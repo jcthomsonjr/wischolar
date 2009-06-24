@@ -1,0 +1,1 @@
+$(function(){  $('.populate').each(function(){    $(this).val( $(this).attr('title') ).focus(function(){      $(this).val('');    });    $(this).val( $(this).attr('title') ).blur(function(){      $(this).val( $(this).attr('title') );    });    $('label[@for='+$(this).attr('id')+']').addClass('structural');  });});
