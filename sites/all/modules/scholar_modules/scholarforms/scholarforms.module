@@ -1,0 +1,108 @@
+<?php
+
+/**
+ * Implementation of hook_theme()
+ */
+
+function scholarforms_theme(){
+  return array(
+  'scholarforms' => array(
+  'arguments' => array('form' => $form),
+  ),
+  );
+}
+
+function scholarforms_preprocess_scholarforms(&$variables) {
+  $node = node_load($variables['form']['nid']['#value']);
+  $variables['node'] = $node;
+  $variables['test'] = 'NOTE: this is text from scholarforms_preprocess_scholarforms()';
+ // dpm($variables);
+  
+}
+
+
+/**
+ * Implementation of hook_form_alter
+ */
+function scholarforms_form_alter(&$form, $form_state, $form_id) { 
+  $types = array_keys(node_get_types());
+
+  //if editing an exisitng node, load the node
+  $node = isset($form['#node']->nid) ? node_load(array('nid' => $form['#node']->nid)) : NULL;
+
+  //create options for publishing status radios
+  $options = array(
+  'publish' => t('Published now'),
+  'save' => t('Save as draft'),
+  'saveondate' => t('Publish on another date'),
+  );
+
+  foreach($types as $type){
+    if ($type . '_node_form' == $form_id) {
+
+      //unset original publish status checkbox
+      unset($form['options']['status']);
+
+      $form['options']['pubstatus'] = array(
+      '#type' => 'radios',
+      '#options' => $options,
+      '#weight' => 3,
+      );
+      $form['options']['promote'] = array(
+      '#type' => 'checkbox',
+      '#title' => t(scholarforms_get_frontpage_text($node)),
+      '#description' => t('This keeps the post on top of any list postings'),
+      '#default_value' => $node->promote,
+      '#weight' => 1,
+      );
+      $form['options']['sticky'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Make Prominant'),
+      '#description' => t('This keeps the post on top of any list postings'),
+      '#default_value' => $node->sticky,
+      '#weight' => 2,
+      );
+      //need to hide this field with jquery unless radio for pubdate is selected
+      $form['options']['pubdate'] = array(
+      '#type' => 'textfield',
+      '#default_value' => $node->pubdate,
+      '#weight' => 4,
+      );
+      
+  
+  $form['attachments']['#title'] = t('Images & Files');
+  $form['#theme'] = 'scholarforms'; 
+  $form['#submit'][] = 'scholarforms_form_submit';
+  //dpm($form);
+    }
+    //adding additional submit function
+   
+  }
+}
+
+function scholarforms_init(){
+  //drupal_add_js(drupal_get_path('module','scholarforms') . '/js/upload.js');
+}
+
+
+/**
+ * Returns text for title and description for Make Prominant checkbox
+ * depending on current status
+ */
+
+function scholarforms_get_frontpage_text($node = NULL){
+  if($node){
+     $title = ($node->promote == '1') ? 'Keep on Front Page' : 'Promote to front page';
+  }
+  else{
+    $title = 'Promote to front page';
+  }
+  return $title;
+}
+
+/**
+ * Additional submit function for node form
+ */
+function scholarforms_form_submit($form, &$form_state){
+  //do something here with  the radio button setting for pubstatus
+}
