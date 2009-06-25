@@ -3,7 +3,9 @@
 /**
  * Implementation of hook_form_alter
  */
-function scholarforms_form_alter(&$form, $form_state, $form_id) {
+function scholarforms_form_alter(&$form, $form_state, $form_id) {   
+
+//$form['test'] = 'scholarforms_form_validate';
   $types = array_keys(node_get_types());
 
   //if editing an exisitng node, load the node
@@ -11,7 +13,7 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
 
   //create options for publishing status radios
   $options = array(
-  'publish' => t('Published now'),
+  'publish' => t('Publish now'),
   'save' => t('Save as draft'),
   'saveondate' => t('Publish on another date'),
   );
@@ -25,6 +27,7 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       $form['options']['pubstatus'] = array(
       '#type' => 'radios',
       '#options' => $options,
+       '#default_value'  => scholarforms_get_pubstatus($node),
       '#weight' => 3,
       );
       $form['options']['promote'] = array(
@@ -48,11 +51,13 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       '#weight' => 4,
       );
 
-      $form['attachments']['#title'] = t('Images & Files');
-
+     // $form['attachments']['#title'] = t('Images & Files');
+      $form['#validate'][] = 'scholarforms_form_validate';
+      
+      
       //adding additional submit function to call "publish options" radio button callbacks
-      $form['#submit'][] = 'scholarforms_form_submit';
-      //dpm($form);
+      //$form['#submit'][] = 'scholarforms_form_submit';
+     // dpm($form);
     }
   }
 }
@@ -72,8 +77,51 @@ function scholarforms_get_frontpage_text($node = NULL){
 }
 
 /**
+ * Validation logic here mainly used to convert $form_state values 
+ * retrieved form 'pubstatus' option for core Drupal node form handler
+ *
+ * @param unknown_type $form
+ * @param unknown_type $form_state
+ */
+function scholarforms_form_validate($form, &$form_state){
+  switch($form_state['values']['pubstatus']){
+
+    case 'publish':
+      $form_state['values']['status'] = '1';
+      break;
+
+    case 'save':
+      $form_state['values']['status'] = '0';
+      //need to save a revision
+
+    case 'saveondate':
+      //need to call a function here to save date information - perhapscan use scheduler module???
+      break;
+  }
+}
+
+/**
  * Additional submit function for node form
  */
 function scholarforms_form_submit($form, &$form_state){
-  //do something here with  the radio button setting for pubstatus
+
+}
+
+/**
+ * Function to return pubstatus radio button setting
+ *
+ * @param unknown_type $node
+ * @return  $pub the returned setting to the form
+ */
+function scholarforms_get_pubstatus($node = NULL){
+  if($node){
+    $pub =  $node->status == '1' ? 'publish' : 'save';
+  }
+  else{
+    $pub = false;
+  }
+  return $pub;
+  
+  //I think I should store this value in the database somewhere. For Example:
+  //  return db_result(db_query("SELECT pubstatus from {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid));
 }
