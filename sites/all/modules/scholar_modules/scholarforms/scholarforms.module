@@ -1,30 +1,9 @@
 <?php
 
 /**
- * Implementation of hook_theme()
- */
-
-function scholarforms_theme(){
-  return array(
-  'scholarforms' => array(
-  'arguments' => array('form' => $form),
-  ),
-  );
-}
-
-function scholarforms_preprocess_scholarforms(&$variables) {
-  $node = node_load($variables['form']['nid']['#value']);
-  $variables['node'] = $node;
-  $variables['test'] = 'NOTE: this is text from scholarforms_preprocess_scholarforms()';
- // dpm($variables);
-  
-}
-
-
-/**
  * Implementation of hook_form_alter
  */
-function scholarforms_form_alter(&$form, $form_state, $form_id) { 
+function scholarforms_form_alter(&$form, $form_state, $form_id) {
   $types = array_keys(node_get_types());
 
   //if editing an exisitng node, load the node
@@ -68,28 +47,20 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       '#default_value' => $node->pubdate,
       '#weight' => 4,
       );
-      
-  
-  $form['attachments']['#title'] = t('Images & Files');
-  $form['#theme'] = 'scholarforms'; 
-  $form['#submit'][] = 'scholarforms_form_submit';
-  //dpm($form);
+
+      $form['attachments']['#title'] = t('Images & Files');
+
+      //adding additional submit function to call "publish options" radio button callbacks
+      $form['#submit'][] = 'scholarforms_form_submit';
+      //dpm($form);
     }
-    //adding additional submit function
-   
   }
 }
-
-function scholarforms_init(){
-  //drupal_add_js(drupal_get_path('module','scholarforms') . '/js/upload.js');
-}
-
 
 /**
  * Returns text for title and description for Make Prominant checkbox
  * depending on current status
  */
-
 function scholarforms_get_frontpage_text($node = NULL){
   if($node){
      $title = ($node->promote == '1') ? 'Keep on Front Page' : 'Promote to front page';
