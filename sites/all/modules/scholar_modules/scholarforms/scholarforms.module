@@ -101,10 +101,36 @@ function scholarforms_form_validate($form, &$form_state){
 }
 
 /**
+ * Implementation of hook_nodeapi
+ *
+ * @param unknown_type $node
+ * @param unknown_type $op
+ */
+
+function scholarforms_nodeapi(&$node, $op){
+  switch($op){
+
+    case 'insert':
+      $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus) VALUES (%d, '%s')",
+      (int)$node->nid, $node->pubstatus);
+
+      break;
+
+    case 'update':
+      $sql_delete = db_query("DELETE FROM {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid);
+      $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus) VALUES (%d, '%s')",
+      (int)$node->nid, $node->pubstatus);
+      
+      break;
+
+  }
+}
+
+/**
  * Additional submit function for node form
  */
-function scholarforms_form_submit($form, &$form_state){
-
+function scholarforms_form_submit($form, &$form_state){ 
+//nothing here right now
 }
 
 /**
@@ -114,14 +140,5 @@ function scholarforms_form_submit($form, &$form_state){
  * @return  $pub the returned setting to the form
  */
 function scholarforms_get_pubstatus($node = NULL){
-  if($node){
-    $pub =  $node->status == '1' ? 'publish' : 'save';
-  }
-  else{
-    $pub = false;
-  }
-  return $pub;
-  
-  //I think I should store this value in the database somewhere. For Example:
-  //  return db_result(db_query("SELECT pubstatus from {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid));
+    return db_result(db_query("SELECT pubstatus from {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid));
 }
