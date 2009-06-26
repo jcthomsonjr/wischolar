@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * Implemenation of hook_init()
+ */
+function scholarforms_init(){
+  drupal_add_js(drupal_get_path('module', 'scholarforms') .'/js/scholarforms.js');
+}
+
+/**
  * Implementation of hook_form_alter
  */
 function scholarforms_form_alter(&$form, $form_state, $form_id) {   
@@ -44,19 +51,28 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       '#default_value' => $node->sticky,
       '#weight' => 2,
       );
+      
+      $date_format = 'm/d/Y';
       //need to hide this field with jquery unless radio for pubdate is selected
       $form['options']['pubdate'] = array(
-      '#type' => 'textfield',
-      '#default_value' => $node->pubdate,
+      
+      '#title' => t('Publish on'),
+      '#type' => 'date_popup',
+      '#date_format' => $date_format,
+      '#maxlength' => 25,
+      '#default_value' => '', //$node->pubdate ? format_date($node->pubdate, 'custom', $date_format) : '',
       '#weight' => 4,
-      );
-
+      '#prefix' => $node->pubstatus == 'saveondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
+      '#suffix' => $node->pubstatus == 'saveondate' ? '' : '</div>',
+       );
+ 
+     
      // $form['attachments']['#title'] = t('Images & Files');
       $form['#validate'][] = 'scholarforms_form_validate';
       
       
       //adding additional submit function to call "publish options" radio button callbacks
-      //$form['#submit'][] = 'scholarforms_form_submit';
+      $form['#submit'][] = 'scholarforms_form_submit';
      // dpm($form);
     }
   }
@@ -109,6 +125,12 @@ function scholarforms_form_validate($form, &$form_state){
 
 function scholarforms_nodeapi(&$node, $op){
   switch($op){
+    
+    case 'load':
+      $pubstatus = scholarforms_get_pubstatus($node);
+      $node->pubstatus = $pubstatus;
+      
+      break;
 
     case 'insert':
       $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus) VALUES (%d, '%s')",
@@ -121,7 +143,7 @@ function scholarforms_nodeapi(&$node, $op){
       $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus) VALUES (%d, '%s')",
       (int)$node->nid, $node->pubstatus);
       
-      break;
+      break;  
 
   }
 }
