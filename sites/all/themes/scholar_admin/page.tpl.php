@@ -15,9 +15,6 @@
   	 <div id="top">
   	 
   	 </div>
-     <div id="sidebar-left" class="column sidebar">
-        <?php print $left; ?>
-     </div> <!-- /sidebar-left -->
      
      <div id="main-content">
 		<div id="header">
