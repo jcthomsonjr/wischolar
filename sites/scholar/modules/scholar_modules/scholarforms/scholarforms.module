@@ -1,5 +1,9 @@
 <?php
 
+
+/**
+ * MODULE SETTINGS CONSTANTS
+ */
 //set the date format for the  pop-up datepicker textfield
 define(DATE_FORMAT, 'm/d/Y');
 //boolean value (true or false) to show all fieldsets - TRUE will hide non-essential fieldsets
@@ -64,7 +68,6 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   dpm($form);
       '#weight' => 2,
       );
       
-      
           //need to hide this field with jquery unless radio for pubdate is selected
       $form['options']['pubdate'] = array(
       
@@ -76,13 +79,45 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   dpm($form);
       '#prefix' => $node->pubstatus == 'saveondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
       '#suffix' => $node->pubstatus == 'saveondate' ? '' : '</div>',
        );
- 
-     
-     // $form['attachments']['#title'] = t('Images & Files');
+
+      // BEGIN PLACEHOLDER FIELDSETS - not sure if I will use these
+      
+     $form['scholarfiles'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Images & Files'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+    '#weight' => 0,
+  );
+  
+     $form['scholarfiles']['testfiles'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Files:'),
+    '#weight' => 0,
+  );
+  
+   $form['scholartaxonomy'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Tags & Categories'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+    '#weight' => 0,    
+  );
+  
+   theme_filefield_widget($element);
+  
+    $form['scholartaxonomy']['testtaxonomy'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Taxonomy'),
+    '#weight' => 0,
+  );
+  
+  // END PLACEHOLDER FIELDSETS
+       
+     // adding validation function
       $form['#validate'][] = 'scholarforms_form_validate';
       
-      
-      //adding additional submit function to call "publish options" radio button callbacks
+      //adding additional submit function
       $form['#submit'][] = 'scholarforms_form_submit';
      // dpm($form);
     }
