@@ -11,81 +11,98 @@
   <?php print $scripts; ?>
 </head>
 <body class="<?php print $body_classes; ?>">
-  <div id="container">
-  	 
-        <div id="sidebar-left" class="column sidebar">
-          <?php print $left; ?>
-        </div> <!-- /sidebar-left -->
-     
-     <div id="main-content">
-		<div id="header">
+  <div id="wrapper">
+		<div id="container">
 			
-			<h1><a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home">
-			  <?php print $site_name; ?></a></h1>
+			<div id="header">
+				<?php if (!empty($header_top)){ ?>
+				<div id="header-top">
+					<?php print $header_top; ?>
+				</div><!-- /header-top -->
+				<?php }; ?>
+				<div id="header-wrapper">
+                   
+                    <?php if (!empty($header_main)){ ?>
+                    <div id="header-main" class="column">
+                        <?php print $header_main; ?>
+                    </div><!-- /header-main -->
+                    <?php }; ?>
+                    
+                    <?php if (!empty($header_left)){ ?>
+                    <div id="header-left" class="column">
+                        <?php print $header_left; ?>
+                    </div><!-- /header-left -->
+                    <?php }; ?>
+                    
+                    <?php if (!empty($header_right)){ ?>
+                    <div id="header-right" class="column">
+                        <?php print $header_right; ?>
+                    </div><!-- /header-right -->
+                    <?php }; ?>
+				</div><!-- /header wrapper -->
+				
+				<?php if (!empty($navbar)){ ?>
+				<div id="navbar">
+					<?php print $navbar; ?>
+				</div><!-- /navbar -->
+				<?php }; ?>				
+			</div> <!-- /header -->
+				
 			
-			<div id="nav" class="clear-block">
-				<?php print theme('links', $primary_links); ?>
-			</div>
+			<div id="content-wrapper">
 			
-			<?php if (!empty($header) || !empty($breadcrumb)){ ?>
-			<div id="header-region">
-				<?php print $header; ?>
-			</div> <!-- /header-region -->
-			<?php }; ?>
-			
-			<?php print $search_box; ?>
-		</div> <!-- /header -->
+				<div id="content-main" class="column">
+					<?php if (!empty($content_top)){ ?>
+				  	<div id="content-top">
+				  		<?php print $content_top; ?>
+				  	</div><!-- /content-top -->
+					<?php }; ?>
+					
+					<div id="content">
+					<?php if (!empty($title)){ ?>
+						<h2 class="title"><?php print $title; ?></h2>
+					 <?php }; ?>
+					 <?php if (!empty($tabs)){ ?>
+						<div class="tabs"><?php print $tabs; ?></div>
+					  <?php }; ?>
+					  <?php print $help; ?>
+					  <?php print $messages; ?>
+					  <?php print $content; ?>
+					</div> <!-- /content -->
+				
+					<?php if (!empty($content_bottom)){ ?>
+				  	<div id="content-bottom">
+				  		<?php print $content_bottom; ?>
+				  	</div><!--/content-bottom-->
+					<?php }; ?>
+			  	</div><!-- /content main -->
+		        
+		      
+		        <?php if (!empty($left)){ ?>
+				<div id="sidebar-left" class="column">
+				  <?php print $left; ?>
+				</div> <!-- /sidebar-left -->
+				<?php }; ?>
 		
-		<?php if (!empty($pic)){ ?>
-			<div id="pic"><?php print $pic; ?></div>
-		<?php }; ?>
-		
-		<div id="main">
-			<?php if (!empty($release)){ ?>
-			  <div id="release"><?php print $release; ?></div>
-			<?php }; ?>
-			
-			<?php if (!empty($content_top)){ ?>
-			  <div id="content-top"><?php print $content_top; ?></div>
-			<?php }; ?>
-			
-			<div id="content">
-			  <?php if (!empty($title)){ ?>
-				<h1 class="title"><?php print $title; ?></h1>
+			  	<?php if (!empty($right)){ ?>
+				<div id="sidebar-right" class="column">
+					<?php print $right; ?>
+				</div> <!-- /sidebar-right -->
 			  <?php }; ?>
-			  <?php if (!empty($tabs)){ ?>
-				<div class="tabs"><?php print $tabs; ?></div>
-			  <?php }; ?>
-			  <?php print $help; ?>
-			  <?php print $messages; ?>
-			  <?php print $content; ?>
-			  <?php if (!empty($feed_icons)){ ?>
-				<div class="feed-icons"><?php print $feed_icons; ?></div>
-			  <?php }; ?>
-			</div> <!-- /content -->
+			</div> <!-- / content wrapper -->
 			
-			<?php if (!empty($content_bottom)){ ?>
-			  <div id="content-bottom"><?php print $content_bottom; ?></div>
+			<?php if ($footer || $footer_message) { ?>		
+		  <div id="footer">
+			<?php if ($footer_message){ ?>
+				<div id="footer-message"><?php print $footer_message; ?></div>
 			<?php }; ?>
-		  </div><!-- /main -->
-	
-		  <?php if (!empty($right)){ ?>
-			<div id="sidebar-right" class="column sidebar">
-			  <?php print $right; ?>
-			</div> <!-- /sidebar-right -->
+			<?php if ($footer){ ?>
+				<?php print $footer; ?>
+			<?php }; ?>
+		  </div> <!-- /#footer -->
 		  <?php }; ?>
-		</div> <!-- / main-content -->
-    </div> <!-- /container -->  
-      <div id="footer">
-        <?php if ($footer_message){ ?>
-          	<div id="footer-message"><?php print $footer_message; ?></div>
-        <?php }; ?>
-        <?php if ($footer){ ?>
-        	<?php print $footer; ?>
-        <?php }; ?>
-        <p id="copy">&copy; <?php echo date(Y);?></p>
-      </div> <!-- /#footer -->
-	</div> <!-- /container --> 
+		</div> <!-- /container -->
+	</div> <!-- /wrapper -->
   <?php if ($closure_region){ ?>
     <div id="closure-blocks"><?php print $closure_region; ?></div>
   <?php }; ?>

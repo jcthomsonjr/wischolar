@@ -61,18 +61,15 @@ conditional-stylesheets[if IE][all][] = ie.css
   ; add a line line to this file, and then add the new variable to your
   ; page.tpl.php template.
 
+regions[header_top]    	= header top
+regions[header_left]    = header left
+regions[header_main]    = header main
+regions[header_right]   = header right
+regions[navbar]         = navigation bar
 regions[left]           = left sidebar
 regions[right]          = right sidebar
-regions[navbar]         = navigation bar
-regions[front1]         = front 1
-regions[front2]         = front 2
-regions[front3]         = front 3
-regions[front4]         = front 4
-regions[pic]			= pic
-regions[release]		= release
 regions[content_top]    = content top
 regions[content_bottom] = content bottom
-regions[header]         = header
 regions[footer]         = footer
 regions[closure_region] = closure
 
@@ -95,10 +92,10 @@ features[] = secondary_links
 
   ; Set the default settings to be used in theme-settings.php
 settings[zen_block_editing]        = 1
-settings[zen_breadcrumb]           = no
+settings[zen_breadcrumb]           = yes
 settings[zen_breadcrumb_separator] = ' › '
 settings[zen_breadcrumb_home]      = 0
 settings[zen_breadcrumb_trailing]  = 0
 settings[zen_breadcrumb_title]     = 0
 settings[zen_rebuild_registry]     = 1
-settings[zen_wireframes]           = 0
+settings[zen_wireframes]           = 1
