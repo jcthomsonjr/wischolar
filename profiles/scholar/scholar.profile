@@ -13,7 +13,7 @@ function scholar_profile_modules() {
   $core_modules = _scholar_core_modules();
 
   $contrib_modules = array(
-
+  // sites/all
     'filefield_paths',
     'jquery_ui', 
     'token',
@@ -30,6 +30,7 @@ function scholar_profile_modules() {
     'date_timezone', 
     'date_api', 
     'date',
+    'date_popup',
     'filefield',
     'imagecache',
     'imagecache_ui',
@@ -42,6 +43,10 @@ function scholar_profile_modules() {
     'ctools',
     'devel',
     'install_profile_api', 
+  
+  // scholar specific
+    'biblio',
+    'scholarforms',
   );
 
   return array_merge($core_modules, $contrib_modules);
