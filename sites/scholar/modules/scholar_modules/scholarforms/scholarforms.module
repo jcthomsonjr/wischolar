@@ -1,5 +1,8 @@
 <?php
 
+//set the date format
+define(DATE_FORMAT, 'm/d/Y');
+
 /**
  * Implemenation of hook_init()
  */
@@ -10,7 +13,7 @@ function scholarforms_init(){
 /**
  * Implementation of hook_form_alter
  */
-function scholarforms_form_alter(&$form, $form_state, $form_id) {   
+function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form);
 
 //$form['test'] = 'scholarforms_form_validate';
   $types = array_keys(node_get_types());
@@ -30,6 +33,7 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
 
       //unset original publish status checkbox
       unset($form['options']['status']);
+       unset($form['revision_information']);
 
       $form['options']['pubstatus'] = array(
       '#type' => 'radios',
@@ -52,14 +56,13 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       '#weight' => 2,
       );
       
-      $date_format = 'm/d/Y';
-      //need to hide this field with jquery unless radio for pubdate is selected
+      
+          //need to hide this field with jquery unless radio for pubdate is selected
       $form['options']['pubdate'] = array(
       
       '#title' => t('Publish on'),
       '#type' => 'date_popup',
-      '#date_format' => $date_format,
-      '#maxlength' => 25,
+      '#date_format' => DATE_FORMAT,
       '#default_value' => '', //$node->pubdate ? format_date($node->pubdate, 'custom', $date_format) : '',
       '#weight' => 4,
       '#prefix' => $node->pubstatus == 'saveondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
@@ -103,12 +106,16 @@ function scholarforms_form_validate($form, &$form_state){
   switch($form_state['values']['pubstatus']){
 
     case 'publish':
-      $form_state['values']['status'] = '1';
+      //publish node
+      $form_state['values']['status'] = 1;
       break;
 
     case 'save':
-      $form_state['values']['status'] = '0';
+      //unpublish node
+      $form_state['values']['status'] = 0;
       //need to save a revision
+      $form_state['values']['revision'] = 1;
+      
 
     case 'saveondate':
       //need to call a function here to save date information - perhapscan use scheduler module???
