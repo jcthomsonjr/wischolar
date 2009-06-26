@@ -1,7 +1,9 @@
 <?php
 
-//set the date format
+//set the date format for the  pop-up datepicker textfield
 define(DATE_FORMAT, 'm/d/Y');
+//boolean value (true or false) to show all fieldsets - TRUE will hide non-essential fieldsets
+define(CLEAN_FIELDSETS, TRUE);
 
 /**
  * Implemenation of hook_init()
@@ -13,7 +15,7 @@ function scholarforms_init(){
 /**
  * Implementation of hook_form_alter
  */
-function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form);
+function scholarforms_form_alter(&$form, $form_state, $form_id) {   dpm($form);
 
 //$form['test'] = 'scholarforms_form_validate';
   $types = array_keys(node_get_types());
@@ -31,9 +33,15 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
 
+      if(CLEAN_FIELDSETS){
       //unset original publish status checkbox
-      unset($form['options']['status']);
+       unset($form['options']['status']);
        unset($form['revision_information']);
+       unset($form['comment_settings']);
+       unset($form['author']);
+       unset($form['menu']);
+       unset($form['path']);
+      }
 
       $form['options']['pubstatus'] = array(
       '#type' => 'radios',
