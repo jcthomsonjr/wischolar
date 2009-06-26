@@ -9,12 +9,12 @@ Drupal.behaviors.scholarforms = function (context){
   });
 
 	  $('input#edit-pubstatus-save', context).click(function(){
-		$('div#edit-pubdate-wrapper').hide();
+		$('div#edit-pubdate-wrapper').fadeOut('fast');
 			
 	});
 	
 	  $('input#edit-pubstatus-publish', context).click(function(){
-		$('div#edit-pubdate-wrapper').hide();	
+		$('div#edit-pubdate-wrapper').fadeOut('fast');
 	});
 
 }
