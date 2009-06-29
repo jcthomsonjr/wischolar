@@ -14,13 +14,27 @@ function scholar_profile_modules() {
 
   $contrib_modules = array(
   // sites/all
+    'context',
+    'context_contrib',
+    'context_ui',
     'filefield_paths',
-    'jquery_ui', 
+    'features',
+    'imageapi',
+    'imageapi_gd',
+    'jquery_ui',
+    'og',
+    'og_access',
+    'og_views', 
+    'purl',
+    'spaces',
+    'spaces_og',
     'token',
+    'transliteration',
     'views', 
     'views_ui', 
     'views_export', 
     'vertical_tabs',
+  
 
 
   //cck
@@ -55,11 +69,12 @@ function scholar_profile_modules() {
 
 function _scholar_core_modules(){
   return array(
+    'block', 
+    'blog',
   	'comment', 
+    'filter', 
   	'help', 
   	'menu',
-  	'block', 
-  	'filter', 
   	'node', 
   	'system', 
   	'user', 
@@ -94,13 +109,20 @@ function scholar_profile_details() {
  *   task list.
  */
 function scholar_profile_task_list() {
+  return array(
+    'scholar-features' => st('Scholar features'),
+    'done' => st('done'),
+  );
 }
 
 /**
  * hook profile_tasks
  */
 function scholar_profile_tasks(&$task, $url) {
-
+  //include_once(dirname(__FILE__) . '/scholar.forms.inc');
+  
+  if ($task == 'profile'){
+    
 
   install_include(scholar_profile_modules());
   
@@ -113,7 +135,25 @@ function scholar_profile_tasks(&$task, $url) {
 
   // set the theme
 
-
+    $task = 'scholar-features';
+    //module_load_include('inc', 'features','features.admin');
+    //return drupal_get_form('scholar_get_features_info', $url);
+    drupal_set_title('helllo form');
+    return drupal_get_form('myform', $url);
+  }
+  
+  if ($task == 'scholar-features'){
+    drupal_set_title('helllo form');
+    return drupal_get_form('myform', $url);
+    
+    $task = 'done';
+    $output = l(st('Continue'), $url);
+    return $output;
+  }
+  
+  if ($task == 'done'){
+    $task = 'profile-finished';
+  }
 }
 
 /**
@@ -141,8 +181,39 @@ function scholar_form_alter(&$form, $form_state, $form_id) {
     // Set default for site name field.
     $form['site_information']['site_name']['#default_value'] = $_SERVER['SERVER_NAME'];
     // dont check for updates automatically
-    $form['server_settings']['update_status_module']['#default_value'] = 0;
+    // TODO this is not working 
+    //$form['server_settings']['update_status_module']['#default_value'] = 0;
   }
 }
 
 
+
+function myform($form_state, $url){
+
+  $form['#action'] = $url;
+  $form['#redirect'] = FALSE;
+  $form['department_code'] = array(
+    '#type' => 'select',
+    '#title' => st('Departmental code'),
+    '#description' => st('Please select the correct code for your department.'),
+    '#options' => array('BIOL', 'CHEM', 'COMP', 'ENGI', 'ENGL', 'HIST', 'MATH', 'LANG', 'PHYS', 'PHIL'),
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => st('Save and Continue'),
+    //'#submit' => 'myform_submit',
+  
+  );
+  
+
+  return $form;
+
+}
+
+function myform_submit($form, &$form_state) {
+     global $redirect_url;
+  variable_set('department_code', $form_state['values']['department_code']);
+
+    drupal_goto($redirect_url);
+   
+}
