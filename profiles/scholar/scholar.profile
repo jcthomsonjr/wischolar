@@ -54,7 +54,19 @@ function scholar_profile_modules() {
 
 
 function _scholar_core_modules(){
-  return array('color', 'comment', 'help', 'menu','block', 'filter', 'node', 'system', 'user', 'path','php');
+  return array(
+  	'comment', 
+  	'help', 
+  	'menu',
+  	'block', 
+  	'filter', 
+  	'node', 
+  	'system', 
+  	'user', 
+  	'path',
+  	'php',
+    'taxonomy',
+  );
 }
 
 /**
