@@ -1,4 +1,4 @@
-﻿/* $Id: README.txt,v 1.4.4.4 2009/06/10 12:55:27 smk Exp $ */
+﻿/* $Id: README.txt,v 1.8 2009/06/10 12:53:47 smk Exp $ */
 
 -- SUMMARY --
 
@@ -74,10 +74,9 @@ transliteration supports language specific alterations to the basic replacements
    additional language-specific variants. To add our custom replacement, we need
    to do two things: first, we need to create a new transliteration variant
    for Azerbaijani since it doesn't exist yet, and second, we need to map the
-   last two digits of the hexadecimal character code (33) to the desired output.
-   To do this, add a new key right before the last closing bracket:
+   last two digits of the hexadecimal character code (33) to the desired output:
 
-     'az' => array(0x33 => 'q'),
+     $variant['az'] = array(0x33 => 'q');
 
    (see http://people.w3.org/rishida/names/languages.html for a list of
    language codes).
