@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * MODULE SETTINGS - CONSTANTS
  */
@@ -18,6 +17,18 @@ function scholarforms_init(){
   drupal_add_js(drupal_get_path('module', 'scholarforms') .'/js/scholarforms.js');
 }
 
+/**
+ * Integrates scholar forms fieldset with vertical tabs - should be called of a new content is added
+ */
+function scholarforms_vertical_tabs_integration(){
+  //define the fieldsets
+  $fieldsets = array('scholarfiles', 'scholartaxonomy', 'options');
+  $types = array_keys(node_get_types());
+  foreach($types as $type){
+    $var_name = check_plain('vertical_tabs_fieldsets_' . $type);
+    variable_set( $var_name, $fieldsets);
+  }
+}
 
 /**
  * scholarforms_get_publishing_options() 
@@ -47,118 +58,117 @@ function scholarforms_get_publishing_options($options, $node = NULL){
  */
 function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form);
 
-//$form['test'] = 'scholarforms_form_validate';
-$types = array_keys(node_get_types());
+  //$form['test'] = 'scholarforms_form_validate';
+  $types = array_keys(node_get_types());
 
-//if editing an exisitng node, load the node
-$node = isset($form['#node']->nid) ? node_load(array('nid' => $form['#node']->nid)) : NULL;
+  //if editing an exisitng node, load the node
+  $node = isset($form['#node']->nid) ? node_load(array('nid' => $form['#node']->nid)) : NULL;
 
-//create options for publishing status radios
-$default_options = array(
-'publish' => t('Publish now'),
-'unpublish' => t('Unpublish this post'),
-'save' => t('Save as draft'),
-'saveondate' => t('Publish on another date'),
-);
+  //create options for publishing status radios
+  $default_options = array(
+  'publish' => t('Publish now'),
+  'unpublish' => t('Unpublish this post'),
+  'save' => t('Save as draft'),
+  'saveondate' => t('Publish on another date'),
+  );
 
-$options = scholarforms_get_publishing_options($default_options, $node);
+  $options = scholarforms_get_publishing_options($default_options, $node);
 
-foreach($types as $type){
-  if ($type . '_node_form' == $form_id) {
+  foreach($types as $type){
+    if ($type . '_node_form' == $form_id) {
 
-    if(CLEAN_FIELDSETS){
-      //unset original publish status checkbox
-      unset($form['options']['status']);
-      unset($form['revision_information']);
-      unset($form['comment_settings']);
-      unset($form['author']);
-      unset($form['menu']);
-      unset($form['path']);
+      if(CLEAN_FIELDSETS){
+        //unset original publish status checkbox
+        unset($form['options']['status']);
+        unset($form['revision_information']);
+        unset($form['comment_settings']);
+        unset($form['author']);
+        unset($form['menu']);
+        unset($form['path']);
+      }
+
+      /***  Images & Files Section ***/
+
+      $form['scholarfiles'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Images & Files'),
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      '#weight' => 0,
+      );
+
+      $filefield = $form[FILE_CCK_FIELD];
+      unset($form[FILE_CCK_FIELD]);
+      $form['scholarfiles'][FILE_CCK_FIELD] = $filefield;
+
+      /*** Tags & Categories Section ***/
+
+      $form['scholartaxonomy'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Tags & Categories'),
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      '#weight' => 0,
+      );
+
+
+      //add a description or new title, etc.
+      $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
+
+      $scholartax =  $form['taxonomy'];
+      unset($form['taxonomy']);
+      /* echo "<pre>";
+      print_r($form['taxonomy']); die;*/
+
+      $form['scholartaxonomy']['taxonomy'] =  $scholartax;
+
+      // $form['scholartaxonomy']['taxonomy'] =  taxonomy_form($vid =1);
+      // theme_filefield_widget($element);
+
+      /*** Publishing Options Section ***/
+
+      $form['options']['pubstatus'] = array(
+      '#type' => 'radios',
+      '#options' => $options,
+      '#default_value'  => scholarforms_get_pubstatus($node),
+      '#weight' => 3,
+      '#required' => TRUE,
+      );
+      $form['options']['promote'] = array(
+      '#type' => 'checkbox',
+      '#title' => t(scholarforms_get_frontpage_text($node)),
+      '#description' => t('This keeps the post on top of any list postings'),
+      '#default_value' => $node->promote,
+      '#weight' => 1,
+      );
+      $form['options']['sticky'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Make Prominant'),
+      '#description' => t('This keeps the post on top of any list postings'),
+      '#default_value' => $node->sticky,
+      '#weight' => 2,
+      );
+
+      //need to hide this field with jquery unless radio for pubdate is selected
+      $form['options']['pubdate'] = array(
+
+      '#title' => t('Publish on'),
+      '#type' => 'date_popup',
+      '#date_format' => DATE_FORMAT,
+      '#default_value' => '', //$node->pubdate ? format_date($node->pubdate, 'custom', $date_format) : '',
+      '#weight' => 4,
+      '#prefix' => $node->pubstatus == 'saveondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
+      '#suffix' => $node->pubstatus == 'saveondate' ? '' : '</div>',
+      );
+
+      // adding validation function
+      $form['#validate'][] = 'scholarforms_form_validate';
+
+      //adding additional submit function - IS THIS NEEDED???
+      $form['#submit'][] = 'scholarforms_form_submit';
+      // dpm($form);
     }
-
-    /***  Images & Files Section ***/
-
-    $form['scholarfiles'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Images & Files'),
-    '#collapsible' => FALSE,
-    '#collapsed' => FALSE,
-    '#weight' => 0,
-    );
-
-    $filefield = $form[FILE_CCK_FIELD];
-    unset($form[FILE_CCK_FIELD]);
-    $form['scholarfiles'][FILE_CCK_FIELD] = $filefield;
-
-    /*** Tags & Categories Section ***/
-
-    $form['scholartaxonomy'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Tags & Categories'),
-    '#collapsible' => FALSE,
-    '#collapsed' => FALSE,
-    '#weight' => 0,
-    );
-
-   
-    //add a description or new title, etc.
-    $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
-
-    $scholartax =  $form['taxonomy'];
-    unset($form['taxonomy']);
-    /* echo "<pre>";
-    print_r($form['taxonomy']); die;*/
-
-    $form['scholartaxonomy']['taxonomy'] =  $scholartax;
-
-    // $form['scholartaxonomy']['taxonomy'] =  taxonomy_form($vid =1);
-    // theme_filefield_widget($element);
-
-    /*** Publishing Options Section ***/
-
-    $form['options']['pubstatus'] = array(
-    '#type' => 'radios',
-    '#options' => $options,
-    '#default_value'  => scholarforms_get_pubstatus($node),
-    '#weight' => 3,
-     '#required' => TRUE,
-    );
-    $form['options']['promote'] = array(
-    '#type' => 'checkbox',
-    '#title' => t(scholarforms_get_frontpage_text($node)),
-    '#description' => t('This keeps the post on top of any list postings'),
-    '#default_value' => $node->promote,
-    '#weight' => 1,
-    );
-    $form['options']['sticky'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Make Prominant'),
-    '#description' => t('This keeps the post on top of any list postings'),
-    '#default_value' => $node->sticky,
-    '#weight' => 2,
-    );
-
-    //need to hide this field with jquery unless radio for pubdate is selected
-    $form['options']['pubdate'] = array(
-
-    '#title' => t('Publish on'),
-    '#type' => 'date_popup',
-    '#date_format' => DATE_FORMAT,
-    '#default_value' => '', //$node->pubdate ? format_date($node->pubdate, 'custom', $date_format) : '',
-    '#weight' => 4,
-    '#prefix' => $node->pubstatus == 'saveondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
-    '#suffix' => $node->pubstatus == 'saveondate' ? '' : '</div>',
-    );
-
-
-    // adding validation function
-    $form['#validate'][] = 'scholarforms_form_validate';
-
-    //adding additional submit function
-    $form['#submit'][] = 'scholarforms_form_submit';
-    // dpm($form);
   }
-}
 }
 
 /**
