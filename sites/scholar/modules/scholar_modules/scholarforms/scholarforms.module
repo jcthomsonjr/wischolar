@@ -19,7 +19,7 @@ function scholarforms_init(){
 /**
  * Implementation of hook_form_alter
  */
-function scholarforms_form_alter(&$form, $form_state, $form_id) {   dpm($form);
+function scholarforms_form_alter(&$form, $form_state, $form_id) {
 
 //$form['test'] = 'scholarforms_form_validate';
   $types = array_keys(node_get_types());
