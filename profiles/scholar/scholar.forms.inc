@@ -1,7 +1,5 @@
 <?php
 
-
-
 function scholar_get_features_info($form_state, $url){
   
   module_load_include('inc', 'features','features.admin');
@@ -12,21 +10,18 @@ function scholar_get_features_info($form_state, $url){
   
   module_load_include('inc', 'features', 'features.export');
   
-  $form['feature'] = array(
+  $form['status'] = array(
     '#tree' => TRUE,
   );
   
   // Generate features form.
   foreach (features_get_features('', TRUE) as $name => $module) {
-    $form['feature'][$name] = array(
-      '#type' => 'value',
-      '#value' => $module,
-    );
+
     
     $form['status'][$name] = array(
       '#type' => 'checkbox',
       '#title' => $module->info['name'],
-      '#description' => 'some descirption', // $description,
+      '#description' =>  $module->info['description'],
       '#default_value' => $module->status,
       '#disabled' => FALSE,
     );
@@ -42,17 +37,23 @@ function scholar_get_features_info($form_state, $url){
   return $form;
 }
 
+/**
+ * Submit function; enable features (modules) selected by 
+ * the administrator
+ */
 function scholar_get_features_info_submit(&$form, &$form_state){
   variable_set('scholar_features', TRUE);
-   $features = $form_state['values']['feature'];
-   $modules = array_keys($features);
-   //$i = 0;
-   //foreach ($features as $name => $feature) {
-      //variable_set($name . $i, $i);
-      module_enable($modules);
+   $features = $form_state['values']['status'];
+
+   //$modules = array_keys($features);
+
+   foreach ($features as $name => $value) {
+      if ($value) {
+      module_enable(array($name));
 
       // Make sure the install API is available.
       include_once './includes/install.inc';
-      drupal_install_modules($modules);
-   //}
+      drupal_install_modules(array($name));
+      }
+   }
 }

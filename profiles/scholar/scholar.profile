@@ -46,6 +46,7 @@ function scholar_profile_modules() {
     'date',
     'date_popup',
     'filefield',
+    'fieldgroup',
     'imagecache',
     'imagecache_ui',
     'imagefield',
@@ -60,7 +61,7 @@ function scholar_profile_modules() {
   
   // scholar specific
     'biblio',
-    'scholarforms',
+    //'scholarforms',
   );
 
   return array_merge($core_modules, $contrib_modules);
@@ -119,6 +120,7 @@ function scholar_profile_task_list() {
  */
 function scholar_profile_tasks(&$task, $url) {
   include_once(dirname(__FILE__) . '/scholar.forms.inc');
+  include_once(dirname(__FILE__) . '/scholar.settings.inc');
 
   if ($task == 'profile'){
 
@@ -130,10 +132,13 @@ function scholar_profile_tasks(&$task, $url) {
     _scholar_access_rebuild();
     // create default content types
     _scholar_profile_content_types();
+    
     // configure modules  (variables table mainly)
+    _scholar_variable_set();
     // set the theme
 
     $task = 'scholar_features';
+    drupal_set_title('Enabe all the features available to each scholar site');
     return drupal_get_form('scholar_get_features_info', $url);
     //drupal_set_title('helllo form');
     //return drupal_get_form('myform', $url);
