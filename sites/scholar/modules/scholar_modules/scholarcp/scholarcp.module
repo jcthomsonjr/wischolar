@@ -1,0 +1,83 @@
+<?php
+
+define('CPTHEME', 'scholar_admin');
+
+function scholarcp_init(){
+  $item = menu_get_item();
+  $first_in_path = arg(0, $item['path']);
+  if($first_in_path == 'scholarcp'){
+    global $custom_theme;
+    $custom_theme = CPTHEME;
+  }
+}
+
+function scholarcp_menu(){
+  $items = array();
+  $items["scholarcp/1/settings"] = array(
+    'title' => 'Settings',
+    'page callback' => 'scholarcp_settings',
+    'access arguments' => array('access content'),
+  );
+  
+  return $items;
+}
+
+function scholarcp_settings(){
+  return 'hello there from settings page';
+}
+
+/**
+ * Generates an array of top control panels links for the 
+ * current site suitable for use in theme_links().
+ */
+function scholarcp_cp_top_links() {
+  $links = array();
+
+  // anyone can modify add links by implementing 
+  // cp_top_links_alter hook
+  drupal_alter('cp_top_links', $links);
+  return $links;
+}
+
+
+/**
+ * Implements cp_top_links_alter
+ */
+function scholarcp_cp_top_links_alter(&$links) {
+  //$site = scholar_get_site ();
+  //$sid = $site -> nid;
+  
+  $sid = scholar_get_site();
+  if ($sid) {
+    $links[] = array (
+      'title' => t ( 'Settings' ), 
+      'href' => "scholarcp/$sid/settings", 
+      'attributes' => array ('id' => 'settings') 
+    );
+    
+    $links[] = array (
+      'title' => t ( 'Content' ), 
+      'href' => "scholarcp/$sid/content", 
+      'attributes' => array ('id' => 'content') 
+    );
+    
+    $links[] = array (
+      'title' => t ( 'Users' ), 
+      'href' => "scholarcp/$sid/users", 
+      'attributes' => array ('id' => 'users') 
+    );
+    
+    $links[] = array (
+      'title' => t ( 'News' ), 
+      'href' => "sitecp/$sid/news", 
+      'attributes' => array ('id' => 'news') 
+    );
+  
+    $links[] = array (
+      'title' => t ( 'Support' ), 
+      'href' => "sitecp/$sid/users", 
+      'attributes' => array ('id' => 'support') 
+    );
+  }
+}
+
