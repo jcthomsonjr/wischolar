@@ -70,14 +70,37 @@ a, a:visited {
 	}
 
 
-body.sidebar-right #content-wrapper, body.header-right #header-wrapper {
+body.sidebar-right #content-wrapper {
     padding-left: 0;
     }
 
 
-body.sidebar-left #content-wrapper, body.header-left #header-wrapper {
+body.sidebar-left #content-wrapper {
     padding-right: 0;
     }
+
+
+/* HEADERS */
+
+body.header-main-right #header-wrapper {
+    padding-left: 0;
+    }
+
+
+body.header-left-main #header-wrapper {
+    padding-right: 0;
+    }
+
+body.header-left-right #header-wrapper {
+    padding: 0;
+    }
+
+body.header-left-right #header-left, body.header-left-right #header-right {
+    width: 50%;
+    right: auto;
+    margin: 0;
+    }
+    
 
 
 
