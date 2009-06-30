@@ -3,8 +3,11 @@
 
 
 function scholar_get_features_info($form_state, $url){
+  
+  module_load_include('inc', 'features','features.admin');
   $form = array();
-  //$form['#action'] = $url;
+  
+  $form['#action'] = $url;
   $form['#redirect'] = FALSE;
   
   module_load_include('inc', 'features', 'features.export');
@@ -34,22 +37,22 @@ function scholar_get_features_info($form_state, $url){
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => st('Enable features'),
-    //'#validate' => array('features_form_validate'),
   );
-  print_r($form);
+  
   return $form;
 }
 
 function scholar_get_features_info_submit(&$form, &$form_state){
-  variable_set('xxxxxxxxxxxx' , 22);
-   print_r($form_state);
+  variable_set('scholar_features', TRUE);
    $features = $form_state['values']['feature'];
-   
-   foreach ($features as $name => $feature) {
-      module_enable($name);
+   $modules = array_keys($features);
+   //$i = 0;
+   //foreach ($features as $name => $feature) {
+      //variable_set($name . $i, $i);
+      module_enable($modules);
 
       // Make sure the install API is available.
       include_once './includes/install.inc';
-      drupal_install_modules($name);
-   }
+      drupal_install_modules($modules);
+   //}
 }

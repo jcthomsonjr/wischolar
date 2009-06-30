@@ -111,7 +111,6 @@ function scholar_profile_details() {
 function scholar_profile_task_list() {
   return array(
     'scholar-features' => st('Scholar features'),
-    'done' => st('done'),
   );
 }
 
@@ -119,41 +118,39 @@ function scholar_profile_task_list() {
  * hook profile_tasks
  */
 function scholar_profile_tasks(&$task, $url) {
-  //include_once(dirname(__FILE__) . '/scholar.forms.inc');
-  
+  include_once(dirname(__FILE__) . '/scholar.forms.inc');
+
   if ($task == 'profile'){
-    
 
-  install_include(scholar_profile_modules());
-  
-  // create roles
-  _scholar_create_roles();
+    install_include(scholar_profile_modules());
 
-  //scholar_profile_create_content_types();
+    // create roles
+    _scholar_create_roles();
+    // rebuild access (required by og)
+    _scholar_access_rebuild();
+    // create default content types
+    _scholar_profile_content_types();
+    // configure modules  (variables table mainly)
+    // set the theme
 
-  // configure modules  (variables table mainly)
-
-  // set the theme
-
-    $task = 'scholar-features';
-    //module_load_include('inc', 'features','features.admin');
-    //return drupal_get_form('scholar_get_features_info', $url);
-    drupal_set_title('helllo form');
-    return drupal_get_form('myform', $url);
+    $task = 'scholar_features';
+    return drupal_get_form('scholar_get_features_info', $url);
+    //drupal_set_title('helllo form');
+    //return drupal_get_form('myform', $url);
   }
-  
-  if ($task == 'scholar-features'){
-    drupal_set_title('helllo form');
-    return drupal_get_form('myform', $url);
-    
-    $task = 'done';
-    $output = l(st('Continue'), $url);
-    return $output;
+
+  if ($task == 'scholar_features'){
+    $form = drupal_get_form('scholar_get_features_info', $url);    
+    if (variable_get('scholar_features', FALSE)){
+       variable_del('scholar_features');
+       $task = 'profile-finished';
+      // see if the form was processed
+    }
+    else {
+      return $form;
+    }
   }
-  
-  if ($task == 'done'){
-    $task = 'profile-finished';
-  }
+
 }
 
 /**
@@ -165,7 +162,43 @@ function _scholar_create_roles(){
   install_add_role('scholar user');
 }
 
+/**
+ * og requires to rebuild node_access_permission
+ * after install
+ * We are just making a fresh install so it's safe
+ * to have $batch = FALSE as argument
+ * 
+ * @see http://api.drupal.org/api/function/node_access_rebuild/6
+ */
+function _scholar_access_rebuild(){
+  node_access_rebuild();
+}
 
+/**
+ * Create default content types
+ */
+function _scholar_profile_content_types(){
+  $node_type_name = 'scholar_site';
+  
+  $site_type = array(
+    'name' => st('Scholar site'),
+    'type' => $node_type_name,
+    'description' => st('Represent a Scholar web site'),
+    'module' => 'node',
+    'has_title' => TRUE,  // TODO check if we can set this to false
+    'title_label' => st('Site title'),
+    'has_body' => FALSE,
+    'custom' => FALSE,
+    'modified' => TRUE,
+    'locked' => FALSE,
+    'is_new' => TRUE,
+  );
+  
+  node_type_save((object)$site_type);
+  
+  // make this a group node
+  variable_set('og_content_type_usage_' . $node_type_name, 'group');
+}
 
 
 /**
