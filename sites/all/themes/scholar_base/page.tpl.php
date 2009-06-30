@@ -14,6 +14,7 @@
   <div id="wrapper">
 		<div id="container">
 			
+			<?php if ($header_top || $header_main || $header_left || $header_right || $navbar) { ?>
 			<div id="header">
 				<?php if (!empty($header_top)){ ?>
 				<div id="header-top">
@@ -47,7 +48,7 @@
 				</div><!-- /navbar -->
 				<?php }; ?>				
 			</div> <!-- /header -->
-				
+			<?php }; ?>	
 			
 			<div id="content-wrapper">
 			
