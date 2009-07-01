@@ -80,27 +80,37 @@ body.sidebar-left #content-wrapper {
     }
 
 
+
 /* HEADERS */
 
 body.header-main-right #header-wrapper {
     padding-left: 0;
     }
 
-
 body.header-left-main #header-wrapper {
     padding-right: 0;
     }
 
-body.header-left-right #header-wrapper {
+body.header-left-right #header-wrapper, body.header-main #header-wrapper, body.header-right #header-wrapper, body.header-left #header-wrapper{
     padding: 0;
     }
 
-body.header-left-right #header-left, body.header-left-right #header-right {
+body.header-left-right #header-left, body.header-left-right #header-right, body.header-left #header-left, body.header-right #header-right {
     width: 50%;
     right: auto;
-    margin: 0;
     }
     
+body.header-left-right #header-left {
+    margin:0 -20px 0 0;
+    }
+    
+body.header-left-right #header-right {
+    margin:0 0 0 -20px;
+    }    
+    
+body.header-left #header-left, body.header-right #header-right {
+    width: 100%;
+    }
 
 
 
