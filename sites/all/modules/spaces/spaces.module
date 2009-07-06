@@ -1039,8 +1039,8 @@ function spaces_settings($type = NULL, $reset = FALSE) {
         }
       }
       // This format is deprecated -- included for backwards compatibility.
-      else if (is_string($info) && class_exists($info)) {
-        $setting = new $info();
+      else if (is_object($info)) {
+        $setting = $info;
       }
       if (!empty($setting->types)) {
         foreach ($setting->types as $t) {
