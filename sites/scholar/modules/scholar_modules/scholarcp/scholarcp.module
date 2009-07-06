@@ -3,24 +3,40 @@
 define('CPTHEME', 'scholar_admin');
 
 function scholarcp_init(){
+	/*
   $item = menu_get_item();
   $first_in_path = arg(0, $item['path']);
   if($first_in_path == 'scholarcp'){
     global $custom_theme;
     $custom_theme = CPTHEME;
   }
+  */
+   if (arg(0) == 'scholarcp'){
+  	_admin_init_theme();
+  }
 }
 
 function scholarcp_menu(){
-  $items = array();
-  $items["scholarcp/1/settings"] = array(
-    'title' => 'Settings',
-    'page callback' => 'scholarcp_settings',
-    'access arguments' => array('access content'),
-  );
+	$space = spaces_get_space();
+  $items = spaces_active_space_menu('og', FALSE, 'scholarcp');
+  //dpm(module_invoke('system','menu'));
+  
+
   
   return $items;
 }
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function scholarcp_menu_alter(&$items) {
+	$items['scholarcp/settings/%node/spaces/features'] = $items['node/%node/spaces/features'];
+	$items['scholarcp/settings/%node/spaces/features']['access arguments'] = array(2, 'og', 'features');
+	$items['scholarcp/settings/%node/spaces/features']['type'] = MENU_CALLBACK;
+	$items['scholarcp/%node/spaces/features/%'] = $items['node/%node/spaces/features/%'];
+
+}
+
 
 function scholarcp_settings(){
   return 'hello there from settings page';

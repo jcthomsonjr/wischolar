@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * Implementaton of hook_enable().
+ */
+function scholar_enable() {
+  // Weight scholar to be after spaces_og
+  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'spaces_og'"));
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'scholar'", ($weight + 1));  
+}
