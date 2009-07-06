@@ -224,34 +224,3 @@ function scholar_form_alter(&$form, $form_state, $form_id) {
   }
 }
 
-
-
-function myform($form_state, $url){
-
-  $form['#action'] = $url;
-  $form['#redirect'] = FALSE;
-  $form['department_code'] = array(
-    '#type' => 'select',
-    '#title' => st('Departmental code'),
-    '#description' => st('Please select the correct code for your department.'),
-    '#options' => array('BIOL', 'CHEM', 'COMP', 'ENGI', 'ENGL', 'HIST', 'MATH', 'LANG', 'PHYS', 'PHIL'),
-  );
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => st('Save and Continue'),
-    //'#submit' => 'myform_submit',
-  
-  );
-  
-
-  return $form;
-
-}
-
-function myform_submit($form, &$form_state) {
-     global $redirect_url;
-  variable_set('department_code', $form_state['values']['department_code']);
-
-    drupal_goto($redirect_url);
-   
-}
