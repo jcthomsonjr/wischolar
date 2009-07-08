@@ -5,7 +5,7 @@ html {
 body {
     background: url(images/body-bg.png) repeat-y center top #fff;
     color:#282828;
-    font:.95em/165% arial, helvetica, sans-serif; 
+    font:.9em/165% arial, helvetica, sans-serif; 
     }
    
 
@@ -24,7 +24,7 @@ a:hover {
     }
 
 
-h1, h2, h3, #sidebar-left a {
+h1, h2, h3, #sidebar-left a, #header {
     font-family: georgia, serif;
     font-weight: normal;
     }
@@ -37,9 +37,9 @@ h1 a, h2 a, h3 a, #sidebar-left a {
 /* LAYOUT ELEMENTS */
 
 #sidebar-left, #header-left {
-    width: 179px;
+    width: 178px;
     right: 199px;
-    padding: 0;
+    padding: 0 1px;
     }
 
 #content-wrapper, #header-wrapper {
@@ -68,19 +68,18 @@ h1 a, h2 a, h3 a, #sidebar-left a {
 
 #header h1 {
     font-size: 3em;
+    line-height:1em;
     }
 
+#header h2 {
+    font-size: 1.5em;
+    line-height:1.3em;
+    }
+    
 #header h1 a, #header h1 a:visited {
     color:#282828;
     }
     
-#header h2 {
-    font-size: 1.5em;
-    }
-    
-
-
-
 
  
 /* SIDEBAR LEFT */
@@ -111,16 +110,15 @@ h1 a, h2 a, h3 a, #sidebar-left a {
     
 /* MAIN CONTENT AREA */
 
-body.sidebar-left #content {
-    margin-left: 30px;
+body.sidebar-left #content, body.header-left-main #header-main .content {
+    margin-left: 20px;
     }
 
-body.sidebar-right #content {
-    margin-right: 30px;
+body.sidebar-right #content, body.header-main-right #header-main .content {
+    margin-right: 20px;
     }    
     
-    
-body.two-sidebars #content {
+body.two-sidebars #content, body.header-left-main-right #header-main .content {
     margin-left: 20px;
     margin-right: 20px;
     }    
