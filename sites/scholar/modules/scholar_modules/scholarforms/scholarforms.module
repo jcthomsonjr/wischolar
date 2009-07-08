@@ -5,8 +5,6 @@
  */
 //set the date format for the  pop-up datepicker textfield
 define(DATE_FORMAT, 'm/d/Y');
-//boolean value (true or false) to show all fieldsets - TRUE will hide non-essential fieldsets
-define(CLEAN_FIELDSETS, TRUE);
 //the name of the cck field for file uploads
 define(FILE_CCK_FIELD, 'field_link_file');
 
@@ -18,17 +16,47 @@ function scholarforms_init(){
 }
 
 /**
- * Integrates scholar forms fieldset with vertical tabs - should be called of a new content is added
+ * Integrates scholar forms fieldset with vertical tabs - should be called of a new content type is added
  */
-function scholarforms_vertical_tabs_integration(){
+function scholarforms_vertical_tabs_integration($type = NULL){
   //define the fieldsets
-  $fieldsets = array('scholarfiles', 'scholartaxonomy', 'options');
+  $fieldsets = array( 'scholartaxonomy', 'options');
+  
+  //if type is specified create vertical tabs system variable for only that type
+  if($type){
+    $var_name = check_plain('vertical_tabs_fieldsets_' . $type);
+    variable_set($var_name, $fieldsets);
+  }
+  else{
   $types = array_keys(node_get_types());
   foreach($types as $type){
     $var_name = check_plain('vertical_tabs_fieldsets_' . $type);
     variable_set( $var_name, $fieldsets);
+    }
   }
 }
+
+/**
+ * Implementation of hook_node_type
+ *
+ * @param unknown_type $op
+ * @param unknown_type $info
+ */
+function scholarforms_hook_node_type($op, $info){
+  switch ($op){
+    
+    case 'delete':
+      $var_name = check_plain('vertical_tabs_fieldsets_' . $info->type);
+      variable_del('comment_'. $info->type);
+      break;
+    
+    case 'insert':
+      //add taxonomy and options to vertical tabs fieldsets for if new content type is createds
+     scholarforms_vertical_tabs_integration($info->type);
+      break;
+  }
+}
+
 
 /**
  * scholarforms_get_publishing_options() 
@@ -77,19 +105,9 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
 
-      if(CLEAN_FIELDSETS){
-        //unset original publish status checkbox
-        unset($form['options']['status']);
-        unset($form['revision_information']);
-        unset($form['comment_settings']);
-        unset($form['author']);
-        unset($form['menu']);
-        unset($form['path']);
-      }
-
       /***  Images & Files Section ***/
 
-      $form['scholarfiles'] = array(
+/*      $form['scholarfiles'] = array(
       '#type' => 'fieldset',
       '#title' => t('Images & Files'),
       '#collapsible' => FALSE,
@@ -99,7 +117,7 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
 
       $filefield = $form[FILE_CCK_FIELD];
       unset($form[FILE_CCK_FIELD]);
-      $form['scholarfiles'][FILE_CCK_FIELD] = $filefield;
+      $form['scholarfiles'][FILE_CCK_FIELD] = $filefield;*/
 
       /*** Tags & Categories Section ***/
 
