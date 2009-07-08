@@ -61,6 +61,8 @@ function scholar_profile_modules() {
   
   // scholar specific
     'biblio',
+    'scholar',
+    'scholarcp'
     //'scholarforms',
   );
 
@@ -121,7 +123,8 @@ function scholar_profile_task_list() {
 function scholar_profile_tasks(&$task, $url) {
   include_once(dirname(__FILE__) . '/scholar.forms.inc');
   include_once(dirname(__FILE__) . '/scholar.settings.inc');
-
+  include_once(dirname(__FILE__) . '/scholar.testingcontent.inc');
+  
   if ($task == 'profile'){
 
     install_include(scholar_profile_modules());
@@ -135,7 +138,12 @@ function scholar_profile_tasks(&$task, $url) {
     
     // configure modules  (variables table mainly)
     _scholar_variable_set();
+    
     // set the theme
+    _scholar_enable_themes();
+    
+    // for testing purposes, create nodes groups etc
+    _scholar_testingcontent();
 
     $task = 'scholar_features';
     drupal_set_title('Enabe all the features available to each scholar site');
@@ -205,6 +213,19 @@ function _scholar_profile_content_types(){
   variable_set('og_content_type_usage_' . $node_type_name, 'group');
 }
 
+/**
+ * enable a couple of themes
+ * TODO Get all the themes automatically and enable 
+ * them based on some predefined pattern (i.e. scholar_theme_*)
+ *
+ */
+function _scholar_enable_themes(){
+	$themes = array('scholar_admin', 'scholar_base', 'scholar_theme_01' , 'scholar_theme_02', 'scholar_theme_03', 'scholar_theme_04');
+
+	foreach($themes as $theme){
+		install_enable_theme($theme);
+	}
+}
 
 /**
  * Implementation of hook_form_alter().
