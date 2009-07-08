@@ -2,27 +2,22 @@
 
 define('CPTHEME', 'scholar_admin');
 
-function scholarcp_init(){
-  //print_r(spaces_get_space());
-	/*
-  $item = menu_get_item();
-  $first_in_path = arg(0, $item['path']);
-  if($first_in_path == 'scholarcp'){
-    global $custom_theme;
-    $custom_theme = CPTHEME;
-  }
-  */
-   if (arg(0) == 'scholarcp'){
-  	_admin_init_theme();
+function scholarcp_init(){	
+  if (arg(0) == 'scholarcp'){
+  	_scholarcp_init_theme();
+  } else {
+  	$space = spaces_get_space();
+  	if ($space -> type == 'og'){
+  		og_set_theme($space -> group);
+  	}
   }
 }
 
 function scholarcp_menu(){
-  //$space = spaces_get_space();
+	$spaces_path = drupal_get_path('module', 'spaces');
   //$items = spaces_active_space_menu('og', FALSE, 'scholarcp/settings');
 
-  //dpm(module_invoke('system','menu'));
-  //$items = array();
+  $items = array();
   
   $items['scholarcp/settings'] = array(
     'title' => 'Settings',
@@ -30,12 +25,29 @@ function scholarcp_menu(){
     'access arguments' => array('administer site configuration'),
   );
   
-  $items['scholarcp/settings/features'] = array(
+  $items["scholarcp/settings/features"] = array(
     'title' => 'Features',
-    'page callback' => 'scholarcp_cp',
-    'access arguments' => array('access content'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('spaces_features_form'),
+    'access callback' => 'spaces_admin_access',
+    'access arguments' => array('og', 'features'),
+    //'access arguments' => array('access content'),
+    'file' => 'spaces_admin.inc',
+    'file path' => $spaces_path,
+    'weight' => 1,
   );
   
+  $items["scholarcp/settings/features/%"] = array(
+    'title' => 'Features',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('spaces_customize_form', NULL, 3),
+    'access callback' => 'spaces_admin_access',
+    'access arguments' => array('og', 'features'),
+    'file' => 'spaces_admin.inc',
+    'file path' => $spaces_path,
+    'weight' => 1,
+  );
+
   $items['scholarcp/content'] = array(
     'title' => 'Content',
     'page callback' => 'scholarcp_cp',
@@ -60,10 +72,11 @@ function scholarcp_menu(){
     'access arguments' => array('access content'),
   );
   
+  // make them all part of 'scholarcp' menu
   foreach($items as $path => $item) {
     $items[$path]['menu_name'] = 'scholarcp';
   }
-  
+
   return $items;
 }
 
@@ -72,21 +85,15 @@ function scholarcp_cp(){
 }
 
 /**
- * Implementation of hook_menu_alter().
+ * initialize admin theme
  */
-function scholarcp_menu_alter(&$items) {
-	$items['scholarcp/settings/%node/spaces/features'] = $items['node/%node/spaces/features'];
-	$items['scholarcp/settings/%node/spaces/features']['access arguments'] = array(2, 'og', 'features');
-	$items['scholarcp/settings/%node/spaces/features']['type'] = MENU_CALLBACK;
-	$items['scholarcp/%node/spaces/features/%'] = $items['node/%node/spaces/features/%'];
-
+function _scholarcp_init_theme(){
+	global $custom_theme;
+  $custom_theme = CPTHEME;
 }
 
 
-function scholarcp_settings(){
-  return 'hello there from settings page';
-}
-
+/************* OLD STUFF **********************************/
 /**
  * Generates an array of top control panels links for the 
  * current site suitable for use in theme_links().

@@ -7,55 +7,46 @@
  * because it's initiating an object of type space_og 
  * How do you tell it to initiate an object of class "scholar"
  * How to find all the subclasses of space_og class ?
+ * TODO I submitted for this http://drupal.org/node/511914
+ * @see scholar_spaces_types_alter
  */
 
 
 class scholar extends space_og implements space {
-
-    function redirect($op = 'home') {
-    	dpm('hello from scholar class');
-      switch ($op) {
-        case 'home':
-          if (!empty($this->purl)) {
-            // Use the menu path of the selected feature as homepage
-            if ($home = $this->settings['home']) {
-              if (menu_get_item($home)) {
-                purl_goto($home, array('purl' => array('provider' => 'spaces_og', 'id' => $this->sid)));
-              }
-            }
-            // The previous checks fail, there is no valid homepage set
-            if ($this->admin_access() && user_access('configure spaces features')) {
-              drupal_set_message(t("Please setup your group by choosing a homepage setting."));
-              purl_goto("scholarcp/settings/{$this->sid}/spaces/features", array('purl' => array('provider' => 'spaces_og', 'id' => $this->sid)));
-              //purl_goto("scholarcp/spaces/features");
-            }
-          }
-          else {
-            drupal_goto('node/'. $this->sid .'/edit');
-          }
-          menu_set_active_item('spaces-access-denied');
-          break;
-        case 'features':
-          purl_goto("scholarcp/settings/{$this->sid}/spaces/features", array('purl' => array('provider' => 'spaces_og', 'id' => $this->sid)));
-         // purl_goto("scholarcp/spaces/features");
-        	break;
-      }
-    }
+	
+	function redirect($op = 'home') {
+		dpm ( 'hello from scholar class' );
+		switch ($op) {
+			case 'home' :
+				if (! empty ( $this->purl )) {
+					// Use the menu path of the selected feature as homepage
+					if ($home = $this->settings ['home']) {
+						if (menu_get_item ( $home )) {
+							purl_goto ( $home, array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
+						}
+					}
+					// The previous checks fail, there is no valid homepage set
+					if ($this->admin_access () && user_access ( 'configure spaces features' )) {
+						drupal_set_message ( t ( "Please setup your group by choosing a homepage setting." ) );
+						purl_goto ( "scholarcp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
+					}
+				} else {
+					drupal_goto ( 'node/' . $this->sid . '/edit' );
+				}
+				menu_set_active_item ( 'spaces-access-denied' );
+				break;
+			case 'features' :
+				purl_goto ( "scholarcp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
+				break;
+		}
+	}
 }
-
-function scholar_spaces_types_alter(&$items){
-	$items['og']['class'] = 'scholar';
-}
-
-
 
 /**
- * Returns the current scholar site
- * 
- * TODO This is based on og for now. 
- * Coud switch to spaces
+ * Implements hook spaces_types_alter
+ *
+ * @see http://drupal.org/node/511914
  */
-function scholar_get_site(){
-  return 1;
-  return og_get_context();
+function scholar_spaces_types_alter(&$items){
+	$items['og']['class'] = 'scholar';
 }
