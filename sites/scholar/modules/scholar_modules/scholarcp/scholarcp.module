@@ -3,6 +3,7 @@
 define('CPTHEME', 'scholar_admin');
 
 function scholarcp_init(){
+  //print_r(spaces_get_space());
 	/*
   $item = menu_get_item();
   $first_in_path = arg(0, $item['path']);
@@ -17,13 +18,57 @@ function scholarcp_init(){
 }
 
 function scholarcp_menu(){
-	$space = spaces_get_space();
-  $items = spaces_active_space_menu('og', FALSE, 'scholarcp');
-  //dpm(module_invoke('system','menu'));
-  
+  //$space = spaces_get_space();
+  //$items = spaces_active_space_menu('og', FALSE, 'scholarcp/settings');
 
+  //dpm(module_invoke('system','menu'));
+  //$items = array();
+  
+  $items['scholarcp/settings'] = array(
+    'title' => 'Settings',
+    'page callback' => 'scholarcp_cp',
+    'access arguments' => array('administer site configuration'),
+  );
+  
+  $items['scholarcp/settings/features'] = array(
+    'title' => 'Features',
+    'page callback' => 'scholarcp_cp',
+    'access arguments' => array('access content'),
+  );
+  
+  $items['scholarcp/content'] = array(
+    'title' => 'Content',
+    'page callback' => 'scholarcp_cp',
+    'access arguments' => array('access content'),
+  );
+  
+  $items['scholarcp/users'] = array(
+    'title' => 'Users',
+    'page callback' => 'scholarcp_cp',
+    'access arguments' => array('access content'),
+  );
+
+  $items['scholarcp/news'] = array(
+    'title' => 'News',
+    'page callback' => 'scholarcp_cp',
+    'access arguments' => array('access content'),
+  ); 
+  
+  $items['scholarcp/support'] = array(
+    'title' => 'Support',
+    'page callback' => 'scholarcp_cp',
+    'access arguments' => array('access content'),
+  );
+  
+  foreach($items as $path => $item) {
+    $items[$path]['menu_name'] = 'scholarcp';
+  }
   
   return $items;
+}
+
+function scholarcp_cp(){
+  return '1';
 }
 
 /**
