@@ -5,7 +5,7 @@ html {
 body {
     background: url(images/body-bg.png) repeat-x left top #fff;
     color:#353535;
-    font:.95em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif; 
+    font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif; 
     }
    
 #container {
@@ -14,12 +14,12 @@ body {
     }
     
 a, a:visited {
-    color:#353535;
-    text-decoration: underline;
+    color:#8A281B;
     }
 
 a:hover {
-    color:#3399CC;
+    color:#8A281B;
+    text-decoration: underline;
     }
 
 
@@ -27,7 +27,10 @@ h1, h2, h3, #sidebar-right a {
     font-weight: normal;
     color:#889095;
     }
-
+    
+h1, h2 {
+    font-size: 1.4em;
+    }
 
 h1 a, h2 a, h3 a, #sidebar-right a {
     font-style: normal;
@@ -60,27 +63,43 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 /* HEADER ELEMENTS */
 
 #header {
-    height: 170px;
+    height: 205px;
+    margin-bottom: 26px;
+    padding-top: 16px;
     color: #FFF;
+    }
+    
+#header-wrapper {
+    height: 155px;
     }
 
 #header h1 {
-    font-size: 3em;
+    font-size: 2.7em;
+    line-height: 1.1em;
+    }
+
+#header h2 {
+    font-size: 1.5em;
+     line-height: 1.3em;
     }
 
 #header h1, #header h2, #header h3, #header a, #header a:visited, #header h1 a, #header h1 a:visited {
     color:#FFF;
     }
     
-#header h1 a, #header h1 a:visited {
+#header a, #header a:visited {
     text-decoration: none;
     }
-
     
-#header h2 {
-    font-size: 1.5em;
+#header a:hover {
+    color:#F9E433;
     }
-    
+        
+#navbar li {
+    margin-right: 1.5em;
+    text-transform: uppercase;
+    font-size: 1.1em;
+    }  
     
     
 /* MAIN CONTENT AREA */
