@@ -529,10 +529,10 @@ function spaces_load($type, $sid = NULL, $is_active = FALSE) {
       require_once $types[$type]['file'];
     }
     $class = $types[$type]['class'];
-
+    //$class = 'scholar';
     // Create a new space object
     $space = new $class($type, $sid, $is_active);
-
+    
     // Initialize various space variables
     $space->type = $type;
     $space->features = array();
@@ -757,6 +757,7 @@ function spaces_types($reset = false) {
   static $spaces_types;
   if (!isset($spaces_types) || $reset) {
     $spaces_types = module_invoke_all('spaces_types');
+    drupal_alter('spaces_types', $spaces_types);
   }
   return $spaces_types;
 }
@@ -1039,8 +1040,8 @@ function spaces_settings($type = NULL, $reset = FALSE) {
         }
       }
       // This format is deprecated -- included for backwards compatibility.
-      else if (is_object($info)) {
-        $setting = $info;
+      else if (is_string($info) && class_exists($info)) {
+        $setting = new $info();
       }
       if (!empty($setting->types)) {
         foreach ($setting->types as $t) {

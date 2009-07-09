@@ -701,6 +701,7 @@ function spaces_customize_form(&$form_state, $space = NULL, $feature) {
 
   // Generate feature-specific settings form
   $settings = spaces_feature_settings($feature);
+
   if (!empty($settings)) {
     $form['settings']['#title'] = t('Settings');
     $form['settings']['#type'] = 'fieldset';
@@ -714,6 +715,7 @@ function spaces_customize_form(&$form_state, $space = NULL, $feature) {
 
   // Create a fieldset per customizer
   $customizers = spaces_customizers();
+    dpm($customizers);
   foreach ($customizers as $id => $customizer) {
     $form['customizers'][$id] = array(
       '#title' => t($customizer->name),

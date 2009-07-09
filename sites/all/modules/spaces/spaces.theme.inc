@@ -209,6 +209,7 @@ function theme_spaces_features_form($form) {
 function theme_spaces_customize_item($form) {
   $output = '';
   $rows = array();
+  dpm($form);
   foreach (element_children($form) as $element) {
     if ($form[$element]['#type'] == 'fieldset') {
       $title = $form[$element]['#title'];
