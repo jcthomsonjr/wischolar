@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * Implementation of hook_context_default_contexts().
+ */
+function scholarwidgets_context_default_contexts() {
+  module_load_include('inc', 'scholarwidgets', 'scholarwidgets_defaults');
+  return _scholarwidgets_default_contexts();
+}
+
+function scholarwidgets_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0]['info'] = t('Scholar site logo'); 
+    $blocks[1]['info'] = t('Scholar site info');
+    $blocks[2]['info'] = t('Scholar site shield');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        return scholarwidgets_logo();
+      case 1:
+       return scholarwidgets_basicinfo();
+      case 2:
+       return scholarwidgets_shield();
+    }
+  }
+}
+
+function scholarwidgets_logo(){
+	$output = '<div id="logo"><img src="http://scholar.iq.harvard.edu/files/scholar/imagecache/scholar_logo_front/scholarlogos/hillygus/Hillyguspic2.jpg" /> </div>';
+	
+	$block['subject'] = t('Logo');
+	$block['content'] = $output;
+	
+	return $block;
+}
+
+function scholarwidgets_basicinfo(){
+	$output = '<h1><a href="http://scholar-dev2.iq.harvard.edu">Bob Patterson</a></h1>
+	<h2>Assistant Professor of Government, Harvard University</h2>
+	<p>N436 CGIS, 1737 Cambridge Street Cambridge, MA 02138 US <a href="#">(email)</a></p>';
+	
+	$block['subject'] = t('Contact');
+	$block['content'] = $output;
+	
+	return $block;
+}
+
+function scholarwidgets_shield(){
+	$output = '<div id="scholar-shield"><img src="http://scholar.iq.harvard.edu/sites/scholar.iq.harvard.edu/themes/fac01/images/harvard_shield.png" /> </div>';
+	$block['subject'] = t('Shield');
+	$block['content'] = $output;
+	
+	return $block;
+}

@@ -50,3 +50,42 @@ class scholar extends space_og implements space {
 function scholar_spaces_types_alter(&$items){
 	$items['og']['class'] = 'scholar';
 }
+
+
+/**
+ * hook spaces_presets
+ */
+function scholar_spaces_presets(){
+	$items = array();
+	$items['scholarsite'] = array(
+  'name' => 'Scholar site preset',
+  'description' => 'Scholar site preset',
+  'preset' => array(
+    'features' => array(
+      'scholar_announcements' => '2',
+      'scholar_blog' => '2',
+    ),
+    'settings' => array(
+      'home' => 'blog',
+    ),
+    'locked' => array(
+      'features' => array(
+        'scholar_announcements' => 0,
+        'scholar_blog' => 0,
+      ),
+      'settings' => array(
+        'home' => 0,
+      ),
+    ),
+    'og' => array(
+      'og_selective' => '3',
+      'og_register' => 0,
+      'og_directory' => 1,
+      'og_private' => 0,
+    ),
+  ),
+  'type' => 'og',
+);
+
+	return $items;
+}
