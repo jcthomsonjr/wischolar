@@ -12,8 +12,7 @@
 </head>
 <body class="<?php print $body_classes; ?>">
   <div id="wrapper">
-		<div id="container">
-			
+		<div id="container">		
 			<?php if ($header_top || $header_main || $header_left || $header_right || $navbar) { ?>
 			<div id="header">
 				<?php if (!empty($header_top)){ ?>
@@ -22,7 +21,6 @@
 				</div><!-- /header-top -->
 				<?php }; ?>
 				<div id="header-wrapper">
-                   
                     <?php if (!empty($header_main)){ ?>
                     <div id="header-main" class="column">
                         <?php print $header_main; ?>
@@ -40,8 +38,7 @@
                         <?php print $header_right; ?>
                     </div><!-- /header-right -->
                     <?php }; ?>
-				</div><!-- /header wrapper -->
-				
+				</div><!-- /header wrapper -->				
 				<?php if (!empty($navbar)){ ?>
 				<div id="navbar">
 					<?php print $navbar; ?>
@@ -104,6 +101,7 @@
 		  <?php }; ?>
 		</div> <!-- /container -->
 	</div> <!-- /wrapper -->
+	<div id="extradiv"></div>
   <?php if ($closure_region){ ?>
     <div id="closure-blocks"><?php print $closure_region; ?></div>
   <?php }; ?>
