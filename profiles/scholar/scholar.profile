@@ -62,7 +62,8 @@ function scholar_profile_modules() {
   // scholar specific
     'biblio',
     'scholar',
-    'scholarcp'
+    'scholarcp',
+    'scholarwidgets',
     //'scholarforms',
   );
 

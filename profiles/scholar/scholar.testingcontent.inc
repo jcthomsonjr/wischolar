@@ -19,9 +19,11 @@ function _scholar_testingcontent(){
 		}
 	}
 
-	$i = 1;
-	foreach($scholar_themes as $scholar_theme){
+	$nr_themes = count($scholar_themes);
+	for ($i = 1; $i <= $nr_themes; $i++ ){
 		$uname_admin = "schlaradmin0$i";
+		$scholar_theme = "scholar_theme_0$i";
+		
 		install_add_user($uname_admin, "sharepass", "scholar0$i@scholar.iq.harvard.edu", $roles = array("scholar admin"), $status = 1);
 		
 		$properties = array (
@@ -50,8 +52,5 @@ function _scholar_testingcontent(){
 				og_save_subscription($node -> nid, $uid, array('is_active' => 1));	
 			}
 		}
-    
-		//next one
-		$i++;
 	}
 }
