@@ -1,0 +1,134 @@
+html {
+    min-width: 910px;
+    }
+
+body {
+    background: #44514f;
+    color:#2F2F2F;
+    font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif; 
+    }
+   
+#container {
+    width: 840px;
+    margin: 0 auto;
+    background:url(images/bg.gif) top center repeat-y #f6f3ea;
+    }
+    
+a, a:visited {
+    color:#723319;
+    }
+
+a:hover {
+    text-decoration: underline;
+    }
+
+
+h1, h2, h3, #sidebar-right a, #header {
+    font-family: georgia, serif;
+    font-weight: normal;
+    color:#484b63;
+    }
+    
+h1, h2 {
+    font-size: 1.4em;
+    }
+
+h1 a, h2 a, h3 a, #sidebar-right a {
+    font-style: normal;
+    }
+
+/* LAYOUT ELEMENTS */
+
+#sidebar-left, #header-left {
+    width: 160px;
+    right: 190px;
+    padding-left: 20px;
+    }
+
+#content-wrapper, #header-wrapper {
+    padding-left: 190px;
+    }
+    
+#sidebar-right,#header-left {
+    width:160px;
+    padding-right: 20px;
+    }
+
+
+#footer {
+    text-align: center;
+    background: #44514F url(images/bot.gif) no-repeat scroll center top;
+    margin-bottom: 30px;
+    }
+
+
+/* HEADER ELEMENTS */
+
+#header {
+    background: #44514F url(images/top.gif) no-repeat scroll center bottom;
+    text-align:center;
+    color: #F7F3EA;
+    padding-bottom: 2em;
+    }
+
+#header h1 {
+    background:transparent url(images/logo.gif) no-repeat scroll left top;
+    height:30px;
+    margin:16px auto 0;
+    text-indent:-999em;
+    width:467px;
+    }
+
+#header h1 a, #header h1 a:visited {
+    display:block;
+    height:30px;
+    width:467px;
+    }
+
+#header h2, #header p {
+    display:none;
+    }
+
+#header a, #header a:visited {
+    text-decoration: none;
+    }
+    
+#header a:hover {
+    color:#F9E433;
+    }
+
+#navbar {
+    margin: 15px 0;
+    }
+        
+#navbar li {
+    margin: 0 1em;
+    text-transform: uppercase;
+    font-size: 1.1em;
+    } 
+    
+#navbar li a, #navbar li a:visited {
+    color:#D4D5D3;
+    }
+    
+#navbar li:hover {
+    color: #F8EE7C;
+    text-decoration: none;
+    }
+    
+/* MAIN CONTENT AREA */
+
+body.sidebar-left #content {
+    margin-left: 30px;
+    }
+
+body.sidebar-right #content {
+    margin-right: 30px;
+    }    
+    
+    
+body.two-sidebars #content {
+    margin-left: 20px;
+    margin-right: 20px;
+    }    
+    
