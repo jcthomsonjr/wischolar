@@ -220,11 +220,10 @@ function _scholar_profile_content_types(){
  *
  */
 function _scholar_enable_themes(){
-	$themes = array('scholar_admin', 'scholar_base', 'scholar_theme_01' , 'scholar_theme_02', 'scholar_theme_03', 'scholar_theme_04');
+	$themes = array('zen', 'scholar_admin', 'scholar_base');
 
-	foreach($themes as $theme){
-		install_enable_theme($theme);
-	}
+	$themes = array_merge($themes, __scholar_get_scholar_theme_names());
+	install_enable_theme($themes);
 }
 
 /**
@@ -243,5 +242,20 @@ function scholar_form_alter(&$form, $form_state, $form_id) {
     // TODO this is not working 
     //$form['server_settings']['update_status_module']['#default_value'] = 0;
   }
+}
+
+/**
+ * return theme names starting with 'scholar_theme_'
+ *
+ * @return unknown
+ */
+function __scholar_get_scholar_theme_names(){
+	$return = array();
+	$sql = "SELECT * FROM {system} WHERE type = '%s' AND name LIKE '%s%%'";
+	$result = db_query($sql, 'theme', 'scholar_theme_');
+	while($data = db_fetch_object($result)){
+		$return[] = $data -> name;
+	}
+	return $return;
 }
 
