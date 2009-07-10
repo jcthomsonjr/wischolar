@@ -1,0 +1,143 @@
+body {
+    background: url(images/body-bg-no-sidebar.jpg) 50% 135px repeat-y #6d2a01;
+    color:#666;
+    font:.9em/165% "Times New Roman", Times, Georgia, serif; 
+    }
+    
+body.sidebar-left {
+    background-image: url(images/body-bg-left-sidebar.jpg);
+    }
+
+body.sidebar-right {
+    background-image: url(images/body-bg-right-sidebar.jpg);
+    }
+
+body.two-sidebars {
+    background-image: url(images/body-bg-both-sidebar.jpg);
+    }
+
+#extradiv {
+    text-indent: -999em;
+    position: fixed;
+    background:url(images/bottom.png) center bottom no-repeat;
+    bottom: 0;
+    height:228px;
+    width: 100%;
+    z-index:50;
+    }
+
+
+#container {
+    width: 960px;
+    margin: 0 auto;
+    }
+    
+a, a:visited {
+    color:#af4917;
+    text-decoration: underline;
+    }
+
+a:hover {
+    color:#672301;
+    }
+
+
+h1, h2, h3, #sidebar-right a, #sidebar-left a {
+    font-weight: normal;
+    color:#870202;
+    text-decoration: none;
+    }
+    
+#block-menu-primary-links {
+    text-transform: uppercase;
+    }
+
+
+/* LAYOUT */
+
+.column {
+    padding: 10px 24px !important;
+    }
+
+#sidebar-left, #header-left, #sidebar-right, #header-right {
+    width: 131px;
+    }
+    
+#sidebar-left, #header-left {
+    right: 228px;
+    text-align:right;
+    }
+    
+#sidebar-right, #header-right {
+    width: 154px;
+    }
+    
+#content-wrapper, #header-wrapper {
+    padding-left: 184px;
+    padding-right: 257px;
+    }
+ 
+
+body.header-main #sidebar-left, body.header-main-right #sidebar-left {
+    position:relative;
+    top: -83px;
+    }
+    
+
+
+/* HEADER ELEMENTS */
+
+
+
+#header {
+    height: 135px;
+    background:url(images/header-no-sidebar.jpg) no-repeat top center #6d2a01;
+    }
+   
+        
+#header-main {
+    background: url(images/crest.png) no-repeat transparent;
+    padding-left: 133px !important;
+    }
+ 
+body.header-main #header-main {
+    margin-left:212px;
+    width:384px;
+    margin-top: 43px;
+    }
+ 
+body.sidebar-left #header {
+    background-image:url(images/header-left-sidebar.jpg);
+    }
+
+body.sidebar-right #header {
+    background-image:url(images/header-right-sidebar.jpg);
+
+    }
+    
+body.two-sidebars #header {
+    background-image:url(images/header-both-sidebar.jpg);
+    }    
+
+#header h1 {
+    font-size: 2.5em;
+    line-height: 1em;
+    }
+
+#header h1, #header h2, #header h3, #header a, #header a:visited, #header h1 a, #header h1 a:visited, #header {
+    color:#414040;
+    }
+    
+#header h1 a, #header h1 a:visited {
+    text-decoration: none;
+    padding: 0;
+    }
+    
+#header h2 {
+    font-size: 1.5em;
+    line-height: 1em;
+    }
+    
+#header a, #header a:visited {
+    text-decoration: none;
+    }
