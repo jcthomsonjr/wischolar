@@ -105,20 +105,6 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
 
-      /***  Images & Files Section ***/
-
-/*      $form['scholarfiles'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Images & Files'),
-      '#collapsible' => FALSE,
-      '#collapsed' => FALSE,
-      '#weight' => 0,
-      );
-
-      $filefield = $form[FILE_CCK_FIELD];
-      unset($form[FILE_CCK_FIELD]);
-      $form['scholarfiles'][FILE_CCK_FIELD] = $filefield;*/
-
       /*** Tags & Categories Section ***/
 
       $form['scholartaxonomy'] = array(
