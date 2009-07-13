@@ -225,7 +225,7 @@ class space_setting_color implements space_setting {
 function spaces_design_preprocess_page(&$vars) {
   $space = spaces_get_space();
   if (!empty($space->settings['color'])) {
-    $vars['body_classes'] .= " spaces-design-color";
+    $vars['body_classes'] .= " spaces-design";
 
     // We add in spaces design styles in their own key to give themes
     // who blow away/reset $vars['styles'] a chance to recover.
