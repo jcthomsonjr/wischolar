@@ -26,6 +26,16 @@ function scholarforms_schema() {
   'not null' => TRUE,
   'default' => '',
   ),
+  
+  'pubondate' => array(
+  'description' => t("The date when the node should be set as published"),
+  'type' => 'int',
+  'length' => 11,
+  'not null' => TRUE,
+  'unsigned' => TRUE,
+  'default' => 0,
+  ),
+  
   ),
   'primary key' => array (
   'nid'
@@ -39,8 +49,10 @@ function scholarforms_schema() {
  */
 function scholarforms_install() {
    drupal_install_schema('scholarforms');
-   //integrate with vertical tabs
-  // scholarforms_vertical_tabs_integration($type = NULL);
+   
+  //integrate this module's fieldsets with vertical tabs for all existing content types
+  drupal_load('module', 'scholarforms');
+  scholarforms_vertical_tabs_integration($type = NULL);
 }
 
 /**
