@@ -4,7 +4,7 @@ Drupal.behaviors.scholarforms = function (context){
   
   $('div#edit-pubdate-wrapper').hide();	
   
-  $('input#edit-pubstatus-saveondate', context).click(function(){
+  $('input#edit-pubstatus-pubondate', context).click(function(){
 		$('div#edit-pubdate-wrapper').fadeIn('fast');	
   });
 
