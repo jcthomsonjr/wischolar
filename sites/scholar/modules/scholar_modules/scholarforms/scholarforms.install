@@ -39,6 +39,8 @@ function scholarforms_schema() {
  */
 function scholarforms_install() {
    drupal_install_schema('scholarforms');
+   //integrate with vertical tabs
+   scholarforms_vertical_tabs_integration($type = NULL);
 }
 
 /**
