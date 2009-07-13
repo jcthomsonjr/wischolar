@@ -11,6 +11,7 @@
  */
 
 function devel_batch_generate_content($form_state) {
+  print_r($form_state);
   $operations = array();
 
   // Setup the batch operations and save the variables.
