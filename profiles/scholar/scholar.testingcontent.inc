@@ -8,7 +8,7 @@ function _scholar_testingcontent(){
 	// include all inc files
 	install_include(array('install_profile_api', 'node', 'user'));
   
-	// get all scholar themes. Just so that we creat a group for each theme
+	// get all scholar themes. Just so that we create a group for each theme
 	// and assign that theme to the group
 	$all_themes = list_themes(TRUE);
 	$scholar_themes = array();
