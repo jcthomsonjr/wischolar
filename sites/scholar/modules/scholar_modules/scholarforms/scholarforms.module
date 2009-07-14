@@ -157,16 +157,14 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
       '#prefix' => '<div id="pub-time">',
       '#suffix' => '</div>',    
       );
-      
-    $publishdate_value = scholarforms_publishdate_value($node, $pubstatus_value);
-      
+              
       //need to hide this field with jquery unless radio for pubdate is selected
       $form['options']['pubdate'] = array(
 
       '#title' => t('Publish on'),
       '#type' => 'date_popup',
       '#date_format' => DATE_FORMAT,
-      '#default_value' => $publishdate_value,
+      '#default_value' => scholarforms_publishdate_value($node, $pubstatus_value),
       '#weight' => 4,
       '#prefix' => $node->pubstatus == 'pubondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
       '#suffix' => $node->pubstatus == 'pubondate' ? '' : '</div>',
@@ -183,13 +181,21 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
 }
 
 function scholarforms_publishdate_value($node = NULL, $pubstatus_value = NULL){
-  if (!isset($node)){
-    $value = '';
-    return $value;    
+  //this is an existing node
+  if (isset($node)){
+    if($pubstatus_value == 'save' || $pubstatus_value == 'publish'){
+      $value = '';
+    }
+    if($pubstatus_value == 'pubondate'){
+      $value =  _scholarforms_timestamp_to_pubdate($node->pubdate);
+    }
+
+    //this is a new node
+    else{
+      $value = '';
+    }
+    return $value;
   }
-  
-   $publishdate_value = isset($node) ?  _scholarforms_timestamp_to_pubdate($node->pubdate) : '';
-  
 }
 
 
@@ -227,7 +233,8 @@ function scholarforms_form_validate($form, &$form_state){
       $form_state['values']['status'] = 0;
       //need to save a revision
       $form_state['values']['revision'] = 1;
-
+       break;
+       
     case 'pubondate':
       
       $form_state['values']['status'] = 0;
@@ -336,8 +343,6 @@ function scholarforms_cron(){
 
   $sql = db_query("SELECT * from {scholarforms_pubstatus} WHERE pubondate  != %d ", 0);
   while($data = db_fetch_object($sql)){
-    
-  
     if ($today == format_date($data->pubondate, $type = 'custom', $format = "Y-m-d") ){
       $node = node_load($data->nid); dpm($node);
       $node->status = 1;
@@ -345,6 +350,6 @@ function scholarforms_cron(){
       //now reset the row and mark it as published
       $sql_reset_row = db_query("UPDATE {scholarforms_pubstatus} SET pubondate = %d, pubstatus = '%s'
       WHERE nid = %d", 0, 'publish', $data->nid);      
-   }
+    }
   }
 }
