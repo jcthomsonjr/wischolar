@@ -341,7 +341,7 @@ function scholarforms_get_pubstatus($node = NULL){
 function scholarforms_cron(){
   $today = format_date(time(), $type = 'custom', $format = "Y-m-d");
 
-  $sql = db_query("SELECT * from {scholarforms_pubstatus} WHERE pubondate  != %d ", 0);
+  $sql = db_query("SELECT * from {scholarforms_pubstatus} WHERE pubstatus = '%s' ", 'pubondate');
   while($data = db_fetch_object($sql)){
     if ($today == format_date($data->pubondate, $type = 'custom', $format = "Y-m-d") ){
       $node = node_load($data->nid); dpm($node);
