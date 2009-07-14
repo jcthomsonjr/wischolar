@@ -4,7 +4,7 @@
  * MODULE SETTINGS - CONSTANTS
  */
 //set the date format for the  pop-up datepicker textfield
-define(DATE_FORMAT, 'm/d/Y');
+define(DATE_FORMAT, 'n/j/Y');
 
 /**
  * Implemenation of hook_init()
@@ -18,7 +18,7 @@ function scholarforms_init(){
  */
 function scholarforms_vertical_tabs_integration($type = NULL){
   //define the fieldsets
-  $fieldsets = array( 'scholartaxonomy', 'options');
+  $fieldsets = array('menu', 'author', 'og_nodeapi' , 'revision_information' , 'path', 'comment_settings', 'scholartaxonomy', 'options');
   
   //if type is specified create vertical tabs system variable for only that type
   if($type){
@@ -55,7 +55,6 @@ function scholarforms_hook_node_type($op, $info){
       break;
   }
 }
-
 
 /**
  * scholarforms_get_publishing_options() 
@@ -144,24 +143,30 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
       '#weight' => 2,
       '#suffix' => '</div>',
       );
-         
+      
+      //this value sets pubstatus radio button value to last selected choice
+      //for existing nodes and defaults 'publish' for new nodes
+      $pubstatus_value = isset($node) ?  scholarforms_get_pubstatus($node) : 'publish';
+      
       $form['options']['pubstatus'] = array(
       '#type' => 'radios',
       '#options' => $options,
-      '#default_value'  => scholarforms_get_pubstatus($node),
+      '#default_value'  => $pubstatus_value,
       '#weight' => 3,
       '#required' => TRUE,
       '#prefix' => '<div id="pub-time">',
       '#suffix' => '</div>',    
       );
-
+      
+    $publishdate_value = scholarforms_publishdate_value($node, $pubstatus_value);
+      
       //need to hide this field with jquery unless radio for pubdate is selected
       $form['options']['pubdate'] = array(
 
       '#title' => t('Publish on'),
       '#type' => 'date_popup',
       '#date_format' => DATE_FORMAT,
-      '#default_value' => _scholarforms_timestamp_to_pubdate($node->pubdate), //$node->pubdate ? format_date($node->pubdate, 'custom', $date_format) : '',
+      '#default_value' => $publishdate_value,
       '#weight' => 4,
       '#prefix' => $node->pubstatus == 'pubondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
       '#suffix' => $node->pubstatus == 'pubondate' ? '' : '</div>',
@@ -176,6 +181,17 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
     }
   }
 }
+
+function scholarforms_publishdate_value($node = NULL, $pubstatus_value = NULL){
+  if (!isset($node)){
+    $value = '';
+    return $value;    
+  }
+  
+   $publishdate_value = isset($node) ?  _scholarforms_timestamp_to_pubdate($node->pubdate) : '';
+  
+}
+
 
 /**
  * Returns text for title and description for Make Prominant checkbox
@@ -229,11 +245,6 @@ function scholarforms_form_validate($form, &$form_state){
   }
 }
 
-
-function scholarforms_pubondate($node){ 
-  
-}
-
 /**
  * Implementation of hook_nodeapi
  *
@@ -255,7 +266,7 @@ function scholarforms_nodeapi(&$node, $op){
     case 'insert':
       $pubdate = $node->pubstatus == 'pubondate' ? _scholarforms_pubdate_to_timestamp($node->pubdate) : 0;
       
-      $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus, pubdate) VALUES (%d, '%s', %d)",
+      $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
       (int)$node->nid, $node->pubstatus, $pubdate);
       break;
 
@@ -312,24 +323,28 @@ function scholarforms_form_submit($form, &$form_state){
  * @param unknown_type $node
  * @return  $pub the returned setting to the form
  */
-function scholarforms_get_pubstatus($node = NULL){
+function scholarforms_get_pubstatus($node = NULL){  
   return db_result(db_query("SELECT pubstatus from {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid));
 }
 
+/**
+ * Implementation of hook_cron()
+ *
+ */
 function scholarforms_cron(){
-  
-$today = format_date(time(), $type = 'custom', $format = "Y-m-d");
-  
+  $today = format_date(time(), $type = 'custom', $format = "Y-m-d");
+
   $sql = db_query("SELECT * from {scholarforms_pubstatus} WHERE pubondate  != %d ", 0);
-  while($data = db_fecth_array($sql)){
-   
+  while($data = db_fetch_object($sql)){
+    
+  
     if ($today == format_date($data->pubondate, $type = 'custom', $format = "Y-m-d") ){
-      $node = node_load($data->nid);
+      $node = node_load($data->nid); dpm($node);
       $node->status = 1;
-      $node_save($node);
+      node_save($node);
       //now reset the row and mark it as published
       $sql_reset_row = db_query("UPDATE {scholarforms_pubstatus} SET pubondate = %d, pubstatus = '%s'
       WHERE nid = %d", 0, 'publish', $data->nid);      
-    }
+   }
   }
 }
