@@ -1,0 +1,165 @@
+html {
+    min-width: 910px;
+    }
+
+body {
+    background: url(images/body-bg.png) repeat-x 0 100px #4E320A;
+    color:#282828;
+    font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif; 
+    }
+
+
+body.admin-menu {
+    background-position: 0 120px;
+    }
+   
+#wrapper {
+    width: 910px;
+    background: url(images/fabric-strip.png) repeat-y transparent; 
+    margin: 0 auto;
+    }
+    
+body.front #wrapper {
+    background: transparent;
+    }
+     
+#container {
+    width: 748;
+    margin-left: 162px;
+    }
+
+body.front #container {
+    width: 100%;
+    margin-left: 0;
+    }
+    
+a, a:visited {
+    color:#353535;
+    text-decoration: underline;
+    }
+
+a:hover {
+    color:#3399CC;
+    }
+
+
+h1, h2, h3, #sidebar-right a, #navbar, #header {
+    font-weight: normal;
+    }
+
+
+h1 a, h2 a, h3 a, #sidebar-right a {
+    font-style: bold;
+    }
+
+/* LAYOUT ELEMENTS */
+
+#sidebar-left, #header-left {
+    width: 178px;
+    right: 199px;
+    padding: 0 1px;
+    }
+
+#content-wrapper, #header-wrapper {
+    padding-left: 189px;
+    }
+    
+#sidebar-right {
+    border-left: 1px solid #ccc;
+    }
+
+#footer {
+    text-align: center;
+    }
+
+
+
+
+/* HEADER ELEMENTS */
+
+
+#header {
+    height: 141px;
+    font-family: georgia, serif;
+    }
+
+#header h1 {
+    font-size: 2.5em;
+    line-height: 1em;
+    }
+
+#header, #header h1, #header h2, #header h3, #header a, #header a:visited, #header h1 a, #header h1 a:visited {
+    color:#fff;
+    }
+
+#header a, #header a:visited {
+    text-decoration: none;
+    border-bottom: 1px solid #c16e04;
+    }
+
+#header h1 a, #header h1 a:visited {
+    text-decoration: none;
+    border: none;
+    }
+    
+#header h2 {
+    font-size: 1.3em;
+    line-height: 1em;
+    }
+   
+#header p {
+    margin-bottom: 0;
+    }
+    
+#navbar {
+    height: 32px;
+    }
+
+        
+#navbar li {
+    margin-right: 1.5em;
+    font-size: 1.1em;
+    line-height: normal;
+    font-family:"Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
+    float:left;
+    margin-top:9px;
+    }
+
+#navbar li a, #navbar li a:visited {
+    color: #523507;
+    border: none;
+    display: block;
+    padding: 7px 4px;
+    font-weight: bold;
+    }
+    
+#navbar li a:hover {
+    color:#fff;
+    background: #b8690c;
+    }
+    
+    
+/* MAIN CONTENT AREA */
+
+#content-wrapper {
+    background:url(images/content-wrapper.png) repeat-y #faf4e5;
+    }
+    
+#content-wrapper-bottom {
+    clear: both;
+    }
+
+body.sidebar-left #content {
+    margin-left: 30px;
+    }
+
+body.sidebar-right #content {
+    margin-right: 30px;
+    }    
+    
+    
+body.two-sidebars #content {
+    margin-left: 20px;
+    margin-right: 20px;
+    }    
+    
