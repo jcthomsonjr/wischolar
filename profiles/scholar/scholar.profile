@@ -1,8 +1,6 @@
 <?php
 // $Id:$
 
-
-
 /**
  * Return an array of the modules to be enabled when this profile is installed.
  *
@@ -25,6 +23,7 @@ function scholar_profile_modules() {
     'og',
     'og_access',
     'og_views', 
+    'og_vocab',
     'purl',
     'spaces',
     'spaces_og',
@@ -50,6 +49,7 @@ function scholar_profile_modules() {
     'imagecache',
     'imagecache_ui',
     'imagefield',
+    'link',
     'text',
 
 
@@ -57,14 +57,15 @@ function scholar_profile_modules() {
     'admin_menu',
     'ctools',
     'devel',
-    'install_profile_api', 
+    'install_profile_api',
+    'strongarm',
   
   // scholar specific
     'biblio',
     'scholar',
     'scholarcp',
     'scholarwidgets',
-    //'scholarforms',
+    'scholarforms',
   );
 
   return array_merge($core_modules, $contrib_modules);
@@ -149,8 +150,6 @@ function scholar_profile_tasks(&$task, $url) {
     $task = 'scholar_features';
     drupal_set_title('Enabe all the features available to each scholar site');
     return drupal_get_form('scholar_get_features_info', $url);
-    //drupal_set_title('helllo form');
-    //return drupal_get_form('myform', $url);
   }
 
   if ($task == 'scholar_features'){
@@ -236,8 +235,6 @@ function _scholar_enable_themes(){
 function scholar_form_alter(&$form, $form_state, $form_id) {
  
   if ($form_id == 'install_configure') {
-    //print_r($form);
-    //print_r($form);
     // Set default for site name field.
     $form['site_information']['site_name']['#default_value'] = $_SERVER['SERVER_NAME'];
     $form['site_information']['site_mail']['#default_value'] = 'swap@lists.iq.harvard.edu';
