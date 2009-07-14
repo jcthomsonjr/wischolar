@@ -87,8 +87,9 @@
 					<?php print $right; ?>
 				</div> <!-- /sidebar-right -->
 			  <?php }; ?>
+			  <
 			</div> <!-- / content wrapper -->
-			
+			<div id="content-wrapper-bottom"></div>
 			<?php if ($footer || $footer_message) { ?>		
 		  <div id="footer">
 			<?php if ($footer_message){ ?>
