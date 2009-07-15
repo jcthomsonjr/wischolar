@@ -395,23 +395,7 @@ function repec_meta_template_names($tid){
   	
   return $friendly_name;	
 }
-  
-  
-/**
-* repec_meta_author_names()
-*
-* @param $property is the biblio formatted author names seperated by a semi-colon
-* @return returns an array of names to be processed as individual lines
-*/
-function repec_meta_author_names($property){
-  $names_arr = explode(';',$property);
-  if (count($names_arr) > 1){
-   	return $names_arr;
-    }
-  
-  else {return false;}
-}
-  
+ 
 /**
 * repec_meta_format_date()
 *
@@ -501,17 +485,19 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
   			$author_names = strip_tags($author_names);
   			$property = $t_data->data;
   			if (strlen($property)){
-  			
-  			//checking to see if multiple authors
-  			$names = repec_meta_author_names($node->$property);
+  			$names = $node->$property;
   			
     			if ($names) {
-    			foreach ($names AS $key => $val){
-    			$template .= $t_data->identifier . ': ' . $val  . "\n";
+    			foreach ($names[1] AS $val){
+    			$template .= $t_data->identifier . ': ' . $val['name']  . "\n";
      				    }		
     			    }
     		    }
-  		  else {$template .= $t_data->identifier . ': ' . $node->$property  . "\n";}
+  		    
+    		    //if no authors added to biblio node, added blank line to template file
+    		    //repec requires this line to be in the template. There SHOULD always 
+    		    //be at least one author or contributor listed however
+    		     else {$template .= $t_data->identifier . ': ' . '' . "\n";}
   	   }
   		
   		//formatting biblio date to repec date format (yyyy-mm)
