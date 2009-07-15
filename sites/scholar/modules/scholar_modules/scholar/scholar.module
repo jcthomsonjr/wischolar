@@ -57,36 +57,37 @@ function scholar_spaces_types_alter(&$items){
  */
 function scholar_spaces_presets(){
 	$items = array();
-	$items['scholarsite'] = array(
-  'name' => 'Scholar site preset',
-  'description' => 'Scholar site preset',
-  'preset' => array(
-    'features' => array(
-      'scholar_links' => '2',
-
-
-    ),
-    'settings' => array(
-      'home' => 'links',
-    ),
-    'locked' => array(
+  $items['scholarsite'] = array(
+    'name' => 'Scholar site preset',
+    'description' => 'Scholar site preset',
+    'preset' => array(
       'features' => array(
-        'scholar_announcements' => 0,
-        'scholar_blog' => 0,
+        'scholar_links' => '2',
+        'scholar_announcements' => '2',
+        'scholar_blog' => '2',
       ),
       'settings' => array(
-        'home' => 0,
+        'home' => 'blog',
+      ),
+      'locked' => array(
+        'features' => array(
+          'scholar_links' => 0,
+          'scholar_announcements' => 0,
+          'scholar_blog' => 0,
+        ),
+        'settings' => array(
+          'home' => 0,
+        ),
+      ),
+      'og' => array(
+        'og_selective' => '3',
+        'og_register' => 0,
+        'og_directory' => 1,
+        'og_private' => 0,
       ),
     ),
-    'og' => array(
-      'og_selective' => '3',
-      'og_register' => 0,
-      'og_directory' => 1,
-      'og_private' => 0,
-    ),
-  ),
-  'type' => 'og',
-);
+    'type' => 'og',
+  );
 
 	return $items;
 }

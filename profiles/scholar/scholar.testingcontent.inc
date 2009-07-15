@@ -54,10 +54,44 @@ function _scholar_testingcontent(){
 			}
 		}
 		
-		__scholar_generate_node('blog',$uids);
+
+
 		
 	}
+			__scholar_generate_nodes();
 }
+
+function __scholar_generate_nodes(){
+  $form_id = 'devel_generate_content_form';
+  $form_state['values'] = array
+        (
+            'node_types' => array
+                (
+                    'blog' => 'blog',
+                    //'announcement' => 'announcement',
+                    //'link' => 'link'
+
+                ),
+
+            'kill_content' => 1,
+            'num_nodes' => 50,
+            'time_range' => 604800,
+            'max_comments' => 0,
+            'title_length' => 8,
+ 
+            'add_terms' => 0,
+            'add_alias' => 0,
+            'add_statistics' => 1,
+
+        );
+ $form_state['clicked_button']['#value'] = t('Do it!');
+   module_load_include('inc', 'node', 'node.pages');
+ module_load_include('inc',  'devel_generate', 'devel_generate');
+ drupal_execute($form_id, $form_state);
+}
+
+
+
 
 /**
  * Create one node.  This is used by both the batch and non-batch branches of
@@ -116,8 +150,9 @@ function __scholar_generate_node1($type, $uids) {
   // Insert new data:
   $node->type = $type;
   module_load_include('inc', 'node', 'node.pages');
+  module_load_include('inc',  'devel_generate', 'devel_generate');
   node_object_prepare($node);
-  $users = $results['users'];
+  //$users = $results['users'];
   $node->uid = array_rand($uids);
 
   $node->title = devel_create_greeking(mt_rand(1, $results['title_length']), TRUE);
@@ -128,13 +163,14 @@ function __scholar_generate_node1($type, $uids) {
   $node->language = '';
   $node->revision = mt_rand(0,1);
   $node->promote = mt_rand(0, 1);
-  $node->created = time() - mt_rand(0, $results['time_range']);
+  //$node->created = time() - mt_rand(0, $results['time_range']);
   
+    node_save($node);
   //add group inf
   $node -> og_groups = array($node -> nid => $node -> nid);
   
   // A flag to let hook_nodeapi() implementations know that this is a generated node.
-  $node->devel_generate = $results;
+  //$node->devel_generate = $results;
       
   // See devel_generate_nodeapi() for actions that happen before and after this save.
   node_save($node);

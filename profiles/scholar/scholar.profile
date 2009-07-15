@@ -58,6 +58,7 @@ function scholar_profile_modules() {
     'admin_menu',
     'ctools',
     'devel',
+    'devel_generate',
     'install_profile_api',
     'strongarm',
   
