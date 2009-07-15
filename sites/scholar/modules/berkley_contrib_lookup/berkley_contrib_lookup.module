@@ -5,10 +5,18 @@
 // the biblioo return
 function berkley_contrib_lookup_menu_alter(&$items) {
   
-  $items['biblio/autocomplete']['page callback'] = 'berkley_contrib_lookup_menu_autocomplete';
+  //Hijack the callback for the biblio autocomplete and call this one first.
+  //$items['biblio/autocomplete']['page callback'] = 'berkley_contrib_lookup_menu_autocomplete';
   
 } // end berkley_contrib_lookup_menu_alter()
 
+/**
+ * Overide that looks up names from berkley
+ *
+ * @param string $field
+ * @param string $string
+ * @deprecated 
+ */
 function berkley_contrib_lookup_menu_autocomplete($field, $string = '') {
   $matches = array();
   if ($field == 'contributor') {
@@ -21,3 +29,94 @@ function berkley_contrib_lookup_menu_autocomplete($field, $string = '') {
     call_user_func_array('biblio_autocomplete',array($field,$string));
   }
 }
+
+/**
+ * implements hook_nodeapi
+ *
+ * @param stdclass $node
+ * @param string $op
+ */
+function berkley_contrib_lookup_nodeapi(& $node, $op, $a3, $a4) {
+  if ($node->type == 'biblio') {
+    switch ($op) {
+       //do any pre-save validation / alterations here
+       /* 	case 'presave':
+         if ($node->type == 'biblio')
+         {
+         	//	$node->body = '';
+         	//	$node_clone = clone($node); // we need a clone since objects get passed by reference regardless and we don't want to change the whole node object
+         	//	$node->body = theme('biblio_tabular', $node_clone, $base, $teaser);
+         }
+         break;
+         */
+      case 'insert':
+      case 'update':
+        if(!empty($node->biblio_contributors)){
+          $md5 = _loadMD5();
+          foreach ($node->biblio_contributors as $cat => $authors) { 
+            foreach ($authors as $key => $author) {
+              if (empty ($author['cid']) && !empty ($md5))
+                $author['cid'] = array_search($author['md5'], $md5);
+              if (empty ($author['cid'])) {
+                //Somthing is wrong, biblio should have written the author by now
+                
+              } else {
+                $cid = $author['cid'];
+              }
+              
+              //Update the contributor_data so that it matches berkley
+            }
+          }
+        }
+      break;
+    }// switch on operation
+  }// only edit biblio saves
+}// end function berkley_contrib_lookup
+
+//
+// implements hook_form_alter
+function berkley_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
+  if($form_id != "biblio_node_form") returbn;
+  
+  $i = 1;
+  while (array_key_exists('contributors'.$i.'_wrapper',$form)){
+    $key = 'contributors'.$i.'_wrapper';
+    
+    foreach ($form[$key]['biblio_contributors'] as $fields_key => $a_fields) {
+      
+         //Disable the Draggable theme it will mess us up
+         if(array_key_exists('theme',$a_fields) && $a_fields['theme'] == 'biblio_contributors'){
+    	  unset($form[$key]['biblio_contributors'][$fields_key]['theme']);
+    	}
+        
+    	foreach ($a_fields as $s_key => $a_field){
+    		if(substr($s_key,0,1) == "#") continue;
+    		
+    		//No autocomplete
+    		if(array_key_exists('name',$a_field) && array_key_exists('#autocomplete_path',$a_field['name'])){
+    		  unset($form[$key]['biblio_contributors'][$fields_key][$s_key]['name']['#autocomplete_path']);
+    		}
+    		
+    	    if(!array_key_exists('check_berkley',$a_field)){
+    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['check_berkley'] = array('#type' => 'checkbox', '#title' => 'Query Berkley');
+    		}
+    		
+    		if(!array_key_exists('berkley_id',$a_field)){
+    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['berkley_id'] = array('#type' => 'hidden', '#default_value' => '');
+    		}
+    		
+    	    if(!array_key_exists('berkley_name',$a_field)){
+    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['berkley_name'] = array('#type' => 'hidden', '#default_value' => '');
+    		}
+    		
+    	    if(!array_key_exists('berkley_url',$a_field)){
+    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['berkley_url'] = array('#type' => 'hidden', '#default_value' => '');
+    		}
+    	}
+    }
+    
+    $i++;
+  }
+  
+}
+
