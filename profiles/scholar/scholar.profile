@@ -27,6 +27,7 @@ function scholar_profile_modules() {
     'purl',
     'spaces',
     'spaces_og',
+    'spaces_user',
     'token',
     'transliteration',
     'views', 

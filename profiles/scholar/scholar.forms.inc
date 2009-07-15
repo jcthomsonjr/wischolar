@@ -16,15 +16,15 @@ function scholar_get_features_info($form_state, $url){
   
   // Generate features form.
   foreach (features_get_features('', TRUE) as $name => $module) {
-
-    
-    $form['status'][$name] = array(
-      '#type' => 'checkbox',
-      '#title' => $module->info['name'],
-      '#description' =>  $module->info['description'],
-      '#default_value' => $module->status,
-      '#disabled' => FALSE,
-    );
+    if (substr($module -> info['name'],0,7) === 'scholar'){
+      $form['status'][$name] = array(
+        '#type' => 'checkbox',
+        '#title' => $module->info['name'],
+        '#description' =>  $module->info['description'],
+        '#default_value' => 1, //$module->status,
+        '#disabled' => FALSE,
+      );
+    }
   }
   
   
@@ -54,6 +54,8 @@ function scholar_get_features_info_submit(&$form, &$form_state){
       // Make sure the install API is available.
       include_once './includes/install.inc';
       drupal_install_modules(array($name));
+      
+      drupal_flush_all_caches();
       }
    }
 }

@@ -31,7 +31,7 @@ function _scholar_testingcontent(){
 			'type' => 'scholar_site', // TODO move this as global variable /settings
 		  'promote' => '1',
 			'purl' => array ('value' => "site0$i", 'provider' => 'spaces_og', 'id' => NULL ), 
-			'preset' => ($i == 1) ? 'scholarsite' : 'public', 
+			'preset' => ($i < 4) ? 'scholarsite' : 'public', 
 			'og_description' => "site0$i", 
 			'theme' => $scholar_theme, 
 			'og_description' => "site0$i", // TODO $terms array should include descriptions
