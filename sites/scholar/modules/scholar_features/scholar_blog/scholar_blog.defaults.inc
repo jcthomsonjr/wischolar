@@ -380,7 +380,7 @@ function _scholar_blog_views_default_views() {
     ),
   ));
   $handler->override_option('title', 'Archive');
-  $handler->override_option('items_per_page', 12);
+  $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
