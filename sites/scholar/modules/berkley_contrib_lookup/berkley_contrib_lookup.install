@@ -5,16 +5,56 @@
  * Implementation of hook_install().
  */
 function berkley_contrib_lookup_install() {
-  //variable_set('contact_hide_email_settings', array());
+  // Add a field to the existing flag_content table (Flag module)
+  $ident_desc = array(
+    'type' => 'varchar',
+    'not null' => false,
+    'default' => null,
+    'size' => 200,
+    'description' => t('The Identifier recieved from berkley.'),
+  );
+
+  $fullname_desc = clone($ident_desc);
+  $ret = array();
+  db_add_field($ret, 'biblio_contributor_data', 'berkley_identifier', $ident_desc);
+  
+  $fullname_desc['description'] = "The name provided from Berkley";
+  
+  $ret = array();
+  db_add_field($ret, 'biblio_contributor_data', 'berkley_fullname', $fullname_desc);
+  
+  $url_desc = array(
+    'type' => 'text',
+    'not null' => false,
+    'default' => null,
+    'description' => t('The URL recieved from berkley.'),
+  );
+  
+  $ret = array();
+  db_add_field($ret, 'biblio_contributor_data', 'berkley_url', $url_desc);
+  
 }
 
-//ALTER TABLE `biblio_contributor_data` ADD `berkley_identifier` VARCHAR( 200 ) NULL ,
-//ADD `berkley_fullname` VARCHAR( 200 ) NULL ,
-//ADD `berkley_url` TEXT NULL ;
 
 /**
  * Implementation of hook_uninstall().
  */
 function berkley_contrib_lookup_uninstall() {
-  //variable_del('contact_hide_email_settings');
+  if (db_table_exists('biblio_contributor_data')){
+    if(db_column_exists('biblio_contributor_data', 'berkley_identifier')) {
+      $ret = array();
+      db_drop_field($ret, 'biblio_contributor_data', 'berkley_identifier');
+    }
+    
+    if(db_column_exists('biblio_contributor_data', 'berkley_fullname')) {
+      $ret = array();
+      db_drop_field($ret, 'biblio_contributor_data', 'berkley_fullname');
+    }
+    
+    if(db_column_exists('biblio_contributor_data', 'berkley_url')) {
+      $ret = array();
+      db_drop_field($ret, 'biblio_contributor_data', 'berkley_url');
+    }
+  }
 }
+
