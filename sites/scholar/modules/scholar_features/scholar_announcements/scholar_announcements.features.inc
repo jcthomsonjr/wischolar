@@ -9,14 +9,6 @@ function scholar_announcements_content_default_fields() {
 }
 
 /**
- * Implementation of hook_context_default_contexts().
- */
-function scholar_announcements_context_default_contexts() {
-  module_load_include('inc', 'scholar_announcements', 'scholar_announcements.defaults');
-  return _scholar_announcements_context_default_contexts();
-}
-
-/**
  * Implementation of hook_node_info().
  */
 function scholar_announcements_node_info() {
