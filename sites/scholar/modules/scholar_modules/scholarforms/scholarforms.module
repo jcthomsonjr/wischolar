@@ -5,6 +5,7 @@
  */
 //set the date format for the  pop-up datepicker textfield
 define(DATE_FORMAT, 'n/j/Y');
+define(TIMEZONE, 'EDT');
 
 /**
  * Implemenation of hook_init()
@@ -247,7 +248,7 @@ function scholarforms_form_validate($form, &$form_state){
       }
       
       //if the form is set to "Publish on another date" and the date selected is prior to today's date, return form error
-       if (isset($form_state['values']['pubdate']) && (date_convert($form_state['values']['pubdate'], DATE_DATETIME, DATE_UNIX, $tz = 'EDT') < time() )) {   
+       if (isset($form_state['values']['pubdate']) && (date_convert($form_state['values']['pubdate'], DATE_DATETIME, DATE_UNIX, TIMEZONE) < time() )) {   
       form_set_error('pubdate', t('When choosing "Publish on another date", you must select a date that occurs after today\'s date.'));
       }      
       break;
@@ -273,7 +274,7 @@ function scholarforms_nodeapi(&$node, $op){
       break;
 
     case 'insert':
-      $pubdate = $node->pubstatus == 'pubondate' ? _scholarforms_pubdate_to_timestamp($node->pubdate) : 0;
+      $pubdate = $node->pubstatus == 'pubondate' ? date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE) : 0;
       
       $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
       (int)$node->nid, $node->pubstatus, $pubdate);
@@ -285,7 +286,7 @@ function scholarforms_nodeapi(&$node, $op){
 
       if ($node->pubstatus == 'pubondate'){
         //convert $node->pubdate into unix timestamp
-        $pubdate_timestamp = _scholarforms_pubdate_to_timestamp($node->pubdate);
+        $pubdate_timestamp = date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE);
 
         $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
         (int)$node->nid, $node->pubstatus,  $pubdate_timestamp );
