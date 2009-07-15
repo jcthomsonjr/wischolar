@@ -189,7 +189,7 @@ function scholarforms_publishdate_value($node = NULL, $pubstatus_value = NULL){
       $value = '';
     }
     if($pubstatus_value == 'pubondate'){
-      $value =  _scholarforms_timestamp_to_pubdate($node->pubdate);
+     $value = format_date($node->pubdate, $type = 'custom', $format = "Y-m-d");
     }
 
     //this is a new node
@@ -247,7 +247,7 @@ function scholarforms_form_validate($form, &$form_state){
       }
       
       //if the form is set to "Publish on another date" and the date selected is prior to today's date, return form error
-       if (isset($form_state['values']['pubdate']) && (_scholarforms_pubdate_to_timestamp($form_state['values']['pubdate']) < time() )) {   
+       if (isset($form_state['values']['pubdate']) && (date_convert($form_state['values']['pubdate'], DATE_DATETIME, DATE_UNIX, $tz = 'EDT') < time() )) {   
       form_set_error('pubdate', t('When choosing "Publish on another date", you must select a date that occurs after today\'s date.'));
       }      
       break;
@@ -297,26 +297,6 @@ function scholarforms_nodeapi(&$node, $op){
       }
       break;
   }
-}
-
-/**
- * Helper function to convert pubdate value into unix timestamp
- */
-function _scholarforms_pubdate_to_timestamp($pubdate){
-// example:  [pubdate] => 2009-06-16 00:00:00
-
-  $date_split = explode(' ', $pubdate);
-  $date_arr = explode('-', $date_split[0]);
-  $timestamp = mktime(0, 0, 0, $date_arr[1], $date_arr[2], $date_arr[0]);
-  return $timestamp;
-}
-
-/**
- * Helper function to convert into unix timestamp into pubdate value
- */
-function _scholarforms_timestamp_to_pubdate($timestamp){
-   $date =  format_date($timestamp, $type = 'custom', $format = "Y-m-d");
-  return $date;
 }
 
 /**
