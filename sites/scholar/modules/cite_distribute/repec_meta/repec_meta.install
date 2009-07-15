@@ -178,9 +178,6 @@ function repec_meta_install() {
 (5, 'wpaper', 'Working Paper')"
 ); 
 
-
-
-
 //populate repec_biblio_types table from biblio_types table
 
  $insert = db_query("INSERT INTO `repec_biblio_types` (`bid`, `b_type`, `rid`, `r_type`) VALUES
@@ -221,7 +218,7 @@ function repec_meta_install() {
 $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `identifier`, `data`, `required`, `active`) VALUES
 
 (1, 1, 'booktm', 'Template-Type', 'ReDIF-Book 1.0', 1, 1),
-(2, 1, 'booktm', 'Editor-Name', 'biblio_authors', 0, 1),
+(2, 1, 'booktm', 'Editor-Name', 'biblio_contributors', 0, 1),
 (3, 1, 'booktm', 'Editor-Email', '', 0, 1),
 (4, 1, 'booktm', 'Editor-Workplace-Name', '', 0, 0),
 (5, 1, 'booktm', 'Title', 'title', 1, 1),
@@ -239,7 +236,7 @@ $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `
 (17, 1, 'booktm', 'Handle', '', 1, 1),
 
 (1, 2, 'bookch', 'Template-Type', 'ReDIF-Chapter 1.0', 1, 1),
-(2, 2, 'bookch', 'Author-Name', 'biblio_authors', 1, 1),
+(2, 2, 'bookch', 'Author-Name', 'biblio_contributors', 1, 1),
 (3, 2, 'bookch', 'Author-Email', '', 0, 1),
 (4, 2, 'bookch', 'Author-Workplace-Name', '', 0, 0),
 (5, 2, 'bookch', 'Title', 'title', 1, 1),
@@ -258,9 +255,8 @@ $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `
 (18, 2, 'bookch', 'Handle', '', 1, 1),
 
 
-
 (1, 3, 'journl', 'Template-Type', 'ReDIF-Article 1.0', 1, 1),
-(2, 3, 'journl', 'Author-Name', 'biblio_authors', 0, 1),
+(2, 3, 'journl', 'Author-Name', 'biblio_contributors', 0, 1),
 (3, 3, 'journl', 'Author-Email', '', 0, 1),
 (4, 3, 'journl', 'Author-Workplace-Name', '', 0, 1),
 (5, 3, 'journl', 'Title', 'title', 1, 1),
@@ -277,9 +273,8 @@ $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `
 (16, 3, 'journl', 'File-Format', '', 0, 0),
 (17, 3, 'journl', 'Handle', '', 1, 1),
 
-
 (1, 4, 'sftwre', 'Template-Type', 'ReDIF-Software 1.0', 1, 1),
-(2, 4, 'sftwre', 'Author-Name', 'biblio_authors', 1, 1),
+(2, 4, 'sftwre', 'Author-Name', 'biblio_contributors', 1, 1),
 (3, 4, 'sftwre', 'Author-WorkPlace-Name', '', 0, 0),
 (4, 4, 'sftwre', 'Author-Email', '', 0, 1),
 (5, 4, 'sftwre', 'Title', 'title', 1, 1),
@@ -294,9 +289,8 @@ $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `
 (14, 4, 'sftwre', 'File-Function', '', 0, 0),
 (15, 4, 'sftwre', 'Handle', '', 1, 1),
 
-
 (1, 5, 'wpaper', 'Template-Type', 'ReDIF-Paper 1.0', 1, 1),
-(2, 5, 'wpaper', 'Author-Name', 'biblio_authors', 1, 1),
+(2, 5, 'wpaper', 'Author-Name', 'biblio_contributors', 1, 1),
 (3, 5, 'wpaper', 'Author-X-Name-First', '', 0, 0),
 (4, 5, 'wpaper', 'Author-X-Name-Last', '', 0, 0),
 (5, 5, 'wpaper', 'Author-Email', '', 0, 1),
@@ -316,19 +310,15 @@ $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `
 (19, 5, 'wpaper', 'Handle', '', 1, 1)"
 
 );  
-	  
 
 //'Author-X-Name-First' and 'Author-X-Name-Last' are disabled by default from 'wpaper' template
 // because the current biblio module form doesn't provide a separate imput for first name/last name.
 drupal_set_message(t('Installed RePEc Meta tables successfully.'));
-	
 }
-
 
 /**
  * Implementation of hook_uninstall().
  */
-
 function repec_meta_uninstall() {
   
    //install repec meta tables
