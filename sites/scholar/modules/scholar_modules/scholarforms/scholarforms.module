@@ -131,7 +131,7 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
       '#type' => 'checkbox',
       '#title' => t(scholarforms_get_frontpage_text($node)),
       '#description' => t('This keeps the post on top of any list postings'),
-      '#default_value' => $node->promote,
+      '#default_value' => $promote_val = isset($node) ? $node->promote : scholarforms_get_workflow($type, $keyword = 'promote'),
       '#weight' => 1,
       '#prefix' => '<div id="pub-options">',
       );
@@ -139,15 +139,17 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
       '#type' => 'checkbox',
       '#title' => t('Make Prominant'),
       '#description' => t('This keeps the post on top of any list postings'),
-      '#default_value' => $node->sticky,
+      '#default_value' => $sticky_val = isset($node) ? $node->sticky : scholarforms_get_workflow($type, $keyword = 'sticky'),
       '#weight' => 2,
       '#suffix' => '</div>',
       );
       
       //this value sets pubstatus radio button value to last selected choice
       //for existing nodes and defaults 'publish' for new nodes
-      $pubstatus_value = isset($node) ?  scholarforms_get_pubstatus($node) : 'publish';
+     // $pubstatus_value = isset($node) ?  scholarforms_get_pubstatus($node) : 'publish';
       
+     $pubstatus_value = scholarforms_get_pubstatus($node, $type);
+     
       $form['options']['pubstatus'] = array(
       '#type' => 'radios',
       '#options' => $options,
@@ -325,18 +327,57 @@ function scholarforms_form_submit($form, &$form_state){
 }
 
 /**
+ * Promote to Front Page and Make Prominent options for new nodes
+ * will used pre-defined settings if already defined by user
+ */
+function scholarforms_get_workflow($type, $keyword){
+  //check to see if custom settings defined for this content type
+  $type_settings = variable_get('node_options_' . $type,'');
+  if ($type_settings && is_array($type_settings)){
+    if (in_array($keyword, $type_settings)){
+      return 1;
+    }
+    //if no custom node setting for these options then default to off for both settings
+    return 0;
+  }
+}
+
+/**
  * Function to return pubstatus radio button setting
  *
  * @param unknown_type $node
  * @return  $pub the returned setting to the form
  */
-function scholarforms_get_pubstatus($node = NULL){  
-  return db_result(db_query("SELECT pubstatus from {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid));
+function scholarforms_get_pubstatus($node = NULL, $type = NULL){
+  if (isset($node)){
+    //editing an exisiting node, populate the choice that the user last selected
+    return db_result(db_query("SELECT pubstatus from {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid));
+  }
+  else{
+    //creating new node
+
+    //check to see if custom settings defined for this content type
+    $type_settings = variable_get('node_options_' . $type,'');
+    if ($type_settings && is_array($type_settings)){
+      //if status is a value in $type_settings array then content type has been set to 'publish now' by default
+      if (in_array('status', $type_settings)){
+        return 'publish';
+      }
+      //custom settings are set to not publish by default
+      //TODO: maybe return 'save as draft' or should I not return any choice here ???
+      else {
+        return 'save';
+      }
+    }
+    //if no custom settings are found for this content type, then make 'publish now' the default
+    else{
+      return 'publish';
+    }
+  }
 }
 
 /**
  * Implementation of hook_cron()
- *
  */
 function scholarforms_cron(){
   $today = format_date(time(), $type = 'custom', $format = "Y-m-d");
@@ -344,10 +385,11 @@ function scholarforms_cron(){
   $sql = db_query("SELECT * from {scholarforms_pubstatus} WHERE pubstatus = '%s' ", 'pubondate');
   while($data = db_fetch_object($sql)){
     if ($today == format_date($data->pubondate, $type = 'custom', $format = "Y-m-d") ){
-      $node = node_load($data->nid); dpm($node);
-      $node->status = 1;
-      node_save($node);
-      //now reset the row and mark it as published
+      
+      //set the node as published
+      $sql_update = db_query("UPDATE {node} SET status = %d WHERE nid = %d", 1, $data->nid);      
+     
+      //now reset the row and mark it as published in the scholarforms_pubstatus table
       $sql_reset_row = db_query("UPDATE {scholarforms_pubstatus} SET pubondate = %d, pubstatus = '%s'
       WHERE nid = %d", 0, 'publish', $data->nid);      
     }
