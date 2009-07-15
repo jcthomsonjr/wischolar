@@ -85,8 +85,8 @@ function berkley_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
     foreach ($form[$key]['biblio_contributors'] as $fields_key => $a_fields) {
       
          //Disable the Draggable theme it will mess us up
-         if(array_key_exists('theme',$a_fields) && $a_fields['theme'] == 'biblio_contributors'){
-    	  unset($form[$key]['biblio_contributors'][$fields_key]['theme']);
+        if(array_key_exists('#theme',$a_fields)){
+    	  $form[$key]['biblio_contributors'][$fields_key]['#theme'] = 'berkley_contrib_lookup_contributors';
     	}
         
     	foreach ($a_fields as $s_key => $a_field){
@@ -95,6 +95,10 @@ function berkley_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
     		//No autocomplete
     		if(array_key_exists('name',$a_field) && array_key_exists('#autocomplete_path',$a_field['name'])){
     		  unset($form[$key]['biblio_contributors'][$fields_key][$s_key]['name']['#autocomplete_path']);
+    		}
+    		
+    	    if(array_key_exists('rank',$a_field)){
+    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['rank']['#type'] = 'hidden';
     		}
     		
     	    if(!array_key_exists('check_berkley',$a_field)){
@@ -118,5 +122,14 @@ function berkley_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
     $i++;
   }
   
+}
+
+function berkley_contrib_lookup_theme($existing, $type, $theme, $path) {
+  return array(
+    'berkley_contrib_lookup_contributors' => array(
+        'file' => 'berkley_contrib_lookup_theme.inc',
+        'arguments' => array('form'),
+    ),
+  );
 }
 
