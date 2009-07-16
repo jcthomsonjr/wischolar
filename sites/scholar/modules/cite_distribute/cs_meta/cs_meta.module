@@ -27,6 +27,7 @@ function cs_meta_cite_distribute_register(){
     'flag' => FILE_APPEND,
     'dynamic_paths' => FALSE, 
     'rebuild_all' => TRUE,
+    'place_once' => TRUE,
     );
   return $module_info;
 }
@@ -98,18 +99,20 @@ function cs_meta_config(){
  * @return template
  */
 
-function cs_meta_make_template($node, $module_mode, $iteration = NULL){
+function cs_meta_make_template($node_arr, $module_mode, $iteration = NULL){
   $make_template = array();
   $archive_path = variable_get('cs_meta_archive_path','');
   
-  if(!$node->biblio_url){
+  foreach($node_arr as $n){
+  
+  if(!$n->biblio_url){
     //adding drupal url here if value for biblio_url does already exist
-    $node->biblio_url = BASE_URL . 'node/' . $node->nid;
+    $n->biblio_url = BASE_URL . '/node/' . $n->nid;
   }
 
   //$results is an array containing the node object which is passed to _bibtex_export()
-  $results[] = $node;
-
+  $results[] = $n;
+  }
    //creating the bibtext file here
   $template = biblio_bibtex_export($results);
  
