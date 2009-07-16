@@ -1,6 +1,13 @@
 <?php
 define('DRUPAL_ROOT', getcwd());
 
+
+/**
+ * Generates some sites and assign users to each 
+ * site. 
+ * Later during task 'generate-content' nodes are assigned 
+ * to these sites
+ */
 function _scholar_testingcontent(){
 	
 	//include_once DRUPAL_ROOT . '/includes/theme.inc';
@@ -12,7 +19,6 @@ function _scholar_testingcontent(){
 	// and assign that theme to the group
 	$all_themes = list_themes(TRUE);
 	$scholar_themes = array();
-	//print_r($all_themes);
 	foreach ($all_themes as $theme){
 		if (strpos( $theme -> name, 'scholar_theme_') === 0){
 			$scholar_themes[] = $theme -> name;
@@ -53,129 +59,5 @@ function _scholar_testingcontent(){
 				og_save_subscription($node -> nid, $uid, array('is_active' => 1));	
 			}
 		}
-		
-
-
-		
 	}
-			//__scholar_generate_nodes();
 }
-
-function __scholar_generate_nodes(){
-  $form_id = 'devel_generate_content_form';
-  $form_state['values'] = array
-        (
-            'node_types' => array
-                (
-                    'blog' => 'blog',
-                    'announcement' => 'announcement',
-                    'link' => 'link'
-
-                ),
-
-            'kill_content' => 1,
-            'num_nodes' => 50,
-            'time_range' => 604800,
-            'max_comments' => 0,
-            'title_length' => 8,
- 
-            'add_terms' => 0,
-            'add_alias' => 0,
-            'add_statistics' => 1,
-
-        );
-  $form_state['clicked_button']['#value'] = t('Do it!');
-  module_load_include('inc', 'node', 'node.pages');
-  module_load_include('inc',  'devel_generate', 'devel_generate');
-  drupal_execute($form_id, $form_state);
-}
-
-
-
-
-/**
- * Create one node.  This is used by both the batch and non-batch branches of
- * the code.
- *
- * @param $num
- *   array of options obtained from devel_generate_content_form.
- */
-function __scholar_generate_node($node_types, $uids) {
-    module_load_include('inc', 'node', 'node.pages');
-    module_load_include('inc',  'devel_generate', 'devel_generate');
-  
-  $results = array (
-  	'values' => array (
-  		'node_types' => array ('blog' => 'Blog Entry', 'announcement' => 'Announcement'), 
-  		'users' => $uids,
-      'num_nodes' => 10,
-    ), 
-  );
-  
-  devel_generate_content($results);
-  /*
-  // Insert new data:
-  $node->type = array_rand($results['node_types']);
-  module_load_include('inc', 'node', 'node.pages');
-  node_object_prepare($node);
-  $users = $results['users'];
-  $node->uid = $users[array_rand($users)];
-
-  $node->title = devel_create_greeking(mt_rand(1, $results['title_length']), TRUE);
-  $node->body = "node ($node->type) - ". devel_create_content();
-  $node->teaser = node_teaser($node->body);
-  $node->filter = variable_get('filter_default_format', 1);
-  $node->format = FILTER_FORMAT_DEFAULT;
-  $node->language = '';
-  $node->revision = mt_rand(0,1);
-  $node->promote = mt_rand(0, 1);
-  $node->created = time() - mt_rand(0, $results['time_range']);
-  
-  // A flag to let hook_nodeapi() implementations know that this is a generated node.
-  $node->devel_generate = $results;
-      
-  // See devel_generate_nodeapi() for actions that happen before and after this save.
-  node_save($node);
-*/
-}
-
-/**
- * Create one node.  This is used by both the batch and non-batch branches of
- * the code.
- *
- * @param $num
- *   array of options obtained from devel_generate_content_form.
- */
-function __scholar_generate_node1($type, $uids) {
-  // Insert new data:
-  $node->type = $type;
-  module_load_include('inc', 'node', 'node.pages');
-  module_load_include('inc',  'devel_generate', 'devel_generate');
-  node_object_prepare($node);
-  //$users = $results['users'];
-  $node->uid = array_rand($uids);
-
-  $node->title = devel_create_greeking(mt_rand(1, $results['title_length']), TRUE);
-  $node->body = "node ($type) - ". devel_create_content();
-  $node->teaser = node_teaser($node->body);
-  $node->filter = variable_get('filter_default_format', 1);
-  $node->format = FILTER_FORMAT_DEFAULT;
-  $node->language = '';
-  $node->revision = mt_rand(0,1);
-  $node->promote = mt_rand(0, 1);
-  //$node->created = time() - mt_rand(0, $results['time_range']);
-  
-    node_save($node);
-  //add group inf
-  $node -> og_groups = array($node -> nid => $node -> nid);
-  
-  // A flag to let hook_nodeapi() implementations know that this is a generated node.
-  //$node->devel_generate = $results;
-      
-  // See devel_generate_nodeapi() for actions that happen before and after this save.
-  node_save($node);
-
-}
-
-
-

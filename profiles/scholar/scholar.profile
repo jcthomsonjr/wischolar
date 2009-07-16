@@ -152,32 +152,33 @@ function scholar_profile_tasks(&$task, $url) {
     // for testing purposes, create nodes groups etc
     _scholar_testingcontent();
 
-    $task = 'scholar_features';
+    $task = 'scholar-features';
     drupal_set_title('Enabe all the features available to each scholar site');
     return drupal_get_form('scholar_get_features_info', $url);
   }
 
-  if ($task == 'scholar_features'){
+  // task to enable features
+  if ($task == 'scholar-features'){
     $form = drupal_get_form('scholar_get_features_info', $url);    
     if (variable_get('scholar_features', FALSE)){
        variable_del('scholar_features');
        $task = 'content-generate';
+       variable_set('content_generate','1');  // why is this important, i have no idea!!
+       
        drupal_set_title('generate some content for testing');
-       return drupal_get_form('devel_generate_content_form', $url);
+       return drupal_get_form('scholar_generate_content_form', $url);
     }
     else {
       return $form;
     }
   }
   
+  // generate some content for testing
   if ($task == 'content-generate'){
-    $form = drupal_get_form('devel_generate_content_form', $url);    
-    if (variable_get('content-generate', FALSE)){
-       variable_del('content-generate');
-      // __scholar_generate_nodes();
+    $form = drupal_get_form('scholar_generate_content_form', $url);    
+    if (variable_get('content_generate', FALSE)){
+       variable_del('content_generate');
        $task = 'profile-finished';
-       
-
     }
     else {
       return $form;

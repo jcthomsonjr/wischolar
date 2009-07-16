@@ -59,3 +59,33 @@ function scholar_get_features_info_submit(&$form, &$form_state){
       }
    }
 }
+
+
+// content generation form (from devel)
+
+function scholar_generate_content_form($form_state, $url) {
+  module_load_include('inc', 'devel','devel.generate');
+
+  $form = devel_generate_content_form();
+  $form['#action'] = $url;
+  $form['#redirect'] = FALSE;
+  
+  $form['node_types']['#options'] = array
+                (
+                    'blog' => 'blog',
+                    'announcement' => 'announcement',
+                    'link' => 'link'
+
+                );
+  
+
+  $form['kill_content'] = array(
+    '#type' => 'value',
+    '#value' => FALSE,
+  );
+  
+  $form['#submit'][] = 'devel_generate_content_form_submit';
+  
+  return $form;
+}
+
