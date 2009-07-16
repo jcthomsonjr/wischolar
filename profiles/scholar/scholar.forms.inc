@@ -78,7 +78,8 @@ function scholar_generate_content_form($form_state, $url) {
 
                 );
   
-
+  $form['max_comments']['#default_value'] = 10;
+               
   $form['kill_content'] = array(
     '#type' => 'value',
     '#value' => FALSE,
