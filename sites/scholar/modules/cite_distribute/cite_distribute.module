@@ -59,14 +59,13 @@ function cite_distribute_flag($event, $flag, $content_id, $account) {
 
 function cite_distribute_nodeapi(&$node, $op){
   if ($node->type == 'biblio'){
-  switch($op){
-    case 'view':
-      /*$flag = flag_get_flag('repec_meta');
-     $flag_bool =  $flag->is_flagged($node->nid) ? 'Yes' : 'No';
-      
-      dpm($flag_bool);*/
-  
-  }
+    switch($op){
+      case 'view':
+        /*$flag = flag_get_flag('repec_meta');
+        $flag_bool =  $flag->is_flagged($node->nid) ? 'Yes' : 'No';
+
+        dpm($flag_bool);*/
+    }
   }
 }
 
@@ -224,7 +223,6 @@ function cite_distribute_widget_process($module, $nid){
   if ($module_mode == 'per_submission'){
   $control = cite_distribute_mode_controller($node, $module, $module_mode);
   }
-
 }
 
 
@@ -236,8 +234,6 @@ function cite_distribute_widget_process($module, $nid){
  * @param string $module
  * @param string $module_mode
  */
-
-
 function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
 
   //check for optional 'api_values' key
@@ -267,13 +263,43 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
       $unlink_path =  $filepath . $module_info[0]['filename'];
       $unlink_file = unlink($unlink_path);      
       }
+      
+      //place_once key IS set in hook_cite_dsitribute_register, used for creating singular bibtex file
+      if ($module_info[0]['place_once']) {
+       while($data = db_fetch_object($sql)){
+            $node[] = node_load($data->nid);
+       }
+       
+           $make_template = array();
             
+            //send to the "make_template" passing it an array of nodes
+            $make_template =  module_invoke($module, 'make_template', $node, $module_mode);
+            
+            
+            //getting filename - checking for dynamic versus static filenames
+            $filename = (($module_info[0]['file']) =='single')? $module_info[0]['filename'] : $make_template['filename'];
+           
+            //getting filepath - checking for dynamic versus static filepaths
+            $filepath = ($module_info[0]['dynamic_paths'])? 
+            
+            $make_template['filepath'] 
+            : 
+            cite_distribute_fix_filepath(variable_get($module_info[0]['name'] . '_archive_path',''));
+             
+            //now place the template file
+            $place_template = cite_distribute_place_template($module, $filepath, $filename, $make_template['template'], $module_info[0]['flag']);
+  
+      }
+      
+      //place_once key NOT set in hook_cite_dsitribute_register
+       if (!$module_info[0]['place_once']) {
        while($data = db_fetch_object($sql)){
             $node = node_load($data->nid);
+
             $make_template = array();
-            //send to the "make_template" passing it an array of nodes
-            $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration);
             
+            //send to the "make_template" passing it an array of nodes
+            $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration);            
             
             //getting filename - checking for dynamic versus static filenames
             $filename = (($module_info[0]['file']) =='single')? $module_info[0]['filename'] : $make_template['filename'];
@@ -289,8 +315,8 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
             $place_template = cite_distribute_place_template($module, $filepath, $filename, $make_template['template'], $module_info[0]['flag']);
             
             $iteration++;
-          }
-              
+            }
+          }    
       //update the cite distribute table "upd" collumn when complete
       cite_distribute_api_complete($module);
       break;
@@ -356,7 +382,6 @@ function cite_distribute_fix_filepath($filepath){
  * @param string $flag - OPTIONAL PHP 5 file_put_contents() flag, such as FILE_APPEND
  * 
  */
-
 function cite_distribute_place_template($module, $filepath, $filename, $template, $flag = NULL){ 
   //make sure trailing slash is included at the end of the file path
   $filepath = cite_distribute_fix_filepath($filepath);
@@ -401,4 +426,9 @@ function cite_distribute_cron(){
       $module_api();
     }
   }
+}
+
+function cite_distribute_form_alter(&$form, $form_state, $form_id){ //dpm($form);
+  
+  
 }
