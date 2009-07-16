@@ -130,6 +130,8 @@ function scholar_profile_tasks(&$task, $url) {
   include_once(dirname(__FILE__) . '/scholar.settings.inc');
   include_once(dirname(__FILE__) . '/scholar.testingcontent.inc');
   
+  $output = '';
+  
   if ($task == 'profile'){
 
     install_include(scholar_profile_modules());
@@ -160,6 +162,8 @@ function scholar_profile_tasks(&$task, $url) {
     if (variable_get('scholar_features', FALSE)){
        variable_del('scholar_features');
        $task = 'content-generate';
+       drupal_set_title('generate some content for testing');
+       return drupal_get_form('devel_generate_content_form', $url);
     }
     else {
       return $form;
@@ -167,19 +171,19 @@ function scholar_profile_tasks(&$task, $url) {
   }
   
   if ($task == 'content-generate'){
-    //$form = drupal_get_form('scholar_get_features_info', $url);    
-    //if (variable_get('content-generate', FALSE)){
-     //  variable_del('content-generate');
-       __scholar_generate_nodes();
+    $form = drupal_get_form('devel_generate_content_form', $url);    
+    if (variable_get('content-generate', FALSE)){
+       variable_del('content-generate');
+      // __scholar_generate_nodes();
        $task = 'profile-finished';
        
 
-    //}
-    //else {
-    //  return 'donex';
-    //}
+    }
+    else {
+      return $form;
+    }
   }
-
+  return $output;
 }
 
 /**
