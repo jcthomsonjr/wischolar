@@ -118,6 +118,7 @@ function scholar_profile_details() {
 function scholar_profile_task_list() {
   return array(
     'scholar-features' => st('Scholar features'),
+    'content-generate' => st('Generate content'),
   );
 }
 
@@ -158,12 +159,25 @@ function scholar_profile_tasks(&$task, $url) {
     $form = drupal_get_form('scholar_get_features_info', $url);    
     if (variable_get('scholar_features', FALSE)){
        variable_del('scholar_features');
-       $task = 'profile-finished';
-      // see if the form was processed
+       $task = 'content-generate';
     }
     else {
       return $form;
     }
+  }
+  
+  if ($task == 'content-generate'){
+    //$form = drupal_get_form('scholar_get_features_info', $url);    
+    //if (variable_get('content-generate', FALSE)){
+     //  variable_del('content-generate');
+       __scholar_generate_nodes();
+       $task = 'profile-finished';
+       
+
+    //}
+    //else {
+    //  return 'donex';
+    //}
   }
 
 }

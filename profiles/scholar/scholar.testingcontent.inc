@@ -58,7 +58,7 @@ function _scholar_testingcontent(){
 
 		
 	}
-			__scholar_generate_nodes();
+			//__scholar_generate_nodes();
 }
 
 function __scholar_generate_nodes(){
@@ -68,8 +68,8 @@ function __scholar_generate_nodes(){
             'node_types' => array
                 (
                     'blog' => 'blog',
-                    //'announcement' => 'announcement',
-                    //'link' => 'link'
+                    'announcement' => 'announcement',
+                    'link' => 'link'
 
                 ),
 
@@ -84,10 +84,10 @@ function __scholar_generate_nodes(){
             'add_statistics' => 1,
 
         );
- $form_state['clicked_button']['#value'] = t('Do it!');
-   module_load_include('inc', 'node', 'node.pages');
- module_load_include('inc',  'devel_generate', 'devel_generate');
- drupal_execute($form_id, $form_state);
+  $form_state['clicked_button']['#value'] = t('Do it!');
+  module_load_include('inc', 'node', 'node.pages');
+  module_load_include('inc',  'devel_generate', 'devel_generate');
+  drupal_execute($form_id, $form_state);
 }
 
 
