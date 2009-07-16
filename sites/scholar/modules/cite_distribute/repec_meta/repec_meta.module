@@ -520,6 +520,15 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
   			$template .= $t_data->identifier . ': ' . $handle . "\n";
   		}
   		
+  		elseif ($t_data->identifier == 'Keywords'){
+  		  
+  			$template .= $t_data->identifier . ': ' .  implode(',', $node->biblio_keywords). "\n";
+  		}
+  		
+  		elseif ($t_data->identifier == 'Pages'){
+  			$template .= $t_data->identifier . ': ' . $node->biblio_section . '-' . $node->biblio_pages . "\n";
+  		}
+  		
   		elseif ($t_data->identifier == 'Title'){
   		  $property = $t_data->data;
   			$template .= $t_data->identifier . ': ' . trim($node->$property) . "\n";
