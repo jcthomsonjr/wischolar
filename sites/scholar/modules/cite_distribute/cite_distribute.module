@@ -8,9 +8,71 @@
 *  to varoius online research repositories.
 */
 
+/**
+ * Implementation of hook_theme()
+ */
+function cite_distribute_theme(){
+  return array(
+  'cite_distribute_get_formlink' => array(
+      'arguments' => array('submodules' => NULL, 'nid' => NULL),
+       'file' => 'cite_distribute_widget.inc',
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_link()
+ */
+function cite_distribute_link($type, $object, $teaser = FALSE){
+  //show this only for biblio nodes
+  if ($object-> type == 'biblio'){
+    $links['cite_distribute'] = array(
+    'title'      => drupal_get_form('cite_distribute_formlink'),
+    'html'       => TRUE,
+    'attributes' => array('title' => t("Distribute this citation to selected repositories")),
+    );
+    return $links;
+  }
+}
+
+/**
+ * Returns themable form elements for cite distribute widgets
+ */
+function cite_distribute_formlink(){
+  
+  //getting node id information from the path
+  if (arg(0) == 'node'){
+    $nid = arg(1);    
+  }
+  else{
+    $path = request_uri();  //FIX ME: This may not work with multi site
+    $source_path = drupal_lookup_path('source', $path, $path_language = '');
+    $path_arr = explode('/', $source_path);
+    $nid = $path_arr[1];
+  }
+  
+   $submodules = cite_distribute_installed_mods();
+  return theme('cite_distribute_get_formlink', $submodules, $nid);
+}
+
+/**
+ * Submit functon for cite_distribute_get_formlink
+ */
+function cite_distribute_formlink_submit($form, &$form_state){
+  $nid =  $form_state['values']['nid'];
+
+  foreach ($form_state['values'] as  $name => $value){
+    if (strpos($name, '_meta') && $value == 1){
+
+      //call the main process function to create the template
+      cite_distribute_widget_process($name, $nid);
+    }
+  }
+}
 
 /**
  * Implementation of hook flag_default_flags
+ * creates flags for each installed submodule
  * @return unknown
  */
 function cite_distribute_flag_default_flags($flags = array(), $i =0) {
@@ -34,10 +96,13 @@ function cite_distribute_flag_default_flags($flags = array(), $i =0) {
     'unflag_long' => 'Remove from ' . $module['repository'],
     //   'unflag_confirmation' => 'Are you sure you want ot remove?',
     'status' => TRUE,
+    //hiding these on page, teaser, and edit node
+    'show_on_page' => FALSE,
+    'show_on_teaser' => FALSE,
+    'show_on_form' => FALSE,
     'link_type' => 'normal', //normal, toggle, confirm
-    'locked' => array('name', 'global', 'link_type', 'types'),
+    'locked' => array('name', 'show_on_page', 'show_on_teaser', 'show_on_form', 'global', 'link_type', 'types'),
     );
-  
   }
      return $flags;
 }
@@ -57,17 +122,26 @@ function cite_distribute_flag($event, $flag, $content_id, $account) {
   }
 }
 
+/**
+ * Implementation hook_nodeapi()
+ * TODO: not sure I will need this hook since the processing of
+ * the template files are now being instantiated by flags
+ * @param unknown_type $node
+ * @param unknown_type $op
+ */
 function cite_distribute_nodeapi(&$node, $op){
   if ($node->type == 'biblio'){
     switch($op){
       case 'view':
         /*$flag = flag_get_flag('repec_meta');
         $flag_bool =  $flag->is_flagged($node->nid) ? 'Yes' : 'No';
-
         dpm($flag_bool);*/
     }
   }
 }
+
+
+
 
 /**
 * Implementation of hook_menu()
