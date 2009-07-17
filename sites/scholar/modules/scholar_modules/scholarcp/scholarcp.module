@@ -1,5 +1,4 @@
 <?php
-
 define('CPTHEME', 'scholar_admin');
 
 function scholarcp_init(){	
@@ -11,6 +10,7 @@ function scholarcp_init(){
   		og_set_theme($space -> group);
   	}
   }
+
 }
 
 function scholarcp_menu(){
@@ -81,8 +81,25 @@ function scholarcp_menu(){
 }
 
 function scholarcp_cp(){
-  return '1';
+  return '(tbd)';
 }
+
+/**
+ * Implementation of hook_theme().
+ */
+function scholarcp_theme($cache, $type, $theme, $path) {
+  $path = drupal_get_path('module', 'scholarcp') .'/theme';
+  
+  $items['scholarcp_toolbar'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'scholarcp-toolbar',
+    'path' => $path,
+    'file' => 'theme.inc',
+  );
+
+  return $items;
+}
+
 
 /**
  * initialize admin theme
@@ -93,59 +110,103 @@ function _scholarcp_init_theme(){
 }
 
 
-/************* OLD STUFF **********************************/
 /**
- * Generates an array of top control panels links for the 
- * current site suitable for use in theme_links().
+ * Preprocess function for for intorducing "scholarcp_toolbar"
+ * and "scholarcp_left" variables
  */
-function scholarcp_cp_top_links() {
-  $links = array();
+function scholarcp_preprocess_page(&$vars) {
+  $vars['scholarcp_toolbar'] = '';
+  //if (admin_is_enabled('admin menu')) { TODO implement the right conditions here
+    $links = scholarcp_toolbar_menu_links();
+    $links = theme('scholarcp_toolbar', $links);
+    $vars['scholarcp_toolbar'] = $links;
+    
+    $links = scholarcp_left_menu_links();
+    $vars['scholarcp_left'] = theme('links', $links);
+  //}
+}
 
-  // anyone can modify add links by implementing 
-  // cp_top_links_alter hook
-  drupal_alter('cp_top_links', $links);
+/**
+ * return links for the toolbar menu
+ */
+function scholarcp_toolbar_menu_links(){
+  $links = array();
+  // Retrieve the admin menu from the database.
+
+  $tree = menu_tree_all_data('scholarcp');
+  $links[0]['toolbar'] = scholarcp_menu_navigation_links($tree);
+
+  // Add user-specific links
+  global $user;
+  $user_links = array();
+  $user_links[] = array(
+    'title' => t('Hello <strong>!username</strong>', array('!username' => $user->name)),
+    'href' => 'user',
+    'html' => TRUE
+  );
+  $user_links[] = array('title' => t('Logout'), 'href' => "logout");
+  $links[0]['user'] = $user_links;
+
+  return $links;
+}
+
+/**
+ * Return links for the left side menu
+ */
+function scholarcp_left_menu_links(){
+  $tree = menu_tree_page_data('scholarcp');
+    foreach ($tree as $item) {
+      if (scholarcp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
+        return scholarcp_menu_navigation_links($item['below']);
+      }
+    }
+}
+
+
+
+/**
+ * Generate a links array from a menu tree array.
+ */
+function scholarcp_menu_navigation_links($tree) {
+  $links = array();
+  foreach ($tree as $item) {
+      $class = '';
+      $id = str_replace('/', '-', $item['link']['href']);
+
+      $l = $item['link']['localized_options'];
+      $l['href'] = $item['link']['href'];
+      $l['title'] = "<span class='icon'></span>". $item['link']['title'];
+      $l['attributes'] = array('id' => 'admin-link-'. $id);
+      $l['html'] = TRUE;
+
+      $class = ' path-'. $id;
+      if (scholarcp_in_active_trail($item['link']['href'])) {
+        $class .= ' active-trail';
+      }
+      // Keyed with the unique mlid to generate classes in theme_links().
+      $links['menu-'. $item['link']['mlid'] . $class] = $l;
+    }
   return $links;
 }
 
 
 /**
- * Implements cp_top_links_alter
+ * Checks whether an item is in the active trail. 
  */
-function scholarcp_cp_top_links_alter(&$links) {
-  //$site = scholar_get_site ();
-  //$sid = $site -> nid;
-  
-  $sid = scholar_get_site();
-  if ($sid) {
-    $links[] = array (
-      'title' => t ( 'Settings' ), 
-      'href' => "scholarcp/$sid/settings", 
-      'attributes' => array ('id' => 'settings') 
-    );
-    
-    $links[] = array (
-      'title' => t ( 'Content' ), 
-      'href' => "scholarcp/$sid/content", 
-      'attributes' => array ('id' => 'content') 
-    );
-    
-    $links[] = array (
-      'title' => t ( 'Users' ), 
-      'href' => "scholarcp/$sid/users", 
-      'attributes' => array ('id' => 'users') 
-    );
-    
-    $links[] = array (
-      'title' => t ( 'News' ), 
-      'href' => "sitecp/$sid/news", 
-      'attributes' => array ('id' => 'news') 
-    );
-  
-    $links[] = array (
-      'title' => t ( 'Support' ), 
-      'href' => "sitecp/$sid/users", 
-      'attributes' => array ('id' => 'support') 
-    );
+function scholarcp_in_active_trail($path, $reset = FALSE) {
+  // Gather active paths
+  static $active_paths;
+  if (!isset($active_paths) || $reset) {
+    $active_paths = array();
+    $trail = menu_get_active_trail();
+    foreach ($trail as $item) {
+      if (!empty($item['href'])) {
+        $active_paths[] = $item['href'];
+      }
+    }
   }
+  return in_array($path, $active_paths);
 }
+
+
 
