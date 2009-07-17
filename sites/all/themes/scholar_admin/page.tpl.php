@@ -13,7 +13,7 @@
 <body class="<?php print $body_classes; ?>">
   <div id="container">
   	 <div id="top">
-  	 
+  	   <?php print $scholarcp_toolbar;?>
   	 </div>
      
      <div id="main-content">
@@ -23,7 +23,7 @@
 			  <?php print $site_name; ?></a></h1>
 			
 			<div id="nav" class="clear-block">
-				<?php print theme('links', $primary_links); ?>
+				<?php print $scholarcp_left;?>
 			</div>
 			
 			<?php if (!empty($header) || !empty($breadcrumb)){ ?>
