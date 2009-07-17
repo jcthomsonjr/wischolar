@@ -2,7 +2,7 @@
 
 function _scholarwidgets_default_contexts(){
 	$items = array();
-$items[] = array(
+  $items[] = array(
   'namespace' => 'scholar',
   'attribute' => 'section',
   'value' => 'scholarwidgets',
@@ -10,15 +10,6 @@ $items[] = array(
     '0' => 'og',
   ),
   'block' => array(
-    'menu_scholarcp' => array(
-      'module' => 'menu',
-      'delta' => 'scholarcp',
-      'weight' => 20,
-      'region' => 'header_top',
-      'status' => '0',
-      'label' => 'Scholar CP',
-      'type' => 'context_ui',
-    ),
     'scholarwidgets_0' => array(
       'module' => 'scholarwidgets',
       'delta' => '0',
