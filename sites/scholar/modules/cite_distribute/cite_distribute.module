@@ -40,12 +40,45 @@ function cite_distribute_link($type, $object, $teaser = FALSE){
    'html'       => TRUE,
    'attributes' => array('title' => t("Distribute this citation to selected repositories")),
     );
+    
+    $links['cite_distribute_ferdi'] = array(
+   'title'      => theme_ferdi($object),
+   'html'       => TRUE,
+   'attributes' => array('title' => t("Distribute this citation to selected repositories")),
+    );    
+
     return $links;
   }
 }
 
+function theme_ferdi($node){
+   
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_modal_add_js();
+  return ctools_modal_text_button('distributeferdi', 'cite_distribute/distribute/js/'. $node -> nid, 'whatever');
+}
 
+function cite_distribute_distribute_js($nid){
+  ctools_include('ajax');
+  ctools_include('modal');
+  
+  $form_state = array(
+    're_render' => TRUE,
+    'ajax' => TRUE,
+  );
 
+  $form_state['nid'] = $nid;
+  
+  $output = ctools_modal_form_wrapper('cite_distribute_form', $form_state);
+
+  if (empty($output)) {
+    $output = array();
+    $output[] = ctools_modal_command_dismiss();
+  }
+  
+  ctools_ajax_render($output);
+}
 
 /**
  * Implementation of hook flag_default_flags
@@ -117,7 +150,8 @@ function cite_distribute_nodeapi(&$node, $op){
   }
 }
 
-function cite_distribute_form($nid){
+function cite_distribute_form($form_id, $nid){
+  $nid = $form_state['nid'];
   $submodules = cite_distribute_installed_mods();
   $form['cite_distribute_widgets'] = array(
   '#type' => 'fieldset',
@@ -176,10 +210,17 @@ function cite_distribute_menu() {
   'page callback'           => 'cite_distribute_widget_process',
   //'access arguments'             => TRUE,
   );
-  $items['cite_distribute/distribute'] = array(
+  
+  $items['cite_distribute/distribute/js'] = array(
+  'title' => t('Cite Distribute'),
+  'page callback' => 'cite_distribute_distribute_js',
+  'access arguments' => array('access content')
+  );
+  
+  $items['cite_distribute/distribute/%'] = array(
   'title' => t('Cite Distribute'),
   'page callback' => 'drupal_get_form',
-  'page arguments' => array('cite_distribute_form'),
+  'page arguments' => array('cite_distribute_form',2),
   'access arguments' => array('access content')
   );
   
@@ -199,7 +240,6 @@ function cite_distribute_menu() {
   'weight' => -10,
   'access arguments' => array('administer cite distribute')
   );
-
   return $items;
 }
 
