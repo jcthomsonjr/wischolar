@@ -183,7 +183,7 @@ function scholarcp_menu_navigation_links($tree) {
       if (scholarcp_in_active_trail($item['link']['href'])) {
         $class .= ' active-trail';
       }
-      // Keyed with the unique mlid to generate classes in theme_links().
+
       $links['menu-'. $item['link']['mlid'] . $class] = $l;
     }
   return $links;
