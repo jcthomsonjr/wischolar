@@ -15,7 +15,7 @@ function cite_distribute_theme(){
   $path_inc = drupal_get_path('module', 'cite_distribute') .'/includes';
   
   return array(
-      'cite_distribute_get_formlink_title' => array(
+      'theme_cite_distribute_get_formlink' => array(
       'arguments' => array('object' => NULL),
        'file' => 'cite_distribute_widget.inc',
        'path' => $path_inc,
@@ -36,7 +36,7 @@ function cite_distribute_link($type, $object, $teaser = FALSE){
   //show this only for biblio nodes
   if ($object-> type == 'biblio'){
     $links['cite_distribute'] = array(
-   'title'      =>  theme('cite_distribute_get_formlink_title', $object) . drupal_get_form('cite_distribute_formlink', $object->nid),
+   'title'      => theme('theme_cite_distribute_get_formlink', $object),
    'html'       => TRUE,
    'attributes' => array('title' => t("Distribute this citation to selected repositories")),
     );
@@ -44,32 +44,8 @@ function cite_distribute_link($type, $object, $teaser = FALSE){
   }
 }
 
-/**
- * Returns themable form elements for cite distribute widgets
- */
-function cite_distribute_formlink($form, $nid){
-   $submodules = cite_distribute_installed_mods();
-   return theme('cite_distribute_get_formlink', $submodules, $nid);
-}
 
-/**
- * Submit functon for cite_distribute_get_formlink
- */
-function cite_distribute_formlink_submit($form, &$form_state){ 
-  $nid =  $form_state['values']['nid'];
 
-  foreach ($form_state['values'] as  $name => $value){
-    if (strpos($name, '_module') && $value == 1){
-      $module_name = trim(str_replace('_module', '', $name));
-      
-      //load flag each repository selected
-      $flag = flag_get_flag($module_name);
-
-      //set the flag for this node
-      $flag->flag('flag', (int)$nid);
-    }
-  }
-}
 
 /**
  * Implementation of hook flag_default_flags
@@ -141,8 +117,54 @@ function cite_distribute_nodeapi(&$node, $op){
   }
 }
 
+function cite_distribute_form($nid){
+  $submodules = cite_distribute_installed_mods();
+  $form['cite_distribute_widgets'] = array(
+  '#type' => 'fieldset',
+  '#title' => t('Select repositories for distribution'),
+  '#collapsible' => FALSE,
+  '#collapsed' => FALSE,
+  );
+  
+  foreach ($submodules as $module){
+    $form['cite_distribute_widgets'][$module['name'] . '_module'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('@repos', array('@repos' => $module['repository'])),
+    '#default_value' => '',// TODO: need to query the cite_distribute table to get this value
+    );
+  }
 
+  $form['cite_distribute_widgets']['nid'] = array(
+  '#type' => 'hidden',
+  '#value' => $nid,
+  );
 
+  $form['cite_distribute_widgets']['cite_distribute_submit'] = array(
+  '#type' => 'submit',
+  '#value' => t('Submit'),
+  );
+
+  return $form;  
+}
+
+/**
+ * Submit functon for cite_distribute_get_formlink
+ */
+function cite_distribute_form_submit($form, &$form_state){ 
+  $nid =  $form_state['values']['nid'];
+
+  foreach ($form_state['values'] as  $name => $value){
+    if (strpos($name, '_module') && $value == 1){
+      $module_name = trim(str_replace('_module', '', $name));
+      
+      //load flag each repository selected
+      $flag = flag_get_flag($module_name);
+
+      //set the flag for this node
+      $flag->flag('flag', (int)$nid);
+    }
+  }
+}
 
 /**
 * Implementation of hook_menu()
@@ -154,7 +176,14 @@ function cite_distribute_menu() {
   'page callback'           => 'cite_distribute_widget_process',
   //'access arguments'             => TRUE,
   );
-
+  $items['cite_distribute/distribute'] = array(
+  'title' => t('Cite Distribute'),
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('cite_distribute_form'),
+  'access arguments' => array('access content')
+  );
+  
+  
   $items['admin/settings/cite_distribute'] = array(
   'title' => t('Cite Distribute'),
   'page callback' => 'drupal_get_form',
