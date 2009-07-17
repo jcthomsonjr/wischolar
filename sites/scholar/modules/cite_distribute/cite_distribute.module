@@ -41,8 +41,8 @@ function cite_distribute_link($type, $object, $teaser = FALSE){
    'attributes' => array('title' => t("Distribute this citation to selected repositories")),
     );
     
-    $links['cite_distribute_ferdi'] = array(
-   'title'      => theme_ferdi($object),
+    $links['cite_distribute_popup'] = array(
+   'title'      => theme_popup($object),
    'html'       => TRUE,
    'attributes' => array('title' => t("Distribute this citation to selected repositories")),
     );    
@@ -51,12 +51,12 @@ function cite_distribute_link($type, $object, $teaser = FALSE){
   }
 }
 
-function theme_ferdi($node){
+function theme_popup($node){
    
   ctools_include('ajax');
   ctools_include('modal');
   ctools_modal_add_js();
-  return ctools_modal_text_button('distributeferdi', 'cite_distribute/distribute/js/'. $node -> nid, 'whatever');
+  return ctools_modal_text_button('distributepopup', 'cite_distribute/distribute/js/'. $node -> nid, 'whatever');
 }
 
 function cite_distribute_distribute_js($nid){
@@ -69,6 +69,7 @@ function cite_distribute_distribute_js($nid){
   );
 
   $form_state['nid'] = $nid;
+  $form_state['cs_meta_module'] = 1;
   
   $output = ctools_modal_form_wrapper('cite_distribute_form', $form_state);
 
