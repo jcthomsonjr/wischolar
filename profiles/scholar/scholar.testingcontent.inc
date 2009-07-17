@@ -34,7 +34,7 @@ function _scholar_testingcontent(){
 		
 		$properties = array (
 			'name' => $uname_admin, 
-			'type' => 'scholar_site', // TODO move this as global variable /settings
+			'type' => variable_get('scholar_content_type', 'scholarsite'),
 		  'promote' => '1',
 			'purl' => array ('value' => "site0$i", 'provider' => 'spaces_og', 'id' => NULL ), 
 			'preset' => ($i < 4) ? 'scholarsite' : 'public', 
