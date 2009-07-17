@@ -69,6 +69,7 @@ function cite_distribute_distribute_js($nid){
   );
 
   $form_state['nid'] = $nid;
+  $form_state['args'] = array($nid);
   $form_state['cs_meta_module'] = 1;
   
   $output = ctools_modal_form_wrapper('cite_distribute_form', $form_state);
