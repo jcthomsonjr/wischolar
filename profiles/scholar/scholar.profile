@@ -212,7 +212,7 @@ function _scholar_access_rebuild(){
  * Create default content types
  */
 function _scholar_profile_content_types(){
-  $node_type_name = 'scholar_site';
+  $node_type_name = 'scholarsite';
   
   $site_type = array(
     'name' => st('Scholar site'),
