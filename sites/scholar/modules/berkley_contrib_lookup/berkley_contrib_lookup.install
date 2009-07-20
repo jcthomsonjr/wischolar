@@ -8,13 +8,13 @@ function berkley_contrib_lookup_install() {
   // Add a field to the existing flag_content table (Flag module)
   $ident_desc = array(
     'type' => 'varchar',
-    'not null' => false,
-    'default' => null,
-    'size' => 200,
+    'not null' => TRUE,
+    'default' => '',
+    'length' => 200,
     'description' => t('The Identifier recieved from berkley.'),
   );
 
-  $fullname_desc = clone($ident_desc);
+  $fullname_desc = $ident_desc;
   $ret = array();
   db_add_field($ret, 'biblio_contributor_data', 'berkley_identifier', $ident_desc);
   
