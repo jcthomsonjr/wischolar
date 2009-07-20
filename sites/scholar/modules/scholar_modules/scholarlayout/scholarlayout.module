@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * hook theme
+ */
+function scholarlayout_theme(){
+  return array(
+    'scholarlayout_layout' => array(
+    	'template' => 'scholarlayout-layout', 
+  		//'arguments' => array('scholarlayout_widgets' => NULL),
+    	'path' => drupal_get_path('module', 'scholarlayout'). '/theme'),
+  );
+}
+
+/**
+ * hook menu
+ */
+function scholarlayout_menu(){
+  $items = array();
+  
+  $items["scholarcp/settings/layout"] = array(
+    'title' => 'Layout',
+    'page callback' => 'scholarlayout_layout',
+    'access arguments' => array('configure spaces features'),
+    'menu_name' => 'scholarcp', 
+  );
+  
+  return $items;
+}
+
+/**
+ * main entry point for "scholarcp/settings/layout"
+ */
+function scholarlayout_layout(){
+  $space = scholar_get_scholar();
+  return theme('scholarlayout_layout');
+}
+
+
+/**
+ * preprocessor function for scholarlayout-layout.tpl.php
+ * Introduces a variable for each region in the admin_base theme
+ * e.g. $scholarlayout_header_left will contain a themed list of 
+ * block names in the header_left
+ */
+function scholarlayout_preprocess_scholarlayout_layout(&$vars){
+  drupal_add_css(drupal_get_path('module', 'scholarlayout') . '/theme/scholarlayout.css');
+  
+  $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
+  $wc = $cts['scholar-section-scholarwidgets'];
+
+  $scholarlayout_widgets = array();
+  
+  $regions = array_keys(system_region_list('scholar_base'));
+
+  foreach($regions as $region){
+    $scholarlayout_widgets[$region] = array();
+  }
+  foreach($wc -> block as $widget){
+    $scholarlayout_widgets[$widget['region']][] = '<div>' .$widget['label'] . '</div>';
+  }
+
+  foreach($regions as $region){
+    $vars['scholarlayout_' . $region] = theme('item_list',$scholarlayout_widgets[$region]);
+  }
+  dpm($vars);
+}

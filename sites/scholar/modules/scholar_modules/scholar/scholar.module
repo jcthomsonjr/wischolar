@@ -129,3 +129,19 @@ function scholar_strongarm(){
   $conf['scholar_content_type'] = 'scholarsite';
   return $conf;
 }
+
+
+/**
+ * 
+ */
+
+function scholar_get_scholar(){
+  $space = spaces_get_space();
+  $scholar_content_type = variable_get('scholar_content_type', 'scholarsite');
+  if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
+    return $space;
+  }
+  else {
+    return NULL;
+  }
+}
