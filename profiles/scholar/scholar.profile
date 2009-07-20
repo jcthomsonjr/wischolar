@@ -17,6 +17,7 @@ function scholar_profile_modules() {
     'context_ui',
     'filefield_paths',
     'features',
+    'flag',
     'imageapi',
     'imageapi_gd',
     'jquery_ui',
@@ -68,6 +69,7 @@ function scholar_profile_modules() {
     'scholarcp',
     'scholarwidgets',
     'scholarforms',
+    'scholarboot',
   );
 
   return array_merge($core_modules, $contrib_modules);
