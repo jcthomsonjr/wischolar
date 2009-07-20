@@ -1,5 +1,3 @@
-
-
 Drupal.behaviors.scholarforms = function (context){
   
   $('div#edit-pubdate-wrapper').hide();	
