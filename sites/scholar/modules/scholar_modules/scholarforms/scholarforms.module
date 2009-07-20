@@ -102,6 +102,22 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
 
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
+      
+      //TODO: need to create a function to place file and image fields into this fieldset
+      /***  Images & Files Section ***/
+      $form['scholarfiles'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Images & Files'),
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      '#weight' => 0,
+      );
+
+     /* $filefield = $form[FILE_CCK_FIELD];
+      unset($form[FILE_CCK_FIELD]);
+      $form['scholarfiles'][FILE_CCK_FIELD] = $filefield;
+*/
+      
 
       /*** Tags & Categories Section ***/
 
