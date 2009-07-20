@@ -1,0 +1,229 @@
+<?php
+// $Id: permissions_api.module,v 1.10 2009/06/16 12:13:41 ebeyrent Exp $
+
+/**
+ * @file
+ * Provides functions for granting and revoking permissions for given roles
+ */
+
+/**
+ * Helper function to grant permissions to a role.
+ */
+function permissions_grant_permissions($role_name, $new_permissions) {
+  $permissions = array();
+  $updated_permissions = '';
+  $role = permissions_get_role($role_name);
+  if (count($new_permissions) > 0) {
+    // Fetch the permissions string for the given role id
+    $permissions = permissions_get_permissions_for_role($role->name);
+    // Check to see if there are existing permissions
+    if(count($permissions) > 0) {
+      // Add the new permissions if the role doesn't already have the permission
+      foreach($new_permissions as $permission) {
+        if(! in_array($permission, $permissions)) {
+          $permissions[] = trim($permission);
+        }
+      }
+
+      // rebuild the permission string
+      $updated_permissions = join(', ', $permissions);
+      db_query("UPDATE {permission} SET perm = '%s' WHERE rid = %d", $updated_permissions, $role->rid);
+    }
+    else{
+      // No permissions have been set for this role, so we need to insert some
+      foreach($new_permissions as $permission){
+        $permissions[] = trim($permission);
+      }
+      // rebuild the permission string
+      $updated_permissions = join(', ', $permissions);
+      db_query("INSERT INTO {permission} (rid, perm, tid) VALUES(%d,'%s',%d)",$role->rid,$updated_permissions,0);       
+    }
+  }
+  return;
+}
+
+/**
+ * Helper function to revoke permissions from a role.
+ */
+function permissions_revoke_permissions($role_name, $new_permissions) {
+  $permissions = array();
+  $updated_permissions = '';
+  $role = permissions_get_role($role_name);
+  if (is_array($new_permissions)) {
+    $permissions = permissions_get_permissions_for_role($role->name);
+    if (count($permissions) > 0) {
+      // Unset the permission from the array
+      foreach($new_permissions as $permission){
+        $index = array_search($permission, $permissions);
+        if($index >= 0){
+          unset($permissions[$index]);       
+        }
+      }
+      
+      // rebuild the permission string
+      $updated_permissions = join(', ', $permissions);
+      db_query("UPDATE {permission} SET perm = '%s' WHERE rid = %d", $updated_permissions, $role->rid);
+    }
+  }
+  return;
+}
+
+/**
+ * Helper function to grant all defined permissions to a given role
+ */
+function permissions_grant_all_permissions($role_name) {
+  $updated_permissions = '';
+  $all_permissions = array();
+  $role = permissions_get_role($role_name);
+  if($role->rid > 0){
+    // Build a list of all the permissions defined by hook_perm
+    foreach (module_list(FALSE, FALSE, TRUE) as $module) {
+      if ($permissions = module_invoke($module, 'perm')) {
+        asort($permissions);
+        foreach ($permissions as $perm) {
+         $all_permissions[] = $perm;
+        }       
+      }
+    }
+  }
+  
+  // Build the permissions string
+  $updated_permissions = join(', ', $all_permissions);
+  
+  $perm_string = db_result(db_query("SELECT perm FROM {permission} WHERE rid = %d", $role->rid));
+  
+  // Check to see if there are existing permissions
+  if (strlen($perm_string) > 0) {
+    db_query("UPDATE {permission} SET perm = '%s' WHERE rid = %d", $updated_permissions, $role->rid);
+  }
+  else{
+    db_query("INSERT INTO {permission} (rid, perm, tid) VALUES(%d,'%s',%d)",$role->rid,$updated_permissions,0);
+  }
+  
+  return;
+}
+
+/**
+ * Helper function to grant all permissions defined by a given module to a given role
+ */
+function permissions_grant_all_permissions_by_module($role_name, $module) {
+  $updated_permissions = '';
+  $permissions = array();
+  $module_permissions = array();
+  $role = permissions_get_role($role_name);
+  if($role->rid > 0){
+    // Fetch the permissions string for the given role id
+    $permissions = permissions_get_permissions_for_role($role->name);
+    
+    // Check to see if there are existing permissions
+    if (count($permissions) > 0) {
+      // Build a list of all the permissions defined by hook_perm
+      if ($module_permissions = module_invoke($module, 'perm')) {
+        asort($module_permissions);
+        foreach ($module_permissions as $perm) {
+          if(! in_array($perm, $permissions)) { 
+            $permissions[] = $perm;
+          }  
+        }
+      }
+      
+      // Build the permissions string
+      $updated_permissions = join(', ', $permissions);
+      db_query("UPDATE {permission} SET perm = '%s' WHERE rid = %d", $updated_permissions, $role->rid);
+    }
+    else {
+      // Build a list of all the permissions defined by hook_perm
+      if ($module_permissions = module_invoke($module, 'perm')) {
+        asort($module_permissions);
+        foreach ($module_permissions as $perm) {
+          $permissions[] = $perm;  
+        }
+      }
+      
+      // Build the permissions string
+      $updated_permissions = join(', ', $permissions);
+      db_query("INSERT INTO {permission} (rid, perm, tid) VALUES(%d,'%s',%d)",$role->rid,$updated_permissions,0);
+    }
+  }
+ 
+  return;
+}
+
+function permissions_revoke_all_permissions_by_module($role_name, $module) {
+  $updated_permissions = '';
+  $permissions = array();
+  $module_permissions = array();
+  $role = permissions_get_role($role_name);
+  if($role->rid > 0){
+    // Fetch the permissions string for the given role id
+    $permissions = permissions_get_permissions_for_role($role->name);
+    
+    // Check to see if there are existing permissions
+    if (count($permissions) > 0) {
+      // Build a list of all the permissions defined by hook_perm
+      if ($module_permissions = module_invoke($module, 'perm')) {
+        asort($module_permissions);
+        foreach ($module_permissions as $perm) {
+          $index = array_search($perm, $permissions);
+          if($index >= 0){
+            unset($permissions[$index]);       
+          } 
+        }
+      }
+      
+      // Build the permissions string
+      $updated_permissions = join(', ', $permissions);
+      db_query("UPDATE {permission} SET perm = '%s' WHERE rid = %d", $updated_permissions, $role->rid);
+    }
+  }
+  return;
+}
+
+/**
+ * returns an array of permissions for a given role
+ */
+function permissions_get_permissions_for_role($role_name){
+  $role = permissions_get_role($role_name);
+  $permissions = array();
+  if($role->rid > 0){
+    $perm_string = db_result(db_query("SELECT perm FROM {permission} WHERE rid = %d", $role->rid));
+    if (strlen($perm_string) > 0) {
+      $permissions = explode(',', $perm_string);
+      foreach($permissions as $index => $perm){
+        $permissions[$index] = trim($perm);
+      }
+    }
+  }
+  return $permissions;  
+}
+
+/**
+ * lookup the role by name
+ */
+function permissions_get_role($name) {
+  $role = db_fetch_object(db_query("SELECT * FROM {role} r WHERE r.name = '%s'", $name));
+  return $role;
+}
+
+/**
+ * This function allows a role to inherit either all the permissions of another role
+ */
+function permissions_role_inherit($new_role, $orig_role) {
+  $role = permissions_get_role($orig_role);
+  if(! $role) {
+    watchdog('permissions_api', 'Unable to inherit permissions from role; role doesn\'t exist');
+    return false;
+  }
+  
+  $clone = permissions_get_role($new_role);
+  if(! $clone) {
+    watchdog('permissions_api', 'Unable to inherit permissions into new role; role doesn\'t exist');
+    return false;
+  }
+  
+  // Inherit all of the permissions
+  $role_permissions = permissions_get_permissions_for_role($role->name);
+  if(! empty($role_permissions)) {
+    permissions_grant_permissions($clone->name, $role_permissions);
+  }
+}
