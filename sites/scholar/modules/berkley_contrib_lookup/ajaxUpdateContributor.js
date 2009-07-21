@@ -1,3 +1,36 @@
+
+function berkleySetFormData(base, id_name_url, lockField){
+  if(!id_name_url.length) berkleyUnsetFormData(base);
+
+  var meta = id_name_url.split("|", 3);
+  
+  $('#'+base+'berkley-id').val(meta[0]);
+  $('#'+base+'berkley-name').val(meta[1]);
+  $('#'+base+'berkley-url').val(meta[2]);
+  
+  $('#'+base+'name').val(meta[1]);
+  if(lockField) $('#'+base+'name').attr("readonly", "readonly");
+  
+  if ( $('#'+base+'displayExtra').length <= 0 ) {
+    $('#'+base+'name').after("<div id='"+ base +"displayExtra'><span>("+meta[0]+") "+meta[0]+" ["+meta[2]+"]</span></div>");
+  }else{
+    $('#'+base+'displayExtra').html("<span>("+meta[0]+") "+meta[1]+" ["+meta[2]+"]</span>");
+  }
+  
+}
+
+function berkleyUnsetFormData(base){
+	  
+	  $('#'+base+'berkley-id').val('');
+	  $('#'+base+'berkley-name').val('');
+	  $('#'+base+'berkley-url').val('');
+	  
+	  $('#'+base+'name').removeAttr("disabled");
+	  
+	  $('#'+base+'displayExtra').html("");	
+	  
+}
+
 Drupal.behaviors.berkleyGetContrbutors = function(context) {
 
   //Each contributor button
@@ -39,7 +72,7 @@ Drupal.behaviors.berkleyGetContrbutors = function(context) {
     					  return false;
     				  }
     				  
-	    			  iHTML = "<select onchange='berkleySetFormData(\""+base+"\",this.value);' ><option>Select Author</option>"+iHTML+"</select>";
+	    			  iHTML = "<select onchange='berkleySetFormData(\""+base+"\",this.value,true);' ><option>Select Author</option>"+iHTML+"</select>";
 	    			  $('#'+base+'displayExtra').html(iHTML);
     				  
     			  });
@@ -58,30 +91,33 @@ Drupal.behaviors.berkleyGetContrbutors = function(context) {
 
 }
 
-function berkleySetFormData(base, id_name_url){
-  if(!id_name_url.length) berkleyUnsetFormData(base);
-
-  var meta = id_name_url.split("|", 3);
-  
-  $('#'+base+'berkley_id').val(meta[0]);
-  $('#'+base+'berkley_name').val(meta[1]);
-  $('#'+base+'berkley_url').val(meta[2]);
-  
-  $('#'+base+'name').val(meta[1]);
-  $('#'+base+'name').attr("disabled", "disabled");
-  
-  $('#'+base+'displayExtra').html("<span>"+meta[0]+" ["+meta[2]+"]</span>");
-	
-}
-
-function berkleyUnsetFormData(base){
+if(Drupal.jsAC){
+	 /**
+	  * Overide some autocomplete functionality
+	  */
+	  Drupal.jsAC.prototype.select = function (node) { 
+		  if(node.autocompleteValue.indexOf('|') != -1){
+			  berkleySetFormData(this.input.id.replace('name', ''), node.autocompleteValue,false);
+		  }else{
+			  this.input.value = node.autocompleteValue;
+		  }
+	  };
 	  
-	  $('#'+base+'berkley_id').val('');
-	  $('#'+base+'berkley_name').val('');
-	  $('#'+base+'berkley_url').val('');
-	  
-	  $('#'+base+'name').removeAttr("disabled");
-	  
-	  $('#'+base+'displayExtra').html("");	
-	  
-}
+	  Drupal.jsAC.prototype.hidePopup = function (keycode) {
+		  // Select item if the right key or mousebutton was pressed
+		  if (this.selected && ((keycode && keycode != 46 && keycode != 8 && keycode != 27) || !keycode)) {
+			  if(this.selected.autocompleteValue.indexOf('|') != -1){
+				  berkleySetFormData(this.input.id.replace('name', ''), this.selected.autocompleteValue,false);
+			  }else{
+				  this.input.value = this.selected.autocompleteValue;
+			  }
+		  }
+		  // Hide popup
+		  var popup = this.popup;
+		  if (popup) {
+		    this.popup = null;
+		    $(popup).fadeOut('fast', function() { $(popup).remove(); });
+		  }
+	    this.selected = false;
+	  };
+ }
