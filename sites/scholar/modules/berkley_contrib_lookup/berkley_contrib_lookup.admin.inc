@@ -7,7 +7,7 @@ function berkley_contrib_lookup_admin_settings() {
 
   $form = array();
   
-   $form['allow_autocomplete_ajax'] = array(
+   $form['berkley_contrib_lookup_allow_autocomplete'] = array(
     '#type' => 'checkbox',
     '#title' => t('Lookup via autocomplete'),
     '#default_value' => 0,
