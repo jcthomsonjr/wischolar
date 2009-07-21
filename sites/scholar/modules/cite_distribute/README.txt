@@ -119,11 +119,12 @@ must return the keys and value options listed below:
           "name": Required. The name of the module
     "repository": Required. The name of the repository.
           "file": Required. Whether your module stores citataions in a single file or multiple files. 
-                  Value must either be 'single' or 'multiple'
+                  Value can be 'single', 'multiple' or 'none' ("none" when a file is not being used store output)
  "dynamic_paths": A boolean value whether your module uses dynamic paths to store files.
       "filename": The name for your file, required only when 'file' => 'single'
           "flag": Optional flag used in PHP 5 file_put_contents() function    
    "rebuild_all": A boolean value. TRUE returns all values when running api mode function. 
+   "place_once": tells the API only to write to the file one time
 
    
 1) Here is an multiple file/dynamic path example from repec_meta.module     

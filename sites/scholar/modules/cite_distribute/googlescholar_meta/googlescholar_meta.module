@@ -1,0 +1,17 @@
+<?php
+
+
+function googlescholar_meta_cite_distribute_register(){
+  $module_info[] = array(
+    'name'       => 'googlescholar_meta',
+    'repository' => 'Google Scholar Repository',
+    'file' => 'none',
+     );
+  return $module_info;
+}
+
+
+function googlescholar_meta_make_template($node, $module_mode, $iteration = NULL){
+  
+  return 'google scholar meta data';
+}

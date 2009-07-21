@@ -132,7 +132,7 @@ function cite_distribute_flag($event, $flag, $content_id, $account) {
 
     if ($flag->name == $module['name'] && $event == 'flag') { 
      cite_distribute_widget_process($module['name'], $content_id);
-     watchdog($module['name'], "Node $content_id has been flagged");
+     //watchdog($module['name'], "Node $content_id has been flagged");
       return false;
     }
   }
@@ -214,8 +214,12 @@ function cite_distribute_form($form_id, $nid){
   return $form;  
 }
 
-
-
+/**
+ * Submit function called from form via ahah
+ * Will flag set the flag for selected modules to
+ * instantiate cite_distribute template process
+ * @return unknown
+ */
 function cite_distribute_form_submit(){
 
    $form_state = array('values' => $_POST);
@@ -227,6 +231,7 @@ function cite_distribute_form_submit(){
     if (strpos($name, '_module') && $value == 1){
       $module_name = trim(str_replace('_module', '', $name));
       
+      //building this $modules array only so I can pass it to theme function  below to generate msg
        $modules[] = $module_name;
       
       //load flag each repository selected
@@ -285,8 +290,7 @@ function cite_distribute_menu() {
   'page arguments' => array('cite_distribute_form', 2),
   'access arguments' => array('access content')
   );
-  
-  
+    
   $items['admin/settings/cite_distribute'] = array(
   'title' => t('Cite Distribute'),
   'page callback' => 'drupal_get_form',
