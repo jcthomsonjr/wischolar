@@ -22,6 +22,13 @@ function cite_distribute_theme(){
        'file' => 'cite_distribute.widget.inc',
        'path' => $path_inc,
     ),
+    
+      'cite_distribute_form_msg' => array(
+      'arguments' => array('modules' => NULL),
+       'file' => 'cite_distribute.widget.inc',
+       'path' => $path_inc,
+    ),
+    
   );
 }
 
@@ -149,6 +156,14 @@ function cite_distribute_nodeapi(&$node, $op){
   }
 }
 
+function cite_distribute_init(){
+  $path = drupal_get_path('module', 'cite_distribute') .'/js/';
+  drupal_add_js($path . 'cite_distribute.js');
+}
+
+/**
+ * Function to define widget form 
+ */
 function cite_distribute_form($form_id, $nid){ 
 
  $submodules = cite_distribute_installed_mods();
@@ -157,16 +172,28 @@ function cite_distribute_form($form_id, $nid){
   '#title' => t('Select repositories for distribution'),
   '#collapsible' => FALSE,
   '#collapsed' => FALSE,
+   '#prefix' =>'<div id="distribute">',
+    '#suffix' => '</div>',
   );
   
   foreach ($submodules as $module){
     $form['cite_distribute_widgets'][$module['name'] . '_module'] = array(
     '#type' => 'checkbox',
+    '#disabled' => cite_distribute_check_disabled($module['name'], $nid),
     '#title' => t('@repos', array('@repos' => $module['repository'])),
     '#default_value' => '',// TODO: need to query the cite_distribute table to get this value
+    '#prefix' =>'<div id="distribute-' . $module['name'] . ' ">',
+    '#suffix' => '</div>',
     );
   }
 
+  $form['cite_distribute_widgets']['test'] = array(
+  '#type' => 'markup',
+  '#value' => 'replace me...',
+   '#prefix' =>'<div id="target">',
+   '#suffix' => '</div>',
+  );
+  
   $form['cite_distribute_widgets']['nid'] = array(
   '#type' => 'hidden',
   '#value' => $nid,
@@ -175,20 +202,32 @@ function cite_distribute_form($form_id, $nid){
   $form['cite_distribute_widgets']['cite_distribute_submit'] = array(
   '#type' => 'submit',
   '#value' => t('Submit'),
+  '#ahah' => array(
+  'event' => 'click',
+  'path' => 'cite_distribute/submit',
+  'wrapper' => 'target', // This should be dynamic
+  'method' => 'replace', 
+  'effect' => 'fade',
+  )
   );
 
   return $form;  
 }
 
-/**
- * Submit functon for cite_distribute_get_formlink
- */
-function cite_distribute_form_submit($form, &$form_state){
-  $nid =  $form_state['values']['nid'];
+
+
+function cite_distribute_form_submit(){
+
+   $form_state = array('values' => $_POST);
+   //dpm($form_state);
+   
+   $nid =  $form_state['values']['nid'];
 
   foreach ($form_state['values'] as  $name => $value){
     if (strpos($name, '_module') && $value == 1){
       $module_name = trim(str_replace('_module', '', $name));
+      
+       $modules[] = $module_name;
       
       //load flag each repository selected
       $flag = flag_get_flag($module_name);
@@ -197,6 +236,22 @@ function cite_distribute_form_submit($form, &$form_state){
       $flag->flag('flag', (int)$nid);
     }
   }
+  $output = theme('cite_distribute_form_msg', $modules);
+  return drupal_json( $output);
+}
+
+/**
+ * Function to check to see if form should be disabled.
+ */
+function cite_distribute_check_disabled($module_name, $nid = NULL){
+  if (!$nid){
+    //this is a new node so do NOT disable
+    return FALSE;
+  }
+  else{
+    $res = db_result(db_query("SELECT nid from {cite_distribute} WHERE type = '%s'", $module_name));
+    return (bool) $res;    
+  }
 }
 
 /**
@@ -204,7 +259,13 @@ function cite_distribute_form_submit($form, &$form_state){
 **/
 function cite_distribute_menu() {
   $items = array();
-
+  
+  $items['cite_distribute/submit'] = array(
+  'page callback'  => 'cite_distribute_form_submit',
+  'access arguments' => array('access content'),
+  );
+  
+  
   $items['cite_distribute/widget'] = array(
   'page callback'           => 'cite_distribute_widget_process',
   //'access arguments'             => TRUE,
@@ -261,41 +322,6 @@ function cite_distribute_installed_mods(){
   return $submodules;
 }
 
-/**
- * Installation of cite_distribute_admin()
- * @return Administrative settings form for cite distribute module
- */
-
-function cite_distribute_admin(){
-
-  $submodules = cite_distribute_installed_mods();
-
-  $num_submodules = count($submodules);
-
-  //creating an array with the module modes. these will be the options in the drop down menu in this form
-  $module_mode_names = array('api'=> 'API Mode', 'batch' => 'Batch Process Mode', 'per_submission' => 'Per Submission Mode');
-
-  $form['cite_distribute'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Configure Cite Distribute'),
-  '#collapsible' => FALSE,
-  '#collapsed' => FALSE,
-  );
-
-  $form['cite_distribute']['cite_distribute_module_mode'] = array(
-  '#type' => 'select',
-  '#title' => t('Select The Mode for this Module'),
-  '#options' => $module_mode_names,
-  '#required' => TRUE,
-  '#default_value' => variable_get('cite_distribute_module_mode',''),
-  '#description' => t('<b>API mode</b> does nothing by default, but lets the developer decide when to call the module\'s functions.
-      <br><b>Batch mode</b> is intended to be run by cron will update all meta files at once in a batch process. 
-      <br><b>Per Submission mode</b> will update or create a meta file whenever content for RePEc is submitted or updated.')
-   );
-
-      //checking to see if any submodules are installed
-      return system_settings_form($form);
-}
 
 /**
  * Implementation cite_distribute_update_val()
@@ -303,8 +329,6 @@ function cite_distribute_admin(){
  * @param $module_mode is one of these system variables (api, batch, per_submission)
  * @return value to place in the 'upd' field for cite_distribute table
  */
-
-
 function cite_distribute_update_val($module_mode){
 
   switch($module_mode){
