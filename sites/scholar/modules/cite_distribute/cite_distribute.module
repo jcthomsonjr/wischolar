@@ -268,12 +268,14 @@ function cite_distribute_menu() {
   
   $items['cite_distribute/widget'] = array(
   'page callback'           => 'cite_distribute_widget_process',
-  //'access arguments'             => TRUE,
+  'type' => MENU_CALLBACK ,
+  'access arguments' => array('access content'), /// TODO: may need to change this permission
   );
   
   $items['cite_distribute/distribute/js'] = array(
   'title' => t('Cite Distribute'),
   'page callback' => 'cite_distribute_distribute_js',
+  'type' => MENU_CALLBACK ,
   'access arguments' => array('access content')
   );
   
