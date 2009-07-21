@@ -267,9 +267,9 @@ function cite_distribute_menu() {
   
   $items['cite_distribute/submit'] = array(
   'page callback'  => 'cite_distribute_form_submit',
+  'type' => MENU_CALLBACK ,
   'access arguments' => array('access content'),
   );
-  
   
   $items['cite_distribute/widget'] = array(
   'page callback'           => 'cite_distribute_widget_process',
@@ -414,8 +414,8 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
   
   switch($module_mode){
 
-    case 'api':
-     
+    case 'api': 
+             
      //allows "make_template" hook in submodules to do something on first pass only 
      $iteration = 1;
                
@@ -438,7 +438,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
       }
       
       //place_once key IS set in hook_cite_dsitribute_register, used for creating singular bibtex file
-      if ($module_info[0]['place_once']) {
+      if ($module_info[0]['place_once'] && ($module_info[0]['file'] !== 'none')) {
        while($data = db_fetch_object($sql)){
             $node[] = node_load($data->nid);
        }
@@ -447,8 +447,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
             
             //send to the "make_template" passing it an array of nodes
             $make_template =  module_invoke($module, 'make_template', $node, $module_mode);
-            
-            
+
             //getting filename - checking for dynamic versus static filenames
             $filename = (($module_info[0]['file']) =='single')? $module_info[0]['filename'] : $make_template['filename'];
            
@@ -465,7 +464,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
       }
       
       //place_once key NOT set in hook_cite_dsitribute_register
-       if (!$module_info[0]['place_once']) {
+       if (!$module_info[0]['place_once'] && ($module_info[0]['file'] !== 'none')) {
        while($data = db_fetch_object($sql)){
             $node = node_load($data->nid);
 
@@ -489,7 +488,25 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
             
             $iteration++;
             }
-          }    
+          }
+    
+          //the submodule has set has 'file' => 'none', so cite_distribute will not deal with files
+          // at all here. Instead it just calls the 'make_template' hook and lets the submodule deal with
+         // the data, e.g., the submodule could send the output via preprocess hook to a template file          
+         if($module_info[0]['file'] == 'none') {           
+           $iteration = 1;        
+           $sql = db_query("SELECT * FROM {cite_distribute} WHERE type = '%s'", $module); 
+ 
+           while($data = db_fetch_object($sql)){
+             $node = node_load($data->nid);
+             $make_template = array(); 
+             //send to the "make_template" passing it an array of nodes
+             $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration);
+             $iteration++;
+             echo "<pre>"; print_r($make_template); die;
+           }
+           
+         }
       //update the cite distribute table "upd" collumn when complete
       cite_distribute_api_complete($module);
       break;
@@ -500,15 +517,15 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
       break;
    
     case 'per_submission':
-        
-      
+      //submodule is not using files
+      if($module_info[0]['file'] == 'none'){
+        return cite_distribute_mode_controller($node = NULL, $module ,$module_mode = 'api');
+      }
       //this when a submodule uses one file and runs the api funtion
       if($module_info[0]['file'] == 'single'){
-           
         //if these two conditions are true then halt execution of placing the file because the api function
-        //is called to deal with these conditions      
+        //is called to deal with these conditions
         return cite_distribute_mode_controller($node = NULL, $module ,$module_mode = 'api');
-   
       }
       
       if($module_info[0]['file'] == 'multiple'){
@@ -606,3 +623,9 @@ function cite_distribute_form_alter(&$form, $form_state, $form_id){
     //dpm($form);
 }
 
+function _cite_distribute_clean(){ 
+
+  $sql = db_query("TRUNCATE table {cite_distribute}");
+  $sql = db_query("TRUNCATE table {flag_content}");
+  drupal_set_message(t('Cleared cite_distribute and flag_content tables'));
+}

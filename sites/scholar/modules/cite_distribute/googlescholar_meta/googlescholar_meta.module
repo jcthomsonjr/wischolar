@@ -1,17 +1,76 @@
 <?php
 
 
+/**
+ * Implementation of hook_cite_distribute_register()
+ *
+ */
 function googlescholar_meta_cite_distribute_register(){
   $module_info[] = array(
     'name'       => 'googlescholar_meta',
-    'repository' => 'Google Scholar Repository',
+    'repository' => 'Google Scholar',
     'file' => 'none',
      );
   return $module_info;
 }
 
 
+/**
+ * Implementation of hook_make_template()
+ *
+ * @param unknown_type $node
+ * @param unknown_type $module_mode
+ * @param unknown_type $iteration
+ */
 function googlescholar_meta_make_template($node, $module_mode, $iteration = NULL){
+  $output = '';
+
+  $output .= $node->biblio_secondary_title ? '<meta name="citation_journal_title" content="' . $node->biblio_secondary_title . '">' : ''; //REPLACE special chars
+  $output .= $node->biblio_publisher ? '<meta name="citation_publisher" content="' . $node->biblio_publisher . '">' : '';
+  $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . $node->biblio_contributors[1][0]. '">' : ''; //NEED FUNCTION HERE
+  $output .= $node->title ? '<meta name="citation_title" content="' . $node->title . '">' : '';
+  $output .= $node->biblio_date ? '<meta name="citation_date" content="' . $node->biblio_date . '">' : ''; //NEED TO FIX FORMAT
+  $output .= $node->biblio_year ? '<meta name="citation_year" content="' . $node->biblio_year . '">' : '';
+  $output .= $node->biblio_volume ? '<meta name="citation_volume" content="' . $node->biblio_volume. '">' : '';
+  $output .= $node->biblio_issue ? '<meta name="citation_issue" content="' . $node->biblio_issue. '">' : '';
+  $output .= $node->biblio_section ? '<meta name="citation_firstpage" content="' . $node->biblio_section. '">' : '';
+  $output .= $node->biblio_section ? '<meta name="citation_lastpage" content="' . $node->biblio_section. '">' : ''; //  WHAT IS BIBLIO EQUIV ???
+  $output .= $node->biblio_issn ? '<meta name="citation_issn" content="' . $node->biblio_issn. '">' : '';
+  $output .= $node->biblio_isbn ? '<meta name="citation_isbn" content="' . $node->biblio_isbn. '">' : '';
+  $output .= $node->biblio_language ? '<meta name="citation_language" content="' . $node->biblio_language. '">' : '';
+  $output .= $node->biblio_keywords ? '<meta name="citation_keywords" content="' . $node->biblio_keywords. '">' : '';  // NEED FUNCTION HERE
+  $output .= $node->biblio_abstract ? '<meta name="citation_abstract" content="' . $node->biblio_abstract. '">' : '';
+
+  //NEED TO FIND EQUIV FOR THESE
+  $output .= $node->biblio_url ? '<meta name="citation_pdf_url" content="' . $node->biblio_url. '">' : '';
+  $output .= $node->biblio_url ? '<meta name="citation_abstract_html_url" content="' . $node->biblio_url. '">' : '';
+  $output .= $node->biblio_url ? '<meta name="citation_pmid" content="' . $node->biblio_url. '">' : '';
+
+
+  return $output;
   
-  return 'google scholar meta data';
+
+  //Example from Google
+  
+  /*<meta name="citation_journal_title" content="Journal of Biological Chemistry">
+<meta name="citation_publisher" content="ASBMB">
+<meta name="citation_authors" content="Grynkiewicz, G; Poenie, M; Tsien, RY">
+<meta name="citation_title" content="A new generation of Ca2+ indicators with greatly improved fluorescence properties">
+<meta name="citation_date" content="1996/01/25"> <!--yyyy/mm/dd-->
+<meta name="citation_year" content="1985">
+<meta name="citation_volume" content="260">
+<meta name="citation_issue" content="6">
+<meta name="citation_firstpage" content="3440">
+<meta name="citation_lastpage" content="3451">
+<meta name="citation_issn" content="ISSN Of the Journal">
+<meta name="citation_isbn" content="ISBN if the item is a book">
+<meta name="citation_language" content="Language Name">
+<meta name="citation_keywords" content="keyphrase1; keyphrase2; ...">
+<meta name="citation_abstract" content="Text of the abstract…">
+
+
+<meta name="citation_pdf_url" content="http://www.jbc.org/cgi/reprint/260/6/3440.pdf">
+<meta name="citation_abstract_html_url" content="http://www.jbc.org/cgi/content/abstract/260/6/3440">
+<meta name="citation_pmid" content="3838314">*/
+
 }
