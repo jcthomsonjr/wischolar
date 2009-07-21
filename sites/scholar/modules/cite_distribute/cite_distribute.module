@@ -503,7 +503,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
              //send to the "make_template" passing it an array of nodes
              $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration);
              $iteration++;
-             echo "<pre>"; print_r($make_template); die;
+            // echo "<pre>"; print_r($make_template); die;
            }
            
          }
