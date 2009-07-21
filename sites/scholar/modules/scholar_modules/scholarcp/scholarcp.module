@@ -25,6 +25,15 @@ function scholarcp_menu(){
     'access arguments' => array('administer site configuration'),
   );
   
+  $items["scholarcp/settings/themes"] = array(
+    'title' => 'Themes',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholarcp_themes_form'),
+    'access callback' => 'spaces_admin_access',
+    'access arguments' => array('og', 'features'),
+    'file' => 'scholarcp.pages.inc',
+  );
+  
   $items["scholarcp/settings/features"] = array(
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
@@ -81,8 +90,6 @@ function scholarcp_menu(){
 }
 
 function scholarcp_cp(){
-$wc = context_get('scholar', 'scholarwidgets'); 
-dpm($wc);
   return '(tbd)';
 }
 
@@ -117,15 +124,17 @@ function _scholarcp_init_theme(){
  * and "scholarcp_left" variables
  */
 function scholarcp_preprocess_page(&$vars) {
-  $vars['scholarcp_toolbar'] = '';
-  //if (admin_is_enabled('admin menu')) { TODO implement the right conditions here
+  $vars['scholarcp_toolbar'] = 
+  $vars['scholarcp_left'] = '';
+  
+  if (scholar_get_scholar() && user_access('configure spaces features')) { 
     $links = scholarcp_toolbar_menu_links();
     $links = theme('scholarcp_toolbar', $links);
     $vars['scholarcp_toolbar'] = $links;
     
     $links = scholarcp_left_menu_links();
     $vars['scholarcp_left'] = theme('links', $links);
-  //}
+  }
 }
 
 /**
