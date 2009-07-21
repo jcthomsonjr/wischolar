@@ -9,14 +9,23 @@
  *
  */
 function berkley_contrib_lookup_menu() {
-  $items = array();
-  
-  $items['berkley_contrib_lookup/getContributors/js'] = array(
-    'title'             => 'Berkley Contributors Lookup',
-    'page callback'     => 'berkley_contributors_js',
-    'access arguments'  => array('access content'),
-    'type'              => MENU_CALLBACK,
+  $items = array(
+    'berkley_contrib_lookup/getContributors/js' => array(
+      'title'             => 'Berkley Contributors Lookup',
+      'page callback'     => 'berkley_contributors_js',
+      'access arguments'  => array('access content'),
+      'type'              => MENU_CALLBACK,
+    ),
+    'admin/settings/berkley_contrib_lookup' => array(
+      'title'             => 'BKN Contributor Settings',
+      'description'       => 'Configure default behavior of the BKN module.',
+      'page callback'     => 'drupal_get_form',
+      'page arguments'    => array('berkley_contrib_lookup_admin_settings'),
+      'access arguments'  => array('administer biblio'),
+      'file'              => 'berkley_contrib_lookup.admin.inc',
+    )
   );
+  
   return $items;
 }
 
@@ -42,16 +51,7 @@ function berkley_contributors_js(){
 function berkley_contrib_lookup_nodeapi(& $node, $op, $a3, $a4) {
   if ($node->type == 'biblio') {
     switch ($op) {
-       //do any pre-save validation / alterations here
-       /* 	case 'presave':
-         if ($node->type == 'biblio')
-         {
-         	//	$node->body = '';
-         	//	$node_clone = clone($node); // we need a clone since objects get passed by reference regardless and we don't want to change the whole node object
-         	//	$node->body = theme('biblio_tabular', $node_clone, $base, $teaser);
-         }
-         break;
-         */
+      
       case 'insert':
       case 'update':
         if(!empty($node->biblio_contributors)){
@@ -102,24 +102,29 @@ function berkley_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
       if(array_key_exists('#theme',$a_fields)){
     	  $form[$key]['biblio_contributors'][$fields_key]['#theme'] = 'berkley_contrib_lookup_contributors';
     	}
-        
+      
+    	$use_autocomplete = variable_get('berkley_contrib_lookup_allow_autocomplete',0);
     	foreach ($a_fields as $s_key => $a_field){
     		if(substr($s_key,0,1) == "#") continue;
     		
- // ACSwitch   		//No autocomplete
-    		if(array_key_exists('name',$a_field) && array_key_exists('#autocomplete_path',$a_field['name'])){
- //   		  unset($form[$key]['biblio_contributors'][$fields_key][$s_key]['name']['#autocomplete_path']);
+    		
+    		//No autocomplete
+    		if(!$use_autocomplete && 
+    		    array_key_exists('name',$a_field) && 
+    		    array_key_exists('#autocomplete_path',$a_field['name'])){
+    		      
+    		  unset($form[$key]['biblio_contributors'][$fields_key][$s_key]['name']['#autocomplete_path']);
     		}
     		
     		$a_parents = $a_field['name']['#parents'];
     		array_pop($a_parents); //Get rid of the name
     		
-    	    if(array_key_exists('rank',$a_field)){
+    	  if(array_key_exists('rank',$a_field)){
     		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['rank']['#type'] = 'hidden';
     		}
     		
     		
-    	    if(!array_key_exists('check_berkley',$a_field)){
+    	  if(!$use_autocomplete && !array_key_exists('check_berkley',$a_field)){
     		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['check_berkley'] = array('#type' => 'checkbox', '#title' => 'Use Berkley Database', '#parents' => array_merge($a_parents,array('check_berkley')), '#attributes' => array('class' => 'berkleyContributorCheck') );
     		}
     		
@@ -127,7 +132,7 @@ function berkley_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
     		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['berkley_id'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('berkley_id')), '#default_value' => '');
     		}
     		
-    	    if(!array_key_exists('berkley_name',$a_field)){
+    	  if(!array_key_exists('berkley_name',$a_field)){
     		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['berkley_name'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('berkley_name')), '#default_value' => '');
     		}
     		
@@ -156,18 +161,16 @@ function berkley_contrib_lookup_theme($existing, $type, $theme, $path) {
 }
 
 
-
-
-
-
 // implement hook_menu_alter() to use berkleys return instead of
-// the biblioo return
+// the biblio return
 function berkley_contrib_lookup_menu_alter(&$items) {
-   // ACSwitch 
+   $use_autocomplete = variable_get('berkley_contrib_lookup_allow_autocomplete',0);
   //Hijack the callback for the biblio autocomplete and call this one first.
-  $items['biblio/autocomplete']['page callback'] = 'berkley_contrib_lookup_menu_autocomplete';
+  if($use_autocomplete) $items['biblio/autocomplete']['page callback'] = 'berkley_contrib_lookup_menu_autocomplete';
   
 } // end berkley_contrib_lookup_menu_alter()
+
+
 
 /**
  * Overide that looks up names from berkley
