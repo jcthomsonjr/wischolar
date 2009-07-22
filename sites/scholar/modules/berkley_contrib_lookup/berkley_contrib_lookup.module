@@ -84,13 +84,24 @@ function berkley_contrib_lookup_nodeapi(& $node, $op, $a3, $a4) {
   }// only edit biblio saves
 }// end function berkley_contrib_lookup
 
-//
-// implements hook_form_alter
+/**
+* Implementation of hook_form_validate().
+*/
+function berkley_contrib_lookup_form_validate($form, $form_state) {
+  // add the Drupal.ajaxUpdateContributor.js file
+  drupal_add_js(drupal_get_path('module', 'berkley_contrib_lookup').'/ajaxUpdateContributor.js', 'module', 'header', true);
+}
+
+/**
+* Implementation of hook_form_alter().
+*/
 function berkley_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
   if($form_id != "biblio_node_form") return;
   
   // add the Drupal.ajaxUpdateContributor.js file
   drupal_add_js(drupal_get_path('module', 'berkley_contrib_lookup').'/ajaxUpdateContributor.js', 'module', 'header', true);
+  
+  $form['#validate'][] = 'berkley_contrib_lookup_form_validate'; 
   
   $i = 1;
   while (array_key_exists('contributors'.$i.'_wrapper',$form)){
