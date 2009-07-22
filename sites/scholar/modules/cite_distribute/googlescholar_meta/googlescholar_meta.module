@@ -18,7 +18,7 @@ function googlescholar_meta_cite_distribute_register(){
 */
 function googlescholar_meta_preprocess_page(&$variables) {
   //check to see if this node is marked in the database for google scholar
-   $res = db_result(db_query("SELECT nid FROM {cite_distribute} WHERE type = '%s' AND nid = %d", 'googlescholar_meta', (int)$variables['node'])); 
+   $res = db_result(db_query("SELECT nid FROM {cite_distribute} WHERE type = '%s' AND nid = %d", 'googlescholar_meta', (int)$variables['node']->nid)); 
   if($res){
     $variables['googlescholar'] = googlescholar_meta_create_metadata($variables['node']);
   }
@@ -36,7 +36,7 @@ function googlescholar_meta_create_metadata($node){
 
   $output .= $node->biblio_secondary_title ? '<meta name="citation_journal_title" content="' . $node->biblio_secondary_title . '">' : ''; //REPLACE special chars
   $output .= $node->biblio_publisher ? '<meta name="citation_publisher" content="' . $node->biblio_publisher . '">' : '';
- // $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . $node->biblio_contributors[1][0]. '">' : ''; //NEED FUNCTION HERE
+  $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . googlescholar_meta_get_authors($node->biblio_contributors[1]) . '">' : ''; //NEED FUNCTION HERE
   $output .= $node->title ? '<meta name="citation_title" content="' . $node->title . '">' : '';
   $output .= $node->biblio_date ? '<meta name="citation_date" content="' . $node->biblio_date . '">' : ''; //NEED TO FIX FORMAT
   $output .= $node->biblio_year ? '<meta name="citation_year" content="' . $node->biblio_year . '">' : '';
@@ -89,4 +89,15 @@ function googlescholar_meta_create_metadata($node){
  */
 function googlescholar_meta_make_template($node, $module_mode = 'api', $iteration = NULL){ 
   //not being used because 'file' is set to 'none' in hook_cite_distribute_register
+}
+
+/**
+ * Returns primary authors of node as string
+ */
+function googlescholar_meta_get_authors($authors = array()){
+  $author_str = '';
+  foreach ($authors as $author){
+    $author_str .= $author['name'] . ';';
+  }
+return $author_str;
 }
