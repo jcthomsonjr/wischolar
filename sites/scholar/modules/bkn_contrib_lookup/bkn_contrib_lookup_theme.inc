@@ -1,12 +1,12 @@
 <?php
 
-module_load_include('inc','berkley_contrib_lookup');
+module_load_include('inc','bkn_contrib_lookup');
 
 /**
  * @param $form
  * @return unknown_type
  */
-function theme_berkley_contrib_lookup_contributors($form) {
+function theme_bkn_contrib_lookup_contributors($form) {
   $rows = array();
   if ($form['#hideRole']) $headers = array('', t('Name'));
   else $headers = array('', t('Name'), t('Role'));
@@ -21,7 +21,7 @@ function theme_berkley_contrib_lookup_contributors($form) {
     // Build the table row.
     $row = array('');
     $row[] = array('data' => drupal_render($form[$key]['name']).
-                             drupal_render($form[$key]['check_berkley']),
+                             drupal_render($form[$key]['check_bkn']),
               		 'class' => 'biblio-contributor');
     if (!$form['#hideRole']) {
       $row[] = array('data' => drupal_render($form[$key]['auth_type']),

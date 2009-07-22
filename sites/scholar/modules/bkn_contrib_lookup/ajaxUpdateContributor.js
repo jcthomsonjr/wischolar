@@ -1,12 +1,12 @@
 
-function berkleySetFormData(base, id_name_url, lockField){
-  if(!id_name_url.length) berkleyUnsetFormData(base);
+function bknSetFormData(base, id_name_url, lockField){
+  if(!id_name_url.length) bknUnsetFormData(base);
 
   var meta = id_name_url.split("|", 3);
   
-  $('#'+base+'berkley-id').val(meta[0]);
-  $('#'+base+'berkley-name').val(meta[1]);
-  $('#'+base+'berkley-url').val(meta[2]);
+  $('#'+base+'bkn-id').val(meta[0]);
+  $('#'+base+'bkn-name').val(meta[1]);
+  $('#'+base+'bkn-url').val(meta[2]);
   
   $('#'+base+'name').val(meta[1]);
   if(lockField) $('#'+base+'name').attr("readonly", "readonly");
@@ -19,11 +19,11 @@ function berkleySetFormData(base, id_name_url, lockField){
   
 }
 
-function berkleyUnsetFormData(base){
+function bknUnsetFormData(base){
 	  
-	  $('#'+base+'berkley-id').val('');
-	  $('#'+base+'berkley-name').val('');
-	  $('#'+base+'berkley-url').val('');
+	  $('#'+base+'bkn-id').val('');
+	  $('#'+base+'bkn-name').val('');
+	  $('#'+base+'bkn-url').val('');
 	  
 	  $('#'+base+'name').removeAttr("disabled");
 	  
@@ -31,18 +31,18 @@ function berkleyUnsetFormData(base){
 	  
 }
 
-Drupal.behaviors.berkleyGetContrbutors = function(context) {
+Drupal.behaviors.bknGetContrbutors = function(context) {
 
   //Each contributor button
-  $('#node-form input.berkleyContributorCheck:not(.berkleyGetContrbutors-processed)', context).addClass('berkleyGetContrbutors-processed').each(function() {
+  $('#node-form input.bknContributorCheck:not(.bknGetContrbutors-processed)', context).addClass('bknGetContrbutors-processed').each(function() {
   
     var check_id = $(this).attr('id');
-    var base = check_id.replace('check-berkley', '');  // rem 'check-berkley' from end
+    var base = check_id.replace('check-bkn', '');  // rem 'check-bkn' from end
     
     $(this).click(function() {
 
     	if(! $(this).is(':checked')){
-    	  berkleyUnsetFormData(base);
+    	  bknUnsetFormData(base);
     	  return true;
     	}
     	
@@ -57,7 +57,7 @@ Drupal.behaviors.berkleyGetContrbutors = function(context) {
     		return false;
     	}
     	
-    	$.getJSON("/berkley_contrib_lookup/getContributors/js",
+    	$.getJSON("/bkn_contrib_lookup/getContributors/js",
     			  { name: searchName },
 	    	      function(data){
 
@@ -72,7 +72,7 @@ Drupal.behaviors.berkleyGetContrbutors = function(context) {
     					  return false;
     				  }
     				  
-	    			  iHTML = "<select onchange='berkleySetFormData(\""+base+"\",this.value,true);' ><option>Select Author</option>"+iHTML+"</select>";
+	    			  iHTML = "<select onchange='bknSetFormData(\""+base+"\",this.value,true);' ><option>Select Author</option>"+iHTML+"</select>";
 	    			  $('#'+base+'displayExtra').html(iHTML);
     				  
     			  });
@@ -81,9 +81,9 @@ Drupal.behaviors.berkleyGetContrbutors = function(context) {
     });
     
     $('#'+base+'name').keyup(function() { 
-    	if($('#'+base+'check-berkley').is(':checked')){
-    		berkleyUnsetFormData(base);
-    		$('#'+base+'check-berkley').attr('checked', false); 
+    	if($('#'+base+'check-bkn').is(':checked')){
+    		bknUnsetFormData(base);
+    		$('#'+base+'check-bkn').attr('checked', false); 
     	}
     });
     
@@ -97,7 +97,7 @@ if(Drupal.jsAC){
 	  */
 	  Drupal.jsAC.prototype.select = function (node) { 
 		  if(node.autocompleteValue.indexOf('|') != -1){
-			  berkleySetFormData(this.input.id.replace('name', ''), node.autocompleteValue,false);
+			  bknSetFormData(this.input.id.replace('name', ''), node.autocompleteValue,false);
 		  }else{
 			  this.input.value = node.autocompleteValue;
 		  }
@@ -107,7 +107,7 @@ if(Drupal.jsAC){
 		  // Select item if the right key or mousebutton was pressed
 		  if (this.selected && ((keycode && keycode != 46 && keycode != 8 && keycode != 27) || !keycode)) {
 			  if(this.selected.autocompleteValue.indexOf('|') != -1){
-				  berkleySetFormData(this.input.id.replace('name', ''), this.selected.autocompleteValue,false);
+				  bknSetFormData(this.input.id.replace('name', ''), this.selected.autocompleteValue,false);
 			  }else{
 				  this.input.value = this.selected.autocompleteValue;
 			  }
