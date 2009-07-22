@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Implementation of hook_cite_distribute_register()
  *
@@ -14,20 +13,30 @@ function googlescholar_meta_cite_distribute_register(){
   return $module_info;
 }
 
+/**
+* Implementation of module_preprocess_hook().
+*/
+function googlescholar_meta_preprocess_page(&$variables) {
+  //check to see if this node is marked in the database for google scholar
+   $res = db_result(db_query("SELECT nid FROM {cite_distribute} WHERE type = '%s' AND nid = %d", 'googlescholar_meta', (int)$variables['node'])); 
+  if($res){
+    $variables['googlescholar'] = googlescholar_meta_create_metadata($variables['node']);
+  }
+}
 
 /**
- * Implementation of hook_make_template()
+ * Function to create google scholar meta data from $node object
  *
- * @param unknown_type $node
- * @param unknown_type $module_mode
- * @param unknown_type $iteration
+ * @param $node
+ * @return string -meta data for google scholar
  */
-function googlescholar_meta_make_template($node, $module_mode, $iteration = NULL){
+function googlescholar_meta_create_metadata($node){
+  
   $output = '';
 
   $output .= $node->biblio_secondary_title ? '<meta name="citation_journal_title" content="' . $node->biblio_secondary_title . '">' : ''; //REPLACE special chars
   $output .= $node->biblio_publisher ? '<meta name="citation_publisher" content="' . $node->biblio_publisher . '">' : '';
-  $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . $node->biblio_contributors[1][0]. '">' : ''; //NEED FUNCTION HERE
+ // $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . $node->biblio_contributors[1][0]. '">' : ''; //NEED FUNCTION HERE
   $output .= $node->title ? '<meta name="citation_title" content="' . $node->title . '">' : '';
   $output .= $node->biblio_date ? '<meta name="citation_date" content="' . $node->biblio_date . '">' : ''; //NEED TO FIX FORMAT
   $output .= $node->biblio_year ? '<meta name="citation_year" content="' . $node->biblio_year . '">' : '';
@@ -38,19 +47,18 @@ function googlescholar_meta_make_template($node, $module_mode, $iteration = NULL
   $output .= $node->biblio_issn ? '<meta name="citation_issn" content="' . $node->biblio_issn. '">' : '';
   $output .= $node->biblio_isbn ? '<meta name="citation_isbn" content="' . $node->biblio_isbn. '">' : '';
   $output .= $node->biblio_language ? '<meta name="citation_language" content="' . $node->biblio_language. '">' : '';
-  $output .= $node->biblio_keywords ? '<meta name="citation_keywords" content="' . $node->biblio_keywords. '">' : '';  // NEED FUNCTION HERE
+ // $output .= $node->biblio_keywords ? '<meta name="citation_keywords" content="' . $node->biblio_keywords. '">' : '';  // NEED FUNCTION HERE
   $output .= $node->biblio_abstract ? '<meta name="citation_abstract" content="' . $node->biblio_abstract. '">' : '';
 
   //NEED TO FIND EQUIV FOR THESE
   $output .= $node->biblio_url ? '<meta name="citation_pdf_url" content="' . $node->biblio_url. '">' : '';
   $output .= $node->biblio_url ? '<meta name="citation_abstract_html_url" content="' . $node->biblio_url. '">' : '';
   $output .= $node->biblio_url ? '<meta name="citation_pmid" content="' . $node->biblio_url. '">' : '';
-
-
+  
   return $output;
   
-
-  //Example from Google
+  
+    //Example from Google
   
   /*<meta name="citation_journal_title" content="Journal of Biological Chemistry">
 <meta name="citation_publisher" content="ASBMB">
@@ -72,5 +80,13 @@ function googlescholar_meta_make_template($node, $module_mode, $iteration = NULL
 <meta name="citation_pdf_url" content="http://www.jbc.org/cgi/reprint/260/6/3440.pdf">
 <meta name="citation_abstract_html_url" content="http://www.jbc.org/cgi/content/abstract/260/6/3440">
 <meta name="citation_pmid" content="3838314">*/
+  
+}
 
+
+/**
+ * Implementation of hook_make_template()
+ */
+function googlescholar_meta_make_template($node, $module_mode = 'api', $iteration = NULL){ 
+  //not being used because 'file' is set to 'none' in hook_cite_distribute_register
 }

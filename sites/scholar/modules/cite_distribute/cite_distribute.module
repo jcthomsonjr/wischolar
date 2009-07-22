@@ -152,9 +152,10 @@ function cite_distribute_nodeapi(&$node, $op){
         /*$flag = flag_get_flag('repec_meta');
         $flag_bool =  $flag->is_flagged($node->nid) ? 'Yes' : 'No';
         dpm($flag_bool);*/
+      }
     }
   }
-}
+
 
 function cite_distribute_init(){
   $path = drupal_get_path('module', 'cite_distribute') .'/js/';
@@ -490,23 +491,10 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
             }
           }
     
-          //the submodule has set has 'file' => 'none', so cite_distribute will not deal with files
-          // at all here. Instead it just calls the 'make_template' hook and lets the submodule deal with
-         // the data, e.g., the submodule could send the output via preprocess hook to a template file          
-         if($module_info[0]['file'] == 'none') {           
-           $iteration = 1;        
-           $sql = db_query("SELECT * FROM {cite_distribute} WHERE type = '%s'", $module); 
- 
-           while($data = db_fetch_object($sql)){
-             $node = node_load($data->nid);
-             $make_template = array(); 
-             //send to the "make_template" passing it an array of nodes
-             $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration);
-             $iteration++;
-            // echo "<pre>"; print_r($make_template); die;
-           }
-           
-         }
+          //If the submodule has set has 'file' => 'none', so cite_distribute will not deal with files
+          //at all. Instead it lets the submodule deal with the data output, e.g., the submodule 
+          //could send the output via preprocess hook to a template file          
+  
       //update the cite distribute table "upd" collumn when complete
       cite_distribute_api_complete($module);
       break;
