@@ -77,9 +77,16 @@ function scholar_menu(){
     'weight' => 0,
   );
   
+  // nodeautocomplete callback for scholar 
+    $items['scholar/node/autocomplete'] = array(
+      'type' => MENU_CALLBACK,
+      'title' => 'something',
+      'page callback' => 'scholar_node_autocomplete',
+      'access arguments' => array('access content'),
+    );
+  
   return $items;
 }
-
 
 /**
  * hook spaces_presets
@@ -132,9 +139,8 @@ function scholar_strongarm(){
 
 
 /**
- * 
+ * API function for getting the active site
  */
-
 function scholar_get_scholar(){
   $space = spaces_get_space();
   $scholar_content_type = variable_get('scholar_content_type', 'scholarsite');
@@ -145,3 +151,20 @@ function scholar_get_scholar(){
     return NULL;
   }
 }
+
+/**
+ * Includes different inc files 
+ */
+function scholar_include($inc_files){
+  $inc_files = is_array($inc_files) ? $inc_files : array($inc_files);
+  
+  $path = dirname(__FILE__);
+
+  foreach ($inc_files as $inc) {
+    if (file_exists("$path/includes/$inc.inc")) {
+      include_once "$path/includes/$inc.inc";
+    }
+  }
+}
+
+
