@@ -15,47 +15,32 @@
   	 <div id="top">
   	   <?php print $scholarcp_toolbar;?>
   	 </div>
-     
      <div id="main-content">
-		<div id="header">
-			
-			<h1><a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home">
-			  <?php print $site_name; ?></a></h1>
-			
-			<div id="nav" class="clear-block">
-				<?php print $scholarcp_left;?>
-			</div>
-			
-			<?php if (!empty($header) || !empty($breadcrumb)){ ?>
-			<div id="header-region">
-				<?php print $header; ?>
-			</div> <!-- /header-region -->
-			<?php }; ?>
-			
-			<?php print $search_box; ?>
-		</div> <!-- /header -->
-		
-		
-			
-			<div id="content">
-			  <?php if (!empty($title)){ ?>
-				<h2 class="title"><?php print $title; ?></h2>
-			  <?php }; ?>
-			  <?php if (!empty($tabs)){ ?>
-				<div class="tabs"><?php print $tabs; ?></div>
-			  <?php }; ?>
-			  <?php print $help; ?>
-			  <?php print $messages; ?>
-			  <?php print $content; ?>
-			  <?php if (!empty($feed_icons)){ ?>
-				<div class="feed-icons"><?php print $feed_icons; ?></div>
-			  <?php }; ?>
-			</div> <!-- /content -->
-			
-			<?php if (!empty($content_bottom)){ ?>
-			  <div id="content-bottom"><?php print $content_bottom; ?></div>
-			<?php }; ?>
-
+      <div id="cp-sidemenu">
+        <div class="frame">
+          <div class="innerframe">
+          <?php print $scholarcp_left;?>
+          </div>
+        </div>
+			</div><!-- /cp-sidemenu -->
+			<div id="cp-content">
+			  <div class="frame">
+          <div class="innerframe">
+            <?php if (!empty($title)){ ?>
+            <h2 class="title"><?php print $title; ?></h2>
+            <?php }; ?>
+            <?php if (!empty($tabs)){ ?>
+            <div class="tabs"><?php print $tabs; ?></div>
+            <?php }; ?>
+            <?php print $help; ?>
+            <?php print $messages; ?>
+            <?php print $content; ?>
+            <?php if (!empty($feed_icons)){ ?>
+            <div class="feed-icons"><?php print $feed_icons; ?></div>
+            <?php }; ?>
+			    </div>
+        </div>
+			</div> <!-- /cp-content -->
 		</div> <!-- / main-content -->
 
       <div id="footer">

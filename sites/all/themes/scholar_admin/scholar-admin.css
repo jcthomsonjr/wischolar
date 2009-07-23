@@ -1,3 +1,12 @@
+body {
+  color:#5a5959;
+  }
+
+body, #top, #footer {
+  overflow: hidden;
+  }
+
+
 body#tinymce {
 	background: #fff;
 	font-size: 1em;
@@ -8,42 +17,68 @@ body#tinymce {
 	width: 100%;
 	}
 
-#main-content, #sidebar-left, #top, #footer {
-	border: 4px solid #88979e;
+#main-content, #top, #footer, #cp-sidemenu, #cp-content {
 	padding: 0;
 	margin: 0;
-	left: 20px;
-	right: 20px;
-	top: 100px;
-	bottom: 80px;
+	left: 0;
+	right: 0;
+	top: 54px;
+	bottom: 56px;
 	position: absolute;
 	float:none;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
 	}
 	
-#main-content, #main, #content {
+#main-content, #main, #cp-content {
 	background: #fff;
-	width: auto;
 	float: none;
 	}
 
-
-#main-content {
-	padding: 34px;
-	}
-
 #top, #footer {
-	top: 40px;
+	top: 20px;
 	bottom: auto;
-	height: 50px;
-	overflow: hidden;
+	height: 44px;
+	background:url(images/top-bottom-bg.png) repeat-x #000 0 18px;
 	}
 
 #footer {
-	bottom: 10px;
+  height: 56px;
+	bottom: 0;
 	top: auto;
 	width: auto;
+	background-position: 0 0;
 	}
 
-#main-content {
-	overflow: auto;
+#cp-sidemenu, #cp-content {
+	top: 0;
+	bottom: 0;
 	}
+
+#cp-sidemenu {
+  width: 200px;
+  right: auto;
+  }
+      
+#cp-content {
+  left: 201px;
+  width: auto;
+  }
+
+.frame {
+  position: relative;
+  overflow-y: auto;
+  height: 100%;
+  }
+
+.innerframe {
+  position: absolute;
+  width: 100%;
+  overflow-x: hidden;
+  }
+ 
+	
+#cp-content .innerframe {
+  padding: 30px 30px 0 30px;
+  }
