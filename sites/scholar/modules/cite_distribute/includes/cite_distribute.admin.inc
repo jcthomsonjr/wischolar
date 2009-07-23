@@ -4,7 +4,7 @@
  * Installation of cite_distribute_admin()
  * @return Administrative settings form for cite distribute module
  */
-function cite_distribute_admin(){ print 'test'; die;
+function cite_distribute_admin(){
 
   $submodules = cite_distribute_installed_mods();
 

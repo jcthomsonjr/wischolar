@@ -86,7 +86,6 @@ function googlescholar_meta_authors($authors =array()){
 }
 
 
-
 /**
  * Returns formatted date per Google scholar meta spec
  * @param $date string- example: 2/2009
@@ -95,7 +94,9 @@ function googlescholar_meta_date($date){
   $date_arr = explode('/', $date);
   //add a zero to month if less than 10
   $month = (intval($date_arr[0]) < 10) ? str_pad($date_arr[0], 2, '0', 'STR_PAD_LEFT') : $date_arr[0];
-   return $date_arr[1] . '/' . $month  . '/' .  '01';  //TODO: day is not defined in biblio form but Google Scholar specifies it. I have placed a static value here
+  
+   return $date_arr[1] . '/' . $month;  // without the day value
+   //return $date_arr[1] . '/' . $month  . '/' .  '01';  //TODO: day is not defined in biblio form but Google Scholar specifies it. I have placed a static value here
 }
 
 /**
