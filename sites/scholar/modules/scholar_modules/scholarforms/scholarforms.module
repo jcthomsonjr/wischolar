@@ -8,6 +8,13 @@ define(DATE_FORMAT, 'n/j/Y');
 define(TIMEZONE, 'EDT');
 
 /**
+ * Returns an array of fieldsets to register with vertical tabs
+ */
+function scholarforms_fieldsets(){
+  return array('menu', 'author', 'og_nodeapi' , 'revision_information' , 'path', 'comment_settings', 'scholartaxonomy', 'options');
+}
+
+/**
  * Implemenation of hook_init()
  */
 function scholarforms_init(){
@@ -19,7 +26,7 @@ function scholarforms_init(){
  */
 function scholarforms_vertical_tabs_integration($type = NULL){
   //define the fieldsets
-  $fieldsets = array('menu', 'author', 'og_nodeapi' , 'revision_information' , 'path', 'comment_settings', 'scholartaxonomy', 'options');
+  $fieldsets =scholarforms_fieldsets();
   
   //if type is specified create vertical tabs system variable for only that type
   if($type){
@@ -42,7 +49,7 @@ function scholarforms_vertical_tabs_integration($type = NULL){
  * @param unknown_type $op
  * @param unknown_type $info
  */
-function scholarforms_hook_node_type($op, $info){
+function scholarforms_node_type($op, $info){
   switch ($op){
     
     case 'delete':
@@ -53,6 +60,14 @@ function scholarforms_hook_node_type($op, $info){
     case 'insert':
       //add taxonomy and options to vertical tabs fieldsets for if new content type is createds
      scholarforms_vertical_tabs_integration($info->type);
+      break;
+     
+     case 'update':
+    $fieldsets = scholarforms_fieldsets(); 
+    //if a vertical tabs system variable for this content type does not exist, then create one   
+    if (!variable_get(check_plain('vertical_tabs_fieldsets_' . $info->type), $fieldsets)){
+     scholarforms_vertical_tabs_integration($info->type);
+    }
       break;
   }
 }
