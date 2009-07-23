@@ -63,13 +63,29 @@ function googlescholar_meta_create_metadata($node){
 /**
  * Returns primary authors of node as string
  */
-function googlescholar_meta_authors($authors = array()){
+function googlescholar_meta_authors($authors =array()){
   $author_str = '';
-  foreach ($authors as $author){
-    $author_str .= $author['name'] . ';';
+  
+  if(count($authors)){
+    foreach ($authors as $author){
+
+      //Fomatting firstname initials output in case there are multiple first names
+      $firstname_arr = explode(' ', $author['firstname']);
+      if (count($firstname_arr)){
+        $firstname = '';
+        foreach ($firstname_arr as $name){
+          $firstname .= strtoupper(substr($name, 0,1));
+        }
+      }
+      $author_str .= $author['lastname'] . ' ' . $firstname . ';';
+    }
+    //removing the semi-colon at the end
+    $author_str = substr( $author_str, 0, -1);
   }
-return $author_str;
+  return $author_str;
 }
+
+
 
 /**
  * Returns formatted date per Google scholar meta spec
