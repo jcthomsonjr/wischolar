@@ -11,7 +11,6 @@
   <?php print $scripts; ?>
 </head>
 <body class="<?php print $body_classes; ?>">
-  <?php print $scholarcp_toolbar;?>
   <div id="wrapper">
     <div id="container">    
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) { ?>
