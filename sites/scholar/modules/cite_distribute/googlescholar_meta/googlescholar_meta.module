@@ -53,9 +53,9 @@ function googlescholar_meta_create_metadata($node){
   $output .= $node->biblio_language ? '<meta name="citation_language" content="' . $node->biblio_language. '">' : '';
   $output .= $node->biblio_keywords ? '<meta name="citation_keywords" content="' . googlescholar_meta_keywords($node->biblio_keywords) . '">' : '';  
   $output .= $node->biblio_abstract ? '<meta name="citation_abstract" content="' . $node->biblio_abstract. '">' : '';
-  $output .= $node->biblio_url ? '<meta name="citation_pdf_url" content="' . $node->biblio_url. '">' : '';
-  $output .= $node->biblio_url ? '<meta name="citation_abstract_html_url" content="' . $node->biblio_url. '">' : '';
-  $output .= $node->biblio_url ? '<meta name="citation_pmid" content="' . $node->biblio_url. '">' : '';
+  //$output .= $node->biblio_url ? '<meta name="citation_pdf_url" content="' . $node->biblio_url. '">' : '';
+  //$output .= $node->biblio_url ? '<meta name="citation_abstract_html_url" content="' . $node->biblio_url. '">' : '';
+ // $output .= $node->biblio_url ? '<meta name="citation_pmid" content="' . $node->biblio_url. '">' : '';
   
   return $output;
  }
