@@ -34,11 +34,11 @@ function googlescholar_meta_create_metadata($node){
   
   $output = '';
 
-  $output .= $node->biblio_secondary_title ? '<meta name="citation_journal_title" content="' . $node->biblio_secondary_title . '">' : ''; //REPLACE special chars
+  $output .= $node->biblio_secondary_title ? '<meta name="citation_journal_title" content="' . $node->biblio_secondary_title . '">' : '';  //REPLACE special chars ???
   $output .= $node->biblio_publisher ? '<meta name="citation_publisher" content="' . $node->biblio_publisher . '">' : '';
-  $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . googlescholar_meta_get_authors($node->biblio_contributors[1]) . '">' : ''; //NEED FUNCTION HERE
+  $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . googlescholar_meta_authors($node->biblio_contributors[1]) . '">' : ''; 
   $output .= $node->title ? '<meta name="citation_title" content="' . $node->title . '">' : '';
-  $output .= $node->biblio_date ? '<meta name="citation_date" content="' . $node->biblio_date . '">' : ''; //NEED TO FIX FORMAT
+  $output .= $node->biblio_date ? '<meta name="citation_date" content="' . googlescholar_meta_date($node->biblio_date) . '">' : ''; //NEED TO FIX FORMAT STILL
   $output .= $node->biblio_year ? '<meta name="citation_year" content="' . $node->biblio_year . '">' : '';
   $output .= $node->biblio_volume ? '<meta name="citation_volume" content="' . $node->biblio_volume. '">' : '';
   $output .= $node->biblio_issue ? '<meta name="citation_issue" content="' . $node->biblio_issue. '">' : '';
@@ -47,18 +47,59 @@ function googlescholar_meta_create_metadata($node){
   $output .= $node->biblio_issn ? '<meta name="citation_issn" content="' . $node->biblio_issn. '">' : '';
   $output .= $node->biblio_isbn ? '<meta name="citation_isbn" content="' . $node->biblio_isbn. '">' : '';
   $output .= $node->biblio_language ? '<meta name="citation_language" content="' . $node->biblio_language. '">' : '';
- // $output .= $node->biblio_keywords ? '<meta name="citation_keywords" content="' . $node->biblio_keywords. '">' : '';  // NEED FUNCTION HERE
+  $output .= $node->biblio_keywords ? '<meta name="citation_keywords" content="' . googlescholar_meta_keywords($node->biblio_keywords) . '">' : '';  
   $output .= $node->biblio_abstract ? '<meta name="citation_abstract" content="' . $node->biblio_abstract. '">' : '';
-
-  //NEED TO FIND EQUIV FOR THESE
   $output .= $node->biblio_url ? '<meta name="citation_pdf_url" content="' . $node->biblio_url. '">' : '';
   $output .= $node->biblio_url ? '<meta name="citation_abstract_html_url" content="' . $node->biblio_url. '">' : '';
   $output .= $node->biblio_url ? '<meta name="citation_pmid" content="' . $node->biblio_url. '">' : '';
   
   return $output;
-  
-  
-    //Example from Google
+ }
+
+/**
+ * Returns primary authors of node as string
+ */
+function googlescholar_meta_authors($authors = array()){
+  $author_str = '';
+  foreach ($authors as $author){
+    $author_str .= $author['name'] . ';';
+  }
+return $author_str;
+}
+
+/**
+ * Returns formatted date per Google scholar meta spec
+ * @param $date string- example: 2/2009
+ */
+function googlescholar_meta_date($date){
+  $date_arr = explode('/', $date);
+  //add a zero to month if less than 10
+  $month = (intval($date_arr[0]) < 10) ? str_pad($date_arr[0], 2, '0', 'STR_PAD_LEFT') : $date_arr[0];
+   return $date_arr[1] . '/' . $month  . '/' .  '01';  //TODO: day is not defined in biblio form but Google Scholar specifies it. I have placed a static value here
+}
+
+/**
+ * Returns formatted keywords string per Google scholar meta spec
+ * @param $keywords -an array of keywords from the biblio node object
+ */
+function googlescholar_meta_keywords($keywords = array()){
+  $keyword_str = '';
+  if (count($keywords)){
+    foreach($keywords as $keyword){
+      $keyword_str .=  $keyword . ';' ;
+    }
+  }
+  return $keyword_str;
+}
+
+/**
+ * Implementation of hook_make_template()
+ */
+function googlescholar_meta_make_template($node, $module_mode = 'api', $iteration = NULL){ 
+  //not being used because 'file' is set to 'none' in hook_cite_distribute_register
+}
+
+//Example from Google
   
   /*<meta name="citation_journal_title" content="Journal of Biological Chemistry">
 <meta name="citation_publisher" content="ASBMB">
@@ -80,24 +121,3 @@ function googlescholar_meta_create_metadata($node){
 <meta name="citation_pdf_url" content="http://www.jbc.org/cgi/reprint/260/6/3440.pdf">
 <meta name="citation_abstract_html_url" content="http://www.jbc.org/cgi/content/abstract/260/6/3440">
 <meta name="citation_pmid" content="3838314">*/
-  
-}
-
-
-/**
- * Implementation of hook_make_template()
- */
-function googlescholar_meta_make_template($node, $module_mode = 'api', $iteration = NULL){ 
-  //not being used because 'file' is set to 'none' in hook_cite_distribute_register
-}
-
-/**
- * Returns primary authors of node as string
- */
-function googlescholar_meta_get_authors($authors = array()){
-  $author_str = '';
-  foreach ($authors as $author){
-    $author_str .= $author['name'] . ';';
-  }
-return $author_str;
-}

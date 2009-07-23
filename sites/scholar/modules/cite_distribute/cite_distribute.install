@@ -84,9 +84,11 @@ function cite_distribute_install(){
   variable_set('cite_distribute_module_mode','per_submission');
   
   //check if table exists
-  $msg = db_table_exists('cite_distribute')? 'Cite Disitribute table created successfully' : 
-  'Error creating Cite Disitribute table';
-   drupal_set_message(t($msg));
+  $msg = db_table_exists('cite_distribute') ? '' :  'Error creating Cite Disitribute table';
+  //if cannot create table then display message
+  if (!empty($msg)) {
+    drupal_set_message(t($msg));
+  }
 }
 
 function cite_distribute_uninstall(){
