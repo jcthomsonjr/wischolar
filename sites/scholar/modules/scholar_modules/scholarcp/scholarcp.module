@@ -10,8 +10,24 @@ function scholarcp_init(){
   		og_set_theme($space -> group);
   	}
   }
-
 }
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholarcp_spaces_settings() {
+  return array(
+    'theme' => array(
+      'class' => 'scholarcp_setting_theme',
+      'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.theme.inc',
+    ),
+    'front' => array(
+      'class' => 'scholarcp_setting_front',
+      'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.front.inc',
+    ),
+  );
+}
+
 
 function scholarcp_menu(){
 	$spaces_path = drupal_get_path('module', 'spaces');
@@ -24,16 +40,8 @@ function scholarcp_menu(){
     'page callback' => 'scholarcp_cp',
     'access arguments' => array('administer site configuration'),
   );
-  
-  $items["scholarcp/settings/themes"] = array(
-    'title' => 'Themes',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholarcp_themes_form'),
-    'access callback' => 'spaces_admin_access',
-    'access arguments' => array('og', 'features'),
-    'file' => 'scholarcp.pages.inc',
-  );
-  
+
+    
   $items["scholarcp/settings/features"] = array(
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
@@ -77,9 +85,27 @@ function scholarcp_menu(){
   
   $items['scholarcp/support'] = array(
     'title' => 'Support',
-    'page callback' => 'scholarcp_cp',
+    'page callback' => 'scholarcp_hello',
     'access arguments' => array('access content'),
   );
+  
+  // other setting by classess
+  $space = spaces_get_space();
+
+  // we go on all settings and make a menu entry for all of them
+  foreach (spaces_settings($space->type, TRUE) as $setting) {
+    $setting_value = isset($space->settings[$setting->id]) ? $space->settings[$setting->id] : NULL;
+    $setting_form = $setting->form($space, $setting_value);
+    if (!empty($setting_form)) {
+      $items['scholarcp/settings/'. $setting -> id] = array(
+        'title' => $setting_form['#title'],
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('scholarcp_settings_form', $setting -> id),
+        'access arguments' => array('access content'),
+      );
+    }
+  }
+  
   
   // make them all part of 'scholarcp' menu
   foreach($items as $path => $item) {
@@ -88,6 +114,76 @@ function scholarcp_menu(){
 
   return $items;
 }
+
+function scholarcp_hello(){
+  return '234';
+}
+
+
+/**
+ * Enter description here...
+ */
+function scholarcp_settings_form($form_id, $setting_id){
+  // get the space
+  $space = spaces_get_space();
+  
+  // all space settings (classes)
+  $settings = spaces_settings($space -> type, TRUE);
+
+  //$form = array('#tree' => TRUE);
+  
+  $form = array();
+  
+  // just do have distinct id for each setting form
+  $form['#prefix'] = '<div id = "scholarcp-settings-'. $setting_id . '">';
+  $form['#suffix'] = '</div>';
+  
+  // the form definition for this particular setting (we know setting_id)
+  // 'settings' is important here (see the submit function)
+  $form['settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Settings'),
+    '#tree' => TRUE,
+  );
+  $form['settings'][$setting_id] = $settings[$setting_id] -> form($space, $space -> settings[$setting_id]);
+  
+  // add the $space object to the form (so that we have it on submit);
+  $form['space'] = array(
+    '#type' => 'value',
+    '#value' => $space,
+  );
+  // pass the settingid too
+  $form['setting'] = array(
+    '#type' => 'value',
+    '#value' => $setting_id,
+  );
+  
+  // add the submit button (not in the form definition yet)
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save settings'),
+  );
+
+  return $form;
+}
+
+function scholarcp_settings_form_submit($form, &$form_state){
+  dpm($form_state);
+  // get the space and the settings we want to save
+  $space = $form_state['values']['space'];
+  $setting = $form_state['values']['setting'];
+  
+  // Set setting values
+  $settings = spaces_settings();
+  if (!empty($form_state['values']['settings'])) {
+    foreach ($form_state['values']['settings'] as $setting => $value) {
+      $space->settings[$setting] = $settings[$setting]->submit($space, $value);
+    }
+  }
+  spaces_save($space);
+
+}
+
 
 function scholarcp_cp(){
   return '(tbd)';
@@ -165,12 +261,18 @@ function scholarcp_toolbar_menu_links(){
  * Return links for the left side menu
  */
 function scholarcp_left_menu_links(){
+  return menu_navigation_links('scholarcp',1);
+  
+  /**
   $tree = menu_tree_page_data('scholarcp');
+
+  print_r($tree);
     foreach ($tree as $item) {
       if (scholarcp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
         return scholarcp_menu_navigation_links($item['below']);
       }
     }
+  */
 }
 
 

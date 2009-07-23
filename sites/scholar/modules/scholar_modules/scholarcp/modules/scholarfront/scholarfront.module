@@ -1,0 +1,17 @@
+<?php
+
+function scholarfront_menu(){
+  $items = array();
+  $items["scholarcp/settings/frontpage"] = array(
+    'title' => 'Front page',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholarcp_frontpage_form'),
+    'access callback' => 'spaces_admin_access',
+    'access arguments' => array('og', 'features'),
+    'file' => 'scholarfront.pages.inc',
+  );
+  
+  
+  return $items;
+}
+
