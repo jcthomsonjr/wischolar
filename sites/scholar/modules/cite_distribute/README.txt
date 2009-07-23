@@ -1,9 +1,7 @@
-//$Id: README.txt,v 1.1.1.1 2008/11/21 20:42:34 jweiner Exp $
 
+Cite Distribute for Drupal 6.x
 
-cite_distribute.module
-
-Author:  Joe Weiner (jweiner@iq.harvard.edu) Harvard MIT Data Center
+Author:  Joe Weiner (jweiner@iq.harvard.edu) The Institute for Quantitative Social Science as Harvard University
 Released under the GPL
 
 
