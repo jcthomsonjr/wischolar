@@ -1,8 +1,12 @@
 <?php
 
 /**
+ * @file
+ * Places meta tags in the <head> section of page with citation data for Google Scholar web service
+ */
+
+/**
  * Implementation of hook_cite_distribute_register()
- *
  */
 function googlescholar_meta_cite_distribute_register(){
   $module_info[] = array(
@@ -90,13 +94,6 @@ function googlescholar_meta_keywords($keywords = array()){
     }
   }
   return $keyword_str;
-}
-
-/**
- * Implementation of hook_make_template()
- */
-function googlescholar_meta_make_template($node, $module_mode = 'api', $iteration = NULL){ 
-  //not being used because 'file' is set to 'none' in hook_cite_distribute_register
 }
 
 //Example from Google

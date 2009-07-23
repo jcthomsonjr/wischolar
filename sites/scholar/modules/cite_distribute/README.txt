@@ -102,11 +102,11 @@ variable_del('cs_archive_path','');
 Cite Distribute API Hooks:
 =========================
 
-There are 2 required hooks used in the Cite Distribution API which you will need to include in your submodule:
+There are hooks used in the Cite Distribute API:
 
 
-hook_cite_distribute_register()
-hook_make_template()
+hook_cite_distribute_register() - Always required
+hook_make_template() - Only required if you submodule needs to send output to a template file
 
 
 
@@ -119,7 +119,7 @@ must return the keys and value options listed below:
           "name": Required. The name of the module
     "repository": Required. The name of the repository.
           "file": Required. Whether your module stores citataions in a single file or multiple files. 
-                  Value can be 'single', 'multiple' or 'none' ("none" when a file is not being used store output)
+                  The value can be 'single', 'multiple' or 'none' ("none" when a file is not being used store output)
  "dynamic_paths": A boolean value whether your module uses dynamic paths to store files.
       "filename": The name for your file, required only when 'file' => 'single'
           "flag": Optional flag used in PHP 5 file_put_contents() function    
@@ -200,11 +200,10 @@ Adminstrative Settings For Your Module:
 
 Cite Distribute API is primarily built on path and naming conventions. 
 
-1)	Your Submodule's Administrative Settings
+1)	Your module's Administrative Settings
 
- You should place your submodules administrative settings using this path 'admin/settings/cite_distribute/yourmodulename'.
- Also it is recommended that you place permissions using 'access' => user_access('administer cite distribute'). Below is 
- example for the 'cs_meta' submodule:
+ If you module has administrative settings, use this path convention 'admin/settings/cite_distribute/yourmodulename'.
+ Below is an example for the 'cs_meta' submodule:
 
 
 $items[] = array(
@@ -218,40 +217,25 @@ $items[] = array(
   ); 
 
 
-  
-Widget Processing:
-=================
-When your widget is clicked, Cite Distribute will automatically determine the module mode and call 
-your submodule's template processing code at the appropriate time (either hook_api hook_per_submission). This is accomplished
-by the function cite_distribute_widget_process(). You should include and item within hook_menu() that calls this function.
-The path should be 'yourmodulename/widget'. Below is an example from the 'cs_meta' module.
-
- 
-$items[] = array(
-  'path'               => 'cs_meta/widget',
-  'callback'           => 'cite_distribute_widget_process',
-  'access'             => user_access('submit cs_meta widget'),
-  );
-
-For user access if it recommended that you create a "submit" access control type permission for your module.
-  
-  
-Widget Presentation:
-===================
-Cite Distribute will automatically place your widget's icon on all biblio pages when viewing them by using Drupal's 
-hook_link() fucntion. A system variable is created automatically when submodule is installed (yourmodulename_show_widget).
-The widget visiblity settings can be centrally manged at: 'admin/settings/cite_distribute'. By default all widgets
-should appear.
-
-
 System Variables:
 ==================
-You must specify one system variable in your administative settings which is the root archive path for which your module
-will store file(s) within the file system, such as '/nfs/www/myarchive' 
+If you are sending output to a file, you must specify one system variable in your administative settings which is the root archive 
+path for which your module will store file(s) within the file system, such as '/nfs/www/myarchive' 
 
 NOTE: It must be named per convention 'modulename_archive_path'.
 
 For example in cs meta module: 
 
-$archive_path = variable_get('cs_archive_path','');
+variable_get('cs_archive_path','');
+
+
+Flag Module Integration:
+=========================
+
+Cite Distribute requires the flag module and uses its API to default create flags for each submodule. When your submodule is
+installed, a default flag will be autmatically created. When a user flags the node it will begin the process of generarating the meta data.
+
+The flags will appear as checkboxes in the Drupal "links" section of the page. Cite Distribute keeps track of the node to flag reference 
+is it own table in the database.
+
 
