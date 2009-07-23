@@ -26,9 +26,9 @@ function cite_distribute_admin(){ print 'test'; die;
   '#options' => $module_mode_names,
   '#required' => TRUE,
   '#default_value' => variable_get('cite_distribute_module_mode',''),
-  '#description' => t('<b>API mode</b> does nothing by default, but lets the developer decide when to call the module\'s functions.
-      <br><b>Batch mode</b> is intended to be run by cron will update all meta files at once in a batch process. 
-      <br><b>Per Submission mode</b> will update or create a meta file whenever content for RePEc is submitted or updated.')
+  '#description' => t('<strong>API mode</strong> does nothing by default, but lets the developer decide when to call the module\'s functions.
+      <br><strong>Batch mode</strong> is intended to be run by cron will update all meta files at once in a batch process. 
+      <br><strong>Per Submission mode</strong> will update or create a meta file whenever content for RePEc is submitted or updated.')
    );
 
       //checking to see if any submodules are installed
