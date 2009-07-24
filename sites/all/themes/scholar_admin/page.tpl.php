@@ -44,6 +44,13 @@
 		</div> <!-- / main-content -->
 
       <div id="footer">
+        <h3>The Scholars' Web Sites Project <span>IQSS, Harvard University</span></h3>
+        <ul>
+          <li>Documentation</li>
+          <li>Feedback</li>
+          <li>Legal</li>
+          <li class="last">Version 2.13</li>
+        </ul>
         <?php if ($footer_message){ ?>
           	<div id="footer-message"><?php print $footer_message; ?></div>
         <?php }; ?>
