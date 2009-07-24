@@ -33,7 +33,7 @@ function dyntextfield_menu() {
 function dyntextfield_lookup_keys($s_table_name, $s_prefix){
   
   $matches = array();
-  $result = db_query("SELECT DISTINCT {$s_table_name}_label as label FROM {content_{$s_table_name}} WHERE {$s_table_name}_label LIKE '%s' ORDER BY {$s_table_name}_label DESC LIMIT 20 ", $s_prefix."%");
+  $result = db_query("SELECT DISTINCT %s_label as label FROM {content_%s} WHERE %s_label LIKE '%s' ORDER BY %s_label DESC LIMIT 20 ", $s_table_name,$s_table_name,$s_table_name,$s_prefix."%",$s_table_name);
   
   while ($item = db_fetch_object($result)) {
     $matches[$item->label] = str_replace($s_prefix,"<b>$s_prefix</b>",$item->label);
@@ -408,6 +408,14 @@ function dyntextfield_widget_info() {
         'default value' => CONTENT_CALLBACK_DEFAULT,
       ),
     ),
+    'dyntextfield_textareawidget' => array(
+      'label' => t('Dynamic TextArea Widget'),
+      'field types' => array('dyntextfield'),
+      'multiple values' => CONTENT_HANDLE_CORE,
+      'callbacks' => array(
+        'default value' => CONTENT_CALLBACK_DEFAULT,
+      ),
+    ),
   );
 }
 
@@ -442,6 +450,7 @@ function dyntextfield_widget_settings($op, $widget) {
       return array('size');
   }
 }
+
 
 /**
 * Implementation of hook_widget().
@@ -497,12 +506,21 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
   
   $element['dyntext_fieldset']['value'] = array(
     '#title' => t('Field Value'),
-    '#type' => 'textfield',
     '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
     '#size' => !empty($field['widget']['size']) ? $field['widget']['size'] : 60,
     '#attributes' => array('class' => 'dyntextfield'),
     '#maxlength' => !empty($field['max_length']) ? $field['max_length'] : NULL,
   );
+  
+  switch($field['widget']['type']){
+    case 'dyntextfield_textareawidget':
+      $element['dyntext_fieldset']['value']['#type'] = 'textarea';
+    break;
+    case 'dyntextfield_widget':
+    default:
+      $element['dyntext_fieldset']['value']['#type'] = 'textfield';
+  }
+  
  
   // Used so that hook_field('validate') knows where to
   // flag an error in deeply nested forms.
