@@ -18,14 +18,14 @@ class scholarcp_setting_front implements space_setting {
 
   //dpm(spaces_settings());
   scholar_include('nodeautocomplete');
-  
-  ctools_include ( 'dependent' );
-  ctools_include ( 'form' );
+  scholar_include('scholarapi');
+  ctools_include ('dependent' );
+  ctools_include ('form' );
   
 
   
   // the "add new *" links
-  $items = scholarfront_create_links();
+  $items = scholar_create_links();
   $links = theme ( 'ctools_dropdown', t ( 'add new' ), $items, FALSE, 'panels-display-links' );
   
   // main options

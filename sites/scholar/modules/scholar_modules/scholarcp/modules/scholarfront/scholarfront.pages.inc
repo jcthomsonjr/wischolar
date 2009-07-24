@@ -8,7 +8,7 @@ function scholarcp_frontpage_form(){
 
   //dpm(spaces_settings());
   scholar_include('nodeautocomplete');
-  
+  scholar_include('scholarapi');
   ctools_include ( 'dependent' );
   ctools_include ( 'form' );
   
@@ -20,7 +20,7 @@ function scholarcp_frontpage_form(){
   );
   
   // the "add new *" links
-  $items = scholarfront_create_links();
+  $items = scholar_create_links();
   $links = theme ( 'ctools_dropdown', t ( 'add new' ), $items, FALSE, 'panels-display-links' );
   
   $default_value = 'feature';

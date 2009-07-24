@@ -19,6 +19,7 @@ class scholarcp_setting_bio implements space_setting {
   
     scholar_include('nodeautocomplete');
     $form['nid'] = scholar_node_autocomplete_element();
+    $auto_element['#description'] = t ( 'Select the post your want to set as a front page or create a new one' ) . $links;
     $form['nid']['#default_value'] = $value['nid'] ? _scholar_node_autocomplete_nid_to_title($value['nid']) : '';
     $form['#title'] = 'bio';
   
