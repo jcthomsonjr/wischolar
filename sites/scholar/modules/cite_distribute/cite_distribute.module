@@ -296,6 +296,8 @@ function cite_distribute_menu() {
   'title' => t('Cite Distribute'),
   'page callback' => 'drupal_get_form',
   'page arguments' => array('cite_distribute_admin'),
+  'file' => 'cite_distribute.admin.inc',
+  'file path' =>  drupal_get_path('module', 'cite_distribute') .'/includes',
   'access arguments' => array('administer cite distribute')
   );
 
@@ -304,6 +306,8 @@ function cite_distribute_menu() {
   'type' => MENU_LOCAL_TASK ,
   'page callback' => 'drupal_get_form',
   'page arguments' => array('cite_distribute_admin'),
+  'file' => 'cite_distribute.admin.inc',
+  'file path' =>  drupal_get_path('module', 'cite_distribute') .'/includes',
   'weight' => -10,
   'access arguments' => array('administer cite distribute')
   );

@@ -42,7 +42,7 @@ function googlescholar_meta_create_metadata($node){
   $output .= $node->biblio_publisher ? '<meta name="citation_publisher" content="' . $node->biblio_publisher . '">' : '';
   $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . googlescholar_meta_authors($node->biblio_contributors[1]) . '">' : ''; 
   $output .= $node->title ? '<meta name="citation_title" content="' . $node->title . '">' : '';
-  $output .= $node->biblio_date ? '<meta name="citation_date" content="' . googlescholar_meta_date($node->biblio_date) . '">' : ''; //NEED TO FIX FORMAT STILL
+  $output .= $node->biblio_date ? '<meta name="citation_date" content="' . googlescholar_meta_date($node->biblio_date) . '">' : '';
   $output .= $node->biblio_year ? '<meta name="citation_year" content="' . $node->biblio_year . '">' : '';
   $output .= $node->biblio_volume ? '<meta name="citation_volume" content="' . $node->biblio_volume. '">' : '';
   $output .= $node->biblio_issue ? '<meta name="citation_issue" content="' . $node->biblio_issue. '">' : '';
