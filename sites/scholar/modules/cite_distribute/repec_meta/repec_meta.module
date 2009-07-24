@@ -105,7 +105,7 @@ function repec_meta_templates_submit($form_id, $form_values) {
   
 /**
  * repec_meta_fields_submit()
-  * @param unknown_type $form_id
+ * @param unknown_type $form_id
  * @param unknown_type $form_values
  */
 function repec_meta_fields_submit($form_id, $form_values) {
@@ -302,8 +302,9 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
     }
 
     elseif ($t_data->identifier == 'Keywords'){
-
+      if(is_array($node->biblio_keywords)){
       $template .= $t_data->identifier . ': ' .  implode(',', $node->biblio_keywords). "\n";
+      }
     }
 
     elseif ($t_data->identifier == 'Pages'){
