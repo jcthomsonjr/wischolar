@@ -10,7 +10,7 @@ function bkn_contrib_lookup_admin_settings() {
    $form['bkn_contrib_lookup_allow_autocomplete'] = array(
     '#type' => 'checkbox',
     '#title' => t('Lookup via autocomplete'),
-    '#default_value' => 0,
+    '#default_value' => variable_get('bkn_contrib_lookup_allow_autocomplete',0),
     '#return_value' => 1,
     '#description' => t('Should the search of the berkly be user initiated or automatic via the autocomplete field.')
   );
