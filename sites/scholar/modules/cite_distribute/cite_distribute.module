@@ -33,6 +33,40 @@ function cite_distribute_theme(){
 }
 
 /**
+ * Implementation of hook_strongarm()
+ * Store and lock down system settings for repec and cs modules
+ * scholar profile only
+ */
+function cite_distribute_strongarm(){
+  $conf = array();
+  //if the Scholar Profile has been installed
+  if (variable_get('install_profile', '') == 'schoslar'){
+    $submodules = cite_distribute_installed_mods();
+    foreach ($submodules as $module){
+
+      switch($module['name']){
+        case 'repec_meta':
+          $conf['repec_meta_inst_name'] = 'The Institute for Quantitative Social Science';
+          $conf['repec_meta_archive_code'] = 'qss';
+          $conf['repec_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec';
+          $conf['repec_meta_archive_url'] = 'http://repec.iq.harvard.edu';
+
+          break;
+        case 'cs_meta':
+          $conf['cs_meta_inst_name'] = 'The Institute for Quantitative Social Science';
+          $conf['cs_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec/cs';
+          break;
+
+        case 'googlescholar_meta':
+          //no system settings needed for googlescholar_meta
+          break;
+      }
+    }
+  }
+  return $conf;
+}
+
+/**
  * Implementation of hook_link()
  */
 function cite_distribute_link($type, $object, $teaser = FALSE){
@@ -255,7 +289,7 @@ function cite_distribute_check_disabled($module_name, $nid = NULL){
     return FALSE;
   }
   else{
-    $res = db_result(db_query("SELECT nid from {cite_distribute} WHERE type = '%s'", $module_name));
+    $res = db_result(db_query("SELECT nid from {cite_distribute} WHERE type = '%s' AND nid = %d", $module_name, (int)$nid));
     return (bool) $res;    
   }
 }
