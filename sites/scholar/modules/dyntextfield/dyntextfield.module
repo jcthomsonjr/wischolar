@@ -30,14 +30,14 @@ function dyntextfield_menu() {
   return $items;
 }
 
-function dyntextfield_lookup_keys($s_prefix){
+function dyntextfield_lookup_keys($s_table_name, $s_prefix){
   
   $matches = array();
-  //db_query(' ORDER BY delta', $node->vid);
+  $result = db_query("SELECT DISTINCT {$s_table_name}_label as label FROM {content_{$s_table_name}} WHERE {$s_table_name}_label LIKE '%s' ORDER BY {$s_table_name}_label DESC LIMIT 20 ", $s_prefix."%");
   
-  $matches[1341234] = array("Richard Brandon","http://google.com");
-  $matches[1441234] = array("Matthew Brandon","http://masters.com");
-  $matches[1366234] = array("John Smith","http://blinks.com");
+  while ($item = db_fetch_object($result)) {
+    $matches[$item->label] = str_replace($s_prefix,"<b>$s_prefix</b>",$item->label);
+  }
   
   print drupal_to_js($matches);
   exit();
@@ -484,8 +484,8 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
   $element['dyntext_fieldset']['label'] = array(
     '#title' => t('Field Name'),
     '#type' => 'textfield',
-    '#default_value' => isset($items[$delta]['label']) ? $items[$delta]['label'] : NULL,
-    '#autocomplete_path' => 'dyntextfield/getKeys/js',
+    '#default_value' => isset($items[$delta]['dyntext_fieldset']['label']) ? $items[$delta]['dyntext_fieldset']['label'] : NULL,
+    '#autocomplete_path' => 'dyntextfield/getKeys/js/'.$field['field_name'],
     '#size' => !empty($field['widget']['size']) ? $field['widget']['size'] : 20,
     '#attributes' => array('class' => 'dyntextfield'),
     '#maxlength' => !empty($field['max_length']) ? $field['max_length'] : NULL,
@@ -494,7 +494,7 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
   $element['dyntext_fieldset']['value'] = array(
     '#title' => t('Field Value'),
     '#type' => 'textfield',
-    '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
+    '#default_value' => isset($items[$delta]['dyntext_fieldset']['value']) ? $items[$delta]['dyntext_fieldset']['value'] : NULL,
     '#size' => !empty($field['widget']['size']) ? $field['widget']['size'] : 60,
     '#attributes' => array('class' => 'dyntextfield'),
     '#maxlength' => !empty($field['max_length']) ? $field['max_length'] : NULL,
