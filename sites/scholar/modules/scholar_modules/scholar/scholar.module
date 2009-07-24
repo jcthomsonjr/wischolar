@@ -82,7 +82,9 @@ function scholar_menu(){
       'type' => MENU_CALLBACK,
       'title' => 'something',
       'page callback' => 'scholar_node_autocomplete',
+    	'file' => 'nodeautocomplete.inc',
       'access arguments' => array('access content'),
+      'file path' => drupal_get_path('module', 'scholar') . '/includes',
     );
   
   return $items;

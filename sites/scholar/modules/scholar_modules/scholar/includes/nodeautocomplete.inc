@@ -43,13 +43,31 @@ function scholar_node_autocomplete($str){
 function scholar_node_autocomplete_validate($element, &$form_state){
   $element_value = $element['#value'];
   if ($element_value){
-    preg_match('/^(?:\s*|(.*) )?\[\s*nid\s*:\s*(\d+)\s*\]$/', $element_value, $matches);
+    $nid = _scholar_node_autocomplete_title_to_nid($element_value);
     
-    if (!empty($matches)) {
-      $form_state['scholar_referenced_nid'] = $matches[2];
+    if ($nid) {
+      $form_state['scholar_referenced_nid'] = $nid;
     }
     else {
       form_error($element, t('This post is not valid'));
     }
   }
+}
+
+function _scholar_node_autocomplete_title_to_nid($title){
+  preg_match('/^(?:\s*|(.*) )?\[\s*nid\s*:\s*(\d+)\s*\]$/', $title, $matches);
+  if (!empty($matches)) {
+    return $matches[2];
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+function _scholar_node_autocomplete_nid_to_title($nid){
+  $query = "SELECT n.title FROM {node} n WHERE n.nid=%d";
+  $title = db_result(db_query($query, $nid));
+  $title .= ' [nid:' . $nid . ']'; 
+  return $title;
 }
