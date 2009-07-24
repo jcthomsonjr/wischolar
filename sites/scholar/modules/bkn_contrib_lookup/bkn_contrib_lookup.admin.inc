@@ -9,10 +9,16 @@ function bkn_contrib_lookup_admin_settings() {
   
    $form['bkn_contrib_lookup_allow_autocomplete'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Lookup via autocomplete'),
-    '#default_value' => variable_get('bkn_contrib_lookup_allow_autocomplete',0),
+    '#title' => t('Enable Autocomplete'),
+    '#default_value' => variable_get('bkn_contrib_lookup_allow_autocomplete',1),
     '#return_value' => 1,
-    '#description' => t('Should the search of the berkly be user initiated or automatic via the autocomplete field.')
+    '#description' => t('Should contributor field use autocomplete?')
+  );
+  $form['bkn_contrib_lookup_mode'] = array(
+    '#type' => 'radios',
+    '#title' => t('How should the data be retrieved from BKN?'),
+    '#default_value' => variable_get('bkn_contrib_lookup_mode', 1),
+    '#options' => array(t('Lookup via autocomplete (many requests to bkn)'), t('User Initiated (single request)'), t('Disabled')),
   );
    
    return system_settings_form($form);

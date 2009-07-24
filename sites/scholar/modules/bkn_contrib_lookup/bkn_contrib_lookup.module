@@ -116,7 +116,8 @@ function bkn_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
     	  $form[$key]['biblio_contributors'][$fields_key]['#theme'] = 'bkn_contrib_lookup_contributors';
     	}
       
-    	$use_autocomplete = variable_get('bkn_contrib_lookup_allow_autocomplete',0);
+    	$use_autocomplete = variable_get('bkn_contrib_lookup_allow_autocomplete',1);
+    	$n_lookup_mode = variable_get('bkn_contrib_lookup_mode',1);
     	foreach ($a_fields as $s_key => $a_field){
     		if(substr($s_key,0,1) == "#") continue;
     		
@@ -137,7 +138,7 @@ function bkn_contrib_lookup_form_alter(&$form, $form_state, $form_id) {
     		}
     		
     		
-    	  if(!$use_autocomplete && !array_key_exists('check_bkn',$a_field)){
+    	  if($n_lookup_mode == 1 && !array_key_exists('check_bkn',$a_field)){
     		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['check_bkn'] = array('#type' => 'checkbox', '#title' => 'Use bkn Database', '#parents' => array_merge($a_parents,array('check_bkn')), '#attributes' => array('class' => 'bknContributorCheck') );
     		}
     		
@@ -177,9 +178,9 @@ function bkn_contrib_lookup_theme($existing, $type, $theme, $path) {
 // implement hook_menu_alter() to use bkns return instead of
 // the biblio return
 function bkn_contrib_lookup_menu_alter(&$items) {
-   $use_autocomplete = variable_get('bkn_contrib_lookup_allow_autocomplete',0);
+   
   //Hijack the callback for the biblio autocomplete and call this one first.
-  if($use_autocomplete) $items['biblio/autocomplete']['page callback'] = 'bkn_contrib_lookup_menu_autocomplete';
+  $items['biblio/autocomplete']['page callback'] = 'bkn_contrib_lookup_menu_autocomplete';
   
 } // end bkn_contrib_lookup_menu_alter()
 
@@ -194,7 +195,9 @@ function bkn_contrib_lookup_menu_alter(&$items) {
  */
 function bkn_contrib_lookup_menu_autocomplete($field, $string = '') {
   $matches = array();
-  if ($field == 'contributor') {
+  $use_bkn_autocomplete = (variable_get('bkn_contrib_lookup_mode',1) == 0);
+  
+  if ($use_bkn_autocomplete && $field == 'contributor') {
     
     $results = bkn_call_service($string);
     
