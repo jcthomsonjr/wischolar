@@ -197,6 +197,10 @@ function dyntextfield_field($op, &$node, $field, &$items, $teaser, $page) {
        
        //Prepare for DB Save (move from fieldset)
       foreach ($items as $delta => $item) {
+        if(!array_key_exists('dyntext_fieldset',$item)){
+          unset($items[$delta]);
+          continue;
+        }
         foreach ($item['dyntext_fieldset'] as $key => $value){
           $items[$delta][$key] = $value;
         }
@@ -216,7 +220,7 @@ function dyntextfield_field($op, &$node, $field, &$items, $teaser, $page) {
 * from forms.
 */
 function dyntextfield_content_is_empty($item, $field) {
-  if($field['field_name'] == 'field_test_dynamic'){
+  if(array_key_exists('dyntext_fieldset',$item)){
     if(empty($item['dyntext_fieldset']['label'])) return true;
     return false;
   }elseif (empty($item['value'])) {
@@ -484,7 +488,7 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
   $element['dyntext_fieldset']['label'] = array(
     '#title' => t('Field Name'),
     '#type' => 'textfield',
-    '#default_value' => isset($items[$delta]['dyntext_fieldset']['label']) ? $items[$delta]['dyntext_fieldset']['label'] : NULL,
+    '#default_value' => isset($items[$delta]['label']) ? $items[$delta]['label'] : NULL,
     '#autocomplete_path' => 'dyntextfield/getKeys/js/'.$field['field_name'],
     '#size' => !empty($field['widget']['size']) ? $field['widget']['size'] : 20,
     '#attributes' => array('class' => 'dyntextfield'),
@@ -494,7 +498,7 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
   $element['dyntext_fieldset']['value'] = array(
     '#title' => t('Field Value'),
     '#type' => 'textfield',
-    '#default_value' => isset($items[$delta]['dyntext_fieldset']['value']) ? $items[$delta]['dyntext_fieldset']['value'] : NULL,
+    '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
     '#size' => !empty($field['widget']['size']) ? $field['widget']['size'] : 60,
     '#attributes' => array('class' => 'dyntextfield'),
     '#maxlength' => !empty($field['max_length']) ? $field['max_length'] : NULL,
