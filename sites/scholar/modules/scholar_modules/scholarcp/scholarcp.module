@@ -1,7 +1,8 @@
 <?php
 define('CPTHEME', 'scholar_admin');
 
-function scholarcp_init(){	
+function scholarcp_init(){
+   drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
   if (arg(0) == 'scholarcp'){
   	_scholarcp_init_theme();
   } else {
@@ -242,7 +243,6 @@ function scholarcp_preprocess_page(&$vars) {
   $vars['scholarcp_left'] = '';
   
   if (scholar_get_scholar() && user_access('configure spaces features')) { 
-    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
     $links = scholarcp_toolbar_menu_links();
     $links = theme('scholarcp_toolbar', $links);
     $vars['scholarcp_toolbar'] = $links;
