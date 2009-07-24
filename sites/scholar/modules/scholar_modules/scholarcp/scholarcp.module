@@ -25,6 +25,10 @@ function scholarcp_spaces_settings() {
       'class' => 'scholarcp_setting_front',
       'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.front.inc',
     ),
+    'bio' => array(
+      'class' => 'scholarcp_setting_bio',
+      'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.bio.inc',
+    ),
   );
 }
 
@@ -181,7 +185,21 @@ function scholarcp_settings_form_submit($form, &$form_state){
     }
   }
   spaces_save($space);
+}
 
+/**
+ * Validate handler for spaces features form
+ */
+function scholarcp_settings_form_validate($form, &$form_state) {
+  dpm('im validating');
+  $space = $form_state['values']['space'];
+  $settings = spaces_settings();
+
+  if (is_array($form_state['values']['settings'])) {
+    foreach ($form_state['values']['settings'] as $setting => $value) {
+      $settings[$setting]->validate($space, $value);
+    }
+  }
 }
 
 
@@ -224,6 +242,7 @@ function scholarcp_preprocess_page(&$vars) {
   $vars['scholarcp_left'] = '';
   
   if (scholar_get_scholar() && user_access('configure spaces features')) { 
+    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
     $links = scholarcp_toolbar_menu_links();
     $links = theme('scholarcp_toolbar', $links);
     $vars['scholarcp_toolbar'] = $links;

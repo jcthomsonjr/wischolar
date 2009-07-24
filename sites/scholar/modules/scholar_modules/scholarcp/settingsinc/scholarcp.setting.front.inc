@@ -28,13 +28,10 @@ class scholarcp_setting_front implements space_setting {
   $items = scholarfront_create_links();
   $links = theme ( 'ctools_dropdown', t ( 'add new' ), $items, FALSE, 'panels-display-links' );
   
-  $default_value = 'feature';
-
-  $form = array();
-  $form['#title'] = 'sssssssssssssssss';
-
   // main options
   $form = array (
+		//'#prefix' => '<div id="edit-settings-wrapper">',
+  	//'#suffix' => '</div>',
     '#title' => t ( 'Front page -- trying' ), 
     '#type' => 'radios', 
     '#options' => array (
@@ -43,52 +40,35 @@ class scholarcp_setting_front implements space_setting {
       'post' => t ('One of your posts'),
       'flagedposts' => t('Hand-pick content as I go'), 
     ), 
-    '#default_value' => isset($value) ? $value : 'bio' , 
+    //'#default_value' => isset($value) ? $value : 'bio' , 
     '#tree' => TRUE 
   );
-  
-  return $form;
-  // dependencies
   
   // post
   $auto_element = scholar_node_autocomplete_element();
   $auto_element['#description'] = t ( 'Select the post your want to set as a front page or create a new one' ) . $links;
   $auto_element['#process'] = array ('ctools_dependent_process' ); 
-  $auto_element['#dependency'] = array ('radio:frontpage_settings[frontpage]' => array ('post' ) );
+  $auto_element['#dependency'] = array ('radio:settings[front]' => array ('post' ) );
   
-  $form ['frontpage_settings'] ['front_nid'] = $auto_element;
-
-
+  $form['front_nid'] = $auto_element;
+  
   $options = array(
-    'news' => t('News'),
-    'announcements' => t('Announcements'),
+    'news' => 'News',
+    'announcements' => 'Announcements',
   );
 
-  $form['frontpage_settings']['node_options'] = array(
-		'#prefix' => '<div id="edit-frontpage-settings-node-options-wrapper">',
-  	'#suffix' => '</div>',
-  	'#type' => 'checkboxes',
-  	'#title' => t('Default options'),
-  	'#options' => $options,
-    '#default_value' => array_keys($options),
-  	'#description' => t('Users with the <em>administer nodes</em> permission will be able to override these options.'),
-    '#process' => array ('expand_checkboxes', 'ctools_dependent_process' ), 
-    '#dependency' => array ('radio:frontpage_settings[frontpage]' => array ('feature' ) ) 
-  );
+
   
   // bio
-  $form['frontpage_settings']['bio'] = array(
+  $form['bio1'] = array(
   '#input' => TRUE,
   '#type' => 'item',
   '#value' => t('create a new one ... etc...'),
   '#process' => array ('ctools_dependent_process' ),
-  '#dependency' => array ('radio:frontpage_settings[frontpage]' => array ('bio' ) ),
+  '#dependency' => array ('radio:settings[front]' => array ('bio' ) ),
   );
   
-
-
-
-  
+  dpm($form);
   return $form;
   }
 
