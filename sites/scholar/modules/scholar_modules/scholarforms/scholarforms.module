@@ -11,7 +11,7 @@ define(TIMEZONE, 'EDT');
  * Returns an array of fieldsets to register with vertical tabs
  */
 function scholarforms_fieldsets(){
-  return array('menu', 'author', 'og_nodeapi' , 'revision_information' , 'path', 'comment_settings', 'scholartaxonomy', 'options');
+  return array('menu', 'author', 'og_nodeapi' , 'revision_information' , 'path', 'comment_settings', 'scholartaxonomy', 'scholarfiles' , 'options');
 }
 
 /**
@@ -99,8 +99,6 @@ function scholarforms_get_publishing_options($options, $node = NULL){
  * Implementation of hook_form_alter
  */
 function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form);
-
-  //$form['test'] = 'scholarforms_form_validate';
   $types = array_keys(node_get_types());
 
   //if editing an exisitng node, load the node
@@ -118,21 +116,28 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
       
-      //TODO: need to create a function to place file and image fields into this fieldset
       /***  Images & Files Section ***/
       $form['scholarfiles'] = array(
       '#type' => 'fieldset',
       '#title' => t('Images & Files'),
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
-      '#weight' => 0,
+      '#weight' => 1,
       );
 
-     /* $filefield = $form[FILE_CCK_FIELD];
-      unset($form[FILE_CCK_FIELD]);
-      $form['scholarfiles'][FILE_CCK_FIELD] = $filefield;
-*/
+      //if the content type has an image field
+      if ($form['field_image']){
+      $scholarimage =  $form['field_image'];
+       unset($form['field_image']);
+      $form['scholarfiles']['field_image'] = $scholarimage;
+      }
       
+     //if the content type has a file field
+      if($form['field_file']){
+        $scholarfile =  $form['field_file'];
+       unset($form['field_file']);
+      $form['scholarfiles']['field_file'] = $scholarfile;
+      }    
 
       /*** Tags & Categories Section ***/
 
@@ -141,16 +146,19 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
       '#title' => t('Tags & Categories'),
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
-      '#weight' => 0,
+      '#weight' => 2,
       );
       
+      //if the form has taxonomy
+      if ($form['taxonomy']){
       //add a description or new title, etc.
       $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
 
+      if ($form['taxonomy']){
       $scholartax =  $form['taxonomy'];
       unset($form['taxonomy']);
       $form['scholartaxonomy']['taxonomy'] =  $scholartax;
-
+      }
       // $form['scholartaxonomy']['taxonomy'] =  taxonomy_form($vid =1);
       // theme_filefield_widget($element);
 
