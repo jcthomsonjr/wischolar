@@ -1,3 +1,4 @@
+<div id="scholarcp-top-admin-menus">
 <?php if (!empty($tree_0)): ?>
     <?php foreach ($tree_0 as $links): ?>
       <?php print $links; ?>
@@ -10,3 +11,4 @@
       <?php print $links; ?>
     <?php endforeach; ?>
 <?php endif; ?>
+</div>
