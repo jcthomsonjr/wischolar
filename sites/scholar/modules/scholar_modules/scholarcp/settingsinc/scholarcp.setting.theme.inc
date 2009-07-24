@@ -28,15 +28,11 @@ class scholarcp_setting_theme implements space_setting {
   
   foreach ($enabled as $theme_obj) {
     $info = $theme_obj -> info;
-    $theme_name = $theme_obj -> name;
+    $info['theme_name'] = $theme_obj -> name;
 
-    $screenshot = t('no screenshoot available');
-    if (file_exists($info['screenshot'])){
-      $screenshot = theme('image', $info['screenshot'], t('Screenshot for %theme theme', array('%theme' => $theme_name)), '', array('class' => 'screenshot'), FALSE);
-    }
-    $options[$theme_name] = $screenshot . $theme_name . $info['description']; //'ccc';
+    $options[$info['theme_name']] = theme('scholarcp_theme_picker', $info); 
   }  
-  
+
   $form = array(
     '#title' => t('theme selection'),
     '#type' => 'radios',
@@ -57,7 +53,6 @@ class scholarcp_setting_theme implements space_setting {
     return $value;
   }
 }
-
 
 /**
  * return the current theme name of the active scholar site

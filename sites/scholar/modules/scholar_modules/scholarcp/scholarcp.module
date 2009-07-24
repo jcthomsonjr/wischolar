@@ -220,6 +220,13 @@ function scholarcp_theme($cache, $type, $theme, $path) {
     'path' => $path,
     'file' => 'theme.inc',
   );
+  
+  $items['scholarcp_theme_picker'] = array(
+    'arguments' => array('info' => array()),
+    'template' => 'scholarcp-theme-picker',
+    'path' => $path,
+    'file' => 'theme.inc',
+  );
 
   return $items;
 }
