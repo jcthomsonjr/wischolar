@@ -131,7 +131,9 @@ function repec_meta_fields() {
   	$form['repec_meta_fields'][$tid] = array( 
       '#type' => 'fieldset', 
       '#title' => t("$friendly_name Fields"),
-      '#description' => t("All fields in the '$type' template are included by default within the RePEc rdf file. You can choose to exclude any of the fields by highlighting them, except for those preceed with an asterisk which are required fields. Required fields will always be included. "),
+      '#description' => t("All fields in the '$type' template are included by default within the RePEc rdf file. 
+      You can choose to EXCLUDE any of the fields by highlighting them, except for those preceed with an 
+      asterisk which are required fields. Required fields will always be included. "),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE, 
       ); 
