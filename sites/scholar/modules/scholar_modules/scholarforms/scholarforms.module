@@ -300,31 +300,31 @@ function scholarforms_nodeapi(&$node, $op){
       $node->pubstatus = $pubstatus;
       
       if ($pubstatus == 'pubondate'){
-      $node->pubdate = db_result(db_query("SELECT pubondate from {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid));
+      $node->pubdate = db_result(db_query("SELECT pubondate from {scholarforms} WHERE nid = %d", (int)$node->nid));
       }
       break;
 
     case 'insert':
       $pubdate = $node->pubstatus == 'pubondate' ? date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE) : 0;
       
-      $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
+      $sql = db_query("INSERT INTO {scholarforms} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
       (int)$node->nid, $node->pubstatus, $pubdate);
       break;
 
     case 'update':
 
-      $sql_delete = db_query("DELETE FROM {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid);
+      $sql_delete = db_query("DELETE FROM {scholarforms} WHERE nid = %d", (int)$node->nid);
 
       if ($node->pubstatus == 'pubondate'){
         //convert $node->pubdate into unix timestamp
         $pubdate_timestamp = date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE);
 
-        $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
+        $sql = db_query("INSERT INTO {scholarforms} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
         (int)$node->nid, $node->pubstatus,  $pubdate_timestamp );
       }
 
       else{
-        $sql = db_query("INSERT INTO {scholarforms_pubstatus} (nid, pubstatus) VALUES (%d, '%s')",
+        $sql = db_query("INSERT INTO {scholarforms} (nid, pubstatus) VALUES (%d, '%s')",
         (int)$node->nid, $node->pubstatus);
       }
       break;
@@ -363,7 +363,7 @@ function scholarforms_get_workflow($type, $keyword){
 function scholarforms_get_pubstatus($node = NULL, $type = NULL){
   if (isset($node)){
     //editing an exisiting node, populate the choice that the user last selected
-    return db_result(db_query("SELECT pubstatus from {scholarforms_pubstatus} WHERE nid = %d", (int)$node->nid));
+    return db_result(db_query("SELECT pubstatus from {scholarforms} WHERE nid = %d", (int)$node->nid));
   }
   else{
     //creating new node
@@ -394,15 +394,15 @@ function scholarforms_get_pubstatus($node = NULL, $type = NULL){
 function scholarforms_cron(){
   $today = format_date(time(), $type = 'custom', $format = "Y-m-d");
 
-  $sql = db_query("SELECT * from {scholarforms_pubstatus} WHERE pubstatus = '%s' ", 'pubondate');
+  $sql = db_query("SELECT * from {scholarforms} WHERE pubstatus = '%s' ", 'pubondate');
   while($data = db_fetch_object($sql)){
     if ($today == format_date($data->pubondate, $type = 'custom', $format = "Y-m-d") ){
       
       //set the node as published
       $sql_update = db_query("UPDATE {node} SET status = %d WHERE nid = %d", 1, $data->nid);      
      
-      //now reset the row and mark it as published in the scholarforms_pubstatus table
-      $sql_reset_row = db_query("UPDATE {scholarforms_pubstatus} SET pubondate = %d, pubstatus = '%s'
+      //now reset the row and mark it as published in the scholarforms table
+      $sql_reset_row = db_query("UPDATE {scholarforms} SET pubondate = %d, pubstatus = '%s'
       WHERE nid = %d", 0, 'publish', $data->nid);      
     }
   }
