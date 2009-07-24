@@ -42,15 +42,13 @@ function repec_meta_config(){
        
   	);
  
-  	
   $form['repec_meta']['repec_meta_archive_url'] = array(
       '#type' => 'textfield',
       '#title' => t('Archive URL'),
       '#required' => TRUE,
       '#default_value' => variable_get('repec_meta_archive_url',''),
       '#description' => t("Enter your institution's archive base URL. 
-      Do not include any directories in the URL. <br> For example: http://test.repec.com" )
-       
+      Do not include any directories in the URL. <br> For example: http://test.repec.com" )  
   	);	
   			
   return system_settings_form($form);

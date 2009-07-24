@@ -205,8 +205,8 @@ function cite_distribute_form($form_id, $nid){
   '#title' => t('Select repositories for distribution'),
   '#collapsible' => FALSE,
   '#collapsed' => FALSE,
-   '#prefix' =>'<div id="distribute">',
-    '#suffix' => '</div>',
+ //  '#prefix' =>'<div id="distribute">',
+ //   '#suffix' => '</div>',
   );
   
   foreach ($submodules as $module){
@@ -219,29 +219,29 @@ function cite_distribute_form($form_id, $nid){
     '#suffix' => '</div>',
     );
   }
-
-  $form['cite_distribute_widgets']['test'] = array(
-  '#type' => 'markup',
-  '#value' => 'replace me...',
-   '#prefix' =>'<div id="target">',
-   '#suffix' => '</div>',
-  );
-  
-  $form['cite_distribute_widgets']['nid'] = array(
-  '#type' => 'hidden',
-  '#value' => $nid,
-  );
-
+ 
   $form['cite_distribute_widgets']['cite_distribute_submit'] = array(
   '#type' => 'submit',
   '#value' => t('Submit'),
   '#ahah' => array(
   'event' => 'click',
   'path' => 'cite_distribute/submit',
-  'wrapper' => '', // This should be dynamic
+  'wrapper' => 'distribute-message',
   'method' => 'replace', 
   'effect' => 'fade',
   )
+  );
+  
+  $form['cite_distribute_widgets']['nid'] = array(
+  '#type' => 'hidden',
+  '#value' => $nid,
+  );
+  
+   $form['cite_distribute_widgets']['distribute-message'] = array(
+  '#type' => 'markup',
+  '#value' => ' ', //empty placeholder
+   '#prefix' =>'<div id="distribute-message">',
+   '#suffix' => '</div>',
   );
 
   return $form;  
@@ -647,6 +647,9 @@ function cite_distribute_form_alter(&$form, $form_state, $form_id){
     //dpm($form);
 }
 
+/**
+ * For development purposes - should be removed
+ */
 function _cite_distribute_clean(){ 
 
   $sql = db_query("TRUNCATE table {cite_distribute}");
