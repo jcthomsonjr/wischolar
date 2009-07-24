@@ -22,25 +22,23 @@ function cite_distribute_theme(){
        'file' => 'cite_distribute.widget.inc',
        'path' => $path_inc,
     ),
-    
       'cite_distribute_form_msg' => array(
       'arguments' => array('modules' => NULL),
        'file' => 'cite_distribute.widget.inc',
        'path' => $path_inc,
     ),
-    
   );
 }
 
 /**
  * Implementation of hook_strongarm()
- * Store and lock down system settings for repec and cs modules
- * scholar profile only
+ * Store and lock down system settings for submodules
+ * (scholar profile only)
  */
 function cite_distribute_strongarm(){
   $conf = array();
   //if the Scholar Profile has been installed
-  if (variable_get('install_profile', '') == 'schoslar'){
+  if (variable_get('install_profile', '') == 'scholar'){
     $submodules = cite_distribute_installed_mods();
     foreach ($submodules as $module){
 
