@@ -13,3 +13,67 @@ li.item-theme-picker  {
 li.item-theme-picker img {
   border: 1px solid #959191;
   }
+  
+  
+  body{
+margin: 0 auto;					/*align the display at the center*/
+text-align: center;				/*align the display at the center*/
+}
+
+div#frame{
+margin: 0 auto;					/*align the frame at the center*/
+width: 50em;					/*frame width*/
+height: 25em;					/*frame height*/
+border: #000 solid 10px;		/*frame border*/
+position: relative;				/*position relative so that it gets hide in IE*/
+overflow: hidden;				/*hide all overflow element out of the frame*/
+}
+div#container
+{
+position: relative;				/*position relative so that it gets hide in IE*/
+width: 200em;					/*the width must be big enough so that all elements can align side by side*/
+height: 25em;					/*container height*/
+}
+div.box
+{
+float: left;					/*float each element side by side*/
+width: 50em;
+height: 25em;
+position:: relative;
+}
+
+div#box1
+{
+background-color: #66A666;
+}
+div#box2
+{
+background-color: #E37373;
+}
+div#box3
+{
+background-color: #B2B2B2;
+}
+div#box4
+{
+background-color: #A51515;
+}
+
+div#next
+{
+width: 3em;
+height: 5em;
+top: 15em;
+right: 15em;
+position: absolute;
+background: transparent url(images/next.png);
+}
+div#prev
+{
+width: 3em;
+height: 5em;
+top: 15em;
+left: 15em;
+position: absolute;
+background: transparent url(images/prev.png);
+}

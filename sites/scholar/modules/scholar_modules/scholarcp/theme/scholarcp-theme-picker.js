@@ -19,7 +19,15 @@ if (Drupal.jsEnabled) {
     });
     
     theList = theList + '</ul>';
+    
+    theList = theList + '<div id="prev"></div>';
+    theList = theList + '<div id="next"></div>';
+    
+    
     $('#scholarcp-settings-theme').prepend(theList);
+    
+    
+    $('div#prev, div#next').RSC();
     
   });
 }
