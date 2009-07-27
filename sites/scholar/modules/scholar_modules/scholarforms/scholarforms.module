@@ -96,48 +96,60 @@ function scholarforms_get_publishing_options($options, $node = NULL){
 }
 
 /**
- * Implementation of hook_form_alter
+ * Implementation of hook_form_alter()
  */
-function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form);
+function scholarforms_form_alter(&$form, $form_state, $form_id) {
   $types = array_keys(node_get_types());
 
   //if editing an exisitng node, load the node
   $node = isset($form['#node']->nid) ? node_load(array('nid' => $form['#node']->nid)) : NULL;
 
   //create options for publishing status radios
-  $default_options = array(
-  'publish' => t('Publish now'),
-  'save' => t('Save as draft (Unpublish this post)'),
-  'pubondate' => t('Publish on another date'),
-  );
-
+  $default_options =  _scholarforms_default_options();
   $options = scholarforms_get_publishing_options($default_options, $node);
 
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
       
-      /***  Images & Files Section ***/
-      $form['scholarfiles'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Images & Files'),
-      '#collapsible' => FALSE,
-      '#collapsed' => FALSE,
-      '#weight' => 1,
-      );
-
-      //if the content type has an image field
-      if ($form['field_image']){
-      $scholarimage =  $form['field_image'];
-       unset($form['field_image']);
-      $form['scholarfiles']['field_image'] = $scholarimage;
-      }
+       /*** Images & Files Section ***/
       
-     //if the content type has a file field
-      if($form['field_file']){
-        $scholarfile =  $form['field_file'];
-       unset($form['field_file']);
-      $form['scholarfiles']['field_file'] = $scholarfile;
-      }    
+       $form['scholarfiles'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Images & Files'),
+        '#collapsible' => FALSE,
+        '#collapsed' => FALSE,
+        '#weight' => 0,
+        );
+       
+      //from content.admin.inc
+      $type = content_types($type);
+      //dpm($type['fields']);
+
+      if (count($type['fields'])){
+        foreach ($type['fields'] as $field){
+
+          if($field['type'] == 'filefield'){
+            $create_files_fieldset = TRUE;
+            
+            $scholarfile =  $form[$field['field_name']];
+            unset($form[$field['field_name']]);
+            $form['scholarfiles'][$field['field_name']] =$scholarfile;
+          }
+          
+          elseif($field['type'] == 'imagefield'){
+            $create_files_fieldset = TRUE;
+
+            $scholarimage = $form[$field['field_name']];
+            unset($form[$field['field_name']]);
+            $form['scholarfiles'][$field['field_name']] = $scholarimage;
+          }
+        }
+      }
+            
+      if (!$create_files_fieldset){
+        //if there are no image or file fields, remove this fieldset
+        unset($form['scholarfiles']);
+      }
 
       /*** Tags & Categories Section ***/
 
@@ -159,9 +171,7 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
       unset($form['taxonomy']);
       $form['scholartaxonomy']['taxonomy'] =  $scholartax;
       }
-      // $form['scholartaxonomy']['taxonomy'] =  taxonomy_form($vid =1);
-      // theme_filefield_widget($element);
-
+      
       /*** Publishing Options Section ***/
      
       //unset 'Publish' checkbox
@@ -217,11 +227,22 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {   //dpm($form)
 
       //adding additional submit function - IS THIS NEEDED???
       $form['#submit'][] = 'scholarforms_form_submit';
-      // dpm($form);
       }
     }
   }
 }
+
+/**
+ * Returns default options radio button list
+ */
+function _scholarforms_default_options(){
+  return array(
+  'publish' => t('Publish now'),
+  'save' => t('Save as draft (Unpublish this post)'),
+  'pubondate' => t('Publish on another date'),
+  );
+}
+
 
 function scholarforms_publishdate_value($node = NULL, $pubstatus_value = NULL){
   //this is an existing node
