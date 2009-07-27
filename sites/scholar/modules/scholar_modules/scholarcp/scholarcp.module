@@ -3,6 +3,7 @@ define('CPTHEME', 'scholar_admin');
 
 function scholarcp_init(){
    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
+   drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-theme-picker.css');
    drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/scholarcp-theme-picker.js');
   if (arg(0) == 'scholarcp'){
   	_scholarcp_init_theme();
