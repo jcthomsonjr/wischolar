@@ -81,11 +81,25 @@ function scholarcp_menu(){
     'weight' => 1,
   );
 
+  // content
+  
   $items['scholarcp/content'] = array(
     'title' => 'Content',
     'page callback' => 'scholarcp_cp',
     'access arguments' => array('access content'),
   );
+
+  // a menu entry for each content type
+  scholar_include('scholarapi');
+  $content_types = scholar_content_types();
+  foreach($content_types as $type => $name){
+    $items['scholarcp/content/'.$type] = array(
+      'title' => $name,
+      'page callback' => 'scholarcp_content',
+      'page arguments' => array($name),
+      'access arguments' => array('access content'),
+    );    
+  }
   
   $items['scholarcp/users'] = array(
     'title' => 'Users',
@@ -135,6 +149,26 @@ function scholarcp_hello(){
   return '234';
 }
 
+function scholarcp_content($type){
+
+  //initialize view to generate sessions output when viewing a conference
+  $view = views_get_view('scholarcp_content');
+  $view->init();
+
+  $view->set_display('default');
+  $view -> set_items_per_page(15);
+  $view->set_arguments(array($type));
+  $view -> execute();
+  foreach ($view -> result as $node){
+    return $view -> render();
+    /*
+    if(stristr($node -> node_title, $str)){
+     $matches[$node -> node_title. ' [nid:' . $node->nid . ']'] = check_plain($node -> node_title);
+    }
+		*/
+  }
+
+}
 
 /**
  * Enter description here...
