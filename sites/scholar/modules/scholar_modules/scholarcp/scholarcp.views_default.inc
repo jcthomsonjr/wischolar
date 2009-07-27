@@ -6,9 +6,10 @@ function scholarcp_views_default_views() {
   foreach ($files as $absolute => $file) {
     require $absolute;
     if (isset($view)) {
-      $views[substr($file->name, 3)] = $view;
+      $views[substr($file->name, 10)] = $view;
       //$views['mainview'] = $view;
     }
   }
+  dpm($views);
   return $views;
 }
