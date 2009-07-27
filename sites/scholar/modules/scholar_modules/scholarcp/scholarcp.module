@@ -105,7 +105,7 @@ function scholarcp_menu(){
     $items['scholarcp/content/'.$type] = array(
       'title' => $name,
       'page callback' => 'scholarcp_content',
-      'page arguments' => array($name),
+      'page arguments' => array($type, $name),
       'access arguments' => array('access content'),
     );    
   }
@@ -158,9 +158,12 @@ function scholarcp_hello(){
   return '234';
 }
 
-function scholarcp_content($type){
-  $output = '<div class="add-new">' . l('+ add new '. $type, 'node/add/' . strtolower($type)) . '</div>';
-  
+/**
+ * Function to return output on cp content page
+ */
+function scholarcp_content($type, $name = NULL){
+  $output = ($type == 'all') ? '' :  '<div class="add-new">' . l('+ add new '. $name, 'node/add/' . strtolower($type)) . '</div>';
+    
   //initialize view to generate sessions output when viewing a conference
   $view = views_get_view('scholarcp_content');
   $view->init();
