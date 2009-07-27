@@ -159,24 +159,18 @@ function scholarcp_hello(){
 }
 
 function scholarcp_content($type){
-
+  $output = '<div class="add-new">' . l('+ add new '. $type, 'node/add/' . strtolower($type)) . '</div>';
+  
   //initialize view to generate sessions output when viewing a conference
   $view = views_get_view('scholarcp_content');
   $view->init();
-
   $view->set_display('default');
   $view -> set_items_per_page(15);
   $view->set_arguments(array($type));
   $view -> execute();
-  foreach ($view -> result as $node){
-    return $view -> render();
-    /*
-    if(stristr($node -> node_title, $str)){
-     $matches[$node -> node_title. ' [nid:' . $node->nid . ']'] = check_plain($node -> node_title);
-    }
-		*/
-  }
-
+  $output .= $view -> render();
+  
+  return $output;
 }
 
 /**
