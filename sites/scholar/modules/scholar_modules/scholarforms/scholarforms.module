@@ -167,7 +167,6 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       //add a description or new title, etc.
       $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
 
-      if ($form['taxonomy']){
       $scholartax =  $form['taxonomy'];
       unset($form['taxonomy']);
       $form['scholartaxonomy']['taxonomy'] =  $scholartax;
@@ -228,7 +227,7 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
 
       //adding additional submit function - IS THIS NEEDED???
       $form['#submit'][] = 'scholarforms_form_submit';
-      }
+      
     }
   }
 }
