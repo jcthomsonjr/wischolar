@@ -70,6 +70,14 @@ function scholar_profile_modules() {
     'scholarwidgets',
     'scholarforms',
     'scholarboot',
+    'bkn_contrib_lookup',
+    'cite_distribute',
+   // 'cs_meta',
+    'repec_meta',
+    'googlescholar_meta',
+    'dyntextfield',
+    'scholarfront',
+    'scholarlayout',
   );
 
   return array_merge($core_modules, $contrib_modules);
