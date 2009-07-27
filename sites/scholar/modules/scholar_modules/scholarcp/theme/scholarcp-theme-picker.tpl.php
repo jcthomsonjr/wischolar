@@ -13,5 +13,5 @@
   if (file_exists($info['screenshot'])){
     $screenshot = theme('image', $info['screenshot'], t('Screenshot for %theme theme', array('%theme' => $info['theme_name'])), '', array('class' => 'screenshot'), FALSE);
   }
-  print '<div class= "item-theme-picker">' .$screenshot . $info['theme_name'] . $info['description'] . '</div>';
+  print '<div class="item-theme-picker"><div class="screenshot">'. $screenshot .'</div><h3>' . $info['theme_name'] . '</h3><p>'. $info['description'] .'</p></div>';
 ?>
