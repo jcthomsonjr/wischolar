@@ -152,17 +152,18 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       }
 
       /*** Tags & Categories Section ***/
-
-      $form['scholartaxonomy'] = array(
+          
+      //if the form has taxonomy
+      if ($form['taxonomy']){
+        
+       $form['scholartaxonomy'] = array(
       '#type' => 'fieldset',
       '#title' => t('Tags & Categories'),
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
       '#weight' => 2,
       );
-      
-      //if the form has taxonomy
-      if ($form['taxonomy']){
+        
       //add a description or new title, etc.
       $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
 
