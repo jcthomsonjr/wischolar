@@ -7,7 +7,7 @@ function scholarcp_views_default_views() {
     require $absolute;
     if (isset($view)) {
       $views[substr($file->name, 3)] = $view;
-      $views['mainview'] = $view;
+      //$views['mainview'] = $view;
     }
   }
   return $views;
