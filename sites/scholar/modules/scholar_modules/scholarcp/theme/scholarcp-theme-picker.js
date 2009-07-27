@@ -1,6 +1,6 @@
 if (Drupal.jsEnabled) {
   $(document).ready(function() {
-    $('#scholarcp-settings-form ').hide();
+    $('#scholarcp-settings-theme #scholarcp-settings-form ').hide();
     
     var theList = '<ul class = "theme-picker">';
     
