@@ -3,6 +3,7 @@ define('CPTHEME', 'scholar_admin');
 
 function scholarcp_init(){
    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
+   drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/scholarcp-theme-picker.js');
   if (arg(0) == 'scholarcp'){
   	_scholarcp_init_theme();
   } else {
@@ -30,6 +31,15 @@ function scholarcp_spaces_settings() {
       'class' => 'scholarcp_setting_bio',
       'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.bio.inc',
     ),
+  );
+}
+
+/**
+ * Implementation of hook_views_api().
+ */
+function scholarcp_views_api() {
+  return array(
+    'api' => 2,
   );
 }
 
@@ -227,7 +237,7 @@ function scholarcp_theme($cache, $type, $theme, $path) {
     'path' => $path,
     'file' => 'theme.inc',
   );
-
+  
   return $items;
 }
 
