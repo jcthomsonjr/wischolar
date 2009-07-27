@@ -25,3 +25,14 @@ function scholar_create_links() {
   }
   return isset($links) ? $links : array();
 }
+
+function scholar_content_types(){
+  $result = array();
+  $post_types = og_get_types('group_post');
+  $types = node_get_types();
+  foreach ($post_types as $post_type) {
+    $type_name = $types[$post_type]->name;
+    $result[$post_type] = $type_name;
+  }
+  return $result;
+}
