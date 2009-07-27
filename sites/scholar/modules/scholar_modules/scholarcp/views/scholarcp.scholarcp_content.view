@@ -2,8 +2,8 @@
 
 $view = new view;
 $view->name = 'scholarcp_content';
-$view->description = 'scholarcp > site content';
-$view->tag = 'scholarcp';
+$view->description = 'scholarcp_content';
+$view->tag = '';
 $view->view_php = '';
 $view->base_table = 'node';
 $view->is_cacheable = FALSE;
@@ -12,7 +12,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 $handler = $view->new_display('default', 'Defaults', 'default');
 $handler->override_option('fields', array(
   'title' => array(
-    'label' => 'Title',
+    'label' => '',
     'alter' => array(
       'alter_text' => 0,
       'text' => '',
@@ -37,8 +37,8 @@ $handler->override_option('fields', array(
     'field' => 'title',
     'relationship' => 'none',
   ),
-  'type' => array(
-    'label' => 'Type',
+  'changed' => array(
+    'label' => '',
     'alter' => array(
       'alter_text' => 0,
       'text' => '',
@@ -56,15 +56,91 @@ $handler->override_option('fields', array(
       'strip_tags' => 0,
       'html' => 0,
     ),
-    'link_to_node' => 0,
+    'date_format' => 'custom',
+    'custom_date_format' => '(F, j, Y)',
     'exclude' => 0,
+    'id' => 'changed',
+    'table' => 'node',
+    'field' => 'changed',
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('arguments', array(
+  'type' => array(
     'id' => 'type',
     'table' => 'node',
     'field' => 'type',
-    'relationship' => 'none',
   ),
-  'status' => array(
-    'label' => 'Published',
+));
+$handler->override_option('access', array(
+  'type' => 'none',
+));
+$handler->override_option('cache', array(
+  'type' => 'none',
+));
+$handler->override_option('style_plugin', 'bulk');
+$handler->override_option('style_options', array(
+  'grouping' => '',
+  'override' => 1,
+  'sticky' => 0,
+  'order' => 'asc',
+  'columns' => array(
+    'title' => 'title',
+    'changed' => 'changed',
+  ),
+  'info' => array(
+    'title' => array(
+      'sortable' => 0,
+      'separator' => '',
+    ),
+    'changed' => array(
+      'sortable' => 0,
+      'separator' => '',
+    ),
+  ),
+  'default' => '-1',
+  'execution_type' => '1',
+  'display_type' => '0',
+  'skip_confirmation' => 0,
+  'display_result' => 1,
+  'merge_single_action' => 1,
+  'selected_operations' => array(
+    '1670834eeea936a2c33420b44c664c8c' => '1670834eeea936a2c33420b44c664c8c',
+    '9767b9169dfb93a386da2effc750da9c' => '9767b9169dfb93a386da2effc750da9c',
+    '799e8527bbd3d99e4c8c25a8a674d264' => '799e8527bbd3d99e4c8c25a8a674d264',
+    'fce859fcce0e81943c3e31c20ccd68ff' => 'fce859fcce0e81943c3e31c20ccd68ff',
+    '591b41a4f10db44fb0b09b1e25152cef' => '591b41a4f10db44fb0b09b1e25152cef',
+    '4df6cb87c9bbb08ebec8c757e9a0fcc7' => '4df6cb87c9bbb08ebec8c757e9a0fcc7',
+    'f033f40d92f0308ed6b2e3befb3a4c2a' => 'f033f40d92f0308ed6b2e3befb3a4c2a',
+    '0341fcc505281031474b68c72e03a997' => '0341fcc505281031474b68c72e03a997',
+    '10edeb21cdd1fd049751311229c5e736' => '10edeb21cdd1fd049751311229c5e736',
+    '3864faba61f46e2b68393b7fc88fa830' => '3864faba61f46e2b68393b7fc88fa830',
+    'c6d3850086dc3c1bca4bf0625ce78c56' => 'c6d3850086dc3c1bca4bf0625ce78c56',
+    '842c933c28478c732f9f777feabf4688' => '842c933c28478c732f9f777feabf4688',
+    '6f7871c7725f0c91c07594602f07aa72' => '6f7871c7725f0c91c07594602f07aa72',
+    '3b3573187a8f60eecaac859273a651c1' => 0,
+    '6a99179e9c90e9edfb34d075fa234d78' => 0,
+    '3ea33dae73a849deedd536991455be98' => 0,
+    '7a3d2d5b1bb6ecb0cb811c4130452d7d' => 0,
+    '132fddcb3f367a243bee632db31985c1' => 0,
+    '334d20af1ae7ac4b770b7ec3210b2638' => 0,
+    '52aec7fee2070ce530da1304653ae1ec' => 0,
+    'b1679c6d77bdfd96c00f292f794a2821' => 0,
+    '2a60528ec9c7ca49e2d3e829dfc10ddf' => 0,
+    '8e00abfe05785c71252c531aba908146' => 0,
+    '94a098afb1689f950d72ed4c44f8655d' => 0,
+    '1dcecde02b48fdfde9628fea88920225' => 0,
+    '15faf15d7f591f8ef8e80238dd7c8b8c' => 0,
+    'daa75f478e3093ab107e657da6620a91' => 0,
+    '1e97c6ba8028058a3a5657fbe6a6b097' => 0,
+    '548749a939aa6334157edff3d8f69351' => 0,
+    'c6db6d4ee28924020b504a5feb2bff9f' => 0,
+  ),
+));
+$handler = $view->new_display('block', 'Block', 'block_1');
+$handler->override_option('fields', array(
+  'title' => array(
+    'label' => '',
     'alter' => array(
       'alter_text' => 0,
       'text' => '',
@@ -82,16 +158,18 @@ $handler->override_option('fields', array(
       'strip_tags' => 0,
       'html' => 0,
     ),
-    'type' => 'yes-no',
-    'not' => 0,
+    'link_to_node' => 1,
     'exclude' => 0,
-    'id' => 'status',
+    'id' => 'title',
     'table' => 'node',
-    'field' => 'status',
+    'field' => 'title',
+    'override' => array(
+      'button' => 'Use default',
+    ),
     'relationship' => 'none',
   ),
-  'edit_node' => array(
-    'label' => 'Edit',
+  'changed' => array(
+    'label' => '',
     'alter' => array(
       'alter_text' => 0,
       'text' => '',
@@ -109,37 +187,15 @@ $handler->override_option('fields', array(
       'strip_tags' => 0,
       'html' => 0,
     ),
-    'text' => 'edit',
+    'date_format' => 'medium',
+    'custom_date_format' => '',
     'exclude' => 0,
-    'id' => 'edit_node',
+    'id' => 'changed',
     'table' => 'node',
-    'field' => 'edit_node',
-    'relationship' => 'none',
-  ),
-  'delete_node' => array(
-    'label' => 'Delete',
-    'alter' => array(
-      'alter_text' => 0,
-      'text' => '',
-      'make_link' => 0,
-      'path' => '',
-      'link_class' => '',
-      'alt' => '',
-      'prefix' => '',
-      'suffix' => '',
-      'help' => '',
-      'trim' => 0,
-      'max_length' => '',
-      'word_boundary' => 1,
-      'ellipsis' => 1,
-      'strip_tags' => 0,
-      'html' => 0,
+    'field' => 'changed',
+    'override' => array(
+      'button' => 'Use default',
     ),
-    'text' => 'delete',
-    'exclude' => 0,
-    'id' => 'delete_node',
-    'table' => 'node',
-    'field' => 'delete_node',
     'relationship' => 'none',
   ),
 ));
@@ -155,7 +211,7 @@ $handler->override_option('arguments', array(
     'default_argument_type' => 'fixed',
     'default_argument' => '',
     'validate_type' => 'none',
-    'validate_fail' => 'not found',
+    'validate_fail' => 'ignore',
     'id' => 'type',
     'table' => 'node',
     'field' => 'type',
@@ -164,6 +220,9 @@ $handler->override_option('arguments', array(
       '2' => 0,
       '3' => 0,
       '4' => 0,
+    ),
+    'override' => array(
+      'button' => 'Use default',
     ),
     'relationship' => 'none',
     'default_options_div_prefix' => '',
@@ -176,7 +235,6 @@ $handler->override_option('arguments', array(
       'link' => 0,
       'biblio' => 0,
       'scholarsite' => 0,
-      'test' => 0,
     ),
     'validate_argument_node_access' => 0,
     'validate_argument_nid_type' => 'nid',
@@ -194,60 +252,5 @@ $handler->override_option('arguments', array(
     'validate_argument_php' => '',
   ),
 ));
-$handler->override_option('filters', array(
-  'current' => array(
-    'operator' => 'all',
-    'value' => '',
-    'group' => '0',
-    'exposed' => FALSE,
-    'expose' => array(
-      'operator' => FALSE,
-      'label' => '',
-    ),
-    'id' => 'current',
-    'table' => 'spaces',
-    'field' => 'current',
-    'relationship' => 'none',
-  ),
-));
-$handler->override_option('access', array(
-  'type' => 'none',
-));
-$handler->override_option('cache', array(
-  'type' => 'none',
-));
-$handler->override_option('style_plugin', 'table');
-$handler->override_option('style_options', array(
-  'grouping' => '',
-  'override' => 1,
-  'sticky' => 1,
-  'order' => 'asc',
-  'columns' => array(
-    'title' => 'title',
-    'status' => 'status',
-    'type' => 'type',
-    'edit_node' => 'edit_node',
-    'delete_node' => 'delete_node',
-  ),
-  'info' => array(
-    'title' => array(
-      'sortable' => 1,
-      'separator' => '',
-    ),
-    'status' => array(
-      'sortable' => 1,
-      'separator' => '',
-    ),
-    'type' => array(
-      'sortable' => 1,
-      'separator' => '',
-    ),
-    'edit_node' => array(
-      'separator' => '',
-    ),
-    'delete_node' => array(
-      'separator' => '',
-    ),
-  ),
-  'default' => '-1',
-));
+$handler->override_option('block_description', '');
+$handler->override_option('block_caching', -1);
