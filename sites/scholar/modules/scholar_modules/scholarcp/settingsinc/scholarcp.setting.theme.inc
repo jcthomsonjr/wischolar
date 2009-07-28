@@ -17,7 +17,7 @@ class scholarcp_setting_theme implements space_setting {
   function form($space, $value = array()) {
   $form = array();
 
- 
+  // all the enabled themes
   $enabled = scholarcp_get_scholar_themes();
   if (count($enabled) > 0){
     ksort($enabled);
@@ -34,7 +34,6 @@ class scholarcp_setting_theme implements space_setting {
   }  
 
   $form = array(
-    '#title' => t('theme selection'),
     '#type' => 'radios',
     '#options' => $options,
     '#default_value' => $value ? $value : '',

@@ -39,6 +39,7 @@ class scholarcp_setting_bio implements space_setting {
   }
 
   function submit($space, $value) {
+    // the value submitted is title + nid .. save only nid
     $value['nid'] = _scholar_node_autocomplete_title_to_nid($value['nid']);
     return $value;
   }
