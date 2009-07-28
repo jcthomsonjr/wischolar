@@ -4,14 +4,20 @@ ul.theme-picker {
 
 li.item-theme-picker  {
   background: url(images/theme-picker-bg.png) no-repeat top center transparent;
-  padding: 25px 0;
+  padding: 23px 0;
   float: left;
   width: 600px;
   text-align: center;
   }
   
-li.item-theme-picker img {
+ul.theme-picker li img {
   border: 1px solid #959191;
+  margin-top: 2px;
+  }
+  
+ul.theme-picker li.checked img {
+  border: 3px solid red;
+  margin-top: 0;
   }
   
 #next, #prev {
@@ -30,5 +36,10 @@ li.item-theme-picker img {
   }
   
 .theme-picker h3 {
+  margin-top: 2px;
   font-size: .9em;
+  }
+  
+ul.theme-picker li.checked h3 {
+  margin-top: 0;
   }
