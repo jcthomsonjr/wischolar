@@ -34,6 +34,7 @@ class scholarcp_setting_theme implements space_setting {
   }  
 
   $form = array(
+    '#title' => t('theme selection'),
     '#type' => 'radios',
     '#options' => $options,
     '#default_value' => $value ? $value : '',

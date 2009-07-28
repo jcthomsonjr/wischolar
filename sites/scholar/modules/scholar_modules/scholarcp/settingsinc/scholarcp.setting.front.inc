@@ -15,60 +15,97 @@ class scholarcp_setting_front implements space_setting {
   }
 
   function form($space, $value = array()) {
+  $space = spaces_get_space();
 
-  //dpm(spaces_settings());
   scholar_include('nodeautocomplete');
   scholar_include('scholarapi');
-  ctools_include ('dependent' );
-  ctools_include ('form' );
-  
-
+  ctools_include ('dependent');
+  ctools_include ('form');
   
   // the "add new *" links
   $items = scholar_create_links();
   $links = theme ( 'ctools_dropdown', t ( 'add new' ), $items, FALSE, 'panels-display-links' );
   
-  // main options
-  $form = array (
-		//'#prefix' => '<div id="edit-settings-wrapper">',
-  	//'#suffix' => '</div>',
-    '#title' => t ( 'Front page -- trying' ), 
+
+
+  /**
+   * main options
+   * 1. your bio page
+   * 2. one of your feature / content types 
+   * 3. one of your posts
+   * 4. Hand-pick as you go
+   */
+  $form  ['frontpage'] = array (
+    '#title' => t ( 'Front page options' ), 
     '#type' => 'radios', 
     '#options' => array (
       'bio' => t('Your Bio page'), 
       'feature' => t ('Posts from some specific feature(s)'), 
-      'post' => t ('One of your posts'),
-      'flagedposts' => t('Hand-pick content as I go'), 
+      'html' => t ('One of your posts'),
+      'flag' => t('Hand-pick content as I go'), 
     ), 
-    //'#default_value' => isset($value) ? $value : 'bio' , 
+    '#default_value' => isset($value['frontpage']) ? $value['frontpage'] : 'bio' , 
     '#tree' => TRUE 
+  );
+  
+  // dependencies  
+  /*
+  $form['bio'] = array(
+    '#input' => TRUE,
+    '#type' => 'item',
+    '#description' => $description,
+    '#process' => array ('ctools_dependent_process' ),
+    '#dependency' => array ('radio:settings[front][frontpage]' => array ('bio' ) ),
+  );
+  */
+  
+    // do they have any bio settings?
+  $bio_nid = (isset($space -> settings['bio']['nid']) && is_numeric($space -> settings['bio']['nid'])) ? $space -> settings['bio']['nid'] : '';
+  if ($bio_nid){
+    $link = l('bio', "node/$bio_nid");
+    $description = "Your " . $link . " will be used as your front page";
+  } else {
+    $link = l('Create', "node/add/page");  // TODO add a variable here (in option) ?frontpage=yes ..etc
+    $description = "You dont have a bio yet. $link one now"; 
+  }
+  
+  // do they want to include the bio title
+  $form['bio_title'] = array(
+    '#prefix' => '<div id="edit-settings-front-bio-title-wrapper" class="description">' . $description,
+    '#suffix' => '</div>',
+    '#type' => 'checkbox',
+    '#title' => t('Include title'),
+    '#description' => t('Do you want to include the title of the post in the page?'),
+    '#default_value' => $value['bio_title'] ? $value['bio_title'] : 0,
+    '#process' => array ('ctools_dependent_process' ),
+    '#dependency' => array ('radio:settings[front][frontpage]' => array ('bio' ) ),
   );
   
   // post
   $auto_element = scholar_node_autocomplete_element();
-  $auto_element['#description'] = t ( 'Select the post your want to set as a front page or create a new one' ) . $links;
+  $auto_element['#description'] = t('Select the post your want to set as a front page or create a new one') . $links;
   $auto_element['#process'] = array ('ctools_dependent_process' ); 
-  $auto_element['#dependency'] = array ('radio:settings[front]' => array ('post' ) );
+  $auto_element['#dependency'] = array ('radio:settings[front][frontpage]' => array ('html'));
   
   $form['front_nid'] = $auto_element;
-  
-  $options = array(
-    'news' => 'News',
-    'announcements' => 'Announcements',
-  );
 
-
-  
-  // bio
-  $form['bio1'] = array(
-  '#input' => TRUE,
-  '#type' => 'item',
-  '#value' => t('create a new one ... etc...'),
-  '#process' => array ('ctools_dependent_process' ),
-  '#dependency' => array ('radio:settings[front]' => array ('bio' ) ),
+  $options = scholar_content_types();
+  $default_value = $value['node_options'] ? array_keys(array_filter($value['node_options'])) : array_keys($options);
+  //dpm(array_filter($value['node_options'], '__scholarcp_nonzero' ));
+  $form['node_options'] = array(
+		'#prefix' => '<div id="edit-settings-front-node-options-wrapper">',  // needed by ctools
+  	'#suffix' => '</div>',
+  	'#type' => 'checkboxes',
+  	'#title' => t('Select features / content types'),
+  	'#options' => $options,
+    '#default_value' => $default_value,
+  	'#description' => t('Select the content types .... TODO better descriptions here'),
+    '#process' => array ('expand_checkboxes', 'ctools_dependent_process' ), 
+    '#dependency' => array ('radio:settings[front][frontpage]' => array ('feature' ) ) 
   );
   
-  dpm($form);
+
+  
   return $form;
   }
 
@@ -77,8 +114,27 @@ class scholarcp_setting_front implements space_setting {
   }
 
   function submit($space, $value) {
+    switch ($value['frontpage']){
+      case 'bio':
+        $value['node_options'] = array();
+        break;
+      case 'feature':
+        break;
+      case 'html':
+        $value['bio_title'] = '';
+        break;
+      case 'flag':
+        break;        
+    }
+    dpm($space);
+    dpm($value);
     return $value;
   }
+}
+
+function __scholarcp_nonzero($el){
+  print_r($el);
+  return $el != 0 ? TRUE : FALSE;
 }
 
 /**

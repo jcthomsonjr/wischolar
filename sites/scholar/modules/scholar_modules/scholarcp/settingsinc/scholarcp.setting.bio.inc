@@ -25,11 +25,7 @@ class scholarcp_setting_bio implements space_setting {
     $form['nid']['#default_value'] = $value['nid'] ? _scholar_node_autocomplete_nid_to_title($value['nid']) : '';
     $form['#title'] = 'bio';
   
-    $form['include_title'] = array(
-       '#type' => 'checkbox',
-       '#title' => t('Include title'),
-       '#default_value' => $value['include_title'] ? $value['include_title'] : 0,
-    );
+
   
     return $form;
   }
