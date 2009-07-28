@@ -1,3 +1,14 @@
 <?php
 
 include_once('scholar_announcements.features.inc');
+
+/**
+ * Implementation of hook_strongarm()
+ */
+function scholar_announcements_strongarm() {
+  $conf = array();
+  // standard group post
+  $conf['og_content_type_usage_announcement'] = 'group_post_standard';
+  return $conf;
+}
+
