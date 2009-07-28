@@ -26,9 +26,9 @@
 			<div id="cp-content">
 			  <div class="frame">
           <div class="innerframe">
-            <?php if (!empty($title)){ ?>
-            <h2 class="title"><?php print $title; ?></h2>
-            <?php }; ?>
+            <?php //if (!empty($title)){ ?>
+            <?php //<h2 class="title">?><?php //print $title; ?><?php //</h2>?>
+            <?php //}; ?>
             <?php if (!empty($tabs)){ ?>
             <div class="tabs"><?php print $tabs; ?></div>
             <?php }; ?>
