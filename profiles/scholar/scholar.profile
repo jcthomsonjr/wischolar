@@ -32,11 +32,11 @@ function scholar_profile_modules() {
     'token',
     'transliteration',
     'views', 
+    'views_bulk_operations',
     'views_ui', 
     'views_export', 
     'vertical_tabs',
   
-
 
   //cck
     'content', 
