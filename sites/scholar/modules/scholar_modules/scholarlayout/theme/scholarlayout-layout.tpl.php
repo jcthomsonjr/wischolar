@@ -1,5 +1,5 @@
 <div id="wrapper">
-	<div id="scholarlayout-container">
+	<div id="scholarlayout-container" class="pad">
 		<div id="scholarlayout-header">
 			<div id="scholarlayout-header-wrapper">
   			<div id="scholarlayout-header-main" class="layout-region">
