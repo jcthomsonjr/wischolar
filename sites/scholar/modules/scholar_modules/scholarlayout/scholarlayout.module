@@ -9,6 +9,11 @@ function scholarlayout_theme(){
     	'template' => 'scholarlayout-layout', 
   		//'arguments' => array('scholarlayout_widgets' => NULL),
     	'path' => drupal_get_path('module', 'scholarlayout'). '/theme'),
+  
+    'scholarlayout_layout_top' => array(
+    	'template' => 'scholarlayout-layout-top', 
+  		//'arguments' => array('scholarlayout_widgets_top' => NULL),
+    	'path' => drupal_get_path('module', 'scholarlayout'). '/theme'),
   );
 }
 
@@ -33,9 +38,16 @@ function scholarlayout_menu(){
  */
 function scholarlayout_layout(){
   $space = scholar_get_scholar();
-  return theme('scholarlayout_layout');
+  $top = theme('scholarlayout_layout_top');
+  $layout = theme('scholarlayout_layout');
+  return $top . $layout;
 }
 
+function scholarlayout_preprocess_scholarlayout_layout_top(&$vars){
+  $cts = context_contexts();  
+  $wc = $cts['scholar-section-scholarwidgets'];  
+  $vars['wgts'] = $wc -> block;
+}
 
 /**
  * preprocessor function for scholarlayout-layout.tpl.php
@@ -56,12 +68,18 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
   foreach($regions as $region){
     $scholarlayout_widgets[$region] = array();
   }
+  
+  //$scholarlayout_top_widgets = array();
+
+
   foreach($wc -> block as $widget){
     $scholarlayout_widgets[$widget['region']][] = '<div>' .$widget['label'] . '</div>';
+    //$scholarlayout_top_widgets[] = '<div>' .$widget['label'] . '</div>';
   }
 
   foreach($regions as $region){
     $vars['scholarlayout_' . $region] = theme('item_list',$scholarlayout_widgets[$region]);
   }
-  dpm($vars);
+  
+  
 }
