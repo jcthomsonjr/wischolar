@@ -27,8 +27,11 @@ class scholarcp_setting_menus implements space_setting {
       '#theme' => 'scholarcp_menu_radios',
     );
     $n_count = 0;
+    $s_current = '';
       
-    $choices = array(t(variable_get('scholar_primary_menu_name',"Top Menu")), t(variable_get('scholar_secondary_menu_name',"Side Menu")), t('None'));
+    $choices = array('primary' => t(variable_get('scholar_primary_menu_name',"Top Menu")),
+                     'secondary' => t(variable_get('scholar_secondary_menu_name',"Side Menu")),
+                     '' => t('None'));
       
     if(variable_get('scholar_primary_menu',false)){
       $a_tree = menu_tree_page_data(variable_get('scholar_primary_menu',false));
@@ -41,10 +44,11 @@ class scholarcp_setting_menus implements space_setting {
           if(!array_key_exists($group_node->nid,$a_groups)) continue; //is this node in the current group
         }
         
+        $s_current = array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])? $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu']:'';
         $form['menu_items'][$element['link']['mlid']]['menu'] = array(
           '#type' => 'radios',
           '#title' => t($element['link']['title']),
-          '#default_value' => 0,
+          '#default_value' => ($s_current == 'primary')?'primary': (($s_current == 'secondary')?'secondary':''),
           '#options' => $choices,
           '#weight' => $n_count--,
         );
@@ -68,10 +72,17 @@ class scholarcp_setting_menus implements space_setting {
           if(!array_key_exists($group_node->nid,$a_groups)) continue; //is this node in the current group
         }
         
+        if(array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
+          $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
+          $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
+        }else{
+          $s_current = '';
+          $n_count++; //put it after the last item
+        }
         $form['menu_items'][$element['link']['mlid']]['menu'] = array(
           '#type' => 'radios',
           '#title' => t($element['link']['title']),
-          '#default_value' => 1,
+          '#default_value' => ($s_current == 'primary')?'primary': (($s_current == 'secondary')?'secondary':''),
           '#options' => $choices,
           '#weight' => $n_count--,
         );

@@ -22,12 +22,24 @@ function scholar_install() {
 
 
 function scholar_update_6001() {
+  $return = array();
   $t = get_t();
-  db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('%s', '%s', '%s')", 'scholar_top_menu', $t('Top menu'), $t('Top menu for each scholar site.'));
-  db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('%s', '%s', '%s')", 'scholar_side_menu', $t('Side menu'), $t('Side menu for each scholar site.'));
+  
+  $return[] = db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('%s', '%s', '%s')", 'scholar_top_menu', $t('Top menu'), $t('Top menu for each scholar site.'));
+  $return[] = db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('%s', '%s', '%s')", 'scholar_side_menu', $t('Side menu'), $t('Side menu for each scholar site.'));
+  
+  return $return;
 }
 
 function scholar_update_6002() {
+  $return = array();
+  
   variable_set('scholar_primary_menu',"scholar_top_menu");
+  $return[] = array('success' => TRUE,
+                   'query' => "Set the default top menu to the newley created 'scholar_top_menu'");
   variable_set('scholar_secondary_menu',"scholar_side_menu");
+  $return[] = array('success' => TRUE,
+                   'query' => "Set the default side menu to the newley created 'scholar_side_menu'");
+  
+  return $return;
 }
