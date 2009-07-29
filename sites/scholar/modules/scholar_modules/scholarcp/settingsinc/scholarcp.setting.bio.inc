@@ -16,7 +16,7 @@ class scholarcp_setting_bio implements space_setting {
 
   function form($space, $value = array()) {
     $form = array();
-  
+    
     scholar_include('nodeautocomplete');
     scholar_include('scholarapi');
     $links = scholar_create_links();

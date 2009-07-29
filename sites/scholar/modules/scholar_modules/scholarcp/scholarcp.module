@@ -6,8 +6,6 @@ function scholarcp_init(){
    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-theme-picker.css');
    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-layout.css');
    drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/scholarcp-theme-picker.js');
-   drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/jQuery.RSC.js');
-   
   if (arg(0) == 'scholarcp'){
   	_scholarcp_init_theme();
   } else {
@@ -34,6 +32,10 @@ function scholarcp_spaces_settings() {
     'bio' => array(
       'class' => 'scholarcp_setting_bio',
       'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.bio.inc',
+    ),
+    'menus' => array(
+      'class' => 'scholarcp_setting_menus',
+      'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.menus.inc',
     ),
   );
 }
@@ -91,13 +93,6 @@ function scholarcp_menu(){
     'page callback' => 'scholarcp_cp',
     'access arguments' => array('access content'),
   );
-  
-  $items['scholarcp/content/all'] = array(
-    'title' => 'All',
-    'page callback' => 'scholarcp_content',
-    'page arguments' => array('all'),
-    'access arguments' => array('access content'),
-  );
 
   // a menu entry for each content type
   scholar_include('scholarapi');
@@ -106,7 +101,7 @@ function scholarcp_menu(){
     $items['scholarcp/content/'.$type] = array(
       'title' => $name,
       'page callback' => 'scholarcp_content',
-      'page arguments' => array($type, $name),
+      'page arguments' => array($name),
       'access arguments' => array('access content'),
     );    
   }
@@ -159,22 +154,25 @@ function scholarcp_hello(){
   return '234';
 }
 
-/**
- * Function to return output on cp content page
- */
-function scholarcp_content($type, $name = NULL){
-  $output = ($type == 'all') ? '' :  '<div class="add-new">' . l('+ add new '. $name, 'node/add/' . strtolower($type)) . '</div>';
-    
+function scholarcp_content($type){
+
   //initialize view to generate sessions output when viewing a conference
   $view = views_get_view('scholarcp_content');
   $view->init();
+
   $view->set_display('default');
   $view -> set_items_per_page(15);
   $view->set_arguments(array($type));
   $view -> execute();
-  $output .= $view -> render();
-  
-  return $output;
+  foreach ($view -> result as $node){
+    return $view -> render();
+    /*
+    if(stristr($node -> node_title, $str)){
+     $matches[$node -> node_title. ' [nid:' . $node->nid . ']'] = check_plain($node -> node_title);
+    }
+		*/
+  }
+
 }
 
 /**
@@ -277,6 +275,12 @@ function scholarcp_theme($cache, $type, $theme, $path) {
     'arguments' => array('info' => array()),
     'template' => 'scholarcp-theme-picker',
     'path' => $path,
+    'file' => 'theme.inc',
+  );
+  
+  $items['scholarcp_menu_radios'] = array(
+    'arguments' => array('element' => NULL),
+  'path' => $path,
     'file' => 'theme.inc',
   );
   

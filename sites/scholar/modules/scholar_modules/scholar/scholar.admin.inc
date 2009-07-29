@@ -1,6 +1,9 @@
 <?php 
 
 function scholar_settings_form(){
+ 
+  $a_menus = menu_get_menus();
+  
   $form = array();
   
   $form['scholar_content_type'] = array(
@@ -9,6 +12,38 @@ function scholar_settings_form(){
     '#title' => t('Node type'),
     '#default_value' => variable_get('scholar_content_type', 'scholarsite'),
     '#description' => t("Choose a og content type which represent a scholar site"),
+  );
+  
+  $form['scholar_primary_menu_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Primary Menu Name'),
+    '#default_value' => variable_get('scholar_primary_menu_name',"Top Menu"),
+    '#size' => 60,
+    '#maxlength' => 60,
+    '#required' => TRUE,
+  );
+  $form['scholar_primary_menu'] = array(
+    '#type' => 'select',
+    '#title' => t('Primary Menu'),
+    '#default_value' => variable_get('scholar_primary_menu',key($a_menus)),
+    '#options' => $a_menus,
+    '#description' => t('The primary menu displayed along the top of scholar site.  Defaults are pulled from here and each site can be configured independently.')
+  );
+  
+  $form['scholar_secondary_menu_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Secondary Menu Name'),
+    '#default_value' => variable_get('scholar_secondary_menu_name',"Side Menu"),
+    '#size' => 60,
+    '#maxlength' => 60,
+    '#required' => TRUE,
+  );
+  $form['scholar_secondary_menu'] = array(
+    '#type' => 'select',
+    '#title' => t('Secondary Menu'),
+    '#default_value' => variable_get('scholar_secondary_menu',key($a_menus)),
+    '#options' => $a_menus,
+    '#description' => t('The secondary menu displayed on a scholar site.  Defaults are pulled from here and each site can be configured independently.')
   );
 
   return system_settings_form($form);
