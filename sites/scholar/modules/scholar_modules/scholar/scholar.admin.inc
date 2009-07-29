@@ -14,14 +14,6 @@ function scholar_settings_form(){
     '#description' => t("Choose a og content type which represent a scholar site"),
   );
   
-  $form['scholar_primary_menu_name'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Primary Menu Name'),
-    '#default_value' => variable_get('scholar_primary_menu_name',"Top Menu"),
-    '#size' => 60,
-    '#maxlength' => 60,
-    '#required' => TRUE,
-  );
   $form['scholar_primary_menu'] = array(
     '#type' => 'select',
     '#title' => t('Primary Menu'),
@@ -30,14 +22,6 @@ function scholar_settings_form(){
     '#description' => t('The primary menu displayed along the top of scholar site.  Defaults are pulled from here and each site can be configured independently.')
   );
   
-  $form['scholar_secondary_menu_name'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Secondary Menu Name'),
-    '#default_value' => variable_get('scholar_secondary_menu_name',"Side Menu"),
-    '#size' => 60,
-    '#maxlength' => 60,
-    '#required' => TRUE,
-  );
   $form['scholar_secondary_menu'] = array(
     '#type' => 'select',
     '#title' => t('Secondary Menu'),
