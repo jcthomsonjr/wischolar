@@ -15,12 +15,11 @@ class scholarcp_setting_menus implements space_setting {
   }
 
   function form($space, $value = array()) {
-    scholar_include('scholarapi');
-    scholar_get_menu_tree('secondary');
     $group_node = og_get_group_context();
     
     $form = array();
     $form['#title'] = 'Menus';
+    if(!$space) return $form; 
     
     // Description
     $form['menu_items'] = array(
@@ -118,7 +117,7 @@ class scholarcp_setting_menus implements space_setting {
     return $value;
   }
   
-  private static function create_menus($value){
+  public static function create_menus($value){
     $a_primary = array();
     $a_secondary = array();
     foreach ($value['menu_items'] as $mlid => $menu_info) {

@@ -418,5 +418,47 @@ function scholarcp_in_active_trail($path, $reset = FALSE) {
   return in_array($path, $active_paths);
 }
 
+/**
+ * Implements hook_menu_node_insert().
+ */
+function scholarcp_menu_node_insert($item, $node) {
+  require_once(drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.menus.inc');
+  $site = scholar_get_scholar();
+  
+  if($site && ($item->menu_name == variable_get('scholar_primary_menu',false) || $item->menu_name == variable_get('scholar_secondary_menu',false))){
+    
+    $site->settings['menus']['menu_items'][$item->mlid] = array('menu' => $item->menu_name, 'weight' => $item->weight);
+    
+    $site->settings['menus'] = scholarcp_setting_menus::create_menus($site->settings['menus']); 
+    
+    spaces_save($site);
+  }elseif ($site && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
+    unset($site->settings['menus']['menu_items'][$item->mlid]);
+    $site->settings['menus'] = scholarcp_setting_menus::create_menus($site->settings['menus']); 
+    spaces_save($site);
+  }
+}
+
+/**
+ * Implements hook_menu_node_update().
+ */
+function scholarcp_menu_node_update($item, $node) {
+  scholarcp_menu_node_insert($item,$node);
+}
+
+/**
+ * Implements hook_menu_node_delete().
+ */
+function scholarcp_menu_node_delete($item, $node) {
+  require_once(drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.menus.inc');
+  $site = scholar_get_scholar();
+  
+  if ($site && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
+    unset($site->settings['menus']['menu_items'][$item->mlid]);
+    $site->settings['menus'] = scholarcp_setting_menus::create_menus($site->settings['menus']); 
+    spaces_save($site);
+  }
+}
+
 
 
