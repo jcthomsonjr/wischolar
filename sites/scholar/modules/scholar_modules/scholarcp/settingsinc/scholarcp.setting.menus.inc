@@ -15,7 +15,8 @@ class scholarcp_setting_menus implements space_setting {
   }
 
   function form($space, $value = array()) {
-    
+    scholar_include('scholarapi');
+    scholar_get_menu_tree('secondary');
     $group_node = og_get_group_context();
     
     $form = array();
@@ -41,7 +42,7 @@ class scholarcp_setting_menus implements space_setting {
                      '' => t('None'));
       
 
-    $a_tree = menu_tree_page_data(variable_get('scholar_primary_menu',false));    
+    $a_tree = menu_tree_all_data(variable_get('scholar_primary_menu',false));    
     foreach ($a_tree as $element) {
       if ($element['link']['hidden']) continue;
         
@@ -55,25 +56,24 @@ class scholarcp_setting_menus implements space_setting {
         $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
         $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
       }else{
-        $s_current = '';
-        $n_count++; //put it after the last item
+        $s_current = 'primary';
+        $n_count = 100; //put it after the last item
       }
+      $form['menu_items'][$element['link']['mlid']]['#weight'] = $n_count;
       $form['menu_items'][$element['link']['mlid']]['menu'] = array(
         '#type' => 'radios',
         '#title' => t($element['link']['title']),
         '#default_value' => $s_current,
         '#options' => $choices,
-        '#weight' => $n_count,
       );
       $form['menu_items'][$element['link']['mlid']]['weight'] = array(
         '#type' => 'hidden',
         '#default_value' => $n_count,
         '#attributes' => array('class' => 'element-weight'),
-        '#weight' => $n_count,
       );
     }
       
-    $a_tree = menu_tree_page_data(variable_get('scholar_secondary_menu',false));
+    $a_tree = menu_tree_all_data(variable_get('scholar_secondary_menu',false));
     foreach ($a_tree as $element) {
       if ($element['link']['hidden']) continue;
         
@@ -87,21 +87,20 @@ class scholarcp_setting_menus implements space_setting {
         $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
         $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
       }else{
-        $s_current = '';
-        $n_count++; //put it after the last item
+        $s_current = 'secondary';
+        $n_count = 100; //put it after the last item
       }
+      $form['menu_items'][$element['link']['mlid']]['#weight'] = $n_count;
       $form['menu_items'][$element['link']['mlid']]['menu'] = array(
         '#type' => 'radios',
         '#title' => t($element['link']['title']),
         '#default_value' => $s_current,
         '#options' => $choices,
-        '#weight' => $n_count,
       );
       $form['menu_items'][$element['link']['mlid']]['weight'] = array(
         '#type' => 'hidden',
         '#default_value' => $n_count,
         '#attributes' => array('class' => 'element-weight'),
-        '#weight' => $n_count,
       );
     }
     
@@ -113,8 +112,37 @@ class scholarcp_setting_menus implements space_setting {
   }
 
   function submit($space, $value) {
-    //$value['nid'] = _scholar_node_autocomplete_title_to_nid($value['nid']);
+    
+    $value = self::create_menus($value); 
+    
     return $value;
+  }
+  
+  private static function create_menus($value){
+    $a_primary = array();
+    $a_secondary = array();
+    foreach ($value['menu_items'] as $mlid => $menu_info) {
+      if($menu_info['menu'] == 'primary') $a_primary[] = $mlid;
+      if($menu_info['menu'] == 'secondary') $a_secondary[] = $mlid;
+    }
+    
+    self::$weight_lookup = $value['menu_items'];
+    usort($a_primary, array("self", "order_by_weight"));
+    usort($a_secondary, array("self", "order_by_weight"));
+    
+    $value['primary'] = $a_primary;
+    $value['secondary'] = $a_secondary;
+    return $value;
+  }
+  
+  private static $weight_lookup;
+  private static function order_by_weight($a,$b){
+        $aw = self::$weight_lookup[$a]['weight'];
+        $bw = self::$weight_lookup[$b]['weight'];
+        if ($aw == $bw) {
+            return 0;
+        }
+        return ($aw > $bw) ? 1 : -1;
   }
 }
   
