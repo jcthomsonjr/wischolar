@@ -239,7 +239,6 @@ function scholarcp_settings_form($form_id, $setting_id){
 }
 
 function scholarcp_settings_form_submit($form, &$form_state){
-  dpm($form_state);
   // get the space and the settings we want to save
   $space = $form_state['values']['space'];
   $setting = $form_state['values']['setting'];
