@@ -358,6 +358,10 @@ function scholarforms_nodeapi(&$node, $op){
         (int)$node->nid, $node->pubstatus);
       }
       break;
+      
+      case 'delete': 
+      $sql_delete = db_query("DELETE FROM {scholarforms} WHERE nid = %d", (int)$node->nid);
+      break;
   }
 }
 
