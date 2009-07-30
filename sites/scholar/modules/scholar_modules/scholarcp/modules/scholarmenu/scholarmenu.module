@@ -3,11 +3,13 @@
 /**
  * Implements hook_menu_node_insert().
  */
-function scholarmenu_node_insert($item, $node) {
-  require_once(drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.menus.inc');
+function scholarmenu_menu_node_insert($item, $node) {
+  require_once(drupal_get_path('module', 'scholarmenu') .'/scholarmenu.menus.inc');
+  scholar_include('scholarapi');
   $site = scholar_get_scholar();
+  $a_scholar_types = scholar_content_types();
   
-  if($site && ($item->menu_name == variable_get('scholar_primary_menu',false) || $item->menu_name == variable_get('scholar_secondary_menu',false))){
+  if($site && array_key_exists($node->type,$a_scholar_types) && ($item->menu_name == variable_get('scholar_primary_menu',false) || $item->menu_name == variable_get('scholar_secondary_menu',false))){
     
     $site->settings['menus']['menu_items'][$item->mlid] = array('menu' => $item->menu_name, 'weight' => $item->weight);
     
@@ -24,18 +26,20 @@ function scholarmenu_node_insert($item, $node) {
 /**
  * Implements hook_menu_node_update().
  */
-function scholarmenu_node_update($item, $node) {
-  scholarcp_menu_node_insert($item,$node);
+function scholarmenu_menu_node_update($item, $node) {
+  scholarmenu_menu_node_insert($item,$node);
 }
 
 /**
  * Implements hook_menu_node_delete().
  */
-function scholarmenu_node_delete($item, $node) {
-  require_once(drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.menus.inc');
+function scholarmenu_menu_node_delete($item, $node) {
+  require_once(drupal_get_path('module', 'scholarmenu') .'/scholarmenu.menus.inc');
+  scholar_include('scholarapi');
   $site = scholar_get_scholar();
+  $a_scholar_types = scholar_content_types();
   
-  if ($site && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
+  if ($site && array_key_exists($node->type,$a_scholar_types) && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
     unset($site->settings['menus']['menu_items'][$item->mlid]);
     $site->settings['menus'] = scholarmenu_menus::create_menus($site->settings['menus']); 
     spaces_save($site);
@@ -98,7 +102,7 @@ function scholarmenu_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
 /**
  * Implementation of hook_theme().
  */
-function scholarcp_theme($cache, $type, $theme, $path) {
+function scholarmenu_theme($cache, $type, $theme, $path) {
   $path = drupal_get_path('module', 'scholarmenu') ;
   
   $items['scholarmenu_radios'] = array(
@@ -108,5 +112,22 @@ function scholarcp_theme($cache, $type, $theme, $path) {
   );
   
   return $items;
+}
+
+function scholarcp_form_alter(&$form, $form_state, $form_id){
+  scholar_include('scholarapi');
+  $a_scholar_types = scholar_content_types();
+  $o_scholar = scholar_get_scholar();
+  
+  if($o_scholar && array_key_exists($form['type']['#value'],$a_scholar_types)){
+    $a_primary = menu_load(variable_get('scholar_primary_menu',false));
+    $a_secondary = menu_load(variable_get('scholar_secondary_menu',false));
+      
+    $form['menu']['parent']['#options'] = array(
+      variable_get('scholar_primary_menu',false).":0" => t($a_primary['title']),
+      variable_get('scholar_secondary_menu',false).":0" => t($a_secondary['title']),
+    );
+    unset($form['menu']['hidden']);
+  }
 }
 
