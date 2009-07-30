@@ -509,7 +509,13 @@ function scholarcp_in_active_trail($path, $reset = FALSE) {
     $active_paths = array();
     $trail = menu_get_active_trail();
     foreach ($trail as $item) {
-      if (!empty($item['href'])) {
+      if(is_array($item['map'])){
+        $path_makup = "";
+        foreach ($item['map'] as $path_component) {
+        	$path_makup = trim($path_makup."/".$path_component,"/");
+        	if(!in_array($path_makup,$active_paths)) $active_paths[] = $path_makup;
+        }
+      }elseif (!empty($item['href'])) {
         $active_paths[] = $item['href'];
       }
     }
