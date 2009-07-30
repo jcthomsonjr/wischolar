@@ -8,12 +8,15 @@ function scholarlayout_theme(){
     'scholarlayout_layout' => array(
     	'template' => 'scholarlayout-layout', 
   		//'arguments' => array('scholarlayout_widgets' => NULL),
-    	'path' => drupal_get_path('module', 'scholarlayout'). '/theme'),
+    	'path' => drupal_get_path('module', 'scholarlayout'). '/theme'
+    ),
   
-    'scholarlayout_layout_top' => array(
-    	'template' => 'scholarlayout-layout-top', 
-  		//'arguments' => array('scholarlayout_widgets_top' => NULL),
-    	'path' => drupal_get_path('module', 'scholarlayout'). '/theme'),
+    'scholarlayout_layout_widgets' => array(
+    	'template' => 'scholarlayout-layout-widgets', 
+  		'arguments' => array('wgts' => NULL, 'wgts_id' => NULL, 'wgts_class' => NULL),
+    	'path' => drupal_get_path('module', 'scholarlayout'). '/theme'
+    ),
+    
   );
 }
 
@@ -37,17 +40,25 @@ function scholarlayout_menu(){
  * main entry point for "scholarcp/settings/layout"
  */
 function scholarlayout_layout(){
+  drupal_add_css(drupal_get_path('module', 'scholarlayout') . '/theme/scholarlayout.css');
   $space = scholar_get_scholar();
-  $top = theme('scholarlayout_layout_top');
+  
+  // top
+  $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
+  $wc = $cts['scholar-section-scholarwidgets'];
+  
+  $wgts = $wc -> block;
+  $wgts_id = 'scholarlayout-top-widgets';
+  $wgts_class = 'scholarlayout-widgets-list';
+  
+  $top = theme('scholarlayout_layout_widgets', $wgts, $wgts_id, $wgts_class);
+  
+  // layout
   $layout = theme('scholarlayout_layout');
   return $top . $layout;
 }
 
-function scholarlayout_preprocess_scholarlayout_layout_top(&$vars){
-  $cts = context_contexts();  
-  $wc = $cts['scholar-section-scholarwidgets'];  
-  $vars['wgts'] = $wc -> block;
-}
+
 
 /**
  * preprocessor function for scholarlayout-layout.tpl.php
@@ -56,7 +67,7 @@ function scholarlayout_preprocess_scholarlayout_layout_top(&$vars){
  * block names in the header_left
  */
 function scholarlayout_preprocess_scholarlayout_layout(&$vars){
-  drupal_add_css(drupal_get_path('module', 'scholarlayout') . '/theme/scholarlayout.css');
+
   
   $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
   $wc = $cts['scholar-section-scholarwidgets'];
@@ -73,12 +84,14 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
 
 
   foreach($wc -> block as $widget){
-    $scholarlayout_widgets[$widget['region']][] = '<div>' .$widget['label'] . '</div>';
+    $scholarlayout_widgets[$widget['region']][] = $widget;
     //$scholarlayout_top_widgets[] = '<div>' .$widget['label'] . '</div>';
   }
 
   foreach($regions as $region){
-    $vars['scholarlayout_' . $region] = theme('item_list',$scholarlayout_widgets[$region]);
+    $r = str_replace('_','-', $region);
+    $wgts_id = 'scholarlayout-' . $r;
+    $vars['scholarlayout_' . $region] = theme('scholarlayout_layout_widgets',$scholarlayout_widgets[$region], $wgts_id, 'scholarlayout-widgets-list');
   }
   
   
