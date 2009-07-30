@@ -15,7 +15,7 @@ class scholarcp_setting_menus implements space_setting {
   }
 
   function form($space, $value = array()) {
-    $group_node = og_get_group_context();
+    $scholar = scholar_get_scholar();
     
     $form = array();
     $form['#title'] = 'Menus';
@@ -48,7 +48,7 @@ class scholarcp_setting_menus implements space_setting {
       $mnode = menu_node_get_node($element['link']['mlid']);
       if($mnode){
         $a_groups = og_get_node_groups($mnode);
-        if(!array_key_exists($group_node->nid,$a_groups)) continue; //is this node in the current group
+        if(!array_key_exists($scholar->group->nid,$a_groups)) continue; //is this node in the current group
       }
         
       if(array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
@@ -79,7 +79,7 @@ class scholarcp_setting_menus implements space_setting {
       $mnode = menu_node_get_node($element['link']['mlid']);
       if($mnode){
         $a_groups = og_get_node_groups($mnode);
-        if(!array_key_exists($group_node->nid,$a_groups)) continue; //is this node in the current group
+        if(!array_key_exists($scholar->group->nid,$a_groups)) continue; //is this node in the current group
       }
         
       if(array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
