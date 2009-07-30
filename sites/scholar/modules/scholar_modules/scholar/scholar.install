@@ -43,3 +43,278 @@ function scholar_update_6002() {
   
   return $return;
 }
+
+function scholar_update_6003() {
+  $return = array();
+  
+  __scholar_create_page();
+  $return[] = array('success' => TRUE,
+                   'query' => "Create 'page' content type");
+
+  
+  return $return;
+}
+
+function __scholar_create_page(){
+$content['type']  = array (
+  'name' => 'Page',
+  'type' => 'page',
+  'description' => 'An html page',
+  'title_label' => 'Title',
+  'body_label' => 'Body',
+  'min_word_count' => '0',
+  'help' => '',
+  'node_options' => 
+  array (
+    'status' => true,
+    'promote' => false,
+    'sticky' => false,
+    'revision' => false,
+  ),
+  'show_preview_changes' => 1,
+  'show_diff_inline' => 1,
+  'old_type' => 'page',
+  'orig_type' => '',
+  'module' => 'node',
+  'custom' => '1',
+  'modified' => '1',
+  'locked' => '0',
+  'og_content_type_usage' => 'omitted',
+  'comment' => '0',
+  'comment_default_mode' => '4',
+  'comment_default_order' => '1',
+  'comment_default_per_page' => '50',
+  'comment_controls' => '3',
+  'comment_anonymous' => 0,
+  'comment_subject_field' => '1',
+  'comment_preview' => '1',
+  'comment_form_location' => '0',
+  'vertical_tabs_fieldsets' => 
+  array (
+    'menu' => true,
+    'author' => true,
+    'og_nodeapi' => 1,
+    'revision_information' => true,
+    'path' => true,
+    'comment_settings' => true,
+    'scholartaxonomy' => 1,
+    'scholarfiles' => true,
+    'options' => true,
+  ),
+);
+$content['fields']  = array (
+  0 => 
+  array (
+    'label' => 'Files',
+    'field_name' => 'field_file',
+    'type' => 'filefield',
+    'widget_type' => 'filefield_widget',
+    'change' => 'Change basic information',
+    'weight' => '2',
+    'file_extensions' => '',
+    'progress_indicator' => 'bar',
+    'file_path' => '',
+    'max_filesize_per_file' => '',
+    'max_filesize_per_node' => '',
+    'description' => '',
+    'ffp_field_file' => 
+    array (
+      'file_path' => '[space-og-path]/files',
+      'file_path_cleanup' => 
+      array (
+        'file_path_pathauto' => 0,
+        'file_path_tolower' => 0,
+        'file_path_transliterate' => 1,
+      ),
+      'file_name' => '[filefield-onlyname-original].[filefield-extension-original]',
+      'file_name_cleanup' => 
+      array (
+        'file_name_pathauto' => 0,
+        'file_name_tolower' => 0,
+        'file_name_transliterate' => 0,
+      ),
+      'retroactive_update' => '',
+    ),
+    'group' => false,
+    'required' => 0,
+    'multiple' => '1',
+    'list_field' => '0',
+    'list_default' => 1,
+    'description_field' => '1',
+    'op' => 'Save field settings',
+    'module' => 'filefield',
+    'widget_module' => 'filefield',
+    'columns' => 
+    array (
+      'fid' => 
+      array (
+        'type' => 'int',
+        'not null' => false,
+        'views' => true,
+      ),
+      'list' => 
+      array (
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => false,
+        'views' => true,
+      ),
+      'data' => 
+      array (
+        'type' => 'text',
+        'serialize' => true,
+        'views' => true,
+      ),
+    ),
+    'display_settings' => 
+    array (
+      'weight' => '1',
+      'parent' => '',
+      'label' => 
+      array (
+        'format' => 'above',
+      ),
+      'teaser' => 
+      array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => 
+      array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      4 => 
+      array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => 
+      array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+  ),
+  1 => 
+  array (
+    'label' => 'Images',
+    'field_name' => 'field_image',
+    'type' => 'filefield',
+    'widget_type' => 'imagefield_widget',
+    'change' => 'Change basic information',
+    'weight' => '4',
+    'file_extensions' => 'png gif jpg jpeg',
+    'progress_indicator' => 'bar',
+    'file_path' => '',
+    'max_filesize_per_file' => '',
+    'max_filesize_per_node' => '',
+    'max_resolution' => 0,
+    'min_resolution' => 0,
+    'custom_alt' => 0,
+    'alt' => '',
+    'custom_title' => 1,
+    'title_type' => 'textfield',
+    'title' => '',
+    'use_default_image' => 0,
+    'default_image_upload' => '',
+    'default_image' => NULL,
+    'description' => '',
+    'ffp_field_image' => 
+    array (
+      'file_path' => '',
+      'file_path_cleanup' => 
+      array (
+        'file_path_pathauto' => 0,
+        'file_path_tolower' => 0,
+        'file_path_transliterate' => 0,
+      ),
+      'file_name' => '[filefield-onlyname-original].[filefield-extension-original]',
+      'file_name_cleanup' => 
+      array (
+        'file_name_pathauto' => 0,
+        'file_name_tolower' => 0,
+        'file_name_transliterate' => 0,
+      ),
+      'retroactive_update' => '',
+    ),
+    'group' => false,
+    'required' => 0,
+    'multiple' => '1',
+    'list_field' => '1',
+    'list_default' => 1,
+    'description_field' => '1',
+    'op' => 'Save field settings',
+    'module' => 'filefield',
+    'widget_module' => 'imagefield',
+    'columns' => 
+    array (
+      'fid' => 
+      array (
+        'type' => 'int',
+        'not null' => false,
+        'views' => true,
+      ),
+      'list' => 
+      array (
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => false,
+        'views' => true,
+      ),
+      'data' => 
+      array (
+        'type' => 'text',
+        'serialize' => true,
+        'views' => true,
+      ),
+    ),
+    'display_settings' => 
+    array (
+      'weight' => '2',
+      'parent' => '',
+      'label' => 
+      array (
+        'format' => 'above',
+      ),
+      'teaser' => 
+      array (
+        'format' => 'image_s_linked',
+        'exclude' => 0,
+      ),
+      'full' => 
+      array (
+        'format' => 'image_s_default',
+        'exclude' => 0,
+      ),
+      4 => 
+      array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      'token' => 
+      array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+    ),
+  ),
+);
+$content['extra']  = array (
+  'title' => '-5',
+  'body_field' => '0',
+  'menu' => '-2',
+);
+  
+  // Make up a $form_state value.
+  $content_type = array(
+    'values' => array(
+      'type_name' => '<create>',
+      'macro' => '$content = '. var_export($content, true) .';',
+    ),
+  );
+  // Run it.
+  drupal_execute('content_copy_import_form', $content_type);
+
+
+}

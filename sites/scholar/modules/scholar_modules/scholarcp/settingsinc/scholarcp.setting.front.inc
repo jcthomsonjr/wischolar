@@ -26,6 +26,9 @@ class scholarcp_setting_front implements space_setting {
   $items = scholar_create_links();
   $links = theme ( 'ctools_dropdown', t ( 'add new' ), $items, FALSE, 'panels-display-links' );
   
+  $form = array(
+    '#title' => 'front page ...',
+  );
 
 
   /**
