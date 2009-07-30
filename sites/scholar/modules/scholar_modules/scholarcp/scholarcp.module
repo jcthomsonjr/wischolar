@@ -117,7 +117,7 @@ function scholarcp_menu(){
     $items['scholarcp/content/'.$type] = array(
       'title' => $name,
       'page callback' => 'scholarcp_content',
-      'page arguments' => array($name),
+      'page arguments' => array($type, $name),
       'access arguments' => array('access content'),
     );    
   }
@@ -179,7 +179,7 @@ function scholarcp_content($type, $name = NULL, $filter=array()){
   $filter_form_classes = 'filter-form ' . 'filter-form-' . $type;
   $add_new_classes = 'add-new ' . 'add-new-' . $type;  
   $output = '<div class="' . $filter_form_classes. '">' . l(t('Filter '. $name . $plural), 'content') . '</div>'; 
-   $output .= drupal_get_form('scholarcp_content_filter_form', $type, $name);
+  // $output .= drupal_get_form('scholarcp_content_filter_form', $type, $name);
    $output .= ($type == 'all') ? '' :  '<div class="' . $add_new_classes . '">' . l(t('+ add new '. $name), 'node/add/' . strtolower($type)) . '</div>';
 
   //initialize view to generate sessions output when viewing a conference
