@@ -13,35 +13,35 @@
 
 
 class scholar extends space_og implements space {
-	
-	function redirect($op = 'home') {
-		dpm ( 'hello from scholar class' );
-		switch ($op) {
-			case 'home' :
-				if (! empty ( $this->purl )) {
-					// Use the menu path of the selected feature as homepage
-					if ($home = $this->settings ['home']) {
-						if (menu_get_item ( $home )) {
-							purl_goto ( $home, array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
-						}
-					}
-					// The previous checks fail, there is no valid homepage set
-					if ($this->admin_access () && user_access ( 'configure spaces features' )) {
-						drupal_set_message ( t ( "Please setup your group by choosing a homepage setting." ) );
-						purl_goto ( "scholarcp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
-					}
-				} else {
-					drupal_goto ( 'node/' . $this->sid . '/edit' );
-				}
-				menu_set_active_item ( 'spaces-access-denied' );
-				break;
-			case 'features' :
-				purl_goto ( "scholarcp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
-				break;
-		}
-	}
-	
-	
+
+  function redirect($op = 'home') {
+    dpm ( 'hello from scholar class' );
+    switch ($op) {
+      case 'home' :
+        if (! empty ( $this->purl )) {
+          // Use the menu path of the selected feature as homepage
+          if ($home = $this->settings ['home']) {
+            if (menu_get_item ( $home )) {
+              purl_goto ( $home, array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
+            }
+          }
+          // The previous checks fail, there is no valid homepage set
+          if ($this->admin_access () && user_access ( 'configure spaces features' )) {
+            drupal_set_message ( t ( "Please setup your group by choosing a homepage setting." ) );
+            purl_goto ( "scholarcp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
+          }
+        } else {
+          drupal_goto ( 'node/' . $this->sid . '/edit' );
+        }
+        menu_set_active_item ( 'spaces-access-denied' );
+        break;
+      case 'features' :
+        purl_goto ( "scholarcp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
+        break;
+    }
+  }
+
+
 }
 
 /**
@@ -138,6 +138,7 @@ function scholar_spaces_presets(){
 function scholar_strongarm(){
   $conf = array();
   $conf['scholar_content_type'] = 'scholarsite';
+  $conf['menu_primary_links_source'] = 'scholar_top_menu';
   return $conf;
 }
 
