@@ -5,43 +5,46 @@
   position: relative;
   }
   
-div.layout-region {
+#scholarlayout-container .scholarlayout-widgets-list {
   position: absolute;
   width: 202px;
   height: 121px;
   top: 26px;
   left: 42px;
+  padding: 0;
+  margin: 0;
   }
   
-div.layout-region:hover {
+#scholarlayout-container .scholarlayout-widgets-list:hover {
   background: #c4e5a3;
   }
 
 
-#scholarlayout-header-main, #scholarlayout-content-main {
+#scholarlayout-container #scholarlayout-header-main, #scholarlayout-container #scholarlayout-content-main {
   width: 244px;
   left: 247px;
   }
 
-#scholarlayout-header-right, #scholarlayout-sidebar-right {
+#scholarlayout-container #scholarlayout-header-right, 
+#scholarlayout-container #scholarlayout-right {
   left: 493px;
   }
 
-#scholarlayout-content-main, 
-#scholarlayout-sidebar-left, 
-#scholarlayout-sidebar-right {
+#scholarlayout-container #scholarlayout-content-main, 
+#scholarlayout-container #scholarlayout-left, 
+#scholarlayout-container #scholarlayout-right {
   top: 182px;
   height: 356px;
   }
 
   
-#scholarlayout-navbar,#scholarlayout-footer {
+#scholarlayout-container #scholarlayout-navbar,#scholarlayout-container #scholarlayout-footer {
   width: 653px;
   height: 30px;
   top: 150px;
   }
   
- #scholarlayout-footer {
+ #scholarlayout-container #scholarlayout-footer {
   top: 541px;
   height: 42px;
   left: 43px;
