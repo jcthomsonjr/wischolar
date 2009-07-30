@@ -70,6 +70,7 @@ function scholar_profile_modules() {
     'scholarwidgets',
     'scholarforms',
     'scholarboot',
+    'scholarmenu',
     'bkn_contrib_lookup',
     'cite_distribute',
    // 'cs_meta',
