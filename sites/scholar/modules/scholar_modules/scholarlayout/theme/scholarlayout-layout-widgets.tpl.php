@@ -1,9 +1,11 @@
 <?php
 /** 
- *  template for theming the top area of the layout page (list of widgets)
+ *  template for theming a list of widgets
  *  Variables:
  *  ----------
  *  $wgts -> list of all the widgets (dpm($wgts) for more info)
+ *  $wgts_id -> the id of the ul
+ *  $wgts_class -> the class of the ul
  */
 ?>
 
