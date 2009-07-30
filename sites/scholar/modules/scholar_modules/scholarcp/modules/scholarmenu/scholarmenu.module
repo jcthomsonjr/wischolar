@@ -11,7 +11,9 @@ function scholarmenu_menu_node_insert($item, $node) {
   
   if($site && array_key_exists($node->type,$a_scholar_types) && ($item->menu_name == variable_get('scholar_primary_menu',false) || $item->menu_name == variable_get('scholar_secondary_menu',false))){
     
-    $site->settings['menus']['menu_items'][$item->mlid] = array('menu' => $item->menu_name, 'weight' => $item->weight);
+    $s_menu_key = $item->menu_name == variable_get('scholar_primary_menu',false)?'primary':'secondary';
+    
+    $site->settings['menus']['menu_items'][$item->mlid] = array('menu' => $s_menu_key, 'weight' => $item->weight);
     
     $site->settings['menus'] = scholarmenu_menus::create_menus($site->settings['menus']); 
     
