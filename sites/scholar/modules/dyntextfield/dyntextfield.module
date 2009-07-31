@@ -488,6 +488,7 @@ function dyntextfield_widget_settings($op, $widget) {
 *   the form item for a single element for this field
 */
 function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
+  $element = array();
   
   $element['dyntext_fieldset'] = array (
     '#type' => 'fieldset',
@@ -534,4 +535,25 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
  
   return $element;
 }
-?>
+
+function dyntextfield_form_alter(&$form, $form_state, $form_id) {
+
+  // this next bit is to remove all the dyntextfield form elements when
+  // pub type is not selected on a biblio form
+  if ($form_id == "biblio_node_form") { 
+    if (!isset($form_state['values']['biblio_type']) &&
+        empty($form_state['post']['biblio_type']) &&
+        empty($form_state['submitted']) &&
+        empty($form['vid']['#value'])) {
+
+      foreach (element_children($form) as $form_element) {
+        $widgets = element_children($form[$form_element]);
+        if (count($widgets) && is_array($form[$form_element][current($widgets)]) && array_key_exists('dyntext_fieldset',$form[$form_element][current($widgets)])){
+          $form[$form_element] = NULL;
+        }
+      }
+    }
+  }
+  
+  return $form;
+}
