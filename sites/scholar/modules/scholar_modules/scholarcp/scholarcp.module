@@ -61,7 +61,6 @@ function scholarcp_menu(){
   $items['scholarcp/settings'] = array(
     'title' => 'Settings',
     'page callback' => 'scholarcp_cp',
-    'access arguments' => array('administer site configuration'),
   );
 
     
@@ -69,9 +68,8 @@ function scholarcp_menu(){
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('spaces_features_form'),
-    'access callback' => 'spaces_admin_access',
-    'access arguments' => array('og', 'features'),
-    //'access arguments' => array('access content'),
+    //'access callback' => 'spaces_admin_access',
+    //'access arguments' => array('og', 'features'),
     'file' => 'spaces_admin.inc',
     'file path' => $spaces_path,
     'weight' => 1,
@@ -81,34 +79,24 @@ function scholarcp_menu(){
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('spaces_customize_form', NULL, 3),
-    'access callback' => 'spaces_admin_access',
-    'access arguments' => array('og', 'features'),
     'file' => 'spaces_admin.inc',
     'file path' => $spaces_path,
     'weight' => 1,
   );
 
   // content
-  
+  // try to make the children menu as local task
   $items['scholarcp/content'] = array(
     'title' => 'Content',
-    'page callback' => 'scholarcp_cp',
-    'access arguments' => array('access content'),
+	  'page callback' => 'scholarcp_content', 	 
+	  'page arguments' => array('all'), 
   );
 
   $items['scholarcp/content/all'] = array( 	 
-	     'title' => 'All', 	 
-	     'page callback' => 'scholarcp_content', 	 
-	     'page arguments' => array('all'), 	 
-	     'access arguments' => array('access content'), 	 
+	     'title' => 'All',
+       'type' => MENU_DEFAULT_LOCAL_TASK,	 
+	  	 
 	);
-  
- $items['scholarcp/content/all'] = array( 	 
-	     'title' => 'All', 	 
-	     'page callback' => 'scholarcp_content', 	 
-	     'page arguments' => array('all'), 	 
-	     'access arguments' => array('access content'), 	 
-	   );
   
   // a menu entry for each content type
   scholar_include('scholarapi');
@@ -116,16 +104,15 @@ function scholarcp_menu(){
   foreach($content_types as $type => $name){
     $items['scholarcp/content/'.$type] = array(
       'title' => $name,
+    	'type' => MENU_LOCAL_TASK,	
       'page callback' => 'scholarcp_content',
       'page arguments' => array($type, $name),
-      'access arguments' => array('access content'),
     );    
   }
   
   $items['scholarcp/users'] = array(
     'title' => 'Users',
     'page callback' => 'scholarcp_cp',
-    'access arguments' => array('access content'),
   );
   
   $items['scholarcp/users/members'] = array(
@@ -137,13 +124,11 @@ function scholarcp_menu(){
   $items['scholarcp/news'] = array(
     'title' => 'News',
     'page callback' => 'scholarcp_cp',
-    'access arguments' => array('access content'),
   ); 
   
   $items['scholarcp/support'] = array(
     'title' => 'Support',
     'page callback' => 'scholarcp_cp',
-    'access arguments' => array('access content'),
   );
   
   // other setting by classess
@@ -158,7 +143,6 @@ function scholarcp_menu(){
         'title' => $setting_form['#title'],
         'page callback' => 'drupal_get_form',
         'page arguments' => array('scholarcp_settings_form', $setting -> id),
-        'access arguments' => array('access content'),
       );
     }
   }
@@ -167,6 +151,7 @@ function scholarcp_menu(){
   // make them all part of 'scholarcp' menu
   foreach($items as $path => $item) {
     $items[$path]['menu_name'] = 'scholarcp';
+    $items[$path]['access arguments'] = array('access content'); //TODO fix this 
   }
 
   return $items;
