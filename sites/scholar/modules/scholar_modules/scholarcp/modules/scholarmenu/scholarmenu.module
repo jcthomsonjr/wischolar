@@ -58,6 +58,8 @@ function scholarmenu_menu_node_delete($item, $node) {
 function scholarmenu_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_expanded = false){
   $space = scholar_get_scholar();
   
+  if(!$space) return ($b_html)?"":false;
+  
   switch ($s_menu){
     case 'secondary':
       $a_settings_menu = array_key_exists('menus',$space->settings)?$space->settings['menus']['secondary']:false;
@@ -116,7 +118,7 @@ function scholarmenu_theme($cache, $type, $theme, $path) {
   return $items;
 }
 
-function scholarcp_form_alter(&$form, $form_state, $form_id){
+function scholarmenu_form_alter(&$form, $form_state, $form_id){
   scholar_include('scholarapi');
   $a_scholar_types = scholar_content_types();
   $o_scholar = scholar_get_scholar();
@@ -130,6 +132,34 @@ function scholarcp_form_alter(&$form, $form_state, $form_id){
       variable_get('scholar_secondary_menu',false).":0" => t($a_secondary['title']),
     );
     unset($form['menu']['hidden']);
+  }
+}
+
+/**
+ * Iplementation of hook block
+ *
+ * @param string $op
+ * @param int $delta
+ * @param array $edit
+ */
+function scholarmenu_block($op = 'list', $delta = 0, $edit = array()) {
+  if(!user_access('access content')) return;
+  
+  $blocks = array();
+  if ($op == 'list') {
+    $blocks[] = array('info' => t('Primary Site Specific Menu'),
+                      'cache' => BLOCK_CACHE_PER_PAGE); 
+    $blocks[] = array('info' => t('Secondary Site Specific Menu'),
+                      'cache' => BLOCK_CACHE_PER_PAGE);  
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        return scholarmenu_get_menu_tree('primary');
+      case 1:
+        return scholarmenu_get_menu_tree('secondary');
+    }
   }
 }
 
