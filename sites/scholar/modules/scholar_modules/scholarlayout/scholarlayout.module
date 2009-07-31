@@ -40,6 +40,9 @@ function scholarlayout_menu(){
  * main entry point for "scholarcp/settings/layout"
  */
 function scholarlayout_layout(){
+  jquery_ui_add(array('ui.draggable', 'ui.droppable', 'ui.sortable'));
+
+  drupal_add_js(drupal_get_path('module', 'scholarlayout') . '/theme/scholarlayout.js');
   drupal_add_css(drupal_get_path('module', 'scholarlayout') . '/theme/scholarlayout.css');
   $space = scholar_get_scholar();
   
