@@ -18,7 +18,7 @@ function theme_scholarmenu_radios($element) {
         if(substr($key2,0,1) == '#') continue;
         $content .= "<th>{$rad['#title']}</th>";
       }
-      $content .= "</tr>";
+      $content .= "<th>Delete</th></tr>";
     }
     
     $content .= "<tr class='draggable'><td>{$item['menu']['#title']}</td>";
@@ -29,6 +29,7 @@ function theme_scholarmenu_radios($element) {
       unset($rad['#title']);
       $content .= "<td>".drupal_render($rad)."</td>";
     }
+    $content .= "<td>".drupal_render($item['delete'])."</td>";
     $content .= "</tr>";
   }
   $content .= "</table>";

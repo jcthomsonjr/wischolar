@@ -70,8 +70,12 @@ class scholarmenu_menus implements space_setting {
         '#default_value' => $n_count,
         '#attributes' => array('class' => 'element-weight'),
       );
+      $form['menu_items'][$element['link']['mlid']]['delete'] = array(
+        '#type' => (menu_node_get_node($element['link']['mlid'], FALSE))?'checkbox':'hidden',
+        '#default_value' => 0,
+      );
     }
-      
+    
     $a_tree = menu_tree_all_data(variable_get('scholar_secondary_menu',false));
     foreach ($a_tree as $element) {
       if ($element['link']['hidden']) continue;
@@ -101,6 +105,10 @@ class scholarmenu_menus implements space_setting {
         '#default_value' => $n_count,
         '#attributes' => array('class' => 'element-weight'),
       );
+      $form['menu_items'][$element['link']['mlid']]['delete'] = array(
+        '#type' => (menu_node_get_node($element['link']['mlid'], FALSE))?'checkbox':'hidden',
+        '#default_value' => 0,
+      );
     }
     
     return $form;
@@ -121,8 +129,22 @@ class scholarmenu_menus implements space_setting {
     $a_primary = array();
     $a_secondary = array();
     foreach ($value['menu_items'] as $mlid => $menu_info) {
-      if($menu_info['menu'] == 'primary') $a_primary[] = $mlid;
-      if($menu_info['menu'] == 'secondary') $a_secondary[] = $mlid;
+      $b_delete = (array_key_exists('delete',$menu_info) && $menu_info['delete']);
+      if(!$b_delete && $menu_info['menu'] == 'primary') $a_primary[] = $mlid;
+      if(!$b_delete && $menu_info['menu'] == 'secondary') $a_secondary[] = $mlid;
+      
+      if($b_delete){
+        $nid = menu_node_get_node($mlid, FALSE);
+        // Is this a menu_node item?
+        if (!empty($nid)) {
+          menu_node_delete($nid, $mlid);
+          menu_link_delete($mlid);
+          unset($value['menu_items'][$mlid]);
+        }
+      }elseif (array_key_exists('delete',$menu_info)){
+        unset($value['menu_items'][$mlid]['delete']);//no use saving this
+      }
+      
     }
     
     self::$weight_lookup = $value['menu_items'];
