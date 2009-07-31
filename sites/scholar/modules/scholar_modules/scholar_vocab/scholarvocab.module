@@ -46,8 +46,9 @@ function scholarvocab_block_view() {
             $image = drupal_get_path('module', 'scholarvocab') . '/images/trash.gif';
             $delete_button = ctools_ajax_image_button($image, $delete_dest, 'delete this category');
             
-            $edit_link = 'scholarvocab/term/'.$term -> vid . "/" . $term -> tid.'/rename/';
-            $item .= l ( 'rename', $edit_link, $options=array('attributes' => array('class' => 'admin')) ) . $delete_button;
+            $delete_link = l('delete',"scholarvocab/term/delete/". $term -> vid . "/" . $term -> tid.'/rename/', $options=array('attributes' => array('class' => 'admin')));
+            $edit_link = l('rename', 'scholarvocab/term/'.$term -> vid . "/" . $term -> tid.'/rename/', $options=array('attributes' => array('class' => 'admin')));
+            $item .= $edit_link . $delete_link;
           }
           $items [] = array ('data' => $item );
         //}
