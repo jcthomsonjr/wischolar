@@ -11,7 +11,9 @@
 
 <ul id="<?php print $wgts_id; ?>" class = "<?php print $wgts_class; ?>">
 	<?php foreach($wgts as $w):?>
-		<li class="scholarlayout-item" id="<?php print $w['module']; ?>-<?php print $w['delta']; ?>"> <?php print $w['label']; ?> </li>
+		<li class="scholarlayout-item" id="<?php print $w['module']; ?>-<?php print $w['delta']; ?>"> <?php print $w['label']; ?> 
+		<span class="scholarlayout-item-settings">Settings</span>
+		</li>
 	<?php endforeach?>
 </ul>
 
