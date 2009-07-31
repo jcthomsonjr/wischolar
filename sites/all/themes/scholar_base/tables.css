@@ -8,6 +8,7 @@
 table {
 	border-collapse: collapse;
 	text-align:left;
+	width: 100%;
 	}
 
 th, td {
@@ -19,6 +20,25 @@ th.checkbox, td.checkbox {
 	text-align: center;
 	}
 	
+tr.even, tr.odd {
+  background-color: transparent;
+  }
+  
+td, td a, th, th a {
+  color: #404040;
+  }
+  
+td.active {
+  background: #eaebe9;
+  }
+  
+tr.selected td, tr.selected td a {
+  background: #a7afaf;
+  color: #fff;
+  }
+  
+  
+	
 /* MODULES LIST */
 
 table.package .version {
@@ -28,3 +48,5 @@ table.package .version {
 table.package .description {
 	width: 100%;
 	}
+	
+	
