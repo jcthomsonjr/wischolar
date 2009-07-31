@@ -34,7 +34,7 @@ function scholarcp_frontpage_form(){
 
   // main options
   $form ['frontpage_settings'] ['frontpage'] = array (
-    '#title' => t ( 'Front page options' ), 
+    '#title' => t ( 'What do you want in the main content area of your front page?' ), 
     '#type' => 'radios', 
     '#options' => array (
       'bio' => t('Your Bio page'), 
