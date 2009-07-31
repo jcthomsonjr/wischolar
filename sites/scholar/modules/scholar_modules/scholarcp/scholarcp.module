@@ -127,6 +127,12 @@ function scholarcp_menu(){
     'page callback' => 'scholarcp_cp',
     'access arguments' => array('access content'),
   );
+  
+  $items['scholarcp/users/members'] = array(
+    'title' => 'Members',
+    'page callback' => 'scholarcp_user_members',
+    'access arguments' => array('access content'),
+  );
 
   $items['scholarcp/news'] = array(
     'title' => 'News',
@@ -136,7 +142,7 @@ function scholarcp_menu(){
   
   $items['scholarcp/support'] = array(
     'title' => 'Support',
-    'page callback' => 'scholarcp_hello',
+    'page callback' => 'scholarcp_cp',
     'access arguments' => array('access content'),
   );
   
@@ -166,8 +172,10 @@ function scholarcp_menu(){
   return $items;
 }
 
-function scholarcp_hello(){
-  return '234';
+function scholarcp_user_members(){
+  $site = scholar_get_scholar();
+  $arg = $site -> group -> nid;
+  return views_page('og_members', 'default', $arg); 
 }
 
 /**
