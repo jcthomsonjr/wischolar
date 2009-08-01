@@ -15,7 +15,6 @@
 class scholar extends space_og implements space {
 
   function redirect($op = 'home') {
-    dpm ( 'hello from scholar class' );
     switch ($op) {
       case 'home' :
         if (! empty ( $this->purl )) {

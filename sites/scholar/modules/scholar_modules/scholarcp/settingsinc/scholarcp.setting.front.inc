@@ -129,8 +129,6 @@ class scholarcp_setting_front implements space_setting {
       case 'flag':
         break;        
     }
-    dpm($space);
-    dpm($value);
     return $value;
   }
 }
