@@ -55,7 +55,15 @@ function scholar_get_features_info_submit(&$form, &$form_state){
       include_once './includes/install.inc';
       drupal_install_modules(array($name));
       
-      drupal_flush_all_caches();
+      //drupal_flush_all_caches();
+      // the above will disable all themes
+      // try this
+      $core = array('cache', 'cache_block', 'cache_filter', 'cache_page');
+      $cache_tables = array_merge(module_invoke_all('flush_caches'), $core);
+      foreach ($cache_tables as $table) {
+        cache_clear_all('*', $table, TRUE);
+      }
+      
       }
    }
 }

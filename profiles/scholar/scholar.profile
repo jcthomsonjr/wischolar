@@ -79,6 +79,7 @@ function scholar_profile_modules() {
     'dyntextfield',
     'scholarfront',
     'scholarlayout',
+    'scholarvocab',
   );
 
   return array_merge($core_modules, $contrib_modules);
