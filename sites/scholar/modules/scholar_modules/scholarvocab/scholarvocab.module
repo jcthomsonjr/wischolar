@@ -67,7 +67,7 @@ function scholarvocab_block_view() {
 function scholarvocab_vocab_block() {
   $vid = 1; //FIXME hard coded for testin purposes
   $data_tree = taxonomy_get_tree ( $vid, $parent = 0, $depth = - 1, $max_depth = 1 );
-  dpm ( $data_tree );
+  //dpm ( $data_tree );
   return theme_scholarvocab ( $data_tree );
 }
 
