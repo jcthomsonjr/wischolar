@@ -257,6 +257,9 @@ function _scholar_enable_themes(){
 
 	$themes = array_merge($themes, __scholar_get_scholar_theme_names());
 	install_enable_theme($themes);
+	
+	// disable all DB blocks
+	db_query("UPDATE {blocks} SET status = 0, region = ''"); 
 }
 
 /**
