@@ -1,5 +1,5 @@
 <?php
-// $Id: image.inc,v 1.1.2.3 2009/06/18 04:31:54 deciphered Exp $
+// $Id: image.inc,v 1.1.2.4 2009/07/27 01:54:34 deciphered Exp $
 
 /**
  * @file
@@ -56,7 +56,7 @@ function image_filefield_paths_get_fields(&$node, &$ffp) {
     foreach ($node->images as $name => &$file) {
       if (isset($info[$name])) {
         $file_info = pathinfo($file);
-  
+
         $ffp['#files'][] = array(
           'field' => array(
             'filepath' => &$file,
@@ -68,7 +68,7 @@ function image_filefield_paths_get_fields(&$node, &$ffp) {
           'name' => 'image',
           'new' => $node->new_file
         );
-  
+
         $ffp['#types']['image'] = TRUE;
       }
     }

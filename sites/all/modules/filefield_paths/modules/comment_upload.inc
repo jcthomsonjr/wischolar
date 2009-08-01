@@ -1,5 +1,5 @@
 <?php
-// $Id: comment_upload.inc,v 1.1.2.3 2009/06/17 02:54:28 deciphered Exp $
+// $Id: comment_upload.inc,v 1.1.2.4 2009/07/27 01:54:34 deciphered Exp $
 
 /**
  * @file
@@ -50,18 +50,16 @@ function comment_upload_filefield_paths_form_submit(&$form_state, &$ffp) {
  * Implementation of hook_filefield_paths_get_fields().
  */
 function comment_upload_filefield_paths_get_fields(&$node, &$ffp) {
-  if (is_object($node) && $node->form_id == 'comment_form') {
-    if (isset($node->files)) {
-      foreach ($node->files as &$file) {
-        $ffp['#files'][] = array(
-          'field' => &$file,
-          'module' => 'comment_upload',
-          'name' => 'comment_upload',
-          'new' => $file['new']
-        );
+  if (is_object($node) && isset($node->cid) && isset($node->files)) {
+    foreach ($node->files as &$file) {
+      $ffp['#files'][] = array(
+        'field' => &$file,
+        'module' => 'comment_upload',
+        'name' => 'comment_upload',
+        'new' => $file['new']
+      );
 
-        $ffp['#types']['comment_upload'] = TRUE;
-      }
+      $ffp['#types']['comment_upload'] = TRUE;
     }
   }
 }
@@ -121,6 +119,7 @@ function filefield_paths_comment($a1, $op) {
       $object->form_id = $a1['form_id'];
       $object->type = $node->type;
       $object->files = $a1['files'];
+      $object->cid = $a1['cid'];
 
       if (($ffp = filefield_paths_get_fields($object)) == FALSE) {
         break;

@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.inc,v 1.1.2.2 2009/05/26 10:24:34 deciphered Exp $
+// $Id: upload.inc,v 1.1.2.3 2009/07/27 01:54:34 deciphered Exp $
 
 /**
  * @file
@@ -50,7 +50,7 @@ function upload_filefield_paths_form_submit(&$form_state, &$ffp) {
  * Implementation of hook_filefield_paths_get_fields().
  */
 function upload_filefield_paths_get_fields(&$node, &$ffp) {
-  if (is_object($node) && $node->form_id == $node->type .'_node_form') {
+  if (is_object($node) && !isset($node->cid)) {
     if (isset($node->files)) {
       foreach ($node->files as &$file) {
         $file = (array) $file;

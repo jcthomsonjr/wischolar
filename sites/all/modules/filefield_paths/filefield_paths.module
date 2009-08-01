@@ -1,5 +1,5 @@
 <?php
-// $Id: filefield_paths.module,v 1.19.2.27 2009/06/18 04:31:52 deciphered Exp $
+// $Id: filefield_paths.module,v 1.19.2.31 2009/07/27 01:54:34 deciphered Exp $
 
 /**
  * @file
@@ -208,8 +208,9 @@ function filefield_paths_form_alter(&$form, $form_state, $form_id) {
         '#weight' => 10
       );
 
-      // TODO: Prevent this being implemented twice.
-      $form['#submit'][] = 'filefield_paths_form_submit';
+      if (!in_array('filefield_paths_form_submit', $form['#submit'])) {
+        $form['#submit'][] = 'filefield_paths_form_submit';
+      }
     }
   }
 }
@@ -401,7 +402,8 @@ function filefield_paths_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 
       // Re-write cck fields.
       if (module_exists('content')) {
-        content_update($node);
+        _content_field_invoke_default('update', $node);
+        cache_clear_all('content:'. $node->nid .':'. $node->vid, content_cache_tablename());
       }
 
       // Cleanup temporary paths.
@@ -468,11 +470,6 @@ function filefield_paths_get_fields(&$node, $op = NULL) {
  */
 function filefield_paths_filefield_paths_process_file($new, &$file, $settings, &$node, &$update) {
   if ($new) {
-    // Process filepath
-    $file['filepath']['old'] = $file['field']['filepath'];
-    $file['filepath']['new'] = filefield_paths_process_string(file_directory_path() .'/'. $settings['filepath']['value'] .'/'. $file['field']['filename'], 'node', $node, $settings['filepath']);
-    $file['filepath']['new'] = filefield_paths_process_string($file['filepath']['new'], 'field', array(0 => $file['field']), $settings['filepath']);
-
     // Process filename
     $file['filename']['old'] = $file['field']['filename'];
     if (($file['filename']['new'] = $settings['filename']['value']) != '') {
@@ -483,6 +480,11 @@ function filefield_paths_filefield_paths_process_file($new, &$file, $settings, &
       $file['filename']['new'] = $file['field']['filename'];
     }
 
+    // Process filepath
+    $file['filepath']['old'] = $file['field']['filepath'];
+    $file['filepath']['new'] = filefield_paths_process_string(file_directory_path() .'/'. $settings['filepath']['value'] .'/'. $file['filename']['new'], 'node', $node, $settings['filepath']);
+    $file['filepath']['new'] = filefield_paths_process_string($file['filepath']['new'], 'field', array(0 => $file['field']), $settings['filepath']);
+
     // Finalize files if necessary
     if (dirname($file['filepath']['new']) != dirname($file['field']['filepath']) || $file['filename']['new'] != $file['field']['filename']) {
       if (filefield_paths_file_move($file)) {
@@ -492,11 +494,19 @@ function filefield_paths_filefield_paths_process_file($new, &$file, $settings, &
         if (isset($node->body)) {
           $file['filepath']['new'] = str_replace($file['filename']['old'], $file['filename']['new'], $file['filepath']['new']);
 
-          $body = str_replace($file['filepath']['old'], $file['filepath']['new'], $node->body);
-          $body = str_replace(drupal_urlencode($file['filepath']['old']), $file['filepath']['new'], $body);
+          $pattern = array(
+            'regex' => str_replace('/', '\/', file_directory_path()) .'(.*?)'. str_replace('/', '\/', str_replace(file_directory_path(), '', $file['filepath']['old'])),
+            'regex_enc' => str_replace('/', '\/', drupal_urlencode(file_directory_path())) .'(.*?)'. str_replace('/', '\/', str_replace(drupal_urlencode(file_directory_path()), '', drupal_urlencode($file['filepath']['old']))),
+            'replace' => file_directory_path() .'$1'. str_replace(file_directory_path(), '', $file['filepath']['new']),
+          );
 
-          $teaser = str_replace($file['filepath']['old'], $file['filepath']['new'], $node->teaser);
-          $teaser = str_replace(drupal_urlencode($file['filepath']['old']), $file['filepath']['new'], $teaser);
+          $body = $node->body;
+          $body = preg_replace('/'. $pattern['regex'] .'/s', $pattern['replace'], $body);
+          $body = preg_replace('/'. $pattern['regex_enc'] .'/s', $pattern['replace'], $body);
+
+          $teaser = $node->teaser;
+          $teaser = preg_replace('/'. $pattern['regex'] .'/s', $pattern['replace'], $teaser);
+          $teaser = preg_replace('/'. $pattern['regex_enc'] .'/s', $pattern['replace'], $teaser);
 
           if ($body != $node->body || $teaser != $node->teaser) {
             $node->body = $body;
@@ -544,12 +554,17 @@ function filefield_paths_token_values($type, $object = NULL) {
       $tokens['filefield-onlyname'] = $item['filename'];
       $tokens['filefield-extension'] = $item['extension'];
     }
-    // Original filename
+    // Original filename.
     $orig = $item;
+    $filename = $object[0]['filename'];
     if (!empty($object[0]['origname'])) {
       $orig = pathinfo($object[0]['origname']);
+      $filename = $object[0]['origname'];
     }
-    $tokens['filefield-onlyname-original'] = $orig['filename'];
+    // PHP < 5.2: pathinfo() doesn't return 'filename' variable.
+    $tokens['filefield-onlyname-original'] = isset($orig['filename'])
+      ? $orig['filename']
+      : basename($filename, '.'. $orig['extension']);
     $tokens['filefield-extension-original'] = $orig['extension'];
     // Tokens for Image module integration.
     if (module_exists('image')) {

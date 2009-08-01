@@ -1,8 +1,12 @@
-// $Id: README.txt,v 1.1.2.5 2009/06/17 23:55:51 deciphered Exp $
+// $Id: README.txt,v 1.1.2.7 2009/07/09 22:50:46 deciphered Exp $
 
-The FileField Paths module extends the default functionality of Drupals Upload
-module and the FileField module by adding the ability to use node tokens in
-destination paths and filenames.
+The FileField Paths module extends the default functionality of Drupals core
+Upload module, the FileField module and many other File Upload modules by adding
+the ability to use node tokens in destination paths and filenames.
+
+In simple terms, FileField Paths allows you to automatically sort and rename
+your uploaded files using token based replacement patterns to maintain a nice
+clean filesystem.
 
 FileField Paths was written and is maintained by Stuart Clark (deciphered).
 - http://stuar.tc/lark
@@ -20,9 +24,11 @@ Features
   * ImageField Crop module.
   * Image module.
   * Comment Upload module.
+  * Audio module.
 * File path and filename cleanup options:
   * Filter out words and punctuation by taking advantage of the Pathauto module.
   * Convert unicode characters into US-ASCII with the Transliteration module.
+* Automatically updates unprocessed file paths in the node body on save.
 * Retroactive updates - rename and/or move previously uploaded files (Use with
   caution)
 
@@ -74,6 +80,13 @@ wish to use.
   Settings can be found on the content types configuration page in 'Comment
   settings > Comment Upload Path settings'.
   http://[www.yoursite.com/path/to/drupal]/admin/content/node-type/[node-type]
+
+
+* Audio module
+
+  Settings can be found on the content types configuration page in 'Audio Path
+  settings'.
+  http://[www.yoursite.com/path/to/drupal]/admin/content/node-type/audio
 
 
 Frequently Asked Questions
