@@ -3,12 +3,7 @@ define('CPTHEME', 'scholar_admin');
 
 function scholarcp_init(){
    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
-   drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-theme-picker.css');
-   drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-layout.css');
-   drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-users.css');
-   drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/scholarcp-theme-picker.js');
-   drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/jQuery.RSC.js');
-   
+
   if (arg(0) == 'scholarcp'){
   	_scholarcp_init_theme();
   } else {
@@ -159,6 +154,7 @@ function scholarcp_menu(){
 }
 
 function scholarcp_user_members(){
+  drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-users.css');
   $site = scholar_get_scholar();
   $arg = $site -> group -> nid;
   return views_page('og_members', 'default', $arg); 
@@ -294,6 +290,11 @@ function _scholarcp_taxonomy_fillter_options($type){
  * Enter description here...
  */
 function scholarcp_settings_form($form_id, $setting_id){
+  drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-front.css');
+  drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-theme-picker.css');
+  drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/scholarcp-theme-picker.js');
+  drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/jQuery.RSC.js');
+  
   // get the space
   $space = spaces_get_space();
   

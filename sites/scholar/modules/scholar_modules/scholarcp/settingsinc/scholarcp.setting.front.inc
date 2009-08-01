@@ -39,7 +39,7 @@ class scholarcp_setting_front implements space_setting {
    * 4. Hand-pick as you go
    */
   $form  ['frontpage'] = array (
-    '#title' => t ( 'Front page options' ), 
+    '#title' => t ( 'What do you want in the main content area of your front page?' ), 
     '#type' => 'radios', 
     '#options' => array (
       'bio' => t('Your Bio page'), 
