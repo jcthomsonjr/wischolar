@@ -2,8 +2,11 @@
 define('CPTHEME', 'scholar_admin');
 
 function scholarcp_init(){
+   // TODO We can get the active space here. 
+   // add this only if in active space + user is admin of space + users wants the toolbar anywhere
    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
 
+  // initialize the scholarcp theme.
   if (arg(0) == 'scholarcp'){
   	_scholarcp_init_theme();
   } else {
@@ -13,6 +16,7 @@ function scholarcp_init(){
   	}
   }
 }
+
 
 /**
  * Implementation of hook_spaces_settings().
@@ -73,25 +77,29 @@ function scholarcp_menu(){
   
   $items["scholarcp/settings/features/%"] = array(
     'title' => 'Features',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('spaces_customize_form', NULL, 3),
+    'page callback' => 'schlarcp_feature_customize',
+    'page arguments' => array(3),
+    //'page callback' => 'drupal_get_form',
+    //'page arguments' => array('spaces_customize_form', NULL, 3),
     'file' => 'spaces_admin.inc',
     'file path' => $spaces_path,
     'weight' => 1,
   );
 
   // content
-  // try to make the children menu as local task
+  // TODO fix its not working: trying to make the children menu as local task
   $items['scholarcp/content'] = array(
     'title' => 'Content',
-	  'page callback' => 'scholarcp_content', 	 
-	  'page arguments' => array('all'), 
+	'page callback' => 'scholarcp_content', 	 
+    'file' => 'scholarcp.content.inc',
+    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
   );
 
   $items['scholarcp/content/all'] = array( 	 
-	     'title' => 'All',
-       'type' => MENU_DEFAULT_LOCAL_TASK,	 
-	  	 
+    'title' => 'All',
+    'type' => MENU_DEFAULT_LOCAL_TASK,	 
+    'file' => 'scholarcp.content.inc',
+    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
 	);
   
   // a menu entry for each content type
@@ -109,12 +117,16 @@ function scholarcp_menu(){
   $items['scholarcp/users'] = array(
     'title' => 'Users',
     'page callback' => 'scholarcp_cp',
+    'file' => 'scholarcp.users.inc',
+    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
   );
   
   $items['scholarcp/users/members'] = array(
     'title' => 'Members',
     'page callback' => 'scholarcp_user_members',
     'access arguments' => array('access content'),
+    'file' => 'scholarcp.users.inc',
+    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
   );
 
   $items['scholarcp/news'] = array(
@@ -139,6 +151,8 @@ function scholarcp_menu(){
         'title' => $setting_form['#title'],
         'page callback' => 'drupal_get_form',
         'page arguments' => array('scholarcp_settings_form', $setting -> id),
+        'file' => 'scholarcp.settings.inc',
+        'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
       );
     }
   }
@@ -153,225 +167,67 @@ function scholarcp_menu(){
   return $items;
 }
 
-function scholarcp_user_members(){
-  drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-users.css');
-  $site = scholar_get_scholar();
-  $arg = $site -> group -> nid;
-  return views_page('og_members', 'default', $arg); 
-}
-
-/**
- * Function to return output on cp content page
- */
-function scholarcp_content($type, $name = NULL, $filter=array()){
-  $plural = ($type == 'all') ? 'All' : 's';
-  
-  $filter_form_classes = 'filter-form ' . 'filter-form-' . $type;
-  $add_new_classes = 'add-new ' . 'add-new-' . $type;  
-  $output = '<div class="' . $filter_form_classes. '">' . l(t('Filter '. $name . $plural), 'content') . '</div>'; 
-  // $output .= drupal_get_form('scholarcp_content_filter_form', $type, $name);
-   $output .= ($type == 'all') ? '' :  '<div class="' . $add_new_classes . '">' . l(t('+ add new '. $name), 'node/add/' . strtolower($type)) . '</div>';
-
-  //initialize view to generate sessions output when viewing a conference
-  $display_id = 'default';
-  $view = views_get_view('scholarcp_content');
-  $view->init();
-  $view->set_display('default');
-  $view -> set_items_per_page(15);
-  
-  //if $filter array is passed then load those arguments into the view result, otherwise just filter by type
-  //$args = count($filter) ? $view->set_arguments(array($type, $filter['pubstatus'], $filter['taxonomy'])): $view->set_arguments(array($type));
-  $view->set_arguments(array($type)); 
-  $view -> execute();
-  $output .= $view -> render();
-  
-  return $output;
-}
-
-function scholarcp_content_filter_form($form_state, $type, $name){
-
-  $pub_options =  array(
-  '2' => 'Any',
-  '1' => 'Yes',
-  '0' => 'No',
-  );
-
-  $form['scholarfilter'] = array(
-  '#type' => 'fieldset',
-  '#collapsible' => FALSE,
-  '#collapsed' => FALSE,
-  '#weight' => 0,
-  );
-
-  $form['scholarfilter']['pubstatus'] = array(
-  '#title' => t('Published'),
-  '#type' => 'radios',
-  '#options' => $pub_options,
-  '#default_value'  => 'test1',
-  '#weight' => 1,
-  // '#required' => TRUE,
-  '#prefix' => '<div id="pubstatus">',
-  '#suffix' => '</div>',
-  );
-
-  $form['scholarfilter']['taxonomy'] = array(
-  '#title' => t('Category'),
-  '#type' => 'radios',
-  '#options' => _scholarcp_taxonomy_fillter_options($type),
-  //  '#default_value'  => 'category3',
-  '#weight' => 2,
-  // '#required' => TRUE,
-  '#prefix' => '<div id="category">',
-  '#suffix' => '</div>',
-  );
-  
-  $form['scholarfilter']['type'] = array(
-  '#type' => 'hidden',
-  '#value' => $type,
-   );
-   
-  $form['scholarfilter']['name'] = array(
-  '#type' => 'hidden',
-  '#value' => $name,
-   );
-
-  $form['scholarfilter']['submit'] = array(
-  '#type' => 'submit',
-  '#value' => t('Submit'),
-  '#weight' => 3,
-  );
-
-  return $form;
-}
-
-/**
- * scholarcp_content_filter_form_submit()
- *
- * @param unknown_type $form
- * @param unknown_type $form_state
- */
-function scholarcp_content_filter_form_submit($form, &$form_state){  
-  
-  //TODO: need to return the filter array to the form below
-  
-  $filter = array(
-  'pubstatus' => $form_state['values']['pubstatus'],
-  'term' => $form_state['values']['taxonomy'],
- );
- //return scholarcp_content($form_state['values']['type'], $form_state['values']['name'], $filter);
- }
-
-function _scholarcp_taxonomy_fillter_options($type){
-
-  //For testing purposes only - remove this after testing
-  $options = array(
-  'category1' => 'category1',
-  'category2' => 'category2',
-  'category3' => 'category3',
-  );
-   return $options;
-
-  // TODO: are we using more than one Vocabulary per content type????
-  $c = db_result(db_query(db_rewrite_sql("SELECT vid FROM {vocabulary} v
-  INNER JOIN {vocabulary_node_types} n ON v.vid = n.vid WHERE n.type = '%s' 
-  ORDER BY v.weight, v.name", 'v', 'vid'), $type));
-  while ($data= db_fetch_object($c)) {
-    $term_tree =taxonomy_get_tree($data->vid);
-  }
-
-  foreach($term_tree as $term){
-    $options[$term->tid] = $term->name;
-  }
-  
-  return $options;
-}
-
-/**
- * Enter description here...
- */
-function scholarcp_settings_form($form_id, $setting_id){
-  drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-front.css');
-  drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-theme-picker.css');
-  drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/scholarcp-theme-picker.js');
-  drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/jQuery.RSC.js');
-  
-  // get the space
-  $space = spaces_get_space();
-  
-  // all space settings (classes)
-  $settings = spaces_settings($space -> type, TRUE);
-
-  //$form = array('#tree' => TRUE);
-  
-  $form = array();
-  
-  // just do have distinct id for each setting form
-  $form['#prefix'] = '<div id = "scholarcp-settings-'. $setting_id . '" class="pad">';
-  $form['#suffix'] = '</div>';
-  
-  // the form definition for this particular setting (we know setting_id)
-  // 'settings' is important here (see the submit function)
-  $form['settings'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Settings'),
-    '#tree' => TRUE,
-  );
-  $form['settings'][$setting_id] = $settings[$setting_id] -> form($space, $space -> settings[$setting_id]);
-  
-  // add the $space object to the form (so that we have it on submit);
-  $form['space'] = array(
-    '#type' => 'value',
-    '#value' => $space,
-  );
-  // pass the settingid too
-  $form['setting'] = array(
-    '#type' => 'value',
-    '#value' => $setting_id,
-  );
-  
-  // add the submit button (not in the form definition yet)
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save settings'),
-  );
-
-  return $form;
-}
-
-function scholarcp_settings_form_submit($form, &$form_state){
-  // get the space and the settings we want to save
-  $space = $form_state['values']['space'];
-  $setting = $form_state['values']['setting'];
-  
-  // Set setting values
-  $settings = spaces_settings();
-  if (!empty($form_state['values']['settings'])) {
-    foreach ($form_state['values']['settings'] as $setting => $value) {
-      $space->settings[$setting] = $settings[$setting]->submit($space, $value);
-    }
-  }
-  spaces_save($space);
-}
-
-/**
- * Validate handler for spaces features form
- */
-function scholarcp_settings_form_validate($form, &$form_state) {
-  
-  $space = $form_state['values']['space'];
-  $settings = spaces_settings();
-
-  if (is_array($form_state['values']['settings'])) {
-    foreach ($form_state['values']['settings'] as $setting => $value) {
-      $settings[$setting]->validate($space, $value);
-    }
-  }
-}
-
 
 function scholarcp_cp(){
   return '(tbd)';
 }
+
+
+/**
+ * callback function for our popup forms
+ */
+function schlarcp_feature_customize($feature_name){
+  ctools_include('ajax');
+  ctools_include('modal');
+  
+  $form_state = array(
+    're_render' => TRUE,
+    'ajax' => TRUE,
+  );
+
+  // pass all arguments needed by the callback function (ctools thing)
+  $form_state['args'] = array(NULL, $feature_name);
+
+  $output = ctools_modal_form_wrapper('spaces_customize_form', $form_state);
+
+  if (empty($output)) {
+    $output = array();
+    $output[] = ctools_modal_command_dismiss();
+  }
+  
+  ctools_ajax_render($output);
+}
+
+
+/**
+ * hook form_alter
+ */
+function scholarcp_form_alter(&$form, $form_state, $form_id) {
+  
+  /*
+   * we'd like to remove the space settings from 'spaces_features_form'
+   * and make 'settings' link as a popup link
+   */
+  if (arg(0) == 'scholarcp' && $form_id == 'spaces_features_form'){
+
+    // we dont need settings here
+    unset($form['settings']);
+    $site = $form['space']['#value'];
+    
+    // we would like to change the "customize" link to "settings" 
+    // and display the form in the popup
+    foreach (array_keys($site -> features) as $f_name){
+      if (isset($form['customize'][$f_name])){ 
+        ctools_include('ajax');
+        ctools_include('modal');
+        ctools_modal_add_js();
+        $link = ctools_modal_text_button('settings', 'scholarcp/settings/features/'. $f_name, 'whatever');
+        $form['customize'][$f_name]['#value'] = $link;
+      }
+    }
+  }
+}
+
 
 /**
  * Implementation of hook_theme().
@@ -396,14 +252,6 @@ function scholarcp_theme($cache, $type, $theme, $path) {
   return $items;
 }
 
-
-/**
- * initialize admin theme
- */
-function _scholarcp_init_theme(){
-	global $custom_theme;
-  $custom_theme = CPTHEME;
-}
 
 
 /**
@@ -518,7 +366,15 @@ function scholarcp_in_active_trail($path, $reset = FALSE) {
   return in_array($path, $active_paths);
 }
 
+/**** Helper function ****/
 
+/**
+ * initialize admin theme
+ */
+function _scholarcp_init_theme(){
+	global $custom_theme;
+  $custom_theme = CPTHEME;
+}
 
 
 
