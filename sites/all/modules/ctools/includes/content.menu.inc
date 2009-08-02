@@ -1,5 +1,5 @@
 <?php
-// $Id: content.menu.inc,v 1.1 2009/04/18 02:00:34 merlinofchaos Exp $
+// $Id: content.menu.inc,v 1.2 2009/07/09 16:54:29 merlinofchaos Exp $
 
 /**
  * @file
@@ -36,9 +36,9 @@ function ctools_content_autocomplete_node($string) {
     }
     else {
       $arg = $string;
-      $where = "LOWER(title) LIKE LOWER('%%%s%%')";
+      $where = "LOWER(n.title) LIKE LOWER('%%%s%%')";
     }
-    $result = db_query_range(db_rewrite_sql("SELECT n.nid, n. title, u.name FROM {node} n INNER JOIN {users} u ON u.uid = n.uid WHERE $where"), $arg, 0, 10);
+    $result = db_query_range(db_rewrite_sql("SELECT n.nid, n.title, u.name FROM {node} n INNER JOIN {users} u ON u.uid = n.uid WHERE $where"), $arg, 0, 10);
 
     $matches = array();
     while ($node = db_fetch_object($result)) {

@@ -1,10 +1,9 @@
 <?php
-// $Id: book_parent.inc,v 1.1 2008/12/04 22:22:41 merlinofchaos Exp $
+// $Id: book_parent.inc,v 1.2 2009/07/20 16:01:20 merlinofchaos Exp $
 
 /**
  * @file
- *
- * Plugin to provide an relationship handler for book parent
+ * Plugin to provide an relationship handler for book parent.
  */
 
 /**
@@ -12,7 +11,7 @@
  */
 function ctools_book_parent_ctools_relationships() {
   $args['book_parent'] = array(
-    'title' => t("Book parent"),
+    'title' => t('Book parent'),
     'keyword' => 'book_parent',
     'description' => t('Adds a book parent from a node context.'),
     'required context' => new ctools_context_required(t('Node'), 'node'),
@@ -24,10 +23,10 @@ function ctools_book_parent_ctools_relationships() {
 }
 
 /**
- * Return a new context based on an existing context
+ * Return a new context based on an existing context.
  */
-function ctools_book_parent_context($context = NULL, $conf) {
-  // If unset it wants a generic, unfilled context, which is just NULL
+function ctools_book_parent_context($context, $conf) {
+  // If unset it wants a generic, unfilled context, which is just NULL.
   if (empty($context->data)) {
     return ctools_context_create_empty('node');
   }
@@ -47,7 +46,7 @@ function ctools_book_parent_context($context = NULL, $conf) {
     }
 
     if (!empty($nid)) {
-      // load the node
+      // Load the node.
       $node = node_load($nid);
       // Generate the context.
       return ctools_context_create('node', $node);
@@ -56,7 +55,7 @@ function ctools_book_parent_context($context = NULL, $conf) {
 }
 
 /**
- * Settings form for the relationship
+ * Settings form for the relationship.
  */
 function ctools_book_parent_settings_form($conf) {
   $form['type'] = array(
@@ -68,4 +67,3 @@ function ctools_book_parent_settings_form($conf) {
 
   return $form;
 }
-

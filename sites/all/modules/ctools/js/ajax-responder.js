@@ -1,4 +1,4 @@
-// $Id: ajax-responder.js,v 1.8 2009/06/12 23:55:45 merlinofchaos Exp $
+// $Id: ajax-responder.js,v 1.13 2009/07/22 00:51:38 merlinofchaos Exp $
 /**
  * @file
  *
@@ -37,7 +37,7 @@ Drupal.CTools.AJAX.clickAJAXLink = function() {
   var object = $(this);
   $(this).addClass('ctools-ajaxing');
   try {
-    url.replace('/nojs/', '/ajax/');
+    url = url.replace('/nojs/', '/ajax/');
     $.ajax({
       type: "POST",
       url: url,
@@ -79,7 +79,7 @@ Drupal.CTools.AJAX.clickAJAXButton = function() {
   var object = $(this);
   try {
     if (url) {
-      url.replace('/nojs/', '/ajax/');
+      url = url.replace('/nojs/', '/ajax/');
       $.ajax({
         type: "POST",
         url: url,
@@ -96,9 +96,9 @@ Drupal.CTools.AJAX.clickAJAXButton = function() {
       });
     }
     else {
-      var form = $(this).parents('form');
+      var form = this.form;
       url = $(form).attr('action');
-      url.replace('/nojs/', '/ajax/');
+      url = url.replace('/nojs/', '/ajax/');
       $(form).ajaxSubmit({
         type: "POST",
         url: url,
@@ -113,6 +113,54 @@ Drupal.CTools.AJAX.clickAJAXButton = function() {
         },
         dataType: 'json'
       });
+    }
+  }
+  catch (err) {
+    alert("An error occurred while attempting to process " + url);
+    $(this).removeClass('ctools-ajaxing');
+    return false;
+  }
+  return false;
+};
+
+/**
+ * Generic replacement for change handler to execute ajax method.
+ */
+Drupal.CTools.AJAX.changeAJAX = function () {
+  if ($(this).hasClass('ctools-ajaxing')) {
+    return false;
+  }
+  
+  var url = Drupal.CTools.AJAX.findURL(this);
+  $(this).addClass('ctools-ajaxing');
+  var object = $(this);
+  var form_id = $(object).parents('form').get(0).id;
+  try {
+    if (url) {
+      url = url.replace('/nojs/', '/ajax/');
+      $.ajax({
+        type: "POST",
+        url: url,
+        data: {'ctools_changed' : $(this).val()},
+        global: true,
+        success: Drupal.CTools.AJAX.respond,
+        error: function() { 
+          alert("An error occurred while attempting to process " + url); 
+        },
+        complete: function() {
+          object.removeClass('ctools-ajaxing');
+          if ($(object).hasClass('ctools-ajax-submit-onchange')) {
+            $('form#' + form_id).submit();
+          }
+        },
+        dataType: 'json'
+      });
+    }
+    else {
+      if ($(object).hasClass('ctools-ajax-submit-onchange')) {
+    	  $('form#' + form_id).submit();
+      }
+      return false;
     }
   }
   catch (err) {
@@ -238,7 +286,13 @@ Drupal.behaviors.CToolsAJAX = function(context) {
     .click(Drupal.CTools.AJAX.clickAJAXLink);
 
   // Bind buttons
-  $('input.ctools-use-ajax:not(.ctools-use-ajax-processed)', context)
+  $('input.ctools-use-ajax:not(.ctools-use-ajax-processed), button.ctools-use-ajax:not(.ctools-use-ajax-processed)', context)
     .addClass('ctools-use-ajax-processed')
     .click(Drupal.CTools.AJAX.clickAJAXButton);
+
+  // Bind select
+  $('select, input:text, input:radio, input:checkbox', context)
+     .filter('.ctools-use-ajax-onchange:not(.ctools-use-ajax-processed)')
+     .addClass('ctools-use-ajax-processed')
+     .change(Drupal.CTools.AJAX.changeAJAX);
 };

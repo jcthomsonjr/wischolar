@@ -1,5 +1,5 @@
 <?php
-// $Id: form.inc,v 1.7 2009/01/29 22:12:05 merlinofchaos Exp $
+// $Id: form.inc,v 1.9 2009/07/17 20:47:33 merlinofchaos Exp $
 
 /**
  * @file
@@ -105,7 +105,6 @@ function ctools_build_form($form_id, &$form_state) {
     if (!empty($form_state['executed']) && empty($form_state['rerender'])) {
       return;
     }
-
     if ($cacheable && !empty($form['#cache']) && empty($form['#no_cache'])) {
       // Caching is done past drupal_process_form so #process callbacks can
       // set #cache. By not sending the form state, we avoid storing
@@ -162,6 +161,10 @@ function ctools_rebuild_form($form_id, &$form_state, $args, $form_build_id = NUL
     $form_build_id = 'form-' . md5(mt_rand());
   }
   $form['#build_id'] = $form_build_id;
+  // Flush form ID element cache because we may be rebuilding
+  // a form in a way that Drupal's FAPI isn't used to which 
+  // causes unnecessary form ID changes. 
+  form_clean_id(NULL, TRUE);
   drupal_prepare_form($form_id, $form, $form_state);
 
   if (empty($form['#no_cache'])) {

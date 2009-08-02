@@ -1,5 +1,5 @@
 <?php
-// $Id: role.inc,v 1.5 2009/04/17 19:16:22 merlinofchaos Exp $
+// $Id: role.inc,v 1.7 2009/07/10 17:06:10 merlinofchaos Exp $
 
 /**
  * @file
@@ -77,6 +77,6 @@ function ctools_role_ctools_acesss_summary($conf, $context) {
     return t('@identifier can have any role', array('@identifier' => $context->identifier));
   }
 
-  return format_plural(count($names), '@identifier must have role "@roles"', '@identifier can be one of "@roles"', array('@roles' => implode(', ', $names), '@identifier' => $context->identifier));
+  return format_plural(count($names), '@identifier has role "@roles"', '@identifier has one of "@roles"', array('@roles' => implode(', ', $names), '@identifier' => $context->identifier));
 }
 

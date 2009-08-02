@@ -1,5 +1,5 @@
 <?php
-// $Id: block.inc,v 1.8 2009/05/11 22:05:45 merlinofchaos Exp $
+// $Id: block.inc,v 1.9 2009/07/17 21:53:41 merlinofchaos Exp $
 
 /**
  * @file
@@ -74,7 +74,7 @@ function ctools_block_content_type_render($subtype, $conf) {
   $block->module = $module;
   $block->delta = $delta;
 
-  if ($module == 'block') {
+  if ($module == 'block' && empty($conf['override_title'])) {
     $block->subject = db_result(db_query("SELECT title FROM {blocks} WHERE module = '%s' AND delta = '%s'", 'block', $delta));
   }
 

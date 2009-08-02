@@ -1,5 +1,5 @@
 <?php
-// $Id: string.inc,v 1.3 2009/04/22 22:31:29 merlinofchaos Exp $
+// $Id: string.inc,v 1.4 2009/07/11 01:17:45 merlinofchaos Exp $
 
 /**
  * @file
@@ -43,7 +43,7 @@ function ctools_context_create_string($empty, $data = NULL, $conf = FALSE) {
     return $context;
   }
 
-  if (!empty($data) && is_object($data)) {
+  if ($data !== FALSE ) {
     $context->data = $data;
     return $context;
   }

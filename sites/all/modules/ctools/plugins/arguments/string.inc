@@ -1,5 +1,5 @@
 <?php
-// $Id: string.inc,v 1.2 2009/04/22 22:31:29 merlinofchaos Exp $
+// $Id: string.inc,v 1.3 2009/07/11 01:17:44 merlinofchaos Exp $
 
 /**
  * @file
@@ -34,12 +34,8 @@ function ctools_string_context($arg = NULL, $conf = NULL, $empty = FALSE) {
     return ctools_context_create_empty('string');
   }
 
-  $string = ctools_break_phrase($arg);
-  if (empty($string->value) || !empty($string->invalid_input)) {
-    return FALSE;
-  }
-
-  $context = ctools_context_create('string', $string);
+  $context = ctools_context_create('string', $arg);
   $context->original_argument = $arg;
+
   return $context;
 }

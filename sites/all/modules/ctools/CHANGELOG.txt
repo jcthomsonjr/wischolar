@@ -1,6 +1,33 @@
-Current API VERSION: 1.0.1
+Current API VERSION: 1.1.0. See API.txt for more information.
 
-ctools 6.x-1.0-dev
+ctools 6.x-1.0-rc1
+==================
+
+#510968: Arguments needed to be recalulculated when path changed in page task.
+#522454 by stella: export.inc not properly using the 'key' instead of 'name' everywhere.
+#132557: Allow alter hook for rendered data: hook_ctools_render_alter()
+#520128: Context object may not be available when loading page cache.
+#498066 by mikl: Fix class names in advanced help.
+#504286 by Darren Oh: Set proper primary key on ctools_object_cache
+#514432 by markus_petrux: Various node fields available as a pane.
+#451928 by populist: Fix file upload from modals.
+#522836 by andrewlevine: Add form_clean_id() to ctools_rebuild_form() to prevent extraneous -1s from appearing.
+#518254: Accidentally inverted truth value on compare users.
+#464252 by andrewlevine: Helper to make onchange AJAX requests for select boxes.
+#490672 by dereine: Title overrides not working for system block using custom block.
+#520402: Disabled some concept code for later use that apparently conflicts with admin_menu.
+#523712: Fix call-time pass by reference typo.
+#477334 by dkruglyak: Remove forced lowercase on CSS processing.
+#484340: Allow keyword substitution in custom content.
+#458300: Option to inherit panel path on views panes not being properly honored.
+#493620: Add a PHP Code option to access control.
+#516222: Use "DELETE FROM" instead of "TRUNCATE" which is not supported by SQLite.
+#444456: Add Node: Node type as a context converter for substitutions and views arguments.
+#516504: Make sure optional contexts are truly and completely optional.
+#528022 by tha_sun: Change wording of "Add variant" to "Create variant" to avoid confusion with the "Add variant" tab.
+#528066: Required context (used by Mini Panels) accidentally had "weight" when not needed.
+
+ctools 6.x-1.0-beta4
 ==================
 #451078: Fix silly typo preventing contexts from getting to views. Again.
 #457376: Text fields need array defaults. This only broke in pgsql.
@@ -15,6 +42,19 @@ Add a hook to allow other modules to cooperate a bit more easily with node page 
 #498000: Allow .info files to create data for plugins.
 Fix a bug in plugins.inc where if two modules create a plugin of the same
 name, they would accidentally share data.
+#512048: by tom_o_t: Path fallback override callback had bad logic.
+
+IMPORTANT:
+Removed the delegator module entirely. There is now a page_manager module in 
+its place, with a vastly improved workflow and user interface. Activating it 
+should automatically update your data to the new module. However, PLEASE 
+PLEASE PLEASE back up your data before using it. Just enough changed to make
+this a bit of a concern.
+
+#514468 by hippich: Fix typos in content.menu.inc related to db_rewrite_sql() use.
+#508292 by rfay: Add user comparison access plugin.
+API version bumped to 1.1.0 to reflect the death of delegator.
+by sdboyer: Bulk Export module created to replace Panels bulk export.
 
 ctools 6.x-1.0-beta3
 ==================

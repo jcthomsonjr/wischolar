@@ -1,5 +1,5 @@
 <?php
-// $Id: context-access-admin.inc,v 1.5 2009/03/24 18:32:45 merlinofchaos Exp $
+// $Id: context-access-admin.inc,v 1.6 2009/07/10 17:40:09 merlinofchaos Exp $
 
 /**
  * @file
@@ -217,7 +217,7 @@ function ctools_access_admin_render_table($access, $fragment, $contexts) {
   );
 
   if (empty($rows)) {
-    $rows[] = array(array('data' => t('No criteria selected, access will automatically be granted.'), 'colspan' => count($header)));
+    $rows[] = array(array('data' => t('No criteria selected, this test will pass.'), 'colspan' => count($header)));
   }
 
   ctools_modal_add_js();

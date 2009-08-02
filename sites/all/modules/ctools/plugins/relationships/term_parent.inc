@@ -1,10 +1,9 @@
 <?php
-// $Id: term_parent.inc,v 1.1 2008/12/04 22:22:41 merlinofchaos Exp $
+// $Id: term_parent.inc,v 1.2 2009/07/20 16:01:20 merlinofchaos Exp $
 
 /**
  * @file relationships/term_parent.inc
- *
- * Plugin to provide an relationship handler for term parent
+ * Plugin to provide an relationship handler for term parent.
  */
 
 /**
@@ -12,7 +11,7 @@
  */
 function ctools_term_parent_ctools_relationships() {
   $args['term_parent'] = array(
-    'title' => t("Term parent"),
+    'title' => t('Term parent'),
     'keyword' => 'parent_term',
     'description' => t('Adds a taxonomy term parent from a term context.'),
     'required context' => new ctools_context_required(t('Term'), 'term'),
@@ -24,10 +23,10 @@ function ctools_term_parent_ctools_relationships() {
 }
 
 /**
- * Return a new context based on an existing context
+ * Return a new context based on an existing context.
  */
-function ctools_term_parent_context($context = NULL, $conf) {
-  // If unset it wants a generic, unfilled context, which is just NULL
+function ctools_term_parent_context($context, $conf) {
+  // If unset it wants a generic, unfilled context, which is just NULL.
   if (empty($context->data)) {
     return ctools_context_create_empty('term');
   }
@@ -47,7 +46,7 @@ function ctools_term_parent_context($context = NULL, $conf) {
       }
     }
 
-    // load the term
+    // Load the term.
     if ($result) {
       $term = taxonomy_get_term($result['tid']);
       return ctools_context_create('term', $term);
@@ -56,7 +55,7 @@ function ctools_term_parent_context($context = NULL, $conf) {
 }
 
 /**
- * Settings form for the relationship
+ * Settings form for the relationship.
  */
 function ctools_term_parent_settings_form($conf) {
   $form['type'] = array(
@@ -68,4 +67,3 @@ function ctools_term_parent_settings_form($conf) {
 
   return $form;
 }
-

@@ -1,5 +1,5 @@
 <?php
-// $Id: node.inc,v 1.3 2009/05/09 07:44:55 merlinofchaos Exp $
+// $Id: node.inc,v 1.4 2009/07/17 21:09:44 merlinofchaos Exp $
 
 /**
  * @file
@@ -84,6 +84,10 @@ function ctools_node_content_type_render($subtype, $conf, $panel_args) {
   }
   if (!empty($conf['identifier'])) {
     $node->panel_identifier = $conf['identifier'];
+  }
+
+  if (!isset($node->build_mode)) {
+    $node->build_mode = NODE_BUILD_NORMAL;
   }
 
   $block->content = node_view($node, $conf['teaser'], FALSE, $conf['links']);

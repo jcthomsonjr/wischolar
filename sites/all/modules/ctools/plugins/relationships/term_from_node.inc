@@ -1,10 +1,9 @@
 <?php
-// $Id: term_from_node.inc,v 1.1 2008/12/04 22:22:41 merlinofchaos Exp $
+// $Id: term_from_node.inc,v 1.2 2009/07/20 16:01:20 merlinofchaos Exp $
 
 /**
  * @file
- *
- * Plugin to provide an relationship handler for term from node
+ * Plugin to provide an relationship handler for term from node.
  */
 
 /**
@@ -12,7 +11,7 @@
  */
 function ctools_term_from_node_ctools_relationships() {
   $args['term_from_node'] = array(
-    'title' => t("Term from node"),
+    'title' => t('Term from node'),
     'keyword' => 'term',
     'description' => t('Adds a taxonomy term from a node context; if multiple terms are selected, this will get the "first" term only.'),
     'required context' => new ctools_context_required(t('Node'), 'node'),
@@ -24,10 +23,10 @@ function ctools_term_from_node_ctools_relationships() {
 }
 
 /**
- * Return a new context based on an existing context
+ * Return a new context based on an existing context.
  */
-function ctools_term_from_node_context($context = NULL, $conf) {
-  // If unset it wants a generic, unfilled context, which is just NULL
+function ctools_term_from_node_context($context, $conf) {
+  // If unset it wants a generic, unfilled context, which is just NULL.
   if (empty($context->data)) {
     return ctools_context_create_empty('term', NULL);
   }
@@ -42,7 +41,7 @@ function ctools_term_from_node_context($context = NULL, $conf) {
 }
 
 /**
- * Settings form for the relationship
+ * Settings form for the relationship.
  */
 function ctools_term_from_node_settings_form($conf) {
   $options = array();
@@ -60,4 +59,3 @@ function ctools_term_from_node_settings_form($conf) {
 
   return $form;
 }
-

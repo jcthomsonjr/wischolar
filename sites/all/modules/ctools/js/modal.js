@@ -1,4 +1,4 @@
-// $Id: modal.js,v 1.11 2009/05/19 21:59:48 merlinofchaos Exp $
+// $Id: modal.js,v 1.15 2009/07/22 00:16:08 merlinofchaos Exp $
 /**
  * @file 
  *
@@ -156,11 +156,12 @@ Drupal.CTools.Modal.submitAjaxForm = function() {
     // If the form requires uploads, use an iframe instead and add data to
     // the submit to support this and use the proper response.
     if ($(this).attr('enctype') == 'multipart/form-data') {
-      ajaxOptions = {
+      $(this).append('<input type="hidden" name="ctools_multipart" value="1">');
+      ajaxIframeOptions = {
         success: Drupal.CTools.AJAX.iFrameJsonRespond,
-        iframe: true,
-        data: {'ctools_multipart': '1'}
-      } + ajaxOptions;
+        iframe: true
+      };
+      ajaxOptions = $.extend(ajaxOptions, ajaxIframeOptions);
     }
 
     $(this).ajaxSubmit(ajaxOptions);
@@ -192,7 +193,7 @@ Drupal.behaviors.CToolsModal = function(context) {
     .click(Drupal.CTools.Modal.clickAjaxLink);
 
   // Bind buttons
-  $('input.ctools-use-modal:not(.ctools-use-modal-processed)', context)
+  $('input.ctools-use-modal:not(.ctools-use-modal-processed), button.ctools-use-modal:not(.ctools-use-modal-processed)', context)
     .addClass('ctools-use-modal-processed')
     .click(Drupal.CTools.Modal.clickAjaxButton);
 
@@ -204,7 +205,7 @@ Drupal.behaviors.CToolsModal = function(context) {
     // add click handlers so that we can tell which button was clicked,
     // because the AJAX submit does not set the values properly.
 
-    $('input[type="submit"]:not(.ctools-use-modal-processed)', context)
+    $('input[type="submit"]:not(.ctools-use-modal-processed), button:not(.ctools-use-modal-processed)', context)
       .addClass('ctools-use-modal-processed')
       .click(function() {
         // Make sure it knows our button.

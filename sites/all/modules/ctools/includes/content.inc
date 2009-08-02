@@ -1,5 +1,5 @@
 <?php
-// $Id: content.inc,v 1.10 2009/05/02 00:56:08 merlinofchaos Exp $
+// $Id: content.inc,v 1.11 2009/07/21 20:42:56 merlinofchaos Exp $
 
 /**
  * @file
@@ -612,7 +612,7 @@ function ctools_content_get_available_types($contexts = NULL, $has_content = FAL
 
       // Check to see if the content type can be used in this context.
       if (!empty($subtype['required context'])) {
-        if (!ctools_context_filter($contexts, $subtype['required context'])) {
+        if (!ctools_context_match_requirements($contexts, $subtype['required context'])) {
           continue;
         }
       }

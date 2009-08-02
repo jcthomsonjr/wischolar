@@ -1,5 +1,5 @@
 <?php
-// $Id: term_vocabulary.inc,v 1.3 2009/04/17 19:16:22 merlinofchaos Exp $
+// $Id: term_vocabulary.inc,v 1.4 2009/07/10 17:06:10 merlinofchaos Exp $
 
 /**
  * @file
@@ -11,7 +11,7 @@
  */
 function ctools_term_vocabulary_ctools_access() {
   $args['term_vocabulary'] = array(
-    'title' => t("Taxonomy: Vocabulary"),
+    'title' => t("Taxonomy: vocabulary"),
     'description' => t('Control access by term vocabulary.'),
     'callback' => 'ctools_term_vocabulary_ctools_access_check',
     'default' => array('vids' => array()),
@@ -82,9 +82,9 @@ function ctools_term_vocabulary_ctools_acesss_summary($conf, $context) {
   }
 
   if (empty($names)) {
-    return t('@identifier can be any vocabulary', array('@identifier' => $context->identifier));
+    return t('@identifier is any vocabulary', array('@identifier' => $context->identifier));
   }
 
-  return format_plural(count($names), '@identifier can be vocabulary "@vids"', '@identifier can be vocabulary "@vids"', array('@vids' => implode(', ', $names), '@identifier' => $context->identifier));
+  return format_plural(count($names), '@identifier vocabulary is "@vids"', '@identifier vocabulary is one of "@vids"', array('@vids' => implode(', ', $names), '@identifier' => $context->identifier));
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: site_language.inc,v 1.5 2009/04/17 19:16:22 merlinofchaos Exp $
+// $Id: site_language.inc,v 1.6 2009/07/10 17:06:10 merlinofchaos Exp $
 
 /**
  * @file
@@ -81,9 +81,9 @@ function ctools_site_language_ctools_acesss_summary($conf, $context) {
   }
 
   if (empty($names)) {
-    return t('Site language can be in any language');
+    return t('Site language is any language');
   }
 
-  return format_plural(count($names), 'Site language can be languages "@languages"', 'Site language can be language "@languages"', array('@languages' => implode(', ', $names)));
+  return format_plural(count($names), 'Site language is "@languages"', 'Site language is one of "@languages"', array('@languages' => implode(', ', $names)));
 }
 

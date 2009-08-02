@@ -1,5 +1,5 @@
 <?php
-// $Id: context-admin.inc,v 1.7 2009/05/11 23:49:33 merlinofchaos Exp $
+// $Id: context-admin.inc,v 1.8 2009/07/23 00:09:59 merlinofchaos Exp $
 
 /**
  * @file includes/common-context.inc
@@ -60,7 +60,7 @@ function ctools_context_info($type = NULL) {
         'context function' => 'ctools_get_context',
         'form id' => 'ctools_edit_requiredcontext_form',
         'key' => 'requiredcontexts',
-        'sortable' => TRUE,
+        'sortable' => FALSE,
       ),
     );
   }

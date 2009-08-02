@@ -1,5 +1,5 @@
 <?php
-// $Id: node_language.inc,v 1.6 2009/04/17 19:16:22 merlinofchaos Exp $
+// $Id: node_language.inc,v 1.7 2009/07/10 17:06:10 merlinofchaos Exp $
 
 /**
  * @file
@@ -12,7 +12,7 @@
 function ctools_node_language_ctools_access() {
   if (module_exists('locale')) {
     $items['node_language'] = array(
-      'title' => t("Node: Language"),
+      'title' => t("Node: language"),
       'description' => t('Control access by node language.'),
       'callback' => 'ctools_node_language_ctools_access_check',
       'default' => array('language' => array()),
@@ -108,9 +108,9 @@ function ctools_node_language_ctools_acesss_summary($conf, $context) {
   }
 
   if (empty($names)) {
-    return t('@identifier can be in any language', array('@identifier' => $context->identifier));
+    return t('@identifier is in any language', array('@identifier' => $context->identifier));
   }
 
-  return format_plural(count($names), '@identifier can be in languages "@languages"', '@identifier can be in language "@languages"', array('@languages' => implode(', ', $names), '@identifier' => $context->identifier));
+  return format_plural(count($names), '@identifier language is "@languages"', '@identifier language is one of "@languages"', array('@languages' => implode(', ', $names), '@identifier' => $context->identifier));
 }
 

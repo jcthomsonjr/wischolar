@@ -1,5 +1,5 @@
 <?php
-// $Id: node.inc,v 1.7 2009/05/11 23:02:55 merlinofchaos Exp $
+// $Id: node.inc,v 1.8 2009/07/21 19:23:57 merlinofchaos Exp $
 
 /**
  * @file
@@ -166,6 +166,7 @@ function ctools_context_node_convert_list() {
     'nid' => t('Node ID'),
     'title' => t('Node title'),
     'uid' => t('Author UID'),
+    'type' => t('Node type'),
   );
 }
 
@@ -180,5 +181,7 @@ function ctools_context_node_convert($context, $type) {
       return $context->data->title;
     case 'uid':
       return $context->data->uid;
+    case 'type':
+      return $context->data->type;
   }
 }

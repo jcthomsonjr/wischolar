@@ -1,5 +1,5 @@
 <?php
-// $Id: views_panes.inc,v 1.12 2009/05/22 17:48:06 merlinofchaos Exp $
+// $Id: views_panes.inc,v 1.13 2009/07/20 17:45:21 merlinofchaos Exp $
 
 /**
  * @file
@@ -198,6 +198,9 @@ function views_content_views_panes_content_type_render($subtype, $conf, $panel_a
 
   if ($allow['path_override'] && !empty($conf['path'])) {
     $view->override_path = $conf['path'];
+  }
+  else if ($path = $view->display_handler->get_option('inherit_panels_path')) {
+    $view->override_path = $_GET['q'];
   }
 
   $block = new stdClass();

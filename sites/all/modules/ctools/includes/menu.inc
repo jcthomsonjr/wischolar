@@ -1,5 +1,5 @@
 <?php
-// $Id: menu.inc,v 1.3 2009/05/08 22:36:29 merlinofchaos Exp $
+// $Id: menu.inc,v 1.4 2009/07/12 05:28:31 merlinofchaos Exp $
 
 /**
  * @file
@@ -210,6 +210,16 @@ function ctools_menu_tree_page_data($item, $menu_name = 'navigation') {
     $tree[$cid] = $data['tree'];
   }
   return $tree[$cid];
+}
+
+function ctools_menu_set_trail_parent($path) {
+  $current = menu_get_active_trail();
+  $keep = array_pop($current);
+  
+  $trail = ctools_get_menu_trail($path);
+  $trail[] = $keep;
+
+  menu_set_active_trail($trail);
 }
 
 /**

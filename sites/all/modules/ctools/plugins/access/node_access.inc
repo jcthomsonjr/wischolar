@@ -1,5 +1,5 @@
 <?php
-// $Id: node_access.inc,v 1.6 2009/04/17 19:16:22 merlinofchaos Exp $
+// $Id: node_access.inc,v 1.7 2009/07/10 17:06:10 merlinofchaos Exp $
 
 /**
  * @file
@@ -11,13 +11,13 @@
  */
 function ctools_node_access_ctools_access() {
   $args['node_access'] = array(
-    'title' => t("Node: Access status"),
+    'title' => t("Node: accessible"),
     'description' => t('Control access with built in Drupal node access test.'),
     'callback' => 'ctools_node_access_ctools_access_check',
     'default' => array('type' => 'view'),
     'settings form' => 'ctools_node_access_ctools_access_settings',
     'settings form submit' => 'ctools_node_access_ctools_access_settings_submit',
-    'summary' => 'ctools_node_access_ctools_acesss_summary',
+    'summary' => 'ctools_node_access_ctools_access_summary',
     'required context' => array(
       new ctools_context_required(t('User'), 'user'),
       new ctools_context_required(t('Node'), 'node'),
@@ -71,7 +71,7 @@ function ctools_node_access_ctools_access_check($conf, $context) {
 /**
  * Provide a summary description based upon the checked node_accesss.
  */
-function ctools_node_access_ctools_acesss_summary($conf, $context) {
+function ctools_node_access_ctools_access_summary($conf, $context) {
   list($user_context, $node_context) = $context;
   $replacement = array('@user' => $user_context->identifier, '@node' => $node_context->identifier);
 
