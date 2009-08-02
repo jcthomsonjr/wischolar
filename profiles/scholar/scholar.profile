@@ -25,6 +25,7 @@ function scholar_profile_modules() {
     'og_access',
     'og_views', 
     'og_vocab',
+    'menu_node',
     'purl',
     'spaces',
     'spaces_og',
