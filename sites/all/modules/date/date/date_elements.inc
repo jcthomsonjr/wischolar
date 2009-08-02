@@ -1,5 +1,5 @@
 <?php
-//$Id: date_elements.inc,v 1.46.2.2.2.63 2009/06/08 18:35:55 karens Exp $
+//$Id: date_elements.inc,v 1.46.2.2.2.64 2009/07/24 18:48:14 karens Exp $
 /**
  * @file
  * Date forms and form themes and validation.
@@ -573,7 +573,7 @@ function theme_date_combo($element) {
   
   // Group from/to items together in fieldset.
   $fieldset = array(
-    '#title' => t($field['widget']['label']) .' '. ($element['#delta'] > 0 ? intval($element['#delta'] + 1) : ''),
+    '#title' => check_plain($field['widget']['label']) .' '. ($element['#delta'] > 0 ? intval($element['#delta'] + 1) : ''),
     '#value' => $element['#children'],
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
