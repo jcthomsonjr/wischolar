@@ -37,6 +37,7 @@ function _scholarwidgets_default_contexts(){
       'label' => 'Scholar site shield',
       'type' => 'context_ui',
     ),
+    /*
     'menu_features' => array(
       'module' => 'menu',
       'delta' => 'features',
@@ -44,6 +45,16 @@ function _scholarwidgets_default_contexts(){
       'region' => 'navbar',
       'status' => '0',
       'label' => 'Features',
+      'type' => 'context_ui',
+    ),
+    */
+    'scholarmenu_0' => array(
+      'module' => 'scholarmenu',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'navbar',
+      'status' => '0',
+      'label' => 'Scholar primary menu',
       'type' => 'context_ui',
     ),
   ),
