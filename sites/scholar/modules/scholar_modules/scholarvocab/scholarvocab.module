@@ -2,10 +2,11 @@
 
 function scholarvocab_menu() {
   $items = array ();
-  $items ['category'] = array (
-  	'title' => 'categories', 
-  	'page callback' => 'scholarvocab_vocab_block', 
-  	'access arguments' => array ('access content' ) 
+  $items ['scholarcp/settings/taxonomy'] = array (
+  	'title' => 'Taxonomy', 
+  	'page callback' => 'scholarvocab_taxonomies', 
+  	'access arguments' => array ('access content' ),
+    'menu_name' => 'scholarcp',
   );
   
   $items['scholarvocab/term/delete/%/%'] = array (
@@ -26,6 +27,27 @@ function scholarvocab_menu() {
   return $items;
 }
 
+function scholarvocab_taxonomies(){
+  $site = scholar_get_scholar();
+  scholar_include('scholarapi');
+  $types = scholar_content_types();
+  $output = '';
+  $delta = 0;
+  foreach($types as $type){
+    
+    $block = scholarvocab_block_per_content_type($site, $type);
+    $bo = new stdClass();
+    $bo -> module = 'scholarvocab';
+    $bo -> content = $block['content'];
+    $bo -> subject = $block['subject'];
+    $bo -> delta = $bo -> module . $delta++;
+    $output .= theme('block', $bo);
+  }
+  
+  return $output;
+}
+
+
 function scholarvocab_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
@@ -42,20 +64,11 @@ function scholarvocab_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
-
 function scholarvocab_block_view() {
-  drupal_add_js ( drupal_get_path ( 'module', 'scholarvocab' ) . '/theme/scholarvocab.js' );
-  ctools_include('ajax');
-  ctools_add_js('ajax-responder');
-  //$site = scholar_get_scholar(); // TODO why this is not working !!!
-  
-
   $group_node = og_get_group_context ();
   $site = spaces_load ( 'og', $group_node->nid, TRUE );
   $sid = $group_node -> nid;
-  
-  $admin = $site->admin_access ();
-  
+ 
   // 1. get the active contexts
   $active_contexts = context_active_contexts();
   foreach($active_contexts as $c){
@@ -63,48 +76,48 @@ function scholarvocab_block_view() {
     if (isset ($c -> node)) {
       $node_type = current($c -> node);  // TODO we are assuming that the context has only one content type
       // get vocabularies associated with this content type
-      $vcs = taxonomy_get_vocabularies($node_type);
-      foreach($vcs as $v){
-        $tree = taxonomy_get_tree ( $v -> vid );
-        //dpm($tree);
-
-        foreach ( $tree as $term ) {
-          $count = taxonomy_term_count_nodes ( $term->tid );
-          //if ($count) {
-              // TODO the following should come from the feature view (where term) is an argument)
-              $term_path = "taxonomy/term/$term->tid"; 
-              $term_link = l ( $term->name, $term_path, array ('title' => t ( $term->description ) , 'attributes' => array( 'id'=>'category_menu_item_'.$term -> tid)) );
-              $item = $term_link . '<span class = "count" > ('. $count . ')</span>';
-              if ($admin){
-                $admin_links = array();
-                $admin_links[] = array(
-                  'title' => 'delete',
-                  'href' => "scholarvocab/term/delete/". $term -> vid . "/" . $term -> tid,
-                );
-                
-                $admin_links[] = array(
-                  'title' => 'rename',
-                  'href' => 'scholarvocab/term/'.$term -> vid . "/" . $term -> tid.'/rename/',
-                );
-                //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
-                $item .= theme('links',$admin_links,  $attributes = array('class' => 'admin'));
-              }
-              $items [] = array ('data' => $item );
-          //}
-        }
-
-      }
-      $block ['content'] = theme ( 'item_list', $items );
-      $block ['subject'] = t ( 'Categories' );
-      if ($admin) {
-        $block ['subject'] .= l ( 'Edit', "node/" . $group_node->nid . "/og/vocab/edit/vocabulary/$vid" );
-      }
-      return $block;
+      return scholarvocab_block_per_content_type($site, $node_type);
     }
   }
 }
 
-
+function scholarvocab_block_per_content_type($site, $node_type) {
+  drupal_add_js ( drupal_get_path ( 'module', 'scholarvocab' ) . '/theme/scholarvocab.js' );
+  ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+  //$site = scholar_get_scholar(); // TODO why this is not working !!!
+  $admin = $site->admin_access ();
+  $vcs = taxonomy_get_vocabularies ( $node_type );
+  foreach ( $vcs as $v ) {
+    $tree = taxonomy_get_tree ( $v->vid );
+    
+    foreach ( $tree as $term ) {
+      $count = taxonomy_term_count_nodes ( $term->tid );
+      //if ($count) {
+      // TODO the following should come from the feature view (where term) is an argument)
+      $term_path = "taxonomy/term/$term->tid";
+      $term_link = l ( $term->name, $term_path, array ('title' => t ( $term->description ), 'attributes' => array ('id' => 'category_menu_item_' . $term->tid ) ) );
+      $item = $term_link . '<span class = "count" > (' . $count . ')</span>';
+      if ($admin) {
+        $admin_links = array ();
+        $admin_links [] = array ('title' => 'delete', 'href' => "scholarvocab/term/delete/" . $term->vid . "/" . $term->tid );
+        
+        $admin_links [] = array ('title' => 'rename', 'href' => 'scholarvocab/term/' . $term->vid . "/" . $term->tid . '/rename/' );
+        //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
+        $item .= theme ( 'links', $admin_links, $attributes = array ('class' => 'admin' ) );
+      }
+      $items [] = array ('data' => $item );
+      //}
+    }
+  
+  }
+  $block ['content'] = theme ( 'item_list', $items );
+  $block ['subject'] = t ( 'Categories' );
+  if ($admin) {
+    $block ['subject'] .= l ( 'Edit', "node/" . $group_node->nid . "/og/vocab/edit/vocabulary/$vid" );
+  }
+  return $block;
+}
 
 function scholarvocab_term_rename($vid, $tid, $newterm) {
   //dpm ( $newterm );

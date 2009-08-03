@@ -59,6 +59,15 @@ function _scholarwidgets_default_contexts(){
       'label' => 'Scholar primary menu',
       'type' => 'context_ui',
     ),
+    'scholarmenu_1' => array(
+      'module' => 'scholarmenu',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'left',
+      'status' => '0',
+      'label' => 'Scholar secondary menu',
+      'type' => 'context_ui',
+    ),
   ),
 );
 	return $items;
