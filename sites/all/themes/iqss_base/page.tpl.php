@@ -6,6 +6,9 @@
   <head>
     <title><?php print $head_title ?></title>
     <?php print $head ?>
+    <?php if (isset($googlescholar)) : ?>
+    <?php print $googlescholar; ?>
+    <?php endif; ?>
     <?php print $styles ?>
     <?php print $scripts ?>
     <!--[if lte IE 7]><?php print iqss_base_get_ie_styles(); ?><![endif]--><!--If Less Than or Equal (lte) to IE 7-->

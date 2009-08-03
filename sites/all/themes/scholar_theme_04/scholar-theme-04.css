@@ -1,13 +1,9 @@
-html {
-    min-width: 910px;
-    }
-
 body {
     background: #ccc;
     color:#666;
     font:.9em/165% Helvetica, Arial,Verdana,sans-serif; 
     }
-   
+
 #container {
     width: 980px;
     margin: 0 auto;
@@ -36,6 +32,20 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 
 h2 {
     color:#51787C;
+    }
+
+/* LAYOUT */
+
+#sidebar-left, #header-left, #sidebar-right, #header-right {
+    width: 180px;
+    }
+#sidebar-left, #header-left {
+    right: 220px;
+    }
+    
+#content-wrapper, #header-wrapper {
+    padding-left: 180px;
+    padding-right: 208px;
     }
 
 
@@ -84,14 +94,13 @@ h2 {
     color: #F9E433;
     }
     
-    
 /* MAIN CONTENT AREA */
 
 #content-main {
     padding: 0;
     }
 
-#content-main .node {
+#content-main .node, body.section-node-edit #content, body.section-node-add #content {
     padding: 10px;
     background: #fff;
     margin-bottom: 10px;
