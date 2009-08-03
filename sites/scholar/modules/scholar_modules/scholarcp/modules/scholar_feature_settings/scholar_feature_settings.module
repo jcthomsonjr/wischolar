@@ -9,6 +9,9 @@ function scholar_feature_settings_init(){
     scholar_feature_settings_customizer_biblio_style::customize($space, $conf['biblio_style']);
     scholar_feature_settings_customizer_bkn::customize($space,'bkn_contrib_lookup_allow_autocomplete',$conf['bkn_contrib_lookup_allow_autocomplete']);
     scholar_feature_settings_customizer_bkn::customize($space,'bkn_contrib_lookup_mode',$conf['bkn_contrib_lookup_mode']);
+    scholar_feature_settings_customizer_biblio_sort::customize($space,'biblio_sort',$conf['biblio_sort']);
+    scholar_feature_settings_customizer_biblio_sort::customize($space,'biblio_sort_tabs',$conf['biblio_sort_tabs']);
+    scholar_feature_settings_customizer_biblio_sort::customize($space,'biblio_order',$conf['biblio_order']);
   }
 }
 
@@ -17,7 +20,7 @@ function scholar_feature_settings_init(){
  */
 function scholar_feature_settings_spaces_customizers() {
   return array(
-    'scholar_style' => array(
+    'scholar_biblio_style' => array(
       'class' => 'scholar_feature_settings_customizer_biblio_style',
       'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.biblio_style.inc',
     ),
@@ -25,9 +28,9 @@ function scholar_feature_settings_spaces_customizers() {
       'class' => 'scholar_feature_settings_customizer_bkn',
       'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.bkn.inc',
     ),
-//    'block' => array(
-//      'class' => 'space_customizer_block',
-//      'file' => drupal_get_path('module', 'spaces') .'/spaces.spaces.inc',
-//    ),
+    'scholar_biblio_sort' => array(
+      'class' => 'scholar_feature_settings_customizer_biblio_sort',
+      'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.biblio_sort.inc',
+    ),
   );
 }
