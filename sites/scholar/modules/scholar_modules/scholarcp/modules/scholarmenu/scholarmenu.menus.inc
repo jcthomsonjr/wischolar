@@ -51,7 +51,8 @@ class scholarmenu_menus implements space_setting {
         if(!array_key_exists($scholar->group->nid,$a_groups)) continue; //is this node in the current group
       }
         
-      if(array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
+      if(is_array($space->settings['menus']['menu_items']) && 
+         array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
         $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
         $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
       }else{
@@ -86,7 +87,8 @@ class scholarmenu_menus implements space_setting {
         if(!array_key_exists($scholar->group->nid,$a_groups)) continue; //is this node in the current group
       }
         
-      if(array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
+      if(is_array($space->settings['menus']['menu_items']) && 
+         array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
         $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
         $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
       }else{
