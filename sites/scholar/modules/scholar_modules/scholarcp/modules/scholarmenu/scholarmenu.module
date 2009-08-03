@@ -147,9 +147,9 @@ function scholarmenu_block($op = 'list', $delta = 0, $edit = array()) {
   
   $blocks = array();
   if ($op == 'list') {
-    $blocks[] = array('info' => t('Primary Site Specific Menu'),
+    $blocks[] = array('info' => t('Scholar primary menu'),
                       'cache' => BLOCK_CACHE_PER_PAGE); 
-    $blocks[] = array('info' => t('Secondary Site Specific Menu'),
+    $blocks[] = array('info' => t('Scholar secondary menu'),
                       'cache' => BLOCK_CACHE_PER_PAGE);  
     return $blocks;
   }
