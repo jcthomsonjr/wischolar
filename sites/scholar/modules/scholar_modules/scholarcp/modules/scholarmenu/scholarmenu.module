@@ -75,9 +75,16 @@ function scholarmenu_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
       $s_def_menu = 'scholar_primary_menu';
   }
   
-  if(!$a_settings_menu) return menu_tree( variable_get( $s_def_menu ,false) );
-  $n_found = 0;   
+  if(!$a_settings_menu){
+    $a_tree = menu_tree_page_data(variable_get($s_def_menu,false));
+    foreach ($a_tree as $k => $tree) {
+      if($tree['below']) $a_tree[$k]['below'] = false;
+    }
+    
+    return menu_tree_output($a_tree);
+  }//send default
   
+  $n_found = 0;   
   if($b_check_expanded){
     $a_full_page_expanded = array_merge( menu_tree_page_data(variable_get('scholar_primary_menu',false)), 
                                          menu_tree_page_data(variable_get('scholar_secondary_menu',false)));
