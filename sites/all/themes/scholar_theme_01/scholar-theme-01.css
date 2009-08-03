@@ -3,24 +3,29 @@ html {
     }
 
 body {
-    background: url(images/body-bg.png) repeat-y center top #fff;
-    color:#282828;
-    font:.9em/165% arial, helvetica, sans-serif; 
-    }
+  background: url(images/body-bg.png) repeat-y center top #fff;
+  color:#282828;
+  font:.9em/165% arial, helvetica, sans-serif; 
+  }
    
+body.sidebar-right {
+  background: url(images/body-bg-horiz.png) repeat-x 0 198px #fff;
+  }
+
+
 
 #container {
     width: 910px;
-    margin: 0 auto;
+    margin: 38px auto 0 auto;
     }
     
 a, a:visited {
-    color:#5088BA;
+    color:#306696;
     font-style: italic;
     }
 
 a:hover {
-    color:#3399CC;
+    color:#13a3eb;
     }
 
 
@@ -63,8 +68,12 @@ h1 a, h2 a, h3 a, #sidebar-left a {
 /* HEADER ELEMENTS */
 
 #header {
-    height: 170px;
+    height: auto;
     }
+
+body.no-sidears #header, body.sidebar-right {
+  height: 196px;
+  }
 
 #header h1 {
     font-size: 3em;
@@ -78,29 +87,88 @@ h1 a, h2 a, h3 a, #sidebar-left a {
     
 #header h1 a, #header h1 a:visited {
     color:#282828;
-    }
-    
+    }    
 
- 
-/* SIDEBAR LEFT */
+#header p {
+  border-top: 1px solid #8c969a;
+  }
+
+
+/*Navbar & sidebar shared */
+
+#navbar a, #navbar a:visited, #sidebar-left a, #sidebar-left a:visited {
+  font-style: normal;
+  display:block;
+  color: #5088BA;
+  font-weight:bold;
+  text-decoration:none;
+  }
+
+
+#navbar a:hover, #sidebar-left a:hover {
+  background:#F9FAFA;
+  }
+
+
+/*Navbar Specific */
+
+#navbar {
+  padding-top: 14px;
+  }
+
+#navbar li {
+  font-size: 1em;
+  line-height: 34px;
+  font-weight: bold;
+  float:left;
+  border-right: 1px solid #D8D6D6;
+  }
+
+#navbar li.first {
+  border-left: 1px solid #D8D6D6;
+  }
+
+#navbar a, #navbar a:visited {
+  padding: 0 9px;
+  height: 34px;
+  }
+
+body.sidebar-left #navbar, body.two-sidebars #navbar {
+  float: right;
+  width: 711px;
+  clear: none;
+  border-bottom: 1px solid #D8D6D6;
+  padding-top: 0;
+  }
+  
+body.sidebar-left #navbar li, body.two-sidebars #navbar li {
+  border:none;
+  }
+  
+body.sidebar-left #content-wrapper, body.two-sidebars #content-wrapper {
+  clear: none;
+  }
+
+body.navbar #sidebar-left {
+  clear: right;
+  }
+
+/* side bar specific */
+
+#sidebar-left li {
+  list-style: none;
+  margin: 0;
+  }
 
 #sidebar-left a, #sidebar-left a:visited {
-    color:#5088BA;
-    display:block;
-    font-size:14px;
-    font-weight:bold;
     line-height:17px;
     padding:14px 9px;
-    text-decoration:none;
     }
     
 #sidebar-left li a {
     border-bottom:1px solid #D8D6D6;
     }
-    
-#sidebar-left li a:hover {
-    background:#F9FAFA none repeat scroll 0 0;
-    }
+   
     
 #sidebar-left h2, #sidebar-left h3, #sidebar-left p {
     margin-left: 9px;
