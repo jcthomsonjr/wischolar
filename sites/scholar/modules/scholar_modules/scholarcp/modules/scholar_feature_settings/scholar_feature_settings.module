@@ -3,7 +3,7 @@
 function scholar_feature_settings_init(){
   $space = scholar_get_scholar();
   
-  if(array_key_exists('scholar_style',$space->customizer) && $space->customizer['scholar_style']){
+  if($space && array_key_exists('scholar_style',$space->customizer) && $space->customizer['scholar_style']){
     global $conf;
     $conf['biblio_style'] = $space->customizer['scholar_style'];
   }
