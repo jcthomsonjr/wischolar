@@ -27,7 +27,7 @@ class scholarcp_setting_front implements space_setting {
   $links = theme ( 'ctools_dropdown', t ( 'add new' ), $items, FALSE, 'panels-display-links' );
   
   $form = array(
-    '#title' => 'front page ...',
+    '#title' => 'Front Page',
   );
 
 
@@ -42,10 +42,10 @@ class scholarcp_setting_front implements space_setting {
     '#title' => t ( 'What do you want in the main content area of your front page?' ), 
     '#type' => 'radios', 
     '#options' => array (
-      'bio' => t('Your Bio page'), 
-      'feature' => t ('Posts from some specific feature(s)'), 
+      'bio' => t('Your bio page'), 
+      'feature' => t ('Posts from specific feature(s)'), 
       'html' => t ('One of your posts'),
-      'flag' => t('Hand-pick content as I go'), 
+      'flag' => t('Hand-pick content as you go'), 
     ), 
     '#default_value' => isset($value['frontpage']) ? $value['frontpage'] : 'bio' , 
     '#tree' => TRUE 
