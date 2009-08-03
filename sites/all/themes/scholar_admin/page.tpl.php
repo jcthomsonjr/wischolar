@@ -26,9 +26,6 @@
 			<div id="cp-content">
 			  <div class="frame">
           <div class="innerframe">
-            <?php //if (!empty($title)){ ?>
-            <?php //<h2 class="title">?><?php //print $title; ?><?php //</h2>?>
-            <?php //}; ?>
             <?php if (!empty($tabs)){ ?>
             <div class="tabs"><?php print $tabs; ?></div>
             <?php }; ?>
@@ -45,10 +42,11 @@
 
       <div id="footer">
         <h3>The Scholars' Web Sites Project <span>IQSS, Harvard University</span></h3>
-        <ul>
-          <li>Documentation</li>
-          <li>Feedback</li>
-          <li>Legal</li>
+        <ul> 
+          <li>&copy; 2008-<?php echo date(Y);?> President &amp; Fellows Harvard University</li>
+          <li><a href="/docs">Documentation</a></li>
+          <li><a href="/contact">Feedback</a></li>
+          <li><a href="/legal">Legal</a></li>
           <li class="last">Version 2.13</li>
         </ul>
         <?php if ($footer_message){ ?>
@@ -57,7 +55,6 @@
         <?php if ($footer){ ?>
         	<?php print $footer; ?>
         <?php }; ?>
-        <p id="copy">&copy; <?php echo date(Y);?></p>
       </div> <!-- /#footer -->
 	</div> <!-- /container --> 
   <?php if ($closure_region){ ?>
