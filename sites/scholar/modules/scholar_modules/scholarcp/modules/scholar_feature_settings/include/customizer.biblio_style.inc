@@ -2,7 +2,7 @@
 /**
  * Customizer for feature menus.
  */
-class scholar_feature_settings_customizer_style implements space_customizer {
+class scholar_feature_settings_customizer_biblio_style implements space_customizer {
 
   var $name = 'Style';
 
@@ -18,12 +18,12 @@ class scholar_feature_settings_customizer_style implements space_customizer {
       
       $s_style = biblio_get_style();
       $this->customize($space, $s_style);
-      $form['scholar_style'] = array(
+      $form['scholar_biblio_style'] = array(
             //'#title' => 'Style',
             '#type' => 'fieldset',
             '#tree' => TRUE,
       );
-      $form['scholar_style'][] = array(
+      $form['scholar_biblio_style'][] = array(
         '#type' => 'radios',
         '#title' => t('Select Style'),
         '#default_value' => $s_style,
@@ -40,16 +40,16 @@ class scholar_feature_settings_customizer_style implements space_customizer {
   }
 
   function submit($space, $feature, $value) {
-    $customizer = $space->customizer['scholar_style'];
+    $customizer = $space->customizer['scholar_biblio_style'];
     
-    $customizer = is_array($value['scholar_style'])?array_shift($value['scholar_style']):null;
+    $customizer = is_array($value['scholar_biblio_style'])?array_shift($value['scholar_biblio_style']):null;
     
     return $customizer;
   }
 
   function customize($space, &$s_style = NULL) {
-    if (is_array($space->customizer) && array_key_exists('scholar_style',$space->customizer)){
-      $s_style = $space->customizer['scholar_style'];
+    if (is_array($space->customizer) && array_key_exists('scholar_biblio_style',$space->customizer)){
+      $s_style = $space->customizer['scholar_biblio_style'];
     }
   }
 }

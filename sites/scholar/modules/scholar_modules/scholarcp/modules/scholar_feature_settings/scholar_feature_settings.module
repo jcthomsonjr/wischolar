@@ -6,7 +6,7 @@ function scholar_feature_settings_init(){
   if($space){
     global $conf;
     spaces_customizers();
-    scholar_feature_settings_customizer_style::customize($space, $conf['biblio_style']);
+    scholar_feature_settings_customizer_biblio_style::customize($space, $conf['biblio_style']);
     scholar_feature_settings_customizer_bkn::customize($space,'bkn_contrib_lookup_allow_autocomplete',$conf['bkn_contrib_lookup_allow_autocomplete']);
     scholar_feature_settings_customizer_bkn::customize($space,'bkn_contrib_lookup_mode',$conf['bkn_contrib_lookup_mode']);
   }
@@ -18,8 +18,8 @@ function scholar_feature_settings_init(){
 function scholar_feature_settings_spaces_customizers() {
   return array(
     'scholar_style' => array(
-      'class' => 'scholar_feature_settings_customizer_style',
-      'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.style.inc',
+      'class' => 'scholar_feature_settings_customizer_biblio_style',
+      'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.biblio_style.inc',
     ),
     'scholar_bkn' => array(
       'class' => 'scholar_feature_settings_customizer_bkn',
