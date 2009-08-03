@@ -261,6 +261,9 @@ function scholarcp_theme($cache, $type, $theme, $path) {
  * and "scholarcp_left" variables
  */
 function scholarcp_preprocess_page(&$vars) {
+  if ($vars['navbar']){
+    $vars['body_classes'] .= ' navbar';
+  }
   $vars['scholarcp_toolbar'] = 
   $vars['scholarcp_left'] = '';
   
