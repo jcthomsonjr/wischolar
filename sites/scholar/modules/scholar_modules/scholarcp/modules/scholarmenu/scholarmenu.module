@@ -63,7 +63,7 @@ function scholarmenu_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   switch ($s_menu){
     case 'secondary':
       $a_settings_menu = array_key_exists('menus',$space->settings)?$space->settings['menus']['secondary']:false;
-      $s_def_menu = 'scholar_primary_menu';
+      $s_def_menu = 'scholar_secondary_menu';
     break;
     case 'primary':
     default:
@@ -71,7 +71,7 @@ function scholarmenu_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
       $s_def_menu = 'scholar_primary_menu';
   }
   
-  if(!$a_settings_menu) return menu_tree( $s_def_menu );
+  if(!$a_settings_menu) return menu_tree( variable_get( $s_def_menu ,false) );
   $n_found = 0;   
   
   if($b_check_expanded){
