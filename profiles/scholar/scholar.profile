@@ -69,6 +69,7 @@ function scholar_profile_modules() {
     'biblio',
     'scholar',
     'scholarcp',
+    'scholar_feature_settings',
     'scholarwidgets',
     'scholarforms',
     'scholarboot',
