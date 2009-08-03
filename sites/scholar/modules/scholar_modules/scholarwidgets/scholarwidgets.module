@@ -30,7 +30,7 @@ function scholarwidgets_block($op = 'list', $delta = 0, $edit = array()) {
 function scholarwidgets_logo(){
 	$output = '<div id="logo"><img src="http://scholar.iq.harvard.edu/files/scholar/imagecache/scholar_logo_front/scholarlogos/hillygus/Hillyguspic2.jpg" /> </div>';
 	
-	$block['subject'] = t('Logo');
+	$block['subject'] = t(''); // intentionally blank
 	$block['content'] = $output;
 	
 	return $block;
@@ -41,7 +41,7 @@ function scholarwidgets_basicinfo(){
 	<h2>Assistant Professor of Government, Harvard University</h2>
 	<p>N436 CGIS, 1737 Cambridge Street Cambridge, MA 02138 US <a href="#">(email)</a></p>';
 	
-	$block['subject'] = t('Contact');
+	$block['subject'] = t('');
 	$block['content'] = $output;
 	
 	return $block;
@@ -49,7 +49,7 @@ function scholarwidgets_basicinfo(){
 
 function scholarwidgets_shield(){
 	$output = '<div id="scholar-shield"><img src="http://scholar.iq.harvard.edu/sites/scholar.iq.harvard.edu/themes/fac01/images/harvard_shield.png" /> </div>';
-	$block['subject'] = t('Shield');
+	$block['subject'] = t('');
 	$block['content'] = $output;
 	
 	return $block;
