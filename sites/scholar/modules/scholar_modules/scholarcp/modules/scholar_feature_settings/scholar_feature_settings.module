@@ -3,11 +3,13 @@
 function scholar_feature_settings_init(){
   $space = scholar_get_scholar();
   
-  if($space && array_key_exists('scholar_style',$space->customizer) && $space->customizer['scholar_style']){
+  if($space){
     global $conf;
-    $conf['biblio_style'] = $space->customizer['scholar_style'];
+    spaces_customizers();
+    scholar_feature_settings_customizer_style::customize($space, $conf['biblio_style']);
+    scholar_feature_settings_customizer_bkn::customize($space,'bkn_contrib_lookup_allow_autocomplete',$conf['bkn_contrib_lookup_allow_autocomplete']);
+    scholar_feature_settings_customizer_bkn::customize($space,'bkn_contrib_lookup_mode',$conf['bkn_contrib_lookup_mode']);
   }
-  
 }
 
 /**
@@ -18,6 +20,10 @@ function scholar_feature_settings_spaces_customizers() {
     'scholar_style' => array(
       'class' => 'scholar_feature_settings_customizer_style',
       'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.style.inc',
+    ),
+    'scholar_bkn' => array(
+      'class' => 'scholar_feature_settings_customizer_bkn',
+      'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.bkn.inc',
     ),
 //    'block' => array(
 //      'class' => 'space_customizer_block',

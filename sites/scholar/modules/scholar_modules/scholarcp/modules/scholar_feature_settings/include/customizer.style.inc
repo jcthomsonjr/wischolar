@@ -48,7 +48,7 @@ class scholar_feature_settings_customizer_style implements space_customizer {
   }
 
   function customize($space, &$s_style = NULL) {
-    if (!empty($space->customizer['scholar_style'])){
+    if (is_array($space->customizer) && array_key_exists('scholar_style',$space->customizer)){
       $s_style = $space->customizer['scholar_style'];
     }
   }
