@@ -160,9 +160,13 @@ function scholarmenu_block($op = 'list', $delta = 0, $edit = array()) {
   elseif ($op == 'view') {
     switch ($delta) {
       case 0:
-        return scholarmenu_get_menu_tree('primary');
+        $block['subject'] = t(''); // intentionally left empty for now.
+        $block['content'] =scholarmenu_get_menu_tree('primary');
+        return $block ;
       case 1:
-        return scholarmenu_get_menu_tree('secondary');
+        $block['subject'] = t(''); // intentionally left empty for now.
+        $block['content'] = scholarmenu_get_menu_tree('secondary');
+        return $block;
     }
   }
 }

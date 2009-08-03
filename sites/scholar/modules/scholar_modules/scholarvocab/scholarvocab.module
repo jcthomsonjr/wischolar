@@ -1,5 +1,31 @@
 <?php
 
+function scholarvocab_menu() {
+  $items = array ();
+  $items ['category'] = array (
+  	'title' => 'categories', 
+  	'page callback' => 'scholarvocab_vocab_block', 
+  	'access arguments' => array ('access content' ) 
+  );
+  
+  $items['scholarvocab/term/delete/%/%'] = array (
+    'title' => 'deleting a term',
+    'page callback' => 'scholarvocab_term_delete',
+        'page arguments' => array(3,4),
+    'access arguments' => array('access content')
+  );
+  
+  $items['scholarvocab/term/%/%/rename/%'] = array (
+    'title' => 'deleting a term',
+    'page callback' => 'scholarvocab_term_rename',
+      'page arguments' => array(2,3,5),
+    'access arguments' => array('access content')
+  );
+  
+  
+  return $items;
+}
+
 function scholarvocab_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
@@ -30,116 +56,55 @@ function scholarvocab_block_view() {
   
   $admin = $site->admin_access ();
   
-  if ($group_node && node_access ( 'view', $group_node )) {
-    foreach ( ( array ) $group_node->og_vocabularies as $vid => $vocab ) {
-      
-      $tree = taxonomy_get_tree ( $vid );
-     // dpm ( $tree );
-      foreach ( $tree as $term ) {
-        $count = taxonomy_term_count_nodes ( $term->tid );
-        //if ($count) {
-          $term_path = "taxonomy/term/$term->tid";
-          $term_link = l ( $term->name, $term_path, array ('title' => t ( $term->description ) , 'attributes' => array( 'id'=>'category_menu_item_'.$term -> tid)) );
-          $item = $term_link . " ($count)";
-          if ($admin) {
-            $delete_dest = "scholarvocab/term/delete/". $term -> vid . "/" . $term -> tid;
-            $image = drupal_get_path('module', 'scholarvocab') . '/images/trash.gif';
-            $delete_button = ctools_ajax_image_button($image, $delete_dest, 'delete this category');
-            
-            $delete_link = l('delete',"scholarvocab/term/delete/". $term -> vid . "/" . $term -> tid.'/rename/', $options=array('attributes' => array('class' => 'admin')));
-            $edit_link = l('rename', 'scholarvocab/term/'.$term -> vid . "/" . $term -> tid.'/rename/', $options=array('attributes' => array('class' => 'admin')));
-            $item .= $edit_link . $delete_link;
-          }
-          $items [] = array ('data' => $item );
-        //}
+  // 1. get the active contexts
+  $active_contexts = context_active_contexts();
+  foreach($active_contexts as $c){
+    // does this context has a "node" associated with it
+    if (isset ($c -> node)) {
+      $node_type = current($c -> node);  // TODO we are assuming that the context has only one content type
+      // get vocabularies associated with this content type
+      $vcs = taxonomy_get_vocabularies($node_type);
+      foreach($vcs as $v){
+        $tree = taxonomy_get_tree ( $v -> vid );
+        //dpm($tree);
+
+        foreach ( $tree as $term ) {
+          $count = taxonomy_term_count_nodes ( $term->tid );
+          //if ($count) {
+              // TODO the following should come from the feature view (where term) is an argument)
+              $term_path = "taxonomy/term/$term->tid"; 
+              $term_link = l ( $term->name, $term_path, array ('title' => t ( $term->description ) , 'attributes' => array( 'id'=>'category_menu_item_'.$term -> tid)) );
+              $item = $term_link . '<span class = "count" > ('. $count . ')</span>';
+              if ($admin){
+                $admin_links = array();
+                $admin_links[] = array(
+                  'title' => 'delete',
+                  'href' => "scholarvocab/term/delete/". $term -> vid . "/" . $term -> tid,
+                );
+                
+                $admin_links[] = array(
+                  'title' => 'rename',
+                  'href' => 'scholarvocab/term/'.$term -> vid . "/" . $term -> tid.'/rename/',
+                );
+                //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
+                $item .= theme('links',$admin_links,  $attributes = array('class' => 'admin'));
+              }
+              $items [] = array ('data' => $item );
+          //}
+        }
+
       }
+      $block ['content'] = theme ( 'item_list', $items );
+      $block ['subject'] = t ( 'Categories' );
+      if ($admin) {
+        $block ['subject'] .= l ( 'Edit', "node/" . $group_node->nid . "/og/vocab/edit/vocabulary/$vid" );
+      }
+      return $block;
     }
-    $block ['content'] = theme ( 'item_list', $items );
-    $block ['subject'] = t ( 'Categories' );
-    if ($admin) {
-      $block ['subject'] .= l ( 'Edit', "node/" . $group_node->nid . "/og/vocab/edit/vocabulary/$vid" );
-    }
-    return $block;
   }
-
-}
-
-function scholarvocab_vocab_block() {
-  $vid = 1; //FIXME hard coded for testin purposes
-  $data_tree = taxonomy_get_tree ( $vid, $parent = 0, $depth = - 1, $max_depth = 1 );
-  //dpm ( $data_tree );
-  return theme_scholarvocab ( $data_tree );
-}
-
-function theme_scholarvocab($items) {
-  drupal_add_js(drupal_get_path('module','scholarvocab').'/theme/scholarvocab.js');
-  $result = '<div id="CategoryList" class="indent">';
-  // FIXME this one should post to a list 
-  /*
-  <div class="category">
-    <a href="http://iqssharvard.basecamphq.com/projects/2901802/posts" class="category_link current"><span>All Messages</span></a>
-  </div>
-  */
-  
-  foreach ( $items as $item ) {
-    
-    $result .= '<div class="category" id="category_menu_item_' . $item->tid . '">';
-    
-    $result .= '<div class="operations">';
-    $result .= '<img align="absmiddle" alt="Indicator" class="spinner" height="5" id="operation_wait_29228656" src="http://asset3.projectpath.com/images/indicator.gif" />
-      <a class="admin ctools-use-ajax" href="scholarvocab/term/'.$item -> tid.'/rename/" id="operation_rename_' . $item->tid . '">Rename</a>';
-
-    ctools_include('ajax');
-    ctools_add_js('ajax-responder');
-    
-    $image = drupal_get_path('module', 'scholarvocab') . '/images/trash.gif';
-    //$image = "http://asset0.projectpath.com/images/trash.gif";
-    $dest = "scholarvocab/term/delete/". $item -> tid;
-    
-    $del_button = ctools_ajax_image_button($image, $dest, $alt, $class = '');
-
-    $result .= $del_button; //'<img alt="Trash" id="operation_delete_' . $item->tid . '" src="http://asset0.projectpath.com/images/trash.gif"/>';
-    
-    $result .= '</div>';
-    $result .= '<a href="taxonomy/term/' . $item -> tid . '" class="category_link" id="category_menu_link_'.$item -> tid.'"><span>' . $item->name . '</span></a>';
-    $result .= '</div>';
-    
-   
-  
-  }
-  
-  $result .= '</div>';
-  
-  return $result;
 }
 
 
-
-function scholarvocab_menu() {
-  $items = array ();
-  $items ['category'] = array (
-  	'title' => 'categories', 
-  	'page callback' => 'scholarvocab_vocab_block', 
-  	'access arguments' => array ('access content' ) 
-  );
-  
-  $items['scholarvocab/term/delete/%/%'] = array (
-    'title' => 'deleting a term',
-    'page callback' => 'scholarvocab_term_delete',
-        'page arguments' => array(3,4),
-    'access arguments' => array('access content')
-  );
-  
-  $items['scholarvocab/term/%/%/rename/%'] = array (
-    'title' => 'deleting a term',
-    'page callback' => 'scholarvocab_term_rename',
-      'page arguments' => array(2,3,5),
-    'access arguments' => array('access content')
-  );
-  
-  
-  return $items;
-}
 
 function scholarvocab_term_rename($vid, $tid, $newterm) {
   //dpm ( $newterm );
@@ -175,25 +140,3 @@ function scholarvocab_term_delete($vid,$tid){
   //}
 }
 
-/*
-function scholarvocab_block($op = 'list', $delta = 0, $edit = array()) {
-  if ($op == 'list') {
-    $blocks [0] = array ('info' => t ( 'scholar taxonomy block ...' ) );
-    return $blocks;
-  } else if ($op == 'view') {
-    switch ($delta) {
-      case 0 :
-        $block = array ('subject' => t ( 'Title of block #1' ), 'content' => scholarvocab_vocab_block () ); // some context og/sid etc should go here
-        break;
-    }
-    return $block;
-  }
-}
-*/
-
-
-
-
-function _scholarvocab_vid_by_content_type(){
-  
-}

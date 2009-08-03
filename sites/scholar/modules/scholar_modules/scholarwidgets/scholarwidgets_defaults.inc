@@ -48,6 +48,8 @@ function _scholarwidgets_default_contexts(){
       'type' => 'context_ui',
     ),
     */
+    
+
     'scholarmenu_0' => array(
       'module' => 'scholarmenu',
       'delta' => '0',
