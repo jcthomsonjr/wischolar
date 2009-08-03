@@ -12,10 +12,24 @@ table {
 	}
 
 th, td {
-	padding: .4em;
+	padding: .6em;
 	vertical-align: top;
+	color:#4a4a4a;
 	}
+	
+td:first-child {
+  text-align: center;
+  }
+	
+th {
+  font-weight: bold;
+  font-size: 1.2em;
+  }
 
+tbody, tbody th {
+  border: none;
+  }
+  
 th.checkbox, td.checkbox {
 	text-align: center;
 	}
@@ -24,8 +38,12 @@ tr.even, tr.odd {
   background-color: transparent;
   }
   
-td, td a, th, th a {
-  color: #404040;
+td, td a {
+  color: #666;
+  }
+
+th, th a {
+  color: #425e69;
   }
   
 td.active {
