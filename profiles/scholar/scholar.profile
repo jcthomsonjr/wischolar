@@ -79,7 +79,6 @@ function scholar_profile_modules() {
     'repec_meta',
     'googlescholar_meta',
     'dyntextfield',
-    'scholarfront',
     'scholarlayout',
     'scholarvocab',
   );
