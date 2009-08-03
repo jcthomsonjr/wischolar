@@ -90,7 +90,7 @@ function scholarcp_menu(){
   // TODO fix its not working: trying to make the children menu as local task
   $items['scholarcp/content'] = array(
     'title' => 'Content',
-	'page callback' => 'scholarcp_content', 	 
+    'page callback' => 'scholarcp_content', 	 
     'file' => 'scholarcp.content.inc',
     'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
   );
@@ -111,6 +111,8 @@ function scholarcp_menu(){
     	'type' => MENU_LOCAL_TASK,	
       'page callback' => 'scholarcp_content',
       'page arguments' => array($type, $name),
+      'file' => 'scholarcp.content.inc',
+      'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
     );    
   }
   
@@ -376,5 +378,39 @@ function _scholarcp_init_theme(){
   $custom_theme = CPTHEME;
 }
 
+/**
+ * Implementation of hook_views_data_alter()
+ * 
+ * Adds argument to view to query by published status
+ */
+function scholarcp_views_data_alter(&$data) {
 
-
+// published status
+  $data['node']['status'] = array(
+   'group' => t('Scholar'),
+   'title' => t('Published'),
+   'help' => t('Whether node is published'), 
+   'field' => array(
+      //'field' => 'status', // the real field. This could be left out since it is the same.
+      //'group' => t('Scholar'), // The group it appears in on the UI. Could be left out.
+      'handler' => 'views_handler_field_node',
+      'click sortable' => TRUE,
+     ),
+ 
+   'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Published'),
+      'type' => 'yes-no',
+    ),
+     
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+      'label' => t('Published Scholar'),
+      'numeric' => TRUE,
+     ),
+    
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+}
