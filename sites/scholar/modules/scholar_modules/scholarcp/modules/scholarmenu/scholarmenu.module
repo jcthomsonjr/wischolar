@@ -1,5 +1,9 @@
 <?php
 
+function scholarmenu_init(){
+   drupal_add_css(drupal_get_path('module', 'scholarmenu') .'/theme/scholarmenu.css');
+   }
+
 /**
  * Implements hook_menu_node_insert().
  */
