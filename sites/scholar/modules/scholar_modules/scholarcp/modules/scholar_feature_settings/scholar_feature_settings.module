@@ -12,6 +12,7 @@ function scholar_feature_settings_init(){
     scholar_feature_settings_customizer_biblio_sort::customize($space,'biblio_sort',$conf['biblio_sort']);
     scholar_feature_settings_customizer_biblio_sort::customize($space,'biblio_sort_tabs',$conf['biblio_sort_tabs']);
     scholar_feature_settings_customizer_biblio_sort::customize($space,'biblio_order',$conf['biblio_order']);
+    scholar_feature_settings_customizer_biblio_rows::customize($space,$conf['biblio_rowsperpage']);
   }
 }
 
@@ -31,6 +32,10 @@ function scholar_feature_settings_spaces_customizers() {
     'scholar_biblio_sort' => array(
       'class' => 'scholar_feature_settings_customizer_biblio_sort',
       'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.biblio_sort.inc',
+    ),
+    'scholar_biblio_rows' => array(
+      'class' => 'scholar_feature_settings_customizer_biblio_rows',
+      'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.biblio_rows.inc',
     ),
   );
 }
