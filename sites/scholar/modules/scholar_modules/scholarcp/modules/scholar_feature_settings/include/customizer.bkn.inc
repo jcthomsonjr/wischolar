@@ -4,7 +4,7 @@
  */
 class scholar_feature_settings_customizer_bkn implements space_customizer {
 
-  var $name = 'BKN Settings';
+  var $name = 'Contributor Lookup Settings';
 
   function form($space, $feature) {
     /**
@@ -25,6 +25,13 @@ class scholar_feature_settings_customizer_bkn implements space_customizer {
             '#type' => 'fieldset',
             '#tree' => TRUE,
       );
+      $form['scholar_bkn']['bkn_enabled'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Enable Contributor Lookup'),
+        '#default_value' => ($n_lookup_mode < 2),
+        '#return_value' => 1,
+        '#description' => t('Uncheck to disable all external lookups?')
+      );
       $form['scholar_bkn']['bkn_contrib_lookup_allow_autocomplete'] = array(
         '#type' => 'checkbox',
         '#title' => t('Enable Autocomplete'),
@@ -32,13 +39,14 @@ class scholar_feature_settings_customizer_bkn implements space_customizer {
         '#return_value' => 1,
         '#description' => t('Should contributor field use autocomplete?')
       );
-      $form['scholar_bkn']['bkn_contrib_lookup_mode'] = array(
-        '#type' => 'radios',
-        '#title' => t('How should the data be retrieved from BKN?'),
-        '#default_value' => $n_lookup_mode,
-        '#options' => array(t('Lookup via autocomplete (many requests to bkn)'), t('User Initiated (single request)'), t('Disabled')),
-      );
-
+      
+//      $form['scholar_bkn']['bkn_contrib_lookup_mode'] = array(
+//        '#type' => 'radios',
+//        '#title' => t('How should the data be retrieved from BKN?'),
+//        '#default_value' => $n_lookup_mode,
+//        '#options' => array(t('Lookup via autocomplete (many requests to bkn)'), t('User Initiated (single request)'), t('Disabled')),
+//      );
+      
     }
     return $form;
   }
@@ -53,7 +61,21 @@ class scholar_feature_settings_customizer_bkn implements space_customizer {
     
     if(is_array($value['scholar_bkn'])){
       foreach ($value['scholar_bkn'] as $k => $v) {
-      	if(array_key_exists($k,$value['scholar_bkn'])) $customizer[$k] = $v;
+        switch ($k){
+          case 'bkn_contrib_lookup_allow_autocomplete':
+            $customizer[$k] = $v;
+          break;
+          case 'bkn_enabled':
+            if($v){
+              $customizer['bkn_contrib_lookup_mode'] = (array_key_exists('bkn_contrib_lookup_allow_autocomplete',$value['scholar_bkn'])
+                                                     && $value['scholar_bkn']['bkn_contrib_lookup_allow_autocomplete'])?0:1;
+            }else{
+              $customizer['bkn_contrib_lookup_mode'] = 2;
+            }
+          break;
+          default:
+            //do nothing
+        }
       }
     }
     
