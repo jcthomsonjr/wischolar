@@ -8,7 +8,7 @@ function scholarcp_content($type = 'all', $name = NULL, $tax=NULL, $pubstatus = 
   
   $filter_form_classes = 'filter-form ' . 'filter-form-' . $type;
   $add_new_classes = 'add-new ' . 'add-new-' . $type;  
-  $output = '<div class="' . $filter_form_classes. '">' . l(t('Filter '. $name . $plural), 'content') . '</div>'; 
+  $output = '<div class="' . $filter_form_classes. '">' . l(t('Filter '. $name . $plural), 'scholarcp/content/'. $type) . '</div>'; 
    $output .= drupal_get_form('scholarcp_content_filter_form', $type, $name, $tax, $pubstatus);
    $output .= ($type == 'all') ? '' :  '<div class="' . $add_new_classes . '">' . l(t('+ add new '. $name), 'node/add/' . strtolower($type)) . '</div>';
 
@@ -53,6 +53,8 @@ function scholarcp_content_filter_form($form_state, $type, $name, $tax = NULL, $
   '#collapsible' => FALSE,
   '#collapsed' => FALSE,
   '#weight' => 0,
+  '#prefix' => '<div id="scholarcp-content-filter">',
+  '#suffix' => '</div>',
   );
 
   $form['scholarfilter']['pubstatus'] = array(
@@ -62,7 +64,7 @@ function scholarcp_content_filter_form($form_state, $type, $name, $tax = NULL, $
   '#default_value'  => $pubstatus ,
   '#weight' => 1,
   // '#required' => TRUE,
-  '#prefix' => '<div id="pubstatus">',
+  '#prefix' => '<div id="column-left">',
   '#suffix' => '</div>',
   );
 
@@ -75,7 +77,7 @@ function scholarcp_content_filter_form($form_state, $type, $name, $tax = NULL, $
   '#options' => _scholarcp_taxonomy_fillter_options($type),
   '#default_value'  => str_replace('_', ' ', $tax), // replacing the underscore with a space
   '#weight' => 2,
-  '#prefix' => '<div id="category">',
+   '#prefix' => '<div id="column-right">',
   '#suffix' => '</div>',
   );
   }
