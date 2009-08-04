@@ -30,16 +30,18 @@ function scholarvocab_menu() {
 function scholarvocab_taxonomies(){
   $site = scholar_get_scholar();
   scholar_include('scholarapi');
-  $types = scholar_content_types();
+
+  $s_types = scholar_content_types();
   $output = '';
   $delta = 0;
-  foreach($types as $type){
+
+  foreach($s_types as $type => $name){
     
     $block = scholarvocab_block_per_content_type($site, $type);
     $bo = new stdClass();
     $bo -> module = 'scholarvocab';
     $bo -> content = $block['content'];
-    $bo -> subject = $block['subject'];
+    $bo -> subject = 'Categories for ' . $name;
     $bo -> delta = $bo -> module . $delta++;
     $output .= theme('block', $bo);
   }
@@ -96,22 +98,33 @@ function scholarvocab_block_per_content_type($site, $node_type) {
       //if ($count) {
       // TODO the following should come from the feature view (where term) is an argument)
       $term_path = "taxonomy/term/$term->tid";
-      $term_link = l ( $term->name, $term_path, array ('title' => t ( $term->description ), 'attributes' => array ('id' => 'category_menu_item_' . $term->tid ) ) );
+      $term_link = l ( $term->name, $term_path, array ('title' => t ( $term->description ) ) );
+      
+      //dpm($term);
+      $item = _scholarvocab_item($term);
       $item = $term_link . '<span class = "count" > (' . $count . ')</span>';
       if ($admin) {
         $admin_links = array ();
-        $admin_links [] = array ('title' => 'delete', 'href' => "scholarvocab/term/delete/" . $term->vid . "/" . $term->tid );
-        
-        $admin_links [] = array ('title' => 'rename', 'href' => 'scholarvocab/term/' . $term->vid . "/" . $term->tid . '/rename/' );
+        $admin_links [] = array (
+        	'title' => 'delete', 
+        	'href' => "scholarvocab/term/delete/" . $term->vid . "/" . $term->tid,
+          'attributes' => array('class' => 'delete ctools-use-ajax'),  // important for ajax to work
+        );
+
+        $admin_links [] = array (
+        	'title' => 'rename', 
+        	'href' => 'scholarvocab/term/' . $term->vid . "/" . $term->tid . '/rename/',
+          'attributes' => array('class' => 'rename') 
+        );
         //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
         $item .= theme ( 'links', $admin_links, $attributes = array ('class' => 'admin' ) );
       }
-      $items [] = array ('data' => $item );
+      $items [] = array ('data' => $item, 'id' => 'scholarvocab_item_' . $term->tid );
       //}
     }
   
   }
-  $block ['content'] = theme ( 'item_list', $items );
+  $block ['content'] = theme ( 'item_list', $items, NULL, 'ul', $attributes = array('id' => 'id') );
   $block ['subject'] = t ( 'Categories' );
   if ($admin) {
     $block ['subject'] .= l ( 'Edit', "node/" . $group_node->nid . "/og/vocab/edit/vocabulary/$vid" );
@@ -133,7 +146,7 @@ function scholarvocab_term_rename($vid, $tid, $newterm) {
     ctools_include ( 'ajax' );
     ctools_add_js ( 'ajax-responder' );
     $commands = array ();
-    $commands [] = ctools_ajax_command_replace ('#category_menu_item_' . $tid, $newterm );
+    $commands [] = ctools_ajax_command_replace ('#scholarvocab_item_' . $tid . ' > a', _scholarvocab_item($term) );
     ctools_ajax_render ( $commands ); // this function exits.
   } else {
     ctools_ajax_render_error($error = 'something wrong happened ...');
@@ -142,14 +155,22 @@ function scholarvocab_term_rename($vid, $tid, $newterm) {
 }
 
 function scholarvocab_term_delete($vid,$tid){
-  //if (taxonomy_del_term($tid)) {
+  if (taxonomy_del_term($tid)) {
     ctools_include('ajax');
     ctools_add_js('ajax-responder');
     $commands = array();
-    $commands[] = ctools_ajax_command_replace('#category_menu_item_' . $tid, '');
+    $commands[] = ctools_ajax_command_replace('#scholarvocab_item_' . $tid, '');
     ctools_ajax_render($commands); // this function exits.
-  //} else {
-  //  ctools_ajax_render_error($error = 'something wrong happened ...');
-  //}
+  } else {
+    ctools_ajax_render_error($error = 'something wrong happened ...');
+  }
 }
 
+function _scholarvocab_item($term){
+  if (is_object($term)){
+    $term = (array)$term;
+  }
+  $term_path = "taxonomy/term/" . $term['tid'];
+  $term_link = l ( $term['name'], $term_path, array ('title' => t ( $term['description'] ) ) ); 
+  return $term_link;
+}

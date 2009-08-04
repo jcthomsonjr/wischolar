@@ -6,12 +6,21 @@ Drupal.ScholarVocab.Rename = function(){
     	alert('nnnnnnnnnnnnnnnn');
       return false;
     }
-	newTerm = $(this).attr('href') + newTerm;
-
-	$(this).attr('href',newTerm);
-	//return false;
+    var dest = $(this).attr('href');
+    var slices = dest.split('/');
+    
+    var newDest = '';
+    for (var i = 0; i < slices.length -1 ; i++ ){
+    	newDest = newDest + slices[i] +  '/';
+    }
+    
+	newDest =  newDest + newTerm;
+	
+	$(this).attr('href',newDest);
+	return false;
 }
 
 Drupal.behaviors.scholarvocab = function(context) {
-	$('a.admin:not(.scholarvocab-processed)', context).addClass('scholarvocab-processed').click(Drupal.ScholarVocab.Rename).click(Drupal.CTools.AJAX.clickAJAXLink);
+	$('ul.admin a.rename:not(.scholarvocab-processed)', context).addClass('scholarvocab-processed').click(Drupal.ScholarVocab.Rename).addClass('ctools-use-ajax');
+	//click(Drupal.CTools.AJAX.clickAJAXLink);
 }
