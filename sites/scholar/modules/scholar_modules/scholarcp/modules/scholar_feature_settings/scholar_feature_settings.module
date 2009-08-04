@@ -13,6 +13,13 @@ function scholar_feature_settings_init(){
     scholar_feature_settings_customizer_biblio_sort::customize($space,'biblio_sort_tabs',$conf['biblio_sort_tabs']);
     scholar_feature_settings_customizer_biblio_sort::customize($space,'biblio_order',$conf['biblio_order']);
     scholar_feature_settings_customizer_biblio_rows::customize($space,$conf['biblio_rowsperpage']);
+    scholar_feature_settings_customizer_biblio_links::customize($space,'export_biblio_export_links', $conf['biblio_export_links']);
+    scholar_feature_settings_customizer_biblio_links::customize($space,'google_biblio_google_link', $conf['biblio_google_link']);
+    scholar_feature_settings_customizer_biblio_links::customize($space,'biblio_links_target_new_window', $conf['biblio_links_target_new_window']);
+    scholar_feature_settings_customizer_biblio_links::customize($space,'biblio_inlinemode_in_links', $conf['biblio_inlinemode_in_links']);
+    scholar_feature_settings_customizer_biblio_links::customize($space,'biblio_link_title_url', $conf['biblio_link_title_url']);
+    scholar_feature_settings_customizer_biblio_links::customize($space,'biblio_author_links', $conf['biblio_author_links']);
+      
   }
 }
 
@@ -36,6 +43,10 @@ function scholar_feature_settings_spaces_customizers() {
     'scholar_biblio_rows' => array(
       'class' => 'scholar_feature_settings_customizer_biblio_rows',
       'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.biblio_rows.inc',
+    ),
+    'scholar_biblio_links' => array(
+      'class' => 'scholar_feature_settings_customizer_biblio_links',
+      'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/customizer.biblio_links.inc',
     ),
   );
 }
