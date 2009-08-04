@@ -109,6 +109,11 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
   $options = scholarforms_get_publishing_options($default_options, $node);
 
   foreach($types as $type){
+    
+    if (!variable_get(check_plain('vertical_tabs_fieldsets_' . $type), '')){
+      scholarforms_vertical_tabs_integration($type);
+    }
+        
     if ($type . '_node_form' == $form_id) {
       
        /*** Images & Files Section ***/
