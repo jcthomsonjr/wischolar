@@ -73,7 +73,7 @@ function scholarcp_content_filter_form($form_state, $type, $name, $tax = NULL, $
   '#title' => t('Category'),
   '#type' => 'radios',
   '#options' => _scholarcp_taxonomy_fillter_options($type),
-  '#default_value'  => $tax,
+  '#default_value'  => str_replace('_', ' ', $tax), // replacing the underscore with a space
   '#weight' => 2,
   '#prefix' => '<div id="category">',
   '#suffix' => '</div>',
@@ -108,7 +108,7 @@ function scholarcp_content_filter_form($form_state, $type, $name, $tax = NULL, $
 function scholarcp_content_filter_form_submit($form, &$form_state){
 
  $filter_str =  'scholarcp/content/' . $form_state['values']['type'] . '/';
- $filter_str .= empty($form_state['values']['taxonomy']) ? 'all' : $form_state['values']['taxonomy'];
+ $filter_str .= empty($form_state['values']['taxonomy']) ? 'all' : str_replace(' ', '_', $form_state['values']['taxonomy']);
  if(!empty($form_state['values']['pubstatus'])){
    $filter_str .= '/' .  $form_state['values']['pubstatus'];
  }
