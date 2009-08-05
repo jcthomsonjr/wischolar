@@ -1,3 +1,26 @@
 <?php
 
 include_once('scholar_blog.features.inc');
+
+
+function scholar_blog_taxonomy_defaults() {
+  return array (
+    0 => array (
+    'name' => 'blog_categories', 
+    'content_types' => array ('blog' => 1), 
+    'properties' => array (), 
+    'terms' => array (
+      0 => array (
+    	'name' => 'Statistics', 
+    	'desription' => 'Statistics', 
+    	'properties' => array () 
+      ), 
+      1 => array (
+    	'name' => 'Political Economy', 
+    	'desription' => 'Political Economy', 
+    	'properties' => array () 
+      ) 
+    ) 
+  ) 
+ );
+}

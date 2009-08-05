@@ -29,3 +29,25 @@ function scholar_links_strongarm() {
   
   return $conf;
 }
+
+function scholar_links_taxonomy_defaults() {
+  return array (
+    0 => array (
+    'name' => 'link_categories', 
+    'content_types' => array ('link' => 1), 
+    'properties' => array (), 
+    'terms' => array (
+      0 => array (
+    	'name' => 'Statistics', 
+    	'desription' => 'Statistics', 
+    	'properties' => array () 
+      ), 
+      1 => array (
+    	'name' => 'Political Economy', 
+    	'desription' => 'Political Economy', 
+    	'properties' => array () 
+      ) 
+    ) 
+  ) 
+ );
+}
