@@ -82,6 +82,13 @@ function scholar_profile_modules() {
     'dyntextfield',
     'scholarlayout',
     'scholarvocab',
+    
+   // features TODO does this gets installed in the  next step (enable features?)
+   // keep here for testing purposes only
+    'scholar_links',
+    'scholar_blog',
+    'scholar_announcements',
+    
   );
 
   return array_merge($core_modules, $contrib_modules);

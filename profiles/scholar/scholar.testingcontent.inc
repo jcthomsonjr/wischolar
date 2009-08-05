@@ -62,14 +62,16 @@ function _scholar_testingcontent(){
 		
 		// categories
         $taxs = module_invoke_all('scholar_vocabulary_defaults');
+        print_r($taxs);
+        $new_taxs = $taxs;
+       // $index = 0;
         install_include(array('taxonomy'));
-        foreach($taxs as $tax) {
+        foreach($taxs as $yindex => $tax) {
           // make the vocab name unique
-          $tax['name'] = $node -> purl['value'] . '_' . $tax['name'];
-          
+          $new_taxs[$yindex]['name'] = $node -> purl['value'] . '_' . $tax['name'];
         }
-        
+        print_r($new_taxs);
         // create vocabs
-        scholarvocab_taxonomy_import($node -> nid, $taxs);
+        scholarvocab_taxonomy_import($node -> nid, $new_taxs);
 	}
 }

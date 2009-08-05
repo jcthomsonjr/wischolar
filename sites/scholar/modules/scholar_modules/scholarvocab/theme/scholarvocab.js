@@ -3,7 +3,6 @@ Drupal.ScholarVocab = Drupal.ScholarVocab || {};
 Drupal.ScholarVocab.Rename = function(){
 	var newTerm = prompt('new name');
     if (newTerm == null){
-    	alert('nnnnnnnnnnnnnnnn');
       return false;
     }
     var dest = $(this).attr('href');

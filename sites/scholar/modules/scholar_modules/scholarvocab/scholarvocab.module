@@ -91,6 +91,9 @@ function scholarvocab_block_per_content_type($site, $node_type) {
   $admin = $site->admin_access ();
   $vcs = taxonomy_get_vocabularies ( $node_type );
   foreach ( $vcs as $v ) {
+    // which is the group of this vocab?
+    $group_vocab = og_vocab_get_group($v -> vid);
+    if ($group_vocab['nid'] == $site -> group -> nid){
     $tree = taxonomy_get_tree ( $v->vid );
     
     foreach ( $tree as $term ) {
@@ -122,7 +125,7 @@ function scholarvocab_block_per_content_type($site, $node_type) {
       $items [] = array ('data' => $item, 'id' => 'scholarvocab_item_' . $term->tid );
       //}
     }
-  
+    }
   }
   $block ['content'] = theme ( 'item_list', $items, NULL, 'ul', $attributes = array('id' => 'id') );
   $block ['subject'] = t ( 'Categories' );
