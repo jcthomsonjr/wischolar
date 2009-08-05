@@ -58,12 +58,82 @@ function scholarcp_menu(){
 
   $items = array();
   
-  $items['scholarcp/settings'] = array(
-    'title' => 'Settings',
-    'page callback' => 'scholarcp_cp',
+
+  // content
+  // TODO fix its not working: trying to make the children menu as local task
+  $items['scholarcp/content'] = array(
+    'title' => 'Content',
+    'page callback' => 'scholarcp_route', 
   );
 
-    
+  $items['scholarcp/content/all'] = array( 	 
+    'title' => 'All',
+    //'type' => MENU_DEFAULT_LOCAL_TASK,	
+    'page callback' => 'scholarcp_content',     
+    'file' => 'scholarcp.content.inc',
+    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
+	);
+  
+  // a menu entry for each content type
+  scholar_include('scholarapi');
+  $content_types = scholar_content_types();
+  foreach($content_types as $type => $name){
+    $items['scholarcp/content/'.$type] = array(
+      'title' => $name,
+    	//'type' => MENU_LOCAL_TASK,	
+      'page callback' => 'scholarcp_content',
+      'page arguments' => array($type, $name),
+      'file' => 'scholarcp.content.inc',
+      'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
+    );    
+  }
+  
+  $items['scholarcp/users'] = array(
+    'title' => 'Users',
+    'page callback' => 'scholarcp_route',  
+  );
+  
+  $items['scholarcp/users/members'] = array(
+    'title' => 'Members',
+    'page callback' => 'scholarcp_user_members',
+    'access arguments' => array('access content'),
+    'file' => 'scholarcp.users.inc',
+    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
+  );
+
+  $items['scholarcp/news'] = array(
+    'title' => 'News',
+    'page callback' => 'scholarcp_cp',
+  ); 
+  
+  $items['scholarcp/support'] = array(
+    'title' => 'Support',
+    'page callback' => 'scholarcp_cp',
+  );
+  
+  $items['scholarcp/settings'] = array(
+    'title' => 'Settings',
+    'page callback' => 'scholarcp_route',
+  );  
+  
+  // other setting by classess
+  $space = spaces_get_space();
+
+  // we go on all settings and make a menu entry for all of them
+  foreach (spaces_settings($space->type, TRUE) as $setting) {
+    $setting_value = isset($space->settings[$setting->id]) ? $space->settings[$setting->id] : NULL;
+    $setting_form = $setting->form($space, $setting_value);
+    if (!empty($setting_form)) {
+      $items['scholarcp/settings/'. $setting -> id] = array(
+        'title' => $setting_form['#title'],
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('scholarcp_settings_form', $setting -> id),
+        'file' => 'scholarcp.settings.inc',
+        'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
+      );
+    }
+  }
+  
   $items["scholarcp/settings/features"] = array(
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
@@ -85,80 +155,6 @@ function scholarcp_menu(){
     'file path' => $spaces_path,
     'weight' => 1,
   );
-
-  // content
-  // TODO fix its not working: trying to make the children menu as local task
-  $items['scholarcp/content'] = array(
-    'title' => 'Content',
-    'page callback' => 'scholarcp_content', 	 
-    'file' => 'scholarcp.content.inc',
-    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
-  );
-
-  $items['scholarcp/content/all'] = array( 	 
-    'title' => 'All',
-    'type' => MENU_DEFAULT_LOCAL_TASK,	 
-    'file' => 'scholarcp.content.inc',
-    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
-	);
-  
-  // a menu entry for each content type
-  scholar_include('scholarapi');
-  $content_types = scholar_content_types();
-  foreach($content_types as $type => $name){
-    $items['scholarcp/content/'.$type] = array(
-      'title' => $name,
-    	'type' => MENU_LOCAL_TASK,	
-      'page callback' => 'scholarcp_content',
-      'page arguments' => array($type, $name),
-      'file' => 'scholarcp.content.inc',
-      'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
-    );    
-  }
-  
-  $items['scholarcp/users'] = array(
-    'title' => 'Users',
-    'page callback' => 'scholarcp_cp',
-    'file' => 'scholarcp.users.inc',
-    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
-  );
-  
-  $items['scholarcp/users/members'] = array(
-    'title' => 'Members',
-    'page callback' => 'scholarcp_user_members',
-    'access arguments' => array('access content'),
-    'file' => 'scholarcp.users.inc',
-    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
-  );
-
-  $items['scholarcp/news'] = array(
-    'title' => 'News',
-    'page callback' => 'scholarcp_cp',
-  ); 
-  
-  $items['scholarcp/support'] = array(
-    'title' => 'Support',
-    'page callback' => 'scholarcp_cp',
-  );
-  
-  // other setting by classess
-  $space = spaces_get_space();
-
-  // we go on all settings and make a menu entry for all of them
-  foreach (spaces_settings($space->type, TRUE) as $setting) {
-    $setting_value = isset($space->settings[$setting->id]) ? $space->settings[$setting->id] : NULL;
-    $setting_form = $setting->form($space, $setting_value);
-    if (!empty($setting_form)) {
-      $items['scholarcp/settings/'. $setting -> id] = array(
-        'title' => $setting_form['#title'],
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('scholarcp_settings_form', $setting -> id),
-        'file' => 'scholarcp.settings.inc',
-        'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
-      );
-    }
-  }
-  
   
   // make them all part of 'scholarcp' menu
   foreach($items as $path => $item) {
@@ -172,6 +168,18 @@ function scholarcp_menu(){
 
 function scholarcp_cp(){
   return '(tbd)';
+}
+
+function scholarcp_route(){
+  $tree = menu_tree_page_data('scholarcp');
+  foreach ($tree as $item) {
+    if (scholarcp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
+    	$a_settings =  array_shift($item['below']);
+    	return menu_execute_active_handler($a_settings['link']['href']);
+    }
+  }
+  
+  return MENU_NOT_FOUND;
 }
 
 
@@ -305,18 +313,18 @@ function scholarcp_toolbar_menu_links(){
  * Return links for the left side menu
  */
 function scholarcp_left_menu_links(){
-  return menu_navigation_links('scholarcp',1);
+  //return menu_navigation_links('scholarcp',1);
   
-  /**
+  
   $tree = menu_tree_page_data('scholarcp');
 
-  print_r($tree);
-    foreach ($tree as $item) {
-      if (scholarcp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
-        return scholarcp_menu_navigation_links($item['below']);
-      }
+  
+  foreach ($tree as $item) {
+    if (scholarcp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
+      return scholarcp_menu_navigation_links($item['below'],true);
     }
-  */
+  }
+  
 }
 
 
@@ -324,25 +332,32 @@ function scholarcp_left_menu_links(){
 /**
  * Generate a links array from a menu tree array.
  */
-function scholarcp_menu_navigation_links($tree) {
+function scholarcp_menu_navigation_links($tree, $b_highlight_first_submenu = false) {
   $links = array();
   foreach ($tree as $item) {
-      $class = '';
-      $id = str_replace('/', '-', $item['link']['href']);
+    $class = '';
+    $id = str_replace('/', '-', $item['link']['href']);
 
-      $l = $item['link']['localized_options'];
-      $l['href'] = $item['link']['href'];
-      $l['title'] = "<span class='icon'></span>". $item['link']['title'];
-      $l['attributes'] = array('id' => 'admin-link-'. $id);
-      $l['html'] = TRUE;
+    $l = $item['link']['localized_options'];
+    $l['href'] = $item['link']['href'];
+    $l['title'] = "<span class='icon'></span>". $item['link']['title'];
+    $l['attributes'] = array('id' => 'admin-link-'. $id);
+    $l['html'] = TRUE;
 
-      $class = ' path-'. $id;
-      if (scholarcp_in_active_trail($item['link']['href'])) {
-        $class .= ' active-trail';
-      }
-
-      $links['menu-'. $item['link']['mlid'] . $class] = $l;
+    $class = ' path-'. $id;
+    if (scholarcp_in_active_trail($item['link']['href'])) {
+    	$b_highlight_first_submenu = false;
+      $class .= ' active-trail';
     }
+
+    $links['menu-'. $item['link']['mlid'] . $class] = $l;
+  }
+  
+  if($b_highlight_first_submenu){
+    $s_key = key($links);
+    $l = array_shift($links);
+    $links = array_merge(array("{$s_key} active-trail" => $l),$links);
+  }
   return $links;
 }
 
