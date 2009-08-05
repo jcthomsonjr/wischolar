@@ -1,5 +1,5 @@
 <?php
-// $Id: export.inc,v 1.1.2.4 2009/05/29 23:25:12 jamesandres Exp $
+// $Id: node_export.inc,v 1.1.2.2 2009/07/14 18:15:19 jamesandres Exp $
 
 /**
  * @file
@@ -29,6 +29,7 @@ function install_node_export_import_from_file($file, $properties = array(), $aut
     $author = $user;
   }
 
+  // TODO: Patch node_export module directly to support these features.
   // Default node properties
   $default_properties = array(
     'nid'     => NULL,
@@ -42,22 +43,33 @@ function install_node_export_import_from_file($file, $properties = array(), $aut
   );
   $properties = array_merge($default_properties, $properties);
 
+  module_load_include('inc', 'node_export', 'node_export.pages');
+
   // This bit borrowed from node_export module, it wasn't possible to use
   // drupal_execute because the export_node_import() function deals with
   // $_POST directly.  When that issue is fixed, it should be feasible
   // to use reuse the node_export code.
-  $export = file_get_contents($file);
-  $node_code = str_replace('node(code(', 'array(array(', $export);
-  $imported_nodes = eval("return " . $node_code . ";");
+  $import_code = file_get_contents($file);
+  $import = node_export_node_decode($import_code);
+
+  // Detect single import and create multiple
+  if (is_object($import)) {
+    $import = array($import);
+  }
 
   $saved_nodes = array();
 
-  foreach ($imported_nodes as $node) {
+  foreach ($import as $node) {
     $node = (object) $node;
 
     foreach ($properties as $key => $value) {
       $node->$key = $value;
     }
+
+    // Let other modules do special fixing up.
+    // The function signature is: hook_export_node_alter(&$node, $original_node, $method)
+    // Where $method is either 'prepopulate' or 'save-edit'.
+    drupal_alter("node_export_node", $node, $original_node, "save-edit");
 
     node_save($node);
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: views.inc,v 1.1.2.3 2009/05/29 23:25:12 jamesandres Exp $
+// $Id: views.inc,v 1.1.2.4 2009/07/14 18:21:16 jamesandres Exp $
 
 /**
  * Import a view from a file.
@@ -10,11 +10,8 @@
  *   The name of the view, must be EXACTLY the same as the 'name'
  *   attribute in the export!
  */
-function install_views_ui_import_from_file($file, $name = NULL) {
+function install_views_ui_import_from_file($file, $name = '') {
   if (!file_exists($file)) {
-    return FALSE;
-  }
-  if (!$name) {
     return FALSE;
   }
 
