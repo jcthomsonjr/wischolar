@@ -17,7 +17,6 @@ function scholarcp_init(){
   }
 }
 
-
 /**
  * Implementation of hook_spaces_settings().
  */
@@ -59,12 +58,13 @@ function scholarcp_menu(){
   $items = array();
   
 
+  
   // content
   // TODO fix its not working: trying to make the children menu as local task
   $items['scholarcp/content'] = array(
     'title' => 'Content',
     'page callback' => 'scholarcp_route', 
-  );
+    );
 
   $items['scholarcp/content/all'] = array( 	 
     'title' => 'All',
@@ -72,7 +72,7 @@ function scholarcp_menu(){
     'page callback' => 'scholarcp_content',     
     'file' => 'scholarcp.content.inc',
     'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
-	);
+    );
   
   // a menu entry for each content type
   scholar_include('scholarapi');
@@ -212,7 +212,52 @@ function schlarcp_feature_customize($feature_name){
 /**
  * hook form_alter
  */
-function scholarcp_form_alter(&$form, $form_state, $form_id) {
+function scholarcp_form_alter(&$form, $form_state, $form_id) { 
+  if($form['#id'] == 'views-exposed-form-scholarcp-content-page'){
+    
+    $options = array(
+    'All' => check_plain('<Any>'),
+    1 => 'Yes',
+    0 => 'No',
+    );
+
+   //get the site information 
+   $site = scholar_get_scholar();
+    //get the vocabularies associated with this site
+   $vocab = og_vocab_get_vocabularies($site -> group ->nid);
+   
+  foreach ($vocab as $vid => $data){
+   $terms[] = taxonomy_get_tree($vid);
+  }
+  
+  //now we have the terms for this site, create an array formatted 
+  //for the taxonomy options in the exposed filter. 
+  //TODO: for now we just are going to use 1 vocabulary, but perhaps 
+  //should nest loops so it can deal with multiple vocabs????
+  foreach($terms[0] as $term){
+    $taxonomy_options[$term -> tid]  =  $term -> name;
+  }
+  
+  //TODO: need to assoc with content type;
+  //dpm($taxonomy_options); 
+  
+    //taxonomy terms flter
+     $form['tid']['#options'] = $taxonomy_options;
+     //5 terms max shown per select box
+     $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
+    
+    //promoted to front page filter
+    $form['promote']['#type'] = 'radios';
+    $form['promote']['#options'] = $options;
+       
+    //published status filter
+    $form['status']['#type'] = 'radios';
+    $form['status']['#options'] = $options;
+        
+   //sticky on top of lists filter 
+    $form['sticky']['#type'] = 'radios';
+    $form['sticky']['#options'] = $options;
+  }
   
   /*
    * we'd like to remove the space settings from 'spaces_features_form'
@@ -396,39 +441,3 @@ function _scholarcp_init_theme(){
   $custom_theme = CPTHEME;
 }
 
-/**
- * Implementation of hook_views_data_alter()
- * 
- * Adds argument to view to query by published status
- */
-function scholarcp_views_data_alter(&$data) {
-
-// published status
-  $data['node']['status'] = array(
-   'group' => t('Scholar'),
-   'title' => t('Published'),
-   'help' => t('Whether node is published'), 
-   'field' => array(
-      //'field' => 'status', // the real field. This could be left out since it is the same.
-      //'group' => t('Scholar'), // The group it appears in on the UI. Could be left out.
-      'handler' => 'views_handler_field_node',
-      'click sortable' => TRUE,
-     ),
- 
-   'filter' => array(
-      'handler' => 'views_handler_filter_boolean_operator',
-      'label' => t('Published'),
-      'type' => 'yes-no',
-    ),
-     
-    'argument' => array(
-      'handler' => 'views_handler_argument_numeric',
-      'label' => t('Published Scholar'),
-      'numeric' => TRUE,
-     ),
-    
-    'sort' => array(
-      'handler' => 'views_handler_sort',
-    ),
-  );
-}
