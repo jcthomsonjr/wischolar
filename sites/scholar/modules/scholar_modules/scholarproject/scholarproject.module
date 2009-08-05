@@ -1,0 +1,32 @@
+<?php
+
+function scholarproject_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks[0]['info'] = t('Scholar project slideshow top left');
+      $blocks[1]['info'] = t('Scholar project big text');
+      $blocks[2]['info'] = t('Scholar project tips');
+      $blocks[3]['info'] = t('Scholar project site examples');
+      return $blocks;
+      
+    case 'view':
+      switch ($delta) {
+        case 0:
+          $block = scholarproject_block_slideshow_view();
+          break;
+        case 1:
+          $block = scholarproject_block_slideshow_view();
+          break;
+        case 2:
+          $block = scholarproject_block_slideshow_view();
+          break;
+        case 3:
+          $block = scholarproject_block_slideshow_view();
+          break;
+      }
+      return $block;
+  }
+}
+
+
+function 

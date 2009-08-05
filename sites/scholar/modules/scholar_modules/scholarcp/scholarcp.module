@@ -214,7 +214,6 @@ function schlarcp_feature_customize($feature_name){
  */
 function scholarcp_form_alter(&$form, $form_state, $form_id) { 
   if($form['#id'] == 'views-exposed-form-scholarcp-content-page'){
-    
     $options = array(
     'All' => check_plain('<Any>'),
     1 => 'Yes',
