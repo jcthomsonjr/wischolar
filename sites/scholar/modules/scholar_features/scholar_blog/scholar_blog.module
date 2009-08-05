@@ -3,7 +3,7 @@
 include_once('scholar_blog.features.inc');
 
 
-function scholar_blog_taxonomy_defaults() {
+function scholar_blog_scholar_vocabulary_defaults() {
   return array (
     0 => array (
     'name' => 'blog_categories', 
@@ -11,13 +11,24 @@ function scholar_blog_taxonomy_defaults() {
     'properties' => array (), 
     'terms' => array (
       0 => array (
-    	'name' => 'Statistics', 
-    	'desription' => 'Statistics', 
+    	'name' => 'Government', 
+    	'desription' => 'Government', 
     	'properties' => array () 
       ), 
       1 => array (
-    	'name' => 'Political Economy', 
-    	'desription' => 'Political Economy', 
+    	'name' => 'Methodology', 
+    	'desription' => 'Methodology', 
+    	'properties' => array () 
+      ),
+      2 => array (
+    	'name' => 'Social computing', 
+    	'desription' => 'Social computing', 
+    	'properties' => array () 
+      ),
+
+      3 => array (
+    	'name' => 'Social Networking', 
+    	'desription' => 'Social Networking', 
     	'properties' => array () 
       ) 
     ) 

@@ -68,6 +68,17 @@ function _scholarwidgets_default_contexts(){
       'label' => 'Scholar secondary menu',
       'type' => 'context_ui',
     ),
+    
+    // search site widget
+    'og_views_0' => array(
+      'module' => 'og_views',
+      'delta' => '0',
+      'weight' => 0,
+      'region' => 'right',
+      'status' => '0',
+      'label' => 'Search',
+      'type' => 'context_ui',
+    ),
   ),
 );
 	return $items;

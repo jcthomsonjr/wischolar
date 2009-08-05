@@ -30,7 +30,7 @@ function scholar_links_strongarm() {
   return $conf;
 }
 
-function scholar_links_taxonomy_defaults() {
+function scholar_links_scholar_vocabulary_defaults() {
   return array (
     0 => array (
     'name' => 'link_categories', 
@@ -45,6 +45,21 @@ function scholar_links_taxonomy_defaults() {
       1 => array (
     	'name' => 'Political Economy', 
     	'desription' => 'Political Economy', 
+    	'properties' => array () 
+      ),
+      2 => array (
+    	'name' => 'Data', 
+    	'desription' => 'Data', 
+    	'properties' => array () 
+      ),  
+      3 => array (
+    	'name' => 'Economics', 
+    	'desription' => 'Economics', 
+    	'properties' => array () 
+      ), 
+      4 => array (
+    	'name' => 'Goverment', 
+    	'desription' => 'Economics', 
     	'properties' => array () 
       ) 
     ) 

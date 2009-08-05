@@ -35,7 +35,7 @@ function _scholar_testingcontent(){
 		$properties = array (
 			'name' => $uname_admin, 
 			'type' => variable_get('scholar_content_type', 'scholarsite'),
-		  'promote' => '1',
+		  	'promote' => '1',
 			'purl' => array ('value' => "site0$i", 'provider' => 'spaces_og', 'id' => NULL ), 
 			'preset' => ($i < 4) ? 'scholarsite' : 'public', 
 			'og_description' => "site0$i", 
@@ -59,5 +59,17 @@ function _scholar_testingcontent(){
 				og_save_subscription($node -> nid, $uid, array('is_active' => 1));	
 			}
 		}
+		
+		// categories
+        $taxs = module_invoke_all('scholar_vocabulary_defaults');
+        install_include(array('taxonomy'));
+        foreach($taxs as $tax) {
+          // make the vocab name unique
+          $tax['name'] = $node -> purl['value'] . '_' . $tax['name'];
+          
+        }
+        
+        // create vocabs
+        scholarvocab_taxonomy_import($node -> nid, $taxs);
 	}
 }

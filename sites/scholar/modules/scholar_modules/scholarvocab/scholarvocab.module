@@ -174,3 +174,42 @@ function _scholarvocab_item($term){
   $term_link = l ( $term['name'], $term_path, array ('title' => t ( $term['description'] ) ) ); 
   return $term_link;
 }
+
+
+/** API functions **/
+
+/**
+ * Creates a series of taxonomy vocabularies and terms from the passed
+ * definition.
+ *
+ * Sample Definition:
+ *   array(
+ *   0 => array(
+ *     'name' => 'vocab name', 
+ *     'content_types' => array(), 
+ *     'properties' => array(),
+ *     'terms' => array(
+ *       0 => array(
+ *         'name' => 'Term Name', 
+ *         'desription' => '', 
+ *         'properties' => array(),
+ *       )
+ *     ),
+ *   ), 
+ * );
+ *
+ * NOTE: This function does not currently do any error or duplicate checking.
+ *
+ * @param $definition
+ *   Definintion of the taxonomy structure.
+ */
+function scholarvocab_taxonomy_import($gid, $definition) {
+  foreach ($definition as $vocab_index => $vocab_definition) {
+    $vid = install_taxonomy_add_vocabulary($vocab_definition['name'], $vocab_definition['content_types'], $vocab_definition['properties']);
+    // make this a group taxonomy
+    og_vocab_write_record($gid, $vid);
+    foreach ($vocab_definition['terms'] as $term_index => $term_definition) {
+      install_taxonomy_add_term($vid, $term_definition['name'], $term_definition['description'], $term_definition['properties']);
+    }
+  }
+}
