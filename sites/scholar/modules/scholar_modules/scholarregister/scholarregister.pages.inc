@@ -1,20 +1,5 @@
 <?php
 
-
-function scholarregister_signup_form_submit($form, &$form_state) {
-  //dpm ( $form_state );
-  
-  $name = $form_state ['values'] ['name'];
-  $email = $form_state ['values'] ['mail'];
-  
-  ctools_add_js ( 'ajax-responder' );
-  $commands = array ();
-  global $base_url;
-  $message = 'Congratulation !! Your site is created. The url of the site is ' . $base_url . '/' . $name;
-  $message .= 'Check your email account for ...';
-  $commands [] = ctools_ajax_command_replace ( '#submit-suffix',  $message );
-  ctools_ajax_render ( $commands );
-}
 /**
  * Construct the form itself
  *
@@ -90,4 +75,20 @@ function  scholarregister_signup_form() {
     );
   return $form;
 
+}
+
+
+function scholarregister_signup_form_submit($form, &$form_state) {
+  //dpm ( $form_state );
+  
+  $name = $form_state ['values'] ['name'];
+  $email = $form_state ['values'] ['mail'];
+  
+  ctools_add_js ( 'ajax-responder' );
+  $commands = array ();
+  global $base_url;
+  $message = 'Congratulation !! Your site is created. The url of the site is ' . $base_url . '/' . $name;
+  $message .= 'Check your email account for ...';
+  $commands [] = ctools_ajax_command_replace ( '#submit-suffix',  $message );
+  ctools_ajax_render ( $commands );
 }
