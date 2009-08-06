@@ -15,32 +15,31 @@ class scholarcp_setting_theme implements space_setting {
   }
 
   function form($space, $value = array()) {
-  $form = array();
-
-  // all the enabled themes
-  $enabled = scholarcp_get_scholar_themes();
-  if (count($enabled) > 0){
-    ksort($enabled);
-  }
-  
-  $options = array();
-  
-  
-  foreach ($enabled as $theme_obj) {
-    $info = $theme_obj -> info;
-    $info['theme_name'] = $theme_obj -> name;
-
-    $options[$info['theme_name']] = theme('scholarcp_theme_picker', $info); 
-  }  
-
-  $form = array(
-    '#title' => t('theme selection'),
-    '#type' => 'radios',
-    '#options' => $options,
-    '#default_value' => $value ? $value : '',
-  );
-  
-  return $form;
+	  $form = array();
+	
+	  // all the enabled themes
+	  $enabled = scholarcp_get_scholar_themes();
+	  if (count($enabled) > 0){
+	    ksort($enabled);
+	  }
+	  
+	  $options = array();
+	  
+	  foreach ($enabled as $theme_obj) {
+	    $info = $theme_obj -> info;
+	    $info['theme_name'] = $theme_obj -> name;
+	
+	    $options[$info['theme_name']] = theme('scholarcp_theme_picker', $info); 
+	  }  
+	
+	  $form = array(
+	    '#title' => t('theme selection'),
+	    '#type' => 'radios',
+	    '#options' => $options,
+	    '#default_value' => $value ? $value : '',
+	  );
+	  
+	  return $form;
   }
 
   function validate($space, $value) {
