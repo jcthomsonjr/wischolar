@@ -2,7 +2,12 @@ if (Drupal.jsEnabled) {
   $(document).ready(function() {
     $('#scholarcp-settings-theme .form-radios ').hide();
 
+    var theSubnav = $("<div>");
+    theSubnav.addClass("theme_subnav");
+    theSubnav.html("<span class='label'>Select a Theme</span>");
+
     var theList = '<ul class = "theme-picker">'; // important, RSC depend on it
+    var n_containers = 0;
     
     function getLi(liId, liChecked, liContent){
     	return '<li class = "item-theme-picker  ' + liChecked + '" id="' + liId  + '">' + liContent + '</li>';
@@ -17,6 +22,13 @@ if (Drupal.jsEnabled) {
     	var liContent = $(this).find('.item-theme-picker').html();
 
     	theList = theList + getLi(liId, liChecked, liContent);
+    	
+    	var jumpLink = $("<a>");
+    	jumpLink.html("&nbsp;"+(n_containers+1)+"&nbsp;");
+    	jumpLink.RSC_Jump(n_containers,{ containerW: 600 });
+    	
+    	theSubnav.append(jumpLink);
+    	n_containers++;
     });
     
     theList = theList + '</ul>';
@@ -26,9 +38,9 @@ if (Drupal.jsEnabled) {
     
     
     $('#scholarcp-settings-theme').prepend(theList);
+    $('#scholarcp-settings-theme').prepend(theSubnav);
     
-    
-    $('div#prev, div#next').RSC();
+    $('div#prev, div#next').RSC({ containerW: 600, noOfContainer: n_containers });
     
     $('li.item-theme-picker').click(function(){
     	// remove the active class from every li first

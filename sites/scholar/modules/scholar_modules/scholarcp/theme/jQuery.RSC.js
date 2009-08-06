@@ -44,14 +44,28 @@
 	duration: 1000
   };
   var op = $.extend(defaults, options);
-
-  return this.each(function() {
-		var i = 0;
+  
+  var i = 0;
+  return this.each(function() {	
 		$(this).click(function()
 		{
 			this.id==op.prevImageID.replace("#","")?$(function(){i++;i>0?i=(0-(op.noOfContainer-1)):"";}):this.id==op.nextImageID.replace("#","")?$(function(){i--;i<(0-(op.noOfContainer-1))?i=0:"";}):"";
-			$("ul.theme-picker").animate({marginLeft: i*op.containerW+"em"},op.duration);
+			$("ul.theme-picker").animate({marginLeft: i*op.containerW+"px"},op.duration);
 		});
   });
  };
+ 
+ $.fn.RSC_Jump= function(index,options) {
+
+	 var defaults = {
+		containerW: 50,
+		duration: 1000
+	  };
+	  var op = $.extend(defaults, options);
+
+	  return $(this).click(function(){
+				$("ul.theme-picker").animate({marginLeft: index*op.containerW*-1+"px"},op.duration);
+			 });
+	  
+	};
 })(jQuery);
