@@ -34,6 +34,8 @@
  *
 */
 (function($){
+ var RSC_index = 0;
+	
  $.fn.RSC= function(options) {
 
   var defaults = {
@@ -45,12 +47,15 @@
   };
   var op = $.extend(defaults, options);
   
-  var i = 0;
   return this.each(function() {	
 		$(this).click(function()
 		{
+			var i = RSC_index;
 			this.id==op.prevImageID.replace("#","")?$(function(){i++;i>0?i=(0-(op.noOfContainer-1)):"";}):this.id==op.nextImageID.replace("#","")?$(function(){i--;i<(0-(op.noOfContainer-1))?i=0:"";}):"";
 			$("ul.theme-picker").animate({marginLeft: i*op.containerW+"px"},op.duration);
+			RSC_index = i;
+			$(".item-theme-picker").removeClass('active');
+			$(".item-theme-picker:eq("+(i*-1)+")").addClass('active');
 		});
   });
  };
@@ -65,6 +70,9 @@
 
 	  return $(this).click(function(){
 				$("ul.theme-picker").animate({marginLeft: index*op.containerW*-1+"px"},op.duration);
+				RSC_index = -1*index;
+				$(".item-theme-picker").removeClass('active');
+				$(".item-theme-picker:eq("+index+")").addClass('active');
 			 });
 	  
 	};

@@ -39,6 +39,7 @@ if (Drupal.jsEnabled) {
     
     $('#scholarcp-settings-theme').prepend(theList);
     $('#scholarcp-settings-theme').prepend(theSubnav);
+    $(".item-theme-picker:first").addClass('active');
     
     $('div#prev, div#next').RSC({ containerW: 600, noOfContainer: n_containers });
     
