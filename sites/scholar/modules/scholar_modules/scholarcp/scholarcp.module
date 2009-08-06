@@ -60,9 +60,7 @@ function scholarcp_menu(){
   //$items = spaces_active_space_menu('og', FALSE, 'scholarcp/settings');
 
   $items = array();
-  
 
-  
   // content
   // TODO fix its not working: trying to make the children menu as local task
   $items['scholarcp/content'] = array(
@@ -222,8 +220,40 @@ function schlarcp_feature_customize($feature_name){
 /**
  * hook form_alter
  */
-function scholarcp_form_alter(&$form, $form_state, $form_id) { 
-  if($form['#id'] == 'views-exposed-form-scholarcp-content-page'){
+function scholarcp_form_alter(&$form, $form_state, $form_id) {
+
+  /*
+   * we'd like to remove the space settings from 'spaces_features_form'
+   * and make 'settings' link as a popup link
+   */
+  if (arg(0) == 'scholarcp' && $form_id == 'spaces_features_form'){
+
+    // we dont need settings here
+    unset($form['settings']);
+    $site = $form['space']['#value'];
+    // we would like to change the "customize" link to "settings" 
+    // and display the form in the popup
+    foreach (array_keys($site -> features) as $f_name){
+      if (isset($form['customize'][$f_name])){ 
+        ctools_include('ajax');
+        ctools_include('modal');
+        ctools_modal_add_js();
+        $link = ctools_modal_text_button('settings', 'scholarcp/settings/features/'. $f_name, 'whatever');
+        $form['customize'][$f_name]['#value'] = $link;
+      }
+    }
+  }
+}
+
+function scholarcp_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){ dpm($form);
+   
+  //TODO: Is there a better way to get this argument???
+ $type = arg(2);
+     
+  if($form['#id'] == 'views-exposed-form-scholarcp-content-default'){
+    
+   //$form['#action'] = request_uri();
+    
     $options = array(
     'All' => check_plain('<Any>'),
     1 => 'Yes',
@@ -232,13 +262,28 @@ function scholarcp_form_alter(&$form, $form_state, $form_id) {
 
    //get the site information 
    $site = scholar_get_scholar();
-    //get the vocabularies associated with this site
-   $vocab = og_vocab_get_vocabularies($site -> group ->nid);
+    //get the vocabularies vid's associated with this site
+   $site_vocabs = array_keys(og_vocab_get_vocabularies($site -> group ->nid));
+   //get the vocabularies vid's associated with content type
+   $type_vocabs = array_keys(taxonomy_get_vocabularies ($type));
    
-  foreach ($vocab as $vid => $data){
-   $terms[] = taxonomy_get_tree($vid);
+   dpm($type_vocabs);
+   
+   if (count($site_vocabs) &&  count($type_vocabs)){
+   //merge common vids
+   $vid = array_intersect($site_vocabs, $type_vocabs);
+   } 
+   
+  if(!count($vid)){
+    //remove Categores selection
+    unset($form['#info']['filter-tid']);  
+    unset($form['tid']);
   }
-  
+  else{
+   //NOTE just passing the first element of the array here because it is assumed
+   //1 vocab per type
+   $terms[] = taxonomy_get_tree($vid[0]);
+
   //now we have the terms for this site, create an array formatted 
   //for the taxonomy options in the exposed filter. 
   //TODO: for now we just are going to use 1 vocabulary, but perhaps 
@@ -246,11 +291,9 @@ function scholarcp_form_alter(&$form, $form_state, $form_id) {
   foreach($terms[0] as $term){
     $taxonomy_options[$term -> tid]  =  $term -> name;
   }
-  
-  //TODO: need to assoc with content type;
-  //dpm($taxonomy_options); 
-  
-    //taxonomy terms flter
+   }
+    
+     //taxonomy terms flter
      $form['tid']['#options'] = $taxonomy_options;
      //5 terms max shown per select box
      $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
@@ -267,31 +310,8 @@ function scholarcp_form_alter(&$form, $form_state, $form_id) {
     $form['sticky']['#type'] = 'radios';
     $form['sticky']['#options'] = $options;
   }
-  
-  /*
-   * we'd like to remove the space settings from 'spaces_features_form'
-   * and make 'settings' link as a popup link
-   */
-  if (arg(0) == 'scholarcp' && $form_id == 'spaces_features_form'){
-
-    // we dont need settings here
-    unset($form['settings']);
-    $site = $form['space']['#value'];
-    
-    // we would like to change the "customize" link to "settings" 
-    // and display the form in the popup
-    foreach (array_keys($site -> features) as $f_name){
-      if (isset($form['customize'][$f_name])){ 
-        ctools_include('ajax');
-        ctools_include('modal');
-        ctools_modal_add_js();
-        $link = ctools_modal_text_button('settings', 'scholarcp/settings/features/'. $f_name, 'whatever');
-        $form['customize'][$f_name]['#value'] = $link;
-      }
-    }
-  }
 }
-
+  
 
 /**
  * Implementation of hook_theme().
