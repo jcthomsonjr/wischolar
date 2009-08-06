@@ -10,6 +10,6 @@ function scholarcp_content($type = NULL, $name = NULL){
   $output .=  isset($type) ? '<div class="' . $add_new_classes . '">' . l(t('+ add new '. $name), 'node/add/' . strtolower($type)) . '</div>' : '' ;
 
   //adding view output
-  $output .= views_page($view_name = 'scholarcp_content', $display = 'page', $arg = $type);
+  $output .= views_page($view_name = 'scholarcp_content', $display = 'default', $arg = $type);
   return $output;
 }
