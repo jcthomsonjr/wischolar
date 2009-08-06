@@ -6,6 +6,7 @@ function scholarregister_menu(){
   $items['site/register'] = array(
     'title' => 'Create your web site',
     'page callback' => 'scholarregister_register',
+    'file' => 'scholarregister.pages.inc',
     'access arguments' => array('access content'),
   );
 
@@ -13,27 +14,78 @@ function scholarregister_menu(){
     'title' => 'Create your web site',
     'page callback' => 'scholarregister_domain_js',
     'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
   );
-
+  
+  $items['scholarregister/mail_js'] = array(
+    'title' => 'Create your web site',
+    'page callback' => 'scholarregister_mail_js',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  
+  
+  $items['scholarregister/name_js'] = array(
+    'title' => 'Create your web site',
+    'page callback' => 'scholarregister_name_js',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
 
   return $items;
 }
 
-function scholarregister_domain_js() {
+function scholarregister_name_js() {
+  $name = $_POST['ctools_changed'];
+  
+  // check uname availability / correctnes (user_validate)
+
   ctools_include ( 'ajax' );
   ctools_add_js ( 'ajax-responder' );
-    $commands = array ();
-    $commands [] = ctools_ajax_command_html ('#search',$_POST['ctools_changed']);
-    ctools_ajax_render ( $commands ); // this function exits.
+  $commands = array ();
+  $commands [] = ctools_ajax_command_html ( '#name-suffix', 'available' );
+  ctools_ajax_render ( $commands );
 }
+
+function scholarregister_mail_js() {
+  $mail = $_POST['ctools_changed'];
+  
+  // check email availability / correctnes (user_validate)
+
+  ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+  $commands = array ();
+  $commands [] = ctools_ajax_command_html ( '#mail-suffix', 'available' );
+  ctools_ajax_render ( $commands ); 
+}
+
+function scholarregister_domain_js() {
+  $domain = $_POST['ctools_changed'];
+  
+  // TODO check availability / correctness of the domain (purl)
+  
+  ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+  $commands = array ();
+  $commands [] = ctools_ajax_command_html ( '#domain-suffix', 'available');
+  ctools_ajax_render ( $commands );
+}
+
 
 /**
  * the callback for site/register menu
  */
 function  scholarregister_register() {
-  drupal_add_css ( drupal_get_path ( 'module', 'scholar_newsite' ) . '/scholar_newsite.css' );
-  
-  $output .= drupal_get_form ( 'scholarregister_signup_form' );
+  drupal_add_css ( drupal_get_path ( 'module', 'scholarregister' ) . '/scholarregister.css' );
+  ctools_include('modal');
+  ctools_include('form');
+  ctools_include('ajax');
+  $form_state = array(
+    '#ajax' => TRUE,
+    '#redirect' => FALSE,
+  );
+  $output .= ctools_modal_form_wrapper('scholarregister_signup_form', &$form_state);
+  //$output .= drupal_get_form ( 'scholarregister_signup_form' );
   
   // we can just return the $output or, if we want to not print
   // blocks etc., use theme_page(..., FALSE) see phptemplate.engine
@@ -42,77 +94,5 @@ function  scholarregister_register() {
   //return $output;
   print theme ( 'page', $output, FALSE );
 }
-function scholarregister_signup_form_submit(){
-  ctools_include ( 'ajax' );
-  ctools_add_js ( 'ajax-responder' );
-    $commands = array ();
-    $commands [] = ctools_ajax_command_replace ('#search','zzz');
-    ctools_ajax_render ( $commands ); // this function exits.
-}
-/**
- * Construct the form itself
- *
- * @param unknown_type $form_values
- * @return unknown
- */
-function  scholarregister_signup_form() {
-  ctools_include ( 'ajax' );
-  ctools_add_js ( 'ajax-responder');
-  $form = array ();
-  $form ['#prefix'] = '<div id = "user_login">';
-  $form ['#suffix'] = '</div>';
-  
-  // username
-  $form ['name'] = array (
-    '#type' => 'textfield', 
-    '#size' => 45, 
-    '#title' => t ( 'User name' ), 
-    '#required' => TRUE,
-    '#description' => t('User name to login .. etc'),
-  );
-  
-  // last name
-  $form ['mail'] = array (
-    '#type' => 'textfield', 
-    '#size' => 45, 
-    '#title' => t ( 'mail' ), 
-    '#required' => TRUE,
-    '#description' => t('A valid %harvard e-mail address . 
-                        All e-mails from the system will be sent to this address. The e-mail address is
-                        not made public and will only be used if you wish to receive a new password or
-                        wish to receive certain news or notifications by e-mail.', array('%harvard' => 'Harvard')), 
-  );
-    
-  global $base_url;
-  // domain name
-  $form ['domain'] = array (
-    '#type' => 'textfield', 
-    '#title' => t ( 'Domain Name' ), 
-    '#field_prefix' => $base_url . '/', 
-    '#size' => 20, 
-    '#default_value' => $form_values ['name'], 
-    '#description' => t ( 'The address of your web site will be %site. It must be at least 4 characters long, letters and numbers only', array (
-    '%site' => $base_url . '/domain')),
-    '#attributes' => array('class' => 'ctools-use-ajax-onchange'),
- 
-  );
-  ctools_ajax_associate_url_to_element($form, $form['domain'], '/scholarregister/domain_js');
-  
-    $form['example'] = array(
-      '#title' => t('Example'),
-      '#type' => 'select',
-     '#options' => array(1 => 'One', 2 => 'Two', 3 => 'Three'),
-     '#default_value' => 1,
-        '#attributes' => array('class' => 'ctools-use-ajax-onchange ctools-ajax-submit-onchange'),
-    );
-   ctools_ajax_associate_url_to_element($form, $form['example'], '/scholarregister/domain_js');
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Create'),
-    '#weight' => 20,
-    '#attributes' => array('class' => 'ctools-use-ajax'),
-    );
-  ctools_ajax_associate_url_to_element($form, $form['submit'], '/scholarregister/domain_js');
-  return $form;
 
-}
+
