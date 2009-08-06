@@ -63,13 +63,14 @@ function scholarcp_menu(){
   // TODO fix its not working: trying to make the children menu as local task
   $items['scholarcp/content'] = array(
     'title' => 'Content',
-    'page callback' => 'scholarcp_route', 
+    'page callback' => 'scholarcp_route',
+    'weight' => 1,    
     );
 
   $items['scholarcp/content/all'] = array( 	 
     'title' => 'All',
     //'type' => MENU_DEFAULT_LOCAL_TASK,	
-    'page callback' => 'scholarcp_content',     
+    'page callback' => 'scholarcp_content',  
     'file' => 'scholarcp.content.inc',
     'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
     );
@@ -90,7 +91,8 @@ function scholarcp_menu(){
   
   $items['scholarcp/users'] = array(
     'title' => 'Users',
-    'page callback' => 'scholarcp_route',  
+    'page callback' => 'scholarcp_route', 
+    'weight' => 2, 
   );
   
   $items['scholarcp/users/members'] = array(
@@ -104,16 +106,19 @@ function scholarcp_menu(){
   $items['scholarcp/news'] = array(
     'title' => 'News',
     'page callback' => 'scholarcp_cp',
+    'weight' => 3,
   ); 
   
   $items['scholarcp/support'] = array(
     'title' => 'Support',
     'page callback' => 'scholarcp_cp',
+    'weight' => 4,
   );
   
   $items['scholarcp/settings'] = array(
     'title' => 'Settings',
     'page callback' => 'scholarcp_route',
+    'weight' => 0,
   );  
   
   // other setting by classess
@@ -142,7 +147,7 @@ function scholarcp_menu(){
     //'access arguments' => array('og', 'features'),
     'file' => 'spaces_admin.inc',
     'file path' => $spaces_path,
-    'weight' => 1,
+    'weight' => 0,
   );
   
   $items["scholarcp/settings/features/%"] = array(
