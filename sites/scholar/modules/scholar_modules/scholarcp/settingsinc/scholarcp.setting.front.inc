@@ -85,10 +85,12 @@ class scholarcp_setting_front implements space_setting {
   );
   
   // post
-  $auto_element = scholar_node_autocomplete_element();
+  $auto_element = scholar_node_autocomplete_element("Select a post");
   $auto_element['#description'] = t('Select the post your want to set as a front page or create a new one') . $links;
   $auto_element['#process'] = array ('ctools_dependent_process' ); 
   $auto_element['#dependency'] = array ('radio:settings[front][frontpage]' => array ('html'));
+  $def_node = intval($value['front_nid'])?node_load($value['front_nid']):false;
+  if($def_node) $auto_element['#default_value'] = $def_node->title." [nid:{$value['front_nid']}]";
   
   $form['front_nid'] = $auto_element;
 
@@ -113,23 +115,49 @@ class scholarcp_setting_front implements space_setting {
   }
 
   function validate($space, $value) {
+  	switch ($value['frontpage']){
+      case 'bio':
+      	$bio_nid = (isset($space -> settings['bio']['nid']) && is_numeric($space -> settings['bio']['nid'])) ? $space -> settings['bio']['nid'] : '';
+        if(!$bio_nid) form_set_error('frontpage',"You must create a bio before you can select this option");
+      break;
+      case 'feature':
+      	$exists = false;
+      	foreach ($value['node_options'] as $opt) if($opt) $exists = true;
+      	if(!$exists) form_set_error('frontpage',"You must select at least one feature.");
+      break;
+      case 'html':
+      	if(!$value['front_nid'] || !preg_match("/\[nid:\d+\]/",$value['front_nid'])){
+      		form_set_error('frontpage',"You must select a post to display.");
+      	} 
+      break;
+      case 'flag':
+      default:
+      	//do nothing        
+    }
+    return $value;
 
+  
   }
 
   function submit($space, $value) {
-    switch ($value['frontpage']){
+    $save = array('frontpage' => $value['frontpage']);
+  	switch ($value['frontpage']){
       case 'bio':
-        $value['node_options'] = array();
-        break;
+        //nothing extra to save  
+      break;
       case 'feature':
-        break;
+      	$save['node_options'] = $value['node_options'];
+      break;
       case 'html':
-        $value['bio_title'] = '';
-        break;
+      	$matches=array();
+        preg_match("/\[nid:\d+\]/",$value['front_nid'],$matches);
+        $save['front_nid'] = substr($matches[0],5,-1);
+      break;
       case 'flag':
-        break;        
+        //nothing extra to save  
+      break;        
     }
-    return $value;
+    return $save;
   }
 }
 
