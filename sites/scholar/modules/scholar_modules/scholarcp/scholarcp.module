@@ -271,30 +271,39 @@ function scholarcp_form_views_exposed_form_alter(&$form, $form_state, $form_id =
     $vid = array_intersect($site_vocabs, $type_vocabs);
   }
 
-  if(!count($vid)){
-    //remove Categores selection
+  //if no vocabulary, then do no show select box
+  if(empty($vid)){
+    //remove Categores selection box
     unset($form['#info']['filter-tid']);
     unset($form['tid']);
   }
   else{
     //NOTE just passing the first element of the array here because it is assumed
     //1 vocab per type
-    $terms[] = taxonomy_get_tree($vid[0]);
+    $terms = taxonomy_get_tree($vid[0]);
+  }
+    
+    //if no terms, then do no show select box
+  if(empty($terms)){
+       //remove Categores selection box
+    unset($form['#info']['filter-tid']);
+    unset($form['tid']);
+    }
 
+    else{       
     //now we have the terms for this site, create an array formatted
     //for the taxonomy options in the exposed filter.
     //TODO: for now we just are going to use 1 vocabulary, but perhaps
     //should nest loops so it can deal with multiple vocabs????
-    foreach($terms[0] as $term){
+    foreach($terms as $term){
       $taxonomy_options[$term -> tid]  =  $term -> name;
     }
-  }
-
   //taxonomy terms flter
   $form['tid']['#options'] = $taxonomy_options;
   //5 terms max shown per select box
   $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
-
+  }
+  
   //promoted to front page filter
   $form['promote']['#type'] = 'radios';
   $form['promote']['#options'] = $options;
