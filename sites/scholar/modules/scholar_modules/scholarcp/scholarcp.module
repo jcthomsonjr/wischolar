@@ -22,6 +22,10 @@ function scholarcp_init(){
  */
 function scholarcp_spaces_settings() {
   return array(
+   'site' => array(
+      'class' => 'scholarcp_setting_site',
+      'file' => drupal_get_path('module', 'scholarcp')  .'/settingsinc/scholarcp.setting.site.inc',
+    ),
     'theme' => array(
       'class' => 'scholarcp_setting_theme',
       'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.theme.inc',
@@ -123,7 +127,7 @@ function scholarcp_menu(){
   
   // other setting by classess
   $space = spaces_get_space();
-
+  //dpm(spaces_settings($space->type, TRUE));
   // we go on all settings and make a menu entry for all of them
   foreach (spaces_settings($space->type, TRUE) as $setting) {
     $setting_value = isset($space->settings[$setting->id]) ? $space->settings[$setting->id] : NULL;
@@ -434,6 +438,25 @@ function scholarcp_in_active_trail($path, $reset = FALSE) {
     }
   }
   return in_array($path, $active_paths);
+}
+
+/**
+ * Implements hook user
+ */
+function scholarcp_user($op, &$edit, &$account, $category = null) {
+  switch($op){
+  	case 'after_update':
+  		if($account->mail && isset($account->og_groups) && count($account->og_groups)){
+  			foreach ($account->og_groups as $a_grp){
+  				if($a_grp['uid'] != $account->uid) continue;
+  				$space = spaces_load('og',$a_grp['nid']);
+  				$space->settings['site']['contact']['email'] = $account->mail;
+  				spaces_save($space);
+  			}
+  		}
+  		$a =$b;
+  	break;
+  }  
 }
 
 /**** Helper function ****/
