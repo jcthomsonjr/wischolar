@@ -245,70 +245,67 @@ function scholarcp_form_alter(&$form, $form_state, $form_id) {
   }
 }
 
-function scholarcp_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){ dpm($form);
-   
-  //TODO: Is there a better way to get this argument???
- $type = arg(2);
-     
-  if($form['#id'] == 'views-exposed-form-scholarcp-content-default'){
-    
-   //$form['#action'] = request_uri();
-    
-    $options = array(
-    'All' => check_plain('<Any>'),
-    1 => 'Yes',
-    0 => 'No',
-    );
+function scholarcp_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
 
-   //get the site information 
-   $site = scholar_get_scholar();
-    //get the vocabularies vid's associated with this site
-   $site_vocabs = array_keys(og_vocab_get_vocabularies($site -> group ->nid));
-   //get the vocabularies vid's associated with content type
-   $type_vocabs = array_keys(taxonomy_get_vocabularies ($type));
-   
-   dpm($type_vocabs);
-   
-   if (count($site_vocabs) &&  count($type_vocabs)){
-   //merge common vids
-   $vid = array_intersect($site_vocabs, $type_vocabs);
-   } 
-   
+  if($form['#id'] == 'views-exposed-form-scholarcp-content-default'){
+  //TODO: Is there a better way to get the content type argument???
+  $type = arg(2);
+  //set action to current url
+  $form['#action'] = request_uri();
+
+  $options = array(
+  'All' => check_plain('<Any>'),
+  1 => 'Yes',
+  0 => 'No',
+  );
+
+  //get the site information
+  $site = scholar_get_scholar();
+  //get the vocabularies vid's associated with this site
+  $site_vocabs = array_keys(og_vocab_get_vocabularies($site -> group ->nid));
+  //get the vocabularies vid's associated with content type
+  $type_vocabs = array_keys(taxonomy_get_vocabularies ($type));
+
+  if (count($site_vocabs) &&  count($type_vocabs)){
+    //merge common vids
+    $vid = array_intersect($site_vocabs, $type_vocabs);
+  }
+
   if(!count($vid)){
     //remove Categores selection
-    unset($form['#info']['filter-tid']);  
+    unset($form['#info']['filter-tid']);
     unset($form['tid']);
   }
   else{
-   //NOTE just passing the first element of the array here because it is assumed
-   //1 vocab per type
-   $terms[] = taxonomy_get_tree($vid[0]);
+    //NOTE just passing the first element of the array here because it is assumed
+    //1 vocab per type
+    $terms[] = taxonomy_get_tree($vid[0]);
 
-  //now we have the terms for this site, create an array formatted 
-  //for the taxonomy options in the exposed filter. 
-  //TODO: for now we just are going to use 1 vocabulary, but perhaps 
-  //should nest loops so it can deal with multiple vocabs????
-  foreach($terms[0] as $term){
-    $taxonomy_options[$term -> tid]  =  $term -> name;
+    //now we have the terms for this site, create an array formatted
+    //for the taxonomy options in the exposed filter.
+    //TODO: for now we just are going to use 1 vocabulary, but perhaps
+    //should nest loops so it can deal with multiple vocabs????
+    foreach($terms[0] as $term){
+      $taxonomy_options[$term -> tid]  =  $term -> name;
+    }
   }
-   }
-    
-     //taxonomy terms flter
-     $form['tid']['#options'] = $taxonomy_options;
-     //5 terms max shown per select box
-     $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
-    
-    //promoted to front page filter
-    $form['promote']['#type'] = 'radios';
-    $form['promote']['#options'] = $options;
-       
-    //published status filter
-    $form['status']['#type'] = 'radios';
-    $form['status']['#options'] = $options;
-        
-   //sticky on top of lists filter 
-    $form['sticky']['#type'] = 'radios';
-    $form['sticky']['#options'] = $options;
+
+  //taxonomy terms flter
+  $form['tid']['#options'] = $taxonomy_options;
+  //5 terms max shown per select box
+  $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
+
+  //promoted to front page filter
+  $form['promote']['#type'] = 'radios';
+  $form['promote']['#options'] = $options;
+
+  //published status filter
+  $form['status']['#type'] = 'radios';
+  $form['status']['#options'] = $options;
+
+  //sticky on top of lists filter
+  $form['sticky']['#type'] = 'radios';
+  $form['sticky']['#options'] = $options;
   }
 }
   
