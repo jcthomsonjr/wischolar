@@ -495,3 +495,81 @@ function _scholarcp_init_theme(){
   $custom_theme = CPTHEME;
 }
 
+/**
+ * Implementation of hook flag_default_flags
+ * @return array - default flag
+ */
+function scholarcp_flag_default_flags() {
+  $flags = array();
+  $flags[] = array(
+  'content_type' => 'node',
+  'name' => 'frontpage',
+  'title' => 'Save to Front Page',
+  'types' => array_keys(node_get_types()),
+  'roles' => array(
+  0 => '2',
+  ),
+  'global' => FALSE,
+  'flag_short' => 'Save to Front Page',
+  'flag_long' =>  'Save to Front Page',
+  'flag_confirmation' => 'Saved to Front Page',
+  'unflag_short' => 'Remove from Front Page',
+  'unflag_long' => 'Remove from Front Page',
+  //   'unflag_confirmation' => 'Are you sure you want ot remove?',
+  'status' => TRUE,
+  'show_on_page' => FALSE,
+  'show_on_teaser' => FALSE,
+  'show_on_form' => FALSE,
+  'link_type' => 'normal', //normal, toggle, confirm
+  'locked' => array('name', 'show_on_page', 'show_on_teaser', 'show_on_form', 'global', 'link_type', 'types'),
+  );
+
+  return $flags;
+}
+
+
+function scholarcp_link($type, $object, $teaser = FALSE){
+
+  //check font page settings here, only execute if front page setting equals flag
+  $site = scholar_get_scholar();
+  //
+  if ($site->settings['front']['frontpage'] !== 'flag'){
+    return false;
+  }
+
+  if (!isset($object) || !flag_fetch_definition($type)) {
+    return;
+  }
+
+  global $user;
+  // Anonymous users can't create flags with this system.
+  if (!$user->uid) {
+    return;
+  }
+
+  // Get frontpage flags
+  $flag = flag_get_flag('frontpage');
+
+  if (!$flag->user_access($user)) {
+    // User has no permission to use this flag.
+    return false;
+  }
+
+  if (!$flag->applies_to_content_object($object)) {
+    // Flag does not apply to this content.
+    return false;
+  }
+
+  $content_id = $flag->get_content_id($object);
+  // The flag links are actually fully rendered theme functions.
+  // The HTML attribute is set to TRUE to allow whatever the themer desires.
+  $links['flag-'. $flag->name] = array(
+  'title' => $flag->theme($flag->is_flagged($content_id) ? 'unflag' : 'flag', $content_id),
+  'html' => TRUE,
+  );
+
+  if (isset($links)) {
+    return $links;
+  }
+}
+ 
