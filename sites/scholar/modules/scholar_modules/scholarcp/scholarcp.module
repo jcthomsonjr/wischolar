@@ -194,6 +194,7 @@ function scholarcp_route(){
 function schlarcp_feature_customize($feature_name){
   ctools_include('ajax');
   ctools_include('modal');
+  ctools_modal_add_js();
   
   $form_state = array(
     're_render' => TRUE,
