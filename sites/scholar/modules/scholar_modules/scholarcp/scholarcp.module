@@ -505,7 +505,7 @@ function scholarcp_flag_default_flags() {
   'content_type' => 'node',
   'name' => 'frontpage',
   'title' => 'Save to Front Page',
-  'types' => array_keys(node_get_types()),
+  'types' => array_keys(node_get_types()), //TODO: maybe some types should be excluded
   'roles' => array(
   0 => '2',
   ),
@@ -515,13 +515,13 @@ function scholarcp_flag_default_flags() {
   'flag_confirmation' => 'Saved to Front Page',
   'unflag_short' => 'Remove from Front Page',
   'unflag_long' => 'Remove from Front Page',
-  //   'unflag_confirmation' => 'Are you sure you want ot remove?',
+  //   'unflag_confirmation' => 'Are you sure you want to remove?',
   'status' => TRUE,
   'show_on_page' => FALSE,
   'show_on_teaser' => FALSE,
   'show_on_form' => FALSE,
-  'link_type' => 'normal', //normal, toggle, confirm
-  'locked' => array('name', 'show_on_page', 'show_on_teaser', 'show_on_form', 'global', 'link_type', 'types'),
+  'link_type' => 'toggle', //normal, toggle, confirm
+  'locked' => array('name', 'show_on_page', 'show_on_teaser', 'show_on_form', 'global'),
   );
 
   return $flags;
