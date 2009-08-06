@@ -350,18 +350,3 @@ $handler->override_option('style_options', array(
     'node_unpublish_action' => 'node_unpublish_action',
   ),
 ));
-$handler = $view->new_display('page', 'Page', 'page');
-$handler->override_option('path', 'admin/scholarcp/content/list');
-$handler->override_option('menu', array(
-  'type' => 'none',
-  'title' => '',
-  'description' => '',
-  'weight' => 0,
-  'name' => 'navigation',
-));
-$handler->override_option('tab_options', array(
-  'type' => 'none',
-  'title' => '',
-  'description' => '',
-  'weight' => 0,
-));
