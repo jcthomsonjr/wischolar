@@ -6,13 +6,20 @@ function scholarcp_init(){
    // add this only if in active space + user is admin of space + users wants the toolbar anywhere
    drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
 
-  // initialize the scholarcp theme.
-  if (arg(0) == 'scholarcp'){
-  	_scholarcp_init_theme();
-  } else {
+   // define some contexts (TODO can we group them all together in scholar.module ?
+   
+   // controlcp context
+  if (arg(0) == 'scholarcp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
+    context_set('scholar', 'section', 'scholarcp');
+    // since we are here .. initialize scholarcp theme
+    _scholarcp_init_theme();
+  }
+  
+  else {
   	$space = spaces_get_space();
   	if ($space -> type == 'og'){
-  		og_set_theme($space -> group);
+  	  context_set('scholar', 'section', 'scholarsite');
+  	  og_set_theme($space -> group); // TODO why dont you get it from space settings
   	}
   }
 }
@@ -349,9 +356,12 @@ function scholarcp_theme($cache, $type, $theme, $path) {
  * and "scholarcp_left" variables
  */
 function scholarcp_preprocess_page(&$vars) {
+  // TODO this shold go to scholar module; shaun needed 
   if ($vars['navbar']){
     $vars['body_classes'] .= ' navbar';
   }
+  
+  // 2 new variables for top and left menus
   $vars['scholarcp_toolbar'] = 
   $vars['scholarcp_left'] = '';
   

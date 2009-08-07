@@ -3,9 +3,9 @@
 function _scholarwidgets_default_contexts(){
 	$items = array();
   $items[] = array(
-  'namespace' => 'scholar',
+  'namespace' => 'scholarcp',
   'attribute' => 'section',
-  'value' => 'scholarwidgets',
+  'value' => 'layout',
   'spaces_type' => array(
     '0' => 'og',
   ),

@@ -48,7 +48,7 @@ function scholarlayout_layout(){
   
   // top
   $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
-  $wc = $cts['scholar-section-scholarwidgets'];
+  $wc = $cts['scholarcp-section-layout'];
   
   $wgts = $wc -> block;
   $wgts_id = 'scholarlayout-top-widgets';
@@ -73,7 +73,7 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
 
   
   $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
-  $wc = $cts['scholar-section-scholarwidgets'];
+  $wc = $cts['scholarcp-section-layout'];
 
   $scholarlayout_widgets = array();
   

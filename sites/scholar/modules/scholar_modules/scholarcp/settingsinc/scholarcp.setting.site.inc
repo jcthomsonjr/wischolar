@@ -15,7 +15,7 @@ class scholarcp_setting_site implements space_setting {
   }
 
   function form($space, $value = array()) {
-    $form = array('#title'=>'Site' );
+    $form = array('#title'=>'Site Information' );
     
     $form['name_title'] = array(
           '#title' => 'Name and Title',
