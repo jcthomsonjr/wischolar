@@ -83,9 +83,6 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
     $scholarlayout_widgets[$region] = array();
   }
   
-  //$scholarlayout_top_widgets = array();
-
-
   foreach($wc -> block as $widget){
     $scholarlayout_widgets[$widget['region']][] = $widget;
     //$scholarlayout_top_widgets[] = '<div>' .$widget['label'] . '</div>';
@@ -97,5 +94,52 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
     $vars['scholarlayout_' . $region] = theme('scholarlayout_layout_widgets',$scholarlayout_widgets[$region], $wgts_id, 'scholarlayout-widgets-list');
   }
   
+  $vars['scholarlayout_form'] = drupal_get_form('scholarlayout_layoutsettings');
+}
+
+
+function scholarlayout_layoutsettings(){
+	
+	$a = func_get_args();
+	$regions = array_keys(system_region_list('scholar_base'));
+  $form = array();
+  $space = scholar_get_scholar();
+
+  foreach($regions as $region){
+    $r = str_replace('_','-', $region);
+    $wgts_id = 'scholarlayout-' . $r;
+    $form[$wgts_id] = array('#type' => 'hidden' );
+    if(isset($space->settings['layout']) && array_key_exists($wgts_id,$space->settings['layout'])){
+    	$form[$wgts_id]['#efault'] = $space->settings['layout'][$wgts_id];
+    }
+  }
   
+  // add the submit button (not in the form definition yet)
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save settings'),
+  );
+  
+  return $form;
+	
+}
+
+function scholarlayout_layoutsettings_validate($form, &$form_state){
+
+}
+
+function scholarlayout_layoutsettings_submit($form, &$form_state){
+  // get the space and the settings we want to save
+  $space = scholar_get_scholar();
+  $setting = array();
+  
+  if (!empty($form_state['values'])) {
+    foreach ($form_state['values'] as $field => $value) {
+    	if(!strlen($value) || 'scholarlayout' != substr($field,0,13)) continue;
+      $a_values = split("\|",$value);
+      $setting[$field] = $a_values;
+    }
+  }
+  $space->settings['layout'] = $setting;
+  spaces_save($space);
 }
