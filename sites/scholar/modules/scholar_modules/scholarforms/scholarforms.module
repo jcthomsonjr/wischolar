@@ -8,39 +8,10 @@ define(DATE_FORMAT, 'n/j/Y');
 define(TIMEZONE, 'EDT');
 
 /**
- * Returns an array of fieldsets to register with vertical tabs
- */
-function scholarforms_fieldsets(){
-  return array('menu', 'author', 'og_nodeapi' , 'revision_information' , 'path', 'comment_settings', 'scholartaxonomy', 'scholarfiles' , 'options');
-}
-
-/**
  * Implemenation of hook_init()
  */
 function scholarforms_init(){
   drupal_add_js(drupal_get_path('module', 'scholarforms') .'/js/scholarforms.js');
-}
-
-/**
- * Integrates scholar forms fieldset with vertical tabs - should be called of a new content type is added
- */
-function scholarforms_vertical_tabs_integration($type = NULL){
-  //define the fieldsets
-  $fieldsets =scholarforms_fieldsets();
-  
-  //if type is specified create vertical tabs system variable for only that type
-  if($type){
-    $var_name = check_plain('vertical_tabs_fieldsets_' . $type);
-    variable_set($var_name, $fieldsets);
-  }
-  else{
-  $types = array_keys(node_get_types());
-  foreach($types as $type){
-    $var_name = check_plain('vertical_tabs_fieldsets_' . $type);
-    variable_set( $var_name, $fieldsets);
-    }
-  }
-  return false;
 }
 
 /**
@@ -50,24 +21,10 @@ function scholarforms_vertical_tabs_integration($type = NULL){
  * @param unknown_type $info
  */
 function scholarforms_node_type($op, $info){
-  switch ($op){
-    
+  switch ($op){    
     case 'delete':
       $var_name = check_plain('vertical_tabs_fieldsets_' . $info->type);
       variable_del('comment_'. $info->type);
-      break;
-    
-    case 'insert':
-      //add taxonomy and options to vertical tabs fieldsets for if new content type is createds
-     scholarforms_vertical_tabs_integration($info->type);
-      break;
-     
-     case 'update':
-    $fieldsets = scholarforms_fieldsets(); 
-    //if a vertical tabs system variable for this content type does not exist, then create one   
-    if (!variable_get(check_plain('vertical_tabs_fieldsets_' . $info->type), $fieldsets)){
-     scholarforms_vertical_tabs_integration($info->type);
-    }
       break;
   }
 }
@@ -96,10 +53,58 @@ function scholarforms_get_publishing_options($options, $node = NULL){
 }
 
 /**
+ * scholarforms_filefield_group
+ * 
+ * Returns name of cck fieldset (group) if it contains a filefield form element
+ */
+function scholarforms_filefield_group($form, $type = NULL){
+  //getting the group key here - FIX ME - only works for one cck group per form
+  foreach ($form as $key =>$val){  
+    if (strstr($key, 'group_')){  
+      $group = $key;
+       break;
+    }
+  }
+  reset($form);
+  //if true, then this is not a cck fieldset return false
+  if ($form[$group]['#type'] !== 'fieldset'){
+    return false;
+  }
+  //now loop through field information to see it is coming from filefield module
+  foreach($form[$group] as $key => $val){
+    if (strstr($key, 'field_')){
+      $field = $key;
+     }
+  }
+  reset($form);
+ 
+  return $form['#field_info'][$field]['module'] == 'filefield' ? $group : FALSE;
+}
+
+/**
+ * scholarforms_custom_fieldsets
+ * Returns an array of custom fieldsets
+ */
+function scholarforms_custom_fieldsets($form, $type){
+  
+  //add the custom fieldsets (taxonomy and files & images)
+      $custom_fieldsets = array();
+      $custom_fieldsets[] = ('scholartaxonomy');     
+      $cck_filefield_group= scholarforms_filefield_group($form, $type);
+      if ($cck_filefield_group){
+         $custom_fieldsets[] = $cck_filefield_group;    
+      }
+     return $custom_fieldsets;
+}
+
+/**
  * Implementation of hook_form_alter()
  */
 function scholarforms_form_alter(&$form, $form_state, $form_id) {
-  $types = array_keys(node_get_types());
+  global $conf;
+  
+  scholar_include('scholarapi');
+  $types = array_keys(scholar_content_types());
 
   //if editing an exisitng node, load the node
   $node = isset($form['#node']->nid) ? node_load(array('nid' => $form['#node']->nid)) : NULL;
@@ -109,79 +114,45 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
   $options = scholarforms_get_publishing_options($default_options, $node);
 
   foreach($types as $type){
-    
-    if (!variable_get(check_plain('vertical_tabs_fieldsets_' . $type), '')){
-      scholarforms_vertical_tabs_integration($type);
-    }
-        
     if ($type . '_node_form' == $form_id) {
       
-       /*** Images & Files Section ***/
-      
-       $form['scholarfiles'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('Images & Files'),
-        '#collapsible' => FALSE,
-        '#collapsed' => FALSE,
-        '#weight' => 0,
-        );
-       
-      //from content.admin.inc
-      $type = content_types($type);
-      //dpm($type['fields']);
-
-      if (count($type['fields'])){
-        foreach ($type['fields'] as $field){
-
-          if($field['type'] == 'filefield'){
-            $create_files_fieldset = TRUE;
-            
-            $scholarfile =  $form[$field['field_name']];
-            unset($form[$field['field_name']]);
-            $form['scholarfiles'][$field['field_name']] =$scholarfile;
-          }
-          
-          elseif($field['type'] == 'imagefield'){
-            $create_files_fieldset = TRUE;
-
-            $scholarimage = $form[$field['field_name']];
-            unset($form[$field['field_name']]);
-            $form['scholarfiles'][$field['field_name']] = $scholarimage;
-          }
-        }
-      }
-            
-      if (!$create_files_fieldset){
-        //if there are no image or file fields, remove this fieldset
-        unset($form['scholarfiles']);
+      //if there is no vertical tabs system variable for this type, then set it here
+      if(!$conf['vertical_tabs_fieldsets_'. $type]){
+        //add the default fieldsets
+        $default_fieldsets = vertical_tabs_fieldsets($type);
+        //add the custom fieldsets (taxonomy and files)
+        $custom_fieldsets = scholarforms_custom_fieldsets($form, $type);       
+        //set the system variable combine both default and custom fieldsets
+        variable_set(check_plain('vertical_tabs_fieldsets_'. $type), array_merge($default_fieldsets, $custom_fieldsets));
+         //dpm($custom_fieldsets);
       }
 
-      /*** Tags & Categories Section ***/
-          
+      /*** Tags & Categories Section (Taxonomy) ***/
+
       //if the form has taxonomy
       if ($form['taxonomy']){
-        
-       $form['scholartaxonomy'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Tags & Categories'),
-      '#collapsible' => FALSE,
-      '#collapsed' => FALSE,
-      '#weight' => 2,
-      );
-        
-      //add a description or new title, etc.
-      $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
 
-      $scholartax =  $form['taxonomy'];
-      unset($form['taxonomy']);
-      $form['scholartaxonomy']['taxonomy'] =  $scholartax;
+        $form['scholartaxonomy'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Tags & Categories'),
+        '#collapsible' => FALSE,
+        '#collapsed' => FALSE,
+        '#weight' => 2,
+        );
+
+        //add a description or new title, etc.
+        $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
+
+        $scholartax =  $form['taxonomy'];
+        unset($form['taxonomy']);
+        $form['scholartaxonomy']['taxonomy'] =  $scholartax;
       }
-      
+
       /*** Publishing Options Section ***/
-     
+
       //unset 'Publish' checkbox
       unset($form['options']['status']);
-          
+
       $form['options']['promote'] = array(
       '#type' => 'checkbox',
       '#title' => t(scholarforms_get_frontpage_text($node)),
@@ -198,13 +169,11 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       '#weight' => 2,
       '#suffix' => '</div>',
       );
-      
+
       //this value sets pubstatus radio button value to last selected choice
       //for existing nodes and defaults 'publish' for new nodes
-     // $pubstatus_value = isset($node) ?  scholarforms_get_pubstatus($node) : 'publish';
-      
-     $pubstatus_value = scholarforms_get_pubstatus($node, $type);
-     
+      $pubstatus_value = scholarforms_get_pubstatus($node, $type);
+
       $form['options']['pubstatus'] = array(
       '#type' => 'radios',
       '#options' => $options,
@@ -212,9 +181,9 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
       '#weight' => 3,
       '#required' => TRUE,
       '#prefix' => '<div id="pub-time">',
-      '#suffix' => '</div>',    
+      '#suffix' => '</div>',
       );
-              
+
       //need to hide this field with jquery unless radio for pubdate is selected
       $form['options']['pubdate'] = array(
 
@@ -229,10 +198,6 @@ function scholarforms_form_alter(&$form, $form_state, $form_id) {
 
       // adding validation function
       $form['#validate'][] = 'scholarforms_form_validate';
-
-      //adding additional submit function - IS THIS NEEDED???
-      $form['#submit'][] = 'scholarforms_form_submit';
-      
     }
   }
 }
@@ -248,7 +213,10 @@ function _scholarforms_default_options(){
   );
 }
 
-
+/**
+ * scholarforms_publishdate_value()
+ * @return Returns value for 'pubdate' date fiel
+ */
 function scholarforms_publishdate_value($node = NULL, $pubstatus_value = NULL){
   //this is an existing node
   if (isset($node)){
@@ -368,13 +336,6 @@ function scholarforms_nodeapi(&$node, $op){
       $sql_delete = db_query("DELETE FROM {scholarforms} WHERE nid = %d", (int)$node->nid);
       break;
   }
-}
-
-/**
- * Additional submit function for node form
- */
-function scholarforms_form_submit($form, &$form_state){
-    //nothing here right now
 }
 
 /**
