@@ -510,16 +510,18 @@ function _scholarcp_init_theme(){
  * @return array - default flag
  */
 function scholarcp_flag_default_flags() {
+  scholar_include('scholarapi');
+  
   $flags = array();
   $flags[] = array(
   'content_type' => 'node',
   'name' => 'frontpage',
   'title' => 'Save to Front Page',
-  'types' => array_keys(node_get_types()), //TODO: maybe some types should be excluded
+  'types' => array_keys(scholar_content_types()), 
   'roles' => array(
   0 => '2',
   ),
-  'global' => FALSE,
+  'global' => TRUE,
   'flag_short' => 'Save to Front Page',
   'flag_long' =>  'Save to Front Page',
   'flag_confirmation' => 'Saved to Front Page',
@@ -533,7 +535,30 @@ function scholarcp_flag_default_flags() {
   'link_type' => 'toggle', //normal, toggle, confirm
   'locked' => array('name', 'show_on_page', 'show_on_teaser', 'show_on_form', 'global'),
   );
-
+  
+  $flags[] = array(
+  'content_type' => 'node',
+  'name' => 'featuredposts',
+  'title' => 'Featured Posts',
+  'types' => array_keys(scholar_content_types()), 
+  'roles' => array(
+  0 => '2',
+  ),
+  'global' => TRUE,
+  'flag_short' => 'Make this a Featured Post',
+  'flag_long' =>  'Make this a Featured Post',
+  'flag_confirmation' => 'Saved as a Featured Post',
+  'unflag_short' => 'Remove as a Featured Post',
+  'unflag_long' => 'Remove as a Featured Post',
+  //   'unflag_confirmation' => 'Are you sure you want to remove?',
+  'status' => TRUE,
+  'show_on_page' => TRUE,
+  'show_on_teaser' => TRUE,
+  'show_on_form' => FALSE,
+  'link_type' => 'toggle', //normal, toggle, confirm
+  'locked' => array('name', 'show_on_page', 'show_on_teaser', 'show_on_form', 'global'),
+  );
+  
   return $flags;
 }
 
@@ -582,4 +607,3 @@ function scholarcp_link($type, $object, $teaser = FALSE){
     return $links;
   }
 }
- 
