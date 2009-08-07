@@ -49,10 +49,7 @@ function scholarforms_schema() {
  */
 function scholarforms_install() {
    drupal_install_schema('scholarforms');
-   
-  //integrate this module's fieldsets with vertical tabs for all existing content types
-  drupal_load('module', 'scholarforms');
-  scholarforms_vertical_tabs_integration($type = NULL);
+   db_query("UPDATE {system} SET weight = 10 WHERE name = '%s'", 'scholarforms');   
 }
 
 /**
