@@ -29,4 +29,15 @@ function scholarproject_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 
-function 
+function scholarproject_theme(){
+  $items['project_slideshow_left'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-slideshow-left',
+    'path' => $path,
+    'file' => 'theme.inc',
+  );
+}
+
+function scholarproject_block_slideshow_view(){
+  return theme('project_slideshow_left');
+}

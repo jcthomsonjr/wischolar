@@ -10,16 +10,6 @@ function scholarregister_menu(){
     'file' => 'scholarregister.pages.inc',
     'access arguments' => array('access content'),
   );
-  
-  $items['site/r'] = array(
-    'title' => 'Create your web site',
-
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('try_modalcontent'),
-    //'page arguments' => array('try')
-    //'file' => 'scholarregister.pages.inc',
-    'access arguments' => array('access content'),
-  );
 
   $items['scholarregister/domain_js'] = array(
     'title' => 'Create your web site',
@@ -48,14 +38,15 @@ function scholarregister_menu(){
 
 function scholarregister_name_js() {
   $name = $_POST ['ctools_changed'];
-  scholarregister_validate_name($name);
-  $message = 'available';
+
   
   // does the username validates
   if ($error = user_validate_name($name)) {
     scholarregister_ctools_message('#name-suffix', $error); // exits
   }
   
+    scholarregister_validate_name($name);
+  $message = 'available';
 
   // is it available
   $query = "SELECT name FROM {users} WHERE name='%s'";
@@ -194,50 +185,11 @@ function scholarregister_ctools_message($id, $message){
  * hook form_alter
  */
 function scholarregister_form_alter(&$form, $form_state, $form_id) {
-    if ($form_id == 'user_register') {
-  ctools_include('modal');
-  ctools_include('form');
-  ctools_include('ajax');
-  $form_state = array(
-    '#ajax' => TRUE,
-    '#redirect' => FALSE,
-  );
-   // print_r($form);
-  $form = ctools_modal_form_wrapper('user_register', &$form_state);
-  
-
-   // print_r($form);
-
-   $form['submit']['#attributes'] = array('class' => 'ctools-use-ajax');
-   $form['#submit'][] = 'scholarregister_signup_form_submit';
-   //unset($form['submit']);
+  if ($form_id == 'user_register') {
   }
 }
 
 
-function try_modalcontent(){
-  return 'hello';
-  ctools_include('ajax');
-  ctools_include('modal');
-  ctools_include('form');
-
-  $form_state = array(
-    're_render' => TRUE,
-    'title' => t('Display settings'),
-   // 'ajax' => TRUE,
-  );
- 
-  $output = ctools_modal_form_wrapper('user_register', $form_state);
-  
-  return $output;
-  if (empty($output)) {
-    $output = array();
-    $output[] = ctools_modal_command_dismiss();
-  }
-
-  ctools_ajax_render($output);
-
-}
 
 
 
