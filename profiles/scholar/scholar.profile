@@ -71,7 +71,7 @@ function scholar_profile_modules() {
     'scholarcp',
     'scholar_feature_settings',
     'scholarwidgets',
-    'scholarforms',
+    'cp_node_forms',
     'scholarboot',
     'scholarmenu',
     'bkn_contrib_lookup',
