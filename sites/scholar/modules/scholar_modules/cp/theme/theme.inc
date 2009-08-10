@@ -6,12 +6,12 @@
 /**
  * Preprocessor for theme('admin_toolbar').
  */
-function scholarcp_preprocess_scholarcp_toolbar(&$vars) {
+function cp_preprocess_cp_toolbar(&$vars) {
   $vars['collapsed'] = TRUE;
   foreach ($vars['tree'] as $depth => $menus) {
     foreach ($menus as $href => $links) {
       $class = ($depth > 0) ? 'collapsed' : '';
-      if ($depth > 0 && scholarcp_in_active_trail($href)) {
+      if ($depth > 0 && cp_in_active_trail($href)) {
         $class = '';
         $vars['collapsed'] = FALSE;
       }
@@ -24,7 +24,7 @@ function scholarcp_preprocess_scholarcp_toolbar(&$vars) {
           'href' => $href,
         );
       }
-      $vars["tree_{$depth}"][$id] = theme('links', $links, array('class' => "links clear-block $class", 'id' => "scholarcp-toolbar-{$id}"));
+      $vars["tree_{$depth}"][$id] = theme('links', $links, array('class' => "links clear-block $class", 'id' => "cp-toolbar-{$id}"));
     }
   }
 }
