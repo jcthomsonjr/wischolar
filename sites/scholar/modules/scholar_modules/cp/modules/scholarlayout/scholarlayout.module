@@ -26,18 +26,18 @@ function scholarlayout_theme(){
 function scholarlayout_menu(){
   $items = array();
   
-  $items["scholarcp/settings/layout"] = array(
+  $items["cp/settings/layout"] = array(
     'title' => 'Layout',
     'page callback' => 'scholarlayout_layout',
     'access arguments' => array('configure spaces features'),
-    'menu_name' => 'scholarcp', 
+    'menu_name' => 'cp', 
   );
   
   return $items;
 }
 
 /**
- * main entry point for "scholarcp/settings/layout"
+ * main entry point for "cp/settings/layout"
  */
 function scholarlayout_layout(){
   jquery_ui_add(array('ui.draggable', 'ui.droppable', 'ui.sortable'));
@@ -48,7 +48,7 @@ function scholarlayout_layout(){
   
   // top
   $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
-  $wc = $cts['scholarcp-section-layout'];
+  $wc = $cts['cp-section-layout'];
   
   $wgts = $wc -> block;
   $wgts_id = 'scholarlayout-top-widgets';
@@ -73,7 +73,7 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
 
   
   $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
-  $wc = $cts['scholarcp-section-layout'];
+  $wc = $cts['cp-section-layout'];
 
   $scholarlayout_widgets = array();
   
