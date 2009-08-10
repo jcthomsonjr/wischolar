@@ -1,4 +1,4 @@
-Drupal.behaviors.scholarforms = function (context){
+Drupal.behaviors.cp_node_forms = function (context){
   
   $('div#edit-pubdate-wrapper').hide();	
   

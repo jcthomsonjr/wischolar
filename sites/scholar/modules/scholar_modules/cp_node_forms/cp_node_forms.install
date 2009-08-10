@@ -4,9 +4,9 @@
 /**
  * Implementation of hook_schemas
  */
-function scholarforms_schema() {
+function cp_node_forms_schema() {
 
-  $schema['scholarforms'] = array(
+  $schema['cp_node_forms'] = array(
   'description' => t('Manages publication status for nodes'),
   'fields' => array(
 
@@ -47,14 +47,14 @@ function scholarforms_schema() {
 /**
  * Implementation of hook_install
  */
-function scholarforms_install() {
-   drupal_install_schema('scholarforms');
-   db_query("UPDATE {system} SET weight = 10 WHERE name = '%s'", 'scholarforms');   
+function cp_node_forms_install() {
+   drupal_install_schema('cp_node_forms');
+   db_query("UPDATE {system} SET weight = 10 WHERE name = '%s'", 'cp_node_forms');   
 }
 
 /**
  * Implementation of hook_uninstall
  */
-function scholarforms_uninstall() {
-   drupal_uninstall_schema('scholarforms');
+function cp_node_forms_uninstall() {
+   drupal_uninstall_schema('cp_node_forms');
 }
