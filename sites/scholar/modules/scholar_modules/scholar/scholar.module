@@ -27,7 +27,7 @@ class scholar extends space_og implements space {
           // The previous checks fail, there is no valid homepage set
           if ($this->admin_access () && user_access ( 'configure spaces features' )) {
             drupal_set_message ( t ( "Please setup your group by choosing a homepage setting." ) );
-            purl_goto ( "scholarcp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
+            purl_goto ( "cp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
           }
         } else {
           drupal_goto ( 'node/' . $this->sid . '/edit' );
@@ -35,7 +35,7 @@ class scholar extends space_og implements space {
         menu_set_active_item ( 'spaces-access-denied' );
         break;
       case 'features' :
-        purl_goto ( "scholarcp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
+        purl_goto ( "cp/settings/features", array ('purl' => array ('provider' => 'spaces_og', 'id' => $this->sid ) ) );
         break;
     }
   }
