@@ -263,7 +263,7 @@ function _scholar_profile_content_types(){
  *
  */
 function _scholar_enable_themes(){
-	$themes = array('zen', 'scholar_admin', 'scholar_base');
+	$themes = array('zen', 'cp_theme', 'scholar_base');
 
 	$themes = array_merge($themes, __scholar_get_scholar_theme_names());
 	install_enable_theme($themes);
