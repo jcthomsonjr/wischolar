@@ -13,13 +13,13 @@
 <body class="<?php print $body_classes; ?>">
   <div id="container">
   	 <div id="top">
-  	   <?php print $scholarcp_toolbar;?>
+  	   <?php print $cp_toolbar;?>
   	 </div>
      <div id="main-content">
       <div id="cp-sidemenu">
         <div class="frame">
           <div class="innerframe">
-          <?php print $scholarcp_left;?>
+          <?php print $cp_left;?>
           </div>
         </div>
 			</div><!-- /cp-sidemenu -->
