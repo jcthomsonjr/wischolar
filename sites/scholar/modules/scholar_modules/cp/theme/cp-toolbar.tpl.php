@@ -1,4 +1,4 @@
-<div id="scholarcp-top-admin-menus">
+<div id="cp-top-admin-menus">
 <?php if (!empty($tree_0)): ?>
     <?php foreach ($tree_0 as $links): ?>
       <?php print $links; ?>

@@ -1,18 +1,18 @@
 <?php
 define('CPTHEME', 'scholar_admin');
 
-function scholarcp_init(){
+function cp_init(){
    // TODO We can get the active space here. 
    // add this only if in active space + user is admin of space + users wants the toolbar anywhere
-   drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-toolbar.css');
+   drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
 
    // define some contexts (TODO can we group them all together in scholar.module ?
    
    // controlcp context
-  if (arg(0) == 'scholarcp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
-    context_set('scholar', 'section', 'scholarcp');
-    // since we are here .. initialize scholarcp theme
-    _scholarcp_init_theme();
+  if (arg(0) == 'cp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
+    context_set('scholar', 'section', 'cp');
+    // since we are here .. initialize cp theme
+    _cp_init_theme();
   }
   
   else {
@@ -27,27 +27,27 @@ function scholarcp_init(){
 /**
  * Implementation of hook_spaces_settings().
  */
-function scholarcp_spaces_settings() {
+function cp_spaces_settings() {
   return array(
    'site' => array(
-      'class' => 'scholarcp_setting_site',
-      'file' => drupal_get_path('module', 'scholarcp')  .'/settingsinc/scholarcp.setting.site.inc',
+      'class' => 'cp_setting_site',
+      'file' => drupal_get_path('module', 'cp')  .'/settingsinc/cp.setting.site.inc',
     ),
     'theme' => array(
-      'class' => 'scholarcp_setting_theme',
-      'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.theme.inc',
+      'class' => 'cp_setting_theme',
+      'file' => drupal_get_path('module', 'cp') .'/settingsinc/cp.setting.theme.inc',
     ),
     'logo' => array(
       'class' => 'scholarcp_setting_logo',
       'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.logo.inc',
     ),
     'front' => array(
-      'class' => 'scholarcp_setting_front',
-      'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.front.inc',
+      'class' => 'cp_setting_front',
+      'file' => drupal_get_path('module', 'cp') .'/settingsinc/cp.setting.front.inc',
     ),
     'bio' => array(
-      'class' => 'scholarcp_setting_bio',
-      'file' => drupal_get_path('module', 'scholarcp') .'/settingsinc/scholarcp.setting.bio.inc',
+      'class' => 'cp_setting_bio',
+      'file' => drupal_get_path('module', 'cp') .'/settingsinc/cp.setting.bio.inc',
     ),
     'menus' => array(
       'class' => 'scholarmenu_menus',
@@ -62,78 +62,78 @@ function scholarcp_spaces_settings() {
 /**
  * Implementation of hook_views_api().
  */
-function scholarcp_views_api() {
+function cp_views_api() {
   return array(
     'api' => 2,
   );
 }
 
 
-function scholarcp_menu(){
+function cp_menu(){
 	$spaces_path = drupal_get_path('module', 'spaces');
-  //$items = spaces_active_space_menu('og', FALSE, 'scholarcp/settings');
+  //$items = spaces_active_space_menu('og', FALSE, 'cp/settings');
 
   $items = array();
 
   // content
   // TODO fix its not working: trying to make the children menu as local task
-  $items['scholarcp/content'] = array(
+  $items['cp/content'] = array(
     'title' => 'Content',
-    'page callback' => 'scholarcp_route',
+    'page callback' => 'cp_route',
     'weight' => 1,    
     );
 
-  $items['scholarcp/content/all'] = array( 	 
+  $items['cp/content/all'] = array( 	 
     'title' => 'All',
     //'type' => MENU_DEFAULT_LOCAL_TASK,	
-    'page callback' => 'scholarcp_content',  
-    'file' => 'scholarcp.content.inc',
-    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
+    'page callback' => 'cp_content',  
+    'file' => 'cp.content.inc',
+    'file path' => drupal_get_path('module', 'cp'). '/includes', 	 
     );
   
   // a menu entry for each content type
   scholar_include('scholarapi');
   $content_types = scholar_content_types();
   foreach($content_types as $type => $name){
-    $items['scholarcp/content/'.$type] = array(
+    $items['cp/content/'.$type] = array(
       'title' => $name,
     	//'type' => MENU_LOCAL_TASK,	
-      'page callback' => 'scholarcp_content',
+      'page callback' => 'cp_content',
       'page arguments' => array($type, $name),
-      'file' => 'scholarcp.content.inc',
-      'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 	 
+      'file' => 'cp.content.inc',
+      'file path' => drupal_get_path('module', 'cp'). '/includes', 	 
     );    
   }
   
-  $items['scholarcp/users'] = array(
+  $items['cp/users'] = array(
     'title' => 'Users',
-    'page callback' => 'scholarcp_route', 
+    'page callback' => 'cp_route', 
     'weight' => 2, 
   );
   
-  $items['scholarcp/users/members'] = array(
+  $items['cp/users/members'] = array(
     'title' => 'Members',
-    'page callback' => 'scholarcp_user_members',
+    'page callback' => 'cp_user_members',
     'access arguments' => array('access content'),
-    'file' => 'scholarcp.users.inc',
-    'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
+    'file' => 'cp.users.inc',
+    'file path' => drupal_get_path('module', 'cp'). '/includes', 
   );
 
-  $items['scholarcp/news'] = array(
+  $items['cp/news'] = array(
     'title' => 'News',
-    'page callback' => 'scholarcp_cp',
+    'page callback' => 'cp_cp',
     'weight' => 3,
   ); 
   
-  $items['scholarcp/support'] = array(
+  $items['cp/support'] = array(
     'title' => 'Support',
-    'page callback' => 'scholarcp_cp',
+    'page callback' => 'cp_cp',
     'weight' => 4,
   );
   
-  $items['scholarcp/settings'] = array(
+  $items['cp/settings'] = array(
     'title' => 'Settings',
-    'page callback' => 'scholarcp_route',
+    'page callback' => 'cp_route',
     'weight' => 0,
   );  
   
@@ -145,17 +145,17 @@ function scholarcp_menu(){
     $setting_value = isset($space->settings[$setting->id]) ? $space->settings[$setting->id] : NULL;
     $setting_form = $setting->form($space, $setting_value);
     if (!empty($setting_form)) {
-      $items['scholarcp/settings/'. $setting -> id] = array(
+      $items['cp/settings/'. $setting -> id] = array(
         'title' => $setting_form['#title'],
         'page callback' => 'drupal_get_form',
-        'page arguments' => array('scholarcp_settings_form', $setting -> id),
-        'file' => 'scholarcp.settings.inc',
-        'file path' => drupal_get_path('module', 'scholarcp'). '/includes', 
+        'page arguments' => array('cp_settings_form', $setting -> id),
+        'file' => 'cp.settings.inc',
+        'file path' => drupal_get_path('module', 'cp'). '/includes', 
       );
     }
   }
   
-  $items["scholarcp/settings/features"] = array(
+  $items["cp/settings/features"] = array(
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('spaces_features_form'),
@@ -166,7 +166,7 @@ function scholarcp_menu(){
     'weight' => 0,
   );
   
-  $items["scholarcp/settings/features/%"] = array(
+  $items["cp/settings/features/%"] = array(
     'title' => 'Features',
     'page callback' => 'schlarcp_feature_customize',
     'page arguments' => array(3),
@@ -177,9 +177,9 @@ function scholarcp_menu(){
     'weight' => 1,
   );
   
-  // make them all part of 'scholarcp' menu
+  // make them all part of 'cp' menu
   foreach($items as $path => $item) {
-    $items[$path]['menu_name'] = 'scholarcp';
+    $items[$path]['menu_name'] = 'cp';
     $items[$path]['access arguments'] = array('access content'); //TODO fix this 
   }
 
@@ -187,14 +187,14 @@ function scholarcp_menu(){
 }
 
 
-function scholarcp_cp(){
+function cp_cp(){
   return '(tbd)';
 }
 
-function scholarcp_route(){
-  $tree = menu_tree_page_data('scholarcp');
+function cp_route(){
+  $tree = menu_tree_page_data('cp');
   foreach ($tree as $item) {
-    if (scholarcp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
+    if (cp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
     	$a_settings =  array_shift($item['below']);
     	return menu_execute_active_handler($a_settings['link']['href']);
     }
@@ -234,13 +234,13 @@ function schlarcp_feature_customize($feature_name){
 /**
  * hook form_alter
  */
-function scholarcp_form_alter(&$form, $form_state, $form_id) {
+function cp_form_alter(&$form, $form_state, $form_id) {
 
   /*
    * we'd like to remove the space settings from 'spaces_features_form'
    * and make 'settings' link as a popup link
    */
-  if (arg(0) == 'scholarcp' && $form_id == 'spaces_features_form'){
+  if (arg(0) == 'cp' && $form_id == 'spaces_features_form'){
 
     // we dont need settings here
     unset($form['settings']);
@@ -252,16 +252,16 @@ function scholarcp_form_alter(&$form, $form_state, $form_id) {
         ctools_include('ajax');
         ctools_include('modal');
         ctools_modal_add_js();
-        $link = ctools_modal_text_button('settings', 'scholarcp/settings/features/'. $f_name, 'whatever');
+        $link = ctools_modal_text_button('settings', 'cp/settings/features/'. $f_name, 'whatever');
         $form['customize'][$f_name]['#value'] = $link;
       }
     }
   }
 }
 
-function scholarcp_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
+function cp_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
 
-  if($form['#id'] == 'views-exposed-form-scholarcp-content-default'){
+  if($form['#id'] == 'views-exposed-form-cp-content-default'){
   //TODO: Is there a better way to get the content type argument???
   $type = arg(2);
   //set action to current url
@@ -336,19 +336,19 @@ function scholarcp_form_views_exposed_form_alter(&$form, $form_state, $form_id =
 /**
  * Implementation of hook_theme().
  */
-function scholarcp_theme($cache, $type, $theme, $path) {
-  $path = drupal_get_path('module', 'scholarcp') .'/theme';
+function cp_theme($cache, $type, $theme, $path) {
+  $path = drupal_get_path('module', 'cp') .'/theme';
   
-  $items['scholarcp_toolbar'] = array(
+  $items['cp_toolbar'] = array(
     'arguments' => array('tree' => array()),
-    'template' => 'scholarcp-toolbar',
+    'template' => 'cp-toolbar',
     'path' => $path,
     'file' => 'theme.inc',
   );
   
-  $items['scholarcp_theme_picker'] = array(
+  $items['cp_theme_picker'] = array(
     'arguments' => array('info' => array()),
-    'template' => 'scholarcp-theme-picker',
+    'template' => 'cp-theme-picker',
     'path' => $path,
     'file' => 'theme.inc',
   );
@@ -359,38 +359,38 @@ function scholarcp_theme($cache, $type, $theme, $path) {
 
 
 /**
- * Preprocess function for for intorducing "scholarcp_toolbar"
- * and "scholarcp_left" variables
+ * Preprocess function for for intorducing "cp_toolbar"
+ * and "cp_left" variables
  */
-function scholarcp_preprocess_page(&$vars) {
+function cp_preprocess_page(&$vars) {
   // TODO this shold go to scholar module; shaun needed 
   if ($vars['navbar']){
     $vars['body_classes'] .= ' navbar';
   }
   
   // 2 new variables for top and left menus
-  $vars['scholarcp_toolbar'] = 
-  $vars['scholarcp_left'] = '';
+  $vars['cp_toolbar'] = 
+  $vars['cp_left'] = '';
   
   if (scholar_get_scholar() && user_access('configure spaces features')) { 
-    $links = scholarcp_toolbar_menu_links();
-    $links = theme('scholarcp_toolbar', $links);
-    $vars['scholarcp_toolbar'] = $links;
+    $links = cp_toolbar_menu_links();
+    $links = theme('cp_toolbar', $links);
+    $vars['cp_toolbar'] = $links;
     
-    $links = scholarcp_left_menu_links();
-    $vars['scholarcp_left'] = theme('links', $links);
+    $links = cp_left_menu_links();
+    $vars['cp_left'] = theme('links', $links);
   }
 }
 
 /**
  * return links for the toolbar menu
  */
-function scholarcp_toolbar_menu_links(){
+function cp_toolbar_menu_links(){
   $links = array();
   // Retrieve the admin menu from the database.
 
-  $tree = menu_tree_all_data('scholarcp');
-  $links[0]['toolbar'] = scholarcp_menu_navigation_links($tree);
+  $tree = menu_tree_all_data('cp');
+  $links[0]['toolbar'] = cp_menu_navigation_links($tree);
 
   // Add user-specific links
   global $user;
@@ -409,16 +409,16 @@ function scholarcp_toolbar_menu_links(){
 /**
  * Return links for the left side menu
  */
-function scholarcp_left_menu_links(){
-  //return menu_navigation_links('scholarcp',1);
+function cp_left_menu_links(){
+  //return menu_navigation_links('cp',1);
   
   
-  $tree = menu_tree_page_data('scholarcp');
+  $tree = menu_tree_page_data('cp');
 
   
   foreach ($tree as $item) {
-    if (scholarcp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
-      return scholarcp_menu_navigation_links($item['below'],true);
+    if (cp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
+      return cp_menu_navigation_links($item['below'],true);
     }
   }
   
@@ -429,7 +429,7 @@ function scholarcp_left_menu_links(){
 /**
  * Generate a links array from a menu tree array.
  */
-function scholarcp_menu_navigation_links($tree, $b_highlight_first_submenu = false) {
+function cp_menu_navigation_links($tree, $b_highlight_first_submenu = false) {
   $links = array();
   foreach ($tree as $item) {
     $class = '';
@@ -442,7 +442,7 @@ function scholarcp_menu_navigation_links($tree, $b_highlight_first_submenu = fal
     $l['html'] = TRUE;
 
     $class = ' path-'. $id;
-    if (scholarcp_in_active_trail($item['link']['href'])) {
+    if (cp_in_active_trail($item['link']['href'])) {
     	$b_highlight_first_submenu = false;
       $class .= ' active-trail';
     }
@@ -462,7 +462,7 @@ function scholarcp_menu_navigation_links($tree, $b_highlight_first_submenu = fal
 /**
  * Checks whether an item is in the active trail. 
  */
-function scholarcp_in_active_trail($path, $reset = FALSE) {
+function cp_in_active_trail($path, $reset = FALSE) {
   // Gather active paths
   static $active_paths;
   if (!isset($active_paths) || $reset) {
@@ -486,7 +486,7 @@ function scholarcp_in_active_trail($path, $reset = FALSE) {
 /**
  * Implements hook user
  */
-function scholarcp_user($op, &$edit, &$account, $category = null) {
+function cp_user($op, &$edit, &$account, $category = null) {
   switch($op){
   	case 'after_update':
   		if($account->mail && isset($account->og_groups) && count($account->og_groups)){
@@ -507,7 +507,7 @@ function scholarcp_user($op, &$edit, &$account, $category = null) {
 /**
  * initialize admin theme
  */
-function _scholarcp_init_theme(){
+function _cp_init_theme(){
 	global $custom_theme;
   $custom_theme = CPTHEME;
 }
@@ -516,7 +516,7 @@ function _scholarcp_init_theme(){
  * Implementation of hook flag_default_flags
  * @return array - default flag
  */
-function scholarcp_flag_default_flags() {
+function cp_flag_default_flags() {
   scholar_include('scholarapi');
   
   $flags = array();
@@ -570,7 +570,7 @@ function scholarcp_flag_default_flags() {
 }
 
 
-function scholarcp_link($type, $object, $teaser = FALSE){
+function cp_link($type, $object, $teaser = FALSE){
 
   //check font page settings here, only execute if front page setting equals flag
   $site = scholar_get_scholar();
