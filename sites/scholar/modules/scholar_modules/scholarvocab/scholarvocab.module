@@ -1,5 +1,9 @@
 <?php
 
+function scholarvocab_init(){
+   drupal_add_css(drupal_get_path('module', 'scholarvocab') .'/theme/scholarvocab.css');
+   }
+
 function scholarvocab_menu() {
   $items = array ();
   $items ['cp/settings/taxonomy'] = array (
@@ -12,14 +16,14 @@ function scholarvocab_menu() {
   $items['scholarvocab/term/delete/%/%'] = array (
     'title' => 'deleting a term',
     'page callback' => 'scholarvocab_term_delete',
-        'page arguments' => array(3,4),
+    'page arguments' => array(3,4),
     'access arguments' => array('access content')
   );
   
   $items['scholarvocab/term/%/%/rename/%'] = array (
     'title' => 'deleting a term',
     'page callback' => 'scholarvocab_term_rename',
-      'page arguments' => array(2,3,5),
+    'page arguments' => array(2,3,5),
     'access arguments' => array('access content')
   );
   
@@ -34,6 +38,7 @@ function scholarvocab_taxonomies(){
   $s_types = scholar_content_types();
   $output = '';
   $delta = 0;
+  $output = '<div class="pad">';
 
   foreach($s_types as $type => $name){
     
@@ -45,7 +50,7 @@ function scholarvocab_taxonomies(){
     $bo -> delta = $bo -> module . $delta++;
     $output .= theme('block', $bo);
   }
-  
+  $output .='</div>';
   return $output;
 }
 
