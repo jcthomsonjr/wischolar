@@ -2,11 +2,11 @@
 
 function scholarvocab_menu() {
   $items = array ();
-  $items ['scholarcp/settings/taxonomy'] = array (
+  $items ['cp/settings/taxonomy'] = array (
   	'title' => 'Taxonomy', 
   	'page callback' => 'scholarvocab_taxonomies', 
   	'access arguments' => array ('access content' ),
-    'menu_name' => 'scholarcp',
+    'menu_name' => 'cp',
   );
   
   $items['scholarvocab/term/delete/%/%'] = array (

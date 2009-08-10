@@ -3,7 +3,7 @@
 function _scholarwidgets_default_contexts(){
 	$items = array();
   $items[] = array(
-  'namespace' => 'scholarcp',
+  'namespace' => 'cp',
   'attribute' => 'section',
   'value' => 'layout',
   'spaces_type' => array(
