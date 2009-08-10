@@ -15,16 +15,61 @@ function cp_node_forms_init(){
 }
 
 /**
+ * Creates cck group for files and images and places the form element into the group
+ */
+function cp_node_forms_cck_group($type, $name_prefix = 'group_images_files_', $label =  'Images & Files'){
+  
+  $cck = _content_type_info();
+ foreach($cck['content types'][ $type]['fields'] as $field){
+    if ($field['type'] == 'filefield'){
+      $fieldnames[] =  $field['field_name'];
+    }
+  }
+  
+  //if filefiled elements exist, create a fieldset (group) for it
+  if (count($fieldnames)){
+  
+   //using helper function from install_profile_api module
+  $path = drupal_get_path('module', 'install_profile_api') . '/contrib';
+  include_once "$path/content.inc";
+
+  //creating filefield group
+   install_create_field_group(
+   $content_type = $type, 
+   $group_name = $name_prefix . $type, 
+   $label, 
+   $settings = array(), 
+   $weight = 0
+   );
+  
+   //now move the existing fields into this group
+   foreach($fieldnames as $fieldname){
+    install_fields_in_group(
+    $content_type = $type, 
+    $group_name =$name_prefix . $type, 
+    $fields = array($fieldname)  
+    );
+   }
+  }
+}
+
+/**
  * Implementation of hook_node_type
  *
  * @param unknown_type $op
  * @param unknown_type $info
  */
-function cp_node_forms_node_type($op, $info){
+function cp_node_forms_node_type($op, $info){ 
   switch ($op){    
     case 'delete':
       $var_name = check_plain('vertical_tabs_fieldsets_' . $info->type);
       variable_del('comment_'. $info->type);
+      break;
+      
+      
+    case 'insert':
+      //adding cck group and moving filefield elements into that group
+      cp_node_forms_cck_group($info->type);
       break;
   }
 }
