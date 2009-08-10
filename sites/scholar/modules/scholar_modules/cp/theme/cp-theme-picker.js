@@ -1,6 +1,6 @@
 if (Drupal.jsEnabled) {
   $(document).ready(function() {
-    $('#-settings-theme .form-radios ').hide();
+    $('#cp-settings-theme .form-radios ').hide();
 
     var theSubnav = $("<div>");
     theSubnav.addClass("theme_subnav");
@@ -13,7 +13,7 @@ if (Drupal.jsEnabled) {
     	return '<li class = "item-theme-picker  ' + liChecked + '" id="' + liId  + '">' + liContent + '</li>';
     	
     }
-    $('#-settings-form .form-radios .form-item').each(function(){
+    $('#cp-settings-form .form-radios .form-item').each(function(){
     	var liIdArr = $(this).attr('id').split('-');
     	var liId = liIdArr[3] + '-' + liIdArr[4] + '-' + liIdArr[5];
     	var liChecked = $(this).find('input').attr('checked') ? 'checked' : '';
@@ -37,8 +37,8 @@ if (Drupal.jsEnabled) {
     theList = theList + '<div id="next"></div>';
     
     
-    $('#-settings-theme').prepend(theList);
-    $('#-settings-theme').prepend(theSubnav);
+    $('#cp-settings-theme').prepend(theList);
+    $('#cp-settings-theme').prepend(theSubnav);
     $(".item-theme-picker:first").addClass('active');
     
     $('div#prev, div#next').RSC({ containerW: 600, noOfContainer: n_containers });
