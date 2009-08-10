@@ -3,7 +3,7 @@
 /**
  * Provides theme selection for each site
  */
-class scholarcp_setting_front implements space_setting {
+class cp_setting_front implements space_setting {
   var $id;
   function __construct($id = NULL) {
     if ($id) {
@@ -96,7 +96,7 @@ class scholarcp_setting_front implements space_setting {
 
   $options = scholar_content_types();
   $default_value = $value['node_options'] ? array_keys(array_filter($value['node_options'])) : array_keys($options);
-  //dpm(array_filter($value['node_options'], '__scholarcp_nonzero' ));
+  //dpm(array_filter($value['node_options'], '__cp_nonzero' ));
   $form['node_options'] = array(
 		'#prefix' => '<div id="edit-settings-front-node-options-wrapper">',  // needed by ctools
   	'#suffix' => '</div>',
@@ -161,7 +161,7 @@ class scholarcp_setting_front implements space_setting {
   }
 }
 
-function __scholarcp_nonzero($el){
+function __cp_nonzero($el){
   print_r($el);
   return $el != 0 ? TRUE : FALSE;
 }

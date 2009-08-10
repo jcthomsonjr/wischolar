@@ -2,7 +2,7 @@
 /**
  * Provides theme selection for each site
  */
-class scholarcp_setting_logo implements space_setting {
+class cp_setting_logo implements space_setting {
   
 	public $s_logo_location = false;
 	public static $validators = array(

@@ -3,11 +3,11 @@
 /**
  * Enter description here...
  */
-function scholarcp_settings_form($form_id, $setting_id){
-  drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-front.css');
-  drupal_add_css(drupal_get_path('module', 'scholarcp') .'/theme/scholarcp-theme-picker.css');
-  drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/scholarcp-theme-picker.js');
-  drupal_add_js(drupal_get_path('module', 'scholarcp') . '/theme/jQuery.RSC.js');
+function cp_settings_form($form_id, $setting_id){
+  drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-front.css');
+  drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-theme-picker.css');
+  drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-theme-picker.js');
+  drupal_add_js(drupal_get_path('module', 'cp') . '/theme/jQuery.RSC.js');
   
   // get the space
   $space = spaces_get_space();
@@ -20,7 +20,7 @@ function scholarcp_settings_form($form_id, $setting_id){
   $form = array();
   
   // just do have distinct id for each setting form
-  $form['#prefix'] = '<div id = "scholarcp-settings-'. $setting_id . '" class="pad">';
+  $form['#prefix'] = '<div id = "cp-settings-'. $setting_id . '" class="pad">';
   $form['#suffix'] = '</div>';
   
   // the form definition for this particular setting (we know setting_id)
@@ -52,7 +52,7 @@ function scholarcp_settings_form($form_id, $setting_id){
   return $form;
 }
 
-function scholarcp_settings_form_submit($form, &$form_state){
+function cp_settings_form_submit($form, &$form_state){
   // get the space and the settings we want to save
   $space = $form_state['values']['space'];
   $setting = $form_state['values']['setting'];
@@ -70,7 +70,7 @@ function scholarcp_settings_form_submit($form, &$form_state){
 /**
  * Validate handler for spaces features form
  */
-function scholarcp_settings_form_validate($form, &$form_state) {
+function cp_settings_form_validate($form, &$form_state) {
   
   $space = $form_state['values']['space'];
   $settings = spaces_settings();

@@ -2,7 +2,7 @@
 /**
  * Provides theme selection for each site
  */
-class scholarcp_setting_bio implements space_setting {
+class cp_setting_bio implements space_setting {
   
   var $id;
   function __construct($id = NULL) {
