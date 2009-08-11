@@ -1,5 +1,7 @@
 ul.theme-picker {
   width: 11250px;
+  clear: both;
+  padding-top: 22px;
   }
 
 li.item-theme-picker  {
@@ -21,17 +23,13 @@ ul.theme-picker li.checked img {
   }
   
 #next, #prev {
-  width: 3em;
-  height: 5em;
-  top: 0;
-  right: 15em;
-  position: absolute;
+  width: 15px;
+  height: 14px;
   background: transparent url(images/next.png);
+  margin-top: 3px;
   }
   
 #prev {
-  right: auto;
-  left: 15em;
   background-image: url(images/prev.png);
   }
   
@@ -42,4 +40,38 @@ ul.theme-picker li.checked img {
   
 ul.theme-picker li.checked h3 {
   margin-top: 0;
+  }
+
+#cp-settings-theme {
+  background:#eaebe9;
+  font-weight: bold;
+  color: #4a4a4a;
+  font-size: 1.1em;
+  height: 43px;
+  padding-top: 1px;
+  padding-left: 30px;
+  }
+
+.theme_subnav {
+  margin-top: 13px;
+  }
+  
+.theme_subnav h3, .theme_subnav ul, .theme_subnav li, #next, #prev {
+  float: left;
+  margin-right: 10px;
+  }
+  
+.theme_subnav h3 {
+  margin-right: 40px;
+  }
+ 
+.theme_subnav li {
+  cursor: pointer;
+  margin-right: 0;
+  font-size: 1.2em;
+  }
+  
+.theme_subnav li.active {
+  background: #f80000;
+  color: #fff;
   }

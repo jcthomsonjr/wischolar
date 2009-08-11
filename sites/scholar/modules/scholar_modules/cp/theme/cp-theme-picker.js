@@ -4,7 +4,7 @@ if (Drupal.jsEnabled) {
 
     var theSubnav = $("<div>");
     theSubnav.addClass("theme_subnav");
-    theSubnav.html("<h3>Select a Theme</h3><div id=\"prev\"></div>");
+    theSubnav.html("<h3>Select a Theme</h3><div id=\"prev\" class=\"theme-pointer\"></div>");
 
     var subnavList = $('<ul>');
     
@@ -37,7 +37,7 @@ if (Drupal.jsEnabled) {
     });
     
     theSubnav.append(subnavList);
-    theSubnav.append('<div id="next"></div>');
+    theSubnav.append('<div id="next" class="theme-pointer"></div>');
     theList += '</ul>';
     
     $('#cp-settings-theme').prepend(theList);
