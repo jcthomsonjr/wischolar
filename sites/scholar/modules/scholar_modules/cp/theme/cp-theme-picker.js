@@ -12,7 +12,7 @@ if (Drupal.jsEnabled) {
     var n_container = 0;
     var total_containers = $('#cp-settings-form .form-radios .form-item').length;
     
-    var slider = new cpSlidingContainer({containerW: 600, mainListClass:'theme-picker', listItemClass: 'item-theme-picker', noOfContainer:total_containers});
+    var slider = new cpSlidingContainer({containerW: 600, mainListClass:'theme-picker', listItemClass: 'item-theme-picker', noOfContainer:total_containers, navClass:'theme_subnav'});
     
     function getLi(liId, liChecked, liContent){
     	return '<li class = "item-theme-picker  ' + liChecked + '" id="' + liId  + '">' + liContent + '</li>';
