@@ -37,10 +37,8 @@ if (Drupal.jsEnabled) {
     });
     
     theSubnav.append(subnavList);
+    theSubnav.append('<div id="next"></div>');
     theList += '</ul>';
-    theList += '<div id="next"></div>';
-    
-    
     
     $('#cp-settings-theme').prepend(theList);
     $('#cp-settings-theme').prepend(theSubnav);
