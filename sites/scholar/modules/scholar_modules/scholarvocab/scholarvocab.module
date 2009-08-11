@@ -120,9 +120,9 @@ function scholarvocab_block_per_content_type($site, $node_type) {
         );
 
         $admin_links [] = array (
-        	'title' => 'rename', 
+        	'title' => 'edit', 
         	'href' => 'scholarvocab/term/' . $term->vid . "/" . $term->tid . '/rename/',
-          'attributes' => array('class' => 'rename') 
+          'attributes' => array('class' => 'edit') 
         );
         //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
         $item .= theme ( 'links', $admin_links, $attributes = array ('class' => 'admin' ) );
