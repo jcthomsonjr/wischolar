@@ -39,13 +39,12 @@ if (Drupal.jsEnabled) {
     theSubnav.append(subnavList);
     
     theList = theList + '</ul>';
-    
-    theList = theList + '<div id="prev"></div>';
     theList = theList + '<div id="next"></div>';
     
     
     $('#cp-settings-theme').prepend(theList);
     $('#cp-settings-theme').prepend(theSubnav);
+    $('#cp-settings-theme').prepend('<div id="prev"></div>');
     $(".item-theme-picker:first").addClass('active');
     
     
