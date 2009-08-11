@@ -99,18 +99,19 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   drupal_execute ( 'user_register', $form_s );
   
   $msgs = drupal_get_messages ();
-  $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $m );
-  ctools_ajax_render ( $commands );
+  //dpm($msgs);
+  //$commands [] = ctools_ajax_command_replace ( '#submit-suffix', $msgs );
+  //ctools_ajax_render ( $commands );
   
-  /*
-  dpm($msgs);
+  
+  //dpm($msgs);
   foreach ($msgs as $status => $m){
    if ($status == 'error'){
-     $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $m );
+     $commands [] = ctools_ajax_command_replace ( '#submit-suffix', 'The web site cannot be created' );
      ctools_ajax_render ( $commands );     
    }
   }
-  */
+  
   
   ctools_add_js ( 'ajax-responder' );
   $commands = array ();
