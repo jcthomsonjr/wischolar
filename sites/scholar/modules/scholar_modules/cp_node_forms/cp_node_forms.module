@@ -155,6 +155,7 @@ function cp_node_forms_custom_fieldsets($form, $type){
  * Implementation of hook_form_alter()
  */
 function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
+  
   global $conf;
   
   scholar_include('scholarapi');
@@ -184,6 +185,9 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
          //dpm($custom_fieldsets);
       }
 
+       $form['#prefix'] = '<div class="node-form test-class">';
+      $form['#suffix'] = '</div>';
+      
       /*** Tags & Categories Section (Taxonomy) ***/
 
       //if the form has taxonomy
@@ -471,3 +475,4 @@ function cp_node_forms_cron(){
     }
   }
 }
+
