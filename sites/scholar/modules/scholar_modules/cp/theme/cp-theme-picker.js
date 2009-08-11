@@ -6,6 +6,8 @@ if (Drupal.jsEnabled) {
     theSubnav.addClass("theme_subnav");
     theSubnav.html("<span class='label'>Select a Theme</span>");
 
+    var subnavList = $('<ul>');
+    
     var theList = '<ul class = "theme-picker">'; // important, RSC depend on it
     var n_containers = 0;
     
@@ -23,13 +25,15 @@ if (Drupal.jsEnabled) {
 
     	theList = theList + getLi(liId, liChecked, liContent);
     	
-    	var jumpLink = $("<a>");
+    	var jumpLink = $("<li>");
     	jumpLink.html("&nbsp;"+(n_containers+1)+"&nbsp;");
     	jumpLink.RSC_Jump(n_containers,{ containerW: 600 });
     	
-    	theSubnav.append(jumpLink);
+    	subnavList.append(jumpLink);
     	n_containers++;
     });
+    
+    theSubnav.append(subnavList);
     
     theList = theList + '</ul>';
     
