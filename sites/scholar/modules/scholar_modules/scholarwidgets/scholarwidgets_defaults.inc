@@ -74,7 +74,7 @@ function _scholarwidgets_default_contexts(){
       'module' => 'og_views',
       'delta' => '0',
       'weight' => 0,
-      'region' => 'right',
+      'region' => 'undefined',
       'status' => '0',
       'label' => 'Search',
       'type' => 'context_ui',
