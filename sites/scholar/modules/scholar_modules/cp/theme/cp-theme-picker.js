@@ -8,8 +8,11 @@ if (Drupal.jsEnabled) {
 
     var subnavList = $('<ul>');
     
-    var theList = '<ul class = "theme-picker">'; // important, RSC depend on it
-    var n_containers = 0;
+    var theList = '<ul class = "theme-picker">'; 
+    var n_container = 0;
+    var total_containers = $('#cp-settings-form .form-radios .form-item').length;
+    
+    var slider = new cpSlidingContainer({containerW: 600, mainListClass:'theme-picker', listItemClass: 'item-theme-picker', noOfContainer:total_containers});
     
     function getLi(liId, liChecked, liContent){
     	return '<li class = "item-theme-picker  ' + liChecked + '" id="' + liId  + '">' + liContent + '</li>';
@@ -26,11 +29,11 @@ if (Drupal.jsEnabled) {
     	theList = theList + getLi(liId, liChecked, liContent);
     	
     	var jumpLink = $("<li>");
-    	jumpLink.html("&nbsp;"+(n_containers+1)+"&nbsp;");
-    	jumpLink.RSC_Jump(n_containers,{ containerW: 600 });
+    	jumpLink.html("&nbsp;"+(n_container+1)+"&nbsp;");
+        slider.sliding_container_link(jumpLink,n_container);
     	
     	subnavList.append(jumpLink);
-    	n_containers++;
+    	n_container++;
     });
     
     theSubnav.append(subnavList);
@@ -45,7 +48,9 @@ if (Drupal.jsEnabled) {
     $('#cp-settings-theme').prepend(theSubnav);
     $(".item-theme-picker:first").addClass('active');
     
-    $('div#prev, div#next').RSC({ containerW: 600, noOfContainer: n_containers });
+    
+    slider.sliding_container($('div#prev'));
+    slider.sliding_container($('div#next'));
     
     $('li.item-theme-picker').click(function(){
     	// remove the active class from every li first

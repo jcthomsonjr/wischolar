@@ -1,0 +1,38 @@
+var cpSlidingContainer = Class.create({
+	settings :{
+			prevImageID: "#prev",
+			nextImageID: "#next",
+			noOfContainer: 4,
+			containerW: 50,
+			duration: 1000,
+			mainListClass: '',
+			listItemClass: ''
+	},
+	currentIndex: 0,
+    init: function(options){
+	  for ( var key in options ){
+		this.settings[key] = options[key];
+	  } 
+    },
+    sliding_container: function(element){
+      var settings = this.settings;
+      var i = this.currentIndex;
+      return $(element).click(function(){
+    	this.id==settings['prevImageID'].replace("#","")?$(function(){i++;i>0?i=(0-(settings['noOfContainer']-1)):"";}):this.id==settings['nextImageID'].replace("#","")?$(function(){i--;i<(0-(settings['noOfContainer']-1))?i=0:"";}):"";
+    	$("ul."+settings['mainListClass']).animate({marginLeft: i* settings['containerW'] +"px"},settings['duration']);
+    	this.currentIndex = i;
+    	$("."+settings['listItemClass']).removeClass('active');
+    	$("."+settings['listItemClass']+":eq("+(i*-1)+")").addClass('active');
+      });
+    	
+    },
+    sliding_container_link: function(element,index){
+    	var settings = this.settings;
+    	return $(element).click(function(){
+			$("ul."+settings['mainListClass']).animate({marginLeft: index * settings['containerW'] *-1+"px"},settings['duration']);
+			this.currentIndex = -1*index;
+			$("."+settings['listItemClass']).removeClass('active');
+			$("."+settings['listItemClass']+":eq("+index+")").addClass('active');
+		 });
+    }
+});
