@@ -15,19 +15,19 @@ function  scholarregister_signup_form() {
   $form ['#suffix'] = '</div>';
   
   // username
-  $form ['name'] = array (
+  $form ['username'] = array (
     '#type' => 'textfield', 
     '#size' => 45, 
     '#title' => t ( 'User name' ), 
     '#required' => TRUE,
     '#description' => t('User name to login .. etc'),
-    '#suffix' => '<div id="name-suffix"></div>',
+    '#suffix' => '<div id="username-suffix"></div>',
     '#attributes' => array('class' => 'ctools-use-ajax-onchange'),
   );
-  ctools_ajax_associate_url_to_element($form, $form['name'], url('scholarregister/name_js'));
+  ctools_ajax_associate_url_to_element($form, $form['username'], url('scholarregister/name_js'));
   
   // last name
-  $form ['mail'] = array (
+  $form ['email'] = array (
     '#type' => 'textfield', 
     '#size' => 45, 
     '#title' => t ( 'mail' ), 
@@ -37,9 +37,9 @@ function  scholarregister_signup_form() {
                         not made public and will only be used if you wish to receive a new password or
                         wish to receive certain news or notifications by e-mail.', array('%harvard' => 'Harvard')), 
     '#attributes' => array('class' => 'ctools-use-ajax-onchange'),
-    '#suffix' => '<div id="mail-suffix"></div>',
+    '#suffix' => '<div id="email-suffix"></div>',
   );
-  ctools_ajax_associate_url_to_element($form, $form['mail'], url('scholarregister/mail_js'));
+  ctools_ajax_associate_url_to_element($form, $form['email'], url('scholarregister/mail_js'));
     
   global $base_url;
   // domain name
@@ -80,32 +80,44 @@ function  scholarregister_signup_form() {
 
 
 function scholarregister_signup_form_submit($form, &$form_state) {
+  //dpm($form_state);
   
+
+  $name = $form_state ['values'] ['username'];
+  $email = $form_state ['values'] ['email'];
+  $domain = $form_state ['values'] ['domain'];
   
-  $name = $form_state ['values'] ['name'];
-  $email = $form_state ['values'] ['mail'];
+  //scholarregister_validate_name($name);
+  //scholarregister_validate_mail($email);
   
-  scholarregister_validate_name($name);
-  scholarregister_validate_mail($email);
+
+  $form_s = array ();
+  $form_s ['values'] ['name'] = $name;
+  $form_s ['values'] ['mail'] = $email;
+  $form_s ['values'] ['pass'] = 'password';
+  $form_s ['values'] ['op'] = t ( 'Create new account' );
+  drupal_execute ( 'user_register', $form_s );
   
-  $form_s = array(); 
-  $form_s['values']['name'] = 'name'; 
-  $form_s['values']['mail'] = 'robouser'; 
-  $form_s['values']['pass'] = 'password'; 
-  $form_s['values']['op'] = t('Create new account'); 
-  drupal_execute('user_register', $form_state);
-  
-  $a = drupal_get_messages();
-  
-  $commands [] = ctools_ajax_command_replace ( '#submit-suffix',  $a );
+  $msgs = drupal_get_messages ();
+  $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $m );
   ctools_ajax_render ( $commands );
+  
+  /*
+  dpm($msgs);
+  foreach ($msgs as $status => $m){
+   if ($status == 'error'){
+     $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $m );
+     ctools_ajax_render ( $commands );     
+   }
+  }
+  */
   
   ctools_add_js ( 'ajax-responder' );
   $commands = array ();
   global $base_url;
-  $message = 'Done !! Your site is created. The url of the site is ' . $base_url . '/' . $name;
+  $message = 'Done !! Your site is created. The url of the site is ' . $base_url . '/' . $domain;
   
   $message .= 'Check your email account for ...';
-  $commands [] = ctools_ajax_command_replace ( '#submit-suffix',  $message );
+  $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
   ctools_ajax_render ( $commands );
 }

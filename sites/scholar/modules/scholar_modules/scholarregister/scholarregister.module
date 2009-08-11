@@ -5,8 +5,8 @@ function scholarregister_menu(){
   $items = array();
   $items['site/register'] = array(
     'title' => 'Create your web site',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholarregister_signup_form'),
+    'page callback' => 'scholarregister_register',
+    //'page arguments' => array('scholarregister_signup_form'),
     'file' => 'scholarregister.pages.inc',
     'access arguments' => array('access content'),
   );
@@ -36,35 +36,6 @@ function scholarregister_menu(){
   return $items;
 }
 
-function scholarregister_name_js() {
-  $name = $_POST ['ctools_changed'];
-
-  scholarregister_validate_name_or_domain($name, $mode = 'user');
-  //scholarregister_validate_name($name); // if it fails it will exit (ctools)
-  
-  // ok then .. it's good and available
-  $message = 'available';
-  scholarregister_ctools_message('#name-suffix', $message); // exits
-}
-
-function scholarregister_mail_js() {
-  $mail = $_POST['ctools_changed'];
-  scholarregister_validate_mail($mail);
-
-  // ok then .. it's good and available
-  $message = 'available';
-  scholarregister_ctools_message('#mail-suffix', $message); // exits
-}
-
-function scholarregister_domain_js() {
-  $domain = $_POST['ctools_changed'];
-  
-  scholarregister_validate_name_or_domain($domain, $mode = 'domain');
-  // ok then .. it's good and available
-  $message = 'available';
-  scholarregister_ctools_message('#name-suffix', $message); // exits
-}
-
 /**
  * the callback for site/register menu
  */
@@ -88,25 +59,69 @@ function  scholarregister_register() {
   print theme ( 'page', $output, FALSE );
 }
 
+/**
+ * ajax callback for username
+ */
+function scholarregister_name_js() {
+  $name = $_POST ['ctools_changed'];
+
+  scholarregister_validate_name_or_domain($name, $mode = 'username');
+  //scholarregister_validate_name($name); // if it fails it will exit (ctools)
+  
+  // ok then .. it's good and available
+  $message = 'available';
+  scholarregister_ctools_message('#username-suffix', $message, 'status'); // exits
+}
+
+/**
+ * ajax callback for email
+ */
+function scholarregister_mail_js() {
+  $mail = $_POST['ctools_changed'];
+  scholarregister_validate_mail($mail);
+
+  // ok then .. it's good and available
+  $message = 'available';
+  scholarregister_ctools_message('#email-suffix', $message, 'status'); // exits
+}
+
+/**
+ * ajax callback for domain
+ */
+function scholarregister_domain_js() {
+  $domain = $_POST['ctools_changed'];
+  
+  scholarregister_validate_name_or_domain($domain, $mode = 'domain');
+  // ok then .. it's good and available
+  $message = 'available';
+  scholarregister_ctools_message('#domain-suffix', $message, 'status'); // exits
+}
 
 
-
+/**
+ * email validation function
+ * @param $mail
+ */
 function scholarregister_validate_mail($mail) {
   // Validate the e-mail address:
   if ($error = user_validate_mail($mail)) {
-    scholarregister_ctools_message('#mail-suffix', $error); // exits
+    scholarregister_ctools_message('#email-suffix', $error); // exits
   }
 }
 
 
-
+/**
+ * validation function for username and domain name (the same !)
+ * @param $str
+ * @param $mode
+ */
 
 function scholarregister_validate_name_or_domain($str, $mode = 'domain'){
   // first check if domain name / username is valid. 
   // Use the user_validate_name function for convenience
 
   if ($error = user_validate_name($str)) {
-    scholarregister_ctools_message("#$mode-suffix", $error); // exits
+    scholarregister_ctools_message("#$mode-suffix", $error, 'error'); // exits
   }  
   
   // check domain availability
@@ -114,28 +129,27 @@ function scholarregister_validate_name_or_domain($str, $mode = 'domain'){
   $existing_purl = db_result(db_query($query, $str));
   
   if ($existing_purl) {
-     scholarregister_ctools_message("#$mode-suffix", "$mode name taken"); // exits
+     scholarregister_ctools_message("#$mode-suffix", "$mode taken", 'error'); // exits
   }
   
 }
 
 
-function scholarregister_ctools_message($id, $message){
+/**
+ * wrapper function for executing ajax commands
+ * @param $id  the html selector (id)
+ * @param $message the message to insert on the div with id=$id
+ * @param $class  the class to apply to the div
+ */
+function scholarregister_ctools_message($id, $message, $class = 'error'){
   ctools_include ( 'ajax' );
   ctools_add_js ( 'ajax-responder' );
   $commands = array ();
   $commands [] = ctools_ajax_command_html ( $id, $message);
+  $commands [] = ctools_ajax_command_attr($id, 'class', $class);
   ctools_ajax_render ( $commands );
 }
 
-
-/**
- * hook form_alter
- */
-function scholarregister_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == 'user_register') {
-  }
-}
 
 
 
