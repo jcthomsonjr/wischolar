@@ -50,6 +50,14 @@ function scholar_get_logo($w=300,$h=false){
 
   if(!$h){
   	$h = $w * ($o_image->info['height']/$o_image->info['width']);
+  }else{
+  	$orig = $o_image->info['width']/$o_image->info['height'];
+  	$new = $w /$h;
+  	if($orig < $new){
+  		$w = $h * $orig;
+  	}elseif ($orig > $new){
+  		$h = $w * ($o_image->info['height']/$o_image->info['width']);
+  	}
   }
   
   $s_folder = $scholar->settings['logo']['current_logo'];
