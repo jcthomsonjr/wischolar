@@ -12,6 +12,7 @@ define(TIMEZONE, 'EDT');
  */
 function cp_node_forms_init(){
   drupal_add_js(drupal_get_path('module', 'cp_node_forms') .'/js/cp_node_forms.js');
+  drupal_add_js(drupal_get_path('module', 'cp_node_forms') .'/theme/cp_node_forms.css');
 }
 
 /**
@@ -39,11 +40,11 @@ function cp_node_forms_cck_group($type, $name_prefix = 'group_images_files_', $l
      }
    }
    
-   //using helper function from install_profile_api module
+   //below will create a new cck group, using helper function from install_profile_api module
   $path = drupal_get_path('module', 'install_profile_api') . '/contrib';
   include_once "$path/content.inc";
 
-  //first remove the vertical tabs var, it will be recreated later
+  //first remove the vertical tabs system variable for this type, it will be recreated later
   $var_name = check_plain('vertical_tabs_fieldsets_' . $type);
   variable_del($var_name);
   
