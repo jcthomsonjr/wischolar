@@ -6,7 +6,8 @@ var cpSlidingContainer = Class.create({
 			containerW: 50,
 			duration: 1000,
 			mainListClass: '',
-			listItemClass: ''
+			listItemClass: '',
+			navClass: ''
 	},
 	currentIndex: 0,
     init: function(options){
@@ -21,6 +22,8 @@ var cpSlidingContainer = Class.create({
     	this.id==settings['prevImageID'].replace("#","")?$(function(){i++;i>0?i=(0-(settings['noOfContainer']-1)):"";}):this.id==settings['nextImageID'].replace("#","")?$(function(){i--;i<(0-(settings['noOfContainer']-1))?i=0:"";}):"";
     	$("ul."+settings['mainListClass']).animate({marginLeft: i* settings['containerW'] +"px"},settings['duration']);
     	this.currentIndex = i;
+    	$("."+settings['navClass']." > li" ).removeClass('active');
+		$("."+settings['navClass']." > li:eq("+(i*-1)+")" ).addClass('active');
     	$("."+settings['listItemClass']).removeClass('active');
     	$("."+settings['listItemClass']+":eq("+(i*-1)+")").addClass('active');
       });
@@ -31,6 +34,8 @@ var cpSlidingContainer = Class.create({
     	return $(element).click(function(){
 			$("ul."+settings['mainListClass']).animate({marginLeft: index * settings['containerW'] *-1+"px"},settings['duration']);
 			this.currentIndex = -1*index;
+			$("."+settings['navClass']." > li" ).removeClass('active');
+			$("."+settings['navClass']." > li:eq("+index+")" ).addClass('active');
 			$("."+settings['listItemClass']).removeClass('active');
 			$("."+settings['listItemClass']+":eq("+index+")").addClass('active');
 		 });

@@ -4,7 +4,7 @@ if (Drupal.jsEnabled) {
 
     var theSubnav = $("<div>");
     theSubnav.addClass("theme_subnav");
-    theSubnav.html("<span class='label'>Select a Theme</span>");
+    theSubnav.html("<h3>Select a Theme</h3>");
 
     var subnavList = $('<ul>');
     
