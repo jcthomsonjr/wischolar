@@ -4,7 +4,7 @@ if (Drupal.jsEnabled) {
 
     var theSubnav = $("<div>");
     theSubnav.addClass("theme_subnav");
-    theSubnav.html("<h3>Select a Theme</h3>");
+    theSubnav.html("<h3>Select a Theme</h3><div id=\"prev\"></div>");
 
     var subnavList = $('<ul>');
     
@@ -37,14 +37,13 @@ if (Drupal.jsEnabled) {
     });
     
     theSubnav.append(subnavList);
+    theList += '</ul>';
+    theList += '<div id="next"></div>';
     
-    theList = theList + '</ul>';
-    theList = theList + '<div id="next"></div>';
     
     
     $('#cp-settings-theme').prepend(theList);
     $('#cp-settings-theme').prepend(theSubnav);
-    $('#cp-settings-theme').prepend('<div id="prev"></div>');
     $(".item-theme-picker:first").addClass('active');
     
     
