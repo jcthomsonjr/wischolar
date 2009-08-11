@@ -43,6 +43,10 @@ function cp_node_forms_cck_group($type, $name_prefix = 'group_images_files_', $l
   $path = drupal_get_path('module', 'install_profile_api') . '/contrib';
   include_once "$path/content.inc";
 
+  //first remove the vertical tabs var, it will be recreated later
+  $var_name = check_plain('vertical_tabs_fieldsets_' . $type);
+  variable_del($var_name);
+  
   //creating filefield group
    install_create_field_group(
    $content_type = $type, 
@@ -71,7 +75,7 @@ function cp_node_forms_node_type($op, $info){
     case 'delete':
       //remove vertical tabs setting if type is deleted - I didn't see where vertical tabs module does this
       $var_name = check_plain('vertical_tabs_fieldsets_' . $info->type);
-      variable_del('comment_'. $info->type);
+      variable_del($var_name);
       break;   
   }
 }
