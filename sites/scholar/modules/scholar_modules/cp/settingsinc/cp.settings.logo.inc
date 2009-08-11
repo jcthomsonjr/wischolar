@@ -28,11 +28,12 @@ class cp_setting_logo implements space_setting {
     $form = array();
     $form['#title'] = 'Logo';
 
-    $s_current = file_check_path($value['current_logo']);
+    $s_current = file_check_location($value['current_logo']);
     
     $form['logo_upload'] = array('#type' => 'file', '#title' => t('Upload Logo'), '#size' => 48, '#description' => t('Your sites logo. '));
     if ($s_current) {
-      $form['current_logo'] = array('#value' => "<img src='/{$value['current_logo']}/{$s_current}?v=".time()."' />");
+    	scholar_include('scholarapi');
+      $form['current_logo'] = array('#value' => "<img src='".scholar_get_logo()."?v=".time()."' />");
     }
     
     return $form;
