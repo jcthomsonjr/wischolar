@@ -18,7 +18,7 @@ function cp_node_forms_init(){
  * Creates cck group for files and images and places the form element into the group
  */
 function cp_node_forms_cck_group($type, $name_prefix = 'group_images_files_', $label =  'Images & Files'){
-  
+
   $cck = _content_type_info();
  foreach($cck['content types'][ $type]['fields'] as $field){
     if ($field['type'] == 'filefield'){
@@ -26,9 +26,19 @@ function cp_node_forms_cck_group($type, $name_prefix = 'group_images_files_', $l
     }
   }
   
-  //if filefiled elements exist, create a fieldset (group) for it
+  //if filefiled elements exist, create a fieldset (group) for it - If group not exist already
   if (count($fieldnames)){
-  
+   $cck_groups = fieldgroup_groups($type);
+   
+   if (count($cck_groups)){
+     foreach ($cck_groups as $group => $values){
+       //if group already exists return false - do not try to recreate it
+       if ($group == $name_prefix . $type){
+         return false;
+       }
+     }
+   }
+   
    //using helper function from install_profile_api module
   $path = drupal_get_path('module', 'install_profile_api') . '/contrib';
   include_once "$path/content.inc";
@@ -55,22 +65,14 @@ function cp_node_forms_cck_group($type, $name_prefix = 'group_images_files_', $l
 
 /**
  * Implementation of hook_node_type
- *
- * @param unknown_type $op
- * @param unknown_type $info
  */
 function cp_node_forms_node_type($op, $info){ 
   switch ($op){    
     case 'delete':
+      //remove vertical tabs setting if type is deleted - I didn't see where vertical tabs module does this
       $var_name = check_plain('vertical_tabs_fieldsets_' . $info->type);
       variable_del('comment_'. $info->type);
-      break;
-      
-      
-    case 'insert':
-      //adding cck group and moving filefield elements into that group
-      cp_node_forms_cck_group($info->type);
-      break;
+      break;   
   }
 }
 
@@ -100,7 +102,7 @@ function cp_node_forms_get_publishing_options($options, $node = NULL){
 /**
  * cp_node_forms_filefield_group
  * 
- * Returns name of cck fieldset (group) if it contains a filefield form element
+ * Returns name of cck group if it contains a filefield form element
  */
 function cp_node_forms_filefield_group($form, $type = NULL){
   //getting the group key here - FIX ME - only works for one cck group per form
@@ -115,14 +117,16 @@ function cp_node_forms_filefield_group($form, $type = NULL){
   if ($form[$group]['#type'] !== 'fieldset'){
     return false;
   }
-  //now loop through field information to see it is coming from filefield module
-  foreach($form[$group] as $key => $val){
-    if (strstr($key, 'field_')){
-      $field = $key;
-     }
+  
+  if ($group){
+    //now loop through field information to see it is coming from filefield module
+    foreach($form[$group] as $key => $val){
+      if (strstr($key, 'field_')){
+        $field = $key;
+      }
+    }
   }
   reset($form);
- 
   return $form['#field_info'][$field]['module'] == 'filefield' ? $group : FALSE;
 }
 
@@ -150,7 +154,7 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
   
   scholar_include('scholarapi');
   $types = array_keys(scholar_content_types());
-
+  
   //if editing an exisitng node, load the node
   $node = isset($form['#node']->nid) ? node_load(array('nid' => $form['#node']->nid)) : NULL;
 
@@ -161,6 +165,9 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
       
+        //create cck fieldgroup and move the filefield form elements - only if necessary
+        cp_node_forms_cck_group($type);
+
       //if there is no vertical tabs system variable for this type, then set it here
       if(!$conf['vertical_tabs_fieldsets_'. $type]){
         //add the default fieldsets
@@ -431,6 +438,13 @@ function cp_node_forms_get_pubstatus($node = NULL, $type = NULL){
       return 'publish';
     }
   }
+}
+
+/**
+ * Helper fucntion removes specified vertical tabs variable
+ */
+function _cp_node_forms_clear_vertical_tabs($type){
+  variable_delete('vertical_tabs_fieldsets_'. $type, array());
 }
 
 /**
