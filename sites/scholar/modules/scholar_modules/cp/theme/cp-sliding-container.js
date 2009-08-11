@@ -15,21 +15,19 @@ var cpSlidingContainer = Class.create({
 		this.settings[key] = options[key];
 	  } 
     },
-    sliding_container: function(element){
+    sliding_container: function(element,i){
       var settings = this.settings;
-      var i = this.currentIndex;
       return $(element).click(function(){
-    	this.id==settings['prevImageID'].replace("#","")?$(function(){i++;i>0?i=(0-(settings['noOfContainer']-1)):"";}):this.id==settings['nextImageID'].replace("#","")?$(function(){i--;i<(0-(settings['noOfContainer']-1))?i=0:"";}):"";
-    	$("ul."+settings['mainListClass']).animate({marginLeft: i* settings['containerW'] +"px"},settings['duration']);
+    	this.id==settings['prevImageID'].replace("#","")?$(function(){i.currentIndex++;i.currentIndex>0?i.currentIndex=(0-(settings['noOfContainer']-1)):"";}):this.id==settings['nextImageID'].replace("#","")?$(function(){i.currentIndex--;i.currentIndex<(0-(settings['noOfContainer']-1))?i.currentIndex=0:"";}):"";
+    	$("ul."+settings['mainListClass']).animate({marginLeft: i.currentIndex* settings['containerW'] +"px"},settings['duration']);
     	$("."+settings['navClass']+" li" ).removeClass('active');
-		$("."+settings['navClass']+" li:eq("+(i*-1)+")" ).addClass('active');
+		$("."+settings['navClass']+" li:eq("+(i.currentIndex*-1)+")" ).addClass('active');
     	$("."+settings['listItemClass']).removeClass('active');
-    	$("."+settings['listItemClass']+":eq("+(i*-1)+")").addClass('active');
+    	$("."+settings['listItemClass']+":eq("+(i.currentIndex*-1)+")").addClass('active');
       });
     },
-    sliding_container_link: function(element,index){
+    sliding_container_link: function(element,index,parent){
     	var settings = this.settings;
-    	var i = this.currentIndex;
     	return $(element).click(function(){
 			$("ul."+settings['mainListClass']).animate({marginLeft: index * settings['containerW'] *-1+"px"},settings['duration']);
 
@@ -37,7 +35,8 @@ var cpSlidingContainer = Class.create({
 			$("."+settings['navClass']+" li:eq("+index+")" ).addClass('active');
 			$("."+settings['listItemClass']).removeClass('active');
 			$("."+settings['listItemClass']+":eq("+index+")").addClass('active');
-			i = -1*index;
+			parent.currentIndex = -1*index;
 		 });
+    	
     }
 });
