@@ -30,7 +30,7 @@ if (Drupal.jsEnabled) {
     	
     	var jumpLink = $("<li>");
     	jumpLink.html("&nbsp;"+(n_container+1)+"&nbsp;");
-        slider.sliding_container_link(jumpLink,n_container,slider);
+        slider.sliding_container_link(jumpLink,n_container);
     	
     	subnavList.append(jumpLink);
     	n_container++;
@@ -45,8 +45,8 @@ if (Drupal.jsEnabled) {
     $(".item-theme-picker:first").addClass('active');
     
     
-    slider.sliding_container($('div#prev'),slider);
-    slider.sliding_container($('div#next'),slider);
+    slider.sliding_container($('div#prev'));
+    slider.sliding_container($('div#next'));
     
     $('li.item-theme-picker').click(function(){
     	// remove the active class from every li first

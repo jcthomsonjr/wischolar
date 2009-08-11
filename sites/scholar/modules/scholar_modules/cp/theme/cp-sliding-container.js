@@ -15,7 +15,10 @@ var cpSlidingContainer = Class.create({
 		this.settings[key] = options[key];
 	  } 
     },
-    sliding_container: function(element,i){
+    sliding_container: function(element){
+    	return this.sliding_container_worker(element, this);
+    },
+    sliding_container_worker: function(element,i){
       var settings = this.settings;
       return $(element).click(function(){
     	this.id==settings['prevImageID'].replace("#","")?$(function(){i.currentIndex++;i.currentIndex>0?i.currentIndex=(0-(settings['noOfContainer']-1)):"";}):this.id==settings['nextImageID'].replace("#","")?$(function(){i.currentIndex--;i.currentIndex<(0-(settings['noOfContainer']-1))?i.currentIndex=0:"";}):"";
@@ -26,7 +29,10 @@ var cpSlidingContainer = Class.create({
     	$("."+settings['listItemClass']+":eq("+(i.currentIndex*-1)+")").addClass('active');
       });
     },
-    sliding_container_link: function(element,index,parent){
+    sliding_container_link: function(element,index){
+    	this.sliding_container_link_worker(element, index, this);
+    },
+    sliding_container_link_worker: function(element,index,parent){
     	var settings = this.settings;
     	return $(element).click(function(){
 			$("ul."+settings['mainListClass']).animate({marginLeft: index * settings['containerW'] *-1+"px"},settings['duration']);
