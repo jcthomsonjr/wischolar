@@ -32,9 +32,30 @@ class cp_setting_logo implements space_setting {
     
     $form['logo_upload'] = array('#type' => 'file', '#title' => t('Upload Logo'), '#size' => 48, '#description' => t('Your sites logo. '));
     if ($s_current) {
+    	drupal_add_js(drupal_get_path('module', 'cp') . '/theme/jquery.jcrop.min.js');
+    	drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-logo-crop.js');
+    	drupal_add_js("$(function() {
+											  $('#logo_preview').Jcrop({
+											    aspectRatio: 1,
+                          onSelect: updateLogo
+											  });
+											}); ","inline");
     	scholar_include('scholarapi');
-      $form['current_logo'] = array('#value' => "<img src='".scholar_get_logo()."?v=".time()."' />");
+      $form['current_logo'] = array('#value' => "<img id='logo_preview' src='".scholar_get_logo()."?v=".time()."' />");
+      $form['x_cord'] = array('#type' => 'hidden');
+	    $form['y_cord'] = array('#type' => 'hidden');
+	    $form['width'] = array('#type' => 'hidden');
+	    $form['height'] = array('#type' => 'hidden');
+	    $form['crop'] = array('#type' => 'hidden');
+	    $form['crop_btn'] = array(
+	      '#type' => 'submit',
+	      '#value' => t('Crop Image'),
+        '#attributes' => array(
+          'onclick' => "$('#edit-settings-logo-crop').val('1');"
+        )
+	    );
     }
+    
     
     return $form;
   }
@@ -42,40 +63,56 @@ class cp_setting_logo implements space_setting {
   function validate($space, $value) {
   	if(!$space) return false;
     
-  	$value['logo_upload'] = file_save_upload('settings', self::$validators);
-  	
-    if(!$value['logo_upload']){
-      form_set_error('logo_upload', t("No image selected for upload."));
-    }
+  	if(!$value['crop']){
+	  	$value['logo_upload'] = file_save_upload('settings', self::$validators);
+	  	
+	    if(!$value['logo_upload']){
+	      form_set_error('logo_upload', t("No image selected for upload."));
+	    }
+  	}else{
+  		if(!$value['x_cord'] || !$value['y_cord'] || !$value['width'] || !$value['height']){
+  			form_set_error('current_logo', t("You must select a region to crop."));
+  		}
+  	}
       
   }
 
   function submit($space, $value) {
   	$return = array();
   	if(!$space) return;
+  	if(!$value['crop']){
+	  	$value['logo_upload'] = file_save_upload('settings',self::$validators);
+	  	//$return['logo'] = OLD_PATH;
+	  	if($value['logo_upload']){
+	  		
+	  		$info = image_get_info($value['logo_upload']->filepath);
+	  		
+	  		$destination = file_create_path($this->s_logo_location."/".$space->group->nid);
+	  		file_check_directory($destination,FILE_CREATE_DIRECTORY);
+	  		
+	  		//Delete cached files
+	      file_scan_directory($destination, '.*', array('.', '..'), 'file_delete', TRUE);
+	      
+	  		$destination = $destination."/".$space->group->nid.".".$info['extension'];
+	  		//require_once drupal_get_path('module', 'imageapi_imagemagick') .'/imageapi_imagemagick.module';
+	  		//$o_image = imageapi_image_open($value['logo_upload']->filepath);//,'imageapi_imagemagick');
+	  		
+	  	  if (file_copy($value['logo_upload'], $destination, FILE_EXISTS_REPLACE)) {
+	        $value['logo_upload'] = "";
+	        $return['current_logo'] = $destination;
+	      }else {
+	        form_set_error('logo_upload', t("Failed to upload the picture image; the %directory directory doesn't exist or is not writable.", array('%directory' => variable_get('user_picture_path', 'pictures'))));
+	      }
+	  	}
   	
-  	$value['logo_upload'] = file_save_upload('settings',self::$validators);
-  	//$return['logo'] = OLD_PATH;
-  	if($value['logo_upload']){
+  	}else{
+  		if(!$space->settings['logo'] && !$space->settings['logo']['current_logo']) return $return;
   		
-  		$info = image_get_info($value['logo_upload']->filepath);
-  		
-  		$destination = file_create_path($this->s_logo_location."/".$space->group->nid);
-  		file_check_directory($destination,FILE_CREATE_DIRECTORY);
-  		
-  		//Delete cached files
-      file_scan_directory($destination, '.*', array('.', '..'), 'file_delete', TRUE);
-      
-  		$destination = $destination."/".$space->group->nid.".".$info['extension'];
-  		//require_once drupal_get_path('module', 'imageapi_imagemagick') .'/imageapi_imagemagick.module';
-  		//$o_image = imageapi_image_open($value['logo_upload']->filepath);//,'imageapi_imagemagick');
-  		
-  	  if (file_copy($value['logo_upload'], $destination, FILE_EXISTS_REPLACE)) {
-        $value['logo_upload'] = "";
-        $return['current_logo'] = $destination;
-      }else {
-        form_set_error('logo_upload', t("Failed to upload the picture image; the %directory directory doesn't exist or is not writable.", array('%directory' => variable_get('user_picture_path', 'pictures'))));
-      }
+  	  $o_image = imageapi_image_open($space->settings['logo']['current_logo'],'imageapi_gd');
+  	  imageapi_toolkit_invoke('crop',$o_image,array($value['x_cord'],$value['y_cord'],$value['width'],$value['height']));
+  	  imageapi_toolkit_invoke('close',$o_image,array($space->settings['logo']['current_logo']));
+  	
+  	  $return['current_logo'] = $space->settings['logo']['current_logo'];
   	}
   	
     return $return;

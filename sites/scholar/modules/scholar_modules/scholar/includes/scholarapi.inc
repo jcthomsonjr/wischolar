@@ -38,11 +38,15 @@ function scholar_content_types(){
 }
 
 
-function scholar_get_logo($w=300,$h=false){
+function scholar_get_logo($w=false,$h=false){
   $scholar = scholar_get_scholar();
   if(!$scholar) return false;
   
   if(!$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']) return false;
+  
+  if(!$w && !$h){
+  	return "/".$scholar->settings['logo']['current_logo']; 
+  }
   
   $o_image = imageapi_image_open($scholar->settings['logo']['current_logo'],'imageapi_gd');
   
