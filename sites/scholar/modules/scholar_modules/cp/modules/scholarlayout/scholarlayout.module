@@ -32,6 +32,16 @@ function scholarlayout_menu(){
     'access arguments' => array('configure spaces features'),
     'menu_name' => 'cp', 
   );
+  $items["cp/settings/layout/region_widgets_js"] = array(
+    'page callback' => 'scholarlayout_region_widgets_callback',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items["cp/settings/layout/top_widgets_js"] = array(
+    'page callback' => 'scholarlayout_top_widgets_callback',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
   
   return $items;
 }
@@ -46,11 +56,8 @@ function scholarlayout_layout(){
   drupal_add_css(drupal_get_path('module', 'scholarlayout') . '/theme/scholarlayout.css');
   $space = scholar_get_scholar();
   
-  // top
-  $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
-  $wc = $cts['cp-section-layout'];
-  
-  $wgts = $wc -> block;
+  //top
+  $wgts = scholarwidgets_scholar_default_widgets();
   $wgts_id = 'scholarlayout-top-widgets';
   $wgts_class = 'scholarlayout-widgets-list';
   
@@ -61,8 +68,6 @@ function scholarlayout_layout(){
   return $top . $layout;
 }
 
-
-
 /**
  * preprocessor function for scholarlayout-layout.tpl.php
  * Introduces a variable for each region in the admin_base theme
@@ -70,10 +75,6 @@ function scholarlayout_layout(){
  * block names in the header_left
  */
 function scholarlayout_preprocess_scholarlayout_layout(&$vars){
-
-  
-  $cts = context_contexts();  // TODO dont know why we need all context; couldnt load just the scholarwidget context
-  $wc = $cts['cp-section-layout'];
 
   $scholarlayout_widgets = array();
   
@@ -83,7 +84,8 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
     $scholarlayout_widgets[$region] = array();
   }
   
-  foreach($wc -> block as $widget){
+  $wgts = scholarwidgets_scholar_default_widgets();
+  foreach($wgts as $widget){
     $scholarlayout_widgets[$widget['region']][] = $widget;
     //$scholarlayout_top_widgets[] = '<div>' .$widget['label'] . '</div>';
   }
@@ -110,9 +112,43 @@ function scholarlayout_layoutsettings(){
     $wgts_id = 'scholarlayout-' . $r;
     $form[$wgts_id] = array('#type' => 'hidden' );
     if(isset($space->settings['layout']) && array_key_exists($wgts_id,$space->settings['layout'])){
-    	$form[$wgts_id]['#efault'] = $space->settings['layout'][$wgts_id];
+    	$form[$wgts_id]['#default'] = $space->settings['layout'][$wgts_id];
     }
   }
+  
+  $features = spaces_features($space->type, TRUE);
+  $a_page_types = array('all' => t('All Pages'), 'front' => t('Front Page'));
+  foreach (array_keys($space->features) as $s_feature_key){
+  	if(!array_key_exists($s_feature_key,$features)) continue;
+  	$a_page_types[$s_feature_key] = $features[$s_feature_key]->info['name'];
+  }
+  
+  $form['page_type'] = array(
+	  '#type' => 'select',
+	  '#title' => t('Page Type'),
+	  '#default_value' =>'all',
+	  '#options' => $a_page_types,
+	  '#description' => t('Switch page type to view it\'s layout.'),
+	  '#ahah' => array(
+          'event' => 'go_ahah',
+	        'path' => 'cp/settings/layout/region_widgets_js',
+	        'wrapper' => 'scholarlayout-container',
+	        'progress' => array('type' => 'throbber', 'message' => t('Loading Page...')),
+          'effect' => 'fade',
+    ),
+	);
+	
+	$form['secret_hidden_ahah'] = array(
+    '#type' => 'hidden',
+	  '#value' =>'all',
+    '#ahah' => array(
+          'event' => 'go_ahah',
+          'path' => 'cp/settings/layout/top_widgets_js',
+          'wrapper' => 'scholarlayout-top-widgets',
+          'effect' => 'fade',
+	        'progress' => array('type' => 'none'),
+    ),
+  );
   
   // add the submit button (not in the form definition yet)
   $form['submit'] = array(
@@ -142,4 +178,63 @@ function scholarlayout_layoutsettings_submit($form, &$form_state){
   }
   $space->settings['layout'] = $setting;
   spaces_save($space);
+}
+
+
+/**
+ * Callback to swap out the top widgets avalible for different pages
+ * @param $s_region
+ * @return string
+ */
+function scholarlayout_top_widgets_callback(){
+  $scholar = scholar_get_scholar();
+  $s_page_type = $_POST['page_type'];
+  
+  //top
+  $wgts = scholarwidgets_scholar_default_widgets();
+  
+  $wgts_id = 'scholarlayout-top-widgets';
+  $wgts_class = 'scholarlayout-widgets-list';
+  
+  $top = theme('scholarlayout_layout_widgets', $wgts, $wgts_id, $wgts_class);
+  
+  drupal_json(array('status' => TRUE, 'data' => $top));
+}
+
+/**
+ * Callback to swap out the regions avalible for different pages
+ * @param $s_region
+ * @return string
+ */
+function scholarlayout_region_widgets_callback(){
+  $scholarlayout_widgets = array();
+  $s_page_type = $_POST['page_type'];
+  
+  $regions = array_keys(system_region_list('scholar_base'));
+
+  foreach($regions as $region){
+    $scholarlayout_widgets[$region] = array();
+  }
+  
+  $wgts = scholarwidgets_scholar_default_widgets();
+  foreach($wgts as $widget){
+    $scholarlayout_widgets[$widget['region']][] = $widget;
+    //$scholarlayout_top_widgets[] = '<div>' .$widget['label'] . '</div>';
+  }
+
+  foreach($regions as $region){
+    $r = str_replace('_','-', $region);
+    $wgts_id = 'scholarlayout-' . $r;
+    $vars['scholarlayout_' . $region] = theme('scholarlayout_layout_widgets',$scholarlayout_widgets[$region], $wgts_id, 'scholarlayout-widgets-list');
+  }
+  
+  $output=$vars['scholarlayout_form'].
+				  $vars['scholarlayout_header_main'].
+				  $vars['scholarlayout_header_left'].
+				  $vars['scholarlayout_header_right'].
+				  $vars['scholarlayout_navbar'].
+				  $vars['scholarlayout_left'].
+				  $vars['scholarlayout_right'];
+				  
+	drupal_json(array('status' => TRUE, 'data' => $output));
 }
