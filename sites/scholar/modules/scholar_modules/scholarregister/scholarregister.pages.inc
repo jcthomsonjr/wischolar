@@ -116,9 +116,11 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   ctools_add_js ( 'ajax-responder' );
   $commands = array ();
   global $base_url;
-  $message = 'Done !! Your site is created. The url of the site is ' . $base_url . '/' . $domain;
-
-  $message .= 'Check your email account for ...';
+  $message  = '<div id="success-message">';
+  $message .= '<p>Success! Your site has been created.</p>';
+  $message .= '<p>The url of your site is ' . $base_url . '/' . $domain . '. <a href="' . $base_url . '/' . $domain . '">Go there now.</a></p>';
+  $message .= '<p>Check your email account for further details.</p>';
+  $message .= '</div>';
   $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
   ctools_ajax_render ( $commands );
 }
