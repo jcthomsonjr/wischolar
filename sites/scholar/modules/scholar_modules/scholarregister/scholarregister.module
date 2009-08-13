@@ -1,6 +1,11 @@
 <?php
 
 
+function scholarregister_init(){
+   drupal_add_css(drupal_get_path('module', 'scholarregister') .'/theme/scholarregister.css');
+   }
+
+
 function scholarregister_menu(){
   $items = array();
   $items['site/register'] = array(
@@ -17,15 +22,15 @@ function scholarregister_menu(){
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-  
+
   $items['scholarregister/mail_js'] = array(
     'title' => 'Create your web site',
     'page callback' => 'scholarregister_mail_js',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-  
-  
+
+
   $items['scholarregister/name_js'] = array(
     'title' => 'Create your web site',
     'page callback' => 'scholarregister_name_js',
@@ -50,10 +55,10 @@ function  scholarregister_register() {
   );
   $output .= ctools_modal_form_wrapper('scholarregister_signup_form', &$form_state);
   //$output .= drupal_get_form ( 'scholarregister_signup_form' );
-  
+
   // we can just return the $output or, if we want to not print
   // blocks etc., use theme_page(..., FALSE) see phptemplate.engine
-  
+
 
   //return $output;
   print theme ( 'page', $output, FALSE );
@@ -67,7 +72,7 @@ function scholarregister_name_js() {
 
   scholarregister_validate_name_or_domain($name, $mode = 'username');
   //scholarregister_validate_name($name); // if it fails it will exit (ctools)
-  
+
   // ok then .. it's good and available
   $message = 'available';
   scholarregister_ctools_message('#username-suffix', $message, 'status'); // exits
@@ -90,7 +95,7 @@ function scholarregister_mail_js() {
  */
 function scholarregister_domain_js() {
   $domain = $_POST['ctools_changed'];
-  
+
   scholarregister_validate_name_or_domain($domain, $mode = 'domain');
   // ok then .. it's good and available
   $message = 'available';
@@ -117,21 +122,21 @@ function scholarregister_validate_mail($mail) {
  */
 
 function scholarregister_validate_name_or_domain($str, $mode = 'domain'){
-  // first check if domain name / username is valid. 
+  // first check if domain name / username is valid.
   // Use the user_validate_name function for convenience
 
   if ($error = user_validate_name($str)) {
     scholarregister_ctools_message("#$mode-suffix", $error, 'error'); // exits
-  }  
-  
+  }
+
   // check domain availability
   $query = "SELECT value FROM {purl} WHERE value='%s'";
   $existing_purl = db_result(db_query($query, $str));
-  
+
   if ($existing_purl) {
      scholarregister_ctools_message("#$mode-suffix", "$mode taken", 'error'); // exits
   }
-  
+
 }
 
 
