@@ -66,6 +66,16 @@ function cp_node_forms_cck_group($type, $name_prefix = 'group_images_files_', $l
     );
    }
   }
+  
+ 
+  
+
+   
+    cache_clear_all();
+  
+   //clear cck cache
+/*  cache_clear_all( 'fieldgroup_data');
+  cache_clear_all('content_type_info');*/
 }
 
 /**
@@ -140,10 +150,10 @@ function cp_node_forms_filefield_group($form, $type = NULL){
  * Returns an array of custom fieldsets
  */
 function cp_node_forms_custom_fieldsets($form, $type){
-  
+  $tax = ($form['taxonomy']['#type'] == 'fieldset') ? 'taxonomy' : 'scholartax';
   //add the custom fieldsets (taxonomy and files & images)
       $custom_fieldsets = array();
-      $custom_fieldsets[] = ('scholartaxonomy');     
+      $custom_fieldsets[] = ($tax);     
       $cck_filefield_group= cp_node_forms_filefield_group($form, $type);
       if ($cck_filefield_group){
          $custom_fieldsets[] = $cck_filefield_group;    
@@ -154,8 +164,7 @@ function cp_node_forms_custom_fieldsets($form, $type){
 /**
  * Implementation of hook_form_alter()
  */
-function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
-  
+function cp_node_forms_form_alter(&$form, $form_state, $form_id) { 
   global $conf;
   
   scholar_include('scholarapi');
@@ -171,8 +180,20 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
       
+      //temporary placement of this function, CLEARING THIS VAR EVERY TIME IS UNESSESARY
+       _cp_node_forms_clear_vertical_tabs($form['type']['#value']);
+       
         //create cck fieldgroup and move the filefield form elements - only if necessary
-        cp_node_forms_cck_group($type);
+        if (cp_node_forms_cck_group($type)){
+       
+            //clear the cck cache
+            cache_clear_all('fieldgroup_data', 'cache_content');
+            cache_clear_all($cid = 'content_type_info', 'cache_content');
+            
+          //if new cck fieldgroup was created clear vertical tabs for this type
+          _cp_node_forms_clear_vertical_tabs($form['type']['#value']);
+          
+        }
 
       //if there is no vertical tabs system variable for this type, then set it here
       if(!$conf['vertical_tabs_fieldsets_'. $type]){
@@ -185,11 +206,23 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
          //dpm($custom_fieldsets);
       }
    
+        /*** Scholar Site Selection ***/
+        $val = $form['spaces_og']['gid']['#default_value']; 
+        unset($form['spaces_og']);
+        $form['spaces_og']['#type'] = 'value';
+        $form['spaces_og']['#value'] = array('gid' => 2);
+ 
       /*** Tags & Categories Section (Taxonomy) ***/
 
       //if the form has taxonomy
-      if ($form['taxonomy']){
-
+      if ($form['taxonomy']) {
+        if($form['taxonomy']['#type'] == 'fieldset'){
+        //if taxonomy fieldset already exists, just change title 
+        $form['taxonomy']['#title'] = 'Tags & Categories';
+        $form['taxonomy']['#weight'] = 2;
+        }
+        //no fieldset exists for taxonomy
+    else{
         $form['scholartaxonomy'] = array(
         '#type' => 'fieldset',
         '#title' => t('Tags & Categories'),
@@ -205,7 +238,7 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
         unset($form['taxonomy']);
         $form['scholartaxonomy']['taxonomy'] =  $scholartax;
       }
-
+      }
       /*** Publishing Options Section ***/
 
       //unset 'Publish' checkbox
@@ -253,7 +286,7 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
       '#prefix' => $node->pubstatus == 'pubondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
       '#suffix' => $node->pubstatus == 'pubondate' ? '' : '</div>',
       );
-
+    
       // adding validation function
       $form['#validate'][] = 'cp_node_forms_form_validate';
     }
@@ -315,7 +348,7 @@ function cp_node_forms_get_frontpage_text($node = NULL){
  * @param unknown_type $form
  * @param unknown_type $form_state
  */
-function cp_node_forms_form_validate($form, &$form_state){
+function cp_node_forms_form_validate($form, &$form_state){ echo "<pre>"; print_r($form_state); die;
   switch($form_state['values']['pubstatus']){
 
     case 'publish':
@@ -450,7 +483,7 @@ function cp_node_forms_get_pubstatus($node = NULL, $type = NULL){
  * Helper fucntion removes specified vertical tabs variable
  */
 function _cp_node_forms_clear_vertical_tabs($type){
-  variable_delete('vertical_tabs_fieldsets_'. $type, array());
+  variable_del('vertical_tabs_fieldsets_'. $type, array());
 }
 
 /**
