@@ -12,12 +12,12 @@
 </head>
 <body class="<?php print $body_classes; ?>">
   <div id="wrapper">
-    <div id="container">    
-      
-      <div id="header">        
+    <div id="container">
+
+      <div id="header">
         <div id="header-left" class="column">
           <h1><a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home"><?php print $site_name; ?></a></h1>
-        </div><!-- /header-left -->        
+        </div><!-- /header-left -->
         <div id="header-right" class="column">
           <?php print $header_right; ?>
             <ul id="top-front">
@@ -25,13 +25,13 @@
               <li>Features</li>
               <li>Tutorials</li>
               <li>Log in</li>
-              <li id="get-form">Get your site now!</li>
+              <li id="get-form"><a href="site/register">Get your site now!</a></li>
              </ul>
          </div><!-- /header-right -->
       </div> <!-- /header -->
-      
+
       <div id="content-wrapper">
-      
+
         <div id="content-main" class="column">
 
             <div id="content-row-1">
@@ -115,9 +115,9 @@
                </div>
             </div><!--/content-row 3-->
 
-          </div><!-- /content main --> 
+          </div><!-- /content main -->
       </div> <!-- / content wrapper -->
-      
+
       <div id="footer">
       <?php if ($footer_message){ ?>
         <div id="footer-message"><?php print $footer_message; ?></div>
