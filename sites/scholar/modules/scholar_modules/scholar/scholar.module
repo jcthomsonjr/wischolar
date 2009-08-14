@@ -146,6 +146,25 @@ function scholar_strongarm(){
   return $conf;
 }
 
+/**
+ *  Hook preproces_page
+ */
+function scholar_preprocess_page(&$vars) {
+  // need to know if there is anything in the navbar for css theming
+  if ($vars['navbar']){
+    $vars['body_classes'] .= ' navbar';
+  }
+  
+  $vsite = scholar_get_scholar();
+  // TODO Probably we would want to let user decide whether they want 
+  // the toolbar on. Add that as a condition below
+  if (context_get('scholar', 'section') == 'vsite' && $vsite -> admin_access()){
+    $vars['body_classes'] .= ' cp-toolbar-on';
+  }
+  
+}
+
+
 
 /**
  * API function for getting the active site

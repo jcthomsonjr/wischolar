@@ -18,7 +18,7 @@ function cp_init(){
   else {
   	$space = spaces_get_space();
   	if ($space -> type == 'og'){
-  	  context_set('scholar', 'section', 'scholarsite');
+  	  context_set('scholar', 'section', 'vsite');
   	  og_set_theme($space -> group); // TODO why dont you get it from space settings
   	}
   }
@@ -362,12 +362,7 @@ function cp_theme($cache, $type, $theme, $path) {
  * Preprocess function for for intorducing "cp_toolbar"
  * and "cp_left" variables
  */
-function cp_preprocess_page(&$vars) {
-  // TODO this shold go to scholar module; shaun needed 
-  if ($vars['navbar']){
-    $vars['body_classes'] .= ' navbar';
-  }
-  
+function cp_preprocess_page(&$vars) {  
   // 2 new variables for top and left menus
   $vars['cp_toolbar'] = 
   $vars['cp_left'] = '';

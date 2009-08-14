@@ -131,3 +131,23 @@ function scholarwidgets_scholar_widgets(){
   );
 	
 }
+
+
+/**
+ * hook context_default_contexts
+ * @return unknown_type
+ */
+function scholarwidgets_context_default_contexts() {
+  $items = array ();
+  $items [] = array (
+      'namespace' => 'cp', 
+      'attribute' => 'section', 
+      'value' => 'layout', 
+      'spaces_type' => array (
+      '0' => 'og' 
+    ), 
+    'block' => module_invoke_all('scholar_widgets'),
+  );
+  
+  return $items;
+}
