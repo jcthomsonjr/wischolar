@@ -35,3 +35,28 @@ function scholar_blog_scholar_vocabulary_defaults() {
   ) 
  );
 }
+
+function scholar_blog_scholar_widgets(){
+  
+  return array(
+    'scholar_blog_0' => array(
+      'module' => 'scholar_blog',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Blog widget 1',
+      'type' => 'context_ui',
+    ),
+    'scholar_blog_1' => array(
+      'module' => 'scholar_blog',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Blog Thing',
+      'type' => 'context_ui',
+    ),
+  );
+  
+}
