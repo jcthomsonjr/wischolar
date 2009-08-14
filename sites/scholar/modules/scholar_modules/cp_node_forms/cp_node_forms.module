@@ -66,16 +66,10 @@ function cp_node_forms_cck_group($type, $name_prefix = 'group_images_files_', $l
     );
    }
   }
-  
- 
-  
 
-   
-    cache_clear_all();
-  
-   //clear cck cache
-/*  cache_clear_all( 'fieldgroup_data');
-  cache_clear_all('content_type_info');*/
+  //clear cck cache
+  cache_clear_all( 'fieldgroup_data', 'cache_content');
+  cache_clear_all('content_type_info', 'cache_content');
 }
 
 /**
@@ -210,7 +204,7 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
         $val = $form['spaces_og']['gid']['#default_value']; 
         unset($form['spaces_og']);
         $form['spaces_og']['#type'] = 'value';
-        $form['spaces_og']['#value'] = array('gid' => 2);
+        $form['spaces_og']['#value'] = array('gid' => $val);
  
       /*** Tags & Categories Section (Taxonomy) ***/
 
