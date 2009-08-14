@@ -121,7 +121,7 @@ function scholarmenu_theme($cache, $type, $theme, $path) {
   $path = drupal_get_path('module', 'scholarmenu') ;
   
   $items['scholarmenu_radios'] = array(
-    'arguments' => array('element' => NULL),
+    'arguments' => array('element' => NULL,'disabled' => array()),
     'path' => $path,
     'file' => 'menu_theme.inc',
   );

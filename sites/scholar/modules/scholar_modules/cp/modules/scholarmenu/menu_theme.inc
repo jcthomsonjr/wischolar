@@ -27,6 +27,10 @@ function theme_scholarmenu_radios($element) {
     foreach ($item['menu'] as $key2 => $rad) {
       if(substr($key2,0,1) == '#') continue;  
       unset($rad['#title']);
+      if(is_array($item['menu']['#disabled_options'])
+      && in_array($rad['#return_value'],$item['menu']['#disabled_options'])){
+      	$rad['#attributes'] = array('disabled'=>'disabled');
+      }
       $content .= "<td>".drupal_render($rad)."</td>";
     }
     $content .= "<td>".drupal_render($item['delete'])."</td>";

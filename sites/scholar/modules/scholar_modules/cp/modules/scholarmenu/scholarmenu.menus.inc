@@ -39,7 +39,8 @@ class scholarmenu_menus implements space_setting {
     $choices = array('primary' => t($a_primary['title']),
                      'secondary' => t($a_secondary['title']),
                      '' => t('None'));
-      
+
+    $disabled_choices = array();
 
     $a_tree = menu_tree_all_data(variable_get('scholar_primary_menu',false));    
     foreach ($a_tree as $element) {
@@ -65,6 +66,7 @@ class scholarmenu_menus implements space_setting {
         '#title' => t($element['link']['title']),
         '#default_value' => $s_current,
         '#options' => $choices,
+        '#disabled_options' => $disabled_choices,
       );
       $form['menu_items'][$element['link']['mlid']]['weight'] = array(
         '#type' => 'hidden',
@@ -101,6 +103,7 @@ class scholarmenu_menus implements space_setting {
         '#title' => t($element['link']['title']),
         '#default_value' => $s_current,
         '#options' => $choices,
+        '#disabled_options' => $disabled_choices,
       );
       $form['menu_items'][$element['link']['mlid']]['weight'] = array(
         '#type' => 'hidden',
