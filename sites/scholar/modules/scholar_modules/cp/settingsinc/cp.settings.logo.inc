@@ -42,7 +42,7 @@ class cp_setting_logo implements space_setting {
 											  });
 											}); ","inline");
     	scholar_include('scholarapi');
-      $form['current_logo'] = array('#value' => "<img id='logo_preview' src='".scholar_get_logo()."?v=".time()."' />");
+      $form['current_logo'] = array('#value' => theme('scholar_logo',false,'','',array('id' => 'logo_preview')));
       $form['x_cord'] = array('#type' => 'hidden');
 	    $form['y_cord'] = array('#type' => 'hidden');
 	    $form['width'] = array('#type' => 'hidden');
@@ -55,6 +55,18 @@ class cp_setting_logo implements space_setting {
           'onclick' => "$('#edit-settings-logo-crop').val('1');"
         )
 	    );
+	    
+	    $form['preview'] = array(
+          '#title' => 'Preview',
+          '#type' => 'fieldset',
+          '#tree' => TRUE,
+	        '#collapsible' => TRUE,
+	        '#collapsed' => true
+      );
+      $form['preview']['landscape'] = array('#type' => 'item','#title' => t('Landscape'),'#value' => theme('scholar_logo','landscape_scholar_logo'));
+      $form['preview']['square'] = array('#type' => 'item','#title' => t('Square'),'#value' => theme('scholar_logo','square_scholar_logo'));
+      $form['preview']['portrait'] = array('#type' => 'item','#title' => t('Portrait'),'#value' => theme('scholar_logo','portrait_scholar_logo'));
+      
     }
     
     

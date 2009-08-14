@@ -37,44 +37,20 @@ function scholar_content_types(){
   return $result;
 }
 
-
-function scholar_get_logo($w=false,$h=false){
+function theme_scholar_logo($preset = false, $alt = '' , $title = '', $attributes = ''){
   $scholar = scholar_get_scholar();
-  if(!$scholar) return false;
-  
-  if(!$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']) return false;
-  
-  if(!$w && !$h){
-  	return "/".$scholar->settings['logo']['current_logo']; 
-  }
-  
-  $o_image = imageapi_image_open($scholar->settings['logo']['current_logo'],'imageapi_gd');
-  
-  if($o_image->info['width'] < $w && (!$h || $h < $o_image->info['height'])) return "/".$o_image->source;
-
-  if(!$h){
-  	$h = $w * ($o_image->info['height']/$o_image->info['width']);
+  if(!$scholar || !$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']){
+  	//@todo DO DEFAULT IMAGE
+  	return false;
+  }	
+	
+  if($preset){
+    return theme('imagecache', $preset, $scholar->settings['logo']['current_logo'], $alt, $title,  $attributes);
   }else{
-  	$orig = $o_image->info['width']/$o_image->info['height'];
-  	$new = $w /$h;
-  	if($orig < $new){
-  		$w = $h * $orig;
-  	}elseif ($orig > $new){
-  		$h = $w * ($o_image->info['height']/$o_image->info['width']);
-  	}
-  }
+  	$attributes = drupal_attributes($attributes);
+    $url = imagecache_create_url($presetname, $path);
+    return '<img src="/'.$scholar->settings['logo']['current_logo'] .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
+  } //use imagecache? or orig?
   
-  $s_folder = $scholar->settings['logo']['current_logo'];
-  $s_filename = file_check_path($s_folder);
-  list($s_file_base,$s_file_ext) = split("\.",$s_filename,2);
-  
-  $s_resized_file = $s_file_base."_".$w."_".$h.".".$o_image->info['extension'];
-  
-  if(!file_check_location($s_resized_file,$s_folder)){
-  	imageapi_toolkit_invoke('resize',$o_image,array($w,$h));
-    imageapi_toolkit_invoke('close',$o_image,array($s_folder."/".$s_resized_file));
-  }
-  
-  return "/".$s_folder."/".$s_resized_file;
 }
 
