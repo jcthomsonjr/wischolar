@@ -36,7 +36,8 @@ class cp_setting_logo implements space_setting {
     	drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-logo-crop.js');
     	drupal_add_js("$(function() {
 											  $('#logo_preview').Jcrop({
-											    aspectRatio: 1,
+											    aspectRatio: 1.2857,
+											    minSize: [180,140],
                           onSelect: updateLogo
 											  });
 											}); ","inline");
@@ -113,7 +114,7 @@ class cp_setting_logo implements space_setting {
   	  imageapi_toolkit_invoke('close',$o_image,array($space->settings['logo']['current_logo']));
   	
   	  $return['current_logo'] = $space->settings['logo']['current_logo'];
-  	}
+  	}//Crop or save source
   	
     return $return;
   }
