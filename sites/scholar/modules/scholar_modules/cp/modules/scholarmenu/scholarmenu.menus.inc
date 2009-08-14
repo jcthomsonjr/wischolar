@@ -36,85 +36,60 @@ class scholarmenu_menus implements space_setting {
     $a_primary = menu_load(variable_get('scholar_primary_menu',false));
     $a_secondary = menu_load(variable_get('scholar_secondary_menu',false));
     
-    $choices = array('primary' => t($a_primary['title']),
-                     'secondary' => t($a_secondary['title']),
-                     '' => t('None'));
+    $choices = array('primary' => t($a_primary['title']), 'secondary' => t($a_secondary['title']), '' => t('None'));
 
-    $disabled_choices = array();
-
-    $a_tree = menu_tree_all_data(variable_get('scholar_primary_menu',false));    
-    foreach ($a_tree as $element) {
-      if ($element['link']['hidden']) continue;
-        
-      $mnode = menu_node_get_node($element['link']['mlid']);
-      if($mnode){
-        $a_groups = og_get_node_groups($mnode);
-        if(!array_key_exists($scholar->group->nid,$a_groups)) continue; //is this node in the current group
-      }
-        
-      if(is_array($space->settings['menus']['menu_items']) && 
-         array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
-        $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
-        $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
-      }else{
-        $s_current = 'primary';
-        $n_count = 100; //put it after the last item
-      }
-      $form['menu_items'][$element['link']['mlid']]['#weight'] = $n_count;
-      $form['menu_items'][$element['link']['mlid']]['menu'] = array(
-        '#type' => 'radios',
-        '#title' => t($element['link']['title']),
-        '#default_value' => $s_current,
-        '#options' => $choices,
-        '#disabled_options' => $disabled_choices,
-      );
-      $form['menu_items'][$element['link']['mlid']]['weight'] = array(
-        '#type' => 'hidden',
-        '#default_value' => $n_count,
-        '#attributes' => array('class' => 'element-weight'),
-      );
-      $form['menu_items'][$element['link']['mlid']]['delete'] = array(
-        '#type' => (menu_node_get_node($element['link']['mlid'], FALSE))?'checkbox':'hidden',
-        '#default_value' => 0,
-      );
+    $disabled_choices = array('scholarmenu_0' => 'primary', 'scholarmenu_1' => 'secondary');//If these blocks are not used they will be disabled
+    foreach (scholarlayout_get_pagetypes($space) as $s_page_type => $s_name){
+      $a_region_wgts = scholarlayout_region_widgets($space,$s_page_type);
+    	if(!array_key_exists('unused',$a_region_wgts)){
+    		$disabled_choices = array(); //nothing is in unused
+    	}else{
+    		$a_still_disabled = array();
+    		foreach ($a_region_wgts['unused'] as $wgt) if(array_key_exists($wgt['module']."_".$wgt['delta'],$disabled_choices)) $a_still_disabled[$wgt['module']."_".$wgt['delta']] = $disabled_choices[$wgt['module']."_".$wgt['delta']];
+    		$disabled_choices = $a_still_disabled;
+    	}
+    	
+    	if(!count($disabled_choices)) break;	
     }
     
-    $a_tree = menu_tree_all_data(variable_get('scholar_secondary_menu',false));
-    foreach ($a_tree as $element) {
-      if ($element['link']['hidden']) continue;
-        
-      $mnode = menu_node_get_node($element['link']['mlid']);
-      if($mnode){
-        $a_groups = og_get_node_groups($mnode);
-        if(!array_key_exists($scholar->group->nid,$a_groups)) continue; //is this node in the current group
-      }
-        
-      if(is_array($space->settings['menus']['menu_items']) && 
-         array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
-        $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
-        $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
-      }else{
-        $s_current = 'secondary';
-        $n_count = 100; //put it after the last item
-      }
-      $form['menu_items'][$element['link']['mlid']]['#weight'] = $n_count;
-      $form['menu_items'][$element['link']['mlid']]['menu'] = array(
-        '#type' => 'radios',
-        '#title' => t($element['link']['title']),
-        '#default_value' => $s_current,
-        '#options' => $choices,
-        '#disabled_options' => $disabled_choices,
-      );
-      $form['menu_items'][$element['link']['mlid']]['weight'] = array(
-        '#type' => 'hidden',
-        '#default_value' => $n_count,
-        '#attributes' => array('class' => 'element-weight'),
-      );
-      $form['menu_items'][$element['link']['mlid']]['delete'] = array(
-        '#type' => (menu_node_get_node($element['link']['mlid'], FALSE))?'checkbox':'hidden',
-        '#default_value' => 0,
-      );
-    }
+    foreach ($choices as $s_menu => $s_menu_name){
+	    $a_tree = menu_tree_all_data(variable_get("scholar_{$s_menu}_menu",false));    
+	    foreach ($a_tree as $element) {
+	      if ($element['link']['hidden']) continue;
+	        
+	      $mnode = menu_node_get_node($element['link']['mlid']);
+	      if($mnode){
+	        $a_groups = og_get_node_groups($mnode);
+	        if(!array_key_exists($scholar->group->nid,$a_groups)) continue; //is this node in the current group
+	      }
+	        
+	      if(is_array($space->settings['menus']['menu_items']) && 
+	         array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
+	        $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
+	        $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
+	      }else{
+	        $s_current = $s_menu;
+	        $n_count = 100; //put it after the last item
+	      }
+	      $form['menu_items'][$element['link']['mlid']]['#weight'] = $n_count;
+	      $form['menu_items'][$element['link']['mlid']]['menu'] = array(
+	        '#type' => 'radios',
+	        '#title' => t($element['link']['title']),
+	        '#default_value' => $s_current,
+	        '#options' => $choices,
+	        '#disabled_options' => $disabled_choices,
+	      );
+	      $form['menu_items'][$element['link']['mlid']]['weight'] = array(
+	        '#type' => 'hidden',
+	        '#default_value' => $n_count,
+	        '#attributes' => array('class' => 'element-weight'),
+	      );
+	      $form['menu_items'][$element['link']['mlid']]['delete'] = array(
+	        '#type' => (menu_node_get_node($element['link']['mlid'], FALSE))?'checkbox':'hidden',
+	        '#default_value' => 0,
+	      );
+	    }//Each Menu Item
+    }//Each Menu
     
     return $form;
   }

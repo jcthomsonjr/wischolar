@@ -112,12 +112,7 @@ function scholarlayout_layoutsettings(){
     }
   }
   
-  $features = spaces_features($space->type, TRUE);
-  $a_page_types = array('all' => t('All Pages'), 'front' => t('Front Page'));
-  foreach (array_keys($space->features) as $s_feature_key){
-  	if(!array_key_exists($s_feature_key,$features)) continue;
-  	$a_page_types[$s_feature_key] = $features[$s_feature_key]->info['name'];
-  }
+  $a_page_types = scholarlayout_get_pagetypes($space);
   
   $form['page_type'] = array(
 	  '#type' => 'select',
@@ -155,6 +150,22 @@ function scholarlayout_layoutsettings(){
   
   return $form;
 	
+}
+
+function scholarlayout_get_pagetypes($space){
+	
+	static $a_page_types;
+	
+	if($a_page_types) return $a_page_types;
+	
+  $features = spaces_features($space->type, TRUE);
+  $a_page_types = array('all' => t('All Pages'), 'front' => t('Front Page'));
+  foreach (array_keys($space->features) as $s_feature_key){
+    if(!array_key_exists($s_feature_key,$features)) continue;
+    $a_page_types[$s_feature_key] = $features[$s_feature_key]->info['name'];
+  }
+	
+  return $a_page_types;
 }
 
 function scholarlayout_layoutsettings_validate($form, &$form_state){
