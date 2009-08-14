@@ -50,7 +50,9 @@ class scholarmenu_menus implements space_setting {
     	}
     	
     	if(!count($disabled_choices)) break;	
-    }
+    }//Enable menus that are in layouts
+    
+    foreach ($disabled_choices as $disabled) $choices[$disabled] .= "<br/>(disabled)";
     
     foreach ($choices as $s_menu => $s_menu_name){
 	    $a_tree = menu_tree_all_data(variable_get("scholar_{$s_menu}_menu",false));    
