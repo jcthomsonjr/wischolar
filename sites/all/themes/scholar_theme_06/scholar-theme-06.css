@@ -5,15 +5,15 @@ html {
 body {
     background: #44514f;
     color:#2F2F2F;
-    font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif; 
+    font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
-   
+
 #container {
     width: 840px;
     margin: 0 auto;
     background:url(images/bg.gif) top center repeat-y #f6f3ea;
     }
-    
+
 a, a:visited {
     color:#723319;
     }
@@ -28,7 +28,7 @@ h1, h2, h3, #sidebar-right a, #header {
     font-weight: normal;
     color:#484b63;
     }
-    
+
 h1, h2 {
     font-size: 1.4em;
     }
@@ -41,19 +41,30 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 
 #sidebar-left, #header-left {
     width: 160px;
-    right: 190px;
-    padding-left: 20px;
+    right: 181px;
     }
 
 #content-wrapper, #header-wrapper {
     padding-left: 190px;
     }
-    
-#sidebar-right,#header-left {
+
+#sidebar-right, #header-left {
     width:160px;
-    padding-right: 20px;
     }
 
+
+#content-wrapper, #header-wrapper {
+  padding-left: 180px;
+  padding-right: 221px;
+  }
+
+body.sidebar-right #content-wrapper {
+  padding-left: 60px;
+  }
+
+body.sidebar-left #content-wrapper {
+  padding-right: 60px;
+  }
 
 #footer {
     text-align: center;
@@ -92,7 +103,7 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 #header a, #header a:visited {
     text-decoration: none;
     }
-    
+
 #header a:hover {
     color:#F9E433;
     }
@@ -100,23 +111,35 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 #navbar {
     margin: 15px 0;
     }
-        
+
 #navbar li {
     margin: 0 1em;
     text-transform: uppercase;
     font-size: 1.1em;
-    } 
-    
+    }
+
 #navbar li a, #navbar li a:visited {
     color:#D4D5D3;
     }
-    
+
 #navbar li:hover {
     color: #F8EE7C;
     text-decoration: none;
     }
-    
+
 /* MAIN CONTENT AREA */
+
+#content-wrapper {
+  background: url(images/bg.gif) repeat-y;
+  }
+
+#content-wrapper-bottom {
+  clear: both;
+  background: url(images/bot.gif) no-repeat;
+  height: 40px;
+  width: 100%;
+  margin-left: -2px;
+  }
 
 body.sidebar-left #content {
     margin-left: 30px;
@@ -124,11 +147,11 @@ body.sidebar-left #content {
 
 body.sidebar-right #content {
     margin-right: 30px;
-    }    
-    
-    
+    }
+
+
 body.two-sidebars #content {
     margin-left: 20px;
     margin-right: 20px;
-    }    
-    
+    }
+
