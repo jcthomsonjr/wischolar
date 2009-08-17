@@ -20,13 +20,6 @@ function scholar_install() {
   // hook_install has no return value
 }
 
-function scholar_uninstall() {
-	imagecache_preset_delete(imagecache_preset_by_name('default_scholar_logo'));
-	imagecache_preset_delete(imagecache_preset_by_name('square_scholar_logo'));
-	imagecache_preset_delete(imagecache_preset_by_name('landscape_scholar_logo'));
-	imagecache_preset_delete(imagecache_preset_by_name('portrait_scholar_logo'));
-}
-
 function scholar_update_6001() {
   $return = array();
   $t = get_t();
@@ -325,29 +318,3 @@ $content['extra']  = array (
   drupal_execute('content_copy_import_form', $content_type);
 }
 
-function scholar_update_6004() {
-  $return = array();
-  
-  $a_sitelogo_presets = array(
-    'default_scholar_logo' => array('name' => "Large Scholar Site Logo", 'width' => 700, 'height' => 600 ,'action'=> 'imagecache_scale_image'),
-    'square_scholar_logo' => array('name' => "Square Scholar Site Logo", 'width' => 140, 'height' => 140, 'action'=> 'imagecache_scale_and_crop'),
-    'landscape_scholar_logo' => array('name' => "Landscape Scholar Site Logo", 'width' => 180, 'height' => 140, 'action'=> 'imagecache_scale_and_crop'),
-    'portrait_scholar_logo' => array('name' => "Portrait Scholar Site Logo", 'width' => 140, 'height' => 180, 'action'=> 'imagecache_scale_and_crop'),
-  );
-  
-  foreach ($a_sitelogo_presets as $s_preset_key => $a_preset_info){
-  
-  	// Preset
-    $imagecachepreset = imagecache_preset_save(array('presetname' => $s_preset_key));
-    // Action
-    $imagecacheaction = new stdClass ();
-    $imagecacheaction->presetid = $imagecachepreset['presetid'];
-    $imagecacheaction->module = 'imagecache';
-    $imagecacheaction->action = $a_preset_info['action'];
-    $imagecacheaction->data = array('width' => $a_preset_info['width'], 'height' => $a_preset_info['height'] );
-    drupal_write_record('imagecache_action', $imagecacheaction);
-    
-  	$return[] = array('success' => TRUE, 'query' => "Created site logo preset {$a_preset_info['name']}");
-  }
-  return $return;
-}

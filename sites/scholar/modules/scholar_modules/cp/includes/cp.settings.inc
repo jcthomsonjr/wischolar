@@ -84,3 +84,67 @@ function cp_settings_form_validate($form, &$form_state) {
     }
   }
 }
+
+/**
+ * Implementation of hook_imagecache_default_presets().
+ */
+function cp_settings_imagecache_default_presets() {
+  $presets = array();
+  $presets['default_scholar_logo'] = array (
+    'presetname' => 'default_scholar_logo',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_image',
+        'data' => array (
+          'width' => '700',
+          'height' => '600',
+        ),
+      ),
+    ),
+  );
+  $presets['square_scholar_logo'] = array (
+    'presetname' => 'square_scholar_logo',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_and_crop',
+        'data' => array (
+          'width' => '140',
+          'height' => '140',
+        ),
+      ),
+    ),
+  );
+  $presets['landscape_scholar_logo'] = array (
+    'presetname' => 'landscape_scholar_logo',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_and_crop',
+        'data' => array (
+          'width' => '180',
+          'height' => '140',
+        ),
+      ),
+    ),
+  );
+  $presets['portrait_scholar_logo'] = array (
+    'presetname' => 'portrait_scholar_logo',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_and_crop',
+        'data' => array (
+          'width' => '140',
+          'height' => '180',
+        ),
+      ),
+    ),
+  );
+  return $presets;
+}
