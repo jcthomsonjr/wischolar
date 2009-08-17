@@ -7,7 +7,10 @@
  * @return unknown
  */
 function  scholarregister_signup_form() {
-  //print_r(drupal_get_form('user_register'));
+  drupal_add_css(drupal_get_path('module', 'scholarregister') .'/theme/scholarregister.css');
+  // clear any drupal_messages. Ajax takes care of them
+  drupal_get_messages();
+  
   ctools_include ( 'ajax' );
   ctools_add_js ( 'ajax-responder');
   $form = array ();
@@ -45,6 +48,7 @@ function  scholarregister_signup_form() {
   $form ['domain'] = array (
     '#type' => 'textfield',
     '#title' => t ( 'Your Domain Name' ),
+    '#required' => TRUE,
     '#field_prefix' => $base_url . '/',
     '#size' => 20,
     '#default_value' => $form_values ['name'],
@@ -68,19 +72,32 @@ function  scholarregister_signup_form() {
 
 }
 
+function scholarregister_signup_form_validate($form, &$form_state){
+  // get all the errors in the form
+  $msgs = form_get_errors();
+  
+  if (count($msgs)) {
+    $commands = array();
+    foreach ( $msgs as $field_name => $m ) {
+      $commands[] = ctools_ajax_command_html("#$field_name-suffix", $m);
+      $commands[] = ctools_ajax_command_attr("#$field_name-suffix", 'class', 'error');
+    }
+    ctools_ajax_render($commands);
+  }
+
+}
 
 function scholarregister_signup_form_submit($form, &$form_state) {
-  //dpm($form_state);
-
 
   $name = $form_state ['values'] ['username'];
   $email = $form_state ['values'] ['email'];
   $domain = $form_state ['values'] ['domain'];
-
-  //scholarregister_validate_name($name);
-  //scholarregister_validate_mail($email);
-
-
+/*
+  scholarregister_validate_name_or_domain($name, $mode = 'name');
+  scholarregister_validate_name_or_domain($domain, $mode = 'domain');
+  scholarregister_validate_mail($email);
+*/
+  
   $form_s = array ();
   $form_s ['values'] ['name'] = $name;
   $form_s ['values'] ['mail'] = $email;

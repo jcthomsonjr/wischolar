@@ -1,17 +1,11 @@
 <?php
 
-
-function scholarregister_init(){
-   drupal_add_css(drupal_get_path('module', 'scholarregister') .'/theme/scholarregister.css');
-   }
-
-
 function scholarregister_menu(){
   $items = array();
   $items['site/register'] = array(
     'title' => 'Create your web site',
-    'page callback' => 'scholarregister_register',
-    //'page arguments' => array('scholarregister_signup_form'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholarregister_signup_form'),
     'file' => 'scholarregister.pages.inc',
     'access arguments' => array('access content'),
   );
@@ -45,7 +39,6 @@ function scholarregister_menu(){
  * the callback for site/register menu
  */
 function  scholarregister_register() {
-  drupal_add_css ( drupal_get_path ( 'module', 'scholarregister' ) . '/scholarregister.css' );
   ctools_include('modal');
   ctools_include('form');
   ctools_include('ajax');
@@ -54,13 +47,10 @@ function  scholarregister_register() {
     '#redirect' => FALSE,
   );
   $output .= ctools_modal_form_wrapper('scholarregister_signup_form', &$form_state);
-  //$output .= drupal_get_form ( 'scholarregister_signup_form' );
 
+  $output = drupal_get_form('scholarregister_signup_form');
   // we can just return the $output or, if we want to not print
-  // blocks etc., use theme_page(..., FALSE) see phptemplate.engine
-
-
-  //return $output;
+  // blocks etc., use theme_page(..., FALSE)
   print theme ( 'page', $output, FALSE );
 }
 
@@ -155,15 +145,17 @@ function scholarregister_ctools_message($id, $message, $class = 'error'){
   ctools_ajax_render ( $commands );
 }
 
-
+/**
+ *  hook nodeapi 
+ *  Need to take some actions when a new vsite is created
+ */
 function scholarregister_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
       if ($node-> type == variable_get('scholar_content_type', 'scholarsite')) {
-		// categories
+		// Features implement their own default taxonomies 
         $taxs = module_invoke_all('scholar_vocabulary_defaults');
         $new_taxs = $taxs;
-       // $index = 0;
         install_include(array('taxonomy'));
         foreach($taxs as $yindex => $tax) {
           // make the vocab name unique
@@ -175,5 +167,6 @@ function scholarregister_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       break;
   }
 }
+
 
 
