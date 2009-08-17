@@ -103,17 +103,17 @@ class cp_setting_logo implements space_setting {
 	  		
 	  		$info = image_get_info($value['logo_upload']->filepath);
 	  		
-	  		$destination = file_create_path($this->s_logo_location."/".$space->group->nid);
+	  		$destination = file_create_path($this->s_logo_location."/".$space->purl);
 	  		file_check_directory($destination,FILE_CREATE_DIRECTORY);
 	  		
 	  		//Delete cached files
 	      file_scan_directory($destination, '.*', array('.', '..'), 'file_delete', TRUE);
 	      
-	  		$destination = $destination."/".$space->group->nid.".".$info['extension'];
-	  		//require_once drupal_get_path('module', 'imageapi_imagemagick') .'/imageapi_imagemagick.module';
+	  		$destination = $destination."/".$space->purl.".".$info['extension'];
+	  		$fullsize_preset = imagecache_preset_by_name('default_scholar_logo');
 	  		//$o_image = imageapi_image_open($value['logo_upload']->filepath);//,'imageapi_imagemagick');
 	  		
-	  	  if (file_copy($value['logo_upload'], $destination, FILE_EXISTS_REPLACE)) {
+	  		if (imagecache_build_derivative($fullsize_preset['actions'], $value['logo_upload']->filepath, $destination)) {
 	        $value['logo_upload'] = "";
 	        $return['current_logo'] = $destination;
 	      }else {
