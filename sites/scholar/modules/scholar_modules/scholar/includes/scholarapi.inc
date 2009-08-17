@@ -37,19 +37,22 @@ function scholar_content_types(){
   return $result;
 }
 
-function theme_scholar_logo($preset = false, $alt = '' , $title = '', $attributes = ''){
+function theme_scholar_logo($preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false){
   $scholar = scholar_get_scholar();
   if(!$scholar || !$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']){
   	//@todo DO DEFAULT IMAGE
   	return false;
   }	
 	
+  $s_url_extra = "";
+  if($bypass_browser_cache) $s_url_extra .= "?version=".time();
+  
   if($preset){
     return theme('imagecache', $preset, $scholar->settings['logo']['current_logo'], $alt, $title,  $attributes);
   }else{
   	$attributes = drupal_attributes($attributes);
     $url = imagecache_create_url($presetname, $path);
-    return '<img src="/'.$scholar->settings['logo']['current_logo'] .'?v='.time().'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
+    return '<img src="/'.$scholar->settings['logo']['current_logo'] . $s_url_extra .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
   } //use imagecache? or orig?
   
 }
