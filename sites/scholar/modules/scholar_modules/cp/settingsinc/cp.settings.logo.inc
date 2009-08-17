@@ -97,6 +97,9 @@ class cp_setting_logo implements space_setting {
 	  	$value['logo_upload'] = file_save_upload('settings',self::$validators);
 	  	//$return['logo'] = OLD_PATH;
 	  	if($value['logo_upload']){
+	  		if($space->settings['logo'] && $space->settings['logo']['current_logo']){
+	  		  imagecache_image_flush($space->settings['logo']['current_logo']);
+	  		}
 	  		
 	  		$info = image_get_info($value['logo_upload']->filepath);
 	  		
