@@ -89,15 +89,15 @@ function scholarregister_signup_form_validate($form, &$form_state){
 
 function scholarregister_signup_form_submit($form, &$form_state) {
 
-  $name = $form_state ['values'] ['username'];
+  $username = $form_state ['values'] ['username'];
   $email = $form_state ['values'] ['email'];
   $domain = $form_state ['values'] ['domain'];
-/*
-  scholarregister_validate_name_or_domain($name, $mode = 'name');
-  scholarregister_validate_name_or_domain($domain, $mode = 'domain');
-  scholarregister_validate_mail($email);
-*/
   
+  $password =  user_password();
+  $roles = variable_get('scholar_manager_role', 'scholar admin');
+  
+  // 1. create user
+  /*
   $form_s = array ();
   $form_s ['values'] ['name'] = $name;
   $form_s ['values'] ['mail'] = $email;
@@ -105,28 +105,48 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   $form_s ['values'] ['op'] = t ( 'Create new account' );
   drupal_execute ( 'user_register', $form_s );
 
-  $msgs = drupal_get_messages ();
-
+  $msgs = drupal_get_messages();
   foreach ($msgs as $status => $m){
    if ($status == 'error'){
      $commands [] = ctools_ajax_command_replace ( '#submit-suffix', 'The web site cannot be created. Please fix the errors and try again.' );
      ctools_ajax_render ( $commands );
    }
   }
+  */
+  $user = install_add_user($username, $password, $email, $roles = array($roles), $status = 1);
+  if (!$user){ // unlikely
+    $commands [] = ctools_ajax_command_replace ( '#submit-suffix', 'The web site cannot be created.' );
+    ctools_ajax_render ( $commands );    
+  } 
 
   // ok user is created sucessfully 
-  // try to create the site
-  scholarregister_vsite_create($name, $email, $domain);
+  // 2. create the site
+  $viste = scholarregister_vsite_create($name, $email, $domain);
   
-  ctools_add_js ( 'ajax-responder' );
+  if (!$vsite){
+    // first delete the user we just created
+    // user_delete($user, $user -> uid);  // TODO test this
+    $commands [] = ctools_ajax_command_replace ( '#submit-suffix', 'The web site cannot be created.' );
+    ctools_ajax_render ( $commands );  
+  }
+  
+  // site created successfully
+  // 3. send e-mail to the user.
+  
+  
+  
+  // 4. let user know this was all sucessful
+  
+  //ctools_add_js ( 'ajax-responder' );
   $commands = array ();
   global $base_url;
   $message  = '<div id="success-message">';
   $message .= '<p>Success! Your site has been created.</p>';
-  $message .= '<p>The url of your site is ' . $base_url . '/' . $domain . '. <a href="' . $base_url . '/' . $domain . '">Go there now.</a></p>';
+  $message .= '<p>The url of your site is ' . $base_url . '/' . $domain . " " . l(t("Go there now"), $base_url . '/' . $domain);
   $message .= '<p>Check your email account for further details.</p>';
   $message .= '</div>';
   $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
+  $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true);
   ctools_ajax_render ( $commands );
 }
 
