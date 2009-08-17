@@ -49,7 +49,7 @@ function theme_scholar_logo($preset = false, $alt = '' , $title = '', $attribute
   }else{
   	$attributes = drupal_attributes($attributes);
     $url = imagecache_create_url($presetname, $path);
-    return '<img src="/'.$scholar->settings['logo']['current_logo'] .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
+    return '<img src="/'.$scholar->settings['logo']['current_logo'] .'?v='.time().'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
   } //use imagecache? or orig?
   
 }

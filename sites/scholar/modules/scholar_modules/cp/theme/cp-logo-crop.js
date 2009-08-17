@@ -5,3 +5,13 @@ function cp_updateLogo(c){
 		$('#edit-settings-logo-width').val(c.w);
 		$('#edit-settings-logo-height').val(c.h);
 }
+
+if (Drupal.jsEnabled) {
+  $(document).ready(function() {
+	  $('#logo_preview').Jcrop({
+	    aspectRatio: 1.2857,
+	    minSize: [180,140],
+	    onSelect: cp_updateLogo
+	  });
+  });
+}

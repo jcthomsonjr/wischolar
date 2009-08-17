@@ -34,13 +34,6 @@ class cp_setting_logo implements space_setting {
     if ($s_current) {
     	drupal_add_js(drupal_get_path('module', 'cp') . '/theme/jquery.jcrop.min.js');
     	drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-logo-crop.js');
-    	drupal_add_js("$(function() {
-											  $('#logo_preview').Jcrop({
-											    aspectRatio: 1.2857,
-											    minSize: [180,140],
-                          onSelect: updateLogo
-											  });
-											}); ","inline");
     	scholar_include('scholarapi');
       $form['current_logo'] = array('#value' => theme('scholar_logo',false,'','',array('id' => 'logo_preview')));
       $form['x_cord'] = array('#type' => 'hidden');
