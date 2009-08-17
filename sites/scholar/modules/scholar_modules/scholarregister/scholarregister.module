@@ -156,7 +156,24 @@ function scholarregister_ctools_message($id, $message, $class = 'error'){
 }
 
 
-
-
+function scholarregister_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'insert':
+      if ($node-> type == variable_get('scholar_content_type', 'scholarsite')) {
+		// categories
+        $taxs = module_invoke_all('scholar_vocabulary_defaults');
+        $new_taxs = $taxs;
+       // $index = 0;
+        install_include(array('taxonomy'));
+        foreach($taxs as $yindex => $tax) {
+          // make the vocab name unique
+          $new_taxs[$yindex]['name'] = $node -> purl['value'] . '_' . $tax['name'];
+        }
+        // create vocabs
+        scholarvocab_taxonomy_import($node -> nid, $new_taxs);
+      }
+      break;
+  }
+}
 
 

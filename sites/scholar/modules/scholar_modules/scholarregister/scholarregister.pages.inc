@@ -61,16 +61,6 @@ function  scholarregister_signup_form() {
     '#type' => 'submit',
     '#value' => t('Create your site'),
     '#weight' => 20,
-    /*
-    '#ahah' => array(
-       'path' => 'scholarregister/domain_js',
-       'wrapper' => 'search',
-       'progress' => array(
-          'type' => 'bar',
-          'message' => 'wwwwwwwwwwaait...',
-       ),
-     ),
-    */
     '#attributes' => array('class' => 'ctools-use-ajax'),
     '#suffix' => '<div id="submit-suffix"></div>',
     );
@@ -94,25 +84,23 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   $form_s = array ();
   $form_s ['values'] ['name'] = $name;
   $form_s ['values'] ['mail'] = $email;
-  $form_s ['values'] ['pass'] = 'password';
+  $form_s ['values'] ['pass'] = user_password();
   $form_s ['values'] ['op'] = t ( 'Create new account' );
   drupal_execute ( 'user_register', $form_s );
 
   $msgs = drupal_get_messages ();
-  //dpm($msgs);
-  //$commands [] = ctools_ajax_command_replace ( '#submit-suffix', $msgs );
-  //ctools_ajax_render ( $commands );
 
-
-  //dpm($msgs);
   foreach ($msgs as $status => $m){
    if ($status == 'error'){
-     $commands [] = ctools_ajax_command_replace ( '#submit-suffix', 'The web site cannot be created' );
+     $commands [] = ctools_ajax_command_replace ( '#submit-suffix', 'The web site cannot be created. Please fix the errors and try again.' );
      ctools_ajax_render ( $commands );
    }
   }
 
-
+  // ok user is created sucessfully 
+  // try to create the site
+  scholarregister_vsite_create($name, $email, $domain);
+  
   ctools_add_js ( 'ajax-responder' );
   $commands = array ();
   global $base_url;
@@ -123,4 +111,28 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   $message .= '</div>';
   $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
   ctools_ajax_render ( $commands );
+}
+
+
+/**
+ * Create a scholar vsite
+ */
+function scholarregister_vsite_create($name, $email, $domain){
+  install_include(array(
+      'node' 
+  ));
+  $properties = array(
+      'name' => $name, 
+      'type' => variable_get('scholar_content_type', 'scholarsite'), 
+      'promote' => '0', 
+      'purl' => array(
+          'value' => $domain, 
+          'provider' => 'spaces_og', 
+          'id' => NULL 
+      ), 
+      'preset' => 'scholarsite', 
+      'og_description' => "$domain's web site", 
+      'theme' => 'scholar_theme_01', // TODO what is the default theme ? 
+  );
+  $node = install_create_node($title = $domain, $body = NULL, $properties = $properties);
 }
