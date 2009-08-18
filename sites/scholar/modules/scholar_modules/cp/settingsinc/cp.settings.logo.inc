@@ -48,17 +48,18 @@ class cp_setting_logo implements space_setting {
           'onclick' => "$('#edit-settings-logo-crop').val('1');"
         )
 	    );
+	    $form['preview'] = array('#type' => 'item','#title' => t('Preview'),'#value' => theme('scholar_logo','landscape_scholar_logo','','',array(),true));
 	    
-	    $form['preview'] = array(
-          '#title' => 'Preview',
-          '#type' => 'fieldset',
-          '#tree' => TRUE,
-	        '#collapsible' => TRUE,
-	        '#collapsed' => true
-      );
-      $form['preview']['landscape'] = array('#type' => 'item','#title' => t('Landscape'),'#value' => theme('scholar_logo','landscape_scholar_logo'));
-      $form['preview']['square'] = array('#type' => 'item','#title' => t('Square'),'#value' => theme('scholar_logo','square_scholar_logo'));
-      $form['preview']['portrait'] = array('#type' => 'item','#title' => t('Portrait'),'#value' => theme('scholar_logo','portrait_scholar_logo'));
+//	    $form['preview'] = array(
+//          '#title' => 'Preview',
+//          '#type' => 'fieldset',
+//          '#tree' => TRUE,
+//	        '#collapsible' => TRUE,
+//	        '#collapsed' => true
+//      );
+//      $form['preview']['landscape'] = array('#type' => 'item','#title' => t('Landscape'),'#value' => theme('scholar_logo','landscape_scholar_logo'));
+//      $form['preview']['square'] = array('#type' => 'item','#title' => t('Square'),'#value' => theme('scholar_logo','square_scholar_logo'));
+//      $form['preview']['portrait'] = array('#type' => 'item','#title' => t('Portrait'),'#value' => theme('scholar_logo','portrait_scholar_logo'));
       
     }
     

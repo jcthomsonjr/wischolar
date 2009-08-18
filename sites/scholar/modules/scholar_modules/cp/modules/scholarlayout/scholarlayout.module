@@ -190,10 +190,41 @@ function scholarlayout_layoutsettings_submit($form, &$form_state){
       foreach ($a_values as $val) $setting[$val] = $field;
     }
     
+    if($s_page_type == 'all'){
+    	$a_prev_settings = array();
+    	if(array_key_exists('all',$space->settings['layout'])){
+    	  $a_prev_settings = $space->settings['layout'][$s_page_type];
+    	}else{
+	    	$a_prev_settings = _scholarlayout_generate_default_settings_ary();
+    	}//Use saved settings or default settings
+    	$a_new_all_wgts = array_diff($setting,$a_prev_settings);
+    	
+    	foreach(scholarlayout_get_pagetypes($space) as $s_page_nm){
+    		if($s_page_nm == 'all' || !count($a_new_all_wgts)) continue;
+    		if(is_array($space->settings['layout'][$s_page_nm])){
+    			foreach ($a_new_all_wgts as $s_widget_name => $s_location) {
+    				if(!array_key_exists($s_widget_name,$space->settings['layout'][$s_page_nm])){
+    					$space->settings['layout'][$s_page_nm][$s_widget_name] = $s_location;
+    				}//Already on this page?
+    			}//Add New Widgets
+    		}else{
+    			$a_new_settings = _scholarlayout_generate_default_settings_ary($s_page_nm);
+    		  foreach ($a_new_all_wgts as $s_widget_name => $s_location) {
+            if(!array_key_exists($s_widget_name,$a_new_settings)){
+              $a_new_settings[$s_widget_name] = $s_location;
+            }//Already on this page?
+          }//Add new widgets
+          $space->settings['layout'][$s_page_nm] = $a_new_settings;
+    		}//create new settings array or add to existing?
+    	}//Check Each Page Type
+    }//Add new all widgets to all templates
+    
     $space->settings['layout'][$s_page_type] = $setting;
     spaces_save($space);
   }
 }
+
+
 
 
 /**
@@ -360,5 +391,19 @@ function scholarlayout_context_active_contexts_alter(&$contexts){
   }
   
 	return true;	
-	
+}
+
+/**
+ * Create a default settings array from defaults
+ * 
+ * @param string $s_page_type
+ * @return array
+ */
+function _scholarlayout_generate_default_settings_ary($s_page_type = 'all'){
+  $a_default = array();
+  
+  $a_widgets = scholarlayout_filtered_widgets($s_page_type);
+  foreach ($a_prev_settings as $s_setting_id => $widget) $a_default[$s_setting_id] = $widget['region'];
+  
+  return $default;
 }
