@@ -148,6 +148,44 @@ function scholarregister_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   }
 }
 
+function scholarregister_notify_user($vsite, $user){
+  global $language;
+  $params = array();
+  $from = variable_get('site_mail', ini_get('sendmail_from'));
+  
+  $params['subject'] = t('[!site_name] We have created an account for you', array(
+      '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project') 
+  ));
+  $variables = array(
+      '!name' => $user -> name, 
+      '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'), 
+      '!login_url' => user_pass_reset_url($user) . '/login', 
+      '!url' => trim(url('<front>', array(
+          'absolute' => TRUE 
+      )), '/'), 
+      '!password' => $user -> pass,
+  );
+
+    $body .= t("\nHello !name,\n", $variables);
+
+  // @todo: Would love to use one time login link here - alas it is only valid for 24 hrs and needs to be renewed then.
+  $body .= t("\nWe have created an account for you on !site\n!url.\n\nYou can log in to the site with the following username and password\n\n!name\n!password\n\nPlease change your password after the first time you log in.\n\nWelcome to !site", $variables);
+  // Put the completed $body in the $params array for hook_mail
+  $params['body'] = $body;
+  if (! drupal_mail('scholarregister', 'scholar-register-notify', $user -> mail, $language, $params, $from)) {
+    //drupal_set_message(t('Error sending notification mail to user.'), 'error');
+  }
+
+}
+
+
+function scholarregister_mail($key, &$message, $params) {
+  $message['subject'] = $params['subject'];
+  $message['body'] = $params['body'];
+}
+
+
+/** Private functions **/
 
 function _scholarregister_domain_exists($domain){
   // check domain availability

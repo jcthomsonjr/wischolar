@@ -160,7 +160,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   
   // site created successfully
   // 3. send e-mail to the user.
-  
+  scholarregister_notify_user($vsite, $user);
   
   
   // 4. let user know this was all sucessful
