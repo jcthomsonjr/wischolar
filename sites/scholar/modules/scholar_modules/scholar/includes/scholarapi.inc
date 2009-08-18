@@ -57,3 +57,36 @@ function theme_scholar_logo($preset = false, $alt = '' , $title = '', $attribute
   
 }
 
+/**
+ * Create a scholar web site
+ * 
+ * NOTE: this function does not do any validation check.
+ *       It's the caller responsibility
+ * 
+ * @param $name the username
+ * @param $mail the e-mail address of the user creating the site
+ * @param $domain the domain name of the site
+ * @return the node object if successful
+ */
+function scholar_vsite_create($name, $mail, $domain){
+  install_include(array(
+      'node' 
+  ));
+  $properties = array(
+      'name' => $name, 
+      'type' => variable_get('scholar_content_type', 'scholarsite'), 
+      'promote' => '0', 
+      'purl' => array(
+          'value' => $domain, 
+          'provider' => 'spaces_og', 
+          'id' => NULL 
+      ), 
+      'preset' => 'scholarsite', 
+      'og_description' => "$domain's web site", 
+      'theme' => 'scholar_theme_01', // TODO what is the default theme ? 
+  );
+  $node = install_create_node($title = $domain, $body = NULL, $properties = $properties);
+  
+  return $node;
+}
+
