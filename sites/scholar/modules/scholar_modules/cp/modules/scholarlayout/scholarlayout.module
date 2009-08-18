@@ -88,12 +88,12 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
   foreach($regions as $region){
     $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
     $wgts = array_key_exists($region,$scholarlayout_widgets)?$scholarlayout_widgets[$region]:array();
+    _check_for_overrides($wgts,$region);
     $vars['scholarlayout_' . $region] = theme('scholarlayout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
   }
   
   $vars['scholarlayout_form'] = drupal_get_form('scholarlayout_layoutsettings');
 }
-
 
 function scholarlayout_layoutsettings($form_state = NULL){
 	
@@ -198,24 +198,25 @@ function scholarlayout_layoutsettings_submit($form, &$form_state){
 	    	$a_prev_settings = _scholarlayout_generate_default_settings_ary();
     	}//Use saved settings or default settings
     	$a_new_all_wgts = array_diff($setting,$a_prev_settings);
+    	$a_rem_all_wgts = array_diff($a_prev_settings,$setting);
     	
-    	foreach(scholarlayout_get_pagetypes($space) as $s_page_nm){
-    		if($s_page_nm == 'all' || !count($a_new_all_wgts)) continue;
-    		if(is_array($space->settings['layout'][$s_page_nm])){
-    			foreach ($a_new_all_wgts as $s_widget_name => $s_location) {
-    				if(!array_key_exists($s_widget_name,$space->settings['layout'][$s_page_nm])){
-    					$space->settings['layout'][$s_page_nm][$s_widget_name] = $s_location;
-    				}//Already on this page?
-    			}//Add New Widgets
-    		}else{
-    			$a_new_settings = _scholarlayout_generate_default_settings_ary($s_page_nm);
-    		  foreach ($a_new_all_wgts as $s_widget_name => $s_location) {
-            if(!array_key_exists($s_widget_name,$a_new_settings)){
-              $a_new_settings[$s_widget_name] = $s_location;
-            }//Already on this page?
-          }//Add new widgets
-          $space->settings['layout'][$s_page_nm] = $a_new_settings;
-    		}//create new settings array or add to existing?
+    	foreach(array_keys(scholarlayout_get_pagetypes($space)) as $s_page_nm){
+    		if($s_page_nm == 'all' || (!count($a_new_all_wgts) && !count($a_rem_all_wgts))) continue;
+    		$a_new_settings = (is_array($space->settings['layout'][$s_page_nm]))?$space->settings['layout'][$s_page_nm]:_scholarlayout_generate_default_settings_ary($s_page_nm);
+    		
+    	 foreach ($a_new_all_wgts as $s_widget_name => $s_location) {
+          if(!array_key_exists($s_widget_name,$a_new_settings) || $a_new_settings[$s_widget_name] === false){
+            $a_new_settings[$s_widget_name] = $s_location;
+          }//Already on this page?
+        }//Add new widgets
+        
+        foreach ($a_rem_all_wgts as $s_widget_name => $s_location) {
+          if(array_key_exists($s_widget_name,$a_new_settings) && $a_new_settings[$s_widget_name] == $s_location){
+            unset($a_new_settings[$s_widget_name]);
+          }//Already on this page?
+        }//Remove widgets
+    		
+    		$space->settings['layout'][$s_page_nm] = $a_new_settings;
     	}//Check Each Page Type
     }//Add new all widgets to all templates
     
@@ -264,6 +265,7 @@ function scholarlayout_region_widgets_callback(){
   foreach($regions as $region){
   	$widgets = array_key_exists($region,$a_region_wgts)?$a_region_wgts[$region]:array();
     $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
+    if($s_page_type == 'all') _check_for_overrides($widgets,$region,$scholar);
     $a_themed_regions[$region] = theme('scholarlayout_layout_widgets',$widgets, $wgts_id, 'scholarlayout-widgets-list');
   }
   
@@ -406,4 +408,20 @@ function _scholarlayout_generate_default_settings_ary($s_page_type = 'all'){
   foreach ($a_widgets as $s_setting_id => $widget) $a_default[$s_setting_id] = $widget['region'];
   
   return $a_default;
+}
+
+function _check_for_overrides(&$widgets,$s_region,$space = null){
+	if(!$space) $space = scholar_get_scholar();
+	
+	foreach(scholarlayout_get_pagetypes($space) as $s_page_nm => $s_page_readable){
+    if($s_page_nm == 'all' || !count($widgets)) continue;
+    $a_page_settings = (is_array($space->settings['layout'][$s_page_nm]))?$space->settings['layout'][$s_page_nm]:_scholarlayout_generate_default_settings_ary($s_page_nm);
+    
+    foreach ($widgets as $key => $wgt){
+    	$s_wgt_name = $wgt['module']."_".$wgt['delta'];
+    	if(!array_key_exists($s_wgt_name,$a_page_settings) || $a_page_settings[$s_wgt_name] != $s_region){
+    		$widgets[$key]['overides'][] = $s_page_readable;
+    	}
+    }
+	}
 }

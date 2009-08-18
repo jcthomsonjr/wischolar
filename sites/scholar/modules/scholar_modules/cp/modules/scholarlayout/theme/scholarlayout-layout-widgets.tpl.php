@@ -21,6 +21,20 @@
         <li>Settings</li>
       </ul>
 		 </span>
+		 <?php 
+		 if($w['overides']){
+		 	 ?>
+		 	 <br />
+		   <span class="scholarlayout-item-settings">Overrides 
+        <ul class="item-settings-popup">
+		 	 <?php
+		 	  foreach ($w['overides'] as $overide) print "<li>{$overide}</li>";
+		 	 ?>
+		 	  </ul>
+		 	 </span>
+		 	 <?php 
+		 }
+		 ?>
 		</li>
 	<?php endforeach?>
 </ul>
