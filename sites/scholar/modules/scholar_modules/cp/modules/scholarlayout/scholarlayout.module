@@ -329,6 +329,9 @@ function scholarlayout_context_active_contexts_alter(&$contexts){
   	break;
   }
   
+  //@todo add call to scholar_get_front_page 
+  //if(!$a_region_widgets && scholar_is_front_page()) $a_region_widgets = scholarlayout_region_widgets($space,'front');
+  
   if(!$a_region_widgets) $a_region_widgets = scholarlayout_region_widgets($space);
 	
   $a_replacement_block = array();
