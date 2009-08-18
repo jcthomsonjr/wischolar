@@ -192,7 +192,7 @@ function scholarlayout_layoutsettings_submit($form, &$form_state){
     
     if($s_page_type == 'all'){
     	$a_prev_settings = array();
-    	if(array_key_exists('all',$space->settings['layout'])){
+    	if(is_array($space->settings['layout']) && array_key_exists('all',$space->settings['layout'])){
     	  $a_prev_settings = $space->settings['layout'][$s_page_type];
     	}else{
 	    	$a_prev_settings = _scholarlayout_generate_default_settings_ary();
@@ -405,5 +405,5 @@ function _scholarlayout_generate_default_settings_ary($s_page_type = 'all'){
   $a_widgets = scholarlayout_filtered_widgets($s_page_type);
   foreach ($a_widgets as $s_setting_id => $widget) $a_default[$s_setting_id] = $widget['region'];
   
-  return $default;
+  return $a_default;
 }
