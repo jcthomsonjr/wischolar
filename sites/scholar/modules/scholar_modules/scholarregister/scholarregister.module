@@ -35,49 +35,31 @@ function scholarregister_menu(){
   return $items;
 }
 
-/**
- * the callback for site/register menu
- */
-function  scholarregister_register() {
-  ctools_include('modal');
-  ctools_include('form');
-  ctools_include('ajax');
-  $form_state = array(
-    '#ajax' => TRUE,
-    '#redirect' => FALSE,
-  );
-  $output .= ctools_modal_form_wrapper('scholarregister_signup_form', &$form_state);
-
-  $output = drupal_get_form('scholarregister_signup_form');
-  // we can just return the $output or, if we want to not print
-  // blocks etc., use theme_page(..., FALSE)
-  print theme ( 'page', $output, FALSE );
-}
 
 /**
- * ajax callback for username
+ * ajax callback for name
  */
 function scholarregister_name_js() {
   $name = $_POST ['ctools_changed'];
 
-  scholarregister_validate_name_or_domain($name, $mode = 'username');
-  //scholarregister_validate_name($name); // if it fails it will exit (ctools)
+  if ($error = scholarregister_validate_name($name)){
+    scholarregister_ctools_message('#name-suffix', $error, 'error'); 
+  }
 
-  // ok then .. it's good and available
-  $message = 'available';
-  scholarregister_ctools_message('#username-suffix', $message, 'status'); // exits
+  // username is available
+  scholarregister_ctools_message('#name-suffix', "available", 'status'); 
 }
 
 /**
- * ajax callback for email
+ * ajax callback for mail
  */
 function scholarregister_mail_js() {
   $mail = $_POST['ctools_changed'];
-  scholarregister_validate_mail($mail);
+  if ($error = scholarregister_validate_mail($mail)){
+    scholarregister_ctools_message('#mail-suffix', $error, 'error'); 
+  }
 
-  // ok then .. it's good and available
-  $message = 'available';
-  scholarregister_ctools_message('#email-suffix', $message, 'status'); // exits
+  scholarregister_ctools_message('#mail-suffix', $message, 'status'); 
 }
 
 /**
@@ -86,12 +68,23 @@ function scholarregister_mail_js() {
 function scholarregister_domain_js() {
   $domain = $_POST['ctools_changed'];
 
-  scholarregister_validate_name_or_domain($domain, $mode = 'domain');
+  if ($error = scholarregister_validate_domain($domain)){
+    scholarregister_ctools_message('#domain-suffix', $error, 'error'); 
+  }
   // ok then .. it's good and available
-  $message = 'available';
-  scholarregister_ctools_message('#domain-suffix', $message, 'status'); // exits
+  scholarregister_ctools_message('#domain-suffix', "available", 'status'); // exits
 }
 
+
+
+function scholarregister_validate_name($name){
+  if ($error = user_validate_name($name)){
+    return $error;
+  }
+  elseif (_scholarregister_domain_exists($name) || _scholarregister_name_exists($name)){
+    return "username \"$name\" is taken";
+  }
+}
 
 /**
  * email validation function
@@ -100,33 +93,20 @@ function scholarregister_domain_js() {
 function scholarregister_validate_mail($mail) {
   // Validate the e-mail address:
   if ($error = user_validate_mail($mail)) {
-    scholarregister_ctools_message('#email-suffix', $error); // exits
+    return $error;
+  }
+  elseif (_scholarregister_mail_exists($mail)){
+    return "e-mail \"$mail\" already exists";
   }
 }
 
-
-/**
- * validation function for username and domain name (the same !)
- * @param $str
- * @param $mode
- */
-
-function scholarregister_validate_name_or_domain($str, $mode = 'domain'){
-  // first check if domain name / username is valid.
-  // Use the user_validate_name function for convenience
-
-  if ($error = user_validate_name($str)) {
-    scholarregister_ctools_message("#$mode-suffix", $error, 'error'); // exits
+function scholarregister_validate_domain($domain){
+  if ($error = user_validate_name($domain)){  // the same validation as the username
+    return $error;
   }
-
-  // check domain availability
-  $query = "SELECT value FROM {purl} WHERE value='%s'";
-  $existing_purl = db_result(db_query($query, $str));
-
-  if ($existing_purl) {
-     scholarregister_ctools_message("#$mode-suffix", "$mode taken", 'error'); // exits
+  elseif (_scholarregister_domain_exists($domain) || _scholarregister_name_exists($domain)){
+    return "domain \"$domain\" is taken";
   }
-
 }
 
 
@@ -169,4 +149,27 @@ function scholarregister_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 }
 
 
+function _scholarregister_domain_exists($domain){
+  // check domain availability
+  $query = "SELECT value FROM {purl} WHERE value='%s'";
+  $existing_purl = db_result(db_query($query, $domain));
+
+  return $existing_purl ? TRUE : FALSE;
+}
+
+function _scholarregister_name_exists($name){
+  // check domain availability
+  $query = "SELECT name FROM {users} WHERE name='%s'";
+  $existing_name = db_result(db_query($query, $name));
+
+  return $existing_name ? TRUE : FALSE;
+}
+
+function _scholarregister_mail_exists($mail){
+  // check domain availability
+  $query = "SELECT mail FROM {users} WHERE mail='%s'";
+  $existing_mail = db_result(db_query($query, $mail));
+
+  return $existing_mail ? TRUE : FALSE;
+}
 
