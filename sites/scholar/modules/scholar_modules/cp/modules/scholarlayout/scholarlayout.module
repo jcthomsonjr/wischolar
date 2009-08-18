@@ -403,7 +403,7 @@ function _scholarlayout_generate_default_settings_ary($s_page_type = 'all'){
   $a_default = array();
   
   $a_widgets = scholarlayout_filtered_widgets($s_page_type);
-  foreach ($a_prev_settings as $s_setting_id => $widget) $a_default[$s_setting_id] = $widget['region'];
+  foreach ($a_widgets as $s_setting_id => $widget) $a_default[$s_setting_id] = $widget['region'];
   
   return $default;
 }
