@@ -178,3 +178,31 @@ function scholarmenu_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
+/**
+ * Implementation of hook_scholar_widgets
+ * @return array
+ */
+function scholarmenu_scholar_widgets(){
+  
+  return array(
+    'scholarmenu_0' => array(
+      'module' => 'scholarmenu',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'navbar',
+      'status' => '0',
+      'label' => 'Scholar primary menu',
+      'type' => 'context_ui',
+    ),
+    'scholarmenu_1' => array(
+      'module' => 'scholarmenu',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'left',
+      'status' => '0',
+      'label' => 'Scholar secondary menu',
+      'type' => 'context_ui',
+    ),
+  );
+}
+
