@@ -158,12 +158,12 @@ function cp_node_forms_custom_fieldsets($form, $type){
 /**
  * Implementation of hook_form_alter()
  */
-function cp_node_forms_form_alter(&$form, $form_state, $form_id) { 
+function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
   global $conf;
-  
+
   scholar_include('scholarapi');
   $types = array_keys(scholar_content_types());
-  
+
   //if editing an exisitng node, load the node
   $node = isset($form['#node']->nid) ? node_load(array('nid' => $form['#node']->nid)) : NULL;
 
@@ -173,65 +173,65 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
 
   foreach($types as $type){
     if ($type . '_node_form' == $form_id) {
-      
+
       //temporary placement of this function, CLEARING THIS VAR EVERY TIME IS UNESSESARY
-       _cp_node_forms_clear_vertical_tabs($form['type']['#value']);
-       
-        //create cck fieldgroup and move the filefield form elements - only if necessary
-        if (cp_node_forms_cck_group($type)){
-       
-            //clear the cck cache
-            cache_clear_all('fieldgroup_data', 'cache_content');
-            cache_clear_all($cid = 'content_type_info', 'cache_content');
-            
-          //if new cck fieldgroup was created clear vertical tabs for this type
-          _cp_node_forms_clear_vertical_tabs($form['type']['#value']);
-          
-        }
+      _cp_node_forms_clear_vertical_tabs($form['type']['#value']);
+
+      //create cck fieldgroup and move the filefield form elements - only if necessary
+      if (cp_node_forms_cck_group($type)){
+
+        //clear the cck cache
+        cache_clear_all('fieldgroup_data', 'cache_content');
+        cache_clear_all($cid = 'content_type_info', 'cache_content');
+
+        //if new cck fieldgroup was created clear vertical tabs for this type
+        _cp_node_forms_clear_vertical_tabs($form['type']['#value']);
+
+      }
 
       //if there is no vertical tabs system variable for this type, then set it here
       if(!$conf['vertical_tabs_fieldsets_'. $type]){
         //add the default fieldsets
         $default_fieldsets = vertical_tabs_fieldsets($type);
         //add the custom fieldsets (taxonomy and files)
-        $custom_fieldsets = cp_node_forms_custom_fieldsets($form, $type);       
+        $custom_fieldsets = cp_node_forms_custom_fieldsets($form, $type);
         //set the system variable combine both default and custom fieldsets
         variable_set(check_plain('vertical_tabs_fieldsets_'. $type), array_merge($default_fieldsets, $custom_fieldsets));
-         //dpm($custom_fieldsets);
+        //dpm($custom_fieldsets);
       }
-   
-        /*** Scholar Site Selection ***/
-        $val = $form['spaces_og']['gid']['#default_value']; 
-        unset($form['spaces_og']);
-        $form['spaces_og']['#type'] = 'value';
-        $form['spaces_og']['#value'] = array('gid' => $val);
- 
+
+      /*** Scholar Site Selection ***/
+      $val = $form['spaces_og']['gid']['#default_value'];
+      unset($form['spaces_og']);
+      $form['spaces_og']['#type'] = 'value';
+      $form['spaces_og']['#value'] = array('gid' => $val);
+
       /*** Tags & Categories Section (Taxonomy) ***/
 
       //if the form has taxonomy
       if ($form['taxonomy']) {
         if($form['taxonomy']['#type'] == 'fieldset'){
-        //if taxonomy fieldset already exists, just change title 
-        $form['taxonomy']['#title'] = 'Tags & Categories';
-        $form['taxonomy']['#weight'] = 2;
+          //if taxonomy fieldset already exists, just change title
+          $form['taxonomy']['#title'] = 'Tags & Categories';
+          $form['taxonomy']['#weight'] = 2;
         }
         //no fieldset exists for taxonomy
-    else{
-        $form['scholartaxonomy'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('Tags & Categories'),
-        '#collapsible' => FALSE,
-        '#collapsed' => FALSE,
-        '#weight' => 2,
-        );
+        else{
+          $form['scholartaxonomy'] = array(
+          '#type' => 'fieldset',
+          '#title' => t('Tags & Categories'),
+          '#collapsible' => FALSE,
+          '#collapsed' => FALSE,
+          '#weight' => 2,
+          );
 
-        //add a description or new title, etc.
-        $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
+          //add a description or new title, etc.
+          $form['taxonomy'][1]['#description'] = t('Select the appropriate category for this post');
 
-        $scholartax =  $form['taxonomy'];
-        unset($form['taxonomy']);
-        $form['scholartaxonomy']['taxonomy'] =  $scholartax;
-      }
+          $scholartax =  $form['taxonomy'];
+          unset($form['taxonomy']);
+          $form['scholartaxonomy']['taxonomy'] =  $scholartax;
+        }
       }
       /*** Publishing Options Section ***/
 
@@ -280,10 +280,56 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
       '#prefix' => $node->pubstatus == 'pubondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
       '#suffix' => $node->pubstatus == 'pubondate' ? '' : '</div>',
       );
-    
+
       // adding validation function
       $form['#validate'][] = 'cp_node_forms_form_validate';
+
     }
+  }
+  //adding submit function for bio (page) node type
+  if ($form_id == 'page_node_form'){
+    $form['frontpage']['#type'] = 'value';
+    $form['frontpage']['#value'] = ($_GET['frontpage'] == 'true') ? 1 : 0;
+  }
+}
+ 
+/**
+ * Validation logic here mainly used to convert $form_state values 
+ * retrieved form 'pubstatus' option for core Drupal node form handler
+ *
+ * @param unknown_type $form
+ * @param unknown_type $form_state
+ */
+function cp_node_forms_form_validate($form, &$form_state){ 
+
+  switch($form_state['values']['pubstatus']){
+
+    case 'publish':
+      //publish node
+      $form_state['values']['status'] = 1;
+      break;
+      
+   case 'save':
+      //unpublish node
+      $form_state['values']['status'] = 0;
+      //need to save a revision
+      $form_state['values']['revision'] = 1;
+       break;
+       
+    case 'pubondate':
+      
+      $form_state['values']['status'] = 0;
+      
+      //if the form is set to "Publish on another date" and no date is selected
+      if (!isset($form_state['values']['pubdate'])){   
+      form_set_error('pubdate', t('A date needs to be selected for this node to be published.'));
+      }
+      
+      //if the form is set to "Publish on another date" and the date selected is prior to today's date, return form error
+       if (isset($form_state['values']['pubdate']) && (date_convert($form_state['values']['pubdate'], DATE_DATETIME, DATE_UNIX, TIMEZONE) < time() )) {   
+      form_set_error('pubdate', t('When choosing "Publish on another date", you must select a date that occurs after today\'s date.'));
+      }      
+      break;
   }
 }
 
@@ -336,45 +382,6 @@ function cp_node_forms_get_frontpage_text($node = NULL){
 }
 
 /**
- * Validation logic here mainly used to convert $form_state values 
- * retrieved form 'pubstatus' option for core Drupal node form handler
- *
- * @param unknown_type $form
- * @param unknown_type $form_state
- */
-function cp_node_forms_form_validate($form, &$form_state){ echo "<pre>"; print_r($form_state); die;
-  switch($form_state['values']['pubstatus']){
-
-    case 'publish':
-      //publish node
-      $form_state['values']['status'] = 1;
-      break;
-      
-   case 'save':
-      //unpublish node
-      $form_state['values']['status'] = 0;
-      //need to save a revision
-      $form_state['values']['revision'] = 1;
-       break;
-       
-    case 'pubondate':
-      
-      $form_state['values']['status'] = 0;
-      
-      //if the form is set to "Publish on another date" and no date is selected
-      if (!isset($form_state['values']['pubdate'])){   
-      form_set_error('pubdate', t('A date needs to be selected for this node to be published.'));
-      }
-      
-      //if the form is set to "Publish on another date" and the date selected is prior to today's date, return form error
-       if (isset($form_state['values']['pubdate']) && (date_convert($form_state['values']['pubdate'], DATE_DATETIME, DATE_UNIX, TIMEZONE) < time() )) {   
-      form_set_error('pubdate', t('When choosing "Publish on another date", you must select a date that occurs after today\'s date.'));
-      }      
-      break;
-  }
-}
-
-/**
  * Implementation of hook_nodeapi
  *
  * @param unknown_type $node
@@ -393,6 +400,15 @@ function cp_node_forms_nodeapi(&$node, $op){
       break;
 
     case 'insert':
+      
+        //if frontpage is set to true in URL, then make bio frontpage type and set the node as frontpage
+        if ($node->frontpage == 1){
+          $space = spaces_get_space();
+          $space->settings['front']['frontpage'] = 'bio';
+          $space->settings['bio']['nid'] =$node->nid;
+          spaces_save($space);
+        }
+                 
       $pubdate = $node->pubstatus == 'pubondate' ? date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE) : 0;
       
       $sql = db_query("INSERT INTO {cp_node_forms} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
@@ -418,6 +434,12 @@ function cp_node_forms_nodeapi(&$node, $op){
       break;
       
       case 'delete': 
+      //remove bio setting if node being deleted is set as default bio
+      $space = spaces_get_space();
+      if ($node->nid == $space->settings['bio']['nid']){
+        unset($space->settings['bio']);
+        spaces_save($space);        
+      }
       $sql_delete = db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
       break;
   }
