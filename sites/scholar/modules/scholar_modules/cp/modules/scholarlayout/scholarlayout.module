@@ -86,8 +86,7 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
   $scholarlayout_widgets = scholarlayout_region_widgets();
   
   foreach($regions as $region){
-    $r = str_replace('_','-', $region);
-    $wgts_id = 'scholarlayout-' . $r;
+    $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
     $wgts = array_key_exists($region,$scholarlayout_widgets)?$scholarlayout_widgets[$region]:array();
     $vars['scholarlayout_' . $region] = theme('scholarlayout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
   }
@@ -96,13 +95,15 @@ function scholarlayout_preprocess_scholarlayout_layout(&$vars){
 }
 
 
-function scholarlayout_layoutsettings(){
+function scholarlayout_layoutsettings($form_state = NULL){
 	
 	$a = func_get_args();
 	$regions = array_keys(system_region_list('scholar_base'));
-  $form = array();
+  $form = array('#attributes' => array('onSubmit' => 'scholarlayout_afterdrag(null,null)'));
   $space = scholar_get_scholar();
 
+  //$s_page_type = ($form_state && $form_state['post'])?'all':$form_state['post']['page_type']
+  
   foreach($regions as $region){
     $r = str_replace('_','-', $region);
     $wgts_id = 'scholarlayout-' . $r;
@@ -126,6 +127,7 @@ function scholarlayout_layoutsettings(){
 	        'wrapper' => 'scholarlayout-container',
 	        'progress' => array('type' => 'throbber', 'message' => t('Loading Page...')),
           'effect' => 'fade',
+          'method' => 'replaceWith',
     ),
 	);
 	
@@ -185,7 +187,7 @@ function scholarlayout_layoutsettings_submit($form, &$form_state){
     	$field = str_replace('-','_',str_replace('scholarlayout-','',$field));
     	if(!in_array($field,$regions)) continue;
       $a_values = strlen($value)?split("\|",$value):array();
-      foreach ($a_values as $val) $setting[str_replace('-','_',$val)] = $field;
+      foreach ($a_values as $val) $setting[$val] = $field;
     }
     
     $space->settings['layout'][$s_page_type] = $setting;
@@ -234,31 +236,45 @@ function scholarlayout_region_widgets_callback(){
     $a_themed_regions[$region] = theme('scholarlayout_layout_widgets',$widgets, $wgts_id, 'scholarlayout-widgets-list');
   }
   
-  $output= $a_themed_regions['header_main'].
+  $output= '<div id="scholarlayout-container" class="pad">'.
+           $a_themed_regions['header_main'].
 				   $a_themed_regions['header_left'].
 				   $a_themed_regions['header_right'].
 				   $a_themed_regions['navbar'].
 				   $a_themed_regions['left'].
-				   $a_themed_regions['right'];
+				   $a_themed_regions['right']."</div>";
 				  
 	drupal_json(array('status' => TRUE, 'data' => $output));
 }
 
-
+/**
+ * Get the blocks that are avalible given a context
+ * 
+ * @param $page_type
+ * @return array
+ */
 function scholarlayout_filtered_widgets($page_type='all'){
   
-	$a_widgets = scholarwidgets_scholar_default_widgets();
+	$contexts = context_contexts();
+  $a_widgets = $contexts['cp-section-layout']->block;
   
-  $features = array_keys(spaces_features($space->type, TRUE));
-  foreach ($a_widgets as $s_key => $a_widget){
-    if(!in_array($a_widget['module'],$features) || $page_type == $a_widget['module']) continue;
-    
-    unset($a_widgets[$s_key]);
+  $features = spaces_features($space->type, TRUE);
+  if(array_key_exists($page_type,$features)){
+  	foreach ($features[$page_type]->info['features']['context'] as $s_sub_context){
+  		$a_widgets = array_merge($a_widgets,$contexts[$s_sub_context]->block);
+  	}
   }
   
   return $a_widgets;
 }
 
+/**
+ * Returns an associative array by region with the widgets sorted correctly
+ * 
+ * @param scholar $scolar
+ * @param string $page_type
+ * @return array
+ */
 function scholarlayout_region_widgets($scolar = false,$page_type='all'){
   if(!$scholar) $scholar = scholar_get_scholar();
   
@@ -272,6 +288,7 @@ function scholarlayout_region_widgets($scolar = false,$page_type='all'){
   $a_site_settings = false;
   if(array_key_exists('layout',$scholar->settings) && array_key_exists($page_type,$scholar->settings['layout'])){
   	$a_site_settings = $scholar->settings['layout'][$page_type];
+  	$a_order = array_keys($a_site_settings);
   }
   
   $a_region_widgets = array();
@@ -279,11 +296,66 @@ function scholarlayout_region_widgets($scolar = false,$page_type='all'){
   	if(!$a_site_settings && $widget['region']){
       $a_region_widgets[$widget['region']][] = $widget;
   	}elseif ($a_site_settings && array_key_exists($s_widget_key,$a_site_settings)){
-  		$a_region_widgets[$a_site_settings[$s_widget_key]][] = $widget;
+  		$a_region_widgets[$a_site_settings[$s_widget_key]][" ".array_search($s_widget_key,$a_order)] = $widget;
   	}else{
   		$a_region_widgets['unused'][] = $widget;
   	}
   }
   
+  foreach ($a_region_widgets as $region => $a_widgets) ksort($a_region_widgets[$region]);
+  
   return $a_region_widgets;
+}
+
+
+/**
+ * Alter the blocks avalible on a given page,  Apply users saved settings
+ * @param array(spaces_context) $contexts
+ * @return boolean
+ */
+function scholarlayout_context_active_contexts_alter(&$contexts){
+	if(!array_key_exists('cp-section-layout',$contexts)) return;
+	$a_region_widgets = false;
+	$o_feature = false;
+	$space = scholar_get_scholar();
+	
+	$features = spaces_features();
+  foreach ($features as $feature) {
+  	$feature_contexts = drupal_map_assoc(spaces_features_items('context', $feature->name));
+  	if(!array_intersect($feature_contexts,array_keys($contexts))) continue;
+  	
+  	$o_feature = $feature;
+  	$a_region_widgets = scholarlayout_region_widgets($space,$feature->name);
+  	break;
+  }
+  
+  if(!$a_region_widgets) $a_region_widgets = scholarlayout_region_widgets($space);
+	
+  $a_replacement_block = array();
+  $a_feat_replacement_block = array();
+  foreach ($a_region_widgets as $s_region => $a_region){
+  	$n_weight = 0;
+  	foreach ($a_region as $a_widget){
+  		$a_widget['region'] = $s_region;
+  		$a_widget['weight'] = $n_weight++;
+  		if($o_feature && $o_feature->name == $a_widget['module']){
+  			$a_feat_replacement_block[] = $a_widget;
+  		}else{
+  			$a_replacement_block[] = $a_widget;
+  		}
+  	}
+  }
+  
+  $contexts['cp-section-layout']->block = $a_replacement_block;
+  if($o_feature){
+  	foreach (drupal_map_assoc(spaces_features_items('context', $feature->name)) as $s_context) {
+  		if(array_key_exists($s_context,$contexts)){
+  			$contexts[$s_context]->block = $a_feat_replacement_block;
+  			$a_feat_replacement_block = array();
+  		}
+  	}
+  }
+  
+	return true;	
+	
 }

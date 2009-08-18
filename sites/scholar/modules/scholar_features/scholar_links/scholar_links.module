@@ -66,29 +66,3 @@ function scholar_links_scholar_vocabulary_defaults() {
   ) 
  );
 }
-
-
-function scholar_links_scholar_widgets(){
-  
-  return array(
-    'scholar_links_0' => array(
-      'module' => 'scholar_links',
-      'delta' => '0',
-      'weight' => 20,
-      'region' => 'header_left',
-      'status' => '0',
-      'label' => 'Scholar Link logo',
-      'type' => 'context_ui',
-    ),
-    'scholar_links_1' => array(
-      'module' => 'scholar_links',
-      'delta' => '1',
-      'weight' => 20,
-      'region' => 'header_main',
-      'status' => '0',
-      'label' => 'Scholar Link info',
-      'type' => 'context_ui',
-    ),
-  );
-  
-}

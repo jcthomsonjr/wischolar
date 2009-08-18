@@ -1,14 +1,5 @@
 <?php
 
-function scholarwidgets_scholar_default_widgets(){
-	static $a_blocks;
-	if(!$a_blocks){
-  	$a_blocks = module_invoke_all('scholar_widgets');
-	}
-	
-	return $a_blocks;
-}
-
 function scholarwidgets_block($op = 'list', $delta = 0, $edit = array()) {
   if ($op == 'list') {
     $blocks[0]['info'] = t('Scholar site logo'); 
