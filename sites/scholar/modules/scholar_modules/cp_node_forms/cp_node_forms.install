@@ -19,15 +19,7 @@ function cp_node_forms_schema() {
   'default' => 0,
   ),
 
-  'pubstatus' => array(
-  'description' => t("Contains value of the radio button selection of pubstatus"),
-  'type' => 'varchar',
-  'length' => 255,
-  'not null' => TRUE,
-  'default' => '',
-  ),
-  
-  'pubondate' => array(
+  'pubdate' => array(
   'description' => t("The date when the node should be set as published"),
   'type' => 'int',
   'length' => 11,
@@ -49,7 +41,7 @@ function cp_node_forms_schema() {
  */
 function cp_node_forms_install() {
    drupal_install_schema('cp_node_forms');
-   db_query("UPDATE {system} SET weight = 10 WHERE name = '%s'", 'cp_node_forms');   
+   db_query("UPDATE {system} SET weight = 20 WHERE name = '%s'", 'cp_node_forms');   
 }
 
 /**
