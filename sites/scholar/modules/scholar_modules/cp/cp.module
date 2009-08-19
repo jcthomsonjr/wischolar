@@ -513,13 +513,14 @@ function _cp_init_theme(){
  */
 function cp_flag_default_flags() {
   scholar_include('scholarapi');
-  
+  $scholar_types = array_keys(scholar_content_types());
+ 
   $flags = array();
   $flags[] = array(
   'content_type' => 'node',
   'name' => 'frontpage',
   'title' => 'Save to Front Page',
-  'types' => array_keys(scholar_content_types()), 
+  'types' => $scholar_types, 
   'roles' => array(
   0 => '2',
   ),
@@ -542,7 +543,7 @@ function cp_flag_default_flags() {
   'content_type' => 'node',
   'name' => 'featuredposts',
   'title' => 'Featured Posts',
-  'types' => array_keys(scholar_content_types()), 
+  'types' => $scholar_types, 
   'roles' => array(
   0 => '2',
   ),
@@ -564,7 +565,9 @@ function cp_flag_default_flags() {
   return $flags;
 }
 
-
+/**
+ * Implementation of hook_link().
+ */
 function cp_link($type, $object, $teaser = FALSE){
 
   //check font page settings here, only execute if front page setting equals flag
