@@ -59,17 +59,5 @@ function _scholar_testingcontent(){
 				og_save_subscription($node -> nid, $uid, array('is_active' => 1));	
 			}
 		}
-		
-		// categories
-        $taxs = module_invoke_all('scholar_vocabulary_defaults');
-        $new_taxs = $taxs;
-       // $index = 0;
-        install_include(array('taxonomy'));
-        foreach($taxs as $yindex => $tax) {
-          // make the vocab name unique
-          $new_taxs[$yindex]['name'] = $node -> purl['value'] . '_' . $tax['name'];
-        }
-        // create vocabs
-        scholarvocab_taxonomy_import($node -> nid, $new_taxs);
 	}
 }
