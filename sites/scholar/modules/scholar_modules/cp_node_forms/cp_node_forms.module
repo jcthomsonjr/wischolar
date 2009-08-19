@@ -386,7 +386,7 @@ function cp_node_forms_nodeapi(&$node, $op){
   switch($op){
 
     case 'load':
-      $pubstatus = cp_node_forms_get_pubstatus($node); dpm($pubstatus);
+      $pubstatus = cp_node_forms_get_pubstatus($node);
       $node->pubstatus = $pubstatus;
       
       if ($pubstatus == 2){
