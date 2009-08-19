@@ -72,6 +72,8 @@ function scholarvocab_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 function scholarvocab_block_view() {
+  //TODO it seems like scholar_get_scholar does not work here
+  // cant get space from within a block
   $group_node = og_get_group_context ();
   $site = spaces_load ( 'og', $group_node->nid, TRUE );
   $sid = $group_node -> nid;

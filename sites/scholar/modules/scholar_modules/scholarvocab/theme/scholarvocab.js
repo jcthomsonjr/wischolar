@@ -20,6 +20,19 @@ Drupal.ScholarVocab.Rename = function(){
 }
 
 Drupal.behaviors.scholarvocab = function(context) {
-	$('ul.admin a.rename:not(.scholarvocab-processed)', context).addClass('scholarvocab-processed').click(Drupal.ScholarVocab.Rename).addClass('ctools-use-ajax');
+  var rename_link = $('ul.admin a.edit:not(.scholarvocab-processed)', context);
+  var dest = rename_link.attr('href');	
+  
+ 
+ 
+    rename_link.click(Drupal.ScholarVocab.Rename);
+    rename_link.click(Drupal.CTools.AJAX.clickAJAXLink);
+
+		
+  //rename_link.addClass('scholarvocab-processed')
+  //click(Drupal.CTools.AJAX.clickAJAXLink);
+  //return false;
+	
+	//$('ul.admin a.rename:not(.scholarvocab-processed)', context).addClass('scholarvocab-processed').click(Drupal.ScholarVocab.Rename).addClass('ctools-use-ajax');
 	//click(Drupal.CTools.AJAX.clickAJAXLink);
 }
