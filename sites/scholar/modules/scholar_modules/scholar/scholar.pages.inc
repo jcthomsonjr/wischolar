@@ -34,7 +34,29 @@ function scholar_home_bio($bio_nid){
 
 function scholar_home_feature($node_options){
 
-  return $result;
+  //initialize the scholar base view
+  $view = views_get_view('scholar_view_base');
+  
+  
+  $view -> display['default'] -> display_options['filters']['type'] = array(
+    'operator' => 'in',
+    'value' => array(
+      'link' => 'link' // TODO replace this with scholar_node_options()
+    ),
+    'group' => 0,
+    'exposed' => FALSE,
+    'id' => 'type',
+    'table' => 'node',
+    'field' => 'type',
+    'relationship' => 'none',
+  );
+  $view->init();
+  $view->set_display('default');
+
+
+  $view -> execute();
+  return $view -> render();
+
 }
 
 function scholar_home_html($front_nid){
