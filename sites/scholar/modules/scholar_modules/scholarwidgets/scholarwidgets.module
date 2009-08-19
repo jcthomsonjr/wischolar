@@ -33,8 +33,8 @@ function scholarwidgets_basicinfo(){
 	
 	$block = array();
 	$block['subject'] = t('');
-	$block['content'] = '';
-	
+	$block['content'] = 'OK';
+	dpm($scholar->settings);
 	if(!array_key_exists('site',$scholar->settings)) return $block;
 	
 	
