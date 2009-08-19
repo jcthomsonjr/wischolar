@@ -93,16 +93,12 @@ function cp_node_forms_node_type($op, $info){
  */
 function cp_node_forms_get_publishing_options($options, $node = NULL){
 
-  if ((!isset($node)) || ($node->pubstatus == 'save' || $node->pubstatus == 'pubondate')){
-    unset($options['unpublish']);
-  }
-
   if($node->status == '1'){
-    $options['publish'] = t('Keep this post published');
+    $options[1] = t('Keep this post published');
   }
 
-  if($node->status !== '1' && $node->pubstatus == 'unpublish'){
-    $options['unpublish'] = t('Keep this post unpublished');
+  if($node->status == '0'){
+    $options[0] = t('Keep this post unpublished');
   }
   reset($options);
   return $options;
@@ -277,13 +273,12 @@ function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
       '#date_format' => DATE_FORMAT,
       '#default_value' => cp_node_forms_publishdate_value($node, $pubstatus_value),
       '#weight' => 4,
-      '#prefix' => $node->pubstatus == 'pubondate' ? '' : '<div id="pubdate" class="hide-pubdate">',
-      '#suffix' => $node->pubstatus == 'pubondate' ? '' : '</div>',
+      '#prefix' => $node->pubstatus == 2 ? '' : '<div id="pubdate" class="hide-puboption">',
+      '#suffix' => $node->pubstatus == 2 ? '' : '</div>',
       );
 
       // adding validation function
       $form['#validate'][] = 'cp_node_forms_form_validate';
-
     }
   }
   //adding submit function for bio (page) node type
@@ -304,19 +299,19 @@ function cp_node_forms_form_validate($form, &$form_state){
 
   switch($form_state['values']['pubstatus']){
 
-    case 'publish':
+    case 1:
       //publish node
       $form_state['values']['status'] = 1;
       break;
       
-   case 'save':
+   case 0:
       //unpublish node
       $form_state['values']['status'] = 0;
       //need to save a revision
       $form_state['values']['revision'] = 1;
        break;
        
-    case 'pubondate':
+    case 2:
       
       $form_state['values']['status'] = 0;
       
@@ -338,9 +333,9 @@ function cp_node_forms_form_validate($form, &$form_state){
  */
 function _cp_node_forms_default_options(){
   return array(
-  'publish' => t('Publish now'),
-  'save' => t('Save as draft (Unpublish this post)'),
-  'pubondate' => t('Publish on another date'),
+   1 => t('Publish now'),
+   0 => t('Save as draft (Unpublish this post)'),
+   2 => t('Publish on another date'),
   );
 }
 
@@ -351,10 +346,10 @@ function _cp_node_forms_default_options(){
 function cp_node_forms_publishdate_value($node = NULL, $pubstatus_value = NULL){
   //this is an existing node
   if (isset($node)){
-    if($pubstatus_value == 'save' || $pubstatus_value == 'publish'){
+    if($pubstatus_value == 0 || 1){
       $value = '';
     }
-    if($pubstatus_value == 'pubondate'){
+    if($pubstatus_value == 2){
      $value = format_date($node->pubdate, $type = 'custom', $format = "Y-m-d");
     }
 
@@ -391,14 +386,29 @@ function cp_node_forms_nodeapi(&$node, $op){
   switch($op){
 
     case 'load':
-      $pubstatus = cp_node_forms_get_pubstatus($node);
+      $pubstatus = cp_node_forms_get_pubstatus($node); dpm($pubstatus);
       $node->pubstatus = $pubstatus;
       
-      if ($pubstatus == 'pubondate'){
-      $node->pubdate = db_result(db_query("SELECT pubondate from {cp_node_forms} WHERE nid = %d", (int)$node->nid));
+      if ($pubstatus == 2){
+      $node->pubdate = db_result(db_query("SELECT pubdate from {cp_node_forms} WHERE nid = %d", (int)$node->nid));
       }
       break;
 
+      
+      case 'presave':
+        
+        switch ($node->pubstatus) {
+        	case 1:
+        		$node->status = 1;
+        		db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
+        		break;
+        
+        	case 0:
+        	  $node->status = 0;
+        	  db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
+        		break;
+        }
+      
     case 'insert':
       
         //if frontpage is set to true in URL, then make bio frontpage type and set the node as frontpage
@@ -409,27 +419,21 @@ function cp_node_forms_nodeapi(&$node, $op){
           spaces_save($space);
         }
                  
-      $pubdate = $node->pubstatus == 'pubondate' ? date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE) : 0;
-      
-      $sql = db_query("INSERT INTO {cp_node_forms} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
-      (int)$node->nid, $node->pubstatus, $pubdate);
-      break;
+        if ($node->pubstatus == 2) {
+          $pubdate =  date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE);
+          $sql = db_query("INSERT INTO {cp_node_forms} (nid, pubdate) VALUES (%d, %d)", (int)$node->nid, $pubdate);
+          break;
+        }
+          
 
     case 'update':
-
-      $sql_delete = db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
-
-      if ($node->pubstatus == 'pubondate'){
+      if ($node->pubstatus == 2){
+        $sql_delete = db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
+        
         //convert $node->pubdate into unix timestamp
-        $pubdate_timestamp = date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE);
-
-        $sql = db_query("INSERT INTO {cp_node_forms} (nid, pubstatus, pubondate) VALUES (%d, '%s', %d)",
-        (int)$node->nid, $node->pubstatus,  $pubdate_timestamp );
-      }
-
-      else{
-        $sql = db_query("INSERT INTO {cp_node_forms} (nid, pubstatus) VALUES (%d, '%s')",
-        (int)$node->nid, $node->pubstatus);
+        $pubdate = date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE);
+        $sql = db_query("INSERT INTO {cp_node_forms} (nid, pubdate) VALUES (%d, %d)",
+        (int)$node->nid,  $pubdate);
       }
       break;
       
@@ -469,8 +473,15 @@ function cp_node_forms_get_workflow($type, $keyword){
  */
 function cp_node_forms_get_pubstatus($node = NULL, $type = NULL){
   if (isset($node)){
+    if ($node->status == '1'){
+      return 1;
+    }
+    else{
     //editing an exisiting node, populate the choice that the user last selected
-    return db_result(db_query("SELECT pubstatus from {cp_node_forms} WHERE nid = %d", (int)$node->nid));
+    $pubdate = db_result(db_query("SELECT pubdate FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid));
+    return ($pubdate > 0) ? 2 : 0; 
+    }
+      
   }
   else{
     //creating new node
@@ -480,17 +491,17 @@ function cp_node_forms_get_pubstatus($node = NULL, $type = NULL){
     if ($type_settings && is_array($type_settings)){
       //if status is a value in $type_settings array then content type has been set to 'publish now' by default
       if (in_array('status', $type_settings)){
-        return 'publish';
+        return 1;
       }
       //custom settings are set to not publish by default
       //TODO: maybe return 'save as draft' or should I not return any choice here ???
       else {
-        return 'save';
+        return 0;
       }
     }
     //if no custom settings are found for this content type, then make 'publish now' the default
     else{
-      return 'publish';
+      return 1;
     }
   }
 }
@@ -508,16 +519,15 @@ function _cp_node_forms_clear_vertical_tabs($type){
 function cp_node_forms_cron(){
   $today = format_date(time(), $type = 'custom', $format = "Y-m-d");
 
-  $sql = db_query("SELECT * from {cp_node_forms} WHERE pubstatus = '%s' ", 'pubondate');
+  $sql = db_query("SELECT * from {cp_node_forms}");
   while($data = db_fetch_object($sql)){
-    if ($today == format_date($data->pubondate, $type = 'custom', $format = "Y-m-d") ){
+    if ($today == format_date($data->pubdate, $type = 'custom', $format = "Y-m-d") ){
       
       //set the node as published
-      $sql_update = db_query("UPDATE {node} SET status = %d WHERE nid = %d", 1, $data->nid);      
+      $sql_update = db_query("UPDATE {node} SET status = %d WHERE nid = %d", 1, (int)$data->nid);      
      
       //now reset the row and mark it as published in the cp_node_forms table
-      $sql_reset_row = db_query("UPDATE {cp_node_forms} SET pubondate = %d, pubstatus = '%s'
-      WHERE nid = %d", 0, 'publish', $data->nid);      
+      $sql_delete_row = db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$data->nid);
     }
   }
 }
