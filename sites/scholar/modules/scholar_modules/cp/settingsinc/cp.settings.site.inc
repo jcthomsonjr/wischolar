@@ -135,7 +135,6 @@ class cp_setting_site implements space_setting {
   function submit($space, $value) {
 
   	//Update User
-  	$space;
   	$user = user_load($space->group->uid);
   	user_save($user,array(//'name' => "{$value['name_title']['first']} {$value['name_title']['last']}",
   	                      'mail' => $value['contact']['email']));

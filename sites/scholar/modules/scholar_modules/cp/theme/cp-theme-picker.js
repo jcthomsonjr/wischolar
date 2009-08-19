@@ -10,10 +10,8 @@ if (Drupal.jsEnabled) {
     
     var theList = '<ul class = "theme-picker">'; 
     var n_container = 0;
-    var total_containers = $('#cp-settings-form .form-radios .form-item').length;
-    
-    var slider = new cpSlidingContainer({containerW: 600, mainListClass:'theme-picker', listItemClass: 'item-theme-picker', noOfContainer:total_containers, navClass:'theme_subnav'});
-    
+    //var total_containers = $('#cp-settings-form .form-radios .form-item').length;
+
     function getLi(liId, liChecked, liContent){
     	return '<li class = "item-theme-picker  ' + liChecked + '" id="' + liId  + '">' + liContent + '</li>';
     	
@@ -30,7 +28,6 @@ if (Drupal.jsEnabled) {
     	
     	var jumpLink = $("<li>");
     	jumpLink.html("&nbsp;"+(n_container+1)+"&nbsp;");
-        slider.sliding_container_link(jumpLink,n_container);
     	
     	subnavList.append(jumpLink);
     	n_container++;
@@ -44,9 +41,10 @@ if (Drupal.jsEnabled) {
     $('#cp-settings-theme').prepend(theSubnav);
     $(".item-theme-picker:first").addClass('active');
     
-    
-    slider.sliding_container($('div#prev'));
-    slider.sliding_container($('div#next'));
+    $('div#prev,div#next,.theme_subnav li').cpSlidingContainer({containerW: 600, 
+							    							   	    mainListClass:'theme-picker',
+							    								    listItemClass: 'item-theme-picker', 
+							    								    navClass:'theme_subnav'});
     
     $('li.item-theme-picker').click(function(){
     	// remove the active class from every li first

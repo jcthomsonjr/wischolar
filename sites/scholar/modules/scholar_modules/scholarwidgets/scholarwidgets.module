@@ -20,7 +20,7 @@ function scholarwidgets_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 function scholarwidgets_logo(){
-	$output = '<div id="logo">'.theme('scholar_logo','landscape_scholar_logo').'</div>';
+	$output = '<div id="logo"><a href="'.url("home").'">'.theme('scholar_logo','landscape_scholar_logo').'</a></div>';
 	
 	$block['subject'] = t(''); // intentionally blank
 	$block['content'] = $output;
@@ -34,14 +34,14 @@ function scholarwidgets_basicinfo(){
 	$block = array();
 	$block['subject'] = t('');
 	$block['content'] = 'OK';
-	dpm($scholar->settings);
+	//dpm($scholar->settings);
 	if(!array_key_exists('site',$scholar->settings)) return $block;
 	
 	
-	$output = '<h1><a href="http://scholar-dev2.iq.harvard.edu">Bob Patterson</a></h1>
-	<h2>Assistant Professor of Government, Harvard University</h2>
-	<p>N436 CGIS, 1737 Cambridge Street Cambridge, MA 02138 US <a href="#">(email)</a></p>';
-	
+	$output = "<h1><a href=\"".url("home")."\">{$scholar->settings['site']['name_title']['first']} {$scholar->settings['site']['name_title']['last']}</a></h1>
+	<h2>{$scholar->settings['site']['name_title']['title']}</h2>
+	<p>{$scholar->settings['site']['address']['address']} {$scholar->settings['site']['address']['city']}, {$scholar->settings['site']['address']['state']} {$scholar->settings['site']['address']['zip']} 
+	<a href=\"mailto:{$scholar->settings['site']['contact']['email']}\">(email)</a></p>";
 	
 	$block['content'] = $output;
 	
