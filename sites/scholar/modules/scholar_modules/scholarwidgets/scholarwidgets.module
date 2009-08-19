@@ -20,7 +20,7 @@ function scholarwidgets_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 function scholarwidgets_logo(){
-	$output = '<div id="logo"><img src="http://scholar.iq.harvard.edu/files/scholar/imagecache/scholar_logo_front/scholarlogos/hillygus/Hillyguspic2.jpg" /> </div>';
+	$output = '<div id="logo">'.theme('scholar_logo','landscape_scholar_logo').'</div>';
 	
 	$block['subject'] = t(''); // intentionally blank
 	$block['content'] = $output;
