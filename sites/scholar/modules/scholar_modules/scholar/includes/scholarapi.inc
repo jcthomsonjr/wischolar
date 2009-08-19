@@ -37,22 +37,36 @@ function scholar_content_types(){
   return $result;
 }
 
+
+/**
+ * Theme that returns the html for a scholar logo
+ * 
+ * @param string $preset
+ * @param string $alt
+ * @param string $title
+ * @param array $attributes
+ * @param boolean $bypass_browser_cache
+ * @return string
+ */
 function theme_scholar_logo($preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false){
   $scholar = scholar_get_scholar();
+  $s_image_path;
+  
   if(!$scholar || !$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']){
-  	//@todo DO DEFAULT IMAGE
-  	return false;
-  }	
+  	$s_image_path = drupal_get_path('theme','scholar_base')."/images/default_logo.jpg";
+  }else{
+  	$s_image_path = $scholar->settings['logo']['current_logo'];
+  }//Default image?
 	
   $s_url_extra = "";
   if($bypass_browser_cache) $s_url_extra .= "?version=".time();
   
   if($preset){
-    return theme('imagecache', $preset, $scholar->settings['logo']['current_logo'], $alt, $title,  $attributes);
+    return theme('imagecache', $preset, $s_image_path, $alt, $title,  $attributes);
   }else{
   	$attributes = drupal_attributes($attributes);
     $url = imagecache_create_url($presetname, $path);
-    return '<img src="/'.$scholar->settings['logo']['current_logo'] . $s_url_extra .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
+    return '<img src="/'.$s_image_path . $s_url_extra .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
   } //use imagecache? or orig?
   
 }

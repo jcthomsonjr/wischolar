@@ -29,11 +29,20 @@ function scholarwidgets_logo(){
 }
 
 function scholarwidgets_basicinfo(){
+	$scholar = scholar_get_scholar();
+	
+	$block = array();
+	$block['subject'] = t('');
+	$block['content'] = '';
+	
+	if(!array_key_exists('site',$scholar->settings)) return $block;
+	
+	
 	$output = '<h1><a href="http://scholar-dev2.iq.harvard.edu">Bob Patterson</a></h1>
 	<h2>Assistant Professor of Government, Harvard University</h2>
 	<p>N436 CGIS, 1737 Cambridge Street Cambridge, MA 02138 US <a href="#">(email)</a></p>';
 	
-	$block['subject'] = t('');
+	
 	$block['content'] = $output;
 	
 	return $block;

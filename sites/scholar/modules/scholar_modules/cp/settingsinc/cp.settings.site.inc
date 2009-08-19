@@ -106,22 +106,23 @@ class cp_setting_site implements space_setting {
       '#maxlength' => 128,
       '#required' => TRUE,
     );
-    
-    $form['notification_preferences'] = array(
-          '#title' => 'Notification Preferences',
-          '#type' => 'fieldset',
-          '#tree' => TRUE,
-    );
-    $form['notification_preferences']['scholar_updates'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Email me with Scholars\' website updates'),
-      '#default_value' => isset($value['notification_preferences']['scholar_updates'])?$value['notification_preferences']['scholar_updates']:0,
-    );
-    $form['notification_preferences']['scholar_comments'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Email me when somone writes a comment on my site'),
-      '#default_value' => isset($value['notification_preferences']['scholar_comments'])?$value['notification_preferences']['scholar_comments']:0,
-    );
+
+//    Notification Pref Disabled 8/19/09 @rbrandon
+//    $form['notification_preferences'] = array(
+//          '#title' => 'Notification Preferences',
+//          '#type' => 'fieldset',
+//          '#tree' => TRUE,
+//    );
+//    $form['notification_preferences']['scholar_updates'] = array(
+//      '#type' => 'checkbox',
+//      '#title' => t('Email me with Scholars\' website updates'),
+//      '#default_value' => isset($value['notification_preferences']['scholar_updates'])?$value['notification_preferences']['scholar_updates']:0,
+//    );
+//    $form['notification_preferences']['scholar_comments'] = array(
+//      '#type' => 'checkbox',
+//      '#title' => t('Email me when somone writes a comment on my site'),
+//      '#default_value' => isset($value['notification_preferences']['scholar_comments'])?$value['notification_preferences']['scholar_comments']:0,
+//    );
 
   
     return $form;
