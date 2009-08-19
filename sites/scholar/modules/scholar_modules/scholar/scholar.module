@@ -19,25 +19,24 @@ class scholar extends space_og implements space {
       case 'home' :
         if (! empty($this->purl)) {
           // Use the menu path of the selected feature as homepage
-          if ($home = $this->settings['home']) {
-            $home = 'home';
-            if (menu_get_item($home)) {
-              purl_goto($home, array(
-                  'purl' => array(
-                      'provider' => 'spaces_og', 
-                      'id' => $this->sid 
-                  ) 
-              ));
-            }
+          $home = 'home';
+          if (menu_get_item($home)) {
+            purl_goto($home, array(
+              'purl' => array(
+                'provider' => 'spaces_og', 
+                'id' => $this->sid 
+              ) 
+            ));
           }
+          
           // The previous checks fail, there is no valid homepage set
           if ($this->admin_access() && user_access('configure spaces features')) {
             drupal_set_message(t("Please setup your group by choosing a homepage setting."));
             purl_goto("cp/settings/features", array(
-                'purl' => array(
-                    'provider' => 'spaces_og', 
-                    'id' => $this->sid 
-                ) 
+              'purl' => array(
+                'provider' => 'spaces_og', 
+                'id' => $this->sid 
+              ) 
             ));
           }
         }
@@ -48,10 +47,10 @@ class scholar extends space_og implements space {
         break;
       case 'features' :
         purl_goto("cp/settings/features", array(
-            'purl' => array(
-                'provider' => 'spaces_og', 
-                'id' => $this->sid 
-            ) 
+          'purl' => array(
+            'provider' => 'spaces_og', 
+            'id' => $this->sid 
+          ) 
         ));
         break;
     }
