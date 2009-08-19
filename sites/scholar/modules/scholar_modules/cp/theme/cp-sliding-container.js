@@ -12,7 +12,7 @@
   };  
   var options = $.extend(defaults, options);  
   var currentIndex = 0;
-  var noOfContainer = $("li."+options.listItemClass).length - 1;
+  var noOfContainer = $("li."+options.listItemClass).length;
   
   var jumpLinkIndex = 0;
   return this.each(function() {  
@@ -22,7 +22,7 @@
       case options.prevImageID.replace("#",""):
     	  obj.click(function(){
     	    currentIndex++;
-    	    if(currentIndex > 0) currentIndex = (0-(noOfContainer));
+    	    if(currentIndex > 0) currentIndex = (0-(noOfContainer)) + 1;
     	    
     	    $("ul."+options.mainListClass).animate({marginLeft: currentIndex * options.containerW +"px"}, options.duration);
     	    $("."+options.navClass+" li" ).removeClass('active');
