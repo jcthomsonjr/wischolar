@@ -12,7 +12,7 @@ function scholar_profile_modules() {
 
   $contrib_modules = array(
   // sites/all
-    'advanced_help'
+    'advanced_help',
     'context',
     'context_contrib',
     'context_ui',
@@ -70,9 +70,10 @@ function scholar_profile_modules() {
     'biblio',
     'scholar',
     'cp',
+    'cp_content',
     'scholar_feature_settings',
     'scholarwidgets',
-    'cp_node_forms',
+    //'cp_node_forms',
     'scholarboot',
     'scholarmenu',
     'bkn_contrib_lookup',
