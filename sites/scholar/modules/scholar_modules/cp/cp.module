@@ -79,36 +79,6 @@ function cp_menu(){
 
   $items = array();
 
-  // content
-  // TODO fix its not working: trying to make the children menu as local task
-  $items['cp/content'] = array(
-    'title' => 'Content',
-    'page callback' => 'cp_route',
-    'weight' => 1,    
-    );
-
-  $items['cp/content/all'] = array( 	 
-    'title' => 'All',
-    //'type' => MENU_DEFAULT_LOCAL_TASK,	
-    'page callback' => 'cp_content',  
-    'file' => 'cp.content.inc',
-    'file path' => drupal_get_path('module', 'cp'). '/includes', 	 
-    );
-  
-  // a menu entry for each content type
-  scholar_include('scholarapi');
-  $content_types = scholar_content_types();
-  foreach($content_types as $type => $name){
-    $items['cp/content/'.$type] = array(
-      'title' => $name,
-    	//'type' => MENU_LOCAL_TASK,	
-      'page callback' => 'cp_content',
-      'page arguments' => array($type, $name),
-      'file' => 'cp.content.inc',
-      'file path' => drupal_get_path('module', 'cp'). '/includes', 	 
-    );    
-  }
-  
   $items['cp/users'] = array(
     'title' => 'Users',
     'page callback' => 'cp_route', 
@@ -184,12 +154,22 @@ function cp_menu(){
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
     $items[$path]['menu_name'] = 'cp';
-    $items[$path]['access arguments'] = array('access content'); //TODO fix this 
+    $items[$path]['access callback'] = 'cp_access_cp';
+    //$items[$path]['access arguments'] = array('access content'); //TODO fix this 
   }
 
   return $items;
 }
 
+
+/**
+ * access callback function for all menus in cp
+ * all cp menu entries should use this function as access callback
+ */
+function cp_access_cp(){
+  $vsite = scholar_get_scholar();
+  return ($vsite && $vsite -> admin_access()) ? TRUE : FALSE;
+}
 
 function cp_cp(){
   return '(tbd)';
@@ -262,80 +242,6 @@ function cp_form_alter(&$form, $form_state, $form_id) {
     }
   }
 }
-
-function cp_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
-
-  if($form['#id'] == 'views-exposed-form-cp-content-default'){
-  //TODO: Is there a better way to get the content type argument???
-  $type = arg(2);
-  //set action to current url
-  $form['#action'] = request_uri();
-
-  $options = array(
-  'All' => check_plain('<Any>'),
-  1 => 'Yes',
-  0 => 'No',
-  );
-
-  //get the site information
-  $site = scholar_get_scholar();
-  //get the vocabularies vid's associated with this site
-  $site_vocabs = array_keys(og_vocab_get_vocabularies($site -> group ->nid));
-  //get the vocabularies vid's associated with content type
-  $type_vocabs = array_keys(taxonomy_get_vocabularies ($type));
-
-  if (count($site_vocabs) &&  count($type_vocabs)){
-    //merge common vids
-    $vid = array_intersect($site_vocabs, $type_vocabs);
-  }
-
-  //if no vocabulary, then do no show select box
-  if(empty($vid)){
-    //remove Categores selection box
-    unset($form['#info']['filter-tid']);
-    unset($form['tid']);
-  }
-  else{
-    //NOTE just passing the first element of the array here because it is assumed
-    //1 vocab per type
-    $terms = taxonomy_get_tree($vid[0]);
-  }
-    
-    //if no terms, then do no show select box
-  if(empty($terms)){
-       //remove Categores selection box
-    unset($form['#info']['filter-tid']);
-    unset($form['tid']);
-    }
-
-    else{       
-    //now we have the terms for this site, create an array formatted
-    //for the taxonomy options in the exposed filter.
-    //TODO: for now we just are going to use 1 vocabulary, but perhaps
-    //should nest loops so it can deal with multiple vocabs????
-    foreach($terms as $term){
-      $taxonomy_options[$term -> tid]  =  $term -> name;
-    }
-  //taxonomy terms flter
-  $form['tid']['#options'] = $taxonomy_options;
-  //5 terms max shown per select box
-  $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
-  }
-  
-  //promoted to front page filter
-  $form['promote']['#type'] = 'radios';
-  $form['promote']['#options'] = $options;
-
-  //published status filter
-  $form['status']['#type'] = 'radios';
-  $form['status']['#options'] = $options;
-
-  //sticky on top of lists filter
-  $form['sticky']['#type'] = 'radios';
-  $form['sticky']['#options'] = $options;
-  }
-}
-  
 
 /**
  * Implementation of hook_theme().
