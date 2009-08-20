@@ -1,0 +1,143 @@
+<?php
+
+/**
+ * hook menu
+ */
+function cp_content_menu(){
+  $items = array();
+  
+  $items['cp/content'] = array(
+    'title' => 'Content', 
+    'page callback' => 'cp_route',
+    'weight' => 1 
+  );
+  
+  $items['cp/content/all'] = array(
+    'title' => 'All', 
+    'page callback' => 'cp_content_content',
+  );
+  
+  // a menu entry for each content type
+  scholar_include('scholarapi');
+  $content_types = scholar_content_types();
+  foreach($content_types as $type => $name){
+    $items['cp/content/'.$type] = array(
+      'title' => $name,
+      'page callback' => 'cp_content_content',
+      'page arguments' => array($type, $name),	 
+    );    
+  }
+
+  // make them all part of 'cp' menu
+  foreach($items as $path => $item) {
+    $items[$path]['menu_name'] = 'cp';
+    $items[$path]['access callback'] = 'cp_access_cp'; 
+  }
+
+  return $items;
+}
+
+
+/**
+ * Implementation of hook_views_api().
+ */
+function cp_content_views_api() {
+  return array(
+    'api' => 2,
+  );
+}
+
+
+/**
+ * Function to return output on cp content page
+ */
+function cp_content_content($type = NULL, $name = NULL){
+  //return 'whatever';
+  //element classes for 'add new' link
+  $add_new_classes = 'add-new ' . 'add-new-' . $type;
+  $v = views_get_view('cp_content');
+  //link to add new content
+  $output .= isset($type) ? '<div class="' . $add_new_classes . '">' . l(t('+ add new ' . $name), 'node/add/' . strtolower($type)) . '</div>' : '';
+  
+  //adding view output
+  $output .= views_page($view_name = 'cp_content', $display = 'default', $arg = $type);
+  return $output;
+}
+
+/**
+ * hook form_alter
+ * Alter the views exposed form
+ */
+function cp_content_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
+  
+  if ($form['#id'] == 'views-exposed-form-cp-content-default') {
+    //TODO: Is there a better way to get the content type argument???
+    $type = arg(2);
+    //set action to current url
+    $form['#action'] = request_uri();
+    
+    $options = array(
+      'All' => check_plain('<Any>'), 
+      1 => 'Yes', 
+      0 => 'No' 
+    );
+    
+    //get the site information
+    $site = scholar_get_scholar();
+    //get the vocabularies vid's associated with this site
+    $site_vocabs = array_keys(og_vocab_get_vocabularies($site->group->nid));
+    //get the vocabularies vid's associated with content type
+    $type_vocabs = array_keys(taxonomy_get_vocabularies($type));
+    
+    if (count($site_vocabs) && count($type_vocabs)) {
+      //merge common vids
+      $vid = array_intersect($site_vocabs, $type_vocabs);
+    }
+    
+    //if no vocabulary, then do no show select box
+    if (empty($vid)) {
+      //remove Categores selection box
+      unset($form['#info']['filter-tid']);
+      unset($form['tid']);
+    }
+    else {
+      //NOTE just passing the first element of the array here because it is assumed
+      //1 vocab per type
+      $terms = taxonomy_get_tree($vid[0]);
+    }
+    
+    //if no terms, then do no show select box
+    if (empty($terms)) {
+      //remove Categores selection box
+      unset($form['#info']['filter-tid']);
+      unset($form['tid']);
+    }
+    
+    else {
+      //now we have the terms for this site, create an array formatted
+      //for the taxonomy options in the exposed filter.
+      //TODO: for now we just are going to use 1 vocabulary, but perhaps
+      //should nest loops so it can deal with multiple vocabs????
+      foreach ( $terms as $term ) {
+        $taxonomy_options[$term->tid] = $term->name;
+      }
+      //taxonomy terms flter
+      $form['tid']['#options'] = $taxonomy_options;
+      //5 terms max shown per select box
+      $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
+    }
+    
+    //promoted to front page filter
+    $form['promote']['#type'] = 'radios';
+    $form['promote']['#options'] = $options;
+    
+    //published status filter
+    $form['status']['#type'] = 'radios';
+    $form['status']['#options'] = $options;
+    
+    //sticky on top of lists filter
+    $form['sticky']['#type'] = 'radios';
+    $form['sticky']['#options'] = $options;
+  }
+}
+  
