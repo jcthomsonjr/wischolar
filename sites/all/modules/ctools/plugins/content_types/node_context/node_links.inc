@@ -1,5 +1,5 @@
 <?php
-// $Id: node_links.inc,v 1.1 2009/06/13 18:53:24 merlinofchaos Exp $
+// $Id: node_links.inc,v 1.2 2009/08/05 16:54:51 sdboyer Exp $
 
 
 /**
@@ -64,7 +64,7 @@ function ctools_node_links_render_links($node, $conf) {
   }
 
   $links = module_invoke_all('link', 'node', $node, $conf['teaser']);
-  drupal_alter('link', $node, $links);
+  drupal_alter('link', $links, $node);
   return theme('links', $links);
 }
 

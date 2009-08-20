@@ -1,5 +1,5 @@
 <?php
-// $Id: context-task-handler.inc,v 1.19 2009/07/17 22:45:30 merlinofchaos Exp $
+// $Id: context-task-handler.inc,v 1.23 2009/08/19 18:03:38 merlinofchaos Exp $
 
 /**
  * @file
@@ -51,12 +51,12 @@ function ctools_context_handler_render($task, $subtask, $contexts, $args, $page 
         }
 
         /*
-        // Only do this if something hasn't already changed the active menu, 
+        // Only do this if something hasn't already changed the active menu,
         // such as a book.
         if (menu_get_active_menu_name() == 'navigation') {
           $item = menu_get_item();
           $mlink = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['href']));
-        
+
           if ($mlink && isset($mlink->menu_name)) {
             menu_set_active_menu_name($mlink->menu_name);
           }
@@ -226,7 +226,7 @@ function ctools_context_handler_get_handler_object($handler) {
  */
 function ctools_context_handler_get_task_object($task, $subtask, $handler) {
   $object = new stdClass;
-  $object->name = !empty($handler->name) ? $handler->name : NULL;
+  $object->name = !empty($handler->name) ? $handler->name : 'temp';
   $object->arguments = ctools_context_handler_get_task_arguments($task, $subtask);
   $object->contexts = isset($handler->conf['contexts']) ? $handler->conf['contexts'] : array();
   $object->relationships = isset($handler->conf['relationships']) ? $handler->conf['relationships'] : array();
@@ -289,7 +289,7 @@ function ctools_context_handler_edit_criteria(&$form, &$form_state) {
   ctools_include('context-access-admin');
   $form['markup'] = array(
     '#value' => '<div class="description">' .
-    t('If there is more than one variant on a page, when the page is visited each variant is given an opportunity to be displayed. Starting from the first variant and working to the last, each one tests to see if its selection rules will pass. If it does, that variant is using. If it does not, it passes to the next one.') .
+    t('If there is more than one variant on a page, when the page is visited each variant is given an opportunity to be displayed. Starting from the first variant and working to the last, each one tests to see if its selection rules will pass. The first variant that its criteria (as specified below) will be used.') .
     '</div>',
   );
   $form = array_merge($form, ctools_access_admin_form($form_state));
@@ -310,13 +310,14 @@ function ctools_context_handler_edit_context(&$form, &$form_state) {
   ctools_context_admin_includes();
 
   $handler = $form_state['handler'];
-  // Check our context object cache.
-  if (!empty($_POST)) {
-    $cache = ctools_object_cache_get('context_object:page_manager', $handler->name);
+  $page = $form_state['page'];
+  $cache_name = $handler->name ? $handler->name : 'temp';
+  if (isset($page->context_cache[$cache_name])) {
+    $cache = $page->context_cache[$cache_name];
   }
   else {
     $cache = ctools_context_handler_get_task_object($form_state['task'], $form_state['subtask'], $form_state['handler']);
-    ctools_object_cache_set('context_object:page_manager', $handler->name, $cache);
+    $form_state['page']->context_cache[$cache_name] = $cache;
   }
 
   $form['right'] = array(
@@ -329,8 +330,9 @@ function ctools_context_handler_edit_context(&$form, &$form_state) {
     '#suffix' => '</div></div>',
   );
 
-  ctools_context_add_context_form('page_manager', $form, $form_state, $form['right']['contexts_table'], $cache);
-  ctools_context_add_relationship_form('page_manager', $form, $form_state, $form['right']['relationships_table'], $cache);
+  $module = 'page_manager-' . $page->task_name;
+  ctools_context_add_context_form($module, $form, $form_state, $form['right']['contexts_table'], $cache);
+  ctools_context_add_relationship_form($module, $form, $form_state, $form['right']['relationships_table'], $cache);
 
   $form['left']['summary'] = array(
     '#prefix' => '<div class="page-manager-contexts">',
@@ -348,8 +350,14 @@ function ctools_context_handler_edit_context(&$form, &$form_state) {
  * Process submission of the context edit form.
  */
 function ctools_context_handler_edit_context_submit(&$form, &$form_state) {
-  $form_state['handler']->conf['contexts'] = $form_state['context_object']->contexts;
-  $form_state['handler']->conf['relationships'] = $form_state['context_object']->relationships;
-  ctools_object_cache_clear('context_object:page_manager', $form_state['handler']->name);
+  $handler = &$form_state['handler'];
+
+  $cache_name = $handler->name ? $handler->name : 'temp';
+
+  $handler->conf['contexts'] = $form_state['context_object']->contexts;
+  $handler->conf['relationships'] = $form_state['context_object']->relationships;
+  if (isset($form_state['page']->context_cache[$cache_name])) {
+    unset($form_state['page']->context_cache[$cache_name]);
+  }
 }
 

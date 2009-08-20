@@ -1,5 +1,5 @@
 <?php
-// $Id: context-access-admin.inc,v 1.6 2009/07/10 17:40:09 merlinofchaos Exp $
+// $Id: context-access-admin.inc,v 1.7 2009/08/16 21:59:42 merlinofchaos Exp $
 
 /**
  * @file
@@ -213,7 +213,7 @@ function ctools_access_admin_render_table($access, $fragment, $contexts) {
   $header = array(
     array('data' => t('Title'), 'class' => 'ctools-access-title'),
     array('data' => t('Description'), 'class' => 'ctools-access-description'),
-    array('data' => t(''), 'class' => 'ctools-access-operations', 'align' => 'right'),
+    array('data' => '', 'class' => 'ctools-access-operations', 'align' => 'right'),
   );
 
   if (empty($rows)) {

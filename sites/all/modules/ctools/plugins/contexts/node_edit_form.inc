@@ -1,5 +1,5 @@
 <?php
-// $Id: node_edit_form.inc,v 1.9 2009/05/11 23:49:33 merlinofchaos Exp $
+// $Id: node_edit_form.inc,v 1.10 2009/08/03 22:19:06 merlinofchaos Exp $
 
 /**
  * @file
@@ -77,7 +77,7 @@ function ctools_context_node_edit_form_settings_form($conf) {
   $form['node'] = array(
     '#prefix' => '<div class="no-float">',
     '#suffix' => '</div>',
-    '#title' => t('Enter the title or NID of a post'),
+    '#title' => t('Enter the title or NID of a node'),
     '#type' => 'textfield',
     '#maxlength' => 512,
     '#autocomplete_path' => 'ctools/autocomplete/node',

@@ -1,5 +1,5 @@
 <?php
-// $Id: page_manager.admin.inc,v 1.21 2009/07/22 22:49:32 merlinofchaos Exp $
+// $Id: page_manager.admin.inc,v 1.27 2009/08/19 22:30:00 merlinofchaos Exp $
 
 /**
  * @file
@@ -16,6 +16,10 @@ function page_manager_list_page($js = NULL) {
   // Prevent this page from showing up when random other links fail.
   if ($js && $js != 'ajax' && $js != 'nojs') {
     return drupal_not_found();
+  }
+
+  if (module_exists('advanced_help')) {
+    drupal_set_message(theme('advanced_help_topic', 'page_manager', 'getting-started', t('See the getting started guide for more information.')));
   }
 
   // TRUE if 'ajax', FALSE if otherwise.
@@ -80,11 +84,11 @@ function page_manager_list_page($js = NULL) {
   $operations = '<div id="page-manager-links" class="links">' . theme('links', $pages['operations']) . '</div>';
 
   drupal_add_css(drupal_get_path('module', 'page_manager') . '/css/page-manager.css');
-  
+
   if (!$js) {
     return $form . $table . $operations;
   }
-  
+
   ctools_include('ajax');
   $commands = array();
   $commands[] = ctools_ajax_command_replace('#page-manager-list-pages', $table);
@@ -125,6 +129,21 @@ function page_manager_get_pages($tasks, &$pages, $task_id = NULL) {
       $class .= ' page-manager-disabled';
     }
 
+    $path = array();
+    foreach (explode('/', $task['admin path']) as $bit) {
+      if ($bit[0] != '!') {
+        $path[] = $bit;
+      }
+    }
+
+    $path = implode('/', $path);
+    if (empty($task['disabled']) && strpos($path, '%') === FALSE) {
+      $visible_path = l('/' . $task['admin path'], $path);
+    }
+    else {
+      $visible_path = '/' . $task['admin path'];
+    }
+
     $row = array('data' => array(), 'class' => $class, 'title' => strip_tags($task['admin description']));
 
     $type = isset($task['admin type']) ? $task['admin type'] : t('System');
@@ -133,24 +152,15 @@ function page_manager_get_pages($tasks, &$pages, $task_id = NULL) {
 
     $row['data']['name'] = array('data' => $task_name, 'class' => 'page-manager-page-name');
     $row['data']['title'] = array('data' => $task['admin title'], 'class' => 'page-manager-page-title');
-    $row['data']['path'] = array('data' => '/' . $task['admin path'], 'class' => 'page-manager-page-path');
+    $row['data']['path'] = array('data' => $visible_path, 'class' => 'page-manager-page-path');
 
     $storage = isset($task['storage']) ? $task['storage'] : t('In code');
     $pages['storages'][$storage] = $storage;
     $row['data']['storage'] = array('data' => $storage, 'class' => 'page-manager-page-storage');
 
-  /*
+
+/*
     if (empty($task['disabled'])) {
-      $path = array();
-      foreach (explode('/', $task['admin path']) as $bit) {
-        if ($bit[0] == '%') {
-          $path[] = '%';
-        }
-        else if ($bit[0] != '!') {
-          $path[] = $bit;
-        }
-      }
-      $path = implode('/', $path);
       $item = menu_get_item($path);
       if (empty($item)) {
         dsm($path);
@@ -159,7 +169,7 @@ function page_manager_get_pages($tasks, &$pages, $task_id = NULL) {
         dsm($item);
       }
     }
-  */
+*/
     $operations = array(
       array(
         'title' => t('Edit'),
@@ -183,7 +193,7 @@ function page_manager_get_pages($tasks, &$pages, $task_id = NULL) {
     }
 
     $row['data']['operations'] = array('data' => theme('links', $operations), 'class' => 'page-manager-page-operations');
-    
+
     $pages['disabled'][$task_name] = !empty($task['disabled']);
     $pages['rows'][$task_name] = $row;
   }
@@ -193,6 +203,11 @@ function page_manager_get_pages($tasks, &$pages, $task_id = NULL) {
  * Provide a form for sorting and filtering the list of pages.
  */
 function page_manager_list_pages_form(&$form_state) {
+  // This forces the form to *always* treat as submitted which is
+  // necessary to make it work.
+  if (empty($_POST)) {
+    $form["#programmed"] = TRUE;
+  }
   $form['#action'] = url('admin/build/pages/nojs/', array('absolute' => TRUE));
   if (!variable_get('clean_url', FALSE)) {
     $form['q'] = array(
@@ -223,7 +238,7 @@ function page_manager_list_pages_form(&$form_state) {
     '#options' => $all + array('0' => t('Enabled'), '1' => t('Disabled')),
     '#default_value' => 'all',
   );
-  
+
   $form['search'] = array(
     '#type' => 'textfield',
     '#title' => t('Search'),
@@ -455,7 +470,7 @@ function page_manager_get_operations($page, $operations = NULL) {
         'children' => array(),
       ),
     );
-    
+
     if (isset($page->subtask['operations'])) {
       $operations += $page->subtask['operations'];
       // add actions separately.
@@ -563,10 +578,10 @@ function page_manager_get_operations($page, $operations = NULL) {
 
     foreach ($page->forms as $id) {
       if (isset($plugin['add features'][$id])) {
-        $result['actions']['children']['configure']['form']['order'][$id] = $plugin['add features'][$id];        
+        $result['actions']['children']['configure']['form']['order'][$id] = $plugin['add features'][$id];
       }
       else if (isset($plugin['required forms'][$id])) {
-        $result['actions']['children']['configure']['form']['order'][$id] = $plugin['required forms'][$id];        
+        $result['actions']['children']['configure']['form']['order'][$id] = $plugin['required forms'][$id];
       }
     }
   }
@@ -632,7 +647,7 @@ function page_manager_get_handler_operations(&$page) {
       'title' => t('Summary'),
       'description' => t('Get a summary of the information about this variant.'),
       'form info' => array(
-        'no buttons' => TRUE, 
+        'no buttons' => TRUE,
       ),
       'form' => 'page_manager_handler_summary',
     );
@@ -640,7 +655,7 @@ function page_manager_get_handler_operations(&$page) {
     if ($plugin && isset($plugin['operations'])) {
       $operations[$id]['children'] += $plugin['operations'];
     }
-    
+
     $actions = &$operations[$id]['children']['actions']['children'];
 
     $actions['clone'] = array(
@@ -874,9 +889,11 @@ function _page_manager_get_operation_content($js, &$page, $active, $operation, $
       $output = $messages . $output;
     }
 
+    $description = isset($operation['admin description']) ? $operation['admin description'] : (isset($operation['description']) ? $operation['description'] : '');
     $return = array(
       'title' => $title,
       'content' => $output,
+      'description' => $description,
     );
 
     // Append any extra content, used for the preview which is submitted then
@@ -884,7 +901,7 @@ function _page_manager_get_operation_content($js, &$page, $active, $operation, $
     if (isset($form_state['content'])) {
       $return['content'] .= $form_state['content'];
     }
-    
+
     // If the form wanted us to go somewhere else next, pass that along.
     if (isset($form_state['new trail'])) {
       $return['new trail'] = $form_state['new trail'];
@@ -923,7 +940,7 @@ function page_manager_edit_page_finish(&$form_state) {
     $form_state['page']->handler_info[$form_state['handler_id']]['changed'] |= PAGE_MANAGER_CHANGED_CACHED;
   }
 
-  // While we make buttons go away on locked pages, it is still possible to 
+  // While we make buttons go away on locked pages, it is still possible to
   // have a lock a appear while you were editing, and have your changes
   // disappear. This at least warns the user that this has happened.
   if (!empty($page->locked)) {
@@ -960,16 +977,16 @@ function page_manager_edit_page_cancel(&$form_state) {
 /**
  * Render an operations array.
  *
- * This renders an array of operations into a series of nested UL statements, 
- * with ajax automatically on unless specified otherwise. Operations will 
+ * This renders an array of operations into a series of nested UL statements,
+ * with ajax automatically on unless specified otherwise. Operations will
  * automatically have the URLs generated nested.
  *
- * Each operation should have a 'type', which tells the renderer how to deal 
+ * Each operation should have a 'type', which tells the renderer how to deal
  * with it:
  * - 'operation': An AJAX link to render. This is the default and is
  *   assumed if a type is not specified. Other fields for the operation:
  * - - 'title': The text to display. Can be an image. Must be pre-sanitized.
- * - - 'description': Text to place in the hover box over the link using the 
+ * - - 'description': Text to place in the hover box over the link using the
  *     title attribute.
  * - - 'arguments': Anything optional to put at the end of the URL.
  * - - 'path': If set, overrides the default path.
@@ -979,11 +996,11 @@ function page_manager_edit_page_cancel(&$form_state) {
  * - - 'ajax': If set to TRUE, ajax will be used. The default is TRUE.
  * - - 'class': An optional class to specify for the link.
  * - - 'form': The form to display for this operation, if using a single form.
- * - - 'forms': An array of forms that must be paired with 'order' of this 
+ * - - 'forms': An array of forms that must be paired with 'order' of this
  *      operation uses multiple forms. See wizard tool for details.
  * - - 'order': The form order to use for multiple forms. See wizard tool for
  *     details.
- * - - 'form info': Form info overrides for the wizard. See the wizard tool 
+ * - - 'form info': Form info overrides for the wizard. See the wizard tool
  *      for available settings
  * - 'group':
  * - - 'title': The title of the link. May be HTML.
@@ -1217,7 +1234,7 @@ function page_manager_handler_add_submit(&$form, &$form_state) {
   $form_state['no_rerender'] = TRUE;
   if (!empty($cache->forms)) {
     // Tell the form to go to the config page.
-    drupal_set_message(t('Before this variant can be added, it must be configured. When you are finished, click "Create variant" to add this to your page.'));
+    drupal_set_message(t('Before this variant can be added, it must be configured. When you are finished, click "Create variant" at the end of this wizard to add this to your page.'));
     $form_state['new trail'] = array('actions', 'configure');
   }
   else {
@@ -1258,7 +1275,7 @@ function page_manager_handler_add_finish(&$form_state) {
  * Throw away a new handler and return to the add form
  */
 function page_manager_handler_add_cancel(&$form_state) {
-  $form_state['new trail'] = array('handlers', 'add'); 
+  $form_state['new trail'] = array('handlers', 'add');
 
   // Remove the temporary page.
   unset($page->new_handler);
@@ -1285,7 +1302,7 @@ function page_manager_handler_add_form(&$form, $form_state, $features = array())
       '#description' => t('Administrative title of this variant. If you leave blank it will be automatically assigned.'),
     );
   }
-  
+
   $form['handler'] = array(
     '#title' => t('Variant type'),
     '#type' => 'select',
@@ -1390,7 +1407,7 @@ function page_manager_handler_rearrange(&$form, &$form_state) {
     $form['handlers'][$id]['title'] = array(
       '#value' => page_manager_get_handler_title($plugin, $handler, $page->task, $page->subtask_id),
     );
-  
+
     $form['handlers'][$id]['weight'] = array(
       '#type' => 'weight',
       '#default_value' => $info['weight'],
@@ -1541,7 +1558,7 @@ function page_manager_handler_summary(&$form, &$form_state) {
   $plugin = page_manager_get_task_handler($handler->handler);
 
   $form['markup'] = array(
-    '#value' => page_manager_get_handler_summary($plugin, $handler, $page->task, $page->subtask),
+    '#value' => page_manager_get_handler_summary($plugin, $handler, $page, FALSE),
   );
 }
 
@@ -1595,7 +1612,7 @@ function page_manager_enable_form_submit(&$form, &$form_state) {
   }
   $form_state['new trail'] = array('actions', 'disable');
 
-  // We don't want to cause this to cache if it wasn't already. If it was 
+  // We don't want to cause this to cache if it wasn't already. If it was
   // cached, however, we want to update the enabled state.
   if (empty($form_state['page']->changed)) {
     $form_state['do not cache'] = TRUE;
@@ -1621,7 +1638,7 @@ function page_manager_disable_form_submit(&$form, &$form_state) {
       menu_rebuild();
     $form_state['new trail'] = array('actions', 'enable');
 
-    // We don't want to cause this to cache if it wasn't already. If it was 
+    // We don't want to cause this to cache if it wasn't already. If it was
     // cached, however, we want to update the enabled state.
     if (empty($form_state['page']->changed)) {
       $form_state['do not cache'] = TRUE;
@@ -1637,10 +1654,12 @@ function page_manager_page_summary(&$form, &$form_state) {
 
   $output = '';
 
+/*
   if (isset($form_state['subtask']['admin title'])) {
     $form_state['title'] = $form_state['subtask']['admin title'];
   }
-  
+*/
+
   if (isset($form_state['subtask']['admin description'])) {
     $output .= '<div class="description">' . $form_state['subtask']['admin description'] . '</div>';
   }
@@ -1657,7 +1676,7 @@ function page_manager_page_summary(&$form, &$form_state) {
       $plugin = page_manager_get_task_handler($handler->handler);
 
       $output .= '<div class="handler-summary">';
-      $output .= page_manager_get_handler_summary($plugin, $handler, $page->task, $page->subtask);
+      $output .= page_manager_get_handler_summary($plugin, $handler, $page);
       $output .= '</div>';
 
     }

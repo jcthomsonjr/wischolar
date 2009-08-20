@@ -1,5 +1,5 @@
 <?php
-// $Id: views_content.module,v 1.3 2009/05/01 16:55:02 merlinofchaos Exp $
+// $Id: views_content.module,v 1.4 2009/08/07 19:58:33 merlinofchaos Exp $
 
 /**
  * @file views_content.module
@@ -50,9 +50,12 @@ function views_ctools_block_info($module, $delta, &$info) {
     }
   }
 
-  // We remove any non 'special' blocks so they don't show up repeatedly.
   if (substr($delta, 0, 1) != '-') {
-    $info = NULL;
+    // Right now, 'special' blocks are all exposed forms. Let's
+    // call those widgets.
+    $info['category'] = t('Widgets');
+    $info['icon'] = 'icon_views_block_legacy.png';
+    $info['path'] = drupal_get_path('module', 'views_content');
   }
   else {
     $info['category'] = t('Views');

@@ -1,5 +1,5 @@
 <?php
-// $Id: node.inc,v 1.8 2009/07/21 19:23:57 merlinofchaos Exp $
+// $Id: node.inc,v 1.11 2009/08/17 20:16:36 merlinofchaos Exp $
 
 /**
  * @file
@@ -78,7 +78,7 @@ function ctools_context_node_settings_form($conf) {
   $form['node'] = array(
     '#prefix' => '<div class="no-float">',
     '#suffix' => '</div>',
-    '#title' => t('Enter the title or NID of a post'),
+    '#title' => t('Enter the title or NID of a node'),
     '#type' => 'textfield',
     '#maxlength' => 512,
     '#autocomplete_path' => 'ctools/autocomplete/node',
@@ -88,7 +88,7 @@ function ctools_context_node_settings_form($conf) {
   if (!empty($conf['nid'])) {
     $info = db_fetch_object(db_query("SELECT * FROM {node} n WHERE n.nid = %d", $conf['nid']));
     if ($info) {
-      $link = l(t("'%title' [node id %nid]", array('%title' => $info->title, '%nid' => $info->nid)), "node/$info->nid", array('target' => '_blank', 'title' => t('Open in new window')));
+      $link = l(t("'%title' [node id %nid]", array('%title' => $info->title, '%nid' => $info->nid)), "node/$info->nid", array('attributes' => array('target' => '_blank', 'title' => t('Open in new window')), 'html' => TRUE));
       $form['node']['#description'] = t('Currently set to !link', array('!link' => $link));
     }
   }
@@ -164,6 +164,7 @@ function ctools_context_node_settings_form_submit($form, &$form_values, &$form_s
 function ctools_context_node_convert_list() {
   return array(
     'nid' => t('Node ID'),
+    'vid' => t('Node revision ID'),
     'title' => t('Node title'),
     'uid' => t('Author UID'),
     'type' => t('Node type'),
@@ -177,6 +178,8 @@ function ctools_context_node_convert($context, $type) {
   switch ($type) {
     case 'nid':
       return $context->data->nid;
+    case 'vid':
+      return $context->data->vid;
     case 'title':
       return $context->data->title;
     case 'uid':

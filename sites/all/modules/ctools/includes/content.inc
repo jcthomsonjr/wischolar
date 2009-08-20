@@ -1,5 +1,5 @@
 <?php
-// $Id: content.inc,v 1.11 2009/07/21 20:42:56 merlinofchaos Exp $
+// $Id: content.inc,v 1.12 2009/08/19 23:21:55 merlinofchaos Exp $
 
 /**
  * @file
@@ -512,6 +512,7 @@ function ctools_content_form($op, $form_info, &$form_state, $plugin, $subtype_na
   );
 
   $form_info += array(
+    'id' => 'ctools_content_form',
     'show back' => TRUE,
   );
 

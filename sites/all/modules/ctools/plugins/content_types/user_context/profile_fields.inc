@@ -1,5 +1,5 @@
 <?php
-// $Id: profile_fields.inc,v 1.3 2009/05/09 07:44:55 merlinofchaos Exp $
+// $Id: profile_fields.inc,v 1.4 2009/08/13 22:24:02 merlinofchaos Exp $
 
 
 /**
@@ -14,7 +14,7 @@ function ctools_profile_fields_ctools_content_types() {
       'description' => t('Contents of a single profile category.'),
       'required context' => new ctools_context_required(t('User'), 'user'),
       'category' => t('User'),
-      'defaults' => array('title' => '', 'category' => '', 'empty' => ''),
+      'defaults' => array('category' => '', 'empty' => ''),
       'hook theme' => 'ctools_profile_fields_content_type_theme',
     );
   }

@@ -1,4 +1,4 @@
-/* $Id: page-manager.css,v 1.8 2009/07/22 04:01:31 merlinofchaos Exp $ */
+/* $Id: page-manager.css,v 1.10 2009/08/06 00:08:45 merlinofchaos Exp $ */
 body form#page-manager-list-pages-form {
   margin: 0 0 20px 0;
 }
@@ -51,7 +51,7 @@ body form#page-manager-list-pages-form {
 }
 
 #page-manager-edit .page-manager-edit-operations {
-  float: left;
+  float: left; /* LTR */
   width: 150px;
   margin-left: -150px;
   margin-top: -1px;
@@ -90,7 +90,7 @@ body form#page-manager-list-pages-form {
 #page-manager-edit .page-manager-edit-operations li.changed,
 #page-manager-edit .page-manager-edit-operations li.changed-group .page-manager-group-title {
   background-color: #ffe;
-  font-weight: bold; 
+  font-weight: bold;
 }
 
 /** provide a reset for non active stray paths */
@@ -129,11 +129,11 @@ body form#page-manager-list-pages-form {
   text-decoration: none;
 }
 
-#page-manager-edit .ctools-collapsible-container { 
-  display: inline-block;  
-  position: relative;  
-  *float: left;  
-  width: 100%; 
+#page-manager-edit .ctools-collapsible-container {
+  display: inline-block;
+  position: relative;
+  *float: left; /* LTR */
+  width: 100%;
 }
 
 #page-manager-edit .page-manager-edit-operations li .ctools-collapsible-handle:hover {
@@ -147,12 +147,11 @@ body form#page-manager-list-pages-form {
 }
 
 #page-manager-edit .page-manager-edit-operations li ul {
-/*  padding-bottom: .2em; */
 }
 
 #page-manager-edit .page-manager-group-title {
   line-height: 2em;
-  font-weight: bold; 
+  font-weight: bold;
   padding: 0 0 0 .5em;
 }
 
@@ -163,7 +162,7 @@ body form#page-manager-list-pages-form {
 }
 
 #page-manager-edit .page-manager-ajax-pad {
-  float: left;
+  float: left; /* LTR */
   width: 100%;
   border-left: none;
   height: 100%;
@@ -173,7 +172,7 @@ body form#page-manager-list-pages-form {
 /** A riser to force the ajax pad to a minimum height. **/
 #page-manager-edit .page-manager-ajax-pad .page-manager-riser {
   width: 1px;
-  float: right;
+  float: right; /* LTR */
   height: 400px;
 }
 
@@ -193,7 +192,6 @@ body form#page-manager-list-pages-form {
 
 #page-manager-edit .actions {
   padding: 0 0 0 20px;
-  height: 25px;
 }
 
 #page-manager-edit .primary-actions li {
@@ -204,27 +202,30 @@ body form#page-manager-list-pages-form {
   border-bottom: 1px solid #aaa;
 }
 
+#page-manager-edit .handler-actions {
+  float: right; /* LTR */
+}
+
 #page-manager-edit .actions .page-manager-group-title {
-  float: left;
+  float: left; /* LTR */
   padding-left: 0;
 }
 
 #page-manager-edit .actions ul {
-  float: right;
-  text-align: right;
+  float: right; /* LTR */
+  text-align: right; /* LTR */
   padding: 0;
   margin: 0;
   border-right: 1px solid #aaa;
 }
 
 #page-manager-edit .actions li {
-  float: left;
+  float: left; /* LTR */
   background: none;
   list-style: none;
   border-left: 1px solid #aaa;
   margin: 0;
   padding: 0;
-  line-height: 200%;
 }
 
 #page-manager-edit .actions li a:hover {
@@ -234,14 +235,13 @@ body form#page-manager-list-pages-form {
 
 #page-manager-edit .actions li a {
   display: block;
-  padding: 0 .5em;
+  padding: 0.2em 0.5em;
   color:#0062A0;
   background-color: #F6F6F6;
 }
 
 #page-manager-edit .page-manager-changed {
-  float: right;
-  float: right;
+  float: right; /* LTR */
   font-style: italic;
   color: #f93;
   padding-left: 1em;
@@ -308,6 +308,13 @@ body form#page-manager-list-pages-form {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   background: #fafafa;
-  padding: 3px;
+  padding: 0 0 0 5px;
   margin-top: .5em;
 }
+
+.handler-summary .handler-title .title-label {
+  font-weight: bold;
+  font-size: 120%;
+  line-height: 1.75em;
+}
+

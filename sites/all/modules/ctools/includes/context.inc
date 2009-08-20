@@ -1,5 +1,5 @@
 <?php
-// $Id: context.inc,v 1.31 2009/07/21 20:42:56 merlinofchaos Exp $
+// $Id: context.inc,v 1.33 2009/08/03 21:41:41 merlinofchaos Exp $
 
 /**
  * @file
@@ -327,7 +327,7 @@ function _ctools_context_selector($contexts, $required, $default, $num = 0) {
  * be a context requirement object or an array of them. When contexts
  * are required, items that do not have enough contexts should not
  * appear. This tests an item to see if it has enough contexts
- * to actually appear. 
+ * to actually appear.
  *
  * @param $contexts
  *   A keyed array of all available contexts.
@@ -601,7 +601,7 @@ function ctools_context_keyword_substitute($string, $keywords, $contexts) {
 
   // Look for context matches we we only have to convert known matches.
   $matches = array();
-  if (preg_match_all('/%([a-zA-Z0-9%:]+)/us', $string, $matches)) {
+  if (preg_match_all('/%([a-zA-Z0-9%:_-]+)/us', $string, $matches)) {
     foreach ($matches[1] as $keyword) {
       // Ignore anything it finds with %%.
       if ($keyword[0] == '%') {
@@ -1159,7 +1159,7 @@ function ctools_context_replace_placeholders($contexts, $arguments) {
         }
         break;
       case 'argument':
-        if (!empty($arguments[$cid])) {
+        if (isset($arguments[$cid]) && $arguments[$cid] !== '') {
           $argument = $context->placeholder['conf'];
           $new_context = ctools_context_get_context_from_argument($argument, $arguments[$cid]);
         }

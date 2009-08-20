@@ -1,11 +1,11 @@
 <?php
-// $Id: user_picture.inc,v 1.2 2009/04/20 19:48:35 merlinofchaos Exp $
+// $Id: user_picture.inc,v 1.3 2009/08/05 18:11:05 merlinofchaos Exp $
 
 /**
  * Callback function to supply a list of content types.
  */
 function ctools_user_picture_ctools_content_types() {
-  $items['user_picture'] = array(
+  return array(
     'single' => TRUE,
     'title' => t('User picture'),
     'icon' => 'icon_user.png',

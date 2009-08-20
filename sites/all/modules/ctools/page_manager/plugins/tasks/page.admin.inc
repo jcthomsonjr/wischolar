@@ -1,5 +1,5 @@
 <?php
-// $Id: page.admin.inc,v 1.14 2009/07/20 16:01:19 merlinofchaos Exp $
+// $Id: page.admin.inc,v 1.18 2009/08/19 01:12:23 merlinofchaos Exp $
 
 /**
  * @file
@@ -64,6 +64,7 @@ function page_manager_page_menu(&$items, $task) {
 
     // Replace named placeholders with our own placeholder to load contexts.
     $position = 0;
+
     foreach (explode('/', $subtask->path) as $bit) {
       // Remove things like double slashes completely.
       if (!isset($bit) || $bit === '') {
@@ -71,9 +72,23 @@ function page_manager_page_menu(&$items, $task) {
       }
 
       if ($bit[0] == '%' && $bit != '%') {
+        $placeholder = '%pm_arg';
+
+        // Chop off that %.
+        $name = substr($bit, 1);
+
+        // Check to see if the argument plugin wants to use a different
+        // placholder. This will allow to_args.
+        if (!empty($subtask->arguments[$name])) {
+          ctools_include('context');
+          $plugin = ctools_get_argument($subtask->arguments[$name]['name']);
+          if (isset($plugin['path placeholder'])) {
+            $placeholder = $plugin['path placeholder'];
+          }
+        }
         // If an argument, swap it out with our argument loader and make sure
         // the argument gets passed through to the page callback.
-        $path[]             = '%pm_arg';
+        $path[]             = $placeholder;
         $page_arguments[]   = $position;
         $access_arguments[] = $position;
       }
@@ -206,7 +221,7 @@ function page_manager_page_add_subtask($task_name = NULL, $step = NULL) {
     }
 
     $form_info['path'] = "admin/build/pages/add/$task_name/%step";
-   
+
     $handler_plugin = page_manager_get_task_handler($page->handler);
 
     $form_info['forms'] += $handler_plugin['forms'];
@@ -214,13 +229,13 @@ function page_manager_page_add_subtask($task_name = NULL, $step = NULL) {
     if (isset($page->forms)) {
       foreach ($page->forms as $id) {
         if (isset($form_info['add order'][$id])) {
-          $form_info['order'][$id] = $form_info['add order'][$id];        
+          $form_info['order'][$id] = $form_info['add order'][$id];
         }
         else if (isset($handler_plugin['add features'][$id])) {
-          $form_info['order'][$id] = $handler_plugin['add features'][$id];        
+          $form_info['order'][$id] = $handler_plugin['add features'][$id];
         }
         else if (isset($handler_plugin['required forms'][$id])) {
-          $form_info['order'][$id] = $handler_plugin['required forms'][$id];        
+          $form_info['order'][$id] = $handler_plugin['required forms'][$id];
         }
       }
     }
@@ -392,7 +407,7 @@ function page_manager_page_form_basic(&$form, &$form_state) {
       }
     }
   }
-  
+
   $path = implode('/', $path);
 
   if (empty($path) || $path != $frontpage) {
@@ -400,7 +415,7 @@ function page_manager_page_form_basic(&$form, &$form_state) {
       '#type' => 'checkbox',
       '#default_value' => !empty($page->make_frontpage),
       '#title' => t('Make this your site home page.'),
-      '#description' => t('If this box is checked this page will become the site home page. Only paths that have no placeholders can be used as the site home page. The current site home page is set to %homepage.', array('%homepage' => '/' . $frontpage)),
+      '#description' => t('To set this panel as your home page you must create a unique path name with no % placeholders in the path. The current site home page is set to %homepage.', array('%homepage' => '/' . $frontpage)),
     );
   }
   else if ($path == $frontpage) {
@@ -597,6 +612,7 @@ function page_manager_page_form_menu(&$form, &$form_state) {
     '#suffix' => '</div>',
     '#tree' => TRUE,
   );
+
   $menu = $form_state['page']->subtask['subtask']->menu;
   if (empty($menu)) {
     $menu = array(
@@ -728,6 +744,41 @@ function page_manager_page_form_menu(&$form, &$form_state) {
 }
 
 /**
+ * Validate handler for the menu form for add/edit page task.
+ */
+function page_manager_page_form_menu_validate(&$form, &$form_state) {
+  // If setting a 'normal' menu entry, make sure that any placeholders
+  // support the to_arg stuff.
+
+  if ($form_state['values']['menu']['type'] == 'normal') {
+    $page = $form_state['page']->subtask['subtask'];
+
+    foreach (explode('/', $page->path) as $bit) {
+      if (!isset($bit) || $bit === '') {
+        continue;
+      }
+
+      if ($bit[0] == '%') {
+        // Chop off that %.
+        $name = substr($bit, 1);
+
+        // Check to see if the argument plugin allows to arg:
+        if (!empty($page->arguments[$name])) {
+          ctools_include('context');
+          $plugin = ctools_get_argument($page->arguments[$name]['name']);
+          if (!empty($plugin['path placeholder to_arg'])) {
+            continue;
+          }
+        }
+
+        form_error($form['menu']['type'], t('Paths with non optional placeholders cannot be used as normal menu items unless the selected argument handler provides a default argument to use for the menu item.'));
+        return;
+      }
+    }
+  }
+}
+
+/**
  * Submit handler for the menu form for add/edit page task.
  */
 function page_manager_page_form_menu_submit(&$form, &$form_state) {
@@ -751,11 +802,6 @@ function page_manager_page_form_access(&$form, &$form_state) {
     $form_state['contexts'] = ctools_context_get_placeholders_from_argument($arguments);
   }
 
-  $form['markup'] = array(
-    '#value' => '<div class="description">' .
-    t('Access rules are used to test if the page is accessible and any menu items associated with it are visible.') .
-    '</div>',
-  );
   ctools_include('context-access-admin');
   $form = array_merge($form, ctools_access_admin_form($form_state));
 }
@@ -1232,7 +1278,7 @@ function page_manager_page_import_subtask_validate(&$form, &$form_state) {
   $task_name = page_manager_make_task_name('page', $form_state['values']['name']);
   $form_state['cache'] = page_manager_get_page_cache($task_name);
 
-  if ($form_state['cache']->locked) {
+  if ($form_state['cache'] && $form_state['cache']->locked) {
     form_error($form['name'], t('That page name is in use and locked by another user. You must <a href="!break">break the lock</a> on that page before proceeding, or choose a different name.', array('!break' => url(page_manager_edit_url($task_name, array('actions', 'break-lock'))))));
     return;
   }
@@ -1245,7 +1291,6 @@ function page_manager_page_import_subtask_validate(&$form, &$form_state) {
     $page->name = NULL;
   }
 
-  // 
   $form_state['page'] = new stdClass();
   $form_state['page']->subtask['subtask'] = $page;
   page_manager_page_form_basic_validate($form, $form_state);
@@ -1387,7 +1432,7 @@ function page_manager_page_form_clone_submit(&$form, &$form_state) {
 function page_manager_page_new_page_cache(&$page, &$cache) {
   // Does a page already exist? If so, we are overwriting it so
   // take its pid.
-  if (!empty($cache->subtask) && !empty($cache->subtask['subtask'])) {
+  if (!empty($cache->subtask) && !empty($cache->subtask['subtask']) && !empty($cache->subtask['subtask']->pid)) {
     $page->pid = $cache->subtask['subtask']->pid;
   }
   else {
@@ -1401,7 +1446,7 @@ function page_manager_page_new_page_cache(&$page, &$cache) {
   $page->export_type = EXPORT_IN_DATABASE;
   $page->type = t('Normal');
   $cache->subtask = page_manager_page_build_subtask($cache->task, $page);
-  
+
   if (isset($cache->handlers)) {
     foreach($cache->handlers as $id => $handler) {
       $cache->handler_info[$id]['changed'] = PAGE_MANAGER_CHANGED_DELETED;

@@ -1,5 +1,5 @@
 <?php
-// $Id: ajax.inc,v 1.10 2009/07/17 21:09:44 merlinofchaos Exp $
+// $Id: ajax.inc,v 1.11 2009/08/17 18:31:13 merlinofchaos Exp $
 
 /**
  * @file
