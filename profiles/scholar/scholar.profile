@@ -12,6 +12,7 @@ function scholar_profile_modules() {
 
   $contrib_modules = array(
   // sites/all
+    'advanced_help'
     'context',
     'context_contrib',
     'context_ui',
