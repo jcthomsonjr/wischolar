@@ -92,14 +92,7 @@ function scholar_menu(){
     'weight' => 0,
   );
   
-  $items['home'] = array(
-    'type' => MENU_CALLBACK,
-    'title' => '',
-    'page callback' => 'scholar_home',
-    'file' => 'scholar.pages.inc',
-    'access arguments' => array('access content'),
-    'weight' => 0,
-  );
+
   
   // nodeautocomplete callback for scholar 
     $items['scholar/node/autocomplete'] = array(
