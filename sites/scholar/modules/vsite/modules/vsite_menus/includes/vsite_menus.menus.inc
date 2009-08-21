@@ -39,8 +39,8 @@ class vsite_menus_menus implements space_setting {
     $choices = array('primary' => t($a_primary['title']), 'secondary' => t($a_secondary['title']), '' => t('None'));
 
     $disabled_choices = array('vsite_menus_0' => 'primary', 'vsite_menus_1' => 'secondary');//If these blocks are not used they will be disabled
-    foreach (scholarlayout_get_pagetypes($space) as $s_page_type => $s_name){
-      $a_region_wgts = scholarlayout_region_widgets($space,$s_page_type);
+    foreach (vsite_layout_get_pagetypes($space) as $s_page_type => $s_name){
+      $a_region_wgts = vsite_layout_region_widgets($space,$s_page_type);
     	if(!array_key_exists('unused',$a_region_wgts)){
     		$disabled_choices = array(); //nothing is in unused
     	}else{

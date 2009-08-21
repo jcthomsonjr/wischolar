@@ -71,7 +71,7 @@ function vsite_layout_layout(){
   $vsite_layout_widgets = vsite_layout_region_widgets();
   $wgts = array_key_exists('unused',$vsite_layout_widgets)?$vsite_layout_widgets['unused']:array();
   
-  $top = theme('vsite_layout_layout_widgets', $wgts, 'vsite_layout-top-widgets', 'vsite_layout-widgets-list');
+  $top = theme('vsite_layout_layout_widgets', $wgts, 'scholarlayout-top-widgets', 'scholarlayout-widgets-list');
   
   // layout
   $layout = theme('vsite_layout_layout');
@@ -97,10 +97,10 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars){
   $vsite_layout_widgets = vsite_layout_region_widgets();
   
   foreach($regions as $region){
-    $wgts_id = 'vsite_layout-' . str_replace('_','-', $region);
+    $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
     $wgts = array_key_exists($region,$vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
     _check_for_overrides($wgts,$region);
-    $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'vsite_layout-widgets-list');
+    $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
   }
   
   $vars['vsite_layout_form'] = drupal_get_form('vsite_layout_layoutsettings');
@@ -252,8 +252,8 @@ function vsite_layout_top_widgets_callback(){
   //top
   $wgts = array_key_exists('unused',$a_region_wgts)?$a_region_wgts['unused']:array();
   
-  $wgts_id = 'vsite_layout-top-widgets';
-  $wgts_class = 'vsite_layout-widgets-list';
+  $wgts_id = 'scholarlayout-top-widgets';
+  $wgts_class = 'scholarlayout-widgets-list';
   
   $top = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, $wgts_class);
   
@@ -275,9 +275,9 @@ function vsite_layout_region_widgets_callback(){
   $regions = array_keys(system_region_list('scholar_base'));
   foreach($regions as $region){
   	$widgets = array_key_exists($region,$a_region_wgts)?$a_region_wgts[$region]:array();
-    $wgts_id = 'vsite_layout-' . str_replace('_','-', $region);
+    $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
     if($s_page_type == 'all') _check_for_overrides($widgets,$region,$scholar);
-    $a_themed_regions[$region] = theme('vsite_layout_layout_widgets',$widgets, $wgts_id, 'vsite_layout-widgets-list');
+    $a_themed_regions[$region] = theme('vsite_layout_layout_widgets',$widgets, $wgts_id, 'scholarlayout-widgets-list');
   }
   
   $output= '<div id="vsite_layout-container" class="pad">'.
