@@ -15,13 +15,13 @@ function scholarproject_block($op = 'list', $delta = 0, $edit = array()) {
           $block = scholarproject_block_slideshow_view();
           break;
         case 1:
-          $block = scholarproject_block_slideshow_view();
+          $block = scholarproject_block_big_text_view();
           break;
         case 2:
-          $block = scholarproject_block_slideshow_view();
+          $block = scholarproject_block_tips_view();
           break;
         case 3:
-          $block = scholarproject_block_slideshow_view();
+          $block = scholarproject_block_site_example_view();
           break;
       }
       return $block;
@@ -29,15 +29,49 @@ function scholarproject_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 
-function scholarproject_theme(){
+function scholarproject_theme($existing, $type, $themeexisting, $type, $theme, $path){
+  
+  $path = drupal_get_path('module', 'scholarproject') . '/theme';
+  
   $items['project_slideshow_left'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'project-slideshow-left',
     'path' => $path,
-    'file' => 'theme.inc',
   );
-}
+  
+    $items['project_big_text'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-big-text',
+    'path' => $path,
+  );
+  
+    $items['project_tips'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-tips',
+    'path' => $path,
+  );
+  
+  $items['project_site_examples'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-site-examples',
+    'path' => $path,
+  );
+  
+  return $items;
+ }
 
 function scholarproject_block_slideshow_view(){
   return theme('project_slideshow_left');
+}
+
+function scholarproject_block_big_text_view(){
+  return theme('project_big_text');
+}
+
+function scholarproject_block_tips_view(){
+  return theme('project_tips');
+}
+
+function scholarproject_block_site_example_view(){
+  return theme('project_site_examples');
 }
