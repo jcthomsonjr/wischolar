@@ -66,12 +66,19 @@ function scholar_profile_modules() {
     'install_profile_api',
     'strongarm',
   
+  // vsite
+    'vsite_content',
+    'vsite_front',
+    'vsite_layout',
+    'vsite_menus',
+    'vsite_themes',
+    'vsite_users',
+    'vsite_vocab',
+    
   // scholar specific
     'biblio',
     'scholar',
     'cp',
-    'vsite_content',
-    'vsite_front',
     'scholar_feature_settings',
     'scholarwidgets',
     //'cp_node_forms',
