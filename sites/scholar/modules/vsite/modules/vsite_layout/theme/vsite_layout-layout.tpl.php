@@ -1,9 +1,9 @@
-<?= $scholarlayout_form; ?>
+<?= $vsite_layout_form; ?>
 <div id="scholarlayout-container" class="pad">
-  <?php print $scholarlayout_header_main; ?>
-  <?php print $scholarlayout_header_left; ?>
-  <?php print $scholarlayout_header_right; ?>
-  <?php print $scholarlayout_navbar; ?>
-  <?php print $scholarlayout_left; ?>
-  <?php print $scholarlayout_right; ?>
+  <?php print $vsite_layout_header_main; ?>
+  <?php print $vsite_layout_header_left; ?>
+  <?php print $vsite_layout_header_right; ?>
+  <?php print $vsite_layout_navbar; ?>
+  <?php print $vsite_layout_left; ?>
+  <?php print $vsite_layout_right; ?>
 </div>
