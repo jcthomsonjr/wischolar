@@ -28,10 +28,12 @@ class cp_setting_shield implements space_setting {
     }  
   
     $form = array(
-      '#title' => t('Shield Selection'),
+      '#prefix' => "<div class='select_wrapper'>",
+      '#title' => t('Shield'),
       '#type' => 'radios',
       '#options' => $options,
       '#default_value' => $value ? $value:$s_default,
+      '#append' => '</div>',
     );
     
     return $form;

@@ -4,9 +4,20 @@
  * Enter description here...
  */
 function cp_settings_form($form_id, $setting_id){
-  drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-theme-picker.css');
-  drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-theme-picker.js');
+  
   drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-sliding-container.js');
+  
+  switch($setting_id){
+  	case 'theme':
+  		drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-theme-picker.css');
+  		drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-theme-picker.js');
+  	break;
+  	case 'shield':
+  		drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-shield-picker.css');
+  		drupal_add_js(drupal_get_path('module', 'cp') .'/theme/cp-shield-picker.js');
+  	break;
+  }
+  
   
   // get the space
   $space = spaces_get_space();
