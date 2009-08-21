@@ -13,6 +13,22 @@ function vsite_themes_init(){
 }
 
 /**
+ * hook_theme
+ */
+function vsite_themes_theme(){
+  $path = drupal_get_path('module', 'vsite_themes') .'/theme';
+  
+  $items = array();
+  $items['vsite_themes_theme_picker'] = array(
+    'arguments' => array('info' => array()),
+    'template' => 'vsite_themes-theme-picker',
+    'path' => $path,
+    'file' => 'theme.inc',
+  );
+  return $items;
+}
+
+/**
  * Implementation of hook_spaces_settings().
  */
 function vsite_themes_spaces_settings() {

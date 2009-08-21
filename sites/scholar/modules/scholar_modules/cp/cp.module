@@ -236,18 +236,10 @@ function cp_form_alter(&$form, $form_state, $form_id) {
  * Implementation of hook_theme().
  */
 function cp_theme($cache, $type, $theme, $path) {
-  $path = drupal_get_path('module', 'cp') .'/theme';
-  
+
   $items['cp_toolbar'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'cp-toolbar',
-    'path' => $path,
-    'file' => 'theme.inc',
-  );
-  
-  $items['cp_theme_picker'] = array(
-    'arguments' => array('info' => array()),
-    'template' => 'cp-theme-picker',
     'path' => $path,
     'file' => 'theme.inc',
   );
