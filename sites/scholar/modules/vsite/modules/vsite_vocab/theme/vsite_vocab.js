@@ -1,6 +1,6 @@
-Drupal.ScholarVocab = Drupal.ScholarVocab || {};
+Drupal.VsiteVocab = Drupal.VsiteVocab || {};
 
-Drupal.ScholarVocab.Rename = function(){
+Drupal.VsiteVocab.Rename = function(){
 	var newTerm = prompt('new name');
     if (newTerm == null){
       return false;
@@ -19,8 +19,8 @@ Drupal.ScholarVocab.Rename = function(){
 	return false;
 }
 
-Drupal.behaviors.scholarvocab = function(context) {
-  var rename_link = $('ul.admin a.edit:not(.scholarvocab-processed)', context);
+Drupal.behaviors.vsitevocab = function(context) {
+  var rename_link = $('ul.admin a.edit:not(.vsitevocab-processed)', context);
   var dest = rename_link.attr('href');	
   
   rename_link.click(Drupal.ScholarVocab.Rename);
