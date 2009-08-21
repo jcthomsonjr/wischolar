@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * hook init
+ * @return unknown_type
+ */
+function vsite_look_init(){
+  $active_menu = menu_get_item();
+  if ($active_menu['path'] == 'cp/settings/theme'){  
+    drupal_add_css(drupal_get_path('module', 'vsite_look') . '/theme/vsite_look_theme_picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_look') . '/theme/vsite_look_theme_picker.js');
+  }
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function vsite_look_spaces_settings() {
+  return array(
+    'theme' => array(
+      'class' => 'cp_setting_theme',
+      'file' => drupal_get_path('module', 'cp') .'/settingsinc/cp.settings.theme.inc',
+    ),
+  );
+}
