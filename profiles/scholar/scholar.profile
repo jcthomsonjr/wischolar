@@ -71,6 +71,7 @@ function scholar_profile_modules() {
     'scholar',
     'cp',
     'cp_content',
+    'cp_front',
     'scholar_feature_settings',
     'scholarwidgets',
     //'cp_node_forms',
