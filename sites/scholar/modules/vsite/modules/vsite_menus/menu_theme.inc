@@ -6,7 +6,7 @@
  * @param fieldset $element
  * @return string html
  */
-function theme_vsite_menu_radios($element) {
+function theme_vsite_menus_radios($element) {
   
   $content = "";
   foreach ($element as $key => $item) {

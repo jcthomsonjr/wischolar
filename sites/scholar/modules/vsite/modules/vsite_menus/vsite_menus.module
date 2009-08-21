@@ -1,17 +1,17 @@
 <?php
 
-function vsite_menu_init(){
-   drupal_add_css(drupal_get_path('module', 'vsite_menu') .'/theme/vsite_menu.css');
+function vsite_menus_init(){
+   drupal_add_css(drupal_get_path('module', 'vsite_menus') .'/theme/vsite_menus.css');
 }
 
 /**
  * Implementation of hook_spaces_settings().
  */
-function vsite_menu_spaces_settings(){
+function vsite_menus_spaces_settings(){
   return array(
     'menus' => array(
-      'class' => 'vsite_menu_menus', 
-      'file' => drupal_get_path('module', 'vsite_menu') . '/includes/vsite_menu.menus.inc' 
+      'class' => 'vsite_menus_menus', 
+      'file' => drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc' 
     ) 
   );
 }
@@ -19,8 +19,8 @@ function vsite_menu_spaces_settings(){
 /**
  * Implements hook_menu_node_insert().
  */
-function vsite_menu_menu_node_insert($item, $node) {
-  require_once(drupal_get_path('module', 'vsite_menu') .'/vsite_menu.menus.inc');
+function vsite_menus_menu_node_insert($item, $node) {
+  require_once(drupal_get_path('module', 'vsite_menus') .'/vsite_menus.menus.inc');
   scholar_include('scholarapi');
   $site = scholar_get_scholar();
   $a_scholar_types = scholar_content_types();
@@ -31,12 +31,12 @@ function vsite_menu_menu_node_insert($item, $node) {
     
     $site->settings['menus']['menu_items'][$item->mlid] = array('menu' => $s_menu_key, 'weight' => $item->weight);
     
-    $site->settings['menus'] = vsite_menu_menus::create_menus($site->settings['menus']); 
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
     
     spaces_save($site);
   }elseif ($site && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
     unset($site->settings['menus']['menu_items'][$item->mlid]);
-    $site->settings['menus'] = vsite_menu_menus::create_menus($site->settings['menus']); 
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
     spaces_save($site);
   }
 }
@@ -44,22 +44,22 @@ function vsite_menu_menu_node_insert($item, $node) {
 /**
  * Implements hook_menu_node_update().
  */
-function vsite_menu_menu_node_update($item, $node) {
-  vsite_menu_menu_node_insert($item,$node);
+function vsite_menus_menu_node_update($item, $node) {
+  vsite_menus_menu_node_insert($item,$node);
 }
 
 /**
  * Implements hook_menu_node_delete().
  */
-function vsite_menu_menu_node_delete($item, $node) {
-  require_once(drupal_get_path('module', 'vsite_menu') .'/vsite_menu.menus.inc');
+function vsite_menus_menu_node_delete($item, $node) {
+  require_once(drupal_get_path('module', 'vsite_menus') .'/vsite_menus.menus.inc');
   scholar_include('scholarapi');
   $site = scholar_get_scholar();
   $a_scholar_types = scholar_content_types();
   
   if ($site && array_key_exists($node->type,$a_scholar_types) && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
     unset($site->settings['menus']['menu_items'][$item->mlid]);
-    $site->settings['menus'] = vsite_menu_menus::create_menus($site->settings['menus']); 
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
     spaces_save($site);
   }
 }
@@ -71,7 +71,7 @@ function vsite_menu_menu_node_delete($item, $node) {
  * @param boolean $b_html (return formated html?)
  * @param boolean $b_check_expanded (allow expanded menus? slightly slower)
  */
-function vsite_menu_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_expanded = false){
+function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_expanded = false){
   $space = scholar_get_scholar();
   
   if(!$space) return ($b_html)?"":false;
@@ -129,10 +129,10 @@ function vsite_menu_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_
 /**
  * Implementation of hook_theme().
  */
-function vsite_menu_theme($cache, $type, $theme, $path) {
-  $path = drupal_get_path('module', 'vsite_menu') ;
+function vsite_menus_theme($cache, $type, $theme, $path) {
+  $path = drupal_get_path('module', 'vsite_menus') ;
   
-  $items['vsite_menu_radios'] = array(
+  $items['vsite_menus_radios'] = array(
     'arguments' => array('element' => NULL,'disabled' => array()),
     'path' => $path,
     'file' => 'menu_theme.inc',
@@ -141,7 +141,7 @@ function vsite_menu_theme($cache, $type, $theme, $path) {
   return $items;
 }
 
-function vsite_menu_form_alter(&$form, $form_state, $form_id){
+function vsite_menus_form_alter(&$form, $form_state, $form_id){
   scholar_include('scholarapi');
   $a_scholar_types = scholar_content_types();
   $o_scholar = scholar_get_scholar();
@@ -165,7 +165,7 @@ function vsite_menu_form_alter(&$form, $form_state, $form_id){
  * @param int $delta
  * @param array $edit
  */
-function vsite_menu_block($op = 'list', $delta = 0, $edit = array()) {
+function vsite_menus_block($op = 'list', $delta = 0, $edit = array()) {
   if(!user_access('access content')) return;
   
   $blocks = array();
@@ -180,11 +180,11 @@ function vsite_menu_block($op = 'list', $delta = 0, $edit = array()) {
     switch ($delta) {
       case 0:
         $block['subject'] = t(''); // intentionally left empty for now.
-        $block['content'] =vsite_menu_get_menu_tree('primary');
+        $block['content'] =vsite_menus_get_menu_tree('primary');
         return $block ;
       case 1:
         $block['subject'] = t(''); // intentionally left empty for now.
-        $block['content'] = vsite_menu_get_menu_tree('secondary');
+        $block['content'] = vsite_menus_get_menu_tree('secondary');
         return $block;
     }
   }
@@ -194,11 +194,11 @@ function vsite_menu_block($op = 'list', $delta = 0, $edit = array()) {
  * Implementation of hook_scholar_widgets
  * @return array
  */
-function vsite_menu_scholar_widgets(){
+function vsite_menus_scholar_widgets(){
   
   return array(
-    'vsite_menu_0' => array(
-      'module' => 'vsite_menu',
+    'vsite_menus_0' => array(
+      'module' => 'vsite_menus',
       'delta' => '0',
       'weight' => 20,
       'region' => 'navbar',
@@ -206,8 +206,8 @@ function vsite_menu_scholar_widgets(){
       'label' => 'Scholar primary menu',
       'type' => 'context_ui',
     ),
-    'vsite_menu_1' => array(
-      'module' => 'vsite_menu',
+    'vsite_menus_1' => array(
+      'module' => 'vsite_menus',
       'delta' => '1',
       'weight' => 20,
       'region' => 'left',
