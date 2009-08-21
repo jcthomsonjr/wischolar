@@ -2,7 +2,7 @@
 /**
  * Provides theme selection for each site
  */
-class scholarmenu_menus implements space_setting {
+class vsite_menu_menus implements space_setting {
   
   var $id;
   function __construct($id = NULL) {
@@ -24,7 +24,7 @@ class scholarmenu_menus implements space_setting {
     // Description
     $form['menu_items'] = array(
       '#type' => 'fieldset',
-      '#theme' => 'scholarmenu_radios',
+      '#theme' => 'vsite_menu_radios',
     );
     $n_count = 0;
     $s_current = '';
@@ -38,7 +38,7 @@ class scholarmenu_menus implements space_setting {
     
     $choices = array('primary' => t($a_primary['title']), 'secondary' => t($a_secondary['title']), '' => t('None'));
 
-    $disabled_choices = array('scholarmenu_0' => 'primary', 'scholarmenu_1' => 'secondary');//If these blocks are not used they will be disabled
+    $disabled_choices = array('vsite_menu_0' => 'primary', 'vsite_menu_1' => 'secondary');//If these blocks are not used they will be disabled
     foreach (scholarlayout_get_pagetypes($space) as $s_page_type => $s_name){
       $a_region_wgts = scholarlayout_region_widgets($space,$s_page_type);
     	if(!array_key_exists('unused',$a_region_wgts)){
