@@ -3,7 +3,7 @@
 /**
  * Provides theme selection for each site
  */
-class vsite_look_settings_theme implements space_setting {
+class vsite_themes_settings_theme implements space_setting {
   var $id;
   function __construct($id = NULL) {
     if ($id) {

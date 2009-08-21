@@ -4,22 +4,22 @@
  * hook init
  * @return unknown_type
  */
-function vsite_look_init(){
+function vsite_themes_init(){
   $active_menu = menu_get_item();
   if ($active_menu['path'] == 'cp/settings/theme'){  
-    drupal_add_css(drupal_get_path('module', 'vsite_look') . '/theme/vsite_look_theme_picker.css');
-    drupal_add_js(drupal_get_path('module', 'vsite_look') . '/theme/vsite_look_theme_picker.js');
+    drupal_add_css(drupal_get_path('module', 'vsite_themes') . '/theme/vsite_themes_theme_picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_themes') . '/theme/vsite_themes_theme_picker.js');
   }
 }
 
 /**
  * Implementation of hook_spaces_settings().
  */
-function vsite_look_spaces_settings() {
+function vsite_themes_spaces_settings() {
   return array(
     'theme' => array(
-      'class' => 'vsite_look_settings_theme',
-      'file' => drupal_get_path('module', 'vsite_look') .'/includes/vsite_look.settings.inc',
+      'class' => 'vsite_themes_settings_theme',
+      'file' => drupal_get_path('module', 'vsite_themes') .'/includes/vsite_themes.settings.inc',
     ),
   );
 }
