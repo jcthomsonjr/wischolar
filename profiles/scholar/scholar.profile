@@ -86,6 +86,7 @@ function scholar_profile_modules() {
     'scholarlayout',
     'scholarvocab',
     'scholarregister',
+    'scholar_project',
     
    // features TODO does this gets installed in the  next step (enable features?)
    // keep here for testing purposes only
