@@ -1,0 +1,225 @@
+<?php
+
+function scholarvocab_init(){
+   drupal_add_css(drupal_get_path('module', 'scholarvocab') .'/theme/scholarvocab.css');
+   }
+
+function scholarvocab_menu() {
+  $items = array ();
+  $items ['cp/settings/taxonomy'] = array (
+  	'title' => 'Taxonomy', 
+  	'page callback' => 'scholarvocab_taxonomies', 
+  	'access arguments' => array ('access content' ),
+    'menu_name' => 'cp',
+  );
+  
+  $items['scholarvocab/term/delete/%/%'] = array (
+    'title' => 'deleting a term',
+    'page callback' => 'scholarvocab_term_delete',
+    'page arguments' => array(3,4),
+    'access arguments' => array('access content')
+  );
+  
+  $items['scholarvocab/term/%/%/rename/%'] = array (
+    'title' => 'deleting a term',
+    'page callback' => 'scholarvocab_term_rename',
+    'page arguments' => array(2,3,5),
+    'access arguments' => array('access content')
+  );
+  
+  
+  return $items;
+}
+
+function scholarvocab_taxonomies(){
+  $site = scholar_get_scholar();
+  scholar_include('scholarapi');
+
+  $s_types = scholar_content_types();
+  $output = '';
+  $delta = 0;
+  $output = '<div class="pad">';
+
+  foreach($s_types as $type => $name){
+    
+    $block = scholarvocab_block_per_content_type($site, $type);
+    $bo = new stdClass();
+    $bo -> module = 'scholarvocab';
+    $bo -> content = $block['content'];
+    $bo -> subject = 'Categories for ' . $name;
+    $bo -> delta = $bo -> module . $delta++;
+    $output .= theme('block', $bo);
+  }
+  $output .='</div>';
+  return $output;
+}
+
+
+function scholarvocab_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks[0]['info'] = t('Scholar site categories');
+      return $blocks;
+    case 'view':
+      switch ($delta) {
+        case 0:
+          $block = scholarvocab_block_view();
+          break;
+      }
+      
+      return $block;
+  }
+}
+
+function scholarvocab_block_view() {
+  //TODO it seems like scholar_get_scholar does not work here
+  // cant get space from within a block
+  $group_node = og_get_group_context ();
+  $site = spaces_load ( 'og', $group_node->nid, TRUE );
+  $sid = $group_node -> nid;
+ 
+  // 1. get the active contexts
+  $active_contexts = context_active_contexts();
+  foreach($active_contexts as $c){
+    // does this context has a "node" associated with it
+    if (isset ($c -> node)) {
+      $node_type = current($c -> node);  // TODO we are assuming that the context has only one content type
+      // get vocabularies associated with this content type
+      return scholarvocab_block_per_content_type($site, $node_type);
+    }
+  }
+}
+
+function scholarvocab_block_per_content_type($site, $node_type) {
+  drupal_add_js ( drupal_get_path ( 'module', 'scholarvocab' ) . '/theme/scholarvocab.js' );
+  ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+  //$site = scholar_get_scholar(); // TODO why this is not working !!!
+  $admin = $site->admin_access ();
+  $vcs = taxonomy_get_vocabularies ( $node_type );
+  foreach ( $vcs as $v ) {
+    // which is the group of this vocab?
+    $group_vocab = og_vocab_get_group($v -> vid);
+    if ($group_vocab['nid'] == $site -> group -> nid){
+    $tree = taxonomy_get_tree ( $v->vid );
+    
+    foreach ( $tree as $term ) {
+      $count = taxonomy_term_count_nodes ( $term->tid );
+      //if ($count) {
+      // TODO the following should come from the feature view (where term) is an argument)
+      $term_path = "taxonomy/term/$term->tid";
+      $term_link = l ( $term->name, $term_path, array ('title' => t ( $term->description ) ) );
+      
+      //dpm($term);
+      $item = _scholarvocab_item($term);
+      $item = $term_link . '<span class = "count" > (' . $count . ')</span>';
+      if ($admin) {
+        $admin_links = array ();
+        $admin_links [] = array (
+        	'title' => 'delete', 
+        	'href' => "scholarvocab/term/delete/" . $term->vid . "/" . $term->tid,
+          'attributes' => array('class' => 'delete ctools-use-ajax'),  // important for ajax to work
+        );
+
+        $admin_links [] = array (
+        	'title' => 'edit', 
+        	'href' => 'scholarvocab/term/' . $term->vid . "/" . $term->tid . '/rename/',
+          'attributes' => array('class' => 'edit') 
+        );
+        //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
+        $item .= theme ( 'links', $admin_links, $attributes = array ('class' => 'admin' ) );
+      }
+      $items [] = array ('data' => $item, 'id' => 'scholarvocab_item_' . $term->tid );
+      //}
+    }
+    }
+  }
+  $block ['content'] = theme ( 'item_list', $items, NULL, 'ul', $attributes = array('id' => 'id') );
+  $block ['subject'] = t ( 'Categories' );
+  if ($admin) {
+    $block ['subject'] .= l ( 'Edit', "node/" . $group_node->nid . "/og/vocab/edit/vocabulary/$vid" );
+  }
+  return $block;
+}
+
+function scholarvocab_term_rename($vid, $tid, $newterm) {
+  //dpm ( $newterm );
+  $table = 'term_data';
+  $record = new stdClass ( );
+  $record->name = $newterm;
+  
+  $term = array ('name' => $newterm, 'vid' => $vid, 'tid' => $tid );
+  
+  // if (drupal_rewrite_record($table, $record, 'tid')){
+  if (taxonomy_save_term ( $term )) {
+    
+    ctools_include ( 'ajax' );
+    ctools_add_js ( 'ajax-responder' );
+    $commands = array ();
+    $commands [] = ctools_ajax_command_replace ('#scholarvocab_item_' . $tid . ' > a', _scholarvocab_item($term) );
+    ctools_ajax_render ( $commands ); // this function exits.
+  } else {
+    ctools_ajax_render_error($error = 'something wrong happened ...');
+  }
+
+}
+
+function scholarvocab_term_delete($vid,$tid){
+  if (taxonomy_del_term($tid)) {
+    ctools_include('ajax');
+    ctools_add_js('ajax-responder');
+    $commands = array();
+    $commands[] = ctools_ajax_command_replace('#scholarvocab_item_' . $tid, '');
+    ctools_ajax_render($commands); // this function exits.
+  } else {
+    ctools_ajax_render_error($error = 'something wrong happened ...');
+  }
+}
+
+function _scholarvocab_item($term){
+  if (is_object($term)){
+    $term = (array)$term;
+  }
+  $term_path = "taxonomy/term/" . $term['tid'];
+  $term_link = l ( $term['name'], $term_path, array ('title' => t ( $term['description'] ) ) ); 
+  return $term_link;
+}
+
+
+/** API functions **/
+
+/**
+ * Creates a series of taxonomy vocabularies and terms from the passed
+ * definition.
+ *
+ * Sample Definition:
+ *   array(
+ *   0 => array(
+ *     'name' => 'vocab name', 
+ *     'content_types' => array(), 
+ *     'properties' => array(),
+ *     'terms' => array(
+ *       0 => array(
+ *         'name' => 'Term Name', 
+ *         'desription' => '', 
+ *         'properties' => array(),
+ *       )
+ *     ),
+ *   ), 
+ * );
+ *
+ * NOTE: This function does not currently do any error or duplicate checking.
+ *
+ * @param $definition
+ *   Definintion of the taxonomy structure.
+ */
+function scholarvocab_taxonomy_import($gid, $definition) {
+  foreach ($definition as $vocab_index => $vocab_definition) {
+    $vid = install_taxonomy_add_vocabulary($vocab_definition['name'], $vocab_definition['content_types'], $vocab_definition['properties']);
+    // make this a group taxonomy
+    og_vocab_write_record($gid, $vid);
+    foreach ($vocab_definition['terms'] as $term_index => $term_definition) {
+      install_taxonomy_add_term($vid, $term_definition['name'], $term_definition['description'], $term_definition['properties']);
+    }
+  }
+}
