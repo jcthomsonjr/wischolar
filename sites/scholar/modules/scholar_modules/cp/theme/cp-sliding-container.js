@@ -34,7 +34,7 @@
     		$("."+options.navClass+" li:eq("+(currentIndex*-1)+")" ).addClass('active');
     	    $("."+options.listItemClass).removeClass('active');
     	    $("."+options.listItemClass+":eq("+(currentIndex*-1)+")").addClass('active');
-		    if(options.changeObject) options.changeObject.trigger('indexChanged',{index:currentIndex});
+		    if(options.changeObject) options.changeObject.trigger('indexChanged',[currentIndex]);
     	    return false;
     	  });
       break;
@@ -48,7 +48,7 @@
 			$("."+options.navClass+" li:eq("+(currentIndex*-1)+")" ).addClass('active');
 		    $("."+options.listItemClass).removeClass('active');
 		    $("."+options.listItemClass+":eq("+(currentIndex*-1)+")").addClass('active');
-		    if(options.changeObject) options.changeObject.trigger('indexChanged',{index:currentIndex});
+		    if(options.changeObject) options.changeObject.trigger('indexChanged',[currentIndex]);
 		    return false;
     	  });
       break;   
@@ -60,7 +60,7 @@
   			$("."+options.listItemClass).removeClass('active');
   			$("."+options.listItemClass+":eq("+ e.data.index +")").addClass('active');
   			currentIndex = -1* e.data.index;
-		    if(options.changeObject) options.changeObject.trigger('indexChanged',{index:currentIndex});
+		    if(options.changeObject) options.changeObject.trigger('indexChanged',[currentIndex]);
   			return false;
   		});
         if($("li."+options.listItemClass+":eq("+ jumpLinkIndex +")").hasClass('checked')){

@@ -31,11 +31,8 @@ if (Drupal.jsEnabled) {
 							    							     navClass:'shield_subnav',
 							    							     changeObject:clickRegister });
     
-    clickRegister.bind("indexChanged", function(e){
-        var index = e.data.index;
-        
-        $("div.form-item input").attr('checked',false);
-        $("div.form-item:eq("+ (index+1) +") input").attr('checked',true);
+    clickRegister.bind("indexChanged",function(e,index){
+        $("div.form-item:eq("+ ((0-index)+1) +") input[type=radio]").click(); //.attr('checked',true);
     });
 
     
