@@ -3,7 +3,7 @@
 /**
  * hook menu
  */
-function cp_content_menu(){
+function vsite_content_menu(){
   $items = array();
   
   $items['cp/content'] = array(
@@ -14,7 +14,7 @@ function cp_content_menu(){
   
   $items['cp/content/all'] = array(
     'title' => 'All', 
-    'page callback' => 'cp_content_content',
+    'page callback' => 'vsite_content_content',
   );
   
   // a menu entry for each content type
@@ -23,7 +23,7 @@ function cp_content_menu(){
   foreach($content_types as $type => $name){
     $items['cp/content/'.$type] = array(
       'title' => $name,
-      'page callback' => 'cp_content_content',
+      'page callback' => 'vsite_content_content',
       'page arguments' => array($type, $name),	 
     );    
   }
@@ -41,7 +41,7 @@ function cp_content_menu(){
 /**
  * Implementation of hook_views_api().
  */
-function cp_content_views_api() {
+function vsite_content_views_api() {
   return array(
     'api' => 2,
   );
@@ -51,16 +51,16 @@ function cp_content_views_api() {
 /**
  * Function to return output on cp content page
  */
-function cp_content_content($type = NULL, $name = NULL){
+function vsite_content_content($type = NULL, $name = NULL){
   //return 'whatever';
   //element classes for 'add new' link
   $add_new_classes = 'add-new ' . 'add-new-' . $type;
-  $v = views_get_view('cp_content');
+  $v = views_get_view('vsite_content');
   //link to add new content
   $output .= isset($type) ? '<div class="' . $add_new_classes . '">' . l(t('+ add new ' . $name), 'node/add/' . strtolower($type)) . '</div>' : '';
   
   //adding view output
-  $output .= views_page($view_name = 'cp_content', $display = 'default', $arg = $type);
+  $output .= views_page($view_name = 'vsite_content', $display = 'default', $arg = $type);
   return $output;
 }
 
@@ -68,7 +68,7 @@ function cp_content_content($type = NULL, $name = NULL){
  * hook form_alter
  * Alter the views exposed form
  */
-function cp_content_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
+function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
   
   if ($form['#id'] == 'views-exposed-form-cp-content-default') {
     //TODO: Is there a better way to get the content type argument???
