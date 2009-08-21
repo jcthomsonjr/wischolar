@@ -1,19 +1,19 @@
 <?php
 
-function cp_front_init(){
+function vsite_front_init(){
   $active_menu = menu_get_item();
   if ($active_menu['path'] == 'cp/settings/front'){
-    drupal_add_css(drupal_get_path('module', 'cp_front') .'/theme/cp-front.css');
+    drupal_add_css(drupal_get_path('module', 'vsite_front') .'/theme/vsite_front.css');
   }
 }
 
-function cp_front_menu(){
+function vsite_front_menu(){
   $items = array();
   $items['home'] = array(
     'type' => MENU_CALLBACK,
     'title' => '',
-    'page callback' => 'cp_front_home',
-    'file' => 'cp_front.pages.inc',
+    'page callback' => 'vsite_front_home',
+    'file' => 'vsite_front.pages.inc',
     'access arguments' => array('access content'),
     'weight' => 0,
   );
@@ -23,11 +23,11 @@ function cp_front_menu(){
 /**
  * Implementation of hook_spaces_settings().
  */
-function cp_front_spaces_settings(){
+function vsite_front_spaces_settings(){
   return array(
     'front' => array(
-      'class' => 'cp_front_settings_front', 
-      'file' => drupal_get_path('module', 'cp_front') . '/includes/cp_front.settings.inc' 
+      'class' => 'vsite_front_settings_front', 
+      'file' => drupal_get_path('module', 'vsite_front') . '/includes/vsite_front.settings.inc' 
     ) 
   );
 }
@@ -35,7 +35,7 @@ function cp_front_spaces_settings(){
 /**
  * Implementation of hook_views_api().
  */
-function cp_front_views_api(){
+function vsite_front_views_api(){
   return array(
     'api' => 2 
   );
@@ -45,7 +45,7 @@ function cp_front_views_api(){
  * Implementation of hook flag_default_flags
  * @return array - default flag
  */
-function cp_front_flag_default_flags(){
+function vsite_front_flag_default_flags(){
   scholar_include('scholarapi');
   $scholar_types = array_keys(scholar_content_types());
   

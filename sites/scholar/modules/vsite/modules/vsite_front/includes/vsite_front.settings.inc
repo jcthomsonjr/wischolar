@@ -3,7 +3,7 @@
 /**
  * Provides front page settings for each site
  */
-class cp_front_settings_front implements space_setting {
+class vsite_front_settings_front implements space_setting {
   var $id;
   function __construct($id = NULL) {
     if ($id) {
