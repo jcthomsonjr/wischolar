@@ -68,20 +68,6 @@ function cp_menu(){
 
   $items = array();
 
-  $items['cp/users'] = array(
-    'title' => 'Users',
-    'page callback' => 'cp_route', 
-    'weight' => 2, 
-  );
-  
-  $items['cp/users/members'] = array(
-    'title' => 'Members',
-    'page callback' => 'cp_user_members',
-    'access arguments' => array('access content'),
-    'file' => 'cp.users.inc',
-    'file path' => drupal_get_path('module', 'cp'). '/includes', 
-  );
-
   $items['cp/news'] = array(
     'title' => 'News',
     'page callback' => 'cp_cp',
