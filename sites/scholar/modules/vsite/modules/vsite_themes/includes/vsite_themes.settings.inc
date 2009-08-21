@@ -29,7 +29,7 @@ class vsite_themes_settings_theme implements space_setting {
 	    $info = $theme_obj -> info;
 	    $info['theme_name'] = $theme_obj -> name;
 	
-	    $options[$info['theme_name']] = theme('cp_theme_picker', $info); 
+	    $options[$info['theme_name']] = theme('vsite_themes_theme_picker', $info); 
 	  }  
 	
 	  $form = array(
