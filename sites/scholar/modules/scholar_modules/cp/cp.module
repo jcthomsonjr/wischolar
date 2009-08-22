@@ -434,53 +434,6 @@ function cp_flag_default_flags(){
   return $flags;
 }
 
-/**
- * Implementation of hook_link().
- */
-function cp_link($type, $object, $teaser = FALSE){
-
-  //check font page settings here, only execute if front page setting equals flag
-  $site = vsite_get_vsite();
-  //
-  if ($site->settings['front']['frontpage'] !== 'flag'){
-    return false;
-  }
-
-  if (!isset($object) || !flag_fetch_definition($type)) {
-    return;
-  }
-
-  global $user;
-  // Anonymous users can't create flags with this system.
-  if (!$user->uid) {
-    return;
-  }
-
-  // Get frontpage flags
-  $flag = flag_get_flag('frontpage');
-
-  if (!$flag->user_access($user)) {
-    // User has no permission to use this flag.
-    return false;
-  }
-
-  if (!$flag->applies_to_content_object($object)) {
-    // Flag does not apply to this content.
-    return false;
-  }
-
-  $content_id = $flag->get_content_id($object);
-  // The flag links are actually fully rendered theme functions.
-  // The HTML attribute is set to TRUE to allow whatever the themer desires.
-  $links['flag-'. $flag->name] = array(
-  'title' => $flag->theme($flag->is_flagged($content_id) ? 'unflag' : 'flag', $content_id),
-  'html' => TRUE,
-  );
-
-  if (isset($links)) {
-    return $links;
-  }
-}
 
 /**
  * Implementation of hook_imagecache_default_presets().
