@@ -32,7 +32,7 @@ function vsite_vocab_menu() {
 }
 
 function vsite_vocab_taxonomies(){
-  $site = scholar_get_scholar();
+  $site = vsite_get_vsite();
   scholar_include('scholarapi');
 
   $s_types = scholar_content_types();
@@ -72,7 +72,7 @@ function vsite_vocab_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 function vsite_vocab_block_view() {
-  //TODO it seems like scholar_get_scholar does not work here
+  //TODO it seems like vsite_get_vsite does not work here
   // cant get space from within a block
   $group_node = og_get_group_context ();
   $site = spaces_load ( 'og', $group_node->nid, TRUE );
@@ -94,7 +94,7 @@ function vsite_vocab_block_per_content_type($site, $node_type) {
   drupal_add_js ( drupal_get_path ( 'module', 'vsite_vocab' ) . '/theme/vsite_vocab.js' );
   ctools_include ( 'ajax' );
   ctools_add_js ( 'ajax-responder' );
-  //$site = scholar_get_scholar(); // TODO why this is not working !!!
+  //$site = vsite_get_vsite(); // TODO why this is not working !!!
   $admin = $site->admin_access ();
   $vcs = taxonomy_get_vocabularies ( $node_type );
   foreach ( $vcs as $v ) {

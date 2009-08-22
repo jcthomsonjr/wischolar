@@ -15,7 +15,7 @@ class vsite_menus_menus implements space_setting {
   }
 
   function form($space, $value = array()) {
-    $scholar = scholar_get_scholar();
+    $scholar = vsite_get_vsite();
     
     $form = array();
     $form['#title'] = 'Menus';

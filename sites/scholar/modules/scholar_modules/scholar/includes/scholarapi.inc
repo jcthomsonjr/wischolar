@@ -9,7 +9,7 @@
  */
 function scholar_create_links() {
   global $user;
-  $site = spaces_get_space();
+  $site = vsite_get_vsite();
   
   $post_types = og_get_types('group_post');
   $types = node_get_types();
@@ -50,7 +50,7 @@ function scholar_content_types(){
  * @return string
  */
 function theme_scholar_logo($preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
-  $scholar = scholar_get_scholar();
+  $scholar = vsite_get_vsite();
   $s_image_path;
   $s_out;
   

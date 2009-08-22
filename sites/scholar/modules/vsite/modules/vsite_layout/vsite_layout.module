@@ -65,7 +65,7 @@ function vsite_layout_layout(){
 
   drupal_add_js(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.js');
   drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.css');
-  $space = scholar_get_scholar();
+  $space = vsite_get_vsite();
   
   //top
   $vsite_layout_widgets = vsite_layout_region_widgets();
@@ -111,7 +111,7 @@ function vsite_layout_layoutsettings($form_state = NULL){
 	$a = func_get_args();
 	$regions = array_keys(system_region_list('scholar_base'));
   $form = array('#attributes' => array('onSubmit' => 'scholarlayout_afterdrag(null,null)'));
-  $space = scholar_get_scholar();
+  $space = vsite_get_vsite();
 
   //$s_page_type = ($form_state && $form_state['post'])?'all':$form_state['post']['page_type']
   
@@ -187,7 +187,7 @@ function vsite_layout_layoutsettings_validate($form, &$form_state){
 
 function vsite_layout_layoutsettings_submit($form, &$form_state){
   // get the space and the settings we want to save
-  $space = scholar_get_scholar();
+  $space = vsite_get_vsite();
   $setting = array();
   $regions = array_keys(system_region_list('scholar_base'));
   
@@ -245,7 +245,7 @@ function vsite_layout_layoutsettings_submit($form, &$form_state){
  * @return string
  */
 function vsite_layout_top_widgets_callback(){
-  $scholar = scholar_get_scholar();
+  $scholar = vsite_get_vsite();
   $s_page_type = $_POST['page_type'];
   
   $a_region_wgts = vsite_layout_region_widgets($scholar,$s_page_type);
@@ -266,7 +266,7 @@ function vsite_layout_top_widgets_callback(){
  * @return string
  */
 function vsite_layout_region_widgets_callback(){
-  $scholar = scholar_get_scholar();
+  $scholar = vsite_get_vsite();
   $s_page_type = $_POST['page_type'];
   
   $a_region_wgts = vsite_layout_region_widgets($scholar,$s_page_type);
@@ -320,7 +320,7 @@ function vsite_layout_filtered_widgets($page_type='all'){
  * @return array
  */
 function vsite_layout_region_widgets($scolar = false,$page_type='all'){
-  if(!$scholar) $scholar = scholar_get_scholar();
+  if(!$scholar) $scholar = vsite_get_vsite();
   
   static $a_region_widgets;
   if($a_region_widgets) return $a_region_widgets;
@@ -361,7 +361,7 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
 	if(!array_key_exists('cp-section-layout',$contexts)) return;
 	$a_region_widgets = false;
 	$o_feature = false;
-	$space = scholar_get_scholar();
+	$space = vsite_get_vsite();
 	
 	$features = spaces_features();
   foreach ($features as $feature) {
@@ -422,7 +422,7 @@ function _vsite_layout_generate_default_settings_ary($s_page_type = 'all'){
 }
 
 function _check_for_overrides(&$widgets,$s_region,$space = null){
-	if(!$space) $space = scholar_get_scholar();
+	if(!$space) $space = vsite_get_vsite();
 	
 	foreach(vsite_layout_get_pagetypes($space) as $s_page_nm => $s_page_readable){
     if($s_page_nm == 'all' || !count($widgets)) continue;

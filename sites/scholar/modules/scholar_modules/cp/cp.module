@@ -16,10 +16,10 @@ function cp_init(){
   }
   
   else {
-  	$space = spaces_get_space();
-  	if ($space -> type == 'og'){
+  	$vsite = vsite_get_site();
+  	if ($vsite){
   	  context_set('scholar', 'section', 'vsite');
-  	  og_set_theme($space -> group); // TODO why dont you get it from space settings
+  	  og_set_theme($vsite -> group); // TODO why dont you get it from space settings
   	}
   }
 }
@@ -87,7 +87,7 @@ function cp_menu(){
   );  
   
   // other setting by classess
-  $space = spaces_get_space();
+  $space = vsite_get_site();
   //dpm(spaces_settings($space->type, TRUE));
   // we go on all settings and make a menu entry for all of them
   foreach (spaces_settings($space->type, TRUE) as $setting) {
@@ -142,7 +142,7 @@ function cp_menu(){
  * all cp menu entries should use this function as access callback
  */
 function cp_access_cp(){
-  $vsite = scholar_get_scholar();
+  $vsite = vsite_get_vsite();
   return ($vsite && $vsite -> admin_access()) ? TRUE : FALSE;
 }
 
@@ -252,7 +252,7 @@ function cp_preprocess_page(&$vars) {
   $vars['cp_toolbar'] = 
   $vars['cp_left'] = '';
   
-  if (scholar_get_scholar() && user_access('configure spaces features')) { 
+  if (vsite_get_vsite() && user_access('configure spaces features')) { 
     $links = cp_toolbar_menu_links();
     $links = theme('cp_toolbar', $links);
     $vars['cp_toolbar'] = $links;
@@ -440,7 +440,7 @@ function cp_flag_default_flags(){
 function cp_link($type, $object, $teaser = FALSE){
 
   //check font page settings here, only execute if front page setting equals flag
-  $site = scholar_get_scholar();
+  $site = vsite_get_vsite();
   //
   if ($site->settings['front']['frontpage'] !== 'flag'){
     return false;

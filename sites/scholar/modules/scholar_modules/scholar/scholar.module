@@ -181,7 +181,7 @@ function scholar_preprocess_page(&$vars) {
     $vars['body_classes'] .= ' navbar';
   }
   
-  $vsite = scholar_get_scholar();
+  $vsite = vsite_get_vsite();
   // TODO Probably we would want to let user decide whether they want 
   // the toolbar on. Add that as a condition below
   if (context_get('scholar', 'section') == 'vsite' && $vsite -> admin_access()){
@@ -195,7 +195,7 @@ function scholar_preprocess_page(&$vars) {
 /**
  * API function for getting the active site
  */
-function scholar_get_scholar(){
+function vsite_get_vsite(){
   $space = spaces_get_space();
   $scholar_content_type = variable_get('scholar_content_type', 'scholarsite');
   if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
@@ -213,7 +213,7 @@ function scholar_get_scholar(){
  * - set context in hook init and then get it here
  */
 function scholar_is_front(){
-  $vsite = scholar_get_scholar();
+  $vsite = vsite_get_vsite();
   $active_menu = menu_get_item();
   return ($vsite && $active_menu['path'] == 'home') ? TRUE : FALSE;
 }

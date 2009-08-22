@@ -15,7 +15,7 @@ class vsite_front_settings_front implements space_setting {
   }
 
   function form($space, $value = array()) {
-  $space = spaces_get_space();
+  $space = vsite_get_vsite();
 
   scholar_include('nodeautocomplete');
   scholar_include('scholarapi');
@@ -96,7 +96,7 @@ class vsite_front_settings_front implements space_setting {
 
   $options = scholar_content_types();
   $default_value = $value['node_options'] ? array_keys(array_filter($value['node_options'])) : array_keys($options);
-  //dpm(array_filter($value['node_options'], '__cp_nonzero' ));
+
   $form['node_options'] = array(
 		'#prefix' => '<div id="edit-settings-front-node-options-wrapper">',  // needed by ctools
   	'#suffix' => '</div>',
@@ -161,33 +161,3 @@ class vsite_front_settings_front implements space_setting {
   }
 }
 
-function __cp_nonzero($el){
-  print_r($el);
-  return $el != 0 ? TRUE : FALSE;
-}
-
-/**
- * return "add content type" links
- * TODO: What would be the right condition for excluding 
- * some content types here. For example, if a content type
- * is part of a feature that user has not selected, that 
- * content type should not be part of the list
- */
-function scholarfront_create_links() {
-  global $user;
-  $site = spaces_get_space();
-  
-  $post_types = og_get_types('group_post');
-  $types = node_get_types();
-  foreach ($post_types as $post_type) {
-    $type_name = $types[$post_type]->name;
-    $type_url_str = str_replace('_', '-', $post_type);
-    if (module_invoke($types[$post_type]->module, 'access', 'create', $post_type, $user)) {
-      $links[] = array(
-        'title' => t('!type', array('!type' => $type_name)),
-        'href' => "node/add/$type_url_str",
-      );
-    }
-  }
-  return isset($links) ? $links : array();
-}

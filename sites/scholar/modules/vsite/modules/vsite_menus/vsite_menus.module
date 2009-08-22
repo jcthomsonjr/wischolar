@@ -22,7 +22,7 @@ function vsite_menus_spaces_settings(){
 function vsite_menus_menu_node_insert($item, $node) {
   require_once(drupal_get_path('module', 'vsite_menus') .'/vsite_menus.menus.inc');
   scholar_include('scholarapi');
-  $site = scholar_get_scholar();
+  $site = vsite_get_vsite();
   $a_scholar_types = scholar_content_types();
   
   if($site && array_key_exists($node->type,$a_scholar_types) && ($item->menu_name == variable_get('scholar_primary_menu',false) || $item->menu_name == variable_get('scholar_secondary_menu',false))){
@@ -54,7 +54,7 @@ function vsite_menus_menu_node_update($item, $node) {
 function vsite_menus_menu_node_delete($item, $node) {
   require_once(drupal_get_path('module', 'vsite_menus') .'/vsite_menus.menus.inc');
   scholar_include('scholarapi');
-  $site = scholar_get_scholar();
+  $site = vsite_get_vsite();
   $a_scholar_types = scholar_content_types();
   
   if ($site && array_key_exists($node->type,$a_scholar_types) && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
@@ -72,7 +72,7 @@ function vsite_menus_menu_node_delete($item, $node) {
  * @param boolean $b_check_expanded (allow expanded menus? slightly slower)
  */
 function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_expanded = false){
-  $space = scholar_get_scholar();
+  $space = vsite_get_vsite();
   
   if(!$space) return ($b_html)?"":false;
   
@@ -144,7 +144,7 @@ function vsite_menus_theme($cache, $type, $theme, $path) {
 function vsite_menus_form_alter(&$form, $form_state, $form_id){
   scholar_include('scholarapi');
   $a_scholar_types = scholar_content_types();
-  $o_scholar = scholar_get_scholar();
+  $o_scholar = vsite_get_vsite();
   
   if($o_scholar && array_key_exists($form['type']['#value'],$a_scholar_types)){
     $a_primary = menu_load(variable_get('scholar_primary_menu',false));

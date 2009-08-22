@@ -57,7 +57,7 @@ class vsite_themes_settings_theme implements space_setting {
  * return the current theme name of the active scholar site
  */
 function cp_current_theme(){
-  $site = scholar_get_scholar();
+  $site = vsite_get_vsite();
   return $site -> group -> og_theme;
 }
 
