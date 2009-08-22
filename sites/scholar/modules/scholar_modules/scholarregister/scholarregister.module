@@ -142,7 +142,7 @@ function scholarregister_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           $new_taxs[$yindex]['name'] = $node -> purl['value'] . '_' . $tax['name'];
         }
         // create vocabs
-        scholarvocab_taxonomy_import($node -> nid, $new_taxs);
+        vsite_vocab_taxonomy_import($node -> nid, $new_taxs);
       }
       break;
   }
