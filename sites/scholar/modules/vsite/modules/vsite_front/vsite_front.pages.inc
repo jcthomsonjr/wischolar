@@ -7,7 +7,7 @@
  */
 function vsite_front_home(){
   
-  $vsite = scholar_get_scholar();
+  $vsite = vsite_get_vsite();
   if ($vsite) {
     $front_type = $vsite->settings['front']['frontpage'];
     switch ($front_type) {

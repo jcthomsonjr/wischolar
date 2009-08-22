@@ -65,7 +65,7 @@ function cp_current_theme(){
  * Submits the form.
  */
 function cp_themes_form_submit($form, &$form_state){
-  $site = scholar_get_scholar();
+  $site = vsite_get_vsite();
   $site -> group -> og_theme = $form_state['values']['theme'];
   spaces_save($site);
 }
