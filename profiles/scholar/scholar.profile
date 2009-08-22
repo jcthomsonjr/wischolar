@@ -66,9 +66,8 @@ function scholar_profile_modules() {
     'install_profile_api',
     'strongarm',
   
+    'vsite',
     'scholar',
-    
-  // vsite
     'vsite_content',
     'vsite_front',
     'vsite_layout',
