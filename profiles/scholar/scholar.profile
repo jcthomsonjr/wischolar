@@ -72,7 +72,7 @@ function scholar_profile_modules() {
     'vsite_front',
     'vsite_layout',
     'vsite_menus',
-    'vsite_themes',
+    'vsite_design',
     'vsite_users',
     'vsite_vocab',
     
