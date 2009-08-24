@@ -397,8 +397,8 @@ function _cp_init_theme(){
  * @return array - default flag
  */
 function cp_flag_default_flags(){
-  scholar_include('scholarapi');
-  $scholar_types = array_keys(scholar_content_types());
+  vsite_include('vsiteapi');
+  $scholar_types = array_keys(vsite_content_types());
   
   $flags = array();
   

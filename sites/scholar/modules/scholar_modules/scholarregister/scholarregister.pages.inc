@@ -183,8 +183,8 @@ function scholarregister_signup_form_submit($form, &$form_state) {
  * Create a scholar vsite
  */
 function scholarregister_vsite_create($name, $mail, $domain){
-  scholar_include('scholarapi');
-  return scholar_vsite_create($name, $mail, $domain);
+  vsite_include('vsiteapi');
+  return vsite_vsite_create($name, $mail, $domain);
 }
 
 

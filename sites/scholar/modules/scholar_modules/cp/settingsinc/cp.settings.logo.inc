@@ -34,7 +34,7 @@ class cp_setting_logo implements space_setting {
     if ($s_current) {
     	drupal_add_js(drupal_get_path('module', 'cp') . '/theme/jquery.Jcrop.min.js');
     	drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-logo-crop.js');
-    	scholar_include('scholarapi');
+    	vsite_include('vsiteapi');
       $form['current_logo'] = array('#value' => theme('scholar_logo',false,'','',array('id' => 'logo_preview'),true));
       $form['x_cord'] = array('#type' => 'hidden');
 	    $form['y_cord'] = array('#type' => 'hidden');

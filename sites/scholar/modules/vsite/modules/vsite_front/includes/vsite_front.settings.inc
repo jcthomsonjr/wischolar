@@ -18,7 +18,7 @@ class vsite_front_settings_front implements space_setting {
   $space = vsite_get_vsite();
 
   vsite_include('nodeautocomplete');
-  vsite_include('scholarapi');
+  vsite_include('vsiteapi');
   ctools_include ('dependent');
   ctools_include ('form');
   

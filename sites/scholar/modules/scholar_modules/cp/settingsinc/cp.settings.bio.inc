@@ -16,12 +16,12 @@ class cp_setting_bio implements space_setting {
 
   function form($space, $value = array()) {
     $form = array();
-    scholar_include('nodeautocomplete');
-    scholar_include('scholarapi');
-    $links = scholar_create_links();
-    $form['nid'] = scholar_node_autocomplete_element();
+    vsite_include('nodeautocomplete');
+    vsite_include('vsiteapi');
+    $links = vsite_create_links();
+    $form['nid'] = vsite_node_autocomplete_element();
     $auto_element['#description'] = t ( 'Select the post your want to set as a front page or create a new one' ) . $links;
-    $form['nid']['#default_value'] = $value['nid'] ? _scholar_node_autocomplete_nid_to_title($value['nid']) : '';
+    $form['nid']['#default_value'] = $value['nid'] ? _vsite_node_autocomplete_nid_to_title($value['nid']) : '';
     $form['#title'] = 'Bio';
   
 
@@ -35,7 +35,7 @@ class cp_setting_bio implements space_setting {
 
   function submit($space, $value) {
     // the value submitted is title + nid .. save only nid
-    $value['nid'] = _scholar_node_autocomplete_title_to_nid($value['nid']);
+    $value['nid'] = _vsite_node_autocomplete_title_to_nid($value['nid']);
     return $value;
   }
 }

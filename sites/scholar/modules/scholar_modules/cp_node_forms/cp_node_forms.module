@@ -157,8 +157,8 @@ function cp_node_forms_custom_fieldsets($form, $type){
 function cp_node_forms_form_alter(&$form, $form_state, $form_id) {
   global $conf;
 
-  scholar_include('scholarapi');
-  $types = array_keys(scholar_content_types());
+  vsite_include('vsiteapi');
+  $types = array_keys(vsite_content_types());
 
   //if editing an exisitng node, load the node
   $node = isset($form['#node']->nid) ? node_load(array('nid' => $form['#node']->nid)) : NULL;

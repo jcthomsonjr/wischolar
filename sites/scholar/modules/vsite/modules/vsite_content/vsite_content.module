@@ -18,7 +18,7 @@ function vsite_content_menu(){
   );
   
   // a menu entry for each content type
-  vsite_include('scholarapi');
+  vsite_include('vsiteapi');
   $content_types = vsite_content_types();
   foreach($content_types as $type => $name){
     $items['cp/content/'.$type] = array(

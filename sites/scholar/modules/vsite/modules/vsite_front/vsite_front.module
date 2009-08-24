@@ -38,7 +38,7 @@ function vsite_front_spaces_settings(){
  * @return array - default flag
  */
 function vsite_front_flag_default_flags(){
-  vsite_include('scholarapi');
+  vsite_include('vsiteapi');
   $scholar_types = array_keys(vsite_content_types());
   
   $flags = array();
