@@ -38,8 +38,8 @@ function vsite_front_spaces_settings(){
  * @return array - default flag
  */
 function vsite_front_flag_default_flags(){
-  scholar_include('scholarapi');
-  $scholar_types = array_keys(scholar_content_types());
+  vsite_include('scholarapi');
+  $scholar_types = array_keys(vsite_content_types());
   
   $flags = array();
   $flags[] = array(

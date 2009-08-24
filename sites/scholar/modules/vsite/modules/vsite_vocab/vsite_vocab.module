@@ -33,9 +33,9 @@ function vsite_vocab_menu() {
 
 function vsite_vocab_taxonomies(){
   $site = vsite_get_vsite();
-  scholar_include('scholarapi');
+  vsite_include('scholarapi');
 
-  $s_types = scholar_content_types();
+  $s_types = vsite_content_types();
   $output = '';
   $delta = 0;
   $output = '<div class="pad">';

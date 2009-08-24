@@ -17,13 +17,13 @@ class vsite_front_settings_front implements space_setting {
   function form($space, $value = array()) {
   $space = vsite_get_vsite();
 
-  scholar_include('nodeautocomplete');
-  scholar_include('scholarapi');
+  vsite_include('nodeautocomplete');
+  vsite_include('scholarapi');
   ctools_include ('dependent');
   ctools_include ('form');
   
   // the "add new *" links
-  $items = scholar_create_links();
+  $items = vsite_create_links();
   $links = theme ( 'ctools_dropdown', t ( 'add new' ), $items, FALSE, 'panels-display-links' );
   
   $form = array(
@@ -85,7 +85,7 @@ class vsite_front_settings_front implements space_setting {
   );
   
   // post
-  $auto_element = scholar_node_autocomplete_element("Select a post");
+  $auto_element = vsite_node_autocomplete_element("Select a post");
   $auto_element['#description'] = t('Select the post your want to set as a front page or create a new one') . $links;
   $auto_element['#process'] = array ('ctools_dependent_process' ); 
   $auto_element['#dependency'] = array ('radio:settings[front][frontpage]' => array ('html'));
@@ -94,7 +94,7 @@ class vsite_front_settings_front implements space_setting {
   
   $form['front_nid'] = $auto_element;
 
-  $options = scholar_content_types();
+  $options = vsite_content_types();
   $default_value = $value['node_options'] ? array_keys(array_filter($value['node_options'])) : array_keys($options);
 
   $form['node_options'] = array(

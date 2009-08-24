@@ -18,8 +18,8 @@ function vsite_content_menu(){
   );
   
   // a menu entry for each content type
-  scholar_include('scholarapi');
-  $content_types = scholar_content_types();
+  vsite_include('scholarapi');
+  $content_types = vsite_content_types();
   foreach($content_types as $type => $name){
     $items['cp/content/'.$type] = array(
       'title' => $name,
