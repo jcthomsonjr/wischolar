@@ -194,11 +194,11 @@ function scholar_preprocess_page(&$vars) {
  * Implementation of hook_theme().
  */
 function scholar_theme($cache, $type, $theme, $path) {
-  $path = drupal_get_path('module', 'scholar') ;
+  $path = drupal_get_path('module', 'vsite') ;
   
   $items['scholar_logo'] = array(
     'arguments' => array('preset' => NULL, 'alt' => NULL, 'title' => NULL, 'attributes' => NULL),
-    'path' => dirname(__FILE__)."/includes/",
+    'path' => $path."/includes/",
     'file' => 'vsiteapi.inc',
   );
   
