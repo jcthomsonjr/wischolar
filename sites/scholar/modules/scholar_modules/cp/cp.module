@@ -33,14 +33,6 @@ function cp_spaces_settings() {
       'class' => 'cp_setting_site',
       'file' => drupal_get_path('module', 'cp')  .'/settingsinc/cp.settings.site.inc',
     ),
-    'shield' => array(
-      'class' => 'cp_setting_shield',
-      'file' => drupal_get_path('module', 'cp')  .'/settingsinc/cp.settings.shield.inc',
-    ),
-    'logo' => array(
-      'class' => 'cp_setting_logo',
-      'file' => drupal_get_path('module', 'cp') .'/settingsinc/cp.settings.logo.inc',
-    ),
     'bio' => array(
       'class' => 'cp_setting_bio',
       'file' => drupal_get_path('module', 'cp') .'/settingsinc/cp.settings.bio.inc',
@@ -223,13 +215,6 @@ function cp_theme($cache, $type, $theme, $path) {
   $items['cp_toolbar'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'cp-toolbar',
-    'path' => $path,
-    'file' => 'theme.inc',
-  );
-  
-  $items['cp_theme_shieldpicker'] = array(
-    'arguments' => array('file' => array()),
-    'template' => 'cp-theme-shieldpicker',
     'path' => $path,
     'file' => 'theme.inc',
   );
@@ -428,83 +413,4 @@ function cp_flag_default_flags(){
   );
   
   return $flags;
-}
-
-
-/**
- * Implementation of hook_imagecache_default_presets().
- */
-function cp_imagecache_default_presets() {
-  $presets = array();
-  $presets['default_scholar_logo'] = array (
-    'presetname' => 'default_scholar_logo',
-    'actions' => array (
-      0 => array (
-        'weight' => '0',
-        'module' => 'imagecache',
-        'action' => 'imagecache_scale_image',
-        'data' => array (
-          'width' => '700',
-          'height' => '600',
-        ),
-      ),
-    ),
-  );
-  $presets['square_scholar_logo'] = array (
-    'presetname' => 'square_scholar_logo',
-    'actions' => array (
-      0 => array (
-        'weight' => '0',
-        'module' => 'imagecache',
-        'action' => 'imagecache_scale_and_crop',
-        'data' => array (
-          'width' => '140',
-          'height' => '140',
-        ),
-      ),
-    ),
-  );
-  $presets['landscape_scholar_logo'] = array (
-    'presetname' => 'landscape_scholar_logo',
-    'actions' => array (
-      0 => array (
-        'weight' => '0',
-        'module' => 'imagecache',
-        'action' => 'imagecache_scale_and_crop',
-        'data' => array (
-          'width' => '180',
-          'height' => '140',
-        ),
-      ),
-    ),
-  );
-  $presets['portrait_scholar_logo'] = array (
-    'presetname' => 'portrait_scholar_logo',
-    'actions' => array (
-      0 => array (
-        'weight' => '0',
-        'module' => 'imagecache',
-        'action' => 'imagecache_scale_and_crop',
-        'data' => array (
-          'width' => '140',
-          'height' => '180',
-        ),
-      ),
-    ),
-  );
-  $presets['default_scholar_shield'] = array (
-    'presetname' => 'default_scholar_shield',
-    'actions' => array (
-      0 => array (
-        'weight' => '0',
-        'module' => 'imagecache',
-        'action' => 'imagecache_scale_and_crop',
-        'data' => array (
-          'width' => '62',
-          'height' => '73',
-        ),
-      ),
-    ),
-  );
-  return $presets;
 }

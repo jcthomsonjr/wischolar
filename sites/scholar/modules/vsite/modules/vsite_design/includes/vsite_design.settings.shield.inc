@@ -3,7 +3,7 @@
 /**
  * Provides shield selection for each site
  */
-class cp_setting_shield implements space_setting {
+class vsite_design_settings_shield implements space_setting {
   var $id;
   function __construct($id = NULL) {
     if ($id) {
@@ -24,7 +24,7 @@ class cp_setting_shield implements space_setting {
     $options = array();
     
     foreach ($a_shields as $shield) {
-      $options[$shield->filename] = theme('cp_theme_shieldpicker', $shield); 
+      $options[$shield->filename] = theme('vsite_design_theme_shieldpicker', $shield); 
     }  
   
     $form = array(

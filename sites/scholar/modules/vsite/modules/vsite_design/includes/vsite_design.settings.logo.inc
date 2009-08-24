@@ -2,7 +2,7 @@
 /**
  * Provides theme selection for each site
  */
-class cp_setting_logo implements space_setting {
+class vsite_design_settings_logo implements space_setting {
   
 	public $s_logo_location = false;
 	public static $validators = array(
@@ -48,7 +48,7 @@ class cp_setting_logo implements space_setting {
           'onclick' => "$('#edit-settings-logo-crop').val('1');"
         )
 	    );
-	    $form['preview'] = array('#type' => 'item','#title' => t('Preview'),'#value' => theme('scholar_logo','landscape_scholar_logo','','',array(),true));
+	    $form['preview'] = array('#type' => 'item','#title' => t('Preview'),'#value' => theme('scholar_logo','vsite_design_landscape_logo','','',array(),true));
 	    
 //	    $form['preview'] = array(
 //          '#title' => 'Preview',
@@ -57,9 +57,9 @@ class cp_setting_logo implements space_setting {
 //	        '#collapsible' => TRUE,
 //	        '#collapsed' => true
 //      );
-//      $form['preview']['landscape'] = array('#type' => 'item','#title' => t('Landscape'),'#value' => theme('scholar_logo','landscape_scholar_logo'));
-//      $form['preview']['square'] = array('#type' => 'item','#title' => t('Square'),'#value' => theme('scholar_logo','square_scholar_logo'));
-//      $form['preview']['portrait'] = array('#type' => 'item','#title' => t('Portrait'),'#value' => theme('scholar_logo','portrait_scholar_logo'));
+//      $form['preview']['landscape'] = array('#type' => 'item','#title' => t('Landscape'),'#value' => theme('scholar_logo','vsite_design_landscape_logo'));
+//      $form['preview']['square'] = array('#type' => 'item','#title' => t('Square'),'#value' => theme('scholar_logo','vsite_design_square_logo'));
+//      $form['preview']['portrait'] = array('#type' => 'item','#title' => t('Portrait'),'#value' => theme('scholar_logo','vsite_design_portrait_logo'));
       
     }
     
@@ -104,7 +104,7 @@ class cp_setting_logo implements space_setting {
 	      file_scan_directory($destination, '.*', array('.', '..'), 'file_delete', TRUE);
 	      
 	  		$destination = $destination."/".$space->purl.".".$info['extension'];
-	  		$fullsize_preset = imagecache_preset_by_name('default_scholar_logo');
+	  		$fullsize_preset = imagecache_preset_by_name('vsite_design_default_logo');
 	  		//$o_image = imageapi_image_open($value['logo_upload']->filepath);//,'imageapi_imagemagick');
 	  		
 	  		if (imagecache_build_derivative($fullsize_preset['actions'], $value['logo_upload']->filepath, $destination)) {

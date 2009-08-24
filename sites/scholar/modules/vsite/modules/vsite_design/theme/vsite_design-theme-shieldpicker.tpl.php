@@ -12,6 +12,6 @@
   
   $shield = t('no preview available');
   if (file_exists($file->filename)){
-    $shield = theme('imagecache', 'default_scholar_shield', $file->filename);
+    $shield = theme('imagecache', 'vsite_design_default_shield', $file->filename);
   }
   print '<div class="item-shield-picker">'. $shield .'</div>';
