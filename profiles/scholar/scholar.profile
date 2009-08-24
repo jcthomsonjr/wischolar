@@ -84,7 +84,7 @@ function scholar_profile_modules() {
     'scholarwidgets',
     //'cp_node_forms',
     'scholarboot',
-    'bkn_contrib_lookup',
+    'bkn',
     'cite_distribute',
    // 'cs_meta',
     'repec_meta',
