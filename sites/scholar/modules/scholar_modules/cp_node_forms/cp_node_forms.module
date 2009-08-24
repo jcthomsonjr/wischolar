@@ -396,17 +396,22 @@ function cp_node_forms_nodeapi(&$node, $op){
 
       
       case 'presave':
-        
-        switch ($node->pubstatus) {
-        	case 1:
-        		$node->status = 1;
-        		db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
-        		break;
-        
-        	case 0:
-        	  $node->status = 0;
-        	  db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
-        		break;
+        //if content is being generated programicatically with node_save, such as devel generate
+        if (!isset($node->pubstatus)){
+          $node->status =  cp_node_forms_get_pubstatus($node, $node->type);
+        }
+        else{
+          switch ($node->pubstatus) {
+            case 1:
+              $node->status = 1;
+              db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
+              break;
+
+            case 0:
+              $node->status = 0;
+              db_query("DELETE FROM {cp_node_forms} WHERE nid = %d", (int)$node->nid);
+              break;
+          }
         }
       
     case 'insert':
