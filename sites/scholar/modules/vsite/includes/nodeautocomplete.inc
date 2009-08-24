@@ -23,7 +23,7 @@ function vsite_node_autocomplete_element($title = NULL){
 function vsite_node_autocomplete($str){
 
   //initialize view to generate sessions output when viewing a conference
-  $view = views_get_view('scholar_autocomplete');
+  $view = views_get_view('vsite_autocomplete');
   $view->init();
 
   $view->set_display('default');

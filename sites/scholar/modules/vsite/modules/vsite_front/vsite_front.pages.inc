@@ -50,7 +50,7 @@ function vsite_front_home_bio($bio_nid){
 function vsite_front_home_feature($node_options){
 
   //initialize the scholar base view
-  $view = views_get_view('scholar_view_base');
+  $view = views_get_view('vsite_view_base');
   
   // add a filter for "node types" in the view
   $options = array();
