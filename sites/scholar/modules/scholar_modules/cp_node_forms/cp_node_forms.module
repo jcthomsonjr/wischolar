@@ -417,12 +417,12 @@ function cp_node_forms_nodeapi(&$node, $op){
     case 'insert':
       
         //if frontpage is set to true in URL, then make bio frontpage type and set the node as frontpage
-        if ($node->frontpage == 1){
+      /*  if ($node->frontpage == 1){
           $space = spaces_get_space();
           $space->settings['front']['frontpage'] = 'bio';
           $space->settings['bio']['nid'] =$node->nid;
           spaces_save($space);
-        }
+        }*/
                  
         if ($node->pubstatus == 2) {
           $pubdate =  date_convert($node->pubdate, DATE_DATETIME, DATE_UNIX, TIMEZONE);
