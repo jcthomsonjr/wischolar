@@ -3,7 +3,7 @@
 /**
  * Provides theme selection for each site
  */
-class vsite_themes_settings_theme implements space_setting {
+class vsite_design_settings_theme implements space_setting {
   var $id;
   function __construct($id = NULL) {
     if ($id) {
@@ -29,7 +29,7 @@ class vsite_themes_settings_theme implements space_setting {
 	    $info = $theme_obj -> info;
 	    $info['theme_name'] = $theme_obj -> name;
 	
-	    $options[$info['theme_name']] = theme('vsite_themes_theme_picker', $info); 
+	    $options[$info['theme_name']] = theme('vsite_design_theme_picker', $info); 
 	  }  
 	
 	  $form = array(

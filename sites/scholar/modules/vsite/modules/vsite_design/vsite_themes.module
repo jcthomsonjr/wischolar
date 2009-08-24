@@ -4,24 +4,24 @@
  * hook init
  * @return unknown_type
  */
-function vsite_themes_init(){
+function vsite_design_init(){
   $active_menu = menu_get_item();
   if ($active_menu['path'] == 'cp/settings/theme'){  
-    drupal_add_css(drupal_get_path('module', 'vsite_themes') . '/theme/vsite_themes_theme_picker.css');
-    drupal_add_js(drupal_get_path('module', 'vsite_themes') . '/theme/vsite_themes_theme_picker.js');
+    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
   }
 }
 
 /**
  * hook_theme
  */
-function vsite_themes_theme(){
-  $path = drupal_get_path('module', 'vsite_themes') .'/theme';
+function vsite_design_theme(){
+  $path = drupal_get_path('module', 'vsite_design') .'/theme';
   
   $items = array();
-  $items['vsite_themes_theme_picker'] = array(
+  $items['vsite_design_theme_picker'] = array(
     'arguments' => array('info' => array()),
-    'template' => 'vsite_themes-theme-picker',
+    'template' => 'vsite_design-theme-picker',
     'path' => $path,
   );
   return $items;
@@ -30,11 +30,11 @@ function vsite_themes_theme(){
 /**
  * Implementation of hook_spaces_settings().
  */
-function vsite_themes_spaces_settings() {
+function vsite_design_spaces_settings() {
   return array(
     'theme' => array(
-      'class' => 'vsite_themes_settings_theme',
-      'file' => drupal_get_path('module', 'vsite_themes') .'/includes/vsite_themes.settings.inc',
+      'class' => 'vsite_design_settings_theme',
+      'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.inc',
     ),
   );
 }
