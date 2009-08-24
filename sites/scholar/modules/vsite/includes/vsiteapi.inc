@@ -109,3 +109,28 @@ function vsite_vsite_create($name, $mail, $domain){
   return $node;
 }
 
+
+/**
+ * returns an array of available themes for faculty to chose
+ * For now it suppose that the theme name will follow this pattern
+ * scholar_theme_01, scholar_theme__02 ... scholar_theme_99
+ * @see _cp_is_scholar_theme
+ * @todo private themes ?!
+ */
+function vsite_vsite_themes(){
+  $allthemes = list_themes();
+  return (array_filter($allthemes,"_vsite_is_vsite_theme"));
+}
+
+
+/**
+ * a callback function for array_filter() in iq_og_fac_themes
+ *
+ * @param unknown_type $atheme - the theme to be tested
+ * @return TRUE if it should be listed as faculty theme, false otherwise
+ */
+function _vsite_is_vsite_theme($atheme){
+  return (ereg("scholar_theme_[0-9][0-9]",$atheme -> name));
+}
+
+
