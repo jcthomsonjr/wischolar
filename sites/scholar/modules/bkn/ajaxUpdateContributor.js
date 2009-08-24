@@ -57,7 +57,7 @@ Drupal.behaviors.bknGetContrbutors = function(context) {
     		return false;
     	}
     	
-    	$.getJSON("/bkn_contrib_lookup/getContributors/js",
+    	$.getJSON("/bkn/getContributors/js",
     			  { name: searchName },
 	    	      function(data){
 

@@ -1,12 +1,12 @@
 <?php
 
-module_load_include('inc','bkn_contrib_lookup');
+module_load_include('inc','bkn');
 
 /**
  * @param $form
  * @return unknown_type
  */
-function theme_bkn_contrib_lookup_contributors($form) {
+function theme_bkn_contributors($form) {
   $rows = array();
   if ($form['#hideRole']) $headers = array('', t('Name'));
   else $headers = array('', t('Name'), t('Role'));
