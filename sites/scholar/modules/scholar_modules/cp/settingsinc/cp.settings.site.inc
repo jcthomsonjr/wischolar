@@ -17,94 +17,30 @@ class cp_setting_site implements space_setting {
   function form($space, $value = array()) {
     $form = array('#title'=>'Site Information' );
     
-    $form['name_title'] = array(
-          '#title' => 'Name and Title',
-          '#type' => 'fieldset',
-          '#tree' => TRUE,
-    );
-    $form['name_title']['first'] = array(
+    
+    $form['headline'] = array(
       '#type' => 'textfield',
-		  '#title' => t('First Name'),
-		  '#default_value' => isset($value['name_title']['first'])?$value['name_title']['first']:'',
+		  '#title' => t('Headline'),
+		  '#default_value' => isset($value['headline'])?$value['headline']:'',
 		  '#size' => 60,
 		  '#maxlength' => 128,
 		  '#required' => TRUE,
     );
-    $form['name_title']['last'] = array(
+    $form['sub_heading'] = array(
       '#type' => 'textfield',
-      '#title' => t('Last Name'),
-      '#default_value' => isset($value['name_title']['last'])?$value['name_title']['last']:'',
+      '#title' => t('Sub Heading 1'),
+      '#default_value' => isset($value['sub_heading'])?$value['sub_heading']:'',
       '#size' => 60,
       '#maxlength' => 128,
       '#required' => TRUE,
     );
-    $form['name_title']['title'] = array(
+    $form['sub_heading_extra'] = array(
       '#type' => 'textfield',
-      '#title' => t('Title'),
-      '#default_value' => isset($value['name_title']['title'])?$value['name_title']['title']:'',
+      '#title' => t('Sub Heading 2'),
+      '#default_value' => isset($value['sub_heading_extra'])?$value['sub_heading_extra']:'',
       '#size' => 60,
       '#maxlength' => 128,
-      '#required' => TRUE,
-    );
-    
-    $form['address'] = array(
-          '#title' => 'Address',
-          '#type' => 'fieldset',
-          '#tree' => TRUE,
-    );
-    $form['address']['address'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Address'),
-      '#default_value' => isset($value['address']['address'])?$value['address']['address']:'',
-      '#size' => 60,
-      '#maxlength' => 128,
-      '#required' => false,
-    );
-    $form['address']['city'] = array(
-      '#type' => 'textfield',
-      '#title' => t('City'),
-      '#default_value' => isset($value['address']['city'])?$value['address']['city']:'',
-      '#size' => 60,
-      '#maxlength' => 128,
-      '#required' => TRUE,
-    );
-    $form['address']['state'] = array(
-      '#type' => 'textfield',
-      '#title' => t('State'),
-      '#default_value' => isset($value['address']['state'])?$value['address']['state']:'',
-      '#size' => 60,
-      '#maxlength' => 128,
-      '#required' => TRUE,
-    );
-    $form['address']['zip'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Zip'),
-      '#default_value' => isset($value['address']['zip'])?$value['address']['zip']:'',
-      '#size' => 60,
-      '#maxlength' => 128,
-      '#required' => TRUE,
-    );
-    
-    $form['contact'] = array(
-          '#title' => 'Contact',
-          '#type' => 'fieldset',
-          '#tree' => TRUE,
-    );
-    $form['contact']['phone'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Phone'),
-      '#default_value' => isset($value['contact']['phone'])?$value['contact']['phone']:'',
-      '#size' => 60,
-      '#maxlength' => 128,
-      '#required' => false,
-    );
-    $form['contact']['email'] = array(
-      '#type' => 'textfield',
-      '#title' => t('EMail'),
-      '#default_value' => isset($value['contact']['email'])?$value['contact']['email']:'',
-      '#size' => 60,
-      '#maxlength' => 128,
-      '#required' => TRUE,
+      '#required' => FALSE,
     );
 
 //    Notification Pref Disabled 8/19/09 @rbrandon
@@ -133,11 +69,6 @@ class cp_setting_site implements space_setting {
   }
 
   function submit($space, $value) {
-
-  	//Update User
-  	$user = user_load($space->group->uid);
-  	user_save($user,array(//'name' => "{$value['name_title']['first']} {$value['name_title']['last']}",
-  	                      'mail' => $value['contact']['email']));
   	
     return $value;
   }

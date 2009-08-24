@@ -33,15 +33,13 @@ function scholarwidgets_basicinfo(){
 	
 	$block = array();
 	$block['subject'] = t('');
-	$block['content'] = 'OK';
+	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
 	//dpm($scholar->settings);
 	if(!array_key_exists('site',$scholar->settings)) return $block;
 	
-	
-	$output = "<h1><a href=\"".url("home")."\">{$scholar->settings['site']['name_title']['first']} {$scholar->settings['site']['name_title']['last']}</a></h1>
-	<h2>{$scholar->settings['site']['name_title']['title']}</h2>
-	<p>{$scholar->settings['site']['address']['address']} {$scholar->settings['site']['address']['city']}, {$scholar->settings['site']['address']['state']} {$scholar->settings['site']['address']['zip']} 
-	<a href=\"mailto:{$scholar->settings['site']['contact']['email']}\">(email)</a></p>";
+	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
+							<h2>{$scholar->settings['site']['sub_heading']}</h2>
+							<p>{$scholar->settings['site']['sub_heading_extra']}</p>";
 	
 	$block['content'] = $output;
 	

@@ -204,3 +204,15 @@ function scholar_theme($cache, $type, $theme, $path) {
   
   return $items;
 }
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_spaces_settings() {
+  return array(
+   'site' => array(
+      'class' => 'scholar_setting_site',
+      'file' => drupal_get_path('module', 'scholar')  .'/settingsinc/scholar.settings.site.inc',
+    ),
+   );
+}
