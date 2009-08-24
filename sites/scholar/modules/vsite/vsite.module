@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Implementation of hook_views_api().
  */
@@ -22,6 +23,23 @@ function vsite_views_default_views() {
   }
   return $views;
 }
+
+/**
+ * Includes different inc files 
+ */
+function vsite_include($inc_files){
+  $inc_files = is_array($inc_files) ? $inc_files : array($inc_files);
+  
+  $path = dirname(__FILE__);
+
+  foreach ($inc_files as $inc) {
+    if (file_exists("$path/includes/$inc.inc")) {
+      include_once "$path/includes/$inc.inc";
+    }
+  }
+}
+
+
 
 
 
