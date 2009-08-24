@@ -40,7 +40,7 @@ function vsite_front_spaces_settings(){
 function vsite_front_flag_default_flags(){
   vsite_include('vsiteapi');
   $scholar_types = array_keys(vsite_content_types());
-  
+  dpm($scholar_types);
   $flags = array();
   $flags[] = array(
     'content_type' => 'node', 
@@ -63,6 +63,7 @@ function vsite_front_flag_default_flags(){
     'show_on_form' => FALSE, 
     'link_type' => 'toggle',  //normal, toggle, confirm
     'locked' => array(
+      'types',
       'name', 
       'show_on_page', 
       'show_on_teaser', 
@@ -98,7 +99,7 @@ function vsite_front_link($type, $object, $teaser = FALSE){
   }
 
   // Get frontpage flags
-  $flag = flag_get_flag('frontpage');
+  $flag = flag_get_flag('vsite_frontpage');
 
   if (!$flag->user_access($user)) {
     // User has no permission to use this flag.

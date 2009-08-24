@@ -8,6 +8,7 @@
 function vsite_front_home(){
   
   $vsite = vsite_get_vsite();
+  dpm($vsite);
   if ($vsite) {
     $front_type = $vsite->settings['front']['frontpage'];
     switch ($front_type) {
@@ -92,5 +93,5 @@ function vsite_front_home_html($front_nid){
  * if front page is set to "flag" 
  */
 function vsite_front_home_flag(){
-  return views_page("scholar_frontpage", "default");
+  return views_page("vsite_front", "default");
 }
