@@ -13,7 +13,7 @@ class vsite_design_settings_logo implements space_setting {
     
   var $id;
   function __construct($id = NULL) {
-  	$this->s_logo_location = file_create_path('scholar_logos');
+  	$this->s_logo_location = file_create_path('vsite_design_logo');
   	file_check_directory($this->s_logo_location,FILE_CREATE_DIRECTORY);
   	
     if ($id) {
@@ -35,7 +35,7 @@ class vsite_design_settings_logo implements space_setting {
     	drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/jquery.Jcrop.min.js');
     	drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/cp-logo-crop.js');
     	vsite_include('vsiteapi');
-      $form['current_logo'] = array('#value' => theme('scholar_logo',false,'','',array('id' => 'logo_preview'),true));
+      $form['current_logo'] = array('#value' => theme('vsite_design_logo',false,'','',array('id' => 'logo_preview'),true));
       $form['x_cord'] = array('#type' => 'hidden');
 	    $form['y_cord'] = array('#type' => 'hidden');
 	    $form['width'] = array('#type' => 'hidden');
@@ -48,7 +48,7 @@ class vsite_design_settings_logo implements space_setting {
           'onclick' => "$('#edit-settings-logo-crop').val('1');"
         )
 	    );
-	    $form['preview'] = array('#type' => 'item','#title' => t('Preview'),'#value' => theme('scholar_logo','vsite_design_landscape_logo','','',array(),true));
+	    $form['preview'] = array('#type' => 'item','#title' => t('Preview'),'#value' => theme('vsite_design_logo','vsite_design_landscape_logo','','',array(),true));
 	    
 //	    $form['preview'] = array(
 //          '#title' => 'Preview',
@@ -57,9 +57,9 @@ class vsite_design_settings_logo implements space_setting {
 //	        '#collapsible' => TRUE,
 //	        '#collapsed' => true
 //      );
-//      $form['preview']['landscape'] = array('#type' => 'item','#title' => t('Landscape'),'#value' => theme('scholar_logo','vsite_design_landscape_logo'));
-//      $form['preview']['square'] = array('#type' => 'item','#title' => t('Square'),'#value' => theme('scholar_logo','vsite_design_square_logo'));
-//      $form['preview']['portrait'] = array('#type' => 'item','#title' => t('Portrait'),'#value' => theme('scholar_logo','vsite_design_portrait_logo'));
+//      $form['preview']['landscape'] = array('#type' => 'item','#title' => t('Landscape'),'#value' => theme('vsite_design_logo','vsite_design_landscape_logo'));
+//      $form['preview']['square'] = array('#type' => 'item','#title' => t('Square'),'#value' => theme('vsite_design_logo','vsite_design_square_logo'));
+//      $form['preview']['portrait'] = array('#type' => 'item','#title' => t('Portrait'),'#value' => theme('vsite_design_logo','vsite_design_portrait_logo'));
       
     }
     

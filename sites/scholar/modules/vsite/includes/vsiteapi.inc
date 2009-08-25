@@ -49,13 +49,13 @@ function vsite_content_types(){
  * @param boolean $b_as_link
  * @return string
  */
-function theme_scholar_logo($preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
+function theme_vsite_design_logo($preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
   $scholar = vsite_get_vsite();
   $s_image_path;
   $s_out;
   
   if(!$scholar || !$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']){
-  	$s_image_path = drupal_get_path('theme','scholar_base')."/images/default_logo.jpg";
+  	$s_image_path = drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg";
   }else{
   	$s_image_path = $scholar->settings['logo']['current_logo'];
   }//Default image?

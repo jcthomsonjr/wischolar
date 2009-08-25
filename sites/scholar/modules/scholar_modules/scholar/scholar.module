@@ -191,21 +191,6 @@ function scholar_preprocess_page(&$vars) {
 }
 
 /**
- * Implementation of hook_theme().
- */
-function scholar_theme($cache, $type, $theme, $path) {
-  $path = drupal_get_path('module', 'vsite') ;
-  
-  $items['scholar_logo'] = array(
-    'arguments' => array('preset' => NULL, 'alt' => NULL, 'title' => NULL, 'attributes' => NULL),
-    'path' => $path."/includes/",
-    'file' => 'vsiteapi.inc',
-  );
-  
-  return $items;
-}
-
-/**
  * Implementation of hook_spaces_settings().
  */
 function scholar_spaces_settings() {
