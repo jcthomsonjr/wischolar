@@ -40,28 +40,18 @@ function simport_import(){
       return false;
   }
   
-//loading each content type
-/*$types =vsite_content_types();
-  
-   //temp to test - should be removed
-   $types = array('link');
-  
-  foreach ($types as $type){
-    $table = 'node_export_scholar_' . $type;
-    $sql = db_query("SELECT * FROM {$table}");
-    while ($data = db_fetch_object($sql)) {
-       $old = unserialize($data ->nodedata);
-       
-       $new = new stdClass();
-       
-       dpm($old);
-       return;
-       echo "<pre>";
-       print_r($old);
-       die;
-    	
-    }
-  }*/
+    //loading each content type
+    /*$types =vsite_content_types();
+       //temp to test - should be removed
+       $types = array('link');
+      foreach ($types as $type){
+        $table = 'node_export_scholar_' . $type;
+        $sql = db_query("SELECT * FROM {$table}");
+        while ($data = db_fetch_object($sql)) {
+           $old = unserialize($data ->nodedata);
+           $new = new stdClass();    	
+        }
+      }*/
 }
 
 /**
