@@ -1,15 +1,98 @@
 <?php
 
 
+/**
+ * Initial function to being import script
+ * @return unknown
+ */
 function simport_import(){
-  // loop throgh all og nodes in the old database
-  // and get the minimum information to create a new
-  // vsite.
-  // create the vsite and pass it on each of the vunction
-  // below for a chance to modify it. ..
+  vsite_include('vsiteapi');
+  $roles = variable_get('scholar_manager_role', 'scholar admin');
+  $old_sites_table = 'node_export_admin_scholar';
+
+  //first create the new vsites
+  $sql = db_query("SELECT * FROM $old_sites_table");
+  while ($data = db_fetch_object($sql)) {
+   
+      //get the old site node object
+      $old = unserialize($data ->nodedata);
   
+      //set the domain for the new site
+  	$domain = $old -> title;
+  
+ 	//collect parameters to create new vsite
+  	$name = db_result(db_query("SELECT name from {users_old} WHERE uid = %d", (int)$old ->uid));
+  	$mail = db_result(db_query("SELECT mail from {users_old} WHERE uid = %d", (int)$old->uid));
+  	$password_hash = db_result(db_query("SELECT pass from {users_old} WHERE uid = %d", (int)$old->uid));
+  	
+  	//create site
+  	$user = simport_create_user($name, $mail, $password_hash, $roles);
+  	 	 	
+  	//create site 
+  	$new_site_info = simport_create_site($user, $domain);
+  	
+  	//get a spaces object for new site so we can modify and save with the functions below
+  	$new = spaces_load ( 'og', $new_site_info ->nid, TRUE );
+  	
+  	//TODO: keep a table to map old site nid to new site nid?? 
+  	
+      //just iterate once for testing purposes - REMOVE THIS WHEN DONE TESTING
+      return false;
+  }
+  
+//loading each content type
+/*$types =vsite_content_types();
+  
+   //temp to test - should be removed
+   $types = array('link');
+  
+  foreach ($types as $type){
+    $table = 'node_export_scholar_' . $type;
+    $sql = db_query("SELECT * FROM {$table}");
+    while ($data = db_fetch_object($sql)) {
+       $old = unserialize($data ->nodedata);
+       
+       $new = new stdClass();
+       
+       dpm($old);
+       return;
+       echo "<pre>";
+       print_r($old);
+       die;
+    	
+    }
+  }*/
 }
 
+/**
+ * Create the user
+ */
+function simport_create_user($name, $mail, $password_hash, $roles){
+  install_include(array( 'user' ));  
+  $password =  user_password();
+  $user = install_add_user($name, $password, $mail, $roles = array($roles), $status = 1);
+
+  if (!$user){
+    //TODO: add watchdog message
+    //watchdog();
+    }
+    
+  else{
+    //change the password back to the original
+    $sql_revert_password = db_query("UPDATE {users} SET pass = '%s' WHERE uid = %d", $password_hash, (int)$user ->uid);
+  } 
+  //return the new user object
+  return $user;
+}
+
+/**
+ * Create the site
+ */
+function simport_create_site($user, $domain){
+  vsite_include('vsiteapi');
+  //create the site
+  return vsite_vsite_create($user->name, $user->mail, $domain);
+}
 
 /**
  * 
