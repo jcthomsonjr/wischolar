@@ -25,7 +25,7 @@ function simport_import(){
   	$mail = db_result(db_query("SELECT mail from {users_old} WHERE uid = %d", (int)$old->uid));
   	$password_hash = db_result(db_query("SELECT pass from {users_old} WHERE uid = %d", (int)$old->uid));
   	
-  	//create site
+  	//create user
   	$user = simport_create_user($name, $mail, $password_hash, $roles);
   	 	 	
   	//create site 
