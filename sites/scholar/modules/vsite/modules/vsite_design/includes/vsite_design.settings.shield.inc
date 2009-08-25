@@ -17,8 +17,8 @@ class vsite_design_settings_shield implements space_setting {
   function form($space, $value = array()) {
     $form = array();
   
-    $s_default = drupal_get_path('theme','scholar_base')."/shields/harvard_shield.png";
-    $s_shield_dir = drupal_get_path('theme','scholar_base')."/shields";
+    $s_default = drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png";
+    $s_shield_dir = drupal_get_path('module','vsite_design')."/theme/shields";
     $a_shields = file_scan_directory($s_shield_dir, '.*', array('.', '..'));
     
     $options = array();

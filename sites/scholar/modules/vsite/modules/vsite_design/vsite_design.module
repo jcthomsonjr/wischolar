@@ -8,10 +8,12 @@ function vsite_design_init(){
   $active_menu = menu_get_item();
   if ($active_menu['path'] == 'cp/settings/theme'){  
     drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
     drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
   }
   elseif ($active_menu['path'] == 'cp/settings/shield'){
     drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-shield-picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
     drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-shield-picker.js');    
   }
 }
