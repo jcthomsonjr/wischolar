@@ -9,10 +9,17 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
   function form($space, $value = array()) {
     $form = array('#title'=>'Site Information' );
     
+    $s_def_headline = isset($value['scholar_headline'])?$value['scholar_headline']:false;
+    
+    if(!$s_def_headline){
+    	$user = user_load($space->group->uid);
+    	if($uaer && $user->name)	$s_def_headline =$user->name;
+    }
+    
     $form['scholar_headline'] = array(
       '#type' => 'textfield',
       '#title' => t('Main Headline'),
-      '#default_value' => isset($value['scholar_headline'])?$value['scholar_headline']:'',
+      '#default_value' => $s_def_headline,
       '#size' => 60,
       '#description' => 'Ususally: First and Last name ex.(John Q. Smith)',
       '#maxlength' => 128,
@@ -21,10 +28,10 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     $form['scholar_link_to_home'] = array(
       '#type' => 'checkbox',
       '#title' => t('Link to Home Page'),
-      '#default_value' => isset($value['scholar_link_to_home'])?$value['scholar_link_to_home']:0,
+      '#default_value' => isset($value['scholar_link_to_home'])?$value['scholar_link_to_home']:1,
     );
-    $form['sub_heading'] = array(
-      '#type' => 'textfield',
+    $form['scholar_sub_heading'] = array(
+      '#type' => 'textarea',
       '#title' => t('Sub Headline'),
       '#default_value' => isset($value['sub_heading'])?$value['sub_heading']:'',
       '#size' => 60,
@@ -63,6 +70,9 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     $value['headline'] = $value['scholar_link_to_home']?"<a href=\"".url("home")."\">{$value['scholar_headline']}</a>":$value['scholar_headline'];
     $value['sub_heading_extra'] = $value['scholar_link_to_contact']?$value['scholar_sub_heading_extra']." <a href='mailto:john@h.com'>(email)</a>":$value['scholar_sub_heading_extra'];
    
+    $value['sub_heading'] = trim($value['scholar_sub_heading']);
+    $value['sub_heading'] = (strstr("\n",$value['sub_heading']))? "<span>".str_replace("\n","</span><span>",$value['sub_heading'])."</span>":$value['sub_heading'];
+    
     return $value;
   }
   
