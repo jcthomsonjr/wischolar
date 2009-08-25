@@ -43,11 +43,18 @@ function cp_settings_form($form_id, $setting_id){
     '#value' => $setting_id,
   );
   
+  $form['reset'] = array(
+    '#type' => 'submit',
+    '#value' => t('Reset to defaults'),
+    '#submit' => array('cp_settings_form_reset'),
+  );
+  
   // add the submit button (not in the form definition yet)
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save settings'),
   );
+  
 
   return $form;
 }
@@ -68,9 +75,27 @@ function cp_settings_form_submit($form, &$form_state){
 }
 
 /**
+ * Reset submit handler for cp spaces settings.
+ */
+function cp_settings_form_reset($form, &$form_state) {
+   // get the space and the settings we want to save
+  $space = $form_state['values']['space'];
+  $setting = $form_state['values']['setting'];
+  
+  $settings = spaces_settings();
+  if (!empty($form_state['values']['settings'])) {
+    foreach ($form_state['values']['settings'] as $setting => $value) {
+      unset($space->settings[$setting]);
+    }
+  }
+  spaces_save($space);
+}
+
+/**
  * Validate handler for spaces features form
  */
 function cp_settings_form_validate($form, &$form_state) {
+  if($form_state['submitted'] && $form_state['submit_handlers'] && in_array('cp_settings_form_reset',$form_state['submit_handlers'])) return; 
   
   $space = $form_state['values']['space'];
   $settings = spaces_settings();
