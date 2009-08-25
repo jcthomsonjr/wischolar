@@ -40,7 +40,6 @@ function vsite_front_spaces_settings(){
 function vsite_front_flag_default_flags(){
   vsite_include('vsiteapi');
   $scholar_types = array_keys(vsite_content_types());
-  dpm($scholar_types);
   $flags = array();
   $flags[] = array(
     'content_type' => 'node', 
