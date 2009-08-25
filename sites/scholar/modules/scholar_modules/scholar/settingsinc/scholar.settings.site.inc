@@ -13,7 +13,7 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     
     if(!$s_def_headline){
     	$user = user_load($space->group->uid);
-    	if($uaer && $user->name)	$s_def_headline =$user->name;
+    	if($user && $user->name)	$s_def_headline = $user->name;
     }
     
     $form['scholar_headline'] = array(
