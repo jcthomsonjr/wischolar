@@ -20,7 +20,7 @@ function vsite_vocab_menu() {
     'access arguments' => array('access content')
   );
   
-  $items['vsite_vocab/term/%/%/rename/%'] = array (
+  $items['vsite_vocab/term/%/%/rename'] = array (
     'title' => 'deleting a term',
     'page callback' => 'vsite_vocab_term_rename',
     'page arguments' => array(2,3,5),
@@ -30,30 +30,6 @@ function vsite_vocab_menu() {
   
   return $items;
 }
-
-function vsite_vocab_taxonomies(){
-  $site = vsite_get_vsite();
-  vsite_include('vsiteapi');
-
-  $s_types = vsite_content_types();
-  $output = '';
-  $delta = 0;
-  $output = '<div class="pad">';
-
-  foreach($s_types as $type => $name){
-    
-    $block = vsite_vocab_block_per_content_type($site, $type);
-    $bo = new stdClass();
-    $bo -> module = 'vsite_vocab';
-    $bo -> content = $block['content'];
-    $bo -> subject = 'Categories for ' . $name;
-    $bo -> delta = $bo -> module . $delta++;
-    $output .= theme('block', $bo);
-  }
-  $output .='</div>';
-  return $output;
-}
-
 
 function vsite_vocab_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
@@ -71,11 +47,45 @@ function vsite_vocab_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
+function vsite_vocab_taxonomies(){
+  drupal_add_js(drupal_get_path('module', 'vsite_vocab') . '/theme/vsite_vocab.js');
+  ctools_include('ajax');
+  ctools_add_js('ajax-responder');
+  
+  $site = vsite_get_vsite();
+  $admin = $site->admin_access();
+  
+  vsite_include('vsiteapi');
+  
+  $s_types = vsite_content_types();
+  $output = '';
+  $delta = 0;
+  $output = '<div class="pad">';
+  
+  foreach ( $s_types as $type => $name ) {
+    $vocabs = vsite_get_vocabs($vsite, $type);
+    if (count($vocabs)) {
+      foreach ( $vocabs as $v ) {
+        $bo = new stdClass();
+        $bo->module = 'vsite_vocab';
+        $bo->content = vsite_vocab_terms($v, $admin = TRUE, $count = TRUE);
+        $bo->subject = 'Categories for ' . $name . '(' . l('edit', "node/" . $site->sid . "/og/vocab/edit/vocabulary/" . $v->vid, $options = array('attributes' => array('class' => 'edit')) ) . ')';
+        $bo->delta = $bo->module . $delta ++;
+        $output .= theme('block', $bo);
+      }
+    }
+  }
+  $output .= '</div>';
+  return $output;
+}
+
 function vsite_vocab_block_view() {
   //TODO it seems like vsite_get_vsite does not work here
   // cant get space from within a block
   $group_node = og_get_group_context ();
   $site = spaces_load ( 'og', $group_node->nid, TRUE );
+
+  
   $sid = $group_node -> nid;
  
   // 1. get the active contexts
@@ -85,64 +95,96 @@ function vsite_vocab_block_view() {
     if (isset ($c -> node)) {
       $node_type = current($c -> node);  // TODO we are assuming that the context has only one content type
       // get vocabularies associated with this content type
+
       return vsite_vocab_block_per_content_type($site, $node_type);
     }
   }
 }
 
-function vsite_vocab_block_per_content_type($site, $node_type) {
-  drupal_add_js ( drupal_get_path ( 'module', 'vsite_vocab' ) . '/theme/vsite_vocab.js' );
-  ctools_include ( 'ajax' );
-  ctools_add_js ( 'ajax-responder' );
-  //$site = vsite_get_vsite(); // TODO why this is not working !!!
-  $admin = $site->admin_access ();
+function vsite_vocab_block_per_content_type($site, $node_type, $subject = 'Categories') {
+
   $vcs = taxonomy_get_vocabularies ( $node_type );
   foreach ( $vcs as $v ) {
     // which is the group of this vocab?
     $group_vocab = og_vocab_get_group($v -> vid);
     if ($group_vocab['nid'] == $site -> group -> nid){
-    $tree = taxonomy_get_tree ( $v->vid );
-    
-    foreach ( $tree as $term ) {
-      $count = taxonomy_term_count_nodes ( $term->tid );
-      //if ($count) {
-      // TODO the following should come from the feature view (where term) is an argument)
-      $term_path = "taxonomy/term/$term->tid";
-      $term_link = l ( $term->name, $term_path, array ('title' => t ( $term->description ) ) );
-      
-      //dpm($term);
-      $item = _vsite_vocab_item($term);
-      $item = $term_link . '<span class = "count" > (' . $count . ')</span>';
-      if ($admin) {
-        $admin_links = array ();
-        $admin_links [] = array (
-        	'title' => 'delete', 
-        	'href' => "vsite_vocab/term/delete/" . $term->vid . "/" . $term->tid,
-          'attributes' => array('class' => 'delete ctools-use-ajax'),  // important for ajax to work
-        );
 
-        $admin_links [] = array (
-        	'title' => 'edit', 
-        	'href' => 'vsite_vocab/term/' . $term->vid . "/" . $term->tid . '/rename/',
-          'attributes' => array('class' => 'edit') 
-        );
-        //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
-        $item .= theme ( 'links', $admin_links, $attributes = array ('class' => 'admin' ) );
-      }
-      $items [] = array ('data' => $item, 'id' => 'vsite_vocab_item_' . $term->tid );
-      //}
-    }
+      $items = vsite_vocab_terms($v, $admin, $count = TRUE);
     }
   }
-  $block ['content'] = theme ( 'item_list', $items, NULL, 'ul', $attributes = array('id' => 'id') );
-  $block ['subject'] = t ( 'Categories' );
-  if ($admin) {
-    $block ['subject'] .= l ( 'Edit', "node/" . $group_node->nid . "/og/vocab/edit/vocabulary/$vid" );
-  }
+  $block['content'] =  theme( 'item_list', $items, NULL, 'ul', $attributes = array('id' => 'id') );
+  $block ['subject'] = $subject;
+
   return $block;
 }
 
-function vsite_vocab_term_rename($vid, $tid, $newterm) {
+
+function vsite_vocab_terms($v , $admin = FALSE, $count = FALSE){
+  $terms = taxonomy_get_tree($v -> vid);
+  
+  foreach ( $terms as $term ) {
+    $item = vsite_vocab_term_item($term, $admin, $count);
+    $items[] = array(
+      'data' => $item, 
+      'id' => 'vsite_vocab_item_' . $term->tid 
+    );
+  }
+  return theme( 'item_list', $items, NULL, 'ul', $attributes = array('id' => 'id') );
+}
+
+
+function vsite_vocab_term_item($term, $admin = FALSE, $count = FALSE){
+
+  $term_path = "taxonomy/term/" . $term -> tid;
+  $term_link = l($term -> name, $term_path, array(
+    'title' => t($term -> description) 
+  ));
+  
+  $nr_nodes = taxonomy_term_count_nodes($term->tid);
+  if ($count) {
+    $item = $term_link . '<span class = "count" > (' . $nr_nodes . ')</span>';
+  }
+  
+  if ($admin) {
+    $admin_links = array();
+    $admin_links[] = array(
+      'title' => 'delete', 
+      'href' => "vsite_vocab/term/delete/" . $term->vid . "/" . $term->tid, 
+      'attributes' => array(
+        'class' => 'delete ctools-use-ajax' 
+      )  // important for ajax to work
+    );
+    
+    $admin_links[] = array(
+      'title' => 'edit', 
+      'href' => 'vsite_vocab/term/' . $term->vid . "/" . $term->tid . '/rename/', 
+      'attributes' => array(
+        'class' => 'edit' 
+      ) 
+    );
+    //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
+    $item .= theme('links', $admin_links, $attributes = array(
+      'class' => 'admin' 
+    ));
+  }
+  return $item;
+}
+
+
+
+
+
+
+/*** Ajax callbacks ***/
+
+function vsite_vocab_term_rename($vid, $tid, $newterm = null) {
+  ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+  
+  if (!$newterm){
+    $commands = array ();
+    ctools_ajax_render ( $commands ); // this function exits.
+  }
   //dpm ( $newterm );
   $table = 'term_data';
   $record = new stdClass ( );
@@ -153,10 +195,9 @@ function vsite_vocab_term_rename($vid, $tid, $newterm) {
   // if (drupal_rewrite_record($table, $record, 'tid')){
   if (taxonomy_save_term ( $term )) {
     
-    ctools_include ( 'ajax' );
-    ctools_add_js ( 'ajax-responder' );
+
     $commands = array ();
-    $commands [] = ctools_ajax_command_replace ('#vsite_vocab_item_' . $tid . ' > a', _vsite_vocab_item($term) );
+    $commands [] = ctools_ajax_command_replace ('#vsite_vocab_item_' . $tid . ' > a', vsite_vocab_term_item($term) );
     ctools_ajax_render ( $commands ); // this function exits.
   } else {
     ctools_ajax_render_error($error = 'something wrong happened ...');
@@ -176,14 +217,6 @@ function vsite_vocab_term_delete($vid,$tid){
   }
 }
 
-function _vsite_vocab_item($term){
-  if (is_object($term)){
-    $term = (array)$term;
-  }
-  $term_path = "taxonomy/term/" . $term['tid'];
-  $term_link = l ( $term['name'], $term_path, array ('title' => t ( $term['description'] ) ) ); 
-  return $term_link;
-}
 
 
 /** API functions **/
