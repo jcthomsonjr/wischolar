@@ -1,10 +1,10 @@
 <?php 
-require_once(drupal_get_path('module', 'cp')  .'/settingsinc/cp.settings.site.inc');
+require_once(drupal_get_path('module', 'vsite_design')  .'/includes/vsite_design.settings.site.inc');
 
 /**
  * Provides theme selection for each site
  */
-class scholar_setting_site extends cp_setting_site implements space_setting {
+class scholar_setting_site extends vsite_design_setting_site implements space_setting {
 
   function form($space, $value = array()) {
     $form = array('#title'=>'Site Information' );
