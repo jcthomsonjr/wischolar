@@ -25,7 +25,7 @@ class scholar_setting_site extends cp_setting_site implements space_setting {
     );
     $form['sub_heading'] = array(
       '#type' => 'textfield',
-      '#title' => t('Sub Heading 1'),
+      '#title' => t('Sub Headline'),
       '#default_value' => isset($value['sub_heading'])?$value['sub_heading']:'',
       '#size' => 60,
       '#description' => 'Ususally: Title  ex.(Director of Mathmatics)',
@@ -34,7 +34,7 @@ class scholar_setting_site extends cp_setting_site implements space_setting {
     );
     $form['scholar_sub_heading_extra'] = array(
       '#type' => 'textfield',
-      '#title' => t('Sub Heading 2'),
+      '#title' => t('Address Line'),
       '#default_value' => isset($value['scholar_sub_heading_extra'])?$value['scholar_sub_heading_extra']:'',
       '#size' => 60,
       '#description' => 'Ususally: Your Address ex.(Cambridge, MA 02118)',
