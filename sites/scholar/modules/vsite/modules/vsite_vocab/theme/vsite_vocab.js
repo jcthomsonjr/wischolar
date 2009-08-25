@@ -20,9 +20,24 @@ Drupal.VsiteVocab.Rename = function(){
 }
 
 Drupal.behaviors.vsitevocab = function(context) {
+  $('.tax-edit').click(function(){
+	  
+  });
+  
   var rename_link = $('ul.admin a.edit:not(.vsitevocab-processed)', context);
   var dest = rename_link.attr('href');	
   
   rename_link.click(Drupal.VsiteVocab.Rename);
   rename_link.click(Drupal.CTools.AJAX.clickAJAXLink);
+}
+
+Drupal.behaviors.VocabEdit = function(context){
+  $('ul.admin').hide();
+  
+  $('.tax-edit:not(.vocabedit-processed)', context)
+  .addClass('vocabedit-processed')
+  .click(function(){
+	  $(this).parent().parent().find('ul.admin').toggle();
+	  return false;
+  });	
 }

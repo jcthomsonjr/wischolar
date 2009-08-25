@@ -69,7 +69,7 @@ function vsite_vocab_taxonomies(){
         $bo = new stdClass();
         $bo->module = 'vsite_vocab';
         $bo->content = vsite_vocab_terms($v, $admin = TRUE, $count = TRUE);
-        $bo->subject = 'Categories for ' . $name . '(' . l('edit', "node/" . $site->sid . "/og/vocab/edit/vocabulary/" . $v->vid, $options = array('attributes' => array('class' => 'edit')) ) . ')';
+        $bo->subject = 'Categories for ' . $name . '(' . l('edit', "node/" . $site->sid . "/og/vocab/edit/vocabulary/" . $v->vid, $options = array('attributes' => array('class' => 'tax-edit')) ) . ')';
         $bo->delta = $bo->module . $delta ++;
         $output .= theme('block', $bo);
       }
