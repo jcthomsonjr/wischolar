@@ -27,11 +27,7 @@ function vsite_activity_action($object, $context){
 	//Setup the advanced Patterns
 	$context['node-pattern'] = 'You [action] a new [type-name] ([title])';
 	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite] ([title])';
-	$context['activity_types'] = array('blog'=>'blog',
-	                                   'announcement'=>'announcement',
-	                                   'link'=>'link',
-	                                   'biblio'=>'biblio',
-	                                   'scholarsite'=>0); //don't run on scholarsite creation
+	$context['activity_types'] = vsite_content_types(); 
 	$s_action = 'modified';
 	switch($context['op']){
 		case 'submit':
