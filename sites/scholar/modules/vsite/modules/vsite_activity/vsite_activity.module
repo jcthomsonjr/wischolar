@@ -1,0 +1,70 @@
+<?php
+
+function vsite_activity_action_info(){
+	$info['vsite_activity_action'] = array(
+	  'type' => 'activity',
+	  'description' => t("Record a new node's creation for activity tracker"),
+	  'configurable' => false,
+	  'hooks' => array(
+	    'any' => true,
+	  ),
+	);
+	
+	return $info;
+}
+
+
+function vsite_activity_action($object, $context){
+	
+	//Setup the advanced Patterns
+	$context['node-pattern'] = 'You [action] a new [type-name] ([title])';
+	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite] ([title])';
+	$context['activity_types'] = array('blog'=>'blog',
+	                                   'announcement'=>'announcement',
+	                                   'link'=>'link',
+	                                   'biblio'=>'biblio',
+	                                   'scholarsite'=>0); //don't run on scholarsite creation
+	$s_action = 'modified';
+	switch($context['op']){
+		case 'submit':
+			$s_action = "submitted";
+    break;
+		case 'insert':
+			$s_action = "inserted";
+    break;	
+    case 'update':
+    	$s_action = "updated";
+    break;
+    case 'view':
+    	$s_action = "viewed";
+		break;
+	}
+	$context['node-pattern'] = str_replace('[action]',$s_action,$context['node-pattern']);
+  $context['everyone-pattern'] = str_replace('[action]',$s_action,$context['everyone-pattern']);
+	
+	$vsite = vsite_get_vsite();
+	if($vsite && $vsite->group->uid){
+		$user = user_load($vsite->group->uid);
+    if($user && $user->name){
+    	$s_users_vsite = "in ".$user->name."'s site";
+    	$context['node-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['node-pattern']);
+    	$context['everyone-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['everyone-pattern']);
+    } 
+	}
+	
+  activity_record($object,$context);
+}
+
+/**
+* Implementation of hook_activity_message_recorded().
+*/
+function vsite_activity_activity_message_recorded($record) {
+  // After a message has been recorded with activity, we then save it's gid so
+  // that we can reference it
+  $vsite = vsite_get_vsite();
+  if ($record->type == 'node' && $vsite) {
+    db_query("UPDATE {activity} SET gid = %d WHERE aid = %d", $vsite->group->nid, $record->aid);
+  }
+}
+
+
