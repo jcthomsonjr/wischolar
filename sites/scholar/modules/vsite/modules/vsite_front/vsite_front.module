@@ -122,3 +122,20 @@ function vsite_front_link($type, $object, $teaser = FALSE){
     return $links;
   }
 }
+
+/**
+ * Implementation of hook_nodeapi
+ */
+function vsite_front_nodeapi(&$node, $op){
+  switch ($op) {
+    case 'insert' :
+      
+      //if frontpage is set to true in URL, make this page a "bio" page
+      if ($_GET['frontpage']) {
+        $space = spaces_get_space();
+        $space->settings['bio']['nid'] = $node->nid;
+        spaces_save($space);
+      }
+      break;
+  }
+}
