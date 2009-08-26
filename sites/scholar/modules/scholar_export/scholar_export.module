@@ -33,23 +33,22 @@ function scholar_export_drush_command() {
 function scholar_export_run($types = array()) {
 
   //create the export table on the target database
-   scholar_export_create_table();
-  
-   //checking if specific types are specified to export 
+  scholar_export_create_table();
+
+  //checking if specific types are specified to export
   $sql_clause= count($types) ? 'WHERE type = ' . implode(' OR ', $types): '';
-  
+
   $res= db_query("SELECT nid from {node} $sql_clause ORDER BY nid ASC");
   while ($data = db_fetch_object($res)){
-     scholar_export_save_node($data -> nid);
+    scholar_export_save_node($data -> nid);
   }
-  
+
   db_set_active('default');
   //now get all the user information and export it
-  $sql_users =db_query("SELECT uid FROM {users} WHERE uid > 0 ORDER BY uid ASC");{
-     while ($data = db_fetch_object($sql_users)){
-            //saving user data to the target database table
-            scholar_export_save_user($data -> uid);
-     }
+  $sql_users =db_query("SELECT uid FROM {users} WHERE uid > 0 ORDER BY uid ASC");
+  while ($data = db_fetch_object($sql_users)){
+    //saving user data to the target database table
+    scholar_export_save_user($data -> uid);
   }
   db_set_active('default');
 }
