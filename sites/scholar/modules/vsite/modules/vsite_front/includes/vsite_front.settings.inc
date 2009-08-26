@@ -68,7 +68,7 @@ class vsite_front_settings_front implements space_setting {
     $link = l('bio', "node/$bio_nid");
     $description = "Your " . $link . " will be used as your front page";
   } else {
-    $link = l(t('Create'), "node/add/page" , array('query' => array('frontpage' => 'true'))); //added option in url to indicate bio will be on frontpage
+    $link = l(t('Create'), "node/add/page" , array('query' => array('frontpage' => '1', 'destination' => $_GET['q']))); //added option in url to indicate bio will be on frontpage
     $description = "You dont have a bio yet. $link one now"; 
   }
   
