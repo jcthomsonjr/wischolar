@@ -75,6 +75,7 @@ function scholar_profile_modules() {
     'vsite_design',
     'vsite_users',
     'vsite_vocab',
+    'vsite_help',
     
   // scholar specific
     'biblio',
