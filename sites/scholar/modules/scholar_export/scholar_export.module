@@ -51,6 +51,7 @@ function scholar_export_run($types = array()) {
             scholar_export_save_user($data -> uid);
      }
   }
+  db_set_active('default');
 }
 
 /**
