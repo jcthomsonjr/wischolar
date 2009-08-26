@@ -273,13 +273,16 @@ function _scholar_profile_content_types(){
  *
  */
 function _scholar_enable_themes(){
-	$themes = array('zen', 'cp_theme', 'scholar_base');
+  // the default theme is the project theme
+  install_default_theme('scholar_project');
+  
+  $themes = array('zen', 'cp_theme', 'scholar_base');
 
-	$themes = array_merge($themes, __scholar_get_scholar_theme_names());
-	install_enable_theme($themes);
+  $themes = array_merge($themes, __scholar_get_scholar_theme_names());
+  install_enable_theme($themes);
 	
-	// disable all DB blocks
-	db_query("UPDATE {blocks} SET status = 0, region = ''"); 
+  // disable all DB blocks
+  db_query("UPDATE {blocks} SET status = 0, region = ''"); 
 }
 
 /**
