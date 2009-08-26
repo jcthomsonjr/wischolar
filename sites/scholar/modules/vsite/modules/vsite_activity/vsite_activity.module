@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * The action hook
+ * 
+ */
 function vsite_activity_action_info(){
 	$info['vsite_activity_action'] = array(
 	  'type' => 'activity',
@@ -13,7 +16,12 @@ function vsite_activity_action_info(){
 	return $info;
 }
 
-
+/**
+ * The action called to add a vsite modification to the activity table, Change the message here to 
+ * @param $object
+ * @param $context
+ * @return unknown_type
+ */
 function vsite_activity_action($object, $context){
 	
 	//Setup the advanced Patterns
@@ -27,17 +35,11 @@ function vsite_activity_action($object, $context){
 	$s_action = 'modified';
 	switch($context['op']){
 		case 'submit':
-			$s_action = "submitted";
+	  case 'insert':
+		case 'update':
+		case 'view':
+			$s_action = $context['op']."ed";
     break;
-		case 'insert':
-			$s_action = "inserted";
-    break;	
-    case 'update':
-    	$s_action = "updated";
-    break;
-    case 'view':
-    	$s_action = "viewed";
-		break;
 	}
 	$context['node-pattern'] = str_replace('[action]',$s_action,$context['node-pattern']);
   $context['everyone-pattern'] = str_replace('[action]',$s_action,$context['everyone-pattern']);
