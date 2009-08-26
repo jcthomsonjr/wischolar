@@ -15,7 +15,7 @@ function simport_import(){
   while ($data = db_fetch_object($sql)) {
    
       //get the old site node object
-      $old = unserialize($data ->nodedata);
+      $old = unserialize($data ->nodedata); //dpm($old);
   
       //set the domain for the new site
   	$domain = $old -> title;
@@ -31,15 +31,29 @@ function simport_import(){
   	//create site 
   	$new_site_info = simport_create_site($user, $domain);
   	
+  	//write to the simport table mapping old site to new site
+  	$sql_map_sites = db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$new_site_info ->nid);
+  	
   	//get a spaces object for new site so we can modify and save with the functions below
   	$new = spaces_load ( 'og', $new_site_info ->nid, TRUE );
   	
-  	//TODO: keep a table to map old site nid to new site nid?? 
+  	dpm($old);
+   	
+  	//set theme
+  	simport_set_theme($old, $new);
+  	 	 	
+      //set logo
+  	simport_set_logo($old, $new);
+  	
+  	
   	
       //just iterate once for testing purposes - REMOVE THIS WHEN DONE TESTING
-      return false;
+     // return false;
+      
+      //save all the changes/additions to the space
+      spaces_save($new);
   }
-  
+  return false;
     //loading each content type
     /*$types =vsite_content_types();
        //temp to test - should be removed
@@ -52,6 +66,11 @@ function simport_import(){
            $new = new stdClass();    	
         }
       }*/
+    
+    
+    
+    //set frontpage last
+  	simport_set_frontpage($old, $new);
 }
 
 /**
@@ -90,9 +109,37 @@ function simport_create_site($user, $domain){
  * @param $new the new vsite
  */
 function simport_set_theme($old, &$new){
-
+  
+  $og_theme_map = array(
+  'fac01' => 'scholar_theme_06',
+  'fac02' => 'scholar_theme_01',
+  'fac03' =>'scholar_theme_03',
+  'fac04' => 'scholar_theme_06',
+  'fac05' => 'scholar_theme_05',
+  'fac06' => 'scholar_theme_04',
+  'fac07' => 'scholar_theme_07',  
+  );
+  //set the new theme
+  $new->settings['theme'] = $og_theme_map[$old -> og_theme];
 }
 
+/**
+ * Set the frontpage value
+ *
+ * @param unknown_type $old
+ * @param unknown_type $new
+ */
+function simport_import_frontpage($old, &$new){
+
+ $frontpage_old =  unserialize(db_result(db_query("SELECT value FROM {og_settings} WHERE name = '%s' and nid = %d", 'scholar_admin_site_front_node', (int)$old -> nid)));
+ 
+ //get nid the mapping
+ $frontpage = db_result(db_query("SELECT new from {simport} WHERE old = %d", (int)$frontpage_old));
+  
+ //TODO: Not sure yet how to deal with this???
+ $new->settings['front']['frontpage'] =  '';  //$frontpage;
+  
+}
 
 function simport_set_logo($old, &$new){
 
@@ -103,20 +150,6 @@ function simport_set_shield($old, &$new){
   
 }
 
-
-function simport_import_class($old, &$new){
-
-}
-
-
-function simport_import_biblio($old, &$new){
-
-}
-
-
-function simport_import_front($old, &$new){
-
-}
 
 
 
