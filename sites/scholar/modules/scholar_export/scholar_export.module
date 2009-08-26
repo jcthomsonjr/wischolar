@@ -1,0 +1,122 @@
+<?php
+//$Id$
+
+/**
+ * @file This module can be run on the Drupal 5 site and will import serialized node and user data tables into
+ * a target database.
+ * 
+ *  NOTE: In settings.php - configure connection settings for the $db_url variable in settings.php for multi-database 
+ *  configuration which includes both your D5 and D6 database. Your D5 database need to be 'default'. 
+ * 
+ * For example:
+ *  $db_url['default'] = 'mysql://iqss:s4ndB0x@localhost/iqdrupal'; //source Drupal 5 installation
+ *  $db_url['targetdb'] = 'mysql://iqss:s4ndB0x@localhost/jdev6';  //destination Drupal 6 installation
+ */
+
+//define target database contant
+define(TARGET_DB, 'targetdb');  //there is no need to modify this
+
+/**
+ * Implementation of hook_drush_command().
+ */
+function scholar_export_drush_command() {
+  $items['scholarexport'] = array(
+  'callback' => 'scholar_export_run',
+  'description' => 'exports content data to target database'
+  );
+  return $items;
+}
+
+/**
+ * starting point for export 
+ */
+function scholar_export_run($types = array()) {
+
+  //create the export table on the target database
+   scholar_export_create_table();
+  
+   //checking if specific types are specified to export 
+  $sql_clause= count($types) ? 'WHERE type = ' . implode(' OR ', $types): '';
+  
+  $res= db_query("SELECT nid from {node} $sql_clause ORDER BY nid ASC");
+  while ($data = db_fetch_object($res)){
+     scholar_export_save_node($data -> nid);
+  }
+  
+  db_set_active('default');
+  //now get all the user information and export it
+  $sql_users =db_query("SELECT uid FROM {users} WHERE uid > 0 ORDER BY uid ASC");{
+     while ($data = db_fetch_object($sql_users)){
+            //saving user data to the target database table
+            scholar_export_save_user($data -> uid);
+     }
+  }
+}
+
+/**
+ * create the export data tables in the Drupal 5 site, first drop the existing tables if they exist
+ */
+function scholar_export_create_table(){
+  db_set_active(TARGET_DB);
+   $drop_table = db_query("DROP TABLE IF EXISTS {scholar_export_data}");
+   $create_table = db_query("CREATE TABLE {scholar_export_data} (
+    id int(10) NOT NULL,
+    type varchar(120) NOT NULL,
+    nodedata longtext NOT NULL
+    ) /*!40100 DEFAULT CHARACTER SET utf8 */;"
+    );
+  
+  db_set_active('default');
+  return;
+} 
+
+/**
+ * gets an old node and dumps to the event_export_* table
+ * where * is the node type
+ */
+function scholar_export_save_node($nid) {
+  db_set_active('default');
+  $node = node_load(array('nid' => $nid));
+  //add og data here
+  $sql = db_query("SELECT * FROM {og_settings} WHERE nid = %d", (int)$nid);
+  while ($data = db_fetch_object($sql)){
+    //now add the og settings data to the node object
+    switch($data -> name){
+      case 'scholar_admin_site_front_node':
+        $node ->scholar_admin_site_front_node = unserialize($data -> value);
+        break;
+
+      case 'scholar_admin_title_on_front_node':
+        $node ->scholar_admin_site_front_node = unserialize($data -> value);
+        break;
+
+      case 'scholar_firstname':
+        $node ->scholar_firstname = unserialize($data -> value);
+        break;
+
+      case 'scholar_lastname':
+        $node ->scholar_lastname = unserialize($data -> value);
+        break;
+
+      case 'scholar_position':
+        $node ->scholar_position = unserialize($data -> value);
+        break;
+    }
+  }
+    $nodedata = serialize($node);
+    db_set_active(TARGET_DB);
+    db_query("INSERT INTO {scholar_export_data} (id, type, nodedata) VALUES (%d , '%s', '%s')", (int)$nid, $node -> type, $nodedata );
+}
+
+/**
+ * Saves serialized user data to target database
+ * @param $uid
+ */
+function scholar_export_save_user($uid) {
+  db_set_active('default');
+  $user = user_load(array('uid' => $uid));
+  $userdata = serialize($user);
+  db_set_active(TARGET_DB);
+  db_query("INSERT INTO {scholar_export_data} (id, type, nodedata) VALUES (%d , '%s', '%s')", (int)$uid, 'user', $userdata );
+}
+
