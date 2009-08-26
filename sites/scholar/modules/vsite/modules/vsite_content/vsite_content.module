@@ -37,7 +37,6 @@ function vsite_content_menu(){
   return $items;
 }
 
-
 /**
  * Function to return output on cp content page
  */
@@ -45,13 +44,62 @@ function vsite_content_content($type = NULL, $name = NULL){
   //return 'whatever';
   //element classes for 'add new' link
   $add_new_classes = 'add-new ' . 'add-new-' . $type;
-  $v = views_get_view('vsite_content');
+  //$v = views_get_view('vsite_content');
   //link to add new content
   $output .= isset($type) ? '<div class="' . $add_new_classes . '">' . l(t('+ add new ' . $name), 'node/add/' . strtolower($type)) . '</div>' : '';
   
   //adding view output
-  $output .= views_page($view_name = 'vsite_content', $display = 'default', $arg = $type);
+  //$output .= views_page($view_name = 'vsite_content', $display = 'default', $arg = $type);
+  $vocabs = vsite_get_vocabs($vsite, $type);
+  if (count($vocabs)){
+    $vid = current(array_keys($vocabs));
+  }
+  $output .= vsite_content_content_view($vid);
   return $output;
+}
+
+/**
+ * Return the result from vsite_content view.
+ * if $vid is specified adds the corresponding term 
+ * as a filter in the view
+ */
+function vsite_content_content_view($vid = NULL){
+  
+  //initialize the scholar base view
+  $view = views_get_view('vsite_content');
+  if ($vid) {
+    $view->display['default']->display_options['filters']['tid'] = array(
+      'operator' => 'or', 
+      'value' => array(), 
+      'group' => '0', 
+      'exposed' => TRUE, 
+      'expose' => array(
+        'use_operator' => 0, 
+        'operator' => 'tid_op', 
+        'identifier' => 'tid', 
+        'label' => 'Category', 
+        'optional' => 1, 
+        'single' => 0, 
+        'remember' => 0, 
+        'reduce' => 0 
+      ), 
+      'type' => 'select', 
+      'limit' => TRUE, 
+      'vid' => $vid, 
+      'id' => 'tid', 
+      'table' => 'term_node', 
+      'field' => 'tid', 
+      'hierarchy' => 0, 
+      'relationship' => 'none', 
+      'reduce_duplicates' => 1 
+    );
+  }
+  $view->init();
+  $view->set_display('default');
+  
+  $view->execute();
+  return $view->render();
+
 }
 
 /**
@@ -59,10 +107,11 @@ function vsite_content_content($type = NULL, $name = NULL){
  * Alter the views exposed form
  */
 function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
-  
-  if ($form['#id'] == 'views-exposed-form-cp-content-default') {
+  drupal_add_js(drupal_get_path('module', 'vsite_content') . '/vsite_content.js');
+  if ($form['#id'] == 'views-exposed-form-vsite-content-default') {
     //TODO: Is there a better way to get the content type argument???
     $type = arg(2);
+    
     //set action to current url
     $form['#action'] = request_uri();
     
@@ -74,36 +123,20 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     
     //get the site information
     $site = vsite_get_vsite();
-    //get the vocabularies vid's associated with this site
-    $site_vocabs = array_keys(og_vocab_get_vocabularies($site->group->nid));
-    //get the vocabularies vid's associated with content type
-    $type_vocabs = array_keys(taxonomy_get_vocabularies($type));
-    
-    if (count($site_vocabs) && count($type_vocabs)) {
-      //merge common vids
-      $vid = array_intersect($site_vocabs, $type_vocabs);
+    $vocabs = array();
+    $vocabs = ($type || $type != 'all') ? vsite_get_vocabs($vsite, $type) : $vocabs;
+    if (count($vocabs)) {
+      $vid = current(array_keys($vocabs));
+      $terms = taxonomy_get_tree($vid);
     }
     
-    //if no vocabulary, then do no show select box
-    if (empty($vid)) {
+    if (! $vid || ! $terms) {
       //remove Categores selection box
       unset($form['#info']['filter-tid']);
       unset($form['tid']);
     }
     else {
-      //NOTE just passing the first element of the array here because it is assumed
-      //1 vocab per type
-      $terms = taxonomy_get_tree($vid[0]);
-    }
-    
-    //if no terms, then do no show select box
-    if (empty($terms)) {
-      //remove Categores selection box
-      unset($form['#info']['filter-tid']);
-      unset($form['tid']);
-    }
-    
-    else {
+      
       //now we have the terms for this site, create an array formatted
       //for the taxonomy options in the exposed filter.
       //TODO: for now we just are going to use 1 vocabulary, but perhaps

@@ -3,7 +3,7 @@
 $view = new view;
 $view->name = 'vsite_content';
 $view->description = 'View, edit and delete your site\'s content.';
-$view->tag = '';
+$view->tag = 'vsite';
 $view->view_php = '';
 $view->base_table = 'node';
 $view->is_cacheable = FALSE;
@@ -71,6 +71,32 @@ $handler->override_option('fields', array(
     'override' => array(
       'button' => 'Override',
     ),
+    'relationship' => 'none',
+  ),
+  'delete_node' => array(
+    'label' => 'Delete',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'link_class' => '',
+      'alt' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'strip_tags' => 0,
+      'html' => 0,
+    ),
+    'text' => 'delete',
+    'exclude' => 0,
+    'id' => 'delete_node',
+    'table' => 'node',
+    'field' => 'delete_node',
     'relationship' => 'none',
   ),
   'edit_node' => array(
@@ -239,31 +265,6 @@ $handler->override_option('filters', array(
       'button' => 'Override',
     ),
   ),
-  'tid' => array(
-    'operator' => 'or',
-    'value' => array(),
-    'group' => '0',
-    'exposed' => TRUE,
-    'expose' => array(
-      'use_operator' => 0,
-      'operator' => 'tid_op',
-      'identifier' => 'tid',
-      'label' => 'Category',
-      'optional' => 1,
-      'single' => 0,
-      'remember' => 0,
-      'reduce' => 0,
-    ),
-    'type' => 'select',
-    'limit' => TRUE,
-    'vid' => '1',
-    'id' => 'tid',
-    'table' => 'term_node',
-    'field' => 'tid',
-    'hierarchy' => 0,
-    'relationship' => 'none',
-    'reduce_duplicates' => 1,
-  ),
   'current' => array(
     'operator' => 'all',
     'value' => '',
@@ -280,16 +281,14 @@ $handler->override_option('filters', array(
   ),
 ));
 $handler->override_option('access', array(
-  'type' => 'perm',
-  'perm' => 'administer nodes',
+  'type' => 'none',
 ));
 $handler->override_option('cache', array(
   'type' => 'none',
 ));
 $handler->override_option('title', 'Content');
-$handler->override_option('empty', 'There are no objects satisfying the filter settings. Try changing them to get some results.');
 $handler->override_option('empty_format', '1');
-$handler->override_option('items_per_page', 20);
+$handler->override_option('items_per_page', 15);
 $handler->override_option('use_pager', '1');
 $handler->override_option('style_plugin', 'bulk');
 $handler->override_option('style_options', array(

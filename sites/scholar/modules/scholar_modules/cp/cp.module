@@ -88,7 +88,7 @@ function cp_menu(){
     }
   }
   
-  $items["cp/settings/features"] = array(
+  $items["cp/features"] = array(
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('spaces_features_form'),
@@ -99,10 +99,10 @@ function cp_menu(){
     'weight' => 0,
   );
   
-  $items["cp/settings/features/%"] = array(
+  $items["cp/features/%"] = array(
     'title' => 'Features',
     'page callback' => 'schlarcp_feature_customize',
-    'page arguments' => array(3),
+    'page arguments' => array(2),
     //'page callback' => 'drupal_get_form',
     //'page arguments' => array('spaces_customize_form', NULL, 3),
     'file' => 'spaces_admin.inc',
@@ -195,7 +195,7 @@ function cp_form_alter(&$form, $form_state, $form_id) {
         ctools_include('ajax');
         ctools_include('modal');
         ctools_modal_add_js();
-        $link = ctools_modal_text_button('settings', 'cp/settings/features/'. $f_name, 'whatever');
+        $link = ctools_modal_text_button('settings', 'cp/features/'. $f_name, 'whatever');
         $form['customize'][$f_name]['#value'] = $link;
       }
     }
