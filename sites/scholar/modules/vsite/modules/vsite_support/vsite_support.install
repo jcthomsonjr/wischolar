@@ -1,0 +1,69 @@
+<?php
+
+function vsite_support_install(){
+  // Execute our defined updates.
+  $version = 6001;
+  while ( function_exists('vsite_support_update_' . $version) ) {
+    call_user_func('vsite_support_update_' . $version ++);
+  }
+  // hook_install has no return value
+}
+
+function vsite_support_update_6001(){
+  $return = array();
+  
+  __vsite_support_create_question();
+  $return[] = array(
+    'success' => TRUE, 
+    'query' => "Create 'question' content type" 
+  );
+  
+  return $return;
+}
+
+function __vsite_support_create_question(){
+  $content['type'] = array(
+    'name' => 'Question', 
+    'type' => 'support_question', 
+    'description' => '', 
+    'title_label' => 'Question', 
+    'body_label' => 'Description', 
+    'min_word_count' => '0', 
+    'help' => '', 
+    'node_options' => array(
+      'status' => true, 
+      'promote' => false, 
+      'sticky' => false, 
+      'revision' => false 
+    ), 
+    'show_preview_changes' => 1, 
+    'show_diff_inline' => 0, 
+    'old_type' => 'support_question', 
+    'orig_type' => '', 
+    'module' => 'node', 
+    'custom' => '1', 
+    'modified' => '1', 
+    'locked' => '0', 
+    'og_content_type_usage' => 'omitted', 
+    'comment' => '2', 
+    'comment_default_mode' => '4', 
+    'comment_default_order' => '1', 
+    'comment_default_per_page' => '50', 
+    'comment_controls' => '3', 
+    'comment_anonymous' => 0, 
+    'comment_subject_field' => '0', 
+    'comment_preview' => '0', 
+    'comment_form_location' => '1' 
+  );
+  
+  // Make up a $form_state value.
+  $content_type = array(
+    'values' => array(
+      'type_name' => '<create>', 
+      'macro' => '$content = ' . var_export($content, true) . ';' 
+    ) 
+  );
+  // Run it.
+  drupal_execute('content_copy_import_form', $content_type);
+}
+
