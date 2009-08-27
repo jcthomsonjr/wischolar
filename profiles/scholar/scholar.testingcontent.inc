@@ -27,7 +27,7 @@ function _scholar_testingcontent(){
 
 	$nr_themes = count($scholar_themes);
 	for ($i = 1; $i <= $nr_themes; $i++ ){
-		$uname_admin = "schlaradmin0$i";
+		$uname_admin = "scholaradmin0$i";
 		$scholar_theme = "scholar_theme_0$i";
 		
 		install_add_user($uname_admin, "sharepass", "scholar0$i@scholar.iq.harvard.edu", $roles = array("scholar admin"), $status = 1);
