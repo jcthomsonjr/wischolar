@@ -1,0 +1,108 @@
+<?php
+
+function advanced_help2book_menu(){
+  $items = array();
+  $items['try/%'] = array(
+    'title' => 'try',
+    'page callback' => 'advanced_help2book_import',
+    'page arguments'      => array(1),
+    'access arguments' => array('access content'),
+  );
+  return $items;
+}
+
+function advanced_help2book_import($module){
+  
+  $all_adv_help = advanced_help_get_topics();
+  $this_module = $all_adv_help[$module];
+  // the first one must be the top book node
+  dpm($this_module);
+  return 'ssss';
+  //create_top_node($top);
+  foreach ( $this_module as $topic ) {
+    $node = new stdClass();
+    $node->type = 'book';
+    
+    module_load_include('inc', 'node', 'node.pages');
+    node_object_prepare($node);
+    
+    if (! $item['parent']) {
+      $node->book['bid'] = 'new';
+    } else {
+     // $node->book['bid'] = $this_module[]
+    }
+    $node->title = $topic['title'] . 'xxxxxxxxxxxxxxxxxxxxxxx';
+    $node->body = file_get_contents($topic['path'] . '/' . $topic['file']);
+    
+    $node = node_submit($node);
+    node_save($node);
+    $this_module[$topic['nid']] = $node -> nid;
+  }
+  
+  return 'success';
+
+}
+
+function advanced_help2book_import_topic($topic){
+  $node = new stdClass();
+  $node->type = 'book';
+  
+  module_load_include('inc', 'node', 'node.pages');
+  node_object_prepare($node);
+  
+  if (!$item['parent']){
+    $node->book['bid'] = 'new';
+  }
+  $node->title = $top['title'] . 'xxxxxxxxxxxxxxxxxxxxxxx';
+  $node->body = file_get_contents($top['path'] . '/' . $top['file']);
+  
+  $node = node_submit($node);
+  node_save($node);
+}
+
+
+function create_top_node($top){
+dpm($top);
+$node = new stdClass();
+$node->type = 'book';
+
+module_load_include('inc', 'node', 'node.pages');
+node_object_prepare($node); 
+
+$node -> book['bid'] = 'new';
+$node->title = $top['title'] . 'xxxxxxxxxxxxxxxxxxxxxxx';
+$node->body = file_get_contents($top['path'] . '/' . $top['file']); 
+
+$node = node_submit($node);
+node_save($node);
+
+return;
+
+  $form_state = array();
+  module_load_include('inc', 'node', 'node.pages');
+  $node = array(
+    'type' => 'book' 
+  );
+  $form_state['values']['title'] = 'My node111';
+  $form_state['values']['body'] = 'This is the body text!';
+  $form_state['values']['book']['bid'] = 'new';
+  //$form_state['values']['name'] = 'robo-user';
+  $form_state['values']['op'] = t('Save');
+  drupal_execute('book_node_form', $form_state, ( object ) $node);
+
+}
+
+/**
+ * this module should lock the book template file
+ * Override the node-book.tpl.php here
+ */
+function advanced_help2book_preprocess_XXX(){
+
+}
+
+function advanced_help2book_form_alter(&$form, $form_state, $form_id) {
+  if (isset($form['#node']) && $form['#node']->type == 'book' && $form_id == $form['#node']->type .'_node_form'){
+    //dpm($form);
+    //dpm($form_state);
+  }
+}
