@@ -11,24 +11,24 @@ function simport_import(){
   $old_sites_table = 'node_export_admin_scholar';
 
   //first create the new vsites
-  $sql = db_query("SELECT * FROM $old_sites_table");
+  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
   while ($data = db_fetch_object($sql)) {
    
       //get the old site node object
-      $old = unserialize($data ->nodedata); //dpm($old);
+      $old = unserialize($data ->data); dpm($old); 
+      return false;
   
+    
       //set the domain for the new site
   	$domain = $old -> title;
   
- 	//collect parameters to create new vsite
-  	$name = db_result(db_query("SELECT name from {users_old} WHERE uid = %d", (int)$old ->uid));
-  	$mail = db_result(db_query("SELECT mail from {users_old} WHERE uid = %d", (int)$old->uid));
-  	$password_hash = db_result(db_query("SELECT pass from {users_old} WHERE uid = %d", (int)$old->uid));
-  	
-  	//create user
-  	$user = simport_create_user($name, $mail, $password_hash, $roles);
+ 	//get old user object
+  	$user_old = unserialize(db_result(db_query("SELECT data from {scholar_export_data} WHERE type = '%s' AND id = %d", 'user', (int)$old ->uid)));
+  
+  	//create new user based on the old user info
+  	$user = simport_create_user($user_old->name, $user_old->mail, $user_old->pass, $roles);
   	 	 	
-  	//create site 
+  	//create new site 
   	$new_site_info = simport_create_site($user, $domain);
   	
   	//write to the simport table mapping old site to new site
@@ -54,6 +54,9 @@ function simport_import(){
       spaces_save($new);
   }
   return false;
+  
+  $types = simport_map_types();  
+  
     //loading each content type
     /*$types =vsite_content_types();
        //temp to test - should be removed
@@ -62,7 +65,7 @@ function simport_import(){
         $table = 'node_export_scholar_' . $type;
         $sql = db_query("SELECT * FROM {$table}");
         while ($data = db_fetch_object($sql)) {
-           $old = unserialize($data ->nodedata);
+           $old = unserialize($data ->data);
            $new = new stdClass();    	
         }
       }*/
@@ -71,6 +74,27 @@ function simport_import(){
     
     //set frontpage last
   	simport_set_frontpage($old, $new);
+}
+
+/**
+ * Correlate old content types to new content types
+ * NOT INCLUDING biblio (biblio nodes to be handled seperately)
+ */
+function simport_map_types(){
+
+  $type_map = array(
+  'admin_scholar' => 'scholarsite',
+  'scholar_link' => 'link',
+  'scholar_blog' => 'blog',
+  'scholar_announcement' => 'announcement',
+
+  'scholar_class' => '', //doesn't exist yet on new scholars
+  'scholar_cv' => '', //doesn't exist yet on new scholars
+  'scholar_bio' => '', //should be page???
+  'scholar_photo' => '', //old web site logo
+  );
+
+  return $type_map;
 }
 
 /**
@@ -129,27 +153,74 @@ function simport_set_theme($old, &$new){
  * @param unknown_type $old
  * @param unknown_type $new
  */
-function simport_import_frontpage($old, &$new){
+function simport_set_frontpage($old, &$new){
 
- $frontpage_old =  unserialize(db_result(db_query("SELECT value FROM {og_settings} WHERE name = '%s' and nid = %d", 'scholar_admin_site_front_node', (int)$old -> nid)));
- 
- //get nid the mapping
- $frontpage = db_result(db_query("SELECT new from {simport} WHERE old = %d", (int)$frontpage_old));
+  //if true then, a node was set as front page on D5 scholar site
+if ($old->scholar_admin_site_front_node){
+  $new->settings['front']['frontpage'] = 'bio';
   
+  }
+
+else{
+    
+}
  //TODO: Not sure yet how to deal with this???
  $new->settings['front']['frontpage'] =  '';  //$frontpage;
-  
 }
 
+/**
+ * Transfer the logo
+ *
+ * @param unknown_type $old
+ * @param unknown_type $new
+ */
 function simport_set_logo($old, &$new){
 
+  if (!empty($old->logo)){
+    
+    //match the "img src" part in the $old -> logo string
+    $pattern = "/img[ ]+src=[\"' ]?([^\"' >]+)[\"' ]?[^>]*>/i";
+    preg_match($pattern, $logo, $matches);
+    $url = parse_url($matches[1]);
+
+    $src_path = '/nfs/www/edu-harvard-iq-scholar/';
+    
+    //get path and remove slash at begining if present
+    $src_path .= (strpos($url['path'], '/') == 0 ) ? substr($url['path'], 1) : $url['path'];
+   
+    //set destination path -- TODO: FIND THE DEST CORRECT PATH LOCATION / CONVENTION
+    $dest_path = '/nfs/www/edu-harvard-iq-scholar-dev3/' . variable_get('file_directory_path', '') .  '/' . $old -> title . '/';
+    
+    //copy the file to the new location
+    file_copy(&$src_path, $dest_path, $replace = FILE_EXISTS_REPLACE);
+
+    //define new file - absolute path
+    $new_file = dirname($src_path . '/' . $old -> title . '.' . 'jpg');
+    
+    //rename the file
+    rename($src_path, $new_file );
+    
+    //now set in the vsite settings
+    $new->logo['current_logo'] = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $old ->title . '/' . basename($new_file);
+  }
 }
 
-
+/**
+ * Set the shield selection
+ *
+ * @param unknown_type $old
+ * @param unknown_type $new
+ */
 function simport_set_shield($old, &$new){
+  //ALL OF THE D5 SITES ARE USING SAME SHEILD - TODO: maybe not shepsle and bates sites???
+  //shield setting now offered on old site, so set sheild to default
+  $new ->settings['sheild'] = drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png";
+}
+
+function simport_set_vocabs($old, &$new){
+  
   
 }
-
 
 
 
