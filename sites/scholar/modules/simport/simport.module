@@ -234,13 +234,14 @@ function simport_set_generic($old, &$new){
   $space = spaces_load ( 'og', $space_nid, TRUE );
 
   //set the generic node data
-  $new -> uid = $space -> group -> uid;
-  $new -> name = $space -> group -> name;
   $new -> title = $old -> title;
   $new -> status = $old -> status;
   $new -> created = $old -> created;
   $new -> changed = $old -> changed;
-
+  $new -> uid = $space -> group -> uid;
+  $new -> name = $space -> group -> name;
+  $new -> og_groups [0] = $old -> og_groups[0]; //double check on this
+  
 }
 
 function simport_set_announcement($old, &$new){  
