@@ -62,7 +62,7 @@ function scholar_export_create_table(){
    $create_table = db_query("CREATE TABLE {scholar_export_data} (
     id int(10) NOT NULL,
     type varchar(120) NOT NULL,
-    nodedata longtext NOT NULL
+    data longtext NOT NULL
     ) /*!40100 DEFAULT CHARACTER SET utf8 */;"
     );
   
@@ -105,7 +105,7 @@ function scholar_export_save_node($nid) {
   }
     $nodedata = serialize($node);
     db_set_active(TARGET_DB);
-    db_query("INSERT INTO {scholar_export_data} (id, type, nodedata) VALUES (%d , '%s', '%s')", (int)$nid, $node -> type, $nodedata );
+    db_query("INSERT INTO {scholar_export_data} (id, type, data) VALUES (%d , '%s', '%s')", (int)$nid, $node -> type, $nodedata );
 }
 
 /**
@@ -117,6 +117,6 @@ function scholar_export_save_user($uid) {
   $user = user_load(array('uid' => $uid));
   $userdata = serialize($user);
   db_set_active(TARGET_DB);
-  db_query("INSERT INTO {scholar_export_data} (id, type, nodedata) VALUES (%d , '%s', '%s')", (int)$uid, 'user', $userdata );
+  db_query("INSERT INTO {scholar_export_data} (id, type, data) VALUES (%d , '%s', '%s')", (int)$uid, 'user', $userdata );
 }
 
