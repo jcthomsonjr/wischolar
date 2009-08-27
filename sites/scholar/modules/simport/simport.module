@@ -5,115 +5,116 @@
  * @return unknown
  */
 function simport_import(){
-  
+
   //PHASE 1 - load sites and settings
-  
+
   vsite_include('vsiteapi');
   $roles = variable_get('scholar_manager_role', 'scholar admin');
 
   //first create the new vsites
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
   while ($data = db_fetch_object($sql)) {
-   
-      //get the old site node object
-      $old = unserialize($data ->data); dpm($old); 
-      return false;
 
-      //set the domain for the new site
-  	$domain = $old -> title;
-  
- 	//get old user object
-  	$user_old = unserialize(db_result(db_query("SELECT data from {scholar_export_data} WHERE type = '%s' AND id = %d", 'user', (int)$old ->uid)));
-  
-  	//create new user based on the old user info
-  	$user = simport_create_user($user_old->name, $user_old->mail, $user_old->pass, $roles);
-  	 	 	
-  	//create new site 
-  	$new_site_info = simport_create_site($user, $domain);
-  	
-  	//write to the simport table mapping old site to new site
-  	$sql_map_sites = db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$new_site_info ->nid);
-  	
-  	//get a spaces object for new site so we can modify and save with the functions below
-  	$new = spaces_load ( 'og', $new_site_info ->nid, TRUE );
-  	
-  	dpm($old);
-   	
-  	//set theme
-  	simport_set_theme($old, $new);
-  	 	 	
-  	//set shield
-  	simport_set_shield($old, $new);
-  	
-      //set logo
-  	simport_set_logo($old, $new);
-  	
-  	
-  	
-      //just iterate once for testing purposes - REMOVE THIS WHEN DONE TESTING
-     // return false;
-      
-      //save all the changes/additions to the space
-      spaces_save($new);
+    //get the old site node object
+    $old = unserialize($data ->data); dpm($old);
+    return false;
+
+    //set the domain for the new site
+    $domain = $old -> title;
+
+    //get old user object
+    $user_old = unserialize(db_result(db_query("SELECT data from {scholar_export_data} WHERE type = '%s' AND id = %d", 'user', (int)$old ->uid)));
+
+    //create new user based on the old user info
+    $user = simport_create_user($user_old->name, $user_old->mail, $user_old->pass, $roles);
+
+    //create new site
+    $new_site_info = simport_create_site($user, $domain);
+
+    //write to the simport table mapping old site to new site
+    $sql_map_sites = db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$new_site_info ->nid);
+
+    //get a spaces object for new site so we can modify and save with the functions below
+    $new = spaces_load ( 'og', $new_site_info ->nid, TRUE );
+
+    dpm($old);
+
+    //set theme
+    simport_set_theme($old, $new);
+
+    //set shield
+    simport_set_shield($old, $new);
+
+    //set logo
+    simport_set_logo($old, $new);
+
+
+
+    //just iterate once for testing purposes - REMOVE THIS WHEN DONE TESTING
+    // return false;
+
+    //save all the changes/additions to the space
+    spaces_save($new);
   }
-  return false;
-  
+  //return false;
+
   //PHASE 2 - load content
-  
+
   //load content for each type
-  $types = _simport_map_content_types();  
-  
-      foreach ($types as $oldtype => $newtype){
-        $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
-        while ($data = db_fetch_object($sql)) {
-           $old = unserialize($data ->data);
-           $new = new stdClass();
-           
-           //set generic values
-           simport_set_generic($old, $new);
-           
-           switch ($old -> type){              
-             case 'scholar_announcement':
-               simport_set_announcement($old, $new);
-               break;
-               
-             case 'scholar_blog':
-               simport_set_blog($old, $new);               
-               break;      
-             
-             case 'scholar_link':
-               simport_set_link($old, $new);
-               break;       
-           }
+  $types = _simport_map_content_types();
 
-            //if old site has front page set to specific node
-      if ($old->scholar_admin_site_front_node){
-    //set frontpage value after content created
-  	simport_set_frontpage($old, $new);
-      } 
-        }
+  foreach ($types as $oldtype => $newtype){
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
+    while ($data = db_fetch_object($sql)) {
+      $old = unserialize($data ->data);
+      $new = new stdClass();
+
+      //set generic values
+      simport_set_generic($old, $new);
+
+      switch ($old -> type){
+        case 'scholar_announcement':
+          simport_set_announcement($old, $new);
+          break;
+
+        case 'scholar_blog':
+          simport_set_blog($old, $new);
+          break;
+
+        case 'scholar_link':
+          simport_set_link($old, $new);
+          break;
       }
+
+      //if old site has front page set to specific node
+      if ($old->scholar_admin_site_front_node){
+        //set frontpage value after content created
+        simport_set_frontpage($old, $new);
+      }
+      
+      //save the node
+      node_save($new);
+    }
+  }
 }
-
-
 
 /**
  * Create the user
  */
 function simport_create_user($name, $mail, $password_hash, $roles){
-  install_include(array( 'user' ));  
+  install_include(array( 'user' ));
   $password =  user_password();
   $user = install_add_user($name, $password, $mail, $roles = array($roles), $status = 1);
 
   if (!$user){
     //TODO: add watchdog message
     //watchdog();
-    }
-    
+  }
+
   else{
     //change the password back to the original
     $sql_revert_password = db_query("UPDATE {users} SET pass = '%s' WHERE uid = %d", $password_hash, (int)$user ->uid);
-  } 
+  }
   //return the new user object
   return $user;
 }
@@ -133,7 +134,7 @@ function simport_create_site($user, $domain){
  * @param $new the new vsite
  */
 function simport_set_theme($old, &$new){
-  
+
   $og_theme_map = array(
   'fac01' => 'scholar_theme_06',
   'fac02' => 'scholar_theme_01',
@@ -141,7 +142,7 @@ function simport_set_theme($old, &$new){
   'fac04' => 'scholar_theme_06',
   'fac05' => 'scholar_theme_05',
   'fac06' => 'scholar_theme_04',
-  'fac07' => 'scholar_theme_07',  
+  'fac07' => 'scholar_theme_07',
   );
   //set the new theme
   $new->settings['theme'] = $og_theme_map[$old -> og_theme];
@@ -160,7 +161,7 @@ function simport_set_frontpage($old, &$new){
     $new->settings['front']['frontpage'] = 'bio';
   }
   else{
-
+  //do something
   }
 }
 
