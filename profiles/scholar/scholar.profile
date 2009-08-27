@@ -12,6 +12,7 @@ function scholar_profile_modules() {
 
   $contrib_modules = array(
   // sites/all
+    'activity',
     'advanced_help',
     'context',
     'context_contrib',
@@ -26,6 +27,7 @@ function scholar_profile_modules() {
     'og_access',
     'og_views', 
     'og_vocab',
+    'og_actions',
     'menu_node',
     'permissions_api',
     'profile',
@@ -34,6 +36,7 @@ function scholar_profile_modules() {
     'spaces_og',
     'spaces_user',
     'token',
+    'trigger',
     'transliteration',
     'views', 
     'views_bulk_operations',

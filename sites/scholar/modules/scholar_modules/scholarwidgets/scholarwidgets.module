@@ -35,7 +35,13 @@ function scholarwidgets_basicinfo(){
 	$block['subject'] = t('');
 	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
 	//dpm($scholar->settings);
-	if(!array_key_exists('site',$scholar->settings)) return $block;
+	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site'])){
+      $user = user_load($scholar->group->uid);
+      $block['content'] =  "<h1>{$user->profile_first_name} {$user->profile_last_name}</h1>
+              <h2>{$user->profile_title}</h2>
+              <p></p>";
+    return $block;
+	} 
 	
 	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
 							<h2>{$scholar->settings['site']['sub_heading']}</h2>

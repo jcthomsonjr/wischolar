@@ -49,8 +49,8 @@ function vsite_activity_action($object, $context){
 	$vsite = vsite_get_vsite();
 	if($vsite && $vsite->group->uid){
 		$user = user_load($vsite->group->uid);
-    if($user && $user->name){
-    	$s_users_vsite = "in ".$user->name."'s site";
+    if($user && ($user->profile_first_name || $user->profile_last_name)){
+    	$s_users_vsite = "in {$user->profile_first_name} {$user->profile_last_name}'s site";
     	$context['node-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['node-pattern']);
     	$context['everyone-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['everyone-pattern']);
     } 

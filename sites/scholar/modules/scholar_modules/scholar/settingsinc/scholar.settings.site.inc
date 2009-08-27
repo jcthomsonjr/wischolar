@@ -10,10 +10,16 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     $form = array('#title'=>'Site Information' );
     
     $s_def_headline = isset($value['scholar_headline'])?$value['scholar_headline']:false;
+    $s_def_subheadline = isset($value['sub_heading'])?$value['sub_heading']:false;
     
     if(!$s_def_headline){
     	$user = user_load($space->group->uid);
-    	if($user && $user->name)	$s_def_headline = $user->name;
+    	if($user && ($user->profile_first_name || $user->profile_last_name))	$s_def_headline = "{$user->profile_first_name} {$user->profile_last_name}";
+    }
+    
+    if(!$s_def_subheadline){
+    	$user = user_load($space->group->uid);
+      if($user && $user->profile_title)  $s_def_subheadline = $user->profile_title;
     }
     
     $form['scholar_headline'] = array(
@@ -33,7 +39,7 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     $form['scholar_sub_heading'] = array(
       '#type' => 'textarea',
       '#title' => t('Sub Headline'),
-      '#default_value' => isset($value['sub_heading'])?$value['sub_heading']:'',
+      '#default_value' => $s_def_subheadline,
       '#size' => 60,
       '#description' => 'Ususally: Title  ex.(Director of Mathmatics)',
       '#maxlength' => 128,
