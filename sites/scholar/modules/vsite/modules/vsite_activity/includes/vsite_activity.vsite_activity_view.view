@@ -1,5 +1,3 @@
-<?php
-
 $view = new view;
 $view->name = 'vsite_activity_view';
 $view->description = 'Display activities ';
@@ -63,6 +61,11 @@ $handler->override_option('filters', array(
     'field' => 'value_vsite_activity',
     'relationship' => 'none',
   ),
+  'access_uid' => array(
+    'id' => 'access_uid',
+    'table' => 'activity',
+    'field' => 'access_uid',
+  ),
 ));
 $handler->override_option('access', array(
   'type' => 'none',
@@ -73,12 +76,18 @@ $handler->override_option('cache', array(
 $handler->override_option('use_ajax', TRUE);
 $handler->override_option('items_per_page', 25);
 $handler->override_option('use_pager', '1');
-$handler = $view->new_display('page', 'Page', 'page_1');
-$handler->override_option('filters', array());
+$handler = $view->new_display('page', 'Main Followers Page', 'page_1');
+$handler->override_option('filters', array(
+  'value_vsite_activity' => array(
+    'id' => 'value_vsite_activity',
+    'table' => 'activity_access',
+    'field' => 'value_vsite_activity',
+  ),
+));
 $handler->override_option('path', 'cp/news/activity');
 $handler->override_option('menu', array(
   'type' => 'normal',
-  'title' => 'Activities',
+  'title' => 'Activity',
   'description' => '',
   'weight' => '0',
   'name' => 'cp',
@@ -89,12 +98,33 @@ $handler->override_option('tab_options', array(
   'description' => '',
   'weight' => 0,
 ));
-$handler = $view->new_display('page', 'Page', 'page_2');
-$handler->override_option('filters', array());
+$handler = $view->new_display('page', 'Tab Followers', 'page_2');
+$handler->override_option('filters', array(
+  'value_vsite_activity' => array(
+    'operator' => '=',
+    'value' => '',
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'realms' => array(
+      'vsite' => 'vsite',
+    ),
+    'id' => 'value_vsite_activity',
+    'table' => 'activity_access',
+    'field' => 'value_vsite_activity',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
+  ),
+));
 $handler->override_option('path', 'cp/news/activity/followers');
 $handler->override_option('menu', array(
   'type' => 'default tab',
-  'title' => 'Followers',
+  'title' => 'Followers Activity',
   'description' => '',
   'weight' => '0',
   'name' => 'navigation',
@@ -105,33 +135,41 @@ $handler->override_option('tab_options', array(
   'description' => '',
   'weight' => '0',
 ));
-$handler = $view->new_display('page', 'Page', 'page_3');
+$handler = $view->new_display('page', 'Tab My Activity', 'page_3');
+$handler->override_option('filters', array(
+  'access_uid' => array(
+    'id' => 'access_uid',
+    'table' => 'activity',
+    'field' => 'access_uid',
+  ),
+));
 $handler->override_option('path', 'cp/news/activity/me');
 $handler->override_option('menu', array(
   'type' => 'tab',
-  'title' => 'Me',
+  'title' => 'My Activity',
   'description' => '',
-  'weight' => '0',
+  'weight' => '1',
   'name' => 'navigation',
 ));
 $handler->override_option('tab_options', array(
   'type' => 'none',
   'title' => '',
   'description' => '',
-  'weight' => 0,
+  'weight' => 1,
 ));
-$handler = $view->new_display('page', 'Page', 'page_4');
+$handler = $view->new_display('page', 'Tab All Activity', 'page_4');
+$handler->override_option('filters', array());
 $handler->override_option('path', 'cp/news/activity/all');
 $handler->override_option('menu', array(
   'type' => 'tab',
-  'title' => 'All',
+  'title' => 'All Activity',
   'description' => '',
-  'weight' => '0',
+  'weight' => '2',
   'name' => 'navigation',
 ));
 $handler->override_option('tab_options', array(
   'type' => 'none',
   'title' => '',
   'description' => '',
-  'weight' => 0,
+  'weight' => 2,
 ));
