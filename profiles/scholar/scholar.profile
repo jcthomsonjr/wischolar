@@ -28,6 +28,7 @@ function scholar_profile_modules() {
     'og_vocab',
     'menu_node',
     'permissions_api',
+    'profile',
     'purl',
     'spaces',
     'spaces_og',
@@ -76,6 +77,7 @@ function scholar_profile_modules() {
     'vsite_users',
     'vsite_vocab',
     'vsite_help',
+    'vsite_activity',
     
   // scholar specific
     'biblio',
