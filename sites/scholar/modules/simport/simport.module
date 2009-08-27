@@ -155,7 +155,7 @@ function simport_set_theme($old, &$new){
  * @param unknown_type $new
  */
 function simport_set_frontpage($old, &$new){
-
+ //TODO: not finished yet
   //if true then, a node was set as front page on D5 scholar site
   if ($old->scholar_admin_site_front_node){
     $new->settings['front']['frontpage'] = 'bio';
@@ -229,10 +229,10 @@ function simport_set_vocabs($old, &$new){
 function simport_set_generic($old, &$new){
 
   //get new og (site id). I am assuming here that there is only one og per node.
-  $space_nid = db_result(db_query("SELECT new FROM {simport} WHERE old = %d", $old -> og_groups[0]));
+  $space_new_nid = db_result(db_query("SELECT new FROM {simport} WHERE old = %d", $old -> og_groups[0]));
   
   //TODO: to expensive?? should I store user uid mapping in table?
-  $space = spaces_load ( 'og', $space_nid, TRUE );
+  $space = spaces_load ( 'og', $space_new_nid, TRUE );
 
   //set the generic node data
   $new -> title = $old -> title;
@@ -241,7 +241,7 @@ function simport_set_generic($old, &$new){
   $new -> changed = $old -> changed;
   $new -> uid = $space -> group -> uid;
   $new -> name = $space -> group -> name;
-  $new -> og_groups [0] = $old -> og_groups[0]; //double check on this
+  $new -> og_groups [0] = $space -> group -> nid; //double check on this
   
 }
 
