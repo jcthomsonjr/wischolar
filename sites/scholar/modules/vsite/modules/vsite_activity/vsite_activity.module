@@ -1,7 +1,13 @@
 <?php
+function vsite_activity_init(){
+	$a_valid_realms = variable_get('activity_access_realms', array('comment'));
+	if(!in_array('vsite',$a_valid_realms)){
+		variable_set('activity_access_realms', array_merge($a_valid_realms,array('vsite')));
+	}
+}
+
 /**
  * The action hook
- * 
  */
 function vsite_activity_action_info(){
 	$info['vsite_activity_action'] = array(
@@ -54,15 +60,54 @@ function vsite_activity_action($object, $context){
 }
 
 /**
-* Implementation of hook_activity_message_recorded().
+* Implementation of hook_activity_grants().
 */
-function vsite_activity_activity_message_recorded($record) {
-  // After a message has been recorded with activity, we then save it's gid so
-  // that we can reference it
-  $vsite = vsite_get_vsite();
-  if ($record->type == 'node' && $vsite) {
-    db_query("UPDATE {activity} SET gid = %d WHERE aid = %d", $vsite->group->nid, $record->aid);
+function vsite_activity_activity_grants($activity, $object, $type) {
+  $vsite = vsite_get_vsite();  
+  if(!$vsite) return array();
+    
+	return array(
+    'vsite' => array($vsite->group->nid), // the module_id that will be used
+  );
+}
+
+/**
+* Implementation of hook_activity_info().
+*/
+function vsite_activity_activity_info() {
+  $info = new stdClass();
+  $info->api = 2;
+  $info->name = 'vsite_activity';
+  $info->object_type = 'vsite_activity';
+  $info->realms = array('vsite' => 'Virtual Site (vsite)');
+  $info->type_options = array();
+  return $info;
+}
+
+/**
+* Implementation of hook_activity_access_records_alter().
+* This removes any access records except vsire. Prevents friend
+* modules from providing direct access.
+*/
+function vsite_activity_access_records_alter(&$grants, $context) {
+  foreach ($grants as $realm => $value) {
+     if ($realm != 'vsite') {
+         unset($grants[$module]);
+     }
   }
 }
 
-
+/**
+ * Implementation of hook_activity_access_grants().
+ */
+function vsite_activity_activity_access_grants($acccount) {
+  //$a_sites = get_all_the_sites_this_dudes_following_func($account->uid);
+  $a_sites = array(1,4,6);
+  $realm_ids = array();
+  if (!empty($a_sites)) {
+    foreach ($a_sites as $n_vsite) {
+      $realm_ids['vsite'][] = $n_vsite;
+    }
+  }
+  return $realm_ids;
+}

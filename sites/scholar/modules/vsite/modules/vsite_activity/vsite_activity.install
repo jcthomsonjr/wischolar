@@ -14,15 +14,15 @@ function vsite_activity_install() {
   
   
   
-  $gid_desc = array(
-    'type' => 'int',
-    'not null' => FALSE,
-    'description' => t('The OG GID.'),
-  );
-
-  //Add GID Field to activity table
-  $ret = array();
-  db_add_field($ret, 'activity', 'gid', $gid_desc);
+//  $gid_desc = array(
+//    'type' => 'int',
+//    'not null' => FALSE,
+//    'description' => t('The OG GID.'),
+//  );
+//
+//  //Add GID Field to activity table
+//  $ret = array();
+//  db_add_field($ret, 'activity', 'gid', $gid_desc);
 }
 
 /**
@@ -32,9 +32,9 @@ function vsite_activity_uninstall() {
   // creates the cp custom menu
   db_query("DELETE FROM {trigger_assignments} WHERE hook = '%s' AND aid = '%s'", 'nodeapi', 'vsite_activity_action');
   
-  if(db_column_exists('activity', 'gid')) {
-    $ret = array();
-    db_drop_field($ret, 'activity', 'gid');
-  }
+//  if(db_column_exists('activity', 'gid')) {
+//    $ret = array();
+//    db_drop_field($ret, 'activity', 'gid');
+//  }
 }
 
