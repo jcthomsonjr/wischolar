@@ -16,6 +16,9 @@ function vsite_design_init(){
     drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
     drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-shield-picker.js');    
   }
+  elseif ($active_menu['path'] == 'cp/settings/logo'){
+    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-logo.css');
+  }
 }
 
 /**

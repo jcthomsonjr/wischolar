@@ -13,5 +13,9 @@ if (Drupal.jsEnabled) {
 	    minSize: [180,140],
 	    onSelect: cp_updateLogo
 	  });
+	  
+	  $('#edit-settings-logo-logo-upload').change(function() {
+		  $('#cp-settings-form').submit();
+	  });//Turns out the easiest solution is the best.
   });
 }
