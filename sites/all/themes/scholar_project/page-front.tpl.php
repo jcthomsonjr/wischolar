@@ -36,83 +36,13 @@
 
             <div id="content-row-1">
               <?php print $row1; ?>
-              <div id="tutorial-link">See a video tutorial</div>
-              <div class="content">
-                <h2>Create a dynamic feature-full web site in seconds. For free!</h2>
-                <h3>(No, there’s no catch.)</h3>
-              </div>
-            </div><!-- /content-row 1-->
-
             <div id="content-row-2">
               <?php print $row2; ?>
-              <div id="feature-academic-content" class="featureblock">
-                <h3>Create anything related to an academic site.</h3>
-                <p>CV, bio, publications, blogs, announcements, links, image galleries, class materials. Easy as using a word processor.</p>
-              </div>
-              <div id="feature-biblio" class="featureblock">
-                <h3>Maintain an accurate and  citable bibliography of all your writings.</h3>
-                <p>Automatically have your publications submitted to induces such as RePEc, Computer Science Reposity, and Google Scholar.
-                </p>
-              </div>
-              <div id="feature-look-feel" class="featureblock">
-                <h3>Control the look and feel of your site.</h3>
-                <p>Move useful widgets in and out of your site; change menus, and overall look of your site in seconds.</p>
-              </div>
-              <div id="feature-collaborate" class="featureblock">
-                <h3>Collaborate with your colleagues.</h3>
-                <p>Allow commentary on your work by whomever you select. Manage your Twtter feeds; keep track of colleagues’ publications and blogs.</p>
-              </div>
             </div><!--/content-row 2-->
 
 
             <div id="content-row-3">
               <?php print $row3; ?>
-              <h3>New Sites</h3>
-              <div id="search-person"></div>
-              <div id="new-sites">
-                <div class="new-site-block">
-                  <div class="photo">
-                    <a href="site01"><img src="<?php print $base_url . $directory;?>/images/scholar-photo1.jpg" /></a>
-                   </div>
-                 <h4>Susan J. Pharr</h4>
-                 <h5>Edwin O. Reischauer Professor of Japanese Politics</h5>
-                </div>
-                <div class="new-site-block">
-                  <div class="photo">
-                    <a href="site02"><img src="<?php print $base_url . $directory;?>/images/scholar-photo2.jpg" /></a>
-                   </div>
-                 <h4>Susan J. Pharr</h4>
-                 <h5>Edwin O. Reischauer Professor of Japanese Politics</h5>
-                </div>
-                <div class="new-site-block">
-                  <div class="photo">
-                    <a href="site03"><img src="<?php print $base_url . $directory;?>/images/scholar-photo3.jpg" /></a>
-                   </div>
-                 <h4>Susan J. Pharr</h4>
-                 <h5>Edwin O. Reischauer Professor of Japanese Politics</h5>
-                </div>
-                <div class="new-site-block">
-                  <div class="photo">
-                    <a href="site04"><img src="<?php print $base_url . $directory;?>/images/scholar-photo4.jpg" /></a>
-                   </div>
-                 <h4>Susan J. Pharr</h4>
-                 <h5>Edwin O. Reischauer Professor of Japanese Politics</h5>
-                </div>
-                <div class="new-site-block">
-                  <div class="photo">
-                    <a href="site05"><img src="<?php print $base_url . $directory;?>/images/scholar-photo5.jpg" /></a>
-                   </div>
-                 <h4>Susan J. Pharr</h4>
-                 <h5>Edwin O. Reischauer Professor of Japanese Politics</h5>
-                </div>
-                <div class="new-site-block">
-                  <div class="photo">
-                    <a href="site06"><img src="<?php print $base_url . $directory;?>/images/scholar-photo6.jpg" /></a>
-                   </div>
-                 <h4>Susan J. Pharr</h4>
-                 <h5>Edwin O. Reischauer Professor of Japanese Politics</h5>
-                </div>
-               </div>
             </div><!--/content-row 3-->
 
           </div><!-- /content main -->
