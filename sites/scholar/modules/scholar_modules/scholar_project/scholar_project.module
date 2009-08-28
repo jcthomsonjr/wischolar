@@ -1,48 +1,8 @@
 <?php
 
-function scholarproject_block($op = 'list', $delta = 0, $edit = array()) {
-  switch ($op) {
-    case 'list':
-      $blocks[0]['info'] = t('Scholar project slideshow');
-      $blocks[1]['info'] = t('Scholar project big text');
-      $blocks[2]['info'] = t('Scholar project tips - Create');
-      $blocks[3]['info'] = t('Scholar project tips - Maintain');
-      $blocks[4]['info'] = t('Scholar project tips - Control');
-      $blocks[5]['info'] = t('Scholar project tips - Collaborate');
-      $blocks[6]['info'] = t('Scholar project site examples');
-      return $blocks;
-      
-    case 'view':
-      switch ($delta) {
-        case 0:
-          $block = scholarproject_block_slideshow_view();
-          break;
-        case 1:
-          $block = scholarproject_block_big_text_view();
-          break;
-        case 2:
-          $block = scholarproject_create_view();
-          break;
-        case 3:
-          $block = scholarproject_maintain_view();
-          break;
-        case 4:
-          $block = scholarproject_control_view();
-          break;
-        case 5:
-          $block = scholarproject_collaborate_view();
-          break;
-        case 6:
-          $block = scholarproject_block_site_example_view();
-          break;
-      }
-      return $block;
-  }
-}
-
-function scholarproject_theme($existing, $type, $themeexisting, $type, $theme, $path){
+function scholar_project_theme(){
   
-  $path = drupal_get_path('module', 'scholarproject') . '/theme';
+  $path = drupal_get_path('module', 'scholar_project') . '/theme';
   
   //top bocks
   $items['project_slideshow'] = array(
@@ -52,7 +12,7 @@ function scholarproject_theme($existing, $type, $themeexisting, $type, $theme, $
   );
   
     $items['project_big_text'] = array(
-    'arguments' => array('tree' => array()),
+    'arguments' => array(),
     'template' => 'project-big-text',
     'path' => $path,
   );
@@ -76,9 +36,9 @@ function scholarproject_theme($existing, $type, $themeexisting, $type, $theme, $
     'path' => $path,
   );
   
-  $items['project_colaborate'] = array(
+  $items['project_collaborate'] = array(
     'arguments' => array('tree' => array()),
-    'template' => 'project-colaborate',
+    'template' => 'project-collaborate',
     'path' => $path,
   );
   
@@ -92,30 +52,14 @@ function scholarproject_theme($existing, $type, $themeexisting, $type, $theme, $
   return $items;
  }
 
-function scholarproject_block_slideshow_view(){
-  return theme('project_slideshow');
-}
 
-function scholarproject_block_big_text_view(){
-  return theme('project_big_text');
-}
 
-function scholarproject_block_create_view(){
-  return theme('project_create');
-}
 
-function scholarproject_block_maintain_view(){
-  return theme('project_maintain');
-}
-
-function scholarproject_block_control_view(){
-  return theme('project_control');
-}
-
-function scholarproject_block_collaborate_view(){
-  return theme('project_collaborate');
-}
-
-function scholarproject_block_site_example_view(){
-  return theme('project_site_examples');
+function scholar_project_preprocess_page(&$vars){
+  if (drupal_is_front_page()){
+    $vars['row1'] = theme('project_big_text');
+    $vars['row2'] = theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate') ;
+    $vars['row3'] = theme('project_site_examples');
+    
+  }
 }
