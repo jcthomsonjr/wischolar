@@ -4,22 +4,24 @@
  * Initial function to begin import script
  * @return unknown
  */
-function simport_import(){
+function simport_import(){ 
 
   //PHASE 1 - load sites and settings
 
   vsite_include('vsiteapi');
   $roles = variable_get('scholar_manager_role', 'scholar admin');
 
+  //test one node
+ // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE id = %d", 33);
+  
   //first create the new vsites
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
   while ($data = db_fetch_object($sql)) {
 
     //get the old site node object
-    $old = unserialize($data ->data); dpm($old);
-    return false;
+    $old = unserialize($data ->data); 
 
-    //set the domain for the new site
+    //define the domain for the new site
     $domain = $old -> title;
 
     //get old user object
@@ -37,8 +39,6 @@ function simport_import(){
     //get a spaces object for new site so we can modify and save with the functions below
     $new = spaces_load ( 'og', $new_site_info ->nid, TRUE );
 
-    dpm($old);
-
     //set theme
     simport_set_theme($old, $new);
 
@@ -47,8 +47,6 @@ function simport_import(){
 
     //set logo
     simport_set_logo($old, $new);
-
-
 
     //just iterate once for testing purposes - REMOVE THIS WHEN DONE TESTING
     // return false;
@@ -71,7 +69,11 @@ function simport_import(){
 
       //set generic values
       simport_set_generic($old, $new);
+      
+      //set taxonomy term values
+      simport_set_terms($old, $new);
 
+      //deal with any custom fields specific to the content type;
       switch ($old -> type){
         case 'scholar_announcement':
           simport_set_announcement($old, $new);
@@ -85,15 +87,15 @@ function simport_import(){
           simport_set_link($old, $new);
           break;
       }
-
-      //if old site has front page set to specific node
+  
+      //save the node
+      $new_node = node_save($new);
+    
+        //if old site has front page set to specific node
       if ($old->scholar_admin_site_front_node){
         //set frontpage value after content created
-        simport_set_frontpage($old, $new);
+        simport_set_frontpage($old, $new_node);
       }
-      
-      //save the node
-      node_save($new);
     }
   }
 }
@@ -159,6 +161,7 @@ function simport_set_frontpage($old, &$new){
   //if true then, a node was set as front page on D5 scholar site
   if ($old->scholar_admin_site_front_node){
     $new->settings['front']['frontpage'] = 'bio';
+    $new->settings['front']['frontpage']['nid'] = $new -> nid; // TODO: is the the right setting for frontpage nid?
   }
   else{
   //do something
@@ -221,27 +224,64 @@ function simport_set_shield($old, &$new){
   $new ->settings['sheild'] = drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png";
 }
 
-function simport_set_vocabs($old, &$new){
-  
-  
+
+
+function simport_set_terms($old, &$new){
+  //check to see of any terms are set in old node
+  if (count($old -> tags)){
+    $vsite = simport_get_new_viste($old -> og_groups[0]);
+
+    foreach($old -> tags as $vocab_id => $values){
+      //NOTE: vocab id 6 is the global vocabularyon the D5 scholars site
+
+      if ($vocab_id == '6'){
+        //store the array information in a property called global_taxonomy for use later
+        $new -> global_taxonomy == $values;
+      }
+
+      else{
+        foreach($values as $old_term){
+          $new_vocab = simport_get_site_vocabularies($sid, $new -> type);
+
+          $term['vid'] = $new_vocab -> vid;
+          $term['name'] = $old_term -> name;
+          $term['description'] = empty($old_term -> description) ? NULL : $old_term -> description;
+          //$term['weight'] = mt_rand(0,10);
+
+          $status = taxonomy_save_term($term);
+          if ($status){
+            //get the newly created term id. TODO: is this the best way???
+            $tid = db_last_insert_id('term_data', 'tid');
+          }
+          //now add the terms to the $new node object
+          $new -> taxonomy .= array( $new_vocab -> vid =>array($tid));
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Pass it the old site nid and it returns current vsite object
+ */
+function simport_get_new_viste($old_site_nid){
+  $space_new = db_result(db_query("SELECT new FROM {simport} WHERE old = %d", $old_site_nid));
+  $vsite = spaces_load ( 'og', $space_new, TRUE );
+  return $vsite;
 }
 
 function simport_set_generic($old, &$new){
 
-  //get new og (site id). I am assuming here that there is only one og per node.
-  $space_new_nid = db_result(db_query("SELECT new FROM {simport} WHERE old = %d", $old -> og_groups[0]));
-  
-  //TODO: to expensive?? should I store user uid mapping in table?
-  $space = spaces_load ( 'og', $space_new_nid, TRUE );
+ $vsite = simport_get_new_viste($old -> og_groups[0]);
 
   //set the generic node data
   $new -> title = $old -> title;
   $new -> status = $old -> status;
   $new -> created = $old -> created;
   $new -> changed = $old -> changed;
-  $new -> uid = $space -> group -> uid;
-  $new -> name = $space -> group -> name;
-  $new -> og_groups [0] = $space -> group -> nid; //double check on this
+  $new -> uid = $vsite -> group -> uid;
+  $new -> name = $vsite -> group -> name;
+  $new -> og_groups [0] = $vsite -> group -> nid; //double check on this
   
 }
 
@@ -258,6 +298,16 @@ function simport_set_link($old, &$new){
 }
 
 /**
+ * Returns vocabulary information specific to site and content type
+ * @param $sid- site id
+ * @param $type- content type
+ */
+function simport_get_site_vocabularies($sid, $type){
+  $vocabs = taxonomy_get_vocabularies($type);
+ return $vocabs[$sid];
+}
+
+/**
  * Correlate old content types to new content types
  * NOT INCLUDING biblio or scholar_admin (biblio nodes to be handled seperately)
  */
@@ -267,6 +317,7 @@ function _simport_map_content_types(){
   'scholar_link' => 'link',
   'scholar_blog' => 'blog',
   'scholar_announcement' => 'announcement',
+  'scholar_bio' => 'page',
 
  /* 'scholar_class' => '', //doesn't exist yet on new scholars
   'scholar_cv' => '', //doesn't exist yet on new scholars
