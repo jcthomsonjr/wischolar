@@ -139,7 +139,8 @@ function cp_route(){
   foreach ($tree as $item) {
     if (cp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
     	$a_settings =  array_shift($item['below']);
-    	return menu_execute_active_handler($a_settings['link']['href']);
+    	drupal_goto($a_settings['link']['href']);
+    	return;
     }
   }
   

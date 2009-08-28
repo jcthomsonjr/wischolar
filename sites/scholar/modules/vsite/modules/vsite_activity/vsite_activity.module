@@ -6,6 +6,22 @@ function vsite_activity_init(){
 	}
 }
 
+function vsite_activity_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'insert':
+    case 'update':
+    	$context = array(
+		    'hook' => 'nodeapi',
+		    'op' => $op,
+    	  'node' => $node
+		  );
+		    	
+      actions_do('vsite_activity_action',$node,$context);
+    break;
+  }
+}
+
+
 /**
  * The action hook
  */
@@ -30,6 +46,8 @@ function vsite_activity_action_info(){
  */
 function vsite_activity_action($object, $context){
 	
+	if(!vsite_get_vsite()) return false;
+	
 	//Setup the advanced Patterns
 	$context['node-pattern'] = 'You [action] a new [type-name] ([title])';
 	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite] ([title])';
@@ -38,9 +56,11 @@ function vsite_activity_action($object, $context){
 	switch($context['op']){
 		case 'submit':
 	  case 'insert':
-		case 'update':
 		case 'view':
 			$s_action = $context['op']."ed";
+    break;
+    case 'update':
+    	$s_action = $context['op']."d";
     break;
 	}
 	$context['node-pattern'] = str_replace('[action]',$s_action,$context['node-pattern']);
@@ -49,14 +69,15 @@ function vsite_activity_action($object, $context){
 	$vsite = vsite_get_vsite();
 	if($vsite && $vsite->group->uid){
 		$user = user_load($vsite->group->uid);
+		$s_users_vsite = '';
     if($user && ($user->profile_first_name || $user->profile_last_name)){
     	$s_users_vsite = "in {$user->profile_first_name} {$user->profile_last_name}'s site";
-    	$context['node-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['node-pattern']);
-    	$context['everyone-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['everyone-pattern']);
-    } 
+    }
+    $context['node-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['node-pattern']);
+    $context['everyone-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['everyone-pattern']);
 	}
 	
-  activity_record($object,$context);
+  return activity_record($object,$context);
 }
 
 /**

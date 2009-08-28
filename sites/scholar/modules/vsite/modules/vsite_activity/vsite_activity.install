@@ -4,37 +4,13 @@
  * Implementation of hook_install().
  */
 function vsite_activity_install() {
-  // Creates default hook / action association
-  
-	//Insert Node
-  db_query("INSERT INTO {trigger_assignments} values ('%s', '%s', '%s', %d)", 'nodeapi', 'insert', 'vsite_activity_action','1');
-  
-  //Update Node
-  db_query("INSERT INTO {trigger_assignments} values ('%s', '%s', '%s', %d)", 'nodeapi', 'update', 'vsite_activity_action','2');
-  
-  
-  
-//  $gid_desc = array(
-//    'type' => 'int',
-//    'not null' => FALSE,
-//    'description' => t('The OG GID.'),
-//  );
-//
-//  //Add GID Field to activity table
-//  $ret = array();
-//  db_add_field($ret, 'activity', 'gid', $gid_desc);
+
 }
 
 /**
  * Implementation of hook_uninstall().
  */
 function vsite_activity_uninstall() {
-  // creates the cp custom menu
-  db_query("DELETE FROM {trigger_assignments} WHERE hook = '%s' AND aid = '%s'", 'nodeapi', 'vsite_activity_action');
-  
-//  if(db_column_exists('activity', 'gid')) {
-//    $ret = array();
-//    db_drop_field($ret, 'activity', 'gid');
-//  }
+
 }
 
