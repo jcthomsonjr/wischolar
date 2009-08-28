@@ -17,8 +17,9 @@ function advanced_help2book_import($module){
   $this_module = $all_adv_help[$module];
   // the first one must be the top book node
   dpm($this_module);
-  return 'ssss';
+  //return 'ssss';
   //create_top_node($top);
+  $nids = array();
   foreach ( $this_module as $topic ) {
     $node = new stdClass();
     $node->type = 'book';
@@ -26,19 +27,22 @@ function advanced_help2book_import($module){
     module_load_include('inc', 'node', 'node.pages');
     node_object_prepare($node);
     
-    if (! $item['parent']) {
+    if (! $topic['parent']) {
       $node->book['bid'] = 'new';
     } else {
-     // $node->book['bid'] = $this_module[]
+      $node->book['bid'] = $nids[0]; // ??? it should be top book nid
     }
     $node->title = $topic['title'] . 'xxxxxxxxxxxxxxxxxxxxxxx';
     $node->body = file_get_contents($topic['path'] . '/' . $topic['file']);
     
+    //dpm($node);
     $node = node_submit($node);
     node_save($node);
-    $this_module[$topic['nid']] = $node -> nid;
+    dpm($node);
+    //dpm($this_module[$topic]);
+    $nids[$topic['name']] = $node -> nid;
   }
-  
+  dpm($nids);
   return 'success';
 
 }
