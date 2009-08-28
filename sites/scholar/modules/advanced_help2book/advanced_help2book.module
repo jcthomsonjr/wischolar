@@ -2,7 +2,7 @@
 
 function advanced_help2book_menu(){
   $items = array();
-  $items['try/%'] = array(
+  $items['helpinject/import/%'] = array(
     'title' => 'try',
     'page callback' => 'advanced_help2book_import',
     'page arguments'      => array(1),
@@ -12,101 +12,75 @@ function advanced_help2book_menu(){
 }
 
 function advanced_help2book_import($module){
-  
+  // load the help from our module
   $all_adv_help = advanced_help_get_topics();
   $this_module = $all_adv_help[$module];
-  // the first one must be the top book node
-  dpm($this_module);
-  //return 'ssss';
-  //create_top_node($top);
-  $nids = array();
+
+  // the first one must be the book (top level book page)
+  $book = reset($this_module);
+  
+  $nids_mlids = array(); // keeps trak of nid/mlid for each node inserted 
+  
   foreach ( $this_module as $topic ) {
+    // prepare the node for submission
     $node = new stdClass();
     $node->type = 'book';
-    
     module_load_include('inc', 'node', 'node.pages');
     node_object_prepare($node);
     
-    if (! $topic['parent']) {
-      $node->book['bid'] = 'new';
-    } else {
-      $node->book['bid'] = $nids[0]; // ??? it should be top book nid
-    }
-    $node->title = $topic['title'] . 'xxxxxxxxxxxxxxxxxxxxxxx';
-    $node->body = file_get_contents($topic['path'] . '/' . $topic['file']);
+    $node->title = check_plain($topic['title']);
+    $body = file_get_contents($topic['path'] . '/' . $topic['file']);
+    $body = check_markup($body);
+    //$body = getTextBetweenTags($body, 'div');
+    //$body -> body = $body;
+    $node->body = $body;
     
-    //dpm($node);
+    if (! $topic['parent']) { // top node only
+      $node->book['bid'] = 'new';
+    }
+    else {
+      // bid is always the nid of the top node
+      $node->book['bid'] = $nids[$book['name']]['nid'];
+      // parent is the mlid of the parent node
+      $node->book['plid'] = $nids[$topic['parent']]['mlid'];
+    }
+    
+    //submit the node
     $node = node_submit($node);
     node_save($node);
-    dpm($node);
-    //dpm($this_module[$topic]);
-    $nids[$topic['name']] = $node -> nid;
+    
+    //register nid/mlid for this node
+    $nids[$topic['name']]['nid'] = $node->nid;
+    $nids[$topic['name']]['mlid'] = $node->book['mlid'];
   }
-  dpm($nids);
+  
   return 'success';
 
 }
 
-function advanced_help2book_import_topic($topic){
-  $node = new stdClass();
-  $node->type = 'book';
-  
-  module_load_include('inc', 'node', 'node.pages');
-  node_object_prepare($node);
-  
-  if (!$item['parent']){
-    $node->book['bid'] = 'new';
-  }
-  $node->title = $top['title'] . 'xxxxxxxxxxxxxxxxxxxxxxx';
-  $node->body = file_get_contents($top['path'] . '/' . $top['file']);
-  
-  $node = node_submit($node);
-  node_save($node);
-}
-
-
-function create_top_node($top){
-dpm($top);
-$node = new stdClass();
-$node->type = 'book';
-
-module_load_include('inc', 'node', 'node.pages');
-node_object_prepare($node); 
-
-$node -> book['bid'] = 'new';
-$node->title = $top['title'] . 'xxxxxxxxxxxxxxxxxxxxxxx';
-$node->body = file_get_contents($top['path'] . '/' . $top['file']); 
-
-$node = node_submit($node);
-node_save($node);
-
-return;
-
-  $form_state = array();
-  module_load_include('inc', 'node', 'node.pages');
-  $node = array(
-    'type' => 'book' 
-  );
-  $form_state['values']['title'] = 'My node111';
-  $form_state['values']['body'] = 'This is the body text!';
-  $form_state['values']['book']['bid'] = 'new';
-  //$form_state['values']['name'] = 'robo-user';
-  $form_state['values']['op'] = t('Save');
-  drupal_execute('book_node_form', $form_state, ( object ) $node);
-
-}
-
 /**
- * this module should lock the book template file
- * Override the node-book.tpl.php here
+ * hook theme_registry_alter
+ * We are overriding node-book.tpl.php
  */
-function advanced_help2book_preprocess_XXX(){
-
+function advanced_help2book_theme_registry_alter(&$theme_registry){
+  $original_path = array_shift($theme_registry['node']['theme paths']);
+  $this_module_path = drupal_get_path('module', 'advanced_help2book');
+  array_unshift($theme_registry['node']['theme paths'], $original_path, $this_module_path);   
 }
 
-function advanced_help2book_form_alter(&$form, $form_state, $form_id) {
-  if (isset($form['#node']) && $form['#node']->type == 'book' && $form_id == $form['#node']->type .'_node_form'){
-    //dpm($form);
-    //dpm($form_state);
+/*
+function advanced_help2book_preprocess_node(&$vars){
+  if ($vars['type'] == 'book'){
+    $vars['advanced_help2book_node_header'] = '<div id="someid">';
+    $vars['advanced_help2book_node_footer'] = '</div>';
+    
   }
+}
+*/
+
+// private
+function getTextBetweenTags($string, $tagname){
+  $pattern = "/<$tagname.[^>]*>(.*?)<\/$tagname>/s";
+  preg_match($pattern, $string, $matches);
+  return $matches[1];
 }
