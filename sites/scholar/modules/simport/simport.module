@@ -1,5 +1,10 @@
 <?php
 
+//do not include trailing slashes when defining these paths
+define(PATH_TO_ROOT , '/nfs/www/edu-harvard-iq-scholar-dev3'); //file system path to current root (site importing to)
+define(PATH_TO_REMOTE_ROOT , '/nfs/www/edu-harvard-iq-test2'); //file system path to current root (site exporting from)
+
+
 /**
  * Initial function to begin import script
  * @return unknown
@@ -79,13 +84,18 @@ function simport_import(){
           simport_set_announcement($old, $new);
           break;
 
-        case 'scholar_blog':
+        case 'scholar_bio':
           simport_set_blog($old, $new);
           break;
 
-        case 'scholar_link':
+        case 'scholar_blog':
           simport_set_link($old, $new);
           break;
+          
+        case 'scholar_link':
+          simport_set_link($old, $new);
+          break;  
+          
       }
   
       //save the node
@@ -189,7 +199,7 @@ function simport_set_logo($old, &$new){
     $src_path .= (strpos($url['path'], '/') == 0 ) ? substr($url['path'], 1) : $url['path'];
    
     //set destination path
-    $dest_path = '/nfs/www/edu-harvard-iq-scholar-dev3/' . variable_get('file_directory_path', '') .  '/' . $old -> title . '/';
+    $dest_path = PATH_TO_ROOT . '/' . variable_get('file_directory_path', '') .  '/' . $old -> title . '/';
     
     //make the new directory - trim off last slash
     mkdir(substr($dest_path, 0, -1));
@@ -286,15 +296,40 @@ function simport_set_generic($old, &$new){
 }
 
 function simport_set_announcement($old, &$new){  
-  
+  //no custom fields
+  $new -> body = $old -> body;
 }
 
-function simport_set_blog($old, &$new){  
+function simport_set_bio($old, &$new){  
+  //no custom fields
+  $new -> body = $old -> body;
+}
+
+
+function simport_set_blog($old, &$new){ 
+     
   
 }
 
 function simport_set_link($old, &$new){ 
+  //set the link
+  if (!empty($old -> field_link[0]['url'])){
+    $new -> field_link_href[0]['url'] = $old -> field_link[0]['url'];
+  }
   
+  //check if file(s) exist
+    if ($old -> field_image[0]['fid'] > 0){
+      module_load_include('inc', 'simport', 'simport.api');
+      $i=0;
+      foreach($old -> field_image as $file){
+      //define full path to file
+      $path = PATH_TO_REMOTE_ROOT . '/' . $file['filepath'];
+      
+      //call api function to import the file into the node object!
+      simport_import_filefield_file($new, $path, $file, $i);
+      $i++;  
+      }
+   } 
 }
 
 /**
