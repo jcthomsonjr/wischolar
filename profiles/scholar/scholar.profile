@@ -81,13 +81,13 @@ function scholar_profile_modules() {
     'vsite_vocab',
     'vsite_help',
     'vsite_activity',
+    'vsite_widgets',
     
   // scholar specific
     'biblio',
 
     'cp',
     'scholar_feature_settings',
-    'scholarwidgets',
     //'cp_node_forms',
     'scholarboot',
     'bkn',
