@@ -1,0 +1,153 @@
+<?php
+
+/**
+ * hook init
+ * @return unknown_type
+ */
+function vsite_design_init(){
+  $active_menu = menu_get_item();
+  if ($active_menu['path'] == 'cp/settings/theme'){  
+    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
+  }
+  elseif ($active_menu['path'] == 'cp/settings/shield'){
+    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-shield-picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-shield-picker.js');    
+  }
+  elseif ($active_menu['path'] == 'cp/settings/logo'){
+    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-logo.css');
+  }
+}
+
+/**
+ * hook_theme
+ */
+function vsite_design_theme(){
+  $path = drupal_get_path('module', 'vsite_design') .'/theme';
+  
+  $items = array();
+  $items['vsite_design_theme_picker'] = array(
+    'arguments' => array('info' => array()),
+    'template' => 'vsite_design-theme-picker',
+    'path' => $path,
+  );
+  
+  $items['vsite_design_theme_shieldpicker'] = array(
+    'arguments' => array('file' => array()),
+    'template' => 'vsite_design-theme-shieldpicker',
+    'path' => $path,
+    //'file' => 'theme.inc',
+  );
+  
+  $items['vsite_design_logo'] = array(
+    'arguments' => array('preset' => NULL, 'alt' => NULL, 'title' => NULL, 'attributes' => NULL),
+    'path' => drupal_get_path('module', 'vsite')."/includes/",
+    'file' => 'vsiteapi.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function vsite_design_spaces_settings() {
+  return array(
+    'theme' => array(
+      'class' => 'vsite_design_settings_theme',
+      'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.theme.inc',
+    ),
+    'shield' => array(
+      'class' => 'vsite_design_settings_shield',
+      'file' => drupal_get_path('module', 'vsite_design')  .'/includes/vsite_design.settings.shield.inc',
+    ),
+    'logo' => array(
+      'class' => 'vsite_design_settings_logo',
+      'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.logo.inc',
+    ),
+    'site' => array(
+      'class' => 'vsite_design_setting_site',
+      'file' => drupal_get_path('module', 'vsite_design')  .'/includes/vsite_design.settings.site.inc',
+    ),
+  );
+}
+
+
+/**
+ * Implementation of hook_imagecache_default_presets().
+ */
+function vsite_design_imagecache_default_presets() {
+  $presets = array();
+  $presets['vsite_design_default_logo'] = array (
+    'presetname' => 'vsite_design_default_logo',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_image',
+        'data' => array (
+          'width' => '700',
+          'height' => '600',
+        ),
+      ),
+    ),
+  );
+  $presets['vsite_design_square_logo'] = array (
+    'presetname' => 'vsite_design_square_logo',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_and_crop',
+        'data' => array (
+          'width' => '140',
+          'height' => '140',
+        ),
+      ),
+    ),
+  );
+  $presets['vsite_design_landscape_logo'] = array (
+    'presetname' => 'vsite_design_landscape_logo',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_and_crop',
+        'data' => array (
+          'width' => '180',
+          'height' => '140',
+        ),
+      ),
+    ),
+  );
+  $presets['vsite_design_portrait_logo'] = array (
+    'presetname' => 'vsite_design_portrait_logo',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_and_crop',
+        'data' => array (
+          'width' => '140',
+          'height' => '180',
+        ),
+      ),
+    ),
+  );
+  $presets['vsite_design_default_shield'] = array (
+    'presetname' => 'vsite_design_default_shield',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_and_crop',
+        'data' => array (
+          'width' => '62',
+          'height' => '73',
+        ),
+      ),
+    ),
+  );
+  return $presets;
+}

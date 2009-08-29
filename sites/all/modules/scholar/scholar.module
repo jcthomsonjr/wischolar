@@ -1,0 +1,203 @@
+<?php
+
+/**
+ * extend class space_og. We would want to override 
+ * some of the methods. 
+ * TODO funciont spaces_load in spaces.module is modified
+ * because it's initiating an object of type space_og 
+ * How do you tell it to initiate an object of class "scholar"
+ * How to find all the subclasses of space_og class ?
+ * TODO I submitted for this http://drupal.org/node/511914
+ * @see scholar_spaces_types_alter
+ */
+
+
+class scholar extends space_og implements space {
+
+  function redirect($op = 'home'){
+    switch ($op) {
+      case 'home' :
+        if (! empty($this->purl)) {
+          // Use the menu path of the selected feature as homepage
+          $home = 'home';
+          if (menu_get_item($home)) {
+            purl_goto($home, array(
+              'purl' => array(
+                'provider' => 'spaces_og', 
+                'id' => $this->sid 
+              ) 
+            ));
+          }
+          
+          // The previous checks fail, there is no valid homepage set
+          if ($this->admin_access() && user_access('configure spaces features')) {
+            drupal_set_message(t("Please setup your group by choosing a homepage setting."));
+            purl_goto("cp/settings/features", array(
+              'purl' => array(
+                'provider' => 'spaces_og', 
+                'id' => $this->sid 
+              ) 
+            ));
+          }
+        }
+        else {
+          drupal_goto('node/' . $this->sid . '/edit');
+        }
+        menu_set_active_item('spaces-access-denied');
+        break;
+      case 'features' :
+        purl_goto("cp/settings/features", array(
+          'purl' => array(
+            'provider' => 'spaces_og', 
+            'id' => $this->sid 
+          ) 
+        ));
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook spaces_types_alter
+ *
+ * @see http://drupal.org/node/511914
+ */
+function scholar_spaces_types_alter(&$items){
+	$items['og']['class'] = 'scholar';
+}
+
+
+function scholar_menu(){
+  $items = array();
+  $items['admin/settings/scholar'] = array(
+    'type' => MENU_NORMAL_ITEM,
+    'title' => 'Scholar settings',
+    'description' => 'Setting for scholars.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_settings_form'),
+    'file' => 'scholar.admin.inc',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'weight' => 10,   
+  );
+  
+  $items['admin/settings/scholar/settings'] = array(
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_settings_form'),
+    'file' => 'scholar.admin.inc',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'weight' => 0,
+  );
+  
+
+  
+  // nodeautocomplete callback for scholar 
+    $items['scholar/node/autocomplete'] = array(
+      'type' => MENU_CALLBACK,
+      'title' => 'something',
+      'page callback' => 'vsite_node_autocomplete',
+    	'file' => 'nodeautocomplete.inc',
+      'access arguments' => array('access content'),
+      'file path' => drupal_get_path('module', 'scholar') . '/includes',
+    );
+  
+  return $items;
+}
+
+/**
+ * hook spaces_presets
+ */
+function scholar_spaces_presets(){
+  $items = array();
+  vsite_include('vsiteapi');
+  $options = vsite_content_types();
+  $items['scholarsite'] = array(
+    'name' => 'Scholar site preset', 
+    'description' => 'Scholar site preset', 
+    'preset' => array(
+      'features' => array(
+        'scholar_links' => '2', 
+        'scholar_announcements' => '2', 
+        'scholar_blog' => '2' 
+      ), 
+      'settings' => array(
+        'home' => 'blog', 
+        'front' => array(
+          'frontpage' => 'feature', 
+          'node_options' => $options,
+        ),
+        'theme' => 'scholar_theme_01', 
+      ),
+       
+      'locked' => array(
+        'features' => array(
+          'scholar_links' => 0, 
+          'scholar_announcements' => 0, 
+          'scholar_blog' => 0 
+        ), 
+        'settings' => array(
+          'home' => 0 
+        ) 
+      ), 
+      'og' => array(
+        'og_selective' => '3', 
+        'og_register' => 0, 
+        'og_directory' => 1, 
+        'og_private' => 0 
+      ) 
+    ), 
+    'type' => 'og' 
+  );
+  
+  return $items;
+}
+
+/**
+ * hook strongarm
+ */
+function scholar_strongarm(){
+  $conf = array();
+  $conf['scholar_content_type'] = 'scholarsite';
+  $conf['menu_primary_links_source'] = 'scholar_top_menu';
+  
+  // scholar menus
+  $conf['scholar_primary_menu'] = 'features';
+  $conf['scholar_secondary_menu'] = 'scholar_secondary_menu';
+  
+  // make page a group post
+  $conf['og_content_type_usage_page'] = 'group_post_standard';
+  return $conf;
+}
+
+/**
+ *  Hook preproces_page
+ */
+function scholar_preprocess_page(&$vars) {
+  // need to know if there is anything in the navbar for css theming
+  if ($vars['navbar']){
+    $vars['body_classes'] .= ' navbar';
+  }
+  
+  $vsite = vsite_get_vsite();
+  // TODO Probably we would want to let user decide whether they want 
+  // the toolbar on. Add that as a condition below
+  if (context_get('scholar', 'section') == 'vsite' && $vsite -> admin_access()){
+    $vars['body_classes'] .= ' cp-toolbar-on';
+  }
+  
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_spaces_settings() {
+  return array(
+   'site' => array(
+      'class' => 'scholar_setting_site',
+      'file' => drupal_get_path('module', 'scholar')  .'/settingsinc/scholar.settings.site.inc',
+    ),
+   );
+}
