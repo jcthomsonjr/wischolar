@@ -1,0 +1,136 @@
+<?php
+
+function scholarwidgets_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0]['info'] = t('Scholar site logo'); 
+    $blocks[1]['info'] = t('Scholar site info');
+    $blocks[2]['info'] = t('Scholar site shield');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        return scholarwidgets_logo();
+      case 1:
+       return scholarwidgets_basicinfo();
+      case 2:
+       return scholarwidgets_shield();
+    }
+  }
+}
+
+function scholarwidgets_logo(){
+	$output = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_design_logo','vsite_design_landscape_logo').'</a></div>';
+	
+	$block['subject'] = t(''); // intentionally blank
+	$block['content'] = $output;
+	
+	return $block;
+}
+
+function scholarwidgets_basicinfo(){
+	$scholar = vsite_get_vsite();
+	
+	$block = array();
+	$block['subject'] = t('');
+	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
+	//dpm($scholar->settings);
+	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site'])){
+      $user = user_load($scholar->group->uid);
+      $block['content'] =  "<h1>{$user->profile_first_name} {$user->profile_last_name}</h1>
+              <h2>{$user->profile_title}</h2>
+              <p></p>";
+    return $block;
+	} 
+	
+	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
+							<h2>{$scholar->settings['site']['sub_heading']}</h2>
+							<p>{$scholar->settings['site']['sub_heading_extra']}</p>";
+	
+	$block['content'] = $output;
+	
+	return $block;
+}
+
+function scholarwidgets_shield(){
+	$output = '<div id="scholar-shield"><img src="http://scholar.iq.harvard.edu/sites/scholar.iq.harvard.edu/themes/fac01/images/harvard_shield.png" /> </div>';
+	$block['subject'] = t('');
+	$block['content'] = $output;
+	
+	return $block;
+}
+
+function scholarwidgets_scholar_widgets(){
+	
+	return array(
+    'scholarwidgets_0' => array(
+      'module' => 'scholarwidgets',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'header_left',
+      'status' => '0',
+      'label' => 'Scholar site logo',
+      'type' => 'context_ui',
+    ),
+    'scholarwidgets_1' => array(
+      'module' => 'scholarwidgets',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'header_main',
+      'status' => '0',
+      'label' => 'Scholar site info',
+      'type' => 'context_ui',
+    ),
+    'scholarwidgets_2' => array(
+      'module' => 'scholarwidgets',
+      'delta' => '2',
+      'weight' => 20,
+      'region' => 'header_right',
+      'status' => '0',
+      'label' => 'Scholar site shield',
+      'type' => 'context_ui',
+    ),
+    
+    // search site widget
+    'og_views_0' => array(
+      'module' => 'og_views',
+      'delta' => '0',
+      'weight' => 0,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Search',
+      'type' => 'context_ui',
+    ),
+    
+    // Featured posts
+    'views_scholar_featuredposts-block_1' => array(
+      'module' => 'views',
+      'delta' => 'scholar_featuredposts-block_1',
+      'weight' => 0,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Featured posts',
+      'type' => 'context_ui',
+    ),    
+  );
+	
+}
+
+/**
+ * hook context_default_contexts
+ * @return unknown_type
+ */
+function scholarwidgets_context_default_contexts() {
+  $items = array ();
+  $items [] = array (
+      'namespace' => 'cp', 
+      'attribute' => 'section', 
+      'value' => 'layout', 
+      'spaces_type' => array (
+      '0' => 'og' 
+    ), 
+    'block' => module_invoke_all('scholar_widgets'),
+  );
+  
+  return $items;
+}
