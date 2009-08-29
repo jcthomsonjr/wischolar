@@ -5,7 +5,7 @@ function advanced_help2book_menu(){
   $items['helpinject/import/%'] = array(
     'title' => 'try',
     'page callback' => 'advanced_help2book_import',
-    'page arguments'      => array(1),
+    'page arguments'      => array(2),
     'access arguments' => array('access content'),
   );
   return $items;
@@ -24,14 +24,14 @@ function advanced_help2book_import($module){
   foreach ( $this_module as $topic ) {
     // prepare the node for submission
     $node = new stdClass();
-    $node->type = 'book';
+    $node->type = 'help';
     module_load_include('inc', 'node', 'node.pages');
     node_object_prepare($node);
     
     $node->title = check_plain($topic['title']);
     $body = file_get_contents($topic['path'] . '/' . $topic['file']);
-    $body = check_markup($body);
-    //$body = getTextBetweenTags($body, 'div');
+    //$body = check_markup($body);
+    $body = getTextBetweenTags($body, 'p');
     //$body -> body = $body;
     $node->body = $body;
     
@@ -72,7 +72,7 @@ function advanced_help2book_theme_registry_alter(&$theme_registry){
   $this_module_path = drupal_get_path('module', 'advanced_help2book');
   array_unshift($theme_registry['imagefield_image']['theme paths'], $original_path, $this_module_path); 
   $theme_registry['imagefield_image']['function'] = 'myfunc';
-    dpm($theme_registry);
+  //dpm($theme_registry);
 }
 
 function myfunc($file, $alt = '', $title = '', $attributes = NULL, $getsize = TRUE) {
@@ -126,9 +126,11 @@ function advanced_help2book_preprocess_node(&$vars){
 
 // deals with files
 function import_images(){
-  $image = '/Users/akahn/Desktop/Untitled-1-not-sharp.jpg';
+  $node = node_load(array('nid' => 51));
+  $image = drupal_get_path('module', 'vsite_design').'/theme/images/default_logo.jpg';
   // Load up the CCK field
-  $field = content_fields('field_story_image', 'tell_your_story');
+  $field = content_fields('field_link_image', 'link');
+  dpm($field);
   // Load up the appropriate validators
   $validators = array_merge(filefield_widget_upload_validators($field), imagefield_widget_upload_validators($field));
   // Where do we store the files?
@@ -136,7 +138,10 @@ function import_images(){
   // Create the file object
   $file = field_file_save_file($image, $validators, $files_path);
   // Apply the file to the field
-  $node->field_story_image = array(0 => $file); 
+  dpm($file);
+  $node->field_link_image = array(0 => $file); 
+  node_save($node);
+  dpm($node);
 }
 
 
@@ -144,6 +149,8 @@ function import_images(){
 // private
 function getTextBetweenTags($string, $tagname){
   $pattern = "/<$tagname.[^>]*>(.*?)<\/$tagname>/s";
+  $pattern = "/<$tagname>(.*?)<\/$tagname>/s";
   preg_match($pattern, $string, $matches);
+  //dpm($matches);
   return $matches[1];
 }
