@@ -17,6 +17,10 @@ function scholar_profile_modules() {
     'context',
     'context_contrib',
     'context_ui',
+    'feedapi',
+    'feedapi_node',
+  	'feedapi_inherit',
+    'feedapi_common_syndication',
     'filefield_paths',
     'features',
     'flag',
@@ -42,6 +46,9 @@ function scholar_profile_modules() {
     'views_bulk_operations',
     'views_ui', 
     'views_export', 
+    'views_attach',
+  	'views_gallery',
+  	'views_gallery_og',
     'vertical_tabs',
   
 
@@ -60,6 +67,9 @@ function scholar_profile_modules() {
     'imagefield',
     'link',
     'text',
+    'nodereference',
+  	'nodereference_url',
+    'optionwidgets',
 
 
   // development
@@ -104,6 +114,11 @@ function scholar_profile_modules() {
     'scholar_links',
     'scholar_blog',
     'scholar_announcements',
+    'scholar_classes',
+    'scholar_image_gallery',
+    'scholar_publications',
+    'scholar_feeds',
+    'scholar_software',
     
   );
 
@@ -305,7 +320,7 @@ function scholar_form_alter(&$form, $form_state, $form_id) {
     $form['site_information']['site_mail']['#default_value'] = 'swap@lists.iq.harvard.edu';
     $form['admin_account']['account']['name']['#value'] = 'admin';
     $form['admin_account']['account']['mail']['#value'] = 'swap@lists.iq.harvard.edu';
-    $form['admin_account']['account']['pass']['#value'] = 'sharepass';
+    //$form['admin_account']['account']['pass']['#value'] = 'sharepass';
     // dont check for updates automatically
     // TODO this is not working 
     //$form['server_settings']['update_status_module']['#default_value'] = 0;
