@@ -34,7 +34,7 @@ class vsite_design_settings_theme implements space_setting {
 	  }  
 	
 	  $form = array(
-	    '#title' => t(''),
+	    '#title' => t('Theme Selection'),
 	    '#type' => 'radios',
 	    '#options' => $options,
 	    '#default_value' => $value ? $value : '',
