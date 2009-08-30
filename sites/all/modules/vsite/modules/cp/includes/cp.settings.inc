@@ -27,7 +27,7 @@ function cp_settings_form($form_id, $setting_id){
   // 'settings' is important here (see the submit function)
   $form['settings'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Settings'),
+    '#title' => t(''),
     '#tree' => TRUE,
   );
   $form['settings'][$setting_id] = $settings[$setting_id] -> form($space, $space -> settings[$setting_id]);
@@ -42,6 +42,12 @@ function cp_settings_form($form_id, $setting_id){
     '#type' => 'value',
     '#value' => $setting_id,
   );
+
+  // add the submit button (not in the form definition yet)
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save settings'),
+  );
   
   $form['reset'] = array(
     '#type' => 'submit',
@@ -49,13 +55,6 @@ function cp_settings_form($form_id, $setting_id){
     '#submit' => array('cp_settings_form_reset'),
   );
   
-  // add the submit button (not in the form definition yet)
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save settings'),
-  );
-  
-
   return $form;
 }
 
