@@ -9,11 +9,18 @@ function vsite_users_menu(){
     'weight' => 2, 
   );
   
+  $items['cp/users/myaccount'] = array(
+    'title' => 'My account',
+    'page callback' => 'vsite_users_myaccount',
+    'file' => 'vsite_users.pages.inc',
+    'weight' => 0, // should be the first one
+  );
+  
   $items['cp/users/members'] = array(
     'title' => 'Members',
     'page callback' => 'vsite_users_members',
-    'access arguments' => array('access content'),
     'file' => 'vsite_users.pages.inc',
+    'weight' => 1, // should be the first one
   );  
   
   // make them all part of 'cp' menu
