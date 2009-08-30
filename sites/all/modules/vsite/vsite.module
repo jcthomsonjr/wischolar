@@ -41,6 +41,7 @@ function vsite_include($inc_files){
 
 /**
  * Implementation of preprocess_views_view().
+ * TODO move this to scholar module
  */
 function vsite_preprocess_views_view(&$vars) {
   if ($feature = context_get('scholar', 'feature')) {
@@ -79,9 +80,7 @@ function vsite_preprocess_views_view(&$vars) {
         $vars['empty'] = $output;
       }
     }
-  } else {
-  	dpm('no');
-  }
+  } 
 }
 
 
