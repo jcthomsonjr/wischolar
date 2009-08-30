@@ -13,9 +13,22 @@ function vsite_support_update_6001(){
   $return = array();
   
   __vsite_support_create_question();
+  __vsite_support_create_feature_request();
   $return[] = array(
     'success' => TRUE, 
-    'query' => "Create 'question' content type" 
+    'query' => "Create 'question' content type",
+  );
+  
+  return $return;
+}
+
+function vsite_support_update_6002(){
+  $return = array();
+
+  __vsite_support_create_feature_request();
+  $return[] = array(
+    'success' => TRUE, 
+    'query' => "Create 'feature_request' content type", 
   );
   
   return $return;
@@ -67,3 +80,40 @@ function __vsite_support_create_question(){
   drupal_execute('content_copy_import_form', $content_type);
 }
 
+function __vsite_support_create_feature_request(){
+  $content['type'] = array(
+    'name' => 'Feature request', 
+    'type' => 'feature_request', 
+    'description' => '', 
+    'title_label' => 'Title', 
+    'body_label' => 'Description', 
+    'min_word_count' => '0', 
+    'help' => '', 
+    'node_options' => array(
+      'status' => true, 
+      'promote' => false, 
+      'sticky' => false, 
+      'revision' => false 
+    ), 
+    'show_preview_changes' => 1, 
+    'show_diff_inline' => 0, 
+    'old_type' => 'feature_request', 
+    'orig_type' => '', 
+    'module' => 'node', 
+    'custom' => '1', 
+    'modified' => '1', 
+    'locked' => '0', 
+    'og_content_type_usage' => 'omitted', 
+    'comment' => '0', 
+  );
+  
+  // Make up a $form_state value.
+  $content_type = array(
+    'values' => array(
+      'type_name' => '<create>', 
+      'macro' => '$content = ' . var_export($content, true) . ';' 
+    ) 
+  );
+  // Run it.
+  drupal_execute('content_copy_import_form', $content_type);
+}
