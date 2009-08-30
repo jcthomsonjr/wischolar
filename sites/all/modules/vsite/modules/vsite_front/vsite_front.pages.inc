@@ -8,7 +8,6 @@
 function vsite_front_home(){
   
   $vsite = vsite_get_vsite();
-  dpm($vsite);
   if ($vsite) {
     $front_type = $vsite->settings['front']['frontpage'];
     switch ($front_type) {
