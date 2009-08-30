@@ -1,0 +1,47 @@
+<?php
+
+include_once('scholar_feeds.features.inc');
+
+/**
+ * hook strongarm
+ */
+function scholar_feeds_strongarm(){
+  $conf = array();
+  $conf['feedapi_settings_feed'] = array(
+    'enabled' => 1,
+    'upload_method' => 'url',
+    'refresh_on_create' => 1,
+    'update_existing' => 0, // we dont want to refresh existing items
+    'refresh_time' => 3600, // every hour ?  increase !
+    'items_delete' => 0,
+    'parsers' => array(
+        'parser_common_syndication' => array(
+           'enabled' => 1,
+           'weight' => 0,
+           'accept_invalid_cert' => 0,
+         ),
+    ),
+
+    'processors' => array(
+       'feedapi_node' => array(
+          'enabled' => 1,
+          'weight' => 1,
+          'content_type' => 'feed_item',
+          'input_format' => 1,
+          'node_date' => 'current',  // use time of download
+          'x_dedupe' => 1,
+       ),
+
+       'feedapi_inherit' => array (
+          'enabled' => 1,
+          'weight' => 2,
+          'inherit_og' => 1,
+          'inherit_taxonomy' => 1,
+          'inherit_author' => 1,
+       ),
+   ),
+  );
+  
+  
+  return $conf;
+}
