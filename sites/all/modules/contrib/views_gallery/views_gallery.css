@@ -1,0 +1,47 @@
+/* $Id: views_gallery.css,v 1.5 2009/08/18 14:45:17 karens Exp $ */
+
+div.view-gallery div.views-field-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+div.view-gallery div.views-field-field-gallery-image-fid img {
+  border: 1px solid #666;
+  padding: 2px;
+}
+
+div.view-gallery div.views-field-field-gallery-image-fid img:hover {
+  border: 3px solid #666;
+  padding: 0px;
+}
+
+div.view-gallery div.views-field-created {
+  font-size: .8em;
+  font-style: italic;
+}
+
+div.view-display-id-node_content_2 {
+  float: left;
+  padding-right: 10px;
+}
+
+div.view-display-id-node_content_2 div.view-empty {
+  border: 1px solid black;
+  font-size: 0.9em;
+  padding: 5px;
+  text-align: center;
+  width: 140px;
+}
+
+ul.links li.image_field_gallery  {
+  float: right;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  font-weight: bold;
+}
+
+// Force the table grid to equal column
+// widths no matter what is in them.
+div.view-gallery table.views-view-grid {
+  table-layout:fixed;
+}
