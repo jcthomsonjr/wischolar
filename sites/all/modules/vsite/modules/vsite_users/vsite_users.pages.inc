@@ -6,3 +6,7 @@ function vsite_users_members(){
   $arg = $site -> group -> nid;
   return views_page('og_members', 'default', $arg); 
 }
+
+function vsite_users_myaccount(){
+  return '(tbd)';
+}
