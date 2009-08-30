@@ -14,6 +14,13 @@ function vsite_support_menu(){
   $items['cp/support/questions'] = array(
     'title' => 'Collaborative FAQ', 
     'page callback' => 'vsite_support_questions',
+    'weight' => 0,
+  );
+  
+  $items['cp/support/featurerequests'] = array(
+    'title' => 'Feature requests', 
+    'page callback' => 'vsite_support_feature_requests',
+    'weight' => 1,
   );
   
   // make them all part of 'cp' menu
@@ -27,6 +34,10 @@ function vsite_support_menu(){
 
 function vsite_support_questions(){
   return views_page($view_name = 'vsite_support_questions', $display = 'default');
+}
+
+function vsite_support_feature_requests(){
+  return '(tbd)';
 }
 
 /**
