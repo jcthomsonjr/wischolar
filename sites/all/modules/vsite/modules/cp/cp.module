@@ -5,6 +5,12 @@ function cp_init(){
    // TODO We can get the active space here. 
    // add this only if in active space + user is admin of space + users wants the toolbar anywhere
    drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
+   
+   // cp nice buttons 
+   if (arg(0) == 'cp'){
+     drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp_nice_buttons.css');
+     drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp_nice_buttons.js');
+   }
 
    // define some contexts (TODO can we group them all together in scholar.module ?
    
