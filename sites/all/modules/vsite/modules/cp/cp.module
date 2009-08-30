@@ -98,8 +98,6 @@ function cp_menu(){
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('spaces_features_form'),
-    //'access callback' => 'spaces_admin_access',
-    //'access arguments' => array('og', 'features'),
     'file' => 'spaces_admin.inc',
     'file path' => $spaces_path,
     'weight' => 0,
@@ -174,7 +172,7 @@ function schlarcp_feature_customize($feature_name){
 
   if (empty($output)) {
     $output = array();
-    $output[] = ctools_modal_command_dismiss();
+    //$output[] = ctools_modal_command_dismiss();
   }
   
   ctools_ajax_render($output);
