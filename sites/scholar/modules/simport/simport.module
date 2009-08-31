@@ -330,33 +330,48 @@ function simport_set_blog($old, &$new){
 }
 
 function simport_set_class($old, &$new){ 
-  
-    //check if images(s) exist
-    if ($old -> field_image[0]['fid'] > 0){
-      module_load_include('inc', 'simport', 'simport.api');
-      $i=0;
-      foreach($old -> field_image as $file){
+  //TODO: These 3 fields do NOT EXIST YET. Change them accordinly once they are created.
+  //set year
+  if(!empty($old ->field_scholar_year[0]['value'])){
+    $new -> field_scholar_year[0]['value'] = $old ->field_scholar_year[0]['value'];
+  }
+
+  //set semester
+  if(!empty($old ->field_scholar_semester[0]['value'])){
+    $new -> field_scholar_semester[0]['value'] = $old ->field_scholar_year[0]['value'];
+  }
+
+  //set link to iSites
+  if(!empty($old ->field_scholar_link[0]['url'])){
+    $new -> field_scholar_link[0]['url'] = $old ->field_scholar_link[0]['url'];
+  }
+
+  //check if images(s) exist
+  if ($old -> field_image[0]['fid'] > 0){
+    module_load_include('inc', 'simport', 'simport.api');
+    $i=0;
+    foreach($old -> field_image as $file){
       //define full path to file
       $source = variable_get('simport_remote_path', '') . '/' . $file['filepath'];
       simport_node_add_imagefield_image($source, 'field_image', &$node, $i);
-      
+
       //call api function to import the file into the node object!
       //simport_import_filefield_file($new, $path, $file, $i);
-      $i++;  
-      }
-   } 
-   
-      //check if files(s) exist
-    if ($old -> field_image[0]['fid'] > 0){
-      module_load_include('inc', 'simport', 'simport.api');
-      $i=0;
-      foreach($old -> field_image as $file){
+      $i++;
+    }
+  }
+
+  //check if files(s) exist
+  if ($old -> field_image[0]['fid'] > 0){
+    module_load_include('inc', 'simport', 'simport.api');
+    $i=0;
+    foreach($old -> field_image as $file){
       //define full path to file
       $source = variable_get('simport_remote_path', '') . '/' . $file['filepath'];
-      simport_node_add_imagefield_image($source, 'field_image', &$node, $i);           
-      $i++;  
-      }
-   } 
+      simport_node_add_imagefield_image($source, 'field_image', &$node, $i);
+      $i++;
+    }
+  }
 }
 
 function simport_set_link($old, &$new){ 
@@ -400,16 +415,14 @@ function _simport_map_content_types(){
 
   $types = array(
   'scholar_link' => 'link',
-  'scholar_blog' => 'blog',
   'scholar_announcement' => 'announcement',
   'scholar_bio' => 'page',
   'scholar_class' => 'scholar_class',
-
- /* 'scholar_class' => '', //doesn't exist yet on new scholars
-  'scholar_cv' => '', //doesn't exist yet on new scholars
-  'scholar_bio' => '', //should be page???
-  'scholar_photo' => '', //old web site logo*/
-  );
+/*
+  'scholar_cv' => '', //ONLY 1 Submit it manually
+  'scholar_photo' => '', //already dealt with in simport_set_logo()
+ */
+  ); 
 
   return $types;
 }
