@@ -1,3 +1,39 @@
 <?php
 
 include_once('scholar_publications.features.inc');
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_publications_spaces_settings() {
+  return array(
+    'scholar_publications' => array(
+      'class' => 'scholar_publications_settings_feature',
+      'file' => drupal_get_path('module', 'scholar_publications') .'scholar_publications.settings.feature.inc',
+    ),
+  );
+}
+
+function scholar_publications_init(){
+  $space = vsite_get_vsite();
+  
+  if($space){
+    global $conf;
+    require_once drupal_get_path('module', 'scholar_publications') .'scholar_publications.settings.feature.inc';
+    
+    scholar_publications_settings_feature::customize($space, 'style',$conf['biblio_style']);
+    scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_allow_autocomplete',$conf['bkn_contrib_lookup_allow_autocomplete']);
+    scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_mode',$conf['bkn_contrib_lookup_mode']);
+    scholar_publications_settings_feature::customize($space,'sort',$conf['biblio_sort']);
+    scholar_publications_settings_feature::customize($space,'sort_tabs',$conf['biblio_sort_tabs']);
+    scholar_publications_settings_feature::customize($space,'order',$conf['biblio_order']);
+    scholar_publications_settings_feature::customize($space,'rowsperpage',$conf['rowsperpage']);
+    scholar_publications_settings_feature::customize($space,'export_links', $conf['biblio_export_links']);
+    scholar_publications_settings_feature::customize($space,'google_link', $conf['biblio_google_link']);
+    scholar_publications_settings_feature::customize($space,'links_target_new_window', $conf['biblio_links_target_new_window']);
+    scholar_publications_settings_feature::customize($space,'inlinemode_in_links', $conf['biblio_inlinemode_in_links']);
+    scholar_publications_settings_feature::customize($space,'link_title_url', $conf['biblio_link_title_url']);
+    scholar_publications_settings_feature::customize($space,'author_links', $conf['biblio_author_links']);
+      
+  }
+}

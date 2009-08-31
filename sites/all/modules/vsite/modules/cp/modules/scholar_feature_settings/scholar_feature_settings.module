@@ -50,3 +50,16 @@ function scholar_feature_settings_spaces_customizers() {
     ),
   );
 }
+
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_feature_settings_spaces_settings() {
+  return array(
+    'biblio' => array(
+      'class' => 'scholar_feature_settings_scholar_publications',
+      'file' => drupal_get_path('module', 'scholar_feature_settings') .'/include/scholar_feature_settings.settings.scholar_publications.inc',
+    ),
+  );
+}
