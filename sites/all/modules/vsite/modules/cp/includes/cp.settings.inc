@@ -20,9 +20,10 @@ function cp_settings_form($form_id, $setting_id){
   if($setting_id == 'logo') $form['#attributes'] = array('enctype' => "multipart/form-data");
   
   // just do have distinct id for each setting form
-  $form['#prefix'] = '<div id = "cp-settings-'. $setting_id . '" class="pad">';
-  $form['#suffix'] = '</div>';
+  //$form['#prefix'] = '<div id = "cp-settings-'. $setting_id . '" class="pad">';
+  //$form['#suffix'] = '</div>';
   
+  $form['#attributes'] = array('class' => 'pad');
   // the form definition for this particular setting (we know setting_id)
   // 'settings' is important here (see the submit function)
   $form['settings'] = array(
