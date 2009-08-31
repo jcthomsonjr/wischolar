@@ -3,9 +3,8 @@
 /**
  * Present a form for setting
  */
-function simport_settings_form(&$form_state) { 
-  $form = array();
-
+function simport_settings_form(&$form_state){
+ 
   $form['current_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Current Path'),
@@ -25,7 +24,7 @@ function simport_settings_form(&$form_state) {
   $form['run_import'] = array(
     '#type' => 'checkbox',
     '#title' => t('Run Import Process'),
-    '#default_value' => $form_state['run_import']['#value'],
+    '#default_value' => isset($form_state['post']['run_import']) ? 1: 0,
     '#description' => t('Check this box to run the import process'),
   );
   
@@ -37,7 +36,7 @@ function simport_settings_form(&$form_state) {
   return $form;
 }
 
-function simport_settings_form_submit(&$form_state){
+function simport_settings_form_submit(&$form_state, $form){
   $paths = array(
   'current_path' => $form_state['current_path']['#value'],
   'remote_path' => $form_state['remote_path']['#value'],
