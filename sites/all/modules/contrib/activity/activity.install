@@ -139,14 +139,16 @@ function activity_uninstall() {
 function activity_requirements($phase) {
   $requirements = array();
   $t = get_t();
-  $views_schema_version = db_result(db_query("SELECT schema_version FROM {system} WHERE name = 'views'"));
-  if (intval($views_schema_version) < 6006) {
-    $requirements['activity_views'] = array(
-      'title' => $t('Activity Views'),
-      'description' => $t('Activity2 requires Views >= 6.2. It can be downloaded <a href=\'!release\'>here</a>. The change that is required by Activity2 is <a href=\'!issue\'>#419270</a>', array('!release' => 'http://drupal.org/node/488082', '!issue' => 'http://drupal.org/node/419270')),
-      // set the severity to warning on install because we don't want to stop the install...
-      'severity' => ($phase == 'install') ? REQUIREMENT_WARNING : REQUIREMENT_ERROR,
-    );
+  if ($phase == 'runtime') {
+	  $views_schema_version = db_result(db_query("SELECT schema_version FROM {system} WHERE name = 'views'"));
+	  if (intval($views_schema_version) < 6006) {
+	    $requirements['activity_views'] = array(
+	      'title' => $t('Activity Views'),
+	      'description' => $t('Activity2 requires Views >= 6.2. It can be downloaded <a href=\'!release\'>here</a>. The change that is required by Activity2 is <a href=\'!issue\'>#419270</a>', array('!release' => 'http://drupal.org/node/488082', '!issue' => 'http://drupal.org/node/419270')),
+	      // set the severity to warning on install because we don't want to stop the install...
+	      'severity' => ($phase == 'install') ? REQUIREMENT_WARNING : REQUIREMENT_ERROR,
+	    );
+	  }
   }
   return $requirements;
 }
