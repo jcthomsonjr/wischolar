@@ -297,7 +297,7 @@ if (function_exists('spaces_menu')) {
                 return FALSE;
               }
               // Case 2: User is not a member
-              else if (!og_is_group_member($this->sid, FALSE)) {
+              else if (!og_is_group_member($this->sid)) {
                 $node_types = spaces_features_map('node');
                 // If the feature is public, show the node but don't allow form access
                 if (!empty($node_types[$node->type])) {
