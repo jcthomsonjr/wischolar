@@ -4,7 +4,6 @@
  * Implementation of hook_menu()
  */
 function simport_menu() { 
-  $items = array();
 
   $items['admin/settings/simport'] = array(
     'title' => 'Simport',
@@ -12,9 +11,8 @@ function simport_menu() {
     'page arguments' => array('simport_settings_form'),
     'access callback' => 'user_access',
     'access arguments' => array('administer site configuration'),
-    'description' => '',
+    'description' => 'Simport Settings',
     'file' => 'simport.admin.inc',
-     'type' => MENU_CALLBACK,
   );
 
   return $items;
@@ -114,9 +112,7 @@ function simport_import(){
        case 'scholar_class':
           simport_set_class($old, $new);
           break;    
-          
-          
-      }
+       }
   
       //save the node
       $new_node = node_save($new);
