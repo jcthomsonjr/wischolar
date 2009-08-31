@@ -9,7 +9,7 @@ function scholar_publications_spaces_settings() {
   return array(
     'scholar_publications' => array(
       'class' => 'scholar_publications_settings_feature',
-      'file' => drupal_get_path('module', 'scholar_publications') .'scholar_publications.settings.feature.inc',
+      'file' => drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc',
     ),
   );
 }
@@ -19,7 +19,7 @@ function scholar_publications_init(){
   
   if($space){
     global $conf;
-    require_once drupal_get_path('module', 'scholar_publications') .'scholar_publications.settings.feature.inc';
+    require_once drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc';
     
     scholar_publications_settings_feature::customize($space, 'style',$conf['biblio_style']);
     scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_allow_autocomplete',$conf['bkn_contrib_lookup_allow_autocomplete']);
