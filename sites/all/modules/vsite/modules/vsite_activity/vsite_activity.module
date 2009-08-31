@@ -65,6 +65,8 @@ function vsite_activity_action($object, $context){
 	
 	if(!vsite_get_vsite()) return false;
 	
+	$vsite = vsite_get_vsite();
+	
 	//Setup the advanced Patterns
 	$context['node-pattern'] = 'You [action] a new [type-name] ([title])';
 	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite] ([title])';
@@ -72,18 +74,19 @@ function vsite_activity_action($object, $context){
 	$s_action = 'modified';
 	switch($context['op']){
 		case 'submit':
-	  case 'insert':
+	    if(array_key_exists('access',$vsite->settings) && $vsite->settings['access']['ignore_insert']) return false;
+		case 'insert':
 		case 'view':
 			$s_action = $context['op']."ed";
     break;
     case 'update':
+    	if(array_key_exists('access',$vsite->settings) && $vsite->settings['access']['ignore_update']) return false;
     	$s_action = $context['op']."d";
     break;
 	}
 	$context['node-pattern'] = str_replace('[action]',$s_action,$context['node-pattern']);
   $context['everyone-pattern'] = str_replace('[action]',$s_action,$context['everyone-pattern']);
 	
-	$vsite = vsite_get_vsite();
 	if($vsite && $vsite->group->uid){
 		$user = user_load($vsite->group->uid);
 		$s_users_vsite = '';
