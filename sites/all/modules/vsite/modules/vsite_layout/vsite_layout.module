@@ -305,6 +305,7 @@ function vsite_layout_filtered_widgets($page_type='all'){
   $features = spaces_features($space->type, TRUE);
   if(array_key_exists($page_type,$features)){
   	foreach ($features[$page_type]->info['features']['context'] as $s_sub_context){
+  		if(!is_array($contexts[$s_sub_context]->block)) continue;//Blocks Avalible?
   		$a_widgets = array_merge($a_widgets,$contexts[$s_sub_context]->block);
   	}
   }
