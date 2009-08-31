@@ -12,7 +12,7 @@ function scholar_profile_modules() {
 
   $contrib_modules = array(
   // sites/all
-    'activity',
+   // 'activity',
     'advanced_help',
     'context',
     'context_contrib',
@@ -20,7 +20,7 @@ function scholar_profile_modules() {
     'feedapi',
     'feedapi_node',
   	'feedapi_inherit',
-    'feedapi_common_syndication',
+    'parser_common_syndication',
     'filefield_paths',
     'features',
     'flag',
@@ -90,7 +90,7 @@ function scholar_profile_modules() {
     'vsite_users',
     'vsite_vocab',
     'vsite_help',
-    'vsite_activity',
+    //'vsite_activity',
     'vsite_widgets',
     
   // scholar specific
