@@ -21,6 +21,23 @@ function vsite_activity_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   }
 }
 
+/*
+ * Implementation of hook menu
+ */
+function vsite_activity_menu(){
+
+  $items = array();
+  $items['cp/news/activity/privacy'] = array(
+    'title' => "Activity Privacy Settings",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cp_settings_form', 'activity'),
+    'file' => 'cp.settings.inc',
+    'file path' => drupal_get_path('module', 'cp'). '/includes', 
+    'access callback' => 'cp_access_cp',
+  );
+
+  return $items;
+}
 
 /**
  * The action hook
@@ -131,4 +148,22 @@ function vsite_activity_activity_access_grants($acccount) {
     }
   }
   return $realm_ids;
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function vsite_activity_spaces_settings() {
+  return array(
+    'activity' => array(
+      'class' => 'vsite_activity_settings_activity',
+      'file' => drupal_get_path('module', 'vsite_activity') .'/includes/vsite_activity.settings.activity.inc',
+    ),
+  );
+}
+
+function vsite_activity_preprocess_views_view(&$variables) { //__vsite_activity_view
+  if($variables['name'] != 'vsite_activity_view') return;
+  
+  $variables['header'] .= l('Privacy Settings','cp/news/activity/privacy', array('attributes' => array('class' => 'tabs')));
 }

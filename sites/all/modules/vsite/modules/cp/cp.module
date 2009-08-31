@@ -81,6 +81,9 @@ function cp_menu(){
   //dpm(spaces_settings($space->type, TRUE));
   // we go on all settings and make a menu entry for all of them
   foreach (spaces_settings($space->type, TRUE) as $setting) {
+  	//Explicitly remove from menus
+    if(isset($setting->menu_name) && !$setting->menu_name) continue;
+    
     $setting_value = isset($space->settings[$setting->id]) ? $space->settings[$setting->id] : NULL;
     $setting_form = $setting->form($space, $setting_value);
     if (!empty($setting_form)) {
@@ -92,6 +95,9 @@ function cp_menu(){
         'file path' => drupal_get_path('module', 'cp'). '/includes', 
       );
     }
+    
+    if(isset($setting->weight)) $items['cp/settings/'. $setting -> id]['weight'] = $setting->weight;
+    if(isset($setting->menu_name)) $items['cp/settings/'. $setting -> id]['menu_name'] = $setting->menu_name;
   }
   
   $items["cp/features"] = array(
@@ -116,8 +122,8 @@ function cp_menu(){
   
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
-    $items[$path]['menu_name'] = 'cp';
-    $items[$path]['access callback'] = 'cp_access_cp';
+  	if(!array_key_exists('menu_name',$item)) $items[$path]['menu_name'] = 'cp';
+    if(!array_key_exists('access callback',$item)) $items[$path]['access callback'] = 'cp_access_cp';
     //$items[$path]['access arguments'] = array('access content'); //TODO fix this 
   }
 

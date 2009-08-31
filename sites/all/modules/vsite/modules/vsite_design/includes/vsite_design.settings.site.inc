@@ -3,7 +3,11 @@
  * Provides theme selection for each site
  */
 class vsite_design_setting_site implements space_setting {
-  
+  //Menu Weight
+  public $weight = -1;
+  //Menu
+  public $menu_name = 'cp';
+
   var $id;
   function __construct($id = NULL) {
     if ($id) {
