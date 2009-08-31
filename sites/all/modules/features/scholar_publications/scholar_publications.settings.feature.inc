@@ -26,7 +26,7 @@ class scholar_publications_settings_feature implements space_setting {
     $form['style'] = array(
       '#type' => 'radios',
       '#title' => t('Select Style'),
-      '#default_value' => array_key_exists('style',$value)?$s_style:$value['style'],
+      '#default_value' => !array_key_exists('style',$value)?$s_style:$value['style'],
       '#options' => _biblio_admin_get_styles(),
       '#description' => t('This alters the layout of the "list" (short) view.'),
     );
@@ -34,7 +34,7 @@ class scholar_publications_settings_feature implements space_setting {
     $form['export_links'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Show export links'),
-      '#default_value' => array_key_exists('export_links',$value)?variable_get('biblio_export_links', array('tagged', 'xml', 'bibtex')):$value['export_links'],
+      '#default_value' => !array_key_exists('export_links',$value)?variable_get('biblio_export_links', array('tagged', 'xml', 'bibtex')):$value['export_links'],
       '#options' => array(
         'tagged'  => t('EndNote Tagged'),
         'xml'     => t('EndNote XML'),
@@ -47,7 +47,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#type' => 'checkbox',
       '#title' => t('Show Google Scholar links'),
       '#return_value' => 1,
-      '#default_value' => array_key_exists('google_link',$value)?variable_get('biblio_google_link', 1):$value['google_link'],
+      '#default_value' => !array_key_exists('google_link',$value)?variable_get('biblio_google_link', 1):$value['google_link'],
       '#description' => t('Selecting this option will display a link to Google Scholar beside each entry.  Clicking this link searches Google Scholar using the title and first author of the current biblio entry.')
     );
     
@@ -55,7 +55,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#type' => 'checkbox',
       '#title' => t('Links open in new browser'),
       '#return_value' => 1,
-      '#default_value' => array_key_exists('links_target_new_window',$value)?variable_get('biblio_links_target_new_window', 0):$value['links_target_new_window'],
+      '#default_value' => !array_key_exists('links_target_new_window',$value)?variable_get('biblio_links_target_new_window', 0):$value['links_target_new_window'],
       '#description' => t('This causes related URLs to open in a new browser window')
     );
       
@@ -63,7 +63,7 @@ class scholar_publications_settings_feature implements space_setting {
         '#type' => 'checkbox',
         '#title' => t('Carry "inline" mode through to all links'),
         '#return_value' => 1,
-        '#default_value' => array_key_exists('inlinemode_in_links',$value)?variable_get('biblio_inlinemode_in_links', 0):$value['inlinemode_in_links'],
+        '#default_value' => !array_key_exists('inlinemode_in_links',$value)?variable_get('biblio_inlinemode_in_links', 0):$value['inlinemode_in_links'],
         '#description' => t('This causes the "inline" mode to be applied to all links such as titles, authors and keywords')
     );
     
@@ -71,7 +71,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#type' => 'checkbox',
       '#title' => t('Hyperlink titles using supplied URL if available'),
       '#return_value' => 1,
-      '#default_value' => array_key_exists('link_title_url',$value)?variable_get('biblio_link_title_url', 0):$value['link_title_url'],
+      '#default_value' => !array_key_exists('link_title_url',$value)?variable_get('biblio_link_title_url', 0):$value['link_title_url'],
       '#description' => t('Selecting this links the titles to the supplied URL (if available) rather than the "node" view.')
     );
     
@@ -79,7 +79,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#type' => 'checkbox',
       '#title' => t('Hyperlink author names'),
       '#return_value' => 1,
-      '#default_value' => array_key_exists('author_links',$value)?variable_get('biblio_author_links', 1):$value['author_links'],
+      '#default_value' => !array_key_exists('author_links',$value)?variable_get('biblio_author_links', 1):$value['author_links'],
       '#description' => t('This creates a hyperlink on author names which, when clicked, will select entries which contain that author')
     );
    
@@ -94,34 +94,34 @@ class scholar_publications_settings_feature implements space_setting {
     $form['sort'] = array(
       '#type' => 'radios',
       '#title' => t('Sort by'),
-      '#default_value' => array_key_exists('sort',$value)?variable_get('biblio_sort','year'):$value['sort'],
+      '#default_value' => !array_key_exists('sort',$value)?variable_get('biblio_sort','year'):$value['sort'],
       '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
     );
     $form['sort_tabs'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Show sort links'),
-      '#default_value' => array_key_exists('sort_tabs',$value)?variable_get('biblio_sort_tabs', array('author'=>'author', 'title'=>'title', 'type'=>'type', 'year'=>'year', 'keyword'=>'keyword')):$value['sort_tabs'],
+      '#default_value' => !array_key_exists('sort_tabs',$value)?variable_get('biblio_sort_tabs', array('author'=>'author', 'title'=>'title', 'type'=>'type', 'year'=>'year', 'keyword'=>'keyword')):$value['sort_tabs'],
       '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
       '#description' => t('You turn the sorting links at the top of the /biblio page here.'),
     );
     $form['order'] = array(
       '#type' => 'radios',
       '#title' => t('Order'),
-      '#default_value' => array_key_exists('order',$value)?variable_get('biblio_order', 'DESC'):$value['order'],
+      '#default_value' => !array_key_exists('order',$value)?variable_get('biblio_order', 'DESC'):$value['order'],
       '#options' => array('DESC' => t('Descending'), 'ASC' => t('Ascending')),
     );
     
     $form['bkn_enabled'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable Contributor Lookup'),
-      '#default_value' => array_key_exists('bkn_enabled',$value)?(variable_get('bkn_contrib_lookup_mode', 1) < 2):$value['bkn_enabled'],
+      '#default_value' => !array_key_exists('bkn_enabled',$value)?(variable_get('bkn_contrib_lookup_mode', 1) < 2):$value['bkn_enabled'],
       '#return_value' => 1,
       '#description' => t('Uncheck to disable all external lookups?')
     );
     $form['bkn_contrib_lookup_allow_autocomplete'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable Autocomplete'),
-      '#default_value' => array_key_exists('bkn_contrib_lookup_allow_autocomplete',$value)?variable_get('bkn_contrib_lookup_allow_autocomplete',1):$value['bkn_contrib_lookup_allow_autocomplete'],
+      '#default_value' => !array_key_exists('bkn_contrib_lookup_allow_autocomplete',$value)?variable_get('bkn_contrib_lookup_allow_autocomplete',1):$value['bkn_contrib_lookup_allow_autocomplete'],
       '#return_value' => 1,
       '#description' => t('Should contributor field use autocomplete?')
     );
