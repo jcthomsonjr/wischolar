@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Present a form for setting
+ * Form for simport settings and to run module
  */
 function simport_settings_form(&$form_state){
  
@@ -55,7 +55,7 @@ function simport_settings_form_submit(&$form_state, $form){
   
   if ($form_state['run_import']['#value'] == 1){
   //now call script to import site
-  //simport_import();
+  simport_import();
 
   //TODO: include log or stats regarding import
   drupal_set_message(t('Import Completed'));
