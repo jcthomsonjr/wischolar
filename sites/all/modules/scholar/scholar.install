@@ -20,7 +20,7 @@ function scholar_install() {
   // hook_install has no return value
 }
 
-function scholar_update_6002() {
+function scholar_update_6001() {
   $return = array();
   
   variable_set('scholar_primary_menu',"scholar_top_menu");
@@ -33,7 +33,7 @@ function scholar_update_6002() {
   return $return;
 }
 
-function scholar_update_6003() {
+function scholar_update_6002() {
   $return = array();
   
   __scholar_create_page();
