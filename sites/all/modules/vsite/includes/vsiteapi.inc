@@ -1,5 +1,9 @@
 <?php
 
+define('FEATURE_PUBLIC', 2);
+define('FEATURE_PRIVATE', 1);
+define('FEATURE_DISABLED', 0);
+
 /**
  * return "add content type" links
  * TODO: What would be the right condition for excluding 
@@ -37,6 +41,36 @@ function vsite_content_types(){
   return $result;
 }
 
+function vsite_content_types3($privacy = array("1"), $vsite = NULL){
+  if (! is_array($privacy)) {
+    $privacy = array(
+      $privacy 
+    );
+  }
+
+  if (! $vsite) {
+    $vsite = vsite_get_vsite();
+  }
+  
+  $result = array();
+  
+  $all_types = node_get_types('names');
+  
+  $features_types = spaces_features_map('node');
+
+  foreach ( $features_types as $type => $feature ) {
+    if (in_array($vsite->features[$feature], $privacy)) {
+      $result[$type] = $all_types[$type];
+    }
+  }
+  //dpm($result);
+  return $result;
+}
+
+function _vsite_feature_is_public_callback($value){
+  //dpm($value);
+  return $value == 2 ? TRUE : FALSE;
+}
 
 /**
  * Theme that returns the html for a scholar logo
@@ -164,3 +198,5 @@ function vsite_get_vocabs($vsite = NULL, $node_type = NULL){
     }
   }
 }
+
+
