@@ -24,16 +24,18 @@ function simport_menu() {
  */
 function simport_import(){ 
 
- //PHASE 1 - load sites and settings
+  //PHASE 1 - load sites and settings
 
+ $testing = db_query("TRUNCATE TABLE {simport}"); //empty the table each time
+ 
   vsite_include('vsiteapi');
   $roles = variable_get('scholar_manager_role', 'scholar admin');
 
   //test one node
-  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE id = %d AND type = '%s'", 31, 'admin_scholar');
+  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE id = %d AND type = '%s'", 31, 'admin_scholar');
   
   //first create the new vsites
-  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
+  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
   while ($data = db_fetch_object($sql)) {
 
     //get the old site node object
@@ -52,7 +54,7 @@ function simport_import(){
     $new_site_info = simport_create_site($user, $domain);
 
     //write to the simport table mapping old site to new site
-    $testing = db_query("TRUNCATE TABLE {simport}"); //empty the table each time
+    
     $sql_map_sites = db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$new_site_info ->nid);
 
     //get a spaces object for new site so we can modify and save with the functions below
@@ -64,9 +66,6 @@ function simport_import(){
     //set shield
     simport_set_shield($old, $new);
 
-    //set logo THIS IS BROKEN
-    simport_set_logo($old, $new);
-
     //just iterate once for testing purposes - REMOVE THIS WHEN DONE TESTING
     // return false;
 
@@ -77,7 +76,7 @@ function simport_import(){
 
   //PHASE 2 - load content
 
-  //load content for each type
+//load content for each type
   $types = _simport_map_content_types();
 
   foreach ($types as $oldtype => $newtype){
@@ -85,38 +84,37 @@ function simport_import(){
     while ($data = db_fetch_object($sql)) {
       $old = unserialize($data ->data);
       $new = new stdClass();
-
-      //set generic values
-      simport_set_generic($old, $new);
       
+      //echo "<pre>"; print_r($old); die;
+      
+      //set generic values
+      simport_set_generic($old, $new);     
+         
       //set taxonomy term values
-      simport_set_terms($old, $new);
+       simport_set_terms($old, $new);
 
-      //deal with any custom fields specific to the content type;
+  //deal with any custom fields specific to the content type;
       switch ($old -> type){
         
-        case 'scholar_photo':
-          simport_set_announcement($old, $new);
-          break;
-        
+              
         case 'scholar_announcement':
           simport_set_announcement($old, $new);
           break;
 
         case 'scholar_bio':
-          simport_set_blog($old, $new);
+          simport_set_bio($old, $new);
           break;
 
         case 'scholar_blog':
-          simport_set_link($old, $new);
+           simport_set_blog($old, $new);
           break;
           
         case 'scholar_link':
           simport_set_link($old, $new);
-          break;  
+            break;  
           
        case 'scholar_class':
-          simport_set_class($old, $new);
+          //simport_set_class($old, $new);
           break;    
        }
   
@@ -124,16 +122,17 @@ function simport_import(){
       $new_node = node_save($new);
     
         //if old site has front page set to specific node
-      if ($old->scholar_admin_site_front_node){
+     if ($old->scholar_admin_site_front_node){
         //set frontpage value after content created
         simport_set_frontpage($old, $new_node);
       }
+    
     }    
   }
-  //Lastly get the logo
- 
- // $sql_logo = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 239);
-  $sql_logo = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
+  
+  //PHASE 3 - get the logo
+  // $sql_logo = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 239);
+ $sql_logo = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
   while($data = db_fetch_object($sql_logo)){
     $old = unserialize($data -> data);
     if($old -> field_photo[0]['fid'] > 0){
@@ -225,9 +224,15 @@ function simport_set_logo($old){
     
     //define source and destination directories
     $source = variable_get('simport_remote_path', '') . '/' .  $file['filepath'];
+    
+    if (file_exists($source)){
+    
     $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title;
     
+    //create the directory if doesn't exist
+  if (!is_dir($dest)){
     mkdir($dest);
+  }
     
     //copy the file to the new location
     file_copy($source, $dest, $replace = FILE_EXISTS_REPLACE);
@@ -246,6 +251,8 @@ function simport_set_logo($old){
     $vsite ->settings['logo']['current_logo'] = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title . '/' . basename($new_file);
     //save the vsite settings
     spaces_save($vsite);
+    }
+    return;
 }
 
 /**
@@ -261,7 +268,7 @@ function simport_set_shield($old, &$new){
 }
 
 
-function simport_set_terms($old, &$new){
+function simport_set_terms($old, &$new){ 
   //check to see of any terms are set in old node
   if (count($old -> tags)){
     $vsite = simport_get_new_viste($old -> og_groups[0]);
@@ -289,7 +296,7 @@ function simport_set_terms($old, &$new){
             $tid = db_last_insert_id('term_data', 'tid');
           }
           //now add the terms to the $new node object
-          $new -> taxonomy .= array( $new_vocab -> vid =>array($tid));
+          $new -> taxonomy[$new_vocab -> vid] = array($tid);
         }
       }
     }
@@ -311,13 +318,17 @@ function simport_set_generic($old, &$new){
 
   //set the generic node data
   $new -> title = $old -> title;
+  $new -> type = _simport_map_content_types($old -> type);
   $new -> status = $old -> status;
   $new -> created = $old -> created;
   $new -> changed = $old -> changed;
+  $new->promote = $old ->promote;
+  $new->sticky = $old ->sticky;
+  $new->format = isset($old ->format)? $old ->format : 0; // Filtered HTML . check d5
+  $new->language = 'en';
   $new -> uid = $vsite -> group -> uid;
   $new -> name = $vsite -> group -> name;
-  $new -> og_groups [0] = $vsite -> group -> nid; //double check on this
-  
+  $new -> og_groups[] = $vsite -> group -> nid; //double check on this
 }
 
 function simport_set_announcement($old, &$new){  
@@ -363,9 +374,6 @@ function simport_set_link($old, &$new){
       //define full path to file
       $source = variable_get('simport_remote_path', '') . '/' . $file['filepath'];
       simport_node_add_imagefield_image($source, 'field_link_image', &$node, $i);
-      
-      //call api function to import the file into the node object!
-      //simport_import_filefield_file($new, $path, $file, $i);
       $i++;  
       }
    } 
@@ -386,7 +394,7 @@ function simport_get_site_vocabularies($sid, $type){
  * Correlate old content types to new content types
  * NOT INCLUDING biblio or scholar_admin (biblio nodes to be handled seperately)
  */
-function _simport_map_content_types(){
+function _simport_map_content_types($old_type = NULL){
 
   $types = array(
   'scholar_link' => 'link',
@@ -398,6 +406,10 @@ function _simport_map_content_types(){
   'scholar_photo' => '', //already dealt with in simport_set_logo()
  */
   ); 
+  
+  if ($old_type){    
+    return $types[$old_type];
+  }
 
   return $types;
 }
