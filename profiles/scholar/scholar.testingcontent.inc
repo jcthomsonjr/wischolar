@@ -44,6 +44,9 @@ function _scholar_testingcontent(){
 		);
 		$node = install_create_node ( $title = "site0$i", $body = NULL, $properties = $properties );
     
+        //make admin group member (admin) for each group
+        og_save_subscription($node -> nid, 1, array('is_active' => 1));
+			
 		$uids = array();
 		
 		for ($j=1; $j < 10; $j++){
@@ -58,6 +61,7 @@ function _scholar_testingcontent(){
 			} else {
 				og_save_subscription($node -> nid, $uid, array('is_active' => 1));	
 			}
+
 		}
 	}
 }
