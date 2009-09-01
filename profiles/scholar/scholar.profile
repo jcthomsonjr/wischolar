@@ -97,7 +97,6 @@ function scholar_profile_modules() {
     'biblio',
 
     'cp',
-    'scholar_feature_settings',
     //'cp_node_forms',
     'scholarboot',
     'bkn',

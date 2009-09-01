@@ -54,7 +54,7 @@ function vsite_content_content($type = NULL, $name = NULL){
   if (count($vocabs)){
     $vid = current(array_keys($vocabs));
   }
-  $output .= vsite_content_content_view($vid);
+  $output .= vsite_content_content_view($type, $vid);
   return $output;
 }
 
@@ -63,7 +63,7 @@ function vsite_content_content($type = NULL, $name = NULL){
  * if $vid is specified adds the corresponding term 
  * as a filter in the view
  */
-function vsite_content_content_view($vid = NULL){
+function vsite_content_content_view($type, $vid = NULL){
   
   //initialize the scholar base view
   $view = views_get_view('vsite_content');
@@ -96,7 +96,7 @@ function vsite_content_content_view($vid = NULL){
   }
   $view->init();
   $view->set_display('default');
-  
+  $view -> set_arguments(array($type));
   $view->execute();
   return $view->render();
 

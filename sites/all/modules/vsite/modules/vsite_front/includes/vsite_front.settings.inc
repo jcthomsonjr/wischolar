@@ -16,7 +16,7 @@ class vsite_front_settings_front implements space_setting {
 
   function form($space, $value = array()) {
   $space = vsite_get_vsite();
-
+dpm($value);
   vsite_include('nodeautocomplete');
   vsite_include('vsiteapi');
   ctools_include ('dependent');
