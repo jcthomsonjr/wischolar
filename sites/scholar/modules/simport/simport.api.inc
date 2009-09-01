@@ -13,7 +13,7 @@
  * @param $field_name the name of the cck field 
  * @param $node the node object to upload the image to (passed by reference)
  */
-function simport_node_add_imagefield_image($source, $field_name, &$node, $i=0){
+function simport_node_add_imagefield_image($source, $field_name, &$node){
 
   // get the cck filefield
   $field = content_fields($field_name, $node -> type);
@@ -28,7 +28,7 @@ function simport_node_add_imagefield_image($source, $field_name, &$node, $i=0){
   $file = field_file_save_file($source, $validators, $files_path);
 
   // attach it to the filefield field
-  $node->$field_name = array($i => $file); 
+  $node->$field_name[] = $file; 
   
   // save the node (optional)
   node_save($node);
