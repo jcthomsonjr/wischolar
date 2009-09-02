@@ -5,13 +5,61 @@ define('FEATURE_PRIVATE', 1);
 define('FEATURE_DISABLED', 0);
 
 /**
+ * Return the content type of a vsite based on the privacy
+ * @param $privacy and array (or single value) (0 -> disabled, 1 -> private, 2 -> public)
+ * @param $vsite optional / the active vsite if nothing provided
+ * @return unknown_type
+ */
+function vsite_content_types($privacy = array(2), $vsite = NULL){
+  if (! is_array($privacy)) {
+    $privacy = array(
+        $privacy 
+    );
+  }
+  
+  if (! $vsite) {
+    $vsite = vsite_get_vsite();
+  }
+  
+  $result = array();
+  if ($vsite) {
+    $all_types = node_get_types('names');
+    
+    $features_types = spaces_features_map('node');
+    
+    foreach ( $features_types as $type => $feature ) {
+      if (in_array(( int ) $vsite->features[$feature], $privacy)) {
+        $result[$type] = $all_types[$type];
+      }
+    }
+  }
+  return $result;
+}
+
+
+function vsite_create_links(){
+  $types = vsite_content_types(array(2, 1));
+  foreach ( $types as $type => $name ) {
+  	$type_url_str = str_replace('_', '-', $type);
+    $links[] = array(
+        'title' => t('!type', array(
+            '!type' => $type 
+        )), 
+        'href' => "node/add/$type_url_str" 
+    );
+  }
+  return isset($links) ? $links : array();
+}
+
+/**
  * return "add content type" links
  * TODO: What would be the right condition for excluding 
  * some content types here. For example, if a content type
  * is part of a feature that user has not selected, that 
  * content type should not be part of the list
  */
-function vsite_create_links() {
+/*
+function vsite_create_links1() {
   global $user;
   $site = vsite_get_vsite();
   
@@ -29,7 +77,9 @@ function vsite_create_links() {
   }
   return isset($links) ? $links : array();
 }
+*/
 
+/* TODO - old delete this one
 function vsite_content_types(){
   $result = array();
   $post_types = og_get_types('group_post');
@@ -41,36 +91,10 @@ function vsite_content_types(){
   return $result;
 }
 
-function vsite_content_types3($privacy = array("1"), $vsite = NULL){
-  if (! is_array($privacy)) {
-    $privacy = array(
-      $privacy 
-    );
-  }
+*/
 
-  if (! $vsite) {
-    $vsite = vsite_get_vsite();
-  }
-  
-  $result = array();
-  
-  $all_types = node_get_types('names');
-  
-  $features_types = spaces_features_map('node');
 
-  foreach ( $features_types as $type => $feature ) {
-    if (in_array($vsite->features[$feature], $privacy)) {
-      $result[$type] = $all_types[$type];
-    }
-  }
-  //dpm($result);
-  return $result;
-}
 
-function _vsite_feature_is_public_callback($value){
-  //dpm($value);
-  return $value == 2 ? TRUE : FALSE;
-}
 
 /**
  * Theme that returns the html for a scholar logo
