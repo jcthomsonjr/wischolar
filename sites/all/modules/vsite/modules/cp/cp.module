@@ -422,3 +422,15 @@ function cp_flag_default_flags(){
   
   return $flags;
 }
+
+/**
+ * Implement Menu Link Alter
+ * Asures that reguardless of install order the menu tree's are created
+ */
+function cp_menu_link_alter(&$item, $menu) {
+  //Do this for any cp menu
+  if (strpos($item['link_path'], 'cp/') === 0) {
+    //Lookup the correct parent
+  	unset($item['plid']);
+  }
+}
