@@ -26,14 +26,14 @@ function vsite_content_menu(){
   $content_types = spaces_features_map('node');
   $all_types = node_get_types('names');
   
-  //$content_types = vsite_content_types(array(2,1));  // only public / private
   foreach($content_types as $type => $name){
     $items['cp/content/'.$type] = array(
       'title' => $all_types[$type],
       'access callback' => 'vsite_content_content_access',
       'access arguments' => array($type, $name),
       'page callback' => 'vsite_content_content',
-      'page arguments' => array($type, $all_types[$type]),	 
+      'page arguments' => array($type, $all_types[$type]),
+      'menu_name' => 'cp',	 
     );    
   }
 
