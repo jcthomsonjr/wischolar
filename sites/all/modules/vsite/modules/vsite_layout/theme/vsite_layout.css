@@ -82,6 +82,10 @@ li.scholarlayout-item {
   background: url(images/scholarlayout-item-placed.png) repeat-x 0 0 #fff;
   }
 
+#scholarlayout-container li.scholarlayout-item:hover {
+  background: #d1ea02;
+  }
+
 .scholarlayout-item-settings {
   color:#f60000;
   padding-right: 14px;
@@ -109,4 +113,23 @@ li.scholarlayout-item {
   border: 1px solid #8a8888;
   color: #444545;
   z-index: 10;
+  }
+
+.close-this {
+  float:right;
+  position: relative;
+  top:-2px;
+  }
+
+#scholarlayout-top-widgets .close-this {
+  display:none;
+  }
+
+.poof {
+	background: transparent url(images/poof.png) no-repeat 0 0;
+	cursor: pointer;
+	display: none;
+	height: 32px;
+	position: absolute;
+	width: 32px;
   }
