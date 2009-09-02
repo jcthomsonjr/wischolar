@@ -91,6 +91,7 @@ function scholar_profile_modules() {
     'vsite_vocab',
     'vsite_help',
     'vsite_activity',
+    'vsite_support',
     'vsite_widgets',
     
   // scholar specific
@@ -118,6 +119,7 @@ function scholar_profile_modules() {
     'scholar_publications',
     'scholar_feeds',
     'scholar_software',
+
     
   );
 
