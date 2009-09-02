@@ -42,7 +42,7 @@
 
       <div id="footer">
         <h3>The Scholars' Web Sites Project <span>IQSS, Harvard University</span></h3>
-        <ul> 
+        <ul>
           <li>&copy; 2008-<?php echo date(Y);?> President &amp; Fellows Harvard University</li>
           <li><a href="/docs">Documentation</a></li>
           <li><a href="/contact">Feedback</a></li>
@@ -56,12 +56,11 @@
         	<?php print $footer; ?>
         <?php }; ?>
       </div> <!-- /#footer -->
-	</div> <!-- /container --> 
+	</div> <!-- /container -->
   <?php if ($closure_region){ ?>
     <div id="closure-blocks"><?php print $closure_region; ?></div>
   <?php }; ?>
 
   <?php print $closure; ?>
-    </div> <!-- /container -->  
 </body>
 </html>
