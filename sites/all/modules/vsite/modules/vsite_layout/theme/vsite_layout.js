@@ -74,7 +74,7 @@ function scholarlayout_afterdrag(event, ui) {
 	   	$('#edit-'+region.id).val(ids);
 	  });
 
-	  if(!$("#scholarforms_save_warning").length && event) $("#vsite-layout-layoutsettings").before($('<div id="scholarforms_save_warning" class="messages error">(Your changes have not yet been saved. Click "Save Settings" for your changes to take effect)</div>'));
+	  if(!$("#scholarforms_save_warning").length && event) $("#vsite-layout-layoutsettings").before($('<div id="scholarforms_save_warning" class="warning"><span class="warning tabledrag-changed">*</span> Your changes have not yet been saved. Click "Save Settings" for your changes to take effect</div>'));
 };
 
 function scholarlayout_catchchanges() {
