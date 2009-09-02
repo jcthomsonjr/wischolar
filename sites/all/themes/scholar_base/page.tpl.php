@@ -14,6 +14,7 @@
   <div id="wrapper">
     <div id="container">    
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) { ?>
+
       <div id="header">
         <?php if (!empty($header_top)){ ?>
         <div id="header-top">
@@ -50,8 +51,9 @@
       <div id="content-wrapper">
       
         <div id="content-main" class="column">
-          <?php if (!empty($content_top)){ ?>
+          <?php if (!empty($content_top) || $context_links){ ?>
             <div id="content-top">
+              <?php print $context_links;?>
               <?php print $content_top; ?>
             </div><!-- /content-top -->
           <?php }; ?>
