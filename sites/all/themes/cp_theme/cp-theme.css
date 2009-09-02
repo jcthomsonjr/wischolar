@@ -18,7 +18,7 @@ body#tinymce {
 	width: 100%;
 	}
 
-#main-content, #top, #footer, #cp-sidemenu, #cp-content {
+#main-content, #top, #footer, #cp-sidemenu, #cp-content, #sidebar-right {
 	padding: 0;
 	margin: 0;
 	left: 0;
@@ -49,7 +49,7 @@ body#tinymce {
 	width: auto;
 	}
 
-#cp-sidemenu, #cp-content {
+#cp-sidemenu, #cp-content, #sidebar-right {
 	top: 0;
 	bottom: 0;
 	}
@@ -64,6 +64,20 @@ body#tinymce {
 #cp-content {
   left: 201px;
   width: auto;
+  }
+
+body.sidebar-right #cp-content {
+  right: 201px;
+  }
+
+#sidebar-right {
+  width: 160px;
+  padding: 35px 10px 0 30px;
+  background: #f2f3f3;
+  border-left: 1px solid #b8c0c0;
+  margin: 0;
+  right:0;
+  left:auto;
   }
 
 .frame {

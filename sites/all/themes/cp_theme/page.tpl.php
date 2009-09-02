@@ -38,9 +38,17 @@
 			    </div>
         </div>
 			</div> <!-- /cp-content -->
+			<?php if ($right) : ?>
+      <div id="sidebar-right">
+        <div class="frame">
+          <div class="innerframe">
+          <?php print $right;?>
+          </div>
+        </div>
+			</div><!-- /sidebar-right -->
+      <?php endif; ?>
 		</div> <!-- / main-content -->
-
-      <div id="footer">
+     <div id="footer">
         <h3>The Scholars' Web Sites Project <span>IQSS, Harvard University</span></h3>
         <ul>
           <li>&copy; 2008-<?php echo date(Y);?> President &amp; Fellows Harvard University</li>
