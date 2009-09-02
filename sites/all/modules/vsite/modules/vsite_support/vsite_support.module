@@ -1,4 +1,7 @@
 <?php
+
+include_once('vsite_support.features.inc');
+
 /**
  * hook menu
  */
@@ -37,7 +40,8 @@ function vsite_support_questions(){
 }
 
 function vsite_support_feature_requests(){
-  return '(tbd)';
+  return '1';
+  return views_page($view_name = 'vsite_support_feature_request', $display = 'default');
 }
 
 /**
@@ -57,6 +61,36 @@ function vsite_support_flag_default_flags(){
     'global' => TRUE, 
     'flag_short' => 'like', 
     'flag_long' => 'This is a good question', 
+    'flag_confirmation' => 'Your vote is registered', 
+    'unflag_short' => 'Undo', 
+    'unflag_long' => 'Your vote is canceled', 
+
+    'status' => TRUE, 
+    'show_on_page' => TRUE, 
+    'show_on_teaser' => TRUE, 
+    'show_on_form' => FALSE, 
+    'link_type' => 'toggle',  //normal, toggle, confirm
+    'locked' => array(
+      'types',
+      'name', 
+      'show_on_page', 
+      'show_on_teaser', 
+      'show_on_form', 
+      'global' 
+    ) 
+  );
+  
+    $flags[] = array(
+    'content_type' => 'node', 
+    'name' => 'vsite_support_feature_like', 
+    'title' => 'Feature request flag', 
+    'types' => array('feature_request'), 
+    'roles' => array(
+      0 => '2' 
+    ), 
+    'global' => TRUE, 
+    'flag_short' => 'like', 
+    'flag_long' => 'I like this feature', 
     'flag_confirmation' => 'Your vote is registered', 
     'unflag_short' => 'Undo', 
     'unflag_long' => 'Your vote is canceled', 
