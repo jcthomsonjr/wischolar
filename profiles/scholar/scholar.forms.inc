@@ -82,8 +82,9 @@ function scholar_generate_content_form($form_state, $url) {
                 (
                     'blog' => 'blog',
                     'announcement' => 'announcement',
-                    'link' => 'link'
-
+                    'link' => 'link',
+                	'feature_request' => 'feature_request',
+                    'support_question' => 'support_question',
                 );
   
   $form['max_comments']['#default_value'] = 10;
