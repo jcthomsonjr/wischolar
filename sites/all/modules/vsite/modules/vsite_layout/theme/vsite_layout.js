@@ -100,5 +100,5 @@ function animatePoof() {
       bgTop -= frameSize; // update bgPosition to reflect the new background-position of our poof <div>
     }
     // wait until the animation completes and then hide the poof <div>
-    setTimeout("$('.poof').destroy()", frames * frameRate);
+    setTimeout("$('.poof').remove()", frames * frameRate);
 }
