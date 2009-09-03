@@ -20,7 +20,7 @@ function _vsite_support_views_default_views() {
   $handler->override_option('relationships', array(
     'flag_content_rel' => array(
       'label' => '',
-      'required' => 1,
+      'required' => 0,
       'flag' => 'vsite_support_question_like',
       'user_scope' => 'any',
       'id' => 'flag_content_rel',
@@ -30,8 +30,8 @@ function _vsite_support_views_default_views() {
     ),
     'flag_count_rel' => array(
       'label' => 'counter',
-      'required' => 1,
-      'flag' => 'bookmarks',
+      'required' => 0,
+      'flag' => 'vsite_support_feature_like',
       'id' => 'flag_count_rel',
       'table' => 'node',
       'field' => 'flag_count_rel',
@@ -272,7 +272,7 @@ function _vsite_support_views_default_views() {
     'links' => 1,
     'comments' => 0,
   ));
-  $handler = $view->new_display('block', 'Best questions', 'block_1');
+  $handler = $view->new_display('block', 'Feature Request: Most voted', 'block_1');
   $handler->override_option('items_per_page', 5);
   $handler->override_option('row_plugin', 'fields');
   $handler->override_option('row_options', array(

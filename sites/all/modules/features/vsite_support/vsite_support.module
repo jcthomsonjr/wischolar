@@ -36,12 +36,11 @@ function vsite_support_menu(){
 }
 
 function vsite_support_questions(){
-  return views_page($view_name = 'vsite_support_questions', $display = 'default');
+  return views_page($view_name = 'vsite_support_faq', $display = 'default');
 }
 
 function vsite_support_feature_requests(){
-  return '1';
-  return views_page($view_name = 'vsite_support_feature_request', $display = 'default');
+  return views_page($view_name = 'vsite_support_feature_reqs', $display = 'default');
 }
 
 /**
