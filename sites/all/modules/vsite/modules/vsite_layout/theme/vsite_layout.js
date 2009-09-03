@@ -6,7 +6,7 @@ Drupal.behaviors.scholarlayout = function() {
 
     if(!scholarlayout_change_bound){
     	scholarlayout_change_bound = true;
-    	
+
     	$('#cp-settings-form').submit(function() {
     		scholarlayout_afterdrag(null,null);
     		return true;
@@ -33,21 +33,21 @@ Drupal.behaviors.scholarlayout = function() {
 	    	// set the x and y offset of the poof animation <div> from cursor position (in pixels)
 	        var xOffset = 24;
 	        var yOffset = 24;
-	
+
 	        $('.poof').css({
 	          left: e.pageX - xOffset + 'px',
 	          top: e.pageY - yOffset + 'px'
 	        }).show(); // display the poof <div>
 	        animatePoof(); // run the sprite animation
-	        
+
 	        parent.appendTo("#scholarlayout-top-widgets");
 	    	scholarlayout_afterdrag(e,null);
-	    	
+
 	        parent.fadeIn('fast');
 	        //$(" .close-this")
 	    });
 
-	    
+
     }
 };
 
@@ -84,6 +84,8 @@ function scholarlayout_add_sortable(layoutRegions){
 	});
 
 }
+
+//The jQuery Poof Effect was developed by Kreg Wallace at The Kombine Group, Inc. http://www.kombine.net/
 
 function animatePoof() {
     var bgTop = 0; // initial background-position for the poof sprit is '0 0'

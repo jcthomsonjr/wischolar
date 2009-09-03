@@ -6,13 +6,13 @@
 function vsite_layout_theme(){
   return array(
     'vsite_layout_layout' => array(
-    	'template' => 'vsite_layout-layout', 
+    	'template' => 'vsite_layout-layout',
   		//'arguments' => array('vsite_layout_widgets' => NULL),
     	'path' => drupal_get_path('module', 'vsite_layout'). '/theme'
     ),
-  
+
     'vsite_layout_layout_widgets' => array(
-    	'template' => 'vsite_layout-layout-widgets', 
+    	'template' => 'vsite_layout-layout-widgets',
   		'arguments' => array('wgts' => NULL, 'wgts_id' => NULL, 'wgts_class' => NULL),
     	'path' => drupal_get_path('module', 'vsite_layout'). '/theme'
     ),
@@ -25,8 +25,8 @@ function vsite_layout_theme(){
 function vsite_layout_spaces_settings(){
   return array(
     'layout' => array(
-      'class' => 'vsite_layout_settings_layout', 
-      'file' => drupal_get_path('module', 'vsite_layout') . '/includes/vsite_layout.settings.inc' 
+      'class' => 'vsite_layout_settings_layout',
+      'file' => drupal_get_path('module', 'vsite_layout') . '/includes/vsite_layout.settings.inc'
     ),
   );
 }
@@ -36,7 +36,7 @@ function vsite_layout_spaces_settings(){
  */
 function vsite_layout_menu(){
   $items = array();
-  
+
   $items["cp/settings/layout/region_widgets_js"] = array(
     'page callback' => 'vsite_layout_region_widgets_callback',
     'access arguments' => array('access content'),
@@ -47,7 +47,7 @@ function vsite_layout_menu(){
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-  
+
   return $items;
 }
 
@@ -56,7 +56,7 @@ function vsite_layout_menu(){
  */
 function vsite_layout_menu_alter(&$items) {
   $items["cp/settings/layout"]['page callback'] = 'vsite_layout_layout';
-} 
+}
 
 /**
  * main entry point for "cp/settings/layout"
@@ -67,17 +67,17 @@ function vsite_layout_layout(){
   drupal_add_js(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.js');
   drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.css');
   $space = vsite_get_vsite();
-  
+
   //top
   $vsite_layout_widgets = vsite_layout_region_widgets();
   $wgts = array_key_exists('unused',$vsite_layout_widgets)?$vsite_layout_widgets['unused']:array();
-  
+
   $top = theme('vsite_layout_layout_widgets', $wgts, 'scholarlayout-top-widgets', 'scholarlayout-widgets-list');
-  
+
   //form
   $args = func_get_args();
   $form = call_user_func_array('drupal_get_form',$args);
-  
+
   // layout
   $layout = theme('vsite_layout_layout');
   return $top . $form . $layout;
@@ -86,44 +86,44 @@ function vsite_layout_layout(){
 /**
  * preprocessor function for vsite_layout-layout.tpl.php
  * Introduces a variable for each region in the admin_base theme
- * e.g. $vsite_layout_header_left will contain a themed list of 
+ * e.g. $vsite_layout_header_left will contain a themed list of
  * block names in the header_left
  */
 function vsite_layout_preprocess_vsite_layout_layout(&$vars){
 
   $vsite_layout_widgets = array();
-  
+
   $regions = array_keys(system_region_list('scholar_base'));
 
   foreach($regions as $region){
     $vsite_layout_widgets[$region] = array();
   }
-  
+
   $vsite_layout_widgets = vsite_layout_region_widgets();
-  
+
   foreach($regions as $region){
     $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
     $wgts = array_key_exists($region,$vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
     _check_for_overrides($wgts,$region);
     $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
   }
-  
+
   //$vars['vsite_layout_form'] = drupal_get_form('vsite_layout_layoutsettings');
 }
 
 function vsite_layout_get_pagetypes($space){
-	
+
 	static $a_page_types;
-	
+
 	if($a_page_types) return $a_page_types;
-	
+
   $features = spaces_features($space->type, TRUE);
   $a_page_types = array('all' => t('All Pages'), 'front' => t('Front Page'));
   foreach (array_keys($space->features) as $s_feature_key){
     if(!array_key_exists($s_feature_key,$features)) continue;
     $a_page_types[$s_feature_key] = $features[$s_feature_key]->info['name'];
   }
-	
+
   return $a_page_types;
 }
 
@@ -135,16 +135,16 @@ function vsite_layout_get_pagetypes($space){
 function vsite_layout_top_widgets_callback(){
   $scholar = vsite_get_vsite();
   $s_page_type = $_POST['settings']['layout']['page_type'];
-  
+
   $a_region_wgts = vsite_layout_region_widgets($scholar,$s_page_type);
   //top
   $wgts = array_key_exists('unused',$a_region_wgts)?$a_region_wgts['unused']:array();
-  
+
   $wgts_id = 'scholarlayout-top-widgets';
   $wgts_class = 'scholarlayout-widgets-list';
-  
+
   $top = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, $wgts_class);
-  
+
   drupal_json(array('status' => TRUE, 'data' => $top));
 }
 
@@ -156,10 +156,10 @@ function vsite_layout_top_widgets_callback(){
 function vsite_layout_region_widgets_callback(){
   $scholar = vsite_get_vsite();
   $s_page_type = $_POST['settings']['layout']['page_type'];
-  
+
   $a_region_wgts = vsite_layout_region_widgets($scholar,$s_page_type);
   $a_themed_regions = array();
-  
+
   $regions = array_keys(system_region_list('scholar_base'));
   foreach($regions as $region){
   	$widgets = array_key_exists($region,$a_region_wgts)?$a_region_wgts[$region]:array();
@@ -167,29 +167,29 @@ function vsite_layout_region_widgets_callback(){
     if($s_page_type == 'all') _check_for_overrides($widgets,$region,$scholar);
     $a_themed_regions[$region] = theme('vsite_layout_layout_widgets',$widgets, $wgts_id, 'scholarlayout-widgets-list');
   }
-  
-  $output= '<div id="scholarlayout-container" class="pad">'.
+
+  $output= '<div id="scholarlayout-container">'.
            $a_themed_regions['header_main'].
 				   $a_themed_regions['header_left'].
 				   $a_themed_regions['header_right'].
 				   $a_themed_regions['navbar'].
 				   $a_themed_regions['left'].
 				   $a_themed_regions['right']."</div>";
-				  
+
 	drupal_json(array('status' => TRUE, 'data' => $output));
 }
 
 /**
  * Get the blocks that are avalible given a context
- * 
+ *
  * @param $page_type
  * @return array
  */
 function vsite_layout_filtered_widgets($page_type='all'){
-  
+
 	$contexts = context_contexts();
   $a_widgets = $contexts['cp-section-layout']->block;
-  
+
   $features = spaces_features($space->type, TRUE);
   if(array_key_exists($page_type,$features)){
   	foreach ($features[$page_type]->info['features']['context'] as $s_sub_context){
@@ -197,33 +197,33 @@ function vsite_layout_filtered_widgets($page_type='all'){
   		$a_widgets = array_merge($a_widgets,$contexts[$s_sub_context]->block);
   	}
   }
-  
+
   return $a_widgets;
 }
 
 /**
  * Returns an associative array by region with the widgets sorted correctly
- * 
+ *
  * @param scholar $scolar
  * @param string $page_type
  * @return array
  */
 function vsite_layout_region_widgets($scolar = false,$page_type='all'){
   if(!$scholar) $scholar = vsite_get_vsite();
-  
+
   static $a_cached_region_widgets = array();
   if(array_key_exists($page_type,$a_cached_region_widgets)) return $a_cached_region_widgets[$page_type];
-  
+
   $a_widgets = vsite_layout_filtered_widgets($page_type);
-  
+
   if(!$scholar) return $a_widgets;
-  
+
   $a_site_settings = false;
   if(array_key_exists('layout',$scholar->settings) && array_key_exists($page_type,$scholar->settings['layout'])){
   	$a_site_settings = $scholar->settings['layout'][$page_type];
   	$a_order = array_keys($a_site_settings);
   }
-  
+
   $a_region_widgets = array();
   foreach($a_widgets as $s_widget_key => $widget){
   	if(!$a_site_settings && $widget['region']){
@@ -234,9 +234,9 @@ function vsite_layout_region_widgets($scolar = false,$page_type='all'){
   		$a_region_widgets['unused'][] = $widget;
   	}
   }
-  
+
   foreach ($a_region_widgets as $region => $a_widgets) ksort($a_region_widgets[$region]);
-  
+
   $a_cached_region_widgets[$page_type] = $a_region_widgets;
   return $a_region_widgets;
 }
@@ -252,22 +252,22 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
 	$a_region_widgets = false;
 	$o_feature = false;
 	$space = vsite_get_vsite();
-	
+
 	$features = spaces_features();
   foreach ($features as $feature) {
   	$feature_contexts = drupal_map_assoc(spaces_features_items('context', $feature->name));
   	if(!array_intersect($feature_contexts,array_keys($contexts))) continue;
-  	
+
   	$o_feature = $feature;
   	$a_region_widgets = vsite_layout_region_widgets($space,$feature->name);
   	break;
   }
-  
-  //@todo add call to scholar_get_front_page 
+
+  //@todo add call to scholar_get_front_page
   if(!$a_region_widgets && vsite_is_front()) $a_region_widgets = vsite_layout_region_widgets($space,'front');
-  
+
   if(!$a_region_widgets) $a_region_widgets = vsite_layout_region_widgets($space);
-	
+
   $a_replacement_block = array();
   $a_feat_replacement_block = array();
   foreach ($a_region_widgets as $s_region => $a_region){
@@ -282,7 +282,7 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
   		}
   	}
   }
-  
+
   $contexts['cp-section-layout']->block = $a_replacement_block;
   if($o_feature){
   	foreach (drupal_map_assoc(spaces_features_items('context', $feature->name)) as $s_context) {
@@ -292,32 +292,32 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
   		}
   	}
   }
-  
-	return true;	
+
+	return true;
 }
 
 /**
  * Create a default settings array from defaults
- * 
+ *
  * @param string $s_page_type
  * @return array
  */
 function _vsite_layout_generate_default_settings_ary($s_page_type = 'all'){
   $a_default = array();
-  
+
   $a_widgets = vsite_layout_filtered_widgets($s_page_type);
   foreach ($a_widgets as $s_setting_id => $widget) $a_default[$s_setting_id] = $widget['region'];
-  
+
   return $a_default;
 }
 
 function _check_for_overrides(&$widgets,$s_region,$space = null){
 	if(!$space) $space = vsite_get_vsite();
-	
+
 	foreach(vsite_layout_get_pagetypes($space) as $s_page_nm => $s_page_readable){
     if($s_page_nm == 'all' || !count($widgets)) continue;
     $a_page_settings = (is_array($space->settings['layout'][$s_page_nm]))?$space->settings['layout'][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
-    
+
     foreach ($widgets as $key => $wgt){
     	$s_wgt_name = $wgt['module']."_".$wgt['delta'];
     	if(!array_key_exists($s_wgt_name,$a_page_settings) || $a_page_settings[$s_wgt_name] != $s_region){
