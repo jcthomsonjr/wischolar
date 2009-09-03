@@ -1,4 +1,3 @@
-<?= $vsite_layout_form; ?>
 <div id="scholarlayout-container" class="pad">
   <?php print $vsite_layout_header_main; ?>
   <?php print $vsite_layout_header_left; ?>

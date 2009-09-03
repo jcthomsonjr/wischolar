@@ -80,6 +80,8 @@ function vsite_activity_action($object, $context){
 	if(!vsite_get_vsite()) return false;
 	
 	$vsite = vsite_get_vsite();
+
+	if(!in_array($object->type,key(vsite_content_types(2)))) return false; //Is this type public?
 	
 	//Setup the advanced Patterns
 	$context['node-pattern'] = 'You [action] a new [type-name] ([title])';

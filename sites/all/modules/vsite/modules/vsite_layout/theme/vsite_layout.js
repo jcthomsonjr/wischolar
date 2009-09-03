@@ -6,17 +6,23 @@ Drupal.behaviors.scholarlayout = function() {
 
     if(!scholarlayout_change_bound){
     	scholarlayout_change_bound = true;
+    	
+    	$('#cp-settings-form').submit(function() {
+    		scholarlayout_afterdrag(null,null);
+    		return true;
+    	});
 
-	    $("#edit-page-type").bind('change', function(e){
+
+	    $("#edit-settings-layout-page-type").bind('change', function(e){
 	    	if(scholarlayout_catchchanges()){
-	    		$('#edit-secret-hidden-ahah').val($("#edit-page-type").val());
-		    	$('#edit-secret-hidden-ahah').trigger('go_ahah');
-		    	$("#edit-page-type").trigger('go_ahah');
+	    		$('#edit-settings-layout-secret-hidden-ahah').val($("#edit-settings-layout-page-type").val());
+		    	$('#edit-settings-layout-secret-hidden-ahah').trigger('go_ahah');
+		    	$("#edit-settings-layout-page-type").trigger('go_ahah');
 		    	$("#scholarforms_save_warning").remove();
 		    	scholarlayout_add_sortable(layoutRegions);
 	    	}else{
 	    		//revert
-	    		$('#edit-page-type').val($("#edit-secret-hidden-ahah").val());
+	    		$('#edit-settings-layout-page-type').val($("#edit-settings-layout-secret-hidden-ahah").val());
 	    	}
 	    });
 
@@ -71,10 +77,10 @@ function scholarlayout_afterdrag(event, ui) {
 	      if(ids.length) ids += "|";
 	      ids += value.id;
 	    } );
-	   	$('#edit-'+region.id).val(ids);
+	   	$('#edit-settings-layout-'+region.id).val(ids);
 	  });
 
-	  if(!$("#scholarforms_save_warning").length && event) $("#vsite-layout-layoutsettings").before($('<div id="scholarforms_save_warning" class="warning"><span class="warning tabledrag-changed">*</span> Your changes have not yet been saved. Click "Save Settings" for your changes to take effect</div>'));
+	  if(!$("#scholarforms_save_warning").length && event) $("#cp-settings-layout").before($('<div id="scholarforms_save_warning" class="warning"><span class="warning tabledrag-changed">*</span> Your changes have not yet been saved. Click "Save Settings" for your changes to take effect</div>'));
 };
 
 function scholarlayout_catchchanges() {
@@ -93,9 +99,4 @@ function scholarlayout_add_sortable(layoutRegions){
 	  });
 	});
 
-
-//    $("").sortable({
-//      connectWith: layoutRegions,
-//      stop: scholarlayout_afterdrag
-//    });
 }
