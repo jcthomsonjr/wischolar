@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function vsite_generic_settings_spaces_settings(){
+  return array(
+    'generic' => array(
+      'class' => 'vsite_generic_settings_settings', 
+      'file' => drupal_get_path('module', 'vsite_generic_settings') . '/includes/vsite_generic_settings.settings.inc' 
+    ) 
+  );
+}
+
+/**
+ * Implementation of hook_init
+ */
+function vsite_init(){
+	$vsite = vsite_get_vsite();
+	if($vsite && is_array($vsite->settings) && is_array($vsite->settings['generic']) && array_key_exists('admin_menu',$vsite->settings['generic'])){
+		if(!(bool) $vsite->settings['generic']['admin_menu']){
+		  module_invoke('admin_menu','suppress', true);
+		  drupal_add_js(array('admin_menu' => array('margin_top' => 0)), 'setting', 'footer');  //Disable auto pading
+		}//Suppress menu?
+	}//Apply menu setting?
+}

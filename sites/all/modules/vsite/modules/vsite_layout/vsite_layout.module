@@ -112,6 +112,7 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars){
 }
 
 function vsite_layout_get_pagetypes($space){
+	if(!$space) $space = vsite_get_vsite();
 
 	static $a_page_types;
 
@@ -119,6 +120,12 @@ function vsite_layout_get_pagetypes($space){
 
   $features = spaces_features($space->type, TRUE);
   $a_page_types = array('all' => t('All Pages'), 'front' => t('Front Page'));
+  if(!is_array($space->features)){
+  	$a_return = $a_page_types;
+  	unset($a_page_types);
+  	return $a_return;
+  } 
+  
   foreach (array_keys($space->features) as $s_feature_key){
     if(!array_key_exists($s_feature_key,$features)) continue;
     $a_page_types[$s_feature_key] = $features[$s_feature_key]->info['name'];
