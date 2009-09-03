@@ -16,6 +16,8 @@ class vsite_layout_settings_layout implements space_setting {
 
   function form($space, $value = array()) {
     
+  	$form = array('#title' => 'Layout');
+  	
 	  $regions = array_keys(system_region_list('scholar_base'));
 	   
 	  foreach($regions as $region){
