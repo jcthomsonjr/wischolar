@@ -4,7 +4,7 @@
   .each(function(){
     var $this = $(this);
     //var f = this.form;
-    var link = $('<a class="submit-link" href="#"><span class="button-inner"><span class="label">' + $this.val() + '</span></span></a>')
+    var link = $('<a class="submit-link ' + $this.attr("id") + '" href="#"><span class="button-inner"><span class="label">' + $this.val() + '</span></span></a>')
                .bind('click',function(){
                  //$(f).trigger('submit');
             	 $this.click();
