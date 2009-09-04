@@ -19,10 +19,16 @@ stylesheets[all][]   = cp-theme.css
 stylesheets[all][]   = spaces.css
 stylesheets[all][]   = zen.css
 scripts[] = upload.js
-stylesheets[all][] = upload.css 
+stylesheets[all][] = upload.css
+stylesheets[all][]   = forms.css
+
+
 
   ; Set the conditional stylesheets that are processed by IE.
 conditional-stylesheets[if IE][all][] = ie.css
+
+
+;scripts[] = modal.js
 
   ; The regions defined in Zen's default page.tpl.php file.  The name in
   ; brackets is the name of the variable in the page.tpl.php file, (e.g.
@@ -40,7 +46,7 @@ regions[closure_region] = closure
 
   ;;; TODO fix this. Context does not work well with different themes with
   ;;; different regions. some fake regions here for now
-  
+
 regions[header_top]    	= header top
 regions[header_left]    = header left
 regions[header_main]    = header main
