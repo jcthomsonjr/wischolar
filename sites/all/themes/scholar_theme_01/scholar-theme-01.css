@@ -5,10 +5,10 @@ html {
 body {
   background: url(images/body-bg.png) repeat-y center top #fff;
   color:#282828;
-  font:.9em/165% arial, helvetica, sans-serif; 
+  font:.9em/165% arial, helvetica, sans-serif;
   }
-   
-body.sidebar-right {
+
+body.sidebar-right, body.no-sidebars {
   background: url(images/body-bg-horiz.png) repeat-x 0 198px #fff;
   }
 
@@ -18,7 +18,7 @@ body.sidebar-right {
     width: 910px;
     margin: 38px auto 0 auto;
     }
-    
+
 a, a:visited {
     color:#306696;
     font-style: italic;
@@ -50,7 +50,7 @@ h1 a, h2 a, h3 a, #sidebar-left a {
 #content-wrapper, #header-wrapper {
     padding-left: 179px;
     }
-    
+
 #sidebar-right {
     border-left: 1px solid #D8D6D6;
     }
@@ -83,23 +83,23 @@ body.no-sidears #header, body.sidebar-right {
     font-size: 1.5em;
     line-height:1.3em;
     }
-    
+
 #header h1 a, #header h1 a:visited {
     color:#282828;
-    }    
+    }
 
 #header p {
   border-top: 1px solid #D8D6D6;
   }
-  
+
 body.navbar #header p {
   border: none;
   }
-  
+
 #header-right {
   width: 70px
   }
-  
+
 #header-wrapper {
   padding-right: 90px;
   }
@@ -151,12 +151,12 @@ body.sidebar-left #navbar, body.two-sidebars #navbar {
   border-bottom: 1px solid #D8D6D6;
   padding-top: 0;
   }
-  
+
 body.sidebar-left #navbar li, body.two-sidebars #navbar li {
   border:none;
   line-height: normal;
   }
-  
+
 body.sidebar-left #content-wrapper, body.two-sidebars #content-wrapper {
   clear: none;
   }
@@ -176,18 +176,18 @@ body.navbar #sidebar-left {
     line-height:17px;
     padding:14px 9px;
     }
-    
+
 #sidebar-left li a {
     border-bottom:1px solid #D8D6D6;
     }
-   
-    
+
+
 #sidebar-left h2, #sidebar-left h3, #sidebar-left p {
     margin-left: 9px;
     margin-right: 9px;
     }
-    
-    
+
+
 /* MAIN CONTENT AREA */
 
 body.sidebar-left #content, body.header-left-main #header-main .content {
@@ -196,10 +196,10 @@ body.sidebar-left #content, body.header-left-main #header-main .content {
 
 body.sidebar-right #content, body.header-main-right #header-main .content {
     margin-right: 20px;
-    }    
-    
+    }
+
 body.two-sidebars #content, body.header-left-main-right #header-main .content {
     margin-left: 20px;
     margin-right: 20px;
-    }    
-    
+    }
+
