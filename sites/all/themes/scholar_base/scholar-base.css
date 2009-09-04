@@ -28,7 +28,7 @@ body {
 
 /* TYPE STYLES */
 
-p, div.messages {
+h2.title, p, div.messages {
 	margin-bottom: 1.5em;
 	}
 
@@ -50,6 +50,28 @@ a, a:visited {
 	color: #2d63a6;
 	}
 
+.block ul {
+  padding: 0;
+  }
+
+ul.menu li {
+  margin: 0;
+  }
+
+li.leaf, li.collapsed {
+  padding: 0;
+  list-style: none;
+  }
+
+.views-admin-links li, .views-admin-links li a {
+  color: #27749F;
+  font-style: normal;
+  font-size:.8em;
+  }
+
+div.terms {
+  clear: left !important;
+  }
 
 /* LAYOUT */
 
@@ -83,10 +105,14 @@ a, a:visited {
 #header-left, #sidebar-left {
 	right: 240px;
 	margin-left: -100%;
+	padding-left: 0;
+	padding-right: 20px;
 	}
 
 #header-right, #sidebar-right {
 	margin-right: -100%;
+	padding-left: 20px;
+	padding-right:0;
 	}
 
 
@@ -101,6 +127,14 @@ body.sidebar-left #content-wrapper {
 
 body.no-sidebars #content-wrapper {
   padding: 0;
+  }
+
+
+/* Node */
+
+.node {
+  padding-bottom: 1.5em;
+  margin-bottom: 1.5em;
   }
 
 /* HEADERS */

@@ -12,7 +12,7 @@
 </head>
 <body class="<?php print $body_classes; ?>">
   <div id="wrapper">
-    <div id="container">    
+    <div id="container">
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) { ?>
 
       <div id="header">
@@ -27,38 +27,38 @@
               <?php print $header_main; ?>
             </div><!-- /header-main -->
           <?php }; ?>
-                    
+
           <?php if (!empty($header_left)){ ?>
             <div id="header-left" class="column">
               <?php print $header_left; ?>
             </div><!-- /header-left -->
           <?php }; ?>
-                    
+
           <?php if (!empty($header_right)){ ?>
           <div id="header-right" class="column">
              <?php print $header_right; ?>
           </div><!-- /header-right -->
             <?php }; ?>
-        </div><!-- /header wrapper -->        
+        </div><!-- /header wrapper -->
         <?php if (!empty($navbar)){ ?>
         <div id="navbar">
           <?php print $navbar; ?>
         </div><!-- /navbar -->
-        <?php }; ?>        
+        <?php }; ?>
       </div> <!-- /header -->
-      <?php }; ?>  
-      
+      <?php }; ?>
+
       <div id="content-wrapper">
-      
+
         <div id="content-main" class="column">
           <?php if (!empty($content_top) || $context_links){ ?>
             <div id="content-top">
-              <?php print $context_links;?>
               <?php print $content_top; ?>
             </div><!-- /content-top -->
           <?php }; ?>
-          
+
           <div id="content">
+          <?php print $context_links;?>
           <?php if (!empty($title)){ ?>
             <h2 class="title"><?php print $title; ?></h2>
            <?php }; ?>
@@ -69,21 +69,21 @@
             <?php print $messages; ?>
             <?php print $content; ?>
           </div> <!-- /content -->
-        
+
           <?php if (!empty($content_bottom)){ ?>
             <div id="content-bottom">
               <?php print $content_bottom; ?>
             </div><!--/content-bottom-->
           <?php }; ?>
           </div><!-- /content main -->
-            
-          
+
+
             <?php if (!empty($left)){ ?>
         <div id="sidebar-left" class="column">
           <?php print $left; ?>
         </div> <!-- /sidebar-left -->
         <?php }; ?>
-    
+
           <?php if (!empty($right)){ ?>
         <div id="sidebar-right" class="column">
           <?php print $right; ?>
@@ -91,7 +91,7 @@
         <?php }; ?>
       </div> <!-- / content wrapper -->
       <div id="content-wrapper-bottom"></div>
-      <?php if ($footer || $footer_message) { ?>    
+      <?php if ($footer || $footer_message) { ?>
       <div id="footer">
       <?php if ($footer_message){ ?>
         <div id="footer-message"><?php print $footer_message; ?></div>
