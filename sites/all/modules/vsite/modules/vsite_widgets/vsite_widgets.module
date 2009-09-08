@@ -36,12 +36,23 @@ function vsite_widgets_basicinfo(){
 	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
 	//dpm($scholar->settings);
 	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site'])){
-      $user = user_load($scholar->group->uid);
-      $block['content'] =  "<h1>{$user->profile_first_name} {$user->profile_last_name}</h1>
-              <h2>{$user->profile_title}</h2>
-              <p></p>";
+	  $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
+    $s_headline = "";
+    $s_subheadline ="";
+    
+    if(is_array($content_profile->vsite_users_last_name)){
+      $s_headline = "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}";
+    }
+    
+    if(is_array($content_profile->vsite_users_title)){
+      $s_subheadline = $content_profile->vsite_users_title[0]['value'];
+    }
+      
+    $block['content'] =  "<h1>{$s_headline}</h1>
+							            <h2>{$s_subheadline}</h2>
+							            <p></p>";
     return $block;
-	} 
+	}//Retrieve Defaults
 	
 	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
 							<h2>{$scholar->settings['site']['sub_heading']}</h2>
