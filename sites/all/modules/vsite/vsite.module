@@ -6,7 +6,7 @@
  */
 function vsite_views_api(){
   return array(
-    'api' => 2 
+    'api' => 2
   );
 }
 
@@ -25,11 +25,11 @@ function vsite_views_default_views() {
 }
 
 /**
- * Includes different inc files 
+ * Includes different inc files
  */
 function vsite_include($inc_files){
   $inc_files = is_array($inc_files) ? $inc_files : array($inc_files);
-  
+
   $path = dirname(__FILE__);
 
   foreach ($inc_files as $inc) {
@@ -71,7 +71,7 @@ function vsite_preprocess_views_view(&$vars) {
           $types = node_get_types();
           if ($type = $types[$nodetype]) {
             $output .= t('Please add your first !type to get started.', array('!type' => $type->name));
-            $output .= "<div class='buttons'>". theme('context_links', context_links()) ."</div>";
+            $output .= "<span class='buttons'>". theme('context_links', context_links()) ."</span>";
           }
         }
         else {
@@ -80,7 +80,7 @@ function vsite_preprocess_views_view(&$vars) {
         $vars['empty'] = $output;
       }
     }
-  } 
+  }
 }
 
 
