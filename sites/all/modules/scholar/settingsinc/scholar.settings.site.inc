@@ -12,14 +12,18 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     $s_def_headline = isset($value['scholar_headline'])?$value['scholar_headline']:false;
     $s_def_subheadline = isset($value['sub_heading'])?$value['sub_heading']:false;
     
-    if(!$s_def_headline){
-    	$user = user_load(1);//$space->group->uid);
-    	if($user && ($user->vsite_users_first_name || $user->vsite_users_last_name))	$s_def_headline = "{$user->vsite_users_first_name} {$user->vsite_users_last_name}";
+    $content_profile = array();
+    if(!$s_def_headline || !$s_def_subheadline){
+    	$content_profile = content_profile_load('vsite_users_profile',$space->group->uid);
     }
     
-    if(!$s_def_subheadline){
-    	$user = user_load($space->group->uid);
-      if($user && $user->vsite_users_title)  $s_def_subheadline = $user->vsite_users_title;
+    
+    if(!$s_def_headline && is_array($content_profile->vsite_users_last_name)){
+    	$s_def_headline = "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}";
+    }
+    
+    if(!$s_def_subheadline  && is_array($content_profile->vsite_users_title)){
+      $s_def_subheadline = $content_profile->vsite_users_title[0]['value'];
     }
     
     $form['scholar_headline'] = array(
