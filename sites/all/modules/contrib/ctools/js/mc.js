@@ -82,7 +82,7 @@ jQuery.modalContent = function(content, css, animation, speed) {
 
   // Create our content div, get the dimensions, and hide it
   var modalContent = $('#modalContent').css('top','-1000px');
-  var mdcTop = wt + ( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
+  var mdcTop = 0; //wt + ( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
   var mdcLeft = ( winWidth / 2 ) - ( modalContent.outerWidth() / 2);
   $('#modalBackdrop').css(css).css('top', 0).css('height', docHeight + 'px').css('width', docWidth + 'px').show();
   modalContent.css({top: mdcTop + 'px', left: mdcLeft + 'px'}).hide()[animation](speed);
@@ -140,12 +140,14 @@ jQuery.modalContent = function(content, css, animation, speed) {
  */
 jQuery.fn.modalContent = function(css, animation, speed)
 {
+  animation = 'slideDown';
+	
   // If our animation isn't set, make it just show/pop
   if (!animation) { var animation = 'show'; } else {
     // If our animation isn't "fadeIn" or "slideDown" then it always is show
     if ( ( animation != 'fadeIn' ) && ( animation != 'slideDown') ) animation = 'show';
   }
-
+  
   if ( !speed ) var speed = 'fast';
 
   // Build our base attributes and allow them to be overriden
