@@ -34,6 +34,7 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
       '#description' => 'Ususally: First and Last name ex.(John Q. Smith)',
       '#maxlength' => 128,
       '#required' => TRUE,
+      '#attributes' => array('onChange' => '$("#site_example .headline").val(this.value);alert(this.value);'),
     );
     $form['scholar_link_to_home'] = array(
       '#type' => 'checkbox',
@@ -48,6 +49,7 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
       '#description' => 'Ususally: Title  ex.(Director of Mathmatics)',
       '#maxlength' => 128,
       '#required' => TRUE,
+      '#attributes' => array('onChange' => '$("#site_example .sub_heading").val(this.value);'),
     );
     $form['scholar_sub_heading_extra'] = array(
       '#type' => 'textfield',
@@ -57,6 +59,7 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
       '#description' => 'Ususally: Your Address ex.(Cambridge, MA 02118)',
       '#maxlength' => 128,
       '#required' => FALSE,
+      '#attributes' => array('onChange' => '$("#site_example .sub_heading_extra").val(this.value);'),
     );
     $form['scholar_link_to_contact'] = array(
       '#type' => 'checkbox',
@@ -67,7 +70,8 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     
     $form['example'] = array(
       '#type' => 'item',
-      '#prefix' => "<div style='clear:both;'></div>",
+      '#prefix' => "<div style='clear:both;'></div><div id='site_example' style='color:grey;'><div class='headline' style='display:absolute; top:0px;'></div><div class='sub_heading' style='display:absolute; top:10px;'></div><div class='sub_heading_extra' style='display:absolute; top:10px;'></div><div class='sub_heading_extra' style='display:absolute; top:20px;'></div>",
+      '#suffix' => "</div>",
       '#title' => t('Example'),
       '#value' => theme('image',drupal_get_path('module', 'scholar')  .'/theme/SiteInfoEx.png'),
     );

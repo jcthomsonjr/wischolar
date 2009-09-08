@@ -71,7 +71,7 @@ function vsite_menus_menu_node_delete($item, $node) {
  * @param boolean $b_html (return formated html?)
  * @param boolean $b_check_expanded (allow expanded menus? slightly slower)
  */
-function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_expanded = false){
+function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_expanded = false, $b_filter_private_features = false){
   $space = vsite_get_vsite();
   
   if(!$space) return ($b_html)?"":false;
@@ -93,33 +93,42 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
       if($tree['below']) $a_tree[$k]['below'] = false;
     }
     
-    return menu_tree_output($a_tree);
-  }//send default
+    $a_settings_menu = $a_tree;
+    
+  }else{
   
-  $n_found = 0;   
-  if($b_check_expanded){
-    $a_full_page_expanded = array_merge( menu_tree_page_data(variable_get('scholar_primary_menu',false)), 
-                                         menu_tree_page_data(variable_get('scholar_secondary_menu',false)));
-                                        
-    //We must unfortunatly loop through the page data once to get the
-    //correct expanded trees, the menu module does not provide an easy
-    //way of retrieving a individual menu_node's tree (expanded)
-    foreach ($a_full_page_expanded as $a_tree) {
-      if(!in_array($a_tree['link']['mlid'],$a_settings_menu)) continue;
-      $n_found++;
-      $a_settings_menu[array_search($a_tree['link']['mlid'],$a_settings_menu)] = $a_tree;
-      if($n_found >= count($a_settings_menu)) break;
-      break;
-    }
+	  $n_found = 0;   
+	  if($b_check_expanded){
+	    $a_full_page_expanded = array_merge( menu_tree_page_data(variable_get('scholar_primary_menu',false)), 
+	                                         menu_tree_page_data(variable_get('scholar_secondary_menu',false)));
+	                                        
+	    //We must unfortunatly loop through the page data once to get the
+	    //correct expanded trees, the menu module does not provide an easy
+	    //way of retrieving a individual menu_node's tree (expanded)
+	    foreach ($a_full_page_expanded as $a_tree) {
+	      if(!in_array($a_tree['link']['mlid'],$a_settings_menu)) continue;
+	      $n_found++;
+	      $a_settings_menu[array_search($a_tree['link']['mlid'],$a_settings_menu)] = $a_tree;
+	      if($n_found >= count($a_settings_menu)) break;
+	      break;
+	    }
+	  }
+	  
+	  if($n_found < count($a_settings_menu)){
+	    foreach ($a_settings_menu as $n_key => $n_mlid) {
+	      if(!is_int($n_mlid)) continue;
+	      $a_settings_menu[$n_key] = array('link' => menu_link_load($n_mlid), 'below' => false);
+	    }
+	  }
+  }//send default?
+  
+  if($b_filter_private_features){
+	  $a_disabled_features = array_intersect_key(spaces_features_map('node'),vsite_content_types(array(FEATURE_DISABLED,FEATURE_PRIVATE)));
+	  $a_disabled_links = array_keys(array_intersect(spaces_features_map('menu'),$a_disabled_features));
+	  foreach ($a_settings_menu as $key => $link) {
+	  	if(in_array($link['link']['link_path'],$a_disabled_links)) unset($a_settings_menu[$key]);
+	  }
   }
-  
-  if($n_found < count($a_settings_menu)){
-    foreach ($a_settings_menu as $n_key => $n_mlid) {
-      if(!is_int($n_mlid)) continue;
-      $a_settings_menu[$n_key] = array('link' => menu_link_load($n_mlid), 'below' => false);
-    }
-  }
-  
   
   if(!$b_html) return $a_settings_menu;
   
@@ -180,11 +189,11 @@ function vsite_menus_block($op = 'list', $delta = 0, $edit = array()) {
     switch ($delta) {
       case 0:
         $block['subject'] = t(''); // intentionally left empty for now.
-        $block['content'] =vsite_menus_get_menu_tree('primary');
+        $block['content'] =vsite_menus_get_menu_tree('primary',true,false,true);
         return $block ;
       case 1:
         $block['subject'] = t(''); // intentionally left empty for now.
-        $block['content'] = vsite_menus_get_menu_tree('secondary');
+        $block['content'] = vsite_menus_get_menu_tree('secondary',true,false,true);
         return $block;
     }
   }

@@ -34,7 +34,7 @@ function vsite_widgets_basicinfo(){
 	$block = array();
 	$block['subject'] = t('');
 	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
-	//dpm($scholar->settings);
+	
 	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site'])){
 	  $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
     $s_headline = "";
