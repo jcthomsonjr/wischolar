@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Implements hook_menu
+ */
 function vsite_users_menu(){
   $items = array();
   
@@ -46,6 +49,9 @@ function vsite_user_content_profile_edit_page($s_type){
 	return content_profile_page_edit($s_type,user_load($vsite->group->uid));
 }
 
+/**
+ * Change the form theme to ours without the extra node settings displayed 
+ */
 function vsite_users_theme() {
 
     $themes = array(
@@ -58,6 +64,11 @@ function vsite_users_theme() {
     return( $themes );
 }
 
+/**
+ * For the content profile form:
+ * - Hide the preview and delete buttons
+ * - Save as the site owner 
+ */
 function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_state){
 	if(isset($form['#redirect'])) unset($form['#redirect']);
 	
@@ -80,6 +91,9 @@ function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_sta
   }
 }
 
+/**
+ * In CP keep the form from redirecting to the node 
+ */
 function vsite_users_form_vsite_users_profile_node_submit($form, &$form_state){
 	if(isset($form_state['redirect'])) unset($form_state['redirect']); //No Redirect for you
 }
