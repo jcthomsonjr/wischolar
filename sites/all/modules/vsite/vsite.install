@@ -4,40 +4,40 @@
  */
 function vsite_install() {
   
-	$a_vsite_profile = array(
-	   'first' => array('values' => array( 'title' => 'First Name',
-						           'name' => 'profile_first_name',  
-						           'explanation' => 'Your First Name', 
-						           'category' => 'Personal Information',
-						           'type' => 'textfield',
-						           'weight' => 0,
-						           'required' => 1,
-						           'register' => 1,
-						           'visibility' => PROFILE_PUBLIC,
-						           'autocomplete' => 0)),
-	   'last' => array('values' => array(  'title' => 'Last Name',
-                       'name' => 'profile_last_name',  
-                       'explanation' => 'Your Last Name', 
-                       'category' => 'Personal Information',
-                       'type' => 'textfield',
-                       'weight' => 1,
-                       'required' => 1,
-                       'register' => 1,
-                       'visibility' => PROFILE_PUBLIC,
-                       'autocomplete' => 0)),
-	   'title' => array('values' => array( 'title' => 'Title',
-                       'name' => 'profile_title',  
-                       'explanation' => 'Your Professional Title', 
-                       'category' => 'Personal Information',
-                       'type' => 'textarea',
-                       'weight' => 2,
-                       'required' => 0,
-                       'register' => 1,
-                       'visibility' => PROFILE_PUBLIC,
-                       'autocomplete' => 0)),
-	);
-	
-	if(!function_exists('profile_field_form_submit')) require_once( drupal_get_path('module', 'profile').'/profile.admin.inc');
-	foreach ($a_vsite_profile as $a_profile_field) profile_field_form_submit(null,$a_profile_field);
+//	$a_vsite_profile = array(
+//	   'first' => array('values' => array( 'title' => 'First Name',
+//						           'name' => 'profile_first_name',  
+//						           'explanation' => 'Your First Name', 
+//						           'category' => 'Personal Information',
+//						           'type' => 'textfield',
+//						           'weight' => 0,
+//						           'required' => 1,
+//						           'register' => 1,
+//						           'visibility' => PROFILE_PUBLIC,
+//						           'autocomplete' => 0)),
+//	   'last' => array('values' => array(  'title' => 'Last Name',
+//                       'name' => 'profile_last_name',  
+//                       'explanation' => 'Your Last Name', 
+//                       'category' => 'Personal Information',
+//                       'type' => 'textfield',
+//                       'weight' => 1,
+//                       'required' => 1,
+//                       'register' => 1,
+//                       'visibility' => PROFILE_PUBLIC,
+//                       'autocomplete' => 0)),
+//	   'title' => array('values' => array( 'title' => 'Title',
+//                       'name' => 'profile_title',  
+//                       'explanation' => 'Your Professional Title', 
+//                       'category' => 'Personal Information',
+//                       'type' => 'textarea',
+//                       'weight' => 2,
+//                       'required' => 0,
+//                       'register' => 1,
+//                       'visibility' => PROFILE_PUBLIC,
+//                       'autocomplete' => 0)),
+//	);
+//	
+//	if(!function_exists('profile_field_form_submit')) require_once( drupal_get_path('module', 'profile').'/profile.admin.inc');
+//	foreach ($a_vsite_profile as $a_profile_field) profile_field_form_submit(null,$a_profile_field);
 
 }

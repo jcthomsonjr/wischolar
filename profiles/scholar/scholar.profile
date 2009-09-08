@@ -16,6 +16,7 @@ function scholar_profile_modules() {
     'advanced_help',
     'context',
     'context_contrib',
+    'content_profile',
     'context_ui',
     'feedapi',
     'feedapi_node',
@@ -93,6 +94,7 @@ function scholar_profile_modules() {
     'vsite_activity',
     'vsite_support',
     'vsite_widgets',
+    'vsite_generic_settings',
     
   // scholar specific
     'biblio',

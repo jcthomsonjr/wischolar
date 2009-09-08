@@ -11,9 +11,13 @@ function vsite_users_menu(){
   
   $items['cp/users/myaccount'] = array(
     'title' => 'My account',
-    'page callback' => 'vsite_users_myaccount',
-    'file' => 'vsite_users.pages.inc',
-    'weight' => 0, // should be the first one
+    'page callback' => 'vsite_user_content_profile_edit_page',
+    'page arguments' => array('vsite_users_profile'),
+    'access callback' => 'content_profile_page_access',
+    'access arguments' => array('vsite_users_profile', 1),
+    'weight' => 0,
+    'file' => 'node.pages.inc',
+    'file path' => drupal_get_path('module', 'node'),
   );
   
   $items['cp/users/members'] = array(
@@ -30,3 +34,68 @@ function vsite_users_menu(){
   }
   return $items;
 }
+
+/**
+ * Function that loads the content profile form for a site
+ * @return form
+ */
+function vsite_user_content_profile_edit_page($s_type){
+	$vsite = vsite_get_vsite();
+	if(!$vsite) return false;
+	
+	return content_profile_page_edit($s_type,user_load($vsite->group->uid));
+}
+
+function vsite_users_theme() {
+
+    $themes = array(
+        'vsite_users_profile_node_form' => array(
+            'arguments' => array('form' => NULL),
+            'path' => drupal_get_path('module', 'vsite_users').'/theme',
+            'file' => 'vsite_users.theme.inc',
+        ),
+    );
+    return( $themes );
+}
+
+function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_state){
+	if(isset($form['#redirect'])) unset($form['#redirect']);
+	
+	if(isset($form['buttons']['submit'])){
+		$form['buttons']['submit']['#submit'][] = 'vsite_users_form_vsite_users_profile_node_submit';
+	}
+	
+	$form['buttons']['preview']['#access'] = FALSE;
+  $form['buttons']['delete']['#access'] = FALSE;
+	
+	$vsite = vsite_get_vsite();
+  if($vsite && isset($form['uid'])){
+    $form['uid']['#value'] = $vsite->group->uid;
+  }
+  
+  // Set the author value - note that this works only for admins.
+  if ($vsite && ($user = user_load($vsite->group->uid))) {
+    $form['author']['name']['#default_value'] = $user->name;
+    $form['name'] = array('#type' => 'value', '#value' => $user->name);
+  }
+}
+
+function vsite_users_form_vsite_users_profile_node_submit($form, &$form_state){
+	if(isset($form_state['redirect'])) unset($form_state['redirect']); //No Redirect for you
+}
+
+/**
+ * Implementation of hook_user().
+ */
+function vsite_users_user($op, &$edit, &$account, $category = NULL) {
+  global $user;
+
+  switch ($op) {
+    case 'load':
+    	$node = content_profile_load('vsite_users_profile', $account->uid);
+      $account->content['content_profile'] = content_profile_show_profiles($account->uid);
+      $t = content_profile_get_types('names');
+    break;
+  }
+}
+

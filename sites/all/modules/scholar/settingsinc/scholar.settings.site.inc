@@ -13,13 +13,13 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     $s_def_subheadline = isset($value['sub_heading'])?$value['sub_heading']:false;
     
     if(!$s_def_headline){
-    	$user = user_load($space->group->uid);
-    	if($user && ($user->profile_first_name || $user->profile_last_name))	$s_def_headline = "{$user->profile_first_name} {$user->profile_last_name}";
+    	$user = user_load(1);//$space->group->uid);
+    	if($user && ($user->vsite_users_first_name || $user->vsite_users_last_name))	$s_def_headline = "{$user->vsite_users_first_name} {$user->vsite_users_last_name}";
     }
     
     if(!$s_def_subheadline){
     	$user = user_load($space->group->uid);
-      if($user && $user->profile_title)  $s_def_subheadline = $user->profile_title;
+      if($user && $user->vsite_users_title)  $s_def_subheadline = $user->vsite_users_title;
     }
     
     $form['scholar_headline'] = array(
