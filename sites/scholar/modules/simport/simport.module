@@ -95,27 +95,26 @@ function simport_import(){
        simport_set_terms($old, $new);
 
       //deal with any custom fields specific to the content type;
-      switch ($old -> type){
-        
+      switch ($old -> type){       
               
         case 'scholar_announcement':
           simport_set_announcement($old, $new);
           break;
 
-        case 'scholar_bio':
-          simport_set_bio($old, $new);
-          break;
+          case 'scholar_bio':
+                simport_set_bio($old, $new);
+                break;
 
-        case 'scholar_blog':
-           simport_set_blog($old, $new);
-          break;
+         case 'scholar_blog':
+            //no blogs to import
+              break;
           
         case 'scholar_link':
-          simport_set_link($old, $new);
+            simport_set_link($old, $new);
             break;  
           
        case 'scholar_class':
-          //simport_set_class($old, $new);
+          simport_set_class($old, $new);
           break;    
        }
   
@@ -389,7 +388,8 @@ function simport_set_generic($old, &$new){
   $new->language = 'en';
   $new -> uid = $vsite -> group -> uid;
   $new -> name = $vsite -> group -> name;
-  $new -> og_groups[] = $vsite -> group -> nid; //double check on this
+  $new -> og_groups[$vsite -> group -> nid] = $vsite -> group -> nid; //double check on this
+  $new -> og_groups_both[$vsite -> group -> nid] = $vsite -> group -> name;
 }
 
 function simport_set_announcement($old, &$new){  
