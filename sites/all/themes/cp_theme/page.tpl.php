@@ -26,11 +26,14 @@
 			<div id="cp-content">
 			  <div class="frame">
           <div class="innerframe">
+           <?php if ($context_links) print $context_links;?>
+           <?php //if ($title): print '<h2'. ($tabs ? ' class="with-tabs"' : '') .'>'. $title .'</h2>'; endif; ?>
             <?php if (!empty($tabs)){ ?>
             <div class="tabs"><?php print $tabs; ?></div>
             <?php }; ?>
             <?php print $help; ?>
             <?php print $messages; ?>
+
             <?php print $content; ?>
             <?php if (!empty($feed_icons)){ ?>
             <div class="feed-icons"><?php print $feed_icons; ?></div>
