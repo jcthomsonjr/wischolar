@@ -14,6 +14,15 @@ function _vsite_support_node_info() {
       'has_body' => '1',
       'body_label' => t('Description'),
     ),
+    'support_answer' => array(
+      'name' => t('Answer'),
+      'module' => 'node',
+      'description' => t(''),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+    ),
     'support_question' => array(
       'name' => t('Question'),
       'module' => 'node',

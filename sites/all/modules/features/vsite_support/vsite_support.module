@@ -2,6 +2,17 @@
 
 include_once('vsite_support.features.inc');
 
+function vsite_support_init(){
+  
+  $node = menu_get_object();
+  // Check if this is an existing node.
+  if (! empty($node->nid) && $node->type == 'support_question' || $node->type == 'feature_request') {
+    global $custom_theme;
+    $custom_theme = CPTHEME;
+    //menu_set_active_item("cp/support/questions");
+  }
+}
+
 /**
  * hook menu
  */
@@ -19,6 +30,7 @@ function vsite_support_menu(){
     'page callback' => 'vsite_support_questions',
     'weight' => 0,
   );
+  
   
   $items['cp/support/featurerequests'] = array(
     'title' => 'Feature requests', 
@@ -39,9 +51,38 @@ function vsite_support_questions(){
   return views_page($view_name = 'vsite_support_faq', $display = 'default');
 }
 
+function vsite_support_questions_node($node){
+  return node_page_view($node);
+  
+}
+
+/*
+function vsite_support_preprocess_node(&$vars){
+ if (! empty($vars['nid']) && $vars['type'] == 'support_question' || $vars['type'] == 'feature_request'){
+   $vars['node_url'] = url('cp/support/questions/'. $vars['nid']);
+ }
+}
+*/
+
 function vsite_support_feature_requests(){
   return views_page($view_name = 'vsite_support_feature_reqs', $display = 'default');
 }
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function vsite_support_strongarm() {
+  $conf = array();
+
+  $types = array('support_question', 'support_answer', 'feature_request' );
+  foreach($types as $type){
+    //disable comments
+    $conf['comment_'. $type] = COMMENT_NODE_DISABLED;
+  }
+  return $conf;
+}
+
+
 
 /**
  * Implementation of hook flag_default_flags
@@ -90,6 +131,36 @@ function vsite_support_flag_default_flags(){
     'global' => TRUE, 
     'flag_short' => 'like', 
     'flag_long' => 'I like this feature', 
+    'flag_confirmation' => 'Your vote is registered', 
+    'unflag_short' => 'Undo', 
+    'unflag_long' => 'Your vote is canceled', 
+
+    'status' => TRUE, 
+    'show_on_page' => FALSE, 
+    'show_on_teaser' => TRUE, 
+    'show_on_form' => FALSE, 
+    'link_type' => 'toggle',  //normal, toggle, confirm
+    'locked' => array(
+      'types',
+      'name', 
+      'show_on_page', 
+      'show_on_teaser', 
+      'show_on_form', 
+      'global' 
+    ) 
+  );
+  
+    $flags[] = array(
+    'content_type' => 'node', 
+    'name' => 'vsite_support_answer_like', 
+    'title' => 'Answer flag', 
+    'types' => array('support_answer'), 
+    'roles' => array(
+      0 => '2' 
+    ), 
+    'global' => TRUE, 
+    'flag_short' => 'like', 
+    'flag_long' => 'I like this answer', 
     'flag_confirmation' => 'Your vote is registered', 
     'unflag_short' => 'Undo', 
     'unflag_long' => 'Your vote is canceled', 
