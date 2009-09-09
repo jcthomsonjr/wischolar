@@ -46,12 +46,13 @@ function create_vsite_users_profile_type(){
         'weight' => '32',
       ),
       array (
-        'label' => 'Title',
+        'label' => 'Titles',
         'field_name' => 'vsite_users_title',
         'type' => 'text',
-        'widget_type' => 'text_textarea',
+        'widget_type' => 'text_textfield',
         'change' => 'Change title information',
         'weight' => '33',
+        'multiple' => '1',
       ),
     );
     foreach ($a_fields as $a_field){
