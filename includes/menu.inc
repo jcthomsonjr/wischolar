@@ -800,7 +800,6 @@ function menu_tree_all_data($menu_name = 'navigation', $item = NULL) {
         $data = $cache->data;
       }
     }
-    $data = null;
     // If the tree data was not in the cache, $data will be NULL.
     if (!isset($data)) {
       // Build and run the query, and build the tree.
