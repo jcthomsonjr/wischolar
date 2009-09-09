@@ -1,5 +1,7 @@
 <?php
 
+include_once('vsite_front.features.inc');
+
 function vsite_front_init(){
   $active_menu = menu_get_item();
   if ($active_menu['path'] == 'cp/settings/front'){
@@ -27,7 +29,7 @@ function vsite_front_spaces_settings(){
   return array(
     'front' => array(
       'class' => 'vsite_front_settings_front', 
-      'file' => drupal_get_path('module', 'vsite_front') . '/includes/vsite_front.settings.inc' 
+      'file' => drupal_get_path('module', 'vsite_front') . '/vsite_front.settings.inc' 
     ) 
   );
 }
