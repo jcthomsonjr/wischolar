@@ -81,6 +81,8 @@ function cp_theme_upload_attachments($files) {
 
 /**
  * Form theming for the block customizer settings form.
+ * 
+ * Overridden to remove tabledrag and the weights from this customizer
  */
 function cp_theme_spaces_block_customizer_settings_form($form) {
   // Add draggable weights
@@ -123,7 +125,7 @@ function cp_theme_spaces_block_customizer_settings_form($form) {
       }
       $output .= "<div class='region-{$a}'>";
       $output .= "<strong class='region'>{$form['contexts'][$identifier][$a]['#title']}</strong>";
-      $output .= theme('table', array(), $rows, array('id' => "spaces-customizer-blocks-{$identifier}-{$a}", 'class' => "fieldset-wrapper"));
+      $output .= theme('table', array(), $rows, array('id' => "spaces-customizer-blocks-{$identifier}-{$a}"));
       $output .= "</div>";
     }
 
@@ -131,5 +133,28 @@ function cp_theme_spaces_block_customizer_settings_form($form) {
   }
 
   $output .= drupal_render($form);
+  return $output;
+}
+
+/**
+ * Form theme function for customization items.
+ * 
+ * Overridden: So that they remain in fieldsets
+ */
+function cp_theme_spaces_customize_item($form) {
+  $output = '';
+  $rows = array();
+  foreach (element_children($form) as $element) {
+    if ($form[$element]['#type'] == 'fieldset') {
+      $title = $form[$element]['#title'];
+      unset($form[$element]['#title']);
+      //unset($form[$element]['#type']);
+      $rows[] = array(
+        "<strong>$title</strong>",
+        drupal_render($form[$element]),
+      );
+    }
+  }
+  $output .= theme('table', array(), $rows);
   return $output;
 }
