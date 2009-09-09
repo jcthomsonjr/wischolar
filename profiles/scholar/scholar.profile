@@ -39,7 +39,7 @@ function scholar_profile_modules() {
     'purl',
     'spaces',
     'spaces_og',
-    'spaces_user',
+    //'spaces_user',
     'token',
     'trigger',
     'transliteration',
