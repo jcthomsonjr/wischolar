@@ -1,7 +1,8 @@
-name = vsite news
-description = provides news / activity interface for the vsite
-dependencies[] = cp
-dependencies[] = views
-dependencies[] = activity
-package = "vsite"
-core = 6.x
+core = "6.x"
+package = "Features"
+project = "vsite_news"
+name = "vsite_news"
+description = "vsite > news : Manage vsite news/activities"
+features[views][] = "vsite_activity"
+dependencies[] = "activity"
+dependencies[] = "views"

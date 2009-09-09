@@ -1,4 +1,8 @@
 <?php
+
+include_once('vsite_news.features.inc');
+
+
 function vsite_news_init(){
 	$a_valid_realms = variable_get('activity_access_realms', array('comment'));
 	if(!in_array('vsite',$a_valid_realms)){
