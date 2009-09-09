@@ -1,6 +1,9 @@
-name = vsite content
-description = provides admin functionalities for each vsite
-dependencies[] = cp
-dependencies[] = views
+name = "vsite_content"
+description = "vsite > content : Administer vsite content"
+dependencies[] = "date_api"
+dependencies[] = "node"
+dependencies[] = "spaces"
+dependencies[] = "views_bulk_operations"
 package = "vsite"
-core = 6.x
+core = "6.x"
+features[views][] = "vsite_content"

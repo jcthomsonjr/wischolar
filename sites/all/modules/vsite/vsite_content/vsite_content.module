@@ -1,5 +1,7 @@
 <?php
 
+include_once('vsite_content.features.inc');
+
 /**
  * hook menu
  */
@@ -134,6 +136,7 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     //get the site information
     $site = vsite_get_vsite();
     $vocabs = array();
+    vsite_include('vsiteapi');
     $vocabs = ($type || $type != 'all') ? vsite_get_vocabs($vsite, $type) : $vocabs;
     if (count($vocabs)) {
       $vid = current(array_keys($vocabs));
