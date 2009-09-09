@@ -142,20 +142,20 @@ function cp_theme_spaces_block_customizer_settings_form($form) {
  * Overridden: So that they remain in fieldsets
  */
 function cp_theme_spaces_customize_item($form) {
-	return drupal_render($form);
-  $output = '';
-  $rows = array();
+	$output = '';
+  //$rows = array();
   foreach (element_children($form) as $element) {
     if ($form[$element]['#type'] == 'fieldset') {
       $title = $form[$element]['#title'];
       unset($form[$element]['#title']);
-      //unset($form[$element]['#type']);
-      $rows[] = array(
-        "<strong>$title</strong>",
-        "<div class='fieldset-wrapper'>".drupal_render($form[$element])."</div>",
-      );
+      unset($form[$element]['#type']);
+      $output .= "<div class='fieldset-wrapper'>".drupal_render($form[$element])."</div>";
+//      $rows[] = array(
+//        "<strong>$title</strong>",
+//        "<div class='fieldset-wrapper'>".drupal_render($form[$element])."</div>",
+//      );
     }
   }
-  $output .= theme('table', array(), $rows);
+  //$output .= theme('table', array(), $rows);
   return $output;
 }
