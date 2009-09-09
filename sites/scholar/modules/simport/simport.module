@@ -312,7 +312,7 @@ function simport_set_terms($old, &$new){
 
       else{
         foreach($values as $old_term){
-          $new_vocab = simport_get_site_vocabularies($sid, $new -> type);
+          $new_vocab = simport_get_site_vocabularies($vsite -> sid, $new -> type);
 
           $term['vid'] = $new_vocab -> vid;
           $term['name'] = $old_term -> name;
@@ -403,6 +403,9 @@ function simport_set_bio($old, &$new){
 }
 
 function simport_set_class($old, &$new){ 
+  
+   $new -> body = $old -> body;
+  
   //TODO: These 3 fields do NOT EXIST YET. Change them accordinly once they are created.
   //set year
   if(!empty($old ->field_scholar_year[0]['value'])){
