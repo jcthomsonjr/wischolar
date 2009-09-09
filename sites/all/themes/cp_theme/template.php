@@ -151,7 +151,7 @@ function cp_theme_spaces_customize_item($form) {
       //unset($form[$element]['#type']);
       $rows[] = array(
         "<strong>$title</strong>",
-        drupal_render($form[$element]),
+        "<div class='fieldset-wrapper'>".drupal_render($form[$element])."</div>",
       );
     }
   }
