@@ -1,12 +1,12 @@
 <?php
-function vsite_activity_init(){
+function vsite_news_init(){
 	$a_valid_realms = variable_get('activity_access_realms', array('comment'));
 	if(!in_array('vsite',$a_valid_realms)){
 		variable_set('activity_access_realms', array_merge($a_valid_realms,array('vsite')));
 	}
 }
 
-function vsite_activity_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+function vsite_news_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
     case 'update':
@@ -16,7 +16,7 @@ function vsite_activity_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     	  'node' => $node
 		  );
 		    	
-      actions_do('vsite_activity_action',$node,$context);
+      actions_do('vsite_news_action',$node,$context);
     break;
   }
 }
@@ -24,7 +24,7 @@ function vsite_activity_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 /*
  * Implementation of hook menu
  */
-function vsite_activity_menu(){
+function vsite_news_menu(){
 
   $items = array();
   $items['cp/news/activity/privacy'] = array(
@@ -38,7 +38,7 @@ function vsite_activity_menu(){
   
   $items['cp/news/activitys'] = array(
     'title' => 'Feature requests', 
-    'page callback' => 'vsite_activity_view',
+    'page callback' => 'vsite_news_view',
     'access callback' => 'cp_access_cp',
     'menu_name' => 'cp'
   );
@@ -47,17 +47,17 @@ function vsite_activity_menu(){
 }
 
 /**
- * show the vsite_activity_view
+ * show the vsite_news_view
  */
-function vsite_activity_view(){
+function vsite_news_view(){
 	return views_page('vsite_activity','default');
 }
 
 /**
  * The action hook
  */
-function vsite_activity_action_info(){
-	$info['vsite_activity_action'] = array(
+function vsite_news_action_info(){
+	$info['vsite_news_activity_action'] = array(
 	  'type' => 'activity',
 	  'description' => t("Record a new node's creation for activity tracker"),
 	  'configurable' => false,
@@ -75,7 +75,7 @@ function vsite_activity_action_info(){
  * @param $context
  * @return unknown_type
  */
-function vsite_activity_action($object, $context){
+function vsite_news_activity_action($object, $context){
 	
 	if(!vsite_get_vsite()) return false;
 	
@@ -119,7 +119,7 @@ function vsite_activity_action($object, $context){
 /**
 * Implementation of hook_activity_grants().
 */
-function vsite_activity_activity_grants($activity, $object, $type) {
+function vsite_news_activity_grants($activity, $object, $type) {
   $vsite = vsite_get_vsite();  
   if(!$vsite) return array();
     
@@ -131,7 +131,7 @@ function vsite_activity_activity_grants($activity, $object, $type) {
 /**
 * Implementation of hook_activity_info().
 */
-function vsite_activity_activity_info() {
+function vsite_news_activity_info() {
   $info = new stdClass();
   $info->api = 2;
   $info->name = 'vsite_activity';
@@ -146,7 +146,7 @@ function vsite_activity_activity_info() {
 * This removes any access records except vsite. Prevents friend
 * modules from providing direct access.
 */
-function vsite_activity_access_records_alter(&$grants, $context) {
+function vsite_news_access_records_alter(&$grants, $context) {
   foreach ($grants as $realm => $value) {
      if ($realm != 'vsite') {
          unset($grants[$module]);
@@ -157,7 +157,7 @@ function vsite_activity_access_records_alter(&$grants, $context) {
 /**
  * Implementation of hook_activity_access_grants().
  */
-function vsite_activity_activity_access_grants($acccount) {
+function vsite_news_activity_access_grants($acccount) {
   //$a_sites = get_all_the_sites_this_dudes_following_func($account->uid);
   $a_sites = array(1,4,6);
   $realm_ids = array();
@@ -172,17 +172,17 @@ function vsite_activity_activity_access_grants($acccount) {
 /**
  * Implementation of hook_spaces_settings().
  */
-function vsite_activity_spaces_settings() {
+function vsite_news_spaces_settings() {
   return array(
     'activity' => array(
-      'class' => 'vsite_activity_settings_activity',
-      'file' => drupal_get_path('module', 'vsite_activity') .'/includes/vsite_activity.settings.activity.inc',
+      'class' => 'vsite_news_settings_activity',
+      'file' => drupal_get_path('module', 'vsite_news') .'/vsite_news.settings.activity.inc',
     ),
   );
 }
 
-function vsite_activity_preprocess_views_view(&$variables) { //__vsite_activity_view
-  if($variables['name'] != 'vsite_activity_view') return;
+function vsite_news_preprocess_views_view(&$variables) { //__vsite_news_view
+  if($variables['name'] != 'vsite_activity') return;
   
   $variables['header'] .= l('Privacy Settings','cp/news/activity/privacy', array('attributes' => array('class' => 'tabs')));
 }
