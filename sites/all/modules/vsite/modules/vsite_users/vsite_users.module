@@ -16,12 +16,20 @@ function vsite_users_menu(){
     'title' => 'My Account',
     'page callback' => 'vsite_user_edit',
     'access callback' => 'vsite_user_edit_access',
+    'file path' => drupal_get_path('module', 'user'),
+    'file' => 'user.pages.inc',
+  );
+  
+  $items['cp/users/myaccount/edit'] = array(
+    'title' => 'My Account',
+    'page callback' => 'vsite_user_edit',
+    'access callback' => 'vsite_user_edit_access',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'file path' => drupal_get_path('module', 'user'),
     'file' => 'user.pages.inc',
   );
   
-  $items['cp/users/personal'] = array(
+  $items['cp/users/myaccount/personal'] = array(
     'title' => 'Personal Information',
     'page callback' => 'vsite_user_content_profile_edit_page',
     'page arguments' => array('vsite_users_profile'),
