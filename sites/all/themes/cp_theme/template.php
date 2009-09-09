@@ -142,6 +142,7 @@ function cp_theme_spaces_block_customizer_settings_form($form) {
  * Overridden: So that they remain in fieldsets
  */
 function cp_theme_spaces_customize_item($form) {
+	return drupal_render($form);
   $output = '';
   $rows = array();
   foreach (element_children($form) as $element) {
