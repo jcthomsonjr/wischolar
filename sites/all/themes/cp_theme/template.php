@@ -123,7 +123,7 @@ function cp_theme_spaces_block_customizer_settings_form($form) {
       }
       $output .= "<div class='region-{$a}'>";
       $output .= "<strong class='region'>{$form['contexts'][$identifier][$a]['#title']}</strong>";
-      $output .= theme('table', array(), $rows, array('id' => "spaces-customizer-blocks-{$identifier}-{$a}"));
+      $output .= theme('table', array(), $rows, array('id' => "spaces-customizer-blocks-{$identifier}-{$a}", 'class' => "fieldset-wrapper"));
       $output .= "</div>";
     }
 
