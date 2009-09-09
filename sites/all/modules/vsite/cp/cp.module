@@ -200,11 +200,30 @@ function cp_form_alter(&$form, $form_state, $form_id) {
         ctools_include('ajax');
         ctools_include('modal');
         ctools_modal_add_js();
-        $link = ctools_modal_text_button('settings', 'cp/features/'. $f_name, 'whatever');
+        $link = ctools_modal_text_button('settings', 'cp/features/'. $f_name, 'customize '.$f_name);
         $form['customize'][$f_name]['#value'] = $link;
       }
     }
   }
+  
+  if (arg(0) == 'cp' && $form_id == 'spaces_customize_form'){
+    foreach(element_children($form['customizers']) as $s_customizer){
+      switch($s_customizer){
+      	case 'menu':
+      		$form['customizers'][$s_customizer]['#title'] = "Menu Title";
+      		foreach(element_children($form['customizers'][$s_customizer]) as $s_block){
+      		  $form['customizers'][$s_customizer][$s_block]['title']['#description'] = "Change the title of the link to your {$form['customizers'][$s_customizer][$s_block]['#title']}";
+      		  unset($form['customizers'][$s_customizer][$s_block]['title']['#title']);
+      		}
+      	break;
+      	case 'block':
+      	  $form['customizers'][$s_customizer]['#title'] = "Widgets";
+      	  $form['customizers'][$s_customizer]['#description'] = "This feature allows you to enable/rename widgets -- small blocks of content -- used in your layout ";
+      	break;
+      }	
+    }
+  }//Make default customizers more descriptive
+  
 }
 
 /**
