@@ -27,8 +27,17 @@ function simport_node_add_imagefield_image($source, $field_name, &$node){
   // create the file object
   $file = field_file_save_file($source, $validators, $files_path);
 
+  //set uid to the node -> uid
+ // $file -> uid = $node -> uid;
+
   // attach it to the filefield field
-  $node->$field_name = array($file); 
+  $node->$field_name = array(
+  0 => array(
+  'fid' => $file['fid'],
+  'uid' => $node -> uid,
+  'list' => 1,
+    )
+  ); 
   
   // save the node (optional)
   node_save($node);
