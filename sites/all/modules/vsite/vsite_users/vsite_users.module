@@ -47,14 +47,6 @@ function vsite_users_menu(){
     'weight' => 1, // should be the first one
   );  
   
-  $items["cp/users/edit/%"] = array(
-    'title' => 'User Edit',
-    'page callback' => 'vsite_users_edit_user',
-    'page arguments' => array(3),
-    'file' => 'vsite_users.pages.inc',
-    'weight' => 1,
-  );
-  
   $items['cp/users/edit/%user_uid_optional'] = array(
     'title' => 'My account',
     'title callback' => 'user_page_title',
