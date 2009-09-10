@@ -64,13 +64,11 @@ Drupal.theme.prototype.CToolsModalDialog = function () {
   html += '    <div class="ctools-modal-content">' // panels-modal-content
   html += '      <div class="modal-header">';
   html += '        <h3 id="modal-title" class="modal-title">&nbsp;</h3>';
+  //html += '        <a class="close-this close" href="#">';
+  //html +=            Drupal.settings.CToolsModal.closeText + Drupal.settings.CToolsModal.closeImage;
+  //html += '        </a>';
   html += '      </div>';
   html += '      <div id="modal-content" class="modal-content">';
-  html += '      </div>';
-  html += '      <div class="modal-footer">';
-  html += '        <a class="close-this close" href="#">';
-  html +=            Drupal.settings.CToolsModal.closeText + Drupal.settings.CToolsModal.closeImage;
-  html += '        </a>';
   html += '      </div>';
   html += '    </div>';
   html += '    <div id="ctools-left"></div>';
