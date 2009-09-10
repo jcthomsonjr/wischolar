@@ -5,10 +5,15 @@
     var $this = $(this);
     //var f = this.form;
     var link = $('<a class="submit-link ' + $this.attr("id") + '" href="#"><span class="button-inner"><span class="label">' + $this.val() + '</span></span></a>')
-               .bind('click',function(){
-                 //$(f).trigger('submit');
-            	 $this.click();
+               .bind('click',[$this],function(e){
+                 e.data[0].click();
                  return false;
+               }).bind('mousedown',[$this],function(e){
+            	 e.data[0].trigger('mousedown');
+                 return true;
+               }).bind('mouseup',[$this],function(e){
+            	 e.data[0].trigger('mouseup');
+                 return true;
                });
     $this.after(link).css({position:'absolute', top:'-2000px'});	  
   });
