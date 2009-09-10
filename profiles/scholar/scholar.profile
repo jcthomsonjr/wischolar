@@ -91,7 +91,7 @@ function scholar_profile_modules() {
     'vsite_users',
     'vsite_vocab',
     'vsite_help',
-    'vsite_activity',
+    'vsite_news',
     'vsite_support',
     'vsite_widgets',
     'vsite_generic_settings',
