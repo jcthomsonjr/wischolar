@@ -313,6 +313,8 @@ function cp_left_menu_links(){
 function cp_menu_navigation_links($tree, $b_highlight_first_submenu = false) {
   $links = array();
   foreach ($tree as $item) {
+  	if($item['link']['type'] == MENU_CALLBACK) continue;
+  	
     $class = '';
     $id = str_replace('/', '-', $item['link']['href']);
 
