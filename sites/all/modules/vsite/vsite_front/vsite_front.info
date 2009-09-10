@@ -1,7 +1,8 @@
-name = vsite front
-description = front page functionalities for a vsite
-dependencies[] = cp
-dependencies[] = views
-dependencies[] = flag
+name = "vsite_front"
+description = "vsite > front :  Vsite front page settings/admin "
+dependencies[] = "date_api"
+dependencies[] = "node"
+dependencies[] = "spaces"
 package = "vsite"
-core = 6.x
+core = "6.x"
+features[views][] = "vsite_front"
