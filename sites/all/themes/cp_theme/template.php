@@ -143,19 +143,24 @@ function cp_theme_spaces_block_customizer_settings_form($form) {
  */
 function cp_theme_spaces_customize_item($form) {
 	$output = '';
-  //$rows = array();
   foreach (element_children($form) as $element) {
     if ($form[$element]['#type'] == 'fieldset') {
       $title = $form[$element]['#title'];
       unset($form[$element]['#title']);
       unset($form[$element]['#type']);
       $output .= "<div class='fieldset-wrapper'>".drupal_render($form[$element])."</div>";
-//      $rows[] = array(
-//        "<strong>$title</strong>",
-//        "<div class='fieldset-wrapper'>".drupal_render($form[$element])."</div>",
-//      );
     }
   }
-  //$output .= theme('table', array(), $rows);
   return $output;
+}
+
+/**
+ * Change the link to users on the og memebers view
+ * @param $view
+ * @param $field
+ * @param $row
+ * @return unknown_type
+ */
+function cp_theme_views_view_field__og_members__name($view, $field, $row) {
+	return ctools_modal_text_button(check_plain($row->{$field->field_alias}), 'cp/users/edit/'. $row->{$field->aliases['uid']} , 'edit '.$row->{$field->field_alias});
 }

@@ -47,6 +47,25 @@ function vsite_users_menu(){
     'weight' => 1, // should be the first one
   );  
   
+  $items["cp/users/edit/%"] = array(
+    'title' => 'User Edit',
+    'page callback' => 'vsite_users_edit_user',
+    'page arguments' => array(3),
+    'file' => 'vsite_users.pages.inc',
+    'weight' => 1,
+  );
+  
+  $items['cp/users/edit/%user_uid_optional'] = array(
+    'title' => 'My account',
+    'title callback' => 'user_page_title',
+    'title arguments' => array(3),
+    'page callback' => 'vsite_users_edit_user',
+    'page arguments' => array(3),
+    'access callback' => 'user_view_access',
+    'access arguments' => array(3),
+    'file' => 'vsite_users.pages.inc',
+  );
+  
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
     $items[$path]['menu_name'] = 'cp';
