@@ -55,6 +55,12 @@ function vsite_users_menu(){
     'weight' => 1,
   );
   
+  // make them all part of 'cp' menu
+  foreach($items as $path => $item) {
+    $items[$path]['menu_name'] = 'cp';
+    $items[$path]['access callback'] = 'cp_access_cp'; 
+  }
+  
   $items['cp/users/edit/%user_uid_optional'] = array(
     'title' => 'My account',
     'title callback' => 'user_page_title',
@@ -65,12 +71,6 @@ function vsite_users_menu(){
     'access arguments' => array(3),
     'file' => 'vsite_users.pages.inc',
   );
-  
-  // make them all part of 'cp' menu
-  foreach($items as $path => $item) {
-    $items[$path]['menu_name'] = 'cp';
-    $items[$path]['access callback'] = 'cp_access_cp'; 
-  }
   return $items;
 }
 
