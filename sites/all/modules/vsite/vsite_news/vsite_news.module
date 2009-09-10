@@ -20,7 +20,7 @@ function vsite_news_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     	  'node' => $node
 		  );
 		    	
-      actions_do('vsite_news_action',$node,$context);
+      actions_do('vsite_news_activity_action',$node,$context);
     break;
   }
 }
