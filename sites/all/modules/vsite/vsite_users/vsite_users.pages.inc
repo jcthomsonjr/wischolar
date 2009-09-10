@@ -22,15 +22,15 @@ function vsite_users_edit_user($account){
   ctools_include('modal');
   ctools_modal_add_js();
   
-//  $form_state = array(
-//    're_render' => TRUE,
-//    'ajax' => TRUE,
-//  );
-//
-//  // pass all arguments needed by the callback function (ctools thing)
-//  $form_state['args'] = array(NULL, $feature_name);
+  $form_state = array(
+    're_render' => TRUE,
+    'ajax' => TRUE,
+  );
 
-  $output = ctools_modal_command_display(user_page_title($account), user_view($account));
+  // pass all arguments needed 
+  $form_state['args'] = array($account, 'account');
+
+  $output = ctools_modal_form_wrapper('user_profile_form', $form_state);
 
   if (empty($output)) {
     $output = array();
