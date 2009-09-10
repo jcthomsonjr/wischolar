@@ -5,7 +5,7 @@
     var $this = $(this);
     //var f = this.form;
     var link = $('<a class="submit-link ' + $this.attr("id") + '" href="#"><span class="button-inner"><span class="label">' + $this.val() + '</span></span></a>')
-               .bind('click mousedown mouseup',[$this],function(e){
+               .bind('click',[$this],function(e){
             	 var elem = refresh_nicebutton_element(e.data[0]);
             	 elem.click();
                  return false;
