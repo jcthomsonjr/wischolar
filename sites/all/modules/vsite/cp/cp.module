@@ -161,6 +161,7 @@ function schlarcp_feature_customize($feature_name){
   ctools_modal_add_js();
   
   $form_state = array(
+    'title' => "Settings for $feature_name feature",
     're_render' => TRUE,
     'ajax' => TRUE,
   );
