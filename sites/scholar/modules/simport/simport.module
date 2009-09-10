@@ -167,6 +167,10 @@ function simport_import(){
       spaces_save($vsite);
     }
   }
+  
+  //PHASE 5 - import the files
+ simport_get_files(); 
+  
 }
 
 /**
@@ -427,20 +431,46 @@ function simport_set_link($old, &$new){
   //set the link
   if (!empty($old -> field_link[0]['url'])){
     $new -> field_link_href[0]['url'] = $old -> field_link[0]['url'];
-  }
-  
-  //check if file(s) exist
-    if ($old -> field_image[0]['fid'] > 0){
-      module_load_include('inc', 'simport', 'simport.api');
-
-      foreach($old -> field_image as $file){
-      //define full path to file
-      $source = variable_get('simport_remote_path', '') . '/' . $file['filepath'];
-      simport_node_add_imagefield_image($source, 'field_link_image', $node);
-      }
-   } 
+  }  
 }
 
+/**
+ * Save files after nodes have been saved
+ */
+function simport_get_files(){
+  module_load_include('inc', 'simport', 'simport.api');
+
+  //list of old types => filefield that have files
+  $types = array(
+  'scholar_link',
+  );
+
+  foreach ($types as $type) {
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $type);
+    while ($data = db_fetch_object($sql)){
+      //get the old site node object
+      $old = unserialize($data ->data);
+
+      switch($data -> type){
+
+        case 'scholar_link':
+          //check if file(s) exist
+          if ($old -> field_image[0]['fid'] > 0){
+
+            //load the new node
+            $node = node_load(simport_get_new_nid(array('nid' => $old -> nid)));
+
+            foreach($old -> field_image as $file){
+              //define full path to file
+              $source = variable_get('simport_remote_path', '') . '/' . $file['filepath'];
+              simport_node_add_imagefield_image($source, 'field_link_image', $node);
+            }
+          }
+          break;
+      }
+    }
+  }
+}
 
 /**
  * Returns vocabulary information specific to site and content type
