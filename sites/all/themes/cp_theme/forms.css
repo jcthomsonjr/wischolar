@@ -33,7 +33,7 @@ select option {
   }
 
 .form-radios {
-  margin: 0 0 1em 0;
+  margin: 1em 0;
   }
 
 .section-cp .form-radios input {
@@ -44,13 +44,18 @@ select option {
   border: none;
   }
 
-.section-cp label, .section-cp .div.form-item label, .section-cp .description, div.spaces-block-customizer {
-	display:block;
+.section-cp label, .section-cp .div.form-item label, .section-cp .description, div.spaces-block-customizer, th {
 	font-weight: bold;
 	color:#333;
 	font-size: 1.1em;
+	}
+
+
+.section-cp label, .section-cp .div.form-item label, .section-cp .description, div.spaces-block-customizer {
+	display:block;
 	text-transform:none;
 	}
+
 
 .section-cp div.description {
 	color:#777;
@@ -60,7 +65,7 @@ select option {
 	font-size: .9em;
 	}
 
-.section-cp .fieldset-wrapper div.description, .section-cp table div.description, .section-cp .form-item div.description {
+.section-cp .fieldset-wrapper div.description, .section-cp table div.description, .section-cp .form-item div.description, #edit-settings-front-bio-title-wrapper {
   margin-left: 0;
   padding: 0;
   margin-top: 3px;
@@ -89,6 +94,10 @@ h3#modal-title {
   border-bottom: 1px solid #ccc;
   }
 
+.section-cp fieldset fieldset, #views-bulk-operations-select fieldset {
+  border: none;
+  }
+
 .section-cp label.option {
 	color: #666;
 	}
@@ -111,4 +120,13 @@ h3#modal-title {
 a.close-this {
   display:block;
   float:right;
+  }
+
+
+/* Various Views */
+
+#views-bulk-operations-select {
+  left:555px;
+  position:absolute;
+  top:12px;
   }
