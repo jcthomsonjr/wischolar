@@ -13,6 +13,9 @@
 <body class="<?php print $body_classes; ?>">
   <div id="wrapper">
     <div id="container">
+     <div id="top">
+  	   <?php print $cp_toolbar;?>
+  	 </div>
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) { ?>
 
       <div id="header">
