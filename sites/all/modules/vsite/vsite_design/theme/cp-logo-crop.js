@@ -11,7 +11,8 @@ if (Drupal.jsEnabled) {
 	  $('#logo_preview').Jcrop({
 	    aspectRatio: 1.2857,
 	    minSize: [180,140],
-	    onSelect: cp_updateLogo
+	    onSelect: cp_updateLogo,
+	    allowMove: true
 	  });
 	  
 	  $('#edit-settings-logo-logo-upload').change(function() {
