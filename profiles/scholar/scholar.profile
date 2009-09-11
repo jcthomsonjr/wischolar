@@ -27,6 +27,7 @@ function scholar_profile_modules() {
     'flag',
     'imageapi',
     'imageapi_gd',
+    'itweak_upload',
     'jquery_ui',
     'og',
     'og_access',

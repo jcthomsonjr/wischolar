@@ -37,7 +37,7 @@ function _scholar_testingcontent(){
 			'type' => variable_get('scholar_content_type', 'scholarsite'),
 		  	'promote' => '1',
 			'purl' => array ('value' => "site0$i", 'provider' => 'spaces_og', 'id' => NULL ), 
-			'preset' => ($i < 4) ? 'scholarsite' : 'public', 
+			'preset' => 'scholarsite', // : 'public', 
 			'og_description' => "site0$i", 
 			'theme' => $scholar_theme, 
 			'og_description' => "site0$i", // TODO $terms array should include descriptions
