@@ -136,7 +136,7 @@ function vsite_spaces_presets(){
   );
   
   //Put default settings here
-  $items['scholarsite']['settings'] = array(
+  $items['scholarsite']['preset']['settings'] = array(
     'home' => 'blog', 
     'front' => array(
       'frontpage' => 'feature', 
@@ -144,7 +144,7 @@ function vsite_spaces_presets(){
     ),
     'theme' => 'scholar_theme_01', 
     'shield' => drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png",
-    'generic' => array('admin_menu'=>1),
+    'generic' => array('admin_menu'=>0),
   );
        
   
