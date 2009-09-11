@@ -69,23 +69,17 @@ function simport_import(){
     //set shield
     simport_set_shield($old, $new);
 
-    //just iterate once for testing purposes - REMOVE THIS WHEN DONE TESTING
-    // return false;
-
     //save all the changes/additions to the space
     spaces_save($new);
   }
-  //return false;
 
   //PHASE 2 - Load And Save The Content
 
-//load content for each type
+  //load content for each type
   $types = _simport_map_content_types();
 
   foreach ($types as $oldtype => $newtype){
-    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", $oldtype, 30);
-    
-    //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
     while ($data = db_fetch_object($sql)) {
       $old = unserialize($data ->data);
       $new = new stdClass();
