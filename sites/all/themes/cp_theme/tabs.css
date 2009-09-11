@@ -1,0 +1,60 @@
+/* $Id: tabs.css,v 1.2 2008/09/08 02:35:29 johnalbin Exp $ */
+
+/*
+ * Tabs CSS
+ *
+ * Adds styles for the primary and secondary tabs.
+ *
+ * Compare this with default CSS found in the system module's stylesheet (a copy
+ * of which is in drupal6-reference.css, line 510.)
+ *
+ */
+
+  div.tabs {
+    margin: 0 0 5px 0;
+    background:#dde7ad;
+    border-bottom: 1px solid #c4cd98
+    }
+
+  ul.primary {
+    margin: 0;
+    padding: 0 0 0 10px;
+    border-width: 0;
+    list-style: none;
+    white-space: nowrap;
+    line-height: normal;
+
+  }
+
+  ul.primary li {
+    float: left;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+  }
+
+  ul.primary li a {
+    display: block;
+    margin: 0;
+    padding: 13px 20px;
+    border-width: 0;
+    font-weight: bold;
+    text-decoration: none;
+    color: #918f8f;
+    background-color: transparent;
+  }
+
+
+  ul.primary li a:hover {
+    border-width: 0;
+    background-color: transparent;
+
+  }
+
+
+  ul.primary li.active a,
+  ul.primary li.active a:hover {
+    border-width: 0;
+    color: #000;
+    background-color: transparent;
+  }

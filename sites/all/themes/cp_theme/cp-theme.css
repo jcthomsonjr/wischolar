@@ -23,7 +23,7 @@ body#tinymce {
 	margin: 0;
 	left: 0;
 	right: 0;
-	top: 62px;
+	top: 40px;
 	bottom: 38px;
 	position: absolute;
 	float:none;
@@ -37,7 +37,7 @@ body#tinymce {
 	}
 
 #top, #footer {
-	top: 22px;
+	top: 0;
 	bottom: auto;
 	height: 42px;
 	background:url(images/top-bottom-bg.png) repeat-x #000 0 -9px;
@@ -102,7 +102,19 @@ body.sidebar-right #cp-content {
   }
 
 .views-admin-links {
-  float: right;
+  position: absolute;
+  top: 0;
+  right: 10px;
+  }
+
+/* For use with admin_menu module only */
+
+body.admin-menu #top {
+  top: 22px;
+  }
+
+body.admin-menu #main-content {
+  top: 62px;
   }
 
 /* First Column */
@@ -114,7 +126,7 @@ body.sidebar-right #cp-content {
 #cp-sidemenu li a, #cp-sidemenu li a:visited {
   color: #626161;
   font-weight: bold;
-  padding: 10px 23px;
+  padding: 13px 23px;
   border-bottom: 1px solid #bfc6c6;
   display:block;
   font-size: 14px;
@@ -125,6 +137,8 @@ body.sidebar-right #cp-content {
 #cp-sidemenu li.active-trail a {
   background: url(images/cp-sidemenu-active.png) 0 100% repeat-x #b8c0c0;
   color: #000;
+  text-decoration: none;
+  text-shadow:0 1px 0 rgba(206, 214, 221, 0.75);
   }
 
 

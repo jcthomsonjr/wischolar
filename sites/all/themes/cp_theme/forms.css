@@ -44,14 +44,15 @@ select option {
   border: none;
   }
 
-.section-cp label, .section-cp .div.form-item label, .section-cp .description, div.spaces-block-customizer, th {
+.section-cp label, .section-cp div.form-item label, .section-cp .description, div.spaces-block-customizer, th {
 	font-weight: bold;
 	color:#333;
-	font-size: 1.1em;
+	font-size: .9em;
+	margin-bottom: 3px;
 	}
 
 
-.section-cp label, .section-cp .div.form-item label, .section-cp .description, div.spaces-block-customizer {
+.section-cp label, .section-cp div.form-item label, .section-cp .description, div.spaces-block-customizer {
 	display:block;
 	text-transform:none;
 	}
@@ -59,10 +60,8 @@ select option {
 
 .section-cp div.description {
 	color:#777;
-  margin-bottom: 3em;
 	font-weight: normal;
 	line-height: 127%;
-	font-size: .9em;
 	}
 
 .section-cp .fieldset-wrapper div.description, .section-cp table div.description, .section-cp .form-item div.description, #edit-settings-front-bio-title-wrapper {
@@ -130,3 +129,14 @@ a.close-this {
   position:absolute;
   top:12px;
   }
+
+
+/* These really should have a standard class "top-marg" or something */
+
+#user-profile-form .description,
+#edit-pass-pass1,
+#edit-vsite-users-first-name-0-value,
+#edit-vsite-users-last-name-0-value {
+  margin-bottom: 14px;
+  }
+
