@@ -2,23 +2,24 @@
   $(':submit:not(.cp-nice-button-processed)', context)
   .addClass('cp-nice-button-processed')
   .each(function(){
-    var $this = $(this);
+    var element = $(this);
     //var f = this.form;
-    var link = $('<a class="submit-link ' + $this.attr("id") + '" href="#"><span class="button-inner"><span class="label">' + $this.val() + '</span></span></a>')
-               .bind('click',[$this],function(e){
+    var link = $('<a class="submit-link ' + element.attr("id") + '" href="#"><span class="button-inner"><span class="label">' + element.val() + '</span></span></a>')
+               .bind('click',[element],function(e){
             	 var elem = refresh_nicebutton_element(e.data[0]);
-            	 elem.click();
+            	 elem.trigger('click');
+            	 //elem.click();
                  return false;
-               }).bind('mousedown',[$this],function(e){
+               }).bind('mousedown',[element],function(e){
             	 var elem = refresh_nicebutton_element(e.data[0]);
             	 elem.trigger('mousedown');
                  return true;
-               }).bind('mouseup',[$this],function(e){
+               }).bind('mouseup',[element],function(e){
             	 var elem = refresh_nicebutton_element(e.data[0]);
             	 elem.trigger('mouseup');
                  return true;
                });
-    $this.after(link).css({position:'absolute', top:'-2000px'});	  
+    element.after(link).css({position:'absolute', top:'-2000px'});	  
   });
 }
 
