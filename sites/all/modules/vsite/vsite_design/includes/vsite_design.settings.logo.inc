@@ -42,11 +42,11 @@ class vsite_design_settings_logo implements space_setting {
 	    $form['height'] = array('#type' => 'hidden');
 	    $form['crop'] = array('#type' => 'hidden');
 	    $form['preview'] = array(
-	      '#prefix' => '<div class="logo-preview">',
+	      '#prefix' => '<div id="live_preview_box">',
 	      '#suffix' => '</div>',
 	      '#type' => 'item',
 	      '#title' => t('Preview'),
-	      '#value' => theme('vsite_design_logo','vsite_design_landscape_logo','','',array(),true)
+	      '#value' => '<div id="live_preview_box_inner" style="overflow: hidden;">'.theme('vsite_design_logo','vsite_design_landscape_logo','','',array('id' => 'live_preview'),true).'</div>'
 	      );
 
 	    $form['crop_btn'] = array(
