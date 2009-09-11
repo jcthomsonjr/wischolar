@@ -12,7 +12,7 @@ if (Drupal.jsEnabled) {
 	    aspectRatio: 1.2857,
 	    minSize: [180,140],
 	    onSelect: cp_updateLogo,
-	    allowMove: true
+	    allowMove: 1
 	  });
 	  
 	  $('#edit-settings-logo-logo-upload').change(function() {
