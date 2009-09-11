@@ -83,7 +83,9 @@ function simport_import(){
   $types = _simport_map_content_types();
 
   foreach ($types as $oldtype => $newtype){
-    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", $oldtype, 30);
+    
+    //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
     while ($data = db_fetch_object($sql)) {
       $old = unserialize($data ->data);
       $new = new stdClass();
@@ -102,8 +104,12 @@ function simport_import(){
           break;
 
           case 'scholar_bio':
-                simport_set_bio($old, $new);
+                simport_set_page($old, $new); //import to page
                 break;
+                
+          case 'scholar_page':
+                simport_set_page($old, $new); //import to page also
+                break;      
 
          case 'scholar_blog':
             //no blogs to import
@@ -300,8 +306,14 @@ function simport_set_shield($old, &$new){
   $new ->settings['sheild'] = drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png";
 }
 
-
+/**
+ * Import the terms to the proper vocabulary and set them in the node object
+ *
+ * @param unknown_type $old
+ * @param unknown_type $new
+ */
 function simport_set_terms($old, &$new){ 
+  vsite_include('vsiteapi');
   //check to see of any terms are set in old node
   if (count($old -> tags)){
     $vsite = simport_get_new_vsite($old -> og_groups[0]);
@@ -311,25 +323,30 @@ function simport_set_terms($old, &$new){
 
       if ($vocab_id == '6'){
         //store the array information in a property called global_taxonomy for use later
-        $new -> global_taxonomy == $values;
+        $new -> global_taxonomy = $values;
       }
 
       else{
         foreach($values as $old_term){
-          $new_vocab = simport_get_site_vocabularies($vsite -> sid, $new -> type);
+          //get vocab(s) for the vsite
+          $vocab_list = vsite_get_vocabs($vsite, $new -> type);
 
-          $term['vid'] = $new_vocab -> vid;
+          foreach($vocab_list as $vocab){
+    
+          $term['vid'] = $vocab -> vid;
           $term['name'] = $old_term -> name;
           $term['description'] = empty($old_term -> description) ? NULL : $old_term -> description;
           //$term['weight'] = mt_rand(0,10);
-
+         
           $status = taxonomy_save_term($term);
+         
           if ($status){
             //get the newly created term id. TODO: is this the best way???
             $tid = db_last_insert_id('term_data', 'tid');
           }
           //now add the terms to the $new node object
-          $new -> taxonomy[$new_vocab -> vid] = array($tid);
+          $new -> taxonomy[$vocab -> vid] = array($tid);
+          }
         }
       }
     }
@@ -401,7 +418,7 @@ function simport_set_announcement($old, &$new){
   $new -> body = $old -> body;
 }
 
-function simport_set_bio($old, &$new){  
+function simport_set_page($old, &$new){  
   //no custom fields
   $new -> body = $old -> body;
 }
@@ -493,6 +510,8 @@ function _simport_map_content_types($old_type = NULL){
   'scholar_announcement' => 'announcement',
   'scholar_bio' => 'page',
   'scholar_class' => 'scholar_class',
+  'scholar_page' => 'page',  //both scholar_bio and scholar_page import to page
+ 
 /*
   'scholar_cv' => '', //ONLY 1 Submit it manually
   'scholar_photo' => '', //already dealt with in simport_set_logo()
