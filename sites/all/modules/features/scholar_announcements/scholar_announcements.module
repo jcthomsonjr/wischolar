@@ -5,10 +5,21 @@ include_once('scholar_announcements.features.inc');
 /**
  * Implementation of hook_strongarm()
  */
-function scholar_announcements_strongarm() {
+function scholar_announcements_strongarm(){
   $conf = array();
   // standard group post
   $conf['og_content_type_usage_announcement'] = 'group_post_standard';
+  $conf['content_extra_weights_announcement'] = array(
+    'title' => '-5', 
+    'body_field' => '-4', 
+    'attachments' => '-3', 
+    'revision_information' => '-1', 
+    'comment_settings' => '1', 
+    'menu' => '-4', 
+    'path' => '0', 
+    'og_nodeapi' => '2' 
+  );
+  
   return $conf;
 }
 
