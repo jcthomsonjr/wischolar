@@ -181,13 +181,6 @@ function scholar_preprocess_page(&$vars) {
     $vars['body_classes'] .= ' navbar';
   }
   
-  $vsite = vsite_get_vsite();
-  // TODO Probably we would want to let user decide whether they want 
-  // the toolbar on. Add that as a condition below
-  if (context_get('scholar', 'section') == 'vsite' && $vsite -> admin_access()){
-    $vars['body_classes'] .= ' cp-toolbar-on';
-  }
-  
 }
 
 /**

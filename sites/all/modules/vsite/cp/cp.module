@@ -2,9 +2,9 @@
 define('CPTHEME', 'cp_theme');
 
 function cp_init(){
-   // TODO We can get the active space here. 
-   // add this only if in active space + user is admin of space + users wants the toolbar anywhere
-   drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
+   $vsite = vsite_get_vsite();
+   $toolbar = FALSE;
+
    
    // cp nice buttons 
    if (arg(0) == 'cp'){
@@ -18,17 +18,27 @@ function cp_init(){
    // controlcp context
   if (arg(0) == 'cp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
     context_set('scholar', 'section', 'cp');
+    $toolbar = TRUE;
     // since we are here .. initialize cp theme
     _cp_init_theme();
   }
   
   else {
-  	$vsite = vsite_get_vsite();
   	if ($vsite){
   	  context_set('scholar', 'section', 'vsite');
   	  og_set_theme($vsite -> group); // TODO why dont you get it from space settings
+  	  
+  	  if ($vsite -> admin_access()){
+  	    $toolbar = TRUE;
+  	  }
   	}
   }
+  
+  if ($toolbar){
+   drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
+  }
+  
+  context_set('toolbar', 'value', $toolbar);
 }
 
 /**
@@ -244,25 +254,50 @@ function cp_theme($cache, $type, $theme, $path) {
   return $items;
 }
 
-
-
 /**
  * Preprocess function for for intorducing "cp_toolbar"
  * and "cp_left" variables
  */
-function cp_preprocess_page(&$vars) {  
+function cp_preprocess_page(&$vars) {
   // 2 new variables for top and left menus
-  $vars['cp_toolbar'] = 
-  $vars['cp_left'] = '';
+  $vars ['cp_toolbar'] = $vars ['cp_left'] = '';
   
-  if (vsite_get_vsite() && user_access('configure spaces features')) { 
-    $links = cp_toolbar_menu_links();
-    $links = theme('cp_toolbar', $links);
-    $vars['cp_toolbar'] = $links;
+  $vsite = vsite_get_vsite ();
+  $user_tb_setting = ($vsite && is_array ( $vsite->settings ) && is_array ( $vsite->settings ['generic'] ) && array_key_exists ( 'admin_menu', $vsite->settings ['generic'] )) ? TRUE : FALSE;
+  
+  if (context_get ( 'toolbar', 'value' )) {
+    if ($user_tb_setting) {
+      $links = cp_toolbar_menu_links ();
+      $links = theme ( 'cp_toolbar', $links );
+      $vars ['cp_toolbar'] = $links;
+      
+      $vars ['body_classes'] .= ' cp-toolbar-on';
     
-    $links = cp_left_menu_links();
-    $vars['cp_left'] = theme('links', $links);
+    } else {
+      global $user;
+      $user_links = array ();
+      $user_links[] = array('title' => 'admin', 'href' => 'cp/features');
+      $user_links [] = array (
+        'title' => t ( 'Hello <strong>!username</strong>', array (
+        '!username' => $user->name 
+      ) ), 'href' => 'user', 'html' => TRUE 
+      );
+      $user_links [] = array (
+        'title' => t ( 'Logout' ), 'href' => "logout" 
+      );
+      $vars ['cp_toolbar'] = $vars ['cp_toolbar'] = theme('links', $user_links);
+    }
+  
   }
+  
+  if (context_get ( 'scholar', 'section' ) == 'cp') {
+    $links = cp_toolbar_menu_links ();
+    $links = theme ( 'cp_toolbar', $links );
+    $vars ['cp_toolbar'] = $links;
+    $links = cp_left_menu_links ();
+    $vars ['cp_left'] = theme ( 'links', $links );
+  }
+
 }
 
 /**
