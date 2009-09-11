@@ -122,12 +122,15 @@ function theme_vsite_design_logo($preset = false, $alt = '' , $title = '', $attr
   if($bypass_browser_cache) $s_url_extra .= "?version=".time();
   
   if($preset){
-    $s_out = theme('imagecache', $preset, $s_image_path, $alt, $title,  $attributes);
+    $s_image_path = imagecache_create_url($preset, $s_image_path);
+  	//$s_out = theme('imagecache', $preset, $s_image_path, $alt, $title,  $attributes);
   }else{
-  	$attributes = drupal_attributes($attributes);
-    $url = imagecache_create_url($presetname, $path);
-    $s_out = '<img src="/'.$s_image_path . $s_url_extra .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
-  } //use imagecache? or orig?
+  	$s_image_path = "/".$s_image_path;
+  }//Cached or orig
+  
+  $attributes = drupal_attributes($attributes);
+  $s_out = '<img src="'.$s_image_path . $s_url_extra .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
+  
   
   if($b_as_link) $s_out = l($s_out,'home',array('html'=>true));
   
