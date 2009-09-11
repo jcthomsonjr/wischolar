@@ -12,6 +12,20 @@ function vsite_views_api(){
 }
 
 /**
+ * Implementation of hook_strongarm()
+ */
+function vsite_strongarm() {
+  $conf = array();
+  $conf['upload_list_default'] = "1";
+  $conf['upload_extensions_default'] = "jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp";
+  $conf['upload_uploadsize_default'] = "5";
+  //$conf['upload_max_resolution'] = 0;
+
+  return $conf;
+}
+
+
+/**
  * Includes different inc files
  */
 function vsite_include($inc_files){
@@ -142,7 +156,7 @@ function vsite_spaces_presets(){
       'frontpage' => 'feature', 
       'node_options' => $options,
     ),
-    'theme' => 'scholar_theme_01', 
+    'theme' => 'scholar_theme_01',  // TODO make this settings for the site-wide admin to chose
     'shield' => drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png",
     'generic' => array('admin_menu'=>1),
   );

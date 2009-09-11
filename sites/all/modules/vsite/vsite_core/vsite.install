@@ -1,43 +1,50 @@
 <?php
-/**
- * Implementation of hook_install().
- */
-function vsite_install() {
-  
-//	$a_vsite_profile = array(
-//	   'first' => array('values' => array( 'title' => 'First Name',
-//						           'name' => 'profile_first_name',  
-//						           'explanation' => 'Your First Name', 
-//						           'category' => 'Personal Information',
-//						           'type' => 'textfield',
-//						           'weight' => 0,
-//						           'required' => 1,
-//						           'register' => 1,
-//						           'visibility' => PROFILE_PUBLIC,
-//						           'autocomplete' => 0)),
-//	   'last' => array('values' => array(  'title' => 'Last Name',
-//                       'name' => 'profile_last_name',  
-//                       'explanation' => 'Your Last Name', 
-//                       'category' => 'Personal Information',
-//                       'type' => 'textfield',
-//                       'weight' => 1,
-//                       'required' => 1,
-//                       'register' => 1,
-//                       'visibility' => PROFILE_PUBLIC,
-//                       'autocomplete' => 0)),
-//	   'title' => array('values' => array( 'title' => 'Title',
-//                       'name' => 'profile_title',  
-//                       'explanation' => 'Your Professional Title', 
-//                       'category' => 'Personal Information',
-//                       'type' => 'textarea',
-//                       'weight' => 2,
-//                       'required' => 0,
-//                       'register' => 1,
-//                       'visibility' => PROFILE_PUBLIC,
-//                       'autocomplete' => 0)),
-//	);
-//	
-//	if(!function_exists('profile_field_form_submit')) require_once( drupal_get_path('module', 'profile').'/profile.admin.inc');
-//	foreach ($a_vsite_profile as $a_profile_field) profile_field_form_submit(null,$a_profile_field);
 
+/**
+ * Implementaton of hook_enable().
+ */
+function vsite_enable() {
+  // Weight scholar to be after spaces_og
+  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'spaces_og'"));
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite'", ($weight + 1));  
+}
+
+
+
+function vsite_install() {
+  // Execute our defined updates.
+  $version = 6001;
+  while (function_exists('vsite_update_' . $version)) {
+    call_user_func('vsite_update_' . $version++);
+  }
+  // hook_install has no return value
+}
+
+function vsite_update_6001() {
+  $return = array();
+  
+  $types = og_get_types('group_post');
+  $file_name = array(
+    'value' => '[filefield-onlyname-original].[filefield-extension-original]',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0,
+  );
+  
+  $file_path = array(
+    'value' => '[space-og-path-raw]/files',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0,
+  );
+  foreach ($types as $type){
+    if (variable_get("upload_$type", "0") === "1"){
+      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path));
+    }
+  }
+  
+  $return[] = array('success' => TRUE,
+                   'query' => "the upload file paths were inserted in the filefield_paths table");
+  
+  return $return;
 }
