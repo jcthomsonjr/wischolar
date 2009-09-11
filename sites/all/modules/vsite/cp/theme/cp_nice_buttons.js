@@ -8,7 +8,6 @@
                .bind('click',[element],function(e){
             	 var elem = refresh_nicebutton_element(e.data[0]);
             	 elem.trigger('click');
-            	 //elem.click();
                  return false;
                }).bind('mousedown',[element],function(e){
             	 var elem = refresh_nicebutton_element(e.data[0]);
