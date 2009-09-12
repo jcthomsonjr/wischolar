@@ -20,7 +20,7 @@ function scholar_profile_modules() {
     'context_ui',
     'feedapi',
     'feedapi_node',
-  	'feedapi_inherit',
+    'feedapi_inherit',
     'parser_common_syndication',
     'filefield_paths',
     'features',
@@ -49,8 +49,8 @@ function scholar_profile_modules() {
     'views_ui', 
     'views_export', 
     'views_attach',
-  	'views_gallery',
-  	'views_gallery_og',
+    'views_gallery',
+    'views_gallery_og',
     'vertical_tabs',
   
 
@@ -134,17 +134,18 @@ function _scholar_core_modules(){
   return array(
     'block', 
     'blog',
-  	'comment', 
+    'comment', 
     'filter', 
-  	'help', 
-  	'menu',
-  	'node', 
-  	'system',
-  	'search',
-  	'user', 
-  	'path',
-  	'php',
+    'help', 
+    'menu',
+    'node', 
+    'system',
+    'search',
+    'user', 
+    'path',
+    'php',
     'taxonomy',
+    'upload',
   );
 }
 
