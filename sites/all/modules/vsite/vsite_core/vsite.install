@@ -31,8 +31,21 @@ function vsite_update_6001() {
   return $return;
 }
 
+function vsite_update_6002(){
 
-function vsite_update_6002() {
+  $return = array();
+  $t = get_t();
+
+  //_vsite_wysiwyg();
+  
+  $return[] = array('success' => TRUE,
+                   'query' => "wysywig configured");
+  
+  return $return;
+
+}
+
+function vsite_update_6003() {
   $return = array();
   
   $types = og_get_types('group_post');
@@ -50,13 +63,60 @@ function vsite_update_6002() {
     'transliterate' => 0,
   );
   foreach ($types as $type){
-    if (variable_get("upload_$type", "0") === "1"){
+    //if (variable_get("upload_$type", "0") === "1"){
       db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path));
-    }
+    //}
   }
   
   $return[] = array('success' => TRUE,
                    'query' => "the upload file paths were inserted in the filefield_paths table");
   
   return $return;
+}
+
+function   _vsite_wysiwyg(){
+  $settings = array (
+    'default' => 1,
+    'user_choose' => 0,
+    'show_toggle' => 1,
+    'theme' => 'advanced',
+    'language' => 'en',
+    'buttons' => array(
+      'default' => array (
+         'bold' => 1,
+         'italic' => 1,
+         'underline' => 1,
+         'bullist' => 1,
+         'numlist' => 1,
+         'image' => 1,
+         'cut' => 1,
+         'copy' => 1,
+         'paste' => 1,
+       ),
+       'drupal' => array (
+         'break' => 1
+       ),
+    ),
+
+    'toolbar_loc' => 'top',
+    'toolbar_align' => 'left',
+    'path_loc' => 'bottom',
+    'resizing' => 1,
+    'verify_html' => 1,
+    'preformatted' => 0, 
+    'convert_fonts_to_spans' => 1,
+    'remove_linebreaks' => 1,
+    'apply_source_formatting' => 0,
+    'paste_auto_cleanup_on_paste' => 1,
+    'block_formats' => 'p,address,pre,h2,h3,h4,h5,h6,div',
+    'css_setting' => 'theme',
+    'css_path' => '',
+    'css_classes' => '',
+
+);
+
+$settings = serialize($settings);
+
+  $query = "INSERT INTO {wysiwyg} (editor, settings) VALUES (%s', '%s')";
+  db_query($query, 'tinymce', $settings);
 }
