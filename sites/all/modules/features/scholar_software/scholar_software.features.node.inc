@@ -5,7 +5,7 @@
  */
 function _scholar_software_node_info() {
   $items = array(
-    'scholar_software' => array(
+    'software' => array(
       'name' => t('Software'),
       'module' => 'node',
       'description' => t(''),

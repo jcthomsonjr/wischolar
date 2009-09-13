@@ -1,15 +1,6 @@
 <?php
 
 /**
- * Implementation of hook_content_default_fields().
- */
-function scholar_software_content_default_fields() {
-  module_load_include('inc', 'scholar_software', 'scholar_software.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_software_content_default_fields', $args);
-}
-
-/**
  * Implementation of hook_context_default_contexts().
  */
 function scholar_software_context_default_contexts() {

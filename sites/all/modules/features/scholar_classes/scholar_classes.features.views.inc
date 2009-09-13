@@ -66,7 +66,7 @@ function _scholar_classes_views_default_views() {
     'type' => array(
       'operator' => 'in',
       'value' => array(
-        'scholar_class' => 'scholar_class',
+        'scholar_class' => 'class',
       ),
       'group' => '0',
       'exposed' => FALSE,

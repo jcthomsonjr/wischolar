@@ -66,7 +66,7 @@ function _scholar_software_views_default_views() {
     'type' => array(
       'operator' => 'in',
       'value' => array(
-        'scholar_software' => 'scholar_software',
+        'software' => 'software',
       ),
       'group' => '0',
       'exposed' => FALSE,

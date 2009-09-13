@@ -54,3 +54,36 @@ function _scholar_announcements_menu_default_items() {
 
   return $items;
 }
+
+/**
+ * Helper to implementation of hook_user_default_permissions().
+ */
+function _scholar_announcements_user_default_permissions() {
+  $permissions = array();
+
+  // Exported permission: create announcement content
+  $permissions[] = array(
+    'name' => 'create announcement content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: delete own announcement content
+  $permissions[] = array(
+    'name' => 'delete own announcement content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: edit own announcement content
+  $permissions[] = array(
+    'name' => 'edit own announcement content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  return $permissions;
+}
