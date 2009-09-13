@@ -16,10 +16,42 @@ function vsite_views_api(){
  */
 function vsite_strongarm() {
   $conf = array();
+  
+  $conf['scholar_content_type'] = 'scholarsite';  // TODO change to vsite
+  $conf['menu_primary_links_source'] = 'features';
+  
+  // scholar menus TODO change to vsite_*
+  $conf['scholar_primary_menu'] = 'features';
+  $conf['scholar_secondary_menu'] = 'scholar_secondary_menu';
+  
+  // page content type settings
+  //$conf['og_content_type_usage_page'] = 'group_post_standard';
+  $conf['comment_page'] = 0;
+  $conf['upload_page'] = 1;
+  $conf['node_options_page'] = 
+  array (
+    0 => 'status',
+  );
+  
+	
+
   $conf['upload_list_default'] = "1";
   $conf['upload_extensions_default'] = "jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp";
   $conf['upload_uploadsize_default'] = "5";
+  $conf['upload_usersize_default'] = "100";
   //$conf['upload_max_resolution'] = 0;
+  
+  // itweak settings
+  
+  $node_types = node_get_types();
+  foreach($node_types as $type){
+  	if ($conf['upload' . $type -> type === "1"]){
+  	  $conf["itweak_upload_node_display_" . $type -> type] = '3';
+  	  $conf["itweak_upload_teaser_display_" . $type -> type] = '3';
+  	}
+  }
+  
+  
 
   return $conf;
 }
@@ -80,7 +112,6 @@ function vsite_preprocess_views_view(&$vars) {
     }
   }
 }
-
 
 
 /** API functions **/
