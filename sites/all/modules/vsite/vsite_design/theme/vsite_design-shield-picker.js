@@ -1,39 +1,7 @@
 if (Drupal.jsEnabled) {
   $(document).ready(function() {
 
-	$('div#cp-settings-shield legend').hide();
-
-	var theSubnav = $("<div class=\"pad\">");
-    theSubnav.addClass("shield_subnav");
-    theSubnav.html("<h3>Select a shield</h3><div id=\"prev\" class=\"shield-pointer\"></div>");
-
-    var subnavList = $('<ul>');
-    var n_container = 0;
-
-    $('div#cp-settings-shield div.form-radios .form-item').each(function(){
-       	var jumpLink = $("<li>");
-    	jumpLink.html("&nbsp;"+(n_container+1)+"&nbsp;");
-
-    	subnavList.append(jumpLink);
-    	n_container++;
-    });
-
-    theSubnav.append(subnavList);
-    theSubnav.append('<div id="next" class="theme-pointer"></div>');
-
-    $('#cp-settings-shield').prepend(theSubnav);
-    $(".item-theme-picker:first").addClass('active');
-    var clickRegister = $('#cp-settings-shield');
-    $('div#prev,div#next,.shield_subnav li').cpSlidingContainer({containerW: 90,
-    	                                                         mainListSelector:'div.form-radios',
-							    							     listItemClass: 'form-item',
-							    							     listItemSelector: 'div.form-item',
-							    							     navClass:'shield_subnav',
-							    							     changeObject:clickRegister });
-
-    clickRegister.bind("indexChanged",function(e,index){
-        $("div.form-item:eq("+ ((0-index)+1) +") input[type=radio]").click(); //.attr('checked',true);
-    });
+	//something goes here
 
 
   });
