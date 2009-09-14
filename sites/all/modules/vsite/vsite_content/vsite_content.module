@@ -19,6 +19,11 @@ function vsite_content_menu(){
     'page callback' => 'vsite_content_content',
   );
   
+  $items['cp/content/files'] = array(
+    'title' => 'Files',
+    'page callback' => 'vsite_content_files',
+  );
+  
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
     $items[$path]['menu_name'] = 'cp';
@@ -39,29 +44,23 @@ function vsite_content_menu(){
     );    
   }
 
-  $items['vtry'] = array(
-    'title' => 'tt',
-    'page callback' => 'tt',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  
-  );
-
   return $items;
 }
 
-function tt(){
-  $result = db_query('SELECT * from {filefield_paths}');
-  while ($data = db_fetch_object($result)){
-    dpm(unserialize($data -> filename));
-    dpm(unserialize($data -> filepath));
-  }
-  return 'xx';
-}
 
 function vsite_content_content_access($type,$name){
   $vsite = vsite_get_vsite();
   return $vsite -> features[$name];
+}
+
+function vsite_content_files(){
+
+  $vsite = vsite_get_vsite();
+  $view_name = 'og_files';
+  $display = 'default';
+  $arg = $vsite -> sid;
+
+  return views_page($view_name, $display, $arg);  
 }
 
 /**
