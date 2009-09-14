@@ -359,5 +359,197 @@ function _vsite_content_views_default_views() {
 
   $views[$view->name] = $view;
 
+  // Exported view: vsite_files
+  $view = new view;
+  $view->name = 'vsite_files';
+  $view->description = 'vsite files';
+  $view->tag = 'vsite';
+  $view->view_php = '';
+  $view->base_table = 'files';
+  $view->is_cacheable = FALSE;
+  $view->api_version = 2;
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+  $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->override_option('relationships', array(
+    'vid' => array(
+      'label' => 'upload',
+      'required' => 0,
+      'id' => 'vid',
+      'table' => 'upload',
+      'field' => 'vid',
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('fields', array(
+    'filename' => array(
+      'label' => 'Name',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'link_to_file' => 1,
+      'exclude' => 0,
+      'id' => 'filename',
+      'table' => 'files',
+      'field' => 'filename',
+      'relationship' => 'none',
+    ),
+    'filepath' => array(
+      'label' => 'Path',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'link_to_file' => 0,
+      'exclude' => 0,
+      'id' => 'filepath',
+      'table' => 'files',
+      'field' => 'filepath',
+      'relationship' => 'none',
+    ),
+    'filemime' => array(
+      'label' => 'Mime type',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'link_to_file' => 0,
+      'exclude' => 0,
+      'id' => 'filemime',
+      'table' => 'files',
+      'field' => 'filemime',
+      'relationship' => 'none',
+    ),
+    'filesize' => array(
+      'label' => 'Size',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'file_size_display' => 'formatted',
+      'exclude' => 0,
+      'id' => 'filesize',
+      'table' => 'files',
+      'field' => 'filesize',
+      'relationship' => 'none',
+    ),
+    'timestamp' => array(
+      'label' => 'Upload date',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'date_format' => 'small',
+      'custom_date_format' => '',
+      'exclude' => 0,
+      'id' => 'timestamp',
+      'table' => 'files',
+      'field' => 'timestamp',
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('sorts', array(
+    'timestamp' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'timestamp',
+      'table' => 'files',
+      'field' => 'timestamp',
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'current' => array(
+      'operator' => 'all',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
+      'relationship' => 'vid',
+    ),
+  ));
+  $handler->override_option('access', array(
+    'type' => 'none',
+  ));
+  $handler->override_option('cache', array(
+    'type' => 'none',
+  ));
+  $handler->override_option('empty', 'no files uploaded');
+  $handler->override_option('empty_format', '1');
+  $handler->override_option('style_plugin', 'table');
+
+  $views[$view->name] = $view;
+
   return $views;
 }

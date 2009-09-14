@@ -56,11 +56,10 @@ function vsite_content_content_access($type,$name){
 function vsite_content_files(){
 
   $vsite = vsite_get_vsite();
-  $view_name = 'og_files';
+  $view_name = 'vsite_files';
   $display = 'default';
-  $arg = $vsite -> sid;
 
-  return views_page($view_name, $display, $arg);  
+  return views_page($view_name, $display);  
 }
 
 /**
