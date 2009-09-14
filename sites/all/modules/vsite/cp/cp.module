@@ -169,7 +169,6 @@ function cp_route(){
 function schlarcp_feature_customize($feature_name){
   ctools_include('ajax');
   ctools_include('modal');
-  ctools_modal_add_js();
   
   $form_state = array(
     're_render' => TRUE,
@@ -180,10 +179,12 @@ function schlarcp_feature_customize($feature_name){
   $form_state['args'] = array(NULL, $feature_name);
 
   $output = ctools_modal_form_wrapper('spaces_customize_form', $form_state);
-
+  
   if (empty($output)) {
     $output = array();
     //$output[] = ctools_modal_command_dismiss();
+  }else{
+  	$output[0]['output'] .= '<script type="text/javascript">Drupal.cpAddCToolsColumns();' . "</script>\n";
   }
   
   ctools_ajax_render($output);
@@ -204,13 +205,14 @@ function cp_form_alter(&$form, $form_state, $form_id) {
     // we dont need settings here
     unset($form['settings']);
     $site = $form['space']['#value'];
+    ctools_include('ajax');
+    ctools_include('modal');
+    ctools_modal_add_js();
+    drupal_add_js(drupal_get_path('module', 'cp') .'/theme/ctools_columns.js');
     // we would like to change the "customize" link to "settings" 
     // and display the form in the popup
     foreach (array_keys($site -> features) as $f_name){
       if (isset($form['customize'][$f_name])){ 
-        ctools_include('ajax');
-        ctools_include('modal');
-        ctools_modal_add_js();
         $link = ctools_modal_text_button('settings', 'cp/features/'. $f_name, 'customize '.$f_name);
         $form['customize'][$f_name]['#value'] = $link;
       }
