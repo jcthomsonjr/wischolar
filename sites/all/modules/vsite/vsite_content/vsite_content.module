@@ -67,12 +67,7 @@ function vsite_content_content($type = NULL, $name = NULL){
     $vid = current(array_keys($vocabs));
   }
   $output .= vsite_content_content_view($type, $vid);
-  
-  $query = "SELECT * FROM {wysiwyg} WHERE format = '1'";
-  $result = db_query($query);
-  while($data = db_fetch_object($result)){
-  	print_r(unserialize($data -> settings));
-  }
+
   return $output;
 }
 
