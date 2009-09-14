@@ -7,7 +7,7 @@ include_once('vsite_content.features.inc');
  */
 function vsite_content_menu(){
   $items = array();
-  
+
   $items['cp/content'] = array(
     'title' => 'Content', 
     'page callback' => 'cp_route',
@@ -39,9 +39,24 @@ function vsite_content_menu(){
     );    
   }
 
-
+  $items['vtry'] = array(
+    'title' => 'tt',
+    'page callback' => 'tt',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  
+  );
 
   return $items;
+}
+
+function tt(){
+  $result = db_query('SELECT * from {filefield_paths}');
+  while ($data = db_fetch_object($result)){
+    dpm(unserialize($data -> filename));
+    dpm(unserialize($data -> filepath));
+  }
+  return 'xx';
 }
 
 function vsite_content_content_access($type,$name){

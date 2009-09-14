@@ -34,7 +34,7 @@ function scholar_profile_modules() {
 }
 
 /**
- * Returns an array list of core atrium modules.
+ * Returns an array list of core contributed modules.
  */
 function _scholar_core_modules() {
  $contrib_modules = array(
