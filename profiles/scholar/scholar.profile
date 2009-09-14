@@ -79,6 +79,7 @@ function _scholar_core_modules() {
     'views_gallery',
     'views_gallery_og',
     'vertical_tabs',
+    'wysiwyg',
   
 
   //cck
@@ -213,7 +214,7 @@ function scholar_profile_tasks(&$task, $url) {
     _scholar_profile_content_types();
     
     // configure modules  (variables table mainly)
-    _scholar_variable_set();
+    //_scholar_variable_set();
     
     // set the theme
     _scholar_enable_themes();
