@@ -260,12 +260,14 @@ function scholar_profile_tasks(&$task, $url) {
     drupal_get_schema('system', TRUE); // Clear schema DB cache
     drupal_flush_all_caches();
     db_query("UPDATE {blocks} SET status = 0, region = ''"); // disable all DB blocks
+    
+    //features_rebuild();
 
   variable_set('scholar_content_type', 'scholarsite');
   // set default to america/new yourk
   variable_set(date_default_timezone_name, "America/New_York");
   
-  _scholar_filefield_paths_config();
+  //_scholar_filefield_paths_config();
 
     // Get out of this batch and let the installer continue
     $task = 'profile-finished';
@@ -452,11 +454,11 @@ function _scholar_filefield_paths_config() {
     'pathauto' => 0,
     'transliterate' => 0,
   );
-  //foreach ($types as $type){
+  foreach ($types as $type){
     //if (variable_get("upload_$type", "0") === "1"){
-      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", 'page', "upload", serialize($file_name), serialize($file_path));
+      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path));
     //}
-  //}
+  }
   
   $return[] = array('success' => TRUE,
                    'query' => "the upload file paths were inserted in the filefield_paths table");
