@@ -222,6 +222,8 @@ function scholar_profile_tasks(&$task, $url) {
     // for testing purposes, create nodes groups etc
     _scholar_testingcontent();
 
+    // configure wisywig/tinymce
+    _scholar_wysiwyg_config();
     /*
     // Remove default input filter formats
     $result = db_query("SELECT * FROM {filter_formats} WHERE name IN ('%s', '%s')", 'Filtered HTML', 'Full HTML');
@@ -262,6 +264,8 @@ function scholar_profile_tasks(&$task, $url) {
   variable_set('scholar_content_type', 'scholarsite');
   // set default to america/new yourk
   variable_set(date_default_timezone_name, "America/New_York");
+  
+  _scholar_filefield_paths_config();
 
     // Get out of this batch and let the installer continue
     $task = 'profile-finished';
@@ -379,5 +383,84 @@ function __scholar_get_scholar_theme_names(){
 		$return[] = $data -> name;
 	}
 	return $return;
+}
+
+function   _scholar_wysiwyg_config(){
+  $settings = array (
+    'default' => 1,
+    'user_choose' => 0,
+    'show_toggle' => 1,
+    'theme' => 'advanced',
+    'language' => 'en',
+    'buttons' => array(
+      'default' => array (
+         'bold' => 1,
+         'italic' => 1,
+         'underline' => 1,
+         'bullist' => 1,
+         'numlist' => 1,
+         'image' => 1,
+         'cut' => 1,
+         'copy' => 1,
+         'paste' => 1,
+       ),
+       'drupal' => array (
+         'break' => 1
+       ),
+    ),
+
+    'toolbar_loc' => 'top',
+    'toolbar_align' => 'left',
+    'path_loc' => 'bottom',
+    'resizing' => 1,
+    'verify_html' => 1,
+    'preformatted' => 0, 
+    'convert_fonts_to_spans' => 1,
+    'remove_linebreaks' => 1,
+    'apply_source_formatting' => 0,
+    'paste_auto_cleanup_on_paste' => 1,
+    'block_formats' => 'p,address,pre,h2,h3,h4,h5,h6,div',
+    'css_setting' => 'theme',
+    'css_path' => '',
+    'css_classes' => '',
+
+);
+
+$settings = serialize($settings);
+
+  $query = "SELECT format FROM {filter_formats} WHERE name='%s'";
+  $filter_name = db_result(db_query($query,'Filtered HTML'));
+  $query = "INSERT INTO {wysiwyg} (format, editor, settings) VALUES ('%d', '%s', '%s')";
+  db_query($query, $filter_name, 'tinymce', $settings);
+}
+
+
+function _scholar_filefield_paths_config() {
+  $return = array();
+  
+  $types = og_get_types('group_post');
+  $file_name = array(
+    'value' => '[filefield-onlyname-original].[filefield-extension-original]',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0,
+  );
+  
+  $file_path = array(
+    'value' => '[space-og-path-raw]/files',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0,
+  );
+  //foreach ($types as $type){
+    //if (variable_get("upload_$type", "0") === "1"){
+      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", 'page', "upload", serialize($file_name), serialize($file_path));
+    //}
+  //}
+  
+  $return[] = array('success' => TRUE,
+                   'query' => "the upload file paths were inserted in the filefield_paths table");
+  
+  return $return;
 }
 
