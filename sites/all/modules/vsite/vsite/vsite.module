@@ -219,12 +219,12 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
     default:
       if ($form['#id'] == 'node-form' && (arg(0) .'/'. arg(1) != 'admin/content')) {
         // GROUP ENABLED CONTENT TYPES
-        if(!array_key_exists('spaces_og',$form)){
+        if(array_key_exists('spaces_og',$form)){
           // Recurse into spaces_og hiding the site select form
           _spaces_og_make_hidden($form['spaces_og']);
         }
         
-        if(!array_key_exists('spaces',$form)){
+        if(array_key_exists('spaces',$form)){
           //Get rid of the incorect description
           _spaces_og_make_hidden($form['spaces']);
         }
