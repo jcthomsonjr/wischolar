@@ -43,28 +43,6 @@ function simport_node_add_imagefield_image($source, $field_name, &$node){
   node_save($node);
 }
 
-
-/**
- * API function - Transfers the file, creates entry in the files table, returns the file id
- * @param unknown_type $file
- */
-function simport_import_filefield_file(&$node, $src_path, $file, $i=0){
-
-  //get dest path TODO: should get destination path token/filefield paths in content type settings.
-  $dest_path = variable_get('file_directory_path', '') . '/' . $node -> og_groups [0];
-
-  $fid = _simport_import_file($src_path, $dest_path, $file, $node ->uid);
-
-  $node -> field_link_image[$i]['fid'] = $fid;
-  $node -> field_link_image[$i]['list'] = 1;
-  $node -> field_link_image[$i]['uid'] = $node -> uid;
-  $node -> field_link_image[$i]['filename'] =  $file['filename'];
-  $node -> field_link_image[$i]['filepath'] =  $dest_path;
-  $node -> field_link_image[$i]['filemime'] =   $file['filemime'];
-  $node -> field_link_image[$i]['filesize'] =   $file['filesize'];
-  $node -> field_link_image[$i]['status '] =  1;
-}
-
  /**
   * API function - saves a single file to a node
   *
@@ -84,20 +62,44 @@ function simport_import_filefield_file(&$node, $src_path, $file, $i=0){
  * @param unknown_type $file
  * @param unknown_type $uid
  */
-function _simport_import_file($src_path, $dest_path, $file, $uid){
-  //create full path to destination directory
-  $full_dest_path = variable_get('simport_current_path', '') . '/' . $dest_path;
+function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
+  
+  //determine site files directory, if set
+   $dir = isset($vsite)? '/'. $vsite ->title : '';
+   
+  //create full path to destination directory TODO: should get destination path token/filefield paths in content type settings.
+  $full_dest_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . $dir;
 
-  //make the directory
-  mkdir($full_dest_path);
+  //create directory  
+  file_check_directory($full_dest_path, $mode = 1, $form_item = NULL);
+  
+  //copy file
+  file_copy(&$source, $full_dest_path, $replace = FILE_EXISTS_REPLACE);
+  
+  if ($file){
+  //customize a object a little bit
+  $file -> uid = $node -> uid;
+  $file-> filepath = variable_get('file_directory_path', '') . $dir .  '/' . $file-> filename;
+  $file -> status = 1;
+  $file -> timestamp = time();
+  }
+  
+  // Get file information from source
+  else{
+    $file = new stdClass();
+    $file -> uid = $node -> uid;
+    $file -> filename = basename($source);
+    $file -> filepath = dirname($source);
+    $file -> filemime = file_get_mimetype($source);
+    $file -> filesize = filesize($source);
+    $file -> status =1;
+    $file -> timestamp = filemtime($source); // TODO: should use modified time as timestamp?
+  }
 
-  //copy the file to the new location
-  file_copy(&$src_path, $full_dest_path, $replace = FILE_EXISTS_REPLACE);
+  //write data to files table
+  drupal_write_record('files', $file);
 
-  //write the file data to the files table - TODO: not sure where to get timestamp???
-  $sql = db_query("INSERT INTO {files} (uid, filename, filepath, filemime, filesize, status, timestamp)
-  VALUES (%d, '%s', '%s', '%s', %d, %d, %d,'%s' )", (int)$uid, $file['filename'], $dest_path .'/' . $file['filename'], $file['filemime'], $file['filesize'], 1, now());
-
-  return db_last_insert_id('files', 'fid');
+  //return file object
+  return $file;
 }
 
