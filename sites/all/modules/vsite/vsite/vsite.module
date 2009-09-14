@@ -194,3 +194,40 @@ function vsite_spaces_presets(){
        
   return $items;
 }
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
+  switch ($op) {
+    case 'presave':
+      // switch node's group for non-features
+      if (!og_is_omitted_type($node->type)) {
+        if (isset($node->spaces_og['gid']) && !in_array($node->spaces_og['gid'], $node->og_groups)) {
+          $node->og_groups = array($node->spaces_og['gid'] => $node->spaces_og['gid']);
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter()
+ **/
+function vsite_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    default:
+      if ($form['#id'] == 'node-form' && (arg(0) .'/'. arg(1) != 'admin/content')) {
+        // GROUP ENABLED CONTENT TYPES
+        if(!og_is_group_type($form['#node']->type) && !og_is_omitted_type($form['#node']->type) && $form['spaces_og']) {
+          // Recurse into spaces_og hiding the site select form
+          _spaces_og_make_hidden($form['spaces_og']);
+          
+          //Get rid of the incorect description
+          _spaces_og_make_hidden($form['spaces']);
+          if(array_key_exists('#description',$form['spaces'])) unset($form['spaces']['#description']);
+        }
+      }
+      break;
+  }
+}
