@@ -280,8 +280,24 @@ function simport_set_logo($old){
     //rename the file
     file_move($source, $new_file );    
     
+    //define new path for logo
+    $new_path = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title . '/' . basename($new_file);
+    
+    $file = new stdClass();
+    $file -> uid = $vsite-> group -> uid;
+    $file -> filename = basename($new_file);
+    $file -> filepath = dirname($new_path);
+    $file -> filemime = file_get_mimetype($new_file);
+    $file -> filesize = filesize($new_file);
+    $file -> status =1;
+    $file -> timestamp = filemtime($new_file);
+    
+    //write to the files table
+    drupal_write_record('files', $file);
+    
+    
     //now set in the vsite settings
-    $vsite ->settings['logo']['current_logo'] = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title . '/' . basename($new_file);
+    $vsite ->settings['logo']['current_logo'] = $new_path;
     //save the vsite settings
     spaces_save($vsite);
     }
@@ -457,7 +473,8 @@ function simport_get_files(){
   );
 
   foreach ($types as $type) {
-    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $type);
+    //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $type);
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", $type, 26);
     while ($data = db_fetch_object($sql)){
       //get the old site node object
       $old = unserialize($data ->data);
@@ -467,14 +484,36 @@ function simport_get_files(){
         case 'scholar_link':
           //check if file(s) exist
           if ($old -> field_image[0]['fid'] > 0){
-
+            
             //load the new node
             $node = node_load(simport_get_new_nid(array('nid' => $old -> nid)));
+            //load the vsite
+            $vsite =  spaces_load ( 'og', key($node -> og_groups), TRUE );
 
-            foreach($old -> field_image as $file){
+            foreach($old -> field_image as $old_file){
               //define full path to file
-              $source = variable_get('simport_remote_path', '') . '/' . $file['filepath'];
-              simport_node_add_imagefield_image($source, 'field_link_image', $node);
+              $source = variable_get('simport_remote_path', '') . '/' . $old_file['filepath'];
+              
+              //unset old info for fid and nid
+              unset($old_file['nid']);
+              unset($old_file['fid']);
+
+             //call api function to import file
+              $file = simport_import_file(&$node, $source, (object)$old_file, $vsite);
+              
+              //If file had description text add it here
+             $file->description =  isset($old_file -> description) ? $old_file -> description : $file -> filename; 
+             $file->list = 1;
+                  
+              // upload_save($node);
+               
+              //taken from upload_save()
+              db_query("INSERT INTO {upload} (fid, nid, vid, list, description, weight) VALUES (%d, %d, %d, %d, '%s', %d)", $file->fid, $node->nid, $node->vid, $file->list, $file->description, $file->weight);
+      file_set_status($file, FILE_STATUS_PERMANENT);
+      
+      
+              //not using filefield anymore - no longer called
+             // simport_node_add_imagefield_image($source, 'field_link_image', $node);
             }
           }
           break;
@@ -515,6 +554,6 @@ function _simport_map_content_types($old_type = NULL){
   if ($old_type){    
     return $types[$old_type];
   }
-
   return $types;
 }
+
