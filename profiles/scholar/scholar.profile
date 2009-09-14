@@ -1,16 +1,43 @@
 <?php
-// $Id:$
+// $Id$
 
 /**
- * Return an array of the modules to be enabled when this profile is installed.
- *
- * @return
- *   An array of modules to enable.
+ * Implementation of hook_profile_details().
+ */
+function scholar_profile_details() {
+  return array(
+    'name' => 'Scholar',
+    'description' => 'Scholar Web Sites by IQSS'
+  );
+}
+
+/**
+ * Implementation of hook_profile_modules().
  */
 function scholar_profile_modules() {
-  $core_modules = _scholar_core_modules();
+  return array(
+    'block', 
+    'blog',
+    'comment', 
+    'filter', 
+    'help', 
+    'menu',
+    'node', 
+    'system',
+    'search',
+    'user', 
+    'path',
+    'php',
+    'taxonomy',
+    'upload',
+  );
+}
 
-  $contrib_modules = array(
+/**
+ * Returns an array list of core atrium modules.
+ */
+function _scholar_core_modules() {
+ $contrib_modules = array(
   // sites/all
     'activity',
     'advanced_help',
@@ -80,8 +107,17 @@ function scholar_profile_modules() {
     'devel',
     'devel_generate',
     'install_profile_api',
-    'strongarm',
+    'strongarm',    
+  );
   
+  return $contrib_modules;
+}
+
+/**
+ * Returns an array list of dsi modules.
+ */
+function _scholar_scholar_modules() {
+  return array(
     'vsite',
     'scholar',
     'vsite_content',
@@ -122,82 +158,57 @@ function scholar_profile_modules() {
     'scholar_publications',
     'scholar_feeds',
     'scholar_software',
-
-    
-  );
-
-  return array_merge($core_modules, $contrib_modules);
-}
-
-
-function _scholar_core_modules(){
-  return array(
-    'block', 
-    'blog',
-    'comment', 
-    'filter', 
-    'help', 
-    'menu',
-    'node', 
-    'system',
-    'search',
-    'user', 
-    'path',
-    'php',
-    'taxonomy',
-    'upload',
   );
 }
 
 /**
- * Return a description of the profile for the initial installation screen.
- *
- * @return
- *   An array with keys 'name' and 'description' describing this profile,
- *   and optional 'language' to override the language selection for
- *   language-specific profiles.
- */
-function scholar_profile_details() {
-  return array(
-    'name' => 'Scholar Profile',
-    'description' => 'Select this profile to enable an scholar installation.'
-    );
-}
-
-/**
- * Return a list of tasks that this profile supports.
- *
- * @return
- *   A keyed array of tasks the profile will perform during
- *   the final stage. The keys of the array will be used internally,
- *   while the values will be displayed to the user in the installer
- *   task list.
+ * Implementation of hook_profile_task_list().
  */
 function scholar_profile_task_list() {
-  return array(
-    'scholar-features' => st('Scholar features'),
-    'content-generate' => st('Generate content'),
+  $tasks = array(
+    'scholar-configure' => st('Scholar  configuration'),
   );
+  return $tasks;
 }
 
 /**
- * hook profile_tasks
+ * Implementation of hook_profile_tasks().
  */
 function scholar_profile_tasks(&$task, $url) {
-  include_once(dirname(__FILE__) . '/scholar.forms.inc');
-  include_once(dirname(__FILE__) . '/scholar.settings.inc');
   include_once(dirname(__FILE__) . '/scholar.testingcontent.inc');
-  
+
   $output = '';
-  
-  if ($task == 'profile'){
 
-    install_include(scholar_profile_modules());
+  if ($task == 'profile') {
+    $modules = _scholar_core_modules();
+    $modules = array_merge($modules, _scholar_scholar_modules());
 
+    $files = module_rebuild_cache();
+    $operations = array();
+    foreach ($modules as $module) {
+      $operations[] = array('_install_module_batch', array($module, $files[$module]->info['name']));
+    }
+    $batch = array(
+      'operations' => $operations,
+      'finished' => '_scholar_profile_batch_finished',
+      'title' => st('Installing @drupal', array('@drupal' => drupal_install_profile_name())),
+      'error_message' => st('The installation has encountered an error.'),
+    );
+    // Start a batch, switch to 'profile-install-batch' task. We need to
+    // set the variable here, because batch_process() redirects.
+    variable_set('install_task', 'profile-install-batch');
+    batch_set($batch);
+    batch_process($url, $url);
+  }
+
+  // Run additional configuration tasks
+  // @todo Review all the cache/rebuild options at the end, some of them may not be needed
+  if ($task == 'scholar-configure') {
+      install_include(_scholar_core_modules());
     // create roles
     _scholar_create_roles();
     // rebuild access (required by og)
-    _scholar_access_rebuild();
+    //_scholar_access_rebuild();
     // create default content types
     _scholar_profile_content_types();
     
@@ -210,39 +221,60 @@ function scholar_profile_tasks(&$task, $url) {
     // for testing purposes, create nodes groups etc
     _scholar_testingcontent();
 
-    $task = 'scholar-features';
-    drupal_set_title('Enabe all the features available to each scholar site');
-    return drupal_get_form('scholar_get_features_info', $url);
-  }
+    /*
+    // Remove default input filter formats
+    $result = db_query("SELECT * FROM {filter_formats} WHERE name IN ('%s', '%s')", 'Filtered HTML', 'Full HTML');
+    while ($row = db_fetch_object($result)) {
+      db_query("DELETE FROM {filter_formats} WHERE format = %d", $row->format);
+      db_query("DELETE FROM {filters} WHERE format = %d", $row->format);
+    }
 
-  // task to enable features
-  if ($task == 'scholar-features'){
-    $form = drupal_get_form('scholar_get_features_info', $url);    
-    if (variable_get('scholar_features', FALSE)){
-       variable_del('scholar_features');
-       $task = 'content-generate';
-       variable_set('content_generate','1');  // why is this important, i have no idea!!
-       
-       drupal_set_title('generate some content for testing');
-       return drupal_get_form('scholar_generate_content_form', $url);
-    }
-    else {
-      return $form;
-    }
-  }
-  
-  // generate some content for testing
-  if ($task == 'content-generate'){
-    $form = drupal_get_form('scholar_generate_content_form', $url);    
-    if (variable_get('content_generate', FALSE)){
-       variable_del('content_generate');
-       $task = 'profile-finished';
-    }
-    else {
-      return $form;
-    }
+    // Eliminate the access content perm from anonymous users.
+    db_query("UPDATE permission set perm = '' WHERE rid = 1");
+
+    // Create user picture directory
+    $picture_path = file_create_path(variable_get('user_picture_path', 'pictures'));
+    file_check_directory($picture_path, 1, 'user_picture_path');
+
+
+
+    // Set time zone
+    variable_set('date_default_timezone_name', 'US/Eastern');
+
+    // Calculate time zone offset from time zone name and set the default timezone offset accordingly.
+    // You dont need to change the next two lines if you change the default time zone above.
+    $date = date_make_date('now', variable_get('date_default_timezone_name', 'US/Eastern'));
+    variable_set('date_default_timezone', date_offset_get($date));
+
+    // Set a default footer message.
+    variable_set('site_footer', '&copy; 2009 '. l('IQSS', 'http://www.iq.harvard.edu', array('absolute' => TRUE)));
+    */
+
+    // Rebuild key tables/caches
+    menu_rebuild();
+    module_rebuild_cache(); // Detects the newly added bootstrap modules
+    node_access_rebuild();
+    drupal_get_schema('system', TRUE); // Clear schema DB cache
+    drupal_flush_all_caches();
+    db_query("UPDATE {blocks} SET status = 0, region = ''"); // disable all DB blocks
+
+  variable_set('scholar_content_type', 'scholarsite');
+  // set default to america/new yourk
+  variable_set(date_default_timezone_name, "America/New_York");
+
+    // Get out of this batch and let the installer continue
+    $task = 'profile-finished';
   }
   return $output;
+}
+
+/**
+ * Finished callback for the modules install batch.
+ *
+ * Advance installer task to language import.
+ */
+function _scholar_profile_batch_finished($success, $results) {
+  variable_set('install_task', 'scholar-configure');
 }
 
 /**
@@ -262,9 +294,11 @@ function _scholar_create_roles(){
  * 
  * @see http://api.drupal.org/api/function/node_access_rebuild/6
  */
+/*
 function _scholar_access_rebuild(){
   node_access_rebuild();
 }
+*/
 
 /**
  * Create default content types
@@ -325,8 +359,7 @@ function scholar_form_alter(&$form, $form_state, $form_id) {
     $form['site_information']['site_mail']['#default_value'] = 'swap@lists.iq.harvard.edu';
     $form['admin_account']['account']['name']['#value'] = 'admin';
     $form['admin_account']['account']['mail']['#value'] = 'swap@lists.iq.harvard.edu';
-    //$form['admin_account']['account']['pass']['#value'] = 'sharepass';
-    // dont check for updates automatically
+
     // TODO this is not working 
     //$form['server_settings']['update_status_module']['#default_value'] = 0;
   }
