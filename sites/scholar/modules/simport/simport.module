@@ -503,7 +503,7 @@ function simport_get_files(){
               unset($old_file['fid']);
 
              //call api function to import file
-              $file = simport_import_file(&$node, $source, (object)$old_file, $vsite);
+              $file = simport_import_file($node, $source, (object)$old_file, $vsite);
               
               //If file had description text add it here
              $file->description =  isset($old_file -> description) ? $old_file -> description : $file -> filename; 
@@ -559,5 +559,28 @@ function _simport_map_content_types($old_type = NULL){
     return $types[$old_type];
   }
   return $types;
+}
+
+/**
+ * Import serialized data from the D5 scholar site
+ */
+function _simport_exportdata(){
+  global $db_url;
+
+  $db_conn = array();
+  //get the conn params  
+  $db_arr = explode('/', $db_url);
+  $db_user = explode(':', $db_arr[2]);
+  $db_pass = explode('@', $db_user[1]);   
+  
+  $db_conn['user'] = $db_user[0];
+  $db_conn['name'] = $db_arr[3];
+  $db_conn['pass'] = $db_pass[0];
+  $db_conn['host'] = $db_pass[1];
+    
+  $cmd = 'mysql -u' . $db_conn['user'] . ' -p' . $db_conn['pass']. ' ' .  $db_conn['name'] . ' < /nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/modules/simport/export/scholar_export_data.sql';
+  
+  //execute command to import table
+  shell_exec($cmd);
 }
 
