@@ -135,8 +135,8 @@ function simport_import(){
   }
   
   //PHASE 3 - Set The logo
-   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 4);
-  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
+   //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 4);
+  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
   while($data = db_fetch_object($sql)){
     $old = unserialize($data -> data);
     if($old -> field_photo[0]['fid'] > 0){
@@ -454,7 +454,7 @@ function simport_set_class($old, &$new){
 
   //set semester
   if(!empty($old ->field_scholar_semester[0]['value'])){
-    $new -> field_class_semester[0]['value'] = $old ->field_scholar_year[0]['value'];
+    $new -> field_class_semester[0]['value'] = $old ->field_scholar_semester[0]['value'];
   }
 }
 
