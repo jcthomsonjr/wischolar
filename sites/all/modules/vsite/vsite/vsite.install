@@ -6,7 +6,15 @@
 function vsite_enable() {
   // Weight scholar to be after spaces_og
   $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'spaces_og'"));
-  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite'", ($weight + 1));  
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite'", ($weight + 1)); 
+  // all vsite* modules have weight higher than vsite // TODO
+  /*
+  $query =  "SELECT weight FROM {system} WHERE type = 'module' AND name LIKE = '%%s%%%'";
+  $result = db_query($query, 'vsite_');
+  while ($data = db_fetch_object($result)){
+    db_query("UPDATE {system} SET weight = %d WHERE name = '%s'", ($weight + 2), $data -> name); 
+  }
+  */
 }
 
 
