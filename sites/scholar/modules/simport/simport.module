@@ -277,9 +277,9 @@ function simport_set_logo($old){
     file_copy($source, $dest, $replace = FILE_EXISTS_REPLACE);
 
     //replacing the file name but keeping file ext
-    $filename = explode('.', basename($source)); dpm($filename);
+    $filename = explode('.', basename($source)); 
     $new_filename = $vsite ->title . '.' . $filename[1];
-     dpm($new_filename);
+   
     //define new file - absolute path
     $new_file = $dest . '/' . $new_filename;
    
@@ -477,8 +477,8 @@ function simport_get_files(){
   );
 
   foreach ($types as $type) {
-    //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $type);
-    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", $type, 26);
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $type);
+    //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", $type, 26);
     while ($data = db_fetch_object($sql)){
       //get the old site node object
       $old = unserialize($data ->data);
