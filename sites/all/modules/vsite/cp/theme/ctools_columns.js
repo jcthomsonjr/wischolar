@@ -23,5 +23,14 @@ if (Drupal.jsEnabled) {
 			  
 		  }//Don't try this if there are a lot of fieldsets / or none
 	  }
+	  
+	  form.find('.form-checkboxes').each(function(index,domElement) {
+		  var el = $(domElement);
+		  if(el.find('.form-item').length <=5){
+			  el.find('.form-item').each(function(index,domElement) {
+				 $(domElement).addClass('horizontal');
+			  });
+		  }
+	  });//add horizontal to checkboxes with < 5 elements
   }
 }

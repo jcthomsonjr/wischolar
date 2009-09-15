@@ -71,6 +71,7 @@ function vsite_users_menu(){
     'access callback' => 'cp_access_cp',
     'file' => 'vsite_users.pages.inc',
     'type' => MENU_CALLBACK,
+    'weight' => 10
   );
   
   return $items;
@@ -182,5 +183,11 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
   	$form['og_register']['og_register']['#value'] = array($vsite->sid => $vsite->title);
   	$form['og_register']['og_register']['#type'] = 'value';
   	$form['og_register']['#type'] = 'value';
+  	
+  	//Add Registration info to form
+  	content_profile_registration_form_alter(&$form, $form_state,'user_register');
+  	
+  	//Add submit handler for registration info
+  	array_unshift($form['#submit'], 'content_profile_registration_user_register_submit');
   }
 }

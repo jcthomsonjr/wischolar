@@ -44,6 +44,7 @@ function _scholar_core_modules() {
     'context',
     'context_contrib',
     'content_profile',
+    'content_profile_registration',
     'context_ui',
     'feedapi',
     'feedapi_node',
