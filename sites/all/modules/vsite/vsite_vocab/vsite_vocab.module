@@ -151,7 +151,7 @@ function vsite_vocab_terms($v , $admin = FALSE, $count = FALSE){
       'id' => 'vsite_vocab_item_' . $term->tid 
     );
   }
-  return theme( 'item_list', $items, NULL, 'ul', $attributes = array('id' => 'id') );
+  return theme( 'item_list', $items, NULL, 'ul' );
 }
 
 
