@@ -6,15 +6,20 @@
     //var f = this.form;
     var link = $('<a class="submit-link ' + element.attr("id") + '" href="#"><span class="button-inner"><span class="label">' + element.val() + '</span></span></a>')
                .bind('click',[element],function(e){
-            	 var elem = refresh_nicebutton_element(e.data[0]);
-            	 elem.trigger('click');
+            	 var elem = refresh_nicebutton_element(e.data[0],$(e.target));
+            	 if(elem.is(".ctools-use-modal-processed")){
+            	   elem.triggerHandler('click');
+            	   $("#modal-content form").submit();
+            	 }else{
+            	   elem.trigger('click');
+            	 }//This is a hack till we fix the html error that is submiting the wrong form
                  return false;
                }).bind('mousedown',[element],function(e){
-            	 var elem = refresh_nicebutton_element(e.data[0]);
+            	 var elem = refresh_nicebutton_element(e.data[0],$(e.target));
             	 elem.trigger('mousedown');
                  return true;
                }).bind('mouseup',[element],function(e){
-            	 var elem = refresh_nicebutton_element(e.data[0]);
+            	 var elem = refresh_nicebutton_element(e.data[0],$(e.target));
             	 elem.trigger('mouseup');
                  return true;
                });
@@ -22,10 +27,15 @@
   });
 }
 
-function refresh_nicebutton_element(elem){
+function refresh_nicebutton_element(elem,clicked){
 	if(elem.attr("id")){
-		var tmp = $('#'+elem.attr("id"));
-		if(tmp.length) elem = tmp; 
+		var par = clicked.parent().parent().parent(); //Get outside Nice button
+		if(par.length && par.find('#'+elem.attr("id")).length){
+			elem = par.find('#'+elem.attr("id"));
+		}else{
+		  var tmp = $('#'+elem.attr("id"));
+		  if(tmp.length) elem = tmp;
+		}
 	}
 	
 	return elem;
