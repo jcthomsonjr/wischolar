@@ -7,7 +7,7 @@ if (Drupal.jsEnabled) {
 			  var col = $("<div class='modal_col'></div>");
 			  var col_height = (form.height() > (container.height() * 2))?Math.round(form.height()/2):container.height();
 			  form.find('fieldset').prepend(col);
-			  form.find('fieldset .form-item').each(function(index,domElement) {
+			  form.find('fieldset > .form-item').each(function(index,domElement) {
 				  var el = $(domElement);
 				  var tmp_h = $('.modal_col:last').height();
 				  var tmp_hc = container.height();
