@@ -31,6 +31,7 @@ Drupal.behaviors.vsitevocab = function(context) {
   rename_link.click(Drupal.CTools.AJAX.clickAJAXLink);
 }
 
+/*
 Drupal.behaviors.VocabEdit = function(context){
   $('ul.admin').hide();
   
@@ -41,3 +42,4 @@ Drupal.behaviors.VocabEdit = function(context){
 	  return false;
   });	
 }
+*/
