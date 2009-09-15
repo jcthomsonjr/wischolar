@@ -54,6 +54,9 @@ function vsite_vocab_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 }
 
 
+/**
+ * hook block
+ */
 function vsite_vocab_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
@@ -70,18 +73,38 @@ function vsite_vocab_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
+function vsite_vocab_form_alter(&$form, $form_state, $form_id) {
+
+  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] .'_node_form' == $form_id) {
+    if (!empty($form['taxonomy'])){
+      $vid = reset(element_children($form['taxonomy']));
+      $old_title = $form['taxonomy'][$vid]['#title'];
+      $new_title = explode('_', $old_title);
+      $new_title[1] = ucfirst($new_title[1]);
+      unset($new_title[0]);
+      $new_title = implode(' ', $new_title);
+      $form['taxonomy'][$vid]['#title'] = $new_title;
+    }
+  }
+}
+
+/**
+ * callback function for cp/content/taxonomy
+ */
 function vsite_vocab_taxonomies(){
   drupal_add_js(drupal_get_path('module', 'vsite_vocab') . '/theme/vsite_vocab.js');
   drupal_add_css(drupal_get_path('module', 'vsite_vocab') .'/theme/vsite_vocab.css');
   ctools_include('ajax');
   ctools_add_js('ajax-responder');
   
-  $site = vsite_get_vsite();
-  $admin = $site->admin_access();
+  $vsite = vsite_get_vsite();
+  
+  // only vsite admins can see the admin links (delete, rename)
+  $admin = $vsite->admin_access();
   
   vsite_include('vsiteapi');
   
-  $s_types = vsite_content_types();
+  $s_types = vsite_content_types($privacy = array(1,2));
   $output = '';
   $delta = 0;
   $output = '<div class="pad" id="vsite-vocab-wrapper">';
@@ -100,16 +123,14 @@ function vsite_vocab_taxonomies(){
   return $output;
 }
 
+/**
+ * callback function for "Site categories" block
+ */
 function vsite_vocab_block_view() {
-  //TODO it seems like vsite_get_vsite does not work here
-  // cant get space from within a block
-  //$group_node = og_get_group_context ();
-  //$site = spaces_load ( 'og', $group_node->nid, TRUE );
-
-  $site = vsite_get_vsite();
+  $vsite = vsite_get_vsite();
   $sid = $vsite -> nid;
  
-  // 1. get the active contexts
+  // get the active contexts
   $active_contexts = context_active_contexts();
   foreach($active_contexts as $c){
     // does this context has a "node" associated with it
@@ -117,21 +138,22 @@ function vsite_vocab_block_view() {
       $node_type = current($c -> node);  // TODO we are assuming that the context has only one content type
       // get vocabularies associated with this content type
 
-      return vsite_vocab_block_per_content_type($site, $node_type);
+      return vsite_vocab_block_per_content_type($vsite, $node_type);
     }
   }
 }
 
-function vsite_vocab_block_per_content_type($site, $node_type, $subject = 'Categories') {
-
-  $vcs = taxonomy_get_vocabularies ( $node_type );
-  foreach ( $vcs as $v ) {
-    // which is the group of this vocab?
-    $group_vocab = og_vocab_get_group($v -> vid);
-    if ($group_vocab['nid'] == $site -> group -> nid){
-
-      $terms_html = vsite_vocab_terms($v, $admin, $count = TRUE);
-    }
+/**
+ * html content of a vocab block for one content type
+ * @param $vsite
+ * @param $node_type
+ * @param $subject  title of the block
+ */
+function vsite_vocab_block_per_content_type($vsite, $node_type, $subject = 'Categories') {
+  $vcs = vsite_get_vocabs ($vsite, $node_type );
+  if (count($vcs)){
+    $v = reset($vcs);
+     $terms_html = vsite_vocab_terms($v, $admin, $count = TRUE);
   }
 
   $block['content'] =  $terms_html;
@@ -141,6 +163,12 @@ function vsite_vocab_block_per_content_type($site, $node_type, $subject = 'Categ
 }
 
 
+/**
+ * Unordered list of terms
+ * @param $v the vocab
+ * @param $admin permission
+ * @param $count display number of nodes after each taxonomy term
+ */
 function vsite_vocab_terms($v , $admin = FALSE, $count = FALSE){
   $terms = taxonomy_get_tree($v -> vid);
   
@@ -154,7 +182,9 @@ function vsite_vocab_terms($v , $admin = FALSE, $count = FALSE){
   return theme( 'item_list', $items, NULL, 'ul' );
 }
 
-
+/**
+ * markup for one taxonomy term
+ */
 function vsite_vocab_term_item($term, $admin = FALSE, $count = FALSE){
 
   $term_path = "taxonomy/term/" . $term -> tid;
@@ -193,10 +223,6 @@ function vsite_vocab_term_item($term, $admin = FALSE, $count = FALSE){
 }
 
 
-
-
-
-
 /*** Ajax callbacks ***/
 
 function vsite_vocab_term_rename($vid, $tid, $newterm = null) {
@@ -219,7 +245,7 @@ function vsite_vocab_term_rename($vid, $tid, $newterm = null) {
     
 
     $commands = array ();
-    $commands [] = ctools_ajax_command_replace ('#vsite_vocab_item_' . $tid . ' > a', vsite_vocab_term_item($term) );
+    $commands [] = ctools_ajax_command_replace ('#vsite_vocab_item_' . $tid . ' > a', $term['name'] );
     ctools_ajax_render ( $commands ); // this function exits.
   } else {
     ctools_ajax_render_error($error = 'something wrong happened ...');

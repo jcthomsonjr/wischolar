@@ -16,6 +16,7 @@ Drupal.VsiteVocab.Rename = function(){
 	newDest =  newDest + newTerm;
 	
 	$(this).attr('href',newDest);
+	//alert($(this).attr('href'));
 	return false;
 }
 
@@ -26,7 +27,7 @@ Drupal.behaviors.vsitevocab = function(context) {
   
   var rename_link = $('ul.admin a.edit:not(.vsitevocab-processed)', context);
   var dest = rename_link.attr('href');	
-  
+
   rename_link.click(Drupal.VsiteVocab.Rename);
   rename_link.click(Drupal.CTools.AJAX.clickAJAXLink);
 }
