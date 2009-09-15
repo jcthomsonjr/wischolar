@@ -178,8 +178,9 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL) {
  */
 function vsite_users_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'ucreate_user_form') {
+  	
+  	
   	$form['og_register']['og_register']['#type'] = 'value';
   	$form['og_register']['#type'] = 'value';
-  
   }
 }
