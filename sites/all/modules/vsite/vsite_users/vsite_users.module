@@ -178,8 +178,8 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL) {
  */
 function vsite_users_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'ucreate_user_form') {
-  	$n_default_site = current($form['og_register']['og_register']['#default_value']);
-  	$form['og_register']['og_register']['#value'] = array($n_default_site => $form['og_register']['og_register']['#options'][$n_default_site]);
+  	$vsite = vsite_get_vsite();
+  	$form['og_register']['og_register']['#value'] = array($vsite->sid => $vsite->title);
   	$form['og_register']['og_register']['#type'] = 'value';
   	$form['og_register']['#type'] = 'value';
   }
