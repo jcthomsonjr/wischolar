@@ -6,7 +6,8 @@ function vsite_users_members(){
   ctools_include('ajax');
   ctools_include('modal');
   ctools_modal_add_js();
-  return views_page('og_members', 'default', $arg); 
+  return  ctools_modal_text_button('Add new user', 'cp/users/add', 'add a new user','add_user_btn')
+         .views_page('og_members', 'default', $arg); 
 }
 
 /**
@@ -34,6 +35,33 @@ function vsite_users_edit_user($account){
 
   if (empty($output)) {
     $output = array();
+  }
+  
+  ctools_ajax_render($output);
+}
+
+/**
+ * callback function for our popup user add
+ */
+function vsite_users_add_user(){
+  ctools_include('ajax');
+  ctools_include('modal');
+  
+  $form_state = array(
+    're_render' => FALSE,
+    'ajax' => TRUE,
+  );
+
+  // pass all arguments needed by the callback function (ctools thing)
+  //$form_state['args'] = array(NULL, $feature_name);
+
+  $output = ctools_modal_form_wrapper('ucreate_user_form', $form_state);
+  
+  if (empty($output)) {
+    $output = array();
+    $output[] = ctools_modal_command_dismiss();
+  }else{
+    $output[0]['output'] .= '<script type="text/javascript">Drupal.cpAddCToolsColumns();' . "</script>\n";
   }
   
   ctools_ajax_render($output);

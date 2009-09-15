@@ -171,7 +171,7 @@ function schlarcp_feature_customize($feature_name){
   ctools_include('modal');
   
   $form_state = array(
-    're_render' => TRUE,
+    're_render' => FALSE,
     'ajax' => TRUE,
   );
 
@@ -182,7 +182,7 @@ function schlarcp_feature_customize($feature_name){
   
   if (empty($output)) {
     $output = array();
-    //$output[] = ctools_modal_command_dismiss();
+    $output[] = ctools_modal_command_dismiss();
   }else{
   	$output[0]['output'] .= '<script type="text/javascript">Drupal.cpAddCToolsColumns();' . "</script>\n";
   }

@@ -71,6 +71,8 @@ function _scholar_core_modules() {
     'token',
     'trigger',
     'transliteration',
+    'ucreate',
+    'ucreate_og',
     'views', 
     'views_bulk_operations',
     'views_ui', 

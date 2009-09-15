@@ -65,6 +65,14 @@ function vsite_users_menu(){
     'type' => MENU_CALLBACK,
   );
   
+  $items['cp/users/add'] = array(
+    'title' => 'Add User',
+    'page callback' => 'vsite_users_add_user',
+    'access callback' => 'cp_access_cp',
+    'file' => 'vsite_users.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+  
   return $items;
 }
 
@@ -165,3 +173,13 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL) {
   }
 }
 
+/**
+ * Edit the ucreate form to hide the site dialogue and set defaults 
+ */
+function vsite_users_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'ucreate_user_form') {
+  	$form['og_register']['og_register']['#type'] = 'value';
+  	$form['og_register']['#type'] = 'value';
+  
+  }
+}
