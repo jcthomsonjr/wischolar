@@ -16,8 +16,6 @@
 .section-cp div.form-item {
 	margin: auto;
 	border: none;
-	padding: 0;
-	margin: 0;
   }
 
 .views-exposed-form .views-exposed-widget {
@@ -56,6 +54,10 @@ select option {
 	display:block;
 	text-transform:none;
 	}
+
+.section-cp label.option, .section-cp div.form-item label.option {
+  font-weight: normal;
+  }
 
 
 .section-cp div.description {
@@ -145,6 +147,18 @@ a.close-this {
 
 .modal_col {
   float: left;
-  width: 40%;
-  margin-right: 50px;
+  width: 45%;
+  margin-right: 46px;
+  }
+
+div.ctools-modal-content .modal_col div.form-item {
+  margin: 1em 0 1.5em 0;
+  }
+
+div.ctools-modal-content .modal_col div.form-item .form-item {
+  margin: 0;
+  }
+
+div.ctools-modal-content .modal_col .form-item label {
+  width: auto;
   }
