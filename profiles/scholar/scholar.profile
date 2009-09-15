@@ -101,7 +101,7 @@ function _scholar_core_modules() {
     'link',
     'text',
     'nodereference',
-  	'nodereference_url',
+    'nodereference_url',
     'optionwidgets',
 
 
@@ -111,7 +111,7 @@ function _scholar_core_modules() {
     'devel',
     'devel_generate',
     'install_profile_api',
-    'strongarm',    
+     'strongarm',    
   );
   
   return $contrib_modules;
@@ -151,6 +151,7 @@ function _scholar_scholar_modules() {
     'dyntextfield',
     'scholarregister',
     'scholar_project',
+    'simport',
     
    // features TODO does this gets installed in the  next step (enable features?)
    // keep here for testing purposes only
@@ -272,6 +273,12 @@ function scholar_profile_tasks(&$task, $url) {
   
   //_scholar_filefield_paths_config();
 
+  //get the exported D5 scholar data
+  _simport_exportdata();
+   
+   //now import the D5 scholar data
+  // simport_import();
+  
     // Get out of this batch and let the installer continue
     $task = 'profile-finished';
   }
