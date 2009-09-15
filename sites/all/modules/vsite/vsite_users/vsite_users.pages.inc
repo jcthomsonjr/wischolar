@@ -53,7 +53,7 @@ function vsite_users_add_user(){
   );
 
   // pass all arguments needed by the callback function (ctools thing)
-  //$form_state['args'] = array(NULL, $feature_name);
+  $form_state['args'] = array(NULL);
 
   $output = ctools_modal_form_wrapper('ucreate_user_form', $form_state);
   
