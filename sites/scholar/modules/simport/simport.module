@@ -135,8 +135,8 @@ function simport_import(){
   }
   
   //PHASE 3 - Set The logo
-  // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 239);
- $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
+   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 4);
+  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
   while($data = db_fetch_object($sql)){
     $old = unserialize($data -> data);
     if($old -> field_photo[0]['fid'] > 0){
@@ -250,33 +250,39 @@ function simport_set_frontpage($old, &$vsite, $new_front_nid, $old_front_nid){
  */
 function simport_set_logo($old){
   //get the corresponding vsite
-  $vsite = simport_get_new_vsite($old -> og_groups[0]);  
+  $vsite = simport_get_new_vsite($old -> og_groups[0]);
   
   //not sure if this is nessary, should always be true
     $file = $old -> field_photo[0];
     
+    if ($file['filepath']){
     //define source and destination directories
-    $source = variable_get('simport_remote_path', '') . '/' .  $file['filepath'];
+    $source = variable_get('simport_remote_path', '') . '/' .  $file['filepath']; 
+    }
+    
+    else{
+      //no filepath defined means this will not work, so return
+      watchdog('simport', 'logo filepath not present %title.', array('%title' => $file['title']), WATCHDOG_NOTICE);
+      return;
+    }
     
     if (file_exists($source)){
     
     $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title;
     
-    //create the directory if doesn't exist
-  if (!is_dir($dest)){
-    mkdir($dest);
-  }
-    
+      //create directory  
+    file_check_directory($dest, $mode = 1, $form_item = NULL);
+         
     //copy the file to the new location
     file_copy($source, $dest, $replace = FILE_EXISTS_REPLACE);
 
     //replacing the file name but keeping file ext
-    $filename = explode('.', basename($source));
+    $filename = explode('.', basename($source)); dpm($filename);
     $new_filename = $vsite ->title . '.' . $filename[1];
-    
+     dpm($new_filename);
     //define new file - absolute path
     $new_file = $dest . '/' . $new_filename;
-    
+   
     //rename the file
     file_move($source, $new_file );    
     
@@ -300,6 +306,9 @@ function simport_set_logo($old){
     $vsite ->settings['logo']['current_logo'] = $new_path;
     //save the vsite settings
     spaces_save($vsite);
+    }
+    else{
+      watchdog('simport', 'logo file does not exist in source location:  %title.', array('%title' => $file['title']), WATCHDOG_NOTICE);
     }
     return;
 }
