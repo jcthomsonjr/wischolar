@@ -186,8 +186,32 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
   	
   	//Add Registration info to form
   	content_profile_registration_form_alter(&$form, $form_state,'user_register');
+
+  	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
   	
   	//Add submit handler for registration info
-  	array_unshift($form['#submit'], 'content_profile_registration_user_register_submit');
+  	//$form['#submit'] = array('vsite_users_user_form_submit');
+  	array_unshift($form['#submit'], 'vsite_users_user_form_submit');
   }
+}
+
+/**
+ * Submit handler for ucreate_user_form().
+ */
+function vsite_users_user_form_submit($form, &$form_state) {
+  // If user roles were handled through a UI element, process accordingly.
+  // This sucks. See user_save() for why this is necessary.
+  if ($form['roles']['#type'] != 'value') {
+    $rids = array();
+    foreach ($form_state['values']['roles'] as $rid => $enabled) {
+      if (!empty($enabled)) {
+        $rids[$rid] = $rid;
+      }
+    }
+    $form_state['values']['roles'] = $rids;
+  }
+
+  //Create the user and store it in the form for other submit functions
+  $form_state['user'] = ucreate_user_create($form_state['values']);
+  
 }
