@@ -440,17 +440,12 @@ function simport_set_class($old, &$new){
   //TODO: These 3 fields do NOT EXIST YET. Change them accordinly once they are created.
   //set year
   if(!empty($old ->field_scholar_year[0]['value'])){
-    $new -> field_scholar_year[0]['value'] = $old ->field_scholar_year[0]['value'];
+    $new -> field_class_year[0]['value'] = $old ->field_scholar_year[0]['value'];
   }
 
   //set semester
   if(!empty($old ->field_scholar_semester[0]['value'])){
-    $new -> field_scholar_semester[0]['value'] = $old ->field_scholar_year[0]['value'];
-  }
-
-  //set link to iSites
-  if(!empty($old ->field_scholar_link[0]['url'])){
-    $new -> field_scholar_link[0]['url'] = $old ->field_scholar_link[0]['url'];
+    $new -> field_class_semester[0]['value'] = $old ->field_scholar_year[0]['value'];
   }
 }
 
@@ -542,7 +537,7 @@ function _simport_map_content_types($old_type = NULL){
   'scholar_link' => 'link',
   'scholar_announcement' => 'announcement',
   'scholar_bio' => 'page',
-  'scholar_class' => 'scholar_class',
+  'scholar_class' => 'class',
   'scholar_page' => 'page',  //both scholar_bio and scholar_page import to page
  
 /*
