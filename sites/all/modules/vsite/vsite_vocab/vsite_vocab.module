@@ -84,7 +84,7 @@ function vsite_vocab_taxonomies(){
   $s_types = vsite_content_types();
   $output = '';
   $delta = 0;
-  $output = '<div class="pad">';
+  $output = '<div class="pad" id="vsite-vocab-wrapper">';
   
   foreach ( $s_types as $type => $name ) {
     $vocabs = vsite_get_vocabs($vsite, $type);
