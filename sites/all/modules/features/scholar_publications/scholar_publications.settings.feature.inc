@@ -23,6 +23,9 @@ class scholar_publications_settings_feature implements space_setting {
     include_once drupal_get_path('module', 'biblio') .'/biblio.admin.inc';
 
     $s_style = biblio_get_style();
+
+
+
     $form['style'] = array(
       '#type' => 'radios',
       '#title' => t('Select your preferred bibliographic format'),
