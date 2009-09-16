@@ -54,6 +54,11 @@ function simport_settings_form_submit(&$form_state, $form){
   }
   
   if ($form_state['run_import']['#value'] == 1){
+    
+    //if the able does not exist already then import it
+    if(!db_table_exists('scholar_export_data')){
+    _simport_exportdata();
+    }
   //now call script to import site
   simport_import();
 
