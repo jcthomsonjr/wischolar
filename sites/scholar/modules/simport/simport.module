@@ -253,7 +253,7 @@ function simport_set_frontpage($old, &$vsite, $new_front_nid, $old_front_nid){
   $vsite->settings['front']['frontpage']= 'bio'; 
   }
   else{
-  $vsite->settings['front']['frontpage']= _simport_map_content_types($$old_frontpage  -> type);
+  $vsite->settings['front']['frontpage']= _simport_map_content_types($old_frontpage  -> type);
   }
 }
 
