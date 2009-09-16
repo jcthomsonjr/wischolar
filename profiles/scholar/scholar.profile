@@ -229,30 +229,6 @@ function scholar_profile_tasks(&$task, $url) {
     // configure wisywig/tinymce
     _scholar_wysiwyg_config();
     /*
-    // Remove default input filter formats
-    $result = db_query("SELECT * FROM {filter_formats} WHERE name IN ('%s', '%s')", 'Filtered HTML', 'Full HTML');
-    while ($row = db_fetch_object($result)) {
-      db_query("DELETE FROM {filter_formats} WHERE format = %d", $row->format);
-      db_query("DELETE FROM {filters} WHERE format = %d", $row->format);
-    }
-
-    // Eliminate the access content perm from anonymous users.
-    db_query("UPDATE permission set perm = '' WHERE rid = 1");
-
-    // Create user picture directory
-    $picture_path = file_create_path(variable_get('user_picture_path', 'pictures'));
-    file_check_directory($picture_path, 1, 'user_picture_path');
-
-
-
-    // Set time zone
-    variable_set('date_default_timezone_name', 'US/Eastern');
-
-    // Calculate time zone offset from time zone name and set the default timezone offset accordingly.
-    // You dont need to change the next two lines if you change the default time zone above.
-    $date = date_make_date('now', variable_get('date_default_timezone_name', 'US/Eastern'));
-    variable_set('date_default_timezone', date_offset_get($date));
-
     // Set a default footer message.
     variable_set('site_footer', '&copy; 2009 '. l('IQSS', 'http://www.iq.harvard.edu', array('absolute' => TRUE)));
     */
