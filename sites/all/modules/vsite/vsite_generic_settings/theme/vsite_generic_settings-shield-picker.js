@@ -1,6 +1,6 @@
 if (Drupal.jsEnabled) {
   $(document).ready(function() {
-    $('#cp-settings-shield .form-radios ').hide();
+    $('.shield_wrapper .form-radios ').hide();
 
     var theList = '<ul class="shield-picker pad">';
     var n_container = 0;
@@ -9,7 +9,7 @@ if (Drupal.jsEnabled) {
     	return '<li class="item-shield-picker ' + liChecked + '" id="' + liId  + '">' + liContent + '</li>';
 
     }
-    $('#cp-settings-form .form-radios .form-item').each(function(){
+    $('.shield_wrapper .form-radios .form-item').each(function(){
     	var liIdArr = $(this).attr('id').split('-');
     	var liId = liIdArr[3] + '-' + liIdArr[4] + '-' + liIdArr[5];
     	var liChecked = $(this).find('input').attr('checked') ? 'checked' : '';
@@ -25,14 +25,14 @@ if (Drupal.jsEnabled) {
 
     theList += '</ul>';
 
-    $('#cp-settings-shield').prepend(theList);
+    $('.shield_wrapper').prepend(theList);
 
     $(".item-shield-picker:first").addClass('active');
 
     $('div#prev,div#next,.shield_subnav li').cpSlidingContainer({containerW: 600,
-    																mainListSelector:'ul.shield-picker',
-							    								    listItemClass: 'item-shield-picker',
-							    								    navClass:'shield_subnav'});
+    mainListSelector:'ul.shield-picker',
+		listItemClass: 'item-shield-picker',
+		navClass:'shield_subnav'});
 
     $('li.item-shield-picker').click(function(){
     	// remove the active class from every li first
