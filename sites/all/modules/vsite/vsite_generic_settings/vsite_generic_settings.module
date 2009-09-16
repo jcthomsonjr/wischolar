@@ -1,5 +1,13 @@
 <?php
 
+function vsite_generic_settings_init(){
+  $active_menu = menu_get_item();
+	if ($active_menu['path'] == 'cp/settings/generic'){
+    drupal_add_css(drupal_get_path('module', 'vsite_generic_settings') . '/theme/vsite_generic_settings-shield-picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_generic_settings') . '/theme/vsite_generic_settings-shield-picker.js');    
+  }
+}
+
 /**
  * Implementation of hook_spaces_settings().
  */
@@ -11,19 +19,3 @@ function vsite_generic_settings_spaces_settings(){
     ) 
   );
 }
-
-/**
- * Implementation of hook_init
- */
-
-/*
-function vsite_init(){
-	$vsite = vsite_get_vsite();
-	if($vsite && is_array($vsite->settings) && is_array($vsite->settings['generic']) && array_key_exists('admin_menu',$vsite->settings['generic'])){
-		if(!(bool) $vsite->settings['generic']['admin_menu']){
-		  module_invoke('admin_menu','suppress', true);
-		  drupal_add_js(array('admin_menu' => array('margin_top' => 0)), 'setting', 'footer');  //Disable auto pading
-		}//Suppress menu?
-	}//Apply menu setting?
-}
-*/
