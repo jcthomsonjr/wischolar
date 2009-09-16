@@ -599,7 +599,9 @@ function _simport_exportdata(){
   $db_conn['pass'] = $db_pass[0];
   $db_conn['host'] = $db_pass[1];
     
-  $cmd = 'mysql -u' . $db_conn['user'] . ' -p' . $db_conn['pass']. ' ' .  $db_conn['name'] . ' < /nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/modules/simport/export/scholar_export_data.sql';
+  $cmd = 'mysql -u' . $db_conn['user'] . ' -p' . $db_conn['pass']. ' ' .  $db_conn['name'] . ' < ' . 
+  variable_get('simport_current_path', '') . '/' .  drupal_get_path('module', 'simport') .  
+  '/export/scholar_export_data.sql';
   
   //execute command to import table
   shell_exec($cmd);
