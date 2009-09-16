@@ -131,6 +131,9 @@ function vsite_users_theme() {
  * - Save as the site owner 
  */
 function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_state){
+	//Only apply these alterations on the admin page where we want this form custom for the site owner
+	if(!(arg(0) == 'cp' && arg(1) == 'users' && arg(2) == 'myaccount' && arg(3) == 'personal')) return;
+	
 	if(isset($form['#redirect'])) unset($form['#redirect']);
 	
 	if(isset($form['buttons']['submit'])){
@@ -160,38 +163,36 @@ function vsite_users_form_vsite_users_profile_node_submit($form, &$form_state){
 }
 
 /**
- * Implementation of hook_user().
- */
-function vsite_users_user($op, &$edit, &$account, $category = NULL) {
-  global $user;
-
-  switch ($op) {
-    case 'load':
-    	$node = content_profile_load('vsite_users_profile', $account->uid);
-      $account->content['content_profile'] = content_profile_show_profiles($account->uid);
-      $t = content_profile_get_types('names');
-    break;
-  }
-}
-
-/**
  * Edit the ucreate form to hide the site dialogue and set defaults 
  */
 function vsite_users_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == 'ucreate_user_form') {
-  	$vsite = vsite_get_vsite();
-  	$form['og_register']['og_register']['#value'] = array($vsite->sid => $vsite->title);
-  	$form['og_register']['og_register']['#type'] = 'value';
-  	$form['og_register']['#type'] = 'value';
-  	
-  	//Add Registration info to form
-  	content_profile_registration_form_alter($form, $form_state,'user_register');
-
-  	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
-  	
-  	//Add submit handler for registration info
-  	//$form['#submit'] = array('vsite_users_user_form_submit');
-  	array_unshift($form['#submit'], 'vsite_users_user_form_submit');
+	
+	switch($form_id){
+    case 'ucreate_user_form':
+	  	$vsite = vsite_get_vsite();
+	  	$form['og_register']['og_register']['#value'] = array($vsite->sid => $vsite->title);
+	  	$form['og_register']['og_register']['#type'] = 'value';
+	  	$form['og_register']['#type'] = 'value';
+	  	
+	  	//Add Registration info to form
+	  	content_profile_registration_form_alter($form, $form_state,'user_register');
+	
+	  	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
+	  	
+	  	//Add submit handler for registration info
+	  	//$form['#submit'] = array('vsite_users_user_form_submit');
+	  	array_unshift($form['#submit'], 'vsite_users_user_form_submit');
+  	break;
+    case 'user_profile_form':
+    	//Redirect the save password form to the profile page
+    	if(!array_key_exists('redirect_from_reset',$form)) $form['redirect_from_reset'] = array('#type' => 'hidden', '#default_value' => false);
+    	
+    	if($_SERVER['REDIRECT_STATUS'] == '200' && strstr($_SERVER['HTTP_REFERER'],'user/reset') !== false){
+    		$form['redirect_from_reset']['#value'] = true;
+    	}//Are we coming from the special login link?
+    	
+    	$form['#submit'][] = 'vsite_users_redirect_reset_submit';
+    break;
   }
 }
 
@@ -213,5 +214,17 @@ function vsite_users_user_form_submit($form, &$form_state) {
 
   //Create the user and store it in the form for other submit functions
   $form_state['user'] = ucreate_user_create($form_state['values']);
+  
+}
+
+/**
+ * Submit handler used to check the passed reset value, if it is present we will redirect
+ */
+function vsite_users_redirect_reset_submit($form, &$form_state) {
+  if(is_array($form_state['values']) 
+  && array_key_exists('redirect_from_reset',$form_state['values']) 
+  && $form_state['values']['redirect_from_reset']){
+  	 drupal_goto('user/'.$form['#uid'].'/edit/vsite_users_profile');
+  }
   
 }

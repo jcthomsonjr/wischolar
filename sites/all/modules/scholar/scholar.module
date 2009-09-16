@@ -152,9 +152,12 @@ function scholar_mail_alter(&$message) {
       	$s_personal_message = (count($a_body_parts) == 2)?trim($a_body_parts[0]):"";
       	
       	//Get the just created user
-      	$n_new_user = db_result(db_query('SELECT u.uid FROM {users} u ORDER BY u.created DESC LIMIT 1', $interval));
+      	$n_new_user = db_result(db_query('SELECT u.uid FROM {users} u ORDER BY u.created DESC LIMIT 1'));
       	$o_user = user_load($n_new_user);
-      	
+     	  $password = user_password();
+     	  $edit = array('pass' => $password);
+     	  user_save($o_user,$edit);
+     	  
       	$a_msg_variables = array(
       	  '!personal_message' => strlen($s_personal_message)?$s_personal_message."\n================================================\n\n":"",
 			    '!username' => $o_user->name,
@@ -166,8 +169,9 @@ function scholar_mail_alter(&$message) {
 			    '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
 			    '!login_uri' => url('user', array('absolute' => TRUE, 'language' => $message['language'])),
 			    '!edit_uri' => url('user/'. $o_user->uid .'/edit', array('absolute' => TRUE, 'language' => $message['language'])),
+      	  '!password' => $password,
 			  );
-      	$message['body'] = t("!personal_message !username,\n\nA site owner at !site has created an account for you. You may now log in to !login_uri using the following username and password:\n\nusername: !username\npassword: !password\n\nYou may also log in by clicking on this link or copying and pasting it in your browser:\n\n!login_url\n\nThis is a one-time login, so it can be used only once.\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n\n--  !site team", $a_msg_variables);
+      	$message['body'] = t("!personal_message\n !firstname, \n\nA site owner at !site has created an account for you. You may now log in to !login_uri using the following username and password:\n\nusername: !username\npassword: !password\n\nYou may also log in by clicking on this link or copying and pasting it in your browser:\n\n!login_url\n\nThis is a one-time login, so it can be used only once.\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n\n--  !site team", $a_msg_variables);
       	
     break;
   }
