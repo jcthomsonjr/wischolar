@@ -73,10 +73,13 @@ function vsite_vocab_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
-function vsite_vocab_form_alter(&$form, $form_state, $form_id) {
-
-  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] .'_node_form' == $form_id) {
-    if (!empty($form['taxonomy'])){
+/**
+ * hook form_alter
+ * Renames the vocabs label in the input form
+ */
+function vsite_vocab_form_alter(&$form, $form_state, $form_id){
+  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
+    if (! empty($form['taxonomy'])) {
       $vid = reset(element_children($form['taxonomy']));
       $old_title = $form['taxonomy'][$vid]['#title'];
       $new_title = explode('_', $old_title);
@@ -85,7 +88,15 @@ function vsite_vocab_form_alter(&$form, $form_state, $form_id) {
       $new_title = implode(' ', $new_title);
       $form['taxonomy'][$vid]['#title'] = $new_title;
     }
+  
   }
+  
+  /*
+  if (module_exists('vertical_tabs') && function_exists('vertical_tabs_add_vertical_tabs')) {
+    vertical_tabs_add_vertical_tabs($form);
+  }
+  */
+
 }
 
 /**
