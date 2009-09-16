@@ -247,13 +247,16 @@ function simport_set_theme($old, &$new){
 function simport_set_frontpage($old, &$vsite, $new_front_nid, $old_front_nid){ 
   //get the old frontpage node
   $old_frontpage = simport_get_old_node($old_front_nid);
-
+  //set frontpage to bio page
   if ( $old_frontpage  -> type == 'scholar_bio'){
   $vsite->settings['bio']['nid'] = $new_front_nid; 
   $vsite->settings['front']['frontpage']= 'bio'; 
   }
   else{
-  $vsite->settings['front']['frontpage']= 'feature';  //  not using this function anymore _simport_map_content_types($old_frontpage  -> type);
+  //set the front page to an individual node
+  $vsite->settings['front']['frontpage']= 'html'; 
+  $vsite->settings['front']['front_nid'] = $new_front_nid;  
+  //  not using this function anymore -  _simport_map_content_types($old_frontpage  -> type);
   }
 }
 
