@@ -249,8 +249,8 @@ function scholar_profile_tasks(&$task, $url) {
   
   //_scholar_filefield_paths_config();
 
-  //get the exported D5 scholar data
-  _simport_exportdata();
+  //get the exported D5 scholar data - no longer called here
+  //_simport_exportdata();
    
    //now import the D5 scholar data
   // simport_import();
