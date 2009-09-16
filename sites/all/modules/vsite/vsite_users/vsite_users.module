@@ -185,7 +185,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
   	$form['og_register']['#type'] = 'value';
   	
   	//Add Registration info to form
-  	content_profile_registration_form_alter(&$form, $form_state,'user_register');
+  	content_profile_registration_form_alter($form, $form_state,'user_register');
 
   	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
   	
