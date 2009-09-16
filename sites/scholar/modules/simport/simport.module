@@ -288,14 +288,15 @@ function simport_set_logo($old){
       //create directory  
     file_check_directory($dest, $mode = 1, $form_item = NULL);
   
-    //delete temp file
+    //delete temp file if exists
+    if(file_exists('/tmp/'. basename($source))){
     file_delete('/tmp/'. basename($source));
-    
+    }
     //copy to temp dir
     file_copy($source, '/tmp');   
     
     //copy the file to the new location
-    file_copy($source, $dest);
+    //file_copy($source, $dest);
 
     //replacing the file name but keeping file ext
     $filename = explode('.', basename($source)); 
@@ -304,8 +305,12 @@ function simport_set_logo($old){
     //define new file - absolute path
     $new_file = $dest . '/' . $new_filename;
    
+    if(file_exists($new_file)){
+      file_delete($new_file);
+    }
+    
     //rename the file
-    file_move($source, $new_file );    
+    file_copy('/tmp/'. basename($source), $new_file );    
     
     //define new path for logo
     $new_path = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title . '/' . basename($new_file);
