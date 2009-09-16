@@ -64,7 +64,13 @@ function vsite_widgets_basicinfo(){
 }
 
 function vsite_widgets_shield(){
-	$output = '<div id="scholar-shield"><img src="http://scholar.iq.harvard.edu/sites/scholar.iq.harvard.edu/themes/fac01/images/harvard_shield.png" /> </div>';
+	$output = '';
+	
+	$scholar = vsite_get_vsite();
+	if(array_key_exists('generic',$scholar->settings) && array_key_exists('shield',$scholar->settings['generic'])){
+		$output = '<div id="scholar-shield"><img src="/'.$scholar->settings['generic']['shield'].'" /> </div>';
+	}
+	
 	$block['subject'] = t('');
 	$block['content'] = $output;
 	

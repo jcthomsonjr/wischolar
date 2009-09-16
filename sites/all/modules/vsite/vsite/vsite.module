@@ -224,8 +224,7 @@ function vsite_spaces_presets(){
       'node_options' => $options,
     ),
     'theme' => 'scholar_theme_01',  // TODO make this settings for the site-wide admin to chose
-    'shield' => drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png",
-    'generic' => array('admin_menu'=>1),
+    'generic' => array('admin_menu'=>1 , 'shield' => drupal_get_path('module','vsite_generic_settings')."/theme/shields/harvard_shield.png"),
   );
        
   return $items;
