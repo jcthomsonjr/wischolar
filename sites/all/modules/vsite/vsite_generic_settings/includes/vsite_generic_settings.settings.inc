@@ -38,7 +38,7 @@ class vsite_generic_settings_settings implements space_setting {
     }  
   
     $form['shield'] = array(
-      '#prefix' => "<div class='select_wrapper'>",
+      '#prefix' => "<div class='shield_wrapper'>",
       '#title' => t('Shield'),
       '#type' => 'radios',
       '#options' => $shield_options,
