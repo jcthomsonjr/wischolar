@@ -33,7 +33,8 @@
       <div id="content-wrapper">
 
         <div id="content-main" class="column">
-
+            <?php if ($messages) print $messages; ?>
+            <?php if ($content) print $content; ?>
             <div id="content-row-1">
               <?php print $row1; ?>
             <div id="content-row-2">
