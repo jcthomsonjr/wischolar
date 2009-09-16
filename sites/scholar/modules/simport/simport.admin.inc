@@ -9,7 +9,7 @@ function simport_settings_form(&$form_state){
     '#type' => 'textfield',
     '#title' => t('Current Path'),
     '#default_value' => variable_get('simport_current_path', ''),
-    '#description' => t('Absolule file system path to the current web site root.'),
+    '#description' => t('Absolule file system path to the current web site root. For example: /nfs/www/edu-harvard-iq-scholar-dev3'),
     '#required' => TRUE,
   );
 
@@ -17,7 +17,7 @@ function simport_settings_form(&$form_state){
     '#type' => 'textfield',
     '#title' => t('Remote Path'),
     '#default_value' => variable_get('simport_remote_path', ''),
-    '#description' => t('Absolule file system path to the remote web site root.'),
+    '#description' => t('Absolule file system path to the remote web site root. For example: /nfs/www/edu-harvard-iq-test2'),
     '#required' => TRUE,
   );
 
