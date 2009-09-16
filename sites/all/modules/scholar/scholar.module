@@ -91,19 +91,6 @@ function scholar_menu(){
     'access arguments' => array('administer site configuration'),
     'weight' => 0,
   );
-  
-
-  
-  // nodeautocomplete callback for scholar 
-    $items['scholar/node/autocomplete'] = array(
-      'type' => MENU_CALLBACK,
-      'title' => 'something',
-      'page callback' => 'vsite_node_autocomplete',
-    	'file' => 'nodeautocomplete.inc',
-      'access arguments' => array('access content'),
-      'file path' => drupal_get_path('module', 'vsite') . '/includes',
-    );
-  
   return $items;
 }
 
