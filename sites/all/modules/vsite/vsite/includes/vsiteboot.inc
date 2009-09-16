@@ -45,6 +45,7 @@ function _vsite_global_taxonomy(){
     'module' => 'vsite', 
     'weight' => 0, 
     'nodes' => $vocab_nodes,  
+    'tags' => TRUE,
     'help' => t('Scholar global taxonomy'),
   );
   taxonomy_save_vocabulary($vocab);
