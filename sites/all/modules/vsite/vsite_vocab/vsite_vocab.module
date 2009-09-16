@@ -97,7 +97,7 @@ function vsite_vocab_context_active_contexts_alter(&$contexts){
  */
 function vsite_vocab_form_alter(&$form, $form_state, $form_id){
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
-    dpm($form);
+    
     if (! empty($form['taxonomy'])) {
       $vid = reset(element_children($form['taxonomy']));
       $old_title = $form['taxonomy'][$vid]['#title'];
