@@ -60,6 +60,10 @@ function simport_import(){
     //write to the simport table mapping old site to new site
     $sql_map_sites = db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$new_site_info ->nid);
 
+    if($new){
+      unset($new);
+    }
+    
     //get a spaces object for new site so we can modify and save with the functions below
     $new = spaces_load ( 'og', $new_site_info ->nid, TRUE );
 
@@ -71,6 +75,12 @@ function simport_import(){
 
     //save all the changes/additions to the space
     spaces_save($new);
+    
+    //update theme in og settings (seperate from vsite setting)
+    /*$og_node = node_load(array('nid' => $new->sid));
+    $og_node -> og_theme = $new -> settings['theme'];
+    drupal_write_record('og', $og_node, array('nid')); */
+    //dpm($og_node); return;
   }
 
   //PHASE 2 - Load And Save The Content
@@ -171,6 +181,8 @@ function simport_import(){
   //PHASE 5 - import the files
  simport_get_files(); 
   
+ //PHASE 6 make sure themes are sync'd
+ simport_sync_themes();  
 }
 
 /**
@@ -221,6 +233,9 @@ function simport_set_theme($old, &$new){
   );
   //set the new theme
   $new->settings['theme'] = $og_theme_map[$old -> og_theme];
+  
+  //TODO: need to make change here
+   $new-> og_theme = $og_theme_map[$old -> og_theme];
 }
 
 /**
@@ -266,15 +281,21 @@ function simport_set_logo($old){
       return;
     }
     
-    if (file_exists($source)){
+        $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title;
     
-    $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title;
-    
+    if (file_exists($source)){        
+      
       //create directory  
     file_check_directory($dest, $mode = 1, $form_item = NULL);
-         
+  
+    //delete temp file
+    file_delete('/tmp/'. basename($source));
+    
+    //copy to temp dir
+    file_copy($source, '/tmp');   
+    
     //copy the file to the new location
-    file_copy($source, $dest, $replace = FILE_EXISTS_REPLACE);
+    file_copy($source, $dest);
 
     //replacing the file name but keeping file ext
     $filename = explode('.', basename($source)); 
@@ -291,12 +312,12 @@ function simport_set_logo($old){
     
     $file = new stdClass();
     $file -> uid = $vsite-> group -> uid;
-    $file -> filename = basename($new_file);
-    $file -> filepath = dirname($new_path);
-    $file -> filemime = file_get_mimetype($new_file);
-    $file -> filesize = filesize($new_file);
+    $file -> filename = basename($source);
+    $file -> filepath = '/tmp/' . basename($source);
+    $file -> filemime = file_get_mimetype($source);
+    $file -> filesize = filesize($source);
     $file -> status =1;
-    $file -> timestamp = filemtime($new_file);
+    $file -> timestamp = filemtime($source);
     
     //write to the files table
     drupal_write_record('files', $file);
@@ -584,3 +605,12 @@ function _simport_exportdata(){
   shell_exec($cmd);
 }
 
+function simport_sync_themes(){
+  $sql = db_query("SELECT * FROM {og}");
+  while($data = db_fetch_object($sql)){
+   $space = spaces_load ( 'og', $data->nid, TRUE );
+   //dpm (trim($space -> settings['theme']));
+   $theme = trim($space -> settings['theme']);
+   $sql_ins = db_query("UPDATE {og} SET og_theme = '%s' WHERE nid = %d", $theme, $data->nid);
+  }
+}
