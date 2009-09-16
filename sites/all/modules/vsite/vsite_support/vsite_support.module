@@ -3,7 +3,7 @@
 include_once('vsite_support.features.inc');
 
 function vsite_support_init(){
-  
+
   $node = menu_get_object();
   // Check if this is an existing node.
   if (! empty($node->nid) && $node->type == 'support_question' || $node->type == 'feature_request') {
@@ -18,30 +18,30 @@ function vsite_support_init(){
  */
 function vsite_support_menu(){
   $items = array();
-  
+
   $items['cp/support'] = array(
-    'title' => 'Support', 
+    'title' => 'Support',
     'page callback' => 'cp_route',
-    'weight' => 5 
+    'weight' => 5
   );
-  
+
   $items['cp/support/questions'] = array(
-    'title' => 'Collaborative FAQ', 
+    'title' => 'Collaborative FAQ',
     'page callback' => 'vsite_support_questions',
     'weight' => 0,
   );
-  
-  
+
+
   $items['cp/support/featurerequests'] = array(
-    'title' => 'Feature requests', 
+    'title' => 'Feature requests',
     'page callback' => 'vsite_support_feature_requests',
     'weight' => 1,
   );
-  
+
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
     $items[$path]['menu_name'] = 'cp';
-    $items[$path]['access callback'] = 'cp_access_cp'; 
+    $items[$path]['access callback'] = 'cp_access_cp';
   }
 
   return $items;
@@ -53,7 +53,7 @@ function vsite_support_questions(){
 
 function vsite_support_questions_node($node){
   return node_page_view($node);
-  
+
 }
 
 /*
@@ -91,94 +91,94 @@ function vsite_support_strongarm() {
 function vsite_support_flag_default_flags(){
   $flags = array();
   $flags[] = array(
-    'content_type' => 'node', 
-    'name' => 'vsite_support_question_like', 
-    'title' => 'Support question flag', 
-    'types' => array('support_question'), 
+    'content_type' => 'node',
+    'name' => 'vsite_support_question_like',
+    'title' => 'Support question flag',
+    'types' => array('support_question'),
     'roles' => array(
-      0 => '2' 
-    ), 
-    'global' => TRUE, 
-    'flag_short' => 'like', 
-    'flag_long' => 'This is a good question', 
-    'flag_confirmation' => 'Your vote is registered', 
-    'unflag_short' => 'Undo', 
-    'unflag_long' => 'Your vote is canceled', 
+      0 => '2'
+    ),
+    'global' => TRUE,
+    'flag_short' => 'Flag as helpful',
+    'flag_long' => 'This is a good question',
+    'flag_confirmation' => 'Your vote is registered',
+    'unflag_short' => 'Undo',
+    'unflag_long' => 'Your vote is canceled',
 
-    'status' => TRUE, 
-    'show_on_page' => TRUE, 
-    'show_on_teaser' => TRUE, 
-    'show_on_form' => FALSE, 
+    'status' => TRUE,
+    'show_on_page' => TRUE,
+    'show_on_teaser' => TRUE,
+    'show_on_form' => FALSE,
     'link_type' => 'toggle',  //normal, toggle, confirm
     'locked' => array(
       'types',
-      'name', 
-      'show_on_page', 
-      'show_on_teaser', 
-      'show_on_form', 
-      'global' 
-    ) 
+      'name',
+      'show_on_page',
+      'show_on_teaser',
+      'show_on_form',
+      'global'
+    )
   );
-  
+
     $flags[] = array(
-    'content_type' => 'node', 
-    'name' => 'vsite_support_feature_like', 
-    'title' => 'Feature request flag', 
-    'types' => array('feature_request'), 
+    'content_type' => 'node',
+    'name' => 'vsite_support_feature_like',
+    'title' => 'Feature request flag',
+    'types' => array('feature_request'),
     'roles' => array(
-      0 => '2' 
-    ), 
-    'global' => TRUE, 
-    'flag_short' => 'like', 
-    'flag_long' => 'I like this feature', 
-    'flag_confirmation' => 'Your vote is registered', 
-    'unflag_short' => 'Undo', 
-    'unflag_long' => 'Your vote is canceled', 
+      0 => '2'
+    ),
+    'global' => TRUE,
+    'flag_short' => 'Flag as helpful',
+    'flag_long' => 'I like this feature',
+    'flag_confirmation' => 'Your vote is registered',
+    'unflag_short' => 'Undo',
+    'unflag_long' => 'Your vote is canceled',
 
-    'status' => TRUE, 
-    'show_on_page' => FALSE, 
-    'show_on_teaser' => TRUE, 
-    'show_on_form' => FALSE, 
+    'status' => TRUE,
+    'show_on_page' => FALSE,
+    'show_on_teaser' => TRUE,
+    'show_on_form' => FALSE,
     'link_type' => 'toggle',  //normal, toggle, confirm
     'locked' => array(
       'types',
-      'name', 
-      'show_on_page', 
-      'show_on_teaser', 
-      'show_on_form', 
-      'global' 
-    ) 
+      'name',
+      'show_on_page',
+      'show_on_teaser',
+      'show_on_form',
+      'global'
+    )
   );
-  
+
     $flags[] = array(
-    'content_type' => 'node', 
-    'name' => 'vsite_support_answer_like', 
-    'title' => 'Answer flag', 
-    'types' => array('support_answer'), 
+    'content_type' => 'node',
+    'name' => 'vsite_support_answer_like',
+    'title' => 'Answer flag',
+    'types' => array('support_answer'),
     'roles' => array(
-      0 => '2' 
-    ), 
-    'global' => TRUE, 
-    'flag_short' => 'like', 
-    'flag_long' => 'I like this answer', 
-    'flag_confirmation' => 'Your vote is registered', 
-    'unflag_short' => 'Undo', 
-    'unflag_long' => 'Your vote is canceled', 
+      0 => '2'
+    ),
+    'global' => TRUE,
+    'flag_short' => 'Flag as helpful"',
+    'flag_long' => 'I like this answer',
+    'flag_confirmation' => 'Your vote is registered',
+    'unflag_short' => 'Undo',
+    'unflag_long' => 'Your vote is canceled',
 
-    'status' => TRUE, 
-    'show_on_page' => TRUE, 
-    'show_on_teaser' => TRUE, 
-    'show_on_form' => FALSE, 
+    'status' => TRUE,
+    'show_on_page' => TRUE,
+    'show_on_teaser' => TRUE,
+    'show_on_form' => FALSE,
     'link_type' => 'toggle',  //normal, toggle, confirm
     'locked' => array(
       'types',
-      'name', 
-      'show_on_page', 
-      'show_on_teaser', 
-      'show_on_form', 
-      'global' 
-    ) 
+      'name',
+      'show_on_page',
+      'show_on_teaser',
+      'show_on_form',
+      'global'
+    )
   );
-  
+
   return $flags;
 }
