@@ -1,0 +1,62 @@
+<?php
+
+include_once('scholar_biocv.features.inc');
+
+function scholar_biocv_menu(){
+  $items = array();
+  $items['bio'] = array(
+    'title' => 'Bio',
+    'page callback' => 'scholar_biocv_bio',
+    'access callback' => 'spaces_feature_access',
+    'access arguments' => array('scholar_biocv'), 
+    'menu_name' => 'features',
+  );
+  
+  return $items;
+}
+
+function scholar_biocv_bio(){
+  $vsite = vsite_get_vsite();
+  // load the bio node for the owner of this vsite
+  // TODO probably an api function for getting the site owner
+  $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
+  if ($bio_node){
+     return node_view($bio_node);
+  }
+  else {
+    // an appropriate message and a link for the user to create their bio
+    return l('ddd', 'node/1');
+  }
+}
+
+function scholar_biocv_strongarm(){
+  $conf = array();
+  $conf['content_profile_use_bio'] = 1;
+  $conf['content_profile_bio'] = array(
+    'weight' => 0, 
+    'user_display' => 'full', 
+    'edit_link' => 0, 
+    'edit_tab' => 'sub', 
+    'add_link' => 0, 
+    'registration_use' => 1, 
+    'admin_user_create_use' => 1, 
+    'registration_hide' => array(
+      'other' 
+    ) 
+  );
+  
+  $conf['content_profile_use_cv'] = 1;
+  $conf['content_profile_cv'] = array(
+    'weight' => 0, 
+    'user_display' => 'full', 
+    'edit_link' => 0, 
+    'edit_tab' => 'sub', 
+    'add_link' => 0, 
+    'registration_use' => 1, 
+    'admin_user_create_use' => 1, 
+    'registration_hide' => array(
+      'other' 
+    ) 
+  );
+  return $conf;
+}
