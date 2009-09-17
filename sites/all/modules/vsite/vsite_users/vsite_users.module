@@ -198,12 +198,15 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	$form['og_register']['og_register']['#type'] = 'value';
 	  	$form['og_register']['#type'] = 'value';
 	  	
+	  	$form['roles']['#type'] = 'value';
+	  	$form['roles']['#value'] = array_search('scholar user',user_roles());
+	  	
 	  	//Add Registration info to form
 	  	content_profile_registration_form_alter($form, $form_state,'user_register');
 	
 	  	if(array_key_exists('vsite_users_first_name',$form)) $form['vsite_users_first_name']['#weight'] = -3;
 	  	if(array_key_exists('vsite_users_last_name',$form)) $form['vsite_users_last_name']['#weight'] = -2;
-	  	if(array_key_exists('vsite_users_title',$form)) $form['vsite_users_title']['#weight'] = -1;
+	  	if(array_key_exists('vsite_users_title',$form)) $form['vsite_users_title']['#type'] = 'value';
 	  	
 	  	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
 	  	
