@@ -15,6 +15,7 @@ function _scholar_biocv_context_default_contexts() {
       'bio' => 'bio',
     ),
     'menu' => 'bio',
+    /*
     'block' => array(
       'biblio_0' => array(
         'module' => 'biblio',
@@ -26,6 +27,7 @@ function _scholar_biocv_context_default_contexts() {
         'type' => 'context_ui',
       ),
     ),
+    */
   );
   return $items;
 }
