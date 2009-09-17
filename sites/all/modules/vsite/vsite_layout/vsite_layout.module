@@ -119,7 +119,7 @@ function vsite_layout_get_pagetypes($space){
 	if($a_page_types) return $a_page_types;
 
   $features = spaces_features($space->type, TRUE);
-  $a_page_types = array('all' => t('Default'), 'front' => t('Front Page'));
+  $a_page_types = array('all' => t('Default Settings'), 'front' => t('Front Page'));
   if(!is_array($space->features)){
   	$a_return = $a_page_types;
   	unset($a_page_types);
