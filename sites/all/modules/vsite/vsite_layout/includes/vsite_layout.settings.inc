@@ -35,10 +35,10 @@ class vsite_layout_settings_layout implements space_setting {
 
 	  $form['page_type'] = array(
 	    '#type' => 'select',
-	    '#title' => t('Page Type'),
+	    '#title' => t('Pages in your site'),
 	    '#default_value' =>'all',
 	    '#options' => $a_page_types,
-	    '#description' => t('Each area of your site can be customized.'),
+	    '#description' => t('You may choose custom layouts for specific pages in your site. This is useful if you\'d like related widgets to appear on particular pages, such as a list of co-authors to appear on your publications page.'),
 	    '#ahah' => array(
 	          'event' => 'go_ahah',
 	          'path' => 'cp/settings/layout/region_widgets_js',
