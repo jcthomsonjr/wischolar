@@ -23,11 +23,12 @@
       </ul>
 		 </span>
 		 -->
+		 <div class="close-this">Remove</div>
 		 <?php
 		 if($w['overides']){
 		 	 ?>
-		 	 <br />
-		   <span class="scholarlayout-item-settings">Overrides
+
+		   <span class="scholarlayout-item-settings">Appears here on all pages with these <span>exceptions</span>
         <ul class="item-settings-popup">
 		 	 <?php
 		 	  foreach ($w['overides'] as $overide) print "<li>{$overide}</li>";
@@ -37,7 +38,7 @@
 		 	 <?php
 		 }
 		 ?>
-		 <div class="close-this">Remove</div>
+
 		</li>
 	<?php endforeach?>
 </ul>

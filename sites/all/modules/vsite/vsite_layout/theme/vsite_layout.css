@@ -88,33 +88,42 @@ li.scholarlayout-item {
   }
 
 .scholarlayout-item-settings {
-  color:#f60000;
-  padding-right: 14px;
-  background: url(images/arrow-red.png) no-repeat 100% 1px;
+  color:#90a0a0;
   font-weight: normal;
   margin-left: 2px;
-  display:inline;
+  display:block;
   position: relative;
-  width: 12px;
-  height: 12px;
+  }
+
+.scholarlayout-item-settings span {
+  padding-right: 7px;
+  background: url(images/arrow-aqua.png) no-repeat 100% 2px;
   }
 
 #scholarlayout-top-widgets .scholarlayout-item-settings,.scholarlayout-item-settings ul {
-  display:none;
+  top: -999em;
   }
 
 .scholarlayout-item-settings:hover ul {
-  display:block;
+  top: -25px
+  }
+
+.scholarlayout-item-settings ul {
   position:absolute;
-  width: 100px;
   padding: 10px;
   background: #fff;
   right: -115px;
-  top: -16px;
   border: 1px solid #8a8888;
-  color: #444545;
+  color: #90a0a0;
   z-index: 10;
   }
+
+.scholarlayout-item-settings ul li {
+  padding-left: 19px;
+  background: url(images/check-mark-exceptions.png) no-repeat 0 0 transparent;
+  line-height: 19px;
+  }
+
 
 .close-this {
   float:right;
