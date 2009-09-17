@@ -201,6 +201,13 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	$form['roles']['#type'] = 'value';
 	  	$form['roles']['#value'] = array_search('scholar user',user_roles());
 	  	
+	  	$form['name']['#weight'] = 1;
+	  	$form['name']['#description'] = "The shortname used to login usually first initial + last name";
+	  	
+	  	$form['mail']['#weight'] = 2;
+	  	$form['mail_confirm']['#weight'] = 3;
+	  	$form['welcome_message_body']['#weight'] = 4;
+	  	
 	  	//Add Registration info to form
 	  	content_profile_registration_form_alter($form, $form_state,'user_register');
 	
