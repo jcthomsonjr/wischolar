@@ -30,7 +30,11 @@ function vsite_front_spaces_settings(){
     'front' => array(
       'class' => 'vsite_front_settings_front', 
       'file' => drupal_get_path('module', 'vsite_front') . '/vsite_front.settings.inc' 
-    ) 
+    ),
+    'home' => array(
+      'class' => 'vsite_front_settings_home',
+      'file' => drupal_get_path('module', 'vsite_front') .'/vsite_home.settings.inc',
+    ),
   );
 }
 
