@@ -100,6 +100,11 @@ function scholar_menu(){
 function scholar_strongarm(){
   $conf = array();
 
+  //replacing scholar or vsite terms with more common terms using stringoverrides module
+  $conf['locale_custom_strings_en'] = array(
+  'group' => 'web site',
+  'space' => 'web site',
+  );
   return $conf;
 }
 
