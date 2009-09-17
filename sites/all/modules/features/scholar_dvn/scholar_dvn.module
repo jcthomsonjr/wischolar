@@ -22,3 +22,15 @@ function scholar_dvn_data(){
     exit();
   
 }
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_dvn_spaces_settings() {
+  return array(
+    'scholar_dvn' => array(
+      'class' => 'scholar_dvn_settings_feature',
+      'file' => drupal_get_path('module', 'scholar_dvn') .'/scholar_dvn.settings.feature.inc',
+    ),
+  );
+}
