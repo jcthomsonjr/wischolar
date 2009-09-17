@@ -1,0 +1,24 @@
+<?php
+include_once('scholar_dvn.features.inc');
+
+function scholar_dvn_menu(){
+  $items = array();
+  $items['data'] = array(
+    'title' => 'data',
+    'page callback' => 'scholar_dvn_data',
+    'access callback' => 'spaces_feature_access',
+    'access arguments' => array('scholar_dvn'), 
+    'menu_name' => 'features',
+  );
+  
+  return $items;
+}
+
+function scholar_dvn_data(){
+    $path = "http://dvn.iq.harvard.edu/dvn/dv/king"; // TODO get this from feature settings
+    $http_response_code = '302';
+    header('Location: ' . $path, TRUE, $http_response_code);
+  
+    exit();
+  
+}
