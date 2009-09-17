@@ -256,10 +256,10 @@ function vsite_layout_region_widgets($scolar = false,$page_type='all'){
  */
 
 function vsite_layout_context_active_contexts_alter(&$contexts){
-	if(!array_key_exists('cp-section-layout',$contexts)) return;
+	if(!array_key_exists('cp-section-layout',$contexts)) return; //Don't run this on CP
 	$a_region_widgets = false;
 	$o_feature = false;
-	$space = vsite_get_vsite();
+  $space = vsite_get_vsite();
 
 	$features = spaces_features();
   foreach ($features as $feature) {
@@ -269,11 +269,12 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
   	$o_feature = $feature;
   	$a_region_widgets = vsite_layout_region_widgets($space,$feature->name);
   	break;
-  }
+  }//Loop through features and get the current feature and the settings (widgets) for that feature
 
-  //@todo add call to scholar_get_front_page
+  //If we are not in a feature and we are on the front page get it's settings
   if(!$a_region_widgets && vsite_is_front()) $a_region_widgets = vsite_layout_region_widgets($space,'front');
 
+  //If we still don't have the settings get the default (all page) settings
   if(!$a_region_widgets) $a_region_widgets = vsite_layout_region_widgets($space);
 
   $a_replacement_block = array();
@@ -284,17 +285,21 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
   		$a_widget['region'] = $s_region;
   		$a_widget['weight'] = $n_weight++;
   		if($o_feature && $o_feature->name == $a_widget['module']){
-  			$a_feat_replacement_block[] = $a_widget;
+  			//Build new block settings for the feature
+  			$a_feat_replacement_block[] = $a_widget; 
   		}else{
+  			//Build new block settings for the (cp-section-layout)
   			$a_replacement_block[] = $a_widget;
   		}
-  	}
-  }
+  	}//For each widget in a region
+  }//For Each region in the settings
 
+  //Apply new default context block settings
   $contexts['cp-section-layout']->block = $a_replacement_block;
   if($o_feature){
   	foreach (drupal_map_assoc(spaces_features_items('context', $feature->name)) as $s_context) {
   		if(array_key_exists($s_context,$contexts)){
+  			//Apply new feature context block settings
   			$contexts[$s_context]->block = $a_feat_replacement_block;
   			$a_feat_replacement_block = array();
   		}
