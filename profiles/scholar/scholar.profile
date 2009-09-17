@@ -69,6 +69,7 @@ function _scholar_core_modules() {
     'spaces',
     'spaces_og',
     //'spaces_user',
+    'stringoverrides',
     'token',
     'trigger',
     'transliteration',
