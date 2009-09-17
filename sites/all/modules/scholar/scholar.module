@@ -108,10 +108,8 @@ function scholar_strongarm(){
  */
 function scholar_preprocess_page(&$vars) {
   // need to know if there is anything in the navbar for css theming
-  if ($vars['navbar']){
-    $vars['body_classes'] .= ' navbar';
-  }
-  
+  $body_class_extra = $vars['navbar'] ? ' navbar-on' : ' navbar-off;
+    $vars['body_classes'] .= $body_class_extra;
 }
 
 /**
