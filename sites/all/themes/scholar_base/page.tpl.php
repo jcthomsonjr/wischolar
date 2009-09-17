@@ -10,12 +10,16 @@
   <?php print $styles; ?>
   <?php print $scripts; ?>
 </head>
+
 <body class="<?php print $body_classes; ?>">
-  <div id="wrapper">
-    <div id="container">
-     <div id="top">
+    <?php if ($cp_toolbar) : ?>
+    <div id="top">
   	   <?php print $cp_toolbar;?>
   	 </div>
+  	 <?php endif;?>
+  <div id="wrapper">
+    <div id="container">
+
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) { ?>
 
       <div id="header">
