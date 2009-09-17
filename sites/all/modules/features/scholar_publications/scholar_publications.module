@@ -1,18 +1,5 @@
 <?php
-
 include_once('scholar_publications.features.inc');
-
-/**
- * Implementation of hook_spaces_settings().
- */
-function scholar_publications_spaces_settings() {
-  return array(
-    'scholar_publications' => array(
-      'class' => 'scholar_publications_settings_feature',
-      'file' => drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc',
-    ),
-  );
-}
 
 function scholar_publications_init(){
   $space = vsite_get_vsite();
@@ -35,5 +22,76 @@ function scholar_publications_init(){
     scholar_publications_settings_feature::customize($space,'link_title_url', $conf['biblio_link_title_url']);
     scholar_publications_settings_feature::customize($space,'author_links', $conf['biblio_author_links']);
       
+  }
+}
+
+
+function scholar_publications_menu(){
+  $items["publications"] = array(
+    'title' => 'Publications and Working Papers',
+    'page callback' => 'scholar_publications_overview',
+    'page arguments' => array(1),
+    'access arguments' => array('access biblio content'), 
+    'type' => MENU_CALLBACK
+  );
+
+  $items['publications/list'] = array(
+    'title' => 'List publications',
+    'page callback' => 'scholar_publications_overview',
+    'page arguments' => array(1),
+    'access arguments' => array('access biblio content'), 
+    'weight' => 0,
+    'type' => MENU_DEFAULT_LOCAL_TASK
+  );
+  
+  // import export
+   $items['publications/import'] = array(
+    'title'             => 'Import',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('biblio_import_form'),
+    'file'              => 'biblio.import.export.inc',
+    'file path'         => drupal_get_path('module', 'biblio'),
+    'access callback'   => 'user_access',
+    'access arguments'  => array('import from file'),
+    'type'              => MENU_LOCAL_TASK,
+    'weight'            => 10,
+   );
+  
+  return $items;
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_publications_spaces_settings() {
+  return array(
+    'scholar_publications' => array(
+      'class' => 'scholar_publications_settings_feature',
+      'file' => drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc',
+    ),
+  );
+}
+
+
+
+function scholar_publications_overview($group_node){
+  module_load_include('inc', 'biblio', 'biblio.pages');
+  return biblio_db_search();
+}
+
+/**
+ * hook db_rewrite_sql
+ *
+ */
+function scholar_publications_db_rewrite_sql($sql, $primary_table, $primary_field,  $args) {
+  $vsite = vsite_get_vsite();
+  $gid = $group_node -> nid;
+  $base_url = 'publications'; //og_settings_variable_get($gid, 'og_biblio_base', 'biblio');
+  if ($vsite  && arg(0) == $base_url){
+    if ($primary_table == 'n'){
+      $query['join'] = 'INNER JOIN {og_ancestry} oga ON n.nid = oga.nid';
+      $query['where'] =  'oga.group_nid = '. $vsite -> sid;
+      return $query;
+	}
   }
 }
