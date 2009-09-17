@@ -1,5 +1,7 @@
 <?php
 
+include_once('vsite_users.features.inc');
+
 /**
  * Implements hook_menu
  */
@@ -75,6 +77,28 @@ function vsite_users_menu(){
   );
   
   return $items;
+}
+
+/**
+ * hook strongarm
+ */
+function vsite_users_strongarm(){
+  $conf = array();
+  $conf['content_profile_use_vsite_users_profile'] = 1;
+  $conf['content_profile_vsite_users_profile'] = array(
+    'weight' => 0, 
+    'user_display' => 'full', 
+    'edit_link' => 0, 
+    'edit_tab' => 'sub', 
+    'add_link' => 0, 
+    'registration_use' => 1, 
+    'admin_user_create_use' => 1, 
+    'registration_hide' => array(
+      'other' 
+    ) 
+  );
+  
+  return $conf;
 }
 
 /**
