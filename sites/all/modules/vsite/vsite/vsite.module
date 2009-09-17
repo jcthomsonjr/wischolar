@@ -129,7 +129,7 @@ function vsite_include($inc_files){
  * @param $view
  */
 function vsite_views_pre_render(&$view) {
-  if($view->tag == "scholarfeature") {
+  if(strpos($view->name,"scholar_") === 0) {
     $nodetype = (array_key_exists('type',$view->filter))?key($view->filter['type']->value):false;
     $types = node_get_types();
     $type = ($nodetype && array_key_exists($nodetype,$types))?$types[$nodetype]:false;
