@@ -119,13 +119,13 @@ function vsite_layout_get_pagetypes($space){
 	if($a_page_types) return $a_page_types;
 
   $features = spaces_features($space->type, TRUE);
-  $a_page_types = array('all' => t('All Pages'), 'front' => t('Front Page'));
+  $a_page_types = array('all' => t('Default'), 'front' => t('Front Page'));
   if(!is_array($space->features)){
   	$a_return = $a_page_types;
   	unset($a_page_types);
   	return $a_return;
-  } 
-  
+  }
+
   foreach (array_keys($space->features) as $s_feature_key){
     if(!array_key_exists($s_feature_key,$features)) continue;
     $a_page_types[$s_feature_key] = $features[$s_feature_key]->info['name'];
@@ -286,7 +286,7 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
   		$a_widget['weight'] = $n_weight++;
   		if($o_feature && $o_feature->name == $a_widget['module']){
   			//Build new block settings for the feature
-  			$a_feat_replacement_block[] = $a_widget; 
+  			$a_feat_replacement_block[] = $a_widget;
   		}else{
   			//Build new block settings for the (cp-section-layout)
   			$a_replacement_block[] = $a_widget;
