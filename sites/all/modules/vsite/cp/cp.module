@@ -230,8 +230,12 @@ function cp_form_alter(&$form, $form_state, $form_id) {
       		}
       	break;
       	case 'block':
-      	  $form['customizers'][$s_customizer]['#title'] = "Widgets";
-      	  $form['customizers'][$s_customizer]['#description'] = "This feature allows you to enable/rename widgets -- small blocks of content -- used in your layout ";
+      		if(!array_key_exists('contexts',$form['customizers'][$s_customizer])){
+      			unset($form['customizers'][$s_customizer]);
+      		}else{
+	      	  $form['customizers'][$s_customizer]['#title'] = "Widgets";
+	      	  $form['customizers'][$s_customizer]['#description'] = "This feature allows you to enable/rename widgets -- small blocks of content -- used in your layout ";
+      		}
       	break;
       }	
     }
