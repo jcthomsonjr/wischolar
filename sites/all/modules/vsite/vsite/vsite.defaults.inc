@@ -1,39 +1,68 @@
 <?php
 
 /**
- * Helper to implementation of hook_imagecache_default_presets().
+ * Helper to implementation of hook_user_default_permissions().
  */
-function _vsite_imagecache_default_presets(){
-  $presets = array();
-  $presets['vsite_image_teaser_thumb'] = array(
-    'presetname' => 'vsite_image_teaser_thumb', 
-    'actions' => array(
-      0 => array(
-        'weight' => '0', 
-        'module' => 'imagecache', 
-        'action' => 'imagecache_scale', 
-        'data' => array(
-          'width' => '', 
-          'height' => '150', 
-          'upscale' => 0 
-        ) 
-      ) 
-    ) 
+function _vsite_user_default_permissions() {
+  $permissions = array();
+
+  // Exported permission: configure spaces features
+  $permissions[] = array(
+    'name' => 'configure spaces features',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
-  $presets['vsite_image_page_thumb'] = array(
-    'presetname' => 'vsite_image_teaser_thumb', 
-    'actions' => array(
-      0 => array(
-        'weight' => '0', 
-        'module' => 'imagecache', 
-        'action' => 'imagecache_scale', 
-        'data' => array(
-          'width' => '', 
-          'height' => '250', 
-          'upscale' => 0 
-        ) 
-      ) 
-    ) 
+
+  // Exported permission: search content
+  $permissions[] = array(
+    'name' => 'search content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
-  return $presets;
+
+  // Exported permission: upload files
+  $permissions[] = array(
+    'name' => 'upload files',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: view advanced help popup
+  $permissions[] = array(
+    'name' => 'view advanced help popup',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: view advanced help topic
+  $permissions[] = array(
+    'name' => 'view advanced help topic',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: view uploaded files
+  $permissions[] = array(
+    'name' => 'view uploaded files',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: view users outside groups
+  $permissions[] = array(
+    'name' => 'view users outside groups',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  return $permissions;
 }

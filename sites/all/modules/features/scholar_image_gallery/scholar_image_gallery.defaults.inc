@@ -168,3 +168,60 @@ function _scholar_image_gallery_context_default_contexts() {
   );
   return $items;
 }
+
+/**
+ * Helper to implementation of hook_user_default_permissions().
+ */
+function _scholar_image_gallery_user_default_permissions() {
+  $permissions = array();
+
+  // Exported permission: create gallery content
+  $permissions[] = array(
+    'name' => 'create gallery content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: create image content
+  $permissions[] = array(
+    'name' => 'create image content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: delete own gallery content
+  $permissions[] = array(
+    'name' => 'delete own gallery content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: delete own image content
+  $permissions[] = array(
+    'name' => 'delete own image content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: edit own gallery content
+  $permissions[] = array(
+    'name' => 'edit own gallery content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: edit own image content
+  $permissions[] = array(
+    'name' => 'edit own image content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  return $permissions;
+}

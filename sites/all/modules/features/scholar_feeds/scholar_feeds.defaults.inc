@@ -59,3 +59,36 @@ function _scholar_feeds_menu_default_items() {
 
   return $items;
 }
+
+/**
+ * Helper to implementation of hook_user_default_permissions().
+ */
+function _scholar_feeds_user_default_permissions() {
+  $permissions = array();
+
+  // Exported permission: create feed content
+  $permissions[] = array(
+    'name' => 'create feed content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: delete own feed content
+  $permissions[] = array(
+    'name' => 'delete own feed content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: edit own feed content
+  $permissions[] = array(
+    'name' => 'edit own feed content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  return $permissions;
+}

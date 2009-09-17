@@ -197,13 +197,17 @@ function _scholar_classes_user_default_permissions() {
   // Exported permission: create class content
   $permissions[] = array(
     'name' => 'create class content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
 
   // Exported permission: delete own class content
   $permissions[] = array(
     'name' => 'delete own class content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
 
   // Exported permission: edit own class content

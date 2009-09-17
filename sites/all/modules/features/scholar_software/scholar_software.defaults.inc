@@ -53,13 +53,17 @@ function _scholar_software_user_default_permissions() {
   // Exported permission: create software content
   $permissions[] = array(
     'name' => 'create software content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
 
   // Exported permission: delete own software content
   $permissions[] = array(
     'name' => 'delete own software content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
 
   // Exported permission: edit own software content
