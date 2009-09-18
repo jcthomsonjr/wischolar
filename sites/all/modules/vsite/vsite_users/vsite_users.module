@@ -10,7 +10,10 @@ function vsite_users_menu(){
   
   $items['cp/users'] = array(
     'title' => 'Users',
-    'page callback' => 'cp_route', 
+    'page callback' => 'vsite_user_edit',
+    'access callback' => 'vsite_user_edit_access',
+    'file path' => drupal_get_path('module', 'user'),
+    'file' => 'user.pages.inc',
     'weight' => 2, 
   );
   
@@ -18,9 +21,18 @@ function vsite_users_menu(){
     'title' => 'My Account',
     'page callback' => 'vsite_user_edit',
     'access callback' => 'vsite_user_edit_access',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
     'file path' => drupal_get_path('module', 'user'),
     'file' => 'user.pages.inc',
   );
+  
+  $items['cp/users/members'] = array(
+    'title' => 'Members',
+    'page callback' => 'vsite_users_members',
+    'file' => 'vsite_users.pages.inc',
+      'type' => MENU_LOCAL_TASK,
+    'weight' => 1, // should be the first one
+  );  
   
   $items['cp/users/myaccount/edit'] = array(
     'title' => 'My Account',
@@ -42,13 +54,7 @@ function vsite_users_menu(){
     'type' => MENU_LOCAL_TASK,
   );
   
-  $items['cp/users/members'] = array(
-    'title' => 'Members',
-    'page callback' => 'vsite_users_members',
-    'file' => 'vsite_users.pages.inc',
-    'weight' => 1, // should be the first one
-  );  
-  
+
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
     $items[$path]['menu_name'] = 'cp';

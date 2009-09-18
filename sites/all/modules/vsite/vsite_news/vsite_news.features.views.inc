@@ -68,6 +68,32 @@ function _vsite_news_views_default_views() {
       'field' => 'message',
       'relationship' => 'none',
     ),
+    'title' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('sorts', array(
     'created' => array(
@@ -116,8 +142,9 @@ function _vsite_news_views_default_views() {
     'inline' => array(
       'created' => 'created',
       'message' => 'message',
+      'title' => 'title',
     ),
-    'separator' => ':',
+    'separator' => '',
   ));
   $handler = $view->new_display('page', 'Main Followers Page', 'page_1');
   $handler->override_option('filters', array(

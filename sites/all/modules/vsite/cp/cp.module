@@ -1,6 +1,33 @@
 <?php
 define('CPTHEME', 'cp_theme');
 
+
+/**
+ * hook block
+ */
+function cp_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks[0]['info'] = t('CP left block');
+      return $blocks;
+    case 'view':
+      switch ($delta) {
+        case 0:
+          $block = cp_left_block_view();
+          break;
+      }
+      
+      return $block;
+  }
+}
+
+function cp_left_block_view(){
+  $block = array();
+  $block['title'] = t(''); //intentionally left blank
+  $block['content'] = menu_primary_local_tasks();
+  return $block;
+}
+
 function cp_init(){
    $vsite = vsite_get_vsite();
    $toolbar = FALSE;
@@ -77,9 +104,24 @@ function cp_menu(){
   
   $items['cp/settings'] = array(
     'title' => 'Settings',
-    'page callback' => 'cp_route',
+    //'page callback' => 'cp_route',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cp_settings_form', 'site'),
+    'file' => 'cp.settings.inc',
+    'file path' => drupal_get_path('module', 'cp'). '/includes', 
     'weight' => 0,
   );  
+
+  $items['cp/settings/site'] = array(
+    'title' => 'Site information',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cp_settings_form', 'site'),
+    'file' => 'cp.settings.inc',
+    'file path' => drupal_get_path('module', 'cp'). '/includes', 
+          'type' =>  MENU_DEFAULT_LOCAL_TASK,
+  );
+  
+
   
   // other setting by classess
   $space = vsite_get_vsite();
@@ -91,11 +133,12 @@ function cp_menu(){
     
     $setting_value = isset($space->settings[$setting->id]) ? $space->settings[$setting->id] : NULL;
     $setting_form = $setting->form($space, $setting_value);
-    if (!empty($setting_form)) {
+    if (!empty($setting_form) && $setting -> id != 'site') {
       $items['cp/settings/'. $setting -> id] = array(
         'title' => $setting_form['#title'],
         'page callback' => 'drupal_get_form',
         'page arguments' => array('cp_settings_form', $setting -> id),
+        'type' =>  MENU_LOCAL_TASK,
         'file' => 'cp.settings.inc',
         'file path' => drupal_get_path('module', 'cp'). '/includes', 
       );

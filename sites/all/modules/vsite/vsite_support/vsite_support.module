@@ -21,13 +21,15 @@ function vsite_support_menu(){
 
   $items['cp/support'] = array(
     'title' => 'Support',
-    'page callback' => 'cp_route',
+    'page callback' => 'vsite_support_questions',
+    'type' => MENU_NORMAL_ITEM,
     'weight' => 5
   );
 
   $items['cp/support/questions'] = array(
     'title' => 'Collaborative FAQ',
     'page callback' => 'vsite_support_questions',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 0,
   );
 
@@ -35,6 +37,7 @@ function vsite_support_menu(){
   $items['cp/support/featurerequests'] = array(
     'title' => 'Feature requests',
     'page callback' => 'vsite_support_feature_requests',
+    'type' => MENU_LOCAL_TASK,
     'weight' => 1,
   );
 

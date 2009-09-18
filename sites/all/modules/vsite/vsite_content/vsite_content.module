@@ -10,18 +10,21 @@ function vsite_content_menu(){
 
   $items['cp/content'] = array(
     'title' => 'Content', 
-    'page callback' => 'cp_route',
+    'page callback' => 'vsite_content_content',
+    //'page callback' => 'cp_route',
     'weight' => 1 
   );
   
   $items['cp/content/all'] = array(
     'title' => 'All', 
     'page callback' => 'vsite_content_content',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   
   $items['cp/content/files'] = array(
     'title' => 'Files',
     'page callback' => 'vsite_content_files',
+    'type' => MENU_LOCAL_TASK,
   );
   
   // make them all part of 'cp' menu
@@ -40,7 +43,8 @@ function vsite_content_menu(){
       'access arguments' => array($type, $name),
       'page callback' => 'vsite_content_content',
       'page arguments' => array($type, $all_types[$type]),
-      'menu_name' => 'cp',	 
+      'type' => MENU_LOCAL_TASK,
+      //'menu_name' => 'cp',	 
     );    
   }
 
