@@ -15,12 +15,23 @@ function scholar_dvn_menu(){
 }
 
 function scholar_dvn_data(){
-    $path = "http://dvn.iq.harvard.edu/dvn/dv/king"; // TODO get this from feature settings
+  $vsite = vsite_get_vsite();
+  if (array_key_exists('scholar_dvn', $vsite->settings)) {
+    // simply redirect to dvn 
+    $dvn_alias = $vsite -> settings['scholar_dvn']['dvn_alias'];
+    $path = "http://dvn.iq.harvard.edu/dvn/dv/" . $dvn_alias; 
     $http_response_code = '302';
     header('Location: ' . $path, TRUE, $http_response_code);
-  
     exit();
-  
+  }
+  elseif ($vsite->admin_access()) {
+    $result = t("No dataverse alias was found. Please set up your dataverse alias in your scholar_dvn feature settings");
+    return $result;
+  }
+  else {
+    return t('no dataverse available yet');
+  }
+
 }
 
 /**
