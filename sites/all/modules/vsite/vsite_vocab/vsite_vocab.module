@@ -72,7 +72,7 @@ function vsite_vocab_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL){
       case 'update' :
         // what is the term of the group vocab for this node
         //$v = reset(vsite_get_vocabs(NULL, $node->type));
-        $v = is_array(vsite_get_vocabs(NULL, $node->type)) ? reset(vsite_get_vocabs(NULL, $node->type)): array();
+        $v = (!empty(vsite_get_vocabs(NULL, $node->type))) ? reset(vsite_get_vocabs(NULL, $node->type)): array();
         if (! empty($v)) {
           $vid = $v->vid;
           if (isset($node->taxonomy[$vid])) {
