@@ -725,23 +725,3 @@ function simport_sync_themes(){
   }
 }
 
-
-function simport_test(){
-
-  $node = new stdClass();
-  $node -> title = 'The Hard Count: The Political and Social Ch';
-  $node -> status  = 1;
-  $node -> created = time();
-  $node -> changed = time();
-  
-  $node -> uid = 1;
-  $node -> name = 'admin';
-  $node -> type = 'biblio';
-$node -> biblio_type = 100;
-$node -> biblio_secondary_title  = 'The Hard Count: The Political and Social Ch';
-$node -> biblio_contributors = array();
-
-node_save($node);
-
-  
-}
