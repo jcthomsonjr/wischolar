@@ -16,13 +16,15 @@
   	   <?php print $cp_toolbar;?>
   	 </div>
      <div id="main-content">
+     <?php if ($left) : ?>
       <div id="cp-sidemenu">
         <div class="frame">
           <div class="innerframe">
-          <?php print $cp_left;?>
+          <?php print $left;?>
           </div>
         </div>
 			</div><!-- /cp-sidemenu -->
+			<?php endif;?>
 			<div id="cp-content">
 			  <div class="frame">
           <div class="innerframe">
