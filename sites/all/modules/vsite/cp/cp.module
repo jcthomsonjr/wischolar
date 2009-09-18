@@ -220,6 +220,10 @@ function cp_form_alter(&$form, $form_state, $form_id) {
   }
   
   if (arg(0) == 'cp' && $form_id == 'spaces_customize_form'){
+  	if(array_key_exists('customizers',$form))$form['customizers']['#weight'] = 0;
+  	if(array_key_exists('settings',$form))$form['settings']['#weight'] = 10;
+  	if(array_key_exists('buttons',$form))$form['buttons']['#weight'] = 20;
+  	
     foreach(element_children($form['customizers']) as $s_customizer){
       switch($s_customizer){
       	case 'menu':
