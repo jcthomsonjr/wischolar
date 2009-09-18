@@ -1,5 +1,25 @@
 <?php
+/**
+ * Override or insert PHPTemplate variables into the templates.
+ */
+function cp_theme_preprocess_page(&$vars) {
+  $vars['tabs2'] = menu_secondary_local_tasks();
 
+  // Hook into color.module
+  if (module_exists('color')) {
+    _color_page_alter($vars);
+  }
+}
+
+/**
+ * Returns the rendered local tasks. The default implementation renders
+ * them as tabs. Overridden to split the secondary tasks.
+ *
+ * @ingroup themeable
+ */
+function cp_theme_menu_local_tasks() {
+  return menu_primary_local_tasks();
+}
 
 
 /**
