@@ -1,6 +1,77 @@
 <?php
 
 /**
+ * Helper to implementation of hook_content_default_fields().
+ */
+function _scholar_biocv_content_default_fields() {
+  $fields = array();
+
+  // Exported field: field_cv_attach
+  $fields[] = array(
+    'field_name' => 'field_cv_attach',
+    'type_name' => 'cv',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'filefield',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'filefield',
+    'active' => '1',
+    'list_field' => '0',
+    'list_default' => 1,
+    'description_field' => '0',
+    'widget' => array(
+      'file_extensions' => 'txt',
+      'file_path' => '',
+      'progress_indicator' => 'bar',
+      'max_filesize_per_file' => '',
+      'max_filesize_per_node' => '',
+      'label' => 'cv attachment',
+      'weight' => '31',
+      'description' => '',
+      'type' => 'filefield_widget',
+      'module' => 'filefield',
+    ),
+  );
+
+  // Translatables
+  array(
+    t('cv attachment'),
+  );
+
+  return $fields;
+}
+
+/**
  * Helper to implementation of hook_context_default_contexts().
  */
 function _scholar_biocv_context_default_contexts() {
@@ -15,19 +86,6 @@ function _scholar_biocv_context_default_contexts() {
       'bio' => 'bio',
     ),
     'menu' => 'bio',
-    /*
-    'block' => array(
-      'biblio_0' => array(
-        'module' => 'biblio',
-        'delta' => '0',
-        'weight' => 20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Most recent publications',
-        'type' => 'context_ui',
-      ),
-    ),
-    */
   );
   return $items;
 }
