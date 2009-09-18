@@ -101,31 +101,35 @@ function simport_import(){
        simport_set_terms($old, $new);
 
       //deal with any custom fields specific to the content type;
-      switch ($old -> type){       
-              
+      switch ($old -> type){
+
         case 'scholar_announcement':
           simport_set_announcement($old, $new);
           break;
 
-          case 'scholar_bio':
-                simport_set_page($old, $new); //import to page
-                break;
-                
-          case 'scholar_page':
-                simport_set_page($old, $new); //import to page also
-                break;      
+        case 'scholar_bio':
+          simport_set_page($old, $new); //import to page
+          break;
+          
+        case 'scholar_biblio':
+          simport_set_biblio($old, $new); 
+          break;   
 
-         case 'scholar_blog':
-            //no blogs to import
-              break;
-          
+        case 'scholar_page':
+          simport_set_page($old, $new); //import to page also
+          break;
+
+        case 'scholar_blog':
+          //no blogs to import
+          break;
+
         case 'scholar_link':
-            simport_set_link($old, $new);
-            break;  
-          
-       case 'scholar_class':
+          simport_set_link($old, $new);
+          break;
+
+        case 'scholar_class':
           simport_set_class($old, $new);
-          break;    
+          break;
        }
   
       //save the node
@@ -496,6 +500,84 @@ function simport_set_link($old, &$new){
 }
 
 /**
+ * Import biblio nodes
+ *
+ * @param unknown_type $old
+ * @param unknown_type $new
+ */
+function simport_set_biblio($old, &$new){
+  
+//a list of D5 biblio author fields
+$author_fields = array('biblio_authors', 'biblio_secondary_authors', 'biblio_tertiary_authors', 'biblio_corp_author', 'biblio_other_author_affiliations');
+
+  //convert old node to array
+   $properties = get_object_vars($old);
+   foreach($properties as $key => $val){
+     
+   //clear $matches for next loop because it is passed by reference
+   if(isset($matches)){
+     unset($matches);
+   }
+  //check if biblio field
+   if (count(preg_match( '/^biblio_/', $key, $matches))){
+     if (!in_array($key, $author_fields))
+     //not an author field, so set the property verbatim
+     $new -> $key = $val;
+   }
+
+   else{
+     $value = array();
+     $i = 0;
+     //deal with author fields
+     switch($key){
+       case 'biblio_authors':
+         if(!empty($val)){
+           $new -> biblio_contributors =  simport_create_biblio_authors($val, 1);
+         }
+         break;
+
+       case 'biblio_secondary_authors':
+         if(!empty($val)){
+           $new -> biblio_contributors =  simport_create_biblio_authors($val, 2);
+         }
+         break;
+
+       case 'biblio_tertiary_authors':
+         if(!empty($val)){
+           $new -> biblio_contributors =  simport_create_biblio_authors($val, 3);
+         }
+         break;
+
+       case  'biblio_other_author_affiliations':
+         //Subsidiary Author is auth_type 4
+         //TODO: not sure where this maps to???
+         break;
+
+       case 'biblio_corp_author':
+         if(!empty($val)){
+           $new -> biblio_contributors =  simport_create_biblio_authors($val, 5);
+         }
+         break;
+     }
+   }
+  }
+}
+
+function simport_create_biblio_authors($val, $auth_type, $i = 0){
+  $authors = explode(';', $val);
+  foreach($authors as $author){
+    $value[$auth_type][$i] = array(
+    'name' => $author,
+    'auth_type' => $auth_type,
+    'rank' => $i,
+    );
+    $i++;
+  }
+  return $value;
+}
+
+
+/**
  * Save files after nodes have been saved
  */
 function simport_get_files(){
@@ -598,7 +680,7 @@ function _simport_exportdata(){
   global $db_url;
 
   $db_conn = array();
-  //get the conn params  
+  //get the connection params  
   $db_arr = explode('/', $db_url);
   $db_user = explode(':', $db_arr[2]);
   $db_pass = explode('@', $db_user[1]);   
@@ -625,3 +707,5 @@ function simport_sync_themes(){
    $sql_ins = db_query("UPDATE {og} SET og_theme = '%s' WHERE nid = %d", $theme, $data->nid);
   }
 }
+
+
