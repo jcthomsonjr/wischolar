@@ -23,15 +23,16 @@
           <?php print $left;?>
           </div>
         </div>
-			</div><!-- /cp-sidemenu -->
-			<?php endif;?>
+	  </div><!-- /cp-sidemenu -->
+	 <?php endif;?>
 			<div id="cp-content">
 			  <div class="frame">
           <div class="innerframe">
            <?php if ($context_links) print $context_links;?>
-           <?php //if ($title): print '<h2'. ($tabs ? ' class="with-tabs"' : '') .'>'. $title .'</h2>'; endif; ?>
-            <?php if (!empty($tabs)){ ?>
-            <div class="tabs"><?php print $tabs; ?></div>
+           <?php //main tabs ($tabs) comes in the block on the left ?>
+            <?php if (!empty($tabs2)){ ?>
+            <?php print 'not empty';?>
+            <div class="tabs"><?php print $tabs2; ?></div>
             <?php }; ?>
             <?php print $help; ?>
             <?php print $messages; ?>
