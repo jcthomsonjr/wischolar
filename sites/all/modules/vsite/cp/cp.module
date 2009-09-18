@@ -21,6 +21,32 @@ function cp_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
+function cp_context_default_contexts(){
+  $items = array();
+  $items[] = array(
+    'namespace' => 'cp', 
+    'attribute' => 'section', 
+    'value' => 'cp', 
+    'path' => array(
+      'cp/*' => 'cp/*' 
+    ), 
+    'block' => array(
+      'cp_0' => array(
+        'module' => 'cp', 
+        'delta' => '0', 
+        'weight' => 20, 
+        'region' => 'left', 
+        'status' => '0', 
+        'label' => 'CP left block', 
+        'type' => 'context_ui' 
+      ) 
+    ) 
+  );
+  
+  return $items;
+}
+
+
 function cp_left_block_view(){
   $block = array();
   $block['title'] = t(''); //intentionally left blank
