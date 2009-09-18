@@ -31,6 +31,31 @@ function vsite_news_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 function vsite_news_menu(){
 
   $items = array();
+  
+  $items['cp/news'] = array(
+    'title' => 'Activity',
+    'page callback' => 'vsite_news_activity',
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+    'weight' => 3,
+  ); 
+
+  $items['cp/news/activity'] = array(
+    'title' => 'Activity',
+    'page callback' => 'vsite_news_activity',
+    'access callback' => 'cp_access_cp',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 3,
+  ); 
+  
+  $items['cp/news/feeds'] = array(
+    'title' => 'Latest feeds',
+    'page callback' => 'vsite_news_feeds',
+      'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 3,
+  );
+  
   $items['cp/news/activity/privacy'] = array(
     'title' => "Activity Privacy Settings",
     'page callback' => 'drupal_get_form',
@@ -40,22 +65,18 @@ function vsite_news_menu(){
     'access callback' => 'cp_access_cp',
   );
   
-  $items['cp/news/activitys'] = array(
-    'title' => 'Feature requests', 
-    'page callback' => 'vsite_news_view',
-    'access callback' => 'cp_access_cp',
-    'menu_name' => 'cp'
-  );
- 
   return $items;
 }
-
+function vsite_news_feeds(){
+  return 'latest feed view goes here';
+}
 /**
  * show the vsite_news_view
  */
-function vsite_news_view(){
+function vsite_news_activity(){
 	return views_page('vsite_activity','default');
 }
+
 
 /**
  * The action hook

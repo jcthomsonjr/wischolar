@@ -146,28 +146,6 @@ function _vsite_news_views_default_views() {
     ),
     'separator' => '',
   ));
-  $handler = $view->new_display('page', 'Main Followers Page', 'page_1');
-  $handler->override_option('filters', array(
-    'value_vsite_activity' => array(
-      'id' => 'value_vsite_activity',
-      'table' => 'activity_access',
-      'field' => 'value_vsite_activity',
-    ),
-  ));
-  $handler->override_option('path', 'cp/news/activity');
-  $handler->override_option('menu', array(
-    'type' => 'normal',
-    'title' => 'Activity',
-    'description' => '',
-    'weight' => '0',
-    'name' => 'cp',
-  ));
-  $handler->override_option('tab_options', array(
-    'type' => 'none',
-    'title' => '',
-    'description' => '',
-    'weight' => 0,
-  ));
   $handler = $view->new_display('page', 'Tab Followers', 'page_2');
   $handler->override_option('filters', array(
     'value_vsite_activity' => array(
