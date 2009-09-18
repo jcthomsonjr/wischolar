@@ -230,12 +230,13 @@ function cp_form_alter(&$form, $form_state, $form_id) {
       		}
       	break;
       	case 'block':
-      		if(!array_key_exists('contexts',$form['customizers'][$s_customizer])){
-      			unset($form['customizers'][$s_customizer]);
-      		}else{
-	      	  $form['customizers'][$s_customizer]['#title'] = "Widgets";
-	      	  $form['customizers'][$s_customizer]['#description'] = "This feature allows you to enable/rename widgets -- small blocks of content -- used in your layout ";
-      		}
+      		if(!array_key_exists('contexts',$form['customizers'][$s_customizer]) && array_key_exists('post',$form_state) && array_key_exists('customizers',$form_state['post'])){
+      			 $form_state['input']['customizers'][$s_customizer] = array();
+      			 $form_state['post']['customizers'][$s_customizer] = array();
+     		  }//Fake this to fix a spaces warning
+	   	    $form['customizers'][$s_customizer]['#title'] = "Widgets";
+	        $form['customizers'][$s_customizer]['#description'] = "This feature allows you to enable/rename widgets -- small blocks of content -- used in your layout ";
+      		
       	break;
       }	
     }

@@ -100,6 +100,7 @@ function _scholar_feeds_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('title', 'Latest Feeds');
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
   $handler->override_option('row_plugin', 'node');
