@@ -220,6 +220,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	if(array_key_exists('vsite_users_first_name',$form)) $form['vsite_users_first_name']['#weight'] = -3;
 	  	if(array_key_exists('vsite_users_last_name',$form)) $form['vsite_users_last_name']['#weight'] = -2;
 	  	if(array_key_exists('vsite_users_title',$form)) $form['vsite_users_title']['#type'] = 'value';
+	  	if(array_key_exists('field_user_profile_photo',$form)) $form['field_user_profile_photo']['#type'] = 'value';
 	  	
 	  	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
 	  	
