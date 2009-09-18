@@ -89,7 +89,8 @@ function simport_import(){
   $types = _simport_map_content_types();
 
   foreach ($types as $oldtype => $newtype){
-    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
+   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
+  // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'biblio', 559);
     while ($data = db_fetch_object($sql)) {
       $old = unserialize($data ->data);
       $new = new stdClass();
@@ -111,8 +112,12 @@ function simport_import(){
           simport_set_page($old, $new); //import to page
           break;
           
-        case 'scholar_biblio':
+        case 'biblio':          
+          dpm($old);
+          //dpm($new);
           simport_set_biblio($old, $new); 
+          dpm($new);
+          
           break;   
 
         case 'scholar_page':
@@ -134,17 +139,12 @@ function simport_import(){
   
       //save the node
       node_save($new);
+                
+      //I've found that this way works the best (instead of db_last_insert_id or node_load)      
+      $last = db_result(db_query("SELECT MAX(nid) FROM {node}"));
       
-      //load the new node (to get the nid)
-      $new_node = node_load( array(
-        'type' => $new-> type,
-        'created' => $new -> created,
-        'changed' => $new -> changed,
-        'uid' => $new -> uid,
-    ) ); 
-     
       //insert new and old node ids into simport table 
-     db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$new_node -> nid);
+     db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$last);
     }    
   }
   
@@ -506,65 +506,82 @@ function simport_set_link($old, &$new){
  * @param unknown_type $new
  */
 function simport_set_biblio($old, &$new){
+
+  //a list of D5 biblio author fields
+  $author_fields = array(
+  'biblio_authors', 
+  'biblio_secondary_authors', 
+  'biblio_tertiary_authors', 
+  'biblio_corp_author', 
+  'biblio_other_author_affiliations'
+  );
+
+   //set to contributors to empty array to begin
+   $new -> biblio_contributors = array();
   
-//a list of D5 biblio author fields
-$author_fields = array('biblio_authors', 'biblio_secondary_authors', 'biblio_tertiary_authors', 'biblio_corp_author', 'biblio_other_author_affiliations');
-
   //convert old node to array
-   $properties = get_object_vars($old);
-   foreach($properties as $key => $val){
+  $properties = get_object_vars($old);
+  foreach($properties as $key => $val){
+
+    //clear $matches for next loop because it is passed by reference
+    if(isset($matches)){
+      unset($matches);
+    }
+    //check if biblio field
+    if (count(preg_match( '/^biblio_/', $key, $matches))){
+      if (!in_array($key, $author_fields)){
+        //not an author field, so set the property verbatim
+        $new -> $key = $val;
+      }
+
+      else{
+         //deal with author fields      
      
-   //clear $matches for next loop because it is passed by reference
-   if(isset($matches)){
-     unset($matches);
-   }
-  //check if biblio field
-   if (count(preg_match( '/^biblio_/', $key, $matches))){
-     if (!in_array($key, $author_fields))
-     //not an author field, so set the property verbatim
-     $new -> $key = $val;
-   }
+           
+      switch($key){
+        case 'biblio_authors':
+          if(!empty($val)){
+            $new -> biblio_contributors =  simport_create_biblio_authors($val, 1);
+          }
+        break;
 
-   else{
-     $value = array();
-     $i = 0;
-     //deal with author fields
-     switch($key){
-       case 'biblio_authors':
-         if(!empty($val)){
-           $new -> biblio_contributors =  simport_create_biblio_authors($val, 1);
-         }
-         break;
+        case 'biblio_secondary_authors':
+          if(!empty($val)){
+            $new -> biblio_contributors =  simport_create_biblio_authors($val, 2);
+          }
+          break;
 
-       case 'biblio_secondary_authors':
-         if(!empty($val)){
-           $new -> biblio_contributors =  simport_create_biblio_authors($val, 2);
-         }
-         break;
+        case 'biblio_tertiary_authors':
+          if(!empty($val)){
+            $new -> biblio_contributors =  simport_create_biblio_authors($val, 3);
+          }
+          break;
 
-       case 'biblio_tertiary_authors':
-         if(!empty($val)){
-           $new -> biblio_contributors =  simport_create_biblio_authors($val, 3);
-         }
-         break;
+        case  'biblio_other_author_affiliations':
+          //Subsidiary Author is auth_type 4
+          //TODO: not sure where this maps to???
+          break;
 
-       case  'biblio_other_author_affiliations':
-         //Subsidiary Author is auth_type 4
-         //TODO: not sure where this maps to???
-         break;
-
-       case 'biblio_corp_author':
-         if(!empty($val)){
-           $new -> biblio_contributors =  simport_create_biblio_authors($val, 5);
-         }
-         break;
-     }
-   }
+        case 'biblio_corp_author':
+          if(!empty($val)){
+            $new -> biblio_contributors =  simport_create_biblio_authors($val, 5);
+          }
+          break;
+      }
+      }
+    }
   }
+  //do some cleanup of the node properties.  TODO: should be cleaner???
+  unset($new->nid);
+  unset($new->vid);
+  $vsite = simport_get_new_vsite($old -> og_groups[0]);
+  $new -> uid = $vsite -> group -> uid;
+  $new -> name = $vsite -> group -> name;
+  
 }
 
 function simport_create_biblio_authors($val, $auth_type, $i = 0){
-  $authors = explode(';', $val);
+  $authors = explode('and', $val);
   foreach($authors as $author){
     $value[$auth_type][$i] = array(
     'name' => $author,
@@ -660,7 +677,7 @@ function _simport_map_content_types($old_type = NULL){
   'scholar_bio' => 'page',
   'scholar_class' => 'class',
   'scholar_page' => 'page',  //both scholar_bio and scholar_page import to page
-  //'biblio' => 'biblio', 
+  'biblio' => 'biblio', 
  
   // 'scholar_cv' => '', //ONLY 1 Submit it manually
  // 'scholar_photo' => '', //already dealt with in simport_set_logo()
@@ -709,3 +726,22 @@ function simport_sync_themes(){
 }
 
 
+function simport_test(){
+
+  $node = new stdClass();
+  $node -> title = 'The Hard Count: The Political and Social Ch';
+  $node -> status  = 1;
+  $node -> created = time();
+  $node -> changed = time();
+  
+  $node -> uid = 1;
+  $node -> name = 'admin';
+  $node -> type = 'biblio';
+$node -> biblio_type = 100;
+$node -> biblio_secondary_title  = 'The Hard Count: The Political and Social Ch';
+$node -> biblio_contributors = array();
+
+node_save($node);
+
+  
+}
