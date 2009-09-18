@@ -31,7 +31,6 @@
            <?php if ($context_links) print $context_links;?>
            <?php //main tabs ($tabs) comes in the block on the left ?>
             <?php if (!empty($tabs2)){ ?>
-            <?php print 'not empty';?>
             <div class="tabs"><?php print $tabs2; ?></div>
             <?php }; ?>
             <?php print $help; ?>
