@@ -4,11 +4,6 @@
  */
 function cp_theme_preprocess_page(&$vars) {
   $vars['tabs2'] = menu_secondary_local_tasks();
-
-  // Hook into color.module
-  if (module_exists('color')) {
-    _color_page_alter($vars);
-  }
 }
 
 /**
