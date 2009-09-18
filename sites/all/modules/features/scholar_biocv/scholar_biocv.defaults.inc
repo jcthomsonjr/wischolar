@@ -10,57 +10,95 @@ function _scholar_biocv_content_default_fields() {
   $fields[] = array(
     'field_name' => 'field_cv_attach',
     'type_name' => 'cv',
-    'display_settings' => array(
-      'label' => array(
+    'display_settings' => array (
+      'label' => array (
         'format' => 'above',
         'exclude' => 0,
       ),
-      'teaser' => array(
+      'teaser' => array (
         'format' => 'default',
         'exclude' => 0,
       ),
-      'full' => array(
+      'full' => array (
         'format' => 'default',
         'exclude' => 0,
       ),
-      '4' => array(
+      4 => array (
         'format' => 'default',
         'exclude' => 0,
       ),
-      '2' => array(
+      2 => array (
         'format' => 'default',
         'exclude' => 0,
       ),
-      '3' => array(
+      3 => array (
         'format' => 'default',
         'exclude' => 0,
       ),
-      'token' => array(
+      'token' => array (
         'format' => 'default',
         'exclude' => 0,
       ),
     ),
-    'widget_active' => '1',
+    'columns' => array (
+      'fid' => 
+      array (
+        'type' => 'int',
+        'not null' => false,
+        'views' => true,
+      ),
+      'list' => 
+      array (
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => false,
+        'views' => true,
+      ),
+      'data' => 
+      array (
+        'type' => 'text',
+        'serialize' => true,
+        'views' => true,
+      ),
+    ),
+    'label' => 'PDF Upload',
     'type' => 'filefield',
-    'required' => '0',
+    'widget_type' => 'filefield_widget',
+    'change' => 'Change basic information',
+    'weight' => '31',
+    'file_extensions' => 'pdf',
+    'progress_indicator' => 'bar',
+    'file_path' => '',
+    'max_filesize_per_file' => '',
+    'max_filesize_per_node' => '',
+    'description' => '',
+    'ffp_field_cv_pdf' => 
+    array (
+      'file_path' => '',
+      'file_path_cleanup' => 
+      array (
+        'file_path_pathauto' => 0,
+        'file_path_tolower' => 0,
+        'file_path_transliterate' => 0,
+      ),
+      'file_name' => 'cv_[filefield-onlyname-original].[filefield-extension-original]',
+      'file_name_cleanup' => 
+      array (
+        'file_name_pathauto' => 0,
+        'file_name_tolower' => 0,
+        'file_name_transliterate' => 0,
+      ),
+      'retroactive_update' => '',
+    ),
+    'group' => false,
+    'required' => 0,
     'multiple' => '0',
-    'module' => 'filefield',
-    'active' => '1',
     'list_field' => '0',
     'list_default' => 1,
     'description_field' => '0',
-    'widget' => array(
-      'file_extensions' => 'txt',
-      'file_path' => '',
-      'progress_indicator' => 'bar',
-      'max_filesize_per_file' => '',
-      'max_filesize_per_node' => '',
-      'label' => 'cv attachment',
-      'weight' => '31',
-      'description' => '',
-      'type' => 'filefield_widget',
-      'module' => 'filefield',
-    ),
+    'op' => 'Save field settings',
+    'module' => 'filefield',
+    'widget_module' => 'filefield',
   );
 
   // Translatables

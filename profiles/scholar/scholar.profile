@@ -156,6 +156,8 @@ function _scholar_scholar_modules() {
     
    // features TODO does this gets installed in the  next step (enable features?)
    // keep here for testing purposes only
+    'scholar_dvn',
+    'scholar_biocv',
     'scholar_links',
     'scholar_blog',
     'scholar_announcements',
