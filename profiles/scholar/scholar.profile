@@ -80,8 +80,6 @@ function _scholar_core_modules() {
     'views_ui', 
     'views_export', 
     'views_attach',
-    'views_gallery',
-    'views_gallery_og',
     'vertical_tabs',
     'wysiwyg',
   
