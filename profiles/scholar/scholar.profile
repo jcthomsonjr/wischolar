@@ -216,7 +216,7 @@ function scholar_profile_tasks(&$task, $url) {
     // rebuild access (required by og)
     //_scholar_access_rebuild();
     // create default content types
-    _scholar_profile_content_types();
+    //_scholar_profile_content_types();
     
     // configure modules  (variables table mainly)
     //_scholar_variable_set();
@@ -225,7 +225,7 @@ function scholar_profile_tasks(&$task, $url) {
     _scholar_enable_themes();
     
     // for testing purposes, create nodes groups etc
-    _scholar_testingcontent();
+
 
     // configure wisywig/tinymce
     _scholar_wysiwyg_config();
@@ -247,6 +247,8 @@ function scholar_profile_tasks(&$task, $url) {
   variable_set('scholar_content_type', 'vsite');
   // set default to america/new yourk
   variable_set(date_default_timezone_name, "America/New_York");
+  
+     // _scholar_testingcontent();
   
   //_scholar_filefield_paths_config();
 

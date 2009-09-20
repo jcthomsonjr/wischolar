@@ -8,6 +8,8 @@ define('DRUPAL_ROOT', getcwd());
  * Later during task 'generate-content' nodes are assigned 
  * to these sites
  */
+
+/*
 function _scholar_testingcontent(){
 	
 	//include_once DRUPAL_ROOT . '/includes/theme.inc';
@@ -65,3 +67,5 @@ function _scholar_testingcontent(){
 		}
 	}
 }
+
+*/
