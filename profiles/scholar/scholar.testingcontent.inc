@@ -34,10 +34,10 @@ function _scholar_testingcontent(){
 		
 		$properties = array (
 			'name' => $uname_admin, 
-			'type' => variable_get('scholar_content_type', 'scholarsite'),
+			'type' => variable_get('scholar_content_type', 'vsite'),
 		  	'promote' => '1',
 			'purl' => array ('value' => "site0$i", 'provider' => 'spaces_og', 'id' => NULL ), 
-			'preset' => 'scholarsite', // : 'public', 
+			'preset' => 'vsite', // : 'public', 
 			'og_description' => "site0$i", 
 			'theme' => $scholar_theme, 
 			'og_description' => "site0$i", // TODO $terms array should include descriptions

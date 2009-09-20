@@ -50,7 +50,7 @@ function vsite_vocab_tt(){
  */
 function vsite_vocab_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL){
   
-  if ($op == 'insert' && $node->type == variable_get('scholar_content_type', 'scholarsite')) {
+  if ($op == 'insert' && $node->type == variable_get('scholar_content_type', 'vsite')) {
     // Features implement their own default taxonomies 
     $taxs = module_invoke_all('scholar_vocabulary_defaults');
     $new_taxs = $taxs;

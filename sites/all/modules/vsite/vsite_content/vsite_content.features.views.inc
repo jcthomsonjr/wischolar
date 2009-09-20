@@ -168,7 +168,7 @@ function _vsite_content_views_default_views() {
         'link' => 0,
         'biblio' => 0,
         'page' => 0,
-        'scholarsite' => 0,
+        'vsite' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',

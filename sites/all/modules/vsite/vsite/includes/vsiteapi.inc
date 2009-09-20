@@ -154,14 +154,14 @@ function vsite_vsite_create($name, $mail, $domain){
   ));
   $properties = array(
       'name' => $name, 
-      'type' => variable_get('scholar_content_type', 'scholarsite'), 
+      'type' => variable_get('scholar_content_type', 'vsite'), 
       'promote' => '0', 
       'purl' => array(
           'value' => $domain, 
           'provider' => 'spaces_og', 
           'id' => NULL 
       ), 
-      'preset' => 'scholarsite', 
+      'preset' => 'vsite', 
       'og_description' => "$domain's web site", 
       'theme' => 'scholar_theme_01', // TODO what is the default theme ? 
   );

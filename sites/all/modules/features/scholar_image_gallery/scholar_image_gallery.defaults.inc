@@ -45,7 +45,7 @@ function _scholar_image_gallery_content_default_fields() {
       'feed_item' => 0,
       'image' => 0,
       'link' => 0,
-      'scholarsite' => 0,
+      'vsite' => 0,
       'scholar_software' => 0,
     ),
     'advanced_view' => '--',

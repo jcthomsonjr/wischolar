@@ -10,7 +10,7 @@ function scholar_settings_form(){
     '#type' => 'select',
     '#options' => og_get_types('group'),
     '#title' => t('Node type'),
-    '#default_value' => variable_get('scholar_content_type', 'scholarsite'),
+    '#default_value' => variable_get('scholar_content_type', 'vsite'),
     '#description' => t("Choose a og content type which represent a scholar site"),
   );
   

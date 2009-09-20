@@ -68,7 +68,7 @@ function vsite_views_api(){
 function vsite_strongarm() {
   $conf = array();
   
-  $conf['scholar_content_type'] = 'scholarsite';  // TODO change to vsite
+  $conf['scholar_content_type'] = 'vsite';  // TODO change to vsite
   $conf['menu_primary_links_source'] = 'features';
   
   // scholar menus TODO change to vsite_*
@@ -183,7 +183,7 @@ function vsite_views_pre_render(&$view) {
  */
 function vsite_get_vsite(){
   $space = spaces_get_space();
-  $scholar_content_type = variable_get('scholar_content_type', 'scholarsite');
+  $scholar_content_type = variable_get('scholar_content_type', 'vsite');
   if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
     return $space;
   }
@@ -212,7 +212,7 @@ function vsite_spaces_presets(){
   $items = array();
   vsite_include('vsiteapi');
   $options = vsite_content_types();
-  $items['scholarsite'] = array(
+  $items['vsite'] = array(
     'name' => 'Scholar site preset', 
     'description' => 'Scholar site preset', 
     'preset' => array(
@@ -242,7 +242,7 @@ function vsite_spaces_presets(){
   );
   
   //Put default settings here
-  $items['scholarsite']['preset']['settings'] = array(
+  $items['vsite']['preset']['settings'] = array(
     'home' => 'blog', 
     'front' => array(
       'frontpage' => 'feature', 

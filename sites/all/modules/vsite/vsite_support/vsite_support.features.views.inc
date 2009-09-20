@@ -267,7 +267,7 @@ function _vsite_support_views_default_views() {
         'biblio' => 0,
         'page' => 0,
         'profile' => 0,
-        'scholarsite' => 0,
+        'vsite' => 0,
         'support_answer' => 0,
         'vsite_users_profile' => 0,
       ),

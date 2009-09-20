@@ -62,7 +62,7 @@ function _vsite_support_content_default_fields() {
       'link' => 0,
       'page' => 0,
       'profile' => 0,
-      'scholarsite' => 0,
+      'vsite' => 0,
       'scholar_software' => 0,
       'vsite_users_profile' => 0,
     ),

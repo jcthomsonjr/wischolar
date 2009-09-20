@@ -244,7 +244,7 @@ function scholar_profile_tasks(&$task, $url) {
     
     //features_rebuild();
 
-  variable_set('scholar_content_type', 'scholarsite');
+  variable_set('scholar_content_type', 'vsite');
   // set default to america/new yourk
   variable_set(date_default_timezone_name, "America/New_York");
   
@@ -298,7 +298,7 @@ function _scholar_access_rebuild(){
  * Create default content types
  */
 function _scholar_profile_content_types(){
-  $node_type_name = 'scholarsite';
+  $node_type_name = 'vsite';
   
   $site_type = array(
     'name' => st('Scholar site'),
