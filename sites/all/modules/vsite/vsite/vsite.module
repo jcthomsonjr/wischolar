@@ -43,6 +43,7 @@ function vsite_vsiteboot(){
     
     module_load_include('inc', 'vsite', 'includes/vsiteboot');
     
+    _scholar_testingcontent();
     _vsite_filefield_paths_config();
     _vsite_global_taxonomy();
 
@@ -68,7 +69,9 @@ function vsite_views_api(){
 function vsite_strongarm() {
   $conf = array();
   
-  $conf['scholar_content_type'] = 'vsite';  // TODO change to vsite
+  $conf['og_content_type_usage_vsite'] = 'group';
+  
+  $conf['scholar_content_type'] = 'vsite'; 
   $conf['menu_primary_links_source'] = 'features';
   
   // scholar menus TODO change to vsite_*

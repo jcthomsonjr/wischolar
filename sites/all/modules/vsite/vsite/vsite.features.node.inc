@@ -14,6 +14,15 @@ function _vsite_node_info() {
       'has_body' => '1',
       'body_label' => t('Body'),
     ),
+    'vsite' => array(
+      'name' => t('Scholar site'),
+      'module' => 'features',
+      'description' => t('Represent a Virtual Web Site'),
+      'has_title' => '1',
+      'title_label' => t('Site title'),
+      'has_body' => '0',
+      'body_label' => t(''),
+    ),
   );
   return $items;
 }
