@@ -7,7 +7,7 @@ function _scholar_biocv_node_info() {
   $items = array(
     'bio' => array(
       'name' => t('bio'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t(''),
       'has_title' => '1',
       'title_label' => t('Title'),
@@ -16,7 +16,7 @@ function _scholar_biocv_node_info() {
     ),
     'cv' => array(
       'name' => t('cv'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t(''),
       'has_title' => '1',
       'title_label' => t('Title'),

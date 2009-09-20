@@ -7,7 +7,7 @@ function _scholar_image_gallery_node_info() {
   $items = array(
     'gallery' => array(
       'name' => t('Gallery'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t('A gallery for a collection of photos.'),
       'has_title' => '1',
       'title_label' => t('Title'),
@@ -16,7 +16,7 @@ function _scholar_image_gallery_node_info() {
     ),
     'image' => array(
       'name' => t('Image'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t('An individual gallery photograph.'),
       'has_title' => '1',
       'title_label' => t('Title'),

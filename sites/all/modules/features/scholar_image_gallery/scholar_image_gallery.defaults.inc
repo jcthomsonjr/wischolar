@@ -170,6 +170,62 @@ function _scholar_image_gallery_context_default_contexts() {
 }
 
 /**
+ * Helper to implementation of hook_imagecache_default_presets().
+ */
+function _scholar_image_gallery_imagecache_default_presets() {
+  $items = array(
+    'reg' => array(
+      'presetname' => 'reg',
+      'actions' => array(
+        '0' => array(
+          'actionid' => '2',
+          'presetid' => '1',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_deprecated_scale',
+          'data' => array(
+            'fit' => 'inside',
+            'width' => '500',
+            'height' => '1000',
+          ),
+        ),
+      ),
+    ),
+    'thumb' => array(
+      'presetname' => 'thumb',
+      'actions' => array(
+        '0' => array(
+          'actionid' => '3',
+          'presetid' => '2',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_deprecated_scale',
+          'data' => array(
+            'fit' => 'outside',
+            'width' => '200',
+            'height' => '150',
+          ),
+        ),
+        '1' => array(
+          'actionid' => '4',
+          'presetid' => '2',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_crop',
+          'data' => array(
+            'width' => '200',
+            'height' => '150',
+            'xoffset' => 'center',
+            'yoffset' => 'center',
+          ),
+        ),
+      ),
+    ),
+  );
+  return $items;
+}
+
+/**
  * Helper to implementation of hook_user_default_permissions().
  */
 function _scholar_image_gallery_user_default_permissions() {

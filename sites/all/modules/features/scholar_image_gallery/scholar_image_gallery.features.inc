@@ -19,6 +19,15 @@ function scholar_image_gallery_context_default_contexts() {
 }
 
 /**
+ * Implementation of hook_imagecache_default_presets().
+ */
+function scholar_image_gallery_imagecache_default_presets() {
+  module_load_include('inc', 'scholar_image_gallery', 'scholar_image_gallery.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_scholar_image_gallery_imagecache_default_presets', $args);
+}
+
+/**
  * Implementation of hook_node_info().
  */
 function scholar_image_gallery_node_info() {

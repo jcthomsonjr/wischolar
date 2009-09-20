@@ -7,7 +7,7 @@ function _scholar_classes_node_info() {
   $items = array(
     'class' => array(
       'name' => t('Class'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t(''),
       'has_title' => '1',
       'title_label' => t('Title'),

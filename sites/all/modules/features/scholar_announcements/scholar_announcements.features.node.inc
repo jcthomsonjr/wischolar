@@ -7,7 +7,7 @@ function _scholar_announcements_node_info() {
   $items = array(
     'announcement' => array(
       'name' => t('Announcement'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t('Manage announcements in your web site'),
       'has_title' => '1',
       'title_label' => t('Title'),

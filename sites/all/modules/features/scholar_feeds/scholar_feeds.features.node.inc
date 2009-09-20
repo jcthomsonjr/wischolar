@@ -7,7 +7,7 @@ function _scholar_feeds_node_info() {
   $items = array(
     'feed' => array(
       'name' => t('Feed'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t('Items from these feeds will be turned into nodes.'),
       'has_title' => '1',
       'title_label' => t('Title'),
@@ -16,7 +16,7 @@ function _scholar_feeds_node_info() {
     ),
     'feed_item' => array(
       'name' => t('Feed item'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t('An item from the subscribed feed'),
       'has_title' => '1',
       'title_label' => t('Title'),
