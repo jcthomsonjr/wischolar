@@ -212,6 +212,7 @@ function cp_cp(){
   return '(tbd)';
 }
 
+/*
 function cp_route(){
   $tree = menu_tree_page_data('cp');
   foreach ($tree as $item) {
@@ -224,7 +225,7 @@ function cp_route(){
   
   return MENU_NOT_FOUND;
 }
-
+*/
 
 /**
  * callback function for our popup forms
@@ -367,8 +368,8 @@ function cp_preprocess_page(&$vars) {
     $links = cp_toolbar_menu_links ();
     $links = theme ( 'cp_toolbar', $links );
     $vars ['cp_toolbar'] = $links;
-    $links = cp_left_menu_links ();
-    $vars ['cp_left'] = theme ( 'links', $links );
+    //$links = cp_left_menu_links ();
+    //$vars ['cp_left'] = theme ( 'links', $links );
   }
 
 }
@@ -400,6 +401,7 @@ function cp_toolbar_menu_links(){
 /**
  * Return links for the left side menu
  */
+/*
 function cp_left_menu_links(){
   //return menu_navigation_links('cp',1);
   
@@ -414,7 +416,7 @@ function cp_left_menu_links(){
   }
   
 }
-
+*/
 
 
 /**

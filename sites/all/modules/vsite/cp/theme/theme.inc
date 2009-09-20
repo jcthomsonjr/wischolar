@@ -1,11 +1,9 @@
 <?php
 /**
- * TODO .. I dont think this is needed
+ * Preprocessor for theme('admin_toolbar').
+ * TODO  do we ever have $depth > 0
  */
 
-/**
- * Preprocessor for theme('admin_toolbar').
- */
 function cp_preprocess_cp_toolbar(&$vars) {
   $vars['collapsed'] = TRUE;
   foreach ($vars['tree'] as $depth => $menus) {
