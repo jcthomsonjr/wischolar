@@ -7,7 +7,7 @@ function _vsite_node_info() {
   $items = array(
     'page' => array(
       'name' => t('Page'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t('An html page'),
       'has_title' => '1',
       'title_label' => t('Title'),

@@ -7,7 +7,7 @@ function _vsite_support_node_info() {
   $items = array(
     'feature_request' => array(
       'name' => t('Feature request'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t(''),
       'has_title' => '1',
       'title_label' => t('Title'),
@@ -16,7 +16,7 @@ function _vsite_support_node_info() {
     ),
     'support_answer' => array(
       'name' => t('Answer'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t(''),
       'has_title' => '1',
       'title_label' => t('Title'),
@@ -25,7 +25,7 @@ function _vsite_support_node_info() {
     ),
     'support_question' => array(
       'name' => t('Question'),
-      'module' => 'node',
+      'module' => 'features',
       'description' => t(''),
       'has_title' => '1',
       'title_label' => t('Question'),
