@@ -57,49 +57,42 @@ h1, h2, h3, #sidebar-right a, #sidebar-left a {
     text-transform: uppercase;
     }
 
+#sidebar-left {
+  text-align:right;
+  }
+
+#sidebar-left ul.menu {
+  text-transform: uppercase;
+  text-align:right;
+  }
 
 /* LAYOUT */
 
 .column {
-    padding: 10px 24px !important;
-    }
-
-#sidebar-left, #header-left, #sidebar-right, #header-right {
-    width: 131px;
+    padding: 10px 35px !important;
     }
 
 #sidebar-left, #header-left {
-    right: 228px;
-    text-align:right;
+    width: 133px;
+    right: 249px;
+    padding-right: 10px !important;
     }
-
-#header-left {
-  right: 357px;
-  }
 
 #sidebar-right, #header-right {
     width: 154px;
+    padding-left: 10px !important;
     }
 
-#content-main {
-  padding:0;
-  }
-
-#header-wrapper {
-    padding-left: 200px;
-    padding-right: 363px;
-    }
-
-#content-wrapper {
+#header-wrapper, #content-wrapper {
     width: auto;
     margin: 0 auto;
-    padding-left: 185px;
-    padding-right: 258px;
+    padding-left: 184px;
+    padding-right: 278px;
     }
 
 body.header-main #sidebar-left, body.header-main-right #sidebar-left {
     position:relative;
-    top: -83px;
+    top: -143px;
     }
 
 body.navbar #content-main {
@@ -109,27 +102,31 @@ body.navbar #content-main {
 
 /* HEADER ELEMENTS */
 
-
+#header-wrapper {
+  padding-right: 378px !important;
+  }
 
 #header {
     padding-top: 41px;
-    height: 94px;
+    height: 173px;
     background:url(images/header-no-sidebar.jpg) no-repeat top center #6d2a01;
     }
 
-
 #header-main {
-    background: url(images/crest.png) no-repeat transparent;
-    padding-left: 133px !important;
+    background: url(images/crest.png) no-repeat transparent 21px 0;
     min-height: 112px;
+    padding-left: 135px !important;
     }
+
+#header-left {
+  right: 349px;
+  }
 
 #header-right {
     text-align: center;
     }
 
 body.header-main #header-main {
-    margin-left:212px;
     width:384px;
     margin-top: 43px;
     }
@@ -145,6 +142,11 @@ body.sidebar-right #header {
 body.two-sidebars #header {
     background-image:url(images/header-both-sidebar.jpg);
     }
+
+
+body.header-main-right #header-wrapper, body.header-main #header-wrapper {
+  margin-left:184px;
+  }
 
 #header h1 {
     font-size: 2.5em;
@@ -172,7 +174,7 @@ body.two-sidebars #header {
 #navbar {
   width: 900px;
   margin-left: 5px;
-  padding-left: 46px;
+  padding-left: 33px;
   }
 
 #navbar li {
@@ -180,6 +182,10 @@ body.two-sidebars #header {
   margin-right: 15px;
   font-style: italic;
   font-family: georgia, serif;
+  }
+
+body.sidebar-right #navbar {
+  width: 685px;
   }
 
 body.sidebar-left #navbar, body.two-sidebars #navbar {
@@ -192,5 +198,5 @@ body.two-sidebars #navbar {
   }
 
 #logo img {
-  width: 100px;
+  width: 133px;
   }

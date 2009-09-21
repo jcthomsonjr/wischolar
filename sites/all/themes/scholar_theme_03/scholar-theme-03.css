@@ -5,7 +5,7 @@ html {
 body {
     background: url(images/body-bg.png) repeat-x left top #fff;
     color:#282828;
-    font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
+    font:1em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
 
 body.cp-toolbar-on {
@@ -18,23 +18,24 @@ body.cp-toolbar-on {
     }
 
 a, a:visited {
-    color:#353535;
+    color:#b54f26;
     text-decoration: underline;
     }
 
 a:hover {
-    color:#3399CC;
+    color:#8c2e08;
     }
 
 
-h1, h2, h3, #sidebar-right a, #navbar, #header {
+h1, h2, h3, #sidebar-right a, #navbar, #header, .column {
     font-weight: normal;
     font-family: georgia, serif;
     }
 
 
-h1 a, h2 a, h3 a, #sidebar-right a {
+.title a, #top a, .views-field-title a {
     font-style: normal;
+    text-decoration: none;
     }
 
 /* LAYOUT ELEMENTS */
@@ -55,6 +56,7 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 
 #footer {
     text-align: center;
+    font-size: .9em;
     }
 
 
@@ -66,11 +68,11 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 #header {
     height: 200px;
     margin-bottom: 26px;
-    padding-top: 16px;
+    padding-top: 15px;
     }
 
 #header-wrapper {
-    height: 160px;
+    height: 150px;
     }
 
 #header h1 {
@@ -94,6 +96,11 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 #header a, #header a:visited {
     text-decoration: none;
     }
+
+#navbar {
+  height: 40px;
+  line-height: 40px;
+  }
 
 #navbar li {
     margin-right: 1.5em;
