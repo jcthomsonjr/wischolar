@@ -19,3 +19,11 @@ function scholar_base_preprocess_page($vars){
 function __scholar_base_is_empty($s){
   return $s ? TRUE : FALSE;
 }
+
+function phptemplate_node_submitted($node){
+  return t('@datetime',
+   array(
+    //'!username' => theme('username', $node),
+     '@datetime' => format_date($node->created),
+  ));
+}

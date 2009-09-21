@@ -12,6 +12,12 @@ body {
 	min-width: 680px;
 	}
 
+#tinymce {
+  background: #fff !important;
+  min-width: 0 !important;
+  margin: 5px !important;
+  }
+
 #admin-menu {
   height: 22px;
   font-size: 11px;
@@ -123,6 +129,10 @@ div.terms {
 #header-top, #navbar, #content-main, #header-main, #footer {
 	width: 100%;
 	}
+
+body.no-sidebars #content-main, body.header-main #header-main	{
+  width: auto;
+  }
 
 #header-wrapper, #navbar, #content-wrapper, #footer {
 	clear: both;
