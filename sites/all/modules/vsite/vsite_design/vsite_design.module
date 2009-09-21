@@ -14,6 +14,24 @@ function vsite_design_init(){
   elseif ($active_menu['path'] == 'cp/settings/logo'){
     drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-logo.css');
   }
+  
+  $vsite = vsite_get_vsite();
+  if(!$vsite->settings['site'] || !$vsite->settings['site']['headline']){
+  	if(!is_array($vsite->settings['site'])) $vsite->settings['site'] = array('sub_heading_extra' => '');
+  	
+  	if((!strlen($vsite->settings['site']['headline']) || !strlen($vsite->settings['site']['sub_heading'])) && ($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) ){
+	  	
+	  	if(!strlen($vsite->settings['site']['headline']) ){
+	  		$vsite->settings['site']['headline'] = $profile->vsite_users_first_name[0]['value']." ".$profile->vsite_users_last_name[0]['value'];
+	  		$vsite->group->title = $profile->vsite_users_first_name[0]['value']." ".$profile->vsite_users_last_name[0]['value'];
+	  	} //Save default headline
+	    if(!strlen($vsite->settings['site']['sub_heading'])){
+	      $vsite->settings['site']['sub_heading'] = $profile->vsite_users_title[0]['value'];
+	      $vsite->group->og_description = $profile->vsite_users_title[0]['value'];
+	    }//Save default title
+	    node_save($vsite->group); //Save to group node
+  	}//Create Presets
+  }//Has a default been created
 }
 
 /**
@@ -147,3 +165,4 @@ function vsite_design_imagecache_default_presets() {
   );
   return $presets;
 }
+
