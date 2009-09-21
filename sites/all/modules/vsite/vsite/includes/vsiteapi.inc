@@ -133,7 +133,7 @@ function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , 
   $s_out = '<img src="'.$s_image_path . $s_url_extra .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
   
   
-  if($b_as_link) $s_out = l($s_out,'node/'.$space->sid,array('html'=>true));
+  if($b_as_link) $s_out = l($s_out,'node/'.$scholar->sid,array('html'=>true));
   
   return $s_out;
 }
