@@ -20,100 +20,99 @@
   <div id="wrapper">
     <div id="container">
 
-      <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) { ?>
+      <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) : ?>
 
       <div id="header">
-        <?php if (!empty($header_top)){ ?>
+        <?php if (!empty($header_top)): ?>
         <div id="header-top">
           <?php print $header_top; ?>
         </div><!-- /header-top -->
-        <?php }; ?>
+        <?php endif; ?>
         <div id="header-wrapper">
-          <?php if (!empty($header_main)){ ?>
+          <?php if (!empty($header_main)): ?>
             <div id="header-main" class="column">
               <?php print $header_main; ?>
             </div><!-- /header-main -->
-          <?php }; ?>
+          <?php endif; ?>
 
-          <?php if (!empty($header_left)){ ?>
+          <?php if (!empty($header_left)): ?>
             <div id="header-left" class="column">
               <?php print $header_left; ?>
             </div><!-- /header-left -->
-          <?php }; ?>
+          <?php endif; ?>
 
-          <?php if (!empty($header_right)){ ?>
+          <?php if (!empty($header_right)): ?>
           <div id="header-right" class="column">
              <?php print $header_right; ?>
           </div><!-- /header-right -->
-            <?php }; ?>
+            <?php endif; ?>
         </div><!-- /header wrapper -->
-        <?php if (!empty($navbar)){ ?>
+        <?php if (!empty($navbar)): ?>
         <div id="navbar">
           <?php print $navbar; ?>
         </div><!-- /navbar -->
-        <?php }; ?>
+        <?php endif; ?>
       </div> <!-- /header -->
-      <?php }; ?>
+      <?php endif; ?>
 
       <div id="content-wrapper">
 
         <div id="content-main" class="column">
-          <?php if (!empty($content_top) || $context_links){ ?>
+          <?php if (!empty($content_top) || $context_links): ?>
             <div id="content-top">
               <?php print $content_top; ?>
             </div><!-- /content-top -->
-          <?php }; ?>
+          <?php endif; ?>
 
           <div id="content">
           <?php print $context_links;?>
-          <?php if (!empty($title)){ ?>
+          <?php if (!empty($title)): ?>
             <h2 class="title"><?php print $title; ?></h2>
-           <?php }; ?>
-           <?php if (!empty($tabs)){ ?>
+           <?php endif; ?>
+           <?php if (!empty($tabs)): ?>
             <div class="tabs"><?php print $tabs; ?></div>
-            <?php }; ?>
+            <?php endif; ?>
             <?php print $help; ?>
             <?php print $messages; ?>
             <?php print $content; ?>
           </div> <!-- /content -->
 
-          <?php if (!empty($content_bottom)){ ?>
+          <?php if (!empty($content_bottom)): ?>
             <div id="content-bottom">
               <?php print $content_bottom; ?>
             </div><!--/content-bottom-->
-          <?php }; ?>
+          <?php endif; ?>
           </div><!-- /content main -->
 
 
-            <?php if (!empty($left)){ ?>
+            <?php if (!empty($left)): ?>
         <div id="sidebar-left" class="column">
           <?php print $left; ?>
         </div> <!-- /sidebar-left -->
-        <?php }; ?>
+        <?php endif; ?>
 
-          <?php if (!empty($right)){ ?>
+        <?php if (!empty($right)): ?>
         <div id="sidebar-right" class="column">
           <?php print $right; ?>
         </div> <!-- /sidebar-right -->
-        <?php }; ?>
+        <?php endif; ?>
       </div> <!-- / content wrapper -->
       <div id="content-wrapper-bottom"></div>
-      <?php if ($footer || $footer_message) { ?>
       <div id="footer">
-      <?php if ($footer_message){ ?>
+      <?php if ($footer_message): ?>
         <div id="footer-message"><?php print $footer_message; ?></div>
-      <?php }; ?>
-      <?php if ($footer){ ?>
+      <?php endif; ?>
+      <?php if ($footer) : ?>
         <?php print $footer; ?>
-      <?php }; ?>
+      <?php endif; ?>
+      <p class="copy">The Scholars' Web Sites Project, IQSS, Harvard University. Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University.</p>
       </div> <!-- /#footer -->
-      <?php }; ?>
     </div> <!-- /container -->
   </div> <!-- /wrapper -->
   <div id="extradiv"></div>
-  <?php if ($closure_region){ ?>
+  <?php if ($closure_region): ?>
     <div id="closure-blocks"><?php print $closure_region; ?></div>
-  <?php }; ?>
+  <?php endif; ?>
   <?php print $closure; ?>
 </body>
 </html>
