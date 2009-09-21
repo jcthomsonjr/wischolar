@@ -206,38 +206,29 @@ body.admin-menu #main-content {
 
 /* SPECIFIC PAGE VIEWS */
 
-/**
- * BEGIN SITE INFO
- *
- * Shaun  below is the style for the site info form, it could use a little attention I just threw some floats in on the form elements
- */
-#edit-settings-site-scholar-link-to-home-wrapper,
-#edit-settings-site-scholar-link-to-contact-wrapper,
-#edit-settings-site-scholar-headline-wrapper,
-#edit-settings-site-scholar-sub-heading-extra-wrapper{
-  float: left;
-}
 
-#edit-settings-site-scholar-link-to-contact-wrapper,
-#edit-settings-site-scholar-link-to-home-wrapper{
-  height: 20px;
-  margin:  15px 0px 0px 10px;
-  clear: right;
-}
-
-#edit-settings-site-scholar-sub-heading-extra-wrapper,
-#edit-settings-site-scholar-sub-heading-wrapper  {
-  clear: left;
-}
-
-
- /**
-  * END Site INFO
-  */
 
 
 /* FAQ */
 
 .view-vsite-support-faq {
   padding: 30px;
+  }
+
+/* Activity Area */
+
+.view-vsite-activity .views-field-message, .view-vsite-activity .views-field-title {
+  font-weight: bold;
+  }
+
+.view-vsite-activity .views-field-title a {
+  text-decoration: underline;
+  }
+
+.view-vsite-activity .views-field-created span:after {
+  content: '.';
+  }
+
+.view-vsite-activity .views-field-message span:after {
+  content: ':';
   }
