@@ -597,17 +597,16 @@ function simport_create_biblio_authors($val, $auth_type, $i = 0){
  * Helper function to fix author(s) string inconsistancies
  * 
  * @param string $val - author string
- * @return  returns and array of author names
+ * @return  returns an array of author names
  */
 function _simport_fix_biblio_authorstr($val){
-  //look for these characters in the author string and replace them with a semi-colon
-  $patterns = array( '/\sand\s/', '/\,/', '/\;;/'); 
+  //look for these patterns in the author string and replace them with a semi-colon
+  $patterns = array( '/\sand\s/',  '/\swith\s/', '/\,/', '/\;;/'); 
   
   for ($i = 0; $i < count($patterns); $i++){ 
   $replace[] = ';';
   }
-  $authors = explode(';', preg_replace($patterns, $replace, $val));
- return $authors; 
+  return explode(';', preg_replace($patterns, $replace, $val));
 }
 
 
