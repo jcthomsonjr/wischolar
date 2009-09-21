@@ -26,7 +26,7 @@ function simport_import(){
   
   //for testing purposes setting these system vars manually  
   //variable_set('simport_current_path', '/nfs/www/edu-harvard-iq-scholar-dev3');
-  //variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
+  variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
   variable_set('file_directory_path', 'sites/scholar-dev3.iq.harvard.edu/files');
 
   //PHASE 1 - Load the VSITE And Settings
@@ -581,7 +581,7 @@ function simport_set_biblio($old, &$new){
 }
 
 function simport_create_biblio_authors($val, $auth_type, $i = 0){
-  $authors = explode('and', $val);
+  $authors = _simport_fix_biblio_authorstr($val);
   foreach($authors as $author){
     $value[$auth_type][$i] = array(
     'name' => $author,
@@ -591,6 +591,23 @@ function simport_create_biblio_authors($val, $auth_type, $i = 0){
     $i++;
   }
   return $value;
+}
+
+/**
+ * Helper function to fix author(s) string inconsistancies
+ * 
+ * @param string $val - author string
+ * @return  returns and array of author names
+ */
+function _simport_fix_biblio_authorstr($val){
+  //look for these characters in the author string and replace them with a semi-colon
+  $patterns = array( '/\sand\s/', '/\,/', '/\;;/'); 
+  
+  for ($i = 0; $i < count($patterns); $i++){ 
+  $replace[] = ';';
+  }
+  $authors = explode(';', preg_replace($patterns, $replace, $val));
+ return $authors; 
 }
 
 
