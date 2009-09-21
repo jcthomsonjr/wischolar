@@ -9,11 +9,7 @@ body {
   }
 
 body.navbar-on {
-  background: url(images/body-bg-horiz.png) repeat-x 0 198px #fff;
-  }
-
-body.cp-toolbar-on {
-  background-position: 0 260px;
+  background: #fff;
   }
 
 body.navbar-off {
@@ -47,6 +43,15 @@ h1 a, h2 a, h3 a, #sidebar-left a {
 
 /* LAYOUT ELEMENTS */
 
+
+body.navbar-on #wrapper {
+  background: url(images/body-bg-horiz.png) repeat-x 0 118px #fff;
+  }
+
+body.cp-toolbar-on #wrapper {
+  background-position: 0 160px;
+  }
+
 #sidebar-left, #header-left {
     width: 178px;
     right: 199px;
@@ -62,18 +67,23 @@ h1 a, h2 a, h3 a, #sidebar-left a {
     }
 
 #footer {
-    width: 722px;
     text-align: center;
-    margin-left: 179px;
     }
 
-
+body.sidebar-left #footer, body.two-sidebars #footer {
+  margin-left: 209px;
+  text-align: left;
+  }
 
 
 /* HEADER ELEMENTS */
 
 #header {
   height: 196px;
+  }
+
+body.navbar-on #header {
+  height: 210px;
   }
 
 #header h1 {
