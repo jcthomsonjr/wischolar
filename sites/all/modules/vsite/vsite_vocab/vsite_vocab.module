@@ -35,6 +35,7 @@ function vsite_vocab_menu() {
 }
 
 function vsite_vocab_tt(){
+  $vsite = vsite_get_vsite();
   $query =  "SELECT * FROM {system} WHERE type = 'module' AND name LIKE 'vsite_%'";
   $result = db_query($query);
   while ($data = db_fetch_object($result)){
@@ -133,12 +134,14 @@ function vsite_vocab_context_active_contexts_alter(&$contexts){
  */
 function vsite_vocab_form_alter(&$form, $form_state, $form_id){
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
-    //dpm($form);
-    if (! empty($form['taxonomy'])) {
-      $v = reset(vsite_get_vocabs(NULL, $form['#node'] -> type));
-      $vid = $v -> vid;
+    
+    $v = reset(vsite_get_vocabs(NULL, $form['#node']->type));
+    $v = is_array($v) ? reset($v) : null;
+    
+    if (! empty($form['taxonomy']) && $v) {
+      $vid = $v->vid;
       //unset global tax
-      unset($form['taxonomy']['tags'][22]);  
+      unset($form['taxonomy']['tags'][22]);
       //dpm(element_children($form['taxonomy']));
       //$vid = reset(element_children($form['taxonomy']));
       $old_title = $form['taxonomy'][$vid]['#title'];
@@ -151,7 +154,7 @@ function vsite_vocab_form_alter(&$form, $form_state, $form_id){
   
   }
   
-  /*
+/*
   if (module_exists('vertical_tabs') && function_exists('vertical_tabs_add_vertical_tabs')) {
     vertical_tabs_add_vertical_tabs($form);
   }
