@@ -20,7 +20,7 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 function vsite_widgets_logo(){
-	$output = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_design_logo','vsite_design_landscape_logo').'</a></div>';
+	$output = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_design_logo', vsite_get_vsite() ,'vsite_design_landscape_logo').'</a></div>';
 	
 	$block['subject'] = t(''); // intentionally blank
 	$block['content'] = $output;

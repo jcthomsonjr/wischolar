@@ -99,6 +99,7 @@ function vsite_content_types(){
 /**
  * Theme that returns the html for a scholar logo
  * 
+ * @param viste $scholar
  * @param string $preset
  * @param string $alt
  * @param string $title
@@ -107,9 +108,8 @@ function vsite_content_types(){
  * @param boolean $b_as_link
  * @return string
  */
-function theme_vsite_design_logo($preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
-  $scholar = vsite_get_vsite();
-  $s_image_path;
+function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
+  s_image_path;
   $s_out;
   
   if(!$scholar || !$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']){

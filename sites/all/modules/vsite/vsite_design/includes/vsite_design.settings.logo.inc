@@ -35,7 +35,7 @@ class vsite_design_settings_logo implements space_setting {
     	drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/jquery.Jcrop.min.js');
     	drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/cp-logo-crop.js');
     	vsite_include('vsiteapi');
-      $form['current_logo'] = array('#value' => theme('vsite_design_logo',false,'','',array('id' => 'logo_preview'),true));
+      $form['current_logo'] = array('#value' => theme('vsite_design_logo',$space,false,'','',array('id' => 'logo_preview'),true));
       $form['x_cord'] = array('#type' => 'hidden');
 	    $form['y_cord'] = array('#type' => 'hidden');
 	    $form['width'] = array('#type' => 'hidden');
@@ -46,7 +46,7 @@ class vsite_design_settings_logo implements space_setting {
 	      '#suffix' => '</div>',
 	      '#type' => 'item',
 	      '#title' => t('Preview'),
-	      '#value' => '<div id="live_preview_box_inner" style="overflow: hidden;">'.theme('vsite_design_logo','vsite_design_landscape_logo','','',array('id' => 'live_preview'),true).'</div>'
+	      '#value' => '<div id="live_preview_box_inner" style="overflow: hidden;">'.theme('vsite_design_logo',$space,'vsite_design_landscape_logo','','',array('id' => 'live_preview'),true).'</div>'
 	      );
 
 	    $form['crop_btn'] = array(
