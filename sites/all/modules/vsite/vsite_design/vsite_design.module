@@ -16,22 +16,32 @@ function vsite_design_init(){
   }
   
   $vsite = vsite_get_vsite();
-  if(!$vsite->settings['site'] || !$vsite->settings['site']['headline']){
+  if($vsite && (!$vsite->settings['site'] || !$vsite->settings['site']['headline'])){
   	if(!is_array($vsite->settings['site'])) $vsite->settings['site'] = array('sub_heading_extra' => '');
   	
   	if((!strlen($vsite->settings['site']['headline']) || !strlen($vsite->settings['site']['sub_heading'])) && ($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) ){
 	  	
-	  	if(!strlen($vsite->settings['site']['headline']) ){
+	  	if(!strlen($vsite->settings['site']['headline']) && is_array($profile->vsite_users_first_name[0])){
 	  		$vsite->settings['site']['headline'] = $profile->vsite_users_first_name[0]['value']." ".$profile->vsite_users_last_name[0]['value'];
 	  		$vsite->group->title = $profile->vsite_users_first_name[0]['value']." ".$profile->vsite_users_last_name[0]['value'];
 	  	} //Save default headline
-	    if(!strlen($vsite->settings['site']['sub_heading'])){
+	    if(!strlen($vsite->settings['site']['sub_heading']) && is_array($profile->vsite_users_title[0])){
 	      $vsite->settings['site']['sub_heading'] = $profile->vsite_users_title[0]['value'];
 	      $vsite->group->og_description = $profile->vsite_users_title[0]['value'];
 	    }//Save default title
 	    node_save($vsite->group); //Save to group node
+	    spaces_save($vsite);
   	}//Create Presets
-  }//Has a default been created
+  }//Has a default title been created
+  
+  if($vsite && (!$vsite->settings['logo'] || !$vsite->settings['logo']['current_logo'])){
+  	if(!is_array($vsite->settings['logo'])) $vsite->settings['logo'] = array();
+  	if(!strlen($vsite->settings['logo']['current_logo']) && ($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) && is_array($profile->vsite_user_profile_photo[0])){	
+  		require_once(drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.logo.inc');
+      $vsite->settings['logo']['current_logo'] = $profile->vsite_user_profile_photo[0]['filepath'];
+      vsite_design_settings_logo::add_imagefield_image($profile->vsite_user_profile_photo[0]['filepath'],'field_vsite_logo',$vsite->group);
+    } //Save default logo
+  }
 }
 
 /**

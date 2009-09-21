@@ -162,7 +162,11 @@ function vsite_users_theme() {
  */
 function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_state){
 	//Only apply these alterations on the admin page where we want this form custom for the site owner
-	if(!(arg(0) == 'cp' && arg(1) == 'users' && arg(2) == 'myaccount' && arg(3) == 'personal')) return;
+	if(!(arg(0) == 'cp' && arg(1) == 'users' && arg(2) == 'myaccount' && arg(3) == 'personal')){
+		content_profile_form_alter($form, $form_state,'vsite_users_profile_node_form');
+		if(!$form['name']) $form['name'] = array('#type' => 'value', '#value' => $form['author']['name']['#default_value']); //Fix admin only bug
+		return;
+	}//If we are not in CP use the regular alter func.
 	
 	if(isset($form['#redirect'])) unset($form['#redirect']);
 	
