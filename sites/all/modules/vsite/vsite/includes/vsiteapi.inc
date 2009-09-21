@@ -109,7 +109,7 @@ function vsite_content_types(){
  * @return string
  */
 function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
-  s_image_path;
+  $s_image_path;
   $s_out;
   
   if(!$scholar || !$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']){
