@@ -9,19 +9,21 @@ function cp_updateLogo(c){
 
 if (Drupal.jsEnabled) {
   $(document).ready(function() {
-	  $('#logo_preview').Jcrop({
-	    aspectRatio: 1.2857,
-	    minSize: [180,140],
-	    onSelect: cp_updateLogo,
-	    onChange: logoShowPreview,
-	    allowSelect: true,
-	    allowMove: true
-	  });
+	  var api = $.Jcrop('#logo_preview',{
+		    aspectRatio: 1.2857,
+		    minSize: [180,140],
+		    onSelect: cp_updateLogo,
+		    onChange: logoShowPreview,
+		    allowSelect: true,
+		    allowMove: true
+		  });
 	  
 	  $('#live_preview_box_inner').css({
 		width: $('#live_preview').attr('width') + 'px',
 		height: $('#live_preview').attr('height') + 'px',
       });
+	  
+	  api.setSelect([5,5,180,140]);
 	  
 	  $('#edit-settings-logo-logo-upload').change(function() {
 		  $('#cp-settings-form').submit();

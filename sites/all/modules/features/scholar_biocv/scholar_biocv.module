@@ -73,7 +73,7 @@ function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
     	  'toggleOff' => array('title','body'),
       );
       drupal_add_js($a_biocv_settings, 'setting');
-      
+      $form['title']['#required'] = false;
     	$form['use_pdf_as_cv'] = array(
 			  '#type' => 'checkbox',
     	  '#weight' => -10,
@@ -92,6 +92,7 @@ function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
  * @param $form_state
  */
 function scholar_biocv_cv_node_submit($form, &$form_state) {
-	
-	
+	$vsite = vsite_get_vsite();
+	$vsite->setting['cv'] = array('use_pdf_as_cv', !!$form_state['values']['use_pdf_as_cv']);
+	spaces_save($vsite);
 }
