@@ -30,24 +30,38 @@ h1 a, h2 a, h3 a, #sidebar-right a {
     font-style: normal;
     }
 
-h2 {
-    color:#51787C;
-    }
+h2, h2.title {
+  color:#51787C;
+  margin-bottom: 0;
+  }
+
+h2.title {
+  margin-bottom: .4em;
+  }
 
 /* LAYOUT */
 
 #sidebar-left, #header-left, #sidebar-right, #header-right {
     width: 180px;
     }
-#sidebar-left, #header-left {
-    right: 220px;
-    }
+
+#header-left {
+  right: 220px;
+  }
+
+#sidebar-left {
+  right: 200px;
+  }
 
 #content-wrapper, #header-wrapper {
-    padding-left: 180px;
-    padding-right: 208px;
-    }
+  padding-left: 200px;
+  padding-right: 220px;
+  }
 
+#content-wrapper {
+  padding-right: 200px;
+  padding-top: 20px;
+  }
 
 /* HEADER ELEMENTS */
 
@@ -72,8 +86,9 @@ h2 {
     }
 
 #header h2 {
-    font-size: 1.5em;
+    font-size: 1.3em;
     line-height: 1em;
+    margin-top: .2em;
     }
 
 #header a, #header a:visited {
@@ -94,16 +109,12 @@ h2 {
     color: #F9E433;
     }
 
+
+
 /* MAIN CONTENT AREA */
 
 #content-main {
     padding: 0;
-    }
-
-#content-main .node, body.section-node-edit #content, body.section-node-add #content {
-    padding: 10px;
-    background: #fff;
-    margin-bottom: 10px;
     }
 
 /* SIDEBARS */
@@ -112,7 +123,7 @@ h2 {
     font-size: 1.1em;
     }
 
-#sidebar-left {
+#sidebar-left, #sidebar-left ul.menu {
     text-align: right;
     }
 
@@ -123,7 +134,32 @@ h2 {
     font-weight: bold;
     }
 
-#sidebar-left a:hover, #sidebar-right a:hover {
+#sidebar-left a:hover, #sidebar-right a:hover, #sidebar-left a.active, #sidebar-right a.active {
     color: #fff;
     background:#adad84;
     }
+
+#sidebar-left .views-admin-links ul li a, #sidebar-right .views-admin-links ul li a{
+  display:inline;
+  }
+
+/* FOOTER */
+
+body.sidebar-left #footer, body.two-sidebars #footer {
+  margin-left: 200px;
+  text-align: left;
+  }
+
+
+/* Nodes */
+
+#content-main .node, body.section-node-edit #content, body.section-node-add #content {
+    padding: 10px;
+    background: #fff;
+    margin-bottom: 10px;
+    }
+
+.submitted {
+  color: #a1b1b1;
+  display:block;
+  }

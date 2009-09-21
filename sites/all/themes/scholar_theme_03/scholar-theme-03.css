@@ -5,8 +5,12 @@ html {
 body {
     background: url(images/body-bg.png) repeat-x left top #fff;
     color:#282828;
-    font:1em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
+    font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
+
+body.navbar-off {
+  background: #fff;
+  }
 
 body.cp-toolbar-on {
   background-position: 0 42px;
@@ -27,16 +31,24 @@ a:hover {
     }
 
 
-h1, h2, h3, #sidebar-right a, #navbar, #header, .column {
+h1, h2, h3, #sidebar-right a, #navbar, #header, #sidebar-right, #sidebar-left {
     font-weight: normal;
     font-family: georgia, serif;
     }
 
 
-.title a, #top a, .views-field-title a {
+.title a, #top a, .views-field-title a, #block-vsite_menus-0 a {
     font-style: normal;
     text-decoration: none;
     }
+
+#block-vsite_menus-0, h3.title {
+  font-size: 1.2em;
+  }
+
+.links li {
+  font-size: .8em;
+  }
 
 /* LAYOUT ELEMENTS */
 
@@ -51,7 +63,15 @@ h1, h2, h3, #sidebar-right a, #navbar, #header, .column {
     }
 
 #sidebar-right {
-    border-left: 1px solid #ccc;
+    border-left: 1px solid #a1b1b1;
+    }
+
+#sidebar-left {
+    border-right: 1px solid #a1b1b1;
+    }
+
+body.two-sidebars #sidebar-left {
+    border: none;
     }
 
 #footer {
@@ -70,6 +90,10 @@ h1, h2, h3, #sidebar-right a, #navbar, #header, .column {
     margin-bottom: 26px;
     padding-top: 15px;
     }
+
+body.navbar-off #header {
+  height:150px;
+  }
 
 #header-wrapper {
     height: 150px;
@@ -127,9 +151,16 @@ body.sidebar-right #content {
     margin-right: 30px;
     }
 
-
 body.two-sidebars #content {
     margin-left: 20px;
     margin-right: 20px;
     }
 
+
+/* Nodes */
+
+.submitted {
+  color: #a1b1b1;
+  border-bottom: 1px solid #a1b1b1;
+  display:block;
+  }
