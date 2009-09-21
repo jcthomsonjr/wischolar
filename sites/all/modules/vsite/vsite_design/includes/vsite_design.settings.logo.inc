@@ -41,23 +41,28 @@ class vsite_design_settings_logo implements space_setting {
 	    $form['width'] = array('#type' => 'hidden');
 	    $form['height'] = array('#type' => 'hidden');
 	    $form['crop'] = array('#type' => 'hidden');
-	    $form['preview'] = array(
-	      '#prefix' => '<div id="live_preview_box">',
-	      '#suffix' => '</div>',
-	      '#type' => 'item',
-	      '#title' => t('Preview'),
-	      '#value' => '<div id="live_preview_box_inner" style="overflow: hidden;">'.theme('vsite_design_logo',$space,'vsite_design_landscape_logo','','',array('id' => 'live_preview'),true).'</div>'
-	      );
-
-	    $form['crop_btn'] = array(
-	      '#prefix' => '<div class="submit-crop">',
-	      '#suffix' => '</div>',
-	      '#type' => 'submit',
-	      '#value' => t('Crop Image'),
-        '#attributes' => array(
-          'onclick' => "$('#edit-settings-logo-crop').val('1');"
-        )
-	    );
+	    if($value['current_logo']){
+		    $form['preview'] = array(
+		      '#prefix' => '<div id="live_preview_box">',
+		      '#suffix' => '</div>',
+		      '#type' => 'item',
+		      '#title' => t('Preview'),
+		      '#value' => '<div id="live_preview_box_inner" style="overflow: hidden;">'
+		                 .theme('vsite_design_logo',$space,'vsite_design_landscape_logo','','',array('id' => 'live_preview'),true)
+		                 .'</div>'
+		    );
+		    $form['crop_btn'] = array(
+		      '#prefix' => '<div class="submit-crop">',
+		      '#suffix' => '</div>',
+		      '#type' => 'submit',
+		      '#value' => t('Crop Image'),
+	        '#attributes' => array(
+	          'onclick' => "$('#edit-settings-logo-crop').val('1');"
+	        )
+		    );
+	    }else{
+	    	$form['clear'] = array('#value' => "<div style='clear:both;'></div>");
+	    }//Only show the preview and crop buttons if they have uploaded somthing
 	    $form['logo_upload'] = array('#type' => 'file', '#title' => t('Upload new photo (or logo)'), '#size' => 48, '#description' => t('Your sites logo. '));
 
 
