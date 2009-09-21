@@ -11,7 +11,8 @@ if (Drupal.jsEnabled) {
     }
     $('.shield_wrapper .form-radios .form-item').each(function(){
     	var liIdArr = $(this).attr('id').split('-');
-    	var liId = liIdArr[3] + '-' + liIdArr[4] + '-' + liIdArr[5];
+    	liIdArr.shift(); liIdArr.shift(); liIdArr.shift(); liIdArr.pop();
+    	var liId = liIdArr.join("-");
     	var liChecked = $(this).find('input').attr('checked') ? 'checked' : '';
 
     	// get the whole img div
@@ -29,10 +30,10 @@ if (Drupal.jsEnabled) {
 
     $(".item-shield-picker:first").addClass('active');
 
-    $('div#prev,div#next,.shield_subnav li').cpSlidingContainer({containerW: 600,
-    mainListSelector:'ul.shield-picker',
-		listItemClass: 'item-shield-picker',
-		navClass:'shield_subnav'});
+//    $('div#prev,div#next,.shield_subnav li').cpSlidingContainer({containerW: 600,
+//    mainListSelector:'ul.shield-picker',
+//		listItemClass: 'item-shield-picker',
+//		navClass:'shield_subnav'});
 
     $('li.item-shield-picker').click(function(){
     	// remove the active class from every li first
@@ -42,7 +43,12 @@ if (Drupal.jsEnabled) {
 
     	var id = $(this).attr('id');
     	$(".form-radio").removeAttr("checked");
-    	$("#edit-settings-shield-" + id).attr("checked", "checked");
+    	$('.form-radio').each(function(){
+    		if( $(this).attr('id').indexOf(id) != -1){
+    			$(this).attr("checked", "checked");
+    		}
+    	});
+    	//$("#edit-settings-generic-" + id.replace('.','\.')).attr("checked", "checked");
     });
 
   });
