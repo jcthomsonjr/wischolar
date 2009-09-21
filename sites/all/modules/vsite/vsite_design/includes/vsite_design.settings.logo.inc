@@ -137,6 +137,53 @@ class vsite_design_settings_logo implements space_setting {
   	  imagecache_image_flush($return['current_logo']);
   	}//Crop or save source
 
+  	if($return['current_logo']){
+  		self::add_imagefield_image($return['current_logo'],'field_vsite_logo',$space->group);
+  	}
+  	
     return $return;
   }
+  
+	/**
+	 * Imports an image as a filefield image of a given node
+	 * 
+	 * Usage example:
+	 * --------------
+	 * $node = node_load(array('nid' => 61));
+	 * $image = drupal_get_path('module', 'vsite_design').'/theme/images/default_logo.jpg';
+	 * simport_node_add_imagefield_image($image, 'field_img', $node);
+	 * 
+	 * @param $source  the path to the source image
+	 * @param $field_name the name of the cck field 
+	 * @param $node the node object to upload the image to (passed by reference)
+	 */
+	public static function add_imagefield_image($source, $field_name, &$node){
+	
+	  // get the cck filefield
+	  $field = content_fields($field_name, $node -> type);
+	
+	  // validators (can add our own validators if we want)
+	  $validators = array_merge(filefield_widget_upload_validators($field), imagefield_widget_upload_validators($field));
+	
+	  // where to store the file
+	  $files_path = filefield_widget_file_path($field);
+	  
+	  // create the file object
+	  $file = field_file_save_file($source, $validators, $files_path);
+	
+	  //set uid to the node -> uid
+	 // $file -> uid = $node -> uid;
+	
+	  // attach it to the filefield field
+	  $node->$field_name = array(
+	  0 => array(
+	  'fid' => $file['fid'],
+	  'uid' => $node -> uid,
+	  'list' => 1,
+	    )
+	  ); 
+	  
+	  // save the node
+	  node_save($node);
+	}
 }

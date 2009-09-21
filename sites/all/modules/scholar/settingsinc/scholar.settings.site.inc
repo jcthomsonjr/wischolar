@@ -87,6 +87,10 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     $value['sub_heading'] = trim($value['scholar_sub_heading']);
     $value['sub_heading'] = (strstr("\n",$value['sub_heading']))? "<span>".str_replace("\n","</span><span>",$value['sub_heading'])."</span>":$value['sub_heading'];
     
+    $space->group->title = $value['scholar_headline'];
+    $space->group->og_description = $value['sub_heading'];
+    node_save($space->group);
+    
     return $value;
   }
   

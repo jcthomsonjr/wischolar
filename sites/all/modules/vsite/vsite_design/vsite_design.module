@@ -48,7 +48,7 @@ function vsite_design_theme(){
  * Implementation of hook_spaces_settings().
  */
 function vsite_design_spaces_settings() {
-  return array(
+  $a_settings = array(
     'theme' => array(
       'class' => 'vsite_design_settings_theme',
       'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.theme.inc',
@@ -57,11 +57,16 @@ function vsite_design_spaces_settings() {
       'class' => 'vsite_design_settings_logo',
       'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.logo.inc',
     ),
-    'site' => array(
+  );
+  
+  if(!module_exists('scholar')){
+    $a_settings['site'] = array(
       'class' => 'vsite_design_setting_site',
       'file' => drupal_get_path('module', 'vsite_design')  .'/includes/vsite_design.settings.site.inc',
-    ),
-  );
+    );
+  }//Let scholar overide this
+  
+  return $a_settings;
 }
 
 

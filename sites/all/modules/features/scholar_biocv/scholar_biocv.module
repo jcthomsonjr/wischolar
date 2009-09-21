@@ -60,3 +60,38 @@ function scholar_biocv_strongarm(){
   );
   return $conf;
 }
+
+/**
+ * Edit cv form to add checkbox for toggle
+ */
+function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
+  switch($form_id){
+    case 'cv_node_form':
+    	drupal_add_js(drupal_get_path('module', 'scholar_biocv') . '/theme/scholar_biocv.biocvToggleUsePDF.js');
+    	$a_biocv_settings['biocvToggleUsePDF'] = array(
+        'monitor' => "use_pdf_as_cv",
+    	  'toggleOff' => array('title','body'),
+      );
+      drupal_add_js($a_biocv_settings, 'setting');
+      
+    	$form['use_pdf_as_cv'] = array(
+			  '#type' => 'checkbox',
+    	  '#weight' => -10,
+			  '#title' => t('Use PDF upload as your CV'),
+       	'#description' => t('When this is checked the pdf you upload will be displayed on the cv section of your site.'),
+			);
+    	
+      $form['#submit'][] = 'scholar_biocv_cv_node_submit';
+    break;
+  }
+}
+
+/**
+ * Save the setting that decides if they will be using thier PDF as thier CV
+ * @param $form
+ * @param $form_state
+ */
+function scholar_biocv_cv_node_submit($form, &$form_state) {
+	
+	
+}

@@ -467,6 +467,7 @@ function cp_in_active_trail($path, $reset = FALSE) {
       if(is_array($item['map'])){
         $path_makup = "";
         foreach ($item['map'] as $path_component) {
+        	if(!is_string($path_component)) continue;
         	$path_makup = trim($path_makup."/".$path_component,"/");
         	if(!in_array($path_makup,$active_paths)) $active_paths[] = $path_makup;
         }
