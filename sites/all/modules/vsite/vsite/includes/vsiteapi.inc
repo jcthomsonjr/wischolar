@@ -111,6 +111,7 @@ function vsite_content_types(){
 function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
   $s_image_path;
   $s_out;
+  if(!$scholar) $scholar = vsite_get_vsite();
   
   if(!$scholar || !$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']){
   	$s_image_path = drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg";
@@ -132,7 +133,7 @@ function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , 
   $s_out = '<img src="'.$s_image_path . $s_url_extra .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
   
   
-  if($b_as_link) $s_out = l($s_out,'home',array('html'=>true));
+  if($b_as_link) $s_out = l($s_out,'node/'.$space->sid,array('html'=>true));
   
   return $s_out;
 }
