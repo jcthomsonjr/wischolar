@@ -14,15 +14,31 @@ body {
 
 #admin-menu {
   height: 22px;
+  font-size: 11px;
   line-height: 22px;
   }
 
-#admin-menu, #admin-menu li li.expandable, #admin-menu li li {
-  background:#800c0c;
+#admin-menu, #admin-menu ul a, #admin-menu ul a:visited {
+  color: #000;
+  text-shadow:0 1px 0 rgba(206, 214, 221, 0.75);
   }
 
-#admin-menu li li:hover {
-  background: #984949;
+#admin-menu, #admin-menu li li.expandable, #admin-menu li li {
+  background:#909090;
+  }
+
+#admin-menu li li {
+  opacity: .9;
+  }
+
+#admin-menu li li a:hover, #admin-menu li li li a:hover, #admin-menu li li li a, #admin-menu li li li a:visited {
+  background: #6b6b6b;
+  text-shadow: 0 0 0 transparent !important;
+  color: #fff;
+  }
+
+#admin-menu li li li a:hover {
+  background: #444;
   }
 
 .clear {
@@ -31,12 +47,17 @@ body {
 
 /* TYPE STYLES */
 
-h2.title, p, div.messages {
+h2.title, p, div.messages, .views-row {
 	margin-bottom: 1.5em;
 	}
 
 #header p {
   margin: 0;
+  }
+
+p.copy {
+  color: #76797C;
+  font-size: .8em;
   }
 
 ul, li {
@@ -70,6 +91,10 @@ li.leaf, li.collapsed {
   color: #27749F;
   font-style: normal;
   font-size:.8em;
+  }
+
+.links li {
+  font-size: .9em;
   }
 
 div.terms {
@@ -124,9 +149,6 @@ div.terms {
 	padding-right:0;
 	}
 
-
-
-
 body.sidebar-right #content-wrapper {
     padding-left: 0;
     }
@@ -140,6 +162,10 @@ body.no-sidebars #content-wrapper {
   padding: 0;
   }
 
+
+#footer {
+  padding-top: 30px;
+  }
 
 /* Node */
 
@@ -222,9 +248,9 @@ a.delete {
 
 a.button {
   float:right;
-  color: #FF003A;
-  font-style: normal;
-  font-size: 12px;
+  color: #FF003A !important;
+  font-style: normal !important;
+  font-size: 12px !important;
   }
 
 span.buttons a.button {
