@@ -74,7 +74,7 @@ function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
   file_check_directory($full_dest_path, $mode = 1, $form_item = NULL);
   
   //copy file
-  file_copy(&$source, $full_dest_path, $replace = FILE_EXISTS_REPLACE);
+  file_copy($source, $full_dest_path, $replace = FILE_EXISTS_REPLACE);
   
   if ($file){
   //customize a object a little bit
