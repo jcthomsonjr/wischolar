@@ -2,6 +2,19 @@ Drupal.behaviors.biocvToggleUsePDF = function (context) {
   var selector = 'input[name="'+Drupal.settings.biocvToggleUsePDF['monitor']+'"]';
   if($(selector).length){
 	  $(selector).change(Drupal.biocvToggleUsePDF);
+	  
+	  //Wait till the MCE editor is loaded then set defaults
+	  var setDefaults = function() { 
+		var triggered = false;
+        for (var ee in tinyMCE.editors) {
+        	if(triggered) continue;
+        	triggered = true;
+        	$(selector).trigger('change'); 
+	    }
+        if(!triggered) setTimeout(setDefaults, 500);
+	  };
+      setTimeout(setDefaults, 500);
+      //END -- Set Defaults
   }
 }
 
