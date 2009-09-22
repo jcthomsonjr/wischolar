@@ -5,8 +5,6 @@
  */
 function cp_settings_form($form_id, $setting_id){
   
-  drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-sliding-container.js');
-  
   // get the space
   $space = spaces_get_space();
   
