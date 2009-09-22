@@ -68,13 +68,13 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
       '#default_value' => isset($value['scholar_link_to_contact'])?$value['scholar_link_to_contact']:0,
     );
     
-    $form['example'] = array(
-      '#type' => 'item',
-      '#prefix' => "<div style='clear:both;'></div><div id='site_example' style='color:grey;'><div class='headline' style='display:absolute; top:0px;'></div><div class='sub_heading' style='display:absolute; top:10px;'></div><div class='sub_heading_extra' style='display:absolute; top:10px;'></div><div class='sub_heading_extra' style='display:absolute; top:20px;'></div>",
-      '#suffix' => "</div>",
-      '#title' => t('Example'),
-      '#value' => theme('image',drupal_get_path('module', 'scholar')  .'/theme/SiteInfoEx.png'),
-    );
+//    $form['example'] = array(
+//      '#type' => 'item',
+//      '#prefix' => "<div style='clear:both;'></div><div id='site_example' style='color:grey;'><div class='headline' style='display:absolute; top:0px;'></div><div class='sub_heading' style='display:absolute; top:10px;'></div><div class='sub_heading_extra' style='display:absolute; top:10px;'></div><div class='sub_heading_extra' style='display:absolute; top:20px;'></div>",
+//      '#suffix' => "</div>",
+//      '#title' => t('Example'),
+//      '#value' => theme('image',drupal_get_path('module', 'scholar')  .'/theme/SiteInfoEx.png'),
+//    );
   
     return $form;
   }
