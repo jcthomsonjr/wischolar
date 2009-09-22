@@ -15,8 +15,8 @@ class vsite_front_settings_front implements space_setting {
     }
   }
 
-  function form($space, $value = array()){
-    $space = vsite_get_vsite();
+  function form($vsite, $value = array()){
+    $vsite = vsite_get_vsite();
     vsite_include('nodeautocomplete');
     vsite_include('vsiteapi');
     ctools_include('dependent');
@@ -30,6 +30,8 @@ class vsite_front_settings_front implements space_setting {
       '#title' => 'Front Page' 
     );
     
+    if(!$vsite) return $form; 
+    
     /**
      * main options
      * 1. your bio page
@@ -39,7 +41,7 @@ class vsite_front_settings_front implements space_setting {
      */
     
     // is scholar_biocv feature turned on for this vsite ?
-    $biocv_feature = array_key_exists("scholar_biocv", $space->features);
+    $biocv_feature = array_key_exists("scholar_biocv", $vsite->features);
     $options = array(
       'bio' => t('Your bio page'), 
       'feature' => t('Posts from specific feature(s)'), 
@@ -61,8 +63,8 @@ class vsite_front_settings_front implements space_setting {
     // BIO
     // only if they have selected bio as feature
     if ($biocv_feature) {
-      $bio_node = content_profile_load("bio", $space->group->uid);
-      //$bio_nid = (isset($space -> settings['bio']['nid']) && is_numeric($space -> settings['bio']['nid'])) ? $space -> settings['bio']['nid'] : '';
+      $bio_node = content_profile_load("bio", $vsite->group->uid);
+      //$bio_nid = (isset($vsite -> settings['bio']['nid']) && is_numeric($vsite -> settings['bio']['nid'])) ? $vsite -> settings['bio']['nid'] : '';
       if ($bio_node) {
         $link = l('bio', "node/" . $bio_node->nid);
         $description = "Your " . $link . " will be used as your front page";
@@ -136,11 +138,11 @@ class vsite_front_settings_front implements space_setting {
     return $form;
   }
 
-  function validate($space, $value){
+  function validate($vsite, $value){
     switch ($value['frontpage']) {
       case 'bio' :
-        $bio_node = content_profile_load("bio", $space->group->uid);
-        //$bio_nid = (isset($space -> settings['bio']['nid']) && is_numeric($space -> settings['bio']['nid'])) ? $space -> settings['bio']['nid'] : '';
+        $bio_node = content_profile_load("bio", $vsite->group->uid);
+        //$bio_nid = (isset($vsite -> settings['bio']['nid']) && is_numeric($vsite -> settings['bio']['nid'])) ? $vsite -> settings['bio']['nid'] : '';
         if (! $bio_node)
           form_set_error('frontpage', "You must create a bio before you can select this option");
         break;
@@ -165,7 +167,7 @@ class vsite_front_settings_front implements space_setting {
   
   }
 
-  function submit($space, $value){
+  function submit($vsite, $value){
     $save = array(
       'frontpage' => $value['frontpage'] 
     );
