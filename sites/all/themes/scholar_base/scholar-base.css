@@ -53,9 +53,13 @@ body {
 
 /* TYPE STYLES */
 
-h2.title, p, div.messages, #content-main .views-row {
+p, div.messages, #content-main .views-row {
 	margin-bottom: 1.5em;
 	}
+
+h2.title {
+  margin-bottom: 1em;
+  }
 
 #header p {
   margin: 0;
@@ -118,7 +122,10 @@ div.terms {
 
 #wrapper { }
 
-#container { }
+#container { border: 1px solid;}
+
+
+/* Top admin bar */
 
 #top {
 	height: 42px;
@@ -126,11 +133,22 @@ div.terms {
 	position:relative;
 	}
 
-#header-top, #navbar, #content-main, #header-main, #footer {
+
+
+
+
+
+
+
+
+/* The following is the scheme for flexible one, two, or three column layouts */
+
+
+#header-top, #navbar, #content-main, #header-main {
 	width: 100%;
 	}
 
-body.no-sidebars #content-main, body.header-main #header-main	{
+body.no-sidebars #content-main, body.sidebar-left #content-main, body.header-left-main #header-main, body.header-main #header-main	{
   width: auto;
   }
 
@@ -138,46 +156,84 @@ body.no-sidebars #content-main, body.header-main #header-main	{
 	clear: both;
 	}
 
-#content-wrapper, #header-wrapper {
-    padding-left: 220px;
-    padding-right: 240px;
-    }
-
 .column {
-    float: left;
-    position: relative;
-    padding: 10px;
-    }
+  float: left;
+  position: relative;
+  padding: 10px;
+  }
 
 #header-left, #header-right, #sidebar-left, #sidebar-right {
 	width: 200px;
 	}
 
+#content-wrapper, #header-wrapper {
+  padding-left: 220px; /* left width incl. padding */
+  padding-right: 240px; /*right width incl. padding plus center padding */
+  }
+
 #header-left, #sidebar-left {
-	right: 240px;
+	right: 240px; /* left width incl. padding plus center padding */
 	margin-left: -100%;
-	padding-left: 0;
-	padding-right: 20px;
 	}
+
+body.sidebar-left #sidebar-left, body.header-left-main #header-left {
+  right: 220px; /* If only left and center are displaying, this value must be the width of the left col. incl. padding only */
+  }
 
 #header-right, #sidebar-right {
 	margin-right: -100%;
-	padding-left: 20px;
-	padding-right:0;
 	}
 
 body.sidebar-right #content-wrapper {
-    padding-left: 0;
-    }
-
+   padding-left: 0;
+   }
 
 body.sidebar-left #content-wrapper {
-    padding-right: 0;
-    }
+  padding-right: 0;
+  }
 
 body.no-sidebars #content-wrapper {
   padding: 0;
   }
+
+body.header-main #header-main {
+  padding: 10px 0;
+  }
+
+body.header-main-right #header-wrapper {
+  padding-left: 0;
+  }
+
+body.header-left-main #header-wrapper {
+  padding-right: 0;
+  }
+
+body.header-left-right #header-wrapper, body.header-main #header-wrapper, body.header-right #header-wrapper, body.header-left #header-wrapper{
+  padding: 0;
+  }
+
+body.header-left-right #header-left, body.header-left-right #header-right, body.header-left #header-left, body.header-right #header-right {
+  width: 50%;
+  right: auto;
+  }
+
+body.header-left-right #header-left {
+  margin:0 -20px 0 0;
+  }
+
+body.header-left-right #header-right {
+  margin:0 0 0 -20px;
+  }
+
+/* end of layouts scheme */
+
+
+
+
+
+
+
+
 
 
 #footer {
@@ -191,41 +247,6 @@ body.no-sidebars #content-wrapper {
   margin-bottom: 1.5em;
   }
 
-/* HEADERS */
-
-body.header-main #header-main {
-    padding: 10px 0;
-    }
-
-body.header-main-right #header-wrapper {
-    padding-left: 0;
-    }
-
-body.header-left-main #header-wrapper {
-    padding-right: 0;
-    }
-
-body.header-left-right #header-wrapper, body.header-main #header-wrapper, body.header-right #header-wrapper, body.header-left #header-wrapper{
-    padding: 0;
-    }
-
-body.header-left-right #header-left, body.header-left-right #header-right, body.header-left #header-left, body.header-right #header-right {
-    width: 50%;
-    right: auto;
-    }
-
-body.header-left-right #header-left {
-    margin:0 -20px 0 0;
-    }
-
-body.header-left-right #header-right {
-    margin:0 0 0 -20px;
-    }
-
-body.header-left #header-left, body.header-right #header-right {
-    width: 100%;
-    margin: 0;
-    }
 
 /* Delete, Edit buttons */
 

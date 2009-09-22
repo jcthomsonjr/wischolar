@@ -39,23 +39,41 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 
 /* LAYOUT ELEMENTS */
 
+.column {
+  padding: 10px 32px;
+  }
+
+#content-main, #header-main {
+  padding: 10px 0;
+  }
+
+
 #sidebar-left, #header-left {
-    width: 160px;
-    right: 181px;
-    }
+  width: 160px;
+  right: 202px;
+  padding-right: 10px;
+  }
+
+body.sidebar-left #sidebar-left, body.header-left-main #header-left {
+  right: 202px;
+  }
+
+#sidebar-right, #header-right {
+  width:160px;
+  padding-left: 10px;
+  }
+
+#header-right {
+  width: 70px;
+  }
 
 #content-wrapper, #header-wrapper {
-    padding-left: 190px;
-    }
+  padding-left: 202px;
+  padding-right: 202px;
+  }
 
-#sidebar-right, #header-left {
-    width:160px;
-    }
-
-
-#content-wrapper, #header-wrapper {
-  padding-left: 180px;
-  padding-right: 221px;
+#header-wrapper {
+  padding-right: 132px;
   }
 
 body.sidebar-right #content-wrapper {
@@ -65,12 +83,6 @@ body.sidebar-right #content-wrapper {
 body.sidebar-left #content-wrapper {
   padding-right: 60px;
   }
-
-#footer {
-    text-align: center;
-    background: #44514F url(images/bot.gif) no-repeat scroll center top;
-    margin-bottom: 30px;
-    }
 
 body.no-sidebars #content-wrapper {
   padding: 0 30px;
@@ -111,6 +123,10 @@ body.no-sidebars #content-wrapper {
     color:#F9E433;
     }
 
+#logo img {
+  width: 160px;
+  }
+
 #navbar {
     margin: 15px 0;
     }
@@ -136,14 +152,6 @@ body.no-sidebars #content-wrapper {
   background: url(images/bg.gif) repeat-y;
   }
 
-#content-wrapper-bottom {
-  clear: both;
-  background: url(images/bot.gif) no-repeat;
-  height: 40px;
-  width: 100%;
-  margin-left: -2px;
-  }
-
 body.sidebar-left #content {
     margin-left: 30px;
     }
@@ -152,9 +160,26 @@ body.sidebar-right #content {
     margin-right: 30px;
     }
 
-
 body.two-sidebars #content {
     margin-left: 20px;
     margin-right: 20px;
     }
 
+#content-wrapper-bottom {
+  clear: both;
+  background: #44514F url(images/bot.gif) no-repeat bottom center;
+  padding-bottom: 40px;
+  }
+
+/* Footer*/
+#footer {
+  text-align: center;
+  background:#44514F;
+  padding-bottom: 30px;
+  padding-top: 0;
+  }
+
+
+p.copy {
+    color: #CFCFCF;
+    }

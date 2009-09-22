@@ -3,13 +3,13 @@ html {
     }
 
 body {
-    background: url(images/body-bg.png) repeat-x 0 0 #fff;
+    background: #fff;
     color:#353535;
     font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
 
-body.cp-toolbar-on {
-  background-position: 0 42px;
+#wrapper {
+  background: url(images/body-bg.png) repeat-x 0 0 #fff;
   }
 
 #container {
@@ -43,13 +43,18 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 /* LAYOUT ELEMENTS */
 
 #sidebar-left, #header-left {
-    width: 178px;
-    right: 199px;
-    padding: 0 1px;
+    width: 180px;
+    right: 210px;
+    padding-left: 0;
     }
 
+#sidebar-right, #header-right {
+  padding-right: 0;
+  }
+
 #content-wrapper, #header-wrapper {
-    padding-left: 179px;
+    padding-left: 190px;
+    padding-right: 230px
     }
 
 #sidebar-right {
@@ -60,6 +65,21 @@ h1 a, h2 a, h3 a, #sidebar-right a {
 #footer {
     text-align: center;
     }
+
+
+#footer {
+    text-align: center;
+    font-size: .9em;
+    }
+
+
+
+
+
+
+
+
+
 
 
 /* HEADER ELEMENTS */

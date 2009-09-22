@@ -38,7 +38,7 @@ a, a:visited {
     text-decoration: underline;
     }
 
-.title a {
+.title a, .title a:visited {
   color:#870202;
   font-size: 1.2em;
   }
@@ -48,7 +48,7 @@ a:hover {
   }
 
 
-h2, h3, #sidebar-right a, #sidebar-left a, .title a {
+h2, h3, #sidebar-right a, #sidebar-left a, .title a, .title a:visited {
     font-weight: normal;
     text-decoration: none !important;
     }
@@ -70,40 +70,42 @@ h2, h3, #sidebar-right a, #sidebar-left a, .title a {
 /* LAYOUT */
 
 .column {
-    padding: 10px 35px !important;
-    }
+  padding: 10px 35px !important;
+  }
 
 #sidebar-left, #header-left {
-    width: 133px;
-    right: 249px;
-    padding-right: 10px !important;
-    }
+  width: 133px;
+  right: 257px;
+  padding-right: 10px !important;
+  padding-left: 44px !important;
+  }
+
+body.sidebar-left #sidebar-left {
+  right:187px;
+  }
 
 #sidebar-right, #header-right {
-    width: 154px;
-    padding-left: 20px !important;
-    padding-right: 25px !important;
-    }
+  width: 154px;
+  padding-left: 20px !important;
+  padding-right: 34px !important;
+  }
 
 #header-wrapper, #content-wrapper {
-    width: auto;
-    margin: 0 auto;
-    padding-left: 184px;
-    padding-right: 278px;
-    }
+  width: auto;
+  margin: 0 auto;
+  padding-left: 187px;
+  padding-right: 269px;
+  }
 
 body.header-main #sidebar-left, body.header-main-right #sidebar-left {
-    position:relative;
-    top: -143px;
-    }
+  position:relative;
+  top: -143px;
+  }
 
 body.navbar #content-main {
   margin-top: 30px;
   }
 
-#footer {
-  padding: 30px;
-  }
 
 /* HEADER ELEMENTS */
 
@@ -124,7 +126,11 @@ body.navbar #content-main {
     }
 
 #header-left {
-  right: 349px;
+  right: 357px;
+  }
+
+body.header-left-main #header-left {
+  right:178px;
   }
 
 #header-right {
@@ -204,6 +210,21 @@ body.two-sidebars #navbar {
 
 #logo img {
   width: 133px;
+  }
+
+
+/* FOOTER */
+
+#footer {
+  padding: 30px;
+  }
+
+body.sidebar-left #footer, body.two-sidebars #footer {
+  margin-left:184px;
+  }
+
+body.sidebar-right #footer, body.two-sidebars #footer {
+  margin-right:184px;
   }
 
 /* Nodes */
