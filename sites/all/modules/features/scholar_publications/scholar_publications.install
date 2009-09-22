@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * Implementation of hook_install()
+ */
+function scholar_publications_install(){
+  
+  //add custom biblio template type - Working Papers
+$form_state = array();
+$form_state['values']['name'] = 'Working Paper';
+$form_state['values']['description'] = 'Scholar Working Paper';
+ drupal_execute('biblio_admin_types_add_form', $form_state); 
+  
+}
