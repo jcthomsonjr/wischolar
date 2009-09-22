@@ -17,8 +17,8 @@ function scholar_publications_init(){
     scholar_publications_settings_feature::customize($space,'rowsperpage',$conf['rowsperpage']);
     scholar_publications_settings_feature::customize($space,'export_links', $conf['biblio_export_links']);
     scholar_publications_settings_feature::customize($space,'google_link', $conf['biblio_google_link']);
-    scholar_publications_settings_feature::customize($space,'links_target_new_window', $conf['biblio_links_target_new_window']);
-    scholar_publications_settings_feature::customize($space,'inlinemode_in_links', $conf['biblio_inlinemode_in_links']);
+    //scholar_publications_settings_feature::customize($space,'links_target_new_window', $conf['biblio_links_target_new_window']);
+    //scholar_publications_settings_feature::customize($space,'inlinemode_in_links', $conf['biblio_inlinemode_in_links']);
     scholar_publications_settings_feature::customize($space,'link_title_url', $conf['biblio_link_title_url']);
     scholar_publications_settings_feature::customize($space,'author_links', $conf['biblio_author_links']);
       
@@ -28,13 +28,15 @@ function scholar_publications_init(){
 
 function scholar_publications_menu(){
   $items["publications"] = array(
-    'title' => 'Publications and Working Papers',
+    'title' => 'Publications',
     'page callback' => 'scholar_publications_overview',
-    'page arguments' => array(1),
+    //'page arguments' => array(1),
     'access arguments' => array('access biblio content'), 
-    'type' => MENU_CALLBACK
+    //'type' => MENU_CALLBACK,
+    'menu_name' => 'features',
   );
 
+  /*
   $items['publications/list'] = array(
     'title' => 'List publications',
     'page callback' => 'scholar_publications_overview',
@@ -43,6 +45,7 @@ function scholar_publications_menu(){
     'weight' => 0,
     'type' => MENU_DEFAULT_LOCAL_TASK
   );
+  */
   
   // import export
    $items['publications/import'] = array(
@@ -53,7 +56,8 @@ function scholar_publications_menu(){
     'file path'         => drupal_get_path('module', 'biblio'),
     'access callback'   => 'user_access',
     'access arguments'  => array('import from file'),
-    'type'              => MENU_LOCAL_TASK,
+    //'type'              => MENU_LOCAL_TASK,
+    'type'              => MENU_CALLBACK,
     'weight'            => 10,
    );
   
@@ -73,10 +77,41 @@ function scholar_publications_spaces_settings() {
 }
 
 
+/**
+ * hook form_alter
+ * Alter the import publications form
+ */
+function scholar_publications_form_alter(&$form, $form_state, $form_id){
+  if ($form_id == 'biblio_import_form'){
+    // the original form is asking to set the userID for these entries
+    // Just the group admin for now. TODO list of users for this og
+		
+    $vsite = vsite_get_vsite();
+    //$group_node = og_get_group_context();
+    $uid = $vsite -> group -> uid;
+	$form['userid'] = array('#type' => 'value', "#value" => $uid);
 
-function scholar_publications_overview($group_node){
+    // just unset the taxonomy settings for now.
+    unset($form['import_taxonomy']);
+  }
+}
+
+function scholar_publications_overview(){
+  $output = '';
+  $links = array();
+  $links[] = array(
+    'title' => 'publication',
+    'href' => 'node/add/biblio',
+  );
+  
+  $links[] = array(
+    'title' => 'import',
+    'href' => 'publications/import',
+  );
+  
+  $output .= theme('context_links', $links);
   module_load_include('inc', 'biblio', 'biblio.pages');
-  return biblio_db_search();
+  return $output . biblio_db_search('inline');
 }
 
 /**
