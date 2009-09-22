@@ -35,14 +35,28 @@ function vsite_vocab_menu() {
 }
 
 function vsite_vocab_tt(){
-  $vsite = vsite_get_vsite();
-  $query =  "SELECT * FROM {system} WHERE type = 'module' AND name LIKE 'vsite_%'";
-  $result = db_query($query);
-  while ($data = db_fetch_object($result)){
-    db_query("UPDATE {system} SET weight = %d WHERE name = '%s'", ($weight + 2), $data -> name); 
-  }
-  
+
   return 'sss';
+}
+
+/**
+ * hook strongarm
+ */
+function vsite_vocab_strongarm(){
+  $conf = array();
+  vsite_include('vsiteapi');
+  $vocabs = vsite_get_vocabs();
+  foreach($vocabs as $vocab){
+    $node_types = $vocab -> nodes;
+    foreach($node_types as $type){
+      $vtabs = vertical_tabs_fieldsets($type);
+      if (!in_array('taxonomy', $vtabs)){
+        $vtabs[] = 'taxonomy';
+        $conf['vertical_tabs_fieldsets_'. $node_type] = $vtabs;
+      }
+    }
+  }
+  return $conf;
 }
 
 /**
@@ -137,16 +151,15 @@ function vsite_vocab_context_active_contexts_alter(&$contexts){
 function vsite_vocab_form_alter(&$form, $form_state, $form_id){
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
     
-    $v = reset(vsite_get_vocabs(NULL, $form['#node']->type));
+    $v = vsite_get_vocabs(NULL, $form['#node']->type);
     $v = is_array($v) ? reset($v) : null;
-    
-          $gv = variable_get('scholar_global_taxonomy', 0);
-      unset($form['taxonomy']['tags'][$gv]);
-      
+
+    $gv = variable_get('scholar_global_taxonomy', 0);
+    unset($form['taxonomy']['tags'][$gv]);
+
     if (! empty($form['taxonomy']) && $v) {
       $vid = $v->vid;
       //unset global tax
-
       //dpm(element_children($form['taxonomy']));
       //$vid = reset(element_children($form['taxonomy']));
       $old_title = $form['taxonomy'][$vid]['#title'];
@@ -156,10 +169,10 @@ function vsite_vocab_form_alter(&$form, $form_state, $form_id){
       $new_title = implode(' ', $new_title);
       $form['taxonomy'][$vid]['#title'] = $new_title;
     }
-  
+  vertical_tabs_add_vertical_tabs($form);
   }
   
-/*
+  /*
   if (module_exists('vertical_tabs') && function_exists('vertical_tabs_add_vertical_tabs')) {
     vertical_tabs_add_vertical_tabs($form);
   }
