@@ -41,21 +41,25 @@ h2.title {
 
 /* LAYOUT */
 
-#sidebar-left, #header-left, #sidebar-right, #header-right, body.sidebar-left #sidebar-left, body.header-left-main #header-left {
+#sidebar-left, #header-left, #sidebar-right, #header-right {
     width: 180px;
     }
 
-#sidebar-left, body.sidebar-left #sidebar-left {
+#sidebar-left {
   right: 190px;
   padding-left: 0;
   }
 
-#header-left, body.header-left-main #header-left {
+#header-left {
   right: 210px;
   padding-left: 0;
   }
 
 #sidebar-right, #header-right {
+  padding-right: 0;
+  }
+
+body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
   padding-right: 0;
   }
 

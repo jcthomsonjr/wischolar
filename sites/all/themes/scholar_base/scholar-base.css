@@ -122,7 +122,7 @@ div.terms {
 
 #wrapper { }
 
-#container { border: 1px solid;}
+#container {border: 1px solid;}
 
 
 /* Top admin bar */
@@ -148,10 +148,6 @@ div.terms {
 	width: 100%;
 	}
 
-body.no-sidebars #content-main, body.sidebar-left #content-main, body.header-left-main #header-main, body.header-main #header-main	{
-  width: auto;
-  }
-
 #header-wrapper, #navbar, #content-wrapper, #footer {
 	clear: both;
 	}
@@ -176,10 +172,6 @@ body.no-sidebars #content-main, body.sidebar-left #content-main, body.header-lef
 	margin-left: -100%;
 	}
 
-body.sidebar-left #sidebar-left, body.header-left-main #header-left {
-  right: 220px; /* If only left and center are displaying, this value must be the width of the left col. incl. padding only */
-  }
-
 #header-right, #sidebar-right {
 	margin-right: -100%;
 	}
@@ -188,8 +180,8 @@ body.sidebar-right #content-wrapper {
    padding-left: 0;
    }
 
-body.sidebar-left #content-wrapper {
-  padding-right: 0;
+body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
+  padding-right: 40px; /* Only the padding of center div */
   }
 
 body.no-sidebars #content-wrapper {
@@ -213,16 +205,16 @@ body.header-left-right #header-wrapper, body.header-main #header-wrapper, body.h
   }
 
 body.header-left-right #header-left, body.header-left-right #header-right, body.header-left #header-left, body.header-right #header-right {
-  width: 50%;
+  width: 45%;
   right: auto;
   }
 
-body.header-left-right #header-left {
-  margin:0 -20px 0 0;
+body.header-left-right #header-left, body.header-left-right #header-right {
+  margin:0;
   }
 
 body.header-left-right #header-right {
-  margin:0 0 0 -20px;
+  float:right;
   }
 
 /* end of layouts scheme */

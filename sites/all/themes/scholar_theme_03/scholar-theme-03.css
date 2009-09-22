@@ -1,3 +1,4 @@
+
 html {
     min-width: 910px;
     }
@@ -56,10 +57,11 @@ h1, h2, h3, #sidebar-right a, #navbar, #header, #sidebar-right, #sidebar-left {
 
 /* LAYOUT ELEMENTS */
 
+
 #sidebar-left, #header-left {
     width: 180px;
-    right: 210px;
     padding-left: 0;
+    right: 210px;
     }
 
 #sidebar-right, #header-right {
@@ -70,6 +72,10 @@ h1, h2, h3, #sidebar-right a, #navbar, #header, #sidebar-right, #sidebar-left {
     padding-left: 190px;
     padding-right: 230px
     }
+
+body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
+  padding-right: 20px;
+  }
 
 #sidebar-right {
     border-left: 1px solid #a1b1b1;
