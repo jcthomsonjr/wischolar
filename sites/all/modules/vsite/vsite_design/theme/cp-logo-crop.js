@@ -28,6 +28,13 @@ if (Drupal.jsEnabled) {
 	  $('#edit-settings-logo-logo-upload').change(function() {
 		  $('#cp-settings-form').submit();
 	  });//Turns out the easiest solution is the best.
+	  
+	  $("#edit-submit").insertAfter("#edit-settings-logo-logo-upload").css({position:'relative', top:'0px'}).attr('value',"Upload");	  
+	  $("a.edit-submit").remove();
+	  
+	  if($('#live_preview').attr('width') <= 180 || $('#live_preview').attr('height') <= 140){
+		  $("a.edit-settings-logo-crop-btn").remove();
+	  }
   });
 }
 
