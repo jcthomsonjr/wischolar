@@ -77,6 +77,31 @@ function scholar_string_overrides(){
   'Add a new !type in this group.' => 'Add a new !type in this web site.',
   'Add a user to a group.' => 'Add a user to a web site.',
   
+    'All members for a given group.' => 'All members for a given web site.',
+    
+    
+
+    'Retrieve the group memberships for a given user.' => 'Retrieve the web site memberships for a given user.',
+    'Title of top group' => 'Title of top web site',
+    'Retrieve the group memberships for a given user.' => 'Retrieve the web site memberships for a given user.',
+    'Title of top group' => 'Title of top web site',
+    'Unfiltered title of top group. WARNING - raw user input.' => 'Unfiltered title of top web site. WARNING - raw user input.',
+    'ID of top group' => 'ID of top web site',
+
+    //PLURALS
+    
+    '1 user added to the group.' => '1 user added to the web site.',
+    '@count users added to the group.' => '@count users added to the web site.',
+    '1 group' => '1 web site',
+    '@count groups' => '@count web sites',
+    'Show this post in this group.' => 'Show this post in this group.',
+    'Show this post in these groups.' => 'Show this post in these groups.',
+    
+    'Create group administrator' => 'Create web site administrator',
+    'Delete group administrator' => 'Delete  web site administrator',
+    'Group activity' =>' Web site activity',
+    'Stores information about each group.' => 'Stores information about each web site.',
+
 
   //spaces overrides
   
