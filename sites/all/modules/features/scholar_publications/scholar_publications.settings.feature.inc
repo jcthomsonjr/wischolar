@@ -54,6 +54,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#description' => t('This adds the necessary metadata to your web site to allow Google Scholar to properly index your publication.')
     );
 
+    /*
     $form['links_target_new_window'] = array(
       '#type' => 'checkbox',
       '#title' => t('Open links in new browser'),
@@ -62,6 +63,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#description' => t('Links in your publication entry would be opened in a new browser window ')
     );
 
+
     $form['inlinemode_in_links'] = array(
         '#type' => 'checkbox',
         '#title' => t('Carry "inline" mode through to all links'),
@@ -69,6 +71,7 @@ class scholar_publications_settings_feature implements space_setting {
         '#default_value' => !array_key_exists('inlinemode_in_links',$value)?variable_get('biblio_inlinemode_in_links', 0):$value['inlinemode_in_links'],
         '#description' => t('This allows an "inline" mode to be applied to all links such as titles, authors and keywords')
     );
+        */
 
     $form['link_title_url'] = array(
       '#type' => 'checkbox',
