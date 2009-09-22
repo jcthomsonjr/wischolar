@@ -97,6 +97,7 @@ function cp_init(){
 /**
  * Implementation of hook_spaces_settings().
  */
+/*
 function cp_spaces_settings() {
   return array(
     'bio' => array(
@@ -105,6 +106,8 @@ function cp_spaces_settings() {
     ),
   );
 }
+*/
+
 
 /**
  * Implementation of hook_views_api().
@@ -179,7 +182,7 @@ function cp_menu(){
   
   $items["cp/features/%"] = array(
     'title' => 'Features',
-    'page callback' => 'schlarcp_feature_customize',
+    'page callback' => 'cp_feature_customize',
     'page arguments' => array(2),
     //'page callback' => 'drupal_get_form',
     //'page arguments' => array('spaces_customize_form', NULL, 3),
@@ -230,7 +233,7 @@ function cp_route(){
 /**
  * callback function for our popup forms
  */
-function schlarcp_feature_customize($feature_name){
+function cp_feature_customize($feature_name){
   ctools_include('ajax');
   ctools_include('modal');
   
