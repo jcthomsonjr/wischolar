@@ -81,7 +81,7 @@ function scholar_string_overrides(){
   //spaces overrides
   
   'The default page for this space.' => 'The default page for this web site.',
-  //from spaces.views.inc
+  //from spaces.views.inc - TODO: May not necessary
   'Node in current space' => 'Node in current web site',
   'Posts in current space.' => 'Posts in current web site.',
   'User in current space' => 'User in current web site',
@@ -92,18 +92,14 @@ function scholar_string_overrides(){
   'Group settings' => 'Web site settings',
   'Please setup your group by choosing a homepage setting.' => 'Please setup your web site by choosing a homepage setting.',
   'This content is not assigned to a group and is not visible to non-administrative users.' => 'This content is not assigned to a web site and is not visible to non-administrative users.',
-  'This form should only be submitted within a properly configured group. Continue at your own risk.' => 'This form should only be submitted within a properly configured web site. Continue at your own risk.',
-  
+  'This form should only be submitted within a properly configured group. Continue at your own risk.' => 'This form should only be submitted within a properly configured web site. Continue at your own risk.',  
   'Private group' => 'Private web site',
   'Controlled group' => 'Controlled web site',
   'Public group' => 'Public web site',
   'My groups' => 'My web sites',
   'Groups' => 'Web Sites',
-  'Your group membership settings were saved successfully.' => 'Your web site membership settings were saved successfully.',
-  
-  'All users may view public content from this group. User may join this group at will.' => 'All users may view public content from this web site. User may join this web site at will.',
-  
-  
+  'Your group membership settings were saved successfully.' => 'Your web site membership settings were saved successfully.',  
+  'All users may view public content from this group. User may join this group at will.' => 'All users may view public content from this web site. User may join this web site at will.',  
   'Only members will be able to access this group. Membership is strictly managed by admins.' => 'Only members will be able to access this web site Membership is strictly managed by adminstrators.',
  // 'Leave this group' => 'Leave this web site', //This doesn't make sense
   'Join this group' => 'Join this web site',
