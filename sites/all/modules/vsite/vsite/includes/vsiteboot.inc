@@ -114,4 +114,7 @@ function _vsite_global_taxonomy(){
     'help' => t('Scholar global taxonomy'),
   );
   taxonomy_save_vocabulary($vocab);
+  
+  $vid = db_last_insert_id('vocabulary', 'vid');
+  variable_set('scholar_global_taxonomy', $vid);
 }
