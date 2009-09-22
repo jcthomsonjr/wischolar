@@ -8,14 +8,7 @@ function vsite_menu_alter(&$items){
 
 function vsite_menu(){
   $items = array();
-  $items['welcome'] = array(
-    'title' => 'Welcome', 
-    'page callback' => 'vsite_welcome', 
-    'access arguments' => array(
-      'access content' 
-    ) 
-  );
-  
+ 
   // nodeautocomplete callback for scholar 
   $items['vsite/node/autocomplete'] = array(
     'type' => MENU_CALLBACK, 
