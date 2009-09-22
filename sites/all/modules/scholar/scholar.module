@@ -98,13 +98,12 @@ function scholar_menu(){
  * hook strongarm
  */
 function scholar_strongarm(){
+ include_once('scholar.overrides.inc');
+    
   $conf = array();
-
   //replacing scholar or vsite terms with more common terms using stringoverrides module
-  $conf['locale_custom_strings_en'] = array(
-  'group' => 'web site',
-  'space' => 'web site',
-  );
+  $conf['locale_custom_strings_en'] = scholar_string_overrides();
+  
   return $conf;
 }
 
@@ -167,3 +166,4 @@ function scholar_mail_alter(&$message) {
   }
 
 }
+
