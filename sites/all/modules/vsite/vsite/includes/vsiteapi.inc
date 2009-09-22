@@ -213,7 +213,7 @@ function vsite_get_vocabs($vsite = NULL, $node_type = NULL){
     $group = $vsite->group;
     if (isset($group->og_vocabularies)) {
       if (! $node_type) {
-        return $group->vocabularies;
+        return $group->og_vocabularies;
       }
       
       foreach ( $group->og_vocabularies as $v ) {
