@@ -4,8 +4,12 @@
  * Implementation of hook_install()
  */
 function scholar_publications_install(){
+  //load biblio module
+  drupal_load('module', 'biblio');
+  //load include file
+  module_load_include('inc', 'biblio', $name = 'biblio.admin');
   
-  //add custom biblio template type - Working Papers
+  //add custom biblio template type - Working Paper
 $form_state = array();
 $form_state['values']['name'] = 'Working Paper';
 $form_state['values']['description'] = 'Scholar Working Paper';
