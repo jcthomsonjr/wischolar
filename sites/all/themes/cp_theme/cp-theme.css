@@ -69,7 +69,7 @@ body#tinymce {
   width: auto;
   }
 
-body.sidebar-right #cp-content {
+body.sidebar-right #cp-content, body.two-sidebars #cp-content {
   right: 201px;
   }
 
@@ -77,10 +77,9 @@ body.no-sidebars #cp-content, body.sidebar-right #cp-content {
   left:0;
   }
 
-
 #sidebar-right {
-  width: 160px;
-  padding: 35px 10px 0 30px;
+  width: 175px;
+  padding: 35px 10px 0 15px;
   background: #f2f3f3;
   border-left: 1px solid #b8c0c0;
   margin: 0;
@@ -112,9 +111,7 @@ body.no-sidebars #cp-content, body.sidebar-right #cp-content {
   }
 
 .views-admin-links {
-  position: absolute;
-  top: 0;
-  right: 10px;
+  float: right;
   }
 
 /* For use with admin_menu module only */
@@ -167,6 +164,10 @@ body.admin-menu #main-content {
   font-size: .8em;
   }
 
+.view-display-id-default {
+  padding: 30px;
+  }
+
 
 /* FOOTER Get rid of all this once the footer content is in a module */
 
@@ -205,16 +206,25 @@ body.admin-menu #main-content {
   border: none;
   }
 
-/* SPECIFIC PAGE VIEWS */
 
 
+/* Typography */
 
-
-/* FAQ */
-
-.view-vsite-support-faq {
-  padding: 30px;
+.submitted {
+  color: #657a7a;
   }
+
+p {
+  margin-bottom: 1em;
+  }
+
+
+
+
+
+
+
+/* SPECIFIC PAGE VIEWS */
 
 /* Activity Area */
 

@@ -57,6 +57,11 @@ p, div.messages, #content-main .views-row {
 	margin-bottom: 1.5em;
 	}
 
+h1, h2, h3, h4 {
+  margin-bottom: 0;
+  margin-top: 1em;
+  }
+
 h2.title {
   margin-bottom: 1em;
   }
@@ -103,13 +108,32 @@ li.leaf, li.collapsed {
   font-size:.8em;
   }
 
-.views-admin-links {
+.views-admin-links ul.links {
   text-align:right;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   }
 
 
 .links li {
   font-size: .9em;
+  }
+
+ul.links li {
+  padding: 0;
+  }
+
+ul.links li a, ul.links li a:visited {
+  text-decoration: none !important;
+  padding: 1px 3px;
+  color: #cd6d06;
+  }
+
+ul.links li a:hover {
+  color: #FFF;
+  background: #7f8f9a;
   }
 
 div.terms {
