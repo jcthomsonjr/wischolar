@@ -34,6 +34,7 @@ if (Drupal.jsEnabled) {
 	  
 	  if($('#live_preview').attr('width') <= 180 || $('#live_preview').attr('height') <= 140){
 		  $("a.edit-settings-logo-crop-btn").remove();
+		  $("#live_preview_box").remove();
 	  }
   });
 }
