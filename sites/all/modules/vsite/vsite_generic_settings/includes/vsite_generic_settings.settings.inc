@@ -37,6 +37,14 @@ class vsite_generic_settings_settings implements space_setting {
       $shield_options[$shield->filename] = theme('vsite_design_theme_shieldpicker', $shield); 
     }  
   
+    
+    $form['disable_shield'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Disable ShieLds'),
+      '#attributes' => array('onChange' => "vsite_generic_grey_out(this);"),
+      '#default_value' => is_array($value) && array_key_exists('disable_shield',$value) ? $value['disable_shield']:0,
+    );
+    
     $form['shield'] = array(
       '#prefix' => "<div class='shield_wrapper'>",
       '#title' => t('Shield'),
@@ -54,7 +62,6 @@ class vsite_generic_settings_settings implements space_setting {
   }
 
   function submit($space, $value) {
-
     return $value;
   }
 }

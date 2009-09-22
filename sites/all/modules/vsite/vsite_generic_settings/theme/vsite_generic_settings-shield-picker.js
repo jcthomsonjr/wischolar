@@ -26,7 +26,7 @@ if (Drupal.jsEnabled) {
 
     theList += '</ul>';
 
-    $('.shield_wrapper').prepend(theList);
+    $('.shield_wrapper').append(theList);
 
     $(".item-shield-picker:first").addClass('active');
 

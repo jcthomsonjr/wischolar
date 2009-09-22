@@ -65,6 +65,10 @@ function vsite_widgets_basicinfo(){
 
 function vsite_widgets_shield(){
 	$output = '';
+	if(array_key_exists('generic',$scholar->settings) && array_key_exists('disable_shield',$scholar->settings['generic']) && $scholar->settings['generic']['disable_shield']){
+		return $output;
+	}//Disabled?
+	
 	
 	$scholar = vsite_get_vsite();
 	if(array_key_exists('generic',$scholar->settings) && array_key_exists('shield',$scholar->settings['generic'])){
