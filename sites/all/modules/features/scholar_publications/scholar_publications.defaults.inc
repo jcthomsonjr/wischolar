@@ -18,17 +18,6 @@ function _scholar_publications_context_default_contexts() {
       'publications' => 'publications',
     ),
     'menu' => 'publications',
-    'block' => array(
-      'biblio_0' => array(
-        'module' => 'biblio',
-        'delta' => '0',
-        'weight' => 20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Most recent publications',
-        'type' => 'context_ui',
-      ),
-    ),
   );
   return $items;
 }
