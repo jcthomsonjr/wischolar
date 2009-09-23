@@ -2,7 +2,7 @@ if (Drupal.jsEnabled) {
   $(document).ready(function() {
     $('.shield_wrapper .form-radios ').hide();
 
-    var theList = '<ul class="shield-picker pad">';
+    var theList = '<ul class="shield-picker">';
     var n_container = 0;
 
     function getLi(liId, liChecked, liContent){
