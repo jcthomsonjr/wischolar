@@ -14,7 +14,42 @@ function _scholar_publications_context_default_contexts() {
     'node' => array(
       '0' => 'biblio',
     ),
+    'path' => array(
+      'publications' => 'publications',
+    ),
+    'menu' => 'publications',
+    'block' => array(
+      'biblio_0' => array(
+        'module' => 'biblio',
+        'delta' => '0',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Most recent publications',
+        'type' => 'context_ui',
+      ),
+    ),
   );
+  return $items;
+}
+
+/**
+ * Helper to implementation of hook_menu_default_items().
+ */
+function _scholar_publications_menu_default_items() {
+  $items = array();
+
+  $items[] = array(
+    'title' => 'Publications',
+    'path' => 'publications',
+    'weight' => '0',
+  );
+  // Translatables
+  array(
+    t('Publications'),
+  );
+
+
   return $items;
 }
 

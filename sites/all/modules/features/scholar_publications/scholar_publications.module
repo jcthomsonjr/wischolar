@@ -25,14 +25,28 @@ function scholar_publications_init(){
   }
 }
 
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_publications_context_links_alter(&$links) {
+  if (! empty ( $links ['biblio'] )) {
+    $links ['importbiblio'] = array (
+      'title' => ' ++Import publications', 
+      'href' => 'publications/import', 
+      'custom' => TRUE 
+    );
+    $links ['biblio'] ['title'] = "publication";
+    
+    $links = array_reverse($links);
+  }
+}
 
 function scholar_publications_menu(){
   $items["publications"] = array(
     'title' => 'Publications',
     'page callback' => 'scholar_publications_overview',
-    //'page arguments' => array(1),
-    'access arguments' => array('access biblio content'), 
-    //'type' => MENU_CALLBACK,
+    'access callback' => 'spaces_feature_access',
+    'access arguments' => array('scholar_publications'), 
     'menu_name' => 'features',
   );
 
@@ -97,21 +111,8 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 }
 
 function scholar_publications_overview(){
-  $output = '';
-  $links = array();
-  $links[] = array(
-    'title' => 'publication',
-    'href' => 'node/add/biblio',
-  );
-  
-  $links[] = array(
-    'title' => 'import',
-    'href' => 'publications/import',
-  );
-  
-  $output .= theme('context_links', $links);
   module_load_include('inc', 'biblio', 'biblio.pages');
-  return $output . biblio_db_search('inline');
+  return biblio_db_search('inline');
 }
 
 /**
@@ -130,3 +131,33 @@ function scholar_publications_db_rewrite_sql($sql, $primary_table, $primary_fiel
 	}
   }
 }
+
+/**
+ * hoook nodeapi
+ */
+function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
+
+  switch ($op) {
+    case 'presave':
+      if ($node -> type == 'biblio'){
+        $vsite = vsite_get_vsite();
+        $gid = $vsite -> sid;
+        ////$node->spaces_og['gid'] = $gid;
+        //if (!($node -> og_groups)){
+          $node -> og_groups = array($gid);
+          //$node -> og_groups_names = array($node -> title);
+          //$node -> og_public = 1;
+          //og_save_ancestry($node);
+        //}
+      }
+
+      break;
+    case 'update':
+      if ($node -> type == 'biblio'){
+        drupal_set_message('biblio node updated');
+      }
+      break;
+  }
+}
+
+
