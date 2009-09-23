@@ -120,7 +120,10 @@ function scholar_string_overrides(){
   // 'Leave this group' => 'Leave this web site', //This doesn't make sense
   'Join this group' => 'Join this web site',
 
+  //spaces_admin.inc
   'The space configuration has been saved successfully.' => 'The web site configuration has been saved successfully.',
+  'Spaces preset defaults were saved successfully.' => 'Web site preset defaults were saved successfully.',
+  'Customizations saved for space !title.' => 'Customizations saved for web site !title.',  
   
   );
 
