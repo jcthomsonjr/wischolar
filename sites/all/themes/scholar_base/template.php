@@ -27,3 +27,26 @@ function phptemplate_node_submitted($node){
      '@datetime' => format_date($node->created),
   ));
 }
+
+/**
+ * Generates a themed set of links for node types associated with
+ * the current active contexts.
+ */
+function scholar_base_context_links($links) {
+  $output = '';
+  foreach ($links as $link) {
+    $options = $link;
+    $options['attributes']['class'] = isset($link['attributes']['class']) ? $link['attributes']['class'] : 'button';
+    if (!empty($link['custom'])) {
+      $output .= l($link['title'], $link['href'], $options);
+    }
+    else {
+      $output .= l('+ '. t('Add !type', array('!type' => $link['title'])), $link['href'], $options);
+    }
+  }
+  
+  if($output){
+    $output = '<div class = "context-links">' . $output . '</div>';
+  }
+  return $output;
+}
