@@ -90,21 +90,31 @@ function scholar_publications_spaces_settings() {
   );
 }
 
-
 /**
  * hook form_alter
  * Alter the import publications form
  */
 function scholar_publications_form_alter(&$form, $form_state, $form_id){
-  if ($form_id == 'biblio_import_form'){
+  if ($form_id == 'biblio_import_form') {
+    dpm($form);
     // the original form is asking to set the userID for these entries
     // Just the group admin for now. TODO list of users for this og
-		
+    
+
     $vsite = vsite_get_vsite();
     //$group_node = og_get_group_context();
-    $uid = $vsite -> group -> uid;
-	$form['userid'] = array('#type' => 'value', "#value" => $uid);
-
+    $uid = $vsite->group->uid;
+    $form['userid'] = array(
+      '#type' => 'value', 
+      "#value" => $uid 
+    );
+    $form['batch_process'] = array(
+      '#type' => 'value', 
+      "#value" => 1 
+    );
+    $form['filetype']['#type'] = 'radios';
+    unset($form['filetype']['#options']['0']);
+    $form['filetype']['#default_value'] = 'bib';
     // just unset the taxonomy settings for now.
     unset($form['import_taxonomy']);
   }

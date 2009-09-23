@@ -26,4 +26,3 @@ function scholar_publications_user_default_permissions() {
   $args = func_get_args();
   return call_user_func_array('_scholar_publications_user_default_permissions', $args);
 }
-
