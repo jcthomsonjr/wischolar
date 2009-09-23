@@ -3,7 +3,7 @@
  * Override or insert PHPTemplate variables into the templates.
  */
 function cp_theme_preprocess_page(&$vars) {
-  $vars['tabs2'] = menu_secondary_local_tasks();
+  $vars['tabs2'] = '<ul class="tabs secondary clear-block">' . menu_secondary_local_tasks() . '</ul>';
 }
 
 /**
@@ -13,7 +13,9 @@ function cp_theme_preprocess_page(&$vars) {
  * @ingroup themeable
  */
 function cp_theme_menu_local_tasks() {
-  return menu_primary_local_tasks();
+  $primary = menu_primary_local_tasks();
+  $output .= '<ul class="tabs primary clear-block">' . $primary . '</ul>';
+  return $output;
 }
 
 
