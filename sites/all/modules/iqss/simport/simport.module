@@ -25,8 +25,8 @@ function simport_menu() {
 function simport_import(){ 
   
   //for testing purposes setting these system vars manually  
-  //variable_set('simport_current_path', '/nfs/www/edu-harvard-iq-scholar-dev3');
-  variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
+ // variable_set('simport_current_path', '/nfs/www/edu-harvard-iq-scholar-dev3');
+  //variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
   variable_set('file_directory_path', 'sites/scholar-dev3.iq.harvard.edu/files');
 
   //PHASE 1 - Load the VSITE And Settings
@@ -85,7 +85,10 @@ function simport_import(){
 
   //PHASE 2 - Load And Save The Content
 
-  //load content for each type
+  //create custom biblio type - Working Paper
+  simport_create_biblio_type();
+  
+  //get the type mappings from old to new
   $types = _simport_map_content_types();
 
   foreach ($types as $oldtype => $newtype){
@@ -609,6 +612,19 @@ function _simport_fix_biblio_authorstr($val){
   return explode(';', preg_replace($patterns, $replace, $val));
 }
 
+/**
+ *Function which creates custom biblio type
+ */
+function simport_create_biblio_type(){
+  //load include file
+  module_load_include('inc', 'biblio', $name = 'biblio.admin');
+  
+  //add custom biblio template type - Working Paper
+$form_state = array();
+$form_state['values']['name'] = 'Working Paper';
+$form_state['values']['description'] = 'Scholar Working Paper';
+ drupal_execute('biblio_admin_types_add_form', $form_state);
+}
 
 /**
  * Save files after nodes have been saved
