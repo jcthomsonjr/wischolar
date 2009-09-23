@@ -36,10 +36,10 @@ function vsite_design_init(){
   
   if($vsite && (!$vsite->settings['logo'] || !$vsite->settings['logo']['current_logo'])){
   	if(!is_array($vsite->settings['logo'])) $vsite->settings['logo'] = array();
-  	if(!strlen($vsite->settings['logo']['current_logo']) && ($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) && is_array($profile->vsite_user_profile_photo[0])){	
+  	if(!strlen($vsite->settings['logo']['current_logo']) && ($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) && is_array($profile->field_user_profile_photo[0])){	
   		require_once(drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.logo.inc');
-      $vsite->settings['logo']['current_logo'] = $profile->vsite_user_profile_photo[0]['filepath'];
-      vsite_design_settings_logo::add_imagefield_image($profile->vsite_user_profile_photo[0]['filepath'],'field_vsite_logo',$vsite->group);
+      $vsite->settings['logo']['current_logo'] = $profile->field_user_profile_photo[0]['filepath'];
+      vsite_design_settings_logo::add_imagefield_image($profile->field_user_profile_photo[0]['filepath'],'field_vsite_logo',$vsite->group);
     } //Save default logo
   }
 }

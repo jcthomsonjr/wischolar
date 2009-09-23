@@ -97,6 +97,7 @@ function _scholar_core_modules() {
     'imagecache',
     'imagecache_ui',
     'imagefield',
+    'imagefield_crop',
     'link',
     'text',
     'nodereference',

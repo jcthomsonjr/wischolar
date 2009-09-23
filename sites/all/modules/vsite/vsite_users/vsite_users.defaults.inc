@@ -67,8 +67,8 @@ function _vsite_users_content_default_fields() {
       'label' => 'Photo',
       'weight' => '34',
       'description' => '',
-      'type' => 'imagefield_widget',
-      'module' => 'imagefield',
+      'type' => 'imagefield_crop_widget',
+      'module' => 'imagefield_crop',
     ),
   );
 
