@@ -150,7 +150,7 @@ function _scholar_scholar_modules() {
     'googlescholar_meta',
     'dyntextfield',
     'scholarregister',
-    'scholar_project',
+    'iqss_project',
     'simport',
     
    // features TODO does this gets installed in the  next step (enable features?)
