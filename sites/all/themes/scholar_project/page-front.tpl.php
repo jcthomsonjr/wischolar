@@ -35,16 +35,10 @@
         <div id="content-main" class="column">
             <?php if ($messages) print $messages; ?>
             <?php if ($content) print $content; ?>
-            <div id="content-row-1">
-              <?php print $row1; ?>
-            <div id="content-row-2">
-              <?php print $row2; ?>
-            </div><!--/content-row 2-->
+            
+              <?php print $content_top;?>
+            
 
-
-            <div id="content-row-3">
-              <?php print $row3; ?>
-            </div><!--/content-row 3-->
 
           </div><!-- /content main -->
       </div> <!-- / content wrapper -->
