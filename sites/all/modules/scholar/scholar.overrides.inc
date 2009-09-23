@@ -120,6 +120,8 @@ function scholar_string_overrides(){
   // 'Leave this group' => 'Leave this web site', //This doesn't make sense
   'Join this group' => 'Join this web site',
 
+  'The space configuration has been saved successfully.' => 'The web site configuration has been saved successfully.',
+  
   );
 
   return $overrides;
