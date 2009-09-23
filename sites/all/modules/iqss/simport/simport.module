@@ -24,10 +24,15 @@ function simport_menu() {
  */
 function simport_import(){ 
   
+  //import the table with serialized D5 scholars site data
+  if(!db_table_exists('scholar_export_data')){
+    _simport_exportdata();
+    }
+
   //for testing purposes setting these system vars manually  
- // variable_set('simport_current_path', '/nfs/www/edu-harvard-iq-scholar-dev3');
-  //variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
-  variable_set('file_directory_path', 'sites/scholar-dev3.iq.harvard.edu/files');
+  variable_set('simport_current_path', _simport_get_fileroot());
+  variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
+  variable_set('file_directory_path', 'sites/scholar/files');
 
   //PHASE 1 - Load the VSITE And Settings
  $testing = db_query("TRUNCATE TABLE {simport}"); //empty the table each time
@@ -86,7 +91,7 @@ function simport_import(){
   //PHASE 2 - Load And Save The Content
 
   //create custom biblio type - Working Paper
-  simport_create_biblio_type();
+  $working_paper = simport_create_biblio_type();
   
   //get the type mappings from old to new
   $types = _simport_map_content_types();
@@ -616,14 +621,8 @@ function _simport_fix_biblio_authorstr($val){
  *Function which creates custom biblio type
  */
 function simport_create_biblio_type(){
-  //load include file
-  module_load_include('inc', 'biblio', $name = 'biblio.admin');
-  
-  //add custom biblio template type - Working Paper
-$form_state = array();
-$form_state['values']['name'] = 'Working Paper';
-$form_state['values']['description'] = 'Scholar Working Paper';
- drupal_execute('biblio_admin_types_add_form', $form_state);
+  //create biblio type - Working Paper
+  db_query("INSERT INTO {biblio_types} (tid, name, description, weight, visible) VALUES (%d, '%s' , '%s', %d, %d)", 1000,  'Working Paper', 'Scholar Working Paper', 0,1);
 }
 
 /**
@@ -740,8 +739,7 @@ function _simport_exportdata(){
   $db_conn['host'] = $db_pass[1];
     
   $cmd = 'mysql -u' . $db_conn['user'] . ' -p' . $db_conn['pass']. ' ' .  $db_conn['name'] . ' < ' . 
-  variable_get('simport_current_path', '') . '/' .  drupal_get_path('module', 'simport') .  
-  '/export/scholar_export_data.sql';
+  dirname(__FILE__) .  '/export/scholar_export_data.sql';
   
   //execute command to import table
   shell_exec($cmd);
@@ -755,5 +753,15 @@ function simport_sync_themes(){
    $theme = trim($space -> settings['theme']);
    $sql_ins = db_query("UPDATE {og} SET og_theme = '%s' WHERE nid = %d", $theme, $data->nid);
   }
+}
+
+/**
+ * Returns file system path before Drupal
+ */
+function _simport_get_fileroot(){
+  $s = dirname(__FILE__);
+  $end_str = strstr($s, '/sites');
+  $fileroot= explode($end_str, $s);
+  return $fileroot[0]; 
 }
 
