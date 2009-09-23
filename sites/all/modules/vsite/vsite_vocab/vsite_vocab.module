@@ -46,13 +46,15 @@ function vsite_vocab_strongarm(){
   $conf = array();
   vsite_include('vsiteapi');
   $vocabs = vsite_get_vocabs();
-  foreach($vocabs as $vocab){
-    $node_types = $vocab -> nodes;
-    foreach($node_types as $type){
-      $vtabs = vertical_tabs_fieldsets($type);
-      if (!in_array('taxonomy', $vtabs)){
-        $vtabs[] = 'taxonomy';
-        $conf['vertical_tabs_fieldsets_'. $node_type] = $vtabs;
+  if(count($vocabs)){
+    foreach($vocabs as $vocab){
+      $node_types = $vocab -> nodes;
+      foreach($node_types as $type){
+        $vtabs = vertical_tabs_fieldsets($type);
+        if (!in_array('taxonomy', $vtabs)){
+          $vtabs[] = 'taxonomy';
+          $conf['vertical_tabs_fieldsets_'. $node_type] = $vtabs;
+        }
       }
     }
   }
