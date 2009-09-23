@@ -40,6 +40,14 @@ function vsite_vsiteboot(){
     _vsite_filefield_paths_config();
     _vsite_global_taxonomy();
 
+     //import the table with serialized D5 scholars site data
+     if(!db_table_exists('scholar_export_data')){
+    _simport_exportdata();
+    }
+    
+    //import D5 scholars site content
+    //simport_import();
+     
     variable_set('scholar_installed', 1);
   }
   
