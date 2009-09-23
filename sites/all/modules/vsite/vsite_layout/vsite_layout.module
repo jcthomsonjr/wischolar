@@ -233,10 +233,6 @@ function vsite_layout_region_widgets($scolar = false,$page_type='all'){
 
   $a_region_widgets = array();
   foreach($a_widgets as $s_widget_key => $widget){
-    // TODO:  why biblio block is an object and not an array ? I'm just making a view for now
-    if(is_object($widget)){
-      $widget = (array)$widget;
-    }
   	if(!$a_site_settings && $widget['region']){
       $a_region_widgets[$widget['region']][] = $widget;
   	}elseif ($a_site_settings && array_key_exists($s_widget_key,$a_site_settings)){
