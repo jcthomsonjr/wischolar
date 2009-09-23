@@ -22,6 +22,30 @@ if (Drupal.jsEnabled) {
 			  });
 			  
 		  }//Don't try this if there are a lot of fieldsets / or none
+		  
+		  if(form.find('fieldset').length > 1){
+			form.find('fieldset').each(function() {
+				var cur_fs = $(this);
+				if(cur_fs.find('.form-item').length > 3){
+					var col = $("<div class='modal_col'></div>");
+					var col_height = (form.height() > (cur_fs.height() * 2))?Math.round(form.height()/2):cur_fs.height();
+					cur_fs.prepend(col);
+					cur_fs.find('.form-item').each(function(index,domElement) {
+				      var el = $(domElement);
+					  var tmp_h = cur_fs.find('.modal_col:last').height();
+					  var tmp_hc = cur_fs.height();
+					  if((el.height() + tmp_h) > col_height && cur_fs.find('.modal_col').length < 2){
+						col = $("<div class='modal_col'></div>");
+						cur_fs.find('.modal_col:last').after(col);
+					  }
+					  cur_fs.find('.modal_col:last').append(el);
+					  if(cur_fs.find('.modal_col').length == 2 && cur_fs.find('.modal_col:last').height() > cur_fs.find('.modal_col:first').height()){
+						  cur_fs.find('.modal_col:first').append(cur_fs.find('.modal_col:last .form-item:first'));
+					  }
+					});
+				}
+		    });
+		  }
 	  }
 	  
 	  form.find('.form-checkboxes').each(function(index,domElement) {

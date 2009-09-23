@@ -2,7 +2,7 @@
 /**
  * Provides theme selection for each site
  */
-class vsite_activity_settings_activity implements space_setting {
+class vsite_news_settings_activity implements space_setting {
   
 	//Remove From Menu
 	public $menu_name = false;

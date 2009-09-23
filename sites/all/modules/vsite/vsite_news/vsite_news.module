@@ -63,6 +63,8 @@ function vsite_news_menu(){
     'file' => 'cp.settings.inc',
     'file path' => drupal_get_path('module', 'cp'). '/includes', 
     'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 5,
   );
   
   return $items;
@@ -206,8 +208,8 @@ function vsite_news_spaces_settings() {
   );
 }
 
-function vsite_news_preprocess_views_view(&$variables) { //__vsite_news_view
-  if($variables['name'] != 'vsite_activity') return;
-  
-  $variables['header'] .= l('Privacy Settings','cp/news/activity/privacy', array('attributes' => array('class' => 'tabs')));
-}
+//function vsite_news_preprocess_views_view(&$variables) { //__vsite_news_view
+//  if($variables['name'] != 'vsite_activity') return;
+//  
+//  $variables['header'] .= l('Privacy Settings','cp/news/activity/privacy', array('attributes' => array('class' => 'tabs')));
+//}
