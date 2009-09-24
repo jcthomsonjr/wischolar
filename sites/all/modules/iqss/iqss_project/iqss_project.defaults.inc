@@ -14,7 +14,6 @@ function _iqss_project_context_default_contexts() {
     'path' => array(
       '<front>' => '<front>',
     ),
-    'menu' => 'announcements',
     'block' => array(
       'iqss_project_0' => array(
         'module' => 'iqss_project',
@@ -41,6 +40,15 @@ function _iqss_project_context_default_contexts() {
         'region' => 'content_top',
         'status' => '0',
         'label' => 'row 3',
+        'type' => 'context_ui',
+      ),
+      'views_iqss_project_sites-block_1' => array(
+        'module' => 'views',
+        'delta' => 'iqss_project_sites-block_1',
+        'weight' => 23,
+        'region' => 'content_top',
+        'status' => '0',
+        'label' => 'Letest web sites',
         'type' => 'context_ui',
       ),
     ),

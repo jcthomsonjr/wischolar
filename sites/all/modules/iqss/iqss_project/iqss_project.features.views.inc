@@ -39,7 +39,7 @@ function _iqss_project_views_default_views() {
       ),
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'vsite_design_portrait_logo_linked',
+      'format' => 'iqss_project_front_logo_linked',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -81,6 +81,41 @@ function _iqss_project_views_default_views() {
       'field' => 'title',
       'relationship' => 'none',
     ),
+    'description' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'exclude' => 0,
+      'id' => 'description',
+      'table' => 'og',
+      'field' => 'description',
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('sorts', array(
+    'created' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('filters', array(
     'type' => array(
@@ -99,6 +134,28 @@ function _iqss_project_views_default_views() {
       'field' => 'type',
       'relationship' => 'none',
     ),
+    'title' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'title_op',
+        'identifier' => 'title',
+        'label' => 'Search',
+        'optional' => 1,
+        'remember' => 0,
+      ),
+      'case' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -106,6 +163,7 @@ function _iqss_project_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 24);
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('style_plugin', 'grid');
@@ -114,7 +172,7 @@ function _iqss_project_views_default_views() {
     'columns' => '4',
     'alignment' => 'horizontal',
   ));
-  $handler->override_option('path', 'sites');
+  $handler->override_option('path', 'websites');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',
@@ -131,7 +189,7 @@ function _iqss_project_views_default_views() {
   $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->override_option('items_per_page', 6);
   $handler->override_option('use_more', 1);
-  $handler->override_option('block_description', '');
+  $handler->override_option('block_description', 'Letest web sites');
   $handler->override_option('block_caching', -1);
 
   $views[$view->name] = $view;
