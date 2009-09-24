@@ -19,19 +19,10 @@ function _scholar_blog_context_default_contexts() {
     ),
     'menu' => 'blog',
     'block' => array(
-      'views_scholar_blog-block_1' => array(
-        'module' => 'views',
-        'delta' => 'scholar_blog-block_1',
-        'weight' => 20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'scholar_blog: Block',
-        'type' => 'context_ui',
-      ),
       'views_scholar_blog_comments-block_1' => array(
         'module' => 'views',
         'delta' => 'scholar_blog_comments-block_1',
-        'weight' => 21,
+        'weight' => 20,
         'region' => 'right',
         'status' => '0',
         'label' => 'scholar_blog_comments: Recent comments',
