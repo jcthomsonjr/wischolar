@@ -9,7 +9,8 @@ function vsite_vocab_menu() {
   	'title' => 'Taxonomy', 
   	'page callback' => 'vsite_vocab_taxonomies', 
   	'access arguments' => array ('access content' ),
-    'menu_name' => 'cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 100,
   );
   
   $items['vsite_vocab/term/delete/%/%'] = array (

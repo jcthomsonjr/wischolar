@@ -32,6 +32,11 @@ function scholar_biocv_menu(){
   return $items;
 }
 
+function scholar_biocv_menu_alter(&$items){
+  unset($items['cp/content/cv']);
+  unset($items['cp/content/bio']);
+}
+
 /**
  * Display a Bio instance
  * 

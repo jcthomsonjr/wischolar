@@ -9,6 +9,11 @@ function scholar_image_gallery_init() {
   drupal_add_css(drupal_get_path('module', 'scholar_image_gallery') .'/scholar_image_gallery.css');
 }
 
+function scholar_image_gallery_menu_alter(&$items){
+  unset($items['cp/content/image']);
+}
+
+
 /**
  * Implementation of hook_context_links_alter().
  */
