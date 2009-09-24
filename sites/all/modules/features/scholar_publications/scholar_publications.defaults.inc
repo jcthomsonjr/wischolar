@@ -93,6 +93,17 @@ function _scholar_publications_context_default_contexts() {
       'publications' => 'publications',
     ),
     'menu' => 'publications',
+    'block' => array(
+      'views_scholar_publications-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_publications-block_1',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Recent publications',
+        'type' => 'context_ui',
+      ),
+    ),
   );
   return $items;
 }

@@ -35,3 +35,12 @@ function scholar_publications_user_default_permissions() {
   $args = func_get_args();
   return call_user_func_array('_scholar_publications_user_default_permissions', $args);
 }
+
+/**
+ * Implementation of hook_views_default_views().
+ */
+function scholar_publications_views_default_views() {
+  module_load_include('inc', 'scholar_publications', 'scholar_publications.features.views');
+  $args = func_get_args();
+  return call_user_func_array('_scholar_publications_views_default_views', $args);
+}
