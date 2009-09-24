@@ -1,6 +1,54 @@
 <?php
 
 /**
+ * Helper to implementation of hook_context_default_contexts().
+ */
+function _iqss_project_context_default_contexts() {
+  $items = array();
+
+  $items[] = array(
+    'namespace' => 'iqss',
+    'attribute' => 'feature',
+    'value' => 'project',
+    'description' => 'IQSS scholar front page',
+    'path' => array(
+      '<front>' => '<front>',
+    ),
+    'menu' => 'announcements',
+    'block' => array(
+      'iqss_project_0' => array(
+        'module' => 'iqss_project',
+        'delta' => '0',
+        'weight' => 20,
+        'region' => 'content_top',
+        'status' => '0',
+        'label' => 'row 1',
+        'type' => 'context_ui',
+      ),
+      'iqss_project_1' => array(
+        'module' => 'iqss_project',
+        'delta' => '1',
+        'weight' => 21,
+        'region' => 'content_top',
+        'status' => '0',
+        'label' => 'row 2',
+        'type' => 'context_ui',
+      ),
+      'iqss_project_2' => array(
+        'module' => 'iqss_project',
+        'delta' => '2',
+        'weight' => 22,
+        'region' => 'content_top',
+        'status' => '0',
+        'label' => 'row 3',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
+}
+
+/**
  * Helper to implementation of hook_imagecache_default_presets().
  */
 function _iqss_project_imagecache_default_presets() {
@@ -22,5 +70,27 @@ function _iqss_project_imagecache_default_presets() {
       ),
     ),
   );
+  return $items;
+}
+
+/**
+ * Helper to implementation of hook_menu_default_items().
+ */
+function _iqss_project_menu_default_items() {
+  $items = array();
+
+  $items[] = array(
+    'title' => 'Announcements',
+    'path' => 'announcements',
+    'weight' => '0',
+    'description' => 'List of announcements in my site',
+  );
+  // Translatables
+  array(
+    t('Announcements'),
+    t('List of announcements in my site'),
+  );
+
+
   return $items;
 }
