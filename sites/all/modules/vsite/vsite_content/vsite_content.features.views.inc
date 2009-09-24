@@ -295,6 +295,7 @@ function _vsite_content_views_default_views() {
   ));
   $handler->override_option('title', 'Content');
   $handler->override_option('empty_format', '1');
+  $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'bulk');
@@ -437,15 +438,15 @@ function _vsite_content_views_default_views() {
         'strip_tags' => 0,
         'html' => 0,
       ),
-      'link_to_file' => 1,
+      'link_to_file' => 0,
       'exclude' => 0,
       'id' => 'filename',
       'table' => 'files',
       'field' => 'filename',
       'relationship' => 'none',
     ),
-    'filepath' => array(
-      'label' => 'Path',
+    'filealias' => array(
+      'label' => 'Download',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -463,11 +464,11 @@ function _vsite_content_views_default_views() {
         'strip_tags' => 0,
         'html' => 0,
       ),
-      'link_to_file' => 0,
+      'link_to_file' => 1,
       'exclude' => 0,
-      'id' => 'filepath',
+      'id' => 'filealias',
       'table' => 'files',
-      'field' => 'filepath',
+      'field' => 'filealias',
       'relationship' => 'none',
     ),
     'filemime' => array(
