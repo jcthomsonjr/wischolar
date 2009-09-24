@@ -125,6 +125,8 @@ function scholar_string_overrides(){
   'Spaces preset defaults were saved successfully.' => 'Web site preset defaults were saved successfully.',
   'Customizations saved for space !title.' => 'Customizations saved for web site !title.',  
   
+  // Biblio
+  'Biblio' => 'Publication',
   );
 
   return $overrides;

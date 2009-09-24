@@ -1,6 +1,81 @@
 <?php
 
 /**
+ * Helper to implementation of hook_content_default_fields().
+ */
+function _scholar_publications_content_default_fields() {
+  $fields = array();
+
+  // Exported field: field_biblio_extra
+  $fields[] = array(
+    'field_name' => 'field_biblio_extra',
+    'type_name' => 'biblio',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'dyntextfield',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'dyntextfield',
+    'active' => '1',
+    'max_length' => '255',
+    'widget' => array(
+      'size' => '60',
+      'default_value' => array(
+        '0' => array(
+          'dyntext_fieldset' => array(
+            'label' => '',
+            'value' => '',
+          ),
+          '_error_element' => 'value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Extra Fields',
+      'weight' => '31',
+      'description' => '',
+      'type' => 'dyntextfield_widget',
+      'module' => 'dyntextfield',
+    ),
+  );
+
+  // Translatables
+  array(
+    t('Extra Fields'),
+  );
+
+  return $fields;
+}
+
+/**
  * Helper to implementation of hook_context_default_contexts().
  */
 function _scholar_publications_context_default_contexts() {

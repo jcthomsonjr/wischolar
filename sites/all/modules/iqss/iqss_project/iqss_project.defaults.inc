@@ -80,25 +80,3 @@ function _iqss_project_imagecache_default_presets() {
   );
   return $items;
 }
-
-/**
- * Helper to implementation of hook_menu_default_items().
- */
-function _iqss_project_menu_default_items() {
-  $items = array();
-
-  $items[] = array(
-    'title' => 'Announcements',
-    'path' => 'announcements',
-    'weight' => '0',
-    'description' => 'List of announcements in my site',
-  );
-  // Translatables
-  array(
-    t('Announcements'),
-    t('List of announcements in my site'),
-  );
-
-
-  return $items;
-}
