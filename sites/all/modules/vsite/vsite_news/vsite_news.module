@@ -45,7 +45,7 @@ function vsite_news_menu(){
     'page callback' => 'vsite_news_activity',
     'access callback' => 'cp_access_cp',
     'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => 3,
+    'weight' => 0,
   ); 
   
   $items['cp/news/feeds'] = array(
@@ -54,6 +54,22 @@ function vsite_news_menu(){
       'access callback' => 'cp_access_cp',
     'type' => MENU_LOCAL_TASK,
     'weight' => 3,
+  );
+  
+  $items['cp/news/following'] = array(
+    'title' => 'Following',
+    'page callback' => 'vsite_news_following',
+      'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+  
+  $items['cp/news/sites'] = array(
+    'title' => 'good title ???',
+    'page callback' => 'vsite_news_sites',
+      'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 2,
   );
   
   $items['cp/news/activity/privacy'] = array(
@@ -70,14 +86,64 @@ function vsite_news_menu(){
   return $items;
 }
 function vsite_news_feeds(){
-  return 'latest feed view goes here';
+  return views_page('scholar_feed_items','default');
 }
+
+function vsite_news_following(){
+  return views_page('vsite_news_follow', 'default');
+}
+
+function vsite_news_sites(){
+  return views_page('vsite_news_follow_candidate', 'default');
+}
+
 /**
  * show the vsite_news_view
  */
 function vsite_news_activity(){
 	return views_page('vsite_activity','default');
 }
+
+
+/**
+ * Implementation of hook flag_default_flags
+ * @return array - default flag
+ */
+function vsite_news_flag_default_flags(){
+  $flags = array();
+  $flags[] = array(
+    'content_type' => 'node', 
+    'name' => 'vsite_follow', 
+    'title' => 'Follow', 
+    'types' => array('vsite'), 
+    'roles' => array(
+      0 => '3' 
+    ), 
+    'global' => FALSE, 
+    'flag_short' => 'follow', 
+    'flag_long' => 'follow activity in other web sites', 
+    'flag_confirmation' => 'Added to your following list', 
+    'unflag_short' => 'Dont follow', 
+    'unflag_long' => 'Removed from your following list', 
+    //   'unflag_confirmation' => 'Are you sure you want to remove?',
+    'status' => TRUE, 
+    'show_on_page' => FALSE, 
+    'show_on_teaser' => TRUE, 
+    'show_on_form' => FALSE, 
+    'link_type' => 'toggle',  //normal, toggle, confirm
+    'locked' => array(
+      'types',
+      'name', 
+      'show_on_page', 
+      'show_on_teaser', 
+      'show_on_form', 
+      'global' 
+    ) 
+  );
+  
+  return $flags;
+}
+
 
 
 /**
