@@ -257,8 +257,8 @@ function vsite_news_activity_access_grants($acccount) {
   //$a_sites = array(1,4,6);
   $realm_ids = array();
   if (!empty($a_sites)) {
-    foreach ($a_sites as $n_vsite) {
-      $realm_ids['vsite'][] = $n_vsite;
+    foreach ($view->result as $o_site) {
+      $realm_ids['vsite'][] = $o_site->nid;
     }
   }
   return $realm_ids;
