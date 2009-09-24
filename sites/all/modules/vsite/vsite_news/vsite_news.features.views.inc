@@ -106,7 +106,7 @@ function _vsite_news_views_default_views() {
     ),
   ));
   $handler->override_option('filters', array(
-    'value_vsite_activity' => array(
+    'value_vsite_news' => array(
       'operator' => '=',
       'value' => '',
       'group' => '0',
@@ -118,9 +118,9 @@ function _vsite_news_views_default_views() {
       'realms' => array(
         'vsite' => 'vsite',
       ),
-      'id' => 'value_vsite_activity',
+      'id' => 'value_vsite_news',
       'table' => 'activity_access',
-      'field' => 'value_vsite_activity',
+      'field' => 'value_vsite_news',
       'relationship' => 'none',
     ),
     'access_uid' => array(
@@ -148,7 +148,7 @@ function _vsite_news_views_default_views() {
   ));
   $handler = $view->new_display('page', 'Tab Followers', 'page_2');
   $handler->override_option('filters', array(
-    'value_vsite_activity' => array(
+    'value_vsite_news' => array(
       'operator' => '=',
       'value' => '',
       'group' => '0',
@@ -160,9 +160,9 @@ function _vsite_news_views_default_views() {
       'realms' => array(
         'vsite' => 'vsite',
       ),
-      'id' => 'value_vsite_activity',
+      'id' => 'value_vsite_news',
       'table' => 'activity_access',
-      'field' => 'value_vsite_activity',
+      'field' => 'value_vsite_news',
       'override' => array(
         'button' => 'Use default',
       ),

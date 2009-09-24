@@ -177,7 +177,7 @@ function vsite_news_activity_action($object, $context){
 	if(!in_array($object->type,array_keys(vsite_content_types(2)))) return false; //Is this type public?
 	
 	//Setup the advanced Patterns
-	$context['node-pattern'] = 'You [action] a new [type-name]';
+	$context['node-pattern'] = 'You [action] a new [type-name] [in-vsite]';
 	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite]';
 	$context['activity_types'] = vsite_content_types(); 
 	$s_action = 'modified';
@@ -198,9 +198,9 @@ function vsite_news_activity_action($object, $context){
 	
 	if($vsite && $vsite->group->uid){
 		$user = user_load($vsite->group->uid);
-		$s_users_vsite = '';
-    if($user && ($user->profile_first_name || $user->profile_last_name)){
-    	$s_users_vsite = "in {$user->profile_first_name} {$user->profile_last_name}'s site";
+		$profile = content_profile_load('vsite_users_profile',$vsite->group->uid);
+    if($profile && (is_array($profile->vsite_users_first_name[0]) && is_array($profile->vsite_users_last_name[0]))){
+    	$s_users_vsite = "in {$profile->vsite_users_first_name[0]['value']} {$profile->vsite_users_last_name[0]['value']}'s site";
     }
     $context['node-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['node-pattern']);
     $context['everyone-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['everyone-pattern']);
@@ -251,8 +251,10 @@ function vsite_news_access_records_alter(&$grants, $context) {
  * Implementation of hook_activity_access_grants().
  */
 function vsite_news_activity_access_grants($acccount) {
-  //$a_sites = get_all_the_sites_this_dudes_following_func($account->uid);
-  $a_sites = array(1,4,6);
+  $view = views_get_view('vsite_news_follow');
+  $view->execute();
+  
+  //$a_sites = array(1,4,6);
   $realm_ids = array();
   if (!empty($a_sites)) {
     foreach ($a_sites as $n_vsite) {

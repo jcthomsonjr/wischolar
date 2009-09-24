@@ -73,7 +73,7 @@ function vsite_users_add_user(){
     $output = array();
     $output[] = ctools_modal_command_dismiss();
   }else{
-  	$output[0]['output'] = "<div style='wdith:550px;float:left;'>".$output[0]['output']."</div><div id='user_lookup' style='float:left;'>This is for good</div>";
+  	//$output[0]['output'] = "<div style='wdith:550px;float:left;'>".$output[0]['output']."</div><div id='user_lookup' style='float:left;'>This is for good</div>";
   }
   
   ctools_ajax_render($output);
