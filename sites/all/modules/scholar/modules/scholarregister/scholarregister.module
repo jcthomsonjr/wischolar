@@ -133,29 +133,49 @@ function scholarregister_notify_user($vsite, $user){
   
   // change users password
   $password = user_password();
-  $edit = array('pass' => $password);
-  user_save($user,$edit);
-  
-  
-  $params['subject'] = t('[!site_name] We have created an account for you', array(
-      '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project') 
-  ));
-  $variables = array(
-      '!name' => $user -> name, 
-      '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'), 
-      '!login_url' => user_pass_reset_url($user) . '/login', 
-      '!url' => trim(url('<front>', array(
-          'absolute' => TRUE 
-      )), '/'), 
-      '!password' => $password,
+  $edit = array(
+    'pass' => $password 
   );
-
-    $body .= t("\nHello !name,\n", $variables);
-
-  $body .= t("\nWe have created an account for you on !site\n!url.\n\nYou can log in to the site with the following username and password\n\n!name\n!password\n\nPlease change your password after the first time you log in.\n\nWelcome to !site", $variables);
+  user_save($user, $edit);
+  
+  $params['subject'] = t('[!site_name] We have created a web site for you', array(
+    '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project') 
+  ));
+  
+  $msg_variables = array(
+    // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "", 
+    '!username' => $user->name, 
+    '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'), 
+    '!login_url' => user_pass_reset_url($user), 
+    '!uri' => $base_url, 
+    '!uri_brief' => preg_replace('!^https?://!', '', $base_url), 
+    '!mailto' => $user->mail, 
+    '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language), 
+    '!login_uri' => url('user', array(
+      'absolute' => TRUE, 
+      'language' => $message['language'] 
+    )), 
+    '!site_url' => url('node/' . $vsite->sid), 
+    '!edit_uri' => url('user/' . $user->uid . '/edit', array(
+      'absolute' => TRUE, 
+      'language' => $message['language'] 
+    )), 
+    '!password' => $password 
+  );
+  
+  $body .= t("\nHello !username,\n", $msg_variables);
+  
+  $body .= t("\nWe have created a web site for you on !site\n\n 
+             !site_url.\n\n
+             You may now log in to !login_uri using the following username and 
+             password:\n\nusername: !username\npassword: !password\n\n
+             You may also log in by clicking on this link or copying and pasting it in 
+             your browser:\n\n!login_url\n\nThis is a one-time login, 
+             so it can be used only once.\n\nAfter logging in, you will be redirected to !edit_uri 
+             so you can change your password.\n\n\n--  !site team", $msg_variables);
   // Put the completed $body in the $params array for hook_mail
   $params['body'] = $body;
-  if (! drupal_mail('scholarregister', 'scholar-register-notify', $user -> mail, $language, $params, $from)) {
+  if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
     drupal_set_message(t('Error sending notification mail to user.'), 'error');
   }
 
