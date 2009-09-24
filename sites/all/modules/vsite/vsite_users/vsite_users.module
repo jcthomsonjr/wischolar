@@ -82,6 +82,15 @@ function vsite_users_menu(){
     'weight' => 10
   );
   
+  $items['cp/users/user_looup'] = array(
+    'title' => '',
+    'page callback' => 'vsite_users_lookup_user',
+    'access callback' => 'cp_access_cp',
+    'file' => 'vsite_users.pages.inc',
+    'type' => MENU_CALLBACK,
+    'weight' => 10
+  );
+  
   return $items;
 }
 
@@ -221,7 +230,17 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	//Add Registration info to form
 	  	content_profile_registration_form_alter($form, $form_state,'user_register');
 	
-	  	if(array_key_exists('vsite_users_first_name',$form)) $form['vsite_users_first_name']['#weight'] = -3;
+	  	if(array_key_exists('vsite_users_first_name',$form)){
+	  	  $form['vsite_users_first_name']['#weight'] = -3;
+	  	  $form['vsite_users_first_name']['#ahah'] = array(
+		      'path' => 'cp/users/user_lookup',
+		      'wrapper' => 'user_lookup',
+		      'method' => 'replace',
+		      'effect' => 'fade',
+	  	    'event' => 'change',
+		    );
+		    $form['vsite_users_first_name']['#type'] = 'textfield';
+	  	} 
 	  	if(array_key_exists('vsite_users_last_name',$form)) $form['vsite_users_last_name']['#weight'] = -2;
 	  	if(array_key_exists('vsite_users_title',$form)) $form['vsite_users_title']['#type'] = 'value';
 	  	if(array_key_exists('field_user_profile_photo',$form)) $form['field_user_profile_photo']['#type'] = 'value';

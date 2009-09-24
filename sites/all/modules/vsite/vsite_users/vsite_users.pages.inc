@@ -47,6 +47,18 @@ function vsite_users_add_user(){
   ctools_include('ajax');
   ctools_include('modal');
   
+//  ctools_add_js('misc/jquery.form.js');
+//  ctools_add_js('misc/ahah.js');
+//  ctools_add_js(array('ahah' => array('edit-vsite-users-first-name' => array('url' => '/site01/cp/users/user_lookup', 
+//                                      'event' => 'change', 
+//                                      'keypress' => '', 
+//                                      'wrapper' => 'user_lookup', 
+//                                      'selector' => '#edit-vsite-users-first-name', 
+//                                      'effect' => 'fade', 
+//                                      'method' => 'replace', 
+//                                      'progress' => Array('type' => 'throbber' ), 
+//                                      'button' => '' ))), 'setting');
+  
   $form_state = array(
     're_render' => FALSE,
     'ajax' => TRUE,
@@ -61,8 +73,25 @@ function vsite_users_add_user(){
     $output = array();
     $output[] = ctools_modal_command_dismiss();
   }else{
-    $output[0]['output'] .= '<script type="text/javascript">Drupal.cpAddCToolsColumns();' . "</script>\n";
+  	$output[0]['output'] = "<div style='wdith:550px;float:left;'>".$output[0]['output']."</div><div id='user_lookup' style='float:left;'>This is for good</div>";
   }
   
   ctools_ajax_render($output);
+}
+
+
+
+/**
+ * callback function for our user lookup
+ */
+function vsite_users_lookup_user(){
+	$output = "<h3>Add an existing user</h3>";
+	
+	$output .= "<ul>";
+	$output .= "<li><a class='add' href='add the user' /><span class='name'>Richard Brandon</span><span class='email'>rbrandon@iq.harvard.edu</span>";
+	$output .= "<li><a class='add' href='add the user' /><span class='name'>Mikey Brandon</span><span class='email'>mbrock@iq.harvard.edu</span>";
+	$output .= "</ul>";
+	
+	print drupal_to_js(array('status' => TRUE, 'data' => $output));
+  exit;
 }

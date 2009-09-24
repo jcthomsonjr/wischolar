@@ -1839,7 +1839,7 @@ function form_expand_ahah($element) {
     if ($ahah_binding['progress']['type'] == 'bar') {
       drupal_add_js('misc/progress.js');
     }
-
+    
     drupal_add_js(array('ahah' => array($element['#id'] => $ahah_binding)), 'setting');
 
     $js_added[$element['#id']] = TRUE;
