@@ -70,6 +70,9 @@ function vsite_content_files(){
  * Function to return output on cp content page
  */
 function vsite_content_content($type = NULL, $name = NULL){
+	//Add collapsible JS
+	drupal_add_js('/misc/collapse.js');
+	
   $type_url_str = str_replace('_', '-', $type);
   //element classes for 'add new' link
   $add_new_classes = 'add-new ' . 'add-new-' . $type_url_str ;
@@ -206,6 +209,22 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     
     $form['#prefix'] = '<fieldset class="group-account-basics collapsible"><legend>Filter options</legend>';
     $form['#suffix'] = '</fieldset>';
+  }
+}
+
+/**
+ * Edit the content view form to put it into fieldsets 
+ */
+function vsite_content_form_alter(&$form, $form_state, $form_id) {
+  
+  switch($form_id){
+    case 'views_exposed_form':
+        $form['#prefix'] = '<fieldset class="vsite_content_filter_box collapsible"><legend>Filter options</legend>';
+    break;
+    case 'views_bulk_operations_form__1':
+        $form['#prefix'] = '<fieldset class="vsite_content_bulk_update collapsible"><legend>Update Options</legend>';
+        $form['#suffix'] = '</fieldset>';
+    break;
   }
 }
   
