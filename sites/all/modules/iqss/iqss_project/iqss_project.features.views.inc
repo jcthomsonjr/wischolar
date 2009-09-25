@@ -187,8 +187,14 @@ function _iqss_project_views_default_views() {
     'weight' => 0,
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
+  $handler->override_option('title', 'Newest sites');
   $handler->override_option('items_per_page', 6);
   $handler->override_option('use_more', 1);
+  $handler->override_option('style_plugin', 'list');
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+    'type' => 'ul',
+  ));
   $handler->override_option('block_description', 'Letest web sites');
   $handler->override_option('block_caching', -1);
 
