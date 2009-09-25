@@ -41,6 +41,7 @@ function _scholar_core_modules() {
   // sites/all
     'activity',
     'advanced_help',
+    'button_style',
     'context',
     'context_contrib',
     'content_profile',
