@@ -134,7 +134,7 @@ function simport_import_sites(&$context){
 }
   //PHASE 2 - Load And Save The Content
 function simport_import_types(&$context){
-  
+
   $context['message'] = 'Created Scholar Content';
   //create custom biblio type - Working Paper
   $working_paper = simport_create_biblio_type();
@@ -144,14 +144,14 @@ function simport_import_types(&$context){
 
   foreach ($types as $oldtype => $newtype){
    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
-  // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'biblio', 559);
+   //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'biblio', 262);
     while ($data = db_fetch_object($sql)) {
       $old = unserialize($data ->data);
       $new = new stdClass();
        
       //set generic values
       simport_set_generic($old, $new);     
-         
+
       //set taxonomy term values
        simport_set_terms($old, $new);
 
@@ -167,11 +167,7 @@ function simport_import_types(&$context){
           break;
           
         case 'biblio':          
-         // dpm($old);
-          //dpm($new);
-          simport_set_biblio($old, $new); 
-          //dpm($new);
-          
+           simport_set_biblio($old, $new);           
           break;   
 
         case 'scholar_page':
@@ -516,8 +512,16 @@ function simport_set_generic($old, &$new){
   $new->language = 'en';
   $new -> uid = $vsite -> group -> uid;
   $new -> name = $vsite -> group -> name;
-  $new -> og_groups[$vsite -> group -> nid] = $vsite -> group -> nid; //double check on this
-  $new -> og_groups_both[$vsite -> group -> nid] = $vsite -> group -> name;
+  
+  $new -> og_public =1;
+  $new -> og_initial_groups = array($vsite->sid => (int)$vsite->sid);
+  $new -> og_groups[0] = (int)$vsite->sid;
+  $new -> og_nodeapi = '';
+  $new -> spaces_og = array('gid' =>  (int)$vsite->sid);
+  
+  
+  //$new -> og_groups[$vsite -> group -> nid] = $vsite -> group -> nid; //double check on this
+  //$new -> og_groups_both[$vsite -> group -> nid] = $vsite -> title;
 }
 
 function simport_set_announcement($old, &$new){  
@@ -834,5 +838,3 @@ function simport_cleanup(){
     }
   }
 }
-
-
