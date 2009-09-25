@@ -269,7 +269,7 @@ function _vsite_news_views_default_views() {
       ),
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'vsite_design_portrait_logo_linked',
+      'format' => 'square_50_50_linked',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -417,7 +417,7 @@ function _vsite_news_views_default_views() {
       ),
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'vsite_design_portrait_logo_linked',
+      'format' => 'square_35_35_linked',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -517,6 +517,25 @@ function _vsite_news_views_default_views() {
       'field' => 'flagged',
       'relationship' => 'flag_content_rel',
     ),
+    'title' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'title_op',
+        'identifier' => 'name',
+        'label' => '',
+        'optional' => 1,
+        'remember' => 0,
+      ),
+      'case' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -524,11 +543,12 @@ function _vsite_news_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('items_per_page', 24);
+  $handler->override_option('items_per_page', 49);
+  $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'grid');
   $handler->override_option('style_options', array(
     'grouping' => '',
-    'columns' => '4',
+    'columns' => '7',
     'alignment' => 'horizontal',
   ));
 
