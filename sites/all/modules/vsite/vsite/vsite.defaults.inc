@@ -63,17 +63,17 @@ function _vsite_content_default_fields() {
       'custom_title' => 0,
       'title_type' => 'textfield',
       'default_image' => array(
-        'filename' => 'default_logo.jpg',
-        'filepath' => 'sites/scholar/files/imagefield_default_images/default_logo_0.jpg',
+        'filename' => 'uniprofs1.jpg',
+        'filepath' => 'sites/scholar/files/imagefield_default_images/uniprofs1_1.jpg',
         'filemime' => 'image/jpeg',
         'source' => 'default_image_upload',
-        'destination' => 'sites/scholar/files/imagefield_default_images/default_logo_0.jpg',
-        'filesize' => 1875,
+        'destination' => 'sites/scholar/files/imagefield_default_images/uniprofs1_1.jpg',
+        'filesize' => 37046,
         'uid' => '1',
         'status' => 1,
-        'timestamp' => 1253482241,
+        'timestamp' => 1253894074,
         'origname' => '',
-        'fid' => '24',
+        'fid' => '23',
       ),
       'use_default_image' => 1,
       'label' => 'Site logo',
@@ -90,6 +90,47 @@ function _vsite_content_default_fields() {
   );
 
   return $fields;
+}
+
+/**
+ * Helper to implementation of hook_imagecache_default_presets().
+ */
+function _vsite_imagecache_default_presets() {
+  $items = array(
+    'square_35_35' => array(
+      'presetname' => 'square_35_35',
+      'actions' => array(
+        '0' => array(
+          'actionid' => '1',
+          'presetid' => '1',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_scale_and_crop',
+          'data' => array(
+            'width' => '35',
+            'height' => '35',
+          ),
+        ),
+      ),
+    ),
+    'square_50_50' => array(
+      'presetname' => 'square_50_50',
+      'actions' => array(
+        '0' => array(
+          'actionid' => '2',
+          'presetid' => '2',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_scale_and_crop',
+          'data' => array(
+            'width' => '50',
+            'height' => '50',
+          ),
+        ),
+      ),
+    ),
+  );
+  return $items;
 }
 
 /**
