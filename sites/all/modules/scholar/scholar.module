@@ -136,7 +136,7 @@ function scholar_mail_alter(&$message) {
 	switch ($message['id']) {
     //Edit the UCreate Email Message
 		case 'ucreate_ucreate-create':
-      	$params['subject'] = t('An account has been created for you at the Scholars\ Web Sites Project' ', array('!site_name' => variable_get('site_name', 'Scholar')));
+      	$params['subject'] = t('An account has been created for you at the !site', array('!site_name' => variable_get('site_name', 'Scholar')));
       	$a_body_parts = split("================================================",$message['body'],2);
       	$s_personal_message = (count($a_body_parts) == 2)?trim($a_body_parts[0]):"";
 
@@ -150,7 +150,7 @@ function scholar_mail_alter(&$message) {
       	$a_msg_variables = array(
       	  '!personal_message' => strlen($s_personal_message)?$s_personal_message."\n================================================\n\n":"",
 			    '!username' => $o_user->name,
-			    '!site' => variable_get('site_name', 'Drupal'),
+			    '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'),
 			    '!login_url' => user_pass_reset_url($o_user),
 			    '!uri' => $base_url,
 			    '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
@@ -160,7 +160,7 @@ function scholar_mail_alter(&$message) {
 			    '!edit_uri' => url('user/'. $o_user->uid .'/edit', array('absolute' => TRUE, 'language' => $message['language'])),
       	  '!password' => $password,
 			  );
-      	$message['body'] = t("Dear !firstname,\n\nA site owner at !site has created an account for you. You may now log in to !login_uri using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n(Note: This is a one-time login, so it can be used only once.)\n\n\Sincerely,\nThe Scholars' Web Sites Project", $a_msg_variables);
+      	$message['body'] = t("Dear !firstname,\n\nA site owner at the !site has created an account for you. You may now log in to !login_uri using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n(Note: This is a one-time login, so it can be used only once.)\n\n\Sincerely,\nThe !site Team", $a_msg_variables);
 
     break;
   }

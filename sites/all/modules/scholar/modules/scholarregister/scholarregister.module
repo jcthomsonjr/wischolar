@@ -165,7 +165,7 @@ function scholarregister_notify_user($vsite, $user){
 
   $body .= t("Dear Scholar,\n\n", $msg_variables);
 
-  $body .= t("Welcome to your new web site!\n\nTo finish the registration process please use the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nYou'll need to  either click on the following link or copy and paste the link directly into your web browser:\n!login_url\n\n(Note: This is a one-time login, and cannot be re-entered.)\n\nAfter logging in, you will be asked to change your password.\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe Scholars' Web Sites Project", $msg_variables);
+  $body .= t("Welcome to your new web site!\n\nTo finish the registration process please use the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nYou'll need to  either click on the following link or copy and paste the link directly into your web browser:\n!login_url\n\n(Note: This is a one-time login, and cannot be re-entered.)\n\nAfter logging in, you will be asked to change your password.\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
   // Put the completed $body in the $params array for hook_mail
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
