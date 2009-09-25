@@ -36,6 +36,8 @@
  */
 jQuery.modalContent = function(content, css, animation, speed) {
 
+	var animation = 'slideDown';
+	var speed = 'slow';
   // if we already ahve a modalContent, remove it
   if ( $('#modalBackdrop') ) $('#modalBackdrop').remove();
   if ( $('#modalContent') ) $('#modalContent').remove();
@@ -123,7 +125,7 @@ jQuery.modalContent = function(content, css, animation, speed) {
 
     // Get where we should move content to
     var modalContent = $('#modalContent');
-    var mdcTop = ( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
+    var mdcTop = 0; //( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
     var mdcLeft = ( winWidth / 2 ) - ( modalContent.outerWidth() / 2);
 
     // Apply the changes
@@ -148,7 +150,7 @@ jQuery.fn.modalContent = function(css, animation, speed)
     if ( ( animation != 'fadeIn' ) && ( animation != 'slideDown') ) animation = 'show';
   }
   
-  if ( !speed ) var speed = 'fast';
+  if ( !speed ) var speed = 'slow';
 
   // Build our base attributes and allow them to be overriden
   css = jQuery.extend({
@@ -184,6 +186,9 @@ jQuery.fn.unmodalContent = function(animation, speed)
   // Set a speed if we dont have one
   if ( !speed ) var speed = 'fast';
 
+	var animation = 'slide';
+	var speed = 'slow';
+  
   // Unbind the events we bound
   $(window).unbind('resize', modalContentResize);
   $('body').unbind( 'focus', modalEventHandler);
