@@ -110,7 +110,7 @@ function dyntextfield_field_settings($op, $field) {
       $columns['label'] = array(
         'type' => 'varchar',
         'length' => is_numeric($field['max_length']) ? $field['max_length'] : 255,
-        'not null' => TRUE,
+        'not null' => FALSE,
         'sortable' => TRUE,
         'views' => TRUE,
       );
