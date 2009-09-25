@@ -136,7 +136,7 @@ function scholar_mail_alter(&$message) {
 	switch ($message['id']) {
     //Edit the UCreate Email Message
 		case 'ucreate_ucreate-create':
-      	$params['subject'] = t('An account has been created for you at the !site', array('!site_name' => variable_get('site_name', 'Scholar')));
+      	$params['subject'] = t('An account has been created for you at the !site', array('!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')));
       	$a_body_parts = split("================================================",$message['body'],2);
       	$s_personal_message = (count($a_body_parts) == 2)?trim($a_body_parts[0]):"";
 
