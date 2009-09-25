@@ -220,11 +220,15 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
   
   switch($form_id){
     case 'views_exposed_form':
-        $form['#prefix'] = '<fieldset class="vsite_content_filter_box collapsible"><legend>Filter options</legend>';
+      if($form['#id'] == "views-exposed-form-vsite-content-default"){
+    	  $form['#prefix'] = '<fieldset class="vsite_content_filter_box collapsible"><legend>Filter options</legend>';
+      }
     break;
     case 'views_bulk_operations_form__1':
+    	if(arg(0) == 'cp' && arg(1) == 'content'){
         $form['#prefix'] = '<fieldset class="vsite_content_bulk_update collapsible"><legend>Update Options</legend>';
         $form['#suffix'] = '</fieldset>';
+    	}
     break;
   }
 }
