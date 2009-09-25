@@ -24,10 +24,10 @@ function simport_menu() {
 function simport_import(){
 
   $batch = array('operations' => array(),
-  'finished' => t('Import Completed'),
+  'finished' => 'simport_completed',
   'title' => t('Simport'),
-  'init_message' => t('Begin Import Process'),
-  'progress_message' => t('Ran @current out of @total processes'),
+  'init_message' => t('Initializing Import Process'),
+  'progress_message' => t('Completed @current out of @total processes'),
   'error_message' => t('An error occurred'),
   );
 
@@ -50,16 +50,20 @@ function simport_import(){
   }
 }
 
+function simport_completed($success, $results, $operations){
+$message = ($success) ? 'Import Process Completed' : 'Errors Durring Import Process';
+drupal_set_message($message);
+drupal_goto('admin');
+}
+
 /**
  * Initial function to begin import script
  * @return unknown
  */
 function simport_import_sites(&$context){ 
-  
-  $context['message'] = 'Creating Scholar Sites';
+  $context['message'] = 'Created Scholar Users and Sites';
 
-  
-  //import the table with serialized D5 scholars site data
+    //import the table with serialized D5 scholars site data
   if(!db_table_exists('scholar_export_data')){
     _simport_exportdata();
     }
@@ -129,7 +133,9 @@ function simport_import_sites(&$context){
   }
 }
   //PHASE 2 - Load And Save The Content
-function simport_import_types(){
+function simport_import_types(&$context){
+  
+  $context['message'] = 'Created Scholar Content';
   //create custom biblio type - Working Paper
   $working_paper = simport_create_biblio_type();
   
@@ -197,7 +203,8 @@ function simport_import_types(){
   }
 }
 
-function simport_import_logo(){
+function simport_import_logo(&$content){
+  $context['message'] = 'Retrieved logos';
   //PHASE 3 - Set The logo
   //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 4);
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
