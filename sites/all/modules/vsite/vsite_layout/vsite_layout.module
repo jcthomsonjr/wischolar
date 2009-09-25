@@ -289,20 +289,18 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
   	}//For each widget in a region
   }//For Each region in the settings
 
-  //Apply new default context block settings
-  if($o_feature){
-  	foreach (drupal_map_assoc(spaces_features_items('context', $feature->name)) as $s_context) {
-  		if(array_key_exists($s_context,$contexts)){
-  			//Apply new feature context block settings
-  			$contexts[$s_context]->block = $a_replacement_block;
-  			$a_feat_replacement_block = array();
-  		}
-  	}
-  }else{
-  	//Front Page or no feature context
-  	$contexts['cp-section-layout']->block = $a_replacement_block;
-  }
-
+  $a_contexts = context_active_contexts();
+  $b_context_loaded = false;
+  foreach ($a_contexts as $s_context => $o_context) {
+    if(array_key_exists($s_context,$contexts) && !$b_context_loaded){
+      //Apply new feature context block settings
+      $contexts[$s_context]->block = $a_replacement_block;
+      $b_context_loaded = true;
+    }elseif(array_key_exists($s_context,$contexts)){
+    	$contexts[$s_context]->block = array();
+    }
+  }  
+  
 	return true;
 }
 
