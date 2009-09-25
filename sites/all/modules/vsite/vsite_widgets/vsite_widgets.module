@@ -145,15 +145,14 @@ function vsite_widgets_vsite_widgets(){
 function vsite_widgets_context_default_contexts() {
   $items = array ();
   $items [] = array (
-      'namespace' => 'scholar',
-		  'attribute' => 'section',
-		  'value' => 'front',
-		  'description' => 'The front page context',
-		  'path' => array(
-        '<front>' => '<front>',
-      ),
-      'block' => module_invoke_all('vsite_widgets'),
-   );
+      'namespace' => 'cp', 
+      'attribute' => 'section', 
+      'value' => 'layout', 
+      'spaces_type' => array (
+      '0' => 'og' 
+    ), 
+    'block' => module_invoke_all('vsite_widgets'),
+  );
   
   return $items;
 }

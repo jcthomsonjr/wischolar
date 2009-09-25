@@ -233,7 +233,7 @@ function vsite_layout_region_widgets($scolar = false,$page_type='all'){
 
   $a_region_widgets = array();
   foreach($a_widgets as $s_widget_key => $widget){
-  	
+  	$widget = (array)$widget;
   	if(!$a_site_settings && $widget['region']){
       $a_region_widgets[$widget['region']][] = $widget;
   	}elseif ($a_site_settings && array_key_exists($s_widget_key,$a_site_settings)){
@@ -279,34 +279,28 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
   if(!$a_region_widgets) $a_region_widgets = vsite_layout_region_widgets($space);
 
   $a_replacement_block = array();
-  $a_feat_replacement_block = array();
   foreach ($a_region_widgets as $s_region => $a_region){
   	$n_weight = 0;
   	foreach ($a_region as $a_widget){
   		$a_widget['region'] = $s_region;
   		$a_widget['weight'] = $n_weight++;
-  		if($o_feature && $o_feature->name == $a_widget['module']){
-  			//Build new block settings for the feature
-  			$a_feat_replacement_block[] = $a_widget;
-  		}else{
-  			//Build new block settings for the (cp-section-layout)
-  			$a_replacement_block[] = $a_widget;
-  		}
+  	  //Build new block settings for the (cp-section-layout)
+  		$a_replacement_block[] = $a_widget;	
   	}//For each widget in a region
   }//For Each region in the settings
 
-  //Apply new default context block settings
-  $contexts['cp-section-layout']->block = $a_replacement_block;
-  if($o_feature){
-  	foreach (drupal_map_assoc(spaces_features_items('context', $feature->name)) as $s_context) {
-  		if(array_key_exists($s_context,$contexts)){
-  			//Apply new feature context block settings
-  			$contexts[$s_context]->block = $a_feat_replacement_block;
-  			$a_feat_replacement_block = array();
-  		}
-  	}
-  }
-
+  $a_contexts = context_active_contexts();
+  $b_context_loaded = false;
+  foreach ($a_contexts as $s_context => $o_context) {
+    if(array_key_exists($s_context,$contexts) && !$b_context_loaded){
+      //Apply new feature context block settings
+      $contexts[$s_context]->block = $a_replacement_block;
+      $b_context_loaded = true;
+    }elseif(array_key_exists($s_context,$contexts)){
+    	$contexts[$s_context]->block = array();
+    }
+  }  
+  
 	return true;
 }
 
