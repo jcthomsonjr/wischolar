@@ -19,10 +19,42 @@ function simport_menu() {
 }
 
 /**
+ * Batch Process iniitiation
+ */
+function simport_import(){
+
+  $batch = array('operations' => array(),
+  'finished' => t('Import Completed'),
+  'title' => t('Simport'),
+  'init_message' => t('Begin Import Process'),
+  'progress_message' => t('Ran @current out of @total processes'),
+  'error_message' => t('An error occurred'),
+  );
+
+  // Add an array declaring the callback function for your
+  // batch process and an array of callback arguments
+  $batch['operations'][] = array('simport_import_sites', array());
+  $batch['operations'][] = array('simport_import_types', array());
+  $batch['operations'][] = array('simport_import_logo', array());
+  $batch['operations'][] = array('simport_import_frontpage', array());
+  $batch['operations'][] = array('simport_get_files', array());
+  $batch['operations'][] = array('simport_sync_themes', array());
+  $batch['operations'][] = array('simport_cleanup', array());
+  // add whatever logic you need
+  //$batch['operations'][] = array('another_batch_function', array($arg1, $arg2));
+
+  if (!empty($batch['operations'])) {
+    batch_set($batch);
+    // batch_process() only needed if not inside a form _submit handler :
+    batch_process();
+  }
+}
+
+/**
  * Initial function to begin import script
  * @return unknown
  */
-function simport_import(){ 
+function simport_import_sites(){ 
   
   //import the table with serialized D5 scholars site data
   if(!db_table_exists('scholar_export_data')){
@@ -81,15 +113,20 @@ function simport_import(){
     //save all the changes/additions to the space
     spaces_save($new);
     
-    //update theme in og settings (seperate from vsite setting)
-    /*$og_node = node_load(array('nid' => $new->sid));
-    $og_node -> og_theme = $new -> settings['theme'];
-    drupal_write_record('og', $og_node, array('nid')); */
-    //dpm($og_node); return;
+    //define position to be set as og_description
+    $position = isset($old -> scholar_position) ? $old -> scholar_position : 'Scholar';
+    //define site title - firstname lastname (if not set just user the username)
+    $site_title = (isset($old -> scholar_firstname) && isset($old -> scholar_lastname)) ? 
+    $old -> scholar_firstname . ' ' . $old -> scholar_lastname : $new -> group -> name;
+    //update og_description in db
+    db_query("UPDATE {og} SET og_description = '%s' WHERE nid = %d", $position, (int) $new ->sid);
+    //TODO: could user node_load then node_save, but I think db_query is less expensive
+    db_query("UPDATE {node} SET title = '%s' WHERE nid = %d", $site_title, (int) $new ->sid);
+    db_query("UPDATE {node_revisions} SET title = '%s' WHERE nid = %d", $site_title, (int) $new ->sid);
   }
-
+}
   //PHASE 2 - Load And Save The Content
-
+function simport_import_types(){
   //create custom biblio type - Working Paper
   $working_paper = simport_create_biblio_type();
   
@@ -121,10 +158,10 @@ function simport_import(){
           break;
           
         case 'biblio':          
-          dpm($old);
+         // dpm($old);
           //dpm($new);
           simport_set_biblio($old, $new); 
-          dpm($new);
+          //dpm($new);
           
           break;   
 
@@ -155,9 +192,11 @@ function simport_import(){
      db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$last);
     }    
   }
-  
+}
+
+function simport_import_logo(){
   //PHASE 3 - Set The logo
-   //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 4);
+  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 4);
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
   while($data = db_fetch_object($sql)){
     $old = unserialize($data -> data);
@@ -165,37 +204,34 @@ function simport_import(){
       simport_set_logo($old);
     }
   }
+}
   
   //PHASE 4 - Set The Front Page
   //loop thorugh all the admin_scholar types now that all nodes have been imported
   
-  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
-  while($data = db_fetch_object($sql)){
+  function simport_import_frontpage(){
 
-    //get the old site node object
-    $old = unserialize($data ->data);
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
+    while($data = db_fetch_object($sql)){
 
-    if ($old->scholar_admin_site_front_node){
-      //load the new vsite
-      $vsite = simport_get_new_vsite($old -> nid);
+      //get the old site node object
+      $old = unserialize($data ->data);
 
-      //lget the new frontpage nid
-      $new_front_nid =  simport_get_new_nid($old->scholar_admin_site_front_node);
+      if ($old->scholar_admin_site_front_node){
+        //load the new vsite
+        $vsite = simport_get_new_vsite($old -> nid);
 
-      //set frontpage value after content created
-      simport_set_frontpage($old, $vsite, $new_front_nid, $old->scholar_admin_site_front_node);
+        //lget the new frontpage nid
+        $new_front_nid =  simport_get_new_nid($old->scholar_admin_site_front_node);
 
-      //save the vsite settings for front page
-      spaces_save($vsite);
+        //set frontpage value after content created
+        simport_set_frontpage($old, $vsite, $new_front_nid, $old->scholar_admin_site_front_node);
+
+        //save the vsite settings for front page
+        spaces_save($vsite);
+      }
     }
   }
-  
-  //PHASE 5 - import the files
- simport_get_files(); 
-  
- //PHASE 6 make sure themes are sync'd
- simport_sync_themes();  
-}
 
 /**
  * Create the user
@@ -764,4 +800,29 @@ function _simport_get_fileroot(){
   $fileroot= explode($end_str, $s);
   return $fileroot[0]; 
 }
+
+/**
+ * Do some clean up tasks - such as remove the D5 scholar site automated welcome nodes
+ */
+function simport_cleanup(){
+  $str = 'Welcome to my new site%';
+  $sql = db_query("SELECT nid, title, type FROM {node} WHERE title LIKE '%s' AND type = '%s'",$str, 'announcement');
+  while ($data = db_fetch_object($sql)){
+
+    $node = node_load($data -> nid);
+
+    //removing "Welcome" nodes
+    db_query('DELETE FROM {node} WHERE nid = %d', $node->nid);
+    db_query('DELETE FROM {node_revisions} WHERE nid = %d', $node->nid);
+
+    // Clear the page and block caches.
+    cache_clear_all();
+
+    // Remove this node from the search index if needed.
+    if (function_exists('search_wipe')) {
+      search_wipe($node->nid, 'node');
+    }
+  }
+}
+
 
