@@ -54,7 +54,10 @@ function simport_import(){
  * Initial function to begin import script
  * @return unknown
  */
-function simport_import_sites(){ 
+function simport_import_sites(&$context){ 
+  
+  $context['message'] = 'Creating Scholar Sites';
+
   
   //import the table with serialized D5 scholars site data
   if(!db_table_exists('scholar_export_data')){
@@ -328,11 +331,11 @@ function simport_set_logo($old){
     
     else{
       //no filepath defined means this will not work, so return
-      watchdog('simport', 'logo filepath not present %title.', array('%title' => $file['title']), WATCHDOG_NOTICE);
+      watchdog('simport', 'logo filepath not present %filename.', array('%filename' => basename($source)), WATCHDOG_NOTICE);
       return;
     }
     
-        $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title;
+        $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->purl;
     
     if (file_exists($source)){        
       
@@ -351,7 +354,7 @@ function simport_set_logo($old){
 
     //replacing the file name but keeping file ext
     $filename = explode('.', basename($source)); 
-    $new_filename = $vsite ->title . '.' . $filename[1];
+    $new_filename = $vsite ->purl . '.' . $filename[1];
    
     //define new file - absolute path
     $new_file = $dest . '/' . $new_filename;
@@ -365,7 +368,7 @@ function simport_set_logo($old){
     file_copy($orig_file, $new_file );    
     
     //define new path for logo
-    $new_path = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->title . '/' . basename($new_file);
+    $new_path = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->purl . '/' . basename($new_file);
     
     $file = new stdClass();
     $file -> uid = $vsite-> group -> uid;
@@ -386,7 +389,7 @@ function simport_set_logo($old){
     spaces_save($vsite);
     }
     else{
-      watchdog('simport', 'logo file does not exist in source location:  %title.', array('%title' => $file['title']), WATCHDOG_NOTICE);
+      //watchdog('simport', 'logo file does not exist in source location:  %filename.', array('%filename' => basename($source)), WATCHDOG_NOTICE);
     }
     return;
 }
