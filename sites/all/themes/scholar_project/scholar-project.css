@@ -192,12 +192,13 @@ li#get-form a {
   }
 
 
-#content-row-3 {
+#content-row-3, #block-views-iqss_project_sites-block_1 {
   background: url(images/front-row3-bg.png) repeat-x #fefefe;
   min-height: 300px;
+  position:relative;
   }
 
-#content-row-3 h3 {
+#content-row-3 h3 , #block-views-iqss_project_sites-block_1 h3 {
   background: url(images/triangle-new-left.png) no-repeat transparent;
   width: 51px;
   height: 46px;
@@ -206,32 +207,74 @@ li#get-form a {
   margin: 0;
   }
 
-#search-person {
+#search-person, #block-views-iqss_project_sites-block_1 .views-exposed-form {
   width: 340px;
   height: 40px;
   background: url(images/search-person.png) no-repeat transparent;
   float:right;
   margin: 15px;
+  margin: 0;
   }
 
-#new-sites {
+
+#block-views-iqss_project_sites-block_1 .views-exposed-form .views-exposed-widget, #block-views-iqss_project_sites-block_1 .views-exposed-form .views-exposed-widget .edit-title-wrapper,#block-views-iqss_project_sites-block_1 .views-exposed-form .form-item, #block-views-iqss_project_sites-block_1 .views-exposed-form .form-submit, #block-views-iqss_project_sites-block_1 .views-exposed-form .clear-block {
+  margin: 0;
+  padding: 0;
+  }
+
+#block-views-iqss_project_sites-block_1 .views-exposed-form .form-text {
+  float:left;
+  margin: 12px 0 0 5px;
+  width:263px;
+  border: none;
+  height: 16px;
+  }
+
+#block-views-iqss_project_sites-block_1 .views-exposed-form .form-submit {
+  float:right;
+  background: transparent;
+  border: none;
+  width: 68px;
+  margin-top: 5px;
+  height: 30px;
+  text-indent: -9999em;
+  }
+
+#search-person, #block-views-iqss_project_sites-block_1 .views-exposed-form label {
+  display:none;
+  }
+
+#new-sites, #block-views-iqss_project_sites-block_1 {
   clear: both;
   }
 
-.new-site-block {
+.new-site-block, #block-views-iqss_project_sites-block_1 .views-row {
   float: left;
   width: 134px;
   margin-left: 24px;
   }
 
-.new-site-block img {
+.new-site-block img, #block-views-iqss_project_sites-block_1 img {
   border: 1px solid #535252;
+  width: 100px;
+  height: 100px;
   }
 
 .new-site-block h5 {
   font-weight: normal;
   line-height: 1.3em;
   }
+
+#block-views-iqss_project_sites-block_1 ul, #block-views-iqss_project_sites-block_1 .more-link {
+  clear: both;
+  }
+
+#block-views-iqss_project_sites-block_1 .views-admin-links {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  }
+
 
 
 /* Different Tables for admin use */
