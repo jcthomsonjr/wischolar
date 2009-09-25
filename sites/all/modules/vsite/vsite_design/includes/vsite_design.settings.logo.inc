@@ -32,8 +32,6 @@ class vsite_design_settings_logo implements space_setting {
 
 
     if ($s_current) {
-    	drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/jquery.Jcrop.min.js');
-    	drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/cp-logo-crop.js');
     	vsite_include('vsiteapi');
       $form['current_logo'] = array('#value' => theme('vsite_design_logo',$space,false,'','',array('id' => 'logo_preview'),true));
       $form['x_cord'] = array('#type' => 'hidden');

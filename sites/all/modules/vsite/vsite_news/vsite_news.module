@@ -57,7 +57,7 @@ function vsite_news_menu(){
   );
   
   $items['cp/news/following'] = array(
-    'title' => 'Following',
+    'title' => 'My Friends',
     'page callback' => 'vsite_news_following',
       'access callback' => 'cp_access_cp',
     'type' => MENU_LOCAL_TASK,
@@ -65,7 +65,7 @@ function vsite_news_menu(){
   );
   
   $items['cp/news/sites'] = array(
-    'title' => 'My Friends',
+    'title' => 'Tag Friends',
     'page callback' => 'vsite_news_sites',
       'access callback' => 'cp_access_cp',
     'type' => MENU_LOCAL_TASK,
