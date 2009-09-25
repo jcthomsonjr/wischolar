@@ -63,27 +63,27 @@ function simport_node_add_imagefield_image($source, $field_name, &$node){
  * @param unknown_type $uid
  */
 function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
-  
+
   //determine site files directory, if set
-   $dir = isset($vsite)? '/'. $vsite ->title : '';
-   
+  $dir = isset($vsite)? '/'. $vsite -> purl : '';
+
   //create full path to destination directory TODO: should get destination path token/filefield paths in content type settings.
   $full_dest_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . $dir;
 
-  //create directory  
+  //create directory
   file_check_directory($full_dest_path, $mode = 1, $form_item = NULL);
-  
+
   //copy file
   file_copy($source, $full_dest_path, $replace = FILE_EXISTS_REPLACE);
-  
+
   if ($file){
-  //customize a object a little bit
-  $file -> uid = $node -> uid;
-  $file-> filepath = variable_get('file_directory_path', '') . $dir .  '/' . $file-> filename;
-  $file -> status = 1;
-  $file -> timestamp = time();
+    //customize a object a little bit
+    $file -> uid = $node -> uid;
+    $file-> filepath = variable_get('file_directory_path', '') . $dir .  '/' . $file-> filename;
+    $file -> status = 1;
+    $file -> timestamp = time();
   }
-  
+
   // Get file information from source
   else{
     $file = new stdClass();
