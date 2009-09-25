@@ -43,7 +43,7 @@ function _scholar_publications_content_default_fields() {
     'widget_active' => '1',
     'type' => 'dyntextfield',
     'required' => '0',
-    'multiple' => '0',
+    'multiple' => '1',
     'module' => 'dyntextfield',
     'active' => '1',
     'max_length' => '255',
