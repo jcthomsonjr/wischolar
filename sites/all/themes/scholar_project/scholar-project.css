@@ -192,10 +192,18 @@ li#get-form a {
   }
 
 
-#content-row-3, #block-views-iqss_project_sites-block_1 {
+#content-row-3, #block-views-iqss_project_sites-block_1, #footer {
   background: url(images/front-row3-bg.png) repeat-x #fefefe;
-  min-height: 300px;
+  min-height: 603px;
   position:relative;
+  border: 1px solid #e1e1e1;
+  border-top: none;
+  border-bottom: none;
+  }
+
+#footer {
+  background: #fefefe;
+  min-height: 0;
   }
 
 #content-row-3 h3 , #block-views-iqss_project_sites-block_1 h3 {
@@ -204,7 +212,7 @@ li#get-form a {
   height: 46px;
   text-indent: -999em;
   float:left;
-  margin: 0;
+  margin: 0 0 0 -1px;
   }
 
 #search-person, #block-views-iqss_project_sites-block_1 .views-exposed-form {
@@ -212,8 +220,7 @@ li#get-form a {
   height: 40px;
   background: url(images/search-person.png) no-repeat transparent;
   float:right;
-  margin: 15px;
-  margin: 0;
+  margin: 5px 18px 10px 0;
   }
 
 
@@ -246,6 +253,7 @@ li#get-form a {
 
 #new-sites, #block-views-iqss_project_sites-block_1 {
   clear: both;
+
   }
 
 .new-site-block, #block-views-iqss_project_sites-block_1 .views-row {
@@ -260,9 +268,15 @@ li#get-form a {
   height: 100px;
   }
 
-.new-site-block h5 {
+.new-site-block h5, #block-views-iqss_project_sites-block_1 .views-field-description p{
   font-weight: normal;
   line-height: 1.3em;
+  margin-bottom: 0;
+  }
+
+#block-views-iqss_project_sites-block_1 .views-field-title a {
+  color: #313030;
+  font-weight: bold;
   }
 
 #block-views-iqss_project_sites-block_1 ul, #block-views-iqss_project_sites-block_1 .more-link {
@@ -275,6 +289,20 @@ li#get-form a {
   right: 0;
   }
 
+
+#block-views-iqss_project_sites-block_1 .more-link {
+  text-indent: -999em;
+  float: right;
+  margin-right: 18px;
+  text-align: left;
+  }
+
+#block-views-iqss_project_sites-block_1 .more-link a {
+  display:block;
+  width: 67px;
+  height: 32px;
+  background: url(images/more.png) no-repeat transparent;
+  }
 
 
 /* Different Tables for admin use */
