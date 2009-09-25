@@ -33,24 +33,19 @@ function vsite_vsiteboot(){
     views_invalidate_cache(); // Rebuild the views.
     menu_rebuild(); // Rebuild the menu.
     features_rebuild(); // Features rebuild scripts.
-    
+
     module_load_include('inc', 'vsite', 'includes/vsiteboot');
-    
+
     _scholar_testingcontent();
     _vsite_filefield_paths_config();
     _vsite_global_taxonomy();
 
-     //import the table with serialized D5 scholars site data
-     /*if(!db_table_exists('scholar_export_data')){
-    _simport_exportdata();
-    }
-    
-    //import D5 scholars site content
-    simport_import();*/
-     
     variable_set('scholar_installed', 1);
+
+    //import D5 scholars site content - Called after scholar_installed 
+    //variable is set to 1 so it isn't continuous loop
+    simport_import();
   }
-  
   // return nothing
   return '';
 }
