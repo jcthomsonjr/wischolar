@@ -543,6 +543,7 @@ function _vsite_news_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 49);
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'grid');
@@ -550,6 +551,140 @@ function _vsite_news_views_default_views() {
     'grouping' => '',
     'columns' => '7',
     'alignment' => 'horizontal',
+  ));
+  $handler = $view->new_display('page', 'Colleagues', 'page_1');
+  $handler->override_option('relationships', array(
+    'flag_content_rel' => array(
+      'label' => 'flag',
+      'required' => 1,
+      'flag' => 'vsite_follow',
+      'user_scope' => 'current',
+      'id' => 'flag_content_rel',
+      'table' => 'node',
+      'field' => 'flag_content_rel',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'vsite' => 'vsite',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'title_op',
+        'identifier' => 'name',
+        'label' => '',
+        'optional' => 1,
+        'remember' => 0,
+      ),
+      'case' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('path', 'cp/news/colleagues');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'Colleagues',
+    'description' => 'Colleagues',
+    'weight' => '0',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'none',
+    'title' => '',
+    'description' => '',
+    'weight' => '0',
+  ));
+  $handler = $view->new_display('page', 'My friends', 'page_2');
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'vsite' => 'vsite',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'title_op',
+        'identifier' => 'name',
+        'label' => '',
+        'optional' => 1,
+        'remember' => 0,
+      ),
+      'case' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('path', 'cp/news/colleagues/friends');
+  $handler->override_option('menu', array(
+    'type' => 'default tab',
+    'title' => 'My friends',
+    'description' => 'Colleagues I follow',
+    'weight' => '0',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'none',
+    'title' => '',
+    'description' => '',
+    'weight' => '0',
+  ));
+  $handler = $view->new_display('page', 'All', 'page_3');
+  $handler->override_option('path', 'cp/news/colleagues/all');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'All',
+    'description' => 'All colleagues',
+    'weight' => '1',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'none',
+    'title' => '',
+    'description' => '',
+    'weight' => 0,
   ));
 
   $views[$view->name] = $view;
