@@ -145,13 +145,34 @@ function vsite_widgets_vsite_widgets(){
 function vsite_widgets_context_default_contexts() {
   $items = array ();
   $items [] = array (
-      'namespace' => 'scholar',
+      'namespace' => 'vsite',
 		  'attribute' => 'subsection',
 		  'value' => 'front',
 		  'description' => 'The front page context',
 		  'path' => array(
         'home' => 'home',
       ),
+      'block' => array(),
+   );
+   $items [] = array (
+      'namespace' => 'vsite',
+      'attribute' => 'subsection',
+      'value' => 'feature',
+      'description' => 'Active when you are on a feature page',
+      'block' => array(),
+   );
+   $items [] = array (
+      'namespace' => 'vsite',
+      'attribute' => 'section',
+      'value' => 'cp',
+      'description' => 'Active when you are in the CP section of a vsite',
+      'block' => array(),
+   );
+   $items [] = array (
+      'namespace' => 'vsite',
+      'attribute' => 'section',
+      'value' => 'public',
+      'description' => 'Active when you are in the public section of a vsite',
       'block' => module_invoke_all('vsite_widgets'),
    );
   

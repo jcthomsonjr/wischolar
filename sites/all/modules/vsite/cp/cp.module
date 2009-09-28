@@ -61,20 +61,16 @@ function cp_init(){
    
    // controlcp context
   if (arg(0) == 'cp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
-    context_set('scholar', 'section', 'cp');
+    context_set('vsite', 'section', 'cp');
     $toolbar = TRUE;
     // since we are here .. initialize cp theme
     _cp_init_theme();
-  }
-  
-  else {
-  	if ($vsite){
-  	  context_set('scholar', 'section', 'vsite');
-  	  og_set_theme($vsite -> group); // TODO why dont you get it from space settings
+  }elseif($vsite) {
+ 	  context_set('vsite', 'section', 'public');
+    og_set_theme($vsite -> group); // TODO why dont you get it from space settings
   	  
-  	  if ($vsite -> admin_access()){
-  	    $toolbar = TRUE;
-  	  }
+	  if ($vsite -> admin_access()){
+     $toolbar = TRUE;
   	}
   }
   

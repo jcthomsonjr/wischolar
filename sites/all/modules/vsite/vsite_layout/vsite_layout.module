@@ -195,21 +195,17 @@ function vsite_layout_region_widgets_callback(){
 function vsite_layout_filtered_widgets($page_type='all'){
 
 	$contexts = context_contexts();
-	$a_widgets = module_invoke_all('vsite_widgets');
+	
+	//The Default Widgets avalible everywhere
+	$a_widgets = $contexts['vsite-section-public']->block;
 	
 	if($page_type == 'all'){
-    return $a_widgets;
+    return $a_widgets; //Just the widgets avalible everywhere
 	}elseif($page_type == 'front'){
-	  return array_merge($a_widgets,$contexts['scholar-subsection-front']->block);
+	  return array_merge($a_widgets,$contexts['vsite-subsection-front']->block); //Everywhere plus the front page
+	}elseif(isset($contexts["scholar-feature-{$page_type}"])){
+		return array_merge($a_widgets,$contexts["scholar-feature-{$page_type}"]->block);  //Everywhere plus the feature
 	}
-	
-  $features = spaces_features($space->type, TRUE);
-  if(array_key_exists($page_type,$features) && array_key_exists('context',$features[$page_type]->info['features'])){
-  	foreach ($features[$page_type]->info['features']['context'] as $s_sub_context){
-  		if(!is_array($contexts[$s_sub_context]->block)) continue;//Blocks Avalible?
-  		$a_widgets = array_merge($a_widgets,$contexts[$s_sub_context]->block);
-  	}
-  }//Feature Widgets
 
   return $a_widgets;
 }
@@ -266,58 +262,62 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
 	//Don't run this if:
 	//  1. there are no active contexts
 	//  2. We are not in a vsite
-	//  3. We are in CP
-	if(!count($contexts) || !($space = vsite_get_vsite()) || array_key_exists('cp-section-cp',$contexts)) return;
-	
-	/*
-	 * @param $a_region_widgets stores array of widgets by region 
+	//  3. We are not public facing
+	if(!count($contexts) || !($space = vsite_get_vsite()) || !array_key_exists('vsite-section-public',$contexts)) return;
+
+	/**
+	 * Load the feature context
 	 */
-	$a_region_widgets = false;
-	$o_feature = false;
-
-	$features = spaces_features();
-  foreach ($features as $feature) {
-  	$feature_contexts = drupal_map_assoc(spaces_features_items('context', $feature->name));
-  	if(!array_intersect($feature_contexts,array_keys($contexts))) continue;
-
-  	$o_feature = $feature;
-  	$a_region_widgets = vsite_layout_region_widgets($space,$feature->name);
-  	break;
-  }//Loop through features and get the current feature and the settings (widgets) for that feature
+	$s_feature = context_get('scholar', 'feature');
+	$feature_context = isset($contexts["scholar-feature-{$s_feature}"]) ? $contexts["scholar-feature-{$s_feature}"] : NULL;
+	$s_feature_module = false;
+	
+	//Loop through features and get the current feature for the context
+  if($feature_context){
+	  foreach (spaces_features() as $feature){
+		  if(in_array("scholar-feature-{$s_feature}",drupal_map_assoc(spaces_features_items('context', $feature->name)))){
+		  	$s_feature_module = $feature->name; 
+		  	break;
+		  }//Break when you find the feature
+	  }//Loop through them
+  }//We have a feature
+  
+	/**
+	 * Load the Settings
+	 */
+	if($feature_context && $s_feature_module){
+		$a_region_widgets = vsite_layout_region_widgets($space,$s_feature_module);
+	}//Is a feature  context active
 
   //If we are not in a feature and we are on the front page get it's settings
-  if(!$a_region_widgets && vsite_is_front()) $a_region_widgets = vsite_layout_region_widgets($space,'front');
+  if(!$a_region_widgets && array_key_exists('scholar-subsection-front',$contexts)) $a_region_widgets = vsite_layout_region_widgets($space,'front');
 
-  //If we still don't have the settings get the default (all page) settings
+  //If we still don't have the settings get the default settings
   if(!$a_region_widgets) $a_region_widgets = vsite_layout_region_widgets($space);
 
   /**
-   * Build The replacement block for the current context
+   * Remove existing blocks from the public / sub contexts
    */
-  $a_replacement_block = array();
-  foreach ($a_region_widgets as $s_region => $a_region){
-  	$n_weight = 0;
-  	foreach ($a_region as $a_widget){
-  		$a_widget['region'] = $s_region;
-  		$a_widget['weight'] = $n_weight++;
-  	  //Build new block settings for the (cp-section-layout)
-  		$a_replacement_block[] = $a_widget;	
-  	}//For each widget in a region
-  }//For Each region in the settings
-
+  $contexts['vsite-section-public']->block = array();
+  if($feature_context) $feature_context->block = array();
+  
   /**
-   * Apply the new block to the active context
+   * Build The replacement block from the settings
    */
-  $b_context_loaded = false;
-  foreach ($contexts as $s_context => $o_context) {
-    if(!$b_context_loaded){
-      //Apply new feature context block settings
-      $contexts[$s_context]->block = $a_replacement_block;
-      $b_context_loaded = true;
-    }else{
-    	$contexts[$s_context]->block = array();
-    }
-  }  
+  foreach ($a_region_widgets as $s_region => $a_region){
+	  $n_weight = 0;
+	  foreach ($a_region as $a_widget){
+	    $a_widget['region'] = $s_region;
+	    $a_widget['weight'] = $n_weight++;
+	    if($feature_context && $s_feature_module == $a_widget['module']){
+	      //Build new block settings for the feature
+	      $feature_context->block[] = $a_widget;
+	    }else{
+	      //Build new block settings for the public context
+	      $contexts['vsite-section-public']->block[] = $a_widget;
+	    }
+	  }//For each widget in a region
+  }//For Each region in the settings
   
 	return true;
 }
