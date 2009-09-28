@@ -23,3 +23,10 @@ function scholar_classes_scholar_vocabulary_defaults() {
   ) 
  );
 }
+
+
+function scholar_classes_theme_registry_alter(&$theme_registry){
+  $original_path = array_shift($theme_registry['node']['theme paths']);
+  $this_module_path = drupal_get_path('module', 'scholar_classes');
+  array_unshift($theme_registry['node']['theme paths'], $original_path, $this_module_path);
+}
