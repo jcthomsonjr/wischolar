@@ -151,20 +151,7 @@ function _scholar_image_gallery_context_default_contexts() {
       '0' => 'gallery',
       '1' => 'image',
     ),
-    'views' => array(
-      '0' => 'gallery',
-    ),
-    'block' => array(
-      'views_gallery-block_1' => array(
-        'module' => 'views',
-        'delta' => 'gallery-block_1',
-        'weight' => 20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'gallery: Latest image',
-        'type' => 'context_ui',
-      ),
-    ),
+    'menu' => 'photos',
   );
   return $items;
 }
@@ -222,6 +209,28 @@ function _scholar_image_gallery_imagecache_default_presets() {
       ),
     ),
   );
+  return $items;
+}
+
+/**
+ * Helper to implementation of hook_menu_default_items().
+ */
+function _scholar_image_gallery_menu_default_items() {
+  $items = array();
+
+  $items[] = array(
+    'title' => 'Photos',
+    'path' => 'photos',
+    'weight' => '0',
+    'description' => 'my photos',
+  );
+  // Translatables
+  array(
+    t('Photos'),
+    t('my photos'),
+  );
+
+
   return $items;
 }
 

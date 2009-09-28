@@ -316,6 +316,74 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
+  $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->override_option('arguments', array());
+  $handler->override_option('filters', array(
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'relationship' => 'none',
+    ),
+    'current' => array(
+      'operator' => 'all',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
+      'relationship' => 'none',
+    ),
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'gallery' => 'gallery',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('style_plugin', 'default');
+  $handler->override_option('style_options', array());
+  $handler->override_option('row_plugin', 'node');
+  $handler->override_option('path', 'photos');
+  $handler->override_option('menu', array(
+    'type' => 'normal',
+    'title' => 'Photos',
+    'description' => 'my photos',
+    'weight' => '0',
+    'name' => 'features',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'none',
+    'title' => '',
+    'description' => '',
+    'weight' => 0,
+  ));
 
   $views[$view->name] = $view;
 
