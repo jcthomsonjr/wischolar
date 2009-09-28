@@ -151,7 +151,21 @@ function _scholar_image_gallery_context_default_contexts() {
       '0' => 'gallery',
       '1' => 'image',
     ),
+    'views' => array(
+      '0' => 'scholar_image_gallery',
+    ),
     'menu' => 'photos',
+    'block' => array(
+      'views_scholar_image_gallery-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_image_gallery-block_1',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Recent images',
+        'type' => 'context_ui',
+      ),
+    ),
   );
   return $items;
 }

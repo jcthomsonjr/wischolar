@@ -22,8 +22,29 @@ function scholar_image_gallery_context_links_alter(&$links) {
     $active_node = menu_get_object();
     if (is_object($active_node) && $active_node -> nid && $active_node -> type == 'gallery'){
       $links['image']['href'] = 'node/add/image/'. $active_node -> nid . '?' . 'destination=node/'. $active_node -> nid;
+    } else {
+      unset($links['image']);
     }
   }
+}
+
+
+/**
+ * hook vsite_sidgets
+ * @return unknown_type
+ */
+function scholar_image_gallery_vsite_widgets(){
+  $items = array();
+  $items['scholar_image_gallery-block_1'] = array(
+    'module' => 'scholar_image_gallery', 
+    'delta' => 'scholar_image_gallery-block_1', 
+    'weight' => 20, 
+    'region' => 'header_left', 
+    'status' => '0', 
+    'label' => 'Scholar site logo', 
+    'type' => 'context_ui' 
+  );
+  return $items;
 }
 
 

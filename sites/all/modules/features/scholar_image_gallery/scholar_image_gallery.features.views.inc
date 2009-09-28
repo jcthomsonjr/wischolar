@@ -263,58 +263,55 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('argument_mode', 'nid');
   $handler->override_option('default_argument', 'nid');
   $handler = $view->new_display('block', 'Latest image', 'block_1');
-  $handler->override_option('arguments', array(
-    'field_gallery_nid' => array(
-      'default_action' => 'default',
-      'style_plugin' => 'default_summary',
-      'style_options' => array(),
-      'wildcard' => 'all',
-      'wildcard_substitution' => 'All',
-      'title' => 'Latest image',
-      'breadcrumb' => '',
-      'default_argument_type' => 'fixed',
-      'default_argument' => '',
-      'validate_type' => 'node',
-      'validate_fail' => 'not found',
-      'break_phrase' => 0,
-      'not' => 0,
-      'id' => 'field_gallery_nid',
-      'table' => 'node_data_field_gallery',
-      'field' => 'field_gallery_nid',
-      'validate_user_argument_type' => 'uid',
-      'validate_user_roles' => array(),
-      'relationship' => 'none',
-      'default_options_div_prefix' => '',
-      'default_argument_user' => 0,
-      'default_argument_fixed' => '58',
-      'default_argument_php' => '',
-      'validate_argument_node_type' => array(
-        'gallery' => 'gallery',
+  $handler->override_option('fields', array(
+    'field_gallery_image_fid' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
       ),
-      'validate_argument_node_access' => 1,
-      'validate_argument_nid_type' => 'nid',
-      'validate_argument_vocabulary' => array(),
-      'validate_argument_type' => 'tid',
-      'validate_argument_transform' => 0,
-      'validate_user_restrict_roles' => 0,
-      'validate_argument_php' => '',
+      'link_to_node' => 0,
+      'label_type' => 'none',
+      'format' => 'square_50_50_imagelink',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_gallery_image_fid',
+      'table' => 'node_data_field_gallery_image',
+      'field' => 'field_gallery_image_fid',
+      'relationship' => 'none',
       'override' => array(
         'button' => 'Use default',
       ),
-      'validate_argument_node_flag_name' => '*relationship*',
-      'validate_argument_node_flag_test' => 'flaggable',
-      'validate_argument_node_flag_id_type' => 'id',
-      'validate_argument_user_flag_name' => '*relationship*',
-      'validate_argument_user_flag_test' => 'flaggable',
-      'validate_argument_user_flag_id_type' => 'id',
-      'validate_argument_is_member' => 0,
-      'validate_argument_signup_status' => 'any',
-      'validate_argument_signup_node_access' => 1,
     ),
   ));
-  $handler->override_option('items_per_page', 1);
+  $handler->override_option('arguments', array());
+  $handler->override_option('title', 'Recent photos');
+  $handler->override_option('items_per_page', 4);
   $handler->override_option('use_pager', '0');
-  $handler->override_option('block_description', '');
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+    'columns' => '2',
+    'alignment' => 'horizontal',
+  ));
+  $handler->override_option('block_description', 'Recent images');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('arguments', array());
