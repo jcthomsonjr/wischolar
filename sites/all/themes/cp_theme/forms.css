@@ -66,7 +66,7 @@ select option {
 	line-height: 127%;
 	}
 
-.section-cp .fieldset-wrapper div.description, .section-cp table div.description, .section-cp .form-item div.description, #edit-settings-front-bio-title-wrapper {
+.section-cp .fieldset-wrapper div.description, .section-cp table div.description, .section-cp .form-item div.description {
   margin-left: 0;
   padding: 0;
   margin-top: 3px;
@@ -181,8 +181,17 @@ div.ctools-modal-content #ucreate-user-form .form-item label {
 
 /* CONTENT PAGES FILTERING AND UPDATING OPTIONS */
 
-fieldset.vsite_content_filter_box, #views-bulk-operations-select {
+/* Removing formating for now 9/28/09
+
+fieldset.vsite_content_filter_box {
   float: left;
+  }
+
+#views-bulk-operations-select {
+  position: absolute;
+  left:135px;
+  top:48px;
+  top: 3.7em;
   }
 
 #views-bulk-operations-form--1 .views-node-selector {
@@ -194,19 +203,11 @@ fieldset.vsite_content_filter_box, #views-bulk-operations-select {
   }
 
 .vsite_content_filter_box .fieldset-wrapper, #views-bulk-operations-select .fieldset-wrapper {
-  left: 0;
-  top: -6px;
-  margin: 0;
+  margin-left: 0;
+  margin-top: -6px;
   font-size:0.8em;
   padding:20px 20px 10px;
   background: #EAEBE9;
-  position: absolute;
-  -moz-border-radius-bottomleft: 8px;
-  -moz-border-radius-bottomright: 8px;
-  -moz-border-radius-topright: 8px;
-  -webkit-border-radius-bottom-left-radius: 8px;
-  -webkit-border-radius-bottom-right-radius: 8px;
-  -webkit-border-radius-top-right-radius: 8px;
   }
 
 .view-vsite-content .vsite_content_filter_box legend, #views-bulk-operations-select legend {
@@ -222,3 +223,5 @@ fieldset.vsite_content_filter_box, #views-bulk-operations-select {
 .view-vsite-content fieldset.collapsed legend.collapse-processed, #views-bulk-operations-select fieldset.collapsed legend.collapse-processed {
   background: transparent;
   }
+
+*/
