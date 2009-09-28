@@ -20,8 +20,8 @@ function _scholar_image_gallery_node_info() {
       'description' => t('An individual gallery photograph.'),
       'has_title' => '1',
       'title_label' => t('Title'),
-      'has_body' => '1',
-      'body_label' => t('Description'),
+      'has_body' => '0',
+      'body_label' => t(''),
     ),
   );
   return $items;
