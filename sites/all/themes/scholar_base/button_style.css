@@ -12,6 +12,7 @@
 table .form-actions {
   margin: 0;
 	}
+
 .form-button-wrapper, li.button a, a.button {
   /* Customizable */
   background: transparent url(images/buttons-sprite.png) no-repeat right top;
@@ -25,6 +26,7 @@ table .form-actions {
   cursor: pointer;
   cursor: hand;
 	}
+
 .form-button-wrapper input, li.button a span, a.button span {
   /* Customizable */
   background: transparent url(images/buttons-sprite.png) no-repeat left top;
@@ -33,7 +35,7 @@ table .form-actions {
   text-shadow:0 1px 0 rgba(206, 214, 221, 0.75);
   font-weight: normal;
   font-size: 12px;
-  height: 26px;
+  height: 25px;
   line-height: 24px;
   padding: 0 5px 2px 16px;
   /* Static */
@@ -46,19 +48,23 @@ table .form-actions {
   cursor: pointer;
   cursor: hand;
 	}
+
 .form-button-wrapper:active, li.button a:active, a.button:active {
-  background-position: right -24px;
+  background-position: right -25px;
 	}
+
 .form-button-wrapper input:active, li.button a span:active, a.button span:active {
-  background-position: left -24px;
+  background-position: left -25px;
 	}
 
 /**
  * Button link overrides.
  */
+
 li.button a span, a.button span {
   padding-bottom: 0;
 	}
+
 li.button a:hover, a.button:hover {
   color: #fff;
 	}
@@ -66,6 +72,7 @@ li.button a:hover, a.button:hover {
 /**
  * Third-party module support styles.
  */
+
 .fivestar-widget .form-button-wrapper { margin: 0; padding: 0; background: transparent none; 	}
 
 .views-exposed-form .views-exposed-widget .form-submit {
