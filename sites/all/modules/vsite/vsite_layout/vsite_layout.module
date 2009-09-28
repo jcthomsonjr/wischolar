@@ -203,8 +203,8 @@ function vsite_layout_filtered_widgets($page_type='all'){
     return $a_widgets; //Just the widgets avalible everywhere
 	}elseif($page_type == 'front'){
 	  return array_merge($a_widgets,$contexts['vsite-subsection-front']->block); //Everywhere plus the front page
-	}elseif(isset($contexts["scholar-feature-{$page_type}"])){
-		return array_merge($a_widgets,$contexts["scholar-feature-{$page_type}"]->block);  //Everywhere plus the feature
+	}elseif(($feature_contexts = drupal_map_assoc(spaces_features_items('context', $page_type))) && count($feature_contexts) && array_key_exists(current($feature_contexts),$contexts) && is_array($contexts[current($feature_contexts)]->block)){
+		return array_merge($a_widgets,$contexts[current($feature_contexts)]->block);  //Everywhere plus the feature
 	}
 
   return $a_widgets;
@@ -306,6 +306,7 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
    */
   foreach ($a_region_widgets as $s_region => $a_region){
 	  $n_weight = 0;
+	  if($s_region == 'unused') continue;
 	  foreach ($a_region as $a_widget){
 	    $a_widget['region'] = $s_region;
 	    $a_widget['weight'] = $n_weight++;
