@@ -150,8 +150,8 @@ function vsite_preprocess_views_view(&$vars) {
         if (!empty($nodetype) && node_access('create', $nodetype) && ($space->type == 'og')) {
           $types = node_get_types();
           if ($type = $types[$nodetype]) {
-            $output .= t('Please add your first <span class="show-content-type">!type</span> to get started:', array('!type' => $type->name));
-            $output .= "<span class='buttons'>". theme('context_links', context_links()) ."</span>";
+            $output .= '<div class="empty-content"><p>' .t('Please add your first <span class="show-content-type">!type</span> to get started:', array('!type' => $type->name)) .'</p>';
+            $output .=  theme('context_links', context_links()) ."</div>";
           }
         }
         else {
