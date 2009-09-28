@@ -45,3 +45,13 @@ function scholar_feeds_strongarm(){
   
   return $conf;
 }
+
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_feeds_context_links_alter(&$links) {
+  if (!empty($links['feed_item'])) {
+    unset($links['feed_item']);
+  }
+}
