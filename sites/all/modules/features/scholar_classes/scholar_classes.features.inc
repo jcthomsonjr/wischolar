@@ -3,6 +3,7 @@
 /**
  * Implementation of hook_content_default_fields().
  */
+
 function scholar_classes_content_default_fields() {
   module_load_include('inc', 'scholar_classes', 'scholar_classes.defaults');
   $args = func_get_args();

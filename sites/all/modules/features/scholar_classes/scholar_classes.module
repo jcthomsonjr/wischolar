@@ -2,28 +2,31 @@
 
 include_once('scholar_classes.features.inc');
 
+function scholar_classes_init(){
+  drupal_add_css(drupal_get_path('module', 'scholar_classes') . 'scholar-classes.css');
+  }
+
 function scholar_classes_scholar_vocabulary_defaults() {
   return array (
     0 => array (
-    'name' => 'class_categories', 
-    'content_types' => array ('class' => 1), 
-    'properties' => array (), 
+    'name' => 'class_categories',
+    'content_types' => array ('class' => 1),
+    'properties' => array (),
     'terms' => array (
       0 => array (
-    	'name' => 'Statistics', 
-    	'desription' => 'Statistics', 
-    	'properties' => array () 
-      ), 
-      1 => array (
-    	'name' => 'Political Economy', 
-    	'desription' => 'Political Economy', 
-    	'properties' => array () 
+    	'name' => 'Statistics',
+    	'desription' => 'Statistics',
+    	'properties' => array ()
       ),
-    ) 
-  ) 
+      1 => array (
+    	'name' => 'Political Economy',
+    	'desription' => 'Political Economy',
+    	'properties' => array ()
+      ),
+    )
+  )
  );
 }
-
 
 function scholar_classes_theme_registry_alter(&$theme_registry){
   $original_path = array_shift($theme_registry['node']['theme paths']);
