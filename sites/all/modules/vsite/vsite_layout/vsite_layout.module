@@ -195,15 +195,21 @@ function vsite_layout_region_widgets_callback(){
 function vsite_layout_filtered_widgets($page_type='all'){
 
 	$contexts = context_contexts();
-  $a_widgets = $contexts['cp-section-layout']->block;
-
+	$a_widgets = module_invoke_all('vsite_widgets');
+	
+	if($page_type == 'all'){
+    return $a_widgets;
+	}elseif($page_type == 'front'){
+	  return array_merge($a_widgets,$contexts['scholar-subsection-front']->block);
+	}
+	
   $features = spaces_features($space->type, TRUE);
   if(array_key_exists($page_type,$features) && array_key_exists('context',$features[$page_type]->info['features'])){
   	foreach ($features[$page_type]->info['features']['context'] as $s_sub_context){
   		if(!is_array($contexts[$s_sub_context]->block)) continue;//Blocks Avalible?
   		$a_widgets = array_merge($a_widgets,$contexts[$s_sub_context]->block);
   	}
-  }
+  }//Feature Widgets
 
   return $a_widgets;
 }
@@ -233,7 +239,7 @@ function vsite_layout_region_widgets($scolar = false,$page_type='all'){
 
   $a_region_widgets = array();
   foreach($a_widgets as $s_widget_key => $widget){
-  	
+  	$widget = (array)$widget;
   	if(!$a_site_settings && $widget['region']){
       $a_region_widgets[$widget['region']][] = $widget;
   	}elseif ($a_site_settings && array_key_exists($s_widget_key,$a_site_settings)){
@@ -257,10 +263,17 @@ function vsite_layout_region_widgets($scolar = false,$page_type='all'){
  */
 
 function vsite_layout_context_active_contexts_alter(&$contexts){
-	if(!array_key_exists('cp-section-layout',$contexts)) return; //Don't run this on CP
+	//Don't run this if:
+	//  1. there are no active contexts
+	//  2. We are not in a vsite
+	//  3. We are in CP
+	if(!count($contexts) || !($space = vsite_get_vsite()) || array_key_exists('cp-section-cp',$contexts)) return;
+	
+	/*
+	 * @param $a_region_widgets stores array of widgets by region 
+	 */
 	$a_region_widgets = false;
 	$o_feature = false;
-  $space = vsite_get_vsite();
 
 	$features = spaces_features();
   foreach ($features as $feature) {
@@ -278,35 +291,34 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
   //If we still don't have the settings get the default (all page) settings
   if(!$a_region_widgets) $a_region_widgets = vsite_layout_region_widgets($space);
 
+  /**
+   * Build The replacement block for the current context
+   */
   $a_replacement_block = array();
-  $a_feat_replacement_block = array();
   foreach ($a_region_widgets as $s_region => $a_region){
   	$n_weight = 0;
   	foreach ($a_region as $a_widget){
   		$a_widget['region'] = $s_region;
   		$a_widget['weight'] = $n_weight++;
-  		if($o_feature && $o_feature->name == $a_widget['module']){
-  			//Build new block settings for the feature
-  			$a_feat_replacement_block[] = $a_widget;
-  		}else{
-  			//Build new block settings for the (cp-section-layout)
-  			$a_replacement_block[] = $a_widget;
-  		}
+  	  //Build new block settings for the (cp-section-layout)
+  		$a_replacement_block[] = $a_widget;	
   	}//For each widget in a region
   }//For Each region in the settings
 
-  //Apply new default context block settings
-  $contexts['cp-section-layout']->block = $a_replacement_block;
-  if($o_feature){
-  	foreach (drupal_map_assoc(spaces_features_items('context', $feature->name)) as $s_context) {
-  		if(array_key_exists($s_context,$contexts)){
-  			//Apply new feature context block settings
-  			$contexts[$s_context]->block = $a_feat_replacement_block;
-  			$a_feat_replacement_block = array();
-  		}
-  	}
-  }
-
+  /**
+   * Apply the new block to the active context
+   */
+  $b_context_loaded = false;
+  foreach ($contexts as $s_context => $o_context) {
+    if(!$b_context_loaded){
+      //Apply new feature context block settings
+      $contexts[$s_context]->block = $a_replacement_block;
+      $b_context_loaded = true;
+    }else{
+    	$contexts[$s_context]->block = array();
+    }
+  }  
+  
 	return true;
 }
 

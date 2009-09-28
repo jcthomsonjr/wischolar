@@ -83,7 +83,7 @@ function _scholar_biocv_context_default_contexts() {
     'value' => 'biocv',
     'description' => 'scholar > biocv',
     'path' => array(
-      'bio' => 'bio',
+      'biocv' => 'biocv',
     ),
   );
   return $items;
