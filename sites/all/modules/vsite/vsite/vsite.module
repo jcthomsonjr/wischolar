@@ -62,12 +62,12 @@ function vsite_views_api(){
 /**
  * Implementation of hook_strongarm()
  */
-function vsite_strongarm() {
+function vsite_strongarm(){
   $conf = array();
   
   $conf['og_content_type_usage_vsite'] = 'group';
   
-  $conf['scholar_content_type'] = 'vsite'; 
+  $conf['scholar_content_type'] = 'vsite';
   $conf['menu_primary_links_source'] = 'features';
   
   // scholar menus TODO change to vsite_*
@@ -85,24 +85,38 @@ function vsite_strongarm() {
   );
   */
   
-	
-
   $conf['upload_list_default'] = "1";
   $conf['upload_extensions_default'] = "jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp";
   $conf['upload_uploadsize_default'] = "5";
   $conf['upload_usersize_default'] = "100";
   //$conf['upload_max_resolution'] = 0;
   
+
   // itweak settings
   
+
   $node_types = node_get_types();
-  foreach($node_types as $type){
-  	  $conf["itweak_upload_node_display_" . $type -> type] = '3';
-  	  $conf["itweak_upload_teaser_display_" . $type -> type] = '3';
+  foreach ( $node_types as $type ) {
+    
+    $conf['node_options_'. $type -> type] = array('status');
+    
+    // itweak
+    $conf["itweak_upload_collapse_" . $type->type] = '0';
+    $conf["itweak_upload_node_display_" . $type->type] = '3';
+    $conf["itweak_upload_teaser_display_" . $type->type] = '3';
+    $conf["itweak_upload_teaser_images_" . $type->type] = '8';
+    $conf["itweak_upload_thumbnail_link_default_" . $type->type] = '_default';
+    $conf["itweak_upload_thumbnail_link_node_" . $type->type] = 'lightbox2slideshow';
+    $conf["itweak_upload_thumbnail_link_teaser_" . $type->type] = 'lightbox2slideshow';
+    $conf["itweak_upload_thumbnail_link_upload_" . $type->type] = '_default';
+    $conf["itweak_upload_thumbnail_preset_default_" . $type->type] = '_default';
+    $conf["itweak_upload_thumbnail_preset_node_" . $type->type] = '_default';
+    $conf["itweak_upload_thumbnail_preset_teaser_" . $type->type] = '_default';
+    $conf["itweak_upload_thumbnail_preset_upload_" . $type->type] = '_default';
+    $conf["itweak_upload_upload_preview_" . $type->type] = 1;
+  
   }
   
-  
-
   return $conf;
 }
 
