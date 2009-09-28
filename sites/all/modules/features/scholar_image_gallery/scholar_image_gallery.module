@@ -28,6 +28,12 @@ function scholar_image_gallery_context_links_alter(&$links) {
   }
 }
 
+function scholar_image_gallery_strongarm(){
+  $conf = array();
+  $conf['upload_image'] = 0;
+  $conf['upload_gallery'] = 0;
+  return $conf;
+}
 
 /**
  * hook vsite_sidgets
