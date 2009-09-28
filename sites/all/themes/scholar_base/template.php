@@ -33,20 +33,21 @@ function phptemplate_node_submitted($node){
  * the current active contexts.
  */
 function scholar_base_context_links($links) {
-  $output = '';
+  $output = array();
   foreach ($links as $link) {
     $options = $link;
-    $options['attributes']['class'] = isset($link['attributes']['class']) ? $link['attributes']['class'] : 'button';
+    $options['attributes']['class'] = isset($link['attributes']['class']) ? $link['attributes']['class'] : 'context-button';
     if (!empty($link['custom'])) {
-      $output .= l($link['title'], $link['href'], $options);
+      $output[]= l($link['title'], $link['href'], $options);
     }
     else {
-      $output .= l('+ '. t('Add !type', array('!type' => $link['title'])), $link['href'], $options);
+      $output[]= l('+ '. t('Add !type', array('!type' => $link['title'])), $link['href'], $options);
     }
   }
   
   if($output){
-    $output = '<div class = "context-links">' . $output . '</div>';
+    $output = theme('item_list', $output,  $title = NULL, $type = 'ul', $attributes = array("class" => "context-links"));
+    //$output = '<div class = "context-links">' . $output . '</div>';
   }
   return $output;
 }
