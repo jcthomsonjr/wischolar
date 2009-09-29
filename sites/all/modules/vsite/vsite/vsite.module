@@ -286,6 +286,16 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   }
 }
 
+function vsite_preprocess_page(&$vars){
+  
+  if ($feature = context_get('scholar', 'feature')) {
+    drupal_add_css(drupal_get_path('module', 'scholar_' . $feature) . '/scholar_' . $feature . '.css');
+  }
+  
+  $vars['css'] = drupal_add_css();
+  $vars['styles'] = drupal_get_css();
+}
+
 /**
  * Implementation of hook_form_alter()
  **/
