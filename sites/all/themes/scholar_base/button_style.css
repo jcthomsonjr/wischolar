@@ -27,6 +27,7 @@ table .form-actions {
   line-height: 0;
   cursor: pointer;
   cursor: hand;
+  position: relative;
 	}
 
 .form-button-wrapper input, li.button a span, a.button span {
@@ -71,6 +72,12 @@ li.button a:hover, a.button:hover {
   color: #fff;
 	}
 
+.ahah-progress-throbber	{
+  position:absolute;
+  right: -20px
+  top: 0;
+  }
+
 /**
  * Third-party module support styles.
  */
@@ -81,7 +88,8 @@ li.button a:hover, a.button:hover {
 #edit-views-apply,
 #edit-views-reset,
 .views-tabset .extra input,
-form#views-ui-preview-form input#preview-submit {
+form#views-ui-preview-form input#preview-submit,
+.filefield-element input.form-submit {
   margin: 0 0 0 -16px !important;
   white-space: nowrap;
   	}
