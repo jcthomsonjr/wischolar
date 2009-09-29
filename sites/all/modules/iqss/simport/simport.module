@@ -64,9 +64,10 @@ function simport_import_sites(&$context){
   $context['message'] = 'Created Scholar Users and Sites';
 
     //import the table with serialized D5 scholars site data
-  if(!db_table_exists('scholar_export_data')){
-    _simport_exportdata();
+  if(db_table_exists('scholar_export_data')){
+    db_drop_table(&$ret, 'scholar_export_data');       
     }
+    _simport_exportdata();
 
   //setting a few path related system vars
   variable_set('simport_current_path', _simport_get_fileroot());
