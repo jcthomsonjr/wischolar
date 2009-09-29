@@ -108,7 +108,7 @@ function scholar_export_save_node($nid) {
   $sql = db_query("SELECT o.mid, o.gid, o.is_primary, m.pid, m.path, m.title, m.description, m.weight, m.type FROM {og_menu2} o INNER JOIN {menu} m USING(mid) HAVING gid = %d", $nid);
   while ($data = db_fetch_object($sql)){
   //construct menu links information
-    $node -> menu_links = array(
+    $node -> scholar_menu_links[] = array(
     'mid' => $data -> mid,
     'gid' => $data -> gid,
     'is_primary' => $data -> is_primary,
