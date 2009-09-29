@@ -138,13 +138,13 @@ function simport_import_types(&$context){
   $context['message'] = 'Created Scholar Content';
   //create custom biblio type - Working Paper
   $working_paper = simport_create_biblio_type();
-  
+
   //get the type mappings from old to new
   $types = _simport_map_content_types();
 
   foreach ($types as $oldtype => $newtype){
    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
-   //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'biblio', 262);
+ // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE  id = %d", 24);
     while ($data = db_fetch_object($sql)) {
       $old = unserialize($data ->data);
       $new = new stdClass();
@@ -415,40 +415,47 @@ function simport_set_shield($old, &$new){
  * @param unknown_type $old
  * @param unknown_type $new
  */
-function simport_set_terms($old, &$new){ 
+function simport_set_terms($old, &$new){
   vsite_include('vsiteapi');
+  include_once(dirname(__FILE__) . '/simport.api.inc');
+
   //check to see of any terms are set in old node
   if (count($old -> tags)){
     $vsite = simport_get_new_vsite($old -> og_groups[0]);
 
     foreach($old -> tags as $vocab_id => $values){
       //NOTE: vocab id 6 is the global vocabularyon the D5 scholars site
-
-      if ($vocab_id == '6'){
-        //store the array information in a property called global_taxonomy for use later
-        $new -> global_taxonomy = $values;
-      }
-
-      else{
+      if ($vocab_id !== 6){
         foreach($values as $old_term){
           //get vocab(s) for the vsite
           $vocab_list = vsite_get_vocabs($vsite, $new -> type);
+//echo "<pre>" ;print_r($vocab_list) ; print_r($new); 
+          foreach($vocab_list as $vocab){                      
+            //check to see if terms already exists
+            $tid = simport_import_term_exists($old_term->name, $vocab->vid);
+                    
+            //term already exists
+            if ($tid){
+              //add term id to node object
+              $new -> taxonomy[$tid] = taxonomy_get_term($tid);
+              return;
+            }
+              
+            if (!$tid){
+              //if term does not exist within vocab, then add it
+              $term['vid'] = $vocab -> vid;
+              $term['name'] = $old_term -> name;
+              $term['description'] = empty($old_term -> description) ? NULL : $old_term -> description;
+              //$term['weight'] = mt_rand(0,10);
 
-          foreach($vocab_list as $vocab){
-    
-          $term['vid'] = $vocab -> vid;
-          $term['name'] = $old_term -> name;
-          $term['description'] = empty($old_term -> description) ? NULL : $old_term -> description;
-          //$term['weight'] = mt_rand(0,10);
-         
-          $status = taxonomy_save_term($term);
-         
-          if ($status){
-            //get the newly created term id. TODO: is this the best way???
-            $tid = db_last_insert_id('term_data', 'tid');
-          }
-          //now add the terms to the $new node object
-          $new -> taxonomy[$vocab -> vid] = array($tid);
+              $status = taxonomy_save_term($term); 
+
+              //get the newly created term id. TODO: is this the best way???           
+             $tid = db_result(db_query("SELECT MAX(tid) FROM {term_data}"));
+//print $tid; die;
+              //now add the terms to the $new node object
+              $new -> taxonomy[$tid] = taxonomy_get_term($tid);
+            }
           }
         }
       }
@@ -837,4 +844,12 @@ function simport_cleanup(){
       search_wipe($node->nid, 'node');
     }
   }
+}
+
+/**
+ * Check if term exists in a vocab
+ */
+function simport_import_term_exists($term, $vid){  
+    //returns string $tid of term or false
+  return db_result(db_query("SELECT tid FROM {term_data} WHERE vid = %d AND (LCASE(name) LIKE LCASE( '%s'))", (int)$vid, $term));
 }
