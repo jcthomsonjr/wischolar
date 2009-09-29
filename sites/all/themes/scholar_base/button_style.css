@@ -10,9 +10,6 @@
   zoom: 1;
 	}
 
-#edit-views-apply, #edit-views-reset {
-  margin-top:0 !important;
-  }
 
 table .form-actions {
   margin: 0;
@@ -80,6 +77,11 @@ li.button a:hover, a.button:hover {
 
 .fivestar-widget .form-button-wrapper { margin: 0; padding: 0; background: transparent none; 	}
 
-.views-exposed-form .views-exposed-widget .form-submit {
-  margin-top: 0;
+.views-exposed-form .views-exposed-widget .form-submit,
+#edit-views-apply,
+#edit-views-reset,
+.views-tabset .extra input,
+form#views-ui-preview-form input#preview-submit {
+  margin: 0 0 0 -16px !important;
+  white-space: nowrap;
   	}
