@@ -59,6 +59,7 @@ function _scholar_core_modules() {
     'imageapi_gd',
     'itweak_upload',
     'jquery_ui',
+    'lightbox2',
     'og',
     'og_access',
     'og_views', 
