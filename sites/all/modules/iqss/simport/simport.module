@@ -70,7 +70,8 @@ function simport_import_sites(&$context){
 
   //setting a few path related system vars
   variable_set('simport_current_path', _simport_get_fileroot());
-  variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
+ // variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
+  variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-scholar');  
   variable_set('file_directory_path', conf_path() .'/files');
 
   //PHASE 1 - Load the VSITE And Settings
@@ -127,7 +128,7 @@ function simport_import_sites(&$context){
     $old -> scholar_firstname . ' ' . $old -> scholar_lastname : $new -> group -> name;
     //update og_description in db
     db_query("UPDATE {og} SET og_description = '%s' WHERE nid = %d", $position, (int) $new ->sid);
-    //TODO: could user node_load then node_save, but I think db_query is less expensive
+    //Update site name to new site name convention
     db_query("UPDATE {node} SET title = '%s' WHERE nid = %d", $site_title, (int) $new ->sid);
     db_query("UPDATE {node_revisions} SET title = '%s' WHERE nid = %d", $site_title, (int) $new ->sid);
   }
@@ -417,7 +418,7 @@ function simport_set_shield($old, &$new){
  */
 function simport_set_terms($old, &$new){
   vsite_include('vsiteapi');
-  include_once(dirname(__FILE__) . '/simport.api.inc');
+  //include_once(dirname(__FILE__) . '/simport.api.inc');
 
   //check to see of any terms are set in old node
   if (count($old -> tags)){
@@ -429,7 +430,7 @@ function simport_set_terms($old, &$new){
         foreach($values as $old_term){
           //get vocab(s) for the vsite
           $vocab_list = vsite_get_vocabs($vsite, $new -> type);
-//echo "<pre>" ;print_r($vocab_list) ; print_r($new); 
+
           foreach($vocab_list as $vocab){                      
             //check to see if terms already exists
             $tid = simport_import_term_exists($old_term->name, $vocab->vid);
