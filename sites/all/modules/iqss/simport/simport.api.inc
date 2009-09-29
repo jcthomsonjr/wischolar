@@ -103,3 +103,14 @@ function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
   return $file;
 }
 
+/**
+ * Pass it a vocalulary id and returns array of terms belonging to it
+ * @param int $vid- vocabulary id
+ */
+function simport_import_list_terms($vid){
+  $vocab = taxonomy_get_tree($vid);
+  foreach ($vocab as $term){    
+  $terms[] = strtolower($term -> name);    
+  }
+  return $terms;
+}
