@@ -557,3 +557,48 @@ function dyntextfield_form_alter(&$form, $form_state, $form_id) {
   
   return $form;
 }
+
+/**
+ * Provide an interface for exporting our fields to bibtex
+ * 
+ * @param $pub object publication
+ * @param $bibtex string 
+ */
+function dyntextfield_biblio_bibtex_export_post($pub, &$bibtex){
+
+  $node = node_load($pub->nid);
+  $result = db_query("SELECT field_name  FROM `content_node_field_instance` WHERE `type_name` = '%s' AND `widget_type` = 'dyntextfield_widget' ",$pub->type);
+  
+  $i = 0;
+  while($a_field = db_fetch_array($result)){
+  	$s_field_name = $a_field['field_name'];
+	  if(isset($node->$s_field_name) && is_array($node->$s_field_name)){
+	  	foreach ($node->$s_field_name as $field){
+	  		if(strlen($field['value'])) $bibtex .= _bibtex_format_entry('biblio_extra'.++$i, "{$field['label']}: {$field['value']}");
+	  	}
+	  }//Add these fields to the biblio export
+  }
+}
+
+/**
+ * Provide an interface for impoting our fields to the biblio type
+ * 
+ * @param $entry array settings
+ * @param $node array 
+ */
+function dyntextfield_biblio_bibtex_import($entry, &$node){
+
+  $result = db_query("SELECT field_name  FROM `content_node_field_instance` WHERE `type_name` = 'biblio' AND `widget_type` = 'dyntextfield_widget' ");
+  $a_field = db_fetch_array($result);
+  
+  $i = 0;
+  if($a_field){
+  	$s_field_name = $a_field['field_name'];
+  	$node[$s_field_name] = array();
+  	while(array_key_exists("biblio_extra".++$i,$entry)){
+  		list($s_key,$s_value) = split(":",$entry["biblio_extra".$i],2);
+  		if(!strlen(trim($s_value))) $s_value = $s_key;
+  		$node[$s_field_name][] = array('dyntext_fieldset' => array('label' => trim($s_key),'value' => trim($s_value)));
+  	}
+  }
+}

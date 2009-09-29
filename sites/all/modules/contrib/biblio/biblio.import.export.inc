@@ -615,6 +615,17 @@ function biblio_bibtex_export($results) {
         $journal = $pub->biblio_secondary_title;
         break;
     }
+    
+    // Allow other modules to adjust the bibtex entries. Functions must
+    // be named modulename_biblio_bibtex_export.
+    // We don't use module_invoke_all to enable passing by reference.
+    foreach (module_implements('biblio_bibtex_export_pre') as $module) {
+      $function = $module . '_biblio_bibtex_export_pre';
+      // Pass all values that are already set.
+      $function ($pub, $type, $journal, $booktitle, $organization, $series, $school);
+    }
+    
+    
     $bibtex .= '@'. $type .' {';
     $bibtex .= ($pub->biblio_citekey) ? $pub->biblio_citekey  : "";
     $bibtex .= _bibtex_format_entry('title', $pub->title);
@@ -657,6 +668,13 @@ function biblio_bibtex_export($results) {
     $bibtex .= _bibtex_format_entry('doi', $pub->biblio_doi);
     $bibtex .= _bibtex_format_entry('url', $pub->biblio_url);
 
+    // Another hook to add fields which are not defined above.
+    foreach (module_implements('biblio_bibtex_export_post') as $module) {
+      $function = $module . '_biblio_bibtex_export_post';
+      // Pass all values that are already set.
+      $function ($pub, $bibtex);
+    }
+    
     $a = $e = array();
     foreach ((array)$pub->biblio_contributors[1] as $auth) $a[] = trim($auth['name']);
     foreach ((array)$pub->biblio_contributors[2] as $auth) $e[] = trim($auth['name']);

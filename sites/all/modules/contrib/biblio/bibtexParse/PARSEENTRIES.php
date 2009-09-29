@@ -560,6 +560,15 @@ class PARSEENTRIES
           }
         }
       }
+      
+     // hook_biblio_bibtex_import_pre. Allows to define new or change
+		 // types, e.g. split @incollection from @book and put in a custom type.
+		 // We don't use module_invoke_all to enable passing by reference.
+		 foreach (module_implements('biblio_bibtex_import_pre') as $module) {
+		   $function = $module . '_biblio_bibtex_import_pre';
+		   $function ($entry, $node);
+		 }
+      
     //foreach($entries as $entry){
       $node['biblio_contributors'] = array();
       $node['biblio_type'] = $this->bibtex_type_map($entry['bibtexEntryType']);
@@ -621,6 +630,15 @@ class PARSEENTRIES
         if (!isset($node['taxonomy'])) $node['taxonomy'] = array();
         $node['taxonomy'] = array_merge($terms,$node['taxonomy']);
       }
+      
+      // Allow other modules to adjust the bibtex entries. Functions must
+			// be named modulename_biblio_bibtex_import.
+			foreach (module_implements('biblio_bibtex_import') as $module) {
+			  $function = $module . '_biblio_bibtex_import';
+			  $function ($entry, $node);
+			}
+      
+      
       $nids[] = biblio_save_node($node, $batch, $session_id, $save);
     }
     return (!empty($nids)) ? $nids : NULL;
