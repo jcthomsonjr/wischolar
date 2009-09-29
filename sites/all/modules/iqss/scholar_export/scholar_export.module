@@ -104,21 +104,20 @@ function scholar_export_save_node($nid) {
     }
   }
   
-  //get custom links
-  $sql = db_query("SELECT o.mid, o.gid, o.is_primary, m.pid, m.path, m.title, m.description, m.weight, m.type FROM {og_menu2} o INNER JOIN {menu} m USING(mid) HAVING gid = %d", $nid);
-  while ($data = db_fetch_object($sql)){
-  //construct menu links information
-    $node -> scholar_menu_links[] = array(
-    'mid' => $data -> mid,
-    'gid' => $data -> gid,
-    'is_primary' => $data -> is_primary,
-    'pid' => $data -> pid,
-    'path' => $data -> path,
-    'title' => $data -> title,
-    'description' => $data -> description,
-    'weight' => $data -> weight,
-    'type' => $data -> type,
-    );
+  //get custom links - Only Primary Links
+  $pid = db_result(db_query("SELECT mid FROM {og_menu2} WHERE gid = %d AND is_primary = %d", (int)$nid, 1));
+    
+  if ($pid){
+    $sql_links = db_query("SELECT * FROM {menu} WHERE pid = %d", (int)$pid);
+    while($link = db_fetch_object($sql_links)){
+      //construct menu links information
+      $node -> scholar_menu_links[] = array(
+      'title' => $link -> title,
+      'path' => $link -> path,
+      'description' =>$link -> description,
+      'weight' =>$link -> weight,      
+      );
+    }
   }
  
     $nodedata = serialize($node);
