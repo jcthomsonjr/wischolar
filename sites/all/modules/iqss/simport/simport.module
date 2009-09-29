@@ -68,10 +68,10 @@ function simport_import_sites(&$context){
     _simport_exportdata();
     }
 
-  //for testing purposes setting these system vars manually  
+  //setting a few path related system vars
   variable_set('simport_current_path', _simport_get_fileroot());
   variable_set('simport_remote_path', '/nfs/www/edu-harvard-iq-test2');
-  variable_set('file_directory_path', 'sites/scholar/files');
+  variable_set('file_directory_path', conf_path() .'/files');
 
   //PHASE 1 - Load the VSITE And Settings
  $testing = db_query("TRUNCATE TABLE {simport}"); //empty the table each time
