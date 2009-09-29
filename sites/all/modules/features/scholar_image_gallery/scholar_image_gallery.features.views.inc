@@ -9,7 +9,7 @@ function _scholar_image_gallery_views_default_views() {
   // Exported view: scholar_image_gallery
   $view = new view;
   $view->name = 'scholar_image_gallery';
-  $view->description = 'Photos belonging to a selected gallery';
+  $view->description = 'Images belonging to a selected gallery';
   $view->tag = 'features';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -188,7 +188,7 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('empty', 'No photos have been added to this gallery.');
+  $handler->override_option('empty', 'No images have been added to this gallery.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 6);
@@ -393,7 +393,7 @@ function _scholar_image_gallery_views_default_views() {
     ),
   ));
   $handler->override_option('arguments', array());
-  $handler->override_option('title', 'Recent photos');
+  $handler->override_option('title', 'Recent images');
   $handler->override_option('items_per_page', 4);
   $handler->override_option('use_pager', '0');
   $handler->override_option('style_options', array(
@@ -457,11 +457,11 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array());
   $handler->override_option('row_plugin', 'node');
-  $handler->override_option('path', 'photos');
+  $handler->override_option('path', 'images');
   $handler->override_option('menu', array(
     'type' => 'normal',
-    'title' => 'Photos',
-    'description' => 'my photos',
+    'title' => 'Images',
+    'description' => 'my images',
     'weight' => '0',
     'name' => 'features',
   ));

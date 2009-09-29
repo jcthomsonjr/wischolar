@@ -54,8 +54,8 @@ function _scholar_image_gallery_content_default_fields() {
       'node_link' => array(
         'teaser' => 0,
         'full' => 1,
-        'title' => 'Add photo',
-        'hover_title' => 'Add a new photo to this gallery',
+        'title' => 'Add image',
+        'hover_title' => 'Add a new image to this gallery',
         'destination' => 'node',
       ),
       'fallback' => 'select',
@@ -106,7 +106,7 @@ function _scholar_image_gallery_content_default_fields() {
     'description_field' => '0',
     'widget' => array(
       'file_extensions' => 'jpg jpeg png gif',
-      'file_path' => 'photos',
+      'file_path' => 'images',
       'progress_indicator' => 'bar',
       'max_filesize_per_file' => '2M',
       'max_filesize_per_node' => '',
@@ -233,15 +233,15 @@ function _scholar_image_gallery_menu_default_items() {
   $items = array();
 
   $items[] = array(
-    'title' => 'Photos',
-    'path' => 'photos',
+    'title' => 'Images',
+    'path' => 'images',
     'weight' => '0',
-    'description' => 'my photos',
+    'description' => 'my images',
   );
   // Translatables
   array(
-    t('Photos'),
-    t('my photos'),
+    t('Images'),
+    t('my images'),
   );
 
 
