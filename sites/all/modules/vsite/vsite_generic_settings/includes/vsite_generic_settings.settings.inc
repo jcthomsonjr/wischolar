@@ -39,10 +39,12 @@ class vsite_generic_settings_settings implements space_setting {
   
     
     $form['disable_shield'] = array(
+      '#prefix' => "<br />",
       '#type' => 'checkbox',
       '#title' => t('Disable Shields'),
       '#attributes' => array('onChange' => "vsite_generic_grey_out(this);"),
       '#default_value' => is_array($value) && array_key_exists('disable_shield',$value) ? $value['disable_shield']:0,
+      '#description' => "Select the shield that you wish to appear in the 'shield widget' on your site.  Click disable to display none.",
     );
     
     $form['shield'] = array(

@@ -11,7 +11,7 @@ function vsite_generic_grey_out(element){
 			               'width':$('.shield_wrapper').width(),
 			               'height':'400px',
 			               'position': 'absolute',
-			               'margin':'40px 0px 0px 20px',
+			               'margin':'0px 0px 0px 0px',
 			               'background':'#000'
 		});
 	}else{
