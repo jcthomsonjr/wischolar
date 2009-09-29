@@ -250,7 +250,12 @@ body.header-left-right #header-right {
   }
 
 
-/* Delete, Edit buttons */
+
+
+
+
+
+/* DELETE, EDIT BUTTONS */
 
 ul.admin {
   background: #fff;
@@ -316,7 +321,13 @@ a.context-button {
   }
 
 
-/* Messages */
+
+
+
+
+
+
+/* MESSAGES */
 
 div.messages {
   background:#BBDDFF none repeat scroll 0 0;
@@ -342,4 +353,27 @@ div.status {
   background:#CCFF88 none repeat scroll 0 0;
   border-color:#BBEE77;
   color:#336600;
+  }
+
+
+
+
+/* SYSTEM THINGS */
+
+/* Animated throbber */
+
+.ahah-progress .throbber, .flag-waiting .flag-throbber {
+  -moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  background:transparent url(images/throbber.gif) no-repeat scroll 0 50%;
+  float:left;
+  height:5px;
+  margin:0 0 0 8px;
+  width:21px;
+  }
+
+.flag-waiting .flag-throbber {
+  float:none;
+  padding-right: 21px;
   }

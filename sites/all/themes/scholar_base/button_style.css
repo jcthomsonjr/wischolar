@@ -27,7 +27,7 @@ table .form-actions {
   line-height: 0;
   cursor: pointer;
   cursor: hand;
-  position: relative;
+
 	}
 
 .form-button-wrapper input, li.button a span, a.button span {
@@ -50,6 +50,7 @@ table .form-actions {
   border: 0;
   cursor: pointer;
   cursor: hand;
+  position: relative;
 	}
 
 .form-button-wrapper:active, li.button a:active, a.button:active {
@@ -72,10 +73,14 @@ li.button a:hover, a.button:hover {
   color: #fff;
 	}
 
-.ahah-progress-throbber	{
+.form-button-wrapper div.ahah-progress, .form-button-wrapper div.throbber {
+  display:block;
   position:absolute;
-  right: -20px
-  top: 0;
+  right: -22px;
+  top: 5px;
+  height:5px;
+  width:21px;
+  float: none;
   }
 
 /**
