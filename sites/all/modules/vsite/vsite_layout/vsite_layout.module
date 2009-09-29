@@ -126,8 +126,8 @@ function vsite_layout_get_pagetypes($space){
   	return $a_return;
   }
 
-  foreach (array_keys($space->features) as $s_feature_key){
-    if(!array_key_exists($s_feature_key,$features)) continue;
+  foreach ($space->features as $s_feature_key => $privacy){
+    if(!array_key_exists($s_feature_key,$features) || $privacy == FEATURE_DISABLED) continue;
     $a_page_types[$s_feature_key] = $features[$s_feature_key]->info['name'];
   }
 

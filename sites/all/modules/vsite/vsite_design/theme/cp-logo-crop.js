@@ -24,16 +24,20 @@ if (Drupal.jsEnabled) {
       });
 	  
 	  api.setSelect([5,5,180,140]);
+	  $('#edit-settings-logo-x-cord').val(5);
+	  $('#edit-settings-logo-y-cord').val(5);
+	  $('#edit-settings-logo-width').val(180);
+	  $('#edit-settings-logo-height').val(140);
 	  
 	  $('#edit-settings-logo-logo-upload').change(function() {
 		  $('#cp-settings-form').submit();
 	  });//Turns out the easiest solution is the best.
 	  
-	  $("#edit-submit").insertAfter("#edit-settings-logo-logo-upload").css({position:'relative', top:'0px'}).attr('value',"Upload");	  
+	  $("#edit-submit").insertAfter("#edit-settings-logo-logo-upload").css({position:'relative', top:'0px', display:'none'}).attr('value',"Upload");	  
 	  $("a.edit-submit").remove();
 	  
 	  if($('#live_preview').attr('width') <= 180 || $('#live_preview').attr('height') <= 140){
-		  $("a.edit-settings-logo-crop-btn").remove();
+		  $("input#edit-settings-logo-crop-btn").remove();
 		  $("#live_preview_box").remove();
 	  }
   });
