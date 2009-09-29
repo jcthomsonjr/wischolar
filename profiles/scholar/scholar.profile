@@ -169,6 +169,7 @@ function _scholar_scholar_modules() {
     'scholar_publications',
     'scholar_feeds',
     'scholar_software',
+    'scholar_pages',
   );
 }
 
