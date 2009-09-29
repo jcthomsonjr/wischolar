@@ -3,7 +3,7 @@
 include_once('scholar_classes.features.inc');
 
 function scholar_classes_init(){
-  drupal_add_css(drupal_get_path('module', 'scholar_classes') . '/scholar-classes.css');
+
   }
 
 function scholar_classes_scholar_vocabulary_defaults() {
@@ -33,3 +33,5 @@ function scholar_classes_theme_registry_alter(&$theme_registry){
   $this_module_path = drupal_get_path('module', 'scholar_classes');
   array_unshift($theme_registry['node']['theme paths'], $original_path, $this_module_path);
 }
+
+
