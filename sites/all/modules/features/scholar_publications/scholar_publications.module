@@ -96,7 +96,7 @@ function scholar_publications_spaces_settings() {
  */
 function scholar_publications_form_alter(&$form, $form_state, $form_id){
   if ($form_id == 'biblio_import_form') {
-    dpm($form);
+    
     // the original form is asking to set the userID for these entries
     // Just the group admin for now. TODO list of users for this og
     
