@@ -7,7 +7,7 @@ class vsite_design_settings_logo implements space_setting {
 	public $s_logo_location = false;
 	public static $validators = array(
       'file_validate_is_image' => array(),
-      //'file_validate_image_resolution' => array(variable_get('user_picture_dimensions', '85x85')),
+      'file_validate_image_resolution' => array('950x600'),
       //'file_validate_size' => array(variable_get('user_picture_file_size', '30') * 1024),
   );
 
