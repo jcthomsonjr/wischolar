@@ -45,20 +45,17 @@ function vsite_vocab_tt(){
  */
 function vsite_vocab_strongarm(){
   $conf = array();
-  vsite_include('vsiteapi');
-  $vocabs = vsite_get_vocabs();
-  if(count($vocabs)){
-    foreach($vocabs as $vocab){
-      $node_types = $vocab -> nodes;
-      foreach($node_types as $type){
-        $vtabs = vertical_tabs_fieldsets($type);
-        if (!in_array('taxonomy', $vtabs)){
-          $vtabs[] = 'taxonomy';
-          $conf['vertical_tabs_fieldsets_'. $node_type] = $vtabs;
-        }
+  $og_types = og_get_types('group_post');
+  foreach ( $og_types as $type ) {
+    if (count(taxonomy_get_vocabularies($type))) {
+      $vtabs = vertical_tabs_fieldsets($type);
+      if (! in_array('taxonomy', $vtabs)) {
+        $vtabs[] = 'taxonomy';
+        $conf['vertical_tabs_fieldsets_' . $type] = $vtabs;
       }
     }
   }
+  
   return $conf;
 }
 
