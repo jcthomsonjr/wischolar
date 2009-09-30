@@ -44,11 +44,7 @@ function vsite_design_init(){
       $vsite->settings['logo']['current_logo'] = $profile->field_user_profile_photo[0]['filepath'];
       vsite_design_settings_logo::add_imagefield_image($profile->field_user_profile_photo[0]['filepath'],'field_vsite_logo',$vsite->group);
     }
-  }elseif($vsite && strlen($vsite->settings['logo']['current_logo']) && (!is_array($vsite->group->field_vsite_logo) || !count($vsite->group->field_vsite_logo))){
-    //if it has been imported to settings but not to the site node then copy it over
-    require_once(drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.logo.inc');
-    vsite_design_settings_logo::add_imagefield_image($vsite->settings['logo']['current_logo'],'field_vsite_logo',$vsite->group);
-  }//Make sure the logo is copied if it needs to be
+  }
 }
 
 /**
