@@ -44,14 +44,15 @@ function vsite_front_spaces_settings(){
  * @return array - default flag
  */
 function vsite_front_flag_default_flags(){
-  vsite_include('vsiteapi');
-  $scholar_types = array_keys(vsite_content_types());
+  //vsite_include('vsiteapi');
+  //$scholar_types = array_keys(vsite_content_types());
+  $types = og_get_types('group_post');
   $flags = array();
   $flags[] = array(
     'content_type' => 'node', 
     'name' => 'vsite_frontpage', 
     'title' => 'Save to Front Page', 
-    'types' => $scholar_types, 
+    'types' => $types, 
     'roles' => array(
       0 => '2' 
     ), 

@@ -1,5 +1,7 @@
 <?php
 
+include_once('vsite_widgets.features.inc');
+
 function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
   if ($op == 'list') {
     $blocks[0]['info'] = t('Scholar site logo'); 
@@ -177,4 +179,48 @@ function vsite_widgets_context_default_contexts() {
    );
   
   return $items;
+}
+
+
+/**
+ * Implementation of hook flag_default_flags
+ * @return array - default flag
+ */
+function vsite_widgets_flag_default_flags(){
+  vsite_include('vsiteapi');
+  $types = og_get_types('group_post');
+  
+  $flags = array();
+  
+  $flags[] = array(
+    'content_type' => 'node', 
+    'name' => 'featuredposts', 
+    'title' => 'Featured Posts', 
+    'types' => $types, 
+    'roles' => array(
+      0 => '2' 
+    ), 
+    'global' => TRUE, 
+    'flag_short' => 'Make this a Featured Post', 
+    'flag_long' => 'Make this a Featured Post', 
+    'flag_confirmation' => 'Saved as a Featured Post', 
+    'unflag_short' => 'Remove as a Featured Post', 
+    'unflag_long' => 'Remove as a Featured Post', 
+    //   'unflag_confirmation' => 'Are you sure you want to remove?',
+    'status' => TRUE, 
+    'show_on_page' => TRUE, 
+    'show_on_teaser' => TRUE, 
+    'show_on_form' => FALSE, 
+    'link_type' => 'toggle',  //normal, toggle, confirm
+    'locked' => array(
+      'types',
+      'name', 
+      'show_on_page', 
+      'show_on_teaser', 
+      'show_on_form', 
+      'global' 
+    ) 
+  );
+  
+  return $flags;
 }
