@@ -220,5 +220,37 @@ function _scholar_classes_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override class promote to front page option
+  $permissions[] = array(
+    'name' => 'override class promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override class published option
+  $permissions[] = array(
+    'name' => 'override class published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override class revision option
+  $permissions[] = array(
+    'name' => 'override class revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override class sticky option
+  $permissions[] = array(
+    'name' => 'override class sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   return $permissions;
 }

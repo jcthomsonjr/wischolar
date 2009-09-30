@@ -85,14 +85,6 @@ function _scholar_announcements_user_default_permissions() {
     ),
   );
 
-  // Exported permission: override announcement authored on option
-  $permissions[] = array(
-    'name' => 'override announcement authored on option',
-    'roles' => array(
-      '0' => 'scholar admin',
-    ),
-  );
-
   // Exported permission: override announcement promote to front page option
   $permissions[] = array(
     'name' => 'override announcement promote to front page option',
