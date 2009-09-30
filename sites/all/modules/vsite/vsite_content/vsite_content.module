@@ -78,12 +78,16 @@ function vsite_content_content($type = NULL, $name = NULL){
   //element classes for 'add new' link
   $add_new_classes = 'add-new ' . 'add-new-' . $type_url_str;
   //$v = views_get_view('vsite_content');
-  //link to add new content
+
   $links = array();
   $links[] = array(
-    'href' => 'node/add/' . $type_url_str,
-    'title' => $name,
-  );
+    'href' => 'node/add/' . $type_url_str, 
+    'title' => $name, 
+    'query' => array(
+      'destination' => 'cp/content/'.$type, 
+    ) 
+  )
+  ;
   $output = $type ? theme('context_links', $links) : '';
   //$output .= isset($type) ? '<div class="' . $add_new_classes . '">' . l(t('+ add new ' . $name), 'node/add/' . $type_url_str) . '</div>' : '';
   
