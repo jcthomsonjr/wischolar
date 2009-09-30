@@ -160,20 +160,25 @@ function vsite_menus_theme($cache, $type, $theme, $path) {
 }
 
 function vsite_menus_form_alter(&$form, $form_state, $form_id){
-  vsite_include('vsiteapi');
-  $a_scholar_types = vsite_content_types(array(1,2));
-  $o_scholar = vsite_get_vsite();
-  
-  if($o_scholar && array_key_exists($form['type']['#value'],$a_scholar_types)){
-    $a_primary = menu_load(variable_get('scholar_primary_menu',false));
-    $a_secondary = menu_load(variable_get('scholar_secondary_menu',false));
-      
-    $form['menu']['parent']['#options'] = array(
-      variable_get('scholar_primary_menu',false).":0" => t($a_primary['title']),
-      variable_get('scholar_secondary_menu',false).":0" => t($a_secondary['title']),
-    );
-    unset($form['menu']['hidden']);
-  }
+	if (isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
+		vsite_include('vsiteapi');
+	  $a_scholar_types = vsite_content_types(array(0,1,2));
+	  $o_scholar = vsite_get_vsite();
+	  
+	  if($o_scholar && array_key_exists($form['type']['#value'],$a_scholar_types)){
+	    $a_primary = menu_load(variable_get('scholar_primary_menu',false));
+	    $a_secondary = menu_load(variable_get('scholar_secondary_menu',false));
+	    
+	    global $user;
+	    $form['menu']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
+	    $form['menu']['parent']['#options'] = array(
+	      variable_get('scholar_primary_menu',false).":0" => t($a_primary['title']),
+	      variable_get('scholar_secondary_menu',false).":0" => t($a_secondary['title']),
+	    );
+	    unset($form['menu']['hidden']);
+	    
+	  }
+	}
 }
 
 /**
