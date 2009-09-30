@@ -20,7 +20,7 @@ function vsite_menus_spaces_settings(){
  * Implements hook_menu_node_insert().
  */
 function vsite_menus_menu_node_insert($item, $node) {
-  require_once(drupal_get_path('module', 'vsite_menus') .'/vsite_menus.menus.inc');
+  require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
   vsite_include('vsiteapi');
   $site = vsite_get_vsite();
   $a_scholar_types = vsite_content_types();
@@ -127,6 +127,15 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
 	  $a_disabled_links = array_keys(array_intersect(spaces_features_map('menu'),$a_disabled_features));
 	  foreach ($a_settings_menu as $key => $link) {
 	  	if(in_array($link['link']['link_path'],$a_disabled_links)) unset($a_settings_menu[$key]);
+	    
+	  	if($link['link']['router_path'] == 'node/%'){
+		  	$args = explode("/",$link['link']['link_path']);
+	  		$node = node_load($args[1]);
+	      if ($node && !empty($node->og_groups) && !in_array($space->group->nid, $node->og_groups)) {
+	        // If the node does not belongs to the current active group space then remove it
+	        unset($a_settings_menu[$key]);
+	      }
+	  	}//Custom Link?
 	  }
   }
   

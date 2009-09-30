@@ -55,6 +55,24 @@ class scholar extends space_og implements space {
         break;
     }
   }
+  
+  /**
+   * Implementation of space->menu_access().
+   */
+  function menu_access($op, $object = NULL, $is_active = TRUE) {
+    switch ($op) {
+      case 'node':
+        $node = $object;
+        if (!empty($node->og_groups)) {
+          // If the node does not belongs to the current active group space then return false
+          if (($is_active && !in_array($this->sid, $node->og_groups))) {
+            return false;
+          }
+        }
+      default:
+      return parent::menu_access($op, $object, $is_active);
+    }
+  }
 }
 
 /**
