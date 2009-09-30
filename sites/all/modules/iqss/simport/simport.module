@@ -112,7 +112,7 @@ function simport_import_sites(&$context){
     
     //get a spaces object for new site so we can modify and save with the functions below
     $new = spaces_load ( 'og', $new_site_info ->nid, TRUE );
-
+    
     //set theme
     simport_set_theme($old, $new);
 
@@ -323,6 +323,9 @@ function simport_set_frontpage($old, &$vsite, $new_front_nid, $old_front_nid){
  * @param unknown_type $new
  */
 function simport_set_logo($old){
+  $path = drupal_get_path('module', 'vsite_design') . '/includes/vsite_design.settings.logo.inc' ;
+  include_once($path);
+  
   //get the corresponding vsite
   $vsite = simport_get_new_vsite($old -> og_groups[0]);
   
@@ -338,47 +341,24 @@ function simport_set_logo($old){
       //no filepath defined means this will not work, so return
       watchdog('simport', 'logo filepath not present %filename.', array('%filename' => basename($source)), WATCHDOG_NOTICE);
       return;
-    }
-    
-        $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->purl;
+    }    
     
     if (file_exists($source)){        
       
-      //create directory  
-    file_check_directory($dest, $mode = 1, $form_item = NULL);
-  
-    //delete temp file if exists
-    if(file_exists('/tmp/'. basename($source))){
-    file_delete('/tmp/'. basename($source));
-    }
-    //copy to temp dir
-    file_copy($source, '/tmp');   
-    
-    //copy the file to the new location
-    //file_copy($source, $dest);
+      $tmp_path = '/tmp/' . basename($source);
+      
+      //delete temp file if exists
+      if(file_exists($tmp_path)){
+      file_delete($tmp_path);
+      }
 
-    //replacing the file name but keeping file ext
-    $filename = explode('.', basename($source)); 
-    $new_filename = $vsite ->purl . '.' . $filename[1];
-   
-    //define new file - absolute path
-    $new_file = $dest . '/' . $new_filename;
-   
-    if(file_exists($new_file)){
-      file_delete($new_file);
-    }
-    //determine orig file tmp path
-    $orig_file = '/tmp/'. basename($source);
-    //copy to new location
-    file_copy($orig_file, $new_file );    
-    
-    //define new path for logo
-    $new_path = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->purl . '/' . basename($new_file);
+      //copy to temp dir
+     file_copy($source, '/tmp');   
     
     $file = new stdClass();
     $file -> uid = $vsite-> group -> uid;
-    $file -> filename = basename($source);
-    $file -> filepath = '/tmp/' . basename($source);
+    $file -> filename = basename($tmp_path);
+    $file -> filepath = $tmp_path;
     $file -> filemime = file_get_mimetype($source);
     $file -> filesize = filesize($source);
     $file -> status =1;
@@ -386,7 +366,28 @@ function simport_set_logo($old){
     
     //write to the files table
     drupal_write_record('files', $file);
+      
+    //copy the file to the new location
+    //file_copy($source, $dest);
     
+    //NOW DEAL WITH CP LOGO
+     $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->purl;
+    
+        //create directory  
+      file_check_directory($dest, $mode = 1, $form_item = NULL);
+     
+    //replacing the file name but keeping file ext
+    $filename = explode('.', basename($source)); 
+    $new_filename = $vsite ->purl . '.' . $filename[1];
+    
+    //copy file to vsite_design_logo dir
+    file_copy($source, $dest . '/' . $new_filename);
+      
+    //add file to og node
+    vsite_design_settings_logo::add_imagefield_image($dest . '/' . $new_filename, 'field_vsite_logo',$vsite->group);
+      
+    //define new path for logo
+    $new_path = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->purl . '/' . $new_filename; 
     
     //now set in the vsite settings
     $vsite ->settings['logo']['current_logo'] = $new_path;
