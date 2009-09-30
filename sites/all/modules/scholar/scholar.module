@@ -69,6 +69,14 @@ class scholar extends space_og implements space {
             return false;
           }
         }
+        
+        vsite_include('vsiteapi');
+        $a_scholar_types = vsite_content_types(array(1,2));
+  
+        if(!array_key_exists($node->type,$a_scholar_types)){
+        	return false;
+        }
+        
       default:
       return parent::menu_access($op, $object, $is_active);
     }
