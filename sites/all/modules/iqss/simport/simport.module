@@ -120,7 +120,10 @@ function simport_import_sites(&$context){
 
     //set shield
     simport_set_shield($old, $new);
-
+    
+    //enabling scholar links
+   $new-> features['scholar_links'] = 2;
+    
     //save all the changes/additions to the space
     spaces_save($new);
     
