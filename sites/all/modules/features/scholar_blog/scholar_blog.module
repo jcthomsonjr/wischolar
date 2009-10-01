@@ -35,3 +35,36 @@ function scholar_blog_scholar_vocabulary_defaults() {
   ) 
  );
 }
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function scholar_blog_strongarm() {
+  $conf = array();
+ 
+  $conf['node_options_blog'] = array('status', 'revision');
+  $conf['upload_blog'] = TRUE;
+ 
+  // Comments
+  $conf['comment_blog'] = COMMENT_NODE_READ_WRITE;
+  $conf['comment_default_mode_blog'] = COMMENT_MODE_THREADED_EXPANDED;
+  $conf['comment_default_order_blog'] = COMMENT_ORDER_OLDEST_FIRST;
+  $conf['comment_default_per_page_blog'] = 20;
+  $conf['comment_controls_blog'] = COMMENT_CONTROLS_HIDDEN;
+  $conf['comment_subject_field_blog'] = 0;
+  $conf['comment_preview_blog'] = COMMENT_PREVIEW_OPTIONAL;
+  $conf['comment_form_location_blog'] = COMMENT_FORM_BELOW;
+  //$conf['comment_upload_blog'] = TRUE;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_blog'] = array('enabled' => FALSE);
+ 
+  // Disable Diff button
+  //$conf["show_preview_changes_blog"] = FALSE;
+  //$conf["show_diff_inline_blog"] = FALSE;
+  
+  // Pathauto settings
+  $conf["pathauto_node_blog_pattern"] = "[space-og-path]/blog/[title-raw]";
+ 
+  return $conf;
+}

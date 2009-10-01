@@ -28,10 +28,27 @@ function scholar_image_gallery_context_links_alter(&$links) {
   }
 }
 
+
+/**
+ * hook strongarm
+ * @return unknown_type
+ */
 function scholar_image_gallery_strongarm(){
   $conf = array();
   $conf['upload_image'] = 0;
   $conf['upload_gallery'] = 0;
+  
+  // Comments
+  $conf['comment_image'] = COMMENT_NODE_DISABLED;
+  $conf['comment_gallery'] = COMMENT_NODE_DISABLED;
+
+  // FeedAPI
+  $conf['feedapi_settings_image'] = array('enabled' => FALSE);
+  $conf['feedapi_settings_gallery'] = array('enabled' => FALSE);
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_gallery_pattern"] = "[space-og-path]/galleries/[title-raw]";
+  
   return $conf;
 }
 

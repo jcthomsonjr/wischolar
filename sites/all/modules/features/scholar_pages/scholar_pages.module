@@ -2,12 +2,24 @@
 
 include_once('scholar_pages.features.inc');
 
-function scholar_pages_strongarm(){
-  $conf = array();
-  // page content type settings
-  $conf['og_content_type_usage_page'] = 'group_post_standard';
-  $conf['comment_page'] = 0;
-  $conf['upload_page'] = 1;
-  
+
+/**
+ *  hook_strongarm().
+ */
+function scholar_pages_strongarm() {
+
+ 
+  $conf['node_options_page'] = array('status', 'revision');
+  $conf['upload_page'] = TRUE;
+ 
+  // Comments
+  $conf['comment_page'] = COMMENT_NODE_DISABLED;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_page'] = array('enabled' => FALSE);
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_page_pattern"] = "[space-og-path]/pages/[title-raw]";
+ 
   return $conf;
 }

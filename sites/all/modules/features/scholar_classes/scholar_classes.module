@@ -2,10 +2,6 @@
 
 include_once('scholar_classes.features.inc');
 
-function scholar_classes_init(){
-
-  }
-
 function scholar_classes_scholar_vocabulary_defaults() {
   return array (
     0 => array (
@@ -32,6 +28,32 @@ function scholar_classes_theme_registry_alter(&$theme_registry){
   $original_path = array_shift($theme_registry['node']['theme paths']);
   $this_module_path = drupal_get_path('module', 'scholar_classes');
   array_unshift($theme_registry['node']['theme paths'], $original_path, $this_module_path);
+}
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function scholar_classes_strongarm() {
+
+ 
+  $conf['node_options_class'] = array('status', 'revision');
+  $conf['upload_class'] = TRUE;
+ 
+  // Comments
+  $conf['comment_class'] = COMMENT_NODE_DISABLED;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_class'] = array('enabled' => FALSE);
+ 
+  // Disable Diff button
+  //$conf["show_preview_changes_class"] = FALSE;
+  //$conf["show_diff_inline_class"] = TRUE;
+ 
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_class_pattern"] = "[space-og-path]/classes/[title-raw]";
+ 
+  return $conf;
 }
 
 

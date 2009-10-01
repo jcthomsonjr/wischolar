@@ -3,32 +3,26 @@
 include_once('scholar_links.features.inc');
 
 /**
-* Implementation of hook_strongarm().
-*/
+ *  hook_strongarm().
+ */
 function scholar_links_strongarm() {
-  //module_load_include('inc', 'scholar_link', 'includes/scholar_link.settings_default');
-  $conf = array();
-  
-  // standard group post
-  $conf['og_content_type_usage_link'] = 'group_post_standard';
-  
-  // no comments
-  $conf['comment_link'] = 0;
-  
-  // no diff, no preview 
-  $conf['show_preview_changes_link'] = 0;
-  $conf['show_diff_inline_link'] = 0;
-  
-  // make it part of the features menu TODO not here
-  //$conf['menu_primary_links_source'] = 'features';
-  
-  // publish by default
 
-  $conf['node_options_link'] = array('status');
-
-  
+ 
+  $conf['node_options_link'] = array('status', 'revision');
+  $conf['upload_link'] = TRUE;
+ 
+  // Comments
+  $conf['comment_link'] = COMMENT_NODE_DISABLED;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_link'] = array('enabled' => FALSE);
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_link_pattern"] = "[space-og-path]/links/[title-raw]";
+ 
   return $conf;
 }
+
 
 function scholar_links_scholar_vocabulary_defaults() {
   return array (

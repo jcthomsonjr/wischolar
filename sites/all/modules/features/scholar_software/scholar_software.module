@@ -1,3 +1,25 @@
 <?php
 
 include_once('scholar_software.features.inc');
+
+
+/**
+ *  hook_strongarm().
+ */
+function scholar_software_strongarm() {
+
+ 
+  $conf['node_options_software'] = array('status', 'revision');
+  $conf['upload_software'] = TRUE;
+ 
+  // Comments
+  $conf['comment_software'] = COMMENT_NODE_DISABLED;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_software'] = array('enabled' => FALSE);
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_software_pattern"] = "[space-og-path]/software/[title-raw]";
+ 
+  return $conf;
+}
