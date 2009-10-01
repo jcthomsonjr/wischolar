@@ -38,19 +38,7 @@ class vsite_menus_menus implements space_setting {
     
     $choices = array('primary' => t($a_primary['title']), 'secondary' => t($a_secondary['title']), '' => t('None'));
 
-    $disabled_choices = array('vsite_menus_0' => 'primary', 'vsite_menus_1' => 'secondary');//If these blocks are not used they will be disabled
-    foreach (vsite_layout_get_pagetypes($space) as $s_page_type => $s_name){
-      $a_region_wgts = vsite_layout_region_widgets($space,$s_page_type);
-    	if(!array_key_exists('unused',$a_region_wgts)){
-    		$disabled_choices = array(); //nothing is in unused
-    	}else{
-    		$a_still_disabled = array();
-    		foreach ($a_region_wgts['unused'] as $wgt) if(array_key_exists($wgt['module']."_".$wgt['delta'],$disabled_choices)) $a_still_disabled[$wgt['module']."_".$wgt['delta']] = $disabled_choices[$wgt['module']."_".$wgt['delta']];
-    		$disabled_choices = $a_still_disabled;
-    	}
-    	
-    	if(!count($disabled_choices)) break;	
-    }//Enable menus that are in layouts
+    $disabled_choices = self::get_disabled_menus();
     
     foreach ($disabled_choices as $disabled) $choices[$disabled] .= "<br/>(disabled)";
     
@@ -150,6 +138,29 @@ class vsite_menus_menus implements space_setting {
             return 0;
         }
         return ($aw > $bw) ? 1 : -1;
+  }
+  
+  /**
+   * Returns an array with any menus that are not used in the layout
+   * 
+   * @return unknown_type
+   */
+  public static function get_disabled_menus(){
+  	$disabled_choices = array('vsite_menus_0' => 'primary', 'vsite_menus_1' => 'secondary');//If these blocks are not used they will be disabled
+    foreach (vsite_layout_get_pagetypes($space) as $s_page_type => $s_name){
+      $a_region_wgts = vsite_layout_region_widgets($space,$s_page_type);
+      if(!array_key_exists('unused',$a_region_wgts)){
+        $disabled_choices = array(); //nothing is in unused
+      }else{
+        $a_still_disabled = array();
+        foreach ($a_region_wgts['unused'] as $wgt) if(array_key_exists($wgt['module']."_".$wgt['delta'],$disabled_choices)) $a_still_disabled[$wgt['module']."_".$wgt['delta']] = $disabled_choices[$wgt['module']."_".$wgt['delta']];
+        $disabled_choices = $a_still_disabled;
+      }
+      
+      if(!count($disabled_choices)) break;  
+    }//Enable menus that are in layouts
+    
+    return $disabled_choices;
   }
 }
   

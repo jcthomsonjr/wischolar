@@ -159,8 +159,16 @@ function vsite_menus_theme($cache, $type, $theme, $path) {
   return $items;
 }
 
+/**
+ * Change the options for the node save form so that only the active vsite menus are displayed
+ * 
+ * @param $form array
+ * @param $form_state array
+ * @param $form_id string
+ */
 function vsite_menus_form_alter(&$form, $form_state, $form_id){
 	if (isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
+		require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
 		vsite_include('vsiteapi');
 	  $a_scholar_types = vsite_content_types(array(0,1,2));
 	  $o_scholar = vsite_get_vsite();
@@ -169,15 +177,17 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id){
 	    $a_primary = menu_load(variable_get('scholar_primary_menu',false));
 	    $a_secondary = menu_load(variable_get('scholar_secondary_menu',false));
 	    
+	    $disabled_choices = vsite_menus_menus::get_disabled_menus();  //Get disabled menus
+	    $a_choices = array();
+	    if(!in_array('primary',$disabled_choices)) $a_choices[variable_get('scholar_primary_menu',false).":0"] = t($a_primary['title']);
+	    if(!in_array('secondary',$disabled_choices)) $a_choices[variable_get('scholar_secondary_menu',false).":0"] = t($a_secondary['title']);
+	    
 	    global $user;
 	    $form['menu']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
-	    $form['menu']['parent']['#options'] = array(
-	      variable_get('scholar_primary_menu',false).":0" => t($a_primary['title']),
-	      variable_get('scholar_secondary_menu',false).":0" => t($a_secondary['title']),
-	    );
+	    $form['menu']['parent']['#options'] = $a_choices;
 	    unset($form['menu']['hidden']);
 	    
-	  }
+	  }//If this is a active scholar type?
 	}
 }
 

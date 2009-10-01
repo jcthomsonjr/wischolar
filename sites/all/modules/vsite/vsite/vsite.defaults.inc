@@ -196,6 +196,7 @@ function _vsite_user_default_permissions() {
       '0' => 'scholar admin',
     ),
   );
+  
 
   return $permissions;
 }
