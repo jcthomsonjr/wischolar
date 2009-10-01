@@ -191,35 +191,46 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id){
 	    $form['menu']['parent']['#options'] = $a_choices;
 	    unset($form['menu']['hidden']);
 	    
+	    $form['path']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
+	    //BELOW HERE -- Create PathAuto Form Modifications
+		  $node = $form['#node'];
+	
+	    // See if there is a pathauto pattern or default applicable
+	    if (isset($form['language'])) {
+	      $language = isset($form['language']['#value']) ? $form['language']['#value'] : $form['language']['#default_value'];
+	      $pattern = trim(variable_get('pathauto_node_'. $form['type']['#value'] .'_'. $language .'_pattern', ''));
+	    }
+	    if (empty($pattern)) {
+	      $pattern = trim(variable_get('pathauto_node_'. $form['type']['#value'] .'_pattern', ''));
+	      if (empty($pattern)) {
+	        $pattern = trim(variable_get('pathauto_node_pattern', ''));
+	      }
+	    }
 	    // If there is a pattern AND the user is allowed to create aliases AND the path textbox is present on this form
-	    if((array_search('scholar admin',$user->roles) || user_access('administer menu'))){
+	    if(!empty($pattern) &&isset($form['path']['path']) && (array_search('scholar admin',$user->roles) || user_access('administer menu'))){
 	    
-	//    if (!empty($pattern) && user_access('create url aliases') && isset($form['path']['path'])) {
-//	      $output = t('An alias will be generated for you. If you wish to create your own alias below, untick this option.');
-//	      if (user_access('administer pathauto')) {
-//	        $output .= t(' To control the format of the generated aliases, see the <a href="@pathauto">Pathauto settings</a>.', array('@pathauto' => url('admin/build/path/pathauto')));
-//	      }
-//	
-//	      drupal_add_js(drupal_get_path('module', 'pathauto') .'/pathauto.js');
-//	      $form['path']['#collapsed'] = FALSE;
-//	
-//	      $form['path']['pathauto_perform_alias'] = array(
-//	        '#type' => 'checkbox',
-//	        '#title' => t('Automatic alias'),
-//	        '#default_value' => isset($node->pathauto_perform_alias) ? $node->pathauto_perform_alias : TRUE,
-//	        '#description' => $output,
-//	        '#weight' => -1,
-//	      );
-//	
-//	      if (!empty($node->pathauto_perform_alias) && !empty($node->old_alias) && $node->path == '') {
-//	        $form['path']['path']['#default_value'] = $node->old_alias;
-//	        $node->path = $node->old_alias;
-//	      }
-//	
-//	      //For Pathauto to remember the old alias and prevent the Path-module from deleteing it when Pathauto wants to preserve it
-//	      if (isset($node->path)) {
-//	        $form['path']['old_alias'] = array('#type' => 'value', '#value' => $node->path);
-//	      }
+	      $output = t('An alias will be generated for you. If you wish to create your own, untick this option.');
+	
+	      drupal_add_js(drupal_get_path('module', 'pathauto') .'/pathauto.js');
+	      $form['path']['#collapsed'] = FALSE;
+	
+	      $form['path']['pathauto_perform_alias'] = array(
+	        '#type' => 'checkbox',
+	        '#title' => t('Automatic alias'),
+	        '#default_value' => isset($node->pathauto_perform_alias) ? $node->pathauto_perform_alias : TRUE,
+	        '#description' => $output,
+	        '#weight' => -1,
+	      );
+	
+	      if (!empty($node->pathauto_perform_alias) && !empty($node->old_alias) && $node->path == '') {
+	        $form['path']['path']['#default_value'] = $node->old_alias;
+	        $node->path = $node->old_alias;
+	      }
+	
+	      //For Pathauto to remember the old alias and prevent the Path-module from deleteing it when Pathauto wants to preserve it
+	      if (isset($node->path)) {
+	        $form['path']['old_alias'] = array('#type' => 'value', '#value' => $node->path);
+	      }
 	    }
 	    
 	  }//If this is a active scholar type?
