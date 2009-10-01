@@ -381,7 +381,7 @@ function simport_set_logo($old){
     $new_filename = $vsite ->purl . '.' . $filename[1];
     
     //copy file to vsite_design_logo dir
-    file_copy($source, $dest . '/' . $new_filename);
+    file_copy($source, $dest . '/' . $new_filename, FILE_EXISTS_REPLACE);
       
     //add file to og node
     vsite_design_settings_logo::add_imagefield_image($dest . '/' . $new_filename, 'field_vsite_logo',$vsite->group);
@@ -856,3 +856,74 @@ function simport_import_term_exists($term, $vid){
     //returns string $tid of term or false
   return db_result(db_query("SELECT tid FROM {term_data} WHERE vid = %d AND (LCASE(name) LIKE LCASE( '%s'))", (int)$vid, $term));
 }
+
+
+/**
+ * Import any custom menu links
+ */
+function simport_set_menu_links(){
+  
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
+  while ($data = db_fetch_object($sql)) {
+        //get the old site node object
+    $old = unserialize($data ->data); 
+    //get custom links
+    $custom_links = simport_get_menu_links($old);
+    //get the current vsite  
+    $vsite = simport_get_new_vsite($old -> nid); 
+    
+    //now create the custom menu links!!! TODO: how???   
+    simport_add_custom_menu_links($vsite, $custom_links);     
+  }
+}
+/**
+ * Find and return the custom Primary Links in the old site
+ *
+ * @param unknown_type $old
+ * @return unknown
+ */
+
+function simport_get_menu_links($old){
+
+  $custom_links = array();
+
+  if (is_array($old -> scholar_menu_links) && count($old -> scholar_menu_links)){
+    foreach($old -> scholar_menu_links as $link){
+      $pattern = '/^node\/'. $old->nid . '\//';
+      preg_match($pattern,$link['path'], $matches);
+      if(empty($matches)){
+        $custom_links[] = array(
+        'title' => $link['title'],
+        'path' => $link['path'],
+        );
+      }
+    }
+  }
+  //dpm($custom_links);
+  return $custom_links;
+}
+
+/**
+ * Add the imported custom menu links to the new vsite
+ *
+ * @param unknown_type $vsite
+ * @param unknown_type $custom_links
+ */
+function simport_add_custom_menu_links($vsite, $custom_links){
+   
+   //nothing here yet
+   
+  }
+
+/*function simport_nodeapi(&$node, $op){
+  switch ($op) {
+  	case 'presave':
+  	  dpm($node);
+  		
+  		break;
+  
+  	default:
+  		break;
+  }
+  
+}*/
