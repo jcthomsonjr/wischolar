@@ -23,6 +23,11 @@ function vsite_menus_menu_node_insert($item, $node) {
   require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
   vsite_include('vsiteapi');
   $site = vsite_get_vsite();
+  
+  if(!is_array($site->settings['menus']) || !is_array($site->settings['menus']['menu_items'])){
+  	return;
+  }//If there are no spaces settings saved for menu then we don't have anything to do
+  
   $a_scholar_types = vsite_content_types();
   
   if($site && array_key_exists($node->type,$a_scholar_types) && ($item->menu_name == variable_get('scholar_primary_menu',false) || $item->menu_name == variable_get('scholar_secondary_menu',false))){
@@ -38,7 +43,7 @@ function vsite_menus_menu_node_insert($item, $node) {
     unset($site->settings['menus']['menu_items'][$item->mlid]);
     $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
     spaces_save($site);
-  }
+  }//Add or remove t from the spaces menu
 }
 
 /**
@@ -101,7 +106,6 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
 	  if($b_check_expanded){
 	    $a_full_page_expanded = array_merge( menu_tree_page_data(variable_get('scholar_primary_menu',false)), 
 	                                         menu_tree_page_data(variable_get('scholar_secondary_menu',false)));
-	                                        
 	    //We must unfortunatly loop through the page data once to get the
 	    //correct expanded trees, the menu module does not provide an easy
 	    //way of retrieving a individual menu_node's tree (expanded)
@@ -186,6 +190,37 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id){
 	    $form['menu']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
 	    $form['menu']['parent']['#options'] = $a_choices;
 	    unset($form['menu']['hidden']);
+	    
+	    // If there is a pattern AND the user is allowed to create aliases AND the path textbox is present on this form
+	    if((array_search('scholar admin',$user->roles) || user_access('administer menu'))){
+	    
+	//    if (!empty($pattern) && user_access('create url aliases') && isset($form['path']['path'])) {
+//	      $output = t('An alias will be generated for you. If you wish to create your own alias below, untick this option.');
+//	      if (user_access('administer pathauto')) {
+//	        $output .= t(' To control the format of the generated aliases, see the <a href="@pathauto">Pathauto settings</a>.', array('@pathauto' => url('admin/build/path/pathauto')));
+//	      }
+//	
+//	      drupal_add_js(drupal_get_path('module', 'pathauto') .'/pathauto.js');
+//	      $form['path']['#collapsed'] = FALSE;
+//	
+//	      $form['path']['pathauto_perform_alias'] = array(
+//	        '#type' => 'checkbox',
+//	        '#title' => t('Automatic alias'),
+//	        '#default_value' => isset($node->pathauto_perform_alias) ? $node->pathauto_perform_alias : TRUE,
+//	        '#description' => $output,
+//	        '#weight' => -1,
+//	      );
+//	
+//	      if (!empty($node->pathauto_perform_alias) && !empty($node->old_alias) && $node->path == '') {
+//	        $form['path']['path']['#default_value'] = $node->old_alias;
+//	        $node->path = $node->old_alias;
+//	      }
+//	
+//	      //For Pathauto to remember the old alias and prevent the Path-module from deleteing it when Pathauto wants to preserve it
+//	      if (isset($node->path)) {
+//	        $form['path']['old_alias'] = array('#type' => 'value', '#value' => $node->path);
+//	      }
+	    }
 	    
 	  }//If this is a active scholar type?
 	}
