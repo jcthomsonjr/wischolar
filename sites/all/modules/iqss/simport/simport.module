@@ -41,7 +41,7 @@ function simport_import(){
   $batch['operations'][] = array('simport_import_frontpage', array());
   $batch['operations'][] = array('simport_get_files', array());
   $batch['operations'][] = array('simport_sync_themes', array());
-  //$batch['operations'][] = array('simport_set_menu_links', array()); //NOT YET
+  $batch['operations'][] = array('simport_set_menu_links', array());
   $batch['operations'][] = array('simport_cleanup', array());
   // add whatever logic you need
   //$batch['operations'][] = array('another_batch_function', array($arg1, $arg2));
@@ -492,7 +492,7 @@ function simport_get_new_vsite($old_site_nid){
  * Pass it the old nid and it returns current nid
  */
 function simport_get_new_nid($old_nid){
-  return db_result(db_query("SELECT new FROM {simport} WHERE old = %d", $old_nid));
+  return db_result(db_query("SELECT new FROM {simport} WHERE old = %d", (int)$old_nid));
 }
 
 /**
@@ -878,6 +878,7 @@ function simport_set_menu_links(&$context){
 
   $context['message'] = 'Created Custom Menu Links';   
     
+  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
   while ($data = db_fetch_object($sql)) {
 
@@ -891,10 +892,11 @@ function simport_set_menu_links(&$context){
     if (count($custom_links)){
       
     foreach($custom_links as $link){
-    $node = node_load(array('nid' =>$link['nid']));
+      //get new nid
+      $nid = simport_get_new_nid($link['nid']);
     
     //now create the custom menu links!!!   
-    simport_add_custom_menu_links($vsite, $custom_links, $node); 
+    simport_add_custom_menu_links($link, $nid, (int)$link['primary']); 
       }
     }    
   }
