@@ -859,3 +859,35 @@ function simport_import_term_exists($term, $vid){
     //returns string $tid of term or false
   return db_result(db_query("SELECT tid FROM {term_data} WHERE vid = %d AND (LCASE(name) LIKE LCASE( '%s'))", (int)$vid, $term));
 }
+
+
+/**
+ * Import any custom menu links
+ */
+function simport_set_menu_links(&$context){
+  module_load_include('inc', 'simport', 'simport.menu_links');
+
+  $context['message'] = 'Created Custom Menu Links';   
+    
+  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
+  while ($data = db_fetch_object($sql)) {
+
+    //get the old site node object
+    $old = unserialize($data ->data); 
+    //get custom links
+    $custom_links = simport_get_menu_links($old); //return dpm($custom_links);
+    //get the current vsite  
+    $vsite = simport_get_new_vsite($old -> nid); 
+    
+    if (count($custom_links)){
+      
+    foreach($custom_links as $link){
+    $node = node_load(array('nid' =>$link['nid']));
+    
+    //now create the custom menu links!!!   
+    simport_add_custom_menu_links($vsite, $custom_links, $node); 
+      }
+    }    
+  }
+}
+
