@@ -1,6 +1,6 @@
 Drupal.behaviors.scholar = function (context){
         $('.toggle', context).click(function(){
-                $(this).next('.slider').toggle(400);
+                $(this).next('.slider').slideToggle(400);
                 return false;
         });
 }
