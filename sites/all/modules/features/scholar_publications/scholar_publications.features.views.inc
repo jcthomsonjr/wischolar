@@ -100,7 +100,7 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Publications');
+  $handler->override_option('title', 'Recent Publications');
   $handler->override_option('items_per_page', 15);
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(

@@ -53,7 +53,7 @@ function scholar_publications_strongarm() {
 function scholar_publications_context_links_alter(&$links) {
   if (! empty ( $links ['biblio'] )) {
     $links ['importbiblio'] = array (
-      'title' => ' ++Import publications', 
+      'title' => 'Import publications', 
       'href' => 'publications/import', 
       'custom' => TRUE 
     );

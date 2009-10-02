@@ -146,8 +146,8 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'create biblio',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'scholar user',
+      '1' => 'scholar admin',
     ),
   );
 
@@ -155,8 +155,8 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'edit own biblio entries',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'scholar user',
+      '1' => 'scholar admin',
     ),
   );
 
