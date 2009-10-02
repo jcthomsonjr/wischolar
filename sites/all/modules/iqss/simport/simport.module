@@ -122,10 +122,10 @@ function simport_import_sites(&$context){
     //set shield
     simport_set_shield($old, $new);
     
-    //turn on some features
-    $new->features['scholar_links'] = 2;
+    //turn on some features development only - TODO: SHOULD USE simport_check_feature()
+    /*$new->features['scholar_links'] = 2;
     $new->features['scholar_pages'] = 2;
-    $new->features['scholar_announcements'] = 2;    
+    $new->features['scholar_announcements'] = 2;*/ 
 
     //save all the changes/additions to the space
     spaces_save($new);
@@ -256,6 +256,20 @@ function simport_import_logo(&$content){
     }
   }
 
+/**
+ * Checks to see if feature is enabled before saving a node, if not, then enable it
+ */
+function simport_check_feature($type, $vsite){
+  //dealing with special case "class" plural (NOTE: feeds, gallery, dvn, software, dvn.. are not imported types)
+  $plural = ($type == 'class') ? 'es' : 's';
+  
+  if ($vsite->features['scholar_' .$type . $plural] !== 2) {
+    $vsite->features['scholar_' .$type . $plural] = 2;
+    spaces_save($vsite);
+  }
+  return;
+}
+  
 /**
  * Create the user
  */
@@ -525,12 +539,19 @@ function simport_get_old_user($uid){
 
 
 function simport_set_generic($old, &$new){
-
+  
+  //define new type
+  $new_type = _simport_map_content_types($old -> type);
+  
+  //get new vsite
  $vsite = simport_get_new_vsite($old -> og_groups[0]);
 
+ //make sure feature for this type is turned on before submitting a node
+ simport_check_feature($new_type, $vsite);
+ 
   //set the generic node data
   $new -> title = $old -> title;
-  $new -> type = _simport_map_content_types($old -> type);
+  $new -> type = $new_type;
   $new -> status = $old -> status;
   $new -> created = $old -> created;
   $new -> changed = $old -> changed;
@@ -546,6 +567,8 @@ function simport_set_generic($old, &$new){
   $new -> og_groups[0] = (int)$vsite->sid;
   $new -> og_nodeapi = '';
   $new -> spaces_og = array('gid' =>  (int)$vsite->sid);
+  
+  
   
   
   //$new -> og_groups[$vsite -> group -> nid] = $vsite -> group -> nid; //double check on this
@@ -905,14 +928,4 @@ function simport_set_menu_links(&$context){
       }
     }
   }
-}
-
-/**
- * Checks to see if feature is enabled, if not them enable it
- *
- * @param unknown_type $type
- * @param unknown_type $vsite
- */
-function simport_check_feature($type, $vsite){
-	
 }
