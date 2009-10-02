@@ -30,6 +30,7 @@
     <?php endif; ?>
     <div class="content">
       <?php print $content; ?>
+      <p>Offered: <?php print $node->field_class_semester[0]['value'] . ' ' . format_date($node->field_class_year[0]['value'], 'custom', 'Y');?></p>
     </div>
     <?php print $links; ?>
   </div> <!-- /node-inner -->
