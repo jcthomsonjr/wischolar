@@ -57,12 +57,13 @@ function vsite_front_flag_default_flags(){
       0 => '2' 
     ), 
     'global' => TRUE, 
-    'flag_short' => 'Save to Front Page', 
-    'flag_long' => 'Save to Front Page', 
+    'flag_short' => 'Save to Front', 
+    'flag_long' => 'Save post to front page', 
     'flag_confirmation' => 'Saved to Front Page', 
-    'unflag_short' => 'Remove from Front Page', 
-    'unflag_long' => 'Remove from Front Page', 
-    //   'unflag_confirmation' => 'Are you sure you want to remove?',
+    'unflag_short' => 'Remove from Front', 
+    'unflag_long' => 'Remove post from Front Page', 
+    'flag_message' => 'Saved to Front Page!',
+    'unflag_message' => 'Removed from Front Page',
     'status' => TRUE, 
     'show_on_page' => FALSE, 
     'show_on_teaser' => FALSE, 
@@ -85,32 +86,22 @@ function vsite_front_flag_default_flags(){
 /**
  * Implementation of hook_link().
  */
-function vsite_front_link($type, $object, $teaser = FALSE){
-
-  //check font page settings here, only execute if front page setting equals flag
-  $site = vsite_get_vsite();
-  //
-  if ($site->settings['front']['frontpage'] !== 'flag'){
-    return false;
-  }
-
-  if (!isset($object) || !flag_fetch_definition($type)) {
-    return;
-  }
-
+function vsite_front_scholar_admin_link($type, $object){
+  $links = array();
   global $user;
-  // Anonymous users can't create flags with this system.
-  if (!$user->uid) {
-    return;
+  //check font page settings here, only execute if front page setting equals flag
+  $vsite = vsite_get_vsite();
+  if ($vsite->settings['front']['frontpage'] !== 'flag' || 
+      !($vsite -> admin_access()) ||
+      !flag_fetch_definition($type)){
+    return $links;
   }
+
+
 
   // Get frontpage flags
   $flag = flag_get_flag('vsite_frontpage');
 
-  if (!$flag->user_access($user)) {
-    // User has no permission to use this flag.
-    return false;
-  }
 
   if (!$flag->applies_to_content_object($object)) {
     // Flag does not apply to this content.
@@ -130,21 +121,3 @@ function vsite_front_link($type, $object, $teaser = FALSE){
   }
 }
 
-/**
- * Implementation of hook_nodeapi
- */
-/*
-function vsite_front_nodeapi(&$node, $op){
-  switch ($op) {
-    case 'insert' :
-      
-      //if frontpage is set to true in URL, make this page a "bio" page
-      if ($_GET['frontpage']) {
-        $space = spaces_get_space();
-        $space->settings['bio']['nid'] = $node->nid;
-        spaces_save($space);
-      }
-      break;
-  }
-}
-*/
