@@ -41,7 +41,7 @@ function simport_import(){
   $batch['operations'][] = array('simport_import_frontpage', array());
   $batch['operations'][] = array('simport_get_files', array());
   $batch['operations'][] = array('simport_sync_themes', array());
-  $batch['operations'][] = array('simport_set_menu_links', array());
+  //$batch['operations'][] = array('simport_set_menu_links', array());
   $batch['operations'][] = array('simport_cleanup', array());
   // add whatever logic you need
   //$batch['operations'][] = array('another_batch_function', array($arg1, $arg2));
@@ -122,7 +122,10 @@ function simport_import_sites(&$context){
     //set shield
     simport_set_shield($old, $new);
     
+    //turn on some features
     $new->features['scholar_links'] = 2;
+    $new->features['scholar_pages'] = 2;
+    $new->features['scholar_announcements'] = 2;    
 
     //save all the changes/additions to the space
     spaces_save($new);
@@ -876,29 +879,27 @@ function simport_import_term_exists($term, $vid){
 function simport_set_menu_links(&$context){
   module_load_include('inc', 'simport', 'simport.menu_links');
 
-  $context['message'] = 'Created Custom Menu Links';   
-    
-  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
-  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
+  $context['message'] = 'Created Custom Menu Links';
+
+  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' ORDER BY id DESC", 'admin_scholar' );
+  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
   while ($data = db_fetch_object($sql)) {
 
     //get the old site node object
-    $old = unserialize($data ->data); 
+    $old = unserialize($data ->data);
     //get custom links
     $custom_links = simport_get_menu_links($old); //return dpm($custom_links);
-    //get the current vsite  
-    $vsite = simport_get_new_vsite($old -> nid); 
-    
+
     if (count($custom_links)){
-      
-    foreach($custom_links as $link){
-      //get new nid
-      $nid = simport_get_new_nid($link['nid']);
-    
-    //now create the custom menu links!!!   
-    simport_add_custom_menu_links($link, $nid, (int)$link['primary']); 
+
+      foreach($custom_links as $link){
+        //get new nid
+        $nid = simport_get_new_nid($link['nid']);
+
+        //now create the custom menu links!!!
+        simport_add_custom_menu_links($link, $nid, (int)$link['primary']);
       }
-    }    
+    }
   }
 }
 
