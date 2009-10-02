@@ -36,12 +36,10 @@ function simport_import(){
   // batch process and an array of callback arguments
   $batch['operations'][] = array('simport_import_sites', array());
   $batch['operations'][] = array('simport_import_types', array());
-  $batch['operations'][] = array('simport_import_types', array(1));
   $batch['operations'][] = array('simport_import_logo', array());
   $batch['operations'][] = array('simport_import_frontpage', array());
   $batch['operations'][] = array('simport_get_files', array());
   $batch['operations'][] = array('simport_sync_themes', array());
- // $batch['operations'][] = array('simport_set_menu_links', array()); NOT YET
   $batch['operations'][] = array('simport_cleanup', array());
   // add whatever logic you need
   //$batch['operations'][] = array('another_batch_function', array($arg1, $arg2));
@@ -68,7 +66,7 @@ function simport_import_sites(&$context){
 
     //import the table with serialized D5 scholars site data
   if(db_table_exists('scholar_export_data')){
-    db_drop_table($ret, 'scholar_export_data');       
+    db_drop_table(&$ret, 'scholar_export_data');       
     }
     _simport_exportdata();
 
@@ -122,9 +120,8 @@ function simport_import_sites(&$context){
     //set shield
     simport_set_shield($old, $new);
     
-    //enabling scholar links
-   $new-> features['scholar_links'] = 2;
-    
+    $new->features['scholar_links'] = 2;
+
     //save all the changes/additions to the space
     spaces_save($new);
     
@@ -141,23 +138,15 @@ function simport_import_sites(&$context){
   }
 }
   //PHASE 2 - Load And Save The Content
-function simport_import_types($biblio = 0, &$context){
+function simport_import_types(&$context){
 
+  $context['message'] = 'Created Scholar Content';
+  //create custom biblio type - Working Paper
+  $working_paper = simport_create_biblio_type();
 
-  if ($biblio ==1){
-    $context['message'] =  'Created Biblio Content';
-    //define content type(s)
-    $types = array('biblio' => 'biblio');
+  //get the type mappings from old to new
+  $types = _simport_map_content_types();
 
-    //create custom biblio type - Working Paper
-    $working_paper = simport_create_biblio_type;
-  }
-  else{
-    $context['message'] =  'Created Scholar Content';
-    //define content type(s)
-    $types = _simport_map_content_types();
-  }
-  
   foreach ($types as $oldtype => $newtype){
    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
  // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE  id = %d", 24);
@@ -182,7 +171,7 @@ function simport_import_types($biblio = 0, &$context){
           simport_set_page($old, $new); //import to page
           break;
           
-        case 'biblio':  
+        case 'biblio':          
            simport_set_biblio($old, $new);           
           break;   
 
@@ -394,11 +383,9 @@ function simport_set_logo($old){
     $filename = explode('.', basename($source)); 
     $new_filename = $vsite ->purl . '.' . $filename[1];
     
-    //check if file exists first
-    if(!file_exists($dest . '/' . $new_filename)){
     //copy file to vsite_design_logo dir
     file_copy($source, $dest . '/' . $new_filename);
-    }
+      
     //add file to og node
     vsite_design_settings_logo::add_imagefield_image($dest . '/' . $new_filename, 'field_vsite_logo',$vsite->group);
       
@@ -705,7 +692,7 @@ function simport_create_biblio_type(){
  * Save files after nodes have been saved
  */
 function simport_get_files(){
-  simport_include('simport.api');
+  module_load_include('inc', 'simport', 'simport.api');
 
   //list of old types => filefield that have files
   $types = array(
@@ -784,9 +771,10 @@ function _simport_map_content_types($old_type = NULL){
   'scholar_bio' => 'page',
   'scholar_class' => 'class',
   'scholar_page' => 'page',  //both scholar_bio and scholar_page import to page
-  // 'biblio' => 'biblio',  //DO NOT INCLUDE BIBLIO - seperated by batch operations 
+  'biblio' => 'biblio', 
+ 
   // 'scholar_cv' => '', //ONLY 1 Submit it manually
-  // 'scholar_photo' => '', //already dealt with in simport_set_logo()
+ // 'scholar_photo' => '', //already dealt with in simport_set_logo()
  ); 
   //if a specific type is specified as an argument, then just return the equivilent for that type
   if ($old_type){    
@@ -824,6 +812,7 @@ function simport_sync_themes(){
   $sql = db_query("SELECT * FROM {og}");
   while($data = db_fetch_object($sql)){
    $space = spaces_load ( 'og', $data->nid, TRUE );
+   //dpm (trim($space -> settings['theme']));
    $theme = trim($space -> settings['theme']);
    $sql_ins = db_query("UPDATE {og} SET og_theme = '%s' WHERE nid = %d", $theme, $data->nid);
   }
@@ -870,60 +859,3 @@ function simport_import_term_exists($term, $vid){
     //returns string $tid of term or false
   return db_result(db_query("SELECT tid FROM {term_data} WHERE vid = %d AND (LCASE(name) LIKE LCASE( '%s'))", (int)$vid, $term));
 }
-
-/**
- * Import any custom menu links
- */
-function simport_set_menu_links(&$context){
-  simport_include('simport.menu_links');
-  
-   $context['message'] = 'Created Scholar Users and Sites';   
-    
-  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
-  while ($data = db_fetch_object($sql)) {
-
-    //get the old site node object
-    $old = unserialize($data ->data); 
-    //get custom links
-    $custom_links = simport_get_menu_links($old); //return dpm($custom_links);
-    //get the current vsite  
-    $vsite = simport_get_new_vsite($old -> nid); 
-    
-    if (count($custom_links)){
-      
-    foreach($custom_links as $link){
-    $node = node_load(array('nid' =>$link['nid']));
-    
-    //now create the custom menu links!!!   
-    simport_add_custom_menu_links($vsite, $custom_links, $node); 
-      }
-    }    
-  }
-}
-
-
-function simport_include($inc_files){
-  $inc_files = is_array($inc_files) ? $inc_files : array($inc_files);
-  $path = dirname(__FILE__);
-
-  foreach ($inc_files as $inc) {
-    if (file_exists("$path/includes/$inc.inc")) {
-      include_once "$path/includes/$inc.inc";
-    }
-  }
-}  
-  
-
-
-/*function simport_nodeapi(&$node, $op){
-  switch ($op) {
-  	case 'presave':
-  	  dpm($node);
-  		
-  		break;
-  
-  	default:
-  		break;
-  }
-  
-}*/
