@@ -41,7 +41,7 @@ function simport_import(){
   $batch['operations'][] = array('simport_import_frontpage', array());
   $batch['operations'][] = array('simport_get_files', array());
   $batch['operations'][] = array('simport_sync_themes', array());
-  //$batch['operations'][] = array('simport_set_menu_links', array());
+  $batch['operations'][] = array('simport_set_menu_links', array());
   $batch['operations'][] = array('simport_cleanup', array());
   // add whatever logic you need
   //$batch['operations'][] = array('another_batch_function', array($arg1, $arg2));
@@ -395,12 +395,15 @@ function simport_set_logo($old){
     $filename = explode('.', basename($source)); 
     $new_filename = $vsite ->purl . '.' . $filename[1];
     
+    //if(!file_exists($dest . '/' . $new_filename)){
     //copy file to vsite_design_logo dir
-    file_copy($source, $dest . '/' . $new_filename);
+    file_copy($source, $dest . '/' . $new_filename, $replace = FILE_EXISTS_REPLACE);
+    //}
       
     //add file to og node
     vsite_design_settings_logo::add_imagefield_image($dest . '/' . $new_filename, 'field_vsite_logo',$vsite->group);
-      
+    
+    
     //define new path for logo
     $new_path = variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->purl . '/' . $new_filename; 
     
@@ -725,7 +728,8 @@ function simport_get_files(){
           if ($old -> field_image[0]['fid'] > 0){
             
             //load the new node
-            $node = node_load(simport_get_new_nid(array('nid' => $old -> nid)));
+            $node = node_load(array('nid' => simport_get_new_nid($old -> nid)));           
+            
             //load the vsite
             $vsite =  spaces_load ( 'og', key($node -> og_groups), TRUE );
 
@@ -881,8 +885,8 @@ function simport_set_menu_links(&$context){
 
   $context['message'] = 'Created Custom Menu Links';
 
-  //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' ORDER BY id DESC", 'admin_scholar' );
-  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
+  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' ORDER BY id ASC", 'admin_scholar' );
+ // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
   while ($data = db_fetch_object($sql)) {
 
     //get the old site node object
@@ -903,3 +907,12 @@ function simport_set_menu_links(&$context){
   }
 }
 
+/**
+ * Checks to see if feature is enabled, if not them enable it
+ *
+ * @param unknown_type $type
+ * @param unknown_type $vsite
+ */
+function simport_check_feature($type, $vsite){
+	
+}
