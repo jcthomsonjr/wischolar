@@ -16,6 +16,9 @@ function simport_get_menu_links($old){
     foreach($old -> scholar_menu_links as $link){
      $pattern = '/(^node)\/([0-9]+)$/';
             
+     
+     if(isset($matches)){unset($matches);}
+     
       preg_match($pattern,$link['path'], $matches);
       if(!empty($matches)){
         $custom_links[] = array(
@@ -39,6 +42,10 @@ function simport_get_menu_links($old){
  */
 function simport_add_custom_menu_links($link, $nid, $primary = 1){
   $node = node_load(array('nid' => $nid));
+  
+  if(!is_object($node)){
+    return;
+  }
  
   $node -> menu  = array(
   'mlid' => 0,
