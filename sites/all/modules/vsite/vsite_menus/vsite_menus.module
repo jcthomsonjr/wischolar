@@ -78,6 +78,7 @@ function vsite_menus_menu_node_delete($item, $node) {
  */
 function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_expanded = false, $b_filter_private_features = false){
   $space = vsite_get_vsite();
+  $b_make_feature_active = true; //Should the feature tab be active, it should unless there is a link that overides this
   
   if(!$space) return ($b_html)?"":false;
   
@@ -138,10 +139,23 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
 	      if ($node && !empty($node->og_groups) && !in_array($space->group->nid, $node->og_groups)) {
 	        // If the node does not belongs to the current active group space then remove it
 	        unset($a_settings_menu[$key]);
+	      }elseif($link['link']['link_path'] == $_GET['q']){
+	      	$link['link']['in_active_trail'] = true;
+	      	$b_make_feature_active = false;
 	      }
 	  	}//Custom Link?
 	  }
   }
+  
+  if ($b_make_feature_active && module_exists('context')) {
+  	$a_new_links = array();
+  	foreach ($a_settings_menu as $key => $link) {
+      $a_new = current(context_menu_set_active(array($link['link'])));
+      if(is_array($a_new['attributes']) && $a_new['attributes']['class'] == 'active'){
+        $a_settings_menu[$key]['link']['in_active_trail'] = true;
+      }
+  	}
+  }//Should the feature tab be made active
   
   if(!$b_html) return $a_settings_menu;
   

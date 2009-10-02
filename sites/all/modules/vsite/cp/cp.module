@@ -75,7 +75,7 @@ function cp_init(){
   }
   
   if ($toolbar){
-   drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
+    drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
   }
   
   context_set('toolbar', 'value', $toolbar);
