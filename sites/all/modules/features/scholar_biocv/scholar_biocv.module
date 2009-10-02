@@ -51,12 +51,14 @@ function scholar_biocv_bio(){
   $s_out = "";
   
   if($vsite->admin_access()){
+  	$a_links = array();
     if ($bio_node){
-      $s_out .= l('Edit your Bio', "node/{$bio_node->nid}/edit");
+      $a_links[] = array('custom' => true, 'title' => 'Edit your Bio', 'href' => "node/{$bio_node->nid}/edit");
     }else {
       // an appropriate message and a link for the user to create their bio
-      $s_out .= l('Add your Bio', 'node/add/bio');
+      $a_links[] = array('custom' => true, 'title' => 'Add your Bio', 'href' => "node/add/bio");
     }
+    $s_out .= theme('context_links', $a_links);
   }
   
   if ($bio_node){
@@ -81,12 +83,14 @@ function scholar_biocv_cv(){
   $s_out = "";
   
   if($vsite->admin_access()){
+    $a_links = array();
     if ($cv_node){
-      $s_out .= l('Edit your CV', "node/{$cv_node->nid}/edit");
+      $a_links[] = array('custom' => true, 'title' => 'Edit your CV', 'href' => "node/{$cv_node->nid}/edit");
     }else {
-      // an appropriate message and a link for the user to create their bio
-      $s_out .= l('Add your CV', 'node/add/cv');
+      // an appropriate message and a link for the user to create their CV
+      $a_links[] = array('custom' => true, 'title' => 'Add your CV', 'href' => "node/add/cv");
     }
+    $s_out .= theme('context_links', $a_links);
   }
   
   $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);

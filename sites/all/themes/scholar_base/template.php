@@ -37,6 +37,9 @@ function scholar_base_context_links($links) {
   foreach ($links as $link) {
     $options = $link;
     $options['attributes']['class'] = isset($link['attributes']['class']) ? $link['attributes']['class'] : 'context-button';
+    if(!is_array($options['query'])) $options['query'] = array();
+    $options['query']['destination'] = $_GET['q'];
+    
     if (!empty($link['custom'])) {
       $output[]= l($link['title'], $link['href'], $options);
     }
