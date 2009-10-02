@@ -82,6 +82,22 @@ class scholar extends space_og implements space {
   }
 }
 
+function scholar_init(){
+drupal_add_js(drupal_get_path('module', 'scholar') .'/theme/scholar.js');
+}
+
+function scholar_link($type, $object, $teaser = FALSE) {
+  $links = array();
+    $links['scholar-admin'] = array(
+   'title'      => theme('scholar_admin_links', scholar_get_admin_links('node', $object)),
+   'html'       => TRUE,
+   //'attributes' => array('title' => t("zzzzzzzzzzzzzzzz")),
+    ); 
+  return $links; 
+}
+
+
+
 /**
  * Implements hook spaces_types_alter
  *
@@ -255,5 +271,5 @@ function node_scholar_admin_link($type, $object) {
  * Implementation of hook_preprocess_node().
  */
 function scholar_preprocess_node(&$vars) {
-  $vars['content'] .= theme('scholar_admin_links', scholar_get_admin_links('node', $vars['node']));
+  //$vars['content'] .= theme('scholar_admin_links', scholar_get_admin_links('node', $vars['node']));
 }

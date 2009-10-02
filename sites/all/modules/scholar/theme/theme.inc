@@ -5,6 +5,8 @@
  * Theme function for contextual popups.
  */
 function scholar_preprocess_scholar_admin_links(&$vars) {
+$vars['links'] = theme('links',$vars['links']);
+/*
   if (!empty($vars['links']) && is_array($vars['links'])) {
     $links = '';
     foreach ($vars['links'] as $link) {
@@ -14,6 +16,10 @@ function scholar_preprocess_scholar_admin_links(&$vars) {
         $links .= $link['title'];
       }
     }
-    $vars['links'] = $links;
+        dpm($vars['links']);
+    //$vars['links'] = $links;
+
+    $vars['links'] = theme('links',$vars['links']);
   }
+  */
 }
