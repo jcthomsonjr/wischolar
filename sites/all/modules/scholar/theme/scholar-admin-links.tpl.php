@@ -1,7 +1,8 @@
 <?php if ($links): ?>
-<a class= "scholar-admin-link-last toggle" href="somehref"> Admin </a>
-<div class="scholar-admin-inline slider"> 
-  <div class="scholar-admin-links"><?php print $links ?></div>
+
+<div class="toggle"><span>Admin Options</span></div>
+<div class="scholar-admin-inline slider">
+  <?php print $links ?>
 </div>
 
 <?php endif; ?>
