@@ -14,10 +14,13 @@ function simport_get_menu_links($old){
 
   if (is_array($old -> scholar_menu_links) && count($old -> scholar_menu_links)){
     foreach($old -> scholar_menu_links as $link){
-      $pattern = '/^node\/'. $old->nid . '\//';
+    //  $pattern = '/^node\/'. $old->nid . '\//';
+      $pattern = '/(^node)\/(\d+)\/$/';
+            
       preg_match($pattern,$link['path'], $matches);
       if(empty($matches)){
         $custom_links[] = array(
+        'nid' => $maches[2],
         'title' => $link['title'],
         'path' => $link['path'],
         );
@@ -28,6 +31,12 @@ function simport_get_menu_links($old){
   return $custom_links;
 }
 
+/**
+ * This function is no longer called
+ *
+ * @param unknown_type $link
+ * @return unknown
+ */
 function simport_get_menu_link_node($link){
   $exploded = explode('/', $link['path']);
   if ($exploded[0] == 'node'){
