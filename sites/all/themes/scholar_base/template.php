@@ -44,10 +44,10 @@ function scholar_base_context_links($links) {
       $output[]= l($link['title'], $link['href'], $options);
     }
     else {
-      $output[]= l('+ '. t('Add !type', array('!type' => $link['title'])), $link['href'], $options);
+      $output[]= l(t('Add !type', array('!type' => $link['title'])), $link['href'], $options);
     }
   }
-  
+
   if($output){
     $output = theme('item_list', $output,  $title = NULL, $type = 'ul', $attributes = array("class" => "context-links"));
     //$output = '<div class = "context-links">' . $output . '</div>';
