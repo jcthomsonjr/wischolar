@@ -83,18 +83,31 @@ class scholar extends space_og implements space {
 }
 
 function scholar_init(){
-drupal_add_css(drupal_get_path('module', 'scholar') .'/theme/scholar-admin-links.css');
-drupal_add_js(drupal_get_path('module', 'scholar') .'/theme/scholar.js');
+  drupal_add_css(drupal_get_path('module', 'scholar') . '/theme/scholar-admin-links.css');
+  drupal_add_js(drupal_get_path('module', 'scholar') . '/theme/scholar.js');
 }
 
-function scholar_link($type, $object, $teaser = FALSE) {
+
+/**
+ * hook link
+ */
+function scholar_link($type, $object, $teaser = FALSE){
   $links = array();
-    $links['scholar-admin'] = array(
-   'title'      => theme('scholar_admin_links', scholar_get_admin_links('node', $object)),
-   'html'       => TRUE,
-   //'attributes' => array('title' => t("zzzzzzzzzzzzzzzz")),
-    );
+  $links['scholar-admin'] = array(
+    'title' => theme('scholar_admin_links', scholar_get_admin_links('node', $object)), 
+    'html' => TRUE 
+  );
   return $links;
+}
+
+/**
+ * hook link_alter (admin at the end of links)
+ */
+function scholar_link_alter(&$links, $node){
+  $old['scholar-admin'] = $links['scholar-admin'];
+  unset($links['scholar-admin']);
+  $links = array_merge($links, $old);
+
 }
 
 
