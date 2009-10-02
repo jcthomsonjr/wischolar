@@ -94,8 +94,8 @@ function scholar_init(){
 function scholar_link($type, $object, $teaser = FALSE){
   $links = array();
   $links['scholar-admin'] = array(
-    'title' => theme('scholar_admin_links', scholar_get_admin_links('node', $object)), 
-    'html' => TRUE 
+    'title' => theme('scholar_admin_links', scholar_get_admin_links('node', $object)),
+    'html' => TRUE
   );
   return $links;
 }
@@ -216,7 +216,10 @@ function scholar_mail_alter(&$message) {
       	  '!password' => $password,
       	  '!firstname' => $o_profile->vsite_users_first_name[0],
 			  );
-      	$message['body'] = t("Dear !firstname,\n\nA site owner at the !site has created an account for you. You may now log in by clicking on the following link:\n\n !login_url\n\n using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n(Note: This is a one-time login, so it can be used only once.)\n\n\Sincerely,\nThe !site Team", $a_msg_variables);
+
+			  //This is unused: Alternatively using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n
+
+      	$message['body'] = t("Dear !firstname,\n\nA site owner at the !site has created an account for you. You may now log in by either clicking through on the following link or pasting it into your browser:\n\n !login_url\n\n(Note: This is a one-time login; it can be used only once.)\n\n\Sincerely,\nThe !site Team", $a_msg_variables);
 
     break;
   }
