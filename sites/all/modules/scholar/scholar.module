@@ -199,6 +199,7 @@ function scholar_mail_alter(&$message) {
       	$o_user = user_load($n_new_user);
      	  $password = user_password();
      	  $edit = array('pass' => $password);
+     	  $o_profile = content_profile_load('vsite_users_profile',$n_new_user);
      	  user_save($o_user,$edit);
 
       	$a_msg_variables = array(
@@ -213,8 +214,9 @@ function scholar_mail_alter(&$message) {
 			    '!login_uri' => url('user', array('absolute' => TRUE, 'language' => $message['language'])),
 			    '!edit_uri' => url('user/'. $o_user->uid .'/edit', array('absolute' => TRUE, 'language' => $message['language'])),
       	  '!password' => $password,
+      	  '!firstname' => $o_profile->vsite_users_first_name[0],
 			  );
-      	$message['body'] = t("Dear !firstname,\n\nA site owner at the !site has created an account for you. You may now log in to !login_uri using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n(Note: This is a one-time login, so it can be used only once.)\n\n\Sincerely,\nThe !site Team", $a_msg_variables);
+      	$message['body'] = t("Dear !firstname,\n\nA site owner at the !site has created an account for you. You may now log in by clicking on the following link:\n\n !login_url\n\n using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n(Note: This is a one-time login, so it can be used only once.)\n\n\Sincerely,\nThe !site Team", $a_msg_variables);
 
     break;
   }
