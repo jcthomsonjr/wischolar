@@ -215,7 +215,7 @@ function cite_distribute_form($form_id, $nid){
     '#disabled' => cite_distribute_check_disabled($module['name'], $nid),
     '#title' => t('@repos', array('@repos' => $module['repository'])),
     '#default_value' => '',// TODO: need to query the cite_distribute table to get this value
-    '#prefix' =>'<div id="distribute-' . $module['name'] . ' " class="respository-item">',
+    '#prefix' =>'<div id="distribute-' . $module['name'] . ' " class="repository-item">',
     '#suffix' => '</div>',
     );
   }
