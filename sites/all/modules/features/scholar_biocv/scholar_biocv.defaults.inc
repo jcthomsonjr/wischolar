@@ -98,37 +98,49 @@ function _scholar_biocv_user_default_permissions() {
   // Exported permission: create bio content
   $permissions[] = array(
     'name' => 'create bio content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin'
+    ),
   );
 
   // Exported permission: create cv content
   $permissions[] = array(
     'name' => 'create cv content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin'
+    ),
   );
 
   // Exported permission: delete own bio content
   $permissions[] = array(
     'name' => 'delete own bio content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin'
+    ),
   );
 
   // Exported permission: delete own cv content
   $permissions[] = array(
     'name' => 'delete own cv content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin'
+    ),
   );
 
   // Exported permission: edit own bio content
   $permissions[] = array(
     'name' => 'edit own bio content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin'
+    ),
   );
 
   // Exported permission: edit own cv content
   $permissions[] = array(
     'name' => 'edit own cv content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin'
+    ),
   );
 
   return $permissions;
