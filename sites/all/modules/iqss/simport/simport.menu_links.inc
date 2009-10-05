@@ -8,14 +8,18 @@
  * @return unknown
  */
 
-function simport_get_menu_links($old){
-
+function simport_get_menu_links($old, $ltype){
+  
+  $ltype_map = array(
+  'primary' => 'scholar_menu_links',
+  'secondary' => 'scholar_menu_links_secondary',
+  );
+  
   $custom_links = array();
+  $pattern = '/(^node)\/([0-9]+)$/';
 
-  if (is_array($old -> scholar_menu_links) && count($old -> scholar_menu_links)){
-    foreach($old -> scholar_menu_links as $link){
-     $pattern = '/(^node)\/([0-9]+)$/';
-            
+  if (is_array($old -> $ltype_map[$ltype]) && count($old -> $ltype_map[$ltype])){
+    foreach($old -> $ltype_map[$ltype] as $link){           
      
      if(isset($matches)){unset($matches);}
      
@@ -25,7 +29,7 @@ function simport_get_menu_links($old){
         'nid' => $matches[2],
         'title' => $link['title'],
         'path' => $link['path'],
-        'primary' => 1,
+        'primary' => $ltype_map[$ltype] == 'scholar_menu_links' ? 1 : 0,
         );
       }
     }
