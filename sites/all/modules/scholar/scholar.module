@@ -104,6 +104,8 @@ function scholar_link($type, $object, $teaser = FALSE){
  * hook link_alter (admin at the end of links)
  */
 function scholar_link_alter(&$links, $node){
+	if(!isset($links['scholar-admin'])) return;
+	
   $old['scholar-admin'] = $links['scholar-admin'];
   unset($links['scholar-admin']);
   $links = array_merge($links, $old);
