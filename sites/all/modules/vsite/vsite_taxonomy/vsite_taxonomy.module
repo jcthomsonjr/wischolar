@@ -13,6 +13,13 @@ function vsite_taxonomy_menu() {
     'weight' => 100,
   );
   
+  $items['categories/%/%'] = array(
+    //'title' => 'xxx',
+    'page callback' => 'vsite_taxonomy_content_by_category',
+    'page arguments' => array(1,2),
+    'access arguments' => array('access contnet'),
+  );
+  
   $items['vsite_taxonomy/term/delete/%/%'] = array (
     'title' => 'deleting a term',
     'page callback' => 'vsite_taxonomy_term_delete',
@@ -47,7 +54,21 @@ function vsite_taxonomy_tt(){
   return 'sss';
 }
 
+function vsite_taxonomy_content_by_category($term_name, $content_type){
 
+  $map = spaces_features_map($type = 'node');
+  context_set_by_condition('node', $content_type, TRUE);
+
+  $view = views_get_view('vsite_taxonomy_view');
+  $view->init();
+  $view->set_display('default');
+  $view->set_arguments(array(
+    $term_name, 
+    $content_type 
+  ));
+  $view->execute();
+  return $view->render();
+}
 
 /**
  * hook block
@@ -68,6 +89,22 @@ function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
+function vsite_taxonomy_context_default_contexts_alter(&$contexts){
+  $contexts_map = spaces_features_map();
+  
+  foreach($contexts_map['context'] as $context_name => $feature_name){
+    $contexts[$context_name]->block['vsite_taxonomy_0'] = array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      );
+  }
+}
+
 /**
  * callback function for "Site categories" block
  */
@@ -75,12 +112,11 @@ function vsite_taxonomy_block_view(){
   $vsite = vsite_get_vsite();
   
   // menu and node associated with the active context (if any)
-  $active_menus = context_active_values("menu");
+  //$active_menus = context_active_values("menu");
   $active_nodes = context_active_values("node");
-  
-  if (count($active_nodes) && count($active_menus)) {
+  if (count($active_nodes)) {
     $node_type = reset($active_nodes);
-    $active_menu = reset($active_menus);
+    //$active_menu = reset($active_menus);
     
     // get the vocabulary for this group
     $vcs = vsite_get_vocabs($vsite, $node_type);
@@ -91,7 +127,8 @@ function vsite_taxonomy_block_view(){
       foreach ( $terms as $term ) {
         $nr_nodes = taxonomy_term_count_nodes($term->tid, $node_type); // only terms for this content type
         if ($nr_nodes) {
-          $item = vsite_taxonomy_term_item($term, $active_menu, $admin, TRUE);
+          $href = 'categories/'. $term -> name . '/'. $node_type;
+          $item = vsite_taxonomy_term_item($term, $href, $admin, TRUE);
           $items[] = array(
             'data' => $item, 
             'id' => 'vsite_taxonomy_item_' . $term->tid 
@@ -175,7 +212,7 @@ function vsite_taxonomy_taxonomies(){
  */
 function vsite_taxonomy_term_item($term, $href, $admin = FALSE, $count = FALSE){
 
- 
+  //$href = 'categories/statistics/class';
   $term_link = l($term -> name, $href, array(
     'title' => t($term -> description) 
   ));
