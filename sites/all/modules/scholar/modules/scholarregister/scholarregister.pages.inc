@@ -21,7 +21,7 @@ function scholarregister_signup_form(){
       '#size' => 45, 
       '#title' => t('Desired user name'), 
       '#required' => TRUE, 
-      '#description' => t('Choose an easy to remember user name.'), 
+      '#description' => t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores.'), 
       '#prefix' => '<div id="name-field">', 
       '#suffix' => '<div id="name-suffix"></div></div>', 
       '#attributes' => array(
