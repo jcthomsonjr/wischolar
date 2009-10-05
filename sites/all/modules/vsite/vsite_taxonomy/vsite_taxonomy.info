@@ -1,6 +1,10 @@
-name = vsite taxonomy
-description = provides taxonomy funct. for a vsite
-dependencies[] = taxonomy
-dependencies[] = ctools
+core = "6.x"
+dependencies[] = "date_api"
+dependencies[] = "spaces"
+dependencies[] = "taxonomy"
+description = "Mange vsite categorization"
+features[views][] = "vsite_taxonomy_view"
+name = "vsite taxonomy"
 package = "vsite"
-core = 6.x
+project = "vsite_taxonomy"
+version = "6.x-1.0-alpha"
