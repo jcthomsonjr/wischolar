@@ -57,7 +57,7 @@ function vsite_menus_menu_node_update($item, $node) {
  * Implements hook_menu_node_delete().
  */
 function vsite_menus_menu_node_delete($item, $node) {
-  require_once(drupal_get_path('module', 'vsite_menus') .'/vsite_menus.menus.inc');
+  require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
   vsite_include('vsiteapi');
   $site = vsite_get_vsite();
   $a_scholar_types = vsite_content_types();
