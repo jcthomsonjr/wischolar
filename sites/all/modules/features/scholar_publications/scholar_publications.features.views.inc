@@ -103,6 +103,7 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('title', 'Recent Publications');
   $handler->override_option('items_per_page', 15);
   $handler->override_option('row_plugin', 'node');
+  $handler->override_option('distinct', 1);
   $handler->override_option('row_options', array(
     'relationship' => 'none',
     'build_mode' => 'teaser',
