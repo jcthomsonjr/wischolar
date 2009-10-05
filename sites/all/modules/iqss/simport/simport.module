@@ -68,7 +68,7 @@ function simport_import_sites(&$context){
 
     //import the table with serialized D5 scholars site data
   if(db_table_exists('scholar_export_data')){
-    db_drop_table(&$ret, 'scholar_export_data');       
+    db_drop_table($ret, 'scholar_export_data');       
     }
     _simport_exportdata();
 
@@ -211,8 +211,8 @@ function simport_import_types($biblio = 0, &$context){
   }
 }
 
-function simport_import_logo(&$content){
-  $context['message'] = 'Retrieved logos';
+function simport_import_logo(&$context){
+  $context['message'] = 'Imported Site Logos';
   //PHASE 3 - Set The logo
   //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'scholar_photo', 4);
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'scholar_photo');
@@ -227,7 +227,8 @@ function simport_import_logo(&$content){
   //PHASE 4 - Set The Front Page
   //loop thorugh all the admin_scholar types now that all nodes have been imported
   
-  function simport_import_frontpage(){
+  function simport_import_frontpage(&$context){
+    $context['message'] = 'Imported Frontpage Settings';
 
     $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
     while($data = db_fetch_object($sql)){
@@ -327,8 +328,12 @@ function simport_set_theme($old, &$new){
 function simport_set_frontpage($old, &$vsite, $new_front_nid, $old_front_nid){ 
   //get the old frontpage node
   $old_frontpage = simport_get_old_node($old_front_nid);
+  $vsite->settings['front']['frontpage']= 'html'; 
+  $vsite->settings['front']['front_nid'] = $new_front_nid;
+  return;
+  
   //set frontpage to bio page
-  if ( $old_frontpage  -> type == 'scholar_bio'){
+/*  if ( $old_frontpage  -> type == 'scholar_bio'){
   $vsite->settings['bio']['nid'] = $new_front_nid; 
   $vsite->settings['front']['frontpage']= 'bio'; 
   }
@@ -337,7 +342,7 @@ function simport_set_frontpage($old, &$vsite, $new_front_nid, $old_front_nid){
   $vsite->settings['front']['frontpage']= 'html'; 
   $vsite->settings['front']['front_nid'] = $new_front_nid;  
   //  not using this function anymore -  _simport_map_content_types($old_frontpage  -> type);
-  }
+  }*/
 }
 
 /**
@@ -373,11 +378,11 @@ function simport_set_logo($old){
       
       //delete temp file if exists
       if(file_exists($tmp_path)){
-      file_delete($tmp_path);
+     // file_delete($tmp_path); 
       }
 
       //copy to temp dir
-     file_copy($source, '/tmp');   
+     file_copy($source, '/tmp', $replace = FILE_EXISTS_REPLACE);   
     
     $file = new stdClass();
     $file -> uid = $vsite-> group -> uid;
@@ -391,10 +396,7 @@ function simport_set_logo($old){
     //write to the files table
     drupal_write_record('files', $file);
       
-    //copy the file to the new location
-    //file_copy($source, $dest);
-    
-    //NOW DEAL WITH CP LOGO
+      //NOW DEAL WITH CP LOGO
      $dest = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . '/vsite_design_logo/' . $vsite ->purl;
     
         //create directory  
@@ -404,11 +406,11 @@ function simport_set_logo($old){
     $filename = explode('.', basename($source)); 
     $new_filename = $vsite ->purl . '.' . $filename[1];
     
-    //if(!file_exists($dest . '/' . $new_filename)){
+    if(!file_exists($dest . '/' . $new_filename)){
     //copy file to vsite_design_logo dir
     file_copy($source, $dest . '/' . $new_filename, $replace = FILE_EXISTS_REPLACE);
-    //}
-      
+    }
+          
     //add file to og node
     vsite_design_settings_logo::add_imagefield_image($dest . '/' . $new_filename, 'field_vsite_logo',$vsite->group);
     
@@ -422,7 +424,7 @@ function simport_set_logo($old){
     spaces_save($vsite);
     }
     else{
-      //watchdog('simport', 'logo file does not exist in source location:  %filename.', array('%filename' => basename($source)), WATCHDOG_NOTICE);
+     //report error msg here;
     }
     return;
 }
@@ -719,14 +721,15 @@ function simport_create_biblio_type(){
 /**
  * Save files after nodes have been saved
  */
-function simport_get_files(){
+function simport_get_files(&$context){
+  $context['message'] = 'Imported Files';
   module_load_include('inc', 'simport', 'simport.api');
 
   //list of old types => filefield that have files
   $types = array(
   'scholar_link',
   );
-
+  //Converting filefield to upload within this foreach loop
   foreach ($types as $type) {
     $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $type);
     //$sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", $type, 26);
@@ -759,24 +762,46 @@ function simport_get_files(){
               
               //If file had description text add it here
              $file->description =  isset($old_file -> description) ? $old_file -> description : $file -> filename; 
-             $file->list = 1;
-                  
-              // upload_save($node);
-               
-              //taken from upload_save()
-              db_query("INSERT INTO {upload} (fid, nid, vid, list, description, weight) VALUES (%d, %d, %d, %d, '%s', %d)", $file->fid, $node->nid, $node->vid, $file->list, $file->description, $file->weight);
-      file_set_status($file, FILE_STATUS_PERMANENT);
-      
-      
-              //not using filefield anymore - no longer called
-             // simport_node_add_imagefield_image($source, 'field_link_image', $node);
+             $file->list = 1;              
+                       
+             simport_save_upload_data($file, $node);
             }
           }
           break;
       }
     }
   }
+
+    //now get all Upload files
+  $types = _simport_map_content_types();
+  $types['biblio'] = 'biblio';
+  
+  foreach ($types as $type => $newtype) {
+    $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $type);
+    while ($data = db_fetch_object($sql)){
+      //get the old site node object
+      $old = unserialize($data ->data);
+
+      if(count($old ->files)){        
+        $node =  node_load(array('nid' => simport_get_new_nid($old -> nid)));   
+        $vsite = simport_get_new_vsite($old ->og_groups[0]);        
+        foreach ($old -> files as $file){
+          
+           //unset old info for fid and nid
+              unset($file->nid);
+              unset($file->fid);
+          
+              $source = $source = variable_get('simport_remote_path', '') . '/' . $file -> filepath;
+              
+          //importing file
+          $file = simport_import_file($node, $source, $file, $vsite);
+          simport_save_upload_data($file, $node);
+        }
+      }
+    }
+  }
 }
+
 
 /**
  * Returns vocabulary information specific to site and content type
@@ -837,7 +862,9 @@ function _simport_exportdata(){
   shell_exec($cmd);
 }
 
-function simport_sync_themes(){
+function simport_sync_themes(&$context){
+   $context['message'] = 'Synchronized Theme Settings';
+    
   $sql = db_query("SELECT * FROM {og}");
   while($data = db_fetch_object($sql)){
    $space = spaces_load ( 'og', $data->nid, TRUE );
@@ -860,7 +887,9 @@ function _simport_get_fileroot(){
 /**
  * Do some clean up tasks - such as remove the D5 scholar site automated welcome nodes
  */
-function simport_cleanup(){
+function simport_cleanup(&$context){
+   $context['message'] = 'Finished Cleanup Tasks';
+   
   $str = 'Welcome to my new site%';
   $sql = db_query("SELECT nid, title, type FROM {node} WHERE title LIKE '%s' AND type = '%s'",$str, 'announcement');
   while ($data = db_fetch_object($sql)){
@@ -899,23 +928,94 @@ function simport_set_menu_links(&$context){
   $context['message'] = 'Created Custom Menu Links';
 
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' ORDER BY id ASC", 'admin_scholar' );
- // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
+  // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
   while ($data = db_fetch_object($sql)) {
 
     //get the old site node object
     $old = unserialize($data ->data);
-    //get custom links
-    $custom_links = simport_get_menu_links($old); //return dpm($custom_links);
 
-    if (count($custom_links)){
+    //capture both primary and secondary links
+    $link_types = array('primary', 'secondary');
+    foreach($link_types as $ltype){
 
-      foreach($custom_links as $link){
-        //get new nid
-        $nid = simport_get_new_nid($link['nid']);
+      //get custom links
+      $custom_links = simport_get_menu_links($old, $ltype); //return dpm($custom_links);
 
-        //now create the custom menu links!!!
-        simport_add_custom_menu_links($link, $nid, (int)$link['primary']);
+      if (count($custom_links)){
+        foreach($custom_links as $link){
+          //get new nid
+          $nid = simport_get_new_nid($link['nid']);
+
+          //now create the custom menu links!!!
+          simport_add_custom_menu_links($link, $nid, (int)$link['primary']);
+        }
       }
     }
   }
+}
+
+
+/**
+ * Reporting function the show how many external links
+ */
+function _simport_external_get_nodes(){
+  $i =1;
+  $pattern = '/(^http)(.+)/';
+  $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' ORDER BY id ASC", 'admin_scholar' );
+  // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
+  while ($data = db_fetch_object($sql)) {
+
+    //get the old site node object
+    $old = unserialize($data ->data);
+
+    $ltype_map = array(
+    'primary' => 'scholar_menu_links',
+    'secondary' => 'scholar_menu_links_secondary',
+    );
+
+    //capture both primary and secondary links
+    $link_types = array('primary', 'secondary');
+    foreach($link_types as $ltype){
+      if (is_array($old -> $ltype_map[$ltype]) && count($old -> $ltype_map[$ltype])){
+        foreach($old -> $ltype_map[$ltype] as $link){
+
+          if(isset($matches)){unset($matches);}
+
+          preg_match($pattern,$link['path'], $matches);
+          if(!empty($matches)){
+            $custom_links[] = array(
+            'nid' => $old -> nid,
+            'title' => $old -> title,
+            'path' => $matches[0],
+            'vsite' => $old -> og_groups[0],
+            'type' => $ltype,
+            );
+          }
+        }
+      }
+    }
+  }
+  dpm($custom_links);
+}
+
+function simport_files_test(){
+  module_load_include('inc', 'simport', 'simport.api');
+  
+  $node = node_load(183);
+  //$node->title = ' About Ken';
+  node_save($node);
+  return;
+  $vsite = spaces_load ( 'og', 8 , TRUE );
+
+ $source =  '/nfs/www/edu-harvard-iq-test2/files/scholar/uploads/21/Data_Sheet-Scholars.pdf';
+ $dest  = '/nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/files';
+ 
+ $file = get_object_vars(simport_import_file($node, $source, $file = NULL, $vsite));
+ 
+ dpm($file);
+// node_save($node);
+ //dpm($file);
+ 
+ //dpm(file_save_upload($src, $validators = array(), $dest, $replace = FILE_EXISTS_RENAME));
+  
 }
