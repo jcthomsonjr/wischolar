@@ -335,9 +335,11 @@ function cp_preprocess_page(&$vars) {
       $user_links [] = array (
         'title' => t ( 'Logout' ), 'href' => "logout" 
       );
-      $vars ['cp_toolbar'] = $vars ['cp_toolbar'] = theme('links', $user_links);
+      $user_links [] = array (
+        'title' => t ( 'Back to <strong>!sitename</strong>', array( '!sitename' => $vsite->title )), 'href' => "/" 
+      );
+      $vars ['cp_toolbar'] = theme('links', $user_links);
     }
-  
   }
   
   if (context_get ( 'scholar', 'section' ) == 'cp') {
@@ -369,6 +371,11 @@ function cp_toolbar_menu_links(){
     'html' => TRUE
   );
   $user_links[] = array('title' => t('Logout'), 'href' => "logout");
+  $user_links [] = array (
+    'title' => t ( 'Back to <strong>!sitename</strong>', array( '!sitename' => vsite_get_vsite()->title )),
+    'href' => "/" ,
+    'html' => TRUE
+  );
   $links[0]['user'] = $user_links;
 
   return $links;
