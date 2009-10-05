@@ -28,6 +28,15 @@ function _scholar_announcements_context_default_contexts() {
         'label' => 'Latest Announcements',
         'type' => 'context_ui',
       ),
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      ),
     ),
   );
   return $items;

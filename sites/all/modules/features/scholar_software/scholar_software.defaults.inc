@@ -18,6 +18,17 @@ function _scholar_software_context_default_contexts() {
       '0' => 'scholar_software',
     ),
     'menu' => 'software',
+    'block' => array(
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      ),
+    ),
   );
   return $items;
 }

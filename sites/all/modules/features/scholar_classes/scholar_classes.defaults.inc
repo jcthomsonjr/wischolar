@@ -11,7 +11,7 @@ function _scholar_classes_content_default_fields() {
     'field_name' => 'field_class_semester',
     'type_name' => 'class',
     'display_settings' => array(
-      'weight' => '32',
+      'weight' => '4',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -73,10 +73,10 @@ Summer',
     'field_name' => 'field_class_year',
     'type_name' => 'class',
     'display_settings' => array(
-      'weight' => '31',
+      'weight' => '5',
       'parent' => '',
       'label' => array(
-        'format' => 'hidden',
+        'format' => 'inline',
       ),
       'teaser' => array(
         'format' => 'default',
@@ -129,7 +129,7 @@ Summer',
       'text_parts' => array(),
       'year_range' => '-3:+3',
       'label_position' => 'above',
-      'label' => 'Year',
+      'label' => 'Offered',
       'weight' => '5',
       'description' => '',
       'type' => 'date_text',
@@ -139,8 +139,8 @@ Summer',
 
   // Translatables
   array(
+    t('Offered'),
     t('Semester'),
-    t('Year'),
   );
 
   return $fields;
@@ -168,7 +168,7 @@ function _scholar_classes_context_default_contexts() {
       'vsite_taxonomy_0' => array(
         'module' => 'vsite_taxonomy',
         'delta' => '0',
-        'weight' => 20,
+        'weight' => -20,
         'region' => 'right',
         'status' => '0',
         'label' => 'Scholar site categories',

@@ -93,7 +93,17 @@ function _scholar_links_context_default_contexts() {
       '0' => 'scholar_links',
     ),
     'menu' => 'links',
-    'block' => array(),
+    'block' => array(
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      ),
+    ),
   );
   return $items;
 }

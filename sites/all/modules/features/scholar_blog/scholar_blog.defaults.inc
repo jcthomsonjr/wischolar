@@ -28,6 +28,15 @@ function _scholar_blog_context_default_contexts() {
         'label' => 'scholar_blog_comments: Recent comments',
         'type' => 'context_ui',
       ),
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      ),
     ),
   );
   return $items;

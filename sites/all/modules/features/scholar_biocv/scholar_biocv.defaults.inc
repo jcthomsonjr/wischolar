@@ -85,6 +85,17 @@ function _scholar_biocv_context_default_contexts() {
     'path' => array(
       'biocv' => 'biocv',
     ),
+    'block' => array(
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      ),
+    ),
   );
   return $items;
 }
@@ -99,7 +110,7 @@ function _scholar_biocv_user_default_permissions() {
   $permissions[] = array(
     'name' => 'create bio content',
     'roles' => array(
-      '0' => 'scholar admin'
+      '0' => 'scholar admin',
     ),
   );
 
@@ -107,7 +118,7 @@ function _scholar_biocv_user_default_permissions() {
   $permissions[] = array(
     'name' => 'create cv content',
     'roles' => array(
-      '0' => 'scholar admin'
+      '0' => 'scholar admin',
     ),
   );
 
@@ -115,7 +126,7 @@ function _scholar_biocv_user_default_permissions() {
   $permissions[] = array(
     'name' => 'delete own bio content',
     'roles' => array(
-      '0' => 'scholar admin'
+      '0' => 'scholar admin',
     ),
   );
 
@@ -123,7 +134,7 @@ function _scholar_biocv_user_default_permissions() {
   $permissions[] = array(
     'name' => 'delete own cv content',
     'roles' => array(
-      '0' => 'scholar admin'
+      '0' => 'scholar admin',
     ),
   );
 
@@ -131,7 +142,7 @@ function _scholar_biocv_user_default_permissions() {
   $permissions[] = array(
     'name' => 'edit own bio content',
     'roles' => array(
-      '0' => 'scholar admin'
+      '0' => 'scholar admin',
     ),
   );
 
@@ -139,7 +150,7 @@ function _scholar_biocv_user_default_permissions() {
   $permissions[] = array(
     'name' => 'edit own cv content',
     'roles' => array(
-      '0' => 'scholar admin'
+      '0' => 'scholar admin',
     ),
   );
 
