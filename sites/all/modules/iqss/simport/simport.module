@@ -122,11 +122,6 @@ function simport_import_sites(&$context){
     //set shield
     simport_set_shield($old, $new);
     
-    //turn on some features development only - TODO: SHOULD USE simport_check_feature()
-    /*$new->features['scholar_links'] = 2;
-    $new->features['scholar_pages'] = 2;
-    $new->features['scholar_announcements'] = 2;*/ 
-
     //save all the changes/additions to the space
     spaces_save($new);
     
@@ -567,12 +562,7 @@ function simport_set_generic($old, &$new){
   $new -> og_groups[0] = (int)$vsite->sid;
   $new -> og_nodeapi = '';
   $new -> spaces_og = array('gid' =>  (int)$vsite->sid);
-  
-  
-  
-  
-  //$new -> og_groups[$vsite -> group -> nid] = $vsite -> group -> nid; //double check on this
-  //$new -> og_groups_both[$vsite -> group -> nid] = $vsite -> title;
+ 
 }
 
 function simport_set_announcement($old, &$new){  
