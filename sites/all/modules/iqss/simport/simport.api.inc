@@ -79,7 +79,7 @@ function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
   if ($file){
     //customize a object a little bit
     $file -> uid = $node -> uid;
-    $file-> filepath = variable_get('file_directory_path', '') . $dir .  '/' . $file-> filename;
+    $file-> filepath = variable_get('file_directory_path', conf_path() .'/files') . $dir .  '/' . $file-> filename;
     $file -> status = 1;
     $file -> timestamp = time();
   }
@@ -98,9 +98,26 @@ function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
 
   //write data to files table
   drupal_write_record('files', $file);
-
+   
   //return file object
   return $file;
+}
+
+
+
+function simport_save_upload_data($file, $node){
+  if(!is_object($file)){
+    drupal_set_message(t('Error: file variable not object'));
+    return;
+  }
+  //If file had description text add it here
+  $file->description =  isset($description) ? $description : $file -> filename;
+  $file->list = 1;
+
+ 
+  //taken from upload_save()
+  db_query("INSERT INTO {upload} (fid, nid, vid, list, description, weight) VALUES (%d, %d, %d, %d, '%s', %d)", $file->fid, $node->nid, $node->vid, $file->list, $file->description, $file->weight);
+  file_set_status($file, FILE_STATUS_PERMANENT);
 }
 
 /**
