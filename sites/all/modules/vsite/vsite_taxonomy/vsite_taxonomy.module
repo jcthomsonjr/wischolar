@@ -50,13 +50,15 @@ function vsite_taxonomy_menu() {
 }
 
 function vsite_taxonomy_tt(){
-
+  $map = spaces_features_map($type = NULL, $reset = FALSE);
+  dpm($map);
   return 'sss';
 }
 
 function vsite_taxonomy_content_by_category($term_name, $content_type){
- dpm(spaces_features('og'));
+
   $map = spaces_features_map($type = 'node');
+
   context_set_by_condition('node', $content_type, TRUE);
 
   $view = views_get_view('vsite_taxonomy_view');
@@ -76,7 +78,7 @@ function vsite_taxonomy_content_by_category($term_name, $content_type){
 function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
-      $blocks[0]['info'] = t('Scholar site categories');
+      $blocks[0]['info'] = t('Categories');
       return $blocks;
     case 'view':
       switch ($delta) {
@@ -89,6 +91,7 @@ function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
+/*
 function vsite_taxonomy_context_default_contexts_alter(&$contexts){
   $contexts_map = spaces_features_map();
   
@@ -104,6 +107,7 @@ function vsite_taxonomy_context_default_contexts_alter(&$contexts){
       );
   }
 }
+*/
 
 /**
  * callback function for "Site categories" block
@@ -381,7 +385,7 @@ function vsite_taxonomy_term_rename($vid, $tid, $newterm = null) {
 }
 
 function vsite_taxonomy_term_add($vid, $newterm= null){
-  dpm($newterm);
+  //dpm($newterm);
   ctools_include ( 'ajax' );
   ctools_add_js ( 'ajax-responder' );
   
