@@ -13,52 +13,62 @@ if(Drupal.jsEnabled){
 		   data: s_urls+"js=1",
 		   success: cp_overide_add_click,
 		});
+		
+		var confirm = new Array();
+		$("div#cp-content a.cp-confirm").each(function(){
+			confirm[$(this).attr('href')] = true;
+		});
+		cp_overide_add_click(confirm);
 	});
 }
 
 var cp_overide_add_click = function(return_value){
 	for ( href in return_value.overideable_settings) { 
 		if(return_value.overideable_settings[href]){
-			if(!$('#cp_confirm_dialog').length){
-				$('<div id="cp_confirm_dialog" title="Please Confirm"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;">Are you sure?</span></p></div>').appendTo("body");
-				$('#cp_confirm_dialog').dialog({
-		 			bgiframe: true,
-		 			resizable: false,
-		 			height:140,
-		 			modal: true,
-		 			autoOpen: false,
-		 			//hide: 'slide',
-		 			overlay: {
-		 				backgroundColor: '#000',
-		 				opacity: 0.5
-		 			},
-		 			buttons: {
-		 				'Yes I\'m Sure': function() {
-		 					$(this).dialog('close');
-		 				},
-		 				'Cancel': function() {
-		 					$(this).dialog('close');
-		 				}
-		 			}
-		 		  });
-			}
+			cp_add_dialog();
 			
-			$("div#cp-content a[href^=\""+href.replace(/([#;&,\.\+\*\~':"\!\^$\[\]\(\)=>\|])/g, "\\$1")+"\"]").click(function(){
-			  var link = $(this);
-			  $('#cp_confirm_dialog span').html(link.html()+"<br />Are you sure?");
-			  $('#cp_confirm_dialog').dialog('option' , 'buttons' ,{
-	 			'Yes I\'m Sure': function() {
-					$(this).dialog('close');
-					window.location = link.attr('href');
-				},
-				'Cancel': function() {
-					$(this).dialog('close');
-				}});
-			  $('#cp_confirm_dialog').dialog('open');
-			  return false;
-			});
-			
-			//Make sure to escape the url for the selector
+			$("div#cp-content a[href^=\""+href.replace(/([#;&,\.\+\*\~':"\!\^$\[\]\(\)=>\|])/g, "\\$1")+"\"]").click(function(event){
+			  if(!$('#cp_confirm_dialog').dialog('isOpen')){
+				  var link = $(this);
+				  $('#cp_confirm_dialog span').html(link.html()+"<br />Are you sure?");
+				  $('#cp_confirm_dialog').dialog('option' , 'buttons' ,{
+		 			'Yes I\'m Sure': function() {
+					  $(this).dialog('close');
+					  window.location = link.attr('href');
+					},
+					'Cancel': function() {
+					  $(this).dialog('close');
+					}});
+				  $('#cp_confirm_dialog').dialog('open');
+				  return false;
+			  }
+		  });
 		}
+	}
+};
+
+var cp_add_dialog = function(){
+	if(!$('#cp_confirm_dialog').length){
+		$('<div id="cp_confirm_dialog" title="Please Confirm"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;">Are you sure?</span></p></div>').appendTo("body");
+		$('#cp_confirm_dialog').dialog({
+ 			bgiframe: true,
+ 			resizable: false,
+ 			height:140,
+ 			modal: true,
+ 			autoOpen: false,
+ 			//hide: 'slide',
+ 			overlay: {
+ 				backgroundColor: '#000',
+ 				opacity: 0.5
+ 			},
+ 			buttons: {
+ 				'Yes I\'m Sure': function() {
+ 					$(this).dialog('close');
+ 				},
+ 				'Cancel': function() {
+ 					$(this).dialog('close');
+ 				}
+ 			}
+ 		  });
 	}
 };
