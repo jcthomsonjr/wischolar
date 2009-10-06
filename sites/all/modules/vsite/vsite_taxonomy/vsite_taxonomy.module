@@ -1,5 +1,7 @@
 <?php
 
+include_once('vsite_taxonomy.features.inc');
+
 /**
  * hook menu
  */
@@ -251,6 +253,13 @@ function vsite_taxonomy_term_item($term, $href, $admin = FALSE, $count = FALSE){
   return $item;
 }
 
+
+function vsite_taxonomy_strongarm(){
+  $conf = array();
+  $conf['pathauto_taxonomy_pattern'] = "[space-og-path]/category/[catpath-raw]";
+  
+  return $conf;
+}
 
 /**
  * hook strongarm
