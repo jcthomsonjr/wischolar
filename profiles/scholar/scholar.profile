@@ -134,7 +134,7 @@ function _scholar_scholar_modules() {
     'vsite_menus',
     'vsite_design',
     'vsite_users',
-    'vsite_vocab',
+    'vsite_taxonomy',
     'vsite_help',
     'vsite_news',
     'vsite_support',
