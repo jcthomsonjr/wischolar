@@ -84,7 +84,7 @@ function _scholar_publications_context_default_contexts() {
   $items[] = array(
     'namespace' => 'scholar',
     'attribute' => 'feature',
-    'value' => 'publication',
+    'value' => 'publications',
     'description' => '',
     'node' => array(
       '0' => 'biblio',
