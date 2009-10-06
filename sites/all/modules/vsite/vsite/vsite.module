@@ -44,7 +44,7 @@ function vsite_vsiteboot(){
 
     //import D5 scholars site content - Called after scholar_installed 
     //variable is set to 1 so it isn't continuous loop
-    simport_import();
+    //simport_import();
   }
   // return nothing
   return '';
@@ -294,6 +294,20 @@ function vsite_preprocess_page(&$vars){
   $vars['css'] = drupal_add_css();
   $vars['styles'] = drupal_get_css();
 }
+
+function vsite_theme_registry_alter(&$theme_registry){
+  $original_path = array_shift($theme_registry['node']['theme paths']);
+  $features =  $features = spaces_features('og');
+  $new_paths = array();
+  foreach ($features as $feature){
+    $this_module_path = drupal_get_path('module', $feature -> name);
+    $new_paths[] = $this_module_path;
+  }
+  array_unshift($new_paths, $original_path);
+  $theme_registry['node']['theme paths'] = array_merge($new_paths,$theme_registry['node']['theme paths'] );
+      //array_unshift($theme_registry['node']['theme paths'], $original_path, $this_module_path);
+}
+
 
 /**
  * Implementation of hook_form_alter()
