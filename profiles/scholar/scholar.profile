@@ -64,7 +64,7 @@ function _scholar_core_modules() {
     'og_views', 
     'og_vocab',
     'og_actions',
-    'override_node_optoins',
+    'override_node_options',
     'menu_node',
     'pathauto',
     'permissions_api',
