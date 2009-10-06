@@ -65,6 +65,11 @@ function cp_init(){
     $toolbar = TRUE;
     // since we are here .. initialize cp theme
     _cp_init_theme();
+    //add the javascript for intercepting confirm pages
+    drupal_add_js(drupal_get_path('module','cp').'/theme/cp-confirm-overide.js');
+    drupal_add_css(drupal_get_path('module','cp').'/theme/cp-confirm-overide.css');
+    //Add the JqueryUI JS for the confirm boxes
+    jquery_ui_add(array('ui.dialog','effects.core','ui.draggable','ui.resizable'));
   }elseif($vsite) {
  	  context_set('vsite', 'section', 'public');
     og_set_theme($vsite -> group); // TODO why dont you get it from space settings
@@ -169,6 +174,12 @@ function cp_menu(){
     if(!array_key_exists('access callback',$item)) $items[$path]['access callback'] = 'cp_access_cp';
     //$items[$path]['access arguments'] = array('access content'); //TODO fix this 
   }
+  
+  $items["cp/allow_callback_override"] = array(
+    'page callback' => 'cp_is_confirm_overide_page',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'cp_access_cp',
+  );
 
   return $items;
 }
@@ -234,7 +245,7 @@ function cp_feature_customize($feature_name){
 /**
  * hook form_alter
  */
-function cp_form_alter(&$form, $form_state, $form_id) {
+function cp_form_alter(&$form, &$form_state, $form_id) {
 
   /*
    * we'd like to remove the space settings from 'spaces_features_form'
@@ -285,6 +296,9 @@ function cp_form_alter(&$form, $form_state, $form_id) {
       }	
     }
   }//Make default customizers more descriptive
+  
+  //Call Confirm Override
+  if(in_array($form_id,cp_get_confirm_form_overides())) cp_confirm_override($form, $form_state, $form_id);
   
 }
 
@@ -503,4 +517,64 @@ function cp_menu_link_alter(&$item, $menu) {
     //Lookup the correct parent
   	unset($item['plid']);
   }
+}
+
+/**
+ * Overides for the confirm form
+ * 
+ */
+function cp_confirm_override(&$form, &$form_state, $form_id) {
+	if(cp_is_confirm_overide_page()){
+		$_POST['form_id'] = $form_id;
+		$form_state['submitted'] = true;
+		unset($form['#token']);
+	}//Set the form values to fake a confirm.
+}
+
+/**
+ * Return true if this page is a confirm overide page
+ * 
+ * @param $page (current page if null)
+ * @return array
+ */
+function cp_is_confirm_overide_page($page = null){
+	
+	if(!$_POST['js'] || $page){
+		//Just check and return as usual
+		$a_router_item = menu_get_item($page);
+	  return array_key_exists($a_router_item['path'], cp_get_confirm_form_overides());
+	}else{
+		$a_return = array();
+		$vsite = vsite_get_vsite();
+		foreach($_POST['paths'] as $path){
+			
+			//Get the correct path and remove the site name from the front
+			if(strpos($path,'http') !== 0) $path = "http://hostname".$path;
+			$a_path_parts = parse_url($path);
+			$s_search_path = (strpos($a_path_parts['path'],'/'.$vsite->title) == 0)?substr($a_path_parts['path'],strlen($vsite->title)+2):$a_path_parts['path'];
+			
+			$a_router_item = menu_get_item($s_search_path);
+			$a_return[$a_path_parts['path']] = ($a_router_item && array_key_exists($a_router_item['path'], cp_get_confirm_form_overides()));
+		}//Check each path
+		
+		//return a json object
+		print drupal_json(array(
+		  'overideable_settings' => $a_return,
+		));
+		exit();
+	}//Was this called by javascript?
+}
+
+
+/**
+ * Get confirm pages that should be overridden
+ * 
+ * @return array
+ */
+function cp_get_confirm_form_overides(){
+	static $a_overides;
+	
+	if(!$a_overides) $a_overides = module_invoke_all('cp_confirm_overide');
+	
+	return $a_overides;
 }
