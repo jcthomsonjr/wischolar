@@ -94,13 +94,13 @@ function cp_init(){
   
   if (context_get('vsite', 'section') == 'public' && $admin ){
     if ($user_tb_setting){
-      $toolbar = "on";
+      $toolbar = "full";
     }else {
-      $toolbar = "small";
+      $toolbar = "mini";
     }
   }
   
-  if($toolbar == "on"){
+  if($toolbar == "full"){
     drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
   }
   
@@ -351,15 +351,15 @@ function cp_preprocess_page(&$vars) {
   
   $vsite = vsite_get_vsite ();
   
-  if (context_get ( 'toolbar', 'value' ) == "on") {
+  if (context_get ( 'toolbar', 'value' ) == "full") {
 
       $links = cp_toolbar_menu_links ();
       $links = theme ( 'cp_toolbar', $links );
       $vars ['cp_toolbar'] = $links;
       
-      $vars ['body_classes'] .= ' cp-toolbar-on';
+      $vars ['body_classes'] .= ' cp-toolbar-full';
     
-    } elseif (context_get ( 'toolbar', 'value' ) == "small") {
+    } elseif (context_get ( 'toolbar', 'value' ) == "mini") {
       global $user;
       $user_links = array ();
       $user_links[] = array('title' => 'Contol Panel', 'href' => 'cp/features');
@@ -377,6 +377,7 @@ function cp_preprocess_page(&$vars) {
       );
       */
       $vars ['cp_toolbar'] = theme('links', $user_links);
+      $vars ['body_classes'] .= ' cp-toolbar-mini';
     
   }
   
