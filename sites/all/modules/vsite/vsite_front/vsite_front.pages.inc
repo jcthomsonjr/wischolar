@@ -12,8 +12,12 @@ function vsite_front_home(){
     $front_type = $vsite->settings['front']['frontpage'];
     switch ($front_type) {
       case 'bio' :
-        $bio_nid = $vsite->settings['bio']['nid'];
-        $result = vsite_front_home_bio($bio_nid);
+        $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
+        if ($vsite->settings['front']['bio_title']){
+          drupal_set_title(t('%title', array('%title' => $bio_node->title)));
+        }
+        $result =  node_view($bio_node,false,true,false);
+
         break;
       case 'feature' :
         $node_options = $vsite->settings['front']['node_options'];
@@ -35,13 +39,14 @@ function vsite_front_home(){
  * if front page is set to bio
  * @param $bio_nid the nid of the bio node
  */
+/*
 function vsite_front_home_bio($bio_nid){
   $node = node_load($bio_nid);
   // TODO "include title" option not implemented here
   $result = node_view($node, $teaser = FALSE, $page = FALSE, $links = FALSE);
   return $result;
 }
-
+*/
 
 /**
  * if front page is set to "features" 

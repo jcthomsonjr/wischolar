@@ -85,7 +85,7 @@ class vsite_front_settings_front implements space_setting {
         '#type' => 'checkbox',
         '#title' => t('Include title'),
         '#description' => t('Do you want to include the title of the post in the page?'),
-        '#default_value' => $value['bio_title'] ? $value['bio_title'] : 0,
+        '#default_value' => $value['bio_title'] ? $value['bio_title'] : 1,
         '#process' => array(
           'ctools_dependent_process'
         ),
@@ -173,7 +173,7 @@ class vsite_front_settings_front implements space_setting {
     );
     switch ($value['frontpage']) {
       case 'bio' :
-        //nothing extra to save
+        $save['bio_title'] = $value['bio_title'];
         break;
       case 'feature' :
         $save['node_options'] = $value['node_options'];
