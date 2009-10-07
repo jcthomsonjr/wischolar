@@ -165,7 +165,7 @@ function simport_import_types($biblio = 0, &$context){
       simport_set_generic($old, $new);     
 
       //set taxonomy term values
-       simport_set_terms($old, $new);
+      simport_set_terms($old, $new);
 
       //deal with any custom fields specific to the content type;
       switch ($old -> type){
@@ -331,18 +331,6 @@ function simport_set_frontpage($old, &$vsite, $new_front_nid, $old_front_nid){
   $vsite->settings['front']['frontpage']= 'html'; 
   $vsite->settings['front']['front_nid'] = $new_front_nid;
   return;
-  
-  //set frontpage to bio page
-/*  if ( $old_frontpage  -> type == 'scholar_bio'){
-  $vsite->settings['bio']['nid'] = $new_front_nid; 
-  $vsite->settings['front']['frontpage']= 'bio'; 
-  }
-  else{
-  //set the front page to an individual node
-  $vsite->settings['front']['frontpage']= 'html'; 
-  $vsite->settings['front']['front_nid'] = $new_front_nid;  
-  //  not using this function anymore -  _simport_map_content_types($old_frontpage  -> type);
-  }*/
 }
 
 /**
@@ -441,6 +429,40 @@ function simport_set_shield($old, &$new){
   $new ->settings['sheild'] = drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png";
 }
 
+
+function _simport_set_terms_test(){
+/*  $vsite = spaces_load ( 'og', 26, TRUE );
+  $old = simport_get_old_node(607);
+  $new = node_load(504);
+  
+  $new -> og_public =1;
+  $new -> og_initial_groups = array($vsite->sid => (int)$vsite->sid);
+  $new -> og_groups[0] = (int)$vsite->sid;
+  $new -> og_nodeapi = '';
+  $new -> spaces_og = array('gid' =>  (int)$vsite->sid);
+  
+  
+  //simport_set_generic($old, $new);
+  simport_set_terms($old, $new);
+ node_save($new);*/
+  
+  $max = db_result(db_query("SELECT MAX(tid) FROM {term_data}"));
+  $sql = db_query("SELECT * FROM {term_node} WHERE tid > %d", (int)$max);
+  while($data = db_fetch_object($sql)){
+
+    $res[] = array(
+    'name' => $data->name,
+    'tid' => $data-> tid,
+    );
+  }
+  $msg = count($res) ? 'Error in tid assignments' : 'Correct tid assignements';
+
+  $_SESSION['batch_op_errors'][] = array(
+  'type' => 'taxonomy',
+  'message' => $msg,
+  );
+}
+
 /**
  * Import the terms to the proper vocabulary and set them in the node object
  *
@@ -449,42 +471,41 @@ function simport_set_shield($old, &$new){
  */
 function simport_set_terms($old, &$new){
   vsite_include('vsiteapi');
-  //include_once(dirname(__FILE__) . '/simport.api.inc');
 
   //check to see of any terms are set in old node
   if (count($old -> tags)){
     $vsite = simport_get_new_vsite($old -> og_groups[0]);
-
+    
     foreach($old -> tags as $vocab_id => $values){
       //NOTE: vocab id 6 is the global vocabularyon the D5 scholars site
       if ($vocab_id !== 6){
         foreach($values as $old_term){
           //get vocab(s) for the vsite
-          $vocab_list = vsite_get_vocabs($vsite, $new -> type);
+          $vocab_list = vsite_get_vocabs($vsite, $new -> type); 
 
           foreach($vocab_list as $vocab){                      
             //check to see if terms already exists
-            $tid = simport_import_term_exists($old_term->name, $vocab->vid);
-                    
-            //term already exists
+            $tid = simport_import_term_exists($old_term->name, $vocab->vid);   
+                              
+       //term already exists
             if ($tid){
-              //add term id to node object
-              $new -> taxonomy[$tid] = taxonomy_get_term($tid);
-              return;
+               $new -> taxonomy[$tid] = taxonomy_get_term($tid);
             }
               
-            if (!$tid){
+            if (!$tid){               
+              $term = array();
+              
               //if term does not exist within vocab, then add it
               $term['vid'] = $vocab -> vid;
               $term['name'] = $old_term -> name;
               $term['description'] = empty($old_term -> description) ? NULL : $old_term -> description;
               //$term['weight'] = mt_rand(0,10);
 
-              $status = taxonomy_save_term($term); 
+              taxonomy_save_term($term); 
 
               //get the newly created term id. TODO: is this the best way???           
              $tid = db_result(db_query("SELECT MAX(tid) FROM {term_data}"));
-//print $tid; die;
+
               //now add the terms to the $new node object
               $new -> taxonomy[$tid] = taxonomy_get_term($tid);
             }
@@ -632,7 +653,9 @@ function simport_set_biblio($old, &$new){
     if (count(preg_match( '/^biblio_/', $key, $matches))){
       if (!in_array($key, $author_fields)){
         //not an author field, so set the property verbatim
+        if ($key !== 'taxonomy'){
         $new -> $key = $val;
+        }
       }
 
       else{
@@ -675,6 +698,7 @@ function simport_set_biblio($old, &$new){
   //do some cleanup of the node properties.  TODO: should be cleaner???
   unset($new->nid);
   unset($new->vid);
+  
   $vsite = simport_get_new_vsite($old -> og_groups[0]);
   $new -> uid = $vsite -> group -> uid;
   $new -> name = $vsite -> group -> name;
@@ -908,6 +932,11 @@ function simport_cleanup(&$context){
       search_wipe($node->nid, 'node');
     }
   }
+  //check terms for errors
+  _simport_set_terms_test();
+  foreach($_SESSION['batch_op_errors'] as $status){
+    dpm(t($status['type'] . ':' . $status['message']));        
+  }
 }
 
 /**
@@ -997,6 +1026,8 @@ function _simport_external_get_nodes(){
   }
   dpm($custom_links);
 }
+
+
 
 function simport_files_test(){
   module_load_include('inc', 'simport', 'simport.api');
