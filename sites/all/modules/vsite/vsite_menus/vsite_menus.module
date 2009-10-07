@@ -128,8 +128,20 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   }//send default?
   
   if($b_filter_private_features){
-	  $a_disabled_features = array_intersect_key(spaces_features_map('node'),vsite_content_types(array(FEATURE_DISABLED,FEATURE_PRIVATE)));
-	  $a_disabled_links = array_keys(array_intersect(spaces_features_map('menu'),$a_disabled_features));
+	  //$a_disabled_features = array_intersect_key(spaces_features_map('node'),vsite_content_types(array(FEATURE_DISABLED,FEATURE_PRIVATE)));
+	  //$a_disabled_links = array_keys(array_intersect(spaces_features_map('menu'),$a_disabled_features));
+    
+      // get all menus coming from features and construct an array
+      // of links to disable based on the users access on this feature
+      $features_menus = spaces_features_map('menu');
+      $a_disabled_links = array();
+
+      foreach($features_menus as $menu_title => $feature_name ){
+        if (!($space -> feature_access($feature_name))){
+          $a_disabled_links[] = $menu_title;
+        }
+      }
+      
 	  foreach ($a_settings_menu as $key => $link) {
 	  	if(in_array($link['link']['link_path'],$a_disabled_links)) unset($a_settings_menu[$key]);
 	    
