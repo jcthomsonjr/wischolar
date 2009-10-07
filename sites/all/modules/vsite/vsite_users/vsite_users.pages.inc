@@ -1,13 +1,19 @@
 <?php 
 function vsite_users_members(){
-  drupal_add_css(drupal_get_path('module', 'vsite_users') .'/theme/vsite_users.css');
+  drupal_add_css(drupal_get_path('module', 'vsite_users') . '/theme/vsite_users.css');
   $site = vsite_get_vsite();
-  $arg = $site -> group -> nid;
+  $arg = $site->group->nid;
   ctools_include('ajax');
   ctools_include('modal');
   ctools_modal_add_js();
-  $output = ctools_modal_text_button('Add new user', 'cp/users/add', 'add a new user','context-button');
-  $output .= views_page('og_members', 'default', $arg); 
+  $output = ctools_modal_text_button('Add new user', 'cp/users/add', 'add a new user', 'context-button');
+  $output = theme('item_list', array(
+    $output 
+  ), $title = NULL, $type = 'ul', $attributes = array(
+    "class" => "context-links" 
+  ));
+  
+  $output .= views_page('og_members', 'default', $arg);
   return $output;
 }
 
