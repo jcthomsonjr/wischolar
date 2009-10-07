@@ -975,9 +975,9 @@ function simport_set_menu_links(&$context){
 
 
 /**
- * Reporting function the show how many external links
+ * Reporting function the show how many external links from old site data table
  */
-function _simport_external_get_nodes(){
+function _simport_external_get_links(){
   $i =1;
   $pattern = '/(^http)(.+)/';
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' ORDER BY id ASC", 'admin_scholar' );
