@@ -56,8 +56,6 @@ function cp_left_block_view(){
 
 function cp_init(){
    $vsite = vsite_get_vsite();
-   //$toolbar = FALSE;
-   // define some contexts (TODO can we group them all together in scholar.module ?
    if (!$vsite){
      return;
    }
@@ -89,7 +87,7 @@ function cp_init(){
   
   // if in cp always toolbar=on (full)
   if (context_get('vsite', 'section') == 'cp' && $admin){
-    $toolbar = "on";
+    $toolbar = "full";
   }
   
   if (context_get('vsite', 'section') == 'public' && $admin ){
