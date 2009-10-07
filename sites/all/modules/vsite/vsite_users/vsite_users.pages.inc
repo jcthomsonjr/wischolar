@@ -6,8 +6,9 @@ function vsite_users_members(){
   ctools_include('ajax');
   ctools_include('modal');
   ctools_modal_add_js();
-  return  ctools_modal_text_button('Add new user', 'cp/users/add', 'add a new user','add_user_btn')
-         .views_page('og_members', 'default', $arg); 
+  $output = ctools_modal_text_button('Add new user', 'cp/users/add', 'add a new user','context-button');
+  $output .= views_page('og_members', 'default', $arg); 
+  return $output;
 }
 
 /**
