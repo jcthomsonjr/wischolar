@@ -56,13 +56,18 @@ function cp_left_block_view(){
 
 function cp_init(){
    $vsite = vsite_get_vsite();
-   $toolbar = FALSE;
+   //$toolbar = FALSE;
    // define some contexts (TODO can we group them all together in scholar.module ?
+   if (!$vsite){
+     return;
+   }
+   
+   $toolbar = "off";
    
    // controlcp context
   if (arg(0) == 'cp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
     context_set('vsite', 'section', 'cp');
-    $toolbar = TRUE;
+
     // since we are here .. initialize cp theme
     _cp_init_theme();
     //add the javascript for intercepting confirm pages
@@ -70,20 +75,38 @@ function cp_init(){
     drupal_add_css(drupal_get_path('module','cp').'/theme/cp-confirm-overide.css');
     //Add the JqueryUI JS for the confirm boxes
     jquery_ui_add(array('ui.dialog','effects.core','ui.draggable','ui.resizable'));
-  }elseif($vsite) {
- 	  context_set('vsite', 'section', 'public');
+  }else {
+ 	context_set('vsite', 'section', 'public');
     og_set_theme($vsite -> group); // TODO why dont you get it from space settings
-  	  
-	  if ($vsite -> admin_access()){
-     $toolbar = TRUE;
-  	}
   }
   
-  if ($toolbar){
+  $admin = $vsite -> admin_access();
+  $user_tb_setting = (is_array( $vsite->settings ) 
+                      && is_array ( $vsite->settings ['generic'] ) 
+                      && array_key_exists ( 'admin_menu', $vsite->settings ['generic'] )
+                      && $vsite->settings ['generic']['admin_menu']) ? TRUE : FALSE;
+
+  
+  // if in cp always toolbar=on (full)
+  if (context_get('vsite', 'section') == 'cp' && $admin){
+    $toolbar = "on";
+  }
+  
+  if (context_get('vsite', 'section') == 'public' && $admin ){
+    if ($user_tb_setting){
+      $toolbar = "on";
+    }else {
+      $toolbar = "small";
+    }
+  }
+  
+  if($toolbar == "on"){
     drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
   }
   
-  context_set('toolbar', 'value', $toolbar);
+  context_set("toolbar", "value", $toolbar);
+  
+  
 }
 
 /**
@@ -327,20 +350,19 @@ function cp_preprocess_page(&$vars) {
   $vars ['cp_toolbar'] = $vars ['cp_left'] = '';
   
   $vsite = vsite_get_vsite ();
-  $user_tb_setting = ($vsite && is_array ( $vsite->settings ) && is_array ( $vsite->settings ['generic'] ) && array_key_exists ( 'admin_menu', $vsite->settings ['generic'] )) ? TRUE : FALSE;
   
-  if (context_get ( 'toolbar', 'value' )) {
-    if ($user_tb_setting) {
+  if (context_get ( 'toolbar', 'value' ) == "on") {
+
       $links = cp_toolbar_menu_links ();
       $links = theme ( 'cp_toolbar', $links );
       $vars ['cp_toolbar'] = $links;
       
       $vars ['body_classes'] .= ' cp-toolbar-on';
     
-    } else {
+    } elseif (context_get ( 'toolbar', 'value' ) == "small") {
       global $user;
       $user_links = array ();
-      $user_links[] = array('title' => 'admin', 'href' => 'cp/features');
+      $user_links[] = array('title' => 'Contol Panel', 'href' => 'cp/features');
       $user_links [] = array (
         'title' => t ( 'Hello <strong>!username</strong>', array (
         '!username' => $user->name 
@@ -349,20 +371,16 @@ function cp_preprocess_page(&$vars) {
       $user_links [] = array (
         'title' => t ( 'Logout' ), 'href' => "logout" 
       );
+      /*
       $user_links [] = array (
         'title' => t ( 'Back to <strong>!sitename</strong>', array( '!sitename' => $vsite->title )), 'href' => "/" 
       );
+      */
       $vars ['cp_toolbar'] = theme('links', $user_links);
-    }
+    
   }
   
-  if (context_get ( 'scholar', 'section' ) == 'cp') {
-    $links = cp_toolbar_menu_links ();
-    $links = theme ( 'cp_toolbar', $links );
-    $vars ['cp_toolbar'] = $links;
-    //$links = cp_left_menu_links ();
-    //$vars ['cp_left'] = theme ( 'links', $links );
-  }
+
 
 }
 
