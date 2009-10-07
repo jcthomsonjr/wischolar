@@ -19,6 +19,7 @@ function scholar_profile_modules() {
     'block', 
     'blog',
     'comment', 
+    'contact',
     'filter', 
     'help', 
     'menu',
@@ -235,6 +236,9 @@ function scholar_profile_tasks(&$task, $url) {
 
     // configure wisywig/tinymce
     _scholar_wysiwyg_config();
+    
+    // configure the contact module
+    _scholar_contact_config();
     /*
     // Set a default footer message.
     variable_set('site_footer', '&copy; 2009 '. l('IQSS', 'http://www.iq.harvard.edu', array('absolute' => TRUE)));
@@ -432,3 +436,10 @@ $settings = serialize($settings);
 }
 
 
+function _scholar_contact_config(){
+  install_include(array('contact'));
+  //install_contact_add_category($category, $recipients, $reply = '', $weight = 0, $selected = 0);
+  install_contact_add_category('website feedback', 'scholars_dev_support@help.hmdc.harvard.edu', $reply = '', $weight = 0, $selected = 1);
+  install_contact_add_category('feature request', 'scholars_dev_support@help.hmdc.harvard.edu', $reply = '', $weight = 0, $selected = 0);
+  install_contact_add_category('bug report', 'scholars_dev_support@help.hmdc.harvard.edu', $reply = '', $weight = 0, $selected = 0);
+}
