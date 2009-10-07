@@ -402,11 +402,13 @@ function cp_toolbar_menu_links(){
     'html' => TRUE
   );
   $user_links[] = array('title' => t('Logout'), 'href' => "logout");
-  $user_links [] = array (
-    'title' => t ( 'Back to <strong>!sitename</strong>', array( '!sitename' => vsite_get_vsite()->title )),
-    'href' => "/" ,
-    'html' => TRUE
-  );
+  if ( context_get('vsite', 'section') == 'cp'){
+    $user_links [] = array (
+      'title' => t ( 'Back to <strong>!sitename</strong>', array( '!sitename' => vsite_get_vsite()->title )),
+      'href' => "/" ,
+      'html' => TRUE
+    );
+  }
   $links[0]['user'] = $user_links;
 
   return $links;
