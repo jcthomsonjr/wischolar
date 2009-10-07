@@ -563,6 +563,7 @@ function cp_is_confirm_overide_page($page = null){
 	}else{
 		$a_return = array();
 		$vsite = vsite_get_vsite();
+		if (count($_POST['paths'])){
 		foreach($_POST['paths'] as $path){
 			
 			//Get the correct path and remove the site name from the front
@@ -573,6 +574,7 @@ function cp_is_confirm_overide_page($page = null){
 			$a_router_item = menu_get_item($s_search_path);
 			$a_return[$a_path_parts['path']] = ($a_router_item && array_key_exists($a_router_item['path'], cp_get_confirm_form_overides()));
 		}//Check each path
+		}
 		
 		//return a json object
 		print drupal_json(array(
