@@ -35,8 +35,9 @@ function simport_import(){
   // Add an array declaring the callback function for your
   // batch process and an array of callback arguments
   $batch['operations'][] = array('simport_import_sites', array());
-  $batch['operations'][] = array('simport_import_types', array(0)); //all non-biblio nodes
-  $batch['operations'][] = array('simport_import_types', array(1)); //biblio nodes
+  $batch['operations'][] = array('simport_import_types', array(0, '')); //all non-biblio nodes
+  $batch['operations'][] = array('simport_import_types', array(1, 0)); //biblio nodes
+  $batch['operations'][] = array('simport_import_types', array(1, 200)); //biblio nodes
   $batch['operations'][] = array('simport_import_logo', array());
   $batch['operations'][] = array('simport_import_frontpage', array());
   $batch['operations'][] = array('simport_get_files', array());
@@ -55,7 +56,14 @@ function simport_import(){
 
 function simport_completed($success, $results, $operations){
 $message = ($success) ? 'Import Process Completed' : 'Errors Durring Import Process';
-drupal_set_message($message);
+
+  //check taxonomy terms import process for errors
+  _simport_set_terms_test();
+  foreach($_SESSION['batch_op_errors'] as $status){
+    drupal_set_message(t($status['type'] .  ': ' . $status['message']));        
+  }
+
+ drupal_set_message($message);
 drupal_goto('admin');
 }
 
@@ -84,9 +92,6 @@ function simport_import_sites(&$context){
   vsite_include('vsiteapi');
   $roles = variable_get('scholar_manager_role', 'scholar admin');
 
-  //test one node
- // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE id = %d AND type = '%s'", 136, 'admin_scholar');
-  
   //first create the new vsites
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", 'admin_scholar');
   while ($data = db_fetch_object($sql)) {
@@ -138,24 +143,32 @@ function simport_import_sites(&$context){
   }
 }
   //PHASE 2 - Load And Save The Content
-function simport_import_types($biblio = 0, &$context){
+function simport_import_types($biblio = 0, $limit = '', &$context){
 
+  if (is_int($limit)){
+    $limit_end = ($limit + 200);
+    $limit_str = ' LIMIT ' . $limit . ' , ' . $limit_end;
+  }
+  else{
+    $limit_str = '';
+  }
+  
   if ($biblio == 1){
-    $context['message'] =  'Created Biblio Content';
+    $context['message'] =  $limit < 200 ? 'Created Biblio Nodes 1-199' : 'Created Biblio Nodes 200-399';
     //define content type(s)
     $types = array('biblio' => 'biblio');
 
-    //create custom biblio type - Working Paper
-    $working_paper = simport_create_biblio_type;
+    //create custom biblio type - Working Paper - only run once
+    $working_paper =  ($limit < 200) ? simport_create_biblio_type : '';
   }
   else{
-    $context['message'] =  'Created Non-Biblio Scholar Content';
+    $context['message'] =  'Created Non-Biblio Nodes';
     //define content type(s)
     $types = _simport_map_content_types();
   }
   
   foreach ($types as $oldtype => $newtype){
-   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s'", $oldtype);
+   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' $limit_str", $oldtype);
  // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE  id = %d", 24);
     while ($data = db_fetch_object($sql)) {
       $old = unserialize($data ->data);
@@ -429,23 +442,12 @@ function simport_set_shield($old, &$new){
   $new ->settings['sheild'] = drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png";
 }
 
-
+/**
+ * Test to see if terms assigned in term_node table exceed the maximum tid in term_data
+ * Therefore an error occured in import of taxonomy (a previous bug when importing biblio nodes)
+ */
 function _simport_set_terms_test(){
-/*  $vsite = spaces_load ( 'og', 26, TRUE );
-  $old = simport_get_old_node(607);
-  $new = node_load(504);
-  
-  $new -> og_public =1;
-  $new -> og_initial_groups = array($vsite->sid => (int)$vsite->sid);
-  $new -> og_groups[0] = (int)$vsite->sid;
-  $new -> og_nodeapi = '';
-  $new -> spaces_og = array('gid' =>  (int)$vsite->sid);
-  
-  
-  //simport_set_generic($old, $new);
-  simport_set_terms($old, $new);
- node_save($new);*/
-  
+
   $max = db_result(db_query("SELECT MAX(tid) FROM {term_data}"));
   $sql = db_query("SELECT * FROM {term_node} WHERE tid > %d", (int)$max);
   while($data = db_fetch_object($sql)){
@@ -455,10 +457,10 @@ function _simport_set_terms_test(){
     'tid' => $data-> tid,
     );
   }
-  $msg = count($res) ? 'Error in tid assignments' : 'Correct tid assignements';
+  $msg = count($res) ? 'Error in tid assignments. Check term tables in database' : 'No errors in tid assignments found.';
 
   $_SESSION['batch_op_errors'][] = array(
-  'type' => 'taxonomy',
+  'type' => 'Taxonomy Import',
   'message' => $msg,
   );
 }
@@ -629,18 +631,21 @@ function simport_set_link($old, &$new){
  */
 function simport_set_biblio($old, &$new){
 
+  //a list of fields that we don't want to import into the new biblio node
+$excluded_fields = array('taxonomy', 'nid', 'vid', 'uid', 'name');
+
   //a list of D5 biblio author fields
   $author_fields = array(
-  'biblio_authors', 
-  'biblio_secondary_authors', 
-  'biblio_tertiary_authors', 
-  'biblio_corp_author', 
+  'biblio_authors',
+  'biblio_secondary_authors',
+  'biblio_tertiary_authors',
+  'biblio_corp_author',
   'biblio_other_author_affiliations'
   );
 
-   //set to contributors to empty array to begin
-   $new -> biblio_contributors = array();
-  
+  //set to contributors to empty array to begin
+  $new -> biblio_contributors = array();
+
   //convert old node to array
   $properties = get_object_vars($old);
   foreach($properties as $key => $val){
@@ -649,60 +654,51 @@ function simport_set_biblio($old, &$new){
     if(isset($matches)){
       unset($matches);
     }
+
     //check if biblio field
-    if (count(preg_match( '/^biblio_/', $key, $matches))){
+    if (count(preg_match( '/^biblio_/', $key, $matches))) {
       if (!in_array($key, $author_fields)){
-        //not an author field, so set the property verbatim
-        if ($key !== 'taxonomy'){
-        $new -> $key = $val;
+        //not an author field or excluded field, so set the property verbatim
+        if (!in_array($key, $excluded_fields)) {
+          $new -> $key = $val;
         }
       }
 
       else{
-         //deal with author fields      
-     
-           
-      switch($key){
-        case 'biblio_authors':
-          if(!empty($val)){
-            $new -> biblio_contributors =  simport_create_biblio_authors($val, 1);
-          }
-        break;
+        //deal with author fields
+        switch($key){
+          case 'biblio_authors':
+            if(!empty($val)){
+              $new -> biblio_contributors =  simport_create_biblio_authors($val, 1);
+            }
+            break;
 
-        case 'biblio_secondary_authors':
-          if(!empty($val)){
-            $new -> biblio_contributors =  simport_create_biblio_authors($val, 2);
-          }
-          break;
+          case 'biblio_secondary_authors':
+            if(!empty($val)){
+              $new -> biblio_contributors =  simport_create_biblio_authors($val, 2);
+            }
+            break;
 
-        case 'biblio_tertiary_authors':
-          if(!empty($val)){
-            $new -> biblio_contributors =  simport_create_biblio_authors($val, 3);
-          }
-          break;
+          case 'biblio_tertiary_authors':
+            if(!empty($val)){
+              $new -> biblio_contributors =  simport_create_biblio_authors($val, 3);
+            }
+            break;
 
-        case  'biblio_other_author_affiliations':
-          //Subsidiary Author is auth_type 4
-          //TODO: not sure where this maps to???
-          break;
+          case  'biblio_other_author_affiliations':
+            //Subsidiary Author is auth_type 4
+            //TODO: not sure where this maps to???
+            break;
 
-        case 'biblio_corp_author':
-          if(!empty($val)){
-            $new -> biblio_contributors =  simport_create_biblio_authors($val, 5);
-          }
-          break;
-      }
+          case 'biblio_corp_author':
+            if(!empty($val)){
+              $new -> biblio_contributors =  simport_create_biblio_authors($val, 5);
+            }
+            break;
+        }
       }
     }
   }
-  //do some cleanup of the node properties.  TODO: should be cleaner???
-  unset($new->nid);
-  unset($new->vid);
-  
-  $vsite = simport_get_new_vsite($old -> og_groups[0]);
-  $new -> uid = $vsite -> group -> uid;
-  $new -> name = $vsite -> group -> name;
-  
 }
 
 function simport_create_biblio_authors($val, $auth_type, $i = 0){
@@ -849,8 +845,7 @@ function _simport_map_content_types($old_type = NULL){
   'scholar_bio' => 'page',
   'scholar_class' => 'class',
   'scholar_page' => 'page',  //both scholar_bio and scholar_page import to page
-  //'biblio' => 'biblio', 
- 
+  //'biblio' => 'biblio', //imported seperately 
   // 'scholar_cv' => '', //ONLY 1 Submit it manually
  // 'scholar_photo' => '', //already dealt with in simport_set_logo()
  ); 
@@ -931,11 +926,6 @@ function simport_cleanup(&$context){
     if (function_exists('search_wipe')) {
       search_wipe($node->nid, 'node');
     }
-  }
-  //check terms for errors
-  _simport_set_terms_test();
-  foreach($_SESSION['batch_op_errors'] as $status){
-    dpm(t($status['type'] . ':' . $status['message']));        
   }
 }
 
@@ -1027,26 +1017,3 @@ function _simport_external_get_nodes(){
   dpm($custom_links);
 }
 
-
-
-function simport_files_test(){
-  module_load_include('inc', 'simport', 'simport.api');
-  
-  $node = node_load(183);
-  //$node->title = ' About Ken';
-  node_save($node);
-  return;
-  $vsite = spaces_load ( 'og', 8 , TRUE );
-
- $source =  '/nfs/www/edu-harvard-iq-test2/files/scholar/uploads/21/Data_Sheet-Scholars.pdf';
- $dest  = '/nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/files';
- 
- $file = get_object_vars(simport_import_file($node, $source, $file = NULL, $vsite));
- 
- dpm($file);
-// node_save($node);
- //dpm($file);
- 
- //dpm(file_save_upload($src, $validators = array(), $dest, $replace = FILE_EXISTS_RENAME));
-  
-}
