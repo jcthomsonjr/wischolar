@@ -364,7 +364,7 @@ function cp_preprocess_page(&$vars) {
       $user_links [] = array (
         'title' => t ( 'Hello <strong>!username</strong>', array (
         '!username' => $user->name 
-      ) ), 'href' => 'user', 'html' => TRUE 
+      ) ), 'href' => 'cp/users', 'html' => TRUE 
       );
       $user_links [] = array (
         'title' => t ( 'Logout' ), 'href' => "logout" 
@@ -398,7 +398,7 @@ function cp_toolbar_menu_links(){
   $user_links = array();
   $user_links[] = array(
     'title' => t('Hello <strong>!username</strong>', array('!username' => $user->name)),
-    'href' => 'user',
+    'href' => 'cp/users',
     'html' => TRUE
   );
   $user_links[] = array('title' => t('Logout'), 'href' => "logout");
