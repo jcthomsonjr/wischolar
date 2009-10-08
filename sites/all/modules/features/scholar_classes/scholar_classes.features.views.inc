@@ -9,7 +9,7 @@ function _scholar_classes_views_default_views() {
   // Exported view: scholar_classes
   $view = new view;
   $view->name = 'scholar_classes';
-  $view->description = 'A view of classes for each site';
+  $view->description = 'Classes and class materials';
   $view->tag = 'features';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -17,25 +17,49 @@ function _scholar_classes_views_default_views() {
   $view->api_version = 2;
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
-  $handler->override_option('sorts', array(
-    'sticky' => array(
-      'order' => 'ASC',
-      'id' => 'sticky',
+  $handler->override_option('fields', array(
+    'title' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
       'table' => 'node',
-      'field' => 'sticky',
+      'field' => 'title',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
-    'changed' => array(
+  ));
+  $handler->override_option('sorts', array(
+    'created' => array(
       'order' => 'DESC',
       'granularity' => 'second',
-      'id' => 'changed',
+      'id' => 'created',
       'table' => 'node',
-      'field' => 'changed',
+      'field' => 'created',
       'relationship' => 'none',
     ),
   ));
   $handler->override_option('arguments', array(
-    'name' => array(
+    'field_class_nid' => array(
       'default_action' => 'ignore',
       'style_plugin' => 'default_summary',
       'style_options' => array(),
@@ -45,18 +69,13 @@ function _scholar_classes_views_default_views() {
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
-      'validate_type' => 'none',
+      'validate_type' => 'node',
       'validate_fail' => 'not found',
-      'glossary' => 0,
-      'limit' => '0',
-      'case' => 'none',
-      'path_case' => 'none',
-      'transform_dash' => 1,
-      'add_table' => 0,
-      'require_value' => 0,
-      'id' => 'name',
-      'table' => 'term_data',
-      'field' => 'name',
+      'break_phrase' => 0,
+      'not' => 0,
+      'id' => 'field_class_nid',
+      'table' => 'node_data_field_class',
+      'field' => 'field_class_nid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
         '2' => 0,
@@ -69,11 +88,12 @@ function _scholar_classes_views_default_views() {
       'default_argument_fixed' => '',
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'class' => 'class',
         'blog' => 0,
         'announcement' => 0,
         'bio' => 0,
         'cv' => 0,
-        'class' => 0,
+        'class_material' => 0,
         'feed' => 0,
         'feed_item' => 0,
         'gallery' => 0,
@@ -89,34 +109,9 @@ function _scholar_classes_views_default_views() {
         'biblio' => 0,
         'profile' => 0,
       ),
-      'validate_argument_node_access' => 0,
+      'validate_argument_node_access' => 1,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '10' => 0,
-        '23' => 0,
-        '31' => 0,
-        '36' => 0,
-        '15' => 0,
-        '33' => 0,
-        '17' => 0,
-        '13' => 0,
-        '19' => 0,
-        '28' => 0,
-        '12' => 0,
-        '22' => 0,
-        '35' => 0,
-        '11' => 0,
-        '9' => 0,
-        '29' => 0,
-        '14' => 0,
-        '30' => 0,
-        '18' => 0,
-        '21' => 0,
-        '34' => 0,
-        '26' => 0,
-        '16' => 0,
-        '24' => 0,
-        '32' => 0,
         '8' => 0,
         '1' => 0,
         '2' => 0,
@@ -125,9 +120,6 @@ function _scholar_classes_views_default_views() {
         '5' => 0,
         '6' => 0,
         '7' => 0,
-        '27' => 0,
-        '25' => 0,
-        '20' => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -143,6 +135,20 @@ function _scholar_classes_views_default_views() {
     ),
   ));
   $handler->override_option('filters', array(
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'relationship' => 'none',
+    ),
     'current' => array(
       'operator' => 'all',
       'value' => '',
@@ -157,65 +163,136 @@ function _scholar_classes_views_default_views() {
       'field' => 'current',
       'relationship' => 'none',
     ),
-    'status' => array(
+  ));
+  $handler->override_option('access', array(
+    'type' => 'spaces_feature',
+    'spaces_feature' => 'scholar_classes',
+  ));
+  $handler->override_option('cache', array(
+    'type' => 'none',
+  ));
+  $handler->override_option('title', 'Related materials');
+  $handler->override_option('empty_format', '1');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('items_per_page', 6);
+  $handler->override_option('use_pager', '1');
+  $handler = $view->new_display('node_content', 'Class full page', 'node_content_1');
+  $handler->override_option('types', array(
+    'class' => 'class',
+  ));
+  $handler->override_option('modes', array(
+    '0' => 'full',
+  ));
+  $handler->override_option('argument_mode', 'nid');
+  $handler->override_option('default_argument', 'nid');
+  $handler->override_option('show_title', 1);
+  $handler = $view->new_display('node_content', 'Class teaser page', 'node_content_2');
+  $handler->override_option('fields', array(
+    'title' => array(
+      'label' => 'Title',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('items_per_page', 5);
+  $handler->override_option('use_pager', '0');
+  $handler->override_option('style_plugin', 'grid');
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+    'columns' => '4',
+    'alignment' => 'horizontal',
+  ));
+  $handler->override_option('types', array(
+    'gallery' => 'gallery',
+  ));
+  $handler->override_option('modes', array(
+    '0' => 'teaser',
+  ));
+  $handler->override_option('argument_mode', 'nid');
+  $handler->override_option('default_argument', 'nid');
+  $handler = $view->new_display('page', 'Classes', 'page_1');
+  $handler->override_option('arguments', array());
+  $handler->override_option('filters', array(
+    'status_extra' => array(
       'operator' => '=',
-      'value' => '1',
+      'value' => '',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status',
+      'id' => 'status_extra',
       'table' => 'node',
-      'field' => 'status',
+      'field' => 'status_extra',
+      'relationship' => 'none',
+    ),
+    'current' => array(
+      'operator' => 'all',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
       'relationship' => 'none',
     ),
     'type' => array(
       'operator' => 'in',
       'value' => array(
-        'scholar_class' => 'class',
+        'class' => 'class',
       ),
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
-        'operator' => 'type_op',
-        'label' => 'Node: Type',
-        'use_operator' => FALSE,
-        'identifier' => 'type',
-        'remember' => FALSE,
-        'single' => TRUE,
-        'optional' => TRUE,
-        'reduce' => FALSE,
+        'operator' => FALSE,
+        'label' => '',
       ),
       'id' => 'type',
       'table' => 'node',
       'field' => 'type',
+      'override' => array(
+        'button' => 'Use default',
+      ),
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('access', array(
-    'type' => 'none',
-  ));
-  $handler->override_option('cache', array(
-    'type' => 'none',
-  ));
-  $handler->override_option('items_per_page', 15);
-  $handler->override_option('use_pager', '1');
-  $handler->override_option('distinct', 1);
+  $handler->override_option('title', 'Classes');
+  $handler->override_option('items_per_page', 10);
   $handler->override_option('row_plugin', 'node');
-  $handler->override_option('row_options', array(
-    'relationship' => 'none',
-    'build_mode' => 'teaser',
-    'links' => 1,
-    'comments' => 0,
-  ));
-  $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('path', 'classes');
   $handler->override_option('menu', array(
     'type' => 'normal',
     'title' => 'Classes',
-    'description' => 'My classes',
+    'description' => 'my images',
     'weight' => '0',
     'name' => 'features',
   ));
