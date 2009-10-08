@@ -140,6 +140,10 @@ div.terms {
 #container { }
 
 
+
+
+
+
 /* Top admin bar */
 
 #top {
@@ -154,34 +158,39 @@ div.terms {
 
 body.cp-toolbar-mini #top {
   position: absolute;
-  background: #BBBABA;
-  height: auto;
-  right: 10px;
+  height: 20px;
+  right: 0;
+  top: 0;
   padding: 0;
   line-height: normal;
-  -webkit-border-bottom-left-radius:5px;
-  -moz-border-radius-bottomleft: 5px;
-  -moz-border-radius-bottomright: 5px;
-  -webkit-border-bottom-right-radius:5px;
+  background: transparent;
+  }
+body.cp-toolbar-mini #top ul.links {
+  background: url(images/toolbar-mini-tab.png) no-repeat 0 0;
+  height: 22px;
   }
 
 body.cp-toolbar-mini #top ul.links li {
   margin:0;
+  background: url(images/toolbar-mini-tab.png) no-repeat 0 0 transparent;
+  height: 22px;
+  padding: 2px 6px 4px;
+  }
+
+body.cp-toolbar-mini #top ul.links li.first {
+  background: transparent;
   }
 
 body.cp-toolbar-mini #top ul.links li a, body.cp-toolbar-mini #top ul.links li a:visited {
-  color:#000000;
-  text-shadow:0 1px 0 rgba(206, 214, 221, 0.75);
+  color:#6e6e6e;
   font-size: 11px;
-  padding: 2px 3px;
-  border: 1px solid #d0d1d1;
-  border-top: none;
+  padding-left: 12px;
   }
 
 body.cp-toolbar-mini #top ul.links li.first a {
-  padding-left: 6px;
-  border-right: none;
-
+  padding-left: 22px;
+  background: url(images/wrench-mini.png) no-repeat 0 0 transparent;
+  margin-left: 5px;
   }
 
 body.cp-toolbar-mini #top ul.links li.last a {
@@ -190,10 +199,9 @@ body.cp-toolbar-mini #top ul.links li.last a {
   }
 
 body.cp-toolbar-mini #top ul.links li a:hover {
-  color: #fff;
   text-decoration: none;
   text-shadow:none;
-  background: #6B6B6B;
+  color: #000;
   }
 
 
