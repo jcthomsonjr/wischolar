@@ -308,6 +308,7 @@ function _scholar_image_gallery_views_default_views() {
         'text' => '',
         'make_link' => 0,
         'path' => '',
+        'link_class' => '',
         'alt' => '',
         'prefix' => '',
         'suffix' => '',
@@ -321,7 +322,7 @@ function _scholar_image_gallery_views_default_views() {
       ),
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'short_default',
+      'format' => 'imagefield__lightbox2__square_50_50__original',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -338,11 +339,12 @@ function _scholar_image_gallery_views_default_views() {
       ),
     ),
   ));
-  $handler->override_option('items_per_page', 1);
+  $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', '0');
-  $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array(
     'grouping' => '',
+    'columns' => '4',
+    'alignment' => 'horizontal',
   ));
   $handler->override_option('types', array(
     'gallery' => 'gallery',
@@ -403,7 +405,7 @@ function _scholar_image_gallery_views_default_views() {
   ));
   $handler->override_option('block_description', 'Recent images');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler = $view->new_display('page', 'Galleries', 'page_1');
   $handler->override_option('arguments', array());
   $handler->override_option('filters', array(
     'status_extra' => array(
