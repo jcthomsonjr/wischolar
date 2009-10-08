@@ -137,8 +137,90 @@ Summer',
     ),
   );
 
+  // Exported field: field_class
+  $fields[] = array(
+    'field_name' => 'field_class',
+    'type_name' => 'class_material',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'nodereference',
+    'required' => '1',
+    'multiple' => '0',
+    'module' => 'nodereference',
+    'active' => '1',
+    'referenceable_types' => array(
+      'class' => 'class',
+      'announcement' => 0,
+      'support_answer' => 0,
+      'blog' => 0,
+      'class_material' => 0,
+      'feature_request' => 0,
+      'feed' => 0,
+      'feed_item' => 0,
+      'gallery' => 0,
+      'image' => 0,
+      'link' => 0,
+      'page' => 0,
+      'profile' => 0,
+      'biblio' => 0,
+      'support_question' => 0,
+      'vsite' => 0,
+      'software' => 0,
+      'vsite_users_profile' => 0,
+      'bio' => 0,
+      'cv' => 0,
+    ),
+    'advanced_view' => '--',
+    'advanced_view_args' => '',
+    'widget' => array(
+      'node_link' => array(
+        'teaser' => 0,
+        'full' => 1,
+        'title' => 'Add class material',
+        'hover_title' => 'Add a post related to this class',
+        'destination' => 'node',
+      ),
+      'fallback' => 'page_not_found',
+      'label' => 'Class',
+      'weight' => '31',
+      'description' => '',
+      'type' => 'nodereference_url',
+      'module' => 'nodereference_url',
+    ),
+  );
+
   // Translatables
   array(
+    t('Class'),
     t('Offered'),
     t('Semester'),
   );
@@ -159,6 +241,7 @@ function _scholar_classes_context_default_contexts() {
     'description' => '',
     'node' => array(
       '0' => 'class',
+      '1' => 'class_material',
     ),
     'views' => array(
       '0' => 'scholar_classes',
@@ -168,10 +251,10 @@ function _scholar_classes_context_default_contexts() {
       'vsite_taxonomy_0' => array(
         'module' => 'vsite_taxonomy',
         'delta' => '0',
-        'weight' => -20,
+        'weight' => 20,
         'region' => 'right',
         'status' => '0',
-        'label' => 'Scholar site categories',
+        'label' => 'Categories',
         'type' => 'context_ui',
       ),
     ),
