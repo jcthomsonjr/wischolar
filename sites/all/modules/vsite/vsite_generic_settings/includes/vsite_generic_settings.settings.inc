@@ -24,7 +24,7 @@ class vsite_generic_settings_settings implements space_setting {
 		  '#type' => 'checkbox',
 		  '#title' => t('Display Admin Menu Bar.'),
       '#description' => "The admin menu bar displays at the top of the page when you are logged in as a site administrator.",
-      '#default_value' => (is_array($value) && array_key_exists('admin_menu',$value))?$value['admin_menu']:1,
+      '#default_value' => (is_array($value) && array_key_exists('admin_menu',$value))?$value['admin_menu']:0,
 		);
 		
 		$s_default_shield = drupal_get_path('module','vsite_generic_settings')."/theme/shields/harvard_shield.png";

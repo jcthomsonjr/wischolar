@@ -122,6 +122,7 @@ function _vsite_global_taxonomy(){
 
 function _vsite_flags_boot(){
   //disable the f. bookmarks flag
+  module_load_include('inc', 'flag', '/includes/flag.admin');
   $flag = flag_get_flag('bookmarks');
   $flag->delete();
   $flag->disable();
