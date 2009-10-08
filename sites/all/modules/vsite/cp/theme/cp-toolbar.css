@@ -72,7 +72,20 @@ a#admin-link-cp-features {
   background-image: url(images/topmenu-features.png);
   }
 
-#cp-toolbar-user li a {
-  font-size: 12px;
-  color: #ddd;
+#cp-toolbar-user li a, #cp-toolbar-user li a:visited {
+  font-size: 12px !important;
+  color: #ddd !important;
+  }
+
+#cp-toolbar-user li.last a, #cp-toolbar-user li.last a:visited {
+  padding: 1px 8px !important;
+  background: #DDDDDD;
+  color: #000 !important;
+  -moz-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  }
+
+#cp-toolbar-user li.last a:hover {
+  text-decoration: none;
+  background: #FFF;
   }

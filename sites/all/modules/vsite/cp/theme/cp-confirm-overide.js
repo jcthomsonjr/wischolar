@@ -62,7 +62,7 @@ var cp_add_dialog = function(){
  			//hide: 'slide',
  			overlay: {
  				backgroundColor: '#000',
- 				opacity: .8
+ 				opacity: .6
  			},
  			buttons: {
  				'Yes I\'m Sure': function() {
