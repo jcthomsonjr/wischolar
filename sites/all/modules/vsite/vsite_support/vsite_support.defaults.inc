@@ -138,3 +138,24 @@ function _vsite_support_context_default_contexts() {
   );
   return $items;
 }
+
+/**
+ * Helper to implementation of hook_user_default_permissions().
+ */
+function _vsite_support_user_default_permissions() {
+  $permissions = array();
+
+  // Exported permission: create support_answer content
+  $permissions[] = array(
+    'name' => 'create support_answer content',
+    'roles' => array(),
+  );
+
+  // Exported permission: create support_question content
+  $permissions[] = array(
+    'name' => 'create support_question content',
+    'roles' => array(),
+  );
+
+  return $permissions;
+}

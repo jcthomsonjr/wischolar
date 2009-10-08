@@ -28,6 +28,15 @@ function vsite_support_node_info() {
 }
 
 /**
+ * Implementation of hook_user_default_permissions().
+ */
+function vsite_support_user_default_permissions() {
+  module_load_include('inc', 'vsite_support', 'vsite_support.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_vsite_support_user_default_permissions', $args);
+}
+
+/**
  * Implementation of hook_views_default_views().
  */
 function vsite_support_views_default_views() {
