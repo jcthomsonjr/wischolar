@@ -91,9 +91,49 @@ function _scholar_feeds_user_default_permissions() {
     ),
   );
 
+  // Exported permission: delete own feed_item content
+  $permissions[] = array(
+    'name' => 'delete own feed_item content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: edit own feed content
   $permissions[] = array(
     'name' => 'edit own feed content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override feed_item promote to front page option
+  $permissions[] = array(
+    'name' => 'override feed_item promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override feed_item published option
+  $permissions[] = array(
+    'name' => 'override feed_item published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override feed_item revision option
+  $permissions[] = array(
+    'name' => 'override feed_item revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override feed_item sticky option
+  $permissions[] = array(
+    'name' => 'override feed_item sticky option',
     'roles' => array(
       '0' => 'scholar admin',
     ),

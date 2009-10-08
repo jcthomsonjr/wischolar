@@ -319,5 +319,21 @@ function _scholar_image_gallery_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override gallery promote to front page option
+  $permissions[] = array(
+    'name' => 'override gallery promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override gallery sticky option
+  $permissions[] = array(
+    'name' => 'override gallery sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   return $permissions;
 }

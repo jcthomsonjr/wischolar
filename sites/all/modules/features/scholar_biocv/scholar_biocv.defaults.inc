@@ -154,5 +154,37 @@ function _scholar_biocv_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override bio revision option
+  $permissions[] = array(
+    'name' => 'override bio revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override bio sticky option
+  $permissions[] = array(
+    'name' => 'override bio sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override cv revision option
+  $permissions[] = array(
+    'name' => 'override cv revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override cv sticky option
+  $permissions[] = array(
+    'name' => 'override cv sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   return $permissions;
 }

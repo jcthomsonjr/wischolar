@@ -75,6 +75,7 @@ function _scholar_blog_user_default_permissions() {
     'name' => 'create blog entries',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -83,12 +84,33 @@ function _scholar_blog_user_default_permissions() {
     'name' => 'delete own blog entries',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
-  // Exported permission: edit any blog entry
+  // Exported permission: override blog promote to front page option
   $permissions[] = array(
-    'name' => 'edit any blog entry',
+    'name' => 'override blog promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override blog published option
+  $permissions[] = array(
+    'name' => 'override blog published option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override blog revision option
+  $permissions[] = array(
+    'name' => 'override blog revision option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override blog sticky option
+  $permissions[] = array(
+    'name' => 'override blog sticky option',
     'roles' => array(),
   );
 

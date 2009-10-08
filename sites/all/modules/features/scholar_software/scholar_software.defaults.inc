@@ -85,5 +85,37 @@ function _scholar_software_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override software promote to front page option
+  $permissions[] = array(
+    'name' => 'override software promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override software published option
+  $permissions[] = array(
+    'name' => 'override software published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override software revision option
+  $permissions[] = array(
+    'name' => 'override software revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override software sticky option
+  $permissions[] = array(
+    'name' => 'override software sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   return $permissions;
 }

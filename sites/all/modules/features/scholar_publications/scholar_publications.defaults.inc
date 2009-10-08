@@ -177,6 +177,38 @@ function _scholar_publications_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override biblio promote to front page option
+  $permissions[] = array(
+    'name' => 'override biblio promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override biblio published option
+  $permissions[] = array(
+    'name' => 'override biblio published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override biblio revision option
+  $permissions[] = array(
+    'name' => 'override biblio revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override biblio sticky option
+  $permissions[] = array(
+    'name' => 'override biblio sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: show download links
   $permissions[] = array(
     'name' => 'show download links',
@@ -214,6 +246,14 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'show sort links',
     'roles' => array(
       '0' => 'anonymous user',
+    ),
+  );
+
+  // Exported permission: submit repec widget
+  $permissions[] = array(
+    'name' => 'submit repec widget',
+    'roles' => array(
+      '0' => 'scholar admin',
     ),
   );
 

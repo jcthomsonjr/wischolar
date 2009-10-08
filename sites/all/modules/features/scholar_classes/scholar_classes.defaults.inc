@@ -298,6 +298,14 @@ function _scholar_classes_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create class_material content
+  $permissions[] = array(
+    'name' => 'create class_material content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: delete own class content
   $permissions[] = array(
     'name' => 'delete own class content',
@@ -306,9 +314,25 @@ function _scholar_classes_user_default_permissions() {
     ),
   );
 
+  // Exported permission: delete own class_material content
+  $permissions[] = array(
+    'name' => 'delete own class_material content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: edit own class content
   $permissions[] = array(
     'name' => 'edit own class content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: edit own class_material content
+  $permissions[] = array(
+    'name' => 'edit own class_material content',
     'roles' => array(
       '0' => 'scholar admin',
     ),
@@ -341,6 +365,38 @@ function _scholar_classes_user_default_permissions() {
   // Exported permission: override class sticky option
   $permissions[] = array(
     'name' => 'override class sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override class_material promote to front page option
+  $permissions[] = array(
+    'name' => 'override class_material promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override class_material published option
+  $permissions[] = array(
+    'name' => 'override class_material published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override class_material revision option
+  $permissions[] = array(
+    'name' => 'override class_material revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override class_material sticky option
+  $permissions[] = array(
+    'name' => 'override class_material sticky option',
     'roles' => array(
       '0' => 'scholar admin',
     ),
