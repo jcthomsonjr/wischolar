@@ -23,6 +23,13 @@ function simport_menu() {
  * Batch Process iniitiation
  */
 function simport_import(){
+  
+      //import the table with serialized D5 scholars site data
+  if(db_table_exists('scholar_export_data')){
+    db_drop_table($ret, 'scholar_export_data');       
+    }
+    _simport_exportdata();
+  
 
   $batch = array('operations' => array(),
   'finished' => 'simport_completed',
@@ -35,17 +42,14 @@ function simport_import(){
   // Add an array declaring the callback function for your
   // batch process and an array of callback arguments
   $batch['operations'][] = array('simport_import_sites', array());
-  $batch['operations'][] = array('simport_import_types', array(0, '')); //all non-biblio nodes
-  $batch['operations'][] = array('simport_import_types', array(1, 0)); //biblio nodes
-  $batch['operations'][] = array('simport_import_types', array(1, 200)); //biblio nodes
+  $batch['operations'][] = array('simport_import_types', array(0, '', '')); //all non-biblio nodes
+  simport_generate_biblio_operations($batch); //automatically calculate the number of biblio node import operations
   $batch['operations'][] = array('simport_import_logo', array());
   $batch['operations'][] = array('simport_import_frontpage', array());
   $batch['operations'][] = array('simport_get_files', array());
   $batch['operations'][] = array('simport_sync_themes', array());
   $batch['operations'][] = array('simport_set_menu_links', array());
   $batch['operations'][] = array('simport_cleanup', array());
-  // add whatever logic you need
-  //$batch['operations'][] = array('another_batch_function', array($arg1, $arg2));
 
   if (!empty($batch['operations'])) {
     batch_set($batch);
@@ -53,6 +57,36 @@ function simport_import(){
     batch_process();
   }
 }
+
+/**
+ * Function calculatates total sum of biblio nodes to import
+ * and generates batch the proper number of batch processes
+ * to avoid time out issues.
+ *
+ *  @param unknown_type $batch
+ */
+function simport_generate_biblio_operations(&$batch, $limit = 100){
+  $num = simport_get_number_biblio_nodes();
+  if($num){
+    for($i=0; $i <$num; $i+=$limit){
+      $batch['operations'][] = array('simport_import_types', array(1, $i, $limit));
+    }
+    return $batch;
+  }
+}
+
+/**
+ * Calculate the number of old biblio nodes
+ * @return integer
+ */
+function simport_get_number_biblio_nodes(){
+  $sql = db_query("SELECT id FROM {scholar_export_data} WHERE type = '%s'", 'biblio');
+  while ($data = db_fetch_object($sql)) {
+    $biblio[] = $data -> id;
+  }
+  return count($biblio);  
+}
+
 
 function simport_completed($success, $results, $operations){
 $message = ($success) ? 'Import Process Completed' : 'Errors Durring Import Process';
@@ -73,12 +107,6 @@ drupal_goto('admin');
  */
 function simport_import_sites(&$context){ 
   $context['message'] = 'Created Scholar Users and Sites';
-
-    //import the table with serialized D5 scholars site data
-  if(db_table_exists('scholar_export_data')){
-    db_drop_table($ret, 'scholar_export_data');       
-    }
-    _simport_exportdata();
 
   //setting a few path related system vars
   variable_set('simport_current_path', _simport_get_fileroot());
@@ -143,23 +171,22 @@ function simport_import_sites(&$context){
   }
 }
   //PHASE 2 - Load And Save The Content
-function simport_import_types($biblio = 0, $limit = '', &$context){
+function simport_import_types($biblio = 0, $start = '', $limit ='', &$context){
 
-  if (is_int($limit)){
-    $limit_end = ($limit + 200);
-    $limit_str = ' LIMIT ' . $limit . ' , ' . $limit_end;
+  if (is_int($start)){
+      $limit_str = ' LIMIT ' . $start . ' , ' . $limit;
   }
   else{
     $limit_str = '';
   }
   
-  if ($biblio == 1){
-    $context['message'] =  $limit < 200 ? 'Created Biblio Nodes 1-199' : 'Created Biblio Nodes 200-399';
+  if ($biblio == 1){    
+    $context['message'] =  'Created Biblio Nodes ' .  ((int)$start +1) . ' - ' . ((int)$start + (int)$limit);
     //define content type(s)
     $types = array('biblio' => 'biblio');
 
     //create custom biblio type - Working Paper - only run once
-    $working_paper =  ($limit < 200) ? simport_create_biblio_type : '';
+    $working_paper =  ($start < 1) ? simport_create_biblio_type : '';
   }
   else{
     $context['message'] =  'Created Non-Biblio Nodes';
@@ -632,7 +659,7 @@ function simport_set_link($old, &$new){
 function simport_set_biblio($old, &$new){
 
   //a list of fields that we don't want to import into the new biblio node
-$excluded_fields = array('taxonomy', 'nid', 'vid', 'uid', 'name');
+$excluded_fields = array('taxonomy', 'nid', 'vid', 'uid', 'name', 'path', 'picture');
 
   //a list of D5 biblio author fields
   $author_fields = array(
@@ -884,7 +911,7 @@ function _simport_exportdata(){
 function simport_sync_themes(&$context){
    $context['message'] = 'Synchronized Theme Settings';
     
-  $sql = db_query("SELECT * FROM {og}");
+  $sql = db_query("SELECT * FROM {og} WHERE nid > %d", 7);
   while($data = db_fetch_object($sql)){
    $space = spaces_load ( 'og', $data->nid, TRUE );
    //dpm (trim($space -> settings['theme']));
