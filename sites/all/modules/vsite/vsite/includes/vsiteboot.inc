@@ -118,3 +118,12 @@ function _vsite_global_taxonomy(){
   $vid = db_last_insert_id('vocabulary', 'vid');
   variable_set('scholar_global_taxonomy', $vid);
 }
+
+
+function _vsite_flags_boot(){
+  //disable the f. bookmarks flag
+  $flag = flag_get_flag('bookmarks');
+  $flag->delete();
+  $flag->disable();
+  _flag_clear_cache();
+}
