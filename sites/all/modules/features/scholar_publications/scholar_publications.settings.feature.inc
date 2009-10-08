@@ -99,31 +99,37 @@ class scholar_publications_settings_feature implements space_setting {
 
     $form['sort'] = array(
       '#type' => 'radios',
-      '#title' => t('By default, sort publications by'),
+      '#title' => t('By default, sort publications by which category'),
       '#default_value' => !array_key_exists('sort',$value)?variable_get('biblio_sort','year'):$value['sort'],
-      '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
+      '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),      
     );
+      $form['order'] = array(
+      '#type' => 'radios',
+      '#title' => t('Select default order of the sort category'),
+      '#default_value' => !array_key_exists('order',$value)?variable_get('biblio_order', 'DESC'):$value['order'],
+      '#options' => array('DESC' => t('Descending'), 'ASC' => t('Ascending')),
+    );
+    
     $form['sort_tabs'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('Allow sorting of your publications by'),
+      '#title' => t('Allow additional sorting of your publications by'),
       '#default_value' => !array_key_exists('sort_tabs',$value)?variable_get('biblio_sort_tabs', array('author'=>'author', 'title'=>'title', 'type'=>'type', 'year'=>'year', 'keyword'=>'keyword')):$value['sort_tabs'],
       '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
       //'#description' => t('You turn the sorting links at the top of the /biblio page here.'),
     );
-    $form['order'] = array(
-      '#type' => 'radios',
-      '#title' => t('Default order of the above search keys'),
-      '#default_value' => !array_key_exists('order',$value)?variable_get('biblio_order', 'DESC'):$value['order'],
-      '#options' => array('DESC' => t('Descending'), 'ASC' => t('Ascending')),
-    );
 
+    $form['bkn'] = array(
+     '#type' => 'item',
+    '#title' =>t('Author Lookup Services'), //TODO: need to implement a space after this item
+    );
+    
     $form['bkn_enabled'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable co-author auto-search'),
       '#default_value' => !array_key_exists('bkn_enabled',$value)?(variable_get('bkn_contrib_lookup_mode', 1) < 2):$value['bkn_enabled'],
       '#return_value' => 1,
-      //'#description' => t('Uncheck to disable all external lookups?')
-    );
+      //'#description' => t('Uncheck to disable all external lookups?'),
+     );
     $form['bkn_contrib_lookup_allow_autocomplete'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable autocomplete on author fields'),
