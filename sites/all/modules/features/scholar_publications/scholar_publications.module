@@ -55,8 +55,11 @@ function scholar_publications_context_links_alter(&$links) {
     $links ['importbiblio'] = array (
       'title' => 'Import publications', 
       'href' => 'publications/import', 
+      'query' => drupal_get_destination(),
       'custom' => TRUE 
     );
+    
+    $links['biblio']['query'] = drupal_get_destination();
     $links ['biblio'] ['title'] = "publication";
     
     $links = array_reverse($links);

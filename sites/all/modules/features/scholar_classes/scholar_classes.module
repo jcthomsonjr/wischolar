@@ -24,6 +24,35 @@ function scholar_classes_scholar_vocabulary_defaults() {
  );
 }
 
+/**
+ * hook link_alter (admin at the end of links)
+ */
+function scholar_classes_link_alter(&$links, $node){
+  if(!isset($links['class_material_field_class'])) return;
+  
+  $old = $links['class_material_field_class'];
+  $old['attributes']['class'] = 'context-button';
+  
+  $links['class_material_field_class'] = array(
+    'title' => theme('context_links', array($old)),
+    'html' => TRUE
+  );
+}
+
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_classes_context_links_alter(&$links) {
+  if (!empty($links['class'])) {
+    //$links['class']['query'] = drupal_get_destination();
+  }
+  
+  if (!empty($links['class_material'])) {
+    unset($links['class_material']);
+  }
+}
+
 
 /**
  * Implementation of hook_strongarm().

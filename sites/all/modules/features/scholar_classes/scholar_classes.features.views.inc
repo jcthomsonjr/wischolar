@@ -174,8 +174,8 @@ function _scholar_classes_views_default_views() {
   $handler->override_option('title', 'Related materials');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
-  $handler->override_option('items_per_page', 6);
   $handler->override_option('use_pager', '1');
+  $handler->override_option('distinct', 1);
   $handler = $view->new_display('node_content', 'Class full page', 'node_content_1');
   $handler->override_option('types', array(
     'class' => 'class',
@@ -286,7 +286,7 @@ function _scholar_classes_views_default_views() {
     ),
   ));
   $handler->override_option('title', 'Classes');
-  $handler->override_option('items_per_page', 10);
+  $handler->override_option('items_per_page', 15);
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('path', 'classes');
   $handler->override_option('menu', array(

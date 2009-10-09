@@ -102,6 +102,8 @@ function _scholar_announcements_views_default_views() {
   ));
   $handler->override_option('title', 'Announcements');
   $handler->override_option('items_per_page', 15);
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('distinct', 1);
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
     'relationship' => 'none',
@@ -157,6 +159,8 @@ function _scholar_announcements_views_default_views() {
     ),
   ));
   $handler->override_option('items_per_page', 5);
+  $handler->override_option('use_pager', FALSE);
+  $handler->override_option('use_more', 1);
   $handler->override_option('row_plugin', 'fields');
   $handler->override_option('row_options', array());
   $handler->override_option('block_description', 'Latest Announcements');

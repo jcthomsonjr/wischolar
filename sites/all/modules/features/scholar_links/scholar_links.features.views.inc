@@ -88,12 +88,14 @@ function _scholar_links_views_default_views() {
   ));
   $handler->override_option('access', array(
     'type' => 'spaces_feature',
-    'spaces_feature' => 'scholar_announcements',
+    'spaces_feature' => 'scholar_links',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
   $handler->override_option('title', 'Links');
+  $handler->override_option('items_per_page', 15);
+  $handler->override_option('use_pager', '1');
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
     'relationship' => 'none',

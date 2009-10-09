@@ -23,3 +23,11 @@ function scholar_announcements_strongarm(){
   return $conf;
 }
 
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_announcements_context_links_alter(&$links) {
+  if (!empty($links['announcement'])) {
+    $links['announcement']['query'] = drupal_get_destination();
+  }
+}

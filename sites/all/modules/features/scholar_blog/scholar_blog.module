@@ -37,6 +37,15 @@ function scholar_blog_scholar_vocabulary_defaults() {
 }
 
 /**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_blog_context_links_alter(&$links) {
+  if (!empty($links['blog'])) {
+    $links['blog']['query'] = drupal_get_destination();
+  }
+}
+
+/**
  * Implementation of hook_strongarm().
  */
 function scholar_blog_strongarm() {

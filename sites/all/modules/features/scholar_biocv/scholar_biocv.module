@@ -53,11 +53,12 @@ function scholar_biocv_bio(){
   if($vsite->admin_access()){
   	$a_links = array();
     if ($bio_node){
-      $a_links[] = array('custom' => true, 'title' => 'Edit your Bio', 'href' => "node/{$bio_node->nid}/edit");
+      $a_links[] = array('custom' => true, 'title' => 'Edit your Bio', 'href' => "node/{$bio_node->nid}/edit", 'query' => drupal_get_destination());
     }else {
       // an appropriate message and a link for the user to create their bio
-      $a_links[] = array('custom' => true, 'title' => 'Add your Bio', 'href' => "node/add/bio");
+      $a_links[] = array('custom' => true, 'title' => 'Add your Bio', 'href' => "node/add/bio", 'query' => drupal_get_destination());
     }
+    
     $s_out .= theme('context_links', $a_links);
   }
   
@@ -85,10 +86,10 @@ function scholar_biocv_cv(){
   if($vsite->admin_access()){
     $a_links = array();
     if ($cv_node){
-      $a_links[] = array('custom' => true, 'title' => 'Edit your CV', 'href' => "node/{$cv_node->nid}/edit");
+      $a_links[] = array('custom' => true, 'title' => 'Edit your CV', 'href' => "node/{$cv_node->nid}/edit", 'query' => drupal_get_destination());
     }else {
       // an appropriate message and a link for the user to create their CV
-      $a_links[] = array('custom' => true, 'title' => 'Add your CV', 'href' => "node/add/cv");
+      $a_links[] = array('custom' => true, 'title' => 'Add your CV', 'href' => "node/add/cv", 'query' => drupal_get_destination());
     }
     $s_out .= theme('context_links', $a_links);
   }

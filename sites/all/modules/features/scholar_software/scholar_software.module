@@ -23,3 +23,13 @@ function scholar_software_strongarm() {
  
   return $conf;
 }
+
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_software_context_links_alter(&$links) {
+  if (!empty($links['software'])) {
+    $links['software']['query'] = drupal_get_destination();
+  }
+}

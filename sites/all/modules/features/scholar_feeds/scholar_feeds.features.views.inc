@@ -95,7 +95,7 @@ function _scholar_feeds_views_default_views() {
   ));
   $handler->override_option('access', array(
     'type' => 'spaces_feature',
-    'spaces_feature' => 'scholar_classes',
+    'spaces_feature' => 'scholar_feeds',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',
@@ -158,6 +158,7 @@ function _scholar_feeds_views_default_views() {
     ),
   ));
   $handler->override_option('items_per_page', 6);
+  $handler->override_option('use_pager', '0');
   $handler->override_option('use_more', 1);
   $handler->override_option('row_plugin', 'fields');
   $handler->override_option('row_options', array(

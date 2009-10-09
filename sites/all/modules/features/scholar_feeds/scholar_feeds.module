@@ -54,4 +54,7 @@ function scholar_feeds_context_links_alter(&$links) {
   if (!empty($links['feed_item'])) {
     unset($links['feed_item']);
   }
+  if (!empty($links['feed'])) {
+    $links['feed']['query'] = drupal_get_destination();
+  }
 }

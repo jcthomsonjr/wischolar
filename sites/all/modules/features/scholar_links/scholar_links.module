@@ -23,6 +23,14 @@ function scholar_links_strongarm() {
   return $conf;
 }
 
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_links_context_links_alter(&$links) {
+  if (!empty($links['link'])) {
+    $links['link']['query'] = drupal_get_destination();
+  }
+}
 
 function scholar_links_scholar_vocabulary_defaults() {
   return array (
