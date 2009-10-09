@@ -1,6 +1,45 @@
 <?php
 
+define(HMDC_RBUILD_ROOT ,'http://gking.harvard.edu/src/contrib/');
+
+
 include_once('scholar_software.features.inc');
+
+function scholar_software_menu(){
+  $items = array();
+  $items['rbuild'] = array(
+    'title' => 'rbuild',
+    'page callback' => 'scholar_software_rbuild',
+    'access arguments' => array('access content'),
+  );
+  
+  return $items;
+}
+
+function scholar_software_rbuild(){
+  $homepage = file_get_contents(HMDC_RBUILD_ROOT . 'PACKAGES');
+  $packages_raw = split("\n\n\n", $homepage);
+  foreach ( $packages_raw as $package_raw ) {
+    
+    $array = preg_split('/^(.*):/mU', $package_raw, - 1, PREG_SPLIT_DELIM_CAPTURE);
+    
+    
+    // $array = preg_split("/\n(.*):/", $package_raw,PREG_SPLIT_DELIM_CAPTURE);
+    //$line = split("\n\n", $package_raw);
+    // dpm($line);
+    // $array = explode(':',$package_raw, 2);
+    //$array = preg_replace ('/^.*:/m', 'xxxxxxxx', $package_raw);
+    dpm($array);
+    
+     $array = preg_grep('/^(.*):/mU', $package_raw);
+     dpm($array);
+  }
+  
+  //dpm($array);
+  
+
+  return 'xxx';
+}
 
 
 /**
@@ -22,6 +61,25 @@ function scholar_software_strongarm() {
   $conf["pathauto_node_software_pattern"] = "[space-og-path]/software/[title-raw]";
  
   return $conf;
+}
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function scholar_software_nodeapi(&$node, $op, $teaser, $page) {
+  if ($op == 'view') {
+
+
+    if (!empty($links)) {
+      $output = theme('links', $links, array('class' => 'links inline'));
+      $weight = content_extra_field_weight($node->type, 'links');
+
+      $node->content['links'] = array(
+        '#weight' => !empty($weight) ? $weight : 100,
+        '#value' => $output,
+      );
+    }
+  }
 }
 
 
