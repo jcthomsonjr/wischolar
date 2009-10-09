@@ -1,8 +1,5 @@
 <?php
 
-define(HMDC_RBUILD_ROOT ,'http://gking.harvard.edu/src/contrib/');
-
-
 include_once('scholar_software.features.inc');
 
 function scholar_software_menu(){
@@ -17,27 +14,36 @@ function scholar_software_menu(){
 }
 
 function scholar_software_rbuild(){
+  
   $homepage = file_get_contents(HMDC_RBUILD_ROOT . 'PACKAGES');
+  $result = array();
   $packages_raw = split("\n\n\n", $homepage);
+  //$i = 0;
   foreach ( $packages_raw as $package_raw ) {
+    // this could work but it's a _bit ugly
+    //$array = preg_split('/^(.*):/mU', $package_raw, - 1, PREG_SPLIT_DELIM_CAPTURE);
+    //$result[$i] = array();
+    $lines = split("\n", $package_raw);
+    foreach ( $lines as $line ) {
+      $line_elements = (explode(':', $line, 2));
+      if (count($line_elements) == 2) {
+        $current_key = $line_elements[0];
+        if ($current_key == 'Package'){
+          $package_name = $line_elements[1];
+          $result[$package_name] = array();
+        }
+        $result[$package_name][$current_key] = $line_elements[1];
+      }
+      else {
+        $result[$package_name][$current_key] .= $line_elements[0];
+      }
+    }
     
-    $array = preg_split('/^(.*):/mU', $package_raw, - 1, PREG_SPLIT_DELIM_CAPTURE);
-    
-    
-    // $array = preg_split("/\n(.*):/", $package_raw,PREG_SPLIT_DELIM_CAPTURE);
-    //$line = split("\n\n", $package_raw);
-    // dpm($line);
-    // $array = explode(':',$package_raw, 2);
-    //$array = preg_replace ('/^.*:/m', 'xxxxxxxx', $package_raw);
-    dpm($array);
-    
-     $array = preg_grep('/^(.*):/mU', $package_raw);
-     dpm($array);
+    //$i ++;
   }
   
-  //dpm($array);
+  dpm($result);
   
-
   return 'xxx';
 }
 
@@ -66,20 +72,50 @@ function scholar_software_strongarm() {
 /**
  * Implementation of hook_nodeapi().
  */
-function scholar_software_nodeapi(&$node, $op, $teaser, $page) {
-  if ($op == 'view') {
-
-
-    if (!empty($links)) {
-      $output = theme('links', $links, array('class' => 'links inline'));
-      $weight = content_extra_field_weight($node->type, 'links');
-
-      $node->content['links'] = array(
-        '#weight' => !empty($weight) ? $weight : 100,
-        '#value' => $output,
-      );
+function scholar_software_nodeapi(&$node, $op, $teaser, $page){
+  if ($node->type == 'software') {
+    switch ($op) {
+      case 'view' :
+        dpm($node);
+        module_load_include('inc', 'scholar_software', '/scholar_software.dcf.parse');
+            if ($pkg_name = $node->field_software_r_package_name[0]['value']) {
+          $packages = scholar_software_rbuild_load_packages();
+          
+          $pkg = $packages[$pkg_name];
+          dpm($pkg);
+          $node->title = 
+          $node->body = $pkg['Description'];
+        
+        }
+                         
+        $output = $pkg['Title'];
+        $output = scholar_software_rbuild_theme_package($pkg);
+        //$weight = content_extra_field_weight($node->type, 'links');
+        
+        $node->content['rbuild'] = array(
+          '#weight' => 100, 
+          '#value' => $output 
+        );
+        
+        break;
+      case 'presave' :
+        
+        module_load_include('inc', 'scholar_software', '/scholar_software.dcf.parse');
+        
+        if ($pkg_name = $node->field_software_r_package_name[0]['value']) {
+          $packages = scholar_software_rbuild_load_packages();
+          
+          $pkg = $packages[$pkg_name];
+          
+          $node->title = $pkg['Title'];
+          //$node->body = $pkg['Description'];
+        
+        }
+            break;
     }
+
   }
+
 }
 
 
@@ -89,5 +125,44 @@ function scholar_software_nodeapi(&$node, $op, $teaser, $page) {
 function scholar_software_context_links_alter(&$links) {
   if (!empty($links['software'])) {
     $links['software']['query'] = drupal_get_destination();
+  }
+}
+
+
+/**
+ * Edit cv form to add checkbox for toggle
+ */
+function scholar_software_form_alter(&$form, $form_state, $form_id){
+  switch ($form_id) {
+    case 'software_node_form' :
+      drupal_add_js(drupal_get_path('module', 'scholar_biocv') . '/theme/scholar_biocv.biocvToggleUsePDF.js');
+      $a_biocv_settings['biocvToggleUsePDF'] = array(
+        'monitor' => "use_pdf_as_cv", 
+        'toggleOff' => array(
+          'title', 
+          'body' 
+        ) 
+      );
+      drupal_add_js($a_biocv_settings, 'setting');
+      $form['title']['#required'] = false;
+      
+    $vsite = vsite_get_vsite();
+
+
+    ctools_include('dependent');
+    ctools_include('form');
+      
+      
+      $vsite = vsite_get_vsite();
+      $form['iqss_hmdc_rbuild']['use_pdf_as_cv'] = array(
+        '#type' => 'checkbox', 
+        '#weight' => - 10, 
+        '#title' => t('Use IQSS/HMDC rbuild'), 
+        //'#default_value' => (array_key_exists('scholar_biocv', $vsite->settings) && array_key_exists('use_pdf_as_cv', $vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']), 
+        '#description' => t('When this is checked the content will be automatically loaded for you') 
+      );
+        
+      //$form['#submit'][] = 'scholar_biocv_cv_node_submit';
+      break;
   }
 }

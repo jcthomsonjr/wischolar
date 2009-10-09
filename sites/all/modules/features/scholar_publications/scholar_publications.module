@@ -146,8 +146,12 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 }
 
 function scholar_publications_overview(){
+  $vsite = vsite_get_vsite();
   module_load_include('inc', 'biblio', 'biblio.pages');
-  return biblio_db_search('inline');
+  //page title = the name of the menu they have in settings or "Publications"
+  $page_title = (is_array($vsite->customizer['menu']) && isset($vsite->customizer['menu']['publications'])) ? $vsite->customizer['menu']['publications'] : "Publications";
+  variable_set('biblio_base_title', $page_title);
+  return biblio_db_search();
 }
 
 /**
