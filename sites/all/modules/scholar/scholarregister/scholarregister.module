@@ -15,9 +15,9 @@ function scholarregister_user($op, &$edit, &$account, $category = NULL){
       //  break;
       //}
       
-      $account -> login = 0;
+      //$account -> login = 0;
       // if the first time login and site owner redirect to cp/user
-      watchdog('e', $account -> login);
+      //watchdog('e', $account -> login);
       ///print_r($account);
       // if is a site owner ...
       if ($vsite = scholarregister_siteowner_path($account)) {
