@@ -164,19 +164,21 @@ body.cp-toolbar-mini #top {
   padding: 0;
   line-height: normal;
   background: transparent;
+  z-index: 10;
   }
 
 body.cp-toolbar-mini #top ul.links {
   background: url(images/toolbar-mini-tab.png) no-repeat 0 0;
   height: 22px;
+  z-index:100;
   }
 
 body.cp-toolbar-mini #top ul.links li {
   margin:0;
   background: url(images/toolbar-mini-tab.png) no-repeat 0 0 transparent;
   height: 22px;
-  line-height: 22px;
-  padding: 0 6px 4px;
+  line-height: 19px;
+  padding: 0 6px;
   float:left;
   }
 
@@ -188,6 +190,7 @@ body.cp-toolbar-mini #top ul.links li a, body.cp-toolbar-mini #top ul.links li a
   color:#6e6e6e;
   font-size: 11px;
   padding-left: 12px;
+  padding-top: 2px;
   }
 
 body.cp-toolbar-mini #top ul.links li.first a {
@@ -313,7 +316,9 @@ body.header-left-right #header-right {
   margin-bottom: 1.5em;
   }
 
-
+.node-type-link {
+  margin-bottom: 0;
+  }
 
 
 /* Views */
