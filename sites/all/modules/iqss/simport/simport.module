@@ -495,8 +495,9 @@ function simport_set_headlines($old, $new){
     $new -> settings['site']['sub_heading_extra'] = $full_address;
     $new -> settings['site']['scholar_sub_heading_extra'] = $full_address;
   }
-  //save headlines
-  $headline = $old -> scholar_firstname . ' ' . $old -> scholar_lastname;  
+
+  //get headline, includes special case for Ken Shelpsle's site
+  $headline = ($old ->nid == '2') ? 'Kenneth A. Shepsle' : $old -> scholar_firstname . ' ' . $old -> scholar_lastname;  
   $new -> settings['site']['scholar_link_to_home'] = 1;
   $new -> settings['site']['scholar_headline'] = $headline;
   $new -> settings['site']['headline'] = "<a href=\"".url($new->purl . "/home")."\">{$headline}</a>";
