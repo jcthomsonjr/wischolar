@@ -31,6 +31,10 @@ function vsite_front_home(){
         $result = vsite_front_home_flag();
         break;
     }
+    
+    //Add Site Name to the page title for the homepage
+    //if(isset($vsite->settings['site']['headline'])) drupal_set_title(t(drupal_get_title().' | %site', array('%site' => $vsite->settings['site']['headline'])));
+     
     return $result;
   }
 }
