@@ -13,39 +13,6 @@ function scholar_software_menu(){
   return $items;
 }
 
-function scholar_software_rbuild(){
-  
-  $homepage = file_get_contents(HMDC_RBUILD_ROOT . 'PACKAGES');
-  $result = array();
-  $packages_raw = split("\n\n\n", $homepage);
-  //$i = 0;
-  foreach ( $packages_raw as $package_raw ) {
-    // this could work but it's a _bit ugly
-    //$array = preg_split('/^(.*):/mU', $package_raw, - 1, PREG_SPLIT_DELIM_CAPTURE);
-    //$result[$i] = array();
-    $lines = split("\n", $package_raw);
-    foreach ( $lines as $line ) {
-      $line_elements = (explode(':', $line, 2));
-      if (count($line_elements) == 2) {
-        $current_key = $line_elements[0];
-        if ($current_key == 'Package'){
-          $package_name = $line_elements[1];
-          $result[$package_name] = array();
-        }
-        $result[$package_name][$current_key] = $line_elements[1];
-      }
-      else {
-        $result[$package_name][$current_key] .= $line_elements[0];
-      }
-    }
-    
-    //$i ++;
-  }
-  
-  dpm($result);
-  
-  return 'xxx';
-}
 
 
 /**
