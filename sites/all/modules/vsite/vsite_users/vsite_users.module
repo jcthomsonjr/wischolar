@@ -95,6 +95,30 @@ function vsite_users_menu(){
 }
 
 /**
+ * Implements hook_menu_alter
+ */
+function vsite_users_menu_alter(&$a_menu){
+	$a_menu['user/%user/groups']['page arguments'] = array(1);
+	$a_menu['user/%user/groups']['page callback']  = 'vsite_users_show_groups';
+}
+
+/**
+ * Show the sites that a user belongs to
+ * 
+ * @param $account user
+ * @return
+ */
+function vsite_users_show_groups($account){
+	
+	if(module_exists('spaces_og')){
+	  og_user('view',false,$account);
+	  
+	  return theme('user_profile', $account);;
+	}
+	
+}
+
+/**
  * hook strongarm
  */
 function vsite_users_strongarm(){

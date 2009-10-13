@@ -40,6 +40,10 @@ var cp_overide_add_click = function(return_value){
 					  $(this).dialog('close');
 					}});
 				  $('#cp_confirm_dialog').dialog('open');
+				  
+				  if($('div.ui-dialog-overlay').length && $('div.ui-dialog-overlay').width() && !$('div.ui-dialog-overlay').height()){
+					  $('div.ui-dialog-overlay').height(1000);
+				  }//If jquery fails to set the height lets do it for them
 				  return false;
 			  }
 		  });
