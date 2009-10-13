@@ -1,5 +1,59 @@
 <?php
 
+/**
+ * Implementation of hook_user.
+ */
+function scholarregister_user($op, &$edit, &$account, $category = NULL){
+  switch ($op) {
+    case 'login' :
+      
+      // dont redirect
+      $url = FALSE;
+      
+      //1. if there is a destination, dont do anything
+      //if ($_GET['destination'] != $_GET['q']) {
+      //  break;
+      //}
+      
+      // if the first time login and site owner redirect to cp/user
+      
+
+      // if is a site owner ...
+      if ($path = scholarregister_siteowner_path($account)) {
+        // if is logging in for the first time or need to reset password
+        if (!$account -> login || (arg(0) == 'user' && arg(1) == 'reset')){
+           $url = url("cp/users");
+        }
+        else {
+          // redirect them to their home page
+          $url = $path;
+        }
+      
+      }
+      
+      if ($url){
+        $_REQUEST['destination'] = $url;
+      }
+      
+
+      break;
+  }
+}
+
+function scholarregister_siteowner_path($account){
+  // if is a site owner redirec to her site home page
+  //dpm($account -> og_groups);
+  if (isset($account->og_groups) && is_array($account->og_groups)) {
+    foreach ( $account->og_groups as $group ) {
+      //dpm($group);
+      if ($group['uid'] == $account->uid) {
+        return url("node/" . $group['nid']);
+      }
+    }
+  }
+  return false;
+}
+
 function scholarregister_menu(){
   $items = array();
   $items['site/register'] = array(
