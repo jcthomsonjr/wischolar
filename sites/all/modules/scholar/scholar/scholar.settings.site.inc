@@ -34,7 +34,7 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
       '#description' => 'Ususally: First and Last name ex.(John Q. Smith)',
       '#maxlength' => 128,
       '#required' => TRUE,
-      '#attributes' => array('onChange' => '$("#site_example .headline").val(this.value);alert(this.value);'),
+      '#attributes' => array('onChange' => '$("#site_example .headline").val(this.value);'),
     );
     $form['scholar_link_to_home'] = array(
       '#type' => 'checkbox',
