@@ -15,25 +15,31 @@ function scholarregister_user($op, &$edit, &$account, $category = NULL){
       //  break;
       //}
       
+      $account -> login = 0;
       // if the first time login and site owner redirect to cp/user
-      
-
+      watchdog('e', $account -> login);
+      ///print_r($account);
       // if is a site owner ...
-      if ($path = scholarregister_siteowner_path($account)) {
+      if ($vsite = scholarregister_siteowner_path($account)) {
         // if is logging in for the first time or need to reset password
-        if (!$account -> login || (arg(0) == 'user' && arg(1) == 'reset')){
-           $url = url("cp/users");
+        if (($account -> login == 0) || (arg(0) == 'user' && arg(1) == 'reset')){
+            purl_goto("cp/users", array(
+              'purl' => array(
+                'provider' => 'spaces_og',
+                'id' => $vsite -> sid,
+              )
+            ));
         }
         else {
           // redirect them to their home page
-          $url = $path;
+          $vsite -> redirect('home');
         }
       
       }
       
-      if ($url){
-        $_REQUEST['destination'] = $url;
-      }
+      //if ($url){
+      //  $_REQUEST['destination'] = $url;
+      //}
       
 
       break;
@@ -41,13 +47,15 @@ function scholarregister_user($op, &$edit, &$account, $category = NULL){
 }
 
 function scholarregister_siteowner_path($account){
+  
   // if is a site owner redirec to her site home page
   //dpm($account -> og_groups);
   if (isset($account->og_groups) && is_array($account->og_groups)) {
     foreach ( $account->og_groups as $group ) {
       //dpm($group);
       if ($group['uid'] == $account->uid) {
-        return url("node/" . $group['nid']);
+        $vsite = spaces_load("og", $sid = $group['nid'], $is_active = FALSE);
+        return $vsite;
       }
     }
   }
@@ -197,7 +205,7 @@ function scholarregister_notify_user($vsite, $user){
     '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
-  $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
+  $scholar_site_url =  $site_url = url("node/" . $vsite -> nid, $options = array('absolute' => TRUE));
   
   $msg_variables = array(
     // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
