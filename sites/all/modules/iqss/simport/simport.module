@@ -996,10 +996,10 @@ function simport_cleanup(&$context){
 
     //assuming that the Welcome node is removed, check if other announcements exist, if not then disbable the feature
     $sql_check = db_result(db_query("SELECT n.type, oga.group_nid FROM {node} n INNER JOIN {og_ancestry} oga USING(nid) HAVING n.type = '%s' AND oga.group_nid = %d", 'announcement', (int)$vsite -> sid));
-    if($sql_check){
+    if(!$sql_check){
       //disable announcements feature
      $vsite->features['scholar_announcements' ] = 0;
-     spaces_save($space); 
+     spaces_save($vsite); 
     } 
   }
 }
