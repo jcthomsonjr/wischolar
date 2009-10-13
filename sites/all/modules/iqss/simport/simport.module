@@ -155,6 +155,9 @@ function simport_import_sites(&$context){
     //set shield
     simport_set_shield($old, $new);
     
+    //set address and phone
+    simport_set_headlines($old, $new);
+    
     //save all the changes/additions to the space
     spaces_save($new);
     
@@ -467,6 +470,16 @@ function simport_set_shield($old, &$new){
   //all D5 site themes use the same shield - TODO: maybe not shepsle and bates sites???
   //shield setting now offered on old site, so set sheild to default
   $new ->settings['sheild'] = drupal_get_path('module','vsite_design')."/theme/shields/harvard_shield.png";
+}
+
+/**
+ * Save site headline information
+ *
+ * @param unknown_type $old
+ * @param unknown_type $new
+ */
+function simport_set_headlines($old, $new){
+  
 }
 
 /**
@@ -941,8 +954,9 @@ function simport_cleanup(&$context){
   while ($data = db_fetch_object($sql)){
 
     $node = node_load($data -> nid);
-
-    //removing "Welcome" nodes
+    $vsite = spaces_load ( 'og', key($node->og_groups), TRUE );
+   
+   //removing "Welcome" nodes
     db_query('DELETE FROM {node} WHERE nid = %d', $node->nid);
     db_query('DELETE FROM {node_revisions} WHERE nid = %d', $node->nid);
 
@@ -953,6 +967,14 @@ function simport_cleanup(&$context){
     if (function_exists('search_wipe')) {
       search_wipe($node->nid, 'node');
     }
+
+    //assuming that the Welcome node is removed, check if other announcements exist, if not then disbable the feature
+    $sql_check = db_result(db_query("SELECT n.type, oga.group_nid FROM {node} n INNER JOIN {og_ancestry} oga USING(nid) HAVING n.type = '%s' AND oga.group_nid = %d", 'announcement', (int)$vsite -> sid));
+    if($sql_check){
+      //disable announcements feature
+     $vsite->features['scholar_announcement' ] = 0;
+     spaces_save($space); 
+    } 
   }
 }
 
