@@ -12,7 +12,7 @@ function simport_menu() {
     'access callback' => 'user_access',
     'access arguments' => array('administer site configuration'),
     'description' => 'Simport Settings',
-    'file path' => drupal_get_path('module', 'simport') . '/includes',
+    'file path' => drupal_get_path('module', 'simport'),
     'file' => 'simport.admin.inc',
   );
 
@@ -479,7 +479,32 @@ function simport_set_shield($old, &$new){
  * @param unknown_type $new
  */
 function simport_set_headlines($old, $new){
-  
+  //construct full address
+  $address = !empty($old ->scholar_address[0]['street1']) ? $old ->scholar_address[0]['street1'] . ', '  : '';
+  $address2 = !empty($old ->scholar_address[0]['street2']) ? $old ->scholar_address[0]['street2'] . ', ' : '';
+  $room = !empty($old ->scholar_address[0]['apt']) ? 'Room ' . $old ->scholar_address[0]['apt'] . ' ' : '';
+  $city = !empty($old ->scholar_address[0]['city']) ? $old ->scholar_address[0]['city'] . ', ' : '';
+  $state = !empty($old ->scholar_address[0]['state']) ? $old ->scholar_address[0]['state'] . ' ' : '';
+  $zip = !empty($old ->scholar_address[0]['zip']) ? $old ->scholar_address[0]['zip'] . ' ' : '';
+  $country = !empty($old ->scholar_address[0]['country']) ? $old ->scholar_address[0]['country'] : '';
+
+  $full_address = $address . $address2 . $room .$city . $state . $zip . $country;
+
+  if(!empty($full_address)){
+    //save the address
+    $new -> settings['site']['sub_heading_extra'] = $full_address;
+    $new -> settings['site']['scholar_sub_heading_extra'] = $full_address;
+  }
+  //save headlines
+  $headline = $old -> scholar_firstname . ' ' . $old -> scholar_lastname;  
+  $new -> settings['site']['scholar_link_to_home'] = 1;
+  $new -> settings['site']['scholar_headline'] = $headline;
+  $new -> settings['site']['headline'] = "<a href=\"".url($new->purl . "/home")."\">{$headline}</a>";
+
+  if (isset($old -> scholar_position)){
+    $new -> settings['site']['scholar_sub_heading'] = $old -> scholar_position;
+    $new -> settings['site']['sub_heading'] = $old -> scholar_position;
+  }
 }
 
 /**
