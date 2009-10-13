@@ -29,21 +29,30 @@ h1, h2, h3, #sidebar-right a, #header {
     color:#484b63;
     }
 
-h1, h2 {
-    font-size: 1.4em;
+
+h2 {
+    font-size: 1.7em;
     }
 
 h1 a, h2 a, h3 a, #sidebar-right a {
     font-style: normal;
     }
 
-h2, h3, h4 {
+#content h2, h3, h4 {
   margin-bottom: 0;
   margin-top: 1em;
   }
 
-h2.title {
+#content h2.title {
   margin-bottom: 1em;
+  }
+
+img {
+  border: 1px solid #444;
+  }
+
+#block-vsite_widgets-2 img {
+  border: none;
   }
 
 
@@ -102,41 +111,21 @@ body.no-sidebars #content-wrapper {
 
 #header {
     background: #44514F url(images/top.gif) no-repeat scroll center bottom;
-    text-align:center;
     color: #F7F3EA;
     padding-bottom: 2em;
     }
 
-/* removed custom logo for Ken Shepsle
-#header h1 {
-    background:transparent url(images/logo.gif) no-repeat scroll left top;
-    height:30px;
-    margin:16px auto 0;
-    text-indent:-999em;
-    width:467px;
-    }
-
-#header h1 a, #header h1 a:visited {
-    display:block;
-    height:30px;
-    width:467px;
-    }
-*/
-
 
 #header h1 {
-  margin: 16px auto 0;
+  margin-top: 16px;
+  margin-bottom: .3em;
   text-transform: uppercase;
   font-size: 40px;
   text-shadow: #222 0 0 .4em;
   }
 
 
-#header h2, #header p {
-    display:none;
-    }
-
-#header a, #header a:visited {
+#header a, #header a:visited,#header h2, #header p {
     text-decoration: none;
     color: #F7F3EA;
     }
@@ -145,6 +134,9 @@ body.no-sidebars #content-wrapper {
     color:#F9E433;
     }
 
+#header-main .content {
+  margin-left: 12px;
+  }
 
 
 #logo img {
