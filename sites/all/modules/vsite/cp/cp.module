@@ -570,11 +570,13 @@ function cp_is_confirm_overide_page($page = null){
 			
 			//Get the correct path and remove the site name from the front
 			if(strpos($path,'http') !== 0) $path = "http://hostname".$path;
-			$a_path_parts = parse_url($path);
-			$s_search_path = (strpos($a_path_parts['path'],'/'.$vsite->title) == 0)?substr($a_path_parts['path'],strlen($vsite->title)+2):$a_path_parts['path'];
-			
-			$a_router_item = menu_get_item($s_search_path);
-			$a_return[$a_path_parts['path']] = ($a_router_item && array_key_exists($a_router_item['path'], cp_get_confirm_form_overides()));
+			$a_path_parts = @parse_url($path);
+			if(is_array($a_path_parts)){
+				$s_search_path = (strpos($a_path_parts['path'],'/'.$vsite->title) == 0)?substr($a_path_parts['path'],strlen($vsite->title)+2):$a_path_parts['path'];
+				
+				$a_router_item = menu_get_item($s_search_path);
+				$a_return[$a_path_parts['path']] = ($a_router_item && array_key_exists($a_router_item['path'], cp_get_confirm_form_overides()));
+			}
 		}//Check each path
 		}
 		

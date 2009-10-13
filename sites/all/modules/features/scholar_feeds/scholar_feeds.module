@@ -58,3 +58,35 @@ function scholar_feeds_context_links_alter(&$links) {
     $links['feed']['query'] = drupal_get_destination();
   }
 }
+
+/**
+ * Implementation of hook_form_alter().
+ * Used to add validation to the feed addition
+ */
+function scholar_feeds_form_alter(&$form, $form_state, $form_id) {
+  // Content type form.
+  if ($form_id == 'feed_node_form' && $form['type']['#value'] == 'feed') {
+    $form['#validate'][] = 'scholar_feeds_feed_validate';
+  }
+}
+
+/**
+ * Validate the feed
+ * 
+ * @param $form
+ * @param $form_state
+ */
+function scholar_feeds_feed_validate($form, &$form_state) {
+  if (!strlen($form_state['values']['feedapi']['feedapi_url'])) {
+    return;
+  }
+	
+  $form_state['values']['feedapi']['feedapi_url'] = trim($form_state['values']['feedapi']['feedapi_url']);
+  
+  $handle = @fopen($form_state['values']['feedapi']['feedapi_url'], "r");
+  if(!$handle){
+  	form_error($form, t('Can\'t connect to '.$form_state['values']['feedapi']['feedapi_url'].'. Invalid feed URL, please check that the URL is valid.'), 'error');
+  }else{
+  	fclose($handle);
+  }
+}
