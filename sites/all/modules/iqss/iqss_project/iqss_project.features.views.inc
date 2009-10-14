@@ -165,6 +165,7 @@ function _iqss_project_views_default_views() {
   ));
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 24);
+  $handler->override_option('use_pager', '1');
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('style_plugin', 'grid');
   $handler->override_option('style_options', array(
@@ -189,6 +190,7 @@ function _iqss_project_views_default_views() {
   $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->override_option('title', 'Newest sites');
   $handler->override_option('items_per_page', 6);
+  $handler->override_option('use_pager', FALSE);
   $handler->override_option('use_more', 1);
   $handler->override_option('style_plugin', 'list');
   $handler->override_option('style_options', array(
