@@ -23,7 +23,9 @@ if (Drupal.jsEnabled) {
 		height: $('#live_preview').attr('height') + 'px',
       });
 	  
-	  api.setSelect([5,5,180,140]);
+	  if($('#live_preview').attr('width') > 0 && $('#live_preview').attr('height') > 0){
+	    api.setSelect([5,5,180,140]);
+	  }
 	  $('#edit-settings-logo-x-cord').val(5);
 	  $('#edit-settings-logo-y-cord').val(5);
 	  $('#edit-settings-logo-width').val(180);
@@ -37,8 +39,27 @@ if (Drupal.jsEnabled) {
 	  $("a.edit-submit").remove();
 	  
 	  if($('#live_preview').attr('width') <= 180 || $('#live_preview').attr('height') <= 140){
-		  $("input#edit-settings-logo-crop-btn").remove();
-		  $("#live_preview_box").remove();
+		  
+		  if($('#live_preview').attr('width') == undefined || $('#live_preview').attr('width') == 0 || $('#live_preview').attr('height') == undefined || $('#live_preview').attr('width') == 0){
+			  $(window).load(function(){
+				  if( $('#logo_preview').attr('width') <= 180 ||  $('#logo_preview').attr('height') <= 140){
+					  $("input#edit-settings-logo-crop-btn").remove();
+					  $("#live_preview_box").remove();
+				  }else{
+					  $('#live_preview_box_inner').css({
+						width: $('#live_preview').attr('width') + 'px',
+						height: $('#live_preview').attr('height') + 'px',
+					  });
+					  api.setSelect([5,5,180,140]);
+				  }
+			  });
+		  }else{
+			  alert($('#live_preview').attr('width')+"ok"+($('#live_preview').attr('width')!=undefined));
+			  $("input#edit-settings-logo-crop-btn").remove();
+			  $("#live_preview_box").remove();
+		  }//If it isn't loaded wait
+		  
+		  
 	  }
   });
 }
@@ -48,13 +69,15 @@ function logoShowPreview(coords)
 	var rx = parseInt($('#live_preview_box_inner').css('width')) / coords.w;
 	var ry = parseInt($('#live_preview_box_inner').css('height')) / coords.h;
 
-	$('#live_preview').attr("src", $('#logo_preview').attr('src')); 
-	
-	$('#live_preview').css({
-		width: Math.round(rx * $('#logo_preview').attr('width')) + 'px',
-		height: Math.round(ry * $('#logo_preview').attr('height')) + 'px',
-		marginLeft: '-' + Math.round(rx * coords.x) + 'px',
-		marginTop: '-' + Math.round(ry * coords.y) + 'px',
-		overflow: 'hidden'
-	});
+	if($('#logo_preview').attr('width') > 0 && $('#logo_preview').attr('height') > 0 && rx > 0 && ry > 0){
+		$('#live_preview').attr("src", $('#logo_preview').attr('src')); 
+		
+		$('#live_preview').css({
+			width: Math.round(rx * $('#logo_preview').attr('width')) + 'px',
+			height: Math.round(ry * $('#logo_preview').attr('height')) + 'px',
+			marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+			marginTop: '-' + Math.round(ry * coords.y) + 'px',
+			overflow: 'hidden'
+		});
+	}
 };
