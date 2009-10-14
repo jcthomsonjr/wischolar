@@ -71,6 +71,7 @@ function vsite_taxonomy_content_by_category($term_name, $content_type){
     $content_type 
   ));
   $view->execute();
+  drupal_set_title($term_name);
   return $view->render();
 }
 
