@@ -1021,6 +1021,61 @@ function simport_cleanup(&$context){
      spaces_save($vsite); 
     } 
   }
+  //now fix all the layouts
+  $sql = db_query("SELECT * FROM {spaces}");
+  while ($data = db_fetch_object($sql)){
+        $vsite = spaces_load ( 'og', $data-> sid);
+        simport_custom_layouts($vsite);
+        spaces_save($vsite);        
+  }
+}
+
+function simport_custom_layouts(&$vsite){
+
+  //defaults for all themes
+  $vsite -> settings ['layout']['all']['vsite_widgets_0'] = 'header_left';
+  $vsite -> settings ['layout']['all']['vsite_widgets_1'] = 'header_main';
+  $vsite -> settings ['layout']['all']['vsite_widgets_2'] = 'header_right';
+
+  switch ($vsite ->settings['theme']){
+    case 'scholar_theme_01':
+      //$vsite -> settings ['layout']['all']['og_views_0'] = 'navbar'; //site search widget TODO: do we enable this??
+      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'left';
+      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
+      break;
+
+    case 'scholar_theme_02':
+      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
+      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
+      break;
+
+    case 'scholar_theme_03':
+      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
+      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
+      break;
+
+    case 'scholar_theme_04':
+      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'left';
+      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
+      break;
+
+    case 'scholar_theme_05':
+      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'right';
+      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'right';
+      break;
+
+    case 'scholar_theme_06':
+      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
+      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left'; //TODO put secondary menu on left???
+      break;
+
+    case 'scholar_theme_07':
+      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
+      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left'; //TODO put secondary menu on left???
+      break;
+  }
+
+  return $vsite;
 }
 
 /**
@@ -1066,7 +1121,6 @@ function simport_set_menu_links(&$context){
     }
   }
 }
-
 
 /**
  * Reporting function the show how many external links from old site data table
