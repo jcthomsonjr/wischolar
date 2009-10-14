@@ -210,7 +210,7 @@ function scholarregister_notify_user($vsite, $user){
       'absolute' => TRUE,
       'language' => $message['language']
     )),
-    '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount"),
+    '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
     '!password' => $password
   );
 
