@@ -195,8 +195,8 @@ function scholarregister_notify_user($vsite, $user){
     '!username' => $user->name,
     '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
     '!scholar_site_url' => $scholar_site_url,
-    '!login_url' => url("user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
-    '!login_url2' => user_pass_reset_url($o_user),
+    //'!login_url' => url("user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
+    '!login_url' => user_pass_reset_url($user),
     '!uri' => $base_url,
     '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
     '!mailto' => $user->mail,
@@ -213,29 +213,9 @@ function scholarregister_notify_user($vsite, $user){
     '!password' => $password
   );
 
-  //$body .= t("Hi !username,\n\n", $msg_variables);
-  $body .= t("Hi !username,\n\n 
-              Your web site at !site has been activated.\n\n
-              Your web site url is !scholar_site_url \n\n 
-              
-              You may now log in by clicking on this link or copying and pasting it in your browser: \n\n 
-              !login_url \n\n 
-              This is a one-time login, so it can be used only once.
-              
-              After logging in, you will be redirected to !edit_uri so you can change your password.
-              Once you have set your own password, you will be able to log in to !login_uri in the future using:
-              
-              username: !username \n
-              
-              
-              You can administer it by log in to !login_url2  using the following username and password:\n\n 
-              username: !username\n 
-              password: !password\n\n 
-              
-              We hope you will enjoy your new web site.\n\n
-              Sincerely,\n
-              The !site Team", $msg_variables);
-  // Put the completed $body in the $params array for hook_mail
+
+  $body .= t("Hi !username,\n\n Your web site at !site has been activated.\n\n Your web site url is !scholar_site_url \n\n You may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\n This is a one-time login, so it can be used only once. After logging in, you will be redirected to !edit_uri so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using: username: !username \n We hope you will enjoy your new web site.\n\n Sincerely,\n The !site Team", $msg_variables);
+
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
     drupal_set_message(t('Error sending notification mail to user.'), 'error');
