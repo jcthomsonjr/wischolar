@@ -176,13 +176,14 @@ function scholarregister_notify_user($vsite, $user){
 
   
   // change users password
+  /*
   $password = user_password();
   $edit = array(
     'pass' => $password
   );
   user_save($user, $edit);
-
-  $params['subject'] = t('A Scholar\s Web Site has been created for you', array(
+  */
+  $params['subject'] = t("A Scholars' Web Site has been created for you", array(
     '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
@@ -192,9 +193,10 @@ function scholarregister_notify_user($vsite, $user){
   $msg_variables = array(
     // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
     '!username' => $user->name,
-    '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'),
+    '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
     '!scholar_site_url' => $scholar_site_url,
     '!login_url' => url("user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
+    '!login_url2' => user_pass_reset_url($o_user),
     '!uri' => $base_url,
     '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
     '!mailto' => $user->mail,
@@ -226,7 +228,7 @@ function scholarregister_notify_user($vsite, $user){
               username: !username \n
               
               
-              You can administer it by log in to !login_url  using the following username and password:\n\n 
+              You can administer it by log in to !login_url2  using the following username and password:\n\n 
               username: !username\n 
               password: !password\n\n 
               
