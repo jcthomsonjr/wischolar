@@ -168,7 +168,9 @@ function vsite_vsite_create($name, $mail, $domain){
   );
   $node = install_create_node($title = $domain, $body = NULL, $properties = $properties);
   
-  return $node;
+  $vsite = spaces_load("og", $sid = $node -> nid, $is_active = FALSE);
+  
+  return $vsite;
 }
 
 
