@@ -187,7 +187,7 @@ function scholarregister_notify_user($vsite, $user){
     '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
-  $scholar_site_url =  $site_url = url("node/" . $vsite -> nid, $options = array('absolute' => TRUE));
+  $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
   $timestamp = time();
   
   $msg_variables = array(
@@ -210,11 +210,12 @@ function scholarregister_notify_user($vsite, $user){
       'absolute' => TRUE,
       'language' => $message['language']
     )),
+    '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount"),
     '!password' => $password
   );
 
 
-  $body .= t("Hi !username,\n\n Your web site at !site has been activated.\n\n Your web site url is !scholar_site_url \n\n You may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\n This is a one-time login, so it can be used only once. After logging in, you will be redirected to !edit_uri so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using: username: !username \n We hope you will enjoy your new web site.\n\n Sincerely,\n The !site Team", $msg_variables);
+  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using:\n\n username: !username \n We hope you will enjoy your new web site.\n\n Sincerely,\n--The !site Team", $msg_variables);
 
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
