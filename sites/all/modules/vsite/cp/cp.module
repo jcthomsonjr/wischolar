@@ -68,13 +68,9 @@ function cp_init(){
 
     // since we are here .. initialize cp theme
     _cp_init_theme();
-    //add the javascript for intercepting confirm pages
-    drupal_add_js(drupal_get_path('module','cp').'/theme/cp-confirm-overide.js');
-    drupal_add_css(drupal_get_path('module','cp').'/theme/cp-confirm-overide.css');
-    //Add the JqueryUI JS for the confirm boxes
-    jquery_ui_add(array('ui.dialog','effects.core','ui.draggable','ui.resizable'));
+    
   }else {
- 	context_set('vsite', 'section', 'public');
+ 	  context_set('vsite', 'section', 'public');
     og_set_theme($vsite -> group); // TODO why dont you get it from space settings
   }
   
@@ -97,6 +93,15 @@ function cp_init(){
       $toolbar = "mini";
     }
   }
+  
+  if($admin){
+  	//add the javascript for intercepting confirm pages
+    drupal_add_js(drupal_get_path('module','cp').'/theme/cp-confirm-overide.js');
+    drupal_add_css(drupal_get_path('module','cp').'/theme/cp-confirm-overide.css');
+    //Add the JqueryUI JS for the confirm boxes
+    jquery_ui_add(array('ui.dialog','effects.core','ui.draggable','ui.resizable'));
+    drupal_add_js(array('cp_confirm_overide_handler'=>array("js" => 1)), 'setting');
+  }//Allow special popups if they are admin
   
   if($toolbar == "full"){
     drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
@@ -572,7 +577,7 @@ function cp_is_confirm_overide_page($page = null){
 			if(strpos($path,'http') !== 0) $path = "http://hostname".$path;
 			$a_path_parts = @parse_url($path);
 			if(is_array($a_path_parts)){
-				$s_search_path = (strpos($a_path_parts['path'],'/'.$vsite->title) == 0)?substr($a_path_parts['path'],strlen($vsite->title)+2):$a_path_parts['path'];
+				$s_search_path = (strpos($a_path_parts['path'],'/'.$vsite->purl) == 0)?substr($a_path_parts['path'],strlen($vsite->purl)+2):$a_path_parts['path'];
 				
 				$a_router_item = menu_get_item($s_search_path);
 				$a_return[$a_path_parts['path']] = ($a_router_item && array_key_exists($a_router_item['path'], cp_get_confirm_form_overides()));

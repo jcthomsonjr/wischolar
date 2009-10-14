@@ -284,8 +284,22 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
     	}//Are we coming from the special login link?
     	
     	$form['#submit'][] = 'vsite_users_redirect_reset_submit';
+    	
+    	//Remove unused fields
+    	if(array_key_exists('contact',$form)) vsite_users_hide_form_value($form['contact']);
+	    if(array_key_exists('biblio_fieldset',$form))  vsite_users_hide_form_value($form['biblio_fieldset']);
+	    if(array_key_exists('timezone',$form))  vsite_users_hide_form_value($form['timezone']);
+	    
     break;
   }
+}
+
+function vsite_users_hide_form_value(&$element){
+	foreach(element_children($element) as $s_key){
+		$element[$s_key]['#type'] = 'value';
+		vsite_users_hide_form_value($element[$s_key]);;
+	}
+	$element['#type'] = 'value';
 }
 
 /**
@@ -316,7 +330,11 @@ function vsite_users_redirect_reset_submit($form, &$form_state) {
   if(is_array($form_state['values']) 
   && array_key_exists('redirect_from_reset',$form_state['values']) 
   && $form_state['values']['redirect_from_reset']){
-  	 drupal_goto('user/'.$form['#uid'].'/edit/vsite_users_profile');
+  	if (arg(0) != 'cp'){
+  	  drupal_goto('user/'.$form['#uid'].'/edit/vsite_users_profile');
+  	}else{
+  		drupal_goto('cp/users/myaccount/personal');
+  	}
   }
   
 }
