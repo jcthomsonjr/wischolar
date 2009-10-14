@@ -194,15 +194,15 @@ function scholarregister_notify_user($vsite, $user){
     '!username' => $user->name,
     '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'),
     '!scholar_site_url' => $scholar_site_url,
-    '!login_url' => url($vsite->purl."/user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
+    '!login_url' => url("user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
     '!uri' => $base_url,
     '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
     '!mailto' => $user->mail,
     '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
-//    '!login_uri' => url('user', array(
-//      'absolute' => TRUE,
-//      'language' => $message['language']
-//    )),
+    '!login_uri' => url('user', array(
+      'absolute' => TRUE,
+      'language' => $message['language']
+    )),
     '!site_url' => url('node/' . $vsite->sid),
     '!edit_uri' => url('user/' . $user->uid . '/edit', array(
       'absolute' => TRUE,
@@ -211,11 +211,20 @@ function scholarregister_notify_user($vsite, $user){
     '!password' => $password
   );
 
-  $body .= t("Dear !username,\n\n", $msg_variables);
-  // use the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nYou'll need to  either click on the following link or copy and paste the link directly into your web browser:\n
-  $body .= t("Your web site was created successfully!\n\n
-              Your web site url is \n\n 
-              !scholar_site_url \n\n 
+  //$body .= t("Hi !username,\n\n", $msg_variables);
+  $body .= t("Hi !username,\n\n 
+              Your web site at !site has been activated.\n\n
+              Your web site url is !scholar_site_url \n\n 
+              
+              You may now log in by clicking on this link or copying and pasting it in your browser: \n\n 
+              !login_url \n\n 
+              This is a one-time login, so it can be used only once.
+              
+              After logging in, you will be redirected to !edit_uri so you can change your password.
+              Once you have set your own password, you will be able to log in to !login_uri in the future using:
+              
+              username: !username \n
+              
               
               You can administer it by log in to !login_url  using the following username and password:\n\n 
               username: !username\n 
