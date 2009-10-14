@@ -66,12 +66,12 @@
       <div id="content-wrapper">
         <div id="bg">
 					<ul id="map">
-						<li class="africa_research"><a href="rbates/africa-research-program">Africa Research Project</a></li>
-						<li class="publications"><a href="rbates/publications">Publications</a></li>
-						<li class="classes"><a href="rbates/classes">Classes</a></li>
-						<li class="contact"><a href="rbates/contact">Contact</a></li>
-						<li class="about"><a href="rbates/about">About</a></li>
-						<li class="links"><a href="rbates/links">Links</a></li>
+						<li class="africa_research"><a href="pages/africa-research-program">Africa Research Project</a></li>
+						<li class="publications"><a href="publications">Publications</a></li>
+						<li class="classes"><a href="classes">Classes</a></li>
+						<li class="contact"><a href="contact">Contact</a></li>
+						<li class="about"><a href="about">About</a></li>
+						<li class="links"><a href="links">Links</a></li>
 					</ul>
 				</div>
       </div> <!-- / content wrapper -->
