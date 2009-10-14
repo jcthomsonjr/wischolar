@@ -215,7 +215,7 @@ function scholarregister_notify_user($vsite, $user){
   );
 
 
-  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using:\n\n username: !username \n We hope you will enjoy your new web site.\n\n Sincerely,\n--The !site Team", $msg_variables);
+  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using:\n\n username: !username\n\nWe hope you will enjoy your new web site.\n\n Sincerely,\nThe !site Team", $msg_variables);
 
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
