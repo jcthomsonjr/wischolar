@@ -28,8 +28,7 @@ function simport_import(){
   if(db_table_exists('scholar_export_data')){
     db_drop_table($ret, 'scholar_export_data');       
     }
-    _simport_exportdata();
-  
+    _simport_exportdata();  
 
   $batch = array('operations' => array(),
   'finished' => 'simport_completed',
@@ -140,14 +139,14 @@ function simport_import_sites(&$context){
     $new_site_info = simport_create_site($user, $domain);
 
     //write to the simport table mapping old site to new site
-    $sql_map_sites = db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$new_site_info ->nid);
+    $sql_map_sites = db_query("INSERT INTO {simport} (old, new) VALUES (%d, %d)", (int)$old -> nid, (int)$new_site_info ->sid);
 
     if($new){
       unset($new);
     }
     
     //get a spaces object for new site so we can modify and save with the functions below
-    $new = spaces_load ( 'og', $new_site_info ->nid, TRUE );
+    $new = spaces_load ( 'og', $new_site_info ->sid, TRUE );
     
     //set theme
     simport_set_theme($old, $new);
@@ -948,14 +947,34 @@ function _simport_exportdata(){
 }
 
 function simport_sync_themes(&$context){
-   $context['message'] = 'Synchronized Theme Settings';
-    
-  $sql = db_query("SELECT * FROM {og} WHERE nid > %d", 7);
+  $context['message'] = 'Synchronized Theme Settings';
+
+  //old vsites for kshepsle and rbates
+  $custom_theme_vsites = array('kshepsle' => 2, 'rbates' => 227);
+  foreach($custom_theme_vsites as $name => $ctv){
+    $new_ctv[$name] = simport_get_new_nid($ctv);
+  }
+
+   //pattern to find the test sites, we want to bypass them completely
+  $pattern = '/^site0[1-7]$/';
+  $sql = db_query("SELECT * FROM {og} WHERE nid > %d", 0);
   while($data = db_fetch_object($sql)){
-   $space = spaces_load ( 'og', $data->nid, TRUE );
-   //dpm (trim($space -> settings['theme']));
-   $theme = trim($space -> settings['theme']);
-   $sql_ins = db_query("UPDATE {og} SET og_theme = '%s' WHERE nid = %d", $theme, $data->nid);
+   //check if test site
+    if (!preg_match($pattern, $data->og_description)){
+      //load the vsite
+      $vsite = spaces_load ( 'og', $data->nid, TRUE );
+
+      if(in_array($data->nid, $new_ctv)){
+        //custom theme name is same as $vsite->purl
+        $theme = $vsite->purl;
+        $vsite -> settings['theme'] = $theme;
+        spaces_save($vsite);
+      }
+      else{
+        $theme = trim($vsite -> settings['theme']);
+      }
+      $sql_ins = db_query("UPDATE {og} SET og_theme = '%s' WHERE nid = %d", $theme, $data->nid);
+    }
   }
 }
 
