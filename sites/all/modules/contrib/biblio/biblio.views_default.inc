@@ -1,5 +1,5 @@
 <?php
-// $Id: biblio.views_default.inc,v 1.1.2.1 2009/06/15 01:52:00 rjerome Exp $
+// $Id: biblio.views_default.inc,v 1.1.2.2 2009/09/29 01:22:38 rjerome Exp $
 /**
  * @file
  * Contains default views on behalf of the biblio module.
@@ -17,7 +17,7 @@ function biblio_views_default_views() {
   $view->base_table = 'node';
   $view->is_cacheable = FALSE;
   $view->api_version = 2;
-  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+  $view->disabled = TRUE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
   'citation' => array(

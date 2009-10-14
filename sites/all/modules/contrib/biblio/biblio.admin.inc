@@ -1,5 +1,5 @@
 <?php
-// $Id: biblio.admin.inc,v 1.9.2.78 2009/07/24 02:03:05 rjerome Exp $
+// $Id: biblio.admin.inc,v 1.9.2.80 2009/09/30 15:48:25 rjerome Exp $
 /**
  *   biblio.admin.inc
  *
@@ -33,7 +33,7 @@ function biblio_admin_ahah($form, $element, $value) {
 * Implementation of hook_settings().
 */
 function biblio_admin_settings() {
-  $version = '$Revision: 1.9.2.78 $ $Date: 2009/07/24 02:03:05 $';
+  $version = '$Revision: 1.9.2.80 $ $Date: 2009/09/30 15:48:25 $';
   $version = str_replace('$', '', $version);
   $form['biblio_rev'] = array(
     '#value' => $version,
@@ -73,7 +73,7 @@ function biblio_admin_settings() {
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
-    '#title' => t('Author'),
+    '#title' => t('Authors'),
     '#description' => ''
   );
   $form['authors']['biblio_auto_orphaned_author_delete'] = array(
@@ -492,6 +492,21 @@ function biblio_admin_settings() {
     '#title' => t('Styling'),
     '#description' => t('You can set the default style for the /biblio page here.')
   );
+  $form['style']['biblio_no_year_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Text to display if no year of publication is available'),
+    '#size' => 95,
+    '#default_value' => variable_get('biblio_no_year_text', t('Submitted')),
+    '#description' => t('The text that is displayed when no date of publication is given or it is deliberately set to <b>9999</b>, it defaults to "Submitted".')
+  );
+  $form['style']['biblio_inpress_year_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Text to display if year of publication is set to 9998'),
+    '#size' => 95,
+    '#default_value' => variable_get('biblio_inpress_year_text', t('In Press')),
+    '#description' => t('The text that is displayed when the date of publication is deliberately set to <b>9998</b>, it defaults to "In Press".')
+  );
+
   $form['style']['biblio_style'] = array(
     '#type' => 'radios',
     '#title' => t('Style'),
@@ -842,7 +857,7 @@ function biblio_admin_type_mapper_form($form_state, $format = 'bibtex', $op = 'm
   $form['#redirect'] = 'admin/settings/biblio/fields/typemap';
 
   if ($op == 'map') {
-    $result = db_query('SELECT t.* FROM {biblio_types as t WHERE t.tid > 0}');
+    $result = db_query('SELECT t.* FROM {biblio_types} as t WHERE t.tid > 0');
     while ($type = db_fetch_object($result)) {
       $biblio_type_options[$type->tid] =  $type->name;
     }
@@ -948,7 +963,7 @@ function biblio_admin_type_mapper_form_submit($form, $form_state) {
 }
 
 function biblio_admin_types_form() {
-  $result = db_query('SELECT t.* FROM {biblio_types as t WHERE t.tid > 0}');
+  $result = db_query('SELECT t.* FROM {biblio_types} as t WHERE t.tid > 0');
   //$rows[] = array('',t('Fields Common To All Types'),l('edit', 'admin/settings/biblio/types/edit'),'');
   while ($row = db_fetch_object($result)) {
     if ($row->tid < 999) {

@@ -1,5 +1,5 @@
 <?php
-// $Id: biblio_handler_citation.inc,v 1.1.2.4 2009/06/25 16:58:57 rjerome Exp $
+// $Id: biblio_handler_citation.inc,v 1.1.2.5 2009/08/21 17:38:35 rjerome Exp $
 class biblio_handler_citation extends views_handler_field {
   function init(&$view, $options) {
     parent::init($view, $options);
@@ -52,7 +52,7 @@ class biblio_handler_citation extends views_handler_field {
         if (isset($item->biblio_year)) $item->biblio_year = _biblio_text_year($item->biblio_year);
         $item->biblio_contributors = biblio_load_contributors($item->vid);
         if (variable_get('biblio_hide_bibtex_braces', 0)) {
-          $node->title = biblio_remove_brace($node->title);
+          $item->title = biblio_remove_brace($item->title);
         }
 
         $this->items[$vid] = $item;
