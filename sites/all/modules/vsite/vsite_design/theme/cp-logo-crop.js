@@ -54,7 +54,6 @@ if (Drupal.jsEnabled) {
 				  }
 			  });
 		  }else{
-			  alert($('#live_preview').attr('width')+"ok"+($('#live_preview').attr('width')!=undefined));
 			  $("input#edit-settings-logo-crop-btn").remove();
 			  $("#live_preview_box").remove();
 		  }//If it isn't loaded wait
