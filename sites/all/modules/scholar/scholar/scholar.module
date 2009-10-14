@@ -87,16 +87,18 @@ function scholar_init(){
   drupal_add_js(drupal_get_path('module', 'scholar') . '/theme/scholar.js');
 }
 
-
 /**
  * hook link
  */
 function scholar_link($type, $object, $teaser = FALSE){
   $links = array();
-  $links['scholar-admin'] = array(
-    'title' => theme('scholar_admin_links', scholar_get_admin_links('node', $object)),
-    'html' => TRUE
-  );
+  $vsite = vsite_get_vsite();
+  if ($vsite && $vsite->admin_access()) {
+    $links['scholar-admin'] = array(
+      'title' => theme('scholar_admin_links', scholar_get_admin_links('node', $object)), 
+      'html' => TRUE 
+    );
+  }
   return $links;
 }
 
@@ -160,6 +162,9 @@ function scholar_strongarm(){
   //replacing scholar or vsite terms with more common terms using stringoverrides module
   $conf['locale_custom_strings_en'] = scholar_string_overrides();
 
+  // User settings
+  $conf['user_register'] = 0; // No registration is allowed; this is a closed group
+  
   return $conf;
 }
 
