@@ -222,6 +222,9 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'show export links',
     'roles' => array(
       '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 

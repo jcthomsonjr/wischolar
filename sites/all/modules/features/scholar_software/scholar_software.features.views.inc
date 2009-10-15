@@ -19,7 +19,7 @@ function _scholar_software_views_default_views() {
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('sorts', array(
     'sticky' => array(
-      'order' => 'ASC',
+      'order' => 'DESC',
       'id' => 'sticky',
       'table' => 'node',
       'field' => 'sticky',
