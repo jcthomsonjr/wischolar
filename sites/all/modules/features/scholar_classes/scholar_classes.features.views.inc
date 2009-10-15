@@ -49,6 +49,13 @@ function _scholar_classes_views_default_views() {
     ),
   ));
   $handler->override_option('sorts', array(
+    'sticky' => array(
+      'order' => 'ASC',
+      'id' => 'sticky',
+      'table' => 'node',
+      'field' => 'sticky',
+      'relationship' => 'none',
+    ),
     'created' => array(
       'order' => 'DESC',
       'granularity' => 'second',
