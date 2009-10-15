@@ -1,13 +1,28 @@
 /* Forms */
 
+fieldset {
+  clear: both;
+  }
+
+.section-cp fieldset legend, h3#modal-title {
+	font-weight: bold;
+	color:#425e69;
+	font-size: 1.2em;
+	float: left;
+	}
 
 .section-cp .fieldset-wrapper, .section-cp div.spaces-block-customizer, .section-cp div.description  {
 	padding: 4px;
 	margin-bottom: 3em;
 	margin-left: 190px;
-	margin-top: -28px;
 	}
 
+/*FireFox 3*/
+@-moz-document url-prefix() {
+  .section-cp .fieldset-wrapper, .section-cp div.spaces-block-customizer, .section-cp div.description {
+  margin-top:-28px;
+    }
+  }
 
 .section-cp .fieldset-wrapper .fieldset-wrapper {
 	margin: 0;
@@ -79,12 +94,7 @@ table.features div.feature div.description {
   margin:0;
   }
 
-.section-cp fieldset legend, h3#modal-title {
-	font-weight: bold;
-	color:#425e69;
-	font-size: 1.2em;
-	float: left;
-	}
+
 
 h3#modal-title {
   float: none;
