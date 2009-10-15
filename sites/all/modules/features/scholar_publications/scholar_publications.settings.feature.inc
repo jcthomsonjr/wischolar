@@ -32,6 +32,8 @@ class scholar_publications_settings_feature implements space_setting {
       //'#description' => t('This alters the bibliographic format of your publications.'),
       '#default_value' => !array_key_exists('style',$value)?$s_style:$value['style'],
       '#options' => _biblio_admin_get_styles(),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>'
     );
 
     $form['export_links'] = array(
@@ -43,7 +45,9 @@ class scholar_publications_settings_feature implements space_setting {
         'xml'     => t('EndNote XML'),
         'bibtex'  => t('BibTex'),
       ),
-      '#description' => t('Each selected format will appear in its own export link.')
+      '#description' => t('Each selected format will appear in its own export link.'),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>'
     );
 
     $form['google_link'] = array(
@@ -51,7 +55,9 @@ class scholar_publications_settings_feature implements space_setting {
       '#title' => t('Link to Google Scholar'),
       '#return_value' => 1,
       '#default_value' => !array_key_exists('google_link',$value)?variable_get('biblio_google_link', 1):$value['google_link'],
-      '#description' => t('This adds the necessary metadata to your web site to allow Google Scholar to properly index your publication.')
+      '#description' => t('This adds the necessary metadata to your web site to allow Google Scholar to properly index your publication.'),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>'
     );
 
     /*
@@ -78,7 +84,9 @@ class scholar_publications_settings_feature implements space_setting {
       '#title' => t('Create hyperlinks to external URLs (if they are available)'),
       '#return_value' => 1,
       '#default_value' => !array_key_exists('link_title_url',$value)?variable_get('biblio_link_title_url', 0):$value['link_title_url'],
-      '#description' => t('If an off-site URL is available, users clicking on the title of the publication would be directed to the off-site URL. This could be useful if the complete work is available online.')
+      '#description' => t('If an off-site URL is available, users clicking on the title of the publication would be directed to the off-site URL. This could be useful if the complete work is available online.'),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>'
     );
 
     $form['author_links'] = array(
@@ -86,7 +94,9 @@ class scholar_publications_settings_feature implements space_setting {
       '#title' => t('Create hyperlinks to authors'),
       '#return_value' => 1,
       '#default_value' => !array_key_exists('author_links',$value)?variable_get('biblio_author_links', 1):$value['author_links'],
-      '#description' => t('Creates a hyperlink on each author name which, when clicked, selects all entries which contain that author')
+      '#description' => t('Creates a hyperlink on each author name which, when clicked, selects all entries which contain that author'),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>'
     );
 
     $form['rowsperpage'] = array(
@@ -95,40 +105,52 @@ class scholar_publications_settings_feature implements space_setting {
       '#size' => 5,
       '#default_value' => array_key_exists('rowsperpage',$value)?variable_get('biblio_rowsperpage',25):$value['rowsperpage'],
       '#description' => t('Select the number of publication to be displayed on each page.'),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>'
     );
 
     $form['sort'] = array(
       '#type' => 'radios',
       '#title' => t('By default, sort publications by which category'),
       '#default_value' => !array_key_exists('sort',$value)?variable_get('biblio_sort','year'):$value['sort'],
-      '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),      
+      '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>',
     );
       $form['order'] = array(
       '#type' => 'radios',
       '#title' => t('Select default order of the sort category'),
       '#default_value' => !array_key_exists('order',$value)?variable_get('biblio_order', 'DESC'):$value['order'],
       '#options' => array('DESC' => t('Descending'), 'ASC' => t('Ascending')),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>',
     );
-    
+
     $form['sort_tabs'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Allow additional sorting of your publications by'),
       '#default_value' => !array_key_exists('sort_tabs',$value)?variable_get('biblio_sort_tabs', array('author'=>'author', 'title'=>'title', 'type'=>'type', 'year'=>'year', 'keyword'=>'keyword')):$value['sort_tabs'],
       '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
       //'#description' => t('You turn the sorting links at the top of the /biblio page here.'),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>'
     );
 
     $form['bkn'] = array(
      '#type' => 'item',
-    '#title' =>t('Author Lookup Services'), //TODO: need to implement a space after this item
+    '#title' =>t('Author Lookup Services'),
+    '#prefix' => '<div class="fieldset-wrapper">',
+     '#suffix' => '</div>',//TODO: need to implement a space after this item
     );
-    
+
     $form['bkn_enabled'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable co-author auto-search'),
       '#default_value' => !array_key_exists('bkn_enabled',$value)?(variable_get('bkn_contrib_lookup_mode', 1) < 2):$value['bkn_enabled'],
       '#return_value' => 1,
       //'#description' => t('Uncheck to disable all external lookups?'),
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>',
      );
     $form['bkn_contrib_lookup_allow_autocomplete'] = array(
       '#type' => 'checkbox',
@@ -136,6 +158,8 @@ class scholar_publications_settings_feature implements space_setting {
       '#default_value' => !array_key_exists('bkn_contrib_lookup_allow_autocomplete',$value)?variable_get('bkn_contrib_lookup_allow_autocomplete',1):$value['bkn_contrib_lookup_allow_autocomplete'],
       '#return_value' => 1,
       //'#description' => t('Should contributor field use autocomplete?')
+      '#prefix' => '<div class="fieldset-wrapper">',
+      '#suffix' => '</div>',
     );
 
     return $form;
