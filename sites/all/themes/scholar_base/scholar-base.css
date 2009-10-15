@@ -64,7 +64,10 @@ p, div.messages, #content-main .views-row {
 
 p.copy {
   color: #76797C;
-  font-size: .8em;
+  font-size: 11px;
+  font-family: arial, sans-serif;
+  line-height: 19px;
+  text-align: center;
   }
 
 ul, li {
@@ -84,13 +87,27 @@ a, a:visited {
 p.copy a, p.copy a:visited {
   font-style: normal;
   text-decoration: none;
-  border-bottom: 1px solid #c0c0c0;
   color: #76797C;
+
   }
 
 p.copy a:hover {
-  border-color:#000;
+  border-bottom: 1px solid #000;
   color: #000;
+  }
+
+p.copy a.footer-login {
+  background: #e9f1c6;
+  color: #000;
+  border: 1px solid #a1aaae;
+  padding: 1px 9px !important;
+  -moz-border-radius:20px;
+  -webkit-border-radius:20px;
+  margin-left: 4px;
+  }
+
+p.copy a.footer-login:hover {
+  background: #fff;
   }
 
 .marker, .form-required, ul.admin li a, ul.admin li a:visited, a.context-button {
