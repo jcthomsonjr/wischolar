@@ -105,7 +105,7 @@
       <?php if ($footer) : ?>
         <?php print $footer; ?>
       <?php endif; ?>
-      <p class="copy">The Scholars' Web Sites Project, IQSS, Harvard University. Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University.</p>
+      <p class="copy"><?php print l('The Scholars\' Web Sites Project, IQSS, Harvard University',$base_path); ?>. Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University. <?php print l('Login',$base_path . '/user');?></p>
       </div> <!-- /#footer -->
     </div> <!-- /container -->
   </div> <!-- /wrapper -->
