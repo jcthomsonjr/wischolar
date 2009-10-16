@@ -917,7 +917,7 @@ function simport_get_files(&$context){
               unset($file->nid);
               unset($file->fid);
           
-              $source = $source = variable_get('simport_remote_path', '') . '/' . $file -> filepath;
+           $source = variable_get('simport_remote_path', '') . '/' . $file -> filepath;
               
           //importing file
           $file = simport_import_file($node, $source, $file, $vsite);
