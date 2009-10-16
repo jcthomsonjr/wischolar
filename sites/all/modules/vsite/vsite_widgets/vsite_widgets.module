@@ -2,11 +2,15 @@
 
 include_once('vsite_widgets.features.inc');
 
+/**
+ * hook block
+ */
 function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
   if ($op == 'list') {
     $blocks[0]['info'] = t('Scholar site logo'); 
     $blocks[1]['info'] = t('Scholar site info');
     $blocks[2]['info'] = t('Scholar site shield');
+    $blocks[3]['info'] = t('Scholar site search');
     return $blocks;
   }
   elseif ($op == 'view') {
@@ -17,9 +21,56 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
        return vsite_widgets_basicinfo();
       case 2:
        return vsite_widgets_shield();
+      case 3:
+       return vsite_widgets_search();
     }
   }
 }
+
+function vsite_widgets_search(){
+  if (! module_exists('search') || ! user_access('search content')) {
+    return;
+  }
+  
+  $block['content'] = drupal_get_form('vsite_widgets_search_form');
+  $block['subject'] = "Search";
+  return $block;
+
+}
+
+/**
+ * Search form.
+ */
+function vsite_widgets_search_form($form_state) {
+  if (arg(0) == 'sitesearch' && isset($_GET['keys'])) {
+    $default = urldecode($_GET['keys']);
+  }
+  $search = 
+  $form = array();
+  $form['search'] = array(
+    '#type' => 'textfield',
+    '#size' => 30,
+    '#required' => true,
+    '#default_value' => !empty($default) ? $default : '',
+    //'#attributes' => array('class' => 'some-class'),
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Search'),
+    '#submit' => array('vsite_widgets_search_form_submit'),
+    //'#attributes' => array('class' => 'some-other-class'),
+  );
+  return $form;
+}
+
+/**
+ * Search form submit handler.
+ */
+function vsite_widgets_search_form_submit($form, &$form_state) {
+  $search = $form_state['values']['search'];
+  drupal_goto('sitesearch', array('keys' => $search));
+}
+
 
 function vsite_widgets_logo(){
 	$output = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_design_logo', vsite_get_vsite() ,'vsite_design_landscape_logo').'</a></div>';
@@ -115,21 +166,21 @@ function vsite_widgets_vsite_widgets(){
       'type' => 'context_ui',
     ),
     
-    // search site widget
-    'og_views_0' => array(
-      'module' => 'og_views',
-      'delta' => '0',
-      'weight' => 0,
-      'region' => false,
+    'vsite_widgets_3' => array(
+      'module' => 'vsite_widgets',
+      'delta' => '3',
+      'weight' => -5,
+      'region' => 'header_right',
       'status' => '0',
-      'label' => 'Search',
+      'label' => 'Scholar search widget',
       'type' => 'context_ui',
     ),
     
+    
     // Featured posts
-    'views_scholar_featuredposts-block_1' => array(
+    'views_vsite_featuredposts-block_1' => array(
       'module' => 'views',
-      'delta' => 'scholar_featuredposts-block_1',
+      'delta' => 'vsite_featuredposts-block_1',
       'weight' => 0,
       'region' => false,
       'status' => '0',
