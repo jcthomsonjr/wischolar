@@ -47,19 +47,22 @@ function vsite_widgets_search_form($form_state) {
   }
   $search =
   $form = array();
-  $form['search'] = array(
-    '#type' => 'textfield',
-    '#size' => 30,
-    '#required' => true,
-    '#default_value' => !empty($default) ? $default : '',
-    //'#attributes' => array('class' => 'some-class'),
-  );
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Search'),
     '#submit' => array('vsite_widgets_search_form_submit'),
     //'#attributes' => array('class' => 'some-other-class'),
   );
+
+  $form['search'] = array(
+    '#type' => 'textfield',
+    '#size' => 'auto',
+    '#required' => true,
+    '#default_value' => !empty($default) ? $default : '',
+    //'#attributes' => array('class' => 'some-class'),
+  );
+
   return $form;
 }
 
