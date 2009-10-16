@@ -7,7 +7,7 @@ include_once('vsite_widgets.features.inc');
  */
 function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
   if ($op == 'list') {
-    $blocks[0]['info'] = t('Scholar site logo'); 
+    $blocks[0]['info'] = t('Scholar site logo');
     $blocks[1]['info'] = t('Scholar site info');
     $blocks[2]['info'] = t('Scholar site shield');
     $blocks[3]['info'] = t('Scholar site search');
@@ -31,9 +31,9 @@ function vsite_widgets_search(){
   if (! module_exists('search') || ! user_access('search content')) {
     return;
   }
-  
+
   $block['content'] = drupal_get_form('vsite_widgets_search_form');
-  $block['subject'] = "Search";
+  //$block['subject'] = "Search";
   return $block;
 
 }
@@ -45,7 +45,7 @@ function vsite_widgets_search_form($form_state) {
   if (arg(0) == 'sitesearch' && isset($_GET['keys'])) {
     $default = urldecode($_GET['keys']);
   }
-  $search = 
+  $search =
   $form = array();
   $form['search'] = array(
     '#type' => 'textfield',
@@ -74,45 +74,45 @@ function vsite_widgets_search_form_submit($form, &$form_state) {
 
 function vsite_widgets_logo(){
 	$output = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_design_logo', vsite_get_vsite() ,'vsite_design_landscape_logo').'</a></div>';
-	
+
 	$block['subject'] = t(''); // intentionally blank
 	$block['content'] = $output;
-	
+
 	return $block;
 }
 
 function vsite_widgets_basicinfo(){
 	$scholar = vsite_get_vsite();
-	
+
 	$block = array();
 	$block['subject'] = t('');
 	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
-	
+
 	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site'])){
 	  $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
     $s_headline = "";
     $s_subheadline ="";
-    
+
     if(is_array($content_profile->vsite_users_last_name)){
       $s_headline = "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}";
     }
-    
+
     if(is_array($content_profile->vsite_users_title)){
       $s_subheadline = $content_profile->vsite_users_title[0]['value'];
     }
-      
+
     $block['content'] =  "<h1>{$s_headline}</h1>
 							            <h2>{$s_subheadline}</h2>
 							            <p></p>";
     return $block;
 	}//Retrieve Defaults
-	
+
 	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
 							<h2>{$scholar->settings['site']['sub_heading']}</h2>
 							<p>{$scholar->settings['site']['sub_heading_extra']}</p>";
-	
+
 	$block['content'] = $output;
-	
+
 	return $block;
 }
 
@@ -122,21 +122,21 @@ function vsite_widgets_shield(){
 	if(array_key_exists('generic',$scholar->settings) && array_key_exists('disable_shield',$scholar->settings['generic']) && $scholar->settings['generic']['disable_shield']){
 		return $output;
 	}//Disabled?
-	
-	
+
+
 
 	if(array_key_exists('generic',$scholar->settings) && array_key_exists('shield',$scholar->settings['generic'])){
 		$output = '<div id="scholar-shield"><img src="/'.$scholar->settings['generic']['shield'].'" /> </div>';
 	}
-	
+
 	$block['subject'] = t('');
 	$block['content'] = $output;
-	
+
 	return $block;
 }
 
 function vsite_widgets_vsite_widgets(){
-	
+
 	return array(
     'vsite_widgets_0' => array(
       'module' => 'vsite_widgets',
@@ -165,7 +165,7 @@ function vsite_widgets_vsite_widgets(){
       'label' => 'Scholar site shield',
       'type' => 'context_ui',
     ),
-    
+
     'vsite_widgets_3' => array(
       'module' => 'vsite_widgets',
       'delta' => '3',
@@ -175,8 +175,8 @@ function vsite_widgets_vsite_widgets(){
       'label' => 'Scholar search widget',
       'type' => 'context_ui',
     ),
-    
-    
+
+
     // Featured posts
     'views_vsite_featuredposts-block_1' => array(
       'module' => 'views',
@@ -186,9 +186,9 @@ function vsite_widgets_vsite_widgets(){
       'status' => '0',
       'label' => 'Featured posts',
       'type' => 'context_ui',
-    ),    
+    ),
   );
-	
+
 }
 
 /**
@@ -228,7 +228,7 @@ function vsite_widgets_context_default_contexts() {
       'description' => 'Active when you are in the public section of a vsite',
       'block' => module_invoke_all('vsite_widgets'),
    );
-  
+
   return $items;
 }
 
@@ -240,39 +240,39 @@ function vsite_widgets_context_default_contexts() {
 function vsite_widgets_flag_default_flags(){
   vsite_include('vsiteapi');
   $types = og_get_types('group_post');
-  
+
   $flags = array();
-  
+
   $flags[] = array(
-    'content_type' => 'node', 
-    'name' => 'featuredposts', 
-    'title' => 'Featured Posts', 
-    'types' => $types, 
+    'content_type' => 'node',
+    'name' => 'featuredposts',
+    'title' => 'Featured Posts',
+    'types' => $types,
     'roles' => array(
-      0 => '2' 
-    ), 
-    'global' => TRUE, 
-    'flag_short' => 'Featured Post', 
-    'flag_long' => 'Make this a Featured Post', 
-    'flag_confirmation' => 'Saved as a Featured Post', 
-    'unflag_short' => 'Remove Featured Post', 
-    'unflag_long' => 'Remove as a Featured Post', 
+      0 => '2'
+    ),
+    'global' => TRUE,
+    'flag_short' => 'Featured Post',
+    'flag_long' => 'Make this a Featured Post',
+    'flag_confirmation' => 'Saved as a Featured Post',
+    'unflag_short' => 'Remove Featured Post',
+    'unflag_long' => 'Remove as a Featured Post',
     'unflag_confirmation' => 'Removed from Featured Post queue',
-    'status' => TRUE, 
-    'show_on_page' => FALSE, 
-    'show_on_teaser' => FALSE, 
-    'show_on_form' => FALSE, 
+    'status' => TRUE,
+    'show_on_page' => FALSE,
+    'show_on_teaser' => FALSE,
+    'show_on_form' => FALSE,
     'link_type' => 'toggle',  //normal, toggle, confirm
     'locked' => array(
       'types',
-      'name', 
-      'show_on_page', 
-      'show_on_teaser', 
-      'show_on_form', 
-      'global' 
-    ) 
+      'name',
+      'show_on_page',
+      'show_on_teaser',
+      'show_on_form',
+      'global'
+    )
   );
-  
+
   return $flags;
 }
 
@@ -286,13 +286,13 @@ function vsite_widgets_scholar_admin_link($type, $object){
   if(!($vsite = vsite_get_vsite()) || !is_object($vsite)){
     return $links;
   }
-  
-  if (//$vsite->settings['front']['frontpage'] !== 'flag' || 
+
+  if (//$vsite->settings['front']['frontpage'] !== 'flag' ||
       !($vsite->admin_access()) ||
       !flag_fetch_definition($type)){
     return $links;
   }
-  
+
   // Get frontpage flags
   $flag = flag_get_flag('featuredposts');
 
