@@ -1,5 +1,5 @@
 <?php
-// $Id: og_vocab.module,v 1.18.2.21 2009/05/05 12:13:02 amitaibu Exp $
+// $Id: og_vocab.module,v 1.18.2.22 2009/10/04 09:27:53 amitaibu Exp $
 
 /**
  * @file
@@ -493,7 +493,9 @@ function og_vocab_get_accessible_vocabs($account = NULL) {
  * Access function to determine if a user has access to the menu item.
  */
 function og_vocab_determine_access($node, $perm) {
-  return og_is_group_type($node->type) && og_is_group_member($node->nid) && (user_access($perm) || user_access('administer organic groups'));
+  // Group admin should have access regardless of permissions.
+  // Otherwise check the user is a member with the right permissions.
+  return (og_is_group_type($node->type) && (og_is_group_admin($node) || (og_is_group_member($node->nid) && (user_access($perm) || user_access('administer organic groups')))));
 }
 
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: og_vocab.admin.inc,v 1.1.2.4 2009/02/17 19:03:01 amitaibu Exp $
+// $Id: og_vocab.admin.inc,v 1.1.2.5 2009/10/04 09:17:03 amitaibu Exp $
 
 /**
  * @file
@@ -24,10 +24,10 @@ function og_vocab_admin_overview_vocabularies($form_state, $groupnode) {
     $types = array();
     foreach ($vocabulary->nodes as $type) {
       $node_type = node_get_types('name', $type);
-      $types[] = $node_type ? $node_type : $type;
+      $types[] = $node_type ? t($node_type) : t($type);
     }
     $row = array(
-      check_plain($vocabulary->name),
+      check_plain(t($vocabulary->name)),
       check_plain(implode(', ', $types)),
     );
     if (user_access('edit own group vocabulary')) {
