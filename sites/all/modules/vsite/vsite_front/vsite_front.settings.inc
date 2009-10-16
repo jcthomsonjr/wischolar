@@ -85,7 +85,7 @@ class vsite_front_settings_front implements space_setting {
         '#type' => 'checkbox',
         '#title' => t('Include title'),
         '#description' => t('Do you want to include the title of the post in the page?'),
-        '#default_value' => $value['bio_title'] ? $value['bio_title'] : 1,
+        '#default_value' => isset($value['bio_title']) ? $value['bio_title'] : 1,
         '#process' => array(
           'ctools_dependent_process'
         ),
