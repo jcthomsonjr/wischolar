@@ -77,6 +77,10 @@ function scholar_biocv_bio(){
  */
 function scholar_biocv_cv(){
   $vsite = vsite_get_vsite();
+  if (!$vsite){
+    return '';
+  } 
+  
   drupal_set_title(t(''));
   
   // load the bio node for the owner of this vsite
@@ -142,6 +146,23 @@ function scholar_biocv_strongarm(){
       'other' 
     ) 
   );
+  
+  $conf['node_options_bio'] = array('status', 'revision');
+  $conf['node_options_cv'] = array('status', 'revision');
+  $conf['upload_bio'] = TRUE;
+  $conf['upload_cv'] = FALSE;
+  
+ 
+  // Comments
+  $conf['comment_bio'] = COMMENT_NODE_DISABLED;
+  $conf['comment_cv'] = COMMENT_NODE_DISABLED;
+  
+  // FeedAPI
+  $conf['feedapi_settings_bio'] = array('enabled' => FALSE);
+  $conf['feedapi_settings_cv'] = array('enabled' => FALSE);
+ 
+  // Pathauto (optional) settings
+  // ?
   return $conf;
 }
 

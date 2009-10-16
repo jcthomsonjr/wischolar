@@ -19,7 +19,22 @@ function scholar_announcements_strongarm(){
     'path' => '0', 
     'og_nodeapi' => '2' 
   );
+
   
+ 
+  $conf['node_options_announcement'] = array('status', 'revision');
+  $conf['upload_announcement'] = TRUE;
+ 
+  // Comments
+  $conf['comment_announcement'] = COMMENT_NODE_DISABLED;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_announcement'] = array('enabled' => FALSE);
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_announcement_pattern"] = "[space-og-path]/announcements/[title-raw]";
+ 
+  return $conf;
   return $conf;
 }
 

@@ -42,7 +42,21 @@ function scholar_feeds_strongarm(){
    ),
   );
   
+
+  $conf['node_options_feed'] = array('status');
+  $conf['node_options_feed_item'] = array('status');
+  $conf['upload_feed'] = FALSE;
+  $conf['upload_feed_item'] = FALSE;
   
+ 
+  // Comments
+  $conf['comment_feed'] = COMMENT_NODE_DISABLED;
+  $conf['comment_feed_item'] = COMMENT_NODE_DISABLED;
+  
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_feed_pattern"] = "[space-og-path]/feeds/[title-raw]";
+  $conf["pathauto_node_feed_item_pattern"] = "[space-og-path]/feed_items/[title-raw]";
   return $conf;
 }
 
