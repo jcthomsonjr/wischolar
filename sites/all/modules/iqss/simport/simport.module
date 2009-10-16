@@ -46,7 +46,7 @@ function simport_import(){
   $batch['operations'][] = array('simport_import_logo', array());
   $batch['operations'][] = array('simport_import_frontpage', array());
   $batch['operations'][] = array('simport_get_files', array());
-  $batch['operations'][] = array('simport_sync_themes', array());
+  //$batch['operations'][] = array('simport_sync_themes', array());
   $batch['operations'][] = array('simport_set_menu_links', array());
   $batch['operations'][] = array('simport_cleanup', array());
 
@@ -204,8 +204,8 @@ function simport_import_types($biblio = 0, $start = '', $limit ='', &$context){
       $new = new stdClass();
        
       //set generic values
-      simport_set_generic($old, $new);     
-
+      simport_set_generic($old, $new);   
+      
       //set taxonomy term values
       simport_set_terms($old, $new);
 
@@ -216,8 +216,12 @@ function simport_import_types($biblio = 0, $start = '', $limit ='', &$context){
           simport_set_announcement($old, $new);
           break;
 
+         case 'scholar_cv':
+          simport_set_cv($old, $new); 
+          break;  
+          
         case 'scholar_bio':
-          simport_set_page($old, $new); //import to page
+          simport_set_bio($old, $new);
           break;
           
         case 'biblio':          
@@ -225,7 +229,24 @@ function simport_import_types($biblio = 0, $start = '', $limit ='', &$context){
           break;   
 
         case 'scholar_page':
-          simport_set_page($old, $new); //import to page also
+          //There are some special cases here and some nodes will 
+          //be converted from type 'page' to type 'bio' or 'cv'          
+          simport_set_page($old, $new);     
+          
+          $bio_pages = array(259, 290);
+          //special case - save as 'bio'. NOTE: "About" menu link should not be transferred 
+           if(in_array((int)$old->nid, $bio_pages)){
+             $new -> type = 'bio';
+           }
+          
+          //if page has a CV, then convert type from 'scholar_page' to 'cv' 
+          simport_check_for_cv_pages($old, $new); 
+          
+          if($new -> type == 'cv'){            
+            simport_set_cv($old, $new);  
+            //special case - rbates old bio and cv is within same node, so unset body text, save it as 'bio' later
+   
+          }                  
           break;
 
         case 'scholar_blog':
@@ -306,6 +327,15 @@ function simport_check_feature($type, $vsite){
     spaces_save($vsite);
   }
   return;
+}
+
+function simport_check_for_cv_pages($old, &$new){
+  //array of known D5 scholar "cv pages"
+  $cv_pages = array(235, 261, 384, 681, 500, 391, 528);
+  if(in_array((int)$old->nid, $cv_pages)){
+    //chage the node type to 'cv'
+    $new -> type = 'cv';
+  }
 }
   
 /**
@@ -665,6 +695,15 @@ function simport_set_page($old, &$new){
   $new -> body = $old -> body;
 }
 
+function simport_set_cv($old, $new){
+  $new -> body = $old -> body;    
+}
+
+function simport_set_bio($old, &$new){  
+  //no custom fields
+  $new -> body = $old -> body;
+}
+
 function simport_set_class($old, &$new){ 
   
    $new -> body = $old -> body;
@@ -907,11 +946,11 @@ function _simport_map_content_types($old_type = NULL){
   $types = array(
   'scholar_link' => 'link',
   'scholar_announcement' => 'announcement',
-  'scholar_bio' => 'page',
+  'scholar_bio' => 'bio',
   'scholar_class' => 'class',
-  'scholar_page' => 'page',  //both scholar_bio and scholar_page import to page
+  'scholar_page' => 'page', 
   //'biblio' => 'biblio', //imported seperately 
-  // 'scholar_cv' => '', //ONLY 1 Submit it manually
+  'scholar_cv' => 'cv', //ONLY 1 thus far - old node 391
  // 'scholar_photo' => '', //already dealt with in simport_set_logo()
  ); 
   //if a specific type is specified as an argument, then just return the equivilent for that type
@@ -1021,60 +1060,75 @@ function simport_cleanup(&$context){
      spaces_save($vsite); 
     } 
   }
-  //now fix all the layouts
-  $sql = db_query("SELECT * FROM {spaces}");
+  
+  //special case - save rbates bio node (cv and bio was saved within same old node, new cv node already saved) 
+  $old = simport_get_old_node(234);
+  $old -> type = 'scholar_bio';
+  $new = new stdClass();
+  simport_set_generic($old, $new);
+  $new -> body = $old -> body;
+  node_save($new);  
+  
+  //run this last - no longer running this as seperate batch operation
+  simport_sync_themes($context = NULL);
+  
+  //now fix all the layouts --- Skipping this part for now
+  /*$sql = db_query("SELECT * FROM {spaces}");
   while ($data = db_fetch_object($sql)){
         $vsite = spaces_load ( 'og', $data-> sid);
         simport_custom_layouts($vsite);
         spaces_save($vsite);        
-  }
+  }*/
 }
 
 function simport_custom_layouts(&$vsite){
 
-  //defaults for all themes
-  $vsite -> settings ['layout']['all']['vsite_widgets_0'] = 'header_left';
-  $vsite -> settings ['layout']['all']['vsite_widgets_1'] = 'header_main';
-  $vsite -> settings ['layout']['all']['vsite_widgets_2'] = 'header_right';
+  $custom_themes = array('kshepsle', 'rbates');
+  
+  //don't alter the vsite layout for custom themes!!!
+  if (!in_array($vsite->settings['theme'], $custom_themes)){
+    //defaults for all non custom themes
+    $vsite -> settings ['layout']['all']['vsite_widgets_0'] = 'header_left';
+    $vsite -> settings ['layout']['all']['vsite_widgets_1'] = 'header_main';
+    $vsite -> settings ['layout']['all']['vsite_widgets_2'] = 'header_right';
 
-  switch ($vsite ->settings['theme']){
-    case 'scholar_theme_01':
-      //$vsite -> settings ['layout']['all']['og_views_0'] = 'navbar'; //site search widget TODO: do we enable this??
-      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'left';
-      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
-      break;
+    switch ($vsite ->settings['theme']){
+      case 'scholar_theme_01':
+        $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'left';
+        $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
+        break;
 
-    case 'scholar_theme_02':
-      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
-      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
-      break;
+      case 'scholar_theme_02':
+        $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
+        $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
+        break;
 
-    case 'scholar_theme_03':
-      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
-      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
-      break;
+      case 'scholar_theme_03':
+        $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
+        $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
+        break;
 
-    case 'scholar_theme_04':
-      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'left';
-      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
-      break;
+      case 'scholar_theme_04':
+        $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'left';
+        $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left';
+        break;
 
-    case 'scholar_theme_05':
-      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'right';
-      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'right';
-      break;
+      case 'scholar_theme_05':
+        $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'right';
+        $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'right';
+        break;
 
-    case 'scholar_theme_06':
-      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
-      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left'; //TODO put secondary menu on left???
-      break;
+      case 'scholar_theme_06':
+        $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
+        $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left'; //TODO put secondary menu on left???
+        break;
 
-    case 'scholar_theme_07':
-      $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
-      $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left'; //TODO put secondary menu on left???
-      break;
+      case 'scholar_theme_07':
+        $vsite -> settings ['layout']['all']['vsite_menus_0'] = 'navbar';
+        $vsite -> settings ['layout']['all']['vsite_menus_1'] = 'left'; //TODO put secondary menu on left???
+        break;
+    }
   }
-
   return $vsite;
 }
 
@@ -1086,7 +1140,6 @@ function simport_import_term_exists($term, $vid){
   return db_result(db_query("SELECT tid FROM {term_data} WHERE vid = %d AND (LCASE(name) LIKE LCASE( '%s'))", (int)$vid, $term));
 }
 
-
 /**
  * Import any custom menu links
  */
@@ -1094,6 +1147,9 @@ function simport_set_menu_links(&$context){
   module_load_include('inc', 'simport', 'simport.menu_links');
 
   $context['message'] = 'Created Custom Menu Links';
+  
+  //skip the About links that contain a bio or cv
+  $skip_links = array(259, 234);
 
   $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' ORDER BY id ASC", 'admin_scholar' );
   // $sql = db_query("SELECT * FROM {scholar_export_data} WHERE type = '%s' AND id = %d", 'admin_scholar', 2);
@@ -1114,8 +1170,10 @@ function simport_set_menu_links(&$context){
           //get new nid
           $nid = simport_get_new_nid($link['nid']);
 
+          if (!in_array((int)$link['nid'], $skip_links)){
           //now create the custom menu links!!!
           simport_add_custom_menu_links($link, $nid, (int)$link['primary']);
+          }
         }
       }
     }
