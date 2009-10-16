@@ -735,6 +735,8 @@ function simport_set_link($old, &$new){
  */
 function simport_set_biblio($old, &$new){
 
+  $new -> biblio_contributors = array();
+  
   //a list of fields that we don't want to import into the new biblio node
 $excluded_fields = array('taxonomy', 'nid', 'vid', 'uid', 'name', 'path', 'picture');
 
@@ -748,7 +750,7 @@ $excluded_fields = array('taxonomy', 'nid', 'vid', 'uid', 'name', 'path', 'pictu
   );
 
   //set to contributors to empty array to begin
-  $new -> biblio_contributors = array();
+  //$new -> biblio_contributors = array();
 
   //convert old node to array
   $properties = get_object_vars($old);
@@ -773,19 +775,19 @@ $excluded_fields = array('taxonomy', 'nid', 'vid', 'uid', 'name', 'path', 'pictu
         switch($key){
           case 'biblio_authors':
             if(!empty($val)){
-              $new -> biblio_contributors =  simport_create_biblio_authors($val, 1);
+              $new -> biblio_contributors +=  simport_create_biblio_authors($val, 1);
             }
             break;
 
           case 'biblio_secondary_authors':
             if(!empty($val)){
-              $new -> biblio_contributors =  simport_create_biblio_authors($val, 2);
+              $new -> biblio_contributors +=  simport_create_biblio_authors($val, 2);
             }
             break;
 
           case 'biblio_tertiary_authors':
             if(!empty($val)){
-              $new -> biblio_contributors =  simport_create_biblio_authors($val, 3);
+              $new -> biblio_contributors +=  simport_create_biblio_authors($val, 3);
             }
             break;
 
@@ -796,7 +798,7 @@ $excluded_fields = array('taxonomy', 'nid', 'vid', 'uid', 'name', 'path', 'pictu
 
           case 'biblio_corp_author':
             if(!empty($val)){
-              $new -> biblio_contributors =  simport_create_biblio_authors($val, 5);
+              $new -> biblio_contributors +=  simport_create_biblio_authors($val, 5);
             }
             break;
         }
