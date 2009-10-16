@@ -397,17 +397,25 @@ function   _scholar_wysiwyg_config(){
       'default' => array (
          'bold' => 1,
          'italic' => 1,
-         'underline' => 1,
+         'strikethrough' => 1,
          'bullist' => 1,
          'numlist' => 1,
+         'link' => 1,
+         'unlink' => 1,
          'image' => 1,
+         'code' => 1,
          'cut' => 1,
          'copy' => 1,
          'paste' => 1,
+         'charmap' => 1,
        ),
-       'drupal' => array (
-         'break' => 1
-       ),
+            
+       'font' => array('formatselect' => 1),
+       'fullscreen' => array('fullscreen' => 1),
+       'paste' => array('pastetext' => 1),
+       'table' => array('tablecontrols' => 1),
+       'safari' => array('safari' => 1),
+       'drupal' => array ('break' => 1),
     ),
 
     'toolbar_loc' => 'top',
@@ -420,7 +428,7 @@ function   _scholar_wysiwyg_config(){
     'remove_linebreaks' => 1,
     'apply_source_formatting' => 0,
     'paste_auto_cleanup_on_paste' => 1,
-    'block_formats' => 'p,address,pre,h2,h3,h4,h5,h6,div',
+    'block_formats' => 'p,address,pre,h2,h3,h4,h5,h6',
     'css_setting' => 'theme',
     'css_path' => '',
     'css_classes' => '',
