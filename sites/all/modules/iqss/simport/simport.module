@@ -1211,13 +1211,73 @@ function simport_set_menu_links(&$context){
         foreach($custom_links as $link){
           //get new nid
           $nid = simport_get_new_nid($link['nid']);
-
+          
+          //load the new node, check if the custom link points to a cv, if so then do not import it
+          //because a link in the primary menu has already been provided by the Bio/CV feature
+          $node = node_load(array('nid' => $nid));
+          
           if (!in_array((int)$link['nid'], $skip_links)){
+            if ($node ->type !=='cv'){
           //now create the custom menu links!!!
-          simport_add_custom_menu_links($link, $nid, (int)$link['primary']);
+          simport_add_custom_menu_links($link, $node, (int)$link['primary']);
+            }
           }
         }
       }
+    }
+  }
+  //deal with special cases where link path begins with "http://"
+  simport_set_external_menu_links();
+}
+
+/**
+ * Import any custom menu links
+ */
+function simport_set_external_menu_links(){
+  module_load_include('inc', 'simport', 'simport.menu_links');
+  //get list of external links
+  $external_links = _simport_external_get_links();
+  
+   
+  // a lot is hard coded here. TODO: find a way to automate this???
+  
+  //"new book" link beth simmons - old node 389
+  //load new node
+  $node = node_load(array('nid' => simport_get_new_nid(389)));
+  $link['title'] = $node -> title;
+  simport_add_custom_menu_links($link, $node);
+  
+  reset($external_links);
+  //external links that will be saved as content type link 
+  simport_convert_type_link($external_links);
+}
+
+function simport_convert_type_link($external_links){
+
+  foreach($external_links as $key => $link){
+
+    $links_to_convert= array(2,3);
+    if (in_array($key, $links_to_convert)){
+
+      $nid = simport_get_new_nid($link['nid']);
+      $vsite = spaces_load('og', $nid);
+      simport_check_feature('link', $vsite);
+
+      $new = new stdClass();
+      $new -> type = 'link';
+      $new -> title = $key == 2 ? 'Natural Language and Linguistic Theory' : 'Language Processing Lab and Heritage Languages';
+      $new -> body = $key == 2 ? 'I am Associate Editor of this journal' : 'Language Processing Lab and Heritage Languages';
+      $new-> language = 'en';      
+      $new -> field_link_href[0]['url'] = $link['path'];      
+      $new -> uid = $vsite -> group -> uid;
+      $new -> name = $vsite -> group -> name;
+      $new -> og_public =1;
+      $new -> og_initial_groups = array($vsite->sid => (int)$vsite->sid);
+      $new -> og_groups[0] = (int)$vsite->sid;
+      $new -> og_nodeapi = '';
+      $new -> spaces_og = array('gid' =>  (int)$vsite->sid);
+
+      node_save($new);
     }
   }
 }
@@ -1262,6 +1322,6 @@ function _simport_external_get_links(){
       }
     }
   }
-  dpm($custom_links);
+  return $custom_links;
 }
 
