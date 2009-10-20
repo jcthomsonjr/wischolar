@@ -44,16 +44,6 @@ function simport_node_add_cck_file($source, $field_name, &$node, $validate = NUL
   node_save($node);
 }
 
- /**
-  * API function - saves a single file to a node
-  *
-  * @param unknown_type $node
-  * @param unknown_type $path
-  */
- function simport_save_filefield_file(&$node, $path){
- //nothing here yet - should save node with node_save()  
-}
-
 /**
  * Helper function to transfer the file and create entry in files table
  * Returns file id
