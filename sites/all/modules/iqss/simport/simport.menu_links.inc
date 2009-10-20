@@ -2,7 +2,7 @@
 
 
 /**
- * Find and return the custom Primary Links in the old site
+ * Find and return the custom Links in the old site
  *
  * @param unknown_type $old
  * @return unknown
@@ -44,9 +44,8 @@ function simport_get_menu_links($old, $ltype){
  * @param unknown_type $nid
  * @param unknown_type $primary
  */
-function simport_add_custom_menu_links($link, $nid, $primary = 1){
-  $node = node_load(array('nid' => $nid));
-  
+function simport_add_custom_menu_links($link, $node, $primary = 1){
+    
   if(!is_object($node)){
     return;
   }
