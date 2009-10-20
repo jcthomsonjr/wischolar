@@ -13,11 +13,11 @@
  * @param $field_name the name of the cck field 
  * @param $node the node object to upload the image to (passed by reference)
  */
-function simport_node_add_imagefield_image($source, $field_name, &$node, $validate = NULL){
+function simport_node_add_cck_file($source, $field_name, &$node, $validate = NULL){
 
   // get the cck filefield
   $field = content_fields($field_name, $node -> type);
-
+ 
   if($validate){
   // validators (can add our own validators if we want)
  $validators = array_merge(filefield_widget_upload_validators($field), imagefield_widget_upload_validators($field));
