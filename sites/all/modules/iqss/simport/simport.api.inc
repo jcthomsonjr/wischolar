@@ -66,10 +66,10 @@ function simport_node_add_cck_file($source, $field_name, &$node, $validate = NUL
 function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
 
   //determine site files directory, if set
-  $dir = isset($vsite)? '/'. $vsite -> purl : '';
+  $dir = isset($vsite)? '/'. $vsite -> purl . '/files' : '';
 
   //create full path to destination directory TODO: should get destination path token/filefield paths in content type settings.
-  $full_dest_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', '') . $dir;
+  $full_dest_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', conf_path() .'/files') . $dir;
 
   //create directory
   file_check_directory($full_dest_path, $mode = 1, $form_item = NULL);
