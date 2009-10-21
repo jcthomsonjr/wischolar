@@ -109,7 +109,7 @@ function _vsite_filefield_paths_config() {
   }
 
   $return[] = array('success' => TRUE,
-  'query' => "the upload file paths were inserted in the filefield_paths table");
+  'query' => "the upload and filefield file paths were inserted in the filefield_paths table");
 
   return $return;
 }
