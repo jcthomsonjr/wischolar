@@ -85,6 +85,8 @@ class vsite_layout_settings_layout implements space_setting {
 	    }
 
 	    if($s_page_type == 'all'){
+	    	//See what alterations you need to carry through
+	    	
 	      $a_prev_settings = array();
 	      if(is_array($space->settings['layout']) && array_key_exists('all',$space->settings['layout'])){
 	        $a_prev_settings = $space->settings['layout'][$s_page_type];
@@ -96,25 +98,39 @@ class vsite_layout_settings_layout implements space_setting {
 	      $a_rem_all_wgts = array_diff(array_keys($a_prev_settings),array_keys($setting));
 
 	      foreach(array_keys(vsite_layout_get_pagetypes($space)) as $s_page_nm){
-	        if($s_page_nm == 'all' || (!count($a_new_all_wgts) && !count($a_rem_all_wgts))) continue;
+	        if($s_page_nm == 'all') continue;
+	        $b_modified = false;
 	        $a_new_settings = (is_array($space->settings['layout'][$s_page_nm]))?$space->settings['layout'][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
 
-	       foreach ($a_new_all_wgts as $s_widget_name) {
+	        //Handle widgets added
+	        foreach ($a_new_all_wgts as $s_widget_name) {
 	          if(!array_key_exists($s_widget_name,$a_new_settings) || $a_new_settings[$s_widget_name] === false){
 	            $a_new_settings[$s_widget_name] = $setting[$s_widget_name];
+	            $b_modified = true;
 	          }//Already on this page?
 	        }//Add new widgets
 
+          //Handle widgets removed
 	        foreach ($a_rem_all_wgts as $s_widget_name) {
 	          if(array_key_exists($s_widget_name,$a_new_settings) && $a_new_settings[$s_widget_name] == $a_prev_settings[$s_widget_name]){
 	            unset($a_new_settings[$s_widget_name]);
+	            $b_modified = true;
 	          }//Already on this page?
 	        }//Remove widgets
+	        
+	        //Widgets that have changed positions
+	        foreach ($setting as $s_widget_name => $s_region){
+	        	if(array_key_exists($s_widget_name,$a_new_settings) && $s_region != $a_new_settings[$s_widget_name]){
+	        		$a_new_settings[$s_widget_name] = $s_region;
+	        		$b_modified = true;
+	        	}
+	        }
 
-	        $space->settings['layout'][$s_page_nm] = $a_new_settings;
+	        if($b_modified) $space->settings['layout'][$s_page_nm] = $a_new_settings;
 	      }//Check Each Page Type
 	    }//Add new all widgets to all templates
 
+	    //Save the new version if we made changes
 	    $space->settings['layout'][$s_page_type] = $setting;
 	  }
 

@@ -206,6 +206,13 @@ function cp_menu(){
     'type' => MENU_CALLBACK,
     'access callback' => 'cp_access_cp',
   );
+  
+  $items['cp/confirm_message/%'] = array(
+    'page callback' => 'cp_confirm_message_view',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'cp_access_cp',
+    'page arguments' => array(2),
+  );
 
   return $items;
 }
@@ -593,6 +600,45 @@ function cp_is_confirm_overide_page($page = null){
 	}//Was this called by javascript?
 }
 
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function cp_spaces_settings() {
+	
+	//Setting that allows you to store the confirm time of messages, they can then be re-shown on intervals or hidden after they have been seen once
+  $a_settings = array(
+    'messages_confirmed' => array()
+  );
+   
+  return $a_settings;
+}
+
+/**
+ * Confirm that a message has been seen for a vsite
+ */
+function cp_confirm_message_view($s_message){
+	$vsite = vsite_get_vsite();
+	$b_status = false;
+	
+	if($vsite && strlen($s_message)){
+		if(!array_key_exists('messages_confirmed',$vsite->settings) || !is_array($vsite->settings['messages_confirmed'])) $vsite->settings['messages_confirmed'] = array();
+		$b_status = time();
+		
+		$vsite->settings['messages_confirmed'][$s_message] = $b_status;
+		spaces_save($vsite);
+	}
+	
+	if($_GET['source']){
+		drupal_goto($_GET['source']);
+		return;
+	}//Redirect if we ask it to
+	
+	//return a json object
+  print drupal_json(array(
+    'status' => $b_status,
+  ));
+  exit();
+}
 
 /**
  * Get confirm pages that should be overridden

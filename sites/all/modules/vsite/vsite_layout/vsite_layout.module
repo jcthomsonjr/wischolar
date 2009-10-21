@@ -200,14 +200,44 @@ function vsite_layout_filtered_widgets($page_type='all'){
 	$a_widgets = $contexts['vsite-section-public']->block;
 	
 	if($page_type == 'all'){
-    return $a_widgets; //Just the widgets avalible everywhere
+    //$a_widgets; //Just the widgets avalible everywhere
 	}elseif($page_type == 'front'){
-	  return array_merge($a_widgets,$contexts['vsite-subsection-front']->block); //Everywhere plus the front page
+	  $a_widgets = array_merge($a_widgets,$contexts['vsite-subsection-front']->block); //Everywhere plus the front page
 	}elseif(($feature_contexts = drupal_map_assoc(spaces_features_items('context', $page_type))) && count($feature_contexts) && array_key_exists(current($feature_contexts),$contexts) && is_array($contexts[current($feature_contexts)]->block)){
-		return array_merge($a_widgets,$contexts[current($feature_contexts)]->block);  //Everywhere plus the feature
+		$a_widgets = array_merge($a_widgets,$contexts[current($feature_contexts)]->block);  //Everywhere plus the feature
 	}
+	
+	//Allow theme to alter Widgets default region
+	_vsite_layout_alter_theme_regions($a_widgets); 
 
   return $a_widgets;
+}
+
+/**
+ * Alter the default location for the theme widgets
+ * 
+ * @param $a_widgets
+ */
+function _vsite_layout_alter_theme_regions(&$a_widgets){
+	
+	static  $a_settings;
+	
+	if(!is_array($a_settings)){
+		$space = vsite_get_vsite();
+		if(!$space) return;
+		
+		$s_path = drupal_get_path('theme',$space->group->og_theme);
+		if(!$s_path) return;
+		
+		$a_info = drupal_parse_info_file($s_path."/".$space->group->og_theme.".info");
+		$a_settings = (is_array($a_info) && array_key_exists('widgets',$a_info))?$a_info['widgets']:array();
+	}
+	
+	foreach ($a_settings as $s_widget => $s_region){
+		$s_region = strlen($s_region)?$s_region:false;
+		if(array_key_exists($s_widget,$a_widgets)) $a_widgets[$s_widget]['region'] = $s_region;
+	}//alter based on theme settings
+	
 }
 
 /**

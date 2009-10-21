@@ -34,7 +34,33 @@ function vsite_front_home(){
     
     //Add Site Name to the page title for the homepage
     //if(isset($vsite->settings['site']['headline'])) drupal_set_title(t(drupal_get_title().' | %site', array('%site' => $vsite->settings['site']['headline'])));
-     
+    
+    if($vsite->admin_access()  && (!array_key_exists('messages_confirmed',$vsite->settings)  || !$vsite->settings['messages_confirmed']['welcome_message'])){
+    	
+    	$s_hide_link = l("Hide this box forever","cp/confirm_message/welcome_message",array('attributes'=>array('class'=>'hide'),'query' => array('source'=>$_GET['q']) ));
+    	$s_close_link = l("Hide for now","",array('attributes'=>array('class'=>'close','onClick'=>'$("div#message_welcome_message").remove(); return false;')));
+    	$s_features = l("Features",'cp/features');
+    	$s_content = l("Content",'cp/content');
+    	$s_members = l("Members",'cp/users/members');
+    	$s_bio = ($vsite->feature_access('scholar_biocv'))?"<li>Add your Bio: ".l("Add Bio",'node/add/bio',array('query' => array('destination'=>'biocv')))."</li>":"";
+    	$result = <<<MESSAGE
+    	<div id="message_welcome_message" class="messages status">
+    	  <div style="float:right;">{$s_hide_link}<br/>{$s_close_link}</div>
+    	  Whoa that was fast, your site is now setup<br />
+    	  You can leave it as is, but that wouldn't be any fun! Below are a few additional resources to help you get started.  Remember that you can access the control panel at any time by clicking the link in the top right corner of the screen.<br/>
+    	  <ol>
+    	    <li>Enable or disable features: {$s_features}</li>
+    	    <li>Add Content: {$s_content}</li>
+    	    <li>Decide who can use your site: {$s_members}</li>
+    	    <li>View Scholars Help: <a href='http://scholar-docs.iq.harvard.edu/' target='_blank'>Help</a></li>
+    	    {$s_bio}
+    	  </ol>
+    	  What else?
+      </div>
+    	{$result}
+MESSAGE;
+    }
+    
     return $result;
   }
 }
