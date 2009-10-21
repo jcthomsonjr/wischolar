@@ -44,7 +44,7 @@ function vsite_front_home(){
     	$s_members = l("Members",'cp/users/members');
     	$s_bio = ($vsite->feature_access('scholar_biocv'))?"<li>Add your Bio: ".l("Add Bio",'node/add/bio',array('query' => array('destination'=>'biocv')))."</li>":"";
     	$result = <<<MESSAGE
-    	<div id="message_welcome_message" class="messages status">
+    	<div id="message_welcome_message">
     	  <div style="float:right;">{$s_hide_link}<br/>{$s_close_link}</div>
     	  Whoa that was fast, your site is now setup<br />
     	  You can leave it as is, but that wouldn't be any fun! Below are a few additional resources to help you get started.  Remember that you can access the control panel at any time by clicking the link in the top right corner of the screen.<br/>
