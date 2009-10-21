@@ -5,6 +5,11 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-project.css
+
+; Set the conditional stylesheets that are processed by IE.
+conditional-stylesheets[if lte IE 7][all][] = ie.css
+conditional-stylesheets[if IE 8][all][] = ie-8.css
+
 regions[header_top]    	= header top
 regions[header_left]    = header left
 regions[header_main]    = header main

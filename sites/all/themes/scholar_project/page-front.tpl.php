@@ -35,9 +35,9 @@
         <div id="content-main" class="column">
             <?php if ($messages) print $messages; ?>
             <?php if ($content) print $content; ?>
-            
+
               <?php print $content_top;?>
-            
+
 
 
           </div><!-- /content main -->

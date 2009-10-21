@@ -1,5 +1,10 @@
 <?php
 
+function scholar_base_theme(&$existing, $type, $theme, $path) {
+  return zen_theme($existing, $type, $theme, $path);
+}
+
+
 function scholar_base_preprocess_page($vars){
 
   $regions = array (   // TODO do this programatically
@@ -39,7 +44,7 @@ function scholar_base_context_links($links) {
     $options['attributes']['class'] = isset($link['attributes']['class']) ? $link['attributes']['class'] : 'context-button';
     //if(!is_array($options['query'])) $options['query'] = array();
     //$options['query']['destination'] = $_GET['q'];
-    
+
     if (!empty($link['custom'])) {
       $output[]= l($link['title'], $link['href'], $options);
     }
