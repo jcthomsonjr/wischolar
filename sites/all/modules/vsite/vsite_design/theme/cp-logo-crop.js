@@ -8,7 +8,10 @@ function cp_updateLogo(c){
 }
 
 if (Drupal.jsEnabled) {
-  $(document).ready(function() {
+  //$(document).ready(function() {
+  //Window.load because safari likes you to wait till the images are ready
+  $(window).load(function(){
+	  
 	  var api = $.Jcrop('#logo_preview',{
 		    aspectRatio: 1.2857,
 		    minSize: [180,140],
@@ -38,25 +41,25 @@ if (Drupal.jsEnabled) {
 	  $("#edit-submit").insertAfter("#edit-settings-logo-logo-upload").css({position:'relative', top:'0px', display:'none'}).attr('value',"Upload");	  
 	  $("a.edit-submit").remove();
 	  
-	  if($('#live_preview').attr('width') <= 180 || $('#live_preview').attr('height') <= 140){
-		  
-		  if($('#live_preview').attr('width') == undefined || $('#live_preview').attr('width') == 0 || $('#live_preview').attr('height') == undefined || $('#live_preview').attr('width') == 0){
-			  $(window).load(function(){
-				  if( $('#logo_preview').attr('width') <= 180 ||  $('#logo_preview').attr('height') <= 140){
-					  $("input#edit-settings-logo-crop-btn").remove();
-					  $("#live_preview_box").remove();
-				  }else{
-					  $('#live_preview_box_inner').css({
-						width: $('#live_preview').attr('width') + 'px',
-						height: $('#live_preview').attr('height') + 'px',
-					  });
-					  api.setSelect([5,5,180,140]);
-				  }
-			  });
-		  }else{
+	  if($('#logo_preview').attr('width') <= 180 || $('#logo_preview').attr('height') <= 140){
+		 
+//		  if($('#live_preview').attr('width') == undefined || $('#live_preview').attr('width') == 0 || $('#live_preview').attr('height') == undefined || $('#live_preview').attr('width') == 0){
+//			  $(window).load(function(){
+//				  if( $('#logo_preview').attr('width') <= 180 ||  $('#logo_preview').attr('height') <= 140){
+//					  $("input#edit-settings-logo-crop-btn").remove();
+//					  $("#live_preview_box").remove();
+//				  }else{
+//					  $('#live_preview_box_inner').css({
+//						width: $('#live_preview').attr('width') + 'px',
+//						height: $('#live_preview').attr('height') + 'px',
+//					  });
+//					  api.setSelect([5,5,180,140]);
+//				  }
+//			  });
+//		  }else{
 			  $("input#edit-settings-logo-crop-btn").remove();
 			  $("#live_preview_box").remove();
-		  }//If it isn't loaded wait
+	//	  }//If it isn't loaded wait
 		  
 		  
 	  }
