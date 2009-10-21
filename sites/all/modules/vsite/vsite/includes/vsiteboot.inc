@@ -64,7 +64,6 @@ function _scholar_testingcontent(){
 	}
 }
 
-
 function _vsite_filefield_paths_config() {
   $return = array();
 
@@ -91,20 +90,12 @@ function _vsite_filefield_paths_config() {
 
   //set the "filefield" paths
   reset($types);
-  $settings = new stdClass();
-  $settings -> filepath = serialize($file_path);
-  $settings -> filename = serialize($file_name);
 
   //find the fields
   foreach (content_fields() as $field){
-    if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)){
-      
-      //if field is found, then define the content type and field name
-      $settings -> type = $field['type_name'];
-      $settings -> field = $field['field_name'];
-      
-      //add path settings to database
-      drupal_write_record('filefield_paths', $settings);
+    if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)){      
+      //add settings to database if applicable
+        db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'], serialize($file_name), serialize($file_path));     
     }
   }
 
