@@ -345,7 +345,7 @@ function _scholar_enable_themes(){
   $themes = array('zen', 'cp_theme', 'scholar_base');
 
   $themes = array_merge($themes, __scholar_get_scholar_theme_names());
-  install_enable_theme($themes);
+  install_enable_themes($themes);
 	
   // disable all DB blocks
   db_query("UPDATE {blocks} SET status = 0, region = ''"); 
