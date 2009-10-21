@@ -64,10 +64,10 @@ function _vsite_content_default_fields() {
       'title_type' => 'textfield',
       'default_image' => array(
         'filename' => 'uniprofs1.jpg',
-        'filepath' => 'sites/scholar/files/imagefield_default_images/uniprofs1_1.jpg',
+        'filepath' => drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg",
         'filemime' => 'image/jpeg',
         'source' => 'default_image_upload',
-        'destination' => 'sites/scholar/files/imagefield_default_images/uniprofs1_1.jpg',
+        'destination' => drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg",
         'filesize' => 37046,
         'uid' => '1',
         'status' => 1,
