@@ -16,6 +16,8 @@ class vsite_layout_settings_layout implements space_setting {
 
   function form($space, $value = array()) {
 
+	  $s_page_type = 	(isset($_GET['page_type']))? $_GET['page_type']:'all';
+  	
   	$form = array('#title' => 'Site Layout');
 
 	  $regions = array_keys(system_region_list('scholar_base'));
@@ -24,9 +26,9 @@ class vsite_layout_settings_layout implements space_setting {
 	    $r = str_replace('_','-', $region);
 	    $wgts_id = 'scholarlayout-' . $r;
 	    $form[$wgts_id] = array('#type' => 'hidden' );
-	    if(is_array($value['all']) && in_array($region,$value['all'])){
+	    if(is_array($value[$s_page_type]) && in_array($region,$value[$s_page_type])){
 	    	$s_def = "";
-	    	foreach($value['all'] as $s_wgt => $s_region) if($s_region == $region) $s_def .= $s_wgt."|";
+	    	foreach($value[$s_page_type] as $s_wgt => $s_region) if($s_region == $region) $s_def .= $s_wgt."|";
 	    	$form[$wgts_id]['#default_value'] = rtrim($s_def,"\|");
 	    }
 	  }
@@ -36,7 +38,7 @@ class vsite_layout_settings_layout implements space_setting {
 	  $form['page_type'] = array(
 	    '#type' => 'select',
 	    '#title' => t('Pages in your site'),
-	    '#default_value' =>'all',
+	    '#default_value' => $s_page_type,
 	    '#options' => $a_page_types,
 	    '#description' => t('You may choose custom layouts for specific pages in your site. This is useful if you\'d like related widgets to appear on particular pages, such as a list of co-authors to appear on your publications page.'),
 	    '#ahah' => array(
@@ -51,7 +53,7 @@ class vsite_layout_settings_layout implements space_setting {
 
 	  $form['secret_hidden_ahah'] = array(
 	    '#type' => 'hidden',
-	    '#value' =>'all',
+	    '#value' => $s_page_type,
 	    '#ahah' => array(
 	          'event' => 'go_ahah',
 	          'path' => 'cp/settings/layout/top_widgets_js',
@@ -120,10 +122,10 @@ class vsite_layout_settings_layout implements space_setting {
 	        
 	        //Widgets that have changed positions
 	        foreach ($setting as $s_widget_name => $s_region){
-	        	if(array_key_exists($s_widget_name,$a_new_settings) && $s_region != $a_new_settings[$s_widget_name]){
+	        	if(array_key_exists($s_widget_name,$a_new_settings) && $s_region != $a_new_settings[$s_widget_name] && $a_prev_settings[$s_widget_name] == $a_new_settings[$s_widget_name]){
 	        		$a_new_settings[$s_widget_name] = $s_region;
 	        		$b_modified = true;
-	        	}
+	        	}//The widget is on the subpage and it is not in the position you are moving to already, and it was in the prev location
 	        }
 
 	        if($b_modified) $space->settings['layout'][$s_page_nm] = $a_new_settings;
@@ -135,6 +137,18 @@ class vsite_layout_settings_layout implements space_setting {
 	  }
 
 	  return $space->settings['layout'];
+  }
+  
+  function modifyRedirect($form_values){
+  	if (!empty($form_values)) {
+      $s_page_type = $form_values['page_type'];
+      if($s_page_type && $s_page_type != 'all'){
+      	return array($_GET['q'], "page_type=".$s_page_type); //$_GET['q']."?page_type=".$s_page_type;
+      }else{
+      	return $_GET['q'];
+      }
+  	}
+    return $_GET['q'];
   }
 }
 

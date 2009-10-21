@@ -67,9 +67,10 @@ function vsite_layout_layout(){
   drupal_add_js(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.js');
   drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.css');
   $space = vsite_get_vsite();
+  $s_page_type =  (isset($_GET['page_type']))? $_GET['page_type']:'all';
 
   //top
-  $vsite_layout_widgets = vsite_layout_region_widgets();
+  $vsite_layout_widgets = vsite_layout_region_widgets($space,$s_page_type);
   $wgts = array_key_exists('unused',$vsite_layout_widgets)?$vsite_layout_widgets['unused']:array();
 
   $top = theme('vsite_layout_layout_widgets', $wgts, 'scholarlayout-top-widgets', 'scholarlayout-widgets-list');
@@ -99,12 +100,13 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars){
     $vsite_layout_widgets[$region] = array();
   }
 
-  $vsite_layout_widgets = vsite_layout_region_widgets();
+  $s_page_type =  (isset($_GET['page_type']))? $_GET['page_type']:'all';
+  $vsite_layout_widgets = vsite_layout_region_widgets(false,$s_page_type);
 
   foreach($regions as $region){
     $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
     $wgts = array_key_exists($region,$vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
-    _check_for_overrides($wgts,$region);
+    if($s_page_type == 'all') _check_for_overrides($wgts,$region);
     $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
   }
 
