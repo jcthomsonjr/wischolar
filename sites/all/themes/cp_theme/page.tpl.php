@@ -12,7 +12,7 @@
   <script type="text/javascript">
   if ($.browser.msie) {
 	  $(document).ready(function() {
-		  $('#main-content .inner-frame:first').prepend('<h1>The control panel does not currently support Internet Explorer.  A good alternative is the freely avalible browser by Mozilla called <a href="http://www.getfirefox.com">Firefox</a></h1>');
+		  $('#main-content .innerframe:first').prepend('<h1>The control panel does not currently support Internet Explorer.  A good alternative is the freely avalible browser by Mozilla called <a href="http://www.getfirefox.com">Firefox</a></h1>');
 	  });
   }
   </script>
