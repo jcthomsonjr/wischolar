@@ -52,8 +52,9 @@ function vsite_taxonomy_menu() {
 }
 
 function vsite_taxonomy_tt(){
-  $map = spaces_features_map($type = NULL, $reset = FALSE);
-  dpm($map);
+  dpm(vsite_taxonomy_vocabulary_default());
+$feature = feature_load('scholar_blog');
+//dpm($feature);
   return 'sss';
 }
 
@@ -443,6 +444,9 @@ function vsite_taxonomy_vocabulary_default(){
   foreach($content_types as $type){
     $types[$type] = 1;
   }
+  
+  drupal_alter('vsite_taxonomy_content_types', $types);
+
   return array (
     0 => array (
     'name' => 'vocabulary', 
