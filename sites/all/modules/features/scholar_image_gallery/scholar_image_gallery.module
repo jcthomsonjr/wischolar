@@ -71,6 +71,17 @@ function scholar_image_gallery_vsite_widgets(){
   return $items;
 }
 
+/**
+ * hook vsite_taxonomy_content_types_alter
+ * @return unknown_type
+ */
+function scholar_image_gallery_vsite_taxonomy_content_types_alter(&$types){
+  // no taxonomy for gallery/images
+  unset($types['gallery']);
+  unset($types['image']);
+}
+
+
 
 /**
  * Helper to implemetation of hook_imagecache_default_presets().
