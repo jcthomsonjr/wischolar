@@ -253,10 +253,12 @@ function cp_feature_customize($feature_name){
   ctools_include('ajax');
   ctools_include('modal');
   
+  $feature = feature_load($feature_name);
+  $feature_title = features_get_feature_title($feature);
   $form_state = array(
     're_render' => FALSE,
     'ajax' => TRUE,
-    'title' => 'Feature "' . $feature_name . '" settings',
+    'title' => 'Feature "' . $feature_title . '" settings',
   );
 
   // pass all arguments needed by the callback function (ctools thing)
