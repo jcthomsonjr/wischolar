@@ -46,6 +46,17 @@ function scholar_blog_context_links_alter(&$links) {
 }
 
 /**
+ * hook link_alter (admin at the end of links)
+ */
+function scholar_blog_link_alter(&$links, $node){
+  
+  if (isset($links['blog_usernames_blog'])) {
+    unset($links['blog_usernames_blog']);
+  }
+}
+
+
+/**
  * Implementation of hook_strongarm().
  */
 function scholar_blog_strongarm() {
