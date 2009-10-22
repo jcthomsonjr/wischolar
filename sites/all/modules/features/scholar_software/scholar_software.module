@@ -39,6 +39,7 @@ function scholar_software_strongarm() {
 /**
  * Implementation of hook_nodeapi().
  */
+/*
 function scholar_software_nodeapi(&$node, $op, $teaser, $page){
   if ($node->type == 'software') {
     switch ($op) {
@@ -85,7 +86,7 @@ function scholar_software_nodeapi(&$node, $op, $teaser, $page){
 
 }
 
-
+*/
 /**
  * Implementation of hook_context_links_alter().
  */
@@ -99,6 +100,8 @@ function scholar_software_context_links_alter(&$links) {
 /**
  * Edit cv form to add checkbox for toggle
  */
+
+/*
 function scholar_software_form_alter(&$form, $form_state, $form_id){
   switch ($form_id) {
     case 'software_node_form' :
@@ -133,3 +136,4 @@ function scholar_software_form_alter(&$form, $form_state, $form_id){
       break;
   }
 }
+*/

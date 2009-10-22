@@ -145,8 +145,8 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
   }
   elseif (isset($form['#node']) && $form['#node']->type === 'biblio' && $form_id == $form['#node']->type .'_node_form') {
 
-    unset($form['doi_lookup']);
-    unset($form['cut_paste']);
+    //unset($form['doi_lookup']);
+    //unset($form['cut_paste']);
 
   }
 }
