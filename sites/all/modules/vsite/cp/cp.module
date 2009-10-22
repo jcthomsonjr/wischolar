@@ -294,7 +294,7 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
     ctools_include('ajax');
     ctools_include('modal');
     ctools_modal_add_js();
-    //drupal_add_js(drupal_get_path('module', 'cp') .'/theme/ctools_columns.js');
+    drupal_add_js(drupal_get_path('module', 'cp') .'/theme/ctools_columns.js');
     // we would like to change the "customize" link to "settings" 
     // and display the form in the popup
     foreach (array_keys($site -> features) as $f_name){
