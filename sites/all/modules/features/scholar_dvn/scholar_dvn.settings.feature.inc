@@ -17,7 +17,7 @@ class scholar_dvn_settings_feature implements space_setting {
   }
 
   function form($space, $value = array()){
-    $base_url = 'http://dvn.iq.harvard.edu/';
+    $base_url = 'http://dvn.iq.harvard.edu/dvn/dv/';
     $form['dvn_alias'] = array(
       '#type' => 'textfield', 
       '#title' => t('Dataverse alias'), 
