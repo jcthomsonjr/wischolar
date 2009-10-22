@@ -139,3 +139,13 @@ function _vsite_flags_boot(){
   $flag->disable();
   _flag_clear_cache();
 }
+
+
+function _vsite_variables_default(){
+    
+  // site performance
+  variable_set("cache", "1");
+  variable_set("preprocess_css", "1");
+  variable_set("preprocess_js", "1");
+
+}
