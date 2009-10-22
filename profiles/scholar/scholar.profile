@@ -202,10 +202,10 @@ function scholar_profile_tasks(&$task, $url) {
       $operations[] = array('_install_module_batch', array($module, $files[$module]->info['name']));
     }
     $batch = array(
-      'operations' => $operations,
-      'finished' => '_scholar_profile_batch_finished',
-      'title' => st('Installing @drupal', array('@drupal' => drupal_install_profile_name())),
-      'error_message' => st('The installation has encountered an error.'),
+    'operations' => $operations,
+    'finished' => '_scholar_profile_batch_finished',
+    'title' => st('Installing @drupal', array('@drupal' => drupal_install_profile_name())),
+    'error_message' => st('The installation has encountered an error.'),
     );
     // Start a batch, switch to 'profile-install-batch' task. We need to
     // set the variable here, because batch_process() redirects.
@@ -217,26 +217,23 @@ function scholar_profile_tasks(&$task, $url) {
   // Run additional configuration tasks
   // @todo Review all the cache/rebuild options at the end, some of them may not be needed
   if ($task == 'scholar-configure') {
-      install_include(_scholar_core_modules());
+    install_include(_scholar_core_modules());
     // create roles
     _scholar_create_roles();
     // rebuild access (required by og)
     //_scholar_access_rebuild();
     // create default content types
     //_scholar_profile_content_types();
-    
+
     // configure modules  (variables table mainly)
     //_scholar_variable_set();
-    
-    // set the theme
-    _scholar_enable_themes();
-    
+
     // for testing purposes, create nodes groups etc
 
 
     // configure wisywig/tinymce
     _scholar_wysiwyg_config();
-    
+
     // configure the contact module
     _scholar_contact_config();
     /*
@@ -251,23 +248,23 @@ function scholar_profile_tasks(&$task, $url) {
     drupal_get_schema('system', TRUE); // Clear schema DB cache
     drupal_flush_all_caches();
     db_query("UPDATE {blocks} SET status = 0, region = ''"); // disable all DB blocks
-    
+
     //features_rebuild();
 
-  variable_set('scholar_content_type', 'vsite');
-  // set default to america/new yourk
-  variable_set(date_default_timezone_name, "America/New_York");
-  
-     // _scholar_testingcontent();
-  
-  //_scholar_filefield_paths_config();
+    // enable the themes
+    _scholar_enable_themes();
 
-  //get the exported D5 scholar data - no longer called here
-  //_simport_exportdata();
-   
-   //now import the D5 scholar data
-  // simport_import();
-  
+    variable_set('scholar_content_type', 'vsite');
+    // set default to america/new yourk
+    variable_set(date_default_timezone_name, "America/New_York");
+
+    // _scholar_testingcontent();
+
+    //_scholar_filefield_paths_config();
+
+    //import the D5 scholar data
+    // simport_import();
+
     // Get out of this batch and let the installer continue
     $task = 'profile-finished';
   }
