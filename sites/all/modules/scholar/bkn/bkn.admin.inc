@@ -17,7 +17,7 @@ function bkn_admin_settings() {
   $form['bkn_mode'] = array(
     '#type' => 'radios',
     '#title' => t('How should the data be retrieved from BKN?'),
-    '#default_value' => variable_get('bkn_mode', 1),
+    '#default_value' => variable_get('bkn_mode', 2),
     '#options' => array(t('Lookup via autocomplete (many requests to bkn)'), t('User Initiated (single request)'), t('Disabled')),
   );
    
