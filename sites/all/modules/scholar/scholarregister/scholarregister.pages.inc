@@ -171,7 +171,8 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   $message  = '<div id="success-message">';
   $message .= '<p>Success! Your site has been created.</p>';
   $message .= '<p>The url of your site is ' . $base_url . '/' . $domain . " " . l(t("Go there now"), $base_url . '/' . $domain);
-  $message .= '<p>Check your email account for further details.</p>';
+  $message .= '<p>Check your email account for further details on how to login in to start adding features and
+content.</p>';
   $message .= '</div>';
   $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
   $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true);
