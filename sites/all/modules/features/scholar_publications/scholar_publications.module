@@ -143,6 +143,12 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     // just unset the taxonomy settings for now.
     unset($form['import_taxonomy']);
   }
+  elseif (isset($form['#node']) && $form['#node']->type === 'biblio' && $form_id == $form['#node']->type .'_node_form') {
+
+    unset($form['doi_lookup']);
+    unset($form['cut_paste']);
+
+  }
 }
 
 function scholar_publications_overview(){
