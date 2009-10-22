@@ -64,7 +64,7 @@ function scholar_biocv_bio(){
   
   if ($bio_node){
   	drupal_set_title(t('%title', array('%title' => $bio_node->title)));
-    $s_out .= node_view($bio_node,false,true,false);
+    $s_out .= node_view($bio_node,false,true,true);
   }
   
   return $s_out;
@@ -101,7 +101,7 @@ function scholar_biocv_cv(){
   $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);
   if ($cv_node && !$b_use_attachment){
     drupal_set_title(t('%title', array('%title' => $cv_node->title)));
-    $s_out .= node_view($cv_node,false,true,false);
+    $s_out .= node_view($cv_node,false,true,true);
   }elseif($cv_node && $b_use_attachment && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
   	drupal_set_title(t('%title', array('%title' => $cv_node->title)));
   	
