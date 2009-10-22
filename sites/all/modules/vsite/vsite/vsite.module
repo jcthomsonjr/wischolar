@@ -40,6 +40,9 @@ function vsite_vsiteboot(){
     _vsite_filefield_paths_config();
     _vsite_global_taxonomy();
     _vsite_flags_boot();
+    
+    // set some default variables
+    _vsite_variables_default();
 
     variable_set('scholar_installed', 1);
 
