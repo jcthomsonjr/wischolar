@@ -258,12 +258,9 @@ function vsite_news_activity_access_grants($acccount) {
   $view = views_get_view('vsite_news_follow');
   $view->execute();
   
-  //$a_sites = array(1,4,6);
   $realm_ids = array();
-  if (!empty($a_sites)) {
-    foreach ($view->result as $o_site) {
-      $realm_ids['vsite'][] = $o_site->nid;
-    }
+  foreach ($view->result as $o_site) {
+    $realm_ids['vsite'][] = $o_site->nid;
   }
   return $realm_ids;
 }

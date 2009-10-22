@@ -285,6 +285,10 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id){
 			      if (isset($node->path)) {
 			        $form['path']['old_alias'] = array('#type' => 'value', '#value' => $node->path);
 			      }
+			      
+			      if($o_scholar && strpos($form['path']['path']['#default_value'],$o_scholar->purl.'/') === 0){
+			      	$form['path']['path']['#default_value'] = substr($form['path']['path']['#default_value'],strlen($o_scholar->purl.'/'));
+			      }
 			    }
 	      }
 	    }
