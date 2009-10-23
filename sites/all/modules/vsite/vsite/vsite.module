@@ -337,6 +337,78 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
           _spaces_og_make_hidden($form['spaces']);
         }
       }
+      
+      if (isset($form['type']) && isset($form['#node'])
+      && ($form_id == $form['type']['#value'] .'_node_form')) {
+        
+        if(module_exists('override_node_options') && array_key_exists('revision_information',$form) && array_key_exists('options',$form)){
+          if(array_key_exists('log',$form['revision_information'])){
+          	$form['options']['log'] = $form['revision_information']['log'];
+          	if(!is_array($form['#validate'])) $form['#validate'] = array();
+          	if(!in_array('cp_validate_node_flags',$form['#validate'])) $form['#validate'][] = 'vsite_validate_node_flags';
+          }
+          
+        	_spaces_og_make_hidden($form['revision_information']);
+        }//Move the revision information under the options tab
+        
+        $nid = !empty($form['nid']['#value']) ? $form['nid']['#value'] : NULL;
+        if(module_exists('override_node_options') && array_key_exists('options',$form)){
+        	$vsite = vsite_get_vsite();
+        	if(array_key_exists('override_publishing_promote',$form['options'])){
+        		_spaces_og_make_hidden($form['options']['override_publishing_promote']);
+        	}
+        	
+          if($vsite->settings['front']['frontpage'] == 'flag'){
+            $form['options']['vsite_promote_to_front'] = array('#type' => 'checkbox', '#title' => "Promote to front page", "#default_value" => false); 
+            if($nid){
+            	$flag = flag_get_flag('vsite_frontpage');
+              $form['options']['vsite_promote_to_front']['#default_value'] = $flag->is_flagged($nid);
+            } 
+          }
+          
+          $form['options']['vsite_make_featured'] = array('#type' => 'checkbox', '#title' => "Make this Featured", "#default_value" => false);
+          if($nid){
+            $flag = flag_get_flag('featuredposts');
+            $form['options']['vsite_make_featured']['#default_value'] = $flag->is_flagged($nid);
+          } 
+        }//Overide the default promote functionality in favor of ours
+        
+      }
+      break;
+  }
+}
+
+/**
+ * Validate our custom arranged flags
+ * @param $form array
+ * @param $form_state array
+ */
+function vsite_validate_node_flags($form, &$form_state){
+	//Reassign back to revision info for submission
+	if(isset($form_state['values']['options']['log'])) $form_state['values']['log'] = $form_state['values']['options']['log'];
+}
+
+/**
+ * Submit our custom arranged flags
+ * @param $form_id string
+ * @param $form_values array
+ */
+function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
+  switch ($op) {
+    case 'update':
+    case 'insert':
+      // Response to the flag checkboxes added to the form in vsite_form_alter().
+      if (isset($node->vsite_promote_to_front)) {
+        $s_action = ($node->vsite_promote_to_front == 1)?'flag':'unflag';
+		    $flag = flag_get_flag('vsite_frontpage');
+		    $flag->flag($s_action,$node->nid);
+      }
+      
+      if (isset($node->vsite_make_featured)) {
+        $s_action = ($node->vsite_make_featured == 1)?'flag':'unflag';
+        $flag = flag_get_flag('featuredposts');
+        $flag->flag($s_action,$node->nid);
+      }
       break;
   }
 }
