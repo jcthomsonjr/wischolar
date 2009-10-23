@@ -11,7 +11,8 @@
 
 <ul id="<?php print $wgts_id; ?>" class = "<?php print $wgts_class; ?>">
 	<?php foreach($wgts as $w):?>
-		<li class="scholarlayout-item" id="<?php print $w['module']; ?>_<?php print $w['delta']; ?>" <?php if(isset($w['hidden']) && $w['hidden']) print " style='display:none;' "; ?>> <?php print $w['label']; ?>
+	  <?php $s_class = (isset($w['hidden']) && $w['hidden'])? 'scholarlayout-item disabled':'scholarlayout-item'; ?>
+		<li class="<?= $s_class ?>" id="<?php print $w['module']; ?>_<?php print $w['delta']; ?>"> <?php print $w['label']; ?>
 		<!--
 		<span class="scholarlayout-item-settings">Edit
       <ul class="item-settings-popup">
