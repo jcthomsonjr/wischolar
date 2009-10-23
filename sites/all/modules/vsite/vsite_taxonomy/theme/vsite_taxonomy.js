@@ -27,7 +27,8 @@ Drupal.VsiteTaxonomy.Add = function(){
 	newDest =  dest + '/' + newTerm;
 	
 	$(this).attr('href',newDest);
-	//alert($(this).attr('href'));
+	if(newTerm) $(this).trigger('doAjax');
+	$(this).attr('href',dest);
 	return false;
 }
 
@@ -45,7 +46,7 @@ Drupal.behaviors.vsitetaxonomy = function(context) {
   var add_link = $('a.add:not(.vsitetaxonomy-processed)', context);
 
   add_link.click(Drupal.VsiteTaxonomy.Add);
-  add_link.click(Drupal.CTools.AJAX.clickAJAXLink);
+  add_link.bind('doAjax', Drupal.CTools.AJAX.clickAJAXLink );
 }
 
 /*
