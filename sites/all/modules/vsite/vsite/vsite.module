@@ -353,6 +353,7 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
         
         $nid = !empty($form['nid']['#value']) ? $form['nid']['#value'] : NULL;
         if(module_exists('override_node_options') && array_key_exists('options',$form)){
+        	drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite_verticaltabs_options.js','module','header',true);
         	$vsite = vsite_get_vsite();
         	if(array_key_exists('override_publishing_promote',$form['options'])){
         		_spaces_og_make_hidden($form['options']['override_publishing_promote']);
