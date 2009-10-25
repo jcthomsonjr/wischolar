@@ -127,6 +127,9 @@ function scholar_string_overrides(){
   
   // Biblio
   'Biblio' => 'Publication',
+  
+  // vbo
+  'Delete node' => 'Delete',
   );
 
   return $overrides;
