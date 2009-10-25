@@ -56,6 +56,22 @@ function _scholar_classes_views_default_views() {
       'field' => 'sticky',
       'relationship' => 'none',
     ),
+    'field_class_year_value' => array(
+      'order' => 'DESC',
+      'delta' => -1,
+      'id' => 'field_class_year_value',
+      'table' => 'node_data_field_class_year',
+      'field' => 'field_class_year_value',
+      'relationship' => 'none',
+    ),
+    'field_class_semester_value' => array(
+      'order' => 'ASC',
+      'delta' => -1,
+      'id' => 'field_class_semester_value',
+      'table' => 'node_data_field_class_semester',
+      'field' => 'field_class_semester_value',
+      'relationship' => 'none',
+    ),
     'created' => array(
       'order' => 'DESC',
       'granularity' => 'second',
