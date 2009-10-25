@@ -30,19 +30,6 @@ function _vsite_content_views_default_views() {
         'button' => 'Override',
       ),
     ),
-    'timestamp' => array(
-      'label' => 'New?',
-      'link_to_node' => 0,
-      'comments' => 0,
-      'exclude' => 0,
-      'id' => 'timestamp',
-      'table' => 'history_user',
-      'field' => 'timestamp',
-      'override' => array(
-        'button' => 'Override',
-      ),
-      'relationship' => 'none',
-    ),
     'type' => array(
       'label' => 'Type',
       'link_to_node' => 0,
@@ -78,6 +65,33 @@ function _vsite_content_views_default_views() {
       'override' => array(
         'button' => 'Override',
       ),
+      'relationship' => 'none',
+    ),
+    'changed' => array(
+      'label' => 'Updated date',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'date_format' => 'time ago',
+      'custom_date_format' => '',
+      'exclude' => 0,
+      'id' => 'changed',
+      'table' => 'node',
+      'field' => 'changed',
       'relationship' => 'none',
     ),
     'delete_node' => array(
@@ -295,21 +309,20 @@ function _vsite_content_views_default_views() {
   ));
   $handler->override_option('title', 'Content');
   $handler->override_option('empty_format', '1');
-  $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'bulk');
   $handler->override_option('style_options', array(
     'grouping' => '',
     'override' => 1,
-    'sticky' => 0,
-    'order' => 'asc',
+    'sticky' => 1,
+    'order' => 'desc',
     'columns' => array(
       'title' => 'title',
-      'timestamp' => 'title',
       'type' => 'type',
       'name' => 'name',
       'status' => 'status',
+      'changed' => 'changed',
       'delete_node' => 'delete_node',
       'edit_node' => 'edit_node',
     ),
@@ -317,9 +330,6 @@ function _vsite_content_views_default_views() {
       'title' => array(
         'sortable' => 1,
         'separator' => '&nbsp;',
-      ),
-      'timestamp' => array(
-        'separator' => '',
       ),
       'type' => array(
         'sortable' => 1,
@@ -330,7 +340,11 @@ function _vsite_content_views_default_views() {
         'separator' => '',
       ),
       'status' => array(
-        'sortable' => 0,
+        'sortable' => 1,
+        'separator' => '',
+      ),
+      'changed' => array(
+        'sortable' => 1,
         'separator' => '',
       ),
       'delete_node' => array(
@@ -340,31 +354,33 @@ function _vsite_content_views_default_views() {
         'separator' => '',
       ),
     ),
-    'default' => '-1',
+    'default' => 'changed',
     'execution_type' => '1',
     'display_type' => '0',
     'hide_select_all' => 0,
-    'skip_confirmation' => 0,
+    'skip_confirmation' => 1,
     'display_result' => 0,
     'merge_single_action' => 0,
     'selected_operations' => array(
       'views_bulk_operations_delete_node_action' => 'views_bulk_operations_delete_node_action',
-      'node_mass_update:c4d3b28efb86fd703619a50b74d43794' => 'node_mass_update:c4d3b28efb86fd703619a50b74d43794',
       'flag_nodes:cf1284faf0f73d5919139733755fa05f' => 'flag_nodes:cf1284faf0f73d5919139733755fa05f',
+      'node_mass_update:c4d3b28efb86fd703619a50b74d43794' => 'node_mass_update:c4d3b28efb86fd703619a50b74d43794',
       'node_mass_update:9c585624b9b3af0b4687d5f97f35e047' => 'node_mass_update:9c585624b9b3af0b4687d5f97f35e047',
       'flag_nodes:b97b1be75191408aa6b92ede220eed88' => 'flag_nodes:b97b1be75191408aa6b92ede220eed88',
       'flag_nodes:b11a471c04bbaaca7b9016b4d0c2f561' => 'flag_nodes:b11a471c04bbaaca7b9016b4d0c2f561',
       'node_mass_update:8ce21b08bb8e773d10018b484fe4815e' => 'node_mass_update:8ce21b08bb8e773d10018b484fe4815e',
+      'flag_nodes:026735f255f15012b2fc8b425835ceb4' => 'flag_nodes:026735f255f15012b2fc8b425835ceb4',
       'node_mass_update:0ccad85c1ebe4c9ceada1aa64293b080' => 'node_mass_update:0ccad85c1ebe4c9ceada1aa64293b080',
       'og_add_group_action' => 0,
-      'flag_nodes:1980f2a3af0b5c3577850d4ba2600405' => 0,
       'node_assign_owner_action' => 0,
       'node_mass_update:a27b9efabcd054685a549378b174ad11' => 0,
       'system_message_action' => 0,
+      'flag_nodes:f8d951529138fca8e3beeb63d2d03a19' => 0,
       'views_bulk_operations_script_action' => 0,
-      'flag_nodes:153d839b937316e8e7fb5cb83c08e2de' => 0,
       'flag_nodes:cf94231c09e756894750b37b8b1c3e6e' => 0,
+      'flag_nodes:153d839b937316e8e7fb5cb83c08e2de' => 0,
       'flag_nodes:dced0d70eea59011d8a91b0dd2e35969' => 0,
+      'flag_nodes:087f28c6c6b68ff7fc8b98a8891a4ce7' => 0,
       'flag_nodes:ccb15f368c8967f519c1ee56eb314352' => 0,
       'og_make_private_action' => 0,
       'og_make_public_action' => 0,
@@ -384,15 +400,29 @@ function _vsite_content_views_default_views() {
       'og_remove_group_action' => 0,
       'flag_nodes:ddcf8f24137fd10987fd9f8dbdab7029' => 0,
       'node_save_action' => 0,
-      'flag_nodes:026735f255f15012b2fc8b425835ceb4' => 0,
       'system_send_email_action' => 0,
-      'flag_nodes:76e4c513dfadc798e2eb84ad0a677401' => 0,
-      'flag_nodes:d849f1f2e5d0dfb863c85500fa6c3e66' => 0,
       'flag_nodes:5aa8d01cff8b6acbd4d3880034b55579' => 0,
       'flag_nodes:96250a008800e16928d04041e311370e' => 0,
+      'flag_nodes:d849f1f2e5d0dfb863c85500fa6c3e66' => 0,
       'node_unpublish_action' => 0,
       'node_unpublish_by_keyword_action' => 0,
+      'pathauto_node_operations_update' => 0,
     ),
+  ));
+  $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->override_option('path', 'cp/content');
+  $handler->override_option('menu', array(
+    'type' => 'normal',
+    'title' => 'Content',
+    'description' => 'Content',
+    'weight' => '1',
+    'name' => 'cp',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'normal',
+    'title' => 'Content',
+    'description' => '',
+    'weight' => '0',
   ));
 
   $views[$view->name] = $view;

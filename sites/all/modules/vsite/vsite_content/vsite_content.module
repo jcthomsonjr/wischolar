@@ -8,19 +8,12 @@ include_once('vsite_content.features.inc');
 function vsite_content_menu(){
   $items = array();
 
-  $items['cp/content'] = array(
-    'title' => 'Content', 
-    'page callback' => 'vsite_content_content',
-    //'page callback' => 'cp_route',
-    'weight' => 1 
-  );
-  
   $items['cp/content/all'] = array(
     'title' => 'All', 
-    'page callback' => 'vsite_content_content',
+    //'page callback' => 'vsite_content_content',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  
+ 
   $items['cp/content/files'] = array(
     'title' => 'Files',
     'page callback' => 'vsite_content_files',
@@ -41,9 +34,9 @@ function vsite_content_menu(){
     $items['cp/content/'.$type] = array(
       'title' => $all_types[$type],
       'access callback' => 'vsite_content_content_access',
-      'access arguments' => array($type, $name),
-      'page callback' => 'vsite_content_content',
-      'page arguments' => array($type, $all_types[$type]),
+      'access arguments' => array($name),
+      //'page callback' => 'vsite_content_content',
+      //'page arguments' => array($type, $all_types[$type]),
       'type' => MENU_LOCAL_TASK,
       //'menu_name' => 'cp',	 
     );    
@@ -52,9 +45,42 @@ function vsite_content_menu(){
   return $items;
 }
 
+/**
+ * hook views_pre_build
+ */
+function vsite_content_views_pre_build(&$view){
+  if ($view->name == 'vsite_content') {
+    $type = arg(2);
+    if ($type && $type !== 'all') {
+      $view->set_arguments(array(
+          $type 
+      ));
+      
+      $type_url_str = str_replace('_', '-', $type);
+      $all_types = node_get_types('names');
+      
+      $links = array();
+      $links[] = array(
+          'href' => 'node/add/' . $type_url_str, 
+          'title' => $all_types[$type], 
+          'query' => array(
+              'destination' => 'cp/content/' . $type 
+          ) 
+      );
+      $output = $type ? theme('context_links', $links) : '';
+      
+      $view->display['default']->handler->options['header'] = $output;
+    }
+  }
 
-function vsite_content_content_access($type,$name){
+}
+
+/**
+ * access callback
+ */
+function vsite_content_content_access($name){
   $vsite = vsite_get_vsite();
+  // feature is enabled (value not 0)
   return $vsite -> features[$name];
 }
 
@@ -70,6 +96,7 @@ function vsite_content_files(){
 /**
  * Function to return output on cp content page
  */
+/*
 function vsite_content_content($type = NULL, $name = NULL){
   //Add collapsible JS
   drupal_add_js('misc/collapse.js');
@@ -104,6 +131,7 @@ function vsite_content_content($type = NULL, $name = NULL){
   
   return $output;
 }
+*/
 
 /**
  * Return the result from vsite_content view.
@@ -142,7 +170,7 @@ function vsite_content_content_view($type, $vid = NULL){
     );
   }
   $view->init();
-  $view->set_display('default');
+  $view->set_display('page_1');
   $view -> set_arguments(array($type));
   $view->execute();
   return $view->render();
@@ -153,23 +181,25 @@ function vsite_content_content_view($type, $vid = NULL){
  * Hook form_alter
  * Change the title of the vbo select element 
  */
- 
+
 function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_state, $form_id = 'views_bulk_operations_form__1'){
  if ($form['#id'] == 'views-bulk-operations-form--1'){
   $form['select']['#title'] = 'Update options'; 
  }
 }
 
+
 /**
  * hook form_alter
  * Alter the views exposed form
  */
+
 function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
   drupal_add_js(drupal_get_path('module', 'vsite_content') . '/vsite_content.js');
-  if ($form['#id'] == 'views-exposed-form-vsite-content-default') {
-    //TODO: Is there a better way to get the content type argument???
+    //Add collapsible JS
+  drupal_add_js('misc/collapse.js');
+  if ($form['#id'] == 'views-exposed-form-vsite-content-page-1') {
     $type = arg(2);
-    
     //set action to current url
     $form['#action'] = request_uri();
     
@@ -195,11 +225,6 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
       unset($form['tid']);
     }
     else {
-      
-      //now we have the terms for this site, create an array formatted
-      //for the taxonomy options in the exposed filter.
-      //TODO: for now we just are going to use 1 vocabulary, but perhaps
-      //should nest loops so it can deal with multiple vocabs????
       foreach ( $terms as $term ) {
         $taxonomy_options[$term->tid] = $term->name;
       }
@@ -223,17 +248,33 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     
     $form['#prefix'] = '<fieldset class="group-account-basics collapsible"><legend>Filter options</legend>';
     $form['#suffix'] = '</fieldset>';
+    
+    
+    // ugly reset button
+    $vsite = vsite_get_vsite();
+    if (!$vsite){
+      return;
+    }
+    $active_menu = menu_get_item();
+    $path = $vsite -> purl . '/' . $active_menu['path'];
+    
+    $form['reset'] = array(
+      '#type' => 'markup',
+      '#value' => '<input class="form-button" type="reset" value="Reset" onClick="javascript:window.location=\'/'. $path .'\';" />',
+    );
   }
 }
+
 
 /**
  * Edit the content view form to put it into fieldsets 
  */
+
 function vsite_content_form_alter(&$form, $form_state, $form_id) {
   
   switch($form_id){
     case 'views_exposed_form':
-      if($form['#id'] == "views-exposed-form-vsite-content-default"){
+      if($form['#id'] == "views-exposed-form-vsite-content-page-1"){
       	$vals = $form_state['input'];
       	//is the filter set? if so don't collapse it
       	$s_state = (!is_array($vals) || !(strlen($vals['title'] || $vals['promote'] != 'All' || $vals['sticky'] != 'All' || $vals['status'] != 'All' || count($vals['tid']))))?'collapsed':'';
@@ -248,7 +289,6 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
     break;
   }
 }
-  
 
 function vsite_content_cp_confirm_overide(){
 	return array(
