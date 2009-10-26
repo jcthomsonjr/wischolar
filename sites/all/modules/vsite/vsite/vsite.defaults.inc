@@ -145,8 +145,8 @@ function _vsite_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '2' => 'scholar user',
+      '3' => 'scholar admin',
     ),
   );
 
@@ -164,8 +164,8 @@ function _vsite_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '2' => 'scholar user',
+      '3' => 'scholar admin',
     ),
   );
 
@@ -173,8 +173,8 @@ function _vsite_user_default_permissions() {
   $permissions[] = array(
     'name' => 'upload files',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'scholar user',
+      '1' => 'scholar admin',
     ),
   );
 
@@ -194,12 +194,20 @@ function _vsite_user_default_permissions() {
     ),
   );
 
+  // Exported permission: view revisions
+  $permissions[] = array(
+    'name' => 'view revisions',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: view uploaded files
   $permissions[] = array(
     'name' => 'view uploaded files',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'scholar user',
+      '1' => 'scholar admin',
     ),
   );
 
