@@ -71,8 +71,39 @@ function vsite_content_views_pre_build(&$view){
       
       $view->display['default']->handler->options['header'] = $output;
     }
+    else {
+      $vsite = vsite_get_vsite();
+      if ($vsite) {
+		//vsite_content_content_types_filter(&$view, $vsite);
+		//dpm($view);
+		//dpm($view->get_item('default', 'filter', 'type'));
+      }
+    }
   }
 
+}
+
+function vsite_content_content_types_filter($view, $vsite){
+  $content_types = $content_types = spaces_features_map('node');
+  $ctypes = array();
+  foreach ( $content_types as $type => $feature_name ) {
+    if ($vsite->features[$feature_name]) {
+      $ctypes[$type] = $type;
+    }
+  }
+  dpm($ctypes);
+  $view->display['default']->display_options['filters']['type'] = array(
+      'operator' => 'in',
+      'value' => array($type => $type),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array('operator' => FALSE, 'label' => ''),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    );
+  
 }
 
 /**
