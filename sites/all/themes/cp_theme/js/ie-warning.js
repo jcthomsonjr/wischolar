@@ -1,0 +1,3 @@
+$(document).ready(function() {
+		  $('#main-content .innerframe:first').prepend('<div id="ie-warning"><p>The control panel does not currently support Internet Explorer. Supported browsers for administration of a Scholar\'s Web Site are current versions of <a href="http://www.getfirefox.com">Firefox</a>, <a href="http://www.apple.com/safari">Safari</a>, <a href="http://www.opera.com">Opera</a>, or <a href="http://www.google.com/chrome">Chrome</a></p></div>');
+	  });
