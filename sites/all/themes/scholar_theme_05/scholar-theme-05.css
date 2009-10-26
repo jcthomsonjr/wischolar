@@ -1,7 +1,7 @@
 body {
     background: url(images/body-bg-no-sidebar.jpg) 50% 135px repeat-y #6d2a01;
     color:#666;
-    font:.9em/165% "Times New Roman", Times, Georgia, serif;
+    font:.9em/165% palatino, Baskerville, "palatino linotype", "Times New Roman", Times, Georgia, serif;
     }
 
 body.sidebar-left {
@@ -21,7 +21,7 @@ body.two-sidebars {
     position: fixed;
     background:url(images/bottom.png) center bottom no-repeat;
     bottom: 0;
-    height:228px;
+    height:215px;
     width: 100%;
     z-index:50;
     }
@@ -30,12 +30,12 @@ body.two-sidebars {
 #container {
     width: 960px;
     margin: 0 auto;
-    padding-bottom: 200px;
+    padding-bottom: 213px;
     }
 
 a, a:visited {
-    color:#af4917;
-    text-decoration: underline;
+    color:#953a0d;
+    text-decoration: none;
     }
 
 .title a, .title a:visited {
@@ -45,11 +45,12 @@ a, a:visited {
 
 a:hover, a.active {
   color:#000;
+  text-decoration: underline;
   }
 
 
 h2, h3, #sidebar-right a, #sidebar-left a, .title a, .title a:visited {
-    font-weight: normal;
+    font-weight: bold;
     text-decoration: none !important;
     }
 
@@ -100,12 +101,12 @@ h2.title {
   width: auto;
   margin: 0 auto;
   padding-left: 184px;
-  padding-right: 269px;
+  padding-right: 279px;
   }
 
 body.header-main #sidebar-left, body.header-main-right #sidebar-left {
   position:relative;
-  top: -143px;
+  top: -164px;
   }
 
 body.sidebar-left #content-wrapper {
@@ -240,7 +241,7 @@ body.sidebar-left #footer, body.two-sidebars #footer {
   }
 
 body.sidebar-right #footer, body.two-sidebars #footer {
-  margin-right:184px;
+  margin-right:209px;
   }
 
 /* Nodes */
