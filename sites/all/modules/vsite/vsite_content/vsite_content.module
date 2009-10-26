@@ -8,18 +8,15 @@ include_once('vsite_content.features.inc');
 function vsite_content_menu(){
   $items = array();
 
+  // views vsite_content defines 'cp/content'
+  
   $items['cp/content/all'] = array(
     'title' => 'All', 
-    //'page callback' => 'vsite_content_content',
+    //'page callback' => if missing, use the parent (views)
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
  
-  $items['cp/content/files'] = array(
-    'title' => 'Files',
-    'page callback' => 'vsite_content_files',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 99,
-  );
+
   
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
@@ -30,18 +27,25 @@ function vsite_content_menu(){
   $content_types = spaces_features_map('node');
   $all_types = node_get_types('names');
   
-  foreach($content_types as $type => $name){
+  foreach($content_types as $type => $feature_name){
     $items['cp/content/'.$type] = array(
       'title' => $all_types[$type],
       'access callback' => 'vsite_content_content_access',
-      'access arguments' => array($name),
-      //'page callback' => 'vsite_content_content',
-      //'page arguments' => array($type, $all_types[$type]),
-      'type' => MENU_LOCAL_TASK,
-      //'menu_name' => 'cp',	 
+      'access arguments' => array($feature_name),
+      'type' => MENU_LOCAL_TASK, 
     );    
   }
 
+  //files
+  $items['cp/content/files'] = array(
+    'title' => 'Files',
+    'page callback' => 'vsite_content_files',
+    'type' => MENU_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access_callback' => 'cp_access_cp',
+    'weight' => 99,
+  );
+  
   return $items;
 }
 
@@ -50,6 +54,14 @@ function vsite_content_menu(){
  */
 function vsite_content_views_pre_build(&$view){
   if ($view->name == 'vsite_content') {
+    $vsite = vsite_get_vsite();
+    if (!$vsite){
+      return;
+    }
+    // taxonomy filter
+    vsite_content_taxonomy_filter($view, $vsite);
+    
+    
     $type = arg(2);
     if ($type && $type !== 'all') {
       $view->set_arguments(array(
@@ -72,29 +84,33 @@ function vsite_content_views_pre_build(&$view){
       $view->display['default']->handler->options['header'] = $output;
     }
     else {
-      $vsite = vsite_get_vsite();
-      if ($vsite) {
-		//vsite_content_content_types_filter(&$view, $vsite);
-		//dpm($view);
-		//dpm($view->get_item('default', 'filter', 'type'));
-      }
+
+        // add a "type" filter to this view
+		vsite_content_content_types_filter($view, $vsite);
+
     }
   }
 
 }
 
-function vsite_content_content_types_filter($view, $vsite){
+/**
+ * adds a "type" filter to a given view
+ */
+function vsite_content_content_types_filter(&$view, $vsite){
+  // map content types => feature name
   $content_types = $content_types = spaces_features_map('node');
+  
+  // content types to set in the filter
   $ctypes = array();
   foreach ( $content_types as $type => $feature_name ) {
     if ($vsite->features[$feature_name]) {
       $ctypes[$type] = $type;
     }
   }
-  dpm($ctypes);
-  $view->display['default']->display_options['filters']['type'] = array(
+
+  $v = array(
       'operator' => 'in',
-      'value' => array($type => $type),
+      'value' => $ctypes,
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array('operator' => FALSE, 'label' => ''),
@@ -104,77 +120,21 @@ function vsite_content_content_types_filter($view, $vsite){
       'relationship' => 'none',
     );
   
+  $view -> set_item('page_1', 'filter', 'type',$v);  
 }
 
 /**
- * access callback
+ * add taxonomy filter to a view
  */
-function vsite_content_content_access($name){
-  $vsite = vsite_get_vsite();
-  // feature is enabled (value not 0)
-  return $vsite -> features[$name];
-}
+function vsite_content_taxonomy_filter(&$view, $vsite){
+  $vocabs = vsite_get_vocabs($vsite);
 
-function vsite_content_files(){
-
-  $vsite = vsite_get_vsite();
-  $view_name = 'vsite_files';
-  $display = 'default';
-
-  return views_page($view_name, $display);  
-}
-
-/**
- * Function to return output on cp content page
- */
-/*
-function vsite_content_content($type = NULL, $name = NULL){
-  //Add collapsible JS
-  drupal_add_js('misc/collapse.js');
-  
-  $type_url_str = str_replace('_', '-', $type);
-  //element classes for 'add new' link
-  $add_new_classes = 'add-new ' . 'add-new-' . $type_url_str;
-  //$v = views_get_view('vsite_content');
-
-  $links = array();
-  $links[] = array(
-    'href' => 'node/add/' . $type_url_str, 
-    'title' => $name, 
-    'query' => array(
-      'destination' => 'cp/content/'.$type, 
-    ) 
-  )
-  ;
-  $output = $type ? theme('context_links', $links) : '';
-  //$output .= isset($type) ? '<div class="' . $add_new_classes . '">' . l(t('+ add new ' . $name), 'node/add/' . $type_url_str) . '</div>' : '';
-  
-  //adding view output
-  //$output .= views_page($view_name = 'vsite_content', $display = 'default', $arg = $type);
-  if ($type) {
-    $vocabs = vsite_get_vocabs($vsite, $type);
-    
-    if (count($vocabs)) {
-      $vid = current(array_keys($vocabs));
-    }
+  if (count($vocabs)) {
+    $vid = current(array_keys($vocabs));
   }
-  $output .= vsite_content_content_view($type, $vid);
   
-  return $output;
-}
-*/
-
-/**
- * Return the result from vsite_content view.
- * if $vid is specified adds the corresponding term 
- * as a filter in the view
- */
-function vsite_content_content_view($type, $vid = NULL){
-  
-  //initialize the scholar base view
-  $view = views_get_view('vsite_content');
   if ($vid) {
-    $view->display['default']->display_options['filters']['tid'] = array(
+    $v = array(
       'operator' => 'or', 
       'value' => array(), 
       'group' => '0', 
@@ -199,13 +159,31 @@ function vsite_content_content_view($type, $vid = NULL){
       'relationship' => 'none', 
       'reduce_duplicates' => 1 
     );
+    
+    $view->set_item('page_1', 'filter', 'tid', $v);
   }
-  $view->init();
-  $view->set_display('page_1');
-  $view -> set_arguments(array($type));
-  $view->execute();
-  return $view->render();
 
+}
+
+/**
+ * access callback
+ */
+function vsite_content_content_access($feature_name){
+  $vsite = vsite_get_vsite();
+  // feature is enabled (value not 0)
+  return $vsite -> features[$feature_name];
+}
+
+/**
+ * callback function for cp/content/files
+ */
+function vsite_content_files(){
+
+  $vsite = vsite_get_vsite();
+  $view_name = 'vsite_files';
+  $display = 'default';
+
+  return views_page($view_name, $display);  
 }
 
 /**
@@ -222,9 +200,8 @@ function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_st
 
 /**
  * hook form_alter
- * Alter the views exposed form
+ * Alter the views exposed form:
  */
-
 function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form'){
   drupal_add_js(drupal_get_path('module', 'vsite_content') . '/vsite_content.js');
     //Add collapsible JS
@@ -244,27 +221,34 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     $site = vsite_get_vsite();
     $vocabs = array();
     vsite_include('vsiteapi');
-    $vocabs = ($type || $type != 'all') ? vsite_get_vocabs($vsite, $type) : $vocabs;
+    $vocabs = vsite_get_vocabs($vsite, $type);
+
     if (count($vocabs)) {
       $vid = current(array_keys($vocabs));
       $terms = taxonomy_get_tree($vid);
+      // remove those terms that do not have any node associated with
+      // TODO : if "all" only terms for some content types should be shown (hook vsite_content_content_types_alter()
+      $taxonomy_options = array();
+      foreach($terms as $term){
+        $n = ($type && $type !== 'all') ? taxonomy_term_count_nodes($term->tid, $type) : taxonomy_term_count_nodes($term->tid);
+        if($n){
+          $taxonomy_options[$term->tid] = $term->name;
+        }        
+      }
     }
     
-    if (! $vid || ! $terms) {
+    if (! $vid || ! count($taxonomy_options)) {
       //remove Categores selection box
       unset($form['#info']['filter-tid']);
       unset($form['tid']);
     }
     else {
-      foreach ( $terms as $term ) {
-        $taxonomy_options[$term->tid] = $term->name;
-      }
-      //taxonomy terms flter
+      $taxonomy_options[$term->tid] = $term->name;
       $form['tid']['#options'] = $taxonomy_options;
       //5 terms max shown per select box
       $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
     }
-    
+
     //promoted to front page filter
     $form['promote']['#type'] = 'radios';
     $form['promote']['#options'] = $options;
