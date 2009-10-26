@@ -65,14 +65,14 @@ function googlescholar_meta_create_metadata($node){
   $output .= $node->biblio_year ? '<meta name="citation_year" content="' . $node->biblio_year . '">' : '';
   $output .= $node->biblio_volume ? '<meta name="citation_volume" content="' . $node->biblio_volume. '">' : '';
   $output .= $node->biblio_issue ? '<meta name="citation_issue" content="' . $node->biblio_issue. '">' : '';
-  $output .= $node->biblio_section ? '<meta name="citation_firstpage" content="' . $node->biblio_section. '">' : '';
-  $output .= $node->biblio_section ? '<meta name="citation_lastpage" content="' . $node->biblio_section. '">' : ''; //  WHAT IS BIBLIO EQUIV ???
+  //$output .= $node->biblio_section ? '<meta name="citation_firstpage" content="' . $node->biblio_section. '">' : '';
+  //$output .= $node->biblio_section ? '<meta name="citation_lastpage" content="' . $node->biblio_section. '">' : ''; //  WHAT IS BIBLIO EQUIV ???
   $output .= $node->biblio_issn ? '<meta name="citation_issn" content="' . $node->biblio_issn. '">' : '';
   $output .= $node->biblio_isbn ? '<meta name="citation_isbn" content="' . $node->biblio_isbn. '">' : '';
   $output .= $node->biblio_language ? '<meta name="citation_language" content="' . $node->biblio_language. '">' : '';
   $output .= $node->biblio_keywords ? '<meta name="citation_keywords" content="' . googlescholar_meta_keywords($node->biblio_keywords) . '">' : '';  
   $output .= $node->biblio_abstract ? '<meta name="citation_abstract" content="' . $node->biblio_abstract. '">' : '';
-  //$output .= $node->biblio_url ? '<meta name="citation_pdf_url" content="' . $node->biblio_url. '">' : '';
+  $output .= $node->biblio_url ? '<meta name="citation_pdf_url" content="' . check_plain($node->biblio_url) . '">' : '';
   //$output .= $node->biblio_url ? '<meta name="citation_abstract_html_url" content="' . $node->biblio_url. '">' : '';
  // $output .= $node->biblio_url ? '<meta name="citation_pmid" content="' . $node->biblio_url. '">' : '';
   
@@ -146,26 +146,24 @@ function googlescholar_meta_keywords($keywords = array()){
  */
 function googlescholar_meta_nodeapi(&$node, $op){
   if (($node->type == 'biblio') && (variable_get('googlescholar_autoflag', 0) == 1)){
+    $flag = flag_get_flag('googlescholar_meta');
     switch($op){
       case 'insert';
       if($node -> status == '1'){
         //add googlescholar flag when node is created
-        $flag = flag_get_flag('googlescholar_meta');
         $flag->flag('flag', (int)$node -> nid);
       }
       break;
 
       case 'update';
       //if the node is set to published and not already flagged
-      if(($node -> status == '1') && (!$flag->is_flagged($node -> nid))){
-        $flag = flag_get_flag('googlescholar_meta');
+      if(($node -> status == '1') && !$flag->is_flagged($node->nid)){
         $flag->flag('flag', (int)$node -> nid);
       }
       break;
 
       case 'delete':
         //cleanup - remove the flag
-        $flag = flag_get_flag('googlescholar_meta');
         $flag -> flag('unflag', (int)$node -> nid);
         break;
     }
