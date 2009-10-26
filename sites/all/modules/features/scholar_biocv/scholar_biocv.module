@@ -32,10 +32,15 @@ function scholar_biocv_menu(){
   return $items;
 }
 
-function scholar_biocv_menu_alter(&$items){
-  unset($items['cp/content/cv']);
-  unset($items['cp/content/bio']);
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function scholar_biocv_vsite_content_types_alter(&$content_types){
+  unset($content_types['cv']);
+  unset($content_types['bio']);
 }
+
 
 /**
  * Display a Bio instance

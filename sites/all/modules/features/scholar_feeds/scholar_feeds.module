@@ -62,6 +62,13 @@ function scholar_feeds_strongarm(){
 
 
 /**
+ * hook  vsite_content_types_alter
+ */
+function scholar_feeds_vsite_content_types_alter(&$content_types){
+  unset($content_types['feed_item']);
+}
+
+/**
  * Implementation of hook_context_links_alter().
  */
 function scholar_feeds_context_links_alter(&$links) {

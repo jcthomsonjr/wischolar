@@ -14,15 +14,20 @@ function vsite_content_menu(){
     'title' => 'All', 
     //'page callback' => if missing, use the parent (views)
     'type' => MENU_DEFAULT_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+  );
+  
+    //files
+  $items['cp/content/files'] = array(
+    'title' => 'Files',
+    'page callback' => 'vsite_content_files',
+    'type' => MENU_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+    'weight' => 99,
   );
  
-
-  
-  // make them all part of 'cp' menu
-  foreach($items as $path => $item) {
-    $items[$path]['menu_name'] = 'cp';
-    $items[$path]['access callback'] = 'cp_access_cp'; 
-  }
   // a menu entry for each content type
   $content_types = spaces_features_map('node');
   $all_types = node_get_types('names');
@@ -31,23 +36,47 @@ function vsite_content_menu(){
     $items['cp/content/'.$type] = array(
       'title' => $all_types[$type],
       'access callback' => 'vsite_content_content_access',
-      'access arguments' => array($feature_name),
+      'access arguments' => array($type, $feature_name),
       'type' => MENU_LOCAL_TASK, 
     );    
   }
 
-  //files
-  $items['cp/content/files'] = array(
-    'title' => 'Files',
-    'page callback' => 'vsite_content_files',
-    'type' => MENU_LOCAL_TASK,
-    'menu_name' => 'cp',
-    'access_callback' => 'cp_access_cp',
-    'weight' => 99,
-  );
+
   
   return $items;
 }
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function vsite_content_vsite_content_types_alter(&$content_types){
+  $cts  = spaces_features_map('node');
+  $vsite = vsite_get_vsite();
+  foreach ( $cts as $type => $feature_name ) {
+    if (!($vsite->features[$feature_name])) {
+      unset($content_types[$type]);
+    }
+  }
+  
+}
+
+/**
+ * access callback
+ */
+function vsite_content_content_access($type, $feature_name){
+
+  $content_types = spaces_features_map('node');
+
+  drupal_alter('vsite_content_types', $content_types);
+
+  if(array_key_exists($type, $content_types)){
+    return TRUE;
+  }
+  
+  return FALSE;
+
+}
+
 
 /**
  * hook views_pre_build
@@ -98,14 +127,13 @@ function vsite_content_views_pre_build(&$view){
  */
 function vsite_content_content_types_filter(&$view, $vsite){
   // map content types => feature name
-  $content_types = $content_types = spaces_features_map('node');
-  
+  $content_types = spaces_features_map('node');
+
+  drupal_alter('vsite_content_types', $content_types);
   // content types to set in the filter
   $ctypes = array();
   foreach ( $content_types as $type => $feature_name ) {
-    if ($vsite->features[$feature_name]) {
-      $ctypes[$type] = $type;
-    }
+    $ctypes[$type] = $type;
   }
 
   $v = array(
@@ -165,14 +193,7 @@ function vsite_content_taxonomy_filter(&$view, $vsite){
 
 }
 
-/**
- * access callback
- */
-function vsite_content_content_access($feature_name){
-  $vsite = vsite_get_vsite();
-  // feature is enabled (value not 0)
-  return $vsite -> features[$feature_name];
-}
+
 
 /**
  * callback function for cp/content/files

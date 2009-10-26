@@ -39,8 +39,12 @@ function scholar_classes_link_alter(&$links, $node){
   );
 }
 
-function scholar_classes_menu_alter(&$items){
-  unset($items['cp/content/class_material']);
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function scholar_classes_vsite_content_types_alter(&$content_types){
+  unset($content_types['class_material']);
 }
 
 

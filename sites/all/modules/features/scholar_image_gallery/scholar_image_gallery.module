@@ -9,10 +9,12 @@ function scholar_image_gallery_init() {
   drupal_add_css(drupal_get_path('module', 'scholar_image_gallery') .'/scholar_image_gallery.css');
 }
 
-function scholar_image_gallery_menu_alter(&$items){
-  unset($items['cp/content/image']);
+/**
+ * hook  vsite_content_types_alter
+ */
+function scholar_image_gallery_vsite_content_types_alter(&$content_types){
+  unset($content_types['image']);
 }
-
 
 /**
  * Implementation of hook_context_links_alter().
