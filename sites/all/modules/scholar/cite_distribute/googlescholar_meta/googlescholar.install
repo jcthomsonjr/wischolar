@@ -5,12 +5,11 @@
  */
 
 function cs_meta_install() {
- 
-//do nothing
+  //set automatic flagging when biblio node is created
+ variable_set('googlescholar_autoflag', 1);
 }
 
 function cs_meta_uninstall() {
-
-//nothing here yet
-
+  //remove the autoflag setting
+ variable_del('googlescholar_autoflag');
 }
