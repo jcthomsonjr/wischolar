@@ -41,13 +41,55 @@ function vsite_support_menu(){
     'weight' => 1,
   );
 
+  
+  if(module_exists('contact')){
+    $items['cp/support/contact'] = array(
+      'title' => 'Contact Us',
+      'page callback' => 'contact_site_page',
+      'file' => 'contact.pages.inc',
+      'type' => MENU_LOCAL_TASK,
+      'file path' => drupal_get_path('module','contact'),
+    );
+    
+    $items['contact_owner'] = array(
+	    'title' => 'Contact',
+	    'page callback' => 'vsite_support_site_contact',
+	    'page arguments' => array(1),
+	    'type' => MENU_NORMAL_ITEM,
+      'menu_name' => variable_get('scholar_primary_menu','features'),
+	    'access callback' => 'vsite_support_site_contact_access',
+	    'file' => 'contact.pages.inc',
+      'file path' => drupal_get_path('module','contact'),
+	  );
+  }
+  
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
-    $items[$path]['menu_name'] = 'cp';
-    $items[$path]['access callback'] = 'cp_access_cp';
+    if(!isset($item['menu_name'])) $items[$path]['menu_name'] = 'cp';
+    if(!isset($item['access callback'])) $items[$path]['access callback'] = 'cp_access_cp';
   }
 
   return $items;
+}
+
+/**
+ * Contact form that contacts the site owner
+ * @return contact_page
+ */
+function vsite_support_site_contact(){
+	if(!($vsite = vsite_get_vsite()) || !($user = user_load($vsite->group->uid))) return MENU_ACCESS_DENIED;
+	
+  return contact_user_page($user);
+}
+
+/**
+ * Check settings to see if you should display
+ * @return contact_page
+ */
+function vsite_support_site_contact_access(){
+  if(!($vsite = vsite_get_vsite()) || !($user = user_load($vsite->group->uid))) return false;
+  
+  return ($vsite->settings['generic']['contact_form'] !== 0 && ($vsite->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()));
 }
 
 function vsite_support_questions(){

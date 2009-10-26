@@ -27,6 +27,20 @@ class vsite_generic_settings_settings implements space_setting {
       '#default_value' => (is_array($value) && array_key_exists('admin_menu',$value))?$value['admin_menu']:0,
 		);
 		
+    $form['contact_form'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Allow Contact Form'),
+      '#default_value' => is_array($value) && array_key_exists('contact_form',$value) ? $value['contact_form']:1,
+      '#description' => "When this is checked a contact form is displayed on your site allowing others to contact you.",
+    );
+    
+    $form['contact_form_anonymous'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Anonymous Contact'),
+      '#default_value' => is_array($value) && array_key_exists('contact_form_anonymous',$value) ? $value['contact_form_anonymous']:1,
+      '#description' => "When this is checked a user does not need to be logged in to contact you.",
+    );
+		
 		$s_default_shield = drupal_get_path('module','vsite_generic_settings')."/theme/shields/harvard_shield.png";
     $s_shield_dir = drupal_get_path('module','vsite_generic_settings')."/theme/shields";
     $a_shields = file_scan_directory($s_shield_dir, '.*', array('.', '..'));
@@ -53,7 +67,7 @@ class vsite_generic_settings_settings implements space_setting {
       '#type' => 'radios',
       '#options' => $shield_options,
       '#default_value' => is_array($value) && array_key_exists('shield',$value) ? $value['shield']:$s_default_shield,
-      '#append' => '</div>',
+      '#append' => '</div><div class="clearfix"></div>',
     );
     
     return $form;
