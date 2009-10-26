@@ -349,6 +349,9 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
     if (! empty($form['taxonomy']) && $v) {
       $vid = $v->vid;
       $form['taxonomy']['tags'][$vid]['#title'] = 'tags';
+      $form['taxonomy']['tags'][$vid]['#description'] = 'A comma-separated list of categories/tags describing this content. 
+      Example: political science, data, causal inference . You can also control your categories in the ' 
+      . l('taxonomy section', 'cp/content/taxonomy'). ' of control pannel';
     }
   //vertical_tabs_add_vertical_tabs($form);
   }
