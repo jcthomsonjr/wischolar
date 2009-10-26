@@ -24,6 +24,9 @@ function scholar_software_strongarm() {
   $conf['node_options_software'] = array('status', 'revision');
   $conf['upload_software'] = TRUE;
  
+  $conf["show_preview_changes_software"] = TRUE;
+  $conf["show_diff_inline_software"] = TRUE;
+  
   // Comments
   $conf['comment_software'] = COMMENT_NODE_DISABLED;
  

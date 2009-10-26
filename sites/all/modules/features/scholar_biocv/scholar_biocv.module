@@ -152,6 +152,12 @@ function scholar_biocv_strongarm(){
     ) 
   );
   
+  // Disable preview button
+  $conf["show_preview_changes_bio"] = TRUE;
+  $conf["show_diff_inline_bio"] = TRUE;
+  $conf["show_preview_changes_cv"] = TRUE;
+  $conf["show_diff_inline_cv"] = TRUE;
+  
   $conf['node_options_bio'] = array('status', 'revision');
   $conf['node_options_cv'] = array('status', 'revision');
   $conf['upload_bio'] = TRUE;

@@ -20,7 +20,9 @@ function scholar_announcements_strongarm(){
     'og_nodeapi' => '2' 
   );
 
-  
+  // Disable preview button
+  $conf["show_preview_changes_announcement"] = FALSE;
+  $conf["show_diff_inline_announcement"] = FALSE;  
  
   $conf['node_options_announcement'] = array('status', 'revision');
   $conf['upload_announcement'] = TRUE;
@@ -34,7 +36,6 @@ function scholar_announcements_strongarm(){
   // Pathauto (optional) settings
   $conf["pathauto_node_announcement_pattern"] = "[space-og-path]/announcements/[title-raw]";
  
-  return $conf;
   return $conf;
 }
 

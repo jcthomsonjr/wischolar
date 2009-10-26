@@ -78,9 +78,9 @@ function scholar_classes_strongarm() {
   // FeedAPI
   $conf['feedapi_settings_class'] = array('enabled' => FALSE);
  
-  // Disable Diff button
-  //$conf["show_preview_changes_class"] = FALSE;
-  //$conf["show_diff_inline_class"] = TRUE;
+  // Disable preview button
+  $conf["show_preview_changes_class"] = FALSE;
+  $conf["show_diff_inline_class"] = TRUE;
  
 
   // Pathauto (optional) settings
@@ -98,8 +98,8 @@ function scholar_classes_strongarm() {
   $conf['feedapi_settings_class_material'] = array('enabled' => FALSE);
  
   // Disable Diff button
-  //$conf["show_preview_changes_class_material"] = FALSE;
-  //$conf["show_diff_inline_class_material"] = TRUE;
+  $conf["show_preview_changes_class_material"] = FALSE;
+  $conf["show_diff_inline_class_material"] = TRUE;
  
 
   // Pathauto (optional) settings

@@ -79,9 +79,9 @@ function scholar_blog_strongarm() {
   // FeedAPI
   $conf['feedapi_settings_blog'] = array('enabled' => FALSE);
  
-  // Disable Diff button
-  //$conf["show_preview_changes_blog"] = FALSE;
-  //$conf["show_diff_inline_blog"] = FALSE;
+  // diff / preview
+  $conf["show_preview_changes_blog"] = TRUE;
+  $conf["show_diff_inline_blog"] = FALSE;
   
   // Pathauto settings
   $conf["pathauto_node_blog_pattern"] = "[space-og-path]/blog/[title-raw]";

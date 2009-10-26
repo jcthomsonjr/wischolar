@@ -34,6 +34,9 @@ function scholar_publications_strongarm() {
   $conf['node_options_biblio'] = array('status', 'revision');
   $conf['upload_biblio'] = TRUE;
  
+  $conf["show_preview_changes_biblio"] = FALSE;
+  $conf["show_diff_inline_biblio"] = FALSE;
+
   // Comments
   $conf['comment_biblio'] = COMMENT_NODE_DISABLED;
  
