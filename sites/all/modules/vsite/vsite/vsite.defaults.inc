@@ -64,10 +64,10 @@ function _vsite_content_default_fields() {
       'title_type' => 'textfield',
       'default_image' => array(
         'filename' => 'uniprofs1.jpg',
-        'filepath' => drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg",
+        'filepath' => 'sites/all/modules/vsite/vsite_design/theme/images/default_logo.jpg',
         'filemime' => 'image/jpeg',
         'source' => 'default_image_upload',
-        'destination' => drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg",
+        'destination' => 'sites/all/modules/vsite/vsite_design/theme/images/default_logo.jpg',
         'filesize' => 37046,
         'uid' => '1',
         'status' => 1,
@@ -139,6 +139,17 @@ function _vsite_imagecache_default_presets() {
 function _vsite_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: access site-wide contact form
+  $permissions[] = array(
+    'name' => 'access site-wide contact form',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: configure spaces features
   $permissions[] = array(
     'name' => 'configure spaces features',
@@ -151,7 +162,10 @@ function _vsite_user_default_permissions() {
   $permissions[] = array(
     'name' => 'search content',
     'roles' => array(
-      '0' => 'scholar admin',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -196,7 +210,6 @@ function _vsite_user_default_permissions() {
       '0' => 'scholar admin',
     ),
   );
-  
 
   return $permissions;
 }
