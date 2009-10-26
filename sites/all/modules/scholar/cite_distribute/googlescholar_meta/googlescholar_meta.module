@@ -156,7 +156,8 @@ function googlescholar_meta_nodeapi(&$node, $op){
       break;
 
       case 'update';
-      if($node -> status == '1'){
+      //if the node is set to published and not already flagged
+      if(($node -> status == '1') && (!$flag->is_flagged($node -> nid))){
         $flag = flag_get_flag('googlescholar_meta');
         $flag->flag('flag', (int)$node -> nid);
       }
