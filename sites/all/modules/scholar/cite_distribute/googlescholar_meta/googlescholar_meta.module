@@ -17,6 +17,25 @@ function googlescholar_meta_cite_distribute_register(){
   return $module_info;
 }
 
+function googlescholar_meta_menu(){
+  
+  $items = array();
+  
+  $items['admin/settings/cite_distribute/googlescholar_meta'] = array(
+  'type' => MENU_LOCAL_TASK,
+  'title' => 'Google Scholar',
+  'description' => 'Google Scholar.',
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('googlescholar_meta_settings_form'),
+  'file' => 'googlescholar_meta.admin.inc',
+  'file path' => drupal_get_path('module', 'googlescholar_meta'),
+  'access callback' => 'user_access',
+  'access arguments' => array('administer site configuration'),
+  'weight' => 10,
+  );
+   return $items;
+}
+ 
 /**
 * Implementation of module_preprocess_hook().
 */
@@ -24,7 +43,7 @@ function googlescholar_meta_preprocess_page(&$variables) {
   //check to see if this node is marked in the database for google scholar
    $res = db_result(db_query("SELECT nid FROM {cite_distribute} WHERE type = '%s' AND nid = %d", 'googlescholar_meta', (int)$variables['node']->nid)); 
   if($res){
-    $variables['googlescholar'] = googlescholar_meta_create_metadata($variables['node']);
+  $variables['head'] .= googlescholar_meta_create_metadata($variables['node']);
   }
 }
 
@@ -77,7 +96,8 @@ function googlescholar_meta_authors($authors =array()){
           $firstname .= strtoupper(substr($name, 0,1));
         }
       }
-      $author_str .= $author['lastname'] . ' ' . $firstname . ';';
+      $initials = (!empty($author['initials'])) ? $author['initials'] : '';
+      $author_str .= $author['lastname'] . ' ' . $firstname.  $initials  . ';';
     }
     //removing the semi-colon at the end
     $author_str = substr( $author_str, 0, -1);
@@ -113,25 +133,40 @@ function googlescholar_meta_keywords($keywords = array()){
   return $keyword_str;
 }
 
-//Example from Google
   
-  /*<meta name="citation_journal_title" content="Journal of Biological Chemistry">
-<meta name="citation_publisher" content="ASBMB">
-<meta name="citation_authors" content="Grynkiewicz, G; Poenie, M; Tsien, RY">
-<meta name="citation_title" content="A new generation of Ca2+ indicators with greatly improved fluorescence properties">
-<meta name="citation_date" content="1996/01/25"> <!--yyyy/mm/dd-->
-<meta name="citation_year" content="1985">
-<meta name="citation_volume" content="260">
-<meta name="citation_issue" content="6">
-<meta name="citation_firstpage" content="3440">
-<meta name="citation_lastpage" content="3451">
-<meta name="citation_issn" content="ISSN Of the Journal">
-<meta name="citation_isbn" content="ISBN if the item is a book">
-<meta name="citation_language" content="Language Name">
-<meta name="citation_keywords" content="keyphrase1; keyphrase2; ...">
-<meta name="citation_abstract" content="Text of the abstract…">
+  function googlescholar_meta_strongarm(){
+    $conf = array();
+    $conf['googlescholar_autoflag'] = 1;
+    return $conf;
+  }
 
+/**
+ * Implementation of hook_nodeapi()
+ *
+ */
+function googlescholar_meta_nodeapi(&$node, $op){
+  if (($node->type == 'biblio') && (variable_get('googlescholar_autoflag', 0) == 1)){
+    switch($op){
+      case 'insert';
+      if($node -> status == '1'){
+        //add googlescholar flag when node is created
+        $flag = flag_get_flag('googlescholar_meta');
+        $flag->flag('flag', (int)$node -> nid);
+      }
+      break;
 
-<meta name="citation_pdf_url" content="http://www.jbc.org/cgi/reprint/260/6/3440.pdf">
-<meta name="citation_abstract_html_url" content="http://www.jbc.org/cgi/content/abstract/260/6/3440">
-<meta name="citation_pmid" content="3838314">*/
+      case 'update';
+      if($node -> status == '1'){
+        $flag = flag_get_flag('googlescholar_meta');
+        $flag->flag('flag', (int)$node -> nid);
+      }
+      break;
+
+      case 'delete':
+        //cleanup - remove the flag
+        $flag = flag_get_flag('googlescholar_meta');
+        $flag -> flag('unflag', (int)$node -> nid);
+        break;
+    }
+  }
+}
