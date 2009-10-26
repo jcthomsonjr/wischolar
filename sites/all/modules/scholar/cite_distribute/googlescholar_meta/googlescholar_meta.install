@@ -4,12 +4,12 @@
  * Implementation of hook_install().
  */
 
-function cs_meta_install() {
+function googlescholar_meta_install() {
   //set automatic flagging when biblio node is created
  variable_set('googlescholar_autoflag', 1);
 }
 
-function cs_meta_uninstall() {
+function googlescholar_meta_uninstall() {
   //remove the autoflag setting
  variable_del('googlescholar_autoflag');
 }
