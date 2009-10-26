@@ -6,7 +6,7 @@
  * @return the content to be rendered in the content area of the front page
  */
 function vsite_front_home(){
-  
+
   $vsite = vsite_get_vsite();
   if ($vsite) {
     $front_type = $vsite->settings['front']['frontpage'];
@@ -31,36 +31,43 @@ function vsite_front_home(){
         $result = vsite_front_home_flag();
         break;
     }
-    
+
     //Add Site Name to the page title for the homepage
     //if(isset($vsite->settings['site']['headline'])) drupal_set_title(t(drupal_get_title().' | %site', array('%site' => $vsite->settings['site']['headline'])));
-    
+
     if($vsite->admin_access()  && (!array_key_exists('messages_confirmed',$vsite->settings)  || !$vsite->settings['messages_confirmed']['welcome_message'])){
-    	
-    	$s_hide_link = l("Hide this box forever","cp/confirm_message/welcome_message",array('attributes'=>array('class'=>'hide'),'query' => array('source'=>$_GET['q']) ));
-    	$s_close_link = l("Hide for now","",array('attributes'=>array('class'=>'close','onClick'=>'$("div#message_welcome_message").remove(); return false;')));
-    	$s_features = l("Features",'cp/features');
-    	$s_content = l("Content",'cp/content');
-    	$s_members = l("Members",'cp/users/members');
-    	$s_bio = ($vsite->feature_access('scholar_biocv'))?"<li>Add your Bio: ".l("Add Bio",'node/add/bio',array('query' => array('destination'=>'biocv')))."</li>":"";
+
+    	$s_hide_link = l("Forever","cp/confirm_message/welcome_message",array('attributes'=>array('class'=>'hide'),'query' => array('source'=>$_GET['q']) ));
+    	$s_close_link = l("For now","",array('attributes'=>array('class'=>'close','onClick'=>'$("div#message_welcome_message").remove(); return false;')));
+    	$s_features = l("Enable or disable features for your site",'cp/features');
+    	$s_content = l("Add content",'cp/content');
+    	$s_members = l("Manage who may use your site",'cp/users/members');
+    	$s_bio = ($vsite->feature_access('scholar_biocv'))?"<li>".l("Add your bio",'node/add/bio',array('query' => array('destination'=>'biocv')))."</li>":"";
     	$result = <<<MESSAGE
     	<div id="message_welcome_message">
-    	  <div style="float:right;">{$s_hide_link}<br/>{$s_close_link}</div>
-    	  Whoa that was fast, your site is now setup<br />
-    	  You can leave it as is, but that wouldn't be any fun! Below are a few additional resources to help you get started.  Remember that you can access the control panel at any time by clicking the link in the top right corner of the screen.<br/>
-    	  <ol>
-    	    <li>Enable or disable features: {$s_features}</li>
-    	    <li>Add Content: {$s_content}</li>
-    	    <li>Decide who can use your site: {$s_members}</li>
-    	    <li>View Scholars Help: <a href='http://scholar-docs.iq.harvard.edu/' target='_blank'>Help</a></li>
+    	  <h3>Welcome to your new website!</h3>
+    	  <p>Below are a few additional resources to help you get started. You may access the control panel at any time by clicking the link in the top right corner of the screen.</p>
+    	  <ul id="resource-list">
+    	    <li>{$s_features}</li>
+    	    <li>{$s_content}</li>
+    	    <li>{$s_members}</li>
     	    {$s_bio}
-    	  </ol>
-    	  What else?
+    	    <li><a href='http://scholar-docs.iq.harvard.edu/' target='_blank'>View documentation</a></li>
+    	  </ul>
+    	  <div class="scholar-admin">
+    	    <div class="toggle"><span>Hide this box</span></div>
+    	    <div class="slider">
+    	      <ul class="links">
+    	        <li class="first">{$s_hide_link}</li>
+    	        <li>{$s_close_link}</li>
+    	      </ul>
+    	    </div>
+    	  </div>
       </div>
     	{$result}
 MESSAGE;
     }
-    
+
     return $result;
   }
 }
@@ -79,20 +86,20 @@ function vsite_front_home_bio($bio_nid){
 */
 
 /**
- * if front page is set to "features" 
+ * if front page is set to "features"
  * @param $node_options array of node types users want to be promoted to the front page
  */
 function vsite_front_home_feature($node_options){
 
   //initialize the scholar base view
   $view = views_get_view('vsite_view_base');
-  
+
   // add a filter for "node types" in the view
   $options = array();
   foreach($node_options as $o){
     $options[$o] = $o; // that's how views wants it
   }
-  
+
   $view -> display['default'] -> display_options['filters']['type'] = array(
     'operator' => 'in',
     'value' => $options,
@@ -114,8 +121,8 @@ function vsite_front_home_feature($node_options){
 }
 
 /**
- * if front page is set to "html" 
- * @param $front_nid the nid of the node 
+ * if front page is set to "html"
+ * @param $front_nid the nid of the node
  */
 function vsite_front_home_html($front_nid){
   $node = node_load($front_nid);
@@ -124,7 +131,7 @@ function vsite_front_home_html($front_nid){
 }
 
 /**
- * if front page is set to "flag" 
+ * if front page is set to "flag"
  */
 function vsite_front_home_flag(){
   return views_page("vsite_front", "default");
