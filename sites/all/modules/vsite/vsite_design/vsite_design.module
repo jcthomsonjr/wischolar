@@ -182,3 +182,25 @@ function vsite_design_imagecache_default_presets() {
   return $presets;
 }
 
+/**
+ * Make sure that the css files are preprocessed correctly
+ * 
+ * @param $vars
+ * @return unknown_type
+ */
+function vsite_design_preprocess_page(&$vars){
+	//Return if:
+	if(!($vsite = vsite_get_vsite()) ||                                 //In a Vsite? 
+	    !$vsite->group->og_theme ||                                     //Grop has a custom theme
+	    !($themes = list_themes()) ||                                   
+	    !array_key_exists($vsite->group->og_theme,$themes) ||           //The theme is valid
+	    empty($themes[$vsite->group->og_theme]->stylesheets)) return;   //The theme has styles associated
+	    
+	// Add stylesheets used by this theme, without preprocessing
+  foreach ($themes[$vsite->group->og_theme]->stylesheets as $media => $stylesheets) {
+    foreach ($stylesheets as $name => $stylesheet) drupal_add_css($stylesheet, 'theme', $media, false);
+  }
+  
+  $vars['css'] = drupal_add_css();
+  $vars['styles'] = drupal_get_css();
+}

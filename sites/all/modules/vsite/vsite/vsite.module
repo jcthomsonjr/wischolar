@@ -301,10 +301,9 @@ function vsite_preprocess_page(&$vars){
   
   if ($feature = context_get('scholar', 'feature')) {
     drupal_add_css(drupal_get_path('module', 'scholar_' . $feature) . '/scholar_' . $feature . '.css');
+    $vars['css'] = drupal_add_css();
+    $vars['styles'] = drupal_get_css();
   }
-  
-  $vars['css'] = drupal_add_css();
-  $vars['styles'] = drupal_get_css();
 }
 
 function vsite_theme_registry_alter(&$theme_registry){
