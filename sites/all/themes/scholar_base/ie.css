@@ -20,24 +20,25 @@
 .item-list ul.context-links li,
 .empty-content p,
 .empty-content .item-list ul.context-links li,
-.ahah-progress .throbber {
+.ahah-progress .throbber,
+.column {
   display: inline;
   }
 
-body.both-sidebars #sidebar-left {
+body.two-sidebars #sidebar-left {
 	left: 220px; /* Total width, including padding of right col */
 	}
 
 body.sidebar-left #sidebar-left {
-	left: -20px; /* Amount of main content padding */
+	left: 0;
 	}
 
 body.header-left-main-right #header-left {
-  left: 90px; /* Total width, including padding of right col */
+  left: -200px; /* Total width, including padding of right col */
   }
 
 body.header-left-main #header-left {
-	left: -20px; /* Amount of main content padding */
+	left: 200px;
 	}
 
 ul.menu li.leaf {

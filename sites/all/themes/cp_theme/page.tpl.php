@@ -9,7 +9,7 @@
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
-  <!--[if IE]>
+  <!--[if lte IE 7]>
   <script type="text/javascript" src="<?php print $base_path . $directory;?>/js/ie-warning.js"></script>
   <![endif]-->
 </head>
