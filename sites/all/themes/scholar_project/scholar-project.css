@@ -14,8 +14,6 @@ body {
     margin: 0 auto;
     }
 
-
-
 a, a:visited {
     color:#990000;
     text-decoration: none;
@@ -214,11 +212,12 @@ li#get-form a {
   }
 
 #block-views-iqss_project_sites-block_1 .views-exposed-form {
-  width: 340px;
+  width: 345px;
   height: 40px;
-  background: url(images/search-person.png) no-repeat transparent;
+  background: url(images/search-person.png) no-repeat 100% 0 transparent;
   float:right;
   margin: 5px 18px 10px 0;
+  position:relative;
   }
 
 
@@ -227,28 +226,40 @@ li#get-form a {
   padding: 0;
   }
 
+
 #block-views-iqss_project_sites-block_1 .views-exposed-form .form-text {
   float:left;
-  margin: 12px 0 0 5px;
+  margin: 12px 0 0 10px;
   width:263px;
   border: none;
   height: 16px;
   }
 
-#block-views-iqss_project_sites-block_1 .views-exposed-form .form-submit {
+#block-views-iqss_project_sites-block_1 .views-exposed-form input.form-submit {
   float:right;
   background: transparent;
   border: none;
   width: 68px;
   margin-top: 5px;
+  margin-right: 0;
   height: 30px;
   text-indent: -9999em;
   line-height: 110%;
+  padding: 0 !important;
   }
 
 #views-exposed-form-iqss-project-sites-block-1 .form-actions {
   margin: 0;
   }
+
+#views-exposed-form-iqss-project-sites-block-1 span.views-throbbing {
+  position:absolute;
+  left: -45px;
+  top: 17px;
+  width: 21px;
+  height: 5px;
+  }
+
 
 #views-exposed-form-iqss-project-sites-block-1 span.form-button-wrapper {
   background: transparent;
@@ -313,6 +324,7 @@ li#get-form a {
   width: 67px;
   height: 32px;
   background: url(images/more.png) no-repeat transparent;
+  cursor: pointer;
   }
 
 

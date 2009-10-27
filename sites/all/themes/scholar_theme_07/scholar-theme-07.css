@@ -1,5 +1,5 @@
 body {
-    background: url(images/fabric-strip.jpg) repeat-y top center #4E320A;
+    background: url(images/fabric-strip.jpg) repeat-y top center #4C2F0D;
     color:#282828;
     font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
@@ -18,8 +18,11 @@ body.front #wrapper {
     }
 
 #container {
-    width: 923px;
+    width: 676px;
+    background: url(images/header.jpg) no-repeat 0 0 transparent;
     margin: 0 auto;
+    padding-left: 193px;
+    padding-right: 54px;
     }
 
 body.front #container {
@@ -82,7 +85,7 @@ h2.title {
   }
 
 #header-wrapper {
-  padding-right: 120px;
+  padding-right: 100px;
   padding-left: 100px;
   }
 
@@ -102,14 +105,14 @@ h2.title {
 #header {
     height: 141px;
     font-family: georgia, serif;
-    background: url(images/header.jpg) no-repeat 0 0 #4E320A;
-    width: 100%;
     }
 
-#header-wrapper, #content-wrapper, #navbar, #footer {
-  margin-left: 193px;
-  margin-right: 34px;
+#header .column {
+  padding-top: 10px;
   }
+
+#header-wrapper, #content-wrapper, #navbar, #footer {
+ }
 
 #header-wrapper {
   height: 114px;
@@ -168,7 +171,7 @@ h2.title {
     font-weight: bold;
     }
 
-#navbar li a:hover, #navbar li a.active {
+#navbar li a:hover, #navbar li a.active, #navbar li.active-trail a {
     color:#fff;
     background: #b8690c;
     }

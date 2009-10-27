@@ -24,13 +24,21 @@
   display: inline;
   }
 
-#sidebar-left {
-	left: 220px;
+body.both-sidebars #sidebar-left {
+	left: 220px; /* Total width, including padding of right col */
 	}
 
-#header-left {
-  left: -210px;
+body.sidebar-left #sidebar-left {
+	left: -20px; /* Amount of main content padding */
+	}
+
+body.header-left-main-right #header-left {
+  left: 90px; /* Total width, including padding of right col */
   }
+
+body.header-left-main #header-left {
+	left: -20px; /* Amount of main content padding */
+	}
 
 ul.menu li.leaf {
   list-style-image: none;
@@ -46,3 +54,28 @@ ul.menu li.leaf {
   line-height: 0px;
   }
 
+ul.primary, ul.secondary {
+  _width: auto; /* Reset to auto width for IE6 */
+  }
+
+ul.primary li, ul.secondary li {
+  _width: 100px; /* Reset to auto width for IE6 */
+  }
+
+ul.primary li a, ul.primary li a:visted {
+  _background: #DDDDDD;
+  }
+
+ul.primary li.active a {
+  _background: #ffffff;
+  }
+
+
+#scholar-shield img {
+  behavior: expression((this.runtimeStyle.behavior="none")&&(this.pngSet?this.pngSet=true:(this.nodeName == "IMG" && this.src.toLowerCase().indexOf('.png')>-1?(this.runtimeStyle.backgroundImage = "none",
+  this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.src + "', sizingMethod='image')",
+  this.src = "/sites/all/themes/scholar_base/images/transparent.gif"):(this.origBg = this.origBg? this.origBg :this.currentStyle.backgroundImage.toString().replace('url("','').replace('")',''),
+  this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.origBg + "', sizingMethod='crop')",
+  this.runtimeStyle.backgroundImage = "none")),this.pngSet=true)
+  );
+  }

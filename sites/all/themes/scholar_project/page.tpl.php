@@ -39,7 +39,6 @@
 
 
           <div id="header-right" class="column">
-            <?php print $search_box; ?>
             <?php print $header_right; ?>
           </div><!-- /header-right -->
 
