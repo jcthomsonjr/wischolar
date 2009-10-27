@@ -339,7 +339,7 @@ function _scholar_enable_themes(){
   // the default theme is the project theme
   install_default_theme('scholar_project');
   
-  $themes = array('zen', 'cp_theme', 'scholar_base');
+  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_project');
 
   $themes = array_merge($themes, __scholar_get_scholar_theme_names());
   install_enable_theme($themes);
