@@ -55,7 +55,7 @@ function vsite_support_menu(){
 	    'title' => 'Contact',
 	    'page callback' => 'vsite_support_site_contact',
 	    'page arguments' => array(1),
-	    'type' => MENU_NORMAL_ITEM,
+	    'type' => MENU_CALLBACK,
       //'menu_name' => variable_get('scholar_primary_menu','features'),
 	    'access callback' => 'vsite_support_site_contact_access',
 	    'file' => 'contact.pages.inc',
