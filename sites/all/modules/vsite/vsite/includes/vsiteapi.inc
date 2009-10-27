@@ -164,7 +164,7 @@ function vsite_vsite_create($name, $mail, $domain){
       ), 
       'preset' => 'vsite', 
       'og_description' => "$domain's web site", 
-      'theme' => 'scholar_theme_01', // TODO what is the default theme ? 
+      'theme' => variable_get('scholar_default_theme', 'scholar_theme_01'), 
   );
   $node = install_create_node($title = $domain, $body = NULL, $properties = $properties);
   

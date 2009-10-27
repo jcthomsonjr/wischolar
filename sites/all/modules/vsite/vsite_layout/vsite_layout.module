@@ -330,10 +330,10 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
 	}//Is a feature  context active
 
   //If we are not in a feature and we are on the front page get it's settings
-  if(!$a_region_widgets && array_key_exists('scholar-subsection-front',$contexts)) $a_region_widgets = vsite_layout_region_widgets($space,'front');
+  if(!isset($a_region_widgets) && array_key_exists('vsite-subsection-front',$contexts)) $a_region_widgets = vsite_layout_region_widgets($space,'front');
 
   //If we still don't have the settings get the default settings
-  if(!$a_region_widgets) $a_region_widgets = vsite_layout_region_widgets($space);
+  if(!isset($a_region_widgets)) $a_region_widgets = vsite_layout_region_widgets($space);
 
   /**
    * Remove existing blocks from the public / sub contexts

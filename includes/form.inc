@@ -397,6 +397,7 @@ function drupal_process_form($form_id, &$form, &$form_state) {
   $form_state['values'] = array();
 
   $form = form_builder($form_id, $form, $form_state);
+
   // Only process the form if it is programmed or the form_id coming
   // from the POST data is set and matches the current form_id.
   if ((!empty($form['#programmed'])) || (!empty($form['#post']) && (isset($form['#post']['form_id']) && ($form['#post']['form_id'] == $form_id)))) {

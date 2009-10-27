@@ -31,6 +31,8 @@ function vsite_design_init(){
 	      $vsite->settings['site']['sub_heading'] = $profile->vsite_users_title[0]['value'];
 	      $vsite->group->og_description = $profile->vsite_users_title[0]['value'];
 	    }//Save default title
+	    
+	    
 	    node_save($vsite->group); //Save to group node
 	    spaces_save($vsite);
   	}//Create Presets

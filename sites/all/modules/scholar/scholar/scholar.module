@@ -12,6 +12,16 @@
 
 
 class scholar extends space_og implements space {
+	
+  /**
+   * Constructor
+   */
+  function __construct($type, $sid = NULL, $is_active = FALSE) {
+    parent::__construct($type,$sid,$is_active);
+    if ($this->group->og_theme && !$this->group->theme) {
+      $this->group->theme = $this->group->og_theme;
+    }//This must be set on load so that when you save the value will persist
+  }
 
   function redirect($op = 'home'){
     switch ($op) {

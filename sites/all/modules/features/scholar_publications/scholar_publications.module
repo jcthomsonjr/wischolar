@@ -147,11 +147,18 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     unset($form['import_taxonomy']);
   }
   elseif (isset($form['#node']) && $form['#node']->type === 'biblio' && $form_id == $form['#node']->type .'_node_form') {
-
-    //unset($form['doi_lookup']);
-    //unset($form['cut_paste']);
-
+  	scholar_publications_hide_form_value($form['doi_lookup']);
+    scholar_publications_hide_form_value($form['cut_paste']);
+    $form['submit_type'] = array('#type' => 'submit', '#disabled' => true, '#access' => false, '#value' => t('Select Publication Type'));
   }
+}
+
+function scholar_publications_hide_form_value(&$element){
+  foreach(element_children($element) as $s_key){
+    $element[$s_key]['#type'] = 'value';
+    vsite_users_hide_form_value($element[$s_key]);;
+  }
+  $element['#type'] = 'value';
 }
 
 function scholar_publications_overview(){
