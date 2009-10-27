@@ -40,7 +40,7 @@ class vsite_layout_settings_layout implements space_setting {
 	    '#title' => t('Pages in your site'),
 	    '#default_value' => $s_page_type,
 	    '#options' => $a_page_types,
-	    '#description' => t('You may choose custom layouts for specific pages in your site. This is useful if you\'d like related widgets to appear on particular pages, such as a list of co-authors to appear on your publications page.'),
+	    '#description' => t('Select the widgets to display everywhere in your site (Default settings) the front page or a specific section (feature) of your site'),
 	    '#ahah' => array(
 	          'event' => 'go_ahah',
 	          'path' => 'cp/settings/layout/region_widgets_js',

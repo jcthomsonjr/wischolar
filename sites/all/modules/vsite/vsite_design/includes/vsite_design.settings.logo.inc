@@ -26,7 +26,7 @@ class vsite_design_settings_logo implements space_setting {
 
   function form($space, $value = array()) {
     $form = array();
-    $form['#title'] = 'Photo';
+    $form['#title'] = 'Site logo';
 
     $s_current = file_check_location($value['current_logo']);
 
@@ -61,7 +61,7 @@ class vsite_design_settings_logo implements space_setting {
 	    }else{
 	    	$form['clear'] = array('#value' => "<div style='clear:both;'></div>");
 	    }//Only show the preview and crop buttons if they have uploaded somthing
-	    $form['logo_upload'] = array('#type' => 'file', '#title' => t('Upload new photo (or logo)'), '#size' => 48, '#description' => t('Your sites logo. '));
+	    $form['logo_upload'] = array('#type' => 'file', '#title' => t('Upload logo'), '#size' => 48, '#description' => t('Your sites logo. '));
 
 
 //	    $form['preview'] = array(
