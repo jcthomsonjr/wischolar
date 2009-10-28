@@ -148,6 +148,9 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'access biblio content',
     'roles' => array(
       '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -214,6 +217,9 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'show download links',
     'roles' => array(
       '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -241,6 +247,8 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'show own download links',
     'roles' => array(
       '0' => 'authenticated user',
+      '1' => 'scholar admin',
+      '2' => 'scholar user',
     ),
   );
 
@@ -249,6 +257,9 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'show sort links',
     'roles' => array(
       '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -265,6 +276,9 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'view full text',
     'roles' => array(
       '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
