@@ -3,7 +3,7 @@
 include_once('vsite_support.features.inc');
 
 function vsite_support_init(){
-
+  drupal_add_css(drupal_get_path('module', 'vsite_support') . '/theme/vsite_support.css');
   $node = menu_get_object();
   // Check if this is an existing node.
   if (! empty($node->nid) && $node->type == 'support_question' || $node->type == 'feature_request') {
@@ -41,7 +41,7 @@ function vsite_support_menu(){
     'weight' => 1,
   );
 
-  
+
   if(module_exists('contact')){
     $items['cp/support/contact'] = array(
       'title' => 'Contact Us',
@@ -50,7 +50,7 @@ function vsite_support_menu(){
       'type' => MENU_LOCAL_TASK,
       'file path' => drupal_get_path('module','contact'),
     );
-    
+
     $items['contact_owner'] = array(
 	    'title' => 'Contact',
 	    'page callback' => 'vsite_support_site_contact',
@@ -62,7 +62,7 @@ function vsite_support_menu(){
       'file path' => drupal_get_path('module','contact'),
 	  );
   }
-  
+
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
     if(!isset($item['menu_name'])) $items[$path]['menu_name'] = 'cp';
@@ -78,7 +78,7 @@ function vsite_support_menu(){
  */
 function vsite_support_site_contact(){
 	if(!($vsite = vsite_get_vsite()) || !($user = user_load($vsite->group->uid))) return MENU_ACCESS_DENIED;
-	
+
 	if($vsite->settings['generic']['contact_form_anonymous'] === 0 && !user_is_logged_in()){
 	  $output = t('You need to be logged in in order to send mail to this user.');
 	}elseif (!flood_is_allowed('contact', variable_get('contact_hourly_threshold', 3))) {
@@ -177,7 +177,7 @@ function vsite_support_contact_mail_owner_submit($form, &$form_state) {
  */
 function vsite_support_site_contact_access(){
   if(!($vsite = vsite_get_vsite()) || !($user = user_load($vsite->group->uid))) return false;
-  
+
   return true;
   return ($vsite->settings['generic']['contact_form'] !== 0 && ($vsite->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()));
 }
