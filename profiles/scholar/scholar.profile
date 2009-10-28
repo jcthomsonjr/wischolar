@@ -336,12 +336,15 @@ function _scholar_profile_content_types(){
  *
  */
 function _scholar_enable_themes(){
+  
   // the default theme is the project theme
   install_default_theme('scholar_project');
   
-  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_project');
-
+  //get list of themes to be enabled - TODO: should 'kshepsle', 'rbates' be enabled for non IQSS installs?
+  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_project', 'kshepsle', 'rbates'); 
   $themes = array_merge($themes, __scholar_get_scholar_theme_names());
+  
+  //enable the themes
   install_enable_theme($themes);
 	
   // disable all DB blocks
