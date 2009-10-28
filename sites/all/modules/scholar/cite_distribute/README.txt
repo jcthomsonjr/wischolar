@@ -120,7 +120,8 @@ must return the keys and value options listed below:
                   The value can be 'single', 'multiple' or 'none' ("none" when a file is not being used store output)
  "dynamic_paths": A boolean value whether your module uses dynamic paths to store files.
       "filename": The name for your file, required only when 'file' => 'single'
-          "flag": Optional flag used in PHP 5 file_put_contents() function    
+          "flag": Optional flag used in PHP 5 file_put_contents() function
+          "hide_flag": Set this to 1 if you don't want any content types to be associated with the flag    
    "rebuild_all": A boolean value. TRUE returns all values when running api mode function. 
    "place_once": tells the API only to write to the file one time
 
