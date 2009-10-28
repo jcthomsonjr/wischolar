@@ -20,3 +20,21 @@ function vsite_generic_settings_spaces_settings(){
     ) 
   );
 }
+
+/**
+ * hook_theme
+ */
+function vsite_generic_settings_theme(){
+  $path = drupal_get_path('module', 'vsite_generic_settings') .'/theme';
+  
+  $items = array();
+  
+  $items['vsite_design_theme_shieldpicker'] = array(
+    'arguments' => array('file' => array()),
+    'template' => 'vsite_generic_settings-theme-shieldpicker',
+    'path' => $path,
+    //'file' => 'theme.inc',
+  );
+  
+  return $items;
+}
