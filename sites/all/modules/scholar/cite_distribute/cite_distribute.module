@@ -132,7 +132,7 @@ function cite_distribute_flag_default_flags($flags = array(), $i =0) {
     'content_type' => 'node',
     'name' =>  $module['name'],
     'title' => $module['repository'],
-    'types' => array('biblio'),
+    'types' => isset($module['hide_flag'])?  '' : array('biblio'),
     'roles' => array(
     0 => '2',
     ),
