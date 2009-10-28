@@ -297,7 +297,7 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
       	$vals = $form_state['input'];
       	//is the filter set? if so don't collapse it
       	$s_state = (!is_array($vals) || !(strlen($vals['title'] || $vals['promote'] != 'All' || $vals['sticky'] != 'All' || $vals['status'] != 'All' || count($vals['tid']))))?'collapsed':'';
-    	$form['#prefix'] = _vsite_content_context_links() . '<fieldset class="vsite_content_filter_box collapsible '.$s_state.'"><legend>Filter options</legend>';
+    	$form['#prefix'] = _vsite_content_context_links() . '<fieldset class="vsite_content_filter_box collapsible '.$s_state.'"><legend>Filter options</legend></fieldset>';
       }
     break;
     case 'views_bulk_operations_form__1':
