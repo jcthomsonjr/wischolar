@@ -464,4 +464,5 @@ function _scholar_configure_biblio(){
    drupal_execute('biblio_admin_types_edit_form',$a_settings['common']);
    
    db_query("UPDATE `biblio_field_type` SET visible = 0 WHERE ftdid IN(2,3,4,5) AND visible = 1");
+   db_query("UPDATE `biblio_field_type` SET visible = 0 WHERE ftdid = 22 AND weight = -1");
 }
