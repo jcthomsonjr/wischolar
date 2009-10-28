@@ -199,7 +199,7 @@ function vsite_taxonomy_taxonomies(){
         
         $content = theme('item_list', $items, NULL, 'ul', array('id' => 'vocabulary_'. $v -> vid ));
         
-        $content .= '<div class="addcategory">' .l('+ Add caregory', 'vsite_taxonomy/term/' . $v -> vid .'/add', array('attributes' => array('class' => 'add'))). '</div>';
+        $content .= '<div class="addcategory">' .l('+ Add category', 'vsite_taxonomy/term/' . $v -> vid .'/add', array('attributes' => array('class' => 'add'))). '</div>';
         
         $subject = 'Site categories';
         $output .= theme('fieldset', array(
