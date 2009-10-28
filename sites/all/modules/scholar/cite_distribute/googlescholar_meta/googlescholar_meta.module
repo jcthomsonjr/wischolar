@@ -13,6 +13,7 @@ function googlescholar_meta_cite_distribute_register(){
     'name'       => 'googlescholar_meta',
     'repository' => 'Google Scholar',
     'file' => 'none',
+    'hide_flag' => 1,
      );
   return $module_info;
 }
@@ -57,7 +58,10 @@ function googlescholar_meta_create_metadata($node){
   
   $output = '';
 
+ //biblio_type 102 is a journal article 
+if($node -> biblio_type == '102'){
   $output .= $node->biblio_secondary_title ? '<meta name="citation_journal_title" content="' . $node->biblio_secondary_title . '">' : '';  //REPLACE special chars ???
+}
   $output .= $node->biblio_publisher ? '<meta name="citation_publisher" content="' . $node->biblio_publisher . '">' : '';
   $output .= $node->biblio_contributors[1][0] ? '<meta name="citation_authors" content="' . googlescholar_meta_authors($node->biblio_contributors[1]) . '">' : ''; 
   $output .= $node->title ? '<meta name="citation_title" content="' . $node->title . '">' : '';
