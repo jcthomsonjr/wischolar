@@ -96,21 +96,9 @@ function vsite_content_views_pre_build(&$view){
       $view->set_arguments(array(
           $type 
       ));
+
       
-      $type_url_str = str_replace('_', '-', $type);
-      $all_types = node_get_types('names');
-      
-      $links = array();
-      $links[] = array(
-          'href' => 'node/add/' . $type_url_str, 
-          'title' => $all_types[$type], 
-          'query' => array(
-              'destination' => 'cp/content/' . $type 
-          ) 
-      );
-      $output = $type ? theme('context_links', $links) : '';
-      
-      $view->display['default']->handler->options['header'] = $output;
+      //$view->display['default']->handler->options['header'] = $output;
     }
     else {
 
@@ -281,10 +269,6 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     $form['sticky']['#type'] = 'radios';
     $form['sticky']['#options'] = $options;
     
-    $form['#prefix'] = '<fieldset class="group-account-basics collapsible"><legend>Filter options</legend>';
-    $form['#suffix'] = '</fieldset>';
-    
-    
     // ugly reset button
     $vsite = vsite_get_vsite();
     if (!$vsite){
@@ -313,7 +297,7 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
       	$vals = $form_state['input'];
       	//is the filter set? if so don't collapse it
       	$s_state = (!is_array($vals) || !(strlen($vals['title'] || $vals['promote'] != 'All' || $vals['sticky'] != 'All' || $vals['status'] != 'All' || count($vals['tid']))))?'collapsed':'';
-    	  $form['#prefix'] = '<fieldset class="vsite_content_filter_box collapsible '.$s_state.'"><legend>Filter options</legend>';
+    	$form['#prefix'] = _vsite_content_context_links() . '<fieldset class="vsite_content_filter_box collapsible '.$s_state.'"><legend>Filter options</legend>';
       }
     break;
     case 'views_bulk_operations_form__1':
@@ -323,6 +307,26 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
     	}
     break;
   }
+}
+
+function _vsite_content_context_links() {
+  $type = arg ( 2 );
+
+  if ($type && $type !== 'all') {
+    $type_url_str = str_replace ( '_', '-', $type );
+    $all_types = node_get_types ( 'names' );
+    $links = array ();
+    $links [] = array (
+      'href' => 'node/add/' . $type_url_str, 'title' => $all_types [$type], 'query' => array (
+      'destination' => 'cp/content/' . $type 
+    ) 
+    );
+    $output = $type ? theme ( 'context_links', $links ) : '';
+  }
+  else {
+    
+  }
+  return $output;
 }
 
 function vsite_content_cp_confirm_overide(){
