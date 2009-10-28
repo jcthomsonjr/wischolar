@@ -184,6 +184,7 @@ function vsite_design_imagecache_default_presets() {
 function vsite_design_preprocess_page(&$vars){
 	//Return if:
 	if(!($vsite = vsite_get_vsite()) ||                                 //In a Vsite? 
+	    arg(0) == 'cp' ||                                               //We are in CP?
 	    !$vsite->group->og_theme ||                                     //Grop has a custom theme
 	    !($themes = list_themes()) ||                                   
 	    !array_key_exists($vsite->group->og_theme,$themes) ||           //The theme is valid

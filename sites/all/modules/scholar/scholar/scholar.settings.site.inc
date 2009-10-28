@@ -63,9 +63,9 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
     );
     $form['scholar_link_to_contact'] = array(
       '#type' => 'checkbox',
-      '#attributes' => array('disabled' => 'disabled'), //disable till we get og_contacts in place
+      //'#attributes' => array('disabled' => 'disabled'), //disable till we get og_contacts in place
       '#title' => t('Add Link to contact form?'),
-      '#default_value' => isset($value['scholar_link_to_contact'])?$value['scholar_link_to_contact']:0,
+      '#default_value' => isset($value['scholar_link_to_contact'])?$value['scholar_link_to_contact']:1,
     );
     
 //    $form['example'] = array(

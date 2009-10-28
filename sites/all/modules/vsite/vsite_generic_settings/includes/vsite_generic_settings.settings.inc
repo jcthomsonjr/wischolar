@@ -27,12 +27,12 @@ class vsite_generic_settings_settings implements space_setting {
       '#default_value' => (is_array($value) && array_key_exists('admin_menu',$value))?$value['admin_menu']:0,
 		);
 		
-    $form['contact_form'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Allow Contact Form'),
-      '#default_value' => is_array($value) && array_key_exists('contact_form',$value) ? $value['contact_form']:1,
-      '#description' => "When this is checked a contact form is displayed on your site allowing others to contact you.",
-    );
+//    $form['contact_form'] = array(
+//      '#type' => 'checkbox',
+//      '#title' => t('Allow Contact Form'),
+//      '#default_value' => is_array($value) && array_key_exists('contact_form',$value) ? $value['contact_form']:1,
+//      '#description' => "When this is checked a contact form is displayed on your site allowing others to contact you.",
+//    );
     
     $form['contact_form_anonymous'] = array(
       '#type' => 'checkbox',

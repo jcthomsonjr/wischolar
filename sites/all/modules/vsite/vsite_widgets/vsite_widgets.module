@@ -109,10 +109,12 @@ function vsite_widgets_basicinfo(){
 							            <p></p>";
     return $block;
 	}//Retrieve Defaults
+	
+	$s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0)?l("(email)","contact_owner"):"";
 
 	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
 							<h2>{$scholar->settings['site']['sub_heading']}</h2>
-							<p>{$scholar->settings['site']['sub_heading_extra']}</p>";
+							<p>{$scholar->settings['site']['sub_heading_extra']}{$s_email}</p>";
 
 	$block['content'] = $output;
 
