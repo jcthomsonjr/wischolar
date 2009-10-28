@@ -1,8 +1,14 @@
 body {
-    background: url(images/fabric-strip.jpg) repeat-y top center #4C2F0D;
+    background: url(images/fabric-strip.jpg) repeat-y 50% 0 #4C2F0D;
     color:#282828;
     font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
+
+
+/* Safari begins background image at an odd place */
+@media screen and (-webkit-min-device-pixel-ratio:0){
+  body {background-position: 50% 20px }
+  }
 
 body.cp-toolbar-full {
   background-position: 50% 42px;
@@ -19,11 +25,13 @@ body.front #wrapper {
 
 #container {
     width: 676px;
-    background: url(images/header.jpg) no-repeat 0 0 transparent;
+    background: url(images/header.jpg) no-repeat 50% 0 transparent;
     margin: 0 auto;
     padding-left: 193px;
     padding-right: 54px;
     }
+
+
 
 body.front #container {
     width: 100%;

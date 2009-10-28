@@ -27,13 +27,11 @@ base theme = zen
 ;stylesheets[all][]   = layout-garland.css
 stylesheets[all][]   = html-elements.css
 stylesheets[all][]  = tabs.css
-
 ;stylesheets[all][]  = system.css
 ;stylesheets[all][]  = system-menus.css
 ;stylesheets[all][]  = defaults.css
 ;stylesheets[all][]  = user.css
 stylesheets[all][]  = admin.css
-
 stylesheets[all][]  = taxonomy.css
 ;stylesheets[all][]   = icons.css
 ;stylesheets[all][]  = block-editing.css
@@ -45,6 +43,7 @@ stylesheets[all][]  = comments.css
 stylesheets[all][]   = modal.css
 stylesheets[all][]   = ctools.css
 stylesheets[all][]   = biblio.css
+stylesheets[all][]   = help-popup.css
 
 stylesheets[print][] = print.css
   ; To prevent stylesheets of a base theme or of a module from being included in
@@ -55,8 +54,9 @@ stylesheets[all][]   = messages.css
 stylesheets[all][]   = wireframes.css
 stylesheets[all][]   = zen.css
 
-  ; Set the conditional stylesheets that are processed by IE.
-conditional-stylesheets[if lte IE 7][all][] = ie.css
+  ; Set the conditional stylesheets that are processed by IE. Note: there is NO actual file called "ie.css" in the theme directory but the follow removes the zen ie css which we don't need.
+conditional-stylesheets[if IE][all][] = ie.css
+conditional-stylesheets[if lte IE 7][all][] = scholar-base-ie.css
 
   ; The regions defined in Zen's default page.tpl.php file.  The name in
   ; brackets is the name of the variable in the page.tpl.php file, (e.g.
