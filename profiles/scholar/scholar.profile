@@ -261,6 +261,7 @@ function scholar_profile_tasks(&$task, $url) {
     // _scholar_testingcontent();
 
     //_scholar_filefield_paths_config();
+    _scholar_configure_biblio();
 
     //import the D5 scholar data
     // simport_import();
@@ -450,4 +451,17 @@ function _scholar_contact_config(){
   install_contact_add_category('website feedback', 'scholars_dev_support@help.hmdc.harvard.edu', $reply = '', $weight = 0, $selected = 1);
   install_contact_add_category('feature request', 'scholars_dev_support@help.hmdc.harvard.edu', $reply = '', $weight = 0, $selected = 0);
   install_contact_add_category('bug report', 'scholars_dev_support@help.hmdc.harvard.edu', $reply = '', $weight = 0, $selected = 0);
+}
+
+/**
+ *  Change the biblio Config
+ *  TODO: permissions
+ */
+function _scholar_configure_biblio(){
+   $a_settings = include dirname(__FILE__) . '/biblio.settings.inc';
+   
+   include_once(drupal_get_path('module','biblio')."/biblio.admin.inc");
+   drupal_execute('biblio_admin_types_edit_form',$a_settings['common']);
+   
+   db_query("UPDATE `biblio_field_type` SET visible = 0 WHERE ftdid IN(2,3,4,5) AND visible = 1");
 }
