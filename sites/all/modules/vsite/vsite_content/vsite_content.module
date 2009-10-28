@@ -325,7 +325,10 @@ function _vsite_content_context_links() {
     $output = $type ? theme ( 'context_links', $links ) : '';
   }
   else {
-    
+    // the "add new *" links
+    $items = vsite_create_links();
+    $output = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'panels-display-links');
+ 
   }
   return $output;
 }

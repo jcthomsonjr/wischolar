@@ -39,6 +39,7 @@ function vsite_content_types($privacy = array(2), $vsite = NULL){
 
 function vsite_create_links(){
   $types = vsite_content_types(array(2, 1));
+  drupal_alter('vsite_content_types', $types);
   foreach ( $types as $type => $name ) {
   	$type_url_str = str_replace('_', '-', $type);
     $links[] = array(
