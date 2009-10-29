@@ -365,7 +365,7 @@ function db_distinct_field($table, $field, $query) {
   $matches = array();
   if (preg_match('/^SELECT(.*?)FROM(.*)/is', $query, $matches)) {
     $select = preg_replace(
-      '/((?:^|,)\s*)(?<!DISTINCT\()(?:'. $table .'\.)?'. $field .'(\s*(?:,|$))/is',
+      '/((?:^|,|\()\s*)(?<!DISTINCT\()(?:'. $table .'\.)?'. $field .'(\s*(?:,|\sAS|\)|$))/is',
       '\1'. $field_to_select .'\2', $matches[1], 1
     );
     
