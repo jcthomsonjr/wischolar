@@ -143,10 +143,10 @@ function _vsite_user_default_permissions() {
   $permissions[] = array(
     'name' => 'access site-wide contact form',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-      '2' => 'anonymous user',
-      '3' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar user',
+      '3' => 'scholar admin',
     ),
   );
 
@@ -158,14 +158,22 @@ function _vsite_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create users
+  $permissions[] = array(
+    'name' => 'create users',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: search content
   $permissions[] = array(
     'name' => 'search content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-      '2' => 'anonymous user',
-      '3' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar user',
+      '3' => 'scholar admin',
     ),
   );
 
@@ -173,8 +181,8 @@ function _vsite_user_default_permissions() {
   $permissions[] = array(
     'name' => 'upload files',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'scholar user',
+      '1' => 'scholar admin',
     ),
   );
 
@@ -206,10 +214,10 @@ function _vsite_user_default_permissions() {
   $permissions[] = array(
     'name' => 'view uploaded files',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-      '2' => 'anonymous user',
-      '3' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar user',
+      '3' => 'scholar admin',
     ),
   );
 
