@@ -24,6 +24,7 @@ function vsite_front_home(){
         if (!$node_options){
           $node_options = vsite_content_types();
         }
+
         // they may have selected a feature that some module decided not to display
         // or that feature is not public anymore.
         drupal_alter('vsite_content_types', $node_options);
@@ -103,8 +104,10 @@ function vsite_front_home_feature($node_options){
 
   // add a filter for "node types" in the view
   $options = array();
-  foreach($node_options as $o){
-    $options[$o] = $o; // that's how views wants it
+  foreach($node_options as $type => $value){
+    if ($value){
+      $options[$type] = $type; // that's how views wants it
+    }
   }
 
   $view -> display['default'] -> display_options['filters']['type'] = array(
@@ -120,7 +123,6 @@ function vsite_front_home_feature($node_options){
   );
   $view->init();
   $view->set_display('default');
-
 
   $view -> execute();
   return $view -> render();
