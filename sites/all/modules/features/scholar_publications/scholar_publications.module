@@ -2,27 +2,33 @@
 include_once('scholar_publications.features.inc');
 
 function scholar_publications_init(){
-  $space = vsite_get_vsite();
   
-  if($space){
-    global $conf;
-    require_once drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc';
-    
-    scholar_publications_settings_feature::customize($space, 'style',$conf['biblio_style']);
-    scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_allow_autocomplete',$conf['bkn_contrib_lookup_allow_autocomplete']);
-    scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_mode',$conf['bkn_contrib_lookup_mode']);
-    scholar_publications_settings_feature::customize($space,'sort',$conf['biblio_sort']);
-    scholar_publications_settings_feature::customize($space,'sort_tabs',$conf['biblio_sort_tabs']);
-    scholar_publications_settings_feature::customize($space,'order',$conf['biblio_order']);
-    scholar_publications_settings_feature::customize($space,'rowsperpage',$conf['rowsperpage']);
-    scholar_publications_settings_feature::customize($space,'export_links', $conf['biblio_export_links']);
-    scholar_publications_settings_feature::customize($space,'google_link', $conf['biblio_google_link']);
-    scholar_publications_settings_feature::customize($space,'no_publication_date', $conf['biblio_no_year_text']);
-    //scholar_publications_settings_feature::customize($space,'inlinemode_in_links', $conf['biblio_inlinemode_in_links']);
-    scholar_publications_settings_feature::customize($space,'link_title_url', $conf['biblio_link_title_url']);
-    scholar_publications_settings_feature::customize($space,'author_links', $conf['biblio_author_links']);
-      
-  }
+	static $init_run;
+	
+	if(!isset($init_run)){
+		$init_run = true;
+		$space = vsite_get_vsite();
+	  
+	  if($space){
+	    global $conf;
+	    require_once drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc';
+	    
+	    scholar_publications_settings_feature::customize($space, 'style',$conf['biblio_style']);
+	    scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_allow_autocomplete',$conf['bkn_contrib_lookup_allow_autocomplete']);
+	    scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_mode',$conf['bkn_contrib_lookup_mode']);
+	    scholar_publications_settings_feature::customize($space,'sort',$conf['biblio_sort']);
+	    scholar_publications_settings_feature::customize($space,'sort_tabs',$conf['biblio_sort_tabs']);
+	    scholar_publications_settings_feature::customize($space,'order',$conf['biblio_order']);
+	    scholar_publications_settings_feature::customize($space,'rowsperpage',$conf['rowsperpage']);
+	    scholar_publications_settings_feature::customize($space,'export_links', $conf['biblio_export_links']);
+	    scholar_publications_settings_feature::customize($space,'google_link', $conf['biblio_google_link']);
+	    scholar_publications_settings_feature::customize($space,'no_publication_date', $conf['biblio_no_year_text']);
+	    //scholar_publications_settings_feature::customize($space,'inlinemode_in_links', $conf['biblio_inlinemode_in_links']);
+	    scholar_publications_settings_feature::customize($space,'link_title_url', $conf['biblio_link_title_url']);
+	    scholar_publications_settings_feature::customize($space,'author_links', $conf['biblio_author_links']);
+	      
+	  }
+	}
 }
 
 /**
@@ -194,6 +200,17 @@ function scholar_publications_db_rewrite_sql($sql, $primary_table, $primary_fiel
 function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 
   switch ($op) {
+  	case 'load':
+  		if ($node -> type == 'biblio'){
+  			$s_orig_text = variable_get('biblio_no_year_text', t('Submitted'));
+  			scholar_publications_init(); //Run the customizations since they probably have not run by this point (they only run once anyway)
+  			//rerun this since it was run before customization
+  			if($node->biblio_year){
+  				if($node->biblio_year === $s_orig_text) $node->biblio_year = 9999;
+  				$node->biblio_year = _biblio_text_year($node->biblio_year);
+  			} 
+  		}
+  	break;
     case 'presave':
       if ($node -> type == 'biblio'){
         $vsite = vsite_get_vsite();
