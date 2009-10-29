@@ -64,44 +64,56 @@ function _scholar_testingcontent(){
 	}
 }
 
-function _vsite_filefield_paths_config() {
+function _vsite_filefield_paths_config(){
   $return = array();
-
+  
   //set the "upload" paths
   $types = og_get_types('group_post');
   $file_name = array(
-  'value' => '[filefield-onlyname-original].[filefield-extension-original]',
-  'tolower' => 0,
-  'pathauto' => 0,
-  'transliterate' => 0,
+    'value' => '[filefield-onlyname-original].[filefield-extension-original]', 
+    'tolower' => 0, 
+    'pathauto' => 0, 
+    'transliterate' => 0 
   );
-
+  
   $file_path = array(
-  'value' => '[space-og-path-raw]/files',
-  'tolower' => 0,
-  'pathauto' => 0,
-  'transliterate' => 0,
+    'value' => '[space-og-path-raw]/files', 
+    'tolower' => 0, 
+    'pathauto' => 0, 
+    'transliterate' => 0 
   );
-  foreach ($types as $type){
+  
+  $file_alias = array(
+    'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]', 
+    'tolower' => 0, 
+    'pathauto' => 0, 
+    'transliterate' => 0,
+    'display' => 0,
+  );
+  
+  
+  foreach ( $types as $type ) {
     //if (variable_get("upload_$type", "0") === "1"){
-    db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path));
+    db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path), serialize($file_alias));
     //}
   }
-
+  
   //set the "filefield" paths
   reset($types);
-
+  
   //find the fields
-  foreach (content_fields() as $field){
-    if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)){      
+  foreach ( content_fields() as $field ) {
+    if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)) {
       //add settings to database if applicable
-        db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'], serialize($file_name), serialize($file_path));     
+      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'], serialize($file_name), serialize($file_path));
     }
   }
-
-  $return[] = array('success' => TRUE,
-  'query' => "the upload and filefield file paths were inserted in the filefield_paths table");
-
+  
+  $return[] = array(
+    'success' => TRUE, 
+    'query' => "the upload and filefield file paths were inserted in the filefield_paths table" 
+  );
+  
   return $return;
 }
 

@@ -52,8 +52,11 @@ function vsite_taxonomy_menu() {
 }
 
 function vsite_taxonomy_tt(){
-  dpm(vsite_taxonomy_vocabulary_default());
-$feature = feature_load('scholar_blog');
+  $a = db_result(db_query("SELECT filealias  from {filefield_paths} WHERE type='class'"));
+ 
+ dpm(unserialize($a));
+  //dpm(vsite_taxonomy_vocabulary_default());
+//$feature = feature_load('scholar_blog');
 //dpm($feature);
   return 'sss';
 }
