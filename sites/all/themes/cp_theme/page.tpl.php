@@ -60,9 +60,9 @@
         <h3>The Scholars' Web Sites Project <span>IQSS, Harvard University</span></h3>
         <ul>
           <li>&copy; 2008-<?php echo date(Y);?> President &amp; Fellows Harvard University</li>
-          <li><a href="/docs">Documentation</a></li>
-          <li><a href="/contact">Feedback</a></li>
-          <li><a href="/legal">Legal</a></li>
+          <li><?php print l('Documentation', 'docs');?></li>
+          <li><?php print l('Feedback', 'cp/support/contact');?></li>
+          <li><?php print l('Terms', 'terms');?></li>
           <li class="last">Version 2.13</li>
         </ul>
         <?php if ($footer_message){ ?>
