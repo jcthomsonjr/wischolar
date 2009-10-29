@@ -1333,21 +1333,3 @@ function _simport_external_get_links(){
   return $custom_links;
 }
 
-function simport_form_alter(&$form, $form_state, $form_id){
-  dpm($form_id);
-  
-}
-
-function simport_test_biblio_add(){
-module_load_include('inc', 'biblio', 'biblio.admin');
-$form =  biblio_admin_types_add_form();
-$form_state['values'] = array(
-'name' => 'Another Working Paper',
-'description' => 'Another Working Paper Description',
-'op' => 'Create New Type',
-);
-
-biblio_admin_types_add_form_submit($form, $form_state) ;
-  //dpm($form_id);
-  
-}
