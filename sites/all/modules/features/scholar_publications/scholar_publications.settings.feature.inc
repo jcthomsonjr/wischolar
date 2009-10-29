@@ -24,7 +24,12 @@ class scholar_publications_settings_feature implements space_setting {
 
     $s_style = biblio_get_style();
 
-
+    $form['no_publication_date'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Unpublished Label'),
+      '#default_value' => !array_key_exists('no_publication_date',$value)?variable_get('biblio_no_year_text', t('Submitted')):$value['no_publication_date'],
+      '#description' => t('This label will show if you do not enter a publication date.'),
+    );
 
     $form['style'] = array(
       '#type' => 'radios',
@@ -93,7 +98,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#type' => 'textfield',
       '#title' => t('Publications per page'),
       '#size' => 5,
-      '#default_value' => array_key_exists('rowsperpage',$value)?variable_get('biblio_rowsperpage',25):$value['rowsperpage'],
+      '#default_value' => !array_key_exists('rowsperpage',$value)?variable_get('biblio_rowsperpage',25):$value['rowsperpage'],
       '#description' => t('Select the number of publication to be displayed on each page.'),
     );
 

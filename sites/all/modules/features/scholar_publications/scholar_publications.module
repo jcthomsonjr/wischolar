@@ -17,7 +17,7 @@ function scholar_publications_init(){
     scholar_publications_settings_feature::customize($space,'rowsperpage',$conf['rowsperpage']);
     scholar_publications_settings_feature::customize($space,'export_links', $conf['biblio_export_links']);
     scholar_publications_settings_feature::customize($space,'google_link', $conf['biblio_google_link']);
-    //scholar_publications_settings_feature::customize($space,'links_target_new_window', $conf['biblio_links_target_new_window']);
+    scholar_publications_settings_feature::customize($space,'no_publication_date', $conf['biblio_no_year_text']);
     //scholar_publications_settings_feature::customize($space,'inlinemode_in_links', $conf['biblio_inlinemode_in_links']);
     scholar_publications_settings_feature::customize($space,'link_title_url', $conf['biblio_link_title_url']);
     scholar_publications_settings_feature::customize($space,'author_links', $conf['biblio_author_links']);

@@ -463,6 +463,7 @@ function _scholar_configure_biblio(){
    include_once(drupal_get_path('module','biblio')."/biblio.admin.inc");
    drupal_execute('biblio_admin_types_edit_form',$a_settings['common']);
    
-   db_query("UPDATE `biblio_field_type` SET visible = 0 WHERE fid IN(2,3,4,5) AND visible = 1");
-   db_query("UPDATE `biblio_field_type` SET visible = 0 WHERE fid = 22 AND weight = -1");
+   db_query("UPDATE `biblio_field_type` SET visible = 0 WHERE fid IN(2,3,4,5) AND visible = 1"); //Hide all the other authers
+   db_query("UPDATE `biblio_field_type` SET weight = -1 WHERE fid = 22");  //Move Abstract
+   db_query("UPDATE `biblio_field_type` SET required = 0 WHERE fid = 15"); //No pub date req.
 }

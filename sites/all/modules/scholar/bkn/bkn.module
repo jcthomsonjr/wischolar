@@ -117,7 +117,7 @@ function bkn_form_alter(&$form, $form_state, $form_id) {
     	}
       
     	$use_autocomplete = variable_get('bkn_allow_autocomplete',1);
-    	$n_lookup_mode = variable_get('bkn_mode',1);
+    	$n_lookup_mode = variable_get('bkn_mode',2);
     	foreach ($a_fields as $s_key => $a_field){
     		if(substr($s_key,0,1) == "#") continue;
     		
@@ -136,7 +136,6 @@ function bkn_form_alter(&$form, $form_state, $form_id) {
     	  if(array_key_exists('rank',$a_field)){
     		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['rank']['#type'] = 'hidden';
     		}
-    		
     		
     	  if($n_lookup_mode == 1 && !array_key_exists('check_bkn',$a_field)){
     		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['check_bkn'] = array('#type' => 'checkbox', '#title' => 'Use bkn Database', '#parents' => array_merge($a_parents,array('check_bkn')), '#attributes' => array('class' => 'bknContributorCheck') );
