@@ -114,6 +114,7 @@ class vsite_front_settings_front implements space_setting {
     $form['front_nid'] = $auto_element;
 
     $options = vsite_content_types();
+    drupal_alter('vsite_content_types', $options);
     $default_value = $value['node_options'] ? array_keys(array_filter($value['node_options'])) : array_keys($options);
 
     $form['node_options'] = array(

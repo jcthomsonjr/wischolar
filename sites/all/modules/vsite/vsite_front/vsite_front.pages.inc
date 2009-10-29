@@ -21,6 +21,9 @@ function vsite_front_home(){
         break;
       case 'feature' :
         $node_options = $vsite->settings['front']['node_options'];
+        if (!$node_options){
+          $node_options = vsite_content_types();
+        }
         // they may have selected a feature that some module decided not to display
         // or that feature is not public anymore.
         drupal_alter('vsite_content_types', $node_options);
