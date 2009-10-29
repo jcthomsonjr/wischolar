@@ -248,6 +248,15 @@ function _vsite_layout_alter_theme_regions(&$a_widgets){
 		if(array_key_exists($s_widget,$a_widgets)) $a_widgets[$s_widget]['region'] = $s_region;
 	}//alter based on theme settings
 	
+	uasort($a_widgets,'_vsite_layout_sort_by_weight');
+	
+}
+
+function _vsite_layout_sort_by_weight($a, $b){
+    if ($a['weight'] == $b['weight']) {
+        return 0;
+    }
+    return ($a['weight'] < $b['weight']) ? -1 : 1;
 }
 
 /**

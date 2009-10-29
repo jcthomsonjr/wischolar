@@ -101,14 +101,12 @@ class vsite_layout_settings_layout implements space_setting {
 
 	      foreach(array_keys(vsite_layout_get_pagetypes($space)) as $s_page_nm){
 	        if($s_page_nm == 'all') continue;
-	        $b_modified = false;
 	        $a_new_settings = (is_array($space->settings['layout'][$s_page_nm]))?$space->settings['layout'][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
 
 	        //Handle widgets added
 	        foreach ($a_new_all_wgts as $s_widget_name) {
 	          if(!array_key_exists($s_widget_name,$a_new_settings) || $a_new_settings[$s_widget_name] === false){
 	            $a_new_settings[$s_widget_name] = $setting[$s_widget_name];
-	            $b_modified = true;
 	          }//Already on this page?
 	        }//Add new widgets
 
@@ -116,7 +114,6 @@ class vsite_layout_settings_layout implements space_setting {
 	        foreach ($a_rem_all_wgts as $s_widget_name) {
 	          if(array_key_exists($s_widget_name,$a_new_settings) && $a_new_settings[$s_widget_name] == $a_prev_settings[$s_widget_name]){
 	            unset($a_new_settings[$s_widget_name]);
-	            $b_modified = true;
 	          }//Already on this page?
 	        }//Remove widgets
 	        
@@ -124,11 +121,10 @@ class vsite_layout_settings_layout implements space_setting {
 	        foreach ($setting as $s_widget_name => $s_region){
 	        	if(array_key_exists($s_widget_name,$a_new_settings) && $s_region != $a_new_settings[$s_widget_name] && $a_prev_settings[$s_widget_name] == $a_new_settings[$s_widget_name]){
 	        		$a_new_settings[$s_widget_name] = $s_region;
-	        		$b_modified = true;
 	        	}//The widget is on the subpage and it is not in the position you are moving to already, and it was in the prev location
 	        }
-
-	        if($b_modified) $space->settings['layout'][$s_page_nm] = $a_new_settings;
+	        
+	        $space->settings['layout'][$s_page_nm] = $a_new_settings;
 	      }//Check Each Page Type
 	    }//Add new all widgets to all templates
 
