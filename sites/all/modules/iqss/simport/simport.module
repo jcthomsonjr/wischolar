@@ -868,16 +868,39 @@ function _simport_fix_biblio_authorstr($val){
  *Function which creates custom biblio type
  */
 function simport_create_biblio_type(){
-  module_load_include('inc', 'biblio', 'biblio.admin');
+  //module_load_include('inc', 'biblio', 'biblio.admin');
+
   //create biblio type - Working Paper
-  $form =  biblio_admin_types_add_form();
   $form_state['values'] = array(
   'name' => 'Working Paper',
   'description' => 'Scholar Working Paper',
-  'op' => 'Create New Type',
   );
-  //submit the form
-  biblio_admin_types_add_form_submit($form, $form_state) ;
+
+  //from biblio.admin.inc
+  $values = $form_state['values'];
+  $values['tid'] = variable_get('biblio_max_user_tid', '999') + 1;
+  drupal_write_record('biblio_types', $values);
+  variable_set('biblio_max_user_tid', $values['tid']);
+  for ($f = 1; $f <= 51; $f++) {
+    $ft_vals = array(
+    'tid'       => $values['tid'],
+    'fid'       => $f,
+    'ftdid'     => $f,
+    'cust_tdid' => $f,
+    'weight'    => $f,
+    'visible'    => 1,
+    );
+    drupal_write_record('biblio_field_type', $ft_vals);
+  }
+  // Fill contributor types. Use the first 4 defaults.
+  for ($type = 1; $type <= 4; $type++) {
+    $ct_vals = array (
+    'auth_category' => $type,
+    'biblio_type' => $values['tid'],
+    'auth_type' => $type,
+    );
+    drupal_write_record('biblio_contributor_type', $ct_vals);
+  }
 }
 
 /**
