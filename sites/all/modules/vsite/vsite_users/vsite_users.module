@@ -67,8 +67,9 @@ function vsite_users_menu(){
     'title arguments' => array(3),
     'page callback' => 'vsite_users_edit_user',
     'page arguments' => array(3),
-    'access callback' => 'user_view_access',
-    'access arguments' => array(3),
+    'access callback' => 'cp_access_cp',
+    //'access callback' => 'user_view_access',
+    //'access arguments' => array(3),
     'file' => 'vsite_users.pages.inc',
     'type' => MENU_CALLBACK,
   );
