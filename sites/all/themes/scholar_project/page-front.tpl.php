@@ -21,10 +21,10 @@
         <div id="header-right" class="column">
           <?php print $header_right; ?>
             <ul id="top-front">
-              <li>What's New</li>
+              <!--<li>What's New</li>
               <li>Features</li>
-              <li>Tutorials</li>
-              <li>Log in</li>
+              <li>Tutorials</li>-->
+              <li><?php print l('Log in', 'user');?></li>
               <li id="get-form"><a href="site/register">Get your site now!</a></li>
              </ul>
          </div><!-- /header-right -->

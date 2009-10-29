@@ -4,12 +4,12 @@ html {
     }
 
 body {
-    background: #fff;
+    background: #bc613c;
     color:#282828;
     font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
 
-body.navbar-off {
+body.navbar-on {
   background: #fff;
   }
 
@@ -21,10 +21,17 @@ body.cp-toolbar-full {
   background: url(images/body-bg.png) repeat-x left top #fff;
   }
 
+body.navbar-off #wrapper {
+  background: url(images/body-bg-alt.png) repeat-x 0 100% #fff;
+  padding-bottom: 180px;
+  }
+
 #container {
   width: 910px;
   margin: 0 auto;
   }
+
+
 
 a, a:visited {
     color:#b54f26;
@@ -86,11 +93,11 @@ body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
   }
 
 #sidebar-right {
-    border-left: 1px solid #a1b1b1;
+    border-left: 1px solid #dec6bd;
     }
 
 #sidebar-left {
-    border-right: 1px solid #a1b1b1;
+    border-right: 1px solid #dec6bd;
     }
 
 body.two-sidebars #sidebar-left {
@@ -119,7 +126,7 @@ body.navbar-off #header {
   }
 
 #header-wrapper {
-    height: 160px;
+    height: 140px;
     }
 
 #header h1 {

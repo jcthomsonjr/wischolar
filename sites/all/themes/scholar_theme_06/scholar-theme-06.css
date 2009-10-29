@@ -115,7 +115,7 @@ body.no-sidebars #content-wrapper {
 /* HEADER ELEMENTS */
 
 #header {
-    background: #44514F url(images/top.gif) no-repeat 0 100%;
+    background: #44514F url(images/top.gif) no-repeat 50% 100%;
     color: #F7F3EA;
     padding-bottom: 40px;
     }
@@ -127,6 +127,7 @@ body.no-sidebars #content-wrapper {
   text-transform: uppercase;
   font-size: 40px;
   text-shadow: #222 0 0 .4em;
+  color: #F7F3EA;
   }
 
 
@@ -152,11 +153,15 @@ body.no-sidebars #content-wrapper {
   text-align:center;
   }
 
-#navbar li {
+#block-vsite_menus-0 li {
     margin: 0 1em;
     text-transform: uppercase;
     font-size: 1.1em;
     }
+
+#sidebar-left #block-vsite_menus-0 li {
+  margin:0;
+  }
 
 #navbar a, #navbar a:visited {
     color:#D4D5D3;
@@ -170,7 +175,7 @@ body.no-sidebars #content-wrapper {
 /* MAIN CONTENT AREA */
 
 #content-wrapper {
-  background: url(images/bg.gif) repeat-y;
+  background: url(images/bg.gif) repeat-y 50% 0;
   }
 
 body.sidebar-left #content {
@@ -186,21 +191,20 @@ body.two-sidebars #content {
     margin-right: 20px;
     }
 
-#content-wrapper-bottom {
-  clear: both;
-  background: #44514F url(images/bot.gif) no-repeat 0 100%;
-  height: 40px;
-  }
-
 /* Footer*/
 #footer {
   text-align: center;
-  background:#44514F;
+  background: url(images/bot.gif) no-repeat 50% 0 #44514F;
+  padding-top: 30px;
   padding-bottom: 30px;
-  padding-top: 0;
   }
 
 
-p.copy {
+#footer a, p.copy {
     color: #CFCFCF;
+    }
+
+#footer a:hover {
+    color: #fff;
+    border-color:#CFCFCF;
     }
