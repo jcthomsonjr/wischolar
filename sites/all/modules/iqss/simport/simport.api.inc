@@ -25,6 +25,21 @@ function simport_node_add_cck_file($source, $field_name, &$node, $validate = NUL
   // where to store the file
   $files_path = filefield_widget_file_path($field);
   
+  $sid = ($node->type == 'vsite') ? $node->nid : key($node->og_groups);
+  
+  //special case for cv because the node has not been saved yet
+ /* if($node -> type == 'cv'){    
+    $sid = key($node->og_initial_groups);
+  }*/
+    
+  $vsite = spaces_load('og', $sid);
+    
+  if ($vsite->purl){    
+  simport_create_file_dirs($vsite);    
+  
+  //modify files path
+  $files_path=  $files_path . $vsite->purl . '/files/'; 
+
   // create the file object
   $file = field_file_save_file($source, $validators, $files_path);
 
@@ -42,6 +57,22 @@ function simport_node_add_cck_file($source, $field_name, &$node, $validate = NUL
   
   // save the node (optional)
   node_save($node);
+  }
+}
+
+
+function simport_create_file_dirs($vsite){
+    //determine site files directory, if set
+  $dir = isset($vsite) ? '/'. $vsite->purl : '';
+  
+  //create path to destination - Need to create dirs one level at a time
+  // TODO: should get destination path token/filefield paths in content type settings.  
+   $vsite_files_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', conf_path() .'/files') . $dir ;
+  file_check_directory($vsite_files_path, $mode = 1, $form_item = NULL);
+   
+  $full_dest_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', conf_path() .'/files') . $dir  . '/files';
+  file_check_directory($full_dest_path, $mode = 1, $form_item = NULL);
+	
 }
 
 /**
@@ -56,12 +87,14 @@ function simport_node_add_cck_file($source, $field_name, &$node, $validate = NUL
 function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
 
   //determine site files directory, if set
-  $dir = isset($vsite)? '/'. $vsite -> purl . '/files' : '';
-
-  //create full path to destination directory TODO: should get destination path token/filefield paths in content type settings.
-  $full_dest_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', conf_path() .'/files') . $dir;
-
-  //create directory
+  $dir = isset($vsite) ? '/'. $vsite->purl : '';
+  
+  //create path to destination - Need to create dirs one level at a time
+  // TODO: should get destination path token/filefield paths in content type settings.  
+   $vsite_files_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', conf_path() .'/files') . $dir ;
+  file_check_directory($vsite_files_path, $mode = 1, $form_item = NULL);
+   
+  $full_dest_path = variable_get('simport_current_path', '') . '/' . variable_get('file_directory_path', conf_path() .'/files') . $dir  . '/files';
   file_check_directory($full_dest_path, $mode = 1, $form_item = NULL);
 
   //copy file
@@ -69,8 +102,8 @@ function simport_import_file(&$node, $source, $file = NULL, $vsite = NULL){
 
   if ($file){
     //customize a object a little bit
-    $file -> uid = $node -> uid;
-    $file-> filepath = variable_get('file_directory_path', conf_path() .'/files') . $dir .  '/' . $file-> filename;
+    $file -> uid = $node -> uid;  
+    $file-> filepath = variable_get('file_directory_path', conf_path() .'/files') . $dir .  '/files/' . $file-> filename;
     $file -> status = 1;
     $file -> timestamp = time();
   }
