@@ -1,3 +1,0 @@
-$(document).ready(function() {
-		  $('#main-content .innerframe:first').prepend('<div id="ie-warning"><p>The control panel does not currently support Internet Explorer 7 or lower. You should update your browser to version 8 or use one of the recommended browsers. Recommended browsers are current versions of <a href="http://www.getfirefox.com">Firefox</a>, <a href="http://www.apple.com/safari">Safari</a>, <a href="http://www.opera.com">Opera</a>, or <a href="http://www.google.com/chrome">Chrome</a></p></div>');
-	  });
