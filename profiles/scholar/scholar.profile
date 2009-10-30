@@ -136,7 +136,7 @@ function _scholar_scholar_modules() {
     'vsite_design',
     'vsite_users',
     'vsite_taxonomy',
-    'vsite_help',
+    'vsitehelp',
     'vsite_news',
     'vsite_support',
     'vsite_widgets',
