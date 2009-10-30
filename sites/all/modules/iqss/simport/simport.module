@@ -236,7 +236,7 @@ function simport_import_types($biblio = 0, $start = '', $limit ='', &$context){
           //be converted from type 'page' to type 'bio' or 'cv'          
           simport_set_page($old, $new);     
           
-          $bio_pages = array(259, 290);
+          $bio_pages = array(259, 290, 689);
           //special case - save as 'bio'. NOTE: "About" menu link should not be transferred 
            if(in_array((int)$old->nid, $bio_pages)){
              $new -> type = 'bio';
@@ -333,7 +333,7 @@ function simport_check_feature($type, $vsite){
 
 function simport_check_for_cv_pages($old, &$new){
   //array of known D5 scholar "cv pages"
-  $cv_pages = array(235, 261, 384, 681, 500, 391, 528); 
+  $cv_pages = array(235, 261, 384, 681, 500, 391, 528, 729); 
   if(in_array((int)$old->nid, $cv_pages)){
     //chage the node type to 'cv'
     $new -> type = 'cv';
@@ -429,7 +429,7 @@ function simport_set_logo($old){
     }
     
     else{
-      drupal_set_message("logo filepath not present filename");
+      drupal_set_message("logo filepath not present");
       //no filepath defined means this will not work, so return
       watchdog('simport', 'logo filepath not present %filename.', array('%filename' => basename($source)), WATCHDOG_NOTICE);
       return;
@@ -703,11 +703,11 @@ function simport_set_page($old, &$new){
   $new -> body = $old -> body;
 }
 
-function simport_set_cv($old, $new){
+function simport_set_cv($old, &$new){ dpm($new);
   module_load_include('inc', 'simport', 'simport.api');
   $new -> body = $old -> body; 
   $field_name = 'field_cv_attach';
-  $source = variable_get('simport_remote_path', '') . '/' . $old -> file[0]['filepath'];
+  //$source = variable_get('simport_remote_path', '') . '/' . $old -> file[0]['filepath'];
   foreach($old ->files as $file){
     $source = variable_get('simport_remote_path', '') . '/' . $file -> filepath; 
   }  
@@ -1356,3 +1356,14 @@ function _simport_external_get_links(){
   return $custom_links;
 }
 
+function simport_delete_files_test(){
+  $dirs = array('aglynn', 'bsimmons', 'epenn', 'jfrieden', 'kquinn', 'kshepsle', 'mpolinsky', 'plam', 'rbates', 'renshon', 'tmacdon', 'pfbergen', 'joaneuncho', 'spharr', 'levitsky', 'pnikolov');
+  
+  foreach($dirs as $dir){
+    
+    $cmd = 'rm -rf /nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/files/' . $dir;
+    shell_exec($cmd);
+    drupal_set_message(t('Removed !dir directory', array('!dir' => $dir)));   
+    
+  }
+}
