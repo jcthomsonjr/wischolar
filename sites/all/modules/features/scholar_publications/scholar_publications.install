@@ -4,15 +4,18 @@
  * Implementation of hook_install()
  */
 function scholar_publications_install(){
-  //load biblio module
-  //drupal_load('module', 'biblio');
-  //load include file
-  //module_load_include('inc', 'biblio', $name = 'biblio.admin');
+
   
-  //add custom biblio template type - Working Paper
-/*$form_state = array();
-$form_state['values']['name'] = 'Working Paper';
-$form_state['values']['description'] = 'Scholar Working Paper';
- drupal_execute('biblio_admin_types_add_form', $form_state); */
-  
+}
+
+function scholar_publications_enable() {
+	$weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'biblio' AND name = 'vsite'"));
+  _scholar_publications_set_system_weight($weight+15);	
+}
+
+
+function _scholar_publications_set_system_weight($weight) {
+	if(!is_int($weight)) return false;
+	
+  return db_query("UPDATE {system} SET weight = %d WHERE name = 'scholar_publications'", $weight);
 }
