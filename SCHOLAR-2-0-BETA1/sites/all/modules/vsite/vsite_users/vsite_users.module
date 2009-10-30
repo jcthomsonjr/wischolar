@@ -1,0 +1,390 @@
+<?php
+
+include_once('vsite_users.features.inc');
+
+/**
+ * Implements hook_menu
+ */
+function vsite_users_menu(){
+  $items = array();
+  
+  $items['cp/users'] = array(
+    'title' => 'Users',
+    'page callback' => 'vsite_user_edit',
+    'access callback' => 'vsite_user_edit_access',
+    'file path' => drupal_get_path('module', 'user'),
+    'file' => 'user.pages.inc',
+    'weight' => 2, 
+  );
+  
+  $items['cp/users/myaccount'] = array(
+    'title' => 'My Account',
+    'page callback' => 'vsite_user_edit',
+    'access callback' => 'vsite_user_edit_access',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'file path' => drupal_get_path('module', 'user'),
+    'file' => 'user.pages.inc',
+  );
+  
+  $items['cp/users/members'] = array(
+    'title' => 'Members',
+    'page callback' => 'vsite_users_members',
+    'file' => 'vsite_users.pages.inc',
+      'type' => MENU_LOCAL_TASK,
+    'weight' => 1, // should be the first one
+  );  
+  
+  $items['cp/users/myaccount/edit'] = array(
+    'title' => 'My Account',
+    'page callback' => 'vsite_user_edit',
+    'access callback' => 'vsite_user_edit_access',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'file path' => drupal_get_path('module', 'user'),
+    'file' => 'user.pages.inc',
+  );
+  
+  $items['cp/users/myaccount/personal'] = array(
+    'title' => 'Personal Information',
+    'page callback' => 'vsite_user_content_profile_edit_page',
+    'page arguments' => array('vsite_users_profile'),
+    'access callback' => 'vsite_user_edit_access',
+    'weight' => 1,
+    'file' => 'node.pages.inc',
+    'file path' => drupal_get_path('module', 'node'),
+    'type' => MENU_LOCAL_TASK,
+  );
+  
+
+  // make them all part of 'cp' menu
+  foreach($items as $path => $item) {
+    $items[$path]['menu_name'] = 'cp';
+    $items[$path]['access callback'] = 'cp_access_cp'; 
+  }
+  
+  $items['cp/users/edit/%user_uid_optional'] = array(
+    'title' => 'Edit User',
+    'title callback' => 'user_page_title',
+    'title arguments' => array(3),
+    'page callback' => 'vsite_users_edit_user',
+    'page arguments' => array(3),
+    'access callback' => 'cp_access_cp',
+    //'access callback' => 'user_view_access',
+    //'access arguments' => array(3),
+    'file' => 'vsite_users.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['cp/users/add'] = array(
+    'title' => 'Add User',
+    'page callback' => 'vsite_users_add_user',
+    'access callback' => 'cp_access_cp',
+    'file' => 'vsite_users.pages.inc',
+    'type' => MENU_CALLBACK,
+    'weight' => 10
+  );
+  
+  $items['cp/users/user_looup'] = array(
+    'title' => '',
+    'page callback' => 'vsite_users_lookup_user',
+    'access callback' => 'cp_access_cp',
+    'file' => 'vsite_users.pages.inc',
+    'type' => MENU_CALLBACK,
+    'weight' => 10
+  );
+  
+  return $items;
+}
+
+/**
+ * Implements hook_menu_alter
+ */
+function vsite_users_menu_alter(&$a_menu){
+	$a_menu['user/%user/groups']['page arguments'] = array(1);
+	$a_menu['user/%user/groups']['page callback']  = 'vsite_users_show_groups';
+}
+
+/**
+ * Show the sites that a user belongs to
+ * 
+ * @param $account user
+ * @return
+ */
+function vsite_users_show_groups($account){
+	
+	if(module_exists('spaces_og')){
+	  og_user('view',false,$account);
+	  
+	  return theme('user_profile', $account);;
+	}
+	
+}
+
+/**
+ * hook strongarm
+ */
+function vsite_users_strongarm(){
+  $conf = array();
+  $conf['content_profile_use_vsite_users_profile'] = 1;
+  $conf['content_profile_vsite_users_profile'] = array(
+    'weight' => 0, 
+    'user_display' => 'full', 
+    'edit_link' => 0, 
+    'edit_tab' => 'sub', 
+    'add_link' => 0, 
+    'registration_use' => 1, 
+    'admin_user_create_use' => 1, 
+    'registration_hide' => array(
+      'other' 
+    ) 
+  );
+  
+  $conf["show_preview_changes_vsite_users_profile"] = FALSE;
+  $conf["show_diff_inline_vsite_users_profile"] = FALSE;
+  
+  return $conf;
+}
+
+/**
+ * Return the owner of the vsite
+ * @return user
+ */
+function vsite_user_edit(){
+	$vsite = vsite_get_vsite();
+  if(!$vsite) return false;
+  
+  return user_edit(user_load($vsite->group->uid));
+}
+
+/**
+ * Return the owner of the vsite
+ * @return user
+ */
+function vsite_user_edit_access(){
+	$vsite = vsite_get_vsite();
+  if(!$vsite) return false;
+  
+  return user_edit_access(user_load($vsite->group->uid));
+}
+
+/**
+ * Function that loads the content profile form for a site
+ * @return form
+ */
+function vsite_user_content_profile_edit_page($s_type){
+	$vsite = vsite_get_vsite();
+	if(!$vsite) return false;
+	
+	return content_profile_page_edit($s_type,user_load($vsite->group->uid));
+}
+
+/**
+ * Change the form theme to ours without the extra node settings displayed 
+ */
+function vsite_users_theme() {
+
+    $themes = array(
+        'vsite_users_profile_node_form' => array(
+            'arguments' => array('form' => NULL),
+            'path' => drupal_get_path('module', 'vsite_users').'/theme',
+            'file' => 'vsite_users.theme.inc',
+        ),
+    );
+    return( $themes );
+}
+
+/**
+ * For the content profile form:
+ * - Hide the preview and delete buttons
+ * - Save as the site owner 
+ */
+function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_state){
+	//Only apply these alterations on the admin page where we want this form custom for the site owner
+	if(!(arg(0) == 'cp' && arg(1) == 'users' && arg(2) == 'myaccount' && arg(3) == 'personal')){
+		content_profile_form_alter($form, $form_state,'vsite_users_profile_node_form');
+		if(!$form['name']) $form['name'] = array('#type' => 'value', '#value' => $form['author']['name']['#default_value']); //Fix admin only bug
+		return;
+	}//If we are not in CP use the regular alter func.
+	
+	if(isset($form['#redirect'])) unset($form['#redirect']);
+	
+	if(isset($form['buttons']['submit'])){
+		$form['buttons']['submit']['#submit'][] = 'vsite_users_form_vsite_users_profile_node_submit';
+	}
+	
+	$form['buttons']['preview']['#access'] = FALSE;
+  $form['buttons']['delete']['#access'] = FALSE;
+	
+	$vsite = vsite_get_vsite();
+  if($vsite && isset($form['uid'])){
+    $form['uid']['#value'] = $vsite->group->uid;
+  }
+  
+  // Set the author value - note that this works only for admins.
+  if ($vsite && ($user = user_load($vsite->group->uid))) {
+    $form['author']['name']['#default_value'] = $user->name;
+    $form['name'] = array('#type' => 'value', '#value' => $user->name);
+  }
+}
+
+/**
+ * In CP keep the form from redirecting to the node or redirect to home
+ */
+function vsite_users_form_vsite_users_profile_node_submit($form, &$form_state){
+	$o_profile = false;
+	if($scholar = vsite_get_vsite()){
+	  $o_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
+	}
+	if(is_array($form_state['values'])  //The form has been submitted 
+  && !$o_profile ){                   //There was not already a profile
+    $form_state['redirect'] = 'home';
+  }elseif(isset($form_state['redirect'])){
+    unset($form_state['redirect']); //No Redirect for you
+  }
+}
+
+/**
+ * Edit the ucreate form to hide the site dialogue and set defaults 
+ */
+function vsite_users_form_alter(&$form, $form_state, $form_id) {
+	
+	switch($form_id){
+    case 'ucreate_user_form':
+	  	$vsite = vsite_get_vsite();
+	  	$form['og_register']['og_register']['#value'] = array($vsite->sid => $vsite->title);
+	  	$form['og_register']['og_register']['#type'] = 'value';
+	  	$form['og_register']['#type'] = 'value';
+	  	
+	  	$form['roles']['#type'] = 'value';
+	  	$form['roles']['#value'] = array_search('scholar user',user_roles());
+	  	
+	  	$form['name']['#weight'] = 1;
+	  	$form['name']['#description'] = "The shortname used to login usually first initial + last name";
+	  	
+	  	$form['mail']['#weight'] = 2;
+	  	$form['mail_confirm']['#weight'] = 3;
+	  	$form['welcome_message_body']['#weight'] = 4;
+	  	
+	  	//Add Registration info to form
+	  	content_profile_registration_form_alter($form, $form_state,'user_register');
+	
+	  	if(array_key_exists('vsite_users_first_name',$form)){
+	  	  $form['vsite_users_first_name']['#weight'] = -3;
+//	  	  $form['vsite_users_first_name']['#ahah'] = array(
+//		      'path' => 'cp/users/user_lookup',
+//		      'wrapper' => 'user_lookup',
+//		      'method' => 'replace',
+//		      'effect' => 'fade',
+//	  	    'event' => 'change',
+//		    );
+//		    $form['vsite_users_first_name']['#type'] = 'textfield';
+	  	} 
+	  	if(array_key_exists('vsite_users_last_name',$form)) $form['vsite_users_last_name']['#weight'] = -2;
+	  	if(array_key_exists('vsite_users_title',$form)) $form['vsite_users_title']['#type'] = 'value';
+	  	if(array_key_exists('field_user_profile_photo',$form)) $form['field_user_profile_photo']['#type'] = 'value';
+	  	
+	  	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
+	  	
+	  	if(is_array($form['#validate']) && array_search('ucreate_user_form_validate',$form['#validate']) !== false) unset($form['#validate'][array_search('ucreate_user_form_validate',$form['#validate'])]); //Hijack this submit validate
+	  	
+	  	//Add Validate handler
+	  	array_unshift($form['#submit'], 'vsite_users_user_form_validate');
+	  	
+	  	//Add submit handler for registration info
+	  	array_unshift($form['#submit'], 'vsite_users_user_form_submit');
+  	break;
+    case 'user_profile_form':
+    	//Redirect the save password form to the profile page
+    	if(!array_key_exists('redirect_from_reset',$form)) $form['redirect_from_reset'] = array('#type' => 'hidden', '#default_value' => false);
+    	
+    	if($_SERVER['REDIRECT_STATUS'] == '200' && strstr($_SERVER['HTTP_REFERER'],'user/reset') !== false){
+    		$form['redirect_from_reset']['#value'] = true;
+    	}//Are we coming from the special login link?
+    	
+    	$form['#submit'][] = 'vsite_users_redirect_reset_submit';
+    	
+    	unset($form['account']['#title']);
+    	//Remove unused fields
+    	if(array_key_exists('contact',$form)) vsite_users_hide_form_value($form['contact']);
+	    if(array_key_exists('biblio_fieldset',$form))  vsite_users_hide_form_value($form['biblio_fieldset']);
+	    if(array_key_exists('timezone',$form))  vsite_users_hide_form_value($form['timezone']);
+	    
+    break;
+  }
+}
+
+function vsite_users_hide_form_value(&$element){
+	foreach(element_children($element) as $s_key){
+		$element[$s_key]['#type'] = 'value';
+		vsite_users_hide_form_value($element[$s_key]);;
+	}
+	$element['#type'] = 'value';
+}
+
+/**
+ * Validation handler for ucreate_user_form()
+ */
+function vsite_users_user_form_validate($form, &$form_state){
+  if ($form_state['values']['mail'] != $form_state['values']['mail_confirm']) {
+    form_set_error('email_confirm', t('E-mail addresses don\'t match'));
+  }
+}
+
+/**
+ * Submit handler for ucreate_user_form().
+ */
+function vsite_users_user_form_submit($form, &$form_state) {
+  if(($account = user_load(array('name' => $form_state['values']['name']))) || ($account = user_load(array('mail' => $form_state['values']['mail'])))){
+		$vsite = vsite_get_vsite();
+  	og_save_subscription($vsite->group->nid, $account->uid, array('is_active' => 1));
+	  drupal_set_message(t('A user with the name [!name] and e-mail address[!email] already existed, they are now a member of [!group]', array('!name' => $account->name, '!email' => $account->mail, '!group' =>  $vsite->group->title)));
+	  return true;
+  }
+	
+	// If user roles were handled through a UI element, process accordingly.
+  // This sucks. See user_save() for why this is necessary.
+  if ($form['roles']['#type'] != 'value') {
+    $rids = array();
+    foreach ($form_state['values']['roles'] as $rid => $enabled) {
+      if (!empty($enabled)) {
+        $rids[$rid] = $rid;
+      }
+    }
+    $form_state['values']['roles'] = $rids;
+  }
+
+  //Create the user and store it in the form for other submit functions
+  $form_state['user'] = ucreate_user_create($form_state['values']);
+  
+}
+
+/**
+ * Submit handler used to check the passed reset value, if it is present we will redirect
+ */
+function vsite_users_redirect_reset_submit($form, &$form_state) {
+  if(is_array($form_state['values']) 
+  && array_key_exists('redirect_from_reset',$form_state['values']) 
+  && $form_state['values']['redirect_from_reset']){
+  	if (arg(0) != 'cp'){
+  	  drupal_goto('user/'.$form['#uid'].'/edit/vsite_users_profile');
+  	}else{
+  		drupal_goto('cp/users/myaccount/personal');
+  	}
+  }
+  
+}
+
+/**
+ * hook_scholar_conformation
+ * 
+ * Returns an array of urls to overide and create cp_confirm_popups for
+ * @return array
+ */
+function vsite_users_cp_confirm_overide(){
+	return array(
+	  "og/unsubscribe/%/%" =>  "og_confirm_unsubscribe",
+	  "og/subscribe/%" =>      "og_confirm_subscribe",
+	  "og/create_admin/%/%" => "og_create_admin_confirm",
+	  "og/delete_admin/%/%" => "og_remove_admin_confirm",
+	);
+	
+}
