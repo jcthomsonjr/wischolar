@@ -28,9 +28,9 @@ function simport_node_add_cck_file($source, $field_name, &$node, $validate = NUL
   $sid = ($node->type == 'vsite') ? $node->nid : key($node->og_groups);
   
   //special case for cv because the node has not been saved yet
- /* if($node -> type == 'cv'){    
-    $sid = key($node->og_initial_groups);
-  }*/
+ if($node -> type == 'cv'){    
+    $sid = $node->og_groups[0];
+  }
     
   $vsite = spaces_load('og', $sid);
     
