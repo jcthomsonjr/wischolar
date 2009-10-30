@@ -1051,7 +1051,10 @@ function _simport_exportdata(){
   $db_conn['pass'] = $db_pass[0];
   $db_conn['host'] = $db_pass[1];
     
-  $cmd = 'mysql -u' . $db_conn['user'] . ' -p' . $db_conn['pass']. ' ' .  $db_conn['name'] . ' < ' . 
+/*  $cmd = 'mysql -u' . $db_conn['user'] .  ' -p' . $db_conn['pass']. ' ' .  $db_conn['name'] . ' < ' . 
+  dirname(__FILE__) .  '/export/scholar_export_data.sql';*/
+  
+    $cmd = 'mysql -u' . $db_conn['user'] . ' -h' . $db_conn['host'] . ' -p' . $db_conn['pass'] . ' ' .  $db_conn['name'] . ' < ' . 
   dirname(__FILE__) .  '/export/scholar_export_data.sql';
   
   //execute command to import table
@@ -1356,14 +1359,3 @@ function _simport_external_get_links(){
   return $custom_links;
 }
 
-function simport_delete_files_test(){
-  $dirs = array('aglynn', 'bsimmons', 'epenn', 'jfrieden', 'kquinn', 'kshepsle', 'mpolinsky', 'plam', 'rbates', 'renshon', 'tmacdon', 'pfbergen', 'joaneuncho', 'spharr', 'levitsky', 'pnikolov');
-  
-  foreach($dirs as $dir){
-    
-    $cmd = 'rm -rf /nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/files/' . $dir;
-    shell_exec($cmd);
-    drupal_set_message(t('Removed !dir directory', array('!dir' => $dir)));   
-    
-  }
-}
