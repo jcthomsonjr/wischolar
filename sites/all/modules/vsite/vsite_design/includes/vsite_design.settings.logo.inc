@@ -30,10 +30,10 @@ class vsite_design_settings_logo implements space_setting {
 
     $s_current = file_check_location($value['current_logo']);
 
-
+    vsite_include('vsiteapi');
+    $form['current_logo'] = array('#value' => theme('vsite_design_logo',$space,false,'','',array('id' => 'logo_preview'),true));
+      
     if ($s_current) {
-    	vsite_include('vsiteapi');
-      $form['current_logo'] = array('#value' => theme('vsite_design_logo',$space,false,'','',array('id' => 'logo_preview'),true));
       $form['x_cord'] = array('#type' => 'hidden');
 	    $form['y_cord'] = array('#type' => 'hidden');
 	    $form['width'] = array('#type' => 'hidden');
@@ -61,22 +61,9 @@ class vsite_design_settings_logo implements space_setting {
 	    }else{
 	    	$form['clear'] = array('#value' => "<div style='clear:both;'></div>");
 	    }//Only show the preview and crop buttons if they have uploaded somthing
-	    $form['logo_upload'] = array('#type' => 'file', '#title' => t('Upload logo'), '#size' => 48, '#description' => t('Your sites logo. '));
-
-
-//	    $form['preview'] = array(
-//          '#title' => 'Preview',
-//          '#type' => 'fieldset',
-//          '#tree' => TRUE,
-//	        '#collapsible' => TRUE,
-//	        '#collapsed' => true
-//      );
-//      $form['preview']['landscape'] = array('#type' => 'item','#title' => t('Landscape'),'#value' => theme('vsite_design_logo','vsite_design_landscape_logo'));
-//      $form['preview']['square'] = array('#type' => 'item','#title' => t('Square'),'#value' => theme('vsite_design_logo','vsite_design_square_logo'));
-//      $form['preview']['portrait'] = array('#type' => 'item','#title' => t('Portrait'),'#value' => theme('vsite_design_logo','vsite_design_portrait_logo'));
-
     }
-
+    
+    $form['logo_upload'] = array('#type' => 'file', '#title' => t('Upload logo'), '#size' => 48, '#description' => t('Your sites logo. '));
 
     return $form;
   }
