@@ -243,6 +243,15 @@ function vsite_users_form_vsite_users_profile_node_submit($form, &$form_state){
 }
 
 /**
+ * Implementation of hook_nodeapi().
+ */
+function vsite_users_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  if ($op == 'prepare' && is_content_profile($node) && !isset($node->nid) && $node->uid && !user_access('administer nodes') && arg(0) == 'cp' && arg(1) == 'users' && arg(2) == 'add') {
+    $node->uid = 0;
+  }
+}
+
+/**
  * Edit the ucreate form to hide the site dialogue and set defaults 
  */
 function vsite_users_form_alter(&$form, $form_state, $form_id) {
@@ -269,14 +278,6 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	
 	  	if(array_key_exists('vsite_users_first_name',$form)){
 	  	  $form['vsite_users_first_name']['#weight'] = -3;
-//	  	  $form['vsite_users_first_name']['#ahah'] = array(
-//		      'path' => 'cp/users/user_lookup',
-//		      'wrapper' => 'user_lookup',
-//		      'method' => 'replace',
-//		      'effect' => 'fade',
-//	  	    'event' => 'change',
-//		    );
-//		    $form['vsite_users_first_name']['#type'] = 'textfield';
 	  	} 
 	  	if(array_key_exists('vsite_users_last_name',$form)) $form['vsite_users_last_name']['#weight'] = -2;
 	  	if(array_key_exists('vsite_users_title',$form)) $form['vsite_users_title']['#type'] = 'value';
