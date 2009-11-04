@@ -112,10 +112,8 @@ function scholar_feeds_feed_validate($form, &$form_state) {
 	
   $form_state['values']['feedapi']['feedapi_url'] = trim($form_state['values']['feedapi']['feedapi_url']);
   
-  $handle = @fopen($form_state['values']['feedapi']['feedapi_url'], "r");
-  if(!$handle){
+  $success = (valid_url($form_state['values']['feedapi']['feedapi_url'],true) && ($status = drupal_http_request($form_state['values']['feedapi']['feedapi_url'])) && !strlen($status->error));
+  if(!$success){
   	form_error($form, t('Can\'t connect to '.$form_state['values']['feedapi']['feedapi_url'].'. Invalid feed URL, please check that the URL is valid.'), 'error');
-  }else{
-  	fclose($handle);
   }
 }
