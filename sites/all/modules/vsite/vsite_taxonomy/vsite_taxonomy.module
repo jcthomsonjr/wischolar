@@ -74,6 +74,10 @@ function vsite_taxonomy_content_by_category($term_name, $content_type){
     $term_name,
     $content_type
   ));
+  
+  // pager 
+  $view -> pager['use_pager'] = 1;
+  
   $view->execute();
   drupal_set_title($term_name);
   return $view->render();
