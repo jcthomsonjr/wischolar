@@ -161,6 +161,7 @@ class vsite_design_settings_logo implements space_setting {
 	  if(og_is_group_type($node->type)){
 	  	$vsite = spaces_load('vsite',$node->nid);
 	  	$files_path .= $vsite->purl . '/files/';
+	  	file_check_directory($files_path,FILE_CREATE_DIRECTORY);
 	  }//If this is the group node lets put it in the group directory
 	  
 	  // create the file object
