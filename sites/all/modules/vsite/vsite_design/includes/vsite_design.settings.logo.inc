@@ -28,7 +28,7 @@ class vsite_design_settings_logo implements space_setting {
     $form = array();
     $form['#title'] = 'Site logo';
 
-    $s_current = file_check_location($value['current_logo'],realpath(dirname($value['current_logo'])));
+    $s_current = file_check_location($value['current_logo']);//,realpath(dirname($value['current_logo'])));
 
     vsite_include('vsiteapi');
     $form['current_logo'] = array('#value' => theme('vsite_design_logo',$space,false,'','',array('id' => 'logo_preview'),true));
@@ -159,6 +159,10 @@ class vsite_design_settings_logo implements space_setting {
 	  $files_path = filefield_widget_file_path($field);
 	  
 	  // create the file object
+	  if(!@filesize($source)){
+	    return false;	
+	  }//if the file does not exsit dont try and save
+	  
 	  $file = field_file_save_file($source, $validators, $files_path);
 	
 	  //set uid to the node -> uid
