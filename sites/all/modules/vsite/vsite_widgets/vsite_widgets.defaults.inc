@@ -10,9 +10,9 @@ function _vsite_widgets_user_default_permissions() {
   $permissions[] = array(
     'name' => 'search content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
       '3' => 'scholar user',
     ),
   );
