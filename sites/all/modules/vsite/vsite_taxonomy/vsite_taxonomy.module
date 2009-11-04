@@ -139,7 +139,7 @@ function vsite_taxonomy_block_view(){
         $nr_nodes = taxonomy_term_count_nodes($term->tid, $node_type); // only terms for this content type
         if ($nr_nodes) {
           $href = 'categories/'. $term -> name . '/'. $node_type;
-          $item = vsite_taxonomy_term_item($term, $href, $admin, TRUE);
+          $item = vsite_taxonomy_term_item($term, $href, $admin, $node_type, TRUE);
           $items[] = array(
             'data' => $item,
             'id' => 'vsite_taxonomy_item_' . $term->tid
@@ -192,7 +192,7 @@ function vsite_taxonomy_taxonomies(){
 
           //$href = $active_menu . '/' . strtr($term -> name, " ", '-');
           $href = "taxonomy/term/" . $term -> tid;
-          $item = vsite_taxonomy_term_item($term, $href, $admin, TRUE);
+          $item = vsite_taxonomy_term_item($term, $href, $admin, FALSE, TRUE);
           $items[] = array(
             'data' => $item,
             'id' => 'vsite_taxonomy_item_' . $term->tid
@@ -220,14 +220,14 @@ function vsite_taxonomy_taxonomies(){
 /**
  * markup for one taxonomy term
  */
-function vsite_taxonomy_term_item($term, $href, $admin = FALSE, $count = FALSE){
+function vsite_taxonomy_term_item($term, $href, $admin = FALSE, $node_type = FALSE, $count = FALSE){
 
   //$href = 'categories/statistics/class';
   $term_link = l($term -> name, $href, array(
     'title' => t($term -> description)
   ));
 
-  $nr_nodes = taxonomy_term_count_nodes($term->tid);
+  $nr_nodes = $node_type ? taxonomy_term_count_nodes($term->tid, $node_type) : taxonomy_term_count_nodes($term->tid);
   if ($count) {
     $item = $term_link . '<span class = "count" > (' . $nr_nodes . ')</span>';
   }
@@ -423,7 +423,7 @@ function vsite_taxonomy_term_add($vid, $newterm= null){
 
     $commands = array ();
     $href = "taxonomy/term/" . $term -> tid;
-    $t = vsite_taxonomy_term_item($term, $href, $admin = TRUE, $count = TRUE);
+    $t = vsite_taxonomy_term_item($term, $href, $admin = TRUE, FALSE,  $count = TRUE);
     $t = '<li id="vsite_taxonomy_item_' . $term -> tid . '">' . $t . '</li>';
     $commands [] = ctools_ajax_command_append ('#vocabulary_' . $vid, $t );
     ctools_ajax_render ( $commands ); // this function exits.
