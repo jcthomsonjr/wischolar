@@ -158,8 +158,14 @@ class vsite_design_settings_logo implements space_setting {
 	  // where to store the file
 	  $files_path = filefield_widget_file_path($field);
 	  
+	  if(og_is_group_type($node->type)){
+	  	$vsite = spaces_load('vsite',$node->nid);
+	  	$files_path .= $vsite->purl . '/files/';
+	  }//If this is the group node lets put it in the group directory
+	  
 	  // create the file object
 	  if(!@filesize($source)){
+	  	error_log("could not get file size for [$source] ");
 	    return false;	
 	  }//if the file does not exsit dont try and save
 	  
@@ -179,5 +185,7 @@ class vsite_design_settings_logo implements space_setting {
 	  
 	  // save the node
 	  node_save($node);
+	  
+	  return $file['destination'];
 	}
 }
