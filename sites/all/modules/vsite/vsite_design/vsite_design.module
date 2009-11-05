@@ -37,8 +37,6 @@ function vsite_design_init(){
 	    spaces_save($vsite);
   	}//Create Presets
   }//Has a default title been created
-$profile = content_profile_load('vsite_users_profile',$vsite->group->uid);
-$a_files = filefield_get_node_files($profile,'field_user_profile_photo');
 
   if($vsite && (!$vsite->settings['logo'] || !$vsite->settings['logo']['current_logo'])){
   	if(!is_array($vsite->settings['logo'])) $vsite->settings['logo'] = array();

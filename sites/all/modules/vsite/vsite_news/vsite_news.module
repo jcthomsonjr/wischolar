@@ -298,8 +298,49 @@ function vsite_news_theme(){
  */
 function theme_views_view_field__vsite_activity__title($view, $field, $row) {
   //purl_disable(true);
-	$s_content = $field->advanced_render($row);
-  //purl_disable(false);
+  $field->options['alter']['path'] =  true;
+	$s_content = $field->render($row);
+	
+	$tokens = $field->get_render_tokens();
+
+  $options = array(
+    'html' => 'true',
+    'purl' => array('disabled' => true),
+  );
+
+  // $path will be run through check_url() by l() so we do not need to
+  // sanitize it ourselves.
+  $path = $field->options['alter']['path'];
+
+  // Use strip tags as there should never be HTML in the path.
+  $path = strip_tags(strtr($path, $tokens));
+
+  // Parse the URL and move any query and fragment parameters out of the path.
+  $url = parse_url($path);
+  if (isset($url['query'])) {
+    $path = strtr($path, array('?' . $url['query'] => ''));
+    $options['query'] = $url['query'];
+  }
+  if (isset($url['fragment'])) {
+    $path = strtr($path, array('#' . $url['fragment'] => ''));
+    $options['fragment'] = $url['fragment'];
+  }
+
+  $alt = $field->options['alter']['alt'];
+  $alt = strtr($alt, $tokens);
+  if ($alt) {
+    $options['attributes']['title'] = $alt;
+    $options['attributes']['alt'] = $alt;
+  }
+
+  $class = $field->options['alter']['link_class'];
+  if ($class) {
+    $options['attributes']['class'] = $class;
+  }
+
+  $s_content = l($s_content, $path, $options);
+
+  $field->last_render = $s_content;
 	
   return $s_content;
 }
