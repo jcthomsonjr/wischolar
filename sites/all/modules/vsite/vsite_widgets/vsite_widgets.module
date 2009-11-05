@@ -91,7 +91,7 @@ function vsite_widgets_basicinfo(){
 	$block['subject'] = t('');
 	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
 
-	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site'])){
+	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site']) || !strlen($scholar->settings['site']['headline'])){
 	  $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
     $s_headline = "";
     $s_subheadline ="";
@@ -103,10 +103,11 @@ function vsite_widgets_basicinfo(){
     if(is_array($content_profile->vsite_users_title)){
       $s_subheadline = $content_profile->vsite_users_title[0]['value'];
     }
-
-    $block['content'] =  "<h1>{$s_headline}</h1>
+    
+    $block['content'] =  (strlen($s_headline) >2)?
+                         "<h1>{$s_headline}</h1>
 							            <h2>{$s_subheadline}</h2>
-							            <p></p>";
+							            <p></p>":"";
     return $block;
 	}//Retrieve Defaults
 	

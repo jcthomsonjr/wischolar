@@ -67,14 +67,6 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
       '#title' => t('Add Link to contact form?'),
       '#default_value' => isset($value['scholar_link_to_contact'])?$value['scholar_link_to_contact']:1,
     );
-    
-//    $form['example'] = array(
-//      '#type' => 'item',
-//      '#prefix' => "<div style='clear:both;'></div><div id='site_example' style='color:grey;'><div class='headline' style='display:absolute; top:0px;'></div><div class='sub_heading' style='display:absolute; top:10px;'></div><div class='sub_heading_extra' style='display:absolute; top:10px;'></div><div class='sub_heading_extra' style='display:absolute; top:20px;'></div>",
-//      '#suffix' => "</div>",
-//      '#title' => t('Example'),
-//      '#value' => theme('image',drupal_get_path('module', 'scholar')  .'/theme/SiteInfoEx.png'),
-//    );
   
     return $form;
   }
@@ -82,7 +74,7 @@ class scholar_setting_site extends vsite_design_setting_site implements space_se
   function submit($space, $value) {
 
     $value['headline'] = $value['scholar_link_to_home']?"<a href=\"".url("home")."\">{$value['scholar_headline']}</a>":$value['scholar_headline'];
-    $value['sub_heading_extra'] = $value['scholar_link_to_contact']?$value['scholar_sub_heading_extra']." <a href='mailto:john@h.com'>(email)</a>":$value['scholar_sub_heading_extra'];
+    $value['sub_heading_extra'] = $value['scholar_sub_heading_extra'];
    
     $value['sub_heading'] = trim($value['scholar_sub_heading']);
     $value['sub_heading'] = (strstr("\n",$value['sub_heading']))? "<span>".str_replace("\n","</span><span>",$value['sub_heading'])."</span>":$value['sub_heading'];
