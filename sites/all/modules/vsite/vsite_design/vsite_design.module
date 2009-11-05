@@ -37,14 +37,18 @@ function vsite_design_init(){
 	    spaces_save($vsite);
   	}//Create Presets
   }//Has a default title been created
-  
+$profile = content_profile_load('vsite_users_profile',$vsite->group->uid);
+$a_files = filefield_get_node_files($profile,'field_user_profile_photo');
+
   if($vsite && (!$vsite->settings['logo'] || !$vsite->settings['logo']['current_logo'])){
   	if(!is_array($vsite->settings['logo'])) $vsite->settings['logo'] = array();
-  	if(!strlen($vsite->settings['logo']['current_logo']) && ($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) && is_array($profile->field_user_profile_photo[0]) && @realpath($profile->field_user_profile_photo[0]['filepath'])){	
+  	if(!strlen($vsite->settings['logo']['current_logo']) && ($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) && ($a_files = filefield_get_node_files($profile,'field_user_profile_photo')) && is_array($a_files)){	
   		//Save default logo to the settings and site node
   		require_once(drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.logo.inc');
-      $s_vsite_dest = vsite_design_settings_logo::add_imagefield_image($profile->field_user_profile_photo[0]['filepath'],'field_vsite_logo',$vsite->group);
-      $vsite->settings['logo']['current_logo'] = ($s_vsite_dest)?$s_vsite_dest:$profile->field_user_profile_photo[0]['filepath'];
+  		$a_image = current($a_files);
+  		
+      $s_vsite_dest = vsite_design_settings_logo::add_imagefield_image($a_image['filepath'],'field_vsite_logo',$vsite->group);
+      $vsite->settings['logo']['current_logo'] = ($s_vsite_dest)?$s_vsite_dest:$a_image['filepath'];
       spaces_save($vsite);
     }
   }
@@ -185,7 +189,7 @@ function vsite_design_imagecache_default_presets() {
 function vsite_design_preprocess_page(&$vars){
 	//Return if:
 	if(!($vsite = vsite_get_vsite()) ||                                 //In a Vsite? 
-	    arg(0) == 'cp' ||                                               //We are in CP?
+	    context_get('vsite', 'section') == 'cp' ||                    //We are in CP?
 	    !$vsite->group->og_theme ||                                     //Grop has a custom theme
 	    !($themes = list_themes()) ||                                   
 	    !array_key_exists($vsite->group->og_theme,$themes) ||           //The theme is valid
