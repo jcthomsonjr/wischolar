@@ -102,10 +102,6 @@ function scholarregister_mail_js() {
     scholarregister_ctools_message('#mail-suffix', $error, 'error');
   }
 
-  $last11 = substr(trim($mail),-12);
-  if ($last11 !== '.harvard.edu' && $last11 !== '@harvard.edu'){
-    scholarregister_ctools_message('#mail-suffix', 'Please enter an harvard email address ', 'error');
-  }  
   scholarregister_ctools_message('#mail-suffix', "available", 'status');
 }
 
@@ -146,8 +142,8 @@ function scholarregister_validate_mail($mail) {
     return "e-mail \"$mail\" already exists";
   }
   
-  $last11 = substr(trim($mail),-12);
-  if ($last11 !== '.harvard.edu' && $last11 !== '@harvard.edu'){
+  if (substr(trim($mail),-12) !== '.harvard.edu' && substr(trim($mail),-12) !== '@harvard.edu' 
+   && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '@hbs.edu'){
    return  'Please enter an harvard email address ';
   }  
   
