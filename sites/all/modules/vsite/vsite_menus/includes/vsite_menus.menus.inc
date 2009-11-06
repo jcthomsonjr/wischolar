@@ -46,7 +46,10 @@ class vsite_menus_menus implements space_setting {
     $a_disabled_links = array_keys(array_intersect(spaces_features_map('menu'),$a_disabled_features));
     
     foreach ($choices as $s_menu => $s_menu_name){
+    	scholar::$override_allow_feature_access = true;
 	    $a_tree = menu_tree_all_data(variable_get("scholar_{$s_menu}_menu",false));    
+	    scholar::$override_allow_feature_access = false;
+	    
 	    foreach ($a_tree as $element) {
 	      if ($element['link']['hidden']) continue;
 	        
@@ -72,7 +75,11 @@ class vsite_menus_menus implements space_setting {
 	        '#options' => $choices,
 	        '#disabled_options' => $disabled_choices,
 	      );
-	      if(in_array($element['link']['link_path'],$a_disabled_links)) $form['menu_items'][$element['link']['mlid']]['menu']['#disabled'] = true;//Disable private features
+	      
+	      _menu_check_access($element['link'],explode('/', $element['link']['link_path']));
+	      if(in_array($element['link']['link_path'],$a_disabled_links) || !$element['link']['access']){
+	      	$form['menu_items'][$element['link']['mlid']]['menu']['#disabled'] = true;//Disable private features
+	      } 
 	      
 	      $form['menu_items'][$element['link']['mlid']]['weight'] = array(
 	        '#type' => 'hidden',

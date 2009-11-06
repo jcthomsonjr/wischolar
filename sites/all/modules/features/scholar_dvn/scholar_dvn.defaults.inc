@@ -7,7 +7,7 @@ function _scholar_dvn_menu_default_items() {
   $items = array();
 
   $items[] = array(
-    'title' => 'Data',
+    'title' => 'Dataverse',
     'path' => 'data',
     'weight' => '0',
   );

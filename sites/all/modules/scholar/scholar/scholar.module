@@ -13,6 +13,8 @@
 
 class scholar extends space_og implements space {
 	
+	public static $override_allow_feature_access = false;
+	
   /**
    * Constructor
    */
@@ -89,6 +91,25 @@ class scholar extends space_og implements space {
       default:
       return parent::menu_access($op, $object, $is_active);
     }
+  }
+  
+  /**
+   * implementation of feature_access()
+   */
+  function feature_access($feature = NULL) {
+    if (isset($this->features[$feature])) {
+      if ($this->features[$feature] == SPACES_FEATURE_DISABLED) {
+        return FALSE;
+      }else if (og_is_group_member($this->sid)) {
+        return TRUE;
+      }else if ($this->features[$feature] == SPACES_OG_PUBLIC) {
+        return TRUE; 
+      }
+    }elseif(self::$override_allow_feature_access){
+    	//allow access to all feature menu items on this page for display purposes
+    	return true; 
+    }//Is this feature a part of the site?
+    return FALSE;
   }
 }
 
