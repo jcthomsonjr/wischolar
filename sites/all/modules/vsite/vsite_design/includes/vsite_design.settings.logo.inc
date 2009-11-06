@@ -128,7 +128,10 @@ class vsite_design_settings_logo implements space_setting {
   	}//Crop or save source
 
   	if($return['current_logo']){
-  		self::add_imagefield_image($return['current_logo'],'field_vsite_logo',$space->group);
+  		$a_files = filefield_get_node_files($space->group,'field_vsite_logo');
+  		if(!count($a_files) || !($a_img = current($a_files)) || $a_img['filepath'] != $return['current_logo']){
+  		  self::add_imagefield_image($return['current_logo'],'field_vsite_logo',$space->group);
+  		}
   	}
   	
     return $return;
