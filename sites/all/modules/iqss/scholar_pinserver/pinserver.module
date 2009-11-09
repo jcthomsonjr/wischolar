@@ -149,7 +149,7 @@ function pinserver_process_user_registration(){
 function pinserver_process_signup_form(){ 
   $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';  
   include_once($inc_file);
-return drupal_get_form('scholarregister_signup_form');
+  //return drupal_get_form('scholarregister_signup_form'); // for testing only
   if (pinserver_process_access_registration()){
   return drupal_get_form('scholarregister_signup_form');
   }
