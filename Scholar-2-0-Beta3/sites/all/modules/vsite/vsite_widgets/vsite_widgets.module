@@ -1,0 +1,322 @@
+<?php
+
+include_once('vsite_widgets.features.inc');
+
+/**
+ * hook block
+ */
+function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0]['info'] = t('Scholar site logo');
+    $blocks[1]['info'] = t('Scholar site info');
+    $blocks[2]['info'] = t('Scholar site shield');
+    $blocks[3]['info'] = t('Scholar site search');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        return vsite_widgets_logo();
+      case 1:
+       return vsite_widgets_basicinfo();
+      case 2:
+       return vsite_widgets_shield();
+      case 3:
+       return vsite_widgets_search();
+    }
+  }
+}
+
+function vsite_widgets_search(){
+  if (! module_exists('search') || ! user_access('search content')) {
+    return;
+  }
+
+  $block['content'] = drupal_get_form('vsite_widgets_search_form');
+  //$block['subject'] = "Search";
+  return $block;
+
+}
+
+/**
+ * Search form.
+ */
+function vsite_widgets_search_form($form_state) {
+  if (arg(0) == 'sitesearch' && isset($_GET['keys'])) {
+    $default = urldecode($_GET['keys']);
+  }
+  $search =
+  $form = array();
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Search'),
+    '#submit' => array('vsite_widgets_search_form_submit'),
+    //'#attributes' => array('class' => 'some-other-class'),
+  );
+
+  $form['search'] = array(
+    '#type' => 'textfield',
+    '#size' => 'auto',
+    '#required' => true,
+    '#default_value' => !empty($default) ? $default : '',
+    //'#attributes' => array('class' => 'some-class'),
+  );
+
+  return $form;
+}
+
+/**
+ * Search form submit handler.
+ */
+function vsite_widgets_search_form_submit($form, &$form_state) {
+  $search = $form_state['values']['search'];
+  drupal_goto('sitesearch', array('keys' => $search));
+}
+
+
+function vsite_widgets_logo(){
+	$output = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_design_logo', vsite_get_vsite() ,'vsite_design_landscape_logo').'</a></div>';
+
+	$block['subject'] = t(''); // intentionally blank
+	$block['content'] = $output;
+
+	return $block;
+}
+
+function vsite_widgets_basicinfo(){
+	$scholar = vsite_get_vsite();
+
+	$block = array();
+	$block['subject'] = t('');
+	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
+
+	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site']) || !strlen($scholar->settings['site']['headline'])){
+	  $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
+    $s_headline = "";
+    $s_subheadline ="";
+
+    if(is_array($content_profile->vsite_users_last_name)){
+      $s_headline = "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}";
+    }
+
+    if(is_array($content_profile->vsite_users_title)){
+      $s_subheadline = $content_profile->vsite_users_title[0]['value'];
+    }
+    
+    $block['content'] =  (strlen($s_headline) >2)?
+                         "<h1>{$s_headline}</h1>
+							            <h2>{$s_subheadline}</h2>
+							            <p></p>":"";
+    return $block;
+	}//Retrieve Defaults
+	
+	$s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0)?l("(email)","contact_owner"):"";
+
+	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
+							<h2>{$scholar->settings['site']['sub_heading']}</h2>
+							<p>{$scholar->settings['site']['sub_heading_extra']}{$s_email}</p>";
+
+	$block['content'] = $output;
+
+	return $block;
+}
+
+function vsite_widgets_shield(){
+  	$scholar = vsite_get_vsite();
+	$output = '';
+	if(array_key_exists('generic',$scholar->settings) && array_key_exists('disable_shield',$scholar->settings['generic']) && $scholar->settings['generic']['disable_shield']){
+		return $output;
+	}//Disabled?
+
+
+
+	if(array_key_exists('generic',$scholar->settings) && array_key_exists('shield',$scholar->settings['generic'])){
+		$output = '<div id="scholar-shield"><img src="/'.$scholar->settings['generic']['shield'].'" /> </div>';
+	}
+
+	$block['subject'] = t('');
+	$block['content'] = $output;
+
+	return $block;
+}
+
+function vsite_widgets_vsite_widgets(){
+
+	return array(
+    'vsite_widgets_0' => array(
+      'module' => 'vsite_widgets',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'header_left',
+      'status' => '0',
+      'label' => 'Scholar site logo',
+      'type' => 'context_ui',
+    ),
+    'vsite_widgets_1' => array(
+      'module' => 'vsite_widgets',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'header_main',
+      'status' => '0',
+      'label' => 'Scholar site info',
+      'type' => 'context_ui',
+    ),
+    'vsite_widgets_2' => array(
+      'module' => 'vsite_widgets',
+      'delta' => '2',
+      'weight' => 20,
+      'region' => 'header_right',
+      'status' => '0',
+      'label' => 'Scholar site shield',
+      'type' => 'context_ui',
+    ),
+
+    'vsite_widgets_3' => array(
+      'module' => 'vsite_widgets',
+      'delta' => '3',
+      'weight' => -5,
+      'region' => 'right',
+      'status' => '0',
+      'label' => 'Scholar search widget',
+      'type' => 'context_ui',
+    ),
+
+
+    // Featured posts
+    'views_vsite_featuredposts-block_1' => array(
+      'module' => 'views',
+      'delta' => 'vsite_featuredposts-block_1',
+      'weight' => 0,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Featured posts',
+      'type' => 'context_ui',
+    ),
+  );
+
+}
+
+/**
+ * hook context_default_contexts
+ * @return unknown_type
+ */
+function vsite_widgets_context_default_contexts() {
+  $items = array ();
+  $items [] = array (
+      'namespace' => 'vsite',
+		  'attribute' => 'subsection',
+		  'value' => 'front',
+		  'description' => 'The front page context',
+		  'path' => array(
+        'home' => 'home',
+      ),
+      'block' => array(),
+   );
+   $items [] = array (
+      'namespace' => 'vsite',
+      'attribute' => 'subsection',
+      'value' => 'feature',
+      'description' => 'Active when you are on a feature page',
+      'block' => array(),
+   );
+   $items [] = array (
+      'namespace' => 'vsite',
+      'attribute' => 'section',
+      'value' => 'cp',
+      'description' => 'Active when you are in the CP section of a vsite',
+      'block' => array(),
+   );
+   $items [] = array (
+      'namespace' => 'vsite',
+      'attribute' => 'section',
+      'value' => 'public',
+      'description' => 'Active when you are in the public section of a vsite',
+      'block' => module_invoke_all('vsite_widgets'),
+   );
+
+  return $items;
+}
+
+
+/**
+ * Implementation of hook flag_default_flags
+ * @return array - default flag
+ */
+function vsite_widgets_flag_default_flags(){
+  vsite_include('vsiteapi');
+  $types = og_get_types('group_post');
+
+  $flags = array();
+
+  $flags[] = array(
+    'content_type' => 'node',
+    'name' => 'featuredposts',
+    'title' => 'Featured Posts',
+    'types' => $types,
+    'roles' => array(
+      0 => '2'
+    ),
+    'global' => TRUE,
+    'flag_short' => 'Featured Post',
+    'flag_long' => 'Make this a Featured Post',
+    'flag_confirmation' => 'Saved as a Featured Post',
+    'unflag_short' => 'Remove Featured Post',
+    'unflag_long' => 'Remove as a Featured Post',
+    'unflag_confirmation' => 'Removed from Featured Post queue',
+    'status' => TRUE,
+    'show_on_page' => FALSE,
+    'show_on_teaser' => FALSE,
+    'show_on_form' => FALSE,
+    'link_type' => 'toggle',  //normal, toggle, confirm
+    'locked' => array(
+      'types',
+      'name',
+      'show_on_page',
+      'show_on_teaser',
+      'show_on_form',
+      'global'
+    )
+  );
+
+  return $flags;
+}
+
+/**
+ * Implementation of hook_link().
+ */
+function vsite_widgets_scholar_admin_link($type, $object){
+  $links = array();
+  global $user;
+  //check font page settings here, only execute if front page setting equals flag
+  if(!($vsite = vsite_get_vsite()) || !is_object($vsite)){
+    return $links;
+  }
+
+  if (//$vsite->settings['front']['frontpage'] !== 'flag' ||
+      !($vsite->admin_access()) ||
+      !flag_fetch_definition($type)){
+    return $links;
+  }
+
+  // Get frontpage flags
+  $flag = flag_get_flag('featuredposts');
+
+
+  if (!$flag->applies_to_content_object($object)) {
+    // Flag does not apply to this content.
+    return false;
+  }
+
+  $content_id = $flag->get_content_id($object);
+  // The flag links are actually fully rendered theme functions.
+  // The HTML attribute is set to TRUE to allow whatever the themer desires.
+  $links['flag-'. $flag->name] = array(
+  'title' => $flag->theme($flag->is_flagged($content_id) ? 'unflag' : 'flag', $content_id),
+  'html' => TRUE,
+  );
+
+  if (isset($links)) {
+    return $links;
+  }
+}

@@ -1,0 +1,346 @@
+<?php
+
+include_once('vsite_news.features.inc');
+
+
+function vsite_news_init(){
+	$a_valid_realms = variable_get('activity_access_realms', array('comment'));
+	if(!in_array('vsite',$a_valid_realms)){
+		variable_set('activity_access_realms', array_merge($a_valid_realms,array('vsite')));
+	}
+}
+
+function vsite_news_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'insert':
+    case 'update':
+    	$context = array(
+		    'hook' => 'nodeapi',
+		    'op' => $op,
+    	  'node' => $node
+		  );
+		    	
+      actions_do('vsite_news_activity_action',$node,$context);
+    break;
+  }
+}
+
+/*
+ * Implementation of hook menu
+ */
+function vsite_news_menu(){
+
+  $items = array();
+  
+  $items['cp/news'] = array(
+    'title' => 'News',
+    'page callback' => 'vsite_news_activity',
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+    'weight' => 3,
+  ); 
+
+  $items['cp/news/activity'] = array(
+    'title' => 'Activity',
+    'page callback' => 'vsite_news_activity',
+    'access callback' => 'cp_access_cp',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 0,
+  ); 
+  
+  $items['cp/news/feeds'] = array(
+    'title' => 'Latest feeds',
+    'page callback' => 'vsite_news_feeds',
+      'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 3,
+  );
+  
+  /*
+  $items['cp/news/following'] = array(
+    'title' => 'My Friends',
+    'page callback' => 'vsite_news_following',
+      'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+  
+  $items['cp/news/sites'] = array(
+    'title' => 'Tag Friends',
+    'page callback' => 'vsite_news_sites',
+      'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 2,
+  );
+  */
+  $items['cp/news/activity/privacy'] = array(
+    'title' => "Activity Privacy Settings",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cp_settings_form', 'activity'),
+    'file' => 'cp.settings.inc',
+    'file path' => drupal_get_path('module', 'cp'). '/includes', 
+    'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 5,
+  );
+  
+  return $items;
+}
+function vsite_news_feeds(){
+  return views_page('scholar_feed_items','default');
+}
+
+/*
+function vsite_news_following(){
+  return views_page('vsite_news_follow', 'default');
+}
+
+function vsite_news_sites(){
+  return views_page('vsite_news_follow_candidate', 'default');
+}
+
+*/
+
+/**
+ * show the vsite_news_view
+ */
+function vsite_news_activity(){
+	return views_page('vsite_activity','default');
+}
+
+
+/**
+ * Implementation of hook flag_default_flags
+ * @return array - default flag
+ */
+function vsite_news_flag_default_flags(){
+  $flags = array();
+  $flags[] = array(
+    'content_type' => 'node', 
+    'name' => 'vsite_follow', 
+    'title' => 'Follow', 
+    'types' => array('vsite'), 
+    'roles' => array(
+      0 => '3' 
+    ), 
+    'global' => FALSE, 
+    'flag_short' => 'follow', 
+    'flag_long' => 'follow activity in other web sites', 
+    'flag_confirmation' => 'Added to your following list', 
+    'unflag_short' => 'Dont follow', 
+    'unflag_long' => 'Removed from your following list', 
+    //   'unflag_confirmation' => 'Are you sure you want to remove?',
+    'status' => TRUE, 
+    'show_on_page' => FALSE, 
+    'show_on_teaser' => TRUE, 
+    'show_on_form' => FALSE, 
+    'link_type' => 'toggle',  //normal, toggle, confirm
+    'locked' => array(
+      'types',
+      'name', 
+      'show_on_page', 
+      'show_on_teaser', 
+      'show_on_form', 
+      'global' 
+    ) 
+  );
+  
+  return $flags;
+}
+
+
+
+/**
+ * The action hook
+ */
+function vsite_news_action_info(){
+	$info['vsite_news_activity_action'] = array(
+	  'type' => 'activity',
+	  'description' => t("Record a new node's creation for activity tracker"),
+	  'configurable' => false,
+	  'hooks' => array(
+	    'any' => true,
+	  ),
+	);
+	
+	return $info;
+}
+
+/**
+ * The action called to add a vsite modification to the activity table, Change the message here to 
+ * @param $object
+ * @param $context
+ * @return unknown_type
+ */
+function vsite_news_activity_action($object, $context){
+	
+	if(!vsite_get_vsite()) return false;
+	
+	$vsite = vsite_get_vsite();
+
+	if(!in_array($object->type,array_keys(vsite_content_types(2)))) return false; //Is this type public?
+	
+	//Setup the advanced Patterns
+	$context['node-pattern'] = 'You [action] a new [type-name] [in-vsite]';
+	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite]';
+	$context['activity_types'] = vsite_content_types(); 
+	$s_action = 'modified';
+	switch($context['op']){
+		case 'submit':
+	    if(array_key_exists('access',$vsite->settings) && $vsite->settings['access']['ignore_insert']) return false;
+		case 'insert':
+		case 'view':
+			$s_action = $context['op']."ed";
+    break;
+    case 'update':
+    	if(array_key_exists('access',$vsite->settings) && $vsite->settings['access']['ignore_update']) return false;
+    	$s_action = $context['op']."d";
+    break;
+	}
+	$context['node-pattern'] = str_replace('[action]',$s_action,$context['node-pattern']);
+  $context['everyone-pattern'] = str_replace('[action]',$s_action,$context['everyone-pattern']);
+	
+	if($vsite && $vsite->group->uid){
+		$user = user_load($vsite->group->uid);
+		$profile = content_profile_load('vsite_users_profile',$vsite->group->uid);
+    if($profile && (is_array($profile->vsite_users_first_name[0]) && is_array($profile->vsite_users_last_name[0]))){
+    	$s_users_vsite = "in {$profile->vsite_users_first_name[0]['value']} {$profile->vsite_users_last_name[0]['value']}'s site";
+    }
+    $context['node-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['node-pattern']);
+    $context['everyone-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['everyone-pattern']);
+	}
+	
+  return activity_record($object,$context);
+}
+
+/**
+* Implementation of hook_activity_grants().
+*/
+function vsite_news_activity_grants($activity, $object, $type) {
+  $vsite = vsite_get_vsite();  
+  if(!$vsite) return array();
+    
+	return array(
+    'vsite' => array($vsite->group->nid), // the module_id that will be used
+  );
+}
+
+/**
+* Implementation of hook_activity_info().
+*/
+function vsite_news_activity_info() {
+  $info = new stdClass();
+  $info->api = 2;
+  $info->name = 'vsite_activity';
+  $info->object_type = 'vsite_activity';
+  $info->realms = array('vsite' => 'Virtual Site (vsite)');
+  $info->type_options = array();
+  return $info;
+}
+
+/**
+* Implementation of hook_activity_access_records_alter().
+* This removes any access records except vsite. Prevents friend
+* modules from providing direct access.
+*/
+function vsite_news_access_records_alter(&$grants, $context) {
+  foreach ($grants as $realm => $value) {
+     if ($realm != 'vsite') {
+         unset($grants[$module]);
+     }
+  }
+}
+
+/**
+ * Implementation of hook_activity_access_grants().
+ */
+function vsite_news_activity_access_grants($acccount) {
+  $view = views_get_view('vsite_news_follow');
+  $view->execute();
+  
+  $realm_ids = array();
+  foreach ($view->result as $o_site) {
+    $realm_ids['vsite'][] = $o_site->nid;
+  }
+  return $realm_ids;
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function vsite_news_spaces_settings() {
+  return array(
+    'activity' => array(
+      'class' => 'vsite_news_settings_activity',
+      'file' => drupal_get_path('module', 'vsite_news') .'/vsite_news.settings.activity.inc',
+    ),
+  );
+}
+
+/**
+ * hook_theme
+ */
+function vsite_news_theme(){
+  $path = drupal_get_path('module', 'vsite_design') .'/theme';
+  
+  $items = array();
+  
+  $items['views_view_field__vsite_activity__title'] = array(
+    'arguments' => array('view' => NULL, 'options' => NULL, 'row' => NULL ),
+  );
+  
+  return $items;
+}
+
+
+/**
+ * Display a single views field "title" for the activity view
+ */
+function theme_views_view_field__vsite_activity__title($view, $field, $row) {
+  //purl_disable(true);
+  $field->options['alter']['path'] =  true;
+	$s_content = $field->render($row);
+	
+	$tokens = $field->get_render_tokens();
+
+  $options = array(
+    'html' => 'true',
+    'purl' => array('disabled' => true),
+  );
+
+  // $path will be run through check_url() by l() so we do not need to
+  // sanitize it ourselves.
+  $path = $field->options['alter']['path'];
+
+  // Use strip tags as there should never be HTML in the path.
+  $path = strip_tags(strtr($path, $tokens));
+
+  // Parse the URL and move any query and fragment parameters out of the path.
+  $url = parse_url($path);
+  if (isset($url['query'])) {
+    $path = strtr($path, array('?' . $url['query'] => ''));
+    $options['query'] = $url['query'];
+  }
+  if (isset($url['fragment'])) {
+    $path = strtr($path, array('#' . $url['fragment'] => ''));
+    $options['fragment'] = $url['fragment'];
+  }
+
+  $alt = $field->options['alter']['alt'];
+  $alt = strtr($alt, $tokens);
+  if ($alt) {
+    $options['attributes']['title'] = $alt;
+    $options['attributes']['alt'] = $alt;
+  }
+
+  $class = $field->options['alter']['link_class'];
+  if ($class) {
+    $options['attributes']['class'] = $class;
+  }
+
+  $s_content = l($s_content, $path, $options);
+
+  $field->last_render = $s_content;
+	
+  return $s_content;
+}

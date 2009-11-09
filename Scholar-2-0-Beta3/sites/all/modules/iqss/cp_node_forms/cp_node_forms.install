@@ -1,0 +1,52 @@
+<?php
+//$Id$
+
+/**
+ * Implementation of hook_schemas
+ */
+function cp_node_forms_schema() {
+
+  $schema['cp_node_forms'] = array(
+  'description' => t('Manages publication status for nodes'),
+  'fields' => array(
+
+  'nid' => array(
+  'description' => t("Drupal node ID"),
+  'type' => 'int',
+  'length' => 10,
+  'not null' => TRUE,
+  'unsigned' => TRUE,
+  'default' => 0,
+  ),
+
+  'pubdate' => array(
+  'description' => t("The date when the node should be set as published"),
+  'type' => 'int',
+  'length' => 11,
+  'not null' => TRUE,
+  'unsigned' => TRUE,
+  'default' => 0,
+  ),
+  
+  ),
+  'primary key' => array (
+  'nid'
+  ),
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install
+ */
+function cp_node_forms_install() {
+   drupal_install_schema('cp_node_forms');
+   db_query("UPDATE {system} SET weight = 20 WHERE name = '%s'", 'cp_node_forms');   
+}
+
+/**
+ * Implementation of hook_uninstall
+ */
+function cp_node_forms_uninstall() {
+   drupal_uninstall_schema('cp_node_forms');
+}

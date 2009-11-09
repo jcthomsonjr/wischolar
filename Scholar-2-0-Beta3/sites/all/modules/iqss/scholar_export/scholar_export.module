@@ -1,0 +1,310 @@
+<?php
+//$Id$
+
+/**
+ * @file This module can be run on the Drupal 5 site and will import serialized node and user data tables into
+ * a target database.
+ * 
+ *  NOTE: In settings.php - configure connection settings for the $db_url variable in settings.php for multi-database 
+ *  configuration which includes both your D5 and D6 database. Your D5 database need to be 'default'. 
+ * 
+ * For example:
+ *  $db_url['default'] = 'mysql://iqss:s4ndB0x@localhost/iqdrupal'; //source Drupal 5 installation
+ *  $db_url['targetdb'] = 'mysql://iqss:s4ndB0x@localhost/jdev6';  //destination Drupal 6 installation
+ */
+
+//define target database contant
+define(TARGET_DB, 'targetdb');  //there is no need to modify this
+
+/**
+ * Implementation of hook_drush_command().
+ */
+function scholar_export_drush_command() {
+  $items['scholarexport'] = array(
+  'callback' => 'scholar_export_run',
+  'description' => 'exports content data to target database'
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_menu()
+ *
+ * @param unknown_type $may_cache
+ * @return unknown
+ */
+function scholar_export_menu($may_cache){
+  
+  $items[] = array(
+  'path' => 'admin/settings/scholar_export',
+  'title' => t('Scholar Export settings'),
+  'callback' => 'drupal_get_form',
+  'callback arguments' => array('scholar_export_settings_form'),
+  'access' => user_access('administer site configuration'),
+  'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function scholar_export_settings_form(){
+  $form['scholar_export'] = array(
+  '#type' => 'fieldset',
+  '#title' => t('Scholar Export Run Settings'),
+  '#collapsible' => FALSE,
+  '#collapsed' => FALSE,
+  );
+
+  $form['scholar_export']['scholar_export_run'] = array(
+  '#type' => 'checkbox',
+  '#title' => t('Run Export Process'),
+  '#options' => array(0,1),
+  '#default_value' => 0,
+  );
+
+  $form['scholar_export_generate_email'] = array(
+  '#type' => 'checkbox',
+  '#title' => t('Generate Initial Email'),
+  '#description' => t('Warning - This will generate an email to site admins alerting them of the upgrade process. This is meant to be used only once.'),
+  '#options' => array(0,1),
+  '#default_value' => 0,
+  );
+
+  $form['scholar_export']['scholar_submit'] = array(
+  '#type' => 'submit',
+  '#value' => t('Submit'),
+  );
+
+  return $form;
+}
+
+function scholar_export_settings_form_submit($form_id, $form_values){
+ // dpm($form_values);
+  
+  if ($form_values['scholar_export_run'] == 1){
+     scholar_export_run(); 
+  }
+  
+    if ($form_values['scholar_export_generate_email'] == 1){
+    //scholar_export_switchover_message();  // TODO uncomment this line when ready to use
+  }  
+}
+
+/**
+ * starting point for export 
+ */
+function scholar_export_run($types = array()) {
+
+  //create the export table on the target database
+  scholar_export_create_table();
+
+  //checking if specific types are specified to export
+  $sql_clause= count($types) ? 'WHERE type = ' . implode(' OR ', $types): '';
+
+  $res= db_query("SELECT nid from {node} $sql_clause ORDER BY nid ASC");
+  while ($data = db_fetch_object($res)){
+    scholar_export_save_node($data -> nid);
+  }
+
+  //db_set_active('default');
+  //now get all the user information and export it
+  $sql_users =db_query("SELECT uid FROM {users} WHERE uid > 0 ORDER BY uid ASC");
+  while ($data = db_fetch_object($sql_users)){
+    //saving user data to the target database table
+    scholar_export_save_user($data -> uid);
+  }
+  //db_set_active('default');
+  drupal_set_message(t('Scholar Export Completed'));
+}
+
+/**
+ * create the export data tables in the Drupal 5 site, first drop the existing tables if they exist
+ */
+function scholar_export_create_table(){
+  //db_set_active(TARGET_DB);
+   $drop_table = db_query("DROP TABLE IF EXISTS {scholar_export_data}");
+   $create_table = db_query("CREATE TABLE {scholar_export_data} (
+    id int(10) NOT NULL,
+    type varchar(120) NOT NULL,
+    data longtext NOT NULL
+    ) /*!40100 DEFAULT CHARACTER SET utf8 */;"
+    );
+  
+  //db_set_active('default');
+  return;
+} 
+
+/**
+ * gets an old node and dumps to the event_export_* table
+ * where * is the node type
+ */
+function scholar_export_save_node($nid) {
+  //db_set_active('default');
+  $node = node_load(array('nid' => $nid));
+  
+    //get site address and phone
+  if ($node->type == 'admin_scholar'){
+    $sql_address = db_query("SELECT n.nid, n.type, oga.group_nid FROM {node} n INNER JOIN {og_ancestry} oga USING(nid) HAVING n.type = '%s' AND oga.group_nid = %d", 'scholar_address', (int)$node->nid);
+    while ($data = db_fetch_object($sql_address)){
+      $ad_node = node_load(array('nid' => $data->nid));
+      //set values in new node object for address and phone
+      $node->scholar_address = $ad_node->field_address;
+      $node->scholar_phone = $ad_node->field_phone;
+    }
+  }
+  
+  //add og data here
+  $sql = db_query("SELECT * FROM {og_settings} WHERE nid = %d", (int)$nid);
+  while ($data = db_fetch_object($sql)){
+    //now add the og settings data to the node object
+    switch($data -> name){
+      case 'scholar_admin_site_front_node':
+        $node ->scholar_admin_site_front_node = unserialize($data -> value);
+        break;
+
+      case 'scholar_admin_title_on_front_node':
+        $node ->scholar_admin_title_on_front_node = unserialize($data -> value);
+        break;
+
+      case 'scholar_firstname':
+        $node ->scholar_firstname = unserialize($data -> value);
+        break;
+
+      case 'scholar_lastname':
+        $node ->scholar_lastname = unserialize($data -> value);
+        break;
+
+      case 'scholar_position':
+        $node ->scholar_position = unserialize($data -> value);
+        break;
+    }
+  }
+  
+  //get custom links - Only Primary Links
+  $pid = db_result(db_query("SELECT mid FROM {og_menu2} WHERE gid = %d AND is_primary = %d", (int)$nid, 1));
+    
+  if ($pid){
+    $sql_links = db_query("SELECT * FROM {menu} WHERE pid = %d", (int)$pid);
+    while($link = db_fetch_object($sql_links)){
+      //construct menu links information
+      $node -> scholar_menu_links[] = array(
+      'title' => $link -> title,
+      'path' => $link -> path,
+      'description' =>$link -> description,
+      'weight' =>$link -> weight,      
+      );
+    }
+  }
+  
+    //get custom links - Only Secondary Links
+  $pid = db_result(db_query("SELECT mid FROM {og_menu2} WHERE gid = %d AND is_primary = %d", (int)$nid, 0));
+    
+  if ($pid){
+    $sql_links = db_query("SELECT * FROM {menu} WHERE pid = %d", (int)$pid);
+    while($link = db_fetch_object($sql_links)){
+      //construct menu links information
+      $node -> scholar_menu_links_secondary[] = array(
+      'title' => $link -> title,
+      'path' => $link -> path,
+      'description' =>$link -> description,
+      'weight' =>$link -> weight,      
+      );
+    }
+  }
+   
+    $nodedata = serialize($node);
+    //db_set_active(TARGET_DB);
+    db_query("INSERT INTO {scholar_export_data} (id, type, data) VALUES (%d , '%s', '%s')", (int)$nid, $node -> type, $nodedata );
+}
+
+/**
+ * Saves serialized user data to target database
+ * @param $uid
+ */
+function scholar_export_save_user($uid) {
+  //db_set_active('default');
+  $user = user_load(array('uid' => $uid));
+  $userdata = serialize($user);
+  //db_set_active(TARGET_DB);
+  db_query("INSERT INTO {scholar_export_data} (id, type, data) VALUES (%d , '%s', '%s')", (int)$uid, 'user', $userdata );
+}
+
+function scholar_export_slinks(){
+  
+  $sql = db_query("SELECT * FROM {menu} m INNER JOIN {og_menu2} ogm USING(mid) HAVING ogm.is_primary = %d", 0);
+  
+  while($data = db_fetch_object($sql)){    
+    $mids[] = $data->mid;     
+  }
+  
+ foreach($mids as $mid){
+   $sql = db_query("SELECT * FROM {menu} WHERE pid = %d", (int)$mid);
+     while($data = db_fetch_object($sql)){    
+       $res[$data -> gid][$data -> mid] = $data -> title;
+     }  
+ }
+ dpm($res);
+}
+
+
+/**
+ * Gathers information to notify users of changeover to new verison Scholars Project 2.0
+ */
+function scholar_export_switchover_message(){
+  $sql = db_query("SELECT nid, uid, is_active, is_admin from {og_uid} WHERE is_active = %d AND is_admin = %d", 1,1);
+  while ($data = db_fetch_object($sql)){
+    $mail = db_result(db_query("SELECT mail FROM {users} WHERE uid = %d", (int)$data->uid));
+    $firstname = db_result(db_query("SELECT value FROM {og_settings} WHERE name = '%s' and nid = %d", 'scholar_firstname' , (int)$data->nid));
+    $lastname = db_result(db_query("SELECT value FROM {og_settings} WHERE name = '%s' and nid = %d", 'scholar_lastname' , (int)$data->nid));
+    $position = db_result(db_query("SELECT value FROM {og_settings} WHERE name = '%s' and nid = %d", 'scholar_position' , (int)$data->nid));
+
+    $site_admins[$data->nid] = array(
+    'uid' => $data ->uid,
+    'mail' => $mail,
+    'firstname' => unserialize($firstname),
+    'lastname' => unserialize($lastname),
+    'position' => unserialize($position),
+    );
+  }
+  
+  //dpm($site_admins);
+  //generate and send the email messages
+  scholar_export_generate_message($site_admins);
+}
+
+function scholar_export_generate_message($site_admins = array()){
+  if (!count($site_admins)){
+    return drupal_set_message('No site admins were generated. No messages have been sent.');
+  }
+  //static subject for all emails
+  $subject = t("Announcing the launch of the new Scholars' Web Sites Project");
+
+  foreach ($site_admins as $sa){
+    $msg_variables = array(
+    '!name' => scholar_export_generate_greeting($sa),
+    );
+
+    $to = $sa['mail'];
+
+    $body = t("Dear !name,\n\nWe are excited to announce the launch of the new Scholars' Web Sites Project version 2.0 which offers many new and exciting features for your web site.\n\n Please Note: Your web site may be unavailable for a few hours during the upgrade process. Once the process is complete your web site will be available as well as the new features of the new Scholars' Web Sites Project.\n\nSincerely,\nThe Scholars' Web Sites Project Team", $msg_variables);
+
+    drupal_mail($mailkey = 'scholar_export_message', $to, $subject, $body, $from = NULL, $headers = array());
+  }
+}
+
+/**
+ * Function to generate names to be used opening greeting in generated email
+ * checks if position string has the word professor in title 
+ */
+function scholar_export_generate_greeting($sa){
+  $pattern = '/\b([Pp]rofessor)\b/';
+  preg_match($pattern, $sa['position'], $matches);
+
+  if ($matches[1] && !empty($sa['lastname'])){
+    $name =  'Professor ' .  $sa['lastname'];
+  }
+  else{
+    $name = (!empty($sa['firstname']) && !empty($sa['lastname'])) ? $sa['firstname'] . ' ' . $sa['lastname'] : 'Scholar Web Site Admin';
+  }
+  return $name;
+}

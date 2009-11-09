@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Implementaton of hook_enable().
+ */
+function vsite_enable() {
+  // Weight scholar to be after spaces_og
+  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'spaces_og'"));
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite'", ($weight + 1)); 
+  // all vsite* modules have weight higher than vsite // TODO
+  
+  $query =  "SELECT * FROM {system} WHERE type = 'module' AND name LIKE 'vsite_%'";
+  $result = db_query($query);
+  while ($data = db_fetch_object($result)){
+    db_query("UPDATE {system} SET weight = %d WHERE name = '%s'", ($weight + 2), $data -> name); 
+  }
+}
+
+
+
+function vsite_install() {
+  // Execute our defined updates.
+  $version = 6001;
+  while (function_exists('vsite_update_' . $version)) {
+    call_user_func('vsite_update_' . $version++);
+  }
+  // hook_install has no return value
+}
+
+function vsite_update_6001() {
+  $return = array();
+  $t = get_t();
+  
+  $return[] = db_query("UPDATE {menu_custom}  SET title='%s', description = '%s' WHERE menu_name='%s'", $t('Primary menu'), $t('Primary menu for each scholar site.'), 'features');
+  
+  $return[] = db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('%s', '%s', '%s')", 'scholar_secondary_menu', $t('Secondary menu'), $t('Side menu for each scholar site.'));
+  
+  return $return;
+}
+
+
+

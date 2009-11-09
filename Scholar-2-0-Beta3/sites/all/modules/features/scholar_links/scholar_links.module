@@ -1,0 +1,73 @@
+<?php
+
+include_once('scholar_links.features.inc');
+
+/**
+ *  hook_strongarm().
+ */
+function scholar_links_strongarm() {
+
+ 
+  $conf['node_options_link'] = array('status', 'revision');
+  $conf['upload_link'] = TRUE;
+  
+  $conf["show_preview_changes_link"] = FALSE;
+  $conf["show_diff_inline_link"] = FALSE;
+ 
+  // Comments
+  $conf['comment_link'] = COMMENT_NODE_DISABLED;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_link'] = array('enabled' => FALSE);
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_link_pattern"] = "[space-og-path]/links/[title-raw]";
+ 
+  return $conf;
+}
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_links_context_links_alter(&$links) {
+  if (!empty($links['link'])) {
+    $links['link']['query'] = drupal_get_destination();
+  }
+}
+
+function scholar_links_scholar_vocabulary_defaults() {
+  return array (
+    0 => array (
+    'name' => 'link_categories', 
+    'content_types' => array ('link' => 1), 
+    'properties' => array (), 
+    'terms' => array (
+      0 => array (
+    	'name' => 'Statistics', 
+    	'desription' => 'Statistics', 
+    	'properties' => array () 
+      ), 
+      1 => array (
+    	'name' => 'Political Economy', 
+    	'desription' => 'Political Economy', 
+    	'properties' => array () 
+      ),
+      2 => array (
+    	'name' => 'Data', 
+    	'desription' => 'Data', 
+    	'properties' => array () 
+      ),  
+      3 => array (
+    	'name' => 'Economics', 
+    	'desription' => 'Economics', 
+    	'properties' => array () 
+      ), 
+      4 => array (
+    	'name' => 'Goverment', 
+    	'desription' => 'Economics', 
+    	'properties' => array () 
+      ) 
+    ) 
+  ) 
+ );
+}
