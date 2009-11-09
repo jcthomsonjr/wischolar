@@ -62,6 +62,14 @@ function pinserver_perm(){
   return array('administer pinserver');
 }
 
+/**
+ * redirect user to PIN login url  
+ */ 
+function pinserver_redirect() {
+  $pin_redirect = PIN_URL.'?__authen_application='.PIN_APP_NAME;
+  drupal_goto($pin_redirect);
+}
+
 /*
  * implementation of hook_theme()
  */
@@ -77,16 +85,6 @@ function pinserver_theme() {
 }
 
 /**
- * Implementation of hook_form_alter()
- */
-function pinserver_form_alter(&$form, $form_state, $form_id){
-  //add the submit function for pinserver
-  if ($form_id == 'scholarregister_signup_form'){
-  //  $form['#submit'][] = 'pinserver_process_user_registration'; //TODO this function not being called
-    }
-}
-
-/**
  * Implementation of hook_menu_alter()
  */
 function pinserver_menu_alter(&$items){
@@ -95,25 +93,27 @@ function pinserver_menu_alter(&$items){
   $items['site/register']['module'] = 'pinserver';
   
   //values to remove
-  $remove_values = array('page arguments', 'file');
-  
+  $remove_values = array('page arguments', 'file');  
   foreach($remove_values as $val){
   unset($items['site/register'][$val]);
   }
  // dpm($items['site/register']);
 }
 
-
 /**
- * pinserver_redirect()
- *
- * Intelligently redirect user to PIN login url if anonymous, otherwise send to /user.  
- *  
- * @return checks if user is logged in and subsequestly sends user to pin url, otherwise send to '/user'
- */ 
-function pinserver_redirect() {
-  $pin_redirect = PIN_URL.'?__authen_application='.PIN_APP_NAME;
-  drupal_goto($pin_redirect);
+ * Checks if user has authenticated through the pinserver
+ * before rendering the signup form
+ */
+function pinserver_process_signup_form(){ 
+  $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';  
+  include_once($inc_file);
+  //return drupal_get_form('scholarregister_signup_form'); // for testing only
+  if (pinserver_process_access_registration()){
+  return drupal_get_form('scholarregister_signup_form');
+  }
+  else{
+    pinserver_redirect();
+  }
 }
 
 /**
@@ -129,7 +129,23 @@ function pinserver_process_access_registration(){
 }
 
 /**
- * Unset the $_SESSION vars after user/site is created
+ * Implementation of hook_form_alter()
+ */
+function pinserver_form_alter(&$form, $form_state, $form_id){
+  //add the submit function for pinserver
+  if ($form_id == 'scholarregister_signup_form'){
+    //  $form['#submit'][] = 'pinserver_process_user_registration'; //TODO this function not being called
+    /*
+    //TODO - alternatively, this could be placed in scholarregister_signup_form_submit()
+    if (module_exists(‘pinserver’)){
+    pinserver_process_user_registration();
+    }
+    */
+  }
+}
+
+/**
+ * Unset the $_SESSION vars after the registration form is submitted
  */
 function pinserver_process_user_registration(){
   //removing session values when new site is created
@@ -141,23 +157,6 @@ function pinserver_process_user_registration(){
   }
 }
 
-
-/**
- * Checks if user has authenticated through the pinserver
- * before rendering the signup form
- */
-function pinserver_process_signup_form(){ 
-  $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';  
-  include_once($inc_file);
-  //return drupal_get_form('scholarregister_signup_form'); // for testing only
-  if (pinserver_process_access_registration()){
-  return drupal_get_form('scholarregister_signup_form');
-  }
-  else{
-    pinserver_redirect(); //Will not work if headers already sent - TODO: need to test this
-  }
-}
-
 /**
  * Implementation of hook_strongarm()
  */
@@ -166,7 +165,7 @@ function pinserver_strongarm(){
 
   //pinserver settings for IQSS Scholars Web Sites Project
   $conf['pinserver_pin_url'] = 'https://www.pin1.harvard.edu/pin/authenticate';
-  $conf['pinserver_app_name'] = 'TEST';
+  $conf['pinserver_app_name'] = 'TESTING'; //TODO this needs to be the application name issued by directory services
   $conf['pinserver_gpg_dir'] = '/nfs/www/edu-harvard-iq-scholar-dev3/' . '.gnupg';
   $conf['pinserver_registration_path'] = 'site/register';
   $conf['pinserver_support_contact'] = 'Web_Dev@help.hmdc.harvard.edu';  
@@ -191,13 +190,6 @@ function pinserver_user($op, &$edit, &$account, $category = NULL){
 
 /**
  * pinserver_check_user()
- *
- * This function is called when the Harvard PIN servers send a successful authenticated PIN login. After verifying
- * the validity of the token, additional access restrictions may be applied. Upon success of all of these checks,
- * this function must determine if the user is a returning user (who has already registered) or a new user who needs
- * to register. It will make this determination by querying the 'pinserver' column in the users table for the unique identifier.
- * 
- * @return either logs the user in or redirects user to pinserver_user_registration_form()
  */
 function pinserver_check_user(){
   global $user;
@@ -237,7 +229,7 @@ function _pinserver_prepare_azp_token($azp_token) {
   );
 
   // This needs to be stored somewhere else.
-  $passphrase = 'uNder15 AfriCan7 6SkiEs';    
+  $passphrase = '';    
 
   $process = proc_open(GPG_BIN ." --batch --no-tty --homedir '". GPG_DIR ."' --passphrase '". $passphrase ."' --decrypt ", $descriptorspec, $pipes); 
 
