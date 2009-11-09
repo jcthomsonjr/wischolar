@@ -234,7 +234,7 @@ function _pinserver_prepare_azp_token($azp_token) {
   );
 
   // This needs to be stored somewhere else.
-  $passphrase = '';    // TODO passphrase removed
+  $passphrase = '';    // TODO passphrase needs to be added
 
   $process = proc_open(GPG_BIN ." --batch --no-tty --homedir '". GPG_DIR ."' --passphrase '". $passphrase ."' --decrypt ", $descriptorspec, $pipes); 
 
