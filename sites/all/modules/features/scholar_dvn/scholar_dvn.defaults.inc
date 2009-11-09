@@ -13,7 +13,7 @@ function _scholar_dvn_menu_default_items() {
   );
   // Translatables
   array(
-    t('Data'),
+    t('Dataverse'),
   );
 
 
