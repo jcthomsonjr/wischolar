@@ -122,6 +122,15 @@ function vsite_strongarm(){
   // path for vsite itself
   $conf["pathauto_node_vsite_pattern"] = "[space-og-path]/[title-raw]";
   
+  
+  // formats
+  // Allowed HTML & default filter format settings
+  $format = db_result(db_query("SELECT format FROM {filter_formats} WHERE name = '%s'", 'Filtered HTML'));
+  if ($format) {
+    $conf["allowed_html_{$format}"] = '<div> <span> <br> <a> <em> <strong> <cite> <code> <strike> <ul> <ol> <li> <dl> <dt> <dd> <img> <blockquote> <p> <h1> <h2> <h3> <h4> <h5> <h6> <table> <caption> <thead> <th> <td> <tr> <sup> <sub>';
+    $conf['filter_default_format'] = $format;
+  }
+  
   return $conf;
 }
 
