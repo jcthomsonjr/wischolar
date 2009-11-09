@@ -1,0 +1,384 @@
+<?php
+
+function vsite_menus_init(){
+   drupal_add_css(drupal_get_path('module', 'vsite_menus') .'/theme/vsite_menus.css');
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function vsite_menus_spaces_settings(){
+  return array(
+    'menus' => array(
+      'class' => 'vsite_menus_menus', 
+      'file' => drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc' 
+    ) 
+  );
+}
+
+/**
+ * Implements hook_menu_node_insert().
+ */
+function vsite_menus_menu_node_insert($item, $node) {
+  require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
+  vsite_include('vsiteapi');
+  $site = vsite_get_vsite();
+  
+  if(!is_array($site->settings['menus']) || !is_array($site->settings['menus']['menu_items'])){
+  	return;
+  }//If there are no spaces settings saved for menu then we don't have anything to do
+  
+  $a_scholar_types = vsite_content_types();
+  
+  if($site && array_key_exists($node->type,$a_scholar_types) && ($item->menu_name == variable_get('scholar_primary_menu',false) || $item->menu_name == variable_get('scholar_secondary_menu',false))){
+    
+    $s_menu_key = $item->menu_name == variable_get('scholar_primary_menu',false)?'primary':'secondary';
+    
+    $site->settings['menus']['menu_items'][$item->mlid] = array('menu' => $s_menu_key, 'weight' => $item->weight);
+    
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
+    
+    spaces_save($site);
+  }elseif ($site && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
+    unset($site->settings['menus']['menu_items'][$item->mlid]);
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
+    spaces_save($site);
+  }//Add or remove t from the spaces menu
+}
+
+/**
+ * Implements hook_menu_node_update().
+ */
+function vsite_menus_menu_node_update($item, $node) {
+  vsite_menus_menu_node_insert($item,$node);
+}
+
+/**
+ * Implements hook_menu_node_delete().
+ */
+function vsite_menus_menu_node_delete($item, $node) {
+  require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
+  vsite_include('vsiteapi');
+  $site = vsite_get_vsite();
+  $a_scholar_types = vsite_content_types();
+  
+  if ($site && array_key_exists($node->type,$a_scholar_types) && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
+    unset($site->settings['menus']['menu_items'][$item->mlid]);
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
+    spaces_save($site);
+  }
+}
+
+/**
+ * Return the menu tree object for a scholar site, adapted for the current page
+ *
+ * @param string $s_menu  (primary / secondary)
+ * @param boolean $b_html (return formated html?)
+ * @param boolean $b_check_expanded (allow expanded menus? slightly slower)
+ */
+function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check_expanded = false, $b_filter_private_features = false){
+  $space = vsite_get_vsite();
+  $b_make_feature_active = true; //Should the feature tab be active, it should unless there is a link that overides this
+  
+  if(!$space) return ($b_html)?"":false;
+  
+  switch ($s_menu){
+    case 'secondary':
+      $a_settings_menu = array_key_exists('menus',$space->settings)?$space->settings['menus']['secondary']:false;
+      $s_def_menu = 'scholar_secondary_menu';
+    break;
+    case 'primary':
+    default:
+      $a_settings_menu = array_key_exists('menus',$space->settings)?$space->settings['menus']['primary']:false;
+      $s_def_menu = 'scholar_primary_menu';
+  }
+  
+  if(!$a_settings_menu){
+    $a_tree = menu_tree_page_data(variable_get($s_def_menu,false));
+    foreach ($a_tree as $k => $tree) {
+      if($tree['below']) $a_tree[$k]['below'] = false;
+    }
+    
+    $a_settings_menu = $a_tree;
+    
+  }else{
+  
+	  $n_found = 0;   
+	  if($b_check_expanded){
+	    $a_full_page_expanded = array_merge( menu_tree_page_data(variable_get('scholar_primary_menu',false)), 
+	                                         menu_tree_page_data(variable_get('scholar_secondary_menu',false)));
+	    //We must unfortunatly loop through the page data once to get the
+	    //correct expanded trees, the menu module does not provide an easy
+	    //way of retrieving a individual menu_node's tree (expanded)
+	    foreach ($a_full_page_expanded as $a_tree) {
+	      if(!in_array($a_tree['link']['mlid'],$a_settings_menu)) continue;
+	      $n_found++;
+	      $a_settings_menu[array_search($a_tree['link']['mlid'],$a_settings_menu)] = $a_tree;
+	      if($n_found >= count($a_settings_menu)) break;
+	      break;
+	    }
+	  }
+	  
+	  if($n_found < count($a_settings_menu)){
+	    foreach ($a_settings_menu as $n_key => $n_mlid) {
+	      if(!is_int($n_mlid)) continue;
+	      $a_settings_menu[$n_key] = array('link' => menu_link_load($n_mlid), 'below' => false);
+	    }
+	  }
+  }//send default?
+  
+  // get all menus coming from features and construct an array
+  // of links to disable based on the users access on this feature
+  $features_menus = spaces_features_map('menu');
+  $a_disabled_links = array();
+  $a_custom_title = array();
+
+  foreach($features_menus as $menu_title => $feature_name ){
+   	if ($b_filter_private_features && !($space -> feature_access($feature_name))){
+    	$a_disabled_links[] = $menu_title;
+    }
+    if(is_array($space->customizer['menu']) && array_key_exists($menu_title,$space->customizer['menu'])){
+    	$a_custom_title[$menu_title] = $space->customizer['menu'][$menu_title];
+    }
+  }
+      
+  foreach ($a_settings_menu as $key => $link) {
+  	if(in_array($link['link']['link_path'],$a_disabled_links)) unset($a_settings_menu[$key]);
+	  $b_check_is_custom_active = false;
+	  
+	  if(in_array($link['link']['link_path'],array_keys($a_custom_title))){
+	  	$a_settings_menu[$key]['link']['title'] = $a_settings_menu[$key]['link']['link_title'] = $a_custom_title[$link['link']['link_path']];
+	  }
+	    
+	  if($link['link']['options'] && is_array($link['link']['options']) && is_array($link['link']['options']['attributes']) && array_key_exists('site',$link['link']['options']['attributes'])){
+	 		//Has the site been set?
+	  	if($space->group->nid == $link['link']['options']['attributes']['site']){
+	 		  $b_check_is_custom_active = true;
+	 		}else{
+	  		unset($a_settings_menu[$key]);
+	 		}
+	 	}elseif($link['link']['router_path'] == 'node/%'){
+	  	//Catch any offsite links
+		  $args = explode("/",$link['link']['link_path']);
+	    $node = node_load($args[1]);
+	    if ($node && !empty($node->og_groups) && !in_array($space->group->nid, $node->og_groups)) {
+	      // If the node does not belongs to the current active group space then remove it
+	      unset($a_settings_menu[$key]);
+	    }else{
+	    	$b_check_is_custom_active = true;
+	    }
+	  }//Custom Link?
+	  	
+	  if($b_check_is_custom_active && $link['link']['link_path'] == $_GET['q']){
+      $link['link']['in_active_trail'] = true;
+      $b_make_feature_active = false;
+    }//Make custom links active
+  }
+  
+  if ($b_make_feature_active && module_exists('context')) {
+  	$a_new_links = array();
+  	foreach ($a_settings_menu as $key => $link) {
+      $a_new = current(context_menu_set_active(array($link['link'])));
+      if(is_array($a_new['attributes']) && $a_new['attributes']['class'] == 'active'){
+        $a_settings_menu[$key]['link']['in_active_trail'] = true;
+      }
+  	}
+  }//Should the feature tab be made active
+  
+  if(!$b_html) return $a_settings_menu;
+  
+  return menu_tree_output($a_settings_menu);
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function vsite_menus_theme($cache, $type, $theme, $path) {
+  $path = drupal_get_path('module', 'vsite_menus') ;
+  
+  $items['vsite_menus_radios'] = array(
+    'arguments' => array('element' => NULL,'disabled' => array()),
+    'path' => $path,
+    'file' => 'menu_theme.inc',
+  );
+  
+  return $items;
+}
+
+/**
+ * Change the options for the node save form so that only the active vsite menus are displayed
+ * 
+ * @param $form array
+ * @param $form_state array
+ * @param $form_id string
+ */
+function vsite_menus_form_alter(&$form, $form_state, $form_id){
+	if (isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
+		require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
+		vsite_include('vsiteapi');
+	  $a_scholar_types = vsite_content_types(array(0,1,2));
+	  $o_scholar = vsite_get_vsite();
+	  
+	  if($o_scholar && is_array($form['menu'])){
+	  	//Add the site to the attributes for the menu
+	  	if(!is_array($form['menu']['options']['#value'])) $form['menu']['options']['#value'] = array();
+	  	
+	  	if(!array_key_exists('attributes',$form['menu']['options']['#value'])) $form['menu']['options']['#value']['attributes'] = array();
+	  	
+	  	$form['menu']['options']['#value']['attributes']['site'] = $o_scholar->group->nid;
+	  }
+	  
+	  if($o_scholar && array_key_exists($form['type']['#value'],$a_scholar_types)){
+	    $a_primary = menu_load(variable_get('scholar_primary_menu',false));
+	    $a_secondary = menu_load(variable_get('scholar_secondary_menu',false));
+	    
+	    $disabled_choices = vsite_menus_menus::get_disabled_menus();  //Get disabled menus
+	    $a_choices = array();
+	    if(!in_array('primary',$disabled_choices)) $a_choices[variable_get('scholar_primary_menu',false).":0"] = t($a_primary['title']);
+	    if(!in_array('secondary',$disabled_choices)) $a_choices[variable_get('scholar_secondary_menu',false).":0"] = t($a_secondary['title']);
+	    
+	    global $user;
+	    $form['menu']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
+	    $form['menu']['parent']['#options'] = $a_choices;
+	    unset($form['menu']['hidden']);
+	    
+	    if (module_exists('path')) {
+		    $form['path']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
+		    
+		    if (module_exists('pathauto')) {
+			    //BELOW HERE -- Create PathAuto Form Modifications
+				  $node = $form['#node'];
+			
+			    // See if there is a pathauto pattern or default applicable
+			    if (isset($form['language'])) {
+			      $language = isset($form['language']['#value']) ? $form['language']['#value'] : $form['language']['#default_value'];
+			      $pattern = trim(variable_get('pathauto_node_'. $form['type']['#value'] .'_'. $language .'_pattern', ''));
+			    }
+			    if (empty($pattern)) {
+			      $pattern = trim(variable_get('pathauto_node_'. $form['type']['#value'] .'_pattern', ''));
+			      if (empty($pattern)) {
+			        $pattern = trim(variable_get('pathauto_node_pattern', ''));
+			      }
+			    }
+			    // If there is a pattern AND the user is allowed to create aliases AND the path textbox is present on this form
+			    if(!empty($pattern) &&isset($form['path']['path']) && (array_search('scholar admin',$user->roles) || user_access('administer menu'))){
+			    
+			      $output = t('An alias will be generated for you. If you wish to create your own, untick this option.');
+			
+			      drupal_add_js(drupal_get_path('module', 'pathauto') .'/pathauto.js');
+			      $form['path']['#collapsed'] = FALSE;
+			
+			      $form['path']['pathauto_perform_alias'] = array(
+			        '#type' => 'checkbox',
+			        '#title' => t('Automatic alias'),
+			        '#default_value' => isset($node->pathauto_perform_alias) ? $node->pathauto_perform_alias : TRUE,
+			        '#description' => $output,
+			        '#weight' => -1,
+			      );
+			
+			      if (!empty($node->pathauto_perform_alias) && !empty($node->old_alias) && $node->path == '') {
+			        $form['path']['path']['#default_value'] = $node->old_alias;
+			        $node->path = $node->old_alias;
+			      }
+			
+			      //For Pathauto to remember the old alias and prevent the Path-module from deleteing it when Pathauto wants to preserve it
+			      if (isset($node->path)) {
+			        $form['path']['old_alias'] = array('#type' => 'value', '#value' => $node->path);
+			      }
+			      
+			      if($o_scholar && strpos($form['path']['path']['#default_value'],$o_scholar->purl.'/') === 0){
+			      	$form['path']['path']['#default_value'] = substr($form['path']['path']['#default_value'],strlen($o_scholar->purl.'/'));
+			      }
+			    }
+	      }
+	    }
+	  }//If this is a active scholar type?
+	}
+}
+
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function vsite_menus_nodeapi(&$node, $op, $teaser, $page) {
+  if (module_exists('path')) {
+    switch ($op) {
+      case 'presave':
+        if (module_exists('path') && module_exists('pathauto')){
+	      	// About to be saved (before insert/update)
+	        // Only add to an alias if the checkbox was not provided or if the checkbox was provided and is unchecked
+	        if (!isset($node->pathauto_perform_alias) || !$node->pathauto_perform_alias) {
+	          $vsite = vsite_get_vsite();
+	        	if(strlen($node->path) && strpos($node->path,$vsite->title."/") !== 0){
+	          	$node->path = $vsite->title ."/". $node->path;
+	          }//Did they provide a path?  is the site name already prepended?
+	        }
+        }//Is Pathauto Enabled?
+         
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+/**
+ * Iplementation of hook block
+ *
+ * @param string $op
+ * @param int $delta
+ * @param array $edit
+ */
+function vsite_menus_block($op = 'list', $delta = 0, $edit = array()) {
+  if(!user_access('access content')) return;
+  
+  $blocks = array();
+  if ($op == 'list') {
+    $blocks[] = array('info' => t('Scholar primary menu'),
+                      'cache' => BLOCK_CACHE_PER_PAGE); 
+    $blocks[] = array('info' => t('Scholar secondary menu'),
+                      'cache' => BLOCK_CACHE_PER_PAGE);  
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        $block['subject'] = t(''); // intentionally left empty for now.
+        $block['content'] =vsite_menus_get_menu_tree('primary',true,false,true);
+        return $block ;
+      case 1:
+        $block['subject'] = t(''); // intentionally left empty for now.
+        $block['content'] = vsite_menus_get_menu_tree('secondary',true,false,true);
+        return $block;
+    }
+  }
+}
+
+/**
+ * Implementation of hook_vsite_widgets
+ * @return array
+ */
+function vsite_menus_vsite_widgets(){
+  
+  return array(
+    'vsite_menus_0' => array(
+      'module' => 'vsite_menus',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'navbar',
+      'status' => '0',
+      'label' => 'Scholar primary menu',
+      'type' => 'context_ui',
+    ),
+    'vsite_menus_1' => array(
+      'module' => 'vsite_menus',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'left',
+      'status' => '0',
+      'label' => 'Scholar secondary menu',
+      'type' => 'context_ui',
+    ),
+  );
+}
+

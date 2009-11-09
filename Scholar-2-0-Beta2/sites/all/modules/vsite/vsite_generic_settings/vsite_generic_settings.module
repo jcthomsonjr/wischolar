@@ -1,0 +1,40 @@
+<?php
+
+function vsite_generic_settings_init(){
+  $active_menu = menu_get_item();
+	if ($active_menu['path'] == 'cp/settings/generic'){
+    drupal_add_css(drupal_get_path('module', 'vsite_generic_settings') . '/theme/vsite_generic_settings-shield-picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_generic_settings') . '/theme/vsite_generic_settings-shield-picker.js');    
+    drupal_add_js(drupal_get_path('module', 'vsite_generic_settings') . '/theme/vsite_generic.greyout.js');    
+  }
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function vsite_generic_settings_spaces_settings(){
+  return array(
+    'generic' => array(
+      'class' => 'vsite_generic_settings_settings', 
+      'file' => drupal_get_path('module', 'vsite_generic_settings') . '/includes/vsite_generic_settings.settings.inc' 
+    ) 
+  );
+}
+
+/**
+ * hook_theme
+ */
+function vsite_generic_settings_theme(){
+  $path = drupal_get_path('module', 'vsite_generic_settings') .'/theme';
+  
+  $items = array();
+  
+  $items['vsite_design_theme_shieldpicker'] = array(
+    'arguments' => array('file' => array()),
+    'template' => 'vsite_generic_settings-theme-shieldpicker',
+    'path' => $path,
+    //'file' => 'theme.inc',
+  );
+  
+  return $items;
+}

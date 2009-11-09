@@ -1,0 +1,269 @@
+<?php
+
+/**
+ * Implementation of hook_user.
+ */
+function scholarregister_user($op, &$edit, &$account, $category = NULL){
+  switch ($op) {
+    case 'login' :
+      // if is a site owner ...
+      if ($vsite = scholarregister_siteowner_path($account)) {
+        // if is logging in for the first time or need to reset password
+        if (($account->login == 0) || (arg(0) == 'user' && arg(1) == 'reset')) {
+          purl_goto("cp/users", array(
+            'purl' => array(
+              'provider' => 'spaces_og', 
+              'id' => $vsite->sid 
+            ) 
+          ));
+        }
+        else {
+          // redirect them to their home page
+          $vsite->redirect('home');
+        }
+      
+      }
+      break;
+  }
+}
+
+function scholarregister_siteowner_path($account){
+  
+  // if is a site owner redirec to her site home page
+  //dpm($account -> og_groups);
+  if (isset($account->og_groups) && is_array($account->og_groups)) {
+    foreach ( $account->og_groups as $group ) {
+      //dpm($group);
+      if ($group['uid'] == $account->uid) {
+        $vsite = spaces_load("og", $sid = $group['nid'], $is_active = FALSE);
+        return $vsite;
+      }
+    }
+  }
+  return false;
+}
+
+function scholarregister_menu(){
+  $items = array();
+  $items['site/register'] = array(
+    'title' => 'Create your web site',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholarregister_signup_form'),
+    'file' => 'scholarregister.pages.inc',
+    'access arguments' => array('access content'),
+  );
+
+  $items['scholarregister/domain_js'] = array(
+    'title' => 'Create your web site',
+    'page callback' => 'scholarregister_domain_js',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['scholarregister/mail_js'] = array(
+    'title' => 'Create your web site',
+    'page callback' => 'scholarregister_mail_js',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+
+  $items['scholarregister/name_js'] = array(
+    'title' => 'Create your web site',
+    'page callback' => 'scholarregister_name_js',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+
+/**
+ * ajax callback for name
+ */
+function scholarregister_name_js() {
+  $name = $_POST ['ctools_changed'];
+
+  if ($error = scholarregister_validate_name($name)){
+    scholarregister_ctools_message('#name-suffix', $error, 'error');
+  }
+
+  // username is available
+  scholarregister_ctools_message('#name-suffix', "available", 'status');
+}
+
+/**
+ * ajax callback for mail
+ */
+function scholarregister_mail_js() {
+  $mail = $_POST['ctools_changed'];
+  if ($error = scholarregister_validate_mail($mail)){
+    scholarregister_ctools_message('#mail-suffix', $error, 'error');
+  }
+
+  $last11 = substr(trim($mail),-12);
+  if ($last11 !== '.harvard.edu' && $last11 !== '@harvard.edu'){
+    scholarregister_ctools_message('#mail-suffix', 'Please enter an harvard email address ', 'error');
+  }  
+  scholarregister_ctools_message('#mail-suffix', "available", 'status');
+}
+
+/**
+ * ajax callback for domain
+ */
+function scholarregister_domain_js() {
+  $domain = $_POST['ctools_changed'];
+
+  if ($error = scholarregister_validate_domain($domain)){
+    scholarregister_ctools_message('#domain-suffix', $error, 'error');
+  }
+  // ok then .. it's good and available
+  scholarregister_ctools_message('#domain-suffix', "available", 'status'); // exits
+}
+
+
+
+function scholarregister_validate_name($name){
+  if ($error = user_validate_name($name)){
+    return $error;
+  }
+  elseif (_scholarregister_domain_exists($name) || _scholarregister_name_exists($name)){
+    return "username \"$name\" is taken";
+  }
+}
+
+/**
+ * email validation function
+ * @param $mail
+ */
+function scholarregister_validate_mail($mail) {
+  // Validate the e-mail address:
+  if ($error = user_validate_mail($mail)) {
+    return $error;
+  }
+  elseif (_scholarregister_mail_exists($mail)){
+    return "e-mail \"$mail\" already exists";
+  }
+  
+  $last11 = substr(trim($mail),-12);
+  if ($last11 !== '.harvard.edu' && $last11 !== '@harvard.edu'){
+   return  'Please enter an harvard email address ';
+  }  
+  
+}
+
+function scholarregister_validate_domain($domain){
+  if ($error = user_validate_name($domain)){  // the same validation as the username
+    return $error;
+  }
+  elseif (_scholarregister_domain_exists($domain) || _scholarregister_name_exists($domain)){
+    return "domain \"$domain\" is taken";
+  }
+}
+
+
+/**
+ * wrapper function for executing ajax commands
+ * @param $id  the html selector (id)
+ * @param $message the message to insert on the div with id=$id
+ * @param $class  the class to apply to the div
+ */
+function scholarregister_ctools_message($id, $message, $class = 'error'){
+  ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+  $commands = array ();
+  $commands [] = ctools_ajax_command_html ( $id, $message);
+  $commands [] = ctools_ajax_command_attr($id, 'class', $class);
+  ctools_ajax_render ( $commands );
+}
+
+
+function scholarregister_notify_user($vsite, $user){
+  global $language;
+  $params = array();
+  $from = variable_get('site_mail', ini_get('sendmail_from'));
+
+  
+  // change users password
+  /*
+  $password = user_password();
+  $edit = array(
+    'pass' => $password
+  );
+  user_save($user, $edit);
+  */
+  $params['subject'] = t("A Scholars' Web Site has been created for you", array(
+    '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
+  ));
+
+  $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
+  $timestamp = time();
+  
+  $msg_variables = array(
+    // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
+    '!username' => $user->name,
+    '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
+    '!scholar_site_url' => $scholar_site_url,
+    //'!login_url' => url("user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
+    '!login_url' => user_pass_reset_url($user),
+    '!uri' => $base_url,
+    '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
+    '!mailto' => $user->mail,
+    '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
+    '!login_uri' => url('user', array(
+      'absolute' => TRUE,
+      'language' => $message['language']
+    )),
+    '!site_url' => url('node/' . $vsite->sid),
+    '!edit_uri' => url('user/' . $user->uid . '/edit', array(
+      'absolute' => TRUE,
+      'language' => $message['language']
+    )),
+    '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
+    '!password' => $password
+  );
+
+
+  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using:\n\n username: !username\n\nWe hope you will enjoy your new web site.\n\n Sincerely,\nThe !site Team", $msg_variables);
+
+  $params['body'] = $body;
+  if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
+    drupal_set_message(t('Error sending notification mail to user.'), 'error');
+  }
+
+}
+
+
+function scholarregister_mail($key, &$message, $params) {
+  $message['subject'] = $params['subject'];
+  $message['body'] = $params['body'];
+}
+
+
+/** Private functions **/
+
+function _scholarregister_domain_exists($domain){
+  // check domain availability
+  $query = "SELECT value FROM {purl} WHERE value='%s'";
+  $existing_purl = db_result(db_query($query, $domain));
+
+  return $existing_purl ? TRUE : FALSE;
+}
+
+function _scholarregister_name_exists($name){
+  // check domain availability
+  $query = "SELECT name FROM {users} WHERE name='%s'";
+  $existing_name = db_result(db_query($query, $name));
+
+  return $existing_name ? TRUE : FALSE;
+}
+
+function _scholarregister_mail_exists($mail){
+  // check domain availability
+  $query = "SELECT mail FROM {users} WHERE mail='%s'";
+  $existing_mail = db_result(db_query($query, $mail));
+
+  return $existing_mail ? TRUE : FALSE;
+}
+
