@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+function pinserver_install(){
+  //table not used in this version
+ //drupal_install_schema('pinserver');
+}  
+
+/**
+* Implementation of hook_uninstall()
+*/
+function pinserver_uninstall() {
+  //drop pinserver table
+  //drupal_uninstall_schema('pinserver');
+
+  //remove pinserver system variables
+  variable_del('pinserver_pin_url');
+  variable_del('pinserver_app_name');
+  variable_del('pinserver_gpg_dir');
+  variable_del('pinserver_registration_path');
+  variable_del('pinserver_support_contact');
+  variable_del('pinserver_enable_logging');
+  variable_del('pinserver_error_log');
+}
