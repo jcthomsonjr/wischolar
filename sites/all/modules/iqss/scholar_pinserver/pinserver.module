@@ -122,6 +122,11 @@ function pinserver_process_signup_form(){
  * @return unknown
  */
 function pinserver_process_access_registration(){
+  global $user;
+  //allow admin to access the form
+  if ($user->uid == '1'){
+    return true;
+  }  
   if (isset($_SESSION['reg_time']) && isset($_SESSION['hash_huid'])){
     return $reg_time =  ((time() - int($_SESSION['reg_time'])) < 120) ? true : false;
   }
@@ -229,7 +234,7 @@ function _pinserver_prepare_azp_token($azp_token) {
   );
 
   // This needs to be stored somewhere else.
-  $passphrase = '';    
+  $passphrase = '';    // TODO passphrase removed
 
   $process = proc_open(GPG_BIN ." --batch --no-tty --homedir '". GPG_DIR ."' --passphrase '". $passphrase ."' --decrypt ", $descriptorspec, $pipes); 
 
