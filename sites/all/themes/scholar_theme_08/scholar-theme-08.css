@@ -1,3 +1,7 @@
+html, body {
+  height: 100%;
+  }
+
 body {
   background: #fff;
   font-family:"helvetica neue",helvetica, Arial,sans-serif;
@@ -5,6 +9,11 @@ body {
 
 #content a, #content a:visited {
   color:#2089ac;
+  }
+
+#content a:hover {
+  color: #000;
+  text-decoration: underline;
   }
 
 
@@ -48,6 +57,19 @@ body {
   height: 140px;
   }
 
+#wrapper {
+  position: relative;
+  min-height: 100%;
+  }
+
+body.admin-menu #wrapper {
+  margin-top: 22px;
+  }
+
+body.navbar-on #wrapper {
+  margin-top: 41px;
+  }
+
 .column, #header-left, #header-right, #sidebar-left, #sidebar-right, #content-main, #header-main {
   float: none;
   padding: 0;
@@ -57,8 +79,8 @@ body {
   left: auto;
   }
 
-#header, #sidebar-left, #sidebar-right, #footer, #content-main {
-  position: fixed;
+#header, #sidebar-left, #sidebar-right, #footer, #content-main, #extradiv {
+  position: absolute;
   float: none;
   background-color: rgba(3, 38, 63, 0.76);
   top: 0;
@@ -68,8 +90,13 @@ body {
   margin: 0;
   }
 
-#content-main {
-  position: absolute;
+#container {
+	overflow: hidden;
+	}
+
+
+#footer {
+  position: fixed;
   }
 
 
@@ -82,7 +109,6 @@ body {
   width: 164px;
   background-color: rgba(210, 218, 184, 0.76);
   left: 202px;
-
   }
 
 #sidebar-right {
@@ -92,6 +118,10 @@ body {
   bottom:0;
   margin-right: 0;
   padding: 10px;
+  }
+
+body.navbar-off #sidebar-right {
+  padding-top: 35px;
   }
 
 #footer {
@@ -173,13 +203,17 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
 #block-vsite_menus-0 ul.menu li a {
   display:block;
   height: 36px;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 36px;
   color: #03263f;
   padding-left: 16px;
   }
 
-#block-vsite_menus-0 ul.menu li a.active, #block-vsite_menus-0 ul.menu li.active-trail a {
+#block-vsite_menus-0 ul.menu li a:hover {
+  background-color: rgba(210, 218, 184, 0.76);
+  }
+
+#block-vsite_menus-0 ul.menu li a.active, #block-vsite_menus-0 ul.menu li.active-trail a, #block-vsite_menus-0 ul.menu li a.active:hover, #block-vsite_menus-0 ul.menu li.active-trail a:hover {
   background: url(images/menu-selected.png) no-repeat 100% 0 #3f5a6d;
   color: #FFF;
   margin-right: -10px;
@@ -199,4 +233,12 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
   padding-left: 20px;
   background: url(images/bullet.png) no-repeat 0 50% transparent;
   margin-left: 0;
+  }
+
+#extradiv {
+  height: 10px;
+  background: rgba(210, 218, 184, 0.5);
+  bottom: auto;
+  right: 0;
+  top: 0;
   }
