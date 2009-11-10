@@ -76,14 +76,6 @@ function vsite_strongarm(){
   $conf['scholar_primary_menu'] = 'features';
   $conf['scholar_secondary_menu'] = 'scholar_secondary_menu';
   
-
-  /*
-  $conf['node_options_page'] = 
-  array (
-    0 => 'status',
-  );
-  */
-  
   $conf['upload_list_default'] = "1";
   $conf['upload_extensions_default'] = "jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp";
   $conf['upload_uploadsize_default'] = "5";
@@ -284,27 +276,13 @@ function vsite_spaces_presets(){
   return $items;
 }
 
+
 /**
- * Implementation of hook_nodeapi().
+ * hook preprocess page
  */
-
-/*
-function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
-  switch ($op) {
-    case 'presave':
-      // switch node's group for non-features
-      if (!og_is_omitted_type($node->type)) {
-        if (isset($node->spaces_og['gid']) && !in_array($node->spaces_og['gid'], $node->og_groups)) {
-          $node->og_groups = array($node->spaces_og['gid'] => $node->spaces_og['gid']);
-        }
-      }
-      break;
-  }
-}
-*/
-
 function vsite_preprocess_page(&$vars){
-  
+  // Each feature can provide its own specific css file 
+  // with this naming convention scholar_[feature name].css
   if ($feature = context_get('scholar', 'feature')) {
     drupal_add_css(drupal_get_path('module', 'scholar_' . $feature) . '/scholar_' . $feature . '.css');
     $vars['css'] = drupal_add_css();
@@ -312,7 +290,14 @@ function vsite_preprocess_page(&$vars){
   }
 }
 
+/**
+ * hook theme_registry_alter
+ */
 function vsite_theme_registry_alter(&$theme_registry){
+  /*
+   * Each module can provide the node template for the node types 
+   * it "owns" 
+   */
   $original_path = array_shift($theme_registry['node']['theme paths']);
   $features =  $features = spaces_features('og');
   $new_paths = array();
@@ -322,7 +307,6 @@ function vsite_theme_registry_alter(&$theme_registry){
   }
   array_unshift($new_paths, $original_path);
   $theme_registry['node']['theme paths'] = array_merge($new_paths,$theme_registry['node']['theme paths'] );
-      //array_unshift($theme_registry['node']['theme paths'], $original_path, $this_module_path);
 }
 
 
