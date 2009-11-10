@@ -16,6 +16,16 @@ function _vsite_widgets_user_default_permissions() {
       '3' => 'scholar user',
     ),
   );
+  
+  $permissions[] = array(
+    'name' => 'view addthis',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
 
   return $permissions;
 }

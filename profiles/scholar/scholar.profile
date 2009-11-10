@@ -41,6 +41,7 @@ function _scholar_core_modules() {
  $contrib_modules = array(
   // sites/all
     'activity',
+    'addthis',
     'advanced_help',
     'context',
     'context_contrib',
