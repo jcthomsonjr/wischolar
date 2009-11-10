@@ -309,8 +309,8 @@ function vsite_menus_nodeapi(&$node, $op, $teaser, $page) {
 	        // Only add to an alias if the checkbox was not provided or if the checkbox was provided and is unchecked
 	        if (!isset($node->pathauto_perform_alias) || !$node->pathauto_perform_alias) {
 	          $vsite = vsite_get_vsite();
-	        	if(strlen($node->path) && strpos($node->path,$vsite->title."/") !== 0){
-	          	$node->path = $vsite->title ."/". $node->path;
+	        	if(strlen($node->path) && strpos($node->path,$vsite->purl."/") !== 0){
+	          	$node->path = $vsite->purl ."/". $node->path;
 	          }//Did they provide a path?  is the site name already prepended?
 	        }
         }//Is Pathauto Enabled?
