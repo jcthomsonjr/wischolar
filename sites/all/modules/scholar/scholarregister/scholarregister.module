@@ -143,7 +143,7 @@ function scholarregister_validate_mail($mail) {
   }
   
   if (substr(trim($mail),-12) !== '.harvard.edu' && substr(trim($mail),-12) !== '@harvard.edu' 
-   && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '@hbs.edu'){
+   && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '.hbs.edu'){
    return  'Please enter an harvard email address ';
   }  
   
