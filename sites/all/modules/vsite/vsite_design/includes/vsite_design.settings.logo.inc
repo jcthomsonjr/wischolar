@@ -29,6 +29,7 @@ class vsite_design_settings_logo implements space_setting {
     $form['#title'] = 'Site logo';
 
     $s_current = file_check_location($value['current_logo']);//,realpath(dirname($value['current_logo'])));
+    if(!$s_current) $s_current = file_check_location($value['current_logo'],realpath(dirname($value['current_logo']))); //Fix the few legacy images in the wrong location
 
     vsite_include('vsiteapi');
     $form['current_logo'] = array('#value' => theme('vsite_design_logo',$space,false,'','',array('id' => 'logo_preview'),true));
