@@ -12,6 +12,7 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
     $blocks[2]['info'] = t('Scholar site shield');
     $blocks[3]['info'] = t('Scholar site search');
     $blocks[4]['info'] = t('AddThis button');
+    $blocks[4]['info'] = t('Google Translate');
     return $blocks;
   }
   elseif ($op == 'view') {
@@ -26,6 +27,8 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
        return vsite_widgets_search();
       case 4:
       	return vsite_widgets_addthis();
+      case 5:
+      	return vsite_widget_googletranslate();
     }
   }
 }
@@ -77,15 +80,44 @@ function vsite_widgets_search_form_submit($form, &$form_state) {
   drupal_goto('sitesearch', array('keys' => $search));
 }
 
+/**
+ * Adds the addthis social networking link
+ * @return array
+ */
 function vsite_widgets_addthis(){
   if (! module_exists('addthis') || ! user_access('view addthis')) {
     return;
+  }
+  
+  if(!function_exists('_addthis_create_button')){
+  	error_log("Unable to find addthis function Line:".__LINE__." File:".__FILE__);
+  	return;
   }
 
   $block['subject'] = t(''); //t('AddThis');
   $block['content'] = _addthis_create_button();
   return $block;
 
+}
+
+/**
+ * A widget to allow translation of a page
+ * @return array
+ */
+function vsite_widget_googletranslate(){
+  global $language;
+	$lang = ($language->language)?$language->language:'en';
+	
+	$block['subject'] = t(''); //Blank
+  $block['content'] = '<div id="google_translate_element"></div><script>
+												function googleTranslateElementInit() {
+												  new google.translate.TranslateElement({
+												    pageLanguage: \''.$lang.'\'
+												  }, \'google_translate_element\');
+												}
+												</script><script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>';
+  return $block;
+	
 }
 
 function vsite_widgets_logo(){
@@ -202,6 +234,16 @@ function vsite_widgets_vsite_widgets(){
       'region' => 'left',
       'status' => '0',
       'label' => 'AddThis button',
+      'type' => 'context_ui',
+    ),
+    
+    'vsite_widgets_5' => array(
+      'module' => 'vsite_widgets',
+      'delta' => '5',
+      'weight' => 40,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Google Translate',
       'type' => 'context_ui',
     ),
 
