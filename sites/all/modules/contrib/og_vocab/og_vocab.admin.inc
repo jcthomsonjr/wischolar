@@ -1,5 +1,5 @@
 <?php
-// $Id: og_vocab.admin.inc,v 1.1.2.5 2009/10/04 09:17:03 amitaibu Exp $
+// $Id: og_vocab.admin.inc,v 1.1.2.6 2009/11/03 13:17:24 amitaibu Exp $
 
 /**
  * @file
@@ -11,7 +11,7 @@
  */
 function og_vocab_admin_overview_vocabularies($form_state, $groupnode) {
   $gid = $groupnode->nid;
-  drupal_set_title($groupnode->title);
+  drupal_set_title(check_plain($groupnode->title));
   drupal_set_breadcrumb(drupal_get_breadcrumb());
 
   if (user_access('add own group vocabulary')) {
