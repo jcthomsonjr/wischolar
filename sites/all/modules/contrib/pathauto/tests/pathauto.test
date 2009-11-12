@@ -1,5 +1,5 @@
 <?php
-// $Id: pathauto.test,v 1.5 2009/10/20 18:02:18 greggles Exp $
+// $Id: pathauto.test,v 1.2.2.2 2009/05/02 20:12:03 freso Exp $
 
 /**
  * @file
@@ -66,9 +66,8 @@ class PathautoTestCase extends DrupalWebTestCase {
     // Create node for testing.
     $random_title = $this->randomName(10); // this contains _
     $expected_alias = 'content/simpletest-title-'. strtolower($random_title);
-    // Extra characters at the beginning and end of the title tests that extra separator characters are removed.
     $edit = array(
-      'title' => ' Simpletest title '. $random_title .' [',
+      'title' => 'Simpletest title '. $random_title,
       'body'  => 'Simpletest body '. $this->randomName(10),
     );
 

@@ -1,63 +1,12 @@
 <?php
-// $Id: pathauto.inc,v 1.54 2009/10/22 00:11:35 greggles Exp $
+// $Id: pathauto.inc,v 1.45.2.3 2009/10/20 17:52:12 greggles Exp $
 
 /**
  * @file
  * Miscellaneous functions for Pathauto.
  *
- * This also contains some constants giving human readable names to some numeric
- * settings; they're included here as they're only rarely used outside this file
- * anyway. Use _pathauto_include() if the constants need to be available.
- *
  * @ingroup pathauto
  */
-
-/**
- * Case should be left as is in the generated path.
- */
-define('PATHAUTO_CASE_LEAVE_ASIS', 0);
-
-/**
- * Case should be lowercased in the generated path.
- */
-define('PATHAUTO_CASE_LOWER', 1);
-
-/**
- * "Do nothing. Leave the old alias intact."
- */
-define('PATHAUTO_UPDATE_ACTION_NO_NEW', 0);
-
-/**
- * "Create a new alias. Leave the existing alias functioning."
- */
-define('PATHAUTO_UPDATE_ACTION_LEAVE', 1);
-
-/**
- * "Create a new alias. Delete the old alias."
- */
-define('PATHAUTO_UPDATE_ACTION_DELETE', 2);
-
-/**
- * "Create a new alias. Redirect from old alias."
- *
- * This is only available when the Path Redirect module is.
- */
-define('PATHAUTO_UPDATE_ACTION_REDIRECT', 3);
-
-/**
- * Remove the punctuation from the alias.
- */
-define('PATHAUTO_PUNCTUATION_REMOVE', 0);
-
-/**
- * Replace the punctuation with the separator in the alias.
- */
-define('PATHAUTO_PUNCTUATION_REPLACE', 1);
-
-/**
- * Leave the punctuation as it is in the alias.
- */
-define('PATHAUTO_PUNCTUATION_DO_NOTHING', 2);
 
 /**
  * Matches Unicode character classes.
@@ -150,17 +99,17 @@ function _pathauto_existing_alias_data($src) {
   $result = db_query("SELECT pid, dst FROM {url_alias} WHERE src='%s'", $src);
   if ($data = db_fetch_object($result)) {
     // The item is already aliased, check what to do...
-    switch (variable_get('pathauto_update_action', PATHAUTO_UPDATE_ACTION_DELETE)) {
+    switch (variable_get('pathauto_update_action', 2)) {
       // Replace old alias - remember the pid to update
-      case PATHAUTO_UPDATE_ACTION_DELETE:
-      case PATHAUTO_UPDATE_ACTION_REDIRECT:
+      case 2:
+      case 3:
         $output['pid'] = $data->pid;
       // Add new alias in addition to old one
-      case PATHAUTO_UPDATE_ACTION_LEAVE:
+      case 1:
         $output['old_alias'] = $data->dst;
         break;
       // Do nothing
-      case PATHAUTO_UPDATE_ACTION_NO_NEW:
+      case 0:
       default:
         break;
     }
@@ -193,8 +142,9 @@ function pathauto_cleanstring($string, $clean_slash = TRUE) {
   $output = $string;
   $punctuation = pathauto_punctuation_chars();
   foreach ($punctuation as $name => $details) {
-    $action = variable_get('pathauto_punctuation_'. $name, PATHAUTO_PUNCTUATION_REMOVE);
-    if ($action != PATHAUTO_PUNCTUATION_DO_NOTHING) {
+    $action = variable_get('pathauto_punctuation_'. $name, 0);
+    // 2 is the action for "do nothing" with the punctuation
+    if ($action != 2) {
       // Slightly tricky inline if which either replaces with the separator or nothing
       $output = str_replace($details['value'], ($action ? $separator : ''), $output);
     }
@@ -205,14 +155,20 @@ function pathauto_cleanstring($string, $clean_slash = TRUE) {
     $output = str_replace('/', '', $output);
   }
 
-  // Optionally transliterate (by running through the Transliteration module)
+  // Optionally remove accents and transliterate
   if (variable_get('pathauto_transliterate', FALSE)) {
-    if (module_exists('transliteration')) {
-      $output = transliteration_get($output);
+    static $i18n_loaded = false;
+    static $translations = array();
+
+    if (!$i18n_loaded) {
+      $path = drupal_get_path('module', 'pathauto');
+      if (is_file($path .'/i18n-ascii.txt')) {
+        $translations = parse_ini_file($path .'/i18n-ascii.txt');
+      }
+      $i18n_loaded = true;
     }
-    else {
-      drupal_set_message(t('Pathauto could not transliterate the path, as the Transliteration module has been disabled.'), 'error');
-    }
+
+    $output = strtr($output, $translations);
   }
 
   // Reduce to the subset of ASCII96 letters and numbers
@@ -243,24 +199,19 @@ function pathauto_cleanstring($string, $clean_slash = TRUE) {
     else {
       $seppattern = '\\'. $separator;
     }
-    // Trim any leading or trailing separators.
+    // Trim any leading or trailing separators (note the need to
     $output = preg_replace("/^$seppattern+|$seppattern+$/", '', $output);
 
     // Replace trailing separators around slashes.
     $output = preg_replace("/$seppattern\/|\/$seppattern/", "/", $output);
 
-    // Replace multiple separators with a single one.
+    // Replace multiple separators with a single one
     $output = preg_replace("/$seppattern+/", "$separator", $output);
-
-    // Optionally convert to lower case.
-    if (variable_get('pathauto_case', PATHAUTO_CASE_LOWER)) {
-      $output = drupal_strtolower($output);
-    }
   }
 
   // Enforce the maximum component length
   $maxlength = min(variable_get('pathauto_max_component_length', 100), 128);
-  $output = _pathauto_truncate_chars($output, $maxlength, $separator);
+  $output = drupal_substr($output, 0, $maxlength);
 
   return $output;
 }
@@ -327,7 +278,7 @@ function pathauto_create_alias($module, $op, $placeholders, $src, $entity_id, $t
   $pid = NULL;
   $old_alias = NULL;
   if ($op == 'update' or $op == 'bulkupdate') {
-    if (variable_get('pathauto_update_action', PATHAUTO_UPDATE_ACTION_DELETE) == PATHAUTO_UPDATE_ACTION_NO_NEW) {
+    if (variable_get('pathauto_update_action', 2) == 0) {
       // Do nothing
       return '';
     }
@@ -336,8 +287,13 @@ function pathauto_create_alias($module, $op, $placeholders, $src, $entity_id, $t
     $old_alias = $update_data['old_alias'];
   }
 
-  // Replace the placeholders with the values provided by the module.
+  // Replace the placeholders with the values provided by the module,
+  // and optionally lower-case the result
   $alias = str_replace($placeholders['tokens'], $placeholders['values'], $pattern);
+
+  if (variable_get('pathauto_case', 1)) {
+    $alias = drupal_strtolower($alias);
+  }
 
   // Two or more slashes should be collapsed into one
   $alias = preg_replace('/\/+/', '/', $alias);
@@ -345,14 +301,11 @@ function pathauto_create_alias($module, $op, $placeholders, $src, $entity_id, $t
   // Trim any leading or trailing slashes
   $alias = preg_replace('/^\/|\/+$/', '', $alias);
 
-  // Shorten to a logical place based on the last separator.
-  $separator = variable_get('pathauto_separator', '-');
   $maxlength = min(variable_get('pathauto_max_length', 100), 128);
-
-  // Make sure we're not ending the alias in the middle of a word.
-  $alias = _pathauto_truncate_chars($alias, $maxlength, $separator);
+  $alias = drupal_substr($alias, 0, $maxlength);
 
   // If the alias already exists, generate a new, hopefully unique, variant
+  $separator = variable_get('pathauto_separator', '-');
   if (_pathauto_alias_exists($alias, $src, $language)) {
     $original_alias = $alias;
     for ($i = 0; _pathauto_alias_exists(drupal_substr($alias, 0, $maxlength - strlen($i)) . $separator . $i, $src, $language); $i++) {
@@ -449,8 +402,7 @@ function _pathauto_set_alias($src, $dst, $entity_type, $entity_id, $pid = NULL, 
   if ($old_alias != $dst) {
     path_set_alias($src, $dst, $pid, $language);
 
-    if (variable_get('pathauto_update_action', PATHAUTO_UPDATE_ACTION_DELETE) == PATHAUTO_UPDATE_ACTION_REDIRECT
-        && function_exists('path_redirect_save')) {
+    if (variable_get('pathauto_update_action', 2) == 3 && function_exists('path_redirect_save')) {
       if (!empty($old_alias)) {
         $redirect = array(
           'path' => $old_alias,
@@ -461,13 +413,13 @@ function _pathauto_set_alias($src, $dst, $entity_type, $entity_id, $pid = NULL, 
     }
     if ($verbose && user_access('notify of path changes')) {
       if (!empty($redirect)) {
-        drupal_set_message(t('Created new alias %dst for %src, replacing %old_alias. %old_alias now redirects to %dst.', array('%dst' => $dst, '%src' => $src, '%old_alias' => $old_alias)));
+        drupal_set_message(t('Created new alias %dst for %src, replacing %old_alias. %old_alias now redirects to %dst', array('%dst' => $dst, '%src' => $src, '%old_alias' => $old_alias)));
       }
       elseif ($pid) {
-        drupal_set_message(t('Created new alias %dst for %src, replacing %old_alias.', array('%dst' => $dst, '%src' => $src, '%old_alias' => $old_alias)));
+        drupal_set_message(t('Created new alias %dst for %src, replacing %old_alias', array('%dst' => $dst, '%src' => $src, '%old_alias' => $old_alias)));
       }
       else {
-        drupal_set_message(t('Created new alias %dst for %src.', array('%dst' => $dst, '%src' => $src)));
+        drupal_set_message(t('Created new alias %dst for %src', array('%dst' => $dst, '%src' => $src)));
       }
     }
   }
@@ -490,7 +442,7 @@ function pathauto_get_placeholders($type, $object) {
     return array('tokens' => $tokens, 'values' => $values);
   }
   // TODO at some point try removing this and see if install profiles have problems again.
-  watchdog('Pathauto', 'It appears that you have installed Pathauto, which depends on Token, but Token is either not installed or not installed properly.');
+  watchdog('Pathauto', 'It appears that you have installed Pathauto, which depends on token, but token is either not installed or not installed properly.');
   return array('tokens' => array(), 'values' => array());
 }
 
@@ -563,30 +515,4 @@ function pathauto_punctuation_chars() {
   $punctuation['back_slash']         = array('value' => '\\', 'name' => t('Back slash \\'));
 
   return $punctuation;
-}
-
-/**
- * A Pathauto friendly version of truncate_utf8.
- *
- * @param $string
- *   The string to be truncated.
- * @param $length
- *   An integer for the maximum desired length.
- * @param $separator
- *   A string which contains the word boundary such as - or _.
- *
- * @return
- *  The string truncated below the maxlength.
- */
-function _pathauto_truncate_chars($string, $length, $separator) {
-  if (drupal_strlen($string) > $length) {
-    $string = drupal_substr($string, 0, $length + 1); // leave one more character
-    if ($last_break = strrpos($string, $separator)) { // space exists AND is not on position 0
-      $string = substr($string, 0, $last_break);
-    }
-    else {
-      $string = drupal_substr($string, 0, $length);
-    }
-  }
-  return $string;
 }
