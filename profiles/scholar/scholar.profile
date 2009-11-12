@@ -146,6 +146,9 @@ function _scholar_scholar_modules() {
   // scholar specific
     'biblio',
 
+  //IQSS Specific
+    'iqss_scholar',
+  
     'cp',
     //'cp_node_forms',
     'scholarboot',

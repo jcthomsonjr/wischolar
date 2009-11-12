@@ -93,9 +93,13 @@ function vsite_widgets_addthis(){
   	error_log("Unable to find addthis function Line:".__LINE__." File:".__FILE__);
   	return;
   }
-
+  
+  //For now we will just show this on node pages this may be customizable in the future
+  $active_node = menu_get_object('node');
+  if(!is_object($active_node)) return;
+  
   $block['subject'] = t(''); //t('AddThis');
-  $block['content'] = _addthis_create_button();
+  $block['content'] = _addthis_create_button($active_node);
   return $block;
 
 }
@@ -224,16 +228,6 @@ function vsite_widgets_vsite_widgets(){
       'region' => 'right',
       'status' => '0',
       'label' => 'Scholar search widget',
-      'type' => 'context_ui',
-    ),
-    
-    'vsite_widgets_4' => array(
-      'module' => 'vsite_widgets',
-      'delta' => '4',
-      'weight' => 50,
-      'region' => 'left',
-      'status' => '0',
-      'label' => 'AddThis button',
       'type' => 'context_ui',
     ),
     
@@ -384,15 +378,4 @@ function vsite_widgets_scholar_admin_link($type, $object){
   if (isset($links)) {
     return $links;
   }
-}
-
-/**
- * Implementation of hook_strongarm().
- */
-function vsite_widgets_strongarm() {
-  $conf = array();
-  
-  $conf['addthis_username'] = 'iqssscholar';
-  
-  return $conf;
 }

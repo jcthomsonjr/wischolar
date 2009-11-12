@@ -103,6 +103,15 @@ function _scholar_links_context_default_contexts() {
         'label' => 'Scholar site categories',
         'type' => 'context_ui',
       ),
+      'vsite_widgets_4' => array(
+        'module' => 'vsite_widgets',
+        'delta' => '4',
+        'weight' => 50,
+        'region' => 'left',
+        'status' => '0',
+        'label' => 'AddThis button',
+        'type' => 'context_ui',
+      ),
     ),
   );
   return $items;
