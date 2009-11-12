@@ -1,0 +1,17 @@
+<?php 
+
+function vsite_users_install(){
+
+}
+
+function vsite_users_enable() {
+  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'content_profile'"));
+  _vsite_users_set_system_weight($weight-2);  
+}
+
+
+function _vsite_users_set_system_weight($weight) {
+  if(!is_int($weight)) return false;
+  
+  return db_query("UPDATE {system} SET weight = %d WHERE name = 'scholar_publications'", $weight);
+}
