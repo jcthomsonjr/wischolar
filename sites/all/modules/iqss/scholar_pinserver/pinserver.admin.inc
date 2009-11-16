@@ -51,13 +51,13 @@ function pinserver_config(){
   
   $form['pinserver']['pinserver_support_contact'] = array(
     '#type' => 'textfield',
-    '#title' => t('E-mail address for customer support'),
+    '#title' => t('E-mail address for techincal support'),
     '#required' => FALSE,
     '#default_value' => variable_get('pinserver_support_contact',''),
     '#description' => t('Optionally specify contact person to be displayed to user if PIN authentication fails.'),
   );
 
-  $form['pinserver_logging'] = array(
+/*  $form['pinserver_logging'] = array(
     '#type' => 'fieldset',
     '#title' => t('Harvard Pinserver Logging'),
     '#collapsible' => TRUE,
@@ -70,7 +70,7 @@ function pinserver_config(){
     '#required' => FALSE,
     '#default_value' => variable_get('pinserver_error_log',''),
     '#description' => t('Optionally specify full filename and path from server\'s root directory (not the website\'s root directory). The file should always be below the root directory, and it is recommended only for development sites. Leave blank to disable. Include the first / to indicate the root directory of the webserver.'),
-   );
+   );*/
   
   return system_settings_form($form);
 }
