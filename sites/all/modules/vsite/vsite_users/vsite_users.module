@@ -389,3 +389,23 @@ function vsite_users_cp_confirm_overide(){
 	);
 	
 }
+
+/**
+ * Implement Hook vsite_generic_settings
+ * @return array
+ */
+function vsite_users_vsite_generic_settings($value = array()){
+  $a_settings = array();
+  
+  //Should Vsite Contact forms allow anon. contact?
+  $a_settings['contact_form_anonymous'] = array(
+    'form' => array(
+      '#type' => 'checkbox',
+      '#title' => t('Anonymous Contact'),
+      '#default_value' => is_array($value) && array_key_exists('contact_form_anonymous',$value) ? $value['contact_form_anonymous']:1,
+      '#description' => "When this is checked a user does not need to be logged in to contact you.",
+    )
+  );
+  
+  return $a_settings;
+}

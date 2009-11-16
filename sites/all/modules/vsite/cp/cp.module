@@ -429,27 +429,6 @@ function cp_toolbar_menu_links(){
 }
 
 /**
- * Return links for the left side menu
- */
-/*
-function cp_left_menu_links(){
-  //return menu_navigation_links('cp',1);
-  
-  
-  $tree = menu_tree_page_data('cp');
-
-  
-  foreach ($tree as $item) {
-    if (cp_in_active_trail($item['link']['href']) && !empty($item['below'])) {
-      return cp_menu_navigation_links($item['below'],true);
-    }
-  }
-  
-}
-*/
-
-
-/**
  * Generate a links array from a menu tree array.
  */
 function cp_menu_navigation_links($tree, $b_highlight_first_submenu = false) {
@@ -653,4 +632,24 @@ function cp_get_confirm_form_overides(){
 	if(!$a_overides) $a_overides = module_invoke_all('cp_confirm_overide');
 	
 	return $a_overides;
+}
+
+/**
+ * Implement Hook vsite_generic_settings
+ * @return array
+ */
+function cp_vsite_generic_settings($value = array()){
+	$a_settings = array();
+	
+	//Show Admin Menu Setting
+	$a_settings['admin_menu'] = array(
+	  'form' => array(
+      '#type' => 'checkbox',
+      '#title' => t('Display Admin Menu Bar.'),
+      '#description' => "The admin menu bar displays at the top of the page when you are logged in as a site administrator.",
+      '#default_value' => (is_array($value) && array_key_exists('admin_menu',$value))?$value['admin_menu']:0,
+    )
+	);
+	
+	return $a_settings;
 }

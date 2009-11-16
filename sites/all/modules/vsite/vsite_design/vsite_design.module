@@ -201,3 +201,44 @@ function vsite_design_preprocess_page(&$vars){
   $vars['css'] = drupal_add_css();
   $vars['styles'] = drupal_get_css();
 }
+
+
+/**
+ * Implement Hook vsite_generic_settings
+ * @return array
+ */
+function vsite_design_vsite_generic_settings($value = array()){
+  $a_settings = array();
+  
+  //Disable the shield
+  $a_settings['disable_shield'] = array(
+    'form' => array(
+      '#prefix' => "<br />",
+      '#type' => 'checkbox',
+      '#title' => t('Disable Shields'),
+      '#attributes' => array('onChange' => "vsite_design_grey_out(this);"),
+      '#default_value' => is_array($value) && array_key_exists('disable_shield',$value) ? $value['disable_shield']:0,
+      '#description' => "Select the shield that you wish to appear in the 'shield widget' on your site.  Click disable to display none.",
+    )
+  );
+  
+  //The shield List
+  $s_shield_dir = drupal_get_path('module','vsite_design')."/theme/shield/shields";
+  $a_shields = file_scan_directory($s_shield_dir, '.*', array('.', '..'));
+    
+  $shield_options = array();
+  foreach ($a_shields as $shield)  $shield_options[$shield->filename] = theme('vsite_design_theme_shieldpicker', $shield); 
+  
+  $a_settings['shield'] = array(
+    'form' => array(
+      '#prefix' => "<div class='shield_wrapper'>",
+      '#title' => t('Shield'),
+      '#type' => 'radios',
+      '#options' => $shield_options,
+      '#default_value' => is_array($value) && array_key_exists('shield',$value) ? $value['shield']: drupal_get_path('module','vsite_design')."/theme/shield/shields/harvard_shield.png",
+      '#append' => '</div><div class="clearfix"></div>',
+    )
+  );
+  
+  return $a_settings;
+}

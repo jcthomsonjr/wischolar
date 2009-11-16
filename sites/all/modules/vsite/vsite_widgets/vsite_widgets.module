@@ -178,10 +178,9 @@ function vsite_widgets_shield(){
 		return $output;
 	}//Disabled?
 
-
-
 	if(array_key_exists('generic',$scholar->settings) && array_key_exists('shield',$scholar->settings['generic'])){
-		$output = '<div id="scholar-shield"><img src="/'.$scholar->settings['generic']['shield'].'" /> </div>';
+		$s_filename = array_pop(explode('/',$scholar->settings['generic']['shield']));
+		$output = '<div id="scholar-shield"><img src="/'.drupal_get_path('module','vsite_design')."/theme/shield/shields/".$s_filename.'" /> </div>';
 	}
 
 	$block['subject'] = t('');
