@@ -1,10 +1,10 @@
 if (Drupal.jsEnabled) {
   $(document).ready(function() {
-	  vsite_generic_grey_out($('#edit-settings-generic-disable-shield'));
+	  vsite_design_grey_out($('#edit-settings-generic-disable-shield'));
   });
 }
 
-function vsite_generic_grey_out(element){
+function vsite_design_grey_out(element){
 	if($(element).is(':checked')){
 	  $('.shield_wrapper').prepend("<div id=\'shield_screen\'></div>").css({ 'position': 'relative', 'overflow': 'hidden' });
 		$('#shield_screen').css({ 'opacity': 0.8,
