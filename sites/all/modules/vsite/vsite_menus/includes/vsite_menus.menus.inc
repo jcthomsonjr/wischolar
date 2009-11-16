@@ -46,9 +46,9 @@ class vsite_menus_menus implements space_setting {
     $a_disabled_links = array_keys(array_intersect(spaces_features_map('menu'),$a_disabled_features));
     
     foreach ($choices as $s_menu => $s_menu_name){
-    	scholar::$override_allow_feature_access = true;
+    	vsite::$override_allow_feature_access = true;
 	    $a_tree = menu_tree_all_data(variable_get("scholar_{$s_menu}_menu",false));    
-	    scholar::$override_allow_feature_access = false;
+	    vsite::$override_allow_feature_access = false;
 	    
 	    foreach ($a_tree as $element) {
 	      if ($element['link']['hidden']) continue;
