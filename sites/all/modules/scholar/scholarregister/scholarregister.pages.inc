@@ -104,8 +104,16 @@ function scholarregister_signup_form_validate($form, &$form_state){
   
   // if any of the above value fail validation, exit with an appropriate message
   if (scholarregister_validate_name($name) || scholarregister_validate_mail($mail) || scholarregister_validate_domain($domain)) {
-    $commands[] = _scholarregister_vsite_error();
+    $commands[] = _scholarregister_vsite_error(1);
     ctools_ajax_render($commands);
+  }
+  
+  if(module_exists('pinserver')){
+    //checking if site exists for this user
+    if (_pinserver_check_row()){    
+     $commands[] = _scholarregister_vsite_error(2);
+    ctools_ajax_render($commands);
+    }
   }
 }
 
@@ -113,7 +121,7 @@ function scholarregister_signup_form_validate($form, &$form_state){
  * the submit handler for the registration form
  */
 function scholarregister_signup_form_submit($form, &$form_state) {
-
+  
   $name = $form_state ['values'] ['name'];
   $mail = $form_state ['values'] ['mail'];
   $domain = $form_state ['values'] ['domain'];
@@ -158,6 +166,11 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     ctools_ajax_render ( $commands );  
   }
   
+  //2a. if user and site created successfully then log user in the pinserver table
+  if(module_exists('pinserver')){
+    pinserver_process_user_registration($user->uid);    
+  }
+  
   // site created successfully
   // 3. send e-mail to the user.
   scholarregister_notify_user($vsite, $user);
@@ -179,7 +192,6 @@ content.</p>';
   ctools_ajax_render ( $commands );
 }
 
-
 /**
  * Create a scholar vsite
  */
@@ -188,8 +200,18 @@ function scholarregister_vsite_create($name, $mail, $domain){
   return vsite_vsite_create($name, $mail, $domain);
 }
 
-
-function _scholarregister_vsite_error(){
-  return ctools_ajax_command_replace('#submit-suffix', 'The web site cannot be created. Please fix the errors and try again.');
-  //ctools_ajax_render($commands);
+function _scholarregister_vsite_error($type = 1){
+  switch ($type){
+    case 1:
+      //web site could not be created
+      return ctools_ajax_command_replace('#submit-suffix', 'The web site cannot be created. 
+      Please fix the errors and try again.');
+      break;
+    case 2:
+      //web site already exists
+      return ctools_ajax_command_replace('#submit-suffix', 'Our records show that a web site already exists
+      for your account.'); //TODO: need a more intuiative message. Perhaps a link to the site???
+      break;
+      //ctools_ajax_render($commands);
+  }
 }
