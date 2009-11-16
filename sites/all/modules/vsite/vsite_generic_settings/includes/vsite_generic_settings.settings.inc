@@ -31,10 +31,24 @@ class vsite_generic_settings_settings implements space_setting {
   }
 
   function validate($space, $value) {
+  	
+    $a_settings = module_invoke_all('vsite_generic_settings',$value);
+    
+    foreach ($a_settings as $s_key => $setting){
+      if(!array_key_exists('validate',$setting) && function_exists($setting['validate'])) continue;
+      call_user_func($setting['validate'], $space, &$value);
+    }
+    
     return $value;
   }
 
   function submit($space, $value) {
+  	
+    foreach ($a_settings as $s_key => $setting){
+      if(!array_key_exists('submit',$setting) && function_exists($setting['submit'])) continue;
+      call_user_func($setting['submit'], $space, &$value);
+    } 
+    
     return $value;
   }
 }

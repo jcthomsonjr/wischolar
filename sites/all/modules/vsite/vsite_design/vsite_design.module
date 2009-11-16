@@ -71,6 +71,13 @@ function vsite_design_theme(){
     'file' => 'vsiteapi.inc',
   );
   
+  $items['vsite_design_theme_shieldpicker'] = array(
+    'arguments' => array('file' => array()),
+    'template' => 'vsite_design-theme-shieldpicker',
+    'path' => $path."/shield",
+    //'file' => 'theme.inc',
+  );
+  
   return $items;
 }
 
@@ -237,7 +244,12 @@ function vsite_design_vsite_generic_settings($value = array()){
       '#options' => $shield_options,
       '#default_value' => is_array($value) && array_key_exists('shield',$value) ? $value['shield']: drupal_get_path('module','vsite_design')."/theme/shield/shields/harvard_shield.png",
       '#append' => '</div><div class="clearfix"></div>',
-    )
+    ),
+    'css' => array(drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_generic_settings-shield-picker.css'),
+    'js' => array(
+      drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_generic_settings-shield-picker.js',
+      drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_generic.greyout.js',
+    ),
   );
   
   return $a_settings;
