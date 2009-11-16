@@ -1,0 +1,130 @@
+<?php 
+
+/**
+ * This Module creates a domain handler for scholar that overides the default purl domain handler
+ * It also also has an admin form for creating domains for vsites
+ */
+
+// Change the default domain proccessor to our custom processor
+define('PURL_VSITE_DOMAIN', 'vsite_domain');
+
+/**
+ * Implements hook_init
+ */
+function vsite_domain_init(){
+	
+}
+
+/**
+ * hook strongarm to set the purl proccessors for our "providers"
+ */
+function vsite_domain_strongarm(){
+  $conf = array();
+ 
+  //Spaces Default Redirection should be by PATH
+  $conf['purl_method_spaces_og'] = PURL_PATH;
+  
+  //We also are adding a method that is by domain
+  $conf['purl_method_vsite_domain'] = PURL_VSITE_DOMAIN;
+  
+  //Enable redirection by both domain and path
+  $conf['purl_types'] = variable_get('purl_types',array());
+  if(!in_array(PURL_VSITE_DOMAIN,$conf['purl_types'])) $conf['purl_types'][] = PURL_VSITE_DOMAIN;
+  if(!in_array(PURL_PATH,$conf['purl_types'])) $conf['purl_types'][] = PURL_PATH;
+  
+  return $conf;
+}
+
+
+/**
+ * Implementation of hook_purl_provider().
+ * This provides the domain provider for our vsite
+ */
+function vsite_domain_purl_provider() {
+  $items = array();
+  $items['vsite_domain'] = array(
+    'name' => 'Vsite Domain Provider',
+    'description' => t('Sets a spaces context for a domain match.'),
+    'callback' => 'vsite_domain_apply_context',
+    'callback arguments' => array('og'),
+    'example' => 'my-space',
+  );
+  return $items;
+}
+
+/**
+ * Context prefix provider callback.
+ */
+function vsite_domain_apply_context($type, $sid) {
+  static $once;
+  if (empty($once)) {
+    spaces_init_context($type, $sid);
+    $space = spaces_get_space();
+    $space->purl_provider = 'vsite_domain';
+    $once = TRUE;
+  }
+}
+
+/**
+ * Create the processor that will override the purl_domain
+ */
+
+if(!class_exists('purl_vsite_domain')){
+  /**
+   *  Full domain handling for scholar, will also remove purl prefix's from alias's
+   */
+  class purl_vsite_domain extends purl_domain implements purl_processor {
+  
+    public function method() {
+      return PURL_VSITE_DOMAIN;
+    }
+  
+    public function description() {
+      return t('Enter a domain registered for this scholar site, such as "www.example.edu".  Do not include http://');
+    }
+  
+    private function remove_scholar_purl($path){
+      if(!($vsite = vsite_get_vsite()) || !strlen($vsite->purl)) return $path;
+      $args = explode('/', $path);
+  
+      // Remove the value from the front of the query string
+      if (current($args) === (string) $vsite->purl) {
+        array_shift($args);
+      }
+      return implode('/', $args);
+    }
+    
+    /**
+     * Either force the url, or set it back to the base.
+     */
+    public function rewrite(&$path, &$options, $element) {
+      $options['absolute'] = TRUE;
+      if (!_purl_skip($element, $options)) {
+        $path = $this->remove_scholar_purl($path);
+        $options['base_url'] = "http://{$element->value}";
+      }else {
+        $options['base_url'] = variable_get('purl_base_domain', $base_url);
+      }
+    }
+    
+	  /**
+	   * If a purl_path has been set we should rewrite the current url
+	   * so that aliased paths will be picked up
+	   */
+	  public function adjust(&$q, $item) {
+	  	if(!($vsite = vsite_get_vsite()) || !strlen($vsite->purl)) return;
+	  	
+	    if ($_GET['q'] == trim($_REQUEST['q'], '/')) {
+	    	$args = explode('/', $_GET['q']);
+  
+	      // Add the value to the front of the query string
+	      if (current($args) !== (string) $vsite->purl) array_unshift($args,$vsite->purl);
+	      
+	      $qstring = implode('/', $args); //String with purl added
+	      $qstring_alias = _purl_get_normal_path($qstring); //Alias of that url
+	      if($qstring != $qstring_alias) $_REQUEST['q'] = $_GET['q'] = $qstring_alias;
+	      
+	    }//It has not been aliased yet
+	  }
+  }
+}
