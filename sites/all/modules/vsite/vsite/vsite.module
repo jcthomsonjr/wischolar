@@ -2,6 +2,9 @@
 
 include_once('vsite.features.inc');
 
+//The Vsite Object instanceof spaces
+include_once('vsite.class.inc');
+
 function vsite_menu_alter(&$items){
   $items['node']['page callback'] = 'vsite_vsiteboot';
 }
@@ -404,4 +407,15 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       }
       break;
   }
+}
+
+/**
+ * Implements hook spaces_types_alter
+ *
+ * @see http://drupal.org/node/511914
+ */
+function vsite_spaces_types_alter(&$items){
+	
+	//Change the class for the og object to "vsite"
+  $items['og']['class'] = 'vsite';
 }
