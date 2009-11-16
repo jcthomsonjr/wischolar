@@ -152,7 +152,10 @@ function pinserver_form_alter(&$form, $form_state, $form_id){
 /**
  * Unset the $_SESSION vars after the registration form is submitted
  */
-function pinserver_process_user_registration(){
+function pinserver_process_user_registration($uid){
+  //new user and vsite have been created, now add row to pinserver table
+  _pinserver_add_row($uid);
+  
   //removing session values when new site is created
   if (isset($_SESSION['hash_huid'])){
     unset ($_SESSION['hash_huid']);
@@ -170,7 +173,7 @@ function pinserver_strongarm(){
 
   //pinserver settings for IQSS Scholars Web Sites Project
   $conf['pinserver_pin_url'] = 'https://www.pin1.harvard.edu/pin/authenticate';
-  $conf['pinserver_app_name'] = 'TESTING'; //TODO this needs to be the application name issued by directory services
+  $conf['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_TEST'; //TODO this needs to be the application name issued by directory services
   $conf['pinserver_gpg_dir'] = '/nfs/www/edu-harvard-iq-scholar-dev3/' . '.gnupg';
   $conf['pinserver_registration_path'] = 'site/register';
   $conf['pinserver_support_contact'] = 'Web_Dev@help.hmdc.harvard.edu';  
@@ -194,6 +197,26 @@ function pinserver_user($op, &$edit, &$account, $category = NULL){
 }
 
 /**
+ * Function to write record to pinserver table
+ * @param unknown_type $uid
+ */
+function _pinserver_add_row($uid){
+  $object = new stdClass();
+  $object->uid = (int)$uid;
+  $object->hash = $_SESSION['hash_huid'];
+  $object->reg_time = time();
+  drupal_write_record('pinserver', $object);
+}
+
+/**
+ * Function to check if user exists in pinserver table
+ * @param unknown_type $uid
+ */
+function _pinserver_check_row(){
+ return  db_query(db_result("SELECT uid FROM {pinserver}WHERE hash = '%s'", $_SESSION['hash_huid'] ));
+}
+
+/**
  * pinserver_check_user()
  */
 function pinserver_check_user(){
@@ -210,118 +233,12 @@ function pinserver_check_user(){
   }
   //if successful pin authentication, place the encrypted harvard uid into a session array
   $_SESSION['hash_huid'] = $token_data['user_id'];
+  //add time value to session array
+  $_SESSION['reg_time'] = time();
   //redirect user to landing page that was set in pinserver configuration page
   drupal_goto(PIN_REGISTRATION_PATH);
 }
-
  
-/**
- * This function decrypts and unravels the several layers of data that are
- * wrapped in an authzproxy token.
- *
- * @return authentication parameters, signature, and attrbibute list are all
- * returned in a single array. 
- */  
-function _pinserver_prepare_azp_token($azp_token) {
-
-  // Use gnupg to decrypt the PGP message. 
-  $stdout = "";
-  $stderr = "";
-  $descriptorspec = array(
-    0 => array('pipe', 'r'), // stdin
-    1 => array('pipe', 'w'), // stdout
-    2 => array('pipe', 'w') // stderr
-  );
-
-  // This needs to be stored somewhere else.
-  $passphrase = '';    // TODO passphrase needs to be added
-
-  $process = proc_open(GPG_BIN ." --batch --no-tty --homedir '". GPG_DIR ."' --passphrase '". $passphrase ."' --decrypt ", $descriptorspec, $pipes); 
-
-  if (!is_resource($process)) { 
-    drupal_goto("pinserver/error/token/azp-token");
-    exit();
-  }
-
-  // Enter encrypted token to gpg proces through stdin pipe. 
-  fwrite($pipes[0], $azp_token);
-  fclose($pipes[0]);
-  
-  // Collect decrypted token by reading stdout pipe from gpg process. 
-  while (!feof($pipes[1])) {
-    $decrypted_token .= fgets($pipes[1], 1024);
-  }
-  fclose($pipes[1]);
-
-  /** 
-   * Save errors to file if set in configuration options and file exists. 
-   * File should be placed below root, recommended only for development/testing. 
-   */
-  if(PIN_ERROR_LOG !== ''){
-    if (is_file(PIN_ERROR_LOG)) {
-      // Read stderr from gpg process. 
-      while (!feof($pipes[2])) {
-        $stderr .= fgets($pipes[2], 1024);
-      }
-      fclose($pipes[2]);
-      $fp = fopen(PIN_ERROR_LOG, 'a');
-      fwrite($fp, ' ---- '. time() .'----');
-      fwrite($fp, $stderr);
-      fclose($fp);
-    }
-  }
-  
-  proc_close($process);
-        
-  // Break out the token into its component pieces. 
-  $azp_token_pieces = explode('&', $decrypted_token);  
-  $token_data = urldecode($azp_token_pieces[0]);
-  $pgp_signature = urldecode($azp_token_pieces[1]);      
-  $token_data_pieces = explode('&', $token_data);
-
-  // The token data is passed as is. 
-  $values['token'] = $token_data;
-
-  // The signature is passed as is. 
-  $values['pgp_signature'] = $pgp_signature;
-  
-  // Prepare the auth parameters and attributes.
-  $token_auth_param = explode('|', $token_data_pieces[0]);
-
-  // User ID is returned as is.
-  $values['user_id'] = $token_auth_param[0];
-
-  // Time must be converted from UTC. 
-  $values['time'] = strtotime($token_auth_param[1]);
-
-  // Client IP is returned as is. 
-  $values['ip'] = $token_auth_param[2];
-
-  // App Name is returned as is. 
-  $values['app'] = $token_auth_param[3];
-
-  // ID type is returned as is. 
-  $values['login_type'] = $token_auth_param[4];
-  
-  //set appropriate good signature string for this type of token
-  $values['good_sig'] = 'Good signature from "authzproxy"';
-
-  // Attributes, if present, should be returned as an array. 
-  if (count($token_data_pieces) == 2) {
-    $values['attributes'] = array();
-    // The following may work but needs testing, this code should
-    // be considered a conceptual framework not a complete solution. 
-    /*
-    $attributes = explode('|', $token_data_pieces[1]);
-    foreach($attributes as $attribute) {
-      $position = strpos($attribute, '=');
-      $values['attributes'][substr(0, $position)] = urldecode(explode(';', substr($position)));
-    }
-    */
-  }  
-  return $values;
-}
-
 /**
  * This function prepares the unencrypted PIN v1 token for authentication.
  * @return authentication parameters and signature in a single array. 
@@ -430,12 +347,8 @@ function pinserver_check_token(){
   /*
    * Prepare token differently depending on the token type and version
    */
-  // Authzproxy Token
-  if ($azp_token = $_GET['_azp_token']) {
-    $values = _pinserver_prepare_azp_token($azp_token);  
-  }
   // Pin Token Version 2
-  else if ($pin_parameters = $_GET['__authen_parameters'] && $pin_signature = $_GET['__authen_pgp_signature']) {
+  if ($pin_parameters = $_GET['__authen_parameters'] && $pin_signature = $_GET['__authen_pgp_signature']) {
     $values = _pinserver_prepare_pin_v2_token($pin_parameters, $pin_signature);
   }
   // Pin Token Version 1
@@ -505,8 +418,7 @@ function pinserver_check_token(){
     }
   }
 
-
-  // If "good signature" statement is not found within gpg output 
+  // If good signature statement is not found within gpg output 
   // or exit code from process is not 0, then it is a bad signature. 
   if (strpos($stderr,  $values['good_sig']) === false || $return_value != 0) {
     $values['errors'][] = 'signature'; 
