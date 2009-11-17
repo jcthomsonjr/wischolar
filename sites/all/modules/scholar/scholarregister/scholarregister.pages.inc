@@ -60,7 +60,8 @@ function scholarregister_signup_form(){
           '%site' => $base_url . '/jdoe' 
       )), 
       '#prefix' => '<div id="domain-field">', 
-      '#suffix' => '<div id="domain-suffix"></div></div>', 
+      '#suffix' => '<div id="domain-suffix"></div>'.t('<div class="description">If you have a full domain name you would like to use to access your site as well ex.( http://jdoe.harvard.edu ) then please use the <a href="@contact_form">Contact Form</a> after you have created your site.  Mention that you would like to setup access to your site using a different domain name.</div>', array(
+          '@contact_form' => url('contact'))).'</div>', 
       '#attributes' => array(
           'class' => 'ctools-use-ajax-onchange' 
       ) 
