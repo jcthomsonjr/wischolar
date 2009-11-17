@@ -49,6 +49,18 @@ function pinserver_config(){
     '#description' => t('Specify the path to the user registration form after !base_url' .'/', array('!base_url' =>$base_url)),
   );
   
+  $form['pinserver']['pinserver_auth_str'] = array(
+    '#type' => 'radios',
+    '#title' => t('PIN Authentication Server Setup'),
+    '#default_value' => variable_get('pinserver_auth_str', ''),
+    '#options' => array(
+        'Good signature from "Harvard University PIN System' => t('PIN only'),
+        'Good signature from "authzproxy"' => t('PIN with AuthProxy'),
+       ),
+    '#required' => TRUE, 
+    '#description' => t('The server that is returning the user back to this site after successful PIN login.'),
+  );
+  
   $form['pinserver']['pinserver_support_contact'] = array(
     '#type' => 'textfield',
     '#title' => t('E-mail address for techincal support'),
@@ -57,6 +69,8 @@ function pinserver_config(){
     '#description' => t('Optionally specify contact person to be displayed to user if PIN authentication fails.'),
   );
 
+  
+  
 /*  $form['pinserver_logging'] = array(
     '#type' => 'fieldset',
     '#title' => t('Harvard Pinserver Logging'),
