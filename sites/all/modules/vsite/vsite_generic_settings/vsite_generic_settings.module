@@ -7,7 +7,7 @@ function vsite_generic_settings_init(){
     
     foreach ($a_settings as $s_key => $setting){
     	//Add form Css
-      if(array_key_exists('css',$setting)) foreach($setting['css'] as $css) drupal_add_css($s_css);
+      if(array_key_exists('css',$setting)) foreach($setting['css'] as $css) drupal_add_css($css);
       
       //Add form JS
       if(array_key_exists('js',$setting)) foreach($setting['js'] as $js) drupal_add_js($js);

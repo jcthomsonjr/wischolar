@@ -128,3 +128,24 @@ if(!class_exists('purl_vsite_domain')){
 	  }
   }
 }
+
+
+/**
+ * Implement Hook vsite_generic_settings
+ * @return array
+ */
+function vsite_domain_vsite_generic_settings($value = array()){
+  $a_settings = array();
+  
+  //Should Vsite Contact forms allow anon. contact?
+  $a_settings['vsite_domain'] = array(
+    'form' => array(
+      '#type' => 'textfield',
+      '#title' => t('Domain Name'),
+      '#default_value' => is_array($value) && array_key_exists('vsite_domain',$value) ? $value['vsite_domain']:'',
+      '#description' => 'Enter a domain registered for this scholar site, such as "www.example.edu".  Do not include http://',
+    )
+  );
+  
+  return $a_settings;
+}

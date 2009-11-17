@@ -245,12 +245,13 @@ function vsite_design_vsite_generic_settings($value = array()){
       '#default_value' => is_array($value) && array_key_exists('shield',$value) ? $value['shield']: drupal_get_path('module','vsite_design')."/theme/shield/shields/harvard_shield.png",
       '#append' => '</div><div class="clearfix"></div>',
     ),
-    'css' => array(drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_generic_settings-shield-picker.css'),
+    'css' => array(drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_design-shield-picker.css'),
     'js' => array(
-      drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_generic_settings-shield-picker.js',
-      drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_generic.greyout.js',
+      drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_design-shield-picker.js',
+      drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_design.greyout.js',
     ),
   );
+  //END Shield List
   
   return $a_settings;
 }
