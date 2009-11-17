@@ -12,6 +12,7 @@ define(PIN_URL, variable_get('pinserver_pin_url',''));  // url to pin server
 define(PIN_REGISTRATION_PATH, variable_get('pinserver_registration_path',''));
 define(PIN_ERROR_LOG, variable_get('pinserver_error_log',''));  // file to save errors for development sites
 define(PIN_SUPPORT_CONTACT, variable_get('pinserver_support_contact',''));  // who to contact if visitor encounters problems ith authentication
+define(PIN_AUTH_STR, variable_get('pinserver_auth_str', '')); //String to check whether using just PIN or PIN with AuthzProxy
 define(PIN_APP_NAME, variable_get('pinserver_app_name','')); //application name given by directory services
 define(PIN_IP_VAL, variable_get('pinserver_ip_validation',0)); //Validate IP address or not. Defaults to yes. 
 define(GPG_DIR, variable_get('pinserver_gpg_dir','')); //path to gpg directory to verify detached signature
@@ -88,7 +89,7 @@ function pinserver_theme() {
  * Implementation of hook_menu_alter()
  */
 function pinserver_menu_alter(&$items){
-  //alter the page callback function  
+ //alter the page callback function  
   $items['site/register']['page callback'] = 'pinserver_process_signup_form';
   $items['site/register']['module'] = 'pinserver';
   
@@ -104,15 +105,42 @@ function pinserver_menu_alter(&$items){
  * Checks if user has authenticated through the pinserver
  * before rendering the signup form
  */
-function pinserver_process_signup_form(){ 
+function pinserver_process_signup_form(){    
+/*var_dump(_pinserver_check_row()); 
+  print($_SESSION['reg_time'] . ' - ');
+    print($_SESSION['hash_huid']);die;*/
   $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';  
   include_once($inc_file);
-  //return drupal_get_form('scholarregister_signup_form'); // for testing only
+  
   if (pinserver_process_access_registration()){
-  return drupal_get_form('scholarregister_signup_form');
+    //see if the uid exists in pinvserver table, if so then user already has a vsite
+      $uid = _pinserver_check_row();
+    //send the user somehwere, either to the registration form or to project home page
+       return $go_somewhere = isset($uid) ? pinserver_vsite_exists($uid)  :  drupal_get_form('scholarregister_signup_form');
   }
   else{
+    //otherwise the user still needs to autheticate thorugh the pin server
     pinserver_redirect();
+  }
+}
+
+function pinserver_vsite_exists($uid){
+  //remove the session vars
+  _pinserver_process_remove_session();
+  $message = pinserver_vsite_exists_message($uid);
+  drupal_set_message(t("$message")); //TODO : need better message with link to vsite
+  drupal_goto();
+}
+
+function pinserver_vsite_exists_message($uid){
+  global $base_url;
+
+  if (module_exists('og') && module_exists('spaces')){
+    $sid = db_result(db_query("SELECT nid FROM {og_uid} WHERE is_admin = %d and uid = %d", 1, (int)$uid));
+    $vsite = spaces_load('og', $sid);
+    $message = 'You already have a registered web site.';
+    $message .=  l(' Go there now.', $base_url . '/' . $vsite->purl); //TODO this needs to work with vsite_domain module
+    return $message;
   }
 }
 
@@ -125,10 +153,10 @@ function pinserver_process_access_registration(){
   global $user;
   //allow admin to access the form
   if ($user->uid == '1'){
-    return true;
+    return false; // for testing purposes
   }  
   if (isset($_SESSION['reg_time']) && isset($_SESSION['hash_huid'])){
-    return $reg_time =  ((time() - int($_SESSION['reg_time'])) < 120) ? true : false;
+    return $reg_time =  ((time() - (int)$_SESSION['reg_time']) < 120) ? true : false;
   }
   return false;
 }
@@ -155,15 +183,19 @@ function pinserver_form_alter(&$form, $form_state, $form_id){
 function pinserver_process_user_registration($uid){
   //new user and vsite have been created, now add row to pinserver table
   _pinserver_add_row($uid);
-  
+  _pinserver_process_remove_session();  
+}
+
+function _pinserver_process_remove_session(){
   //removing session values when new site is created
   if (isset($_SESSION['hash_huid'])){
     unset ($_SESSION['hash_huid']);
   }
   if (isset($_SESSION['reg_time'])){
     unset ($_SESSION['reg_time']);
-  }
+  }  
 }
+
 
 /**
  * Implementation of hook_strongarm()
@@ -176,6 +208,7 @@ function pinserver_strongarm(){
   $conf['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_TEST'; //TODO this needs to be the application name issued by directory services
   $conf['pinserver_gpg_dir'] = '/nfs/www/edu-harvard-iq-scholar-dev3/' . '.gnupg';
   $conf['pinserver_registration_path'] = 'site/register';
+  $conf['pinserver_auth_str'] = 'Good signature from "authzproxy"';  
   $conf['pinserver_support_contact'] = 'Web_Dev@help.hmdc.harvard.edu';  
 
   return $conf;
@@ -209,18 +242,18 @@ function _pinserver_add_row($uid){
 }
 
 /**
- * Function to check if user exists in pinserver table
+ * Function to check if user exists in pinserver table and returns uid
  * @param unknown_type $uid
+ * @return user id
  */
 function _pinserver_check_row(){
- return  db_query(db_result("SELECT uid FROM {pinserver}WHERE hash = '%s'", $_SESSION['hash_huid'] ));
+ return db_result(db_query("SELECT uid FROM {pinserver} WHERE hash = '%s'", $_SESSION['hash_huid'] ));
 }
 
 /**
  * pinserver_check_user()
  */
 function pinserver_check_user(){
-  global $user;
 
   // First, parse and validate the PIN token.
   $token_data = pinserver_check_token();
@@ -278,7 +311,7 @@ function _pinserver_prepare_pin_v1_token() {
   $values['login_type'] = 'PIN';
   
   //set appropriate good signature string for this type of token
-  $values['good_sig'] = 'Good signature from "Harvard University PIN System';
+  $values['good_sig'] = PIN_AUTH_STR;
 
   return $values;
 }
@@ -322,7 +355,7 @@ function _pinserver_prepare_pin_v2_token($pin_parameters, $pin_signature) {
   $values['login_type'] = $token_array[6];
   
   //set appropriate good signature string for this type of token
-  $values['good_sig'] = 'Good signature from "Harvard University PIN System';    
+  $values['good_sig'] = PIN_AUTH_STR;   
 
   return $values;
 }
@@ -453,7 +486,7 @@ function pinserver_check_token(){
   if(abs($values['time'] - time()) > 120) {
     $values['errors'][] = 'time-elapsed';
   }
-
+  //echo "<pre>"; print_r($values); die;
   return $values; 
 }
 
