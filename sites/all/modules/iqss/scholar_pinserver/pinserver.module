@@ -116,7 +116,7 @@ function pinserver_process_signup_form(){
     //see if the uid exists in pinvserver table, if so then user already has a vsite
       $uid = _pinserver_check_row();
     //send the user somehwere, either to the registration form or to project home page
-       return $go_somewhere = isset($uid) ? pinserver_vsite_exists($uid)  :  drupal_get_form('scholarregister_signup_form');
+       return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  drupal_get_form('scholarregister_signup_form');
   }
   else{
     //otherwise the user still needs to autheticate thorugh the pin server
