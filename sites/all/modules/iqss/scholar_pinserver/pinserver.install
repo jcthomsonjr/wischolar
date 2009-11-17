@@ -43,6 +43,7 @@ function pinserver_install(){
  drupal_install_schema('pinserver');
  //set module weight
  db_query("UPDATE {system} SET weight = %d WHERE name = '%s'", 'pinserver', 80);
+ cache_clear_all();
 }  
 
 /**
