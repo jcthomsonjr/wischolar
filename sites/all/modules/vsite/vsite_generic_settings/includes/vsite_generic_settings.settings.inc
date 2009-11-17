@@ -21,12 +21,10 @@ class vsite_generic_settings_settings implements space_setting {
     $form = array('#title' => "Other Settings");
     
     $a_settings = module_invoke_all('vsite_generic_settings',$value);
-    
     foreach ($a_settings as $s_key => $setting){
     	if(!array_key_exists('form',$setting)) continue;
-    	$form[$key] = $setting['form'];
+    	$form[$s_key] = $setting['form'];
     }
-		
     return $form;
   }
 
