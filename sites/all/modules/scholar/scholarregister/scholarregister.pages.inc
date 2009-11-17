@@ -150,6 +150,11 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   // ok user is created sucessfully 
   // 2. create the site
   $vsite = scholarregister_vsite_create($name, $mail, $domain);
+    
+    //2a. if user and site created successfully then log user in the pinserver table
+  if($vsite && module_exists('pinserver')){
+    pinserver_process_user_registration($user->uid);    
+  }
   
   if (!$vsite){
     // first delete the user we just created
