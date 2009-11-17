@@ -3,7 +3,7 @@
 function vsite_generic_settings_init(){
   $active_menu = menu_get_item();
 	if ($active_menu['path'] == 'cp/settings/generic'){
-		$a_settings = module_invoke_all('vsite_generic_settings',$value);
+		$a_settings = module_invoke_all('vsite_generic_settings',vsite_get_vsite(),array());
     
     foreach ($a_settings as $s_key => $setting){
     	//Add form Css
@@ -26,4 +26,3 @@ function vsite_generic_settings_spaces_settings(){
     ) 
   );
 }
-

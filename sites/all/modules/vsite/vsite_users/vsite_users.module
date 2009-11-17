@@ -394,7 +394,7 @@ function vsite_users_cp_confirm_overide(){
  * Implement Hook vsite_generic_settings
  * @return array
  */
-function vsite_users_vsite_generic_settings($value = array()){
+function vsite_users_vsite_generic_settings($space, $value = array()){
   $a_settings = array();
   
   //Should Vsite Contact forms allow anon. contact?

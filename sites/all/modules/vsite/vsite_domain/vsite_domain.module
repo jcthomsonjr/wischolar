@@ -75,6 +75,8 @@ if(!class_exists('purl_vsite_domain')){
    */
   class purl_vsite_domain extends purl_domain implements purl_processor {
   
+  	public $modifier_regex = '!^[a-z0-9_\.-]+$!';
+  	
     public function method() {
       return PURL_VSITE_DOMAIN;
     }
@@ -134,18 +136,64 @@ if(!class_exists('purl_vsite_domain')){
  * Implement Hook vsite_generic_settings
  * @return array
  */
-function vsite_domain_vsite_generic_settings($value = array()){
+function vsite_domain_vsite_generic_settings($space, $value = array()){
   $a_settings = array();
   
   //Should Vsite Contact forms allow anon. contact?
   $a_settings['vsite_domain'] = array(
-    'form' => array(
-      '#type' => 'textfield',
-      '#title' => t('Domain Name'),
-      '#default_value' => is_array($value) && array_key_exists('vsite_domain',$value) ? $value['vsite_domain']:'',
-      '#description' => 'Enter a domain registered for this scholar site, such as "www.example.edu".  Do not include http://',
-    )
+    'form' => purl_form('vsite_domain', $space->group->nid, ((is_array($value) && array_key_exists('vsite_domain',$value)) ? $value['vsite_domain']:'')),
+    'submit' => 'vsite_domain_vsite_generic_settings_domain_submit',
   );
   
+  //Set the title since purl does not give you control over this
+  $a_settings['vsite_domain']['form']['value']['#title'] = "Your Sites Custom Domain";
+  $a_settings['vsite_domain']['form']['value']['#required'] = false; //Not required
+  $a_settings['vsite_domain']['form']['#element_validate'] = array('vsite_domain_vsite_generic_settings_domain_validate'); //Use our validate function
+  
   return $a_settings;
+}
+
+/**
+ * Validate function for handdling the vsite_domain generic setting
+ * @param $space vsite
+ * @param $value array
+ */
+function vsite_domain_vsite_generic_settings_domain_validate($form){
+  
+	if(strlen($form['value']['#value'])) return purl_form_validate($form);
+	
+	return true;
+}
+
+/**
+ * Submit function for handdling the vsite_domain generic setting
+ * @param $space vsite
+ * @param $value array
+ */
+function vsite_domain_vsite_generic_settings_domain_submit($space, &$value){
+	
+    if (is_array($value['vsite_domain'])) {
+      
+      $modifier = array(
+        'provider' => $value['vsite_domain']['provider'],
+        'id' => $value['vsite_domain']['id'],
+        'value' => $value['vsite_domain']['value'],
+      );
+      
+      if(strlen($modifier['value'])){
+      	//Save the new purl
+        if (purl_validate($modifier)) {
+			    $id = db_result(db_query("SELECT id FROM {purl} WHERE id = '%s' AND provider = '%s' ", $modifier['id'], $modifier['provider']));
+			    if (!empty($id)) {
+			      drupal_write_record('purl', $modifier, array('provider', 'id')); //UPDATE
+			    } else {
+			      drupal_write_record('purl', $modifier); //CREATE
+			    }
+			  }//Valid?
+      }else{
+      	//Delete an old purl
+        purl_delete($modifier);
+      }
+    }
+    $value['vsite_domain'] = $value['vsite_domain']['value'];
 }

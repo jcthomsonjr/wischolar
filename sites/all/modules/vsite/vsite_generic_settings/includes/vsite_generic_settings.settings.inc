@@ -20,7 +20,7 @@ class vsite_generic_settings_settings implements space_setting {
 
     $form = array('#title' => "Other Settings");
     
-    $a_settings = module_invoke_all('vsite_generic_settings',$value);
+    $a_settings = module_invoke_all('vsite_generic_settings',$space, $value);
     foreach ($a_settings as $s_key => $setting){
     	if(!array_key_exists('form',$setting)) continue;
     	$form[$s_key] = $setting['form'];
@@ -30,7 +30,7 @@ class vsite_generic_settings_settings implements space_setting {
 
   function validate($space, $value) {
   	
-    $a_settings = module_invoke_all('vsite_generic_settings',$value);
+    $a_settings = module_invoke_all('vsite_generic_settings',$space, $value);
     foreach ($a_settings as $s_key => $setting){
       if(!array_key_exists('validate',$setting) || !function_exists($setting['validate'])) continue;
       call_user_func($setting['validate'], $space, &$value);
@@ -41,10 +41,10 @@ class vsite_generic_settings_settings implements space_setting {
 
   function submit($space, $value) {
   	
-  	$a_settings = module_invoke_all('vsite_generic_settings',$value);
+  	$a_settings = module_invoke_all('vsite_generic_settings',$space, $value);
     foreach ($a_settings as $s_key => $setting){
       if(!array_key_exists('submit',$setting) || !function_exists($setting['submit'])) continue;
-      call_user_func($setting['submit'], $space, &$value);
+      call_user_func_array($setting['submit'], array($space, &$value));
     } 
     
     return $value;
