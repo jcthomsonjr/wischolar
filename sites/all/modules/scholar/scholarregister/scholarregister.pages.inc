@@ -60,8 +60,7 @@ function scholarregister_signup_form(){
           '%site' => $base_url . '/jdoe' 
       )), 
       '#prefix' => '<div id="domain-field">', 
-      '#suffix' => '<div id="domain-suffix"></div>'.t('<div class="description">If you have a full domain name you would like to use to access your site as well ex.( http://jdoe.harvard.edu ) then please use the <a href="@contact_form">Contact Form</a> after you have created your site.  Mention that you would like to setup access to your site using a different domain name.</div>', array(
-          '@contact_form' => url('contact'))).'</div>', 
+      '#suffix' => '<div id="domain-suffix"></div></div>', 
       '#attributes' => array(
           'class' => 'ctools-use-ajax-onchange' 
       ) 
@@ -105,16 +104,8 @@ function scholarregister_signup_form_validate($form, &$form_state){
   
   // if any of the above value fail validation, exit with an appropriate message
   if (scholarregister_validate_name($name) || scholarregister_validate_mail($mail) || scholarregister_validate_domain($domain)) {
-    $commands[] = _scholarregister_vsite_error(1);
+    $commands[] = _scholarregister_vsite_error();
     ctools_ajax_render($commands);
-  }
-  
-  if(module_exists('pinserver')){
-    //checking if site exists for this user
-    if (_pinserver_check_row()){    
-     $commands[] = _scholarregister_vsite_error(2);
-    ctools_ajax_render($commands);
-    }
   }
 }
 
@@ -122,7 +113,7 @@ function scholarregister_signup_form_validate($form, &$form_state){
  * the submit handler for the registration form
  */
 function scholarregister_signup_form_submit($form, &$form_state) {
-  
+
   $name = $form_state ['values'] ['name'];
   $mail = $form_state ['values'] ['mail'];
   $domain = $form_state ['values'] ['domain'];
@@ -167,11 +158,6 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     ctools_ajax_render ( $commands );  
   }
   
-  //2a. if user and site created successfully then log user in the pinserver table
-  if(module_exists('pinserver')){
-    pinserver_process_user_registration($user->uid);    
-  }
-  
   // site created successfully
   // 3. send e-mail to the user.
   scholarregister_notify_user($vsite, $user);
@@ -189,9 +175,12 @@ function scholarregister_signup_form_submit($form, &$form_state) {
 content.</p>';
   $message .= '</div>';
   $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
-  $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true);
+  $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true); 
+  dpm($commands);
+  
   ctools_ajax_render ( $commands );
 }
+
 
 /**
  * Create a scholar vsite
@@ -201,18 +190,8 @@ function scholarregister_vsite_create($name, $mail, $domain){
   return vsite_vsite_create($name, $mail, $domain);
 }
 
-function _scholarregister_vsite_error($type = 1){
-  switch ($type){
-    case 1:
-      //web site could not be created
-      return ctools_ajax_command_replace('#submit-suffix', 'The web site cannot be created. 
-      Please fix the errors and try again.');
-      break;
-    case 2:
-      //web site already exists
-      return ctools_ajax_command_replace('#submit-suffix', 'Our records show that a web site already exists
-      for your account.'); //TODO: need a more intuiative message. Perhaps a link to the site???
-      break;
-      //ctools_ajax_render($commands);
-  }
+
+function _scholarregister_vsite_error(){
+  return ctools_ajax_command_replace('#submit-suffix', 'The web site cannot be created. Please fix the errors and try again.');
+  //ctools_ajax_render($commands);
 }
