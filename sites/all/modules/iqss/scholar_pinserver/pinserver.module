@@ -128,7 +128,7 @@ function pinserver_vsite_exists($uid){
   //remove the session vars
   _pinserver_process_remove_session();
   $message = pinserver_vsite_exists_message($uid);
-  drupal_set_message(t("$message")); //TODO : need better message with link to vsite
+  drupal_set_message(t("$message"));
   drupal_goto();
 }
 
@@ -137,9 +137,11 @@ function pinserver_vsite_exists_message($uid){
 
   if (module_exists('og') && module_exists('spaces')){
     $sid = db_result(db_query("SELECT nid FROM {og_uid} WHERE is_admin = %d and uid = %d", 1, (int)$uid));
-    $vsite = spaces_load('og', $sid);
+    $vsite = spaces_load('og', $sid);    
+    //get the vsite url, check if custom domain has been set
+    $url = isset($vsite->settings['generic']['vsite_domain']) ? 'http://' . $vsite->settings['generic']['vsite_domain'] : $base_url . '/' . $vsite->purl;    
     $message = 'You already have a registered web site.';
-    $message .=  l(' Go there now.', $base_url . '/' . $vsite->purl); //TODO this needs to work with vsite_domain module
+    $message .=  l(' Go there now.', $url); 
     return $message;
   }
 }
