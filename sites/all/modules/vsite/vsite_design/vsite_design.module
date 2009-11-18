@@ -7,9 +7,9 @@
 function vsite_design_init(){
   $active_menu = menu_get_item();
   if ($active_menu['path'] == 'cp/settings/theme'){  
-    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
+    //drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
     drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
-    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
+    //drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
   }
   elseif ($active_menu['path'] == 'cp/settings/logo'){
     drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-logo.css');
@@ -192,19 +192,36 @@ function vsite_design_imagecache_default_presets() {
  * @return unknown_type
  */
 function vsite_design_preprocess_page(&$vars){
-	//Return if:
-	if(!($vsite = vsite_get_vsite()) ||                                 //In a Vsite? 
-	    context_get('vsite', 'section') == 'cp' ||                    //We are in CP?
-	    !$vsite->group->og_theme ||                                     //Grop has a custom theme
-	    !($themes = list_themes()) ||                                   
-	    !array_key_exists($vsite->group->og_theme,$themes) ||           //The theme is valid
-	    empty($themes[$vsite->group->og_theme]->stylesheets)) return;   //The theme has styles associated
-	    
-	// Add stylesheets used by this theme, without preprocessing
-  foreach ($themes[$vsite->group->og_theme]->stylesheets as $media => $stylesheets) {
-    foreach ($stylesheets as $name => $stylesheet) drupal_add_css($stylesheet, 'theme', $media, false);
+  //Return if:
+  if (! ($vsite = vsite_get_vsite()) || //In a Vsite? 
+context_get('vsite', 'section') == 'cp' || //We are in CP?
+! $vsite->group->og_theme || //Grop has a custom theme
+! ($themes = list_themes()) || ! array_key_exists($vsite->group->og_theme, $themes) || //The theme is valid
+empty($themes[$vsite->group->og_theme]->stylesheets))
+    return; //The theme has styles associated
+  
+
+  // Add stylesheets used by this theme, without preprocessing
+  foreach ( $themes[$vsite->group->og_theme]->stylesheets as $media => $stylesheets ) {
+    foreach ( $stylesheets as $name => $stylesheet )
+      drupal_add_css($stylesheet, 'theme', $media, false);
   }
   
+  // load the css for the theme flavor
+  if (isset($vsite->settings['theme']) && is_array($vsite->settings['theme'])) {
+    if ($vsite->settings['theme']['flavor']) {
+      $fname = $vsite->settings['theme']['flavor'] . '.css';
+      $fname = str_replace('_', '-', $fname);
+      //$theme_name = str_replace('-','_',$vsite -> settings['theme']['maintheme']);
+      $theme_name = $vsite->settings['theme']['maintheme'];
+      $stylesheet = drupal_get_path("theme", $theme_name) . '/' . $fname;
+      
+      drupal_add_css($stylesheet, 'theme', 'all', false);
+    }
+  }
+  //drupal_add_css($stylesheet, 'theme', $media, false);
+  
+
   $vars['css'] = drupal_add_css();
   $vars['styles'] = drupal_get_css();
 }
