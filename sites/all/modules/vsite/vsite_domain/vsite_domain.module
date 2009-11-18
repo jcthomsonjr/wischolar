@@ -27,10 +27,8 @@ function vsite_domain_strongarm(){
   //We also are adding a method that is by domain
   $conf['purl_method_vsite_domain'] = PURL_VSITE_DOMAIN;
   
-  //Enable redirection by both domain and path
-  $conf['purl_types'] = variable_get('purl_types',array());
-  if(!in_array(PURL_VSITE_DOMAIN,$conf['purl_types'])) $conf['purl_types'][] = PURL_VSITE_DOMAIN;
-  if(!in_array(PURL_PATH,$conf['purl_types'])) $conf['purl_types'][] = PURL_PATH;
+  //We want path and vsite_domain enabled and we want domain to be init first and have the first say at what site we are on
+  $conf['purl_types'] = array(PURL_VSITE_DOMAIN, PURL_PATH);
   
   return $conf;
 }
@@ -124,9 +122,24 @@ if(!class_exists('purl_vsite_domain')){
 	      
 	      $qstring = implode('/', $args); //String with purl added
 	      $qstring_alias = _purl_get_normal_path($qstring); //Alias of that url
-	      if($qstring != $qstring_alias) $_REQUEST['q'] = $_GET['q'] = $qstring_alias;
-	      
+	      if($qstring != $qstring_alias){
+	      	$_REQUEST['q'] = $_GET['q'] = $qstring_alias;
+	      }else{
+	      	//Sudo alias to prevent path rewrites
+	      	$_REQUEST['q'] = $qstring_alias;
+	      } 
 	    }//It has not been aliased yet
+	    
+	    //Invalidate other sites path aliases
+//	    $processor = purl_get_processor(PURL_PATH);
+//	    if(current(explode('/', $_GET['q'])) !== (string) $vsite->purl){
+//			  $value = $processor->detect();
+//			  $parsed = purl_parse($processor, $value);
+//			  
+//			  if (is_array($parsed) && count($parsed) && current(explode('/', $_GET['q'])) == key($parsed)){
+//			    $_REQUEST['q'] = $_GET['q'] = substr($_GET['q'],strlen(key($parsed))+1);
+//			  }
+//	    }//Path proccessor and the url does not have the current sites alias in it
 	  }
   }
 }
@@ -149,6 +162,7 @@ function vsite_domain_vsite_generic_settings($space, $value = array()){
   $a_settings['vsite_domain']['form']['value']['#title'] = "Your Sites Custom Domain";
   $a_settings['vsite_domain']['form']['value']['#required'] = false; //Not required
   $a_settings['vsite_domain']['form']['#element_validate'] = array('vsite_domain_vsite_generic_settings_domain_validate'); //Use our validate function
+  $a_settings['vsite_domain']['form']['#access'] = user_access('change vsite domain');
   
   return $a_settings;
 }

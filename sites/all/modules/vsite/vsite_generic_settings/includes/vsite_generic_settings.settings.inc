@@ -33,7 +33,7 @@ class vsite_generic_settings_settings implements space_setting {
     $a_settings = module_invoke_all('vsite_generic_settings',$space, $value);
     foreach ($a_settings as $s_key => $setting){
       if(!array_key_exists('validate',$setting) || !function_exists($setting['validate'])) continue;
-      call_user_func($setting['validate'], $space, &$value);
+      call_user_func($setting['validate'], $space, $value);
     }
     
     return $value;
