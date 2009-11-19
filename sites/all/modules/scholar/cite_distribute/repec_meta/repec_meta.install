@@ -211,8 +211,8 @@ function repec_meta_install() {
 (128, 'Legal Ruling', 5, 'wpaper'),
 (129, 'Miscellaneous', 5, 'wpaper'),
 (130, 'Miscellaneous Section',5, 'wpaper'),
-(1000, 'Working Paper',5, 'wpaper'), 
-");
+(1000, 'Working Paper',5, 'wpaper')"
+);
   
 
 $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `identifier`, `data`, `required`, `active`) VALUES
@@ -308,7 +308,6 @@ $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `
 (17, 5, 'wpaper', 'File-Format', '', 0, 0),
 (18, 5, 'wpaper', 'File-Function', '', 0, 0),
 (19, 5, 'wpaper', 'Handle', '', 1, 1)"
-
 );  
 
 //'Author-X-Name-First' and 'Author-X-Name-Last' are disabled by default from 'wpaper' template
