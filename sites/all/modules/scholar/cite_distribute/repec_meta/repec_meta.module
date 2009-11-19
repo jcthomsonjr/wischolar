@@ -246,8 +246,15 @@ function repec_meta_make_template($node, $module_mode, $iteration = NULL){
  */
 function repec_meta_template_process($node, $template_id, $template_type, $archive_code){
 
-  $handle = 'RePEc:' . $archive_code . ':' . $template_type . ':' .  $node->nid;
-  $file_url = BASE_URL . '/node/' . $node->nid;
+  $handle = 'RePEc:' . $archive_code . ':' . $template_type . ':' .  $node->nid;  
+  $path = (!empty($node ->path)) ? $node ->path : 'node/'. $node->nid;
+  
+  //checking for custom domain
+  if (module_exists('vsite_domain') && count($node->og_groups)){
+    $vsite = spaces_load('og', key($node->og_groups));
+    $file_url = isset($vsite->settings['generic']['vsite_domain']) ? 'http://' . $vsite->settings['generic']['vsite_domain'] : BASE_URL . '/' . $path;
+  }
+  
   $template = '';
 
   $sql_make_template = db_query("SELECT * FROM {repec_type_details} WHERE tid = %d AND active = %d ORDER BY
@@ -308,7 +315,7 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
     }
 
     elseif ($t_data->identifier == 'Pages'){
-      $template .= $t_data->identifier . ': ' . $node->biblio_section . '-' . $node->biblio_pages . "\n";
+     $template .= $t_data->identifier . ': ' . $node->biblio_pages . "\n";
     }
 
     elseif ($t_data->identifier == 'Title'){
