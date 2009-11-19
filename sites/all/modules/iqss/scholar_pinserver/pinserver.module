@@ -198,24 +198,6 @@ function _pinserver_process_remove_session(){
   }  
 }
 
-
-/**
- * Implementation of hook_strongarm()
- */
-function pinserver_strongarm(){
-   $conf = array();
-
-  //pinserver settings for IQSS Scholars Web Sites Project
-  $conf['pinserver_pin_url'] = 'https://www.pin1.harvard.edu/pin/authenticate';
-  $conf['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_TEST'; //TODO this needs to be the application name issued by directory services
-  $conf['pinserver_gpg_dir'] = '/nfs/www/edu-harvard-iq-scholar-dev3/' . '.gnupg';
-  $conf['pinserver_registration_path'] = 'site/register';
-  $conf['pinserver_auth_str'] = 'Good signature from "authzproxy"';  
-  $conf['pinserver_support_contact'] = 'Web_Dev@help.hmdc.harvard.edu';  
-
-  return $conf;
-}
-
 /**
  * Implementation of hook_user()
  */
