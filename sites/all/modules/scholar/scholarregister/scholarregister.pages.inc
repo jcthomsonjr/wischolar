@@ -146,15 +146,20 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     $commands [] = _scholarregister_vsite_error();
     ctools_ajax_render ( $commands );    
   } 
-
+  
+//add $user object to $form_state used by pinserver module
+  if(is_object($user)){  
+    $form_state['new_user'] = $user;
+  }
+  
   // ok user is created sucessfully 
   // 2. create the site
   $vsite = scholarregister_vsite_create($name, $mail, $domain);
     
-    //2a. if user and site created successfully then log user in the pinserver table
+  /*  //2a. if user and site created successfully then log user in the pinserver table
   if($vsite && module_exists('pinserver')){
     pinserver_process_user_registration($user->uid);    
-  }
+  }*/
   
   if (!$vsite){
     // first delete the user we just created
@@ -181,8 +186,14 @@ content.</p>';
   $message .= '</div>';
   $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
   $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true); 
-  dpm($commands);
+  //dpm($commands);
   
+  //call any other submit functions here
+  foreach($form['#submit'] as $fnc){
+    if (__FUNCTION__ !== $fnc){
+      call_user_func($fnc, $form, $form_state);
+    }
+  }  
   ctools_ajax_render ( $commands );
 }
 
