@@ -76,12 +76,9 @@ function pinserver_redirect() {
  */
 function pinserver_theme() {
   return array(
-    'pinserver_token_error' => array(
-      'arguments' => array('values' => NULL)
-    ),
-    'pinserver_register_error' => array(
-      'arguments' => array('values' => NULL)
-    ),
+  'pinserver_token_error' => array(
+  'arguments' => array('values' => NULL)
+  ),
   );
 }
 
@@ -105,24 +102,38 @@ function pinserver_menu_alter(&$items){
  * Checks if user has authenticated through the pinserver
  * before rendering the signup form
  */
-function pinserver_process_signup_form(){    
-/*var_dump(_pinserver_check_row()); 
-  print($_SESSION['reg_time'] . ' - ');
-    print($_SESSION['hash_huid']);die;*/
-  $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';  
+function pinserver_process_signup_form(){
+  /*print($_SESSION['reg_time'] . ' - ');
+  print($_SESSION['hash_huid']);die;*/
+  $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';
   include_once($inc_file);
-  
+
+  //first make sure pinserver settings are saved  path to .gnupg directory exists
+  $settings_info = pinserver_check_system_settings();
+  switch ($settings_info['value']){
+    case true;
+    //proceed;
+    break;
+    case false:
+      error_log($settings_info['message']);
+      $support_mail = strlen(PIN_SUPPORT_CONTACT) ?  PIN_SUPPORT_CONTACT :  'scholar_dev@help.hmdc.harvard.edu';
+      drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail))); 
+            drupal_goto();
+      break;
+  }
+
   if (pinserver_process_access_registration()){
     //see if the uid exists in pinvserver table, if so then user already has a vsite
-      $uid = _pinserver_check_row();
+    $uid = _pinserver_check_row();
     //send the user somehwere, either to the registration form or to project home page
-       return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  drupal_get_form('scholarregister_signup_form');
+    return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  drupal_get_form('scholarregister_signup_form');
   }
   else{
-    //otherwise the user still needs to autheticate thorugh the pin server
+    //otherwise the user still needs to authenticate thorugh the pin server
     pinserver_redirect();
   }
 }
+
 
 function pinserver_vsite_exists($uid){
   //remove the session vars
@@ -151,8 +162,9 @@ function pinserver_vsite_exists_message($uid){
  * The $_SESSION values are only set when a user succesfully 
  * @return unknown
  */
-function pinserver_process_access_registration(){
+function pinserver_process_access_registration(){  
   global $user;
+  
   //allow admin to access the form
   if ($user->uid == '1'){
     return true; // for testing purposes
@@ -161,6 +173,45 @@ function pinserver_process_access_registration(){
     return $reg_time =  ((time() - (int)$_SESSION['reg_time']) < 120) ? true : false;
   }
   return false;
+}
+
+function pinserver_check_system_settings(){  
+  
+  $settings = array(
+  'PIN_URL' => PIN_URL,
+  'PIN_REGISTRATION_PATH' =>  PIN_REGISTRATION_PATH,
+  'PIN_AUTH_STR' => PIN_AUTH_STR,
+  'GPG_DIR' => GPG_DIR,
+  'GPG_BIN' => GPG_BIN,
+  );
+
+  $info = array(
+  'value' => true,
+  'message' => '',
+  );
+  
+  //check to see if all settings are set
+  foreach ($settings as $key => $setting){
+    if (empty($setting)){
+      $missing_settings[] = strtolower($key);      
+    }    
+  }
+  if (count($missing_settings)){
+    $message = 'ALERT: scholar pinserver is missing system settings: ';
+    foreach($missing_settings as $setting){
+      $message .= $setting . ' ';
+    }
+    $info['value'] = false;
+    $info['message'] = $message . '. ';
+  }
+
+  if (!is_dir(GPG_DIR)){
+    $message = 'The system path for gpg_dir directory is invalid or does not exist.';
+    $info['value'] = false;
+    $info['message'] .= $message;
+  }
+ 
+  return $info;
 }
 
 /**
@@ -476,31 +527,13 @@ function pinserver_check_token(){
 function pinserver_error($type, $values) {
   switch ($type) {
     case 'token':
-        watchdog('pinserver', 'Token error(s): %values', array('%values' => $values), WATCHDOG_ALERT);
-        return theme('pinserver_token_error', explode(',', $values));
-      break;
-    case 'register':
-        watchdog('pinserver', 'Registration error(s): %values', array('%values' => $values), WATCHDOG_ALERT);
-        return theme('pinserver_register_error', explode(',', $values));
+      //log the errors
+      error_log("The pinserver module has errored in processing the token in the following categories: $values");
+      return theme('pinserver_token_error', explode(',', $values));
       break;
     default:
       return '';
   }
-}
-
-/*
- * theme_pinserver_registration_error()
- *
- * @param  array $values - all errors that occured due to a problem with the token or token processing. 
- */
-function theme_pinserver_register_error($values = NULL) {
-  $message = '<p>We have encountered an error with the registration process. ';
-  if (valid_email_address(PIN_SUPPORT_CONTACT)) { 
-    $message .= 'Please <a href="mailto:'. PIN_SUPPORT_CONTACT .'">contact an administrator</a> with your name, email_address, desired username, and Harvard affiliation.';  
-  }
-  $message .= 'We apologize for the inconvenience.';
-  $message .= '</p>';
-  return $message;
 }
 
 /* 
