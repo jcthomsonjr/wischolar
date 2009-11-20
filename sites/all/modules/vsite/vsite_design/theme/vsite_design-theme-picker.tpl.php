@@ -17,10 +17,8 @@
   }
 ?>
 <div class="item-theme-picker">
-  <?php print $screenshot?>
-
-	<h3> <?php print $info['name'] ?> </h3>
-	<?= $sub_theme ?>
-	<p> <?php  print $info['description'] ?></p>
-
+  <?= $sub_theme ?>  
+  <?= $screenshot?>
+  <h3> <?= $info['name'] ?> </h3>
+	<p> <?= $info['description'] ?></p>
 </div>
