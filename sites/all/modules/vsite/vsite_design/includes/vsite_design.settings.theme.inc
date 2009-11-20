@@ -58,7 +58,6 @@ class vsite_design_settings_theme implements space_setting {
     
     $form['maintheme'] = array(
       '#enabled_themes' => $enabled,
-      '#title' => t('Theme Selection'), 
       '#type' => 'radios', 
       '#options' => $options, 
       '#default_value' => $value['maintheme'] ? $value['maintheme'] : 'scholar_theme_01', 
