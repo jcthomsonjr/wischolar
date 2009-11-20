@@ -155,7 +155,7 @@ function pinserver_process_access_registration(){
   global $user;
   //allow admin to access the form
   if ($user->uid == '1'){
-    return false; // for testing purposes
+    return true; // for testing purposes
   }  
   if (isset($_SESSION['reg_time']) && isset($_SESSION['hash_huid'])){
     return $reg_time =  ((time() - (int)$_SESSION['reg_time']) < 120) ? true : false;
@@ -169,22 +169,16 @@ function pinserver_process_access_registration(){
 function pinserver_form_alter(&$form, $form_state, $form_id){
   //add the submit function for pinserver
   if ($form_id == 'scholarregister_signup_form'){
-    //  $form['#submit'][] = 'pinserver_process_user_registration'; //TODO this function not being called
-    /*
-    //TODO - alternatively, this could be placed in scholarregister_signup_form_submit()
-    if (module_exists(‘pinserver’)){
-    pinserver_process_user_registration();
-    }
-    */
+      $form['#submit'][] = 'pinserver_process_user_registration'; 
   }
 }
 
 /**
  * Unset the $_SESSION vars after the registration form is submitted
  */
-function pinserver_process_user_registration($uid){
+function pinserver_process_user_registration($form, $form_state){
   //new user and vsite have been created, now add row to pinserver table
-  _pinserver_add_row($uid);
+  _pinserver_add_row($form_state['new_user'] ->uid);
   _pinserver_process_remove_session();  
 }
 
@@ -528,9 +522,15 @@ function theme_pinserver_token_error($values = NULL) {
   }
   $message .= '.</p>';  
   $message .= '<p>Error types: ';
+
+  $num = count($values);
+  $i=1;
   foreach($values as $value) {
     $message .= $value;
-    $message .= ', ';
+    if($i < $num){ 
+      $message .= ', '; 
+    }
+  $i++;
   }  
   $message .= '</p>';    
   return $message;
