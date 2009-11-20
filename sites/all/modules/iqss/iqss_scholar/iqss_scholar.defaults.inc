@@ -21,19 +21,19 @@ function _iqss_scholar_config_by_domain(){
 	switch(isqq_scholar_current_location()){
 		case IQSS_DEV:
 	    //PINSERVER Config Variables
-	    $config['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_TEST'; //TODO this needs to be the application name issued by directory services
+	    $config['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_DEV'; //TODO this needs to be the application name issued by directory services
 	    $config['pinserver_gpg_dir'] = '/nfs/www/edu-harvard-iq-scholar-dev3/' . '.gnupg';
 	    $config['error_level'] = 1; //Log to screen and log;
 	  break;
 		case IQSS_LOCAL_DEV:
 			//PINSERVER Config Variables
-      $config['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_TEST'; 
+      $config['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_DEV'; 
       $config['pinserver_gpg_dir'] = '/tmp/' . '.gnupg';
       $config['error_level'] = 1; //Log to screen and log;
 		break;
 		case IQSS_STAGING:
 			//PINSERVER Config Variables
-      $config['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_STAGING';
+      $config['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_TEST';
       $config['pinserver_gpg_dir'] = '/nfs/www/edu-harvard-iq-scholar-test/' . '.gnupg';
       $config['error_level'] = 0; //Log in background only
 	  break;
