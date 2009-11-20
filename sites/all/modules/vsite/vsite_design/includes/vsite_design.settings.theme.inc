@@ -16,9 +16,10 @@ class vsite_design_settings_theme implements space_setting {
   }
 
   function form($space, $value = array()){
-        ctools_include('dependent');
+  	if(is_string($value)) $value = array('maintheme' => $value); //Backwards Compatibility
+  	
+    ctools_include('dependent');
     ctools_include('form');
-    $form = array();
     
     // all the enabled themes
     vsite_include('vsiteapi');
@@ -27,21 +28,20 @@ class vsite_design_settings_theme implements space_setting {
       ksort($enabled);
     }
     
-
+    $form = array('#title' => 'Theme', '#theme' => 'vsite_design_theme_form'); 
     
+    $options = array(); //Radio Options
  
     foreach ( $enabled as $theme_obj ) {
       $info = $theme_obj->info;
       $info['theme_name'] = $theme_obj->name;
       
       if (isset($info['theme_flavor']) && is_array($info['theme_flavor'])) {
-        $x = str_replace('_', '-', $info['theme_name']);
         $form[$info['theme_name'] . '_flavor'] = array(
           '#type' => 'select', 
           '#title' => 'Flavor', 
           '#options' => $info['theme_flavor'], 
           '#default_value' => $value['flavor'] ? $value['flavor'] : '', 
-          
           '#process' => array(
             'ctools_dependent_process' 
           ), 
@@ -52,25 +52,20 @@ class vsite_design_settings_theme implements space_setting {
           ) 
         );
       }
-    }
-    $options = array();
-    
-    foreach ( $enabled as $theme_obj ) {
-      $info = $theme_obj->info;
-      //dpm($info);
-      $info['theme_name'] = $theme_obj->name;
       
-      $options[$info['theme_name']] = $info['name']; //theme('vsite_design_theme_picker', $info); 
+      $options[$info['theme_name']] = $info['theme_name'];
     }
-    
     
     $form['maintheme'] = array(
+      '#enabled_themes' => $enabled,
       '#title' => t('Theme Selection'), 
       '#type' => 'radios', 
       '#options' => $options, 
-      '#default_value' => $value['maintheme'] ? $value['maintheme'] : '', 
+      '#default_value' => $value['maintheme'] ? $value['maintheme'] : 'scholar_theme_01', 
       '#tree' => TRUE 
     );
+    
+    $form['#prefix'] = theme('vsite_design_theme_subnav', count($enabled));
 
     return $form;
   }

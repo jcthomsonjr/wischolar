@@ -6,6 +6,7 @@
  * Variables:
  * ----------
  * $info : the whole theme object  (dpm($info) to see everything
+ * $sub_theme : the rendered select element for the subtheme 
  * 
  */
   
@@ -19,6 +20,7 @@
   <?php print $screenshot?>
 
 	<h3> <?php print $info['name'] ?> </h3>
+	<?= $sub_theme ?>
 	<p> <?php  print $info['description'] ?></p>
 
 </div>
