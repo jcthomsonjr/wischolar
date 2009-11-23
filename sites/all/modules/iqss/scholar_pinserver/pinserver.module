@@ -550,21 +550,9 @@ function theme_pinserver_token_error($values = NULL) {
   }
   global $base_url;
   $message .= 'Please '. l('try again', PIN_URL .'?__authen_application='. PIN_APP_NAME);
-  if (valid_email_address(PIN_SUPPORT_CONTACT)) { 
-    $message .= ' or <a href="mailto:'. PIN_SUPPORT_CONTACT .'">contact us</a>';  
+  if (valid_email_address(PIN_SUPPORT_CONTACT)) {
+    $message .= ' or <a href="mailto:'. PIN_SUPPORT_CONTACT .'">contact us</a>';
   }
-  $message .= '.</p>';  
-  $message .= '<p>Error types: ';
-
-  $num = count($values);
-  $i=1;
-  foreach($values as $value) {
-    $message .= $value;
-    if($i < $num){ 
-      $message .= ', '; 
-    }
-  $i++;
-  }  
-  $message .= '</p>';    
+  $message .= '.</p>';
   return $message;
 }
