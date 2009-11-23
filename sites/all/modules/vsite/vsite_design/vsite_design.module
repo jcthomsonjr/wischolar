@@ -232,9 +232,9 @@ empty($themes[$vsite->group->og_theme]->stylesheets))
   // load the css for the theme flavor
   if (isset($vsite->settings['theme']) && is_array($vsite->settings['theme'])) {
     if ($vsite->settings['theme']['flavor']) {
-      $fname = $vsite->settings['theme']['flavor'] . '.css';
+      $fname = $vsite->settings['theme']['maintheme']."-".$vsite->settings['theme']['flavor'] . '.css';
       $fname = str_replace('_', '-', $fname);
-      //$theme_name = str_replace('-','_',$vsite -> settings['theme']['maintheme']);
+      
       $theme_name = $vsite->settings['theme']['maintheme'];
       $stylesheet = drupal_get_path("theme", $theme_name) . '/' . $fname;
       
