@@ -18,8 +18,13 @@ class vsite_design_settings_theme implements space_setting {
   function form($space, $value = array()){
   	if(is_string($value)) $value = array('maintheme' => $value); //Backwards Compatibility
   	
+  	//Showing and hiding the flavors
     ctools_include('dependent');
     ctools_include('form');
+    
+    //For changing the screenshot
+    ctools_include('ajax');
+    ctools_add_js('ajax-responder');
     
     // all the enabled themes
     vsite_include('vsiteapi');
@@ -36,14 +41,19 @@ class vsite_design_settings_theme implements space_setting {
       $info = $theme_obj->info;
       $info['theme_name'] = $theme_obj->name;
       
-      if (isset($info['theme_flavor']) && is_array($info['theme_flavor'])) {
+      //show flavors if there is more than the default theme flavor defined
+      if (isset($info['theme_flavor']) && is_array($info['theme_flavor']) && count($info['theme_flavor']) > 2) {
+      	$info['theme_flavor'][0] .= " (Default)";
         $form[$info['theme_name'] . '_flavor'] = array(
           '#type' => 'select', 
           '#title' => 'Flavor', 
           '#options' => $info['theme_flavor'], 
-          '#default_value' => $value['flavor'] ? $value['flavor'] : '', 
+          '#default_value' => intval($value['flavor']), 
           '#process' => array(
             'ctools_dependent_process' 
+          ), 
+          '#attributes' => array(
+            'class' => 'ctools-use-ajax-onchange' 
           ), 
           '#dependency' => array(
             'radio:settings[theme][maintheme]' => array(
@@ -51,6 +61,9 @@ class vsite_design_settings_theme implements space_setting {
             ) 
           ) 
         );
+        
+        //Screenshot callback
+        if($info['screenshot']) ctools_ajax_associate_url_to_element($form, $form[$info['theme_name'] . '_flavor'], url('cp/settings/theme/swap_screenshot/'.$info['theme_name']));
       }
       
       $options[$info['theme_name']] = $info['theme_name'];

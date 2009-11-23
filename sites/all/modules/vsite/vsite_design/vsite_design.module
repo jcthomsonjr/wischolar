@@ -1,5 +1,17 @@
 <?php
 
+function vsite_design_menu(){
+  $items = array();
+  $items['cp/settings/theme/swap_screenshot/%'] = array(
+    'page callback' => 'vsite_design_swap_screenshot',
+    'page arguments' => array(4),
+    'access arguments' => 'cp_access_cp',
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
 /**
  * hook init
  * @return unknown_type
@@ -296,13 +308,34 @@ function theme_vsite_design_theme_form($form) {
 	$output .= '<ul class = "theme-picker">';
 	foreach ($form['maintheme']['#enabled_themes'] as $o_theme){
 		$s_sub_theme = '';
-		if(array_key_exists($o_theme->name.'_flavor',$form)) $s_subtheme =  drupal_render($form[$o_theme->name.'_flavor']);
+		if(array_key_exists($o_theme->name.'_flavor',$form)) $s_sub_theme =  drupal_render($form[$o_theme->name.'_flavor']);
 		
 		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['maintheme']['#default_value'])?'checked':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' . 
-		             theme('vsite_design_theme_picker', (array)$o_theme->info,$s_subtheme) . 
+		             theme('vsite_design_theme_picker', array_merge((array)$o_theme->info, array('theme_name'=>$o_theme->name)) ,$s_sub_theme) . 
 		           '</li>';
 	}
 	$output .= '</ul>';
 	
+	$output .= drupal_render($form); //Anything we havn't rendered
+	
   return $output;
+}
+
+/**
+ * The function that handles the swap of the screenshot
+ * @param string $s_theme_name
+ * @return array html
+ */
+function vsite_design_swap_screenshot($s_theme_name){
+	$n_flavor = $_POST ['ctools_changed']; //The Flavor
+	
+	ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+  
+  $s_screenshot_file = intval($n_flavor)?"screenshot-".$n_flavor.".png" : "screenshot.png";
+  $s_screenshot_html = theme('image', drupal_get_path('theme',$s_theme_name)."/".$s_screenshot_file, t('Screenshot for theme'), '', array('class' => 'screenshot', 'id' => 'screenshot_'.$s_theme_name), FALSE);
+  
+  $commands = array ();
+  $commands [] = ctools_ajax_command_replace ( "img#screenshot_{$s_theme_name}", $s_screenshot_html);
+  ctools_ajax_render ( $commands );
 }
