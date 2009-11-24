@@ -6,19 +6,19 @@
  * Variables:
  * ----------
  * $info : the whole theme object  (dpm($info) to see everything
- * $sub_theme : the rendered select element for the subtheme 
- * 
+ * $sub_theme : the rendered select element for the subtheme
+ *
  */
-  
-  
+
+
   $screenshot = t('no screenshoot available');
   if (file_exists($info['screenshot'])){
     $screenshot = theme('image', $info['screenshot'], t('Screenshot for %theme theme', array('%theme' => $info['name'])), '', array('class' => 'screenshot', 'id' => 'screenshot_'.$info['theme_name']), FALSE);
   }
 ?>
 <div class="item-theme-picker">
-  <?= $sub_theme ?>  
+
   <?= $screenshot?>
-  <h3> <?= $info['name'] ?> </h3>
+  <h3><?= $info['name'] ?></h3><?= $sub_theme ?>
 	<p> <?= $info['description'] ?></p>
 </div>

@@ -1,7 +1,15 @@
+#cp-content .innerframe #cp-settings-theme form#cp-settings-form, #cp-content .innerframe #cp-settings-theme form#cp-settings-form fieldset {
+  margin:0;
+  padding: 0;
+  }
+
+.page-cp-settings-theme .help {
+  position: absolute;
+  }
+
 ul.theme-picker {
   width: 11250px;
   clear: both;
-  padding-top: 22px;
   }
 
 li.item-theme-picker  {
@@ -17,33 +25,46 @@ ul.theme-picker li img {
   margin-top: 2px;
   }
 
-ul.theme-picker li p {
-  fon
-  }
-
 ul.theme-picker li.checked img {
   border: 3px solid red;
   margin-top: 0;
   }
 
-#next, #prev {
+#cp-settings-form #next, #cp-settings-form #prev {
   width: 15px;
   height: 14px;
-  background: transparent url(images/next.png);
+  background: transparent url(images/next.png) no-repeat;
   margin-top: 3px;
   }
 
-#prev {
+#cp-settings-form #prev {
   background-image: url(images/prev.png);
   }
 
-.theme-picker h3, ul.theme-picker li p {
-  margin-top: 2px;
-  font-size: .9em;
+.theme-picker h3, ul.theme-picker li p, .item-theme-picker .form-item {
+  margin-top: 3px;
+  font-size: 13px;
+  line-height: 16px;
   margin-bottom: 0;
+  display:inline;
   }
 
-ul.theme-picker li.checked h3 {
+.section-cp .item-theme-picker .form-item {
+  vertical-align: top;
+  margin-left: 4px;
+  }
+
+.item-theme-picker .form-item label {
+  position:absolute;
+  top: -9999em;
+  }
+
+ul.theme-picker li p  {
+  display:block;
+  }
+
+
+ul.theme-picker li.checked h3, .item-theme-picker li.checked .form-item {
   margin-top: 0;
   }
 
@@ -60,10 +81,7 @@ ul.theme-picker li.checked h3 {
   background:#eaebe9;
   height: 43px;
   padding-left: 30px;
-  }
-
-#cp-settings-form div {
-  padding-left: 30px;
+  padding-left: 30px
   }
 
 .theme_subnav h3, .theme_subnav ul, .theme_subnav li, #next, #prev {
@@ -96,4 +114,8 @@ form#cp-settings-form div.form-radios {
 
 #cp-settings-form  {
   clear: both;
+  }
+
+.page-cp-settings-theme input#edit-submit {
+  margin-left: 30px;
   }
