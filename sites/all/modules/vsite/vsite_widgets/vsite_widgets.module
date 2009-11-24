@@ -160,7 +160,8 @@ function vsite_widgets_basicinfo(){
     return $block;
 	}//Retrieve Defaults
 	
-	$s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0)?l("(email)","contact_owner"):"";
+	$s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0 && 
+	           ($scholar->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
 
 	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
 							<h2>{$scholar->settings['site']['sub_heading']}</h2>

@@ -282,7 +282,7 @@ function vsite_design_vsite_generic_settings($space, $value = array()){
       '#type' => 'radios',
       '#options' => $shield_options,
       '#default_value' => is_array($value) && array_key_exists('shield',$value) ? $value['shield']: drupal_get_path('module','vsite_design')."/theme/shield/shields/harvard_shield.png",
-      '#append' => '</div><div class="clearfix"></div>',
+      '#suffix' => '</div><div class="clearfix"></div>',
     ),
     'css' => array(drupal_get_path('module', 'vsite_design') . '/theme/shield/vsite_design-shield-picker.css'),
     'js' => array(
