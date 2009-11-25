@@ -1,9 +1,8 @@
-html, body {
+html,body {
   height: 100%;
   }
 
 body {
-  background: #fff;
   font-family:"helvetica neue",helvetica, Arial,sans-serif;
   }
 
@@ -16,13 +15,8 @@ body {
   text-decoration: underline;
   }
 
-
 #header h1 {
-  position: relative;
-  top: 0;
-  left: 0;
   font-size: 20px;
-  width: 999em;
   margin: 17px 10px 0 0;
   }
 
@@ -48,6 +42,11 @@ body {
   margin: 0 10px 3px 0;
   }
 
+h2.title {
+  margin-bottom: 1em;
+  font-size: 1.2em;
+  }
+
 #header p {
   margin: 0 10px 0 0;
   font-size: 11px;
@@ -58,8 +57,8 @@ body {
   }
 
 #wrapper {
-  position: relative;
   min-height: 100%;
+  overflow: hidden;
   }
 
 body.admin-menu #wrapper {
@@ -70,90 +69,68 @@ body.navbar-on #wrapper {
   margin-top: 41px;
   }
 
-.column, #header-left, #header-right, #sidebar-left, #sidebar-right, #content-main, #header-main {
+#header-left, #header-right, #header-main {
   float: none;
+  position: static !important;
   padding: 0;
-  margin: 0;
+  margin: 0 !important;
   width: auto;
   right: auto;
   left: auto;
   }
 
-#header, #sidebar-left, #sidebar-right, #footer, #content-main, #extradiv {
-  position: absolute;
-  float: none;
-  background-color: rgba(3, 38, 63, 0.76);
-  top: 0;
-  bottom: 0;
-  left: 0;
-  padding: 0;
-  margin: 0;
+#header, #sidebar-left, #sidebar-right, #footer {
+  background: rgba(3, 38, 63, 0.76);
   }
-
-#container {
-	overflow: hidden;
-	}
 
 
 #footer {
   position: fixed;
+  clear: both;
   }
 
 
 #header {
   width: 180px;
   padding-left: 22px;
+  float: left;
   }
 
 #sidebar-left {
   width: 164px;
-  background-color: rgba(210, 218, 184, 0.76);
-  left: 202px;
+  background: rgba(210, 218, 184, 0.76);
+  right: 224px;
+  padding: 0;
   }
 
 #sidebar-right {
   width: 150px;
-  left: auto;
-  right: 0;
-  bottom:0;
-  margin-right: 0;
-  padding: 10px;
-  }
-
-body.navbar-off #sidebar-right {
-  padding-top: 35px;
   }
 
 #footer {
   position: fixed;
   top: auto;
   right: 0;
+  bottom:0;
+  left: 0;
   height: 69px;
+  padding: 0;
   }
 
-#content-wrapper, #header-wrapper {
-  padding-right :0;
-  padding-left: 0;
+#header-wrapper {
+  padding: 0 !important;
+  }
+
+#content-wrapper  {
+  margin-left: 202px;
+  clear:none;
+  padding-left:164px;
+  padding-right: 230px;
   }
 
 #content-main {
   padding: 30px;
   background: #FFF;
-  }
-
-body.two-sidebars #content-main {
-  left:366px;
-  right: 170px;
-  }
-
-body.sidebar-left #content-main {
-  left:366px;
-  right: 0;
-  }
-
-body.sidebar-right #content-main {
-  left:202px;
-  right: 170px;
   }
 
 
@@ -200,6 +177,7 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
   padding-top: 30px;
   }
 
+
 #block-vsite_menus-0 ul.menu li a {
   display:block;
   height: 36px;
@@ -210,11 +188,18 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
   }
 
 #block-vsite_menus-0 ul.menu li a:hover {
-  background-color: rgba(210, 218, 184, 0.76);
+  background: rgba(210, 218, 184, 0.76);
+  }
+
+#block-vsite_menus-0 ul.menu li.active-trail {
+  background:rgba(3, 38, 63, 0.67);
   }
 
 #block-vsite_menus-0 ul.menu li a.active, #block-vsite_menus-0 ul.menu li.active-trail a, #block-vsite_menus-0 ul.menu li a.active:hover, #block-vsite_menus-0 ul.menu li.active-trail a:hover {
-  background: url(images/menu-selected.png) no-repeat 100% 0 #3f5a6d;
+  background-image: url(images/menu-selected.png);
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-color: transparent;
   color: #FFF;
   margin-right: -10px;
   }
@@ -222,6 +207,7 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
 /* SIDEBAR RIGHT*/
 #sidebar-right {
   color: #c2bfa7;
+  padding-top: 30px;
   }
 
 #sidebar-right a, #sidebar-right a:visited {
@@ -235,10 +221,23 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
   margin-left: 0;
   }
 
+#header, #sidebar-left, #sidebar-right {
+  padding-bottom: 1001em;
+	margin-bottom: -1000em;
+	}
+
+.node-teaser {
+  background: rgba(210, 218, 184, 0.3);
+  margin: 0 -1000em 30px -194px;
+  padding: 30px 1000em 30px 194px;
+  }
+
 #extradiv {
-  height: 10px;
-  background: rgba(210, 218, 184, 0.5);
+  position: absolute;
+  height: 15px;
+  background: rgba(3, 38, 63, 0.5);
   bottom: auto;
   right: 0;
   top: 0;
+  left: 0;
   }

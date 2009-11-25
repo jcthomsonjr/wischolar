@@ -7,6 +7,7 @@ core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-theme-08.css
 conditional-stylesheets[if IE][all][] = scholar-theme-08-ie.css
+conditional-stylesheets[if lte IE 7][all][] = scholar-theme-08-ie7.css
 regions[header_top]    	= header top
 regions[header_left]    = header left
 regions[header_main]    = header main
@@ -45,3 +46,8 @@ widgets[vsite_widgets_0] = header_main
 widgets[vsite_widgets_1] = header_left
 widgets[vsite_widgets_2] = header_right
 widgets[vsite_widgets_3] = right
+
+theme_flavor[0] = 'Blue'
+theme_flavor[1] = 'Brown'
+theme_flavor[2] = 'Moss'
+theme_flavor[3] = 'Gray'
