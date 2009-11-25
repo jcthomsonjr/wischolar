@@ -55,7 +55,9 @@ function cp_left_block_view(){
 }
 
 function cp_init(){
-   $vsite = vsite_get_vsite();
+global $user; 
+  
+   $vsite = vsite_get_vsite();  dpm($vsite);
    if (!$vsite){
      return;
    }
