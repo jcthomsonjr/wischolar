@@ -4,8 +4,8 @@
  * Implementation of hook menu
  */
 function vsite_google_analytics_menu(){
-
   $items = array();
+  
   $items['admin/settings/scholar_google_analytics'] = array(
     'type' => MENU_NORMAL_ITEM,
     'title' => 'Scholar Google Analytics',
@@ -28,8 +28,8 @@ function vsite_google_analytics_menu(){
     'access arguments' => array('administer site configuration'),
     'weight' => 0,
   );
+  
   return $items;
-
 }
 
 /**
@@ -125,11 +125,6 @@ function vsite_google_analytics_footer(){
 function vsite_google_analytics_init() {
   global $user;
 
-  // 1. Check if the GA account number has a value.
-  // 2. Track page views based on visibility value.
-  // 3. Check if we should track the currently active user's role.
-
-    // Should a local cached copy of ga.js
     $js_file = 'ga.js';
     $url = 'http://www.google-analytics.com/'. $js_file;
     $scope = 'footer'; //TODO make this dynamic via admin setting???
@@ -163,8 +158,6 @@ function _vsite_google_analytics_cache($location) {
 
 /**
  * Check for Google Analytics ID variables
- *
- * @return unknown
  */
 function _vsite_google_analytics_ga_id_vars(){
   $ga_vars = array();
