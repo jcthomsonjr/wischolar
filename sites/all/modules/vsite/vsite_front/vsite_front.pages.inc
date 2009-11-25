@@ -80,7 +80,7 @@ function vsite_front_home(){
 	    	    <li>{$s_docs}</li>
 	    	  </ul>
 	    	  <div class="scholar-admin">
-	    	    <div class="toggle"><span>Hide this box</span></div>
+	    	    <div class="toggle"><span>Hide this message</span></div>
 	    	    <div class="slider">
 	    	      <ul class="links">
 	    	        <li class="first">{$s_hide_link}</li>
