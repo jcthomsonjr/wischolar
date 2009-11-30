@@ -55,63 +55,71 @@ function cp_left_block_view(){
 }
 
 function cp_init(){
-global $user; 
+  global $user;
   
-   $vsite = vsite_get_vsite();  dpm($vsite);
-   if (!$vsite){
-     return;
-   }
-   
-   $toolbar = "off";
-   
-   // controlcp context
-  if (arg(0) == 'cp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
-    context_set('vsite', 'section', 'cp');
+  $vsite = vsite_get_vsite();
 
-    // since we are here .. initialize cp theme
-    _cp_init_theme();
-    
-  }else {
- 	  context_set('vsite', 'section', 'public');
-    og_set_theme($vsite -> group); // TODO why dont you get it from space settings
+  if (! $vsite) {
+    return;
   }
   
-  $admin = $vsite -> admin_access();
-  $user_tb_setting = (is_array( $vsite->settings ) 
-                      && is_array ( $vsite->settings ['generic'] ) 
-                      && array_key_exists ( 'admin_menu', $vsite->settings ['generic'] )
-                      && $vsite->settings ['generic']['admin_menu']) ? TRUE : FALSE;
-
+  $toolbar = "off";
+  
+  // controlcp context
+  if (arg(0) == 'cp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
+    context_set('vsite', 'section', 'cp');
+    
+    // since we are here .. initialize cp theme
+    _cp_init_theme();
+  
+  }
+  else {
+    context_set('vsite', 'section', 'public');
+    og_set_theme($vsite->group); // TODO why dont you get it from space settings
+  }
+  
+  $admin = $vsite->admin_access();
+  $user_tb_setting = (is_array($vsite->settings) && is_array($vsite->settings['generic']) && array_key_exists('admin_menu', $vsite->settings['generic']) && $vsite->settings['generic']['admin_menu']) ? TRUE : FALSE;
   
   // if in cp always toolbar=on (full)
-  if (context_get('vsite', 'section') == 'cp' && $admin){
+  if (context_get('vsite', 'section') == 'cp' && $admin) {
     $toolbar = "full";
   }
   
-  if (context_get('vsite', 'section') == 'public' && $admin ){
-    if ($user_tb_setting){
+  if (context_get('vsite', 'section') == 'public' && $admin) {
+    if ($user_tb_setting) {
       $toolbar = "full";
-    }else {
+    }
+    else {
       $toolbar = "mini";
     }
   }
   
-  if($admin){
-  	//add the javascript for intercepting confirm pages
-    drupal_add_js(drupal_get_path('module','cp').'/theme/cp-confirm-overide.js');
-    drupal_add_css(drupal_get_path('module','cp').'/theme/cp-confirm-overide.css');
+  if ($admin) {
+    //add the javascript for intercepting confirm pages
+    drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.js');
+    drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.css');
     //Add the JqueryUI JS for the confirm boxes
-    jquery_ui_add(array('ui.dialog','effects.core','ui.draggable','ui.resizable'));
-    drupal_add_js(array('cp_confirm_overide_handler'=>array("js" => 1)), 'setting');
-  }//Allow special popups if they are admin
+    jquery_ui_add(array(
+      'ui.dialog', 
+      'effects.core', 
+      'ui.draggable', 
+      'ui.resizable' 
+    ));
+    drupal_add_js(array(
+      'cp_confirm_overide_handler' => array(
+        "js" => 1 
+      ) 
+    ), 'setting');
+  } //Allow special popups if they are admin
   
-  if($toolbar == "full"){
-    drupal_add_css(drupal_get_path('module', 'cp') .'/theme/cp-toolbar.css');
+
+  if ($toolbar == "full") {
+    drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
   }
   
   context_set("toolbar", "value", $toolbar);
-  
-  
+
 }
 
 /**
