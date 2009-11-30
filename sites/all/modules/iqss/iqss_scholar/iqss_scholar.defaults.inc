@@ -12,7 +12,7 @@ function _iqss_scholar_config_variables(){
     'pinserver_pin_url' => 'https://www.pin1.harvard.edu/pin/authenticate',
 	  'pinserver_registration_path' => 'site/register',
     'pinserver_auth_str' => 'Good signature from "authzproxy"',  
-    'pinserver_support_contact' => 'Web_Dev@help.hmdc.harvard.edu',
+    'pinserver_support_contact' => 'scholars_dev_support@help.hmdc.harvard.edu',
 	);
 }
 
