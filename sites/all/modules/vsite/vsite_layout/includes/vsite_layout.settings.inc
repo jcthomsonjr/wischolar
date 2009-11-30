@@ -119,9 +119,35 @@ class vsite_layout_settings_layout implements space_setting {
 	        
 	        //Widgets that have changed positions
 	        foreach ($setting as $s_widget_name => $s_region){
-	        	if(array_key_exists($s_widget_name,$a_new_settings) && $s_region != $a_new_settings[$s_widget_name] && $a_prev_settings[$s_widget_name] == $a_new_settings[$s_widget_name]){
+	        	if(array_key_exists($s_widget_name,$a_new_settings) &&  //The Widget is in the subpage
+	        	   (($a_prev_settings[$s_widget_name] == $a_new_settings[$s_widget_name])  //The Widget had the same prev region
+	        	   || (in_array($s_widget_name,$a_new_all_wgts) && $s_region == $a_new_settings[$s_widget_name]))){  //OR The widget was just added from the bucket
+	        	  //Put it into the new location if it has moved
 	        		$a_new_settings[$s_widget_name] = $s_region;
-	        	}//The widget is on the subpage and it is not in the position you are moving to already, and it was in the prev location
+	        		
+	        		//Get the Offset of the widget within the region on the homepage
+	        	  $n_pos = array_search($s_widget_name,array_keys(array_intersect($setting, array($s_region))));
+	        	  
+	        	  if($n_pos != self::getSubpageRelitiveOffset($s_widget_name,$s_region,$a_new_settings,$setting)){
+	        	  	
+	        	  	//Move this setting to the end of the stack
+	        	  	unset($a_new_settings[$s_widget_name]);
+	        	  	$a_new_settings[$s_widget_name] = $s_region;
+	        	  	
+		        	  $offset = -1;
+		        		while(self::getSubpageRelitiveOffset($s_widget_name,$s_region,$a_new_settings,$setting) > $n_pos){
+		        			unset($a_new_settings[$s_widget_name]);
+		        			$a_keys = array_keys($a_new_settings);
+		        			array_splice($a_keys,$offset,0,$s_widget_name); //Insert Key in correct place
+		        			array_splice($a_new_settings,$offset,0,$s_region); //Insert Value in correct place
+		        			
+		        			$a_new_settings = array_combine($a_keys,$a_new_settings); //Preserve Keys
+		        			$offset--;
+		        		}//move the element up till it is in the correct location
+
+	        	  }//If the Widget's offset does not match that of the one on the homepage
+	        		
+	        	}//The widget is on the subpage, and it was in the prev location or it has just been added to the page
 	        }
 	        
 	        $space->settings['layout'][$s_page_nm] = $a_new_settings;
@@ -146,5 +172,22 @@ class vsite_layout_settings_layout implements space_setting {
   	}
     return $_GET['q'];
   }
+  
+  /**
+   * Filter return the 0-indexed offset of a widget within a region
+   * @param $s_name string The Widget ID
+   * @param $region string The Region ID
+   * @param $a_subpage array The subpage settings
+   * @param $a_home array The homepage Settings
+   * @return number
+   */
+  private static function getSubpageRelitiveOffset($s_name,$s_region,$a_subpage,$a_home){
+  	
+  	return array_search( $s_name, //Offset of this widget
+  	         array_keys(          //Return the keys as a 0 indexed array
+  	           array_intersect(   //Remove the items that are in other regions
+  	             array_intersect_key($a_subpage,$a_home) //Remove those items that don't exist in the home array
+  	             ,array($s_region))));
+  }  
 }
 

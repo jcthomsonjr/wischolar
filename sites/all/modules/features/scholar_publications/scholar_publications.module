@@ -83,7 +83,7 @@ function scholar_publications_menu(){
     'access arguments' => array('scholar_publications'), 
     'menu_name' => 'features',
   );
-
+  
   /*
   $items['publications/list'] = array(
     'title' => 'List publications',
@@ -176,11 +176,21 @@ function scholar_publications_hide_form_value(&$element){
 }
 
 function scholar_publications_overview(){
-  $vsite = vsite_get_vsite();
+	$vsite = vsite_get_vsite();
   module_load_include('inc', 'biblio', 'biblio.pages');
   //page title = the name of the menu they have in settings or "Publications"
   $page_title = (is_array($vsite->customizer['menu']) && isset($vsite->customizer['menu']['publications'])) ? $vsite->customizer['menu']['publications'] : "Publications";
   variable_set('biblio_base_title', $page_title);
+  
+  //To Create The Abstract hovers
+//  drupal_add_js(drupal_get_path('module', 'scholar_publications').'/theme/Drupal.scholarPublications.js', 'module');
+//  ctools_add_js('ajax-responder');
+//  
+//  $settings['scholarPublications'] = array(
+//    'abstract_id' => "biblio-abstract-link",
+//  );
+//  drupal_add_js($settings, 'setting');
+      
   return biblio_db_search();
 }
 
