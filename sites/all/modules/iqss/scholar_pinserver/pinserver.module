@@ -228,8 +228,15 @@ function pinserver_form_alter(&$form, $form_state, $form_id){
  * Unset the $_SESSION vars after the registration form is submitted
  */
 function pinserver_process_user_registration($form, $form_state){
-  //new user and vsite have been created, now add row to pinserver table
-  _pinserver_add_row($form_state['new_user'] ->uid);
+  //new user and vsite should have already been created, check to make sure the user information is present
+  if (!isset($form_state['new_user'] ->uid) || $form_state['new_user'] ->uid == '0'){
+  error_log("WARNING: The pinserver module could not insert the new user information into the database because
+  the user information was not supplied.");
+  }
+  //if user information is present, then add user info to the database
+  else{
+    _pinserver_add_row($form_state['new_user'] ->uid);
+  }
   _pinserver_process_remove_session();  
 }
 
