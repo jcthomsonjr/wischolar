@@ -2,7 +2,7 @@
 
 
 function iqss_scholar_utility_form(){  
-   variable_set('iqss_scholar_utility_submit', 0); //for dev only should remove this
+  // variable_set('iqss_scholar_utility_submit', 0); //for dev only should remove this
   
     $form['iqss_scholar_utility_info'] = array(
     '#type' => 'item',
