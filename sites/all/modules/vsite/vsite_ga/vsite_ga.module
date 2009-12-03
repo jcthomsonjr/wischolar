@@ -82,14 +82,6 @@ function vsite_ga_footer(){
   $segmentation = '';
   if (count($fields) > 0) {
     $segmentation = 'pageTrackerGlobal._setVar('. drupal_to_js(implode(':', $fields)) .');';
-/*    
-    
-     $segmentation = pageTracker._setCustomVar(1,                   // This custom var is set to slot #1
-      "Section",           // The top-level name for your online content categories
-      "Life & Style",      // Sets the value of "Section" to "Life & Style" for this particular aricle
-      3                    // Sets the scope to page-level
-   ); */
-       
   }
 
   // Track access denied (403) and file not found (404) pages.
