@@ -32,8 +32,7 @@ function iqss_scholar_utility_menu() {
  * 
  */
 function iqss_scholar_utility_other_biblio_fields(){ 
-  
-  //db_set_active('prod_backup');  
+
   $custom = array();
 
   $fields = array(
@@ -77,10 +76,8 @@ function iqss_scholar_utility_other_biblio_fields(){
        _iqss_scholar_utility_update_fields($custom);
      }
    } 
-      
     //delete the content cache - wildcard is enabled
     cache_clear_all('content:', 'cache_content',  TRUE);    
-   //db_set_active('default');
 }
 
 /**
@@ -95,15 +92,6 @@ function _iqss_scholar_utility_update_fields($custom = array()){
     //starting key number for field_biblio_extra, so we don't overwrite anything
     $delta = count($node->field_biblio_extra);
     foreach($custom[$node -> nid] as $fieldname => $field_info){ 
-          
-      //remove the field property value
-     // $node -> $field= '';
-      
-      //add field data to node object
-/*      $node->field_biblio_extra[$num]['dyntext_fieldset'] = array(
-      'label' =>  key($field_info),
-      'value' => $field_info[key($field_info)],
-      );*/
       
       //update the database directly instead of node save
       _iqss_scholar_utility_update_db($node -> vid , $node -> nid, key($field_info), $field_info[key($field_info)], $delta);
@@ -116,14 +104,6 @@ function _iqss_scholar_utility_update_fields($custom = array()){
        
       $delta++;
     }
-    
-    //deal with og based url alias
-    /*$vsite = spaces_load('og', key($node -> og_groups));    
-    $node -> path = $vsite->purl . '/' . $node-> path;
-    
-    dpm($node);*/
-    //save the node
-    //node_save($node);
   }
 }
 
