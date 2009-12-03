@@ -58,7 +58,7 @@ function iqss_scholar_utility_other_biblio_fields(){
   'Access Date' => 'biblio_access_date',
   );
   
-  $nid = 37;  //for TESTING PURPOSES ONLY - to test 1 node
+ // $nid = 37;  //for TESTING PURPOSES ONLY - to test 1 node
   $cond = isset($nid)? "AND b.nid = $nid" : ''; //for TESTING PURPOSES ONLY - to test 1 node
   
    $res= db_query("SELECT DISTINCT b.*, n.vid as version_id FROM {biblio} b LEFT JOIN {node} n USING (nid) HAVING n.vid = b.vid $cond");
