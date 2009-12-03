@@ -58,7 +58,7 @@ function iqss_scholar_utility_other_biblio_fields(){
   'Access Date' => 'biblio_access_date',
   );
   
-  $nid = 35;  //for TESTING PURPOSES ONLY - to test 1 node
+  $nid = 37;  //for TESTING PURPOSES ONLY - to test 1 node
   $cond = isset($nid)? "AND b.nid = $nid" : ''; //for TESTING PURPOSES ONLY - to test 1 node
   
    $res= db_query("SELECT DISTINCT b.*, n.vid as version_id FROM {biblio} b LEFT JOIN {node} n USING (nid) HAVING n.vid = b.vid $cond");
@@ -139,9 +139,8 @@ function _iqss_scholar_utility_update_db($vid, $nid, $label, $value, $delta){
  *
  */
 function _iqss_scholar_utility_remove($vid, $nid, $fieldname){
-  $replace = '';
   //remove value for hidden biblio field
-  db_query("UPDATE {biblio} SET '%s' = '%s'  WHERE nid = %d and vid = %d", $fieldname, $replace, (int)$vid, (int)$nid);
+  db_query("UPDATE {biblio} SET %s = '' WHERE nid = %d and vid = %d", $fieldname, (int)$nid, (int)$vid);
 }
 
 /**
@@ -149,7 +148,7 @@ function _iqss_scholar_utility_remove($vid, $nid, $fieldname){
  */
 function _iqss_scholar_save_test_node(){
 
-  $node = node_load(35);
+  $node = node_load(37);
   $node -> biblio_notes = 'test notes here';
    node_save($node);  
   
