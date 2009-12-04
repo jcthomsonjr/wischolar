@@ -50,7 +50,6 @@ function vsite_ga_vsite_generic_settings($space, $value = array()){
   '#description' => "Entering your ID this will send page and visitor data to your Google Analytics account.",
     )
   );
-
   return $a_settings;
 }
 
@@ -125,21 +124,26 @@ function vsite_ga_footer(){
 function vsite_ga_init() {
   global $user;
 
+    //These ga file location values may change in the future, but not soon enough that they should be in a system settings form
     $js_file = 'ga.js';
-    $url = 'http://www.google-analytics.com/'. $js_file;
-    $scope = 'footer'; //TODO make this dynamic via admin setting???
+    $location= 'http://www.google-analytics.com/'. $js_file;
     
-    if (variable_get('vsite_ga_cache', 0) == 1 && (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PUBLIC) && $source = _vsite_ga_cache($url)) {
-      drupal_add_js($source, 'module', 'header');
+    if (variable_get('vsite_ga_cache', 0) == 1 && (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PUBLIC) && $source = _vsite_ga_cache($location)) {  
+         
+      //if module set to cache mode and file is present, include it within the footer, otherwise log an error
+      $implement = is_file($source) ? drupal_add_js('/' . $source, 'module', 'footer') : error_log(t("ERROR: vsite_ga is set to cache mode but the js file is missing from the local directory"));      
     }
     else {
       $script = 'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");';
       $script .= 'document.write(unescape("%3Cscript src=\'" + gaJsHost + "google-analytics.com/'. $js_file .'\' type=\'text/javascript\'%3E%3C/script%3E"));';
-      drupal_add_js($script, 'inline', $scope);
+      drupal_add_js($script, 'inline',  'footer');
     }
   }
 
-function _vsite_ga_cache($location) {
+/**
+ * Function to download the ga.js file from google
+ */
+ function _vsite_ga_cache($location) {
   $directory = file_directory_path() .'/googleanalytics';
   $file_destination = $directory .'/'. basename($location);
   if (!file_exists($file_destination)) {
