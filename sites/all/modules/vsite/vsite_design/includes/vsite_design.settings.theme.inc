@@ -14,12 +14,12 @@ class vsite_design_settings_theme implements space_setting {
       $this->id = 'theme';
     }
   }
-
+  
   /**
    * Include JS and CSS Files needed for this form
    */
   private function include_externals(){
-  	drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
+    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
     drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
     drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
   }
