@@ -17,18 +17,7 @@ function vsite_design_menu(){
  * @return unknown_type
  */
 function vsite_design_init(){
-  $active_menu = menu_get_item();
-  if ($active_menu['path'] == 'cp/settings/theme'){  
-    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
-    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
-    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
-  }
-  elseif ($active_menu['path'] == 'cp/settings/logo'){
-    drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-logo.css');
-    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/jquery.Jcrop.min.js');
-    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/cp-logo-crop.js');
-  }
-  
+
   $vsite = vsite_get_vsite();
   if($vsite && (!$vsite->settings['site'] || !$vsite->settings['site']['headline'])){
   	if(!is_array($vsite->settings['site'])) $vsite->settings['site'] = array('sub_heading_extra' => '');
@@ -112,18 +101,7 @@ function vsite_design_spaces_settings() {
       'class' => 'vsite_design_settings_theme',
       'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.theme.inc',
     ),
-    'logo' => array(
-      'class' => 'vsite_design_settings_logo',
-      'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.logo.inc',
-    ),
   );
-  
-  if(!module_exists('scholar')){
-    $a_settings['site'] = array(
-      'class' => 'vsite_design_setting_site',
-      'file' => drupal_get_path('module', 'vsite_design')  .'/includes/vsite_design.settings.site.inc',
-    );
-  }//Let scholar overide this
   
   return $a_settings;
 }

@@ -69,10 +69,11 @@ function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , 
   $s_out;
   if(!$scholar) $scholar = vsite_get_vsite();
   
-  if(!$scholar || !$scholar->settings['logo'] && !$scholar->settings['logo']['current_logo']){
+  if(!$scholar || !($a_files = filefield_get_node_files($scholar->group,'field_vsite_logo')) || !count($a_files)){
   	$s_image_path = drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg";
   }else{
-  	$s_image_path = $scholar->settings['logo']['current_logo'];
+  	$a_image = current($a_files);
+  	$s_image_path = $a_image['filepath'];
   }//Default image?
 	
   $s_url_extra = "";
@@ -80,7 +81,6 @@ function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , 
   
   if($preset){
     $s_image_path = imagecache_create_url($preset, $s_image_path);
-  	//$s_out = theme('imagecache', $preset, $s_image_path, $alt, $title,  $attributes);
   }else{
   	$s_image_path = "/".$s_image_path;
   }//Cached or orig

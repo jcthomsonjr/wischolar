@@ -55,7 +55,7 @@ function vsite_front_home(){
     	$s_docs = l("View documentation","help/vsitehelp/Scholar-Web-Sites-Project-Documentation");
 
     	//Created in the last 26 hours?
-    	$s_welcome_message = (time() - $vsite->group->created < 93600)?"Welcome to your new website!":"Quick Help:";
+    	$s_welcome_message = (time() - $vsite->group->created < 93600)?"Welcome to your new website!":"";
      	$s_short_message = (time() - $vsite->group->created < 93600)?"Not sure what to do now? Need help <span>gettings started?</span>":"Need quick access to <span>common settings?</span>";
 
     	//Add Content

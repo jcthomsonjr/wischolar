@@ -319,6 +319,29 @@ function vsite_theme_registry_alter(&$theme_registry){
  **/
 function vsite_form_alter(&$form, $form_state, $form_id) {
   switch ($form_id) {
+  	case 'vsite_node_form':
+  		//Customize the "Site Information" form
+  		if(arg(0) != 'cp') break;
+  		$form['buttons']['submit']['#value'] = t('Save settings');
+  		$form['#prefix'] = '<div id = "cp-settings-'. $setting_id . '">';
+      $form['#suffix'] = '</div>';
+      $form['pre_fieldset'] = array('#value' => "<fieldset>", '#weight' => -1000);
+      $form['post_fieldset'] = array('#value' => "</fieldset>", '#weight' => 1000);
+      $form['field_vsite_logo']['#weight'] = 33;
+      _spaces_og_make_hidden($form['purl']);
+      _spaces_og_make_hidden($form['attachments']);
+      _spaces_og_make_hidden($form['menu']);
+      _spaces_og_make_hidden($form['comment_settings']);
+      _spaces_og_make_hidden($form['buttons']['preview']);
+      _spaces_og_make_hidden($form['buttons']['delete']);
+  		_spaces_og_make_hidden($form['buttons']['preview_changes']);
+  		_spaces_og_make_hidden($form['spaces_preset']);
+  		unset($form['spaces_preset']['#theme']); //Remove theme
+  		_spaces_og_make_hidden($form['path']);
+  		_spaces_og_make_hidden($form['revision_information']);
+  		_spaces_og_make_hidden($form['author']);
+  		_spaces_og_make_hidden($form['options']);
+  	break;
     default:
       if ($form['#id'] == 'node-form' && (arg(0) .'/'. arg(1) != 'admin/content')) {
         // GROUP ENABLED CONTENT TYPES
@@ -418,4 +441,54 @@ function vsite_spaces_types_alter(&$items){
 	
 	//Change the class for the og object to "vsite"
   $items['og']['class'] = 'vsite';
+}
+
+/**
+ * Returns the group node given the id in a url
+ * @param $n_vsite_id integer (VSITE ID)
+ * @return object node
+ */
+function vsite_group_load($n_vsite_id = false){
+	if($n_vsite_id === false) $n_vsite_id = vsite_group_to_arg();
+	
+	//Same as Site ID
+	$o_group_node = node_load($n_vsite_id);
+	$vsite = vsite_get_vsite();
+	
+	if($o_group_node->type == 'vsite' &&  //Make sure that they have update permissions or they are accessing the node withing the context of thier own site
+	  ($o_group_node->nid == $vsite->group->nid || node_access('update',$o_group_node))){  //Does not replace the functonality of 'access callback' but provides a stopgap
+		 return $o_group_node;
+	}
+	
+	return false;
+}
+
+/**
+ * Default the param to the current site, used when making a link
+ * 
+ * @return number sid
+ */
+function vsite_group_to_arg(){
+  $vsite = vsite_get_vsite();
+  return $vsite->group->nid;
+}
+
+/**
+ * Implements hook cp_settings
+ *
+ */
+function vsite_cp_settings(){
+  
+	return array(
+	  array(
+	    'path' => 'site_info/%vsite_group',
+		  'title' => 'Site Information',
+	    'page callback' => 'node_page_edit',
+	    'file' => 'node.pages.inc',
+	    'file path' => drupal_get_path('module', 'node'),
+	    'page arguments' => array(3),
+	    'weight' => 0,
+	    'type' =>  MENU_LOCAL_TASK,
+	  ),
+	);
 }

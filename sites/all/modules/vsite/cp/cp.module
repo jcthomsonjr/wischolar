@@ -137,39 +137,30 @@ function cp_menu(){
   //$items = spaces_active_space_menu('og', FALSE, 'cp/settings');
 
   $items = array();
-
-  $items['cp/settings'] = array(
-    'title' => 'Settings',
-    //'page callback' => 'cp_route',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('cp_settings_form', 'site'),
-    'file' => 'cp.settings.inc',
-    'file path' => drupal_get_path('module', 'cp'). '/includes', 
-    'weight' => 0,
-  );  
-
-  $items['cp/settings/site'] = array(
-    'title' => 'Site information',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('cp_settings_form', 'site'),
-    'file' => 'cp.settings.inc',
-    'file path' => drupal_get_path('module', 'cp'). '/includes', 
-          'type' =>  MENU_DEFAULT_LOCAL_TASK,
-  );
-  
-
   
   // other setting by classess
   $space = vsite_get_vsite();
-  //dpm(spaces_settings($space->type, TRUE));
+  $b_default_setting_created = false;
+  
+//  $items['cp/settings'] = array(
+//       'title' => 'Settings',
+//       //'page callback' => 'cp_route',
+//       'page callback' => 'drupal_get_form',
+//       'page arguments' => array('cp_settings_form', 'site'),
+//       'file' => 'cp.settings.inc',
+//       'file path' => drupal_get_path('module', 'cp'). '/includes',
+//       'weight' => 0,
+//     );
+  
+  
   // we go on all settings and make a menu entry for all of them
   foreach (spaces_settings($space->type, TRUE) as $setting) {
   	//Explicitly remove from menus
     if(isset($setting->menu_name) && !$setting->menu_name) continue;
     
-    $setting_value = isset($space->settings[$setting->id]) ? $space->settings[$setting->id] : NULL;
-    $setting_form = $setting->form($space, $setting_value);
-    if (!empty($setting_form) && $setting -> id != 'site') {
+    //@TODO Dont know why we have a manual exclusion here and we need to find a way to do this without using vsite_get_vsite
+    $setting_form = $setting->form($space, NULL);
+    if (!empty($setting_form)) {
       $items['cp/settings/'. $setting -> id] = array(
         'title' => $setting_form['#title'],
         'page callback' => 'drupal_get_form',
@@ -178,10 +169,41 @@ function cp_menu(){
         'file' => 'cp.settings.inc',
         'file path' => drupal_get_path('module', 'cp'). '/includes', 
       );
+      
+	    if(!$b_default_setting_created){
+	      $b_default_setting_created = true;
+	      $a_setting = $items['cp/settings/'. $setting -> id];
+	      //Create Local Task
+	      $items['cp/settings/'. $setting -> id]['type'] = MENU_DEFAULT_LOCAL_TASK;
+	      
+	      //Crate Main Menu Item
+	      unset($a_setting['type']);
+	      $a_setting['title'] = "Settings";
+	      $items['cp/settings'] = $a_setting;
+	    }
+	    
+	    if(isset($setting->weight)) $items['cp/settings/'. $setting -> id]['weight'] = $setting->weight;
+      if(isset($setting->menu_name)) $items['cp/settings/'. $setting -> id]['menu_name'] = $setting->menu_name;
     }
     
-    if(isset($setting->weight)) $items['cp/settings/'. $setting -> id]['weight'] = $setting->weight;
-    if(isset($setting->menu_name)) $items['cp/settings/'. $setting -> id]['menu_name'] = $setting->menu_name;
+  }
+  
+  foreach (module_invoke_all("cp_settings") as $a_settings) {
+    if(!is_array($a_settings)) continue;
+    $items['cp/settings/'. $a_settings['path']] = $a_settings;
+    
+    if(!$b_default_setting_created && !strstr($a_settings['path'],'%')){
+      $b_default_setting_created = true;
+      
+      //Create Local Task
+      $a_settings['type'] = MENU_DEFAULT_LOCAL_TASK;
+      $items['cp/settings/'. $a_settings['path']] = $a_settings;
+      
+      //Crate Main Menu Item
+      unset($a_settings['type']);
+      $a_settings['name'] = "Settings";
+      $items['cp/settings'] = $a_settings;
+    }//Default created yet?  also make sure there are no dynamic params
   }
   
   $items["cp/features"] = array(

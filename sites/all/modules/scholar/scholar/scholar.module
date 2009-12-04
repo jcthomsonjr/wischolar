@@ -86,18 +86,6 @@ function scholar_preprocess_page(&$vars) {
 }
 
 /**
- * Implementation of hook_spaces_settings().
- */
-function scholar_spaces_settings() {
-  return array(
-   'site' => array(
-      'class' => 'scholar_setting_site',
-      'file' => drupal_get_path('module', 'scholar')  .'/scholar.settings.site.inc',
-    ),
-   );
-}
-
-/**
 * Implementation of hook_mail_alter().
 */
 function scholar_mail_alter(&$message) {
@@ -199,3 +187,24 @@ function node_scholar_admin_link($type, $object) {
   return $links;
 }
 
+/**
+ * Implementation of hook_form_alter()
+ **/
+function scholar_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'vsite_node_form':
+      //Customize the "Site Information" form
+      if(arg(0) != 'cp') break;
+
+      $form['title']['#title'] = "Main Headline:";
+      $form['title']['#description'] = "Usually: First and Last name ex.(John Q. Smith)";
+      $form['og_description']['#title'] = "Sub Headline:";
+      $form['og_description']['#description'] = "Usually: Title ex.(Director of Mathematics)";
+      $form['field_vsite_address'][0]['#title'] = "Address Line";
+      $form['field_vsite_address'][0]['#description'] = "Usually: Your Address ex.(Cambridge, MA 02118)";
+      
+    break;
+    default:
+    	
+  }
+}

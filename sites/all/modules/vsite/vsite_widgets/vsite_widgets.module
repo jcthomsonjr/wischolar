@@ -140,18 +140,14 @@ function vsite_widgets_basicinfo(){
 	$block['subject'] = t('');
 	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
 
-	if(!array_key_exists('site',$scholar->settings) || !array_key_exists('headline',$scholar->settings['site']) || !strlen($scholar->settings['site']['headline'])){
+	if(!strlen($scholar->group->title)){
 	  $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
     $s_headline = "";
     $s_subheadline ="";
 
-    if(is_array($content_profile->vsite_users_last_name)){
-      $s_headline = "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}";
-    }
+    if(is_array($content_profile->vsite_users_last_name)) $s_headline = "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}";
 
-    if(is_array($content_profile->vsite_users_title)){
-      $s_subheadline = $content_profile->vsite_users_title[0]['value'];
-    }
+    if(is_array($content_profile->vsite_users_title)) $s_subheadline = $content_profile->vsite_users_title[0]['value'];
     
     $block['content'] =  (strlen($s_headline) >2)?
                          "<h1>{$s_headline}</h1>
@@ -163,9 +159,11 @@ function vsite_widgets_basicinfo(){
 	$s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0 && 
 	           ($scholar->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
 
-	$output =  "<h1>{$scholar->settings['site']['headline']}</h1>
-							<h2>{$scholar->settings['site']['sub_heading']}</h2>
-							<p>{$scholar->settings['site']['sub_heading_extra']}{$s_email}</p>";
+	$s_address = count($scholar->group->field_vsite_address)?$scholar->group->field_vsite_address[0]['value']:"";   
+	        
+	$output =  "<h1>{$scholar->group->title}</h1>
+							<h2>{$scholar->group->og_description}</h2>
+							<p>{$s_address}&nbsp;{$s_email}</p>";
 
 	$block['content'] = $output;
 

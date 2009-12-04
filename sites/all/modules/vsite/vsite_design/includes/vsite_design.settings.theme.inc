@@ -15,8 +15,19 @@ class vsite_design_settings_theme implements space_setting {
     }
   }
 
+  /**
+   * Include JS and CSS Files needed for this form
+   */
+  private function include_externals(){
+  	drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
+    drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
+  }
+  
   function form($space, $value = array()){
   	if(is_string($value)) $value = array('maintheme' => $value); //Backwards Compatibility
+  	
+  	$this->include_externals();
   	
   	//Showing and hiding the flavors
     ctools_include('dependent');
@@ -83,10 +94,13 @@ class vsite_design_settings_theme implements space_setting {
   }
 
   function validate($space, $value){
-
+    $this->include_externals();
+    
   }
 
   function submit($space, $value){
+  	$this->include_externals();
+  	
     $save = array(
       'maintheme' => $value['maintheme'],
       'flavor' => $value[$value['maintheme'] . '_flavor'],
@@ -97,18 +111,4 @@ class vsite_design_settings_theme implements space_setting {
     return $save;
   }
 }
-
-
-/**
- * Submits the form.
- */
-
-/*
-function cp_themes_form_submit($form, &$form_state){
-  $site = vsite_get_vsite();
-  $site -> group -> og_theme = $form_state['values']['theme'];
-  spaces_save($site);
-}
-*/
-
 
