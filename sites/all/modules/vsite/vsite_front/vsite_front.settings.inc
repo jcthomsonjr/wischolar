@@ -124,7 +124,7 @@ class vsite_front_settings_front implements space_setting {
       '#title' => t('Select features / content types'),
       '#options' => $options,
       '#default_value' => $default_value,
-      '#description' => t('Select the content types .... TODO better descriptions here'),
+      '#description' => t("Select the features that you would like to provide content for your home page."),
       '#process' => array(
         'expand_checkboxes',
         'ctools_dependent_process'
