@@ -147,7 +147,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     ctools_ajax_render ( $commands );    
   } 
   
-//add $user object to $form_state used by pinserver module
+  //add $user object to $form_state  and can be used by other submit functions called after this
   if(is_object($user)){  
     $form_state['new_user'] = $user;
   }
@@ -168,11 +168,12 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     ctools_ajax_render ( $commands );  
   }
   
-  // site created successfully
+  else{  
+  // site created successfully add the form values for additional submit fuctions
+  $form_state['vsite'] = $vsite;
   // 3. send e-mail to the user.
-  scholarregister_notify_user($vsite, $user);
-  
-  
+  scholarregister_notify_user($vsite, $user);  
+  }
   // 4. let user know this was all sucessful
   
   //ctools_add_js ( 'ajax-responder' );
@@ -193,10 +194,10 @@ content.</p>';
     if (__FUNCTION__ !== $fnc){
       call_user_func($fnc, $form, $form_state);
     }
-  }  
-  ctools_ajax_render ( $commands );
+  }
+  
+ctools_ajax_render ( $commands );
 }
-
 
 /**
  * Create a scholar vsite
