@@ -145,10 +145,13 @@ function scholarregister_validate_mail($mail) {
     return "e-mail \"$mail\" already exists";
   }
   
-  if (substr(trim($mail),-12) !== '.harvard.edu' && substr(trim($mail),-12) !== '@harvard.edu' 
-   && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '.hbs.edu'){
-   return  'Please enter an harvard email address ';
-  }  
+  //THIS BLOCK SHOULD BE REMOVED AFTER NEXT RELEASE
+  if(!module_exists('pinserver')){
+    if (substr(trim($mail),-12) !== '.harvard.edu' && substr(trim($mail),-12) !== '@harvard.edu'
+    && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '.hbs.edu'){
+      return  'Please enter an harvard email address ';
+    }
+  }
   
 }
 
@@ -160,7 +163,6 @@ function scholarregister_validate_domain($domain){
     return "domain \"$domain\" is taken";
   }
 }
-
 
 /**
  * wrapper function for executing ajax commands
@@ -183,6 +185,9 @@ function scholarregister_notify_user($vsite, $user){
   $params = array();
   $from = variable_get('site_mail', ini_get('sendmail_from'));
 
+     //add vsite and user object
+   $params['vsite'] = $vsite;
+   $params['user'] = $user;
   
   // change users password
   /*
@@ -237,6 +242,10 @@ function scholarregister_notify_user($vsite, $user){
 function scholarregister_mail($key, &$message, $params) {
   $message['subject'] = $params['subject'];
   $message['body'] = $params['body'];
+  
+    //these values be used with any mail alter hooks
+ $message['vsite'] = $params['vsite'];
+ $message['user'] = $params['user'];
 }
 
 
