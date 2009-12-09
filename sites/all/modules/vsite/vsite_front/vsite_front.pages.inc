@@ -48,6 +48,7 @@ function vsite_front_home(){
     	$s_hide_link = l("Forever","cp/confirm_message/welcome_message",array('attributes'=>array('class'=>'hide'),'query' => array('source'=>$_GET['q']) ));
     	$s_close_link = l("For now","",array('attributes'=>array('class'=>'close','onClick'=>'$("div#message_welcome_message").remove(); return false;')));
 
+    	$s_info = l("Add your personal information",'cp/users/myaccount/personal');
     	$s_features = l("Enable or disable features for your site",'cp/features');
     	$s_members = l("Manage who may use your site",'cp/users/members');
     	$s_theme = l("Change the look of your site",'cp/settings/theme');
@@ -70,6 +71,7 @@ function vsite_front_home(){
 	    	  <h3>{$s_welcome_message}</h3>
 	    	  <p>Below are a few additional resources to help you. You may access the control panel at any time by clicking the link in the top right corner of the screen.</p>
 	    	  <ul id="resource-list">
+	    	    <li>{$s_info}</li>
 	    	    <li>{$s_features}</li>
 	    	    <li>{$s_content}</li>
 	    	    <li>{$s_members}</li>
