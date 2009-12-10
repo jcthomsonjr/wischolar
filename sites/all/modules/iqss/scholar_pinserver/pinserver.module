@@ -63,7 +63,7 @@ function pinserver_menu() {
  * @return array - permissions set for the pinserver module
  */
 function pinserver_perm(){
-  return array('administer pinserver');
+  return array('administer pinserver', 'pinserver login link');
 }
 
 /**
@@ -220,30 +220,32 @@ function pinserver_check_system_settings(){
 /**
  * Implementation of hook_form_alter()
  */
-function pinserver_form_alter(&$form, $form_state, $form_id){
+function pinserver_form_alter(&$form, $form_state, $form_id){ //dpm($form);
   //add the submit function for pinserver
   if ($form_id == 'scholarregister_signup_form'){
+    $path = drupal_get_path('module', 'pinserver');
+    drupal_add_css($path .'/pinserver.css', 'module', 'all', FALSE); 
+    
+    //add submit function
     $form['#submit'][] = 'pinserver_process_user_registration';
 
-    
     // _user_password_dynamic_validation();
-  unset($form['submit']['#attributes']);
+    unset($form['submit']['#attributes']);
     //place domain at bottom of form
-     $form['domain']['#weight'] = 20;
-          
-     //place domain at bottom of form
-     $form['mail']['#description'] =  t('A valid e-mail address is required. All e-mails from the Scholar Web Sites Project will be sent to this address.');
-    
+    $form['domain']['#weight'] = 10;
+
+    //change email field description
+    $form['mail']['#description'] =  t('A valid e-mail address is required. All e-mails from the Scholar Web Sites Project will be sent to this address.');
+
+    //add dynamic password validation
+    _user_password_dynamic_validation();
+
     // password field
     $form['password'] = array(
-    '#type' =>  'password', //'password_confirm', //
+    '#type' => 'password_confirm',
     '#size' => 35,
-    '#title' => t('Desired password'),
     '#required' => TRUE,
-    '#description' => t('Provide a password for your account.'),
-    '#prefix' => '<div id="password-field">',
-    '#suffix' => '<div id="password-suffix"></div></div>',
-   
+    '#description' => 'Create a password for your account.'
     );
   }
 }
@@ -261,42 +263,31 @@ function pinserver_mail_alter(&$message){
 }
 
 function pinserver_register_notify_message($vsite, $user){
- global $base_url;
- 
-   $scholar_site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
-  
-    $msg_variables = array(
-    // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
-    '!username' => $user->name,
-    '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
-    '!scholar_site_url' => $scholar_site_url,
-    //'!login_url' => url("user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
-    '!login_url' => user_pass_reset_url($user),
-    '!uri' => $base_url,
-    '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
-    '!mailto' => $user->mail,
-    '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
-    '!login_uri' => url('user', array(
-      'absolute' => TRUE,
-      'language' => $message['language']
-    )),
-    '!site_url' => url('node/' . $vsite->sid),
-    '!edit_uri' => url('user/' . $user->uid . '/edit', array(
-      'absolute' => TRUE,
-      'language' => $message['language']
-    )),
-    '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
-    '!password' => $password,
-    '!help_page' => $base_url . '/help/vsitehelp/Getting-Started',
+  global $base_url;
+
+  $scholar_site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
+
+  $msg_variables = array(
+  // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
+  '!username' => $user->name,
+  '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
+  '!scholar_site_url' => $scholar_site_url,
+  '!login_url' => user_pass_reset_url($user),
+  '!uri' => $base_url,
+  '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
+  '!mailto' => $user->mail,
+  '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
+  '!site_url' => url('node/' . $vsite->sid),
+  '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
+  '!help_getting_started' => $base_url . '/help/vsitehelp/Getting-Started',
+  '!help_features' => $base_url . '/help/vsitehelp/Features',
+  '!help_settings' => $base_url . '/help/vsitehelp/Site-Settings',
   );
 
-  $body = t("Hi !username,\n\nYour new web site at !site has been activated. Your web site url is !scholar_site_url \n
-  For help with getting started, go to: !help_page \nWe hope you will enjoy your new web site.\n\n Sincerely,\nThe !site Team", $msg_variables);  
+  $body = t("Hi !username,\n\nCongratulations, your new web site at !site has been activated! Your web site url is !scholar_site_url \nFor help with getting started, go to: !help_getting_started\n Your scholar web site comes with built-in features to allow you to post and manage a wide range of content. For more information regarding features, go to:  !help_features \nYou also have the ability to customizaize the look and layout of your site. The theme selector in the allows you to easily sselect a theme for your site. In addition you can further customize your theme by selecting a color scheme or \"flavor\". For more information regarding themes and other site settings, go to:  !help_settings \nWe hope you will enjoy your new web site.\nSincerely,\nThe !site Team", $msg_variables);  
 
   return $body;
 }
-
-
 
 /**
  * Unset the $_SESSION vars after the registration form is submitted
