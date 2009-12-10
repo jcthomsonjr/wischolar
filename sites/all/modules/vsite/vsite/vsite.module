@@ -332,12 +332,12 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
       if(array_key_exists('taxonomy',$form)){
       	if($n_affil_tag = variable_get('vsite_taxonomy_affiliation',false)){
           $form['taxonomy']['tags'][$n_affil_tag]['#title'] = "Sites Affiliation / Department";
-          $form['taxonomy']['tags'][$n_affil_tag]['#description'] = "Any affiliation that your site may have, for ex.(IQSS or 'Harvard Business School') ";
+          $form['taxonomy']['tags'][$n_affil_tag]['#description'] = "A comma-separated list of affiliation that your site may have, for ex.(IQSS or 'Harvard Business School') ";
       	}
         
       	if($n_interest_tag = variable_get('vsite_taxonomy_interests',false)){
           $form['taxonomy']['tags'][$n_interest_tag]['#title'] = "Related Interests";
-          $form['taxonomy']['tags'][$n_interest_tag]['#description'] = "Topics that may relate to the content of your site. ex.(statistics, casual inference)";
+          $form['taxonomy']['tags'][$n_interest_tag]['#description'] = "A comma-separated list of topics that may relate to the content of your site. ex.(statistics, casual inference)";
       	}
       }
       

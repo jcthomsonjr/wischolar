@@ -167,6 +167,8 @@ function _vsite_variables_default(){
  */
 function _vsite_object_create_taxonomys(){
   
+	install_include(array('taxonomy'));
+    
 	// Create the vsite tax for affiliation
   $vocab = array(
     'name' => 'Vsite Affiliation', 
@@ -184,6 +186,12 @@ function _vsite_object_create_taxonomys(){
   
   $vid = db_last_insert_id('vocabulary', 'vid');
   variable_set('vsite_taxonomy_affiliation', $vid);
+  
+  $a_terms = array ( array('name' => 'IQSS', 'description' => "The Institute for Quantitive Social Science at Harvard University", 'properties' => array('synonyms' => "Institute for Quantitive Social Science\nThe Institute for Quantitive Social Science\nThe Institute for Quantitive Social Science at Harvard University")), 
+                     array('name' => 'HBS', 'description' => "Harvard Business School", 'properties' => array('synonyms'=> "Harvard Business School\nBusiness School at Harvard University")) );
+                     
+  foreach($a_terms as $a_term) install_taxonomy_add_term($vid, $a_term['name'], $a_term['description'], $a_term['properties']);
+  
   
   // Create the vsite tax for intrests
   $vocab = array(
