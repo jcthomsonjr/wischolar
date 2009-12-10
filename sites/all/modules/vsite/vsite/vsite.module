@@ -29,8 +29,9 @@ function vsite_menu(){
 
 function vsite_vsiteboot(){
   $scholar_installed = variable_get('scholar_installed', 0);
-  module_load_include('inc', 'vsite', 'includes/vsiteboot');
+  
   if (! $scholar_installed) {
+  	module_load_include('inc', 'vsite', 'includes/vsiteboot');
     // from development seed code
     system_theme_data(); // Rebuild theme cache.
     _block_rehash(); // Rebuild block cache.
@@ -47,7 +48,6 @@ function vsite_vsiteboot(){
     _vsite_variables_default();
 
     variable_set('scholar_installed', 1);
-
   }
   
   // return nothing
@@ -328,6 +328,7 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
       $form['pre_fieldset'] = array('#value' => "<fieldset>", '#weight' => -1000);
       $form['post_fieldset'] = array('#value' => "</fieldset>", '#weight' => 1000);
       $form['field_vsite_logo']['#weight'] = 33;
+      
       _spaces_og_make_hidden($form['purl']);
       _spaces_og_make_hidden($form['attachments']);
       _spaces_og_make_hidden($form['menu']);

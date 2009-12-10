@@ -1,21 +1,6 @@
 <?php
 
 /**
- * Proccess pending updates on boot
- */
-function _vsite_proccess_updates(){
-	module_load_include('inc', 'vsite', 'includes/vsite_updates');
-
-	// Execute our defined updates.
-  $version = variable_get('vsite_version',6000);
-  $version++;//Check next version
-  while (function_exists('vsite_update_' . $version)) {
-    variable_set('vsite_version',$version);
-    call_user_func('vsite_update_' . $version++);
-  }
-}
-
-/**
  * Generates some sites and assign users to each 
  * site. 
  * Later during task 'generate-content' nodes are assigned 
@@ -191,7 +176,7 @@ function _vsite_object_create_taxonomys(){
     'relations' => 0, 
     'module' => 'taxonomy', 
     'weight' => 0, 
-    'nodes' => array('vsite'),  
+    'nodes' => array('vsite' => 1),  
     'tags' => TRUE,
     'help' => t('Vsite Affiliation taxonomy'),
   );
@@ -209,7 +194,7 @@ function _vsite_object_create_taxonomys(){
     'relations' => 0, 
     'module' => 'taxonomy', 
     'weight' => 0, 
-    'nodes' => array('vsite'),  
+    'nodes' => array('vsite' => 1),  
     'tags' => TRUE,
     'help' => t('Vsite Interests taxonomy'),
   );
