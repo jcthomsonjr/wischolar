@@ -46,6 +46,9 @@ function vsite_vsiteboot(){
     
     // set some default variables
     _vsite_variables_default();
+    
+    //Create Vsite Taxonomies
+    _vsite_object_create_taxonomys();
 
     variable_set('scholar_installed', 1);
   }
