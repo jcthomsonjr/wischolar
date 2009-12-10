@@ -14,9 +14,9 @@ function vsite_ga_settings_form(){
 
   $form['vsite_ga_cache'] = array(
   '#type' => 'checkbox',
-  '#title' => t('Cache the ga.js file Locally (Recommended)'),
-  '#default_value' => variable_get('vsite_ga_cache', 1),
-   '#description' => t('Cacheing the ga.js locally may improve overall page loading speeds')
+  '#title' => t('Cache the ga.js file locally'),
+  '#default_value' => variable_get('vsite_ga_cache', 0),
+   '#description' => t('Cacheing the ga.js locally will download the file.')
   );
   return system_settings_form($form);
 }
