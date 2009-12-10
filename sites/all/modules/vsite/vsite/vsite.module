@@ -328,6 +328,18 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
       $form['pre_fieldset'] = array('#value' => "<fieldset>", '#weight' => -1000);
       $form['post_fieldset'] = array('#value' => "</fieldset>", '#weight' => 1000);
       $form['field_vsite_logo']['#weight'] = 33;
+
+      if(array_key_exists('taxonomy',$form)){
+      	if($n_affil_tag = variable_get('vsite_taxonomy_affiliation',false)){
+          $form['taxonomy']['tags'][$n_affil_tag]['#title'] = "Sites Affiliation / Department";
+          $form['taxonomy']['tags'][$n_affil_tag]['#description'] = "Any affiliation that your site may have, for ex.(IQSS or 'Harvard Business School') ";
+      	}
+        
+      	if($n_interest_tag = variable_get('vsite_taxonomy_interests',false)){
+          $form['taxonomy']['tags'][$n_interest_tag]['#title'] = "Related Interests";
+          $form['taxonomy']['tags'][$n_interest_tag]['#description'] = "Topics that may relate to the content of your site. ex.(statistics, casual inference)";
+      	}
+      }
       
       _spaces_og_make_hidden($form['purl']);
       _spaces_og_make_hidden($form['attachments']);
