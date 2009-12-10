@@ -29,6 +29,7 @@ function vsite_menu(){
 
 function vsite_vsiteboot(){
   $scholar_installed = variable_get('scholar_installed', 0);
+  module_load_include('inc', 'vsite', 'includes/vsiteboot');
   if (! $scholar_installed) {
     // from development seed code
     system_theme_data(); // Rebuild theme cache.
@@ -36,8 +37,6 @@ function vsite_vsiteboot(){
     views_invalidate_cache(); // Rebuild the views.
     menu_rebuild(); // Rebuild the menu.
     features_rebuild(); // Features rebuild scripts.
-
-    module_load_include('inc', 'vsite', 'includes/vsiteboot');
 
     _scholar_testingcontent();
     _vsite_filefield_paths_config();
@@ -50,6 +49,9 @@ function vsite_vsiteboot(){
     variable_set('scholar_installed', 1);
 
   }
+  //Proccess Updates
+  _vsite_proccess_updates();
+  
   // return nothing
   drupal_set_title('Scholars\'s Web Sites Project');
   return '';
