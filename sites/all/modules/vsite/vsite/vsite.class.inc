@@ -97,4 +97,9 @@ class vsite extends space_og implements space {
     }//Is this feature a part of the site?
     return FALSE;
   }
+  
+  function router($op, $object = NULL, $is_active = TRUE){
+  	if(!is_object($this)) return; //Because there is a bug in spaces that calls this as a static function bug report submitted
+  	parent::router($op,$object,$is_active);
+  }
 }

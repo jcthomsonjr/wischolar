@@ -172,14 +172,14 @@ function _vsite_object_create_taxonomys(){
 	// Create the vsite tax for affiliation
   $vocab = array(
     'name' => 'Vsite Affiliation', 
-    'multiple' => 0, 
+    'multiple' => 1, 
     'required' => 0, 
     'hierarchy' => 0, 
     'relations' => 0, 
     'module' => 'taxonomy', 
     'weight' => 0, 
     'nodes' => array('vsite' => 1),  
-    'tags' => TRUE,
+    'tags' => false,
     'help' => t('Vsite Affiliation taxonomy'),
   );
   taxonomy_save_vocabulary($vocab);
