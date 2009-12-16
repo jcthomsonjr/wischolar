@@ -150,11 +150,17 @@ function scholarregister_validate_mail($mail) {
 }
 
 function scholarregister_validate_domain($domain){
+	$modifier = array(
+    'provider' => 'spaces_og',
+    'value' => $domain,
+    'id' => null,
+  );
+  
   if ($error = user_validate_name($domain)){  // the same validation as the username
     return $error;
   }
-  elseif (_scholarregister_domain_exists($domain) || _scholarregister_name_exists($domain)){
-    return "domain \"$domain\" is taken";
+  elseif (!purl_validate($modifier) || _scholarregister_name_exists($domain)){
+    return "domain \"$domain\" is taken or invalid";
   }
 }
 

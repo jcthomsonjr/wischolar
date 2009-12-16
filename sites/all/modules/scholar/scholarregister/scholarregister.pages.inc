@@ -56,7 +56,7 @@ function scholarregister_signup_form(){
       '#field_prefix' => $base_url . '/', 
       '#size' => 20, 
       '#default_value' => $form_values['name'], 
-      '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be at least four characters long, and comprise of alphanumeric characters only.', array(
+      '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be at least four characters long, may contain only lowercase letters, numbers, dashes and underscores.', array(
           '%site' => $base_url . '/jdoe' 
       )), 
       '#prefix' => '<div id="domain-field">', 
