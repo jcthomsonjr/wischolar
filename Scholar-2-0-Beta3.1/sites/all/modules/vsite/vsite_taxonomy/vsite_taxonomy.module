@@ -1,0 +1,533 @@
+<?php
+
+include_once('vsite_taxonomy.features.inc');
+
+/**
+ * hook menu
+ */
+function vsite_taxonomy_menu() {
+  $items = array ();
+  $items ['cp/content/taxonomy'] = array (
+  	'title' => 'Taxonomy',
+  	'page callback' => 'vsite_taxonomy_taxonomies',
+  	'access arguments' => array ('access content' ),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 100,
+  );
+
+  $items['categories/%/%'] = array(
+    //'title' => 'xxx',
+    'page callback' => 'vsite_taxonomy_content_by_category',
+    'page arguments' => array(1,2),
+    'access arguments' => array('access content'),
+  );
+
+  $items['vsite_taxonomy/term/delete/%/%'] = array (
+    'title' => 'deleting a term',
+    'page callback' => 'vsite_taxonomy_term_delete',
+    'page arguments' => array(3,4),
+    'access arguments' => array('access content')
+  );
+
+  $items['vsite_taxonomy/term/%/add'] = array (
+    'title' => 'deleting a term',
+    'page callback' => 'vsite_taxonomy_term_add',
+    'page arguments' => array(2,4),
+    'access arguments' => array('access content')
+  );
+
+  $items['vsite_taxonomy/term/%/%/rename'] = array (
+    'title' => 'deleting a term',
+    'page callback' => 'vsite_taxonomy_term_rename',
+    'page arguments' => array(2,3,5),
+    'access arguments' => array('access content')
+  );
+
+  $items['tt'] = array(
+    'title' => 'tt',
+    'page callback' => 'vsite_taxonomy_tt',
+    'access arguments' => array('access contnet'),
+  );
+  return $items;
+}
+
+function vsite_taxonomy_tt(){
+  $a = db_result(db_query("SELECT filealias  from {filefield_paths} WHERE type='class'"));
+ 
+ dpm(unserialize($a));
+  //dpm(vsite_taxonomy_vocabulary_default());
+//$feature = feature_load('scholar_blog');
+//dpm($feature);
+  return 'sss';
+}
+
+function vsite_taxonomy_content_by_category($term_name, $content_type){
+
+  $map = spaces_features_map($type = 'node');
+
+  context_set_by_condition('node', $content_type, TRUE);
+
+  $view = views_get_view('vsite_taxonomy_view');
+  $view->init();
+  $view->set_display('default');
+  $view->set_arguments(array(
+    $term_name,
+    $content_type
+  ));
+  
+  // pager 
+  $view -> pager['use_pager'] = 1;
+  
+  $view->execute();
+  drupal_set_title($term_name);
+  return $view->render();
+}
+
+/**
+ * hook block
+ */
+function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks[0]['info'] = t('Categories');
+      return $blocks;
+    case 'view':
+      switch ($delta) {
+        case 0:
+          $block = vsite_taxonomy_block_view();
+          break;
+      }
+
+      return $block;
+  }
+}
+
+/*
+function vsite_taxonomy_context_default_contexts_alter(&$contexts){
+  $contexts_map = spaces_features_map();
+
+  foreach($contexts_map['context'] as $context_name => $feature_name){
+    $contexts[$context_name]->block['vsite_taxonomy_0'] = array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      );
+  }
+}
+*/
+
+/**
+ * callback function for "Site categories" block
+ */
+function vsite_taxonomy_block_view(){
+  $vsite = vsite_get_vsite();
+  $block['subject'] = "Categories";
+  // menu and node associated with the active context (if any)
+  //$active_menus = context_active_values("menu");
+  $active_nodes = context_active_values("node");
+  if (count($active_nodes)) {
+    $node_type = reset($active_nodes);
+    //$active_menu = reset($active_menus);
+
+    // get the vocabulary for this group
+    $vcs = vsite_get_vocabs($vsite, $node_type);
+    if (count($vcs)) {
+      $v = reset($vcs);
+      $terms = taxonomy_get_tree($v->vid);
+      $items = array();
+      foreach ( $terms as $term ) {
+        $nr_nodes = taxonomy_term_count_nodes($term->tid, $node_type); // only terms for this content type
+        if ($nr_nodes) {
+          $href = 'categories/'. $term -> name . '/'. $node_type;
+          $item = vsite_taxonomy_term_item($term, $href, $admin, $node_type, TRUE);
+          $items[] = array(
+            'data' => $item,
+            'id' => 'vsite_taxonomy_item_' . $term->tid
+          );
+        }
+      }
+
+      if (! count($items)) {
+        return;
+      }
+      $terms_html = theme('item_list', $items, NULL, 'ul');
+      //$terms_html = vsite_taxonomy_terms($v, $node_type, $active_menu, $admin, $count = TRUE);
+    }
+
+    $block['content'] = $terms_html;
+  }
+
+  return $block;
+}
+
+/**
+ * callback function for cp/content/taxonomy
+ */
+function vsite_taxonomy_taxonomies(){
+  drupal_add_js(drupal_get_path('module', 'vsite_taxonomy') . '/theme/vsite_taxonomy.js');
+  drupal_add_css(drupal_get_path('module', 'vsite_taxonomy') . '/theme/vsite_taxonomy.css');
+  ctools_include('ajax');
+  ctools_add_js('ajax-responder');
+
+  $vsite = vsite_get_vsite();
+
+  // only vsite admins can see the admin links (delete, rename)
+  $admin = $vsite->admin_access();
+
+  vsite_include('vsiteapi');
+
+  $output = '';
+  $delta = 0;
+  $output = '<div class="pad" id="vsite-taxonomy-wrapper">';
+
+
+    $vocabs = vsite_get_vocabs($vsite, $type);
+    if (count($vocabs)) {
+      foreach ( $vocabs as $v ) {
+        $terms = taxonomy_get_tree($v->vid);
+
+        $items = array();
+        foreach ( $terms as $term ) {
+          $nr_nodes = taxonomy_term_count_nodes($term->tid);
+
+          //$href = $active_menu . '/' . strtr($term -> name, " ", '-');
+          $href = "taxonomy/term/" . $term -> tid;
+          $item = vsite_taxonomy_term_item($term, $href, $admin, FALSE, TRUE);
+          $items[] = array(
+            'data' => $item,
+            'id' => 'vsite_taxonomy_item_' . $term->tid
+          );
+
+        }
+
+        $content = theme('item_list', $items, NULL, 'ul', array('id' => 'vocabulary_'. $v -> vid ));
+
+        $content .= '<div class="addcategory">' .l('Add category', 'vsite_taxonomy/term/' . $v -> vid .'/add', array('attributes' => array('class' => 'add'))). '</div>';
+
+        $subject = 'Site categories';
+        $output .= theme('fieldset', array(
+          '#title' => $subject,
+          '#value' => $content
+        ));
+      }
+    }
+
+  $output .= '</div>';
+  return $output;
+}
+
+
+/**
+ * markup for one taxonomy term
+ */
+function vsite_taxonomy_term_item($term, $href, $admin = FALSE, $node_type = FALSE, $count = FALSE){
+
+  //$href = 'categories/statistics/class';
+  $term_link = l($term -> name, $href, array(
+    'title' => t($term -> description)
+  ));
+
+  $nr_nodes = $node_type ? taxonomy_term_count_nodes($term->tid, $node_type) : taxonomy_term_count_nodes($term->tid);
+  if ($count) {
+    $item = $term_link . '<span class = "count" > (' . $nr_nodes . ')</span>';
+  }
+
+  if ($admin) {
+    $admin_links = array();
+    $admin_links[] = array(
+      'title' => 'delete',
+      'href' => "vsite_taxonomy/term/delete/" . $term->vid . "/" . $term->tid,
+      'attributes' => array(
+        'class' => 'delete ctools-use-ajax'
+      )  // important for ajax to work
+    );
+
+    $admin_links[] = array(
+      'title' => 'edit',
+      'href' => 'vsite_taxonomy/term/' . $term->vid . "/" . $term->tid . '/rename/',
+      'attributes' => array(
+        'class' => 'edit'
+      )
+    );
+    //$admin_links[] = l('rename', , $options=array('attributes' => array('class' => 'admin')));
+    $item .= theme('links', $admin_links, $attributes = array(
+      'class' => 'admin'
+    ));
+  }
+  return $item;
+}
+
+
+function vsite_taxonomy_strongarm(){
+  $conf = array();
+  $conf['pathauto_taxonomy_pattern'] = "[space-og-path]/category/[catpath-raw]";
+
+  return $conf;
+}
+
+/**
+ * hook strongarm
+ */
+/*
+function vsite_taxonomy_strongarm(){
+  $conf = array();
+  $og_types = og_get_types('group_post');
+  foreach ( $og_types as $type ) {
+    if (count(taxonomy_get_vocabularies($type))) {
+      $vtabs = vertical_tabs_fieldsets($type);
+      if (! in_array('taxonomy', $vtabs)) {
+        $vtabs[] = 'taxonomy';
+        $conf['vertical_tabs_fieldsets_' . $type] = $vtabs;
+      }
+    }
+  }
+
+  return $conf;
+}
+*/
+
+/**
+ *  hook nodeapi
+ *  When a vsite is created, create the og_vocabs for each feature content type
+ */
+function vsite_taxonomy_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL){
+
+  if ($op == 'insert' && $node->type == variable_get('scholar_content_type', 'vsite')) {
+    // Features implement their own default taxonomies
+    $taxs = vsite_taxonomy_vocabulary_default();
+    $new_taxs = $taxs;
+    install_include(array(
+      'taxonomy'
+    ));
+    foreach ( $taxs as $yindex => $tax ) {
+      // make the vocab name unique
+      $new_taxs[$yindex]['name'] = $node->purl['value'] . '_' . $tax['name'];
+    }
+    // create vocabs
+    vsite_taxonomy_taxonomy_import($node->nid, $new_taxs);
+  }
+  elseif (in_array($node->type, og_get_types('group_post'))) {
+    // the global taxonomy is hidden (see form_alter below)
+    // let's give it the value of the group category of this node
+    switch ($op) {
+      case 'insert' :
+      case 'update' :
+        // what is the term of the group vocab for this node
+        //$v = reset(vsite_get_vocabs(NULL, $node->type));
+        /*
+        $v = vsite_get_vocabs(NULL, $node->type);
+        // globla tax
+        $gv = variable_get('scholar_global_taxonomy', 0);
+        if (! empty($v)) {
+          reset($v);
+          $vid = $v->vid;
+          if (isset($node->taxonomy[$vid])) {
+            $term = taxonomy_get_term($node->taxonomy[$vid]);
+            $terms = array();
+            $terms['tags'][$gv] = $term->name;
+            $node->taxonomy['tags'][$gv] = $term->name;
+            taxonomy_node_save($node, $node->taxonomy);
+          }
+        }
+        */
+        break;
+    }
+  }
+}
+
+
+/**
+ * hook form_alter
+ * Renames the vocabs label in the input form
+ */
+function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
+  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
+
+    $v = vsite_get_vocabs(NULL, $form['#node']->type);
+    $v = is_array($v) ? reset($v) : null;
+
+    $gv = variable_get('scholar_global_taxonomy', 0);
+    unset($form['taxonomy']['tags'][$gv]);
+
+    if (! empty($form['taxonomy']) && $v) {
+      $vid = $v->vid;
+      $form['taxonomy']['tags'][$vid]['#title'] = 'tags';
+      $form['taxonomy']['tags'][$vid]['#description'] = 'A comma-separated list of categories/tags describing this content.
+      Example: political science, data, causal inference . You can also control your categories in the '
+      . l('taxonomy section', 'cp/content/taxonomy'). ' of control pannel';
+    }
+  //vertical_tabs_add_vertical_tabs($form);
+  }
+
+  /*
+  if (module_exists('vertical_tabs') && function_exists('vertical_tabs_add_vertical_tabs')) {
+    vertical_tabs_add_vertical_tabs($form);
+  }
+  */
+
+}
+
+
+
+
+/*** Ajax callbacks ***/
+
+function vsite_taxonomy_term_rename($vid, $tid, $newterm = null) {
+  ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+
+  if (!$newterm){
+    $commands = array ();
+    ctools_ajax_render ( $commands ); // this function exits.
+  }
+  //dpm ( $newterm );
+  $table = 'term_data';
+  $record = new stdClass ( );
+  $record->name = $newterm;
+
+  $term = array ('name' => $newterm, 'vid' => $vid, 'tid' => $tid );
+
+  // if (drupal_rewrite_record($table, $record, 'tid')){
+  if (taxonomy_save_term ( $term )) {
+
+
+    $commands = array ();
+    $commands [] = ctools_ajax_command_replace ('#vsite_taxonomy_item_' . $tid . ' > a', $term['name'] );
+    ctools_ajax_render ( $commands ); // this function exits.
+  } else {
+    ctools_ajax_render_error($error = 'something wrong happened ...');
+  }
+
+}
+
+function vsite_taxonomy_term_add($vid, $newterm= null){
+  //dpm($newterm);
+  ctools_include ( 'ajax' );
+  ctools_add_js ( 'ajax-responder' );
+
+  if (!$newterm){
+    $commands = array ();
+    ctools_ajax_render ( $commands ); // this function exits.
+  }
+  //dpm ( $newterm );
+  $table = 'term_data';
+  $record = new stdClass ( );
+  $record->name = $newterm;
+
+  $a_term = array ('name' => $newterm, 'vid' => $vid);
+
+  // if (drupal_rewrite_record($table, $record, 'tid')){
+  if (taxonomy_save_term ( $a_term )) {
+    $term -> tid = $a_term['tid'];
+    $term -> name = $a_term['name'];
+
+    $commands = array ();
+    $href = "taxonomy/term/" . $term -> tid;
+    $t = vsite_taxonomy_term_item($term, $href, $admin = TRUE, FALSE,  $count = TRUE);
+    $t = '<li id="vsite_taxonomy_item_' . $term -> tid . '">' . $t . '</li>';
+    $commands [] = ctools_ajax_command_append ('#vocabulary_' . $vid, $t );
+    ctools_ajax_render ( $commands ); // this function exits.
+  } else {
+    ctools_ajax_render_error($error = 'something wrong happened ...');
+  }
+}
+
+function vsite_taxonomy_term_delete($vid,$tid){
+  if (taxonomy_del_term($tid)) {
+    ctools_include('ajax');
+    ctools_add_js('ajax-responder');
+    $commands = array();
+    $commands[] = ctools_ajax_command_replace('#vsite_taxonomy_item_' . $tid, '');
+    ctools_ajax_render($commands); // this function exits.
+  } else {
+    ctools_ajax_render_error($error = 'something wrong happened ...');
+  }
+}
+
+function vsite_taxonomy_vocabulary_default(){
+  $types = array();
+  $content_types = og_get_types('group_post');
+  foreach($content_types as $type){
+    $types[$type] = 1;
+  }
+
+  drupal_alter('vsite_taxonomy_content_types', $types);
+
+  return array (
+    0 => array (
+    'name' => 'vocabulary',
+    'content_types' => $types,
+    'properties' => array ('tags' => 1),
+    'terms' => array (
+      0 => array (
+    	'name' => 'Statistics',
+    	'desription' => 'Statistics',
+    	'properties' => array ()
+      ),
+      1 => array (
+    	'name' => 'Political Economy',
+    	'desription' => 'Political Economy',
+    	'properties' => array ()
+      ),
+      2 => array (
+    	'name' => 'Data',
+    	'desription' => 'Data',
+    	'properties' => array ()
+      ),
+      3 => array (
+    	'name' => 'Economics',
+    	'desription' => 'Economics',
+    	'properties' => array ()
+      ),
+      4 => array (
+    	'name' => 'Goverment',
+    	'desription' => 'Economics',
+    	'properties' => array ()
+      )
+    )
+  )
+ );
+
+}
+
+/** API functions **/
+
+/**
+ * Creates a series of taxonomy vocabularies and terms from the passed
+ * definition.
+ *
+ * Sample Definition:
+ *   array(
+ *   0 => array(
+ *     'name' => 'vocab name',
+ *     'content_types' => array(),
+ *     'properties' => array(),
+ *     'terms' => array(
+ *       0 => array(
+ *         'name' => 'Term Name',
+ *         'desription' => '',
+ *         'properties' => array(),
+ *       )
+ *     ),
+ *   ),
+ * );
+ *
+ * NOTE: This function does not currently do any error or duplicate checking.
+ *
+ * @param $definition
+ *   Definintion of the taxonomy structure.
+ */
+function vsite_taxonomy_taxonomy_import($gid, $definition) {
+  foreach ($definition as $vocab_index => $vocab_definition) {
+    $vid = install_taxonomy_add_vocabulary($vocab_definition['name'], $vocab_definition['content_types'], $vocab_definition['properties']);
+    // make this a group taxonomy
+    og_vocab_write_record($gid, $vid);
+    foreach ($vocab_definition['terms'] as $term_index => $term_definition) {
+      install_taxonomy_add_term($vid, $term_definition['name'], $term_definition['description'], $term_definition['properties']);
+    }
+  }
+}

@@ -1,0 +1,111 @@
+<?php
+
+include_once('scholar_classes.features.inc');
+
+function scholar_classes_scholar_vocabulary_defaults() {
+  return array (
+    0 => array (
+    'name' => 'class_categories',
+    'content_types' => array ('class' => 1),
+    'properties' => array (),
+    'terms' => array (
+      0 => array (
+    	'name' => 'Statistics',
+    	'desription' => 'Statistics',
+    	'properties' => array ()
+      ),
+      1 => array (
+    	'name' => 'Political Economy',
+    	'desription' => 'Political Economy',
+    	'properties' => array ()
+      ),
+    )
+  )
+ );
+}
+
+/**
+ * hook link_alter (admin at the end of links)
+ */
+function scholar_classes_link_alter(&$links, $node){
+  if(!isset($links['class_material_field_class'])) return;
+  
+  $old = $links['class_material_field_class'];
+  $old['attributes']['class'] = 'context-button';
+  
+  $links['class_material_field_class'] = array(
+    'title' => theme('context_links', array($old)),
+    'html' => TRUE
+  );
+}
+
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function scholar_classes_vsite_content_types_alter(&$content_types){
+  unset($content_types['class_material']);
+}
+
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_classes_context_links_alter(&$links) {
+  if (!empty($links['class'])) {
+    //$links['class']['query'] = drupal_get_destination();
+  }
+  
+  if (!empty($links['class_material'])) {
+    unset($links['class_material']);
+  }
+}
+
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function scholar_classes_strongarm() {
+
+  // class 
+   
+  $conf['node_options_class'] = array('status', 'revision');
+  $conf['upload_class'] = TRUE;
+ 
+  // Comments
+  $conf['comment_class'] = COMMENT_NODE_DISABLED;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_class'] = array('enabled' => FALSE);
+ 
+  // Disable preview button
+  $conf["show_preview_changes_class"] = FALSE;
+  $conf["show_diff_inline_class"] = TRUE;
+ 
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_class_pattern"] = "[space-og-path]/classes/[title-raw]";
+ 
+  
+  // class meterial 
+  $conf['node_options_class_material'] = array('status', 'revision');
+  $conf['upload_class_material'] = TRUE;
+ 
+  // Comments
+  $conf['comment_class_material'] = COMMENT_NODE_DISABLED;
+ 
+  // FeedAPI
+  $conf['feedapi_settings_class_material'] = array('enabled' => FALSE);
+ 
+  // Disable Diff button
+  $conf["show_preview_changes_class_material"] = FALSE;
+  $conf["show_diff_inline_class_material"] = TRUE;
+ 
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_class_material_pattern"] = "[space-og-path]/classes/[field_class-path]/materials/[title-raw]"; 
+  
+  return $conf;
+}
+
+
