@@ -1,5 +1,5 @@
 <?php
-// $Id: biblio.keywords.inc,v 1.6.2.12 2009/07/29 18:11:33 rjerome Exp $
+// $Id: biblio.keywords.inc,v 1.6.2.13 2009/11/09 21:29:02 rjerome Exp $
 /**
  *   biblio.module for Drupal
  *
@@ -58,8 +58,32 @@ function biblio_get_keyword_by_id($kid) {
 }
 
 /**
- * @param $node
+ * @param unknown_type $node
  * @return unknown_type
+ */
+function biblio_delete_keywords($node) {
+  db_query('DELETE FROM {biblio_keyword} WHERE nid = %d', $node->nid);
+  biblio_delete_orphan_keywords();
+}
+
+function biblio_update_keywords($node) {
+  biblio_save_keywords($node, TRUE);
+  biblio_delete_orphan_keywords();
+}
+
+function biblio_delete_orphan_keywords () {
+  if (variable_get('biblio_auto_orphaned_keyword_delete', 0)) {
+    db_query('DELETE FROM {biblio_keyword_data} WHERE kid NOT IN (SELECT DISTINCT(kid) FROM {biblio_keyword})');
+  }
+}
+
+/**
+ * Load keywords from the database
+ *
+ * @param $vid
+ *   node version id of the keywords to load
+ * @return
+ *   an array of keywords keyed on the keyword id
  */
 function biblio_load_keywords($vid) {
 

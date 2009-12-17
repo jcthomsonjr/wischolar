@@ -1,5 +1,5 @@
 <?php
-// $Id: biblio.admin.inc,v 1.9.2.80 2009/09/30 15:48:25 rjerome Exp $
+// $Id: biblio.admin.inc,v 1.9.2.85 2009/12/15 14:56:09 rjerome Exp $
 /**
  *   biblio.admin.inc
  *
@@ -33,7 +33,7 @@ function biblio_admin_ahah($form, $element, $value) {
 * Implementation of hook_settings().
 */
 function biblio_admin_settings() {
-  $version = '$Revision: 1.9.2.80 $ $Date: 2009/09/30 15:48:25 $';
+  $version = '$Revision: 1.9.2.85 $ $Date: 2009/12/15 14:56:09 $';
   $version = str_replace('$', '', $version);
   $form['biblio_rev'] = array(
     '#value' => $version,
@@ -613,6 +613,18 @@ function biblio_admin_types_edit_form() {
     '#type' => 'markup',
     '#value' => $msg
   );
+  $form['options'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Options'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE
+  );
+  $form['options']['hide_other_fields'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide "Other Biblio Fields" fieldset'),
+    '#description' => t('Fields set as "Common" on this page or "Visible" on one of the Type specific edit pages are normally moved to the "Other Biblio Fields" fieldset, selecting this check box will hide that fieldset completely'),
+    '#default_value' => variable_get('biblio_hide_other_fields', 0),
+  );
   // get author types
   $result = db_query("SELECT * FROM {biblio_contributor_type_data} b");
   $contrib_options = array();
@@ -760,6 +772,7 @@ function biblio_admin_types_edit_form_submit($form, & $form_state) {
       drupal_write_record('biblio_contributor_type', $link);
     }
   }
+  variable_set('biblio_hide_other_fields', $form_state['values']['hide_other_fields']);
   // save other field data
   foreach ($form_state['values']['configured_flds'] as $fid => $values) {
     $update = FALSE;
@@ -824,6 +837,9 @@ function biblio_admin_types_edit_form_submit($form, & $form_state) {
 
   // Clear the cached pages and menus:
   menu_rebuild();
+
+  // Refresh translatable field strings.
+  biblio_locale_refresh_fields($tid);
 }
 
 function biblio_admin_type_mapper_page() {
@@ -1043,6 +1059,9 @@ function biblio_admin_types_add_form_submit($form, & $form_state) {
       );
     drupal_write_record('biblio_contributor_type', $ct_vals);
   }
+
+  // Refresh publication type string for translation.
+  biblio_locale_refresh_types($values['tid']);
 
   drupal_goto('admin/settings/biblio/fields/type');
 }
@@ -1286,7 +1305,7 @@ function biblio_admin_author_types_form($form_state, $op = NULL, $id = NULL) {
         '#title' => t('Type Name'),
         '#size' => 20,
         '#weight' => 1,
-        '#default_value' =>$type->title,
+        '#default_value' => ($op == 'new' ? '' : $type->title),
         '#required' => TRUE,
         '#maxlength' => 64
       );
@@ -1295,7 +1314,7 @@ function biblio_admin_author_types_form($form_state, $op = NULL, $id = NULL) {
         '#title' => t('Description'),
     		'#size' => 60,
     		'#weight' => 2,
-    		'#default_value' => $type->hint,
+    		'#default_value' => ($op == 'new' ? '' : $type->hint),
     		'#maxlength' => 255
       );
       $form['type_button'] = array(
@@ -1337,7 +1356,7 @@ function theme_biblio_admin_author_types_form($form) {
     t('Description'),
     array('data' => t('Operations'),'colspan' => '2')
   );
-  $output .= '<p>[ '. l(t('Add New Type'), 'admin/settings/biblio/author/type/new') .' ]';
+  $output = '<p>[ '. l(t('Add New Type'), 'admin/settings/biblio/author/type/new') .' ]';
   $output .= theme('table', $header, $rows);
   $output .= '<p>[ '. l(t('Add New Type'), 'admin/settings/biblio/author/type/new') .' ]';
  // $output .= ' [ '. l(t('Reset all types to defaults'), 'admin/settings/biblio/authors/reset') .' ]';
@@ -1389,6 +1408,7 @@ function biblio_admin_author_type_delete_confirm_submit($form, &$form_state) {
 }
 
 function biblio_admin_author_edit_form($form_state, $author_id) {
+  $merge_options = $linked = array();
   $author = db_fetch_object(db_query('SELECT * FROM {biblio_contributor_data} b WHERE b.cid = %d ', $author_id));
   if (!$author) {
     drupal_not_found();
@@ -1425,6 +1445,14 @@ function biblio_admin_author_edit_form($form_state, $author_id) {
     '#weight' => 1,
     '#required' => TRUE,
     '#maxlength' => 128
+  );
+  $form['no_format'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Do not reformat'),
+    '#default_value' => 0,
+    '#weight' => 1.5,
+    '#required' => false,
+    '#description' => t('Selecting this will prevent the styles from trying to reformat the contributor name.  The text in the "Complete Name" field will be used as is.')
   );
   $form['prefix'] = array(
     '#type' => 'textfield',
@@ -1569,13 +1597,13 @@ function biblio_admin_author_edit_form_submit($form, &$form_state) {
     $uid = $form_state['values']['drupal_uid'];
     $cid = $form_state['values']['cid'] ;
   }
-
   db_query("UPDATE {biblio_contributor_data} SET drupal_uid = 0 WHERE drupal_uid = %d", $uid);
-  $data = unserialize(db_result(db_query('SELECT data FROM {users} WHERE uid = %d', $uid)));
-  $data['biblio_contributor_id'] = $cid;
-  $v[] = serialize($data);
-  db_query("UPDATE {users} SET data = '%s' WHERE uid = %d", array_merge($v, array($uid)));
-
+  if ($uid){
+    $data = unserialize(db_result(db_query('SELECT data FROM {users} WHERE uid = %d', $uid)));
+    $data['biblio_contributor_id'] = $cid;
+    $v[] = serialize($data);
+    db_query("UPDATE {users} SET data = '%s' WHERE uid = %d", array_merge($v, array($uid)));
+  }
   drupal_write_record('biblio_contributor_data', $form_state['values'], 'cid');
   // merge authors
   if (isset($form_state['values']['merge_authors']) && $op == t('Merge')) {

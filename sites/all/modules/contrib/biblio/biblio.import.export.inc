@@ -1,6 +1,6 @@
 <?PHP
 
-// $Id: biblio.import.export.inc,v 1.7.2.68 2009/09/29 01:34:42 rjerome Exp $
+// $Id: biblio.import.export.inc,v 1.7.2.70 2009/10/09 20:19:12 rjerome Exp $
 /**
  * @file
  * Functions that are used to import and export biblio data.
@@ -71,7 +71,7 @@ function biblio_import_form() {
       '#title' => t('File Type'),
       '#default_value' => 0,
       '#options' => array (
-        0     => t('Select type'),
+        'none'   => t('Select type'),
         'bib'    => t('BibTex'),
         'tagged' => t('EndNote Tagged'),
         'xml'    => t('EndNote 7 XML (and previous versions)'),
@@ -148,24 +148,24 @@ function biblio_import_form_validate($form, & $form_state) {
   $filetype = $form_state['values']['filetype'];
   if ($error = $_FILES['files']['error']['biblio_import_file']) {
     switch ($error){
-      case 1: form_set_error('', t("The uploaded file exceeds the upload_max_filesize directive in php.ini."));
+      case 1: form_set_error('biblio_import_form', t("The uploaded file exceeds the upload_max_filesize directive in php.ini."));
       break;
-      case 2: form_set_error('', t("The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form."));
+      case 2: form_set_error('biblio_import_form', t("The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form."));
       break;
-      case 3: form_set_error('', t("The uploaded file was only partially uploaded."));
+      case 3: form_set_error('biblio_import_form', t("The uploaded file was only partially uploaded."));
       break;
-      case 4: form_set_error('', t("No file was uploaded."));
+      case 4: form_set_error('biblio_import_form', t("No file was uploaded."));
       break;
-      case 6: form_set_error('', t("Missing a temporary folder."));
+      case 6: form_set_error('biblio_import_form', t("Missing a temporary folder."));
       break;
-      case 7: form_set_error('', t("Failed to write file to disk."));
+      case 7: form_set_error('biblio_import_form', t("Failed to write file to disk."));
       break;
-      case 8: form_set_error('', t("File upload stopped by extension."));
+      case 8: form_set_error('biblio_import_form', t("File upload stopped by extension."));
     }
   }
 
-  if ($op == t('Import') && $filetype === 0) {
-    form_set_error('', t("You must select a file type"));
+  if ($op == t('Import') && $filetype == "none") {
+    form_set_error('biblio_import_form', t("Error: You must select a file type"));
   }
 }
 /**
@@ -178,7 +178,7 @@ function biblio_import_form_submit($form, & $form_state) {
     if ($import_file = file_save_upload('biblio_import_file')) {
       if($form_state['values']['batch_process'] == 1) $batch_proc = 1;  // we will use batch import for larger files.
 
-      drupal_set_message(t("@file was uploaded", array ('@file' => $import_file->filename)), 'status');
+      drupal_set_message(t("The file <i><b>@file</b></i> was successfully uploaded.", array ('@file' => $import_file->filename)), 'status');
       // Concatenate all the terms of the different vocabularies
       // in a single array to be sent to biblio_import
       $terms = array ();
@@ -238,6 +238,7 @@ function biblio_import_batch_operations($session_id, $userid, $terms, &$context)
     $context['results']['terms'] = $terms;
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['current_id'] = 0;
+    $context['results']['nids'] = array();
     $context['sandbox']['max'] = db_result(db_query("SELECT COUNT(DISTINCT(id)) FROM {biblio_import_cache} WHERE session_id = '%s'", $session_id));
   }
 
@@ -258,13 +259,15 @@ function biblio_import_batch_operations($session_id, $userid, $terms, &$context)
   }
 }
 function biblio_import_batch_finished($success, $results, $operations) {
-  if ($success) {
+  if ($success && count($results['nids'])) {
     $message = format_plural(count($results['nids']), 'One node saved.', '@count nodes saved.');
+    $type = 'status';
   }
   else {
-    $message = t('Import finished with an error.');
+    $message = t('Import finished with an error!  '). format_plural(count($results['nids']), 'One node saved.', '@count nodes saved.');
+    $type = 'error';
   }
-  drupal_set_message($message);
+  drupal_set_message($message, $type);
   foreach ($results['nids'] as $node_id) {
     if (count($results['terms'])) module_invoke('taxonomy', 'node_save', $node_id, $results['terms']);
     db_query('UPDATE {node} SET uid = %d WHERE nid = %d', $results['userid'], $node_id);
@@ -373,6 +376,7 @@ function biblio_import($import_file, $type, $userid = 1, $terms = NULL, $batch =
     if (count($node_ids)) {
       db_query('UPDATE {node} SET uid = %d WHERE nid IN(%s)', $userid, implode(',', $node_ids));
       db_query('UPDATE {node_revisions} SET uid = %d WHERE nid IN(%s)', $userid, implode(',', $node_ids));
+      drupal_set_message(t("<i><b>%count</b></i> nodes were successfully imported.", array('%count' => count($node_ids))), 'status');
     }
 
     return $node_ids;
@@ -440,7 +444,7 @@ function biblio_export($format = "tagged", $nid = null, $popup = false, $version
           drupal_set_header('Content-type: application/xml; charset=utf-8');
           drupal_set_header('Content-Disposition: attachment; filename="Biblio-EndNote'. $version .'.xml"');
           print _endnote8_XML_export('', 'begin');
-        }    
+        }
         print _endnote8_XML_export($node);
         break;
       case "bibtex" :
@@ -462,7 +466,7 @@ function biblio_export($format = "tagged", $nid = null, $popup = false, $version
         break;
     }
   }
-  
+
   if ($format == 'xml' && $count > 0) print _endnote8_XML_export('', 'end');
   if ($popup && !empty($popup_data)) return '<pre>' . $popup_data . '</pre>';
 
