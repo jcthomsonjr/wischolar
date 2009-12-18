@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Implementation of hook_schema().
+ */
+function pinserver_schema(){
+  $schema['pinserver'] = array(
+  'description' => t('Maps unique encrypted HUID identifier to Drupal User ID'),
+  'fields' => array(
+    'uid' => array(
+    'description' => t('Drupal user ID'),
+    'type' => 'int',
+    'length' => 10,
+    'not null' => TRUE,
+    'default' => 0,
+    ),
+    'hash' => array(
+    'description' => t("Holds the hashed Harvard ID of returning users"),
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+    ),
+    'reg_time' => array(
+    'description' => t("The time of user regsitration"),
+    'type' => 'int',
+    'length' => 11,
+    ),
+  ),
+   
+  'unique keys' => array(
+   'hash' =>array('hash'),
+   ),
+  'primary key' => array( 'uid') ,  
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function pinserver_install(){
+ drupal_install_schema('pinserver');
+ //set module weight
+ db_query("UPDATE {system} SET weight = %d WHERE name = '%s'", 'pinserver', 80);
+ cache_clear_all('strongarm', 'cache');
+}  
+
+/**
+* Implementation of hook_uninstall()
+*/
+function pinserver_uninstall() {
+  //drop pinserver table
+  drupal_uninstall_schema('pinserver');
+
+  //remove pinserver system variables
+  variable_del('pinserver_pin_url');
+  variable_del('pinserver_app_name');
+  variable_del('pinserver_gpg_dir');
+  variable_del('pinserver_registration_path');
+  variable_del('pinserver_support_contact');
+  variable_del('pinserver_enable_logging');
+  variable_del('pinserver_error_log');
+}

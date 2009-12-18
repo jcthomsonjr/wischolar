@@ -1,0 +1,687 @@
+<?php  
+
+/**
+ * @file 
+ * This is an authentication module to allow Drupal users to authenticate via the Harvard Univeristy PIN server
+ */ 
+
+/**
+ * These are module constants - Please do not modify these
+ */
+define(PIN_URL, variable_get('pinserver_pin_url',''));  // url to pin server
+define(PIN_REGISTRATION_PATH, variable_get('pinserver_registration_path', 'user/register'));
+define(PIN_ERROR_LOG, variable_get('pinserver_error_log',''));  // file to save errors for development sites
+define(PIN_SUPPORT_CONTACT, variable_get('pinserver_support_contact',''));  // who to contact if visitor encounters problems ith authentication
+define(PIN_AUTH_STR, variable_get('pinserver_auth_str', '')); //String to check whether using just PIN or PIN with AuthzProxy
+define(PIN_APP_NAME, variable_get('pinserver_app_name','')); //application name given by directory services
+define(PIN_IP_VAL, variable_get('pinserver_ip_validation',0)); //Validate IP address or not. Defaults to yes. 
+define(GPG_DIR, variable_get('pinserver_gpg_dir','')); //path to gpg directory to verify detached signature
+define(GPG_BIN, variable_get('pinserver_gpg_bin','/usr/bin/gpg')); //absolute path to gpg binary
+define(REG_TIME_EXP, 1200); //expiration time for user registration. (Primarily used in hook_cron to clean up pinserver table)
+
+//global registration message 
+$pin_scholar_reg_msg = '';
+
+/**
+ * Implementation of hook_menu(). 
+ */ 
+function pinserver_menu() {
+  $path = drupal_get_path('module', 'pinserver');
+  $items = array();
+
+  $items['pinserver/auth'] = array(
+    'type' => MENU_CALLBACK,
+    'page callback' => 'pinserver_check_user',
+    'access callback' => TRUE,
+  );
+  
+  $items['pinserver/error'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => t('Authentication Error'),
+    'page callback' => 'pinserver_error',
+    'access callback' => TRUE,
+  );
+    
+  $items['admin/user/pinserver'] = array(
+    'title' => t('Pinserver settings'),
+    'description' => t('Modify Harvard Pinserver configuration, access, and logging'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 0,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('pinserver_config'),
+    'access arguments' =>  array('administer pinserver'),
+   'file' => 'pinserver.admin.inc',
+    'file path' => $path,
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_perm
+ *
+ * @return array - permissions set for the pinserver module
+ */
+function pinserver_perm(){
+  return array('administer pinserver', 'pinserver login link');
+}
+
+/**
+ * redirect user to PIN login url  
+ */ 
+function pinserver_redirect() {
+  $pin_redirect = PIN_URL.'?__authen_application='.PIN_APP_NAME;
+  drupal_goto($pin_redirect);
+}
+
+/*
+ * implementation of hook_theme()
+ */
+function pinserver_theme() {
+  return array(
+  'pinserver_token_error' => array(
+  'arguments' => array('values' => NULL)
+  ),
+  );
+}
+
+
+/**
+ * Checks if user has authenticated through the pinserver
+ * before rendering the signup form
+ */
+function pinserver_process_signup_form(){
+  /*print($_SESSION['reg_time'] . ' - ');
+  print($_SESSION['hash_huid']);die;*/
+  $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';
+  include_once($inc_file);
+
+
+
+  if (pinserver_process_access_registration()){
+    //see if the uid exists in pinvserver table, if so then user already has a vsite
+    $uid = _pinserver_check_row();
+    //send the user somehwere, either to the registration form or to project home page
+    return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  drupal_get_form('scholarregister_signup_form');
+  }
+  else{
+    //otherwise the user still needs to authenticate thorugh the pin server
+    pinserver_redirect();
+  }
+}
+
+
+function pinserver_vsite_exists($uid){
+  //remove the session vars
+  _pinserver_process_remove_session();
+  $message = pinserver_vsite_exists_message($uid);
+  drupal_set_message(t("$message"));
+  drupal_goto();
+}
+
+function pinserver_vsite_exists_message($uid){
+  global $base_url;
+
+  if (module_exists('og') && module_exists('spaces')){
+    $sid = db_result(db_query("SELECT nid FROM {og_uid} WHERE is_admin = %d and uid = %d", 1, (int)$uid));
+    $vsite = spaces_load('og', $sid);    
+    //get the vsite url, check if custom domain has been set
+    $url = isset($vsite->settings['generic']['vsite_domain']) ? 'http://' . $vsite->settings['generic']['vsite_domain'] : $base_url . '/' . $vsite->purl;    
+    $message = 'You already have a registered web site.';
+    $message .=  l(' Go there now.', $url); 
+    return $message;
+  }
+}
+
+/**
+ * Checks if user can access registration form by checking $_SESSION values
+ * The $_SESSION values are only set when a user succesfully 
+ * @return unknown
+ */
+function pinserver_process_access_registration(){  
+  global $user;
+  
+  //allow admin to access the form
+  if ($user->uid == '1'){
+    return true; // for testing purposes
+  }  
+  if (isset($_SESSION['reg_time']) && isset($_SESSION['hash_huid'])){
+    return $reg_time =  ((time() - (int)$_SESSION['reg_time']) < 120) ? true : false;
+  }
+  return false;
+}
+
+function pinserver_check_system_settings(){  
+  
+  $settings = array(
+  'PIN_URL' => PIN_URL,
+  'PIN_REGISTRATION_PATH' =>  PIN_REGISTRATION_PATH,
+  'PIN_AUTH_STR' => PIN_AUTH_STR,
+  'GPG_DIR' => GPG_DIR,
+  'GPG_BIN' => GPG_BIN,
+  );
+
+  $info = array(
+  'value' => true,
+  'message' => '',
+  );
+  
+  //check to see if all settings are set
+  foreach ($settings as $key => $setting){
+    if (empty($setting)){
+      $missing_settings[] = strtolower($key);      
+    }    
+  }
+  if (count($missing_settings)){
+    $message = 'ALERT: scholar pinserver is missing system settings: ';
+    foreach($missing_settings as $setting){
+      $message .= $setting . ' ';
+    }
+    $info['value'] = false;
+    $info['message'] = $message . '. ';
+  }
+
+  if (!is_dir(GPG_DIR)){
+    $message = 'The system path for gpg_dir directory is invalid or does not exist.';
+    $info['value'] = false;
+    $info['message'] .= $message;
+  }
+ 
+  return $info;
+}
+
+/**
+ * Implementation of hook_form_alter()
+ */
+function pinserver_form_alter(&$form, $form_state, $form_id){ //dpm($form);
+  //add the submit function for pinserver
+  if ($form_id == 'user_register'){
+    
+    $path = drupal_get_path('module', 'pinserver');
+    drupal_add_css($path .'/pinserver.css', 'module', 'all', FALSE); 
+    
+    //add submit function
+    $form['#submit'][] = 'pinserver_process_user_registration';
+    
+          global $base_url;
+  // domain name
+  $form['domain'] = array(
+      '#type' => 'textfield', 
+      '#title' => t('Your Domain Name'), 
+      '#required' => TRUE, 
+      '#field_prefix' => $base_url . '/', 
+      '#size' => 20, 
+      '#weight' => 10,
+      '#default_value' => $form_values['name'], 
+      '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be at least four characters long, and comprise of alphanumeric characters only.', array(
+          '%site' => $base_url . '/jdoe' 
+      )), 
+  );    
+ 
+    $form['#validate'][] = 'scholar_register_signup_form_validate';
+    $form['#submit'][] = 'scholar_register_signup_form_submit';
+
+    // _user_password_dynamic_validation();
+   // unset($form['submit']['#attributes']);
+    //place domain at bottom of form
+    $form['domain']['#weight'] = 10;    
+    }
+}
+
+
+/**
+ * Unset the $_SESSION vars after the registration form is submitted
+ */
+function pinserver_process_user_registration($form, &$form_state){ 
+
+   //  try to log user in
+  global $user;
+
+  //this case is unlikely
+    if(!$user || $user ->uid == '0'){
+    //new user and vsite should have already been created, check to make sure the user information is present
+    // if (!isset($form_state['new_user'] ->uid) || $form_state['new_user'] ->uid == '0'){
+    error_log("WARNING: The pinserver module could not insert the new user information into the database because
+  the user information was not supplied.");
+    return;
+  }
+  
+  else{
+    $vsite = scholar_register_siteowner_path($user);    
+    _pinserver_add_row($user->uid);
+    _pinserver_process_remove_session();
+
+      //redirect user to vsite home
+      drupal_goto($vsite -> purl . '/home');
+  }
+}
+
+function _pinserver_process_remove_session(){
+  //removing session values when new site is created
+  if (isset($_SESSION['hash_huid'])){  
+    unset ($_SESSION['hash_huid']);
+  }
+  if (isset($_SESSION['reg_time'])){
+    unset ($_SESSION['reg_time']);
+  }  
+}
+
+/**
+ * Implementation of hook_user()
+ */
+function pinserver_user($op, &$edit, &$account, $category = NULL){
+  global $user;
+  
+  switch($op){
+    case 'login': 
+        
+       
+      break;
+    case 'delete':
+      $sql_delete = db_query("DELETE FROM {pinserver} WHERE uid = %d", (int)$account->uid);
+      break;
+      
+    case 'register':
+      //first make sure pinserver settings are saved  path to .gnupg directory exists
+      $settings_info = pinserver_check_system_settings();
+      
+      switch ($settings_info['value']){
+        case true;
+        //proceed;
+        break;
+        
+        case false:
+          error_log($settings_info['message']);
+          $support_mail = strlen(PIN_SUPPORT_CONTACT) ?  PIN_SUPPORT_CONTACT :  'scholar_dev@help.hmdc.harvard.edu';
+          drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail)));
+          drupal_goto();
+          break;
+      }
+
+      if (pinserver_process_access_registration()){
+        //see if the uid exists in pinvserver table, if so then user already has a vsite
+        $uid = _pinserver_check_row();
+        //send the user somehwere, either to the registration form or to project home page
+        return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  '';
+      }
+      else{
+        //otherwise the user still needs to authenticate thorugh the pin server
+        pinserver_redirect();
+      }
+      break;
+  }
+}
+
+/**
+ * Function to write record to pinserver table
+ * @param unknown_type $uid
+ */
+function _pinserver_add_row($uid){
+  $object = new stdClass();
+  $object->uid = (int)$uid;
+  $object->hash = $_SESSION['hash_huid'];
+  $object->reg_time = time();
+  drupal_write_record('pinserver', $object);
+}
+
+/**
+ * Function to check if user exists in pinserver table and returns uid
+ * @param unknown_type $uid
+ * @return user id
+ */
+function _pinserver_check_row(){
+ return db_result(db_query("SELECT uid FROM {pinserver} WHERE hash = '%s'", $_SESSION['hash_huid'] ));
+}
+
+/**
+ * pinserver_check_user()
+ */
+function pinserver_check_user(){
+
+  // First, parse and validate the PIN token.
+  $token_data = pinserver_check_token();
+ 
+  // If any errors are returned, redirect to an error page.
+  if (is_array($token_data) && count($token_data['errors']) > 0) {
+    $errors = implode(',', array_unique($token_data['errors']));
+    drupal_goto("pinserver/error/token/$errors");
+    exit();
+  }
+  //if successful pin authentication, place the encrypted harvard uid into a session array
+  $_SESSION['hash_huid'] = $token_data['user_id'];
+  //add time value to session array
+  $_SESSION['reg_time'] = time();
+  //redirect user to landing page that was set in pinserver configuration page
+  drupal_goto(PIN_REGISTRATION_PATH);
+}
+ 
+/**
+ * This function prepares the unencrypted PIN v1 token for authentication.
+ * @return authentication parameters and signature in a single array. 
+ */  
+function _pinserver_prepare_pin_v1_token() {
+  $values = array();
+
+  // Collect URL parameters
+  $app = $_GET['__authen_application'];
+  $user_id = $_GET['__authen_huid'];
+  $proxy_id = "";
+  $ip = $_GET['__authen_ip'];
+  $time = $_GET['__authen_time'];
+  $pgp_signature = $_GET['__authen_pgp_signature'];
+  $pgp_version = $_GET['__authen_pgp_version'];      
+
+  // Construct the auth token from the returned URL arguments from PIN server.
+  $values['token'] = $app ."|". $user_id ."|". $proxy_id ."|". $ip ."|". $time;
+
+  // The signature is passed as is. 
+  $values['pgp_signature'] = $pgp_signature;
+  
+  // User ID is returned as a hash for safer storage.
+  $values['user_id'] = md5($user_id);
+
+  // Time must be converted into unix timestamp.  
+  $exploded_time = explode(" ", $time);
+  $values['time'] = strtotime($exploded_time[1]." ".$exploded_time[2]." ".$exploded_time[5]." ".$exploded_time[3]);
+
+  // Client IP is returned as is. 
+  $values['ip'] = $ip;
+
+  // App Name is returned as is. 
+  $values['app'] = $app;
+
+  // ID type is returned as PIN. 
+  $values['login_type'] = 'PIN';
+  
+  //set appropriate good signature string for this type of token
+  $values['good_sig'] = PIN_AUTH_STR;
+
+  return $values;
+}
+
+/**
+ * This function prepares the unencrypted PIN v2 token for authentication.
+ * @return authentication parameters and signature in a single array. 
+ */  
+function _pinserver_prepare_pin_v2_token($pin_parameters, $pin_signature) {
+  $values = array();
+
+  // Deconstruct parameters from the authentication token.
+  $token_array = explode($pin_parameters, '|');
+
+  // The token data is passed as is.
+  $values['token'] = $pin_parameters;
+
+  // The signature is passed as is. 
+  $values['pgp_signature'] = $pgp_signature;
+  
+  // App Name is returned as is. 
+  $values['app'] = $token_array[0];
+
+  // User ID is returned as a hash for safer storage.
+  $values['user_id'] = md5($token_array[1]);
+
+  // Unused parameter proxy_id
+  // $values['proxy_id'] = $token_array[2];
+
+  // Client IP is returned as is. 
+  $values['ip'] = $token_array[3];
+
+  // Time must be converted into unix timestamp.  
+  $exploded_time = explode(" ", $token_array[4]);
+  $values['time'] = strtotime($exploded_time[1]." ".$exploded_time[2]." ".$exploded_time[5]." ".$exploded_time[3]);
+
+  // Unused parameter "blank"
+  // $token_array[5]
+
+  // ID type is returned as is. 
+  $values['login_type'] = $token_array[6];
+  
+  //set appropriate good signature string for this type of token
+  $values['good_sig'] = PIN_AUTH_STR;   
+
+  return $values;
+}
+
+
+/**
+ * pinserver_check_token()
+ *
+ * This function serves to check all components of the returned token in compliance with the 
+ * Harvard UIS procedures speficied at: http://www.pin.harvard.edu/dev-guide-token.shtml
+ * It is instantiated when the user has just logged in via the Harvard PIN server and has now 
+ * been returned to the Drupal site
+ *
+ * @return if the detached signature is deemed good, it returns "pinserver_check_user($user_id)". Otherwise
+ * it prohibits the user from logging in.
+ */
+function pinserver_check_token(){
+
+  // Initialize the return values.
+  $return = array('errors' => array());
+
+  /*
+   * Prepare token differently depending on the token type and version
+   */
+  // Pin Token Version 2
+  if ($pin_parameters = $_GET['__authen_parameters'] && $pin_signature = $_GET['__authen_pgp_signature']) {
+    $values = _pinserver_prepare_pin_v2_token($pin_parameters, $pin_signature);
+  }
+  // Pin Token Version 1
+  else if ($_GET['__authen_huid']) {
+    $values = _pinserver_prepare_pin_v1_token();
+  }
+  else {
+    drupal_goto("pinserver/error/token/unrecognized-url");
+    exit();
+  }
+  
+  $pgp_message = "-----BEGIN PGP SIGNED MESSAGE-----"."\n";
+  $pgp_message .= "Hash: SHA1"."\n";
+  $pgp_message .= "\n";
+  $pgp_message .= $values['token']."\n";
+  $pgp_message .= "-----BEGIN PGP SIGNATURE-----"."\n";
+  $pgp_message .= "Version: 5.0"."\n";
+  $pgp_message .= "\n";
+  $pgp_message .= $values['pgp_signature'] ."\n";
+  $pgp_message .= "-----END PGP SIGNATURE-----"."\n";
+
+  $stdout = "";
+  $stderr = "";
+
+  // Use gnupg to verify signature.
+  $descriptorspec = array(
+    0 => array('pipe', 'r'), // stdin
+    1 => array('pipe', 'w'), // stdout
+    2 => array('pipe', 'w') // stderr
+  );
+
+   $process = proc_open("gpg --homedir '".GPG_DIR."' --verify", $descriptorspec, $pipes);
+   
+  if (!is_resource($process)) {
+    $values['errors'][] = 'signature';
+    $values = implode(',', array_unique($values['errors']));
+    drupal_goto("pinserver/error/token/$values");
+    exit();
+  }
+
+ fwrite($pipes[0], $pgp_message);
+  fclose($pipes[0]);
+  fclose($pipes[1]);
+
+  // read stderr ;
+  while (!feof($pipes[2])) {
+    $stderr .= fgets($pipes[2], 1024);
+  }
+  fclose($pipes[2]);
+
+  $return_value = proc_close($process);
+
+  /** 
+   * Save errors to file if set in configuration options and file exists. 
+   * File should be placed below root, recommended only for development/testing. 
+   */
+  if(PIN_ERROR_LOG !== ''){
+    if (is_file(PIN_ERROR_LOG)) {
+      // Read stderr from gpg process. 
+      while (!feof($pipes[2])) {
+        $stderr .= fgets($pipes[2], 1024);
+      }
+      fclose($pipes[2]);
+      $fp = fopen(PIN_ERROR_LOG, 'w');
+      fwrite($fp, $stderr);
+      fclose($fp);
+    }
+  }
+
+  // If good signature statement is not found within gpg output 
+  // or exit code from process is not 0, then it is a bad signature. 
+  if (strpos($stderr,  $values['good_sig']) === false || $return_value != 0) {
+    $values['errors'][] = 'signature'; 
+  }
+
+  /*
+  Now that PGP Signature has been verified, all other token components
+  that require validation must be processed, as specified by the HU directory
+  services developer's manual: http://www.pin.harvard.edu/dev-guide-token.shtml
+  This includes checking the following URL parameters: 
+  1) __authen_application / "Application Id" must match the application name
+  2) __authen_ip / "Ip Address" must match the IP address of the current user
+  3) __authen_time / "Timestamp" is valid and not more than a few minutes old
+  */
+
+  // Verify application name.
+  if ($values['app'] != PIN_APP_NAME) {
+    $values['errors'][] = 'name';
+  }  
+  
+  if (PIN_IP_VAL != 1) {
+    // Verify current user's IP address. 
+    if ( $values['ip'] != $_SERVER['REMOTE_ADDR'] ) { 
+      $values['errors'][] = 'ip-mismatch';
+    }
+  }
+  
+  // Verify time parameter is not longer than 2 minutes old. 
+  // The PHP abs() function converts integers to absolute values (unsigned).
+  // Subtract timestamp value sent by PIN server from the current time (on web server)
+  // 120 equals 2 minutes; could change this to 60 but no more than 180
+  if(abs($values['time'] - time()) > 120) {
+    $values['errors'][] = 'time-elapsed';
+  }
+  //echo "<pre>"; print_r($values); die;
+  return $values; 
+}
+
+/**
+ * Log error and display message
+ * @param  string $type - string to identify message type to display
+ * @param  string $values - comma separated list of errors encountered
+ */
+function pinserver_error($type, $values) {
+  switch ($type) {
+    case 'token':
+      //log the errors
+      error_log("The pinserver module has errored in processing the token in the following categories: $values");
+      return theme('pinserver_token_error', explode(',', $values));
+      break;
+    default:
+      return '';
+  }
+}
+
+/* 
+ * theme_pinserver_token_error()
+ * @param  array $values - all errors that occured due to a problem with the token or token processing. 
+ */
+function theme_pinserver_token_error($values = NULL) {
+  $message = '<p>Communication with the Harvard PIN server failed. ';
+  if (in_array('time-elapsed', $values)) {
+    $message .= 'High traffic volumes may be responsible. We apologize for the inconvenience. ';
+  }
+  if (in_array('ip-mismatch', $values)) {
+    $message .= 'Note: Use of a VPN or tunnel connection may cause problems with PIN authentication. ';
+  }
+  global $base_url;
+  $message .= 'Please '. l('try again', PIN_URL .'?__authen_application='. PIN_APP_NAME);
+  if (valid_email_address(PIN_SUPPORT_CONTACT)) {
+    $message .= ' or <a href="mailto:'. PIN_SUPPORT_CONTACT .'">contact us</a>';
+  }
+  $message .= '.</p>';
+  return $message;
+}
+
+function pinserver_notify_user($vsite, $user, $alter = TRUE){
+  global $language;
+  global $base_url;
+
+  $params = array();
+  $params['from'] = variable_get('site_mail', ini_get('sendmail_from'));
+
+  $params['subject'] = t("A Scholars' Web Site has been created for you", array(
+  '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
+  ));
+
+  $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
+  $timestamp = time();
+
+  $msg_variables = array(
+  // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
+  '!username' => $user->name,
+  '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
+  '!scholar_site_url' => $scholar_site_url,
+  '!login_url' => user_pass_reset_url($user),
+  '!uri' => $base_url,
+  '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
+  '!mailto' => $user->mail,
+  '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
+  '!site_url' => url('node/' . $vsite->sid),
+  '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
+  '!help_getting_started' => $base_url . '/help/vsitehelp/Getting-Started',
+  '!help_features' => $base_url . '/help/vsitehelp/Features',
+  '!help_settings' => $base_url . '/help/vsitehelp/Site-Settings',
+  );
+
+  $params['body'] = t("Hi !username,\n\nCongratulations, your new web site has been activated! Your web site url is: !scholar_site_url\n\nFor help with getting started, go to: !help_getting_started\n\nYour scholar web site comes with built-in features to allow you to post and manage a wide range of content. For more information regarding features, go to:\n  !help_features \n\nYou also have the ability to customize the look and layout of your site. The theme selector in the allows you to easily select a theme for your site. In addition you can further customize your theme by selecting a color scheme or \"flavor\". For more information regarding themes and other site settings, go to:  !help_settings\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
+
+  //if the is being use to overwrite another mail message the just return the params
+  if ($alter){
+    return $params;
+  }
+  //this gives the option to send a seperate email
+  else{
+    if (! drupal_mail('scholar_register', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
+      drupal_set_message(t('Error sending notification mail to user.'), 'error');
+    }
+  }
+}
+
+/**
+ * Implementation of hook_mail_alter
+ */
+function pinserver_mail_alter(&$message){
+  if ($message['id'] == 'scholar_register_scholar-register-notify'){
+    $params = pinserver_notify_user($message['vsite'], $message['user']);
+    //replace "from" address and "from" headers
+    $message['from'] = $params['from'];
+    $message['headers']['Errors-To'] = $params['from'];
+    $message['headers']['Return-Path'] = $params['from'];
+    $message['headers']['Sender'] = $params['from'];
+    $message['headers']['From'] = $params['from'];
+
+    //replace subject
+    $message['subject'] = $params['subject'];
+    //replace body
+    $message['body'] = array($params['body']);
+  }
+}
+
+/**
+ * Implementation of hook_strongarm
+ */
+function pinserver_strongarm(){
+  $conf = array();
+  //add password field to registration form and log user in after registration
+  $conf['user_email_verification'] = 0;
+  return $conf;
+}
