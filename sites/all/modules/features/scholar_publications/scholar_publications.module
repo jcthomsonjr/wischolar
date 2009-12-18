@@ -181,17 +181,25 @@ function scholar_publications_overview(){
   //page title = the name of the menu they have in settings or "Publications"
   $page_title = (is_array($vsite->customizer['menu']) && isset($vsite->customizer['menu']['publications'])) ? $vsite->customizer['menu']['publications'] : "Publications";
   variable_set('biblio_base_title', $page_title);
+        
+  $s_bib_out =  biblio_db_search();
   
-  //To Create The Abstract hovers
-//  drupal_add_js(drupal_get_path('module', 'scholar_publications').'/theme/Drupal.scholarPublications.js', 'module');
-//  ctools_add_js('ajax-responder');
-//  
-//  $settings['scholarPublications'] = array(
-//    'abstract_id' => "biblio-abstract-link",
-//  );
-//  drupal_add_js($settings, 'setting');
-      
-  return biblio_db_search();
+  global $pager_total_items;
+  if(is_array($pager_total_items) && $pager_total_items[0] > 0){
+  	return $s_bib_out;
+  }
+  
+  //Display Empty Result Text
+  $contexts = context_enabled_contexts();
+  $nodetype = null;
+  if(array_key_exists('scholar-feature-publications',$contexts) && ($context = $contexts["scholar-feature-publications"])){
+    if (!empty($context->node)) {
+      reset($context->node);
+      $nodetype = current($context->node);
+    }
+  }
+  
+  return vsite_empty_veiw_message($nodetype,$vsite);
 }
 
 /**
@@ -270,3 +278,16 @@ function scholar_publications_vsite_widgets(){
   return $items;
 }
 
+/**
+ * Adjust the "Recent Publications View" if there are no publications
+ * 
+ * @param $view view
+ * @param $s_display_handler_output string
+ * @param $cache
+ * @return none
+ */
+function scholar_publications_views_post_render($view, &$s_display_handler_output, $cache){
+	if($view->name == 'scholar_publications' && $view->current_display == 'block_1' && !count($view->result)){
+		$s_display_handler_output = ''; //Do no display when there are no publications
+	}
+}

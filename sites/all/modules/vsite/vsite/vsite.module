@@ -169,20 +169,33 @@ function vsite_preprocess_views_view(&$vars) {
           $nodetype = current($context->node);
         }
 
-        if (!empty($nodetype) && node_access('create', $nodetype) && ($space->type == 'og')) {
-          $types = node_get_types();
-          if ($type = $types[$nodetype]) {
-            $output .= '<div class="empty-content"><p>' .t('Please add your first <span class="show-content-type">!type</span> to get started:', array('!type' => $type->name)) .'</p>';
-            $output .=  theme('context_links', context_links()) ."</div>";
-          }
-        }
-        else {
-          $output .= t('There is currently no content to view in this section.');
-        }
-        $vars['empty'] = $output;
+        
+        $vars['empty'] = vsite_empty_veiw_message($nodetype,$space);
       }
     }
   }
+}
+
+/**
+ * Return the empty message for a given node type and vsite
+ * 
+ * @param $node_type string
+ * @param $space vsite
+ * @return string
+ */
+function vsite_empty_veiw_message($s_node_type, $space){
+	
+  if (!empty($s_node_type) && node_access('create', $s_node_type) && ($space->type == 'og')) {
+    $types = node_get_types();
+    if ($type = $types[$s_node_type]) {
+      $output .= '<div class="empty-content"><p>' .t('Please add your first <span class="show-content-type">!type</span> to get started:', array('!type' => $type->name)) .'</p>';
+      $output .=  theme('context_links', context_links()) ."</div>";
+    }
+  } else {
+    $output .= t('There is currently no content to view in this section.');
+  }
+	
+  return $output;
 }
 
 /**

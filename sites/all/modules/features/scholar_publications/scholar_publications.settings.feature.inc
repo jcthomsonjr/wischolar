@@ -134,14 +134,14 @@ class scholar_publications_settings_feature implements space_setting {
       '#title' => t('Enable co-author auto-search'),
       '#default_value' => !array_key_exists('bkn_enabled',$value)?(variable_get('bkn_contrib_lookup_mode', 1) < 2):$value['bkn_enabled'],
       '#return_value' => 1,
-      //'#description' => t('Uncheck to disable all external lookups?'),
+      '#description' => t('This searches Berkley\'s Database for matching names'),
      );
     $form['bkn_contrib_lookup_allow_autocomplete'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable autocomplete on author fields'),
       '#default_value' => !array_key_exists('bkn_contrib_lookup_allow_autocomplete',$value)?variable_get('bkn_contrib_lookup_allow_autocomplete',1):$value['bkn_contrib_lookup_allow_autocomplete'],
       '#return_value' => 1,
-      //'#description' => t('Should contributor field use autocomplete?')
+      '#description' => t('When checked the search results are provided to you as you type')
     );
 
     return $form;
