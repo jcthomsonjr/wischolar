@@ -37,7 +37,7 @@ function vsite_content_types($privacy = array(2), $vsite = NULL){
 }
 
 
-function vsite_create_links(){
+function vsite_create_links($addition = ''){
   $types = vsite_content_types(array(2, 1));
   drupal_alter('vsite_content_types', $types);
   foreach ( $types as $type => $name ) {
@@ -46,7 +46,7 @@ function vsite_create_links(){
         'title' => t('!type', array(
             '!type' => $type 
         )), 
-        'href' => "node/add/$type_url_str" 
+        'href' => "node/add/$type_url_str" . $addition
     );
   }
   return isset($links) ? $links : array();
