@@ -193,46 +193,41 @@ function pinserver_check_system_settings(){
 /**
  * Implementation of hook_form_alter()
  */
-function pinserver_form_alter(&$form, $form_state, $form_id){ //dpm($form);
+function pinserver_form_alter(&$form, $form_state, $form_id){
+
   //add the submit function for pinserver
   if ($form_id == 'user_register'){
-    
+
     $path = drupal_get_path('module', 'pinserver');
-    drupal_add_css($path .'/pinserver.css', 'module', 'all', FALSE); 
-    
+    drupal_add_css($path .'/pinserver.css', 'module', 'all', FALSE);
+
     //add submit function
     $form['#submit'][] = 'pinserver_process_user_registration';
-    
-          global $base_url;
-  // domain name
-  $form['domain'] = array(
-      '#type' => 'textfield', 
-      '#title' => t('Your Domain Name'), 
-      '#required' => TRUE, 
-      '#field_prefix' => $base_url . '/', 
-      '#size' => 20, 
-      '#weight' => 10,
-      '#default_value' => $form_values['name'], 
-      '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be at least four characters long, and comprise of alphanumeric characters only.', array(
-          '%site' => $base_url . '/jdoe' 
-      )), 
-  );    
- 
-    $form['#validate'][] = 'scholar_register_signup_form_validate';
-    $form['#submit'][] = 'scholar_register_signup_form_submit';
 
-    // _user_password_dynamic_validation();
-   // unset($form['submit']['#attributes']);
+    global $base_url;
+    // domain name
+    $form['domain'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Your Domain Name'),
+    '#required' => TRUE,
+    '#field_prefix' => $base_url . '/',
+    '#size' => 20,
+    '#weight' => 10,
+    '#default_value' => $form_values['name'],
+    '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be at least four characters long, and comprise of alphanumeric characters only.', array(
+    '%site' => $base_url . '/jdoe'
+    )),
+    );
     //place domain at bottom of form
-    $form['domain']['#weight'] = 10;    
-    }
+    $form['domain']['#weight'] = 10;
+  }
 }
 
 
 /**
  * Unset the $_SESSION vars after the registration form is submitted
  */
-function pinserver_process_user_registration($form, &$form_state){ 
+function pinserver_process_user_registration($form, &$form_state){
 
    //  try to log user in
   global $user;
@@ -247,10 +242,16 @@ function pinserver_process_user_registration($form, &$form_state){
   }
   
   else{
+    $msg = 'Your web site registration was succesful! Your site is now active. You are now logged in.'
+    $_SESSION['messages']['status'][0] = $msg; //Registration successful. You are now logged in.
     $vsite = scholar_register_siteowner_path($user);    
     _pinserver_add_row($user->uid);
     _pinserver_process_remove_session();
 
+ 
+    
+     //unset($_SESSION['messages']);
+    
       //redirect user to vsite home
       drupal_goto($vsite -> purl . '/home');
   }
