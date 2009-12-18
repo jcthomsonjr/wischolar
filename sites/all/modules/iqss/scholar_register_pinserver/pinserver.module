@@ -314,11 +314,7 @@ function pinserver_user($op, &$edit, &$account, $category = NULL){
  * @param unknown_type $uid
  */
 function _pinserver_add_row($uid){
-  $object = new stdClass();
-  $object->uid = (int)$uid;
-  $object->hash = $_SESSION['hash_huid'];
-  $object->reg_time = time();
-  drupal_write_record('pinserver', $object);
+  $res = db_query("INSERT INTO {pinserver} (uid, hash, reg_time) VALUES (%d, '%s', %d)", (int)$uid, $_SESSION['hash_huid'], time());
 }
 
 /**
