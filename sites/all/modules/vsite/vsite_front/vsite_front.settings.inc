@@ -23,7 +23,7 @@ class vsite_front_settings_front implements space_setting {
     ctools_include('form');
 
     // the "add new *" links
-    $items = vsite_create_links();
+    $items = vsite_create_links('/front');
     $links = theme('ctools_dropdown', t('add new'), $items, FALSE, 'panels-display-links');
 
     $form = array(
