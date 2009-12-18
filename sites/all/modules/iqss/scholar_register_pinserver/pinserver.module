@@ -242,17 +242,13 @@ function pinserver_process_user_registration($form, &$form_state){
   }
   
   else{
-    $msg = 'Your web site registration was succesful! Your site is now active. You are now logged in.'
+    $msg = 'Your web site registration was successful! Your site is live and you are now logged in.';
     $_SESSION['messages']['status'][0] = $msg; //Registration successful. You are now logged in.
     $vsite = scholar_register_siteowner_path($user);    
     _pinserver_add_row($user->uid);
     _pinserver_process_remove_session();
 
- 
-    
-     //unset($_SESSION['messages']);
-    
-      //redirect user to vsite home
+    //redirect user to vsite home
       drupal_goto($vsite -> purl . '/home');
   }
 }
