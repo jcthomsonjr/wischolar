@@ -18,7 +18,7 @@ function vsite_front_menu(){
     'file' => 'vsite_front.pages.inc',
     'access arguments' => array('access content'),
     'weight' => 0,
-  );
+  );  
   return $items;
 }
 
@@ -121,3 +121,43 @@ function vsite_front_scholar_admin_link($type, $object){
   }
 }
 
+/**
+ * Implementation of hook_nodeapi()
+ */
+function vsite_front_nodeapi(&$node, $op, $a3, $a4){
+  switch($op){
+    case 'presave':
+      $uri = request_uri();
+      $pattern = '/(node\/add\/)(.+?)(\/front)/';
+      preg_match($pattern, $uri, $matches);
+      // set new property in node object indicating to set as front page
+      if ($matches) $node -> front  = 1;
+      break;
+
+    case 'insert':
+      if ($node -> front == 1){
+        //$vsite = spaces_load('og', $node->og_groups[0]);
+        $vsite = vsite_get_vsite();
+
+        //modify the vsite settings
+        unset($vsite -> settings['front']);
+        $vsite -> settings['front']['frontpage'] = 'html';
+        $vsite -> settings['front']['front_nid'] = $node->nid;
+
+        //save the changes
+        spaces_save($vsite);
+
+        $link =  l('Control Panel Settings.', $vsite -> purl. '/cp/settings/front' );
+        $msg_variables = array (
+        '@type' => node_get_types('name', $node),
+        '%title' => $node -> title,
+        '!link' => $link,
+        );
+
+        //redirect the user to thier home page with message
+        drupal_set_message(t('@type <em>%title</em> has been created. You have selected this post to be your site\'s front page. To change your front page content, go the !link', $msg_variables));
+        drupal_goto($vsite -> purl . '/home');
+      }
+      break;
+  }
+}
