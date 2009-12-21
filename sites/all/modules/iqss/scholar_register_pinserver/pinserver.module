@@ -19,9 +19,6 @@ define(GPG_DIR, variable_get('pinserver_gpg_dir','')); //path to gpg directory t
 define(GPG_BIN, variable_get('pinserver_gpg_bin','/usr/bin/gpg')); //absolute path to gpg binary
 define(REG_TIME_EXP, 1200); //expiration time for user registration. (Primarily used in hook_cron to clean up pinserver table)
 
-//global registration message 
-$pin_scholar_reg_msg = '';
-
 /**
  * Implementation of hook_menu(). 
  */ 
@@ -63,7 +60,7 @@ function pinserver_menu() {
  * @return array - permissions set for the pinserver module
  */
 function pinserver_perm(){
-  return array('administer pinserver', 'pinserver login link');
+  return array('administer pinserver');
 }
 
 /**
@@ -85,35 +82,9 @@ function pinserver_theme() {
   );
 }
 
-
-/**
- * Checks if user has authenticated through the pinserver
- * before rendering the signup form
- */
-function pinserver_process_signup_form(){
-  /*print($_SESSION['reg_time'] . ' - ');
-  print($_SESSION['hash_huid']);die;*/
-  $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';
-  include_once($inc_file);
-
-
-
-  if (pinserver_process_access_registration()){
-    //see if the uid exists in pinvserver table, if so then user already has a vsite
-    $uid = _pinserver_check_row();
-    //send the user somehwere, either to the registration form or to project home page
-    return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  drupal_get_form('scholarregister_signup_form');
-  }
-  else{
-    //otherwise the user still needs to authenticate thorugh the pin server
-    pinserver_redirect();
-  }
-}
-
-
 function pinserver_vsite_exists($uid){
   //remove the session vars
-  _pinserver_process_remove_session();
+  pinserver_process_remove_session();
   $message = pinserver_vsite_exists_message($uid);
   drupal_set_message(t("$message"));
   drupal_goto();
@@ -190,70 +161,8 @@ function pinserver_check_system_settings(){
   return $info;
 }
 
-/**
- * Implementation of hook_form_alter()
- */
-function pinserver_form_alter(&$form, $form_state, $form_id){
 
-  //add the submit function for pinserver
-  if ($form_id == 'user_register'){
-
-    $path = drupal_get_path('module', 'pinserver');
-    drupal_add_css($path .'/pinserver.css', 'module', 'all', FALSE);
-
-    //add submit function
-    $form['#submit'][] = 'pinserver_process_user_registration';
-
-    global $base_url;
-    // domain name
-    $form['domain'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Your Domain Name'),
-    '#required' => TRUE,
-    '#field_prefix' => $base_url . '/',
-    '#size' => 20,
-    '#weight' => 10,
-    '#default_value' => $form_values['name'],
-    '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be at least four characters long, and comprise of alphanumeric characters only.', array(
-    '%site' => $base_url . '/jdoe'
-    )),
-    );
-    //place domain at bottom of form
-    $form['domain']['#weight'] = 10;
-  }
-}
-
-
-/**
- * Unset the $_SESSION vars after the registration form is submitted
- */
-function pinserver_process_user_registration($form, &$form_state){
-
-   //  try to log user in
-  global $user;
-
-  //this case is unlikely
-    if(!$user || $user ->uid == '0'){
-    //new user and vsite should have already been created, check to make sure the user information is present
-    // if (!isset($form_state['new_user'] ->uid) || $form_state['new_user'] ->uid == '0'){
-    error_log("WARNING: The pinserver module could not insert the new user information into the database because
-  the user information was not supplied.");
-    return;
-  }
-  
-  else{
-    $msg = 'Your web site registration was successful! Your site is live and you are now logged in.';
-    $_SESSION['messages']['status'][0] = $msg; //Registration successful. You are now logged in.
-    $vsite = scholar_register_siteowner_path($user);    
-    _pinserver_add_row($user->uid);
-    _pinserver_process_remove_session();
-
-    //redirect user to vsite home
-      drupal_goto($vsite -> purl . '/home');
-  }
-}
-
-function _pinserver_process_remove_session(){
+function pinserver_process_remove_session(){
   //removing session values when new site is created
   if (isset($_SESSION['hash_huid'])){  
     unset ($_SESSION['hash_huid']);
@@ -263,57 +172,12 @@ function _pinserver_process_remove_session(){
   }  
 }
 
-/**
- * Implementation of hook_user()
- */
-function pinserver_user($op, &$edit, &$account, $category = NULL){
-  global $user;
-  
-  switch($op){
-    case 'login': 
-        
-       
-      break;
-    case 'delete':
-      $sql_delete = db_query("DELETE FROM {pinserver} WHERE uid = %d", (int)$account->uid);
-      break;
-      
-    case 'register':
-      //first make sure pinserver settings are saved  path to .gnupg directory exists
-      $settings_info = pinserver_check_system_settings();
-      
-      switch ($settings_info['value']){
-        case true;
-        //proceed;
-        break;
-        
-        case false:
-          error_log($settings_info['message']);
-          $support_mail = strlen(PIN_SUPPORT_CONTACT) ?  PIN_SUPPORT_CONTACT :  'scholar_dev@help.hmdc.harvard.edu';
-          drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail)));
-          drupal_goto();
-          break;
-      }
-
-      if (pinserver_process_access_registration()){
-        //see if the uid exists in pinvserver table, if so then user already has a vsite
-        $uid = _pinserver_check_row();
-        //send the user somehwere, either to the registration form or to project home page
-        return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  '';
-      }
-      else{
-        //otherwise the user still needs to authenticate thorugh the pin server
-        pinserver_redirect();
-      }
-      break;
-  }
-}
 
 /**
  * Function to write record to pinserver table
  * @param unknown_type $uid
  */
-function _pinserver_add_row($uid){
+function pinserver_add_row($uid){
   $res = db_query("INSERT INTO {pinserver} (uid, hash, reg_time) VALUES (%d, '%s', %d)", (int)$uid, $_SESSION['hash_huid'], time());
 }
 
@@ -322,7 +186,7 @@ function _pinserver_add_row($uid){
  * @param unknown_type $uid
  * @return user id
  */
-function _pinserver_check_row(){
+function pinserver_check_row(){
  return db_result(db_query("SELECT uid FROM {pinserver} WHERE hash = '%s'", $_SESSION['hash_huid'] ));
 }
 
@@ -604,6 +468,132 @@ function theme_pinserver_token_error($values = NULL) {
   return $message;
 }
 
+/*** User Registration Form Specific Functions ***/
+
+
+/**
+ * Implementation of hook_form_alter()
+ */
+function pinserver_form_alter(&$form, $form_state, $form_id){
+
+  //add the submit function for pinserver
+  if ($form_id == 'user_register'){
+    
+    $path = drupal_get_path('module', 'pinserver');
+    drupal_add_css($path .'/pinserver.css', 'module', 'all', FALSE);
+
+    //add submit function
+    $form['#submit'][] = 'pinserver_process_user_registration';
+  }
+}
+
+
+/**
+ *  User Registration Submit Function
+ */
+function pinserver_process_user_registration($form, &$form_state){
+
+   //  try to log user in
+  global $user;
+
+  //this case is unlikely
+    if(!$user || $user ->uid == '0'){
+    //new user and vsite should have already been created, check to make sure the user information is present
+    // if (!isset($form_state['new_user'] ->uid) || $form_state['new_user'] ->uid == '0'){
+    error_log("WARNING: The pinserver module could not insert the new user information into the database because
+  the user information was not supplied.");
+    return;
+  }
+  
+  else{
+    $msg = 'Your web site registration was successful! Your site is live and you are now logged in.';
+    $_SESSION['messages']['status'][0] = $msg; //Registration successful. You are now logged in.
+    $vsite = scholar_register_siteowner_path($user);    
+    pinserver_add_row($user->uid);
+    pinserver_process_remove_session();
+
+    //redirect user to vsite home
+      drupal_goto($vsite -> purl . '/home');
+  }
+}
+
+
+/**
+ * Implementation of hook_mail_alter
+ */
+function pinserver_mail_alter(&$message){
+  if ($message['id'] == 'scholar_register_scholar-register-notify'){
+    $params = pinserver_notify_user($message['vsite'], $message['user']);
+    //replace "from" address and "from" headers
+    $message['from'] = $params['from'];
+    $message['headers']['Errors-To'] = $params['from'];
+    $message['headers']['Return-Path'] = $params['from'];
+    $message['headers']['Sender'] = $params['from'];
+    $message['headers']['From'] = $params['from'];
+
+    //replace subject
+    $message['subject'] = $params['subject'];
+    //replace body
+    $message['body'] = array($params['body']);
+  }
+}
+
+/**
+ * Implementation of hook_strongarm
+ */
+function pinserver_strongarm(){
+  $conf = array();
+  //add password field to registration form and log user in after registration
+  $conf['user_email_verification'] = 0;
+  return $conf;
+}
+
+/**
+ * Implementation of hook_user()
+ */
+function pinserver_user($op, &$edit, &$account, $category = NULL){
+  global $user;
+  
+  switch($op){
+    case 'login':        
+       
+      break;
+    case 'delete':
+      $sql_delete = db_query("DELETE FROM {pinserver} WHERE uid = %d", (int)$account->uid);
+      break;
+      
+    case 'register':
+      //first make sure pinserver settings are saved  path to .gnupg directory exists
+      $settings_info = pinserver_check_system_settings();
+      
+      switch ($settings_info['value']){
+        case true;
+        //proceed;
+        break;
+        
+        case false:
+          error_log($settings_info['message']);
+          $support_mail = strlen(PIN_SUPPORT_CONTACT) ?  PIN_SUPPORT_CONTACT :  'scholar_dev@help.hmdc.harvard.edu';
+          drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail)));
+          drupal_goto();
+          break;
+      }
+
+      if (pinserver_process_access_registration()){
+        //see if the uid exists in pinvserver table, if so then user already has a vsite
+        $uid = pinserver_check_row();
+        //send the user somehwere, either to the registration form or to project home page
+        return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  '';
+      }
+      else{
+        //otherwise the user still needs to authenticate thorugh the pin server
+        pinserver_redirect();
+      }
+      break;
+  }
+}
+
+
 function pinserver_notify_user($vsite, $user, $alter = TRUE){
   global $language;
   global $base_url;
@@ -647,34 +637,4 @@ function pinserver_notify_user($vsite, $user, $alter = TRUE){
       drupal_set_message(t('Error sending notification mail to user.'), 'error');
     }
   }
-}
-
-/**
- * Implementation of hook_mail_alter
- */
-function pinserver_mail_alter(&$message){
-  if ($message['id'] == 'scholar_register_scholar-register-notify'){
-    $params = pinserver_notify_user($message['vsite'], $message['user']);
-    //replace "from" address and "from" headers
-    $message['from'] = $params['from'];
-    $message['headers']['Errors-To'] = $params['from'];
-    $message['headers']['Return-Path'] = $params['from'];
-    $message['headers']['Sender'] = $params['from'];
-    $message['headers']['From'] = $params['from'];
-
-    //replace subject
-    $message['subject'] = $params['subject'];
-    //replace body
-    $message['body'] = array($params['body']);
-  }
-}
-
-/**
- * Implementation of hook_strongarm
- */
-function pinserver_strongarm(){
-  $conf = array();
-  //add password field to registration form and log user in after registration
-  $conf['user_email_verification'] = 0;
-  return $conf;
 }
