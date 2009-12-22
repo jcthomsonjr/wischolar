@@ -614,9 +614,7 @@ function vsite_cp_settings(){
  * Implementation of hook_context_active_contexts_alter().
  */
 function vsite_context_active_contexts_alter($contexts) {
-  dpm($contexts);
   $feature = context_get('scholar', 'feature');
-  dpm($feature);
   if($contexts['vsite-section-public']){
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/vsite-admin-links.css');
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite.js');   

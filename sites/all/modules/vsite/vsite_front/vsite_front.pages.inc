@@ -81,7 +81,7 @@ function vsite_front_home(){
 	    	    {$s_cv}
 	    	    <li>{$s_docs}</li>
 	    	  </ul>
-	    	  <div class="scholar-admin">
+	    	  <div class="vsite-admin">
 	    	    <div class="toggle"><span>Hide this message</span></div>
 	    	    <div class="slider">
 	    	      <ul class="links">
