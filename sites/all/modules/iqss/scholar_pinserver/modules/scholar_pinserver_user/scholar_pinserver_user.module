@@ -1,0 +1,169 @@
+<?php
+
+/**
+ * Implementation of hook_form_alter()
+ */
+function scholar_pinserver_user_form_alter(&$form, $form_state, $form_id){
+
+  //add the submit function for pinserver
+  if ($form_id == 'user_register'){ //echo '<pre>'; print_r($form);
+
+    $path = drupal_get_path('module', 'pinserver');
+    drupal_add_css($path .'/pinserver.css', 'module', 'all', FALSE);
+
+    //add submit function
+    $form['#submit'][] = 'scholar_pinserver_user_process_registration';
+  }
+}
+
+/**
+ *  User Registration Submit Function
+ */
+function scholar_pinserver_user_process_registration($form, &$form_state){
+
+   //  try to log user in
+  global $user;  
+  
+  //this case is unlikely
+    if(!$user || $user ->uid == '0'){
+    //new user and vsite should have already been created, check to make sure the user information is present
+    // if (!isset($form_state['new_user'] ->uid) || $form_state['new_user'] ->uid == '0'){
+    error_log("WARNING: The pinserver module could not insert the new user information into the database because
+  the user information was not supplied.");
+    return;
+  }
+  
+  else{
+    $msg = 'Your web site registration was successful! Your site is live and you are now logged in.';
+    $_SESSION['messages']['status'][0] = $msg; //Registration successful. You are now logged in.
+    $vsite = scholar_register_siteowner_path($user);    
+    pinserver_add_row($user->uid);
+    pinserver_process_remove_session();
+
+    //redirect user to vsite home
+      drupal_goto($vsite -> purl . '/home');
+  }
+}
+
+
+/**
+ * Implementation of hook_mail_alter
+ */
+function scholar_pinserver_user_mail_alter(&$message){ 
+  if ($message['id'] == 'scholar_register_scholar-register-notify'){
+    $params = scholar_pinserver_user_notify_user($message['vsite'], $message['user']);
+    //replace "from" address and "from" headers
+    $message['from'] = $params['from'];
+    $message['headers']['Errors-To'] = $params['from'];
+    $message['headers']['Return-Path'] = $params['from'];
+    $message['headers']['Sender'] = $params['from'];
+    $message['headers']['From'] = $params['from'];
+
+    //replace subject
+    $message['subject'] = $params['subject'];
+    //replace body
+    $message['body'] = array($params['body']);
+   
+  }
+}
+
+/**
+ * Implementation of hook_strongarm
+ */
+function scholar_pinserver_user_strongarm(){
+  $conf = array();
+  //add password field to registration form and log user in after registration
+  $conf['user_email_verification'] = 0;
+  return $conf;
+}
+
+/**
+ * Implementation of hook_user()
+ */
+function scholar_pinserver_user_user($op, &$edit, &$account, $category = NULL){
+  global $user;
+  
+  switch($op){
+    case 'login':        
+       
+      break;
+    case 'delete':
+      $sql_delete = db_query("DELETE FROM {pinserver} WHERE uid = %d", (int)$account->uid);
+      break;
+      
+    case 'register':
+      //first make sure pinserver settings are saved  path to .gnupg directory exists
+      $settings_info = pinserver_check_system_settings();
+      
+      switch ($settings_info['value']){
+        case true;
+        //proceed;
+        break;
+        
+        case false:
+          error_log($settings_info['message']);
+          $support_mail = strlen(PIN_SUPPORT_CONTACT) ?  PIN_SUPPORT_CONTACT :  'scholar_dev@help.hmdc.harvard.edu';
+          drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail)));
+          drupal_goto();
+          break;
+      }
+
+      if (pinserver_process_access_registration()){
+        //see if the uid exists in pinvserver table, if so then user already has a vsite
+        $uid = pinserver_check_row();
+        //send the user somehwere, either to the registration form or to project home page
+        return $go_somewhere = ($uid) ? pinserver_vsite_exists($uid)  :  '';
+      }
+      else{
+        //otherwise the user still needs to authenticate thorugh the pin server
+        pinserver_redirect();
+      }
+      break;
+  }
+}
+
+
+function scholar_pinserver_user_notify_user($vsite, $user, $alter = TRUE){
+  global $language;
+  global $base_url;
+
+  $params = array();
+  $params['from'] = variable_get('site_mail', ini_get('sendmail_from'));
+
+  $params['subject'] = t("A Scholars' Web Site has been created for you", array(
+  '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
+  ));
+
+  $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
+  $timestamp = time();
+
+  $msg_variables = array(
+  // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
+  '!username' => $user->name,
+  '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
+  '!scholar_site_url' => $scholar_site_url,
+  '!login_url' => user_pass_reset_url($user),
+  '!uri' => $base_url,
+  '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
+  '!mailto' => $user->mail,
+  '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
+  '!site_url' => url('node/' . $vsite->sid),
+  '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
+  '!help_getting_started' => $base_url . '/help/vsitehelp/Getting-Started',
+  '!help_features' => $base_url . '/help/vsitehelp/Features',
+  '!help_settings' => $base_url . '/help/vsitehelp/Site-Settings',
+  );
+
+  $params['body'] = t("Hi !username,\n\nCongratulations, your new web site has been activated! Your web site url is: !scholar_site_url\n\nFor help with getting started, go to: !help_getting_started\n\nYour scholar web site comes with built-in features to allow you to post and manage a wide range of content. For more information regarding features, go to:\n  !help_features \n\nYou also have the ability to customize the look and layout of your site. The theme selector in the allows you to easily select a theme for your site. In addition you can further customize your theme by selecting a color scheme or \"flavor\". For more information regarding themes and other site settings, go to:  !help_settings\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
+
+  //if the is being use to overwrite another mail message the just return the params
+  if ($alter){
+    return $params;
+  }
+  //this gives the option to send a seperate email
+  else{
+    if (! drupal_mail('scholar_register', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
+      drupal_set_message(t('Error sending notification mail to user.'), 'error');
+    }
+  }
+}
