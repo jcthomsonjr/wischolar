@@ -121,6 +121,9 @@ function scholar_register_signup_form_submit($form, &$form_state) {
   else{
     // 3. send e-mail to the user with one-time login link
     scholar_register_notify_user($vsite, $user);
+    //modify message    
+   $msg = 'Your site has been created successfully!. An email has been sent to you with your account details.';
+   $_SESSION['messages']['status'][0] = $msg;  
   }
 }
 
