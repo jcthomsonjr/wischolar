@@ -169,6 +169,7 @@ function vsite_link_alter(&$links, $node){
   $old['vsite-admin'] = $links['vsite-admin'];
   unset($links['vsite-admin']);
   $links = array_merge($links, $old);
+
 }
 
 /**
@@ -637,7 +638,7 @@ function vsite_get_admin_links($type, $object) {
 /**
  * Implementation of hook_scholar_admin_link() on behalf of the node module.
  */
-function node_scholar_admin_link($type, $object) {
+function node_vsite_admin_link($type, $object) {
   $links = array();
   if ($type == 'node') {
     if (node_access('update', $object)) {
