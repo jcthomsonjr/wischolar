@@ -10,7 +10,7 @@ function scholar_register_strongarm(){
 function scholar_register_mail_alter(&$message){
   //echo "<pre>"; print_r($message); die;
    if ($message['id'] == 'user_register_no_approval_required') { 
- 
+     $message['to'] ='jweiner@iq.harvard.edu'; //TODO remove this after testing 
   }
 }
 
@@ -44,7 +44,8 @@ function scholar_register_user($op, &$edit, &$account, $category = NULL){
 }
 
 function scholar_register_form_alter(&$form, $form_state, $form_id){
-    if ($form_id == 'user_register'){    
+    
+    if ($form_id == 'user_register'){
 
     $path = drupal_get_path('module', 'scholar_register');
     drupal_add_css($path .'/scholar_register.css', 'module', 'all', FALSE);      
@@ -65,7 +66,18 @@ function scholar_register_form_alter(&$form, $form_state, $form_id){
       '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be at least four characters long, and comprise of alphanumeric characters only.', array(
           '%site' => $base_url . '/jdoe' 
       )), 
-  );    
+  );
+
+      //check if content profile settings are to be used, remove them from the form if so
+    $settings = variable_get('content_profile_vsite_users_profile', array());
+    if ($settings['registration_use' == 1]){
+      $profile_fields = array_keys(content_fields($field_name = NULL, 'vsite_users_profile'));
+      foreach($profile_fields as $field){
+        if (isset($form[$field])) {
+          $form[$field] = array();
+        }
+      }
+    } 
  
     $form['#validate'][] = 'scholar_register_signup_form_validate';
     $form['#submit'][] = 'scholar_register_signup_form_submit';
@@ -89,7 +101,7 @@ function scholar_register_signup_form_submit($form, &$form_state) {
   $name = $form_state ['values'] ['name'];
   $mail = $form_state ['values'] ['mail'];
   $domain = $form_state ['values'] ['domain'];
-
+  
   //load the user
   $user = user_load(array('name' => $name));
 
