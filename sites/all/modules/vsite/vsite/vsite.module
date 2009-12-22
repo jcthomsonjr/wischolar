@@ -367,7 +367,7 @@ function vsite_theme_registry_alter(&$theme_registry){
    * it "owns" 
    */
   $original_path = array_shift($theme_registry['node']['theme paths']);
-  $features =  $features = spaces_features('og');
+  $features = spaces_features('og');
   $new_paths = array();
   foreach ($features as $feature){
     $this_module_path = drupal_get_path('module', $feature -> name);

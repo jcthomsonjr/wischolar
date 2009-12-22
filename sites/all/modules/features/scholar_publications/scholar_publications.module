@@ -291,3 +291,54 @@ function scholar_publications_views_post_render($view, &$s_display_handler_outpu
 		$s_display_handler_output = ''; //Do no display when there are no publications
 	}
 }
+
+
+/**
+ * hook theme_registry_alter
+ */
+function scholar_publications_theme_registry_alter(&$theme_registry){
+  /*
+   * Change the biblio theme to use ours so it can make the views consistent
+   */
+  $theme_registry['biblio_entry']['function'] = 'scholar_publications_biblio_entry';
+}
+
+/**
+ * Standardize the biblio entry look 
+ * 
+ * @param $node
+ * @param $base
+ * @param $style
+ * @param $inline
+ * @return unknown_type
+ */
+function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'classic', $inline = false) {
+	$s_output = theme_biblio_entry($node, $base, $style, $inline);
+	
+	$links = module_invoke_all('link', 'node', $node, '');
+  drupal_alter('link', $links, $node);
+  
+	$s_output .= theme('links', $links);
+	
+	return $s_output;
+}
+
+/**
+ * Theme the biblio nodes the same in views as elsewhere
+ * @param $vars array
+ */
+function scholar_publications_preprocess_views_view_row_node(&$vars){
+  
+  $nid = $vars['row']->{$vars['field_alias']};
+  if (!is_numeric($nid) || (array_key_exists('build_mode',$vars['options']) && $vars['options']['build_mode'] != 'teaser')) {
+    return;
+  }//Can't find the node or this is not in the teaser view
+
+  $node = node_load($nid);
+
+  if (empty($node) || $node->type != 'biblio') {
+    return;
+  }
+
+  $vars['node'] = scholar_publications_biblio_entry($node,'biblio',biblio_get_style());
+}
