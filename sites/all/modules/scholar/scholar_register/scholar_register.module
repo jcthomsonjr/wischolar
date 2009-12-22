@@ -69,8 +69,8 @@ function scholar_register_form_alter(&$form, $form_state, $form_id){
   );
 
       //check if content profile settings are to be used, remove them from the form if so
-    $settings = variable_get('content_profile_vsite_users_profile', array());
-    if ($settings['registration_use' == 1]){
+    $settings = variable_get('content_profile_vsite_users_profile', array()); 
+    if ($settings['registration_use'] == 1){
       $profile_fields = array_keys(content_fields($field_name = NULL, 'vsite_users_profile'));
       foreach($profile_fields as $field){
         if (isset($form[$field])) {
