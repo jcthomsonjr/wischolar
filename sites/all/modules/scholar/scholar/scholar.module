@@ -1,36 +1,8 @@
 <?php
 
-function scholar_init(){
-  drupal_add_css(drupal_get_path('module', 'scholar') . '/theme/scholar-admin-links.css');
-  drupal_add_js(drupal_get_path('module', 'scholar') . '/theme/scholar.js');
-  
-}
 
-/**
- * hook link
- */
-function scholar_link($type, $object, $teaser = FALSE){
-  $links = array();
-  $vsite = vsite_get_vsite();
-  if ($vsite && $vsite->admin_access()) {
-    $links['scholar-admin'] = array(
-      'title' => theme('scholar_admin_links', scholar_get_admin_links('node', $object)), 
-      'html' => TRUE 
-    );
-  }
-  return $links;
-}
 
-/**
- * hook link_alter (admin at the end of links)
- */
-function scholar_link_alter(&$links, $node){
-	if(!isset($links['scholar-admin'])) return;
-	
-  $old['scholar-admin'] = $links['scholar-admin'];
-  unset($links['scholar-admin']);
-  $links = array_merge($links, $old);
-}
+
 
 
 function scholar_menu(){
@@ -77,15 +49,6 @@ function scholar_strongarm(){
 }
 
 /**
- *  Hook preproces_page
- */
-function scholar_preprocess_page(&$vars) {
-  // need to know if there is anything in the navbar for css theming
-  $body_class_extra = $vars['navbar'] ? ' navbar-on' : ' navbar-off';
-    $vars['body_classes'] .= $body_class_extra;
-}
-
-/**
 * Implementation of hook_mail_alter().
 */
 function scholar_mail_alter(&$message) {
@@ -127,64 +90,6 @@ function scholar_mail_alter(&$message) {
     break;
   }
 
-}
-
-
-
-/**
- * Implementation of hook_theme().
- */
-function scholar_theme($cache, $type, $theme, $path) {
-  $path = drupal_get_path('module', 'scholar');
-
-  $items['scholar_admin_links'] = array(
-    'arguments' => array('links' => array()),
-    'template' => 'scholar-admin-links',
-    'path' => $path . '/theme',
-    'file' => 'theme.inc',
-  );
-
-  return $items;
-}
-
-
-
-/**
- * Retrieve the admin links for a given object.
- */
-function scholar_get_admin_links($type, $object) {
-  $links = array();
-  //if (admin_is_enabled('admin inline')) {
-    $links = module_invoke_all('scholar_admin_link', $type, $object);
-    drupal_alter('scholar_admin_link', $links, $type, $object);
-  //}
-  return $links;
-}
-
-/**
- * Implementation of hook_scholar_admin_link() on behalf of the node module.
- */
-function node_scholar_admin_link($type, $object) {
-  $links = array();
-  if ($type == 'node') {
-    if (node_access('update', $object)) {
-      $links['node-edit'] = array(
-        'title' => t('Edit'),
-        'href' => "node/{$object->nid}/edit",
-        'attributes' => array('class' => 'icon-edit'),
-        'query' => array('destination' => $_GET['q']),
-      );
-    }
-    if (node_access('delete', $object)) {
-      $links['node-delete'] = array(
-        'title' => t('Delete'),
-        'href' => "node/{$object->nid}/delete",
-        'attributes' => array('class' => 'icon-delete'),
-        'query' => array('destination' => $_GET['q']),
-      );
-    }
-  }
-  return $links;
 }
 
 /**

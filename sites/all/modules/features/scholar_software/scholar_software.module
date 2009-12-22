@@ -2,6 +2,56 @@
 
 include_once('scholar_software.features.inc');
 
+class rbuild {
+  
+  private $packages = array();
+
+  function __construct($url = "http://gking.harvard.edu/src/contrib/PACKAGES"){
+    $this->packages = _rbuild_parse($url);
+  
+  }
+  
+/**
+ * @return the $packages
+ */
+  public function getPackages(){
+    return $this->packages;
+  }
+
+  
+  
+
+  function _rbuild_parse($url){
+    $homepage = file_get_contents($url);
+    
+    $packages_raw = split("\n\n\n", $homepage);
+    
+    foreach ( $packages_raw as $package_raw ) {
+      $lines = split("\n", $package_raw);
+      foreach ( $lines as $line ) {
+        $line_elements = (explode(':', $line, 2));
+        if (count($line_elements) == 2) {
+          $current_key = ltrim($line_elements[0]);
+          if ($current_key == 'Package') {
+            $package_name = ltrim($line_elements[1]);
+            $packages[$package_name] = array();
+          }
+          $packages[$package_name][$current_key] = ltrim($line_elements[1]);
+        }
+        else {
+          $packages[$package_name][$current_key] .= ' ' . ltrim($line_elements[0]);
+        }
+      }
+    }
+    
+    return $packages;
+  }
+}
+
+
+
+
+
 function scholar_software_menu(){
   $items = array();
   $items['rbuild'] = array(
@@ -13,6 +63,12 @@ function scholar_software_menu(){
   return $items;
 }
 
+
+function scholar_software_rbuild(){
+  $rbuild = new rbuild();
+  dpm($rbuild -> packages);
+  return 'xx';
+}
 
 
 /**
@@ -99,7 +155,6 @@ function scholar_software_context_links_alter(&$links) {
   }
 }
 
-
 /**
  * Edit cv form to add checkbox for toggle
  */
@@ -140,3 +195,5 @@ function scholar_software_form_alter(&$form, $form_state, $form_id){
   }
 }
 */
+
+
