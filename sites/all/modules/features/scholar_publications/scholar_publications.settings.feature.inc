@@ -78,21 +78,21 @@ class scholar_publications_settings_feature implements space_setting {
     );
         */
 
-    $form['link_title_url'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Create hyperlinks to external URLs (if they are available)'),
-      '#return_value' => 1,
-      '#default_value' => !array_key_exists('link_title_url',$value)?variable_get('biblio_link_title_url', 0):$value['link_title_url'],
-      '#description' => t('If an off-site URL is available, users clicking on the title of the publication would be directed to the off-site URL. This could be useful if the complete work is available online.'),
-    );
+//    $form['link_title_url'] = array(
+//      '#type' => 'checkbox',
+//      '#title' => t('Create hyperlinks to external URLs (if they are available)'),
+//      '#return_value' => 1,
+//      '#default_value' => !array_key_exists('link_title_url',$value)?variable_get('biblio_link_title_url', 0):$value['link_title_url'],
+//      '#description' => t('If an off-site URL is available, users clicking on the title of the publication would be directed to the off-site URL. This could be useful if the complete work is available online.'),
+//    );
 
-    $form['author_links'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Create hyperlinks to authors'),
-      '#return_value' => 1,
-      '#default_value' => !array_key_exists('author_links',$value)?variable_get('biblio_author_links', 1):$value['author_links'],
-      '#description' => t('Creates a hyperlink on each author name which, when clicked, selects all entries which contain that author'),
-    );
+//    $form['author_links'] = array(
+//      '#type' => 'checkbox',
+//      '#title' => t('Create hyperlinks to authors'),
+//      '#return_value' => 1,
+//      '#default_value' => !array_key_exists('author_links',$value)?variable_get('biblio_author_links', 1):$value['author_links'],
+//      '#description' => t('Creates a hyperlink on each author name which, when clicked, selects all entries which contain that author'),
+//    );
 
     $form['rowsperpage'] = array(
       '#type' => 'textfield',
