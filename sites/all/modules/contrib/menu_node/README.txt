@@ -1,4 +1,4 @@
-// $Id: README.txt,v 1.1 2009/05/08 14:00:16 agentken Exp $
+// $Id: README.txt,v 1.2 2009/08/21 14:20:55 agentken Exp $
 
 Menu Node API
 Manages relationships between node ids and menu items.
@@ -66,17 +66,17 @@ and tricks.
 At the core of the module are three simple CRUD hooks. They each pass
 the same arguments:
 
-  -- hook_menu_node_insert($node, $item)
-  -- hook_menu_node_update($node, $item)
-  -- hook_menu_node_delete($node, $item)
+  -- hook_menu_node_insert($item, $node)
+  -- hook_menu_node_update($item, $node)
+  -- hook_menu_node_delete($item, $node)
 
 These functions pass the arguments:
 
-  -- $node
-  The complete node object being acted upon.
   -- $item
   The menu item (taken from the {menu_links} table) being
   acted upon.
+  -- $node
+  The complete node object being acted upon.
 
 NOTE: Using menu_get_item() here returns a router item, not the data
 found in {menu_links}. So instead, we load the $item from the {menu_links}

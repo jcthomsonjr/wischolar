@@ -1,6 +1,6 @@
 <?php
 
-// $Id: menu_node.module,v 1.2 2009/05/26 15:19:15 agentken Exp $
+// $Id: menu_node.module,v 1.4 2009/09/14 14:26:16 agentken Exp $
 
 /**
  * @file
@@ -30,7 +30,7 @@ function menu_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       menu_node_save($node->nid, $mlid);
     }
     // If the menu item is being deleted, do so.
-    else {
+    else if (!empty($mlid)) {
       menu_node_delete($node->nid, $mlid);
     }
   }
@@ -273,14 +273,12 @@ function menu_node_edit_form_submit($form, &$form_state) {
  *   The menu link id.
  */
 function menu_node_save($nid, $mlid, $hook = 'update') {
-  $record = array('nid' => $nid, 'mlid' => $mlid);
   $new = menu_node_exists($nid, $mlid);
+  // We only save if the record does not exist, otherwise, call the update hook.
   if (empty($new)) {
+    $record = array('nid' => $nid, 'mlid' => $mlid);
     drupal_write_record('menu_node', $record);
     $hook = 'insert';
-  }
-  else {
-    drupal_write_record('menu_node', $record, 'nid');
   }
   _menu_node_invoke($nid, $mlid, $hook);
 }

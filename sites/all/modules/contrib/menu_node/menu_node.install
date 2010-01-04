@@ -1,6 +1,6 @@
 <?php
 
-// $Id: menu_node.install,v 1.1 2009/05/08 14:00:16 agentken Exp $
+// $Id: menu_node.install,v 1.2 2009/08/21 14:20:55 agentken Exp $
 
 /**
  * @file
@@ -42,11 +42,12 @@ function menu_node_uninstall() {
  */
 function menu_node_enable() {
   $items = array();
-  $result = db_query("SELECT mlid, link_path FROM {menu_links} WHERE link_path LIKE 'node/%' AND router_path = 'node/%%'");
+  $result = db_query("SELECT ml.mlid, ml.link_path FROM {menu_links} ml INNER JOIN {menu_custom} mc ON ml.menu_name = mc.menu_name WHERE ml.link_path LIKE 'node/%' AND ml.router_path = 'node/%%'");
   while ($data = db_fetch_object($result)) {
     $nid = str_replace('node/', '', $data->link_path);
     // Ensure that we did not grab any bad links accidentally.
-    if (is_numeric($nid)) {
+    $check = (bool) db_result(db_query("SELECT COUNT(*) FROM {node} WHERE nid = %d", $nid));
+    if ($check) {
       db_query("INSERT INTO {menu_node} (nid, mlid) VALUES (%d, %d)", $nid, $data->mlid);
     }
   }
@@ -59,4 +60,18 @@ function menu_node_enable() {
  */
 function menu_node_disable() {
   db_query("DELETE FROM {menu_node}");
+}
+
+/**
+ * Update function to remove book module entries.
+ */
+function menu_node_update_6000() {
+  $ret = array();
+  if (module_exists('book')) {
+    $result = db_query("SELECT mlid, nid FROM {book}");
+    while ($data = db_fetch_object($result)) {
+      menu_node_delete($data->nid, $data->mlid);
+    }
+  }
+  return $ret;
 }
