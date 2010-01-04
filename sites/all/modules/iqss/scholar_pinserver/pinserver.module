@@ -116,8 +116,9 @@ function pinserver_process_access_registration(){
   if ($user->uid == '1'){
     return true; // for testing purposes
   }  
+  //20 minute time out on registration form
   if (isset($_SESSION['reg_time']) && isset($_SESSION['hash_huid'])){
-    return $reg_time =  ((time() - (int)$_SESSION['reg_time']) < 120) ? true : false;
+    return $reg_time =  ((time() - (int)$_SESSION['reg_time']) < 1200) ? true : false;
   }
   return false;
 }
