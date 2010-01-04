@@ -36,12 +36,12 @@ function scholar_pinserver_user_process_registration($form, &$form_state){
   else{
     $msg = 'Your web site registration was successful! Your site is live and you are now logged in.';
     $_SESSION['messages']['status'][0] = $msg; //Registration successful. You are now logged in.
-    $vsite = scholar_register_siteowner_path($user);    
+    //$vsite = scholar_register_siteowner_path($user);           
     pinserver_add_row($user->uid);
     pinserver_process_remove_session();
 
     //redirect user to vsite home
-      drupal_goto($vsite -> purl . '/home');
+     drupal_goto($user -> domain . '/home');
   }
 }
 
@@ -50,8 +50,8 @@ function scholar_pinserver_user_process_registration($form, &$form_state){
  * Implementation of hook_mail_alter
  */
 function scholar_pinserver_user_mail_alter(&$message){ 
-  if ($message['id'] == 'scholar_register_scholar-register-notify'){
-    $params = scholar_pinserver_user_notify_user($message['vsite'], $message['user']);
+  if ($message['id'] == 'user_register_no_approval_required'){
+    $params = scholar_pinserver_user_notify_user($message['params']['account']);
     //replace "from" address and "from" headers
     $message['from'] = $params['from'];
     $message['headers']['Errors-To'] = $params['from'];
@@ -123,18 +123,18 @@ function scholar_pinserver_user_user($op, &$edit, &$account, $category = NULL){
 }
 
 
-function scholar_pinserver_user_notify_user($vsite, $user, $alter = TRUE){
+function scholar_pinserver_user_notify_user($user, $alter = TRUE){
   global $language;
   global $base_url;
 
   $params = array();
   $params['from'] = variable_get('site_mail', ini_get('sendmail_from'));
 
-  $params['subject'] = t("A Scholars' Web Site has been created for you", array(
+  $params['subject'] = t("Your Scholars' Web Site has been created", array(
   '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
-  $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
+  $scholar_site_url =  $site_url = url($user -> domain, $options = array('absolute' => TRUE));
   $timestamp = time();
 
   $msg_variables = array(
