@@ -7,3 +7,10 @@ function scholar_register_install(){
  //set module weight
  db_query("UPDATE {system} SET weight = 60 WHERE name = 'scholar_register'");
 }  
+
+/**
+ * Implementation of hook_uninstall()
+ */
+function scholar_register_uninstall(){
+//nothing here yet
+}  
