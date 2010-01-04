@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Implementation of hook_strongarm()
+ */
 function scholar_register_strongarm(){
   $conf = array();
   //allow users to register accounts
@@ -7,18 +10,28 @@ function scholar_register_strongarm(){
   return $conf;
 }
 
+/**
+ * Implementation of hook_form_alter()
+ */
 function scholar_register_mail_alter(&$message){
   //echo "<pre>"; print_r($message); die;
    if ($message['id'] == 'user_register_no_approval_required') { 
-     $message['to'] ='jweiner@iq.harvard.edu'; //TODO remove this after testing 
+     //$message['to'] ='jweiner@iq.harvard.edu'; //TODO remove this after testing 
+     $params = scholar_register_notify_user($message['params']['account']);
+     $message['body'] = $params['body'];     
   }
 }
 
 /**
- * Implementation of hook_user.
+ * Implementation of hook_user()
  */
 function scholar_register_user($op, &$edit, &$account, $category = NULL){
   switch ($op) {
+    case 'insert':
+      // create the site
+      $vsite = scholar_register_vsite_create($edit['name'], $edit['mail'], $edit['domain']);
+      break;
+
     case 'login' :
       // if is a site owner ...
       if ($vsite = scholar_register_siteowner_path($account)) {
@@ -43,6 +56,9 @@ function scholar_register_user($op, &$edit, &$account, $category = NULL){
   }
 }
 
+/**
+ * Implementation of hook_form_alter()
+ */
 function scholar_register_form_alter(&$form, $form_state, $form_id){
     
     if ($form_id == 'user_register'){
@@ -77,54 +93,46 @@ function scholar_register_form_alter(&$form, $form_state, $form_id){
           $form[$field] = array();
         }
       }
-    } 
- 
+    }  
     $form['#validate'][] = 'scholar_register_signup_form_validate';
     $form['#submit'][] = 'scholar_register_signup_form_submit';
     }  	
 }
 
 /**
- * validation callback for the registration form
+ * Validation callback for the registration form
  */
 function scholar_register_signup_form_validate($form, &$form_state){
-  if (isset($form_state['values']['notify'])){
-    //unset($form_state['values']['notify']);
-  }
+  
 }
 
 /**
- * the submit handler for the registration form
+ * The submit handler for the registration form
  */
 function scholar_register_signup_form_submit($form, &$form_state) {
-
-  $name = $form_state ['values'] ['name'];
-  $mail = $form_state ['values'] ['mail'];
-  $domain = $form_state ['values'] ['domain'];
+  // add scholar admin role to user account
+  $user = user_load(array('name' => $form_state['values']['name']));
   
-  //load the user
-  $user = user_load(array('name' => $name));
-
-
-
   install_include(array('user'));
-  //add role to user account
   $rid = install_get_rid(variable_get('scholar_manager_role', 'scholar admin'));
   install_add_user_to_role($user -> uid, $rid);
 
-  // 2. create the site
-  $vsite = scholar_register_vsite_create($name, $mail, $domain);
+  //modify the output message form drupal core
+  $original = 'Your password and further instructions have been sent to your e-mail address.';
+  $replace = 'Your site has been created successfully! An email has been sent to you with your account details.';
+  scholar_register_message_replace($original, $replace);
+}
+ 
 
-  if (!$vsite){
-    // TODO - need somthing here
-  }
-  else{
-    // 3. send e-mail to the user with one-time login link
-    scholar_register_notify_user($vsite, $user);
-    //modify message  
-    if ($_SESSION['messages']['status'][0] == 'Your password and further instructions have been sent to your e-mail address.'){  
-   $msg = 'Your site has been created successfully! An email has been sent to you with your account details.';
-   $_SESSION['messages']['status'][0] = $msg;  
+/**
+ * Function to replace messages output by drupal_set_message()
+ */
+function scholar_register_message_replace($original, $replace, $type = 'status'){
+  if (!empty($_SESSION['messages'][$type])){
+    foreach ($_SESSION['messages'][$type] as $key => $msg){
+      if ($msg == $original){
+        $_SESSION['messages'][$type][$key] = $replace;
+      }
     }
   }
 }
@@ -133,16 +141,13 @@ function scholar_register_signup_form_submit($form, &$form_state) {
  * Function returns vsite object when passed user object if user owns vsite
  * otherwise returns false
  */
-
 function scholar_register_siteowner_path($account){
-  
   // if is a site owner redirec to her site home page
   //dpm($account -> og_groups);
   if (isset($account->og_groups) && is_array($account->og_groups)) {
     foreach ( $account->og_groups as $group ) {
-      //dpm($group);
       if ($group['uid'] == $account->uid) {
-        $vsite = spaces_load("og", $sid = $group['nid'], $is_active = FALSE);
+        $vsite = spaces_load("og", $group['nid']);
         return $vsite;
       }
     }
@@ -150,21 +155,19 @@ function scholar_register_siteowner_path($account){
   return false;
 }
 
-
-function scholar_register_notify_user($vsite, $user){
+/**
+ * Generate email content to send to user creating new web site
+ */
+function scholar_register_notify_user($user){
   global $language;
   $params = array();
   $from = variable_get('site_mail', ini_get('sendmail_from'));
-
-     //add vsite and user object
-   $params['vsite'] = $vsite;
-   $params['user'] = $user;
   
   $params['subject'] = t("A Scholars' Web Site has been created for you", array(
     '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
-  $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
+  $scholar_site_url =  url( $user->domain, $options = array('absolute' => TRUE));
   $timestamp = time();
   
   $msg_variables = array(
@@ -192,22 +195,11 @@ function scholar_register_notify_user($vsite, $user){
   );
 
 
-  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\n Sincerely,\nThe !site Team", $msg_variables);
+  $body .= t("Hi !username,\n\nCongratulations, your web site at !site has been activated!\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
 
   $params['body'] = $body;
-  if (! drupal_mail('scholar_register', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
-    drupal_set_message(t('Error sending notification mail to user.'), 'error');
-  }
 
-}
-
-function scholar_register_mail($key, &$message, $params) {
-  $message['subject'] = $params['subject'];
-  $message['body'] = $params['body'];
-  
-  //these values be used with any mail alter hooks
- $message['vsite'] = $params['vsite'];
- $message['user'] = $params['user'];
+  return $params;
 }
 
 
