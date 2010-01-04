@@ -18,6 +18,7 @@ function scholar_register_mail_alter(&$message){
    if ($message['id'] == 'user_register_no_approval_required') { 
      //$message['to'] ='jweiner@iq.harvard.edu'; //TODO remove this after testing 
      $params = scholar_register_notify_user($message['params']['account']);
+     $message['subject'] = $params['subject'];
      $message['body'] = $params['body'];     
   }
 }
@@ -172,8 +173,8 @@ function scholar_register_notify_user($user){
   $params = array();
   $from = variable_get('site_mail', ini_get('sendmail_from'));
   
-  $params['subject'] = t("A Scholars' Web Site has been created for you", array(
-    '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
+   $params['subject'] = t("Your Scholars' Web Site has been created", array(
+  '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
   $scholar_site_url =  url( $user->domain, $options = array('absolute' => TRUE));
