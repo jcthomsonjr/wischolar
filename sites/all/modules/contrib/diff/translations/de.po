@@ -1,4 +1,4 @@
-# $Id: de.po,v 1.1.2.1.2.2 2008/09/03 19:04:50 hass Exp $
+# $Id: de.po,v 1.1.2.1 2008/02/24 19:10:58 roetzi Exp $
 #
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
@@ -13,16 +13,29 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Diff 5.x\n"
-"POT-Creation-Date: 2008-09-03 20:45+0200\n"
-"PO-Revision-Date: 2008-09-03 21:04+0100\n"
+"POT-Creation-Date: 2007-06-02 20:15+0200\n"
+"PO-Revision-Date: 2007-06-13 16:21+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
+
+#: DiffEngine.php:1045
+#: ;1046
+msgid "Line @line"
+msgstr "Zeile @line"
+
+#: node.inc:10
+msgid "Title"
+msgstr "Titel"
+
+#: node.inc:18
+msgid "Body"
+msgstr "Textkörper"
 
 #: taxonomy.inc:48
 msgid "Taxonomy"
@@ -32,96 +45,103 @@ msgstr "Taxonomie"
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: diff.module:20
+#: diff.module:15
 msgid "The diff module overwrites the normal revisions view. The revisions table is enhanced with a possibility to view the difference between two node revisions. Users with the %view_revisions permission will also be able to view the changes between any two selected revisions. You may disable this for individual content types on the content type configuration page. This module also provides a nifty %preview_changes button while editing a post."
-msgstr "Das Diff Modul überschreibt die normale Versionsansicht. Die Versionentabelle wird verbessert, um die Unterschiede zwischen Beitragsversionen einzusehen. Benutzer mit der Berechtigung %view_revisions haben die Möglichkeit die Änderungen zwischen zwei ausgewählten Versionen einzusehen. Dies kann für individuelle Inhaltstypen auf der Seite des Inhaltstyps deaktiviert werden. Dieses Modul stellt während dem Bearbeiten eines Beitrages einen eleganten Schaltknopf für eine %preview_changes zu Verfügung."
+msgstr "Das Diff Modul überschreibt die normale Revisionsansicht. Die Revisionentabelle wird verbessert, um die Unterschiede zwischen Beitragsrevisionen einzusehen. Benutzer mit der Berechtigung %view_revisions haben die Möglichkeit die Änderungen zwischen zwei ausgewählten Revisonen einzusehen. Dies kann für individuelle Inhaltstypen auf der Seite des Inhaltstyps deaktiviert werden. Dieses Modul stellt während dem Bearbeiten eines Beitrages einen eleganten Knopf für eine %preview_changes zu Verfügung."
 
-#: diff.module:20;467;478;479
+#: diff.module:15
+#: ;420;479
 msgid "Preview changes"
 msgstr "Änderungsvorschau"
 
-#: diff.module:20
+#: diff.module:15
 msgid "view revisions"
-msgstr "Versionen anzeigen"
+msgstr "Revisionen anzeigen"
 
-#: diff.module:74;256
+#: diff.module:49
+#: diff.install:23
+msgid "Revisions"
+msgstr "Revisionen"
+
+#: diff.module:92
+msgid "Diff for %title"
+msgstr "Unterschiede für %title"
+
+#: diff.module:118
 msgid "Revisions for %title"
-msgstr "Versionen für %title"
+msgstr "Revisionen für %title"
 
-#: diff.module:128;136;264;268
+#: diff.module:168
+#: ;176;295;299
 msgid "!date by !username"
 msgstr "!date von !username"
 
-#: diff.module:142
+#: diff.module:182
 msgid "revert"
-msgstr "Zurücksetzen"
+msgstr "zurücksetzen"
 
-#: diff.module:145
+#: diff.module:185
 msgid "delete"
 msgstr "Löschen"
 
-#: diff.module:168
+#: diff.module:208
 msgid "Show diff"
 msgstr "Unterschiede anzeigen"
 
-#: diff.module:186
+#: diff.module:224
 msgid "Revision"
-msgstr "Version"
+msgstr "Revision"
 
-#: diff.module:188
+#: diff.module:226
 msgid "Operations"
 msgstr "Operationen"
 
-#: diff.module:208
+#: diff.module:246
 msgid "current revision"
-msgstr "aktuelle Version"
+msgstr "aktuelle Revision"
 
-#: diff.module:238
+#: diff.module:276
 msgid "Select different revisions to compare."
-msgstr "Es müssen unterschiedliche Versionen für einen Vergleich ausgewählt werden."
+msgstr "Es müssen unterschiedliche Revisionen für einen Vergleich ausgewählt werden."
 
-#: diff.module:279
+#: diff.module:310
 msgid "next diff >"
 msgstr "Nächster Unterschied >"
 
-#: diff.module:286
+#: diff.module:317
 msgid "< previous diff"
 msgstr "< vorheriger Unterschied"
 
-#: diff.module:323
+#: diff.module:335
 msgid "Current revision:"
-msgstr "aktuelle Version"
+msgstr "aktuelle Revision"
 
-#: diff.module:326
+#: diff.module:338
 msgid "Revision of !new_date:"
-msgstr "Version vom !new_date:"
+msgstr "Revision vom !new_date:"
 
-#: diff.module:390
+#: diff.module:371
 msgid "Changes to %name"
 msgstr "Änderungen am %name"
 
-#: diff.module:402
+#: diff.module:377
 msgid "No visible changes"
-msgstr "Keine sichtbaren Unterschiede"
-
-#: diff.module:478
-msgid "Show %preview_changes button on node edit form"
-msgstr "Den %preview_changes-Schaltknopf auf dem Formular zum Bearbeiten eines Beitrages anzeigen"
-
-#: diff.module:705
-msgid "Line %lineno"
-msgstr "Zeile %lineno"
-
-#: diff.module:31;39
-#: diff.info:0
-msgid "Diff"
-msgstr "Diff"
+msgstr "Keine sichtbare Unterschiede"
 
 #: diff.module:0
 msgid "diff"
 msgstr "diff"
 
+#: diff.install:23
+msgid "Weight of %diff module set to %weight. You can now see a diff of different node revisions using the %revisions tab when viewing a node."
+msgstr "Die Gewichtung des %diff Moduls ist auf %weight eingestellt. Die Unterschiede zwischen Beitragsrevisionen können im Ansichtsmodus über den %revisions Tabulator eingesehen werden."
+
+#: diff.install:23
+#: diff.info:0
+msgid "Diff"
+msgstr "Diff"
+
 #: diff.info:0
 msgid "Show difference between node revisions."
-msgstr "Unterschiede zwischen den Beitragsversionen anzeigen"
+msgstr "Unterschiede zwischen den Beitragsrevisionen anzeigen"
 

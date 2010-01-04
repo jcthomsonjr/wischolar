@@ -1,5 +1,5 @@
 <?php
-// $Id: diff.module,v 1.23.2.3.2.10 2009/04/15 15:21:26 yhahn Exp $
+// $Id: diff.module,v 1.23.2.3.2.5 2008/05/22 19:07:11 weitzman Exp $
 
 /**
  * @file
@@ -19,65 +19,24 @@ function diff_help($path, $arg) {
     case 'admin/help#diff':
       $output = '<p>'. t('The diff module overwrites the normal revisions view. The revisions table is enhanced with a possibility to view the difference between two node revisions. Users with the %view_revisions permission will also be able to view the changes between any two selected revisions. You may disable this for individual content types on the content type configuration page. This module also provides a nifty %preview_changes button while editing a post.', array('%preview_changes' => t('Preview changes'), '%view_revisions' => t('view revisions'))) .'</p>';
       return $output;
-    case 'node/%/revisions/%/view': // the following string is copied from string copied from node_help('node/%/revisions')
-      return '<p>'. t('The revisions let you track differences between multiple versions of a post.') .'</p>';
-    case 'node/%/revisions/view/%/%':
-      return '<p>'. t('Comparing two revisions:') .'</p>';
   }
 }
 
 /**
  * Implementation of hook_menu()
+ * The menu path 'node/$nid/revisions' is overriden with 'diff_diffs'.
  */
 function diff_menu() {
   $items = array();
-  
-  /** 
-   * By using MENU_LOCAL_TASK (and 'tab_parent') we can get the various revision-views to
-   * show the View|Edit|Revision-tabs of the node on top, and have the Revisions-tab open.
-   * To avoid creating/showing any extra tabs or sub-tabs (tasks below top level) for the
-   * various paths (i.e. "Diff", "Show latest" and "Show a specific revision") that need
-   * a revision-id (vid) parameter, we make sure to set 'tab_parent' a bit odd.
-   * This solution may not be the prettiest one, but by avoiding having two _LOCAL_TASKs
-   * sharing a parent that can be accessed by its full path, it seems to work as desired.
-   * Breadcrumbs work decently, at least the node link is among the crumbs. For some reason
-   * any breadcrumbs "before/above" the node is only seen at 'node/%node/revisions/%/view'.
-   */ 
-  $items['node/%node/revisions/list'] = array(
-    // Not used directly, but was created to get the other menu items to work well
-    'title' => 'List revisions',
-    'page callback' => 'diff_diffs_overview',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'access callback' => '_node_revision_access',
-    'access arguments' => array(1),
-  );
   $items['node/%node/revisions/view/%/%'] = array(
     'title' => 'Diff',
     'page callback' => 'diff_diffs_show',
     'page arguments' => array(1, 4, 5),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_CALLBACK,
     'access callback' => '_node_revision_access',
     'access arguments' => array(1),
-    'tab_parent' => 'node/%/revisions/list',
-  );
-  $items['node/%node/revisions/view/latest'] = array(
-    'title' => 'Show latest diff',
-    'page callback' => 'diff_latest',
-    'page arguments' => array(1),
-    'type' => MENU_LOCAL_TASK,
-    'access callback' => '_node_revision_access',
-    'access arguments' => array(1),
-    'tab_parent' => 'node/%/revisions/view',
   );
   return $items;
-}
-
-// Menu callback - show latest diff for a given node.
-function diff_latest($node) {
-  $revisions = node_revision_list($node);
-  $new = array_shift($revisions);
-  $old = array_shift($revisions);
-  drupal_goto("node/$node->nid/revisions/view/$old->vid/$new->vid");
 }
 
 /**
@@ -88,171 +47,6 @@ function diff_menu_alter(&$callbacks) {
   $callbacks['node/%node/revisions']['page callback'] = 'diff_diffs_overview';
   $callbacks['node/%node/revisions']['module'] = 'diff';
   unset($callbacks['node/%node/revisions']['file']);
-
-  $callbacks['node/%node/revisions/%/view']['tab_parent'] = 'node/%/revisions/list';
-  $callbacks['node/%node/revisions/%/revert']['tab_parent'] = 'node/%/revisions/%/view';
-  $callbacks['node/%node/revisions/%/delete']['tab_parent'] = 'node/%/revisions/%/view';
-  return;
-}
-
-/**
- * Form for selecting two consecutive revisions for inline diff'ing.
- */
-function diff_inline_form($form_state, $node, $revisions) {
-  $form = array();
-  $form['nid'] = array(
-    '#type' => 'value',
-    '#value' => $node->nid,
-  );
-  $form['#theme'] = 'diff_inline_form';
-
-  if (!empty($_SESSION['diff_inline_highlight'])) {
-    $rev = count($revisions);
-    $pad_length = strlen($rev);
-
-    // Build list of revisions. Label using sequential numbers instead of vids
-    // for easier reading.
-    $options = array();
-    foreach ($revisions as $r) {
-      $options[$r->vid] = t("#!num by !name", array('!num' => str_pad($rev, $pad_length, '0', STR_PAD_LEFT), '!date' => format_date($r->timestamp, 'small'), '!name' => $r->name));
-      $rev--;
-    }
-
-    $form['vid'] = array(
-      '#type' => 'select',
-      '#options' => $options,
-      '#default_value' => $node->vid,
-    );
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('View revision'),
-      '#submit' => array('diff_inline_on'),
-    );
-    $form['toggle'] = array(
-      '#type' => 'submit',
-      '#value' => t('Turn off highlighting'),
-      '#submit' => array('diff_inline_off'),
-    );
-  }
-  else {
-    $form['vid'] = array(
-      '#type' => 'value',
-      '#value' => $node->vid,
-    );
-    $form['toggle'] = array(
-      '#type' => 'submit',
-      '#value' => t('Highlight changes'),
-      '#submit' => array('diff_inline_on'),
-    );
-  }
-
-  return $form;
-}
-
-/**
- * Diff inline form submit handler. Retrieves node/revision information and
- * directs user to the correct node revision page.
- */
-function diff_inline_on(&$form, &$form_state) {
-  $_SESSION['diff_inline_highlight'] = TRUE;
-  $form_state['redirect'] = "node/{$form_state['values']['nid']}/revisions/{$form_state['values']['vid']}/view";
-}
-
-/**
- * Diff inline form toggle submit handler. Turns off inline diff highlighting.
- */
-function diff_inline_off(&$form, &$form_state) {
-  $_SESSION['diff_inline_highlight'] = FALSE;
-  $form_state['redirect'] = "node/{$form_state['values']['nid']}";
-}
-
-/**
- * Theme function for diff inline forms.
- */
-function theme_diff_inline_form($form) {
-  $output = "<div class='diff-inline-form clear-block'>";
-  $output .= "<div class='toggle'>". drupal_render($form['toggle']) ."</div>";
-  $output .= drupal_render($form);
-  $output .= "</div>";
-  return $output;
-}
-
-/**
- * Implementation of hook_nodeapi().
- */
-function diff_nodeapi(&$node, $op, $teaser, $page) {
-  switch ($op) {
-    case 'view':
-      if ($page && user_access('view revisions') && variable_get('show_diff_inline_'. $node->type, FALSE)) {
-        $revisions = node_revision_list($node);
-
-        // Only render the form if there are multiple revisions
-        if (count($revisions) > 1) {
-          drupal_add_css(drupal_get_path('module', 'diff') .'/diff.css', 'module', 'all', FALSE);
-          $node->content['diff_inline'] = array(
-            '#value' => drupal_get_form('diff_inline_form', $node, $revisions),
-            '#weight' => -100,
-          );
-
-          $vids = array_keys($revisions);
-          $position = array_search($node->vid, $vids) + 1;
-          $old = isset($vids[$position]) ? $vids[$position] : NULL;
-
-          // Only highlight changes if inline highlighting is enabled & there
-          // is actually an older revision to diff against.
-          if ($old && !empty($_SESSION['diff_inline_highlight'])) {
-            // @TODO: This is a bad hack that should instead be a patch against the node module.
-            menu_set_active_item("node/{$node->nid}");
-
-            module_load_include('php', 'diff', 'DiffEngine');
-            $new = drupal_clone($node);
-
-            // We could use a node_load() / node_prepare() combo here but for now
-            // we would rather save queries...
-            $old = db_fetch_object(db_query("SELECT body, format FROM {node_revisions} WHERE nid = %d AND vid = %d", $node->nid, $old));
-            $old->body = check_markup($old->body, $old->format, FALSE);
-
-            $new = preg_split('/(<[^>]+?>)/', $new->body, -1, PREG_SPLIT_DELIM_CAPTURE);
-            $old = preg_split('/(<[^>]+?>)/', $old->body, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-            $diff = new Diff($old, $new);
-
-            // Assemble highlighted output
-            $output = '';
-            foreach ($diff->edits as $chunk) {
-              switch ($chunk->type) {
-                case 'copy':
-                  $output .= implode("", $chunk->closing);
-                  break;
-                case 'add':
-                case 'change':
-                  foreach ($chunk->closing as $i =>$piece) {
-                    if (strpos($piece, '<') === 0 && substr($piece, strlen($piece) - 1) === '>') {
-                      $output .= $piece;
-                    }
-                    else {
-                      $output .= "<span class='diff-changed'>{$piece}</span>";
-                    }
-                  }
-                  break;
-                default:
-                  foreach ($chunk->orig as $i =>$piece) {
-                    if (strpos($piece, '<') === 0 && substr($piece, strlen($piece) - 1) === '>') {
-                      $output .= $piece;
-                    }
-                    else {
-                      $output .= "<span class='diff-deleted'>{$piece}</span>";
-                    }
-                  }
-                  break;
-              }
-            }
-            $node->content['body']['#value'] = $output;
-          }
-        }
-      }
-      break;
-  }
 }
 
 /**
@@ -532,13 +326,13 @@ function diff_diffs_show(&$node, $old_vid, $new_vid) {
  */
 function _diff_body_rows(&$old_node, &$new_node) {
   drupal_add_css(drupal_get_path('module', 'diff') .'/diff.css', 'module', 'all', FALSE);
-  module_load_include('php', 'diff', 'DiffEngine');
-  module_load_include('inc', 'diff', 'node');
+  include_once('DiffEngine.php');
+  include_once('node.inc');
   if (module_exists('taxonomy')) {
-    module_load_include('inc', 'diff', 'taxonomy');
+    include_once('taxonomy.inc');
   }
   if (module_exists('upload')) {
-    module_load_include('inc', 'diff', 'upload');
+    include_once('upload.inc');
   }
 
   $rows = array();
@@ -648,10 +442,12 @@ function _diff_get_previous_vid(&$node_revisions, $vid) {
 
 /**
  * Implementation of hook_form_alter().
+ * Used to add a 'Preview changes' button on the node edit form.
  */
 function diff_form_alter(&$form, $form_state, $form_id) {
   if (isset($form['type']['#value']) && $form['type']['#value'] .'_node_form' == $form_id) {
-    // Add a 'Preview changes' button on the node edit form.
+    // Node editing form.
+    // Add a 'Preview changes' button.
     if (variable_get('show_preview_changes_'. $form['type']['#value'], TRUE) && $form['nid']['#value'] > 0) {
       $form['buttons']['preview_changes'] = array(
         '#type' => 'submit',
@@ -670,14 +466,6 @@ function diff_form_alter(&$form, $form_state, $form_id) {
       '#prefix' => '<strong>'. t('Preview changes') .'</strong>',
       '#weight' => 10,
       '#default_value' => variable_get('show_preview_changes_'. $form['#node_type']->type, TRUE),
-    );
-    // Add checkbox to present inline diff forms and highlighting to users.
-    $form['workflow']['show_diff_inline'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Show diffs inline for this content type'),
-      '#weight' => 10,
-      '#prefix' => "<strong>". t('Inline diffs') ."</strong>",
-      '#default_value' => variable_get('show_diff_inline_'. $form['#node_type']->type, FALSE),
     );
   }
 }
@@ -937,9 +725,6 @@ function diff_theme() {
     ),
     'diff_empty_line' => array(
       'arguments' => array('line' => NULL),
-    ),
-    'diff_inline_form' => array(
-      'arguments' => array('form' => NULL),
     ),
   );
 }
