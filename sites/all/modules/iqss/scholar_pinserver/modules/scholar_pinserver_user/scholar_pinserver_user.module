@@ -62,8 +62,7 @@ function scholar_pinserver_user_mail_alter(&$message){
     //replace subject
     $message['subject'] = $params['subject'];
     //replace body
-    $message['body'] = array($params['body']);
-   
+    $message['body'] = $params['body'];   
   }
 }
 
