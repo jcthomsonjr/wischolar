@@ -103,7 +103,17 @@ function scholar_register_form_alter(&$form, $form_state, $form_id){
  * Validation callback for the registration form
  */
 function scholar_register_signup_form_validate($form, &$form_state){
-  
+
+  //domain name validation
+  $modifier = array(
+  'provider' =>'spaces_og',
+  'value' => $form_state['values']['domain'],
+  'id' =>NULL,
+  );
+
+  if (!purl_validate($modifier)){
+    form_set_error('domain', 'The domain name you have entered is invalid or in use.');
+  }
 }
 
 /**
