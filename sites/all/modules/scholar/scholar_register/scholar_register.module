@@ -122,7 +122,7 @@ function scholar_register_signup_form_validate($form, &$form_state){
 function scholar_register_signup_form_submit($form, &$form_state) {
   // add scholar admin role to user account
   $user = user_load(array('name' => $form_state['values']['name']));
-  
+
   install_include(array('user'));
   $rid = install_get_rid(variable_get('scholar_manager_role', 'scholar admin'));
   install_add_user_to_role($user -> uid, $rid);
@@ -133,7 +133,6 @@ function scholar_register_signup_form_submit($form, &$form_state) {
   scholar_register_message_replace($original, $replace);
 }
  
-
 /**
  * Function to replace messages output by drupal_set_message()
  */
@@ -204,14 +203,10 @@ function scholar_register_notify_user($user){
     '!password' => $password
   );
 
-
-  $body .= t("Hi !username,\n\nCongratulations, your web site at !site has been activated!\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
-
-  $params['body'] = $body;
+  $params['body'] =  t("Hi !username,\n\nCongratulations, your web site at !site has been activated!\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
 
   return $params;
 }
-
 
 /**
  * Create a scholar vsite
@@ -220,52 +215,6 @@ function scholar_register_vsite_create($name, $mail, $domain){
   vsite_include('vsiteapi');
   return vsite_vsite_create($name, $mail, $domain);
 }
-
-
-/** Validation functions **/
-
-function scholar_register_validate_name($name){
-  if ($error = user_validate_name($name)){
-    return $error;
-  }
-  elseif (_scholar_register_domain_exists($name) || _scholar_register_name_exists($name)){
-    return "username \"$name\" is taken";
-  }
-}
-
-function scholar_register_validate_domain($domain){
-  if ($error = user_validate_name($domain)){  // the same validation as the username
-    return $error;
-  }
-  elseif (_scholar_register_domain_exists($domain) || _scholar_register_name_exists($domain)){
-    return "domain \"$domain\" is taken";
-  }
-}
-
-function _scholar_register_domain_exists($domain){
-  // check domain availability
-  $query = "SELECT value FROM {purl} WHERE value='%s'";
-  $existing_purl = db_result(db_query($query, $domain));
-
-  return $existing_purl ? TRUE : FALSE;
-}
-
-function _scholar_register_name_exists($name){
-  // check domain availability
-  $query = "SELECT name FROM {users} WHERE name='%s'";
-  $existing_name = db_result(db_query($query, $name));
-
-  return $existing_name ? TRUE : FALSE;
-}
-
-function _scholar_register_mail_exists($mail){
-  // check domain availability
-  $query = "SELECT mail FROM {users} WHERE mail='%s'";
-  $existing_mail = db_result(db_query($query, $mail));
-
-  return $existing_mail ? TRUE : FALSE;
-}
-
 
 function _scholar_register_vsite_error(){
   return ctools_ajax_command_replace('#submit-suffix', 'The web site cannot be created. Please fix the errors and try again.');
