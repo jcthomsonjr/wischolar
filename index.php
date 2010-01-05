@@ -1,8 +1,6 @@
 <?php
 // $Id: index.php,v 1.94 2007/12/26 08:46:48 dries Exp $
 
-//include_once 'dummy.php';
-
 /**
  * @file
  * The PHP page that serves all page requests on a Drupal installation.
