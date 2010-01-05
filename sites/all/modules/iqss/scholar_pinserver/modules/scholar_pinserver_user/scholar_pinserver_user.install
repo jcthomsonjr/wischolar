@@ -6,11 +6,11 @@
 function scholar_pinserver_user_install(){
  //set module weight
   db_query("UPDATE {system} SET weight = 70 WHERE name = 'scholar_pinserver_user'");
+  cache_clear_all();
 }  
 
 
 function scholar_pinserver_user_unistall(){
   //set the password display back to hidden
-  variable_set('user_email_verification', 1);
-  cache_clear_all();
+  variable_set('user_email_verification', 1);  
 }
