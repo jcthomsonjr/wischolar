@@ -1,5 +1,5 @@
 <?php
-// $Id: view.inc,v 1.164 2009/06/18 19:27:32 merlinofchaos Exp $
+// $Id: view.inc,v 1.167.2.2 2009/11/18 02:26:16 merlinofchaos Exp $
 /**
  * @file view.inc
  * Provides the view object type and associated methods.
@@ -99,6 +99,13 @@ class view extends views_db_object {
     if (empty($items_per_page)) {
       $this->pager['use_pager'] = FALSE;
     }
+  }
+
+  /**
+   * Change/Set the current page for the pager.
+   */
+  function set_current_page($page) {
+    $this->pager['current_page'] = $page;
   }
 
   /**
@@ -591,6 +598,7 @@ class view extends views_db_object {
     // Arguments can, in fact, cause this whole thing to abort.
     if (!$this->_build_arguments()) {
       $this->build_time = views_microtime() - $start;
+      $this->attach_displays();
       return $this->built;
     }
 
@@ -765,6 +773,13 @@ class view extends views_db_object {
         while ($item = db_fetch_object($result)) {
           $this->result[] = $item;
         }
+
+        // If we already know how many items we have even if we did not run the
+        // count query, go ahead and set that value:
+        if (empty($this->pager['items_per_page'])) {
+          $this->total_rows = count($this->result);
+        }
+
         if (!empty($external)) {
           db_set_active();
         }
@@ -788,6 +803,8 @@ class view extends views_db_object {
     if (!empty($this->build_info['fail'])) {
       return;
     }
+
+    init_theme();
 
     $start = views_microtime();
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
@@ -1495,7 +1512,7 @@ class view extends views_db_object {
   function clone_view() {
     $clone = version_compare(phpversion(), '5.0') < 0 ? $this : clone($this);
 
-    $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after', 'field', 'argument', 'filter', 'sort', 'relationship', 'query', 'inited', 'style_plugin', 'plugin_name', 'exposed_data', 'exposed_input', 'many_to_one_tables');
+    $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after', 'field', 'argument', 'filter', 'sort', 'relationship', 'query', 'inited', 'style_plugin', 'plugin_name', 'exposed_data', 'exposed_input', 'exposed_widgets', 'many_to_one_tables');
     foreach ($keys as $key) {
       if (isset($clone->$key)) {
         unset($clone->$key);
