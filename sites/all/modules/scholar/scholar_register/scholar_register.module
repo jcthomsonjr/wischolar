@@ -179,6 +179,10 @@ function scholar_register_notify_user($user, $vsite){
   $params = array();
   $from = variable_get('site_mail', ini_get('sendmail_from'));
   
+  //add some additional information which can be used with other hook alter functions
+  $params['user'] = $user;
+  $params['vsite'] = $vsite;
+  
    $params['subject'] = t("Your Scholars' Web Site has been created", array(
   '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
@@ -221,6 +225,10 @@ function scholar_register_mail($key, &$message, $params){
   if ($key == 'scholar-register-notify'){
     $message['subject'] = $params['subject'];
     $message['body'] = $params['body'];
+    
+    //add additional params to $message info
+   $message['user'] =  $params['user'];
+   $message['vsite'] = $params['vsite'];
   }
 }
 
