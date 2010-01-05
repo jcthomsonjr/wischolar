@@ -1,0 +1,98 @@
+Index: better_formats.module
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/better_formats/better_formats.module,v
+retrieving revision 1.23.2.14
+diff -u -p -r1.23.2.14 better_formats.module
+--- better_formats.module	5 Jun 2009 23:16:33 -0000	1.23.2.14
++++ better_formats.module	25 Nov 2009 07:56:14 -0000
+@@ -132,6 +132,90 @@ function better_formats_form_alter(&$for
+ }
+ 
+ /**
++ * Implementation of hook_features_api().
++ */
++function better_formats_features_api() {
++  return array(
++    'better_formats' => array(
++      'default_hook' => 'better_formats_default',
++      'features_source' => TRUE,
++    ),
++  );
++}
++
++/**
++ * Implementation of hook_features_export_options().
++ */
++function better_formats_features_export_options() {
++  $result = db_query("SELECT DISTINCT rid FROM {better_formats_defaults}");
++  $roles = user_roles();
++  while ($rid = db_fetch_array($result)) {
++    // Add format to exports
++    $options[$rid['rid']] = $roles[$rid['rid']];
++  }
++  return $options;
++}
++
++/**
++ * Implementation of hook_features_export().
++ */
++function better_formats_features_export($data, &$export, $module_name = '') {
++  // The filter_default_formats() hook integration is provided by the
++  // features module so we need to add it as a dependency.
++  $export['dependencies']['features'] = 'features';
++  $result = db_query("SELECT DISTINCT rid FROM {better_formats_defaults}");
++  while ($row = db_fetch_array($result)) {
++    // Add format to exports
++    $export['features']['better_formats'][$row['rid']] = $row['rid'];
++  }
++
++  return array();
++}
++
++/**
++ * Implementation of hook_features_export_render().
++ */
++function better_formats_features_export_render($module = 'foo', $data) {
++  // @todo - without this there is an undefined function features_var_export().
++  module_load_include('inc', 'features', 'features.export');
++  $code = array();
++  $code[] = '  $defaults = array();';
++  $code[] = '';
++
++  $result = db_query("SELECT * FROM {better_formats_defaults}");
++   while ($row = db_fetch_array($result)) {
++    $code[] = '  $defaults[] = '. features_var_export($row, '  ') .';';
++    $code[] = '';
++  }
++
++  $code[] = '  return $defaults;';
++  $code = implode("\n", $code);
++  return array('better_formats_default' => $code);
++}
++
++/**
++ * Implementation of hook_features_export_revert().
++ */
++function better_formats_features_revert($module) {
++  better_formats_features_rebuild($module);
++}
++
++/**
++ * Implementation of hook_features_export_rebuild().
++ */
++function better_formats_features_rebuild($module) {
++  $defaults = module_invoke($module, 'better_formats_default');
++  if (!empty($defaults)) {
++    foreach ($defaults as $default) {
++      db_query("UPDATE {better_formats_defaults} SET rid = %d, type = '%s', format = %d, type_weight = %d, weight = %d WHERE rid = %d AND type = '%s'", $default['rid'], $default['type'], $default['format'], $default['type_weight'], $default['weight'], $default['rid'], $default['type']);
++      if (!db_affected_rows()) {
++        db_query("INSERT INTO {better_formats_defaults} (rid, type, format, type_weight, weight) VALUES (%d, '%s', %d, %d, %d)", $default['rid'], $default['type'], $default['format'], $default['type_weight'], $default['weight']);
++      }
++    }
++  }
++}
++
++/**
+  * FAPI form to add to the content type edit form.
+  *
+  * @see better_formats_node_type_form_validate()

@@ -1,5 +1,5 @@
 <?php
-// $Id: features.filter.inc,v 1.1.2.5 2009/08/27 18:05:48 jmiccolis Exp $
+// $Id: features.filter.inc,v 1.1.2.8 2009/12/21 22:00:48 yhahn Exp $
 
 /**
  * Implementation of hook_features_api().
@@ -7,6 +7,7 @@
 function filter_features_api() {
   return array(
     'filter' => array(
+      'name' => t('Filter formats'),
       'default_hook' => 'filter_default_formats',
     ),
   );
@@ -62,21 +63,19 @@ function filter_features_export_render($module = 'foo', $data) {
 /**
  * Implementation of hook_features_revert().
  */
-function filter_features_revert($module = NULL) {
-  $defaults = module_invoke($module, 'filter_default_formats');
-  foreach ($defaults as $format) {
-    _filter_features_update($format, TRUE);
-  }
-  return TRUE;
+function filter_features_revert($module) {
+  return filter_features_rebuild($module);
 }
 
 /**
  * Implementation of hook_features_rebuild().
  */
-function filter_features_rebuild() {
-  $defaults = module_invoke_all('filter_default_formats');
-  foreach ($defaults as $format) {
-    _filter_features_update($format, FALSE);
+function filter_features_rebuild($module) {
+  $defaults = module_invoke($module, 'filter_default_formats');
+  if (!empty($defaults)) {
+    foreach ($defaults as $format) {
+      _filter_features_update($format);
+    }
   }
 }
 
@@ -101,7 +100,7 @@ function _filter_get_formats() {
       'roles' => $format_roles,
       'filters' => array(),
     );
-    foreach (filter_list_format($row->format) as $filter) {
+    foreach (_filter_list_format($row->format, TRUE) as $filter) {
       $formats[$row->format]['filters'][] = array(
         'module' => $filter->module,
         'delta' => $filter->delta,
@@ -114,54 +113,80 @@ function _filter_get_formats() {
 }
 
 /**
- * Helper function for updating/inserting formats. Called in both rebuild
- * and revert steps.
+ * Direct copy of filter_list_format() but with a way to clear the static.
  */
-function _filter_features_update($format, $update = FALSE) {
-  $format_id = db_result(db_query("SELECT format FROM {filter_formats} WHERE name = '%s'", $format['name']));
-  if ($update || !$format_id) {
-    // Format the role IDs into something that can be inserted into the database.
-    // This is so painful. See filter.admin.inc line 218. : (
-    // We cannot use user_roles() here because it has the names translated.
-    $roles = _features_get_roles();
-    $format_rids = array();
-    foreach ($format['roles'] as $role_name) {
-      // Ensure that each role exists. If it does not, create it and store the rid.
-      if (!isset($roles[$role_name])) {
-        $record = array('name' => $role_name);
-        drupal_write_record('role', $record);
-        $roles[$role_name]['rid'] = $record['rid'];
-        $roles[$role_name]['perm'] = array();
-      }
-      // Retrieve the rid corresponding to each role and add it to the format's rids
-      if (isset($roles[$role_name])) {
-        $format_rids[] = $roles[$role_name]['rid'];
-      }
-    }
-    if ($format_id && $format_id == variable_get('filter_default_format', 1)) {
-      $format['roles'] = ','. implode(',', array_keys(user_roles())) .',';
+function _filter_list_format($format, $reset = FALSE) {
+  static $filters = array();
+
+  if (!isset($filters[$format]) || $reset) {
+    $result = db_query("SELECT * FROM {filters} WHERE format = %d ORDER BY weight, module, delta", $format);
+    if (db_affected_rows($result) == 0 && !db_result(db_query("SELECT 1 FROM {filter_formats} WHERE format = %d", $format))) {
+      // The format has no filters and does not exist, use the default input
+      // format.
+      $filters[$format] = filter_list_format(variable_get('filter_default_format', 1));
     }
     else {
-      $format['roles'] = ','. implode(',', $format_rids) .',';
-    }
-
-    // Update or insert the format
-    if ($format_id) {
-      $format['format'] = $format_id;
-      drupal_write_record('filter_formats', $format, 'format');
-    }
-    else {
-      drupal_write_record('filter_formats', $format);
-    }
-
-    // Update the filters for the format
-    if ($format['format']) {
-      db_query("DELETE FROM {filters} WHERE format = %d", $format['format']);
-      foreach ($format['filters'] as $filter) {
-        $filter['format'] = $format['format'];
-        drupal_write_record('filters', $filter);
+      $filters[$format] = array();
+      while ($filter = db_fetch_object($result)) {
+        $list = module_invoke($filter->module, 'filter', 'list');
+        if (isset($list) && is_array($list) && isset($list[$filter->delta])) {
+          $filter->name = $list[$filter->delta];
+          $filters[$format][$filter->module .'/'. $filter->delta] = $filter;
+        }
       }
     }
   }
+
+  return $filters[$format];
 }
 
+
+/**
+ * Helper function for updating/inserting formats.
+ */
+function _filter_features_update($format) {
+  $format_id = db_result(db_query("SELECT format FROM {filter_formats} WHERE name = '%s'", $format['name']));
+
+  // Format the role IDs into something that can be inserted into the database.
+  // This is so painful. See filter.admin.inc line 218. : (
+  // We cannot use user_roles() here because it has the names translated.
+  $roles = _features_get_roles();
+  $format_rids = array();
+  foreach ($format['roles'] as $role_name) {
+    // Ensure that each role exists. If it does not, create it and store the rid.
+    if (!isset($roles[$role_name])) {
+      $record = array('name' => $role_name);
+      drupal_write_record('role', $record);
+      $roles[$role_name]['rid'] = $record['rid'];
+      $roles[$role_name]['perm'] = array();
+    }
+    // Retrieve the rid corresponding to each role and add it to the format's rids
+    if (isset($roles[$role_name])) {
+      $format_rids[] = $roles[$role_name]['rid'];
+    }
+  }
+  if ($format_id && $format_id == variable_get('filter_default_format', 1)) {
+    $format['roles'] = ','. implode(',', array_keys(user_roles())) .',';
+  }
+  else {
+    $format['roles'] = ','. implode(',', $format_rids) .',';
+  }
+
+  // Update or insert the format
+  if ($format_id) {
+    $format['format'] = $format_id;
+    drupal_write_record('filter_formats', $format, 'format');
+  }
+  else {
+    drupal_write_record('filter_formats', $format);
+  }
+
+  // Update the filters for the format
+  if ($format['format']) {
+    db_query("DELETE FROM {filters} WHERE format = %d", $format['format']);
+    foreach ($format['filters'] as $filter) {
+      $filter['format'] = $format['format'];
+      drupal_write_record('filters', $filter);
+    }
+  }
+}
