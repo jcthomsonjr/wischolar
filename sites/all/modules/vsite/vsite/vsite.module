@@ -147,6 +147,8 @@ function vsite_include($inc_files){
 
 /**
  * hook link
+ * Adds a node link which contains some other administrative
+ * links.
  */
 function vsite_link($type, $object, $teaser = FALSE){
   $links = array();
@@ -161,7 +163,8 @@ function vsite_link($type, $object, $teaser = FALSE){
 }
 
 /**
- * hook link_alter (admin at the end of links)
+ * hook link_alter
+ * Move the admin links (above) at the end of the node links
  */
 function vsite_link_alter(&$links, $node){
 	if(!isset($links['vsite-admin'])) return;
