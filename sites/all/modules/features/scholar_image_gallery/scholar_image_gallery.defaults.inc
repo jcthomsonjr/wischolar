@@ -205,8 +205,6 @@ function _scholar_image_gallery_imagecache_default_presets() {
       'presetname' => 'reg',
       'actions' => array(
         '0' => array(
-          'actionid' => '2',
-          'presetid' => '1',
           'weight' => '0',
           'module' => 'imagecache',
           'action' => 'imagecache_deprecated_scale',
@@ -222,8 +220,6 @@ function _scholar_image_gallery_imagecache_default_presets() {
       'presetname' => 'thumb',
       'actions' => array(
         '0' => array(
-          'actionid' => '3',
-          'presetid' => '2',
           'weight' => '0',
           'module' => 'imagecache',
           'action' => 'imagecache_deprecated_scale',
@@ -234,8 +230,6 @@ function _scholar_image_gallery_imagecache_default_presets() {
           ),
         ),
         '1' => array(
-          'actionid' => '4',
-          'presetid' => '2',
           'weight' => '0',
           'module' => 'imagecache',
           'action' => 'imagecache_crop',
