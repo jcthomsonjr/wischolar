@@ -16,7 +16,8 @@ function _vsite_widgets_user_default_permissions() {
       '3' => 'scholar user',
     ),
   );
-  
+
+  // Exported permission: view addthis
   $permissions[] = array(
     'name' => 'view addthis',
     'roles' => array(
