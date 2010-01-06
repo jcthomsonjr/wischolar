@@ -12,7 +12,9 @@ function _vsite_node_info() {
       'has_title' => '1',
       'title_label' => t('Site title'),
       'has_body' => '0',
-      'body_label' => t(''),
+      'body_label' => '',
+      'min_word_count' => '0',
+      'help' => '',
     ),
   );
   return $items;

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 /**
  * Helper to implementation of hook_content_default_fields().
  */
@@ -131,6 +132,10 @@ function _vsite_content_default_fields() {
     'list_default' => 1,
     'description_field' => '0',
     'widget' => array(
+      'collapsible' => '2',
+      'resolution' => '180x140',
+      'enforce_ratio' => 1,
+      'croparea' => '400x400',
       'file_extensions' => 'png gif jpg jpeg',
       'file_path' => '',
       'progress_indicator' => 'bar',
@@ -156,10 +161,6 @@ function _vsite_content_default_fields() {
         'fid' => '23',
       ),
       'use_default_image' => 1,
-      'resolution' => '180x140',
-      'enforce_ratio' => 1,
-      'croparea' => '400x400',
-      'collapsible' => '2',
       'label' => 'Site logo',
       'weight' => '31',
       'description' => '',
@@ -186,8 +187,6 @@ function _vsite_imagecache_default_presets() {
       'presetname' => 'square_35_35',
       'actions' => array(
         '0' => array(
-          'actionid' => '1',
-          'presetid' => '1',
           'weight' => '0',
           'module' => 'imagecache',
           'action' => 'imagecache_scale_and_crop',
@@ -202,8 +201,6 @@ function _vsite_imagecache_default_presets() {
       'presetname' => 'square_50_50',
       'actions' => array(
         '0' => array(
-          'actionid' => '2',
-          'presetid' => '2',
           'weight' => '0',
           'module' => 'imagecache',
           'action' => 'imagecache_scale_and_crop',
