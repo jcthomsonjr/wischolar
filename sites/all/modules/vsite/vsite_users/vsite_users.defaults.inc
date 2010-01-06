@@ -258,6 +258,14 @@ function _vsite_users_content_default_fields() {
 function _vsite_users_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: create url aliases
+  $permissions[] = array(
+    'name' => 'create url aliases',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: create vsite_users_profile content
   $permissions[] = array(
     'name' => 'create vsite_users_profile content',
@@ -266,14 +274,6 @@ function _vsite_users_user_default_permissions() {
     ),
   );
 
-  //Create Path alias's
-  $permissions[] = array(
-    'name' => 'create url aliases',
-    'roles' => array(
-      '0' => 'scholar admin',
-    ),
-  );
-  
   // Exported permission: delete own vsite_users_profile content
   $permissions[] = array(
     'name' => 'delete own vsite_users_profile content',
