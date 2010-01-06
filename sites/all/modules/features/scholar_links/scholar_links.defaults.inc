@@ -126,8 +126,6 @@ function _scholar_links_imagecache_default_presets() {
       'presetname' => 'image_s',
       'actions' => array(
         '0' => array(
-          'actionid' => '2',
-          'presetid' => '1',
           'weight' => '0',
           'module' => 'imagecache',
           'action' => 'imagecache_scale',

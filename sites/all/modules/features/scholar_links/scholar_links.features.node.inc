@@ -8,11 +8,13 @@ function _scholar_links_node_info() {
     'link' => array(
       'name' => t('Link'),
       'module' => 'features',
-      'description' => t(''),
+      'description' => '',
       'has_title' => '1',
       'title_label' => t('Title'),
       'has_body' => '0',
-      'body_label' => t(''),
+      'body_label' => '',
+      'min_word_count' => '0',
+      'help' => '',
     ),
   );
   return $items;
