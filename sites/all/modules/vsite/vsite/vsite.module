@@ -273,6 +273,22 @@ function vsite_get_vsite(){
   }
 }
 
+/**
+ * API function for returning the vsite object if the user is the site owner
+ * otherwise returns NULL
+ * @param  $uid - user id
+ */
+function vsite_get_vsite_by_owner($uid){
+  $scholar_content_type = variable_get('scholar_content_type', 'vsite');
+  $sid = db_result(db_query("SELECT nid FROM {node} WHERE type = '%s' AND uid = %d", $scholar_content_type, (int)$uid));
+  $space =  spaces_load('og', $sid);
+  if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
+    return $space;
+  }
+  else {
+    return NULL;
+  }
+}
 
 /**
  * API function for testing wether we are on the front page of a vsite
