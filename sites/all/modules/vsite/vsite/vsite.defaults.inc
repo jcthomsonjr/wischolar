@@ -280,7 +280,10 @@ function _vsite_user_default_permissions() {
   $permissions[] = array(
     'name' => 'view advanced help topic',
     'roles' => array(
-      '0' => 'scholar admin',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
