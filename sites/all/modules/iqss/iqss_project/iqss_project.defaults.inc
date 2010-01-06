@@ -56,8 +56,6 @@ function _iqss_project_imagecache_default_presets() {
       'presetname' => 'iqss_project_front_logo',
       'actions' => array(
         '0' => array(
-          'actionid' => '1',
-          'presetid' => '1',
           'weight' => '0',
           'module' => 'imagecache',
           'action' => 'imagecache_scale_and_crop',
