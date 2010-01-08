@@ -24,9 +24,6 @@ function scholarregister_signup_form(){
       '#description' => t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores.'), 
       '#prefix' => '<div id="name-field">', 
       '#suffix' => '<div id="name-suffix"></div></div>', 
-      '#attributes' => array(
-          'class' => 'ctools-use-ajax-onchange' 
-      ) 
   );
   ctools_ajax_associate_url_to_element($form, $form['name'], url('scholarregister/name_js'), 'ctools-use-ajax-onchange');
   
@@ -39,9 +36,6 @@ function scholarregister_signup_form(){
       '#description' => t('A valid %harvard e-mail address is required. All e-mails from the Scholar Web Sites Project will be sent to this address.', array(
           '%harvard' => 'Harvard' 
       )), 
-      '#attributes' => array(
-          'class' => 'ctools-use-ajax-onchange' 
-      ), 
       '#prefix' => '<div id="mail-field">', 
       '#suffix' => '<div id="mail-suffix"></div></div>' 
   );
@@ -61,11 +55,7 @@ function scholarregister_signup_form(){
       )), 
       '#prefix' => '<div id="domain-field">', 
       '#suffix' => '<div id="domain-suffix"></div></div>', 
-      '#attributes' => array(
-          'class' => 'ctools-use-ajax-onchange' 
-      ) 
-  )
-  ;
+  );  
   ctools_ajax_associate_url_to_element($form, $form['domain'], url('scholarregister/domain_js'), 'ctools-use-ajax-onchange');
   
   $form['submit'] = array(
@@ -78,7 +68,6 @@ function scholarregister_signup_form(){
       '#suffix' => '<div id="submit-suffix"></div>' 
   );
   return $form;
-
 }
 
 /**
