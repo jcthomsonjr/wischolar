@@ -48,10 +48,14 @@ function _scholar_core_modules() {
     'content_profile',
     'content_profile_registration',
     'context_ui',
-    'feedapi',
-    'feedapi_node',
-    'feedapi_inherit',
-    'parser_common_syndication',
+    'ctools',
+    'data',
+    'data_node',
+    'feeds',
+    //'feedapi',
+    //'feedapi_node',
+    //'feedapi_inherit',
+    //'parser_common_syndication',
     'filefield_paths',
     'file_aliases',
     'features',
@@ -114,11 +118,12 @@ function _scholar_core_modules() {
 
   // development
     'admin_menu',
-    'ctools',
+
     'devel',
     'devel_generate',
     'install_profile_api',
-     'strongarm',    
+    'schema',
+    'strongarm',    
   );
   
   return $contrib_modules;
@@ -173,9 +178,10 @@ function _scholar_scholar_modules() {
     'scholar_classes',
     'scholar_image_gallery',
     'scholar_publications',
-    'scholar_feeds',
+    //'scholar_feeds',
     'scholar_software',
     'scholar_pages',
+    'scholar_reader',
   );
 }
 
