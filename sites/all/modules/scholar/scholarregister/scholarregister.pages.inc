@@ -28,7 +28,7 @@ function scholarregister_signup_form(){
           'class' => 'ctools-use-ajax-onchange' 
       ) 
   );
-  ctools_ajax_associate_url_to_element($form, $form['name'], url('scholarregister/name_js'));
+  ctools_ajax_associate_url_to_element($form, $form['name'], url('scholarregister/name_js'), 'ctools-use-ajax-onchange');
   
   // last name
   $form['mail'] = array(
@@ -45,7 +45,7 @@ function scholarregister_signup_form(){
       '#prefix' => '<div id="mail-field">', 
       '#suffix' => '<div id="mail-suffix"></div></div>' 
   );
-  ctools_ajax_associate_url_to_element($form, $form['mail'], url('scholarregister/mail_js'));
+  ctools_ajax_associate_url_to_element($form, $form['mail'], url('scholarregister/mail_js'), 'ctools-use-ajax-onchange');
   
   global $base_url;
   // domain name
@@ -66,7 +66,7 @@ function scholarregister_signup_form(){
       ) 
   )
   ;
-  ctools_ajax_associate_url_to_element($form, $form['domain'], url('scholarregister/domain_js'));
+  ctools_ajax_associate_url_to_element($form, $form['domain'], url('scholarregister/domain_js'), 'ctools-use-ajax-onchange');
   
   $form['submit'] = array(
       '#type' => 'submit', 
