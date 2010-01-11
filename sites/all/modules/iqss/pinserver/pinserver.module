@@ -165,6 +165,9 @@ function pinserver_check_user(){
   //hook for dynamic landing path, if no hooks fired, then use static landing path
   $path = module_invoke_all('pinserver_landing_path');
   $landing_path = !empty($path) ? end($path) : PIN_LANDING_PATH;
+  
+  //invoke hook_pinserver after sucessful pin login and token authentication
+  module_invoke_all('pinserver');
     
   //redirect user to landing page that was set in pinserver configuration page
   drupal_goto($landing_path);
