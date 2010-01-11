@@ -31,11 +31,7 @@ function scholar_menu(){
  * hook strongarm
  */
 function scholar_strongarm(){
- include_once('scholar.overrides.inc');
-
   $conf = array();
-  //replacing scholar or vsite terms with more common terms using stringoverrides module
-  $conf['locale_custom_strings_en'] = scholar_string_overrides();
 
   // User settings
   $conf['user_register'] = 0; // No registration is allowed; this is a closed group

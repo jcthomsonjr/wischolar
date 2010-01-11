@@ -73,6 +73,13 @@ function vsite_views_api(){
 function vsite_strongarm(){
   $conf = array();
   
+  // string overrides
+  //replacing scholar or vsite terms with more common terms using stringoverrides module
+  //include_once('vsite.overrides.inc');
+  module_load_include('inc', 'vsite', 'vsite.overrides');
+
+  $conf['locale_custom_strings_en'] = scholar_string_overrides();
+    
   $conf['og_content_type_usage_vsite'] = 'group';
   
   $conf['scholar_content_type'] = 'vsite';
