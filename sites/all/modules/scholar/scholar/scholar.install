@@ -20,3 +20,14 @@ function scholar_install() {
   // hook_install has no return value
 }
 
+/**
+ * Update script 6001.
+ */
+function scholar_update_6001() {
+  $ret = array();
+
+  // change preset type to "scholar" for existing sites
+  db_query("UPDATE {spaces} SET preset = 'scholar'  WHERE preset = 'vsite'");
+
+  return $ret;
+}

@@ -100,12 +100,12 @@ function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , 
  * NOTE: this function does not do any validation check.
  *       It's the caller responsibility
  * 
- * @param $name the username
+ * @param $name the username (site owner)
  * @param $mail the e-mail address of the user creating the site
  * @param $domain the domain name of the site
  * @return the node object if successful
  */
-function vsite_vsite_create($name, $mail, $domain){
+function vsite_vsite_create($name, $domain, $preset){
   install_include(array(
       'node' 
   ));
@@ -118,7 +118,7 @@ function vsite_vsite_create($name, $mail, $domain){
           'provider' => 'spaces_og', 
           'id' => NULL 
       ), 
-      'preset' => 'vsite', 
+      'preset' => $preset, 
       'og_description' => "$domain's web site", 
       'theme' => variable_get('scholar_default_theme', 'scholar_theme_01'), 
   );

@@ -76,9 +76,9 @@ function vsite_strongarm(){
   // string overrides
   //replacing scholar or vsite terms with more common terms using stringoverrides module
   //include_once('vsite.overrides.inc');
-  module_load_include('inc', 'vsite', 'vsite.overrides');
+  module_load_include('inc', 'vsite', 'includes/vsite.overrides');
 
-  $conf['locale_custom_strings_en'] = scholar_string_overrides();
+  $conf['locale_custom_strings_en'] = vsite_string_overrides();
     
   $conf['og_content_type_usage_vsite'] = 'group';
   
@@ -307,62 +307,6 @@ function vsite_is_front(){
   $vsite = vsite_get_vsite();
   $active_menu = menu_get_item();
   return ($vsite && $active_menu['path'] == 'home') ? TRUE : FALSE;
-}
-
-/**
- * hook spaces_presets
- */
-function vsite_spaces_presets(){
-  $items = array();
-  vsite_include('vsiteapi');
-  $options = vsite_content_types();
-  $items['vsite'] = array(
-    'name' => 'Scholar site preset', 
-    'description' => 'Scholar site preset', 
-    'preset' => array(
-      'features' => array(
-        'scholar_publications' => '2', 
-        'scholar_biocv' => '2', 
-        'scholar_classes' => '2' 
-      ), 
-      'locked' => array(
-        'features' => array(
-          'scholar_links' => 0, 
-          'scholar_announcements' => 0, 
-          'scholar_blog' => 0 
-        ), 
-        'settings' => array(
-          'home' => 0 
-        ) 
-      ), 
-      'og' => array(
-        'og_selective' => '3', 
-        'og_register' => 0, 
-        'og_directory' => 1, 
-        'og_private' => 0 
-      ) 
-    ), 
-    'type' => 'og' 
-  );
-  
-  //Put default settings here
-  $items['vsite']['preset']['settings'] = array(
-    'home' => 'blog', 
-    'front' => array(
-      'frontpage' => 'feature', 
-      'node_options' => $options,
-    ),
-    'theme' => 'scholar_theme_01',  // TODO make this settings for the site-wide admin to chose
-    'generic' => array(
-    	'admin_menu'=> 0 , 
-      'contact_form'=> 1,
-      'contact_form_anonymous'=> 1,
-    	'shield' => drupal_get_path('module','vsite_generic_settings')."/theme/shields/harvard_shield.png"),
-  );
-  
-  $items['vsite']['preset']['settings']['site'] = array('headline' => "",'sub_heading' => "");
-       
-  return $items;
 }
 
 
