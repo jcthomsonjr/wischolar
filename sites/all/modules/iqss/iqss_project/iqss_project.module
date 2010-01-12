@@ -2,41 +2,6 @@
 
 include_once('iqss_project.features.inc');
 
-function iqss_project_menu(){
-
-    $items['iqss_project_search'] = array(
-    'title' => 'xxx',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('iqss_project_search_sites_form'),
-    'access arguments' => array('access content'),
-
-  );
-
-
-  $items['iqss_project_search_js'] = array(
-    'title' => 'xxx',
-    'page callback' => 'iqss_project_search_js',
-    'access arguments' => array('access content'),
-
-  );
-
-  return $items;
-}
-
-
-function iqss_project_search_js(){
-  $res = '';
-  $site_title = $_POST['iqss_project_name'];
-  $sql = "SELECT * FROM {node} WHERE title LIKE '%%s%%'";
-  $result = db_query($sql, $site_title);
-  while ($data = db_fetch_object($result)){
-    $res .= $data -> title;
-  }
-  return drupal_json($res);
-
-}
-
-
 
 /**
  * hook block
@@ -106,44 +71,6 @@ function iqss_project_row4(){
   return $block;
 }
 
-function iqss_project_search_sites_form(){
-  
-  ctools_include('ajax');
-  ctools_add_js('ajax-responder');
-  
-  $form = array();
-
-  
-  $form['iqss_project_name'] = array(
-    '#type' => 'textfield',
-    //'#value' => t('xxxx'),
-    //'#default_value' => $node->title,
-    '#size' => 30,
-    '#ahah' => array(
-      'path' => 'iqss_project_search_js',
-      'wrapper' => 'new-sites',
-      'event' => 'keyup',
-    ),
-    '#process' => array('form_expand_ahah'),
-  );
-  
-  
-  /*
-  $form['iqss_project_search_js'] = array(
-    '#type' => 'textfield',
-    '#value' => t(''),
-    //'#default_value' => $node->title,
-    '#size' => 30,
-    //'#attributes' => array(
-    //  'class' => 'ctools-use-ajax-onchange' 
-    //), 
-  );
-  //ctools_ajax_associate_url_to_element($form, $form['iqss_project_search_js'], url('iqss_project_search_js'), 'ctools-use-ajax-onchange');
-  */
-  return $form;
-}
-
-
 
 function iqss_project_theme(){
   
@@ -197,37 +124,6 @@ function iqss_project_theme(){
   return $items;
  }
 
-function iqss_project_preprocess_project_site_examples(&$vars){
-  $vars['sites'] = array();
-  $view = views_get_view('iqss_project_sites');
-  $view->init();
-  $view->set_display('block_1');
-  //dpm($view);
-  $view->display['block_1']->handler->options['items_per_page'] = 6;  // not working
-
-  $view->execute();
-
-  $results = array_slice($view -> result, 0, 6);
-  foreach ( $results as $result ) {
-    $sid = $result -> nid;
-    $vsite = spaces_load('og', $sid, FALSE);
-    $og_node = $vsite -> group;
-
-//    if(!$vsite || !$vsite->settings['logo'] && !$vsite->settings['logo']['current_logo']){
-//    	$s_image_path = drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg";
-//    }else{
-//    	$s_image_path = $vsite->settings['logo']['current_logo'];
-//    }//Default image?
-//    
-    $vars['sites'][]= array(
-      'headline' => $og_node -> title,
-      'sub_headline' => $og_node -> og_description,
-      'photo' =>  theme_vsite_design_logo($vsite, $preset = 'iqss_project_front_logo', $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = TRUE),
-    
-      //'photo' => theme('imagecache', 'iqss_project_front_logo', $s_image_path, $alt, $title,  $attributes),
-    );
-  }
-}
 
 
 function iqss_project_preprocess_page(&$vars){
