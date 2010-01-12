@@ -319,7 +319,6 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
    * and make 'settings' link as a popup link
    */
   if (arg(0) == 'cp' && $form_id == 'spaces_features_form'){
-
     // we dont need settings here
     unset($form['settings']);
     $site = $form['space']['#value'];
@@ -327,11 +326,15 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
     ctools_include('modal');
     ctools_modal_add_js();
     drupal_add_js(drupal_get_path('module', 'cp') .'/theme/ctools_columns.js');
-    // we would like to change the "customize" link to "settings" 
-    // and display the form in the popup
+    /*
+     * 1. change title of the feature depending on the installation
+     * 2. make "customize" link a ctool popup link
+     */
     foreach (array_keys($site -> features) as $f_name){
+      $installation_name = variable_get('vsite_installation_name', 'scholar');
+      $form['features'][$f_name]['#title'] =  str_replace('scholar', $installation_name, $form['features'][$f_name]['#title'] );
       if (isset($form['customize'][$f_name])){ 
-        $link = ctools_modal_text_button('settings', 'cp/features/'. $f_name, 'customize '.$f_name);
+        $link = ctools_modal_text_button('customize', 'cp/features/'. $f_name, 'customize '.$f_name);
         $form['customize'][$f_name]['#value'] = $link;
       }
     }

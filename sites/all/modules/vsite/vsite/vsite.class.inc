@@ -5,7 +5,6 @@
  * some of the methods.
  * TODO funciont spaces_load in spaces.module is modified
  * because it's initiating an object of type space_og
-
  * TODO I submitted for this http://drupal.org/node/511914
  * @see scholar_spaces_types_alter
  */
