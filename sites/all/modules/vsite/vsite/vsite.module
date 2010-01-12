@@ -628,3 +628,48 @@ function node_vsite_admin_link($type, $object) {
   }
   return $links;
 }
+
+
+/**
+* Implementation of hook_mail_alter().
+*/
+function vsite_mail_alter(&$message) {
+
+	switch ($message['id']) {
+    //Edit the UCreate Email Message
+		case 'ucreate_ucreate-create':
+      	$params['subject'] = t('An account has been created for you at the !site', array('!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')));
+      	$a_body_parts = split("================================================",$message['body'],2);
+      	$s_personal_message = (count($a_body_parts) == 2)?trim($a_body_parts[0]):"";
+
+      	//Get the just created user
+      	$n_new_user = db_result(db_query('SELECT u.uid FROM {users} u ORDER BY u.created DESC LIMIT 1'));
+      	$o_user = user_load($n_new_user);
+     	  $password = user_password();
+     	  $edit = array('pass' => $password);
+     	  $o_profile = content_profile_load('vsite_users_profile',$n_new_user);
+     	  user_save($o_user,$edit);
+
+      	$a_msg_variables = array(
+      	  '!personal_message' => strlen($s_personal_message)?$s_personal_message."\n================================================\n\n":"",
+			    '!username' => $o_user->name,
+			    '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'),
+			    '!login_url' => user_pass_reset_url($o_user),
+			    '!uri' => $base_url,
+			    '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
+			    '!mailto' => $o_user->mail,
+			    '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
+			    '!login_uri' => url('user', array('absolute' => TRUE, 'language' => $message['language'])),
+			    '!edit_uri' => url('user/'. $o_user->uid .'/edit', array('absolute' => TRUE, 'language' => $message['language'])),
+      	  '!password' => $password,
+      	  '!firstname' => $o_profile->vsite_users_first_name[0],
+			  );
+
+			  //This is unused: Alternatively using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n
+
+      	$message['body'] = t("Dear !firstname,\n\nA site owner at the !site has created an account for you. You may now log in by either clicking through on the following link or pasting it into your browser:\n\n !login_url\n\n(Note: This is a one-time login; it can be used only once.)\n\n\Sincerely,\nThe !site Team", $a_msg_variables);
+
+    break;
+  }
+
+}

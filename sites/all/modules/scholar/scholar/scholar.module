@@ -26,32 +26,76 @@ function scholar_strongarm(){
   return $conf;
 }
 
-/**
- * hook spaces_presets
- */
-function vsite_spaces_presets(){
+function scholar_spaces_presets(){
   $items = array();
   vsite_include('vsiteapi');
   $options = vsite_content_types();
+
   $items['scholar'] = array(
     'name' => 'Scholar site preset', 
     'description' => 'Scholar site preset', 
+    'type' => 'og', 
     'preset' => array(
       'features' => array(
         'scholar_publications' => '2', 
         'scholar_biocv' => '2', 
         'scholar_classes' => '2', 
-        'scholar_pages' => '2' 
+        'scholar_pages' => '2', 
+        'scholar_image_gallery' => '0', 
+        'scholar_reader' => '0', 
+        'scholar_announcements' => '0', 
+        'scholar_blog' => '0', 
+        'scholar_dvn' => '0', 
+        'scholar_links' => '0', 
+        'scholar_software' => '0' 
       ), 
+      'settings' => array(
+        'theme' => array(
+          'maintheme' => 'scholar_theme_01', 
+          'flavor' => '0' 
+        ), 
+
+        'front' => array(
+          'frontpage' => 'feature', 
+          'node_options' => $options 
+        ), 
+        
+        'activity' => array(
+          'ignore_insert' => '1', 
+          'ignore_update' => '1' 
+        ), 
+        
+        'generic' => array(
+          'admin_menu' => 0, 
+          'contact_form' => 1, 
+          'contact_form_anonymous' => 1, 
+          'shield' => drupal_get_path('module', 'vsite_generic_settings') . "/theme/shields/harvard_shield.png" 
+        ), 
+        
+        'site' => array(
+          'headline' => "", 
+          'sub_heading' => "" 
+        ),
+        
+      ), 
+      
       'locked' => array(
         'features' => array(
-          'scholar_links' => 0, 
-          'scholar_announcements' => 0, 
-          'scholar_blog' => 0 
-        ), 
-        'settings' => array(
-          'home' => 0 
+          'scholar_software' => 1 
         ) 
+      ), 
+      'weights' => array(
+        'scholar_publications' => '-10', 
+        'scholar_biocv' => '-9', 
+        'scholar_classes' => '-8', 
+        'scholar_pages' => '-7', 
+        'scholar_image_gallery' => '-6', 
+        'scholar_reader' => '-5', 
+        'scholar_announcements' => '-4', 
+        'scholar_blog' => '-3', 
+        'scholar_dvn' => '-2', 
+        'scholar_links' => '-1', 
+        'scholar_software' => '0' 
       ), 
       'og' => array(
         'og_selective' => '3', 
@@ -59,35 +103,11 @@ function vsite_spaces_presets(){
         'og_directory' => 1, 
         'og_private' => 0 
       ) 
-    ), 
-    'type' => 'og' 
-  );
-  
-  //Put default settings here
-  $items['scholar']['preset']['settings'] = array(
-    'home' => 'blog', 
-    'front' => array(
-      'frontpage' => 'feature', 
-      'node_options' => $options 
-    ), 
-    'theme' => 'scholar_theme_01',  // TODO make this settings for the site-wide admin to chose
-    'generic' => array(
-      'admin_menu' => 0, 
-      'contact_form' => 1, 
-      'contact_form_anonymous' => 1, 
-      'shield' => drupal_get_path('module', 'vsite_generic_settings') . "/theme/shields/harvard_shield.png" 
     ) 
-  );
-  
-  $items['scholar']['preset']['settings']['site'] = array(
-    'headline' => "", 
-    'sub_heading' => "" 
   );
   
   return $items;
 }
-
-
 
 
 function scholar_menu(){
@@ -118,50 +138,6 @@ function scholar_menu(){
 }
 
 
-
-/**
-* Implementation of hook_mail_alter().
-*/
-function scholar_mail_alter(&$message) {
-
-	switch ($message['id']) {
-    //Edit the UCreate Email Message
-		case 'ucreate_ucreate-create':
-      	$params['subject'] = t('An account has been created for you at the !site', array('!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')));
-      	$a_body_parts = split("================================================",$message['body'],2);
-      	$s_personal_message = (count($a_body_parts) == 2)?trim($a_body_parts[0]):"";
-
-      	//Get the just created user
-      	$n_new_user = db_result(db_query('SELECT u.uid FROM {users} u ORDER BY u.created DESC LIMIT 1'));
-      	$o_user = user_load($n_new_user);
-     	  $password = user_password();
-     	  $edit = array('pass' => $password);
-     	  $o_profile = content_profile_load('vsite_users_profile',$n_new_user);
-     	  user_save($o_user,$edit);
-
-      	$a_msg_variables = array(
-      	  '!personal_message' => strlen($s_personal_message)?$s_personal_message."\n================================================\n\n":"",
-			    '!username' => $o_user->name,
-			    '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'),
-			    '!login_url' => user_pass_reset_url($o_user),
-			    '!uri' => $base_url,
-			    '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
-			    '!mailto' => $o_user->mail,
-			    '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
-			    '!login_uri' => url('user', array('absolute' => TRUE, 'language' => $message['language'])),
-			    '!edit_uri' => url('user/'. $o_user->uid .'/edit', array('absolute' => TRUE, 'language' => $message['language'])),
-      	  '!password' => $password,
-      	  '!firstname' => $o_profile->vsite_users_first_name[0],
-			  );
-
-			  //This is unused: Alternatively using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n
-
-      	$message['body'] = t("Dear !firstname,\n\nA site owner at the !site has created an account for you. You may now log in by either clicking through on the following link or pasting it into your browser:\n\n !login_url\n\n(Note: This is a one-time login; it can be used only once.)\n\n\Sincerely,\nThe !site Team", $a_msg_variables);
-
-    break;
-  }
-
-}
 
 /**
  * Implementation of hook_form_alter()

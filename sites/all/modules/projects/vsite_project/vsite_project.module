@@ -1,2 +1,86 @@
 <?php
 
+function vsite_project_spaces_presets(){
+  $items = array();
+  vsite_include('vsiteapi');
+  $options = vsite_content_types();
+
+  $items['project'] = array(
+    'name' => 'generic site preset', 
+    'description' => 'Project site preset', 
+    'type' => 'og', 
+    'preset' => array(
+      'features' => array(
+        'scholar_publications' => '0', 
+        'scholar_biocv' => '0', 
+        'scholar_classes' => '0', 
+        'scholar_pages' => '2', 
+        'scholar_image_gallery' => '0', 
+        'scholar_reader' => '0', 
+        'scholar_announcements' => '2', 
+        'scholar_blog' => '0', 
+        'scholar_dvn' => '0', 
+        'scholar_links' => '0', 
+        'scholar_software' => '0' 
+      ), 
+      'settings' => array(
+        'theme' => array(
+          'maintheme' => 'scholar_theme_01', 
+          'flavor' => '0' 
+        ), 
+ 
+        'front' => array(
+          'frontpage' => 'feature', 
+          'node_options' => $options 
+        ), 
+        
+        'activity' => array(
+          'ignore_insert' => '1', 
+          'ignore_update' => '1' 
+        ), 
+        
+        'generic' => array(
+          'admin_menu' => 0, 
+          'contact_form' => 1, 
+          'contact_form_anonymous' => 1, 
+          'shield' => drupal_get_path('module', 'vsite_generic_settings') . "/theme/shields/harvard_shield.png" 
+        ), 
+        
+        'site' => array(
+          'headline' => "", 
+          'sub_heading' => "" 
+        ),
+        
+      ), 
+      
+      'locked' => array(
+        'features' => array(
+          'scholar_software' => 1 
+        ) 
+      ), 
+      'weights' => array(
+        'scholar_publications' => '-10', 
+        'scholar_biocv' => '-9', 
+        'scholar_classes' => '-8', 
+        'scholar_pages' => '-7', 
+        'scholar_image_gallery' => '-6', 
+        'scholar_reader' => '-5', 
+        'scholar_announcements' => '-4', 
+        'scholar_blog' => '-3', 
+        'scholar_dvn' => '-2', 
+        'scholar_links' => '-1', 
+        'scholar_software' => '0' 
+      ), 
+      'og' => array(
+        'og_selective' => '3', 
+        'og_register' => 0, 
+        'og_directory' => 1, 
+        'og_private' => 0 
+      ) 
+    ) 
+  );
+  
+  return $items;
+}
+
+
