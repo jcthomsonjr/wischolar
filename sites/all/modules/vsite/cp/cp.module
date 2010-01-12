@@ -322,7 +322,6 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
     // we dont need settings here
     unset($form['settings']);
     $site = $form['space']['#value'];
-    dpm($site);
     ctools_include('ajax');
     ctools_include('modal');
     ctools_modal_add_js();
