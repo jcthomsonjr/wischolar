@@ -23,8 +23,7 @@ function scholarregister_user($op, &$edit, &$account, $category = NULL){
         else {
           // redirect them to their home page
           $vsite->redirect('home');
-        }
-      
+        }  
       }
       break;
   }
@@ -32,7 +31,7 @@ function scholarregister_user($op, &$edit, &$account, $category = NULL){
 
 function scholarregister_siteowner_path($account){
   
-  // if is a site owner redirec to her site home page
+  // if is a site owner redirect to her site home page
   //dpm($account -> og_groups);
   if (isset($account->og_groups) && is_array($account->og_groups)) {
     foreach ( $account->og_groups as $group ) {
@@ -69,7 +68,6 @@ function scholarregister_menu(){
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-
 
   $items['scholarregister/name_js'] = array(
     'title' => 'Create your web site',
@@ -146,20 +144,20 @@ function scholarregister_validate_mail($mail) {
   }
   
   //THIS BLOCK SHOULD BE REMOVED AFTER NEXT RELEASE
-  if(!module_exists('pinserver')){
+/*  if(!module_exists('pinserver')){
     if (substr(trim($mail),-12) !== '.harvard.edu' && substr(trim($mail),-12) !== '@harvard.edu'
     && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '.hbs.edu'){
       return  'Please enter an harvard email address ';
     }
-  }
+  }*/
   
 }
 
 function scholarregister_validate_domain($domain){
-        $modifier = array(
-    'provider' => 'spaces_og',
-    'value' => $domain,
-    'id' => null,
+  $modifier = array(
+  'provider' => 'spaces_og',
+  'value' => $domain,
+  'id' => null,
   );
 
   if ($error = user_validate_name($domain)){  // the same validation as the username
@@ -236,13 +234,12 @@ function scholarregister_notify_user($vsite, $user){
   );
 
 
-  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using:\n\n username: !username\n\nWe hope you will enjoy your new web site.\n\n Sincerely,\nThe !site Team", $msg_variables);
+  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using:\n\nusername: !username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
 
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
     drupal_set_message(t('Error sending notification mail to user.'), 'error');
   }
-
 }
 
 
@@ -250,7 +247,7 @@ function scholarregister_mail($key, &$message, $params) {
   $message['subject'] = $params['subject'];
   $message['body'] = $params['body'];
   
-    //these values be used with any mail alter hooks
+  //these values be used with any mail alter hooks
  $message['vsite'] = $params['vsite'];
  $message['user'] = $params['user'];
 }
