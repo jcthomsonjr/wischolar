@@ -1,0 +1,140 @@
+<?php
+// $Id: override_node_options.module,v 1.12 2010/01/03 23:18:08 davereid Exp $
+
+/**
+ * @file
+ * Allow users to override the default publishing options for nodes they can
+ * edit without giving them the 'administer nodes' permission.
+ */
+
+/**
+ * Implements hook_permisson().
+ */
+function override_node_options_permission() {
+  $permissions = array();
+
+  // Generate override node permissions for all applicable node types.
+  foreach (node_permissions_get_configured_types() as $type) {
+    $permissions += override_node_options_list_permissions($type);
+  }
+
+  return $permissions;
+}
+
+/**
+ * Helper function to generate override node permission list for a given type.
+ *
+ * @param $type
+ *   The machine-readable name of the node type.
+ * @return
+ *   An array of permission names and description.
+ */
+function override_node_options_list_permissions($type) {
+  $name = node_type_get_name($type);
+  $type = check_plain($type);
+
+  $permissions = array(
+    "override $type published option" => array(
+      'title' => t('Override %type_name published option.', array('%type_name' => $name)),
+    ),
+    "override $type promote to front page option" => array(
+      'title' => t('Override %type_name promote to front page option.', array('%type_name' => $name)),
+    ),
+    "override $type sticky option" => array(
+      'title' => t('Override %type_name sticky option.', array('%type_name' => $name)),
+    ),
+    "override $type revision option" => array(
+      'title' => t('Override %type_name revision option.', array('%type_name' => $name)),
+    ),
+    "override $type authored on option" => array(
+      'title' => t('Override %type_name authored on option.', array('%type_name' => $name)),
+    ),
+    "override $type authored by option" => array(
+      'title' => t('Override %type_name authored by option.', array('%type_name' => $name)),
+    ),
+  );
+
+  return $permissions;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function override_node_options_form_alter(&$form, $form_state, $form_id) {
+  if (isset($form['type']['#value']) && $form['type']['#value'] . '_node_form' == $form_id && !user_access('administer nodes')) {
+    // Get a copy of the current node object.
+    $node = $form['#node'];
+
+    // Add access to the 'Revision information' fieldset.
+    $form['revision_information']['revision']['#access'] = user_access('override ' . $node->type . ' revision option');
+    $form['revision_information']['#access'] = override_node_options_element_children_access($form['revision_information']);
+
+    // Add access to the 'Authoring information' fieldset.
+    $form['author']['name']['#access'] = user_access('override ' . $node->type . ' authored by option');
+    $form['author']['date']['#access'] = user_access('override ' . $node->type . ' authored on option');
+    $form['author']['#access'] |= override_node_options_element_children_access($form['author']);
+
+    // Add access to the 'Publishing options' fieldset.
+    $form['options']['status']['#access'] = user_access('override ' . $node->type . ' published option');
+    $form['options']['promote']['#access'] = user_access('override ' . $node->type . ' promote to front page option');
+    $form['options']['sticky']['#access'] = user_access('override ' . $node->type . ' sticky option');
+    $form['options']['#access'] |= override_node_options_element_children_access($form['options']);
+
+    // Add extra validation and processing if the user does not have the
+    // 'administer nodes' permission since it would be otherwise skipped by core.
+    if ($form['author']['#access']) {
+      $form['#validate'][] = 'override_node_options_validate_node';
+    }
+    if ($form['author']['name']['#access']) {
+      $form['#submit'][] = 'override_node_options_submit_node';
+    }
+  }
+}
+
+/**
+ * Perform additional node form validation normally skipped by core.
+ */
+function override_node_options_validate_node($form, &$form_state) {
+  // Validate the "authored by" field.
+  if (!empty($form_state['values']['name']) && !($account = user_load_by_name($form_state['values']['name']))) {
+    // The use of empty() is mandatory in the context of usernames
+    // as the empty string denotes the anonymous user. In case we
+    // are dealing with an anonymous user we set the user ID to 0.
+    form_set_error('name', t('The username %name does not exist.', array('%name' => $form_state['values']['name'])));
+  }
+
+  // Validate the "authored on" field. As of PHP 5.1.0, strtotime returns FALSE instead of -1 upon failure.
+  if (!empty($form_state['values']['date']) && strtotime($form_state['values']['date']) <= 0) {
+    form_set_error('date', t('You have to specify a valid date.'));
+  }
+}
+
+/**
+ * Perform additional node form submission processing normally skipped by core.
+ */
+function override_node_options_submit_node($form, &$form_state) {
+  // Populate the "authored by" field.
+  if ($account = user_load_by_name($form_state['values']['name'])) {
+    $form_state['values']['uid'] = $account->uid;
+  }
+  else {
+    $form_state['values']['uid'] = 0;
+  }
+}
+
+/**
+ * Check if there is a child element accessible in a parent element.
+ *
+ * @param $element
+ *   A form element.
+ * @return
+ *   TRUE if a child element of $element if accessible, or FALSE otherwise.
+ */
+function override_node_options_element_children_access($element) {
+  foreach (element_children($element) as $key) {
+    if (!isset($element[$key]['#access']) || !empty($element[$key]['#access'])) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
