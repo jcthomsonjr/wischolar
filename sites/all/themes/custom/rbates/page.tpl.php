@@ -105,7 +105,7 @@
       <?php if ($footer) : ?>
         <?php print $footer; ?>
       <?php endif; ?>
-      <?php
+     <?php
         global $user, $base_url;
         purl_disable(TRUE);
         $home_link =  l('The Scholars\' Web Sites Project, IQSS, Harvard University',$base_url);
