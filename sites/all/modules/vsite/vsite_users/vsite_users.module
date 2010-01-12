@@ -148,8 +148,10 @@ function vsite_users_strongarm(){
  * Implementaiton of hook_mail_alter()
  */
 function vsite_users_mail_alter(&$message){
-  if ($message['id'] == 'ucreate_ucreate-create'){ 
-    $message['body'] = array($_POST['welcome_message_body']);
+  if ($message['id'] == 'ucreate_ucreate-create'){
+    if (!empty($_POST['welcome_message_body'])){
+      $message['body'] = array($_POST['welcome_message_body']); //TODO: need to add check_plain()?
+    }
   }
 }
 
