@@ -330,5 +330,29 @@ function _scholar_reader_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override feed promote to front page option
+  $permissions[] = array(
+    'name' => 'override feed promote to front page option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override feed published option
+  $permissions[] = array(
+    'name' => 'override feed published option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override feed revision option
+  $permissions[] = array(
+    'name' => 'override feed revision option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override feed sticky option
+  $permissions[] = array(
+    'name' => 'override feed sticky option',
+    'roles' => array(),
+  );
+
   return $permissions;
 }
