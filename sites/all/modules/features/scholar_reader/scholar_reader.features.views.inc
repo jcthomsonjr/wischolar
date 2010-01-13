@@ -375,6 +375,7 @@ function _scholar_reader_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('title', 'Latest  Feed Items');
   $handler->override_option('items_per_page', 20);
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('path', 'reader');
