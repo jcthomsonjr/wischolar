@@ -1,5 +1,5 @@
 <?php
-// $Id: content_profile.module,v 1.1.2.45 2010/01/12 13:50:39 fago Exp $
+// $Id: content_profile.module,v 1.1.2.47 2010/01/13 10:38:26 fago Exp $
 
 /**
  * @file
@@ -558,7 +558,7 @@ function content_profile_show_profiles($uid) {
  * Implementation of hook_theme().
  */
 function content_profile_theme() {
-  return array(
+  $return = array(
     'content_profile_display_view' => array(
       'template'  => 'content_profile-display-view',
       'arguments' => array('element' => NULL),
@@ -576,11 +576,14 @@ function content_profile_theme() {
     'content_profile_display_tab_edit' => array(
       'file' => 'content_profile.theme.inc',
     ),
-    'content_profile_pageroute_empty' => array(
-      'arguments' => array('type_name' => NULL),
-      'file' => 'content_profile.pageroute.inc',
-    ),
   );
+  if (module_exists('pageroute')) {
+    $return['content_profile_pageroute_empty']  = array(
+      'arguments' => array('type_name' => NULL),
+    	'file' => 'content_profile.pageroute.inc',
+    );
+  }
+  return $return;
 }
 
 /**
