@@ -1,0 +1,24 @@
+Index: spaces/spaces.module
+===================================================================
+--- spaces/spaces.module	(revision 2194)
++++ spaces/spaces.module	(working copy)
+@@ -206,7 +206,8 @@
+   }
+   // Run each non-active space type's menu access check
+   foreach ($types as $type => $info) {
+-    $access = $access && call_user_func(array($info['class'], 'menu_access'), $op, $object, FALSE);
++  	$space = new $info['class']($type);
++    $access = $access && $space->menu_access($op, $object, false);
+   }
+ 
+   $standard_access = !empty($access_callback) ? call_user_func_array($access_callback, $args) : TRUE;
+@@ -934,7 +935,8 @@
+     }
+     // Run each non-active space type's router
+     foreach ($types as $type => $info) {
+-      call_user_func(array($info['class'], 'router'), $op, $object, FALSE);
++      $space = new $info['class']($type);
++      $space->router($op, $object);
+     }
+   }
+ }

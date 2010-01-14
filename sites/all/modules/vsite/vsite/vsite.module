@@ -390,6 +390,8 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
           $form['taxonomy']['tags'][$n_interest_tag]['#title'] = "Related Interests";
           $form['taxonomy']['tags'][$n_interest_tag]['#description'] = "A comma-separated list of topics that may relate to the content of your site. ex.(statistics, casual inference)";
       	}
+      	
+      	$form['taxonomy']['#collapsible'] = false;
       }
       $form['#redirect'] = false;
       _spaces_og_make_hidden($form['purl']);
@@ -437,8 +439,8 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
         if(module_exists('override_node_options') && array_key_exists('options',$form)){
         	drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite_verticaltabs_options.js','module','footer',false,true,false);
         	$vsite = vsite_get_vsite();
-        	if(array_key_exists('override_publishing_promote',$form['options'])){
-        		_spaces_og_make_hidden($form['options']['override_publishing_promote']);
+        	if(array_key_exists('promote',$form['options'])){
+        		_spaces_og_make_hidden($form['options']['promote']);
         	}
         	
           if($vsite->settings['front']['frontpage'] == 'flag'){
@@ -626,6 +628,10 @@ function vsite_get_admin_links($type, $object) {
 function node_vsite_admin_link($type, $object) {
   $links = array();
   if ($type == 'node') {
+//  	global $user;
+//  	//If this user is a scholar admin for this site treat the access permissions as if they owned the content
+//  	$object->uid = $user->uid;
+  	
     if (node_access('update', $object)) {
       $links['node-edit'] = array(
         'title' => t('Edit'),
