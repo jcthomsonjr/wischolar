@@ -126,7 +126,7 @@ class vsite extends space_og implements space {
 	 * @param $node_type
 	 * @return array
 	 */
-	public function vsite_get_vocabs($node_type = NULL){
+	public function get_vocabs($node_type = NULL){
 	  
 	  if ($this->group) {
 	    

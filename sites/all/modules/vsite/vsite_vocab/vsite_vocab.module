@@ -88,7 +88,7 @@ function vsite_vocab_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL){
         // what is the term of the group vocab for this node
         //$v = reset(vsite_get_vocabs(NULL, $node->type));
         $vsite = vsite_get_vsite();
-        if($vsite) $v = $vsite->vsite_get_vocabs($node->type);
+        if($vsite) $v = $vsite->get_vocabs($node->type);
         // globla tax
         $gv = variable_get('scholar_global_taxonomy', 0);
         if (! empty($v)) {
@@ -153,7 +153,7 @@ function vsite_vocab_form_alter(&$form, $form_state, $form_id){
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
     
   	$vsite = vsite_get_vsite();
-    if($vsite) $v = $vsite->vsite_get_vocabs($form['#node']->type);
+    if($vsite) $v = $vsite->get_vocabs($form['#node']->type);
     $v = is_array($v) ? reset($v) : null;
 
     $gv = variable_get('scholar_global_taxonomy', 0);
@@ -204,7 +204,7 @@ function vsite_vocab_taxonomies(){
   $output = '<div class="pad" id="vsite-vocab-wrapper">';
   
   foreach ( $s_types as $type => $name ) {
-    $vocabs = $vsite->vsite_get_vocabs($type);
+    $vocabs = $vsite->get_vocabs($type);
     if (count($vocabs)) {
       foreach ( $vocabs as $v ) {
         $content = vsite_vocab_terms($v, $admin = TRUE, $count = TRUE);
@@ -244,7 +244,7 @@ function vsite_vocab_block_view() {
  * @param $subject  title of the block
  */
 function vsite_vocab_block_per_content_type($vsite, $node_type, $subject = 'Categories') {
-  if($vsite) $vcs = $vsite->vsite_get_vocabs ($vsite, $node_type );
+  if($vsite) $vcs = $vsite->get_vocabs ($vsite, $node_type );
   if (count($vcs)){
     $v = reset($vcs);
      $terms_html = vsite_vocab_terms($v, $admin, $count = TRUE);

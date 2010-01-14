@@ -142,7 +142,7 @@ function vsite_content_content_types_filter(&$view, $vsite){
  * add taxonomy filter to a view
  */
 function vsite_content_taxonomy_filter(&$view, $vsite){
-  $vocabs = $vsite->vsite_get_vocabs();
+  $vocabs = $vsite->get_vocabs();
 
   if (count($vocabs)) {
     $vid = current(array_keys($vocabs));
@@ -227,7 +227,7 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     
     //get the site information
     $site = vsite_get_vsite();
-    $vocabs = $site->vsite_get_vocabs($type);
+    $vocabs = $site->get_vocabs($type);
     
     if (count($vocabs)) {
       $vid = current(array_keys($vocabs));
