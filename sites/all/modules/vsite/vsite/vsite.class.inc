@@ -111,13 +111,46 @@ class vsite extends space_og implements space {
   }
   
   /**
-   * 
+   * Return the absolute URL to this vsite
    */
 	public function get_absolute_url($path = ""){
 	  
 	  return url($path, array( 'purl' => array( 'provider' => $this->purl_provider,'id' => $this->sid), 'absolute' => true));
 	  
 	}
+	
+	/**
+	 * Returns the vocabularies associated with a vsite.
+	 * If a content type is provided, return vocabs associated 
+	 * with that content type only.
+	 * @param $node_type
+	 * @return array
+	 */
+	public function vsite_get_vocabs($node_type = NULL){
+	  
+	  if ($this->group) {
+	    
+	    if (isset($this->group->og_vocabularies)) {
+	      if (!$node_type) {
+	        return $this->group->og_vocabularies;
+	      }
+	      
+	      $result = array();
+	      
+	      foreach ( $this->group->og_vocabularies as $v ) {
+	        if (in_array($node_type, array_keys($v->nodes))) {
+	          $result[$v->vid] = $v;
+	        }
+	      }
+	      
+	      return $result;
+	    }
+	  }
+	}
+	
+	/**
+	 * PRIVATE FUNCTIONS
+	 */
 	
 	/**
 	 * If this space is loaded outside a active context (ie) externally from the home page

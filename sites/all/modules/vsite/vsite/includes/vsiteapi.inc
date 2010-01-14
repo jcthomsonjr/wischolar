@@ -152,37 +152,3 @@ function vsite_vsite_themes(){
 function _vsite_is_vsite_theme($atheme){
   return (ereg("scholar_theme_[0-9][0-9]",$atheme -> name));
 }
-
-
-/**
- * Returns the vocabularies associated with a vsite.
- * If a content type is provided, return vocabs associated 
- * with that content type only.
- * @param $node_type
- * @return unknown_type
- */
-function vsite_get_vocabs($vsite = NULL, $node_type = NULL){
-  $result = array();
-  if (!$vsite) {
-    $vsite = vsite_get_vsite();
-  }
-  
-  if ($vsite) {
-    $group = $vsite->group;
-    if (isset($group->og_vocabularies)) {
-      if (! $node_type) {
-        return $group->og_vocabularies;
-      }
-      
-      foreach ( $group->og_vocabularies as $v ) {
-        if (in_array($node_type, array_keys($v->nodes))) {
-          $result[$v->vid] = $v;
-        }
-      }
-      
-      return $result;
-    }
-  }
-}
-
-

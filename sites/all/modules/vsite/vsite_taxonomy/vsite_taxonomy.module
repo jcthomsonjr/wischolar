@@ -134,7 +134,7 @@ function vsite_taxonomy_block_view(){
     //$active_menu = reset($active_menus);
 
     // get the vocabulary for this group
-    $vcs = vsite_get_vocabs($vsite, $node_type);
+    $vcs = $vsite->vsite_get_vocabs($node_type);
     if (count($vcs)) {
       $v = reset($vcs);
       $terms = taxonomy_get_tree($v->vid);
@@ -185,7 +185,7 @@ function vsite_taxonomy_taxonomies(){
   $output = '<div class="pad" id="vsite-taxonomy-wrapper">';
 
 
-    $vocabs = vsite_get_vocabs($vsite, $type);
+    $vocabs = $vsite->vsite_get_vocabs($type);
     if (count($vocabs)) {
       foreach ( $vocabs as $v ) {
         $terms = taxonomy_get_tree($v->vid);
@@ -346,8 +346,8 @@ function vsite_taxonomy_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL){
  */
 function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
-
-    $v = vsite_get_vocabs(NULL, $form['#node']->type);
+    $vsite = vsite_get_vsite();
+    if($vsite) $v = $vsite->vsite_get_vocabs($form['#node']->type);
     $v = is_array($v) ? reset($v) : null;
 
     $gv = variable_get('scholar_global_taxonomy', 0);
