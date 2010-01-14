@@ -8,7 +8,8 @@ function iqss_pinserver_register_form_alter(&$form, $form_state, $form_id){ //dp
   //add the submit function for pinserver
   if ($form_id == 'scholarregister_signup_form'){
     $path = drupal_get_path('module', 'iqss_pinserver_register');
-    drupal_add_css($path .'/iqss_pinserver_register.css', 'module', 'all', FALSE); 
+    drupal_add_css($path .'/iqss_pinserver_register.css', 'module', 'all', FALSE);    
+ 
     
     //add submit function
     $form['#submit'][] = 'iqss_pinserver_register_submit';
@@ -21,6 +22,20 @@ function iqss_pinserver_register_form_alter(&$form, $form_state, $form_id){ //dp
     //change email field description
     $form['mail']['#description'] =  t('A valid e-mail address is required. All e-mails from the Scholar Web Sites Project will be sent to this address.');
 
+     //if user is superuser then load additional fields
+  if (user_access('create vsites')){
+    $form['huid'] = array(
+    '#type' => 'textfield',
+    '#size' => 45,
+    '#title' => t('Harvard ID'),
+    '#required' => TRUE,
+    '#description' => t('Optional: Enter the %harvard ID of the web site owner', array(
+    '%harvard' => 'Harvard'
+    )),
+    );
+  return;
+  }
+    
     //add dynamic password validation
     _user_password_dynamic_validation();
 
@@ -146,14 +161,8 @@ function iqss_pinserver_register_vsite_exists($uid){
   global $base_url;
   //remove the session vars
   pinserver_remove_session();
-   
-    $vsite = vsite_get_vsite_by_owner($uid)   ;
-    //get the vsite url, check if custom domain has been set //TODO: ask Richard about this
-    $url = isset($vsite->settings['generic']['vsite_domain']) ? 'http://' . $vsite->settings['generic']['vsite_domain'] : $base_url . '/' . $vsite->purl;    
-    //return message with url to exisiting vsite    
-    $message = 'You already have a registered web site.' . l(' Go there now.', $url);
-  
-  
+  $vsite = vsite_get_vsite_by_owner($uid);
+  $message = 'You already have a registered web site.' . l(' Go there now.', $vsite->get_absolute_url());
   drupal_set_message(t("$message"));
   drupal_goto();
 }
@@ -190,6 +199,11 @@ function iqss_pinserver_register_submit($form, $form_state){
  
     //remove pinserver session vars
     pinserver_remove_session();
+    
+    //need to clear messages???
+    drupal_get_messages();
+    //set message
+    drupal_set_message(t("Your web site registration was successful! Your site is live and you are now logged in")); // TODO : improve ths message
  
     //re-direct user to home page
     drupal_goto($form_state['vsite'] -> purl . '/home');
