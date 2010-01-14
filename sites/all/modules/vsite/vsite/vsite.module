@@ -302,19 +302,6 @@ function vsite_get_vsite_by_owner($uid){
 }
 
 /**
- * API function for returning full url of vsite
- * @param site id - $sid
- */
-function vsite_get_url($sid = NULL){
-  global $base_url;
-  $space = ($sid == NULL) ?  spaces_get_space() : spaces_load('og', $sid);
-  if ($space){
-  return empty($space->settings['generic']['vsite_domain']) ? $base_url . '/'. $space->purl : $space->settings['generic']['vsite_domain'];
-  }
-  return NULL;
-}
-
-/**
  * API function for testing wether we are on the front page of a vsite
  * TODO there are different ways of doing this
  * - as a full context "context_vsite_home" which has blocks etc

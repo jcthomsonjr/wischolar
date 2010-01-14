@@ -23,9 +23,17 @@ class vsite extends space_og implements space {
     if ($this->group->og_theme && !$this->group->theme) {
       $this->group->theme = $this->group->og_theme;
     }//This must be set on load so that when you save the value will persist
+    
+    if($this->group){
+    	$this->sid = $sid;
+    }//If the group was loaded correctly set the sid
+    
+    if(!$is_active){
+    	$this->set_purl_provider();
+    }
   }
 
-  function redirect($op = 'home'){
+  public function redirect($op = 'home'){
     switch ($op) {
       case 'home' :
         if (! empty($this->purl)) {
@@ -58,7 +66,7 @@ class vsite extends space_og implements space {
    * This is overridden from the default so that we can restrict menu access for 
    * nodes that have been marked "disabled" by site owners.  Non Nodes use the parent function
    */
-  function menu_access($op, $object = NULL, $is_active = TRUE) {
+  public function menu_access($op, $object = NULL, $is_active = TRUE) {
     switch ($op) {
       case 'node':
         $node = $object;
@@ -86,7 +94,7 @@ class vsite extends space_og implements space {
   /**
    * implementation of feature_access()
    */
-  function feature_access($feature = NULL) {
+  public function feature_access($feature = NULL) {
     if (isset($this->features[$feature])) {
       if ($this->features[$feature] == SPACES_FEATURE_DISABLED) {
         return FALSE;
@@ -102,8 +110,25 @@ class vsite extends space_og implements space {
     return FALSE;
   }
   
-  function router($op, $object = NULL, $is_active = TRUE){
-  	if(!is_object($this)) return; //Because there is a bug in spaces that calls this as a static function bug report submitted
-  	parent::router($op,$object,$is_active);
-  }
+  /**
+   * 
+   */
+	public function get_absolute_url($path = ""){
+	  
+	  return url($path, array( 'purl' => array( 'provider' => $this->purl_provider,'id' => $this->sid), 'absolute' => true));
+	  
+	}
+	
+	/**
+	 * If this space is loaded outside a active context (ie) externally from the home page
+	 * then determine which purl_provider would be best
+	 * 
+	 * domain if they have that set otherwise path
+	 */
+	private function set_purl_provider(){
+		//This line checks to see if a domain modifier has been set for this site
+		if(purl_load(array('provider' => 'vsite_domain', 'id'=> $this->sid))){  
+		  $this->purl_provider = 'vsite_domain';
+		}//If this site is configured for domains use that as default, otherwise leave the default as "spaces_og"
+	}
 }
