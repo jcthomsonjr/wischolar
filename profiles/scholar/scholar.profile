@@ -51,6 +51,7 @@ function _scholar_core_modules() {
     'ctools',
     'data',
     'data_node',
+    'data_ui',
     'feeds',
     //'feedapi',
     //'feedapi_node',
