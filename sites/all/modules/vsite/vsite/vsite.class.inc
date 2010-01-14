@@ -54,6 +54,9 @@ class vsite extends space_og implements space {
 
   /**
    * Implementation of space->menu_access().
+   * 
+   * This is overridden from the default so that we can restrict menu access for 
+   * nodes that have been marked "disabled" by site owners.  Non Nodes use the parent function
    */
   function menu_access($op, $object = NULL, $is_active = TRUE) {
     switch ($op) {
@@ -66,13 +69,15 @@ class vsite extends space_og implements space {
           }
         }
 
-        vsite_include('vsiteapi');
-        $a_scholar_types = vsite_content_types(array(1,2));
-        $form = !isset($node->nid) || isset($node->date) ? TRUE : FALSE;
-
-        if($form && !array_key_exists($node->type,$a_scholar_types)){
-          return false;
-        }//If this is disabled then you can't see it's form...sorry
+        if($is_active){
+	        vsite_include('vsiteapi');
+	        $a_scholar_types = vsite_content_types(array(1,2));
+	        $form = !isset($node->nid) || isset($node->date) ? TRUE : FALSE;
+	
+	        if($form && !array_key_exists($node->type,$a_scholar_types)){
+	          return false;
+	        }//If this is disabled then you can't see it's form...sorry
+        }//If you are within this vsite
       default:
       return parent::menu_access($op, $object, $is_active);
     }

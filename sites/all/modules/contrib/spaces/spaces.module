@@ -936,7 +936,7 @@ function spaces_router($op, $object = NULL) {
     // Run each non-active space type's router
     foreach ($types as $type => $info) {
       $space = new $info['class']($type);
-      $space->router($op, $object);
+      $space->router($op, $object,false);
     }
   }
 }
