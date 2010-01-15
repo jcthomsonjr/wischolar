@@ -25,11 +25,59 @@ function vsite_users_content_profile_node_form($form) {
 }
 
 /**
- * vsite_suers_profile should use the cp layout
+ * vsite_users_profile should use the cp layout
  * 
  * @param $form
  * @return string
  */
 function theme_vsite_users_profile_node_form($form){
   return vsite_users_content_profile_node_form($form);
+}
+
+/**
+ * Format the output of the groups or "My web sites" section in the Drupal user settings
+ *
+ * @param unknown_type $my_sites
+ * @param unknown_type $member_sites
+ */
+function theme_vsite_users_list_sites($my_sites, $member_sites){
+  //TODO : Need to add proper markup/ styling
+  
+  $output = '<div class="form-item"><label>' . "My Web Site:"  .'</label>';
+
+  //print sites that I own
+  if (!empty($my_sites)){
+    $output .=  '<ul>';
+    foreach($my_sites as $site){
+      $output .=  '<li>';
+      $output .=  l($site['name'], $site['url']);  //should have a max of 1
+      $output .=  '<li>';
+    }
+    $output .=  '<ul>';
+  }
+  
+  else{
+  $output .= "  <div class=\"standard\">\n"; 
+  $output .= 'none';
+  $output .= "</div>\n";
+}
+  
+   $output .= '<div class="form-item"><label>' . "Web Sites That I am a Member of:"  .'</label>';
+   
+    //print sites I am a member of
+  if (!empty($member_sites)){
+      $output .=  '<ul>';
+    foreach($member_sites as $site){
+      $output .=  '<li>';
+      $output .=  l($site['name'], $site['url']);
+      $output .=  '<li>';
+    }
+    $output .=  '<ul>';
+  }
+else{
+  $output .= "  <div class=\"standard\">\n"; 
+  $output .= 'none';
+  $output .= "</div>\n";
+}
+  return $output;
 }
