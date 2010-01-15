@@ -290,6 +290,14 @@ function _vsite_users_user_default_permissions() {
       '1' => 'scholar user',
     ),
   );
+  
+  // Allow annon users to see the comments
+  $permissions[] = array(
+    'name' => 'access comments',
+    'roles' => array(
+      '0' => 'anonymous user',
+    ),
+  );
 
   return $permissions;
 }
