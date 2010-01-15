@@ -108,48 +108,6 @@ function vsite_news_activity(){
 	return views_page('vsite_activity','default');
 }
 
-
-/**
- * Implementation of hook flag_default_flags
- * @return array - default flag
- */
-function vsite_news_flag_default_flags(){
-  $flags = array();
-  $flags[] = array(
-    'content_type' => 'node', 
-    'name' => 'vsite_follow', 
-    'title' => 'Follow', 
-    'types' => array('vsite'), 
-    'roles' => array(
-      0 => '3' 
-    ), 
-    'global' => FALSE, 
-    'flag_short' => 'follow', 
-    'flag_long' => 'follow activity in other web sites', 
-    'flag_confirmation' => 'Added to your following list', 
-    'unflag_short' => 'Dont follow', 
-    'unflag_long' => 'Removed from your following list', 
-    //   'unflag_confirmation' => 'Are you sure you want to remove?',
-    'status' => TRUE, 
-    'show_on_page' => FALSE, 
-    'show_on_teaser' => TRUE, 
-    'show_on_form' => FALSE, 
-    'link_type' => 'toggle',  //normal, toggle, confirm
-    'locked' => array(
-      'types',
-      'name', 
-      'show_on_page', 
-      'show_on_teaser', 
-      'show_on_form', 
-      'global' 
-    ) 
-  );
-  
-  return $flags;
-}
-
-
-
 /**
  * The action hook
  */

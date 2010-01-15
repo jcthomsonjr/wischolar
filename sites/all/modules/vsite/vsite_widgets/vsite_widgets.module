@@ -300,43 +300,17 @@ function vsite_widgets_context_default_contexts() {
  * Implementation of hook flag_default_flags
  * @return array - default flag
  */
-function vsite_widgets_flag_default_flags(){
+function vsite_widgets_flag_alter(&$flag){
+  if (!($viste = vsite_get_vsite()) || $flag -> name !== 'featuredposts'){
+    return;
+  }
   vsite_include('vsiteapi');
-  $types = og_get_types('group_post');
 
-  $flags = array();
+  $types = vsite_content_types();
 
-  $flags[] = array(
-    'content_type' => 'node',
-    'name' => 'featuredposts',
-    'title' => 'Featured Posts',
-    'types' => $types,
-    'roles' => array(
-      0 => '2'
-    ),
-    'global' => TRUE,
-    'flag_short' => 'Featured Post',
-    'flag_long' => 'Make this a Featured Post',
-    'flag_confirmation' => 'Saved as a Featured Post',
-    'unflag_short' => 'Remove Featured Post',
-    'unflag_long' => 'Remove as a Featured Post',
-    'unflag_confirmation' => 'Removed from Featured Post queue',
-    'status' => TRUE,
-    'show_on_page' => FALSE,
-    'show_on_teaser' => FALSE,
-    'show_on_form' => FALSE,
-    'link_type' => 'toggle',  //normal, toggle, confirm
-    'locked' => array(
-      'types',
-      'name',
-      'show_on_page',
-      'show_on_teaser',
-      'show_on_form',
-      'global'
-    )
-  );
-
-  return $flags;
+  if (count($types)){
+    $flag -> types = array_keys($types);
+  }
 }
 
 /**

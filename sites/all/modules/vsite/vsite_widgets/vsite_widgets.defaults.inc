@@ -1,6 +1,55 @@
 <?php
 
 /**
+ * Helper to implementation of hook_flag_default_flags().
+ */
+function _vsite_widgets_flag_default_flags() {
+$flags = array();
+// Exported flag: "Featured Posts".
+$flags[] = array (
+  'content_type' => 'node',
+  'name' => 'featuredposts',
+  'title' => 'Featured Posts',
+  'global' => '1',
+  'types' => 
+  array (
+    0 => 'class',
+  ),
+  'flag_short' => 'Featured Post',
+  'flag_long' => 'Make this a Featured Post',
+  'flag_message' => '',
+  'unflag_short' => 'Remove Featured Post',
+  'unflag_long' => 'Remove as a Featured Post',
+  'unflag_message' => '',
+  'unflag_denied_text' => '',
+  'link_type' => 'toggle',
+  'roles' => 
+  array (
+    'flag' => 
+    array (
+      0 => 2,
+    ),
+    'unflag' => 
+    array (
+      0 => 2,
+    ),
+  ),
+  'show_on_page' => 0,
+  'show_on_teaser' => 0,
+  'show_on_form' => 0,
+  'access_author' => '',
+  'i18n' => 0,
+  'module' => 'vsite_widgets',
+  'api_version' => 2,
+  'locked' => 
+  array (
+    0 => 'name',
+  ),
+);
+return $flags;
+}
+
+/**
  * Helper to implementation of hook_user_default_permissions().
  */
 function _vsite_widgets_user_default_permissions() {
