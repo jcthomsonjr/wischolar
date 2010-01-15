@@ -37,10 +37,14 @@ class vsite extends space_og implements space {
     switch ($op) {
       case 'home' :
         if (! empty($this->purl)) {
+        	
+        	$home = 'home';  //Hardcoded for now
+        	//$home = $this->settings['home'];
+        	
           // Use the menu path of the selected feature as homepage
-          $home = 'home';
           if (menu_get_item($home)) {
             purl_goto($home, array( 'purl' => array( 'provider' => $this->purl_provider,'id' => $this->sid)));
+            break; //if we get here we have an infinate redirect situation and are on the correct page
           }
 
           // The previous checks fail, there is no valid homepage set

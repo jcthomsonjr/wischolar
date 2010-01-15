@@ -31,3 +31,16 @@ function scholar_update_6001() {
 
   return $ret;
 }
+
+
+/**
+ * Update script 6001.
+ */
+function scholar_update_6002() {
+  $ret = array();
+
+  //Allow annon users to view comments on scholar
+  user_perm();
+
+  return $ret;
+}

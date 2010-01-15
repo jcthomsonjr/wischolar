@@ -134,7 +134,7 @@ function vsite_taxonomy_block_view(){
     //$active_menu = reset($active_menus);
 
     // get the vocabulary for this group
-    $vcs = $vsite->get_vocabs($node_type);
+    if($vsite) $vcs = $vsite->get_vocabs($node_type);
     if (count($vcs)) {
       $v = reset($vcs);
       $terms = taxonomy_get_tree($v->vid);
