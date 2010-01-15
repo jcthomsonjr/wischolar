@@ -314,14 +314,5 @@ function _vsite_user_default_permissions() {
     ),
   );
   
-    
-  // Allow annon users to see the comments
-  $permissions[] = array(
-    'name' => 'access comments',
-    'roles' => array(
-      '0' => 'anonymous user',
-    ),
-  );
-
   return $permissions;
 }
