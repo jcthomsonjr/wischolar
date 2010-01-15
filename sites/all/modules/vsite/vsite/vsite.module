@@ -291,7 +291,7 @@ function vsite_get_vsite(){
  */
 function vsite_get_vsite_by_owner($uid){
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
-  $sid = db_result(db_query("SELECT nid FROM {node} WHERE type = '%s' AND uid = %d", $scholar_content_type, (int)$uid));
+  $sid = db_result(db_query("SELECT nid FROM {node} WHERE type = '%s' AND uid = %d LIMIT 0, 1", $scholar_content_type, (int)$uid));
   $space =  spaces_load('og', $sid);
   if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
     return $space;
@@ -654,11 +654,10 @@ function vsite_mail_alter(&$message) {
       	//Get the just created user
       	$n_new_user = db_result(db_query('SELECT u.uid FROM {users} u ORDER BY u.created DESC LIMIT 1'));
       	$o_user = user_load($n_new_user);
-     	  $password = user_password();
-     	  $edit = array('pass' => $password);
+     	//  $password = user_password();
+     	//  $edit = array('pass' => $password);
      	  $o_profile = content_profile_load('vsite_users_profile',$n_new_user);
-     	  user_save($o_user,$edit);
-     	  
+     	 // user_save($o_user,$edit);     	  
      	  
      	   //checking for custom welcome message string submitted in form
      $personal_msg_text = (!empty($_POST['welcome_message_body'])) ?
