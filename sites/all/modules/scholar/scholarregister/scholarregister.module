@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Implementation of hook_user.
  */
@@ -26,8 +27,11 @@ function scholarregister_user($op, &$edit, &$account, $category = NULL){
         if (($account->login == 0) || (arg(0) == 'user' && arg(1) == 'reset')) {
           //direct user to account edit page to change password
           $edit_page = 'user/' . $account->uid . '/edit';
-          drupal_goto($edit_page);
         }
+        else{
+          $edit_page = 'user';
+        }
+         return drupal_goto($edit_page);
      }
         else{
           // returning vsite owner, redirect user to site home page
