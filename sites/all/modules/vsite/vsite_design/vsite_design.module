@@ -286,10 +286,23 @@ function theme_vsite_design_theme_form($form) {
 	$output .= '<ul class = "theme-picker">';
 	foreach ($form['maintheme']['#enabled_themes'] as $o_theme){
 		$s_sub_theme = '';
-		if(array_key_exists($o_theme->name.'_flavor',$form)) $s_sub_theme =  drupal_render($form[$o_theme->name.'_flavor']);
+		$a_info = array_merge((array)$o_theme->info, array('theme_name'=>$o_theme->name));
+		
+		if(array_key_exists($o_theme->name.'_flavor',$form)){
+			$s_sub_theme =  drupal_render($form[$o_theme->name.'_flavor']);
+			
+			if($s_flavor = $form[$o_theme->name.'_flavor']['#default_value']){
+				$theme_flavors = vsite_design_get_flavors();
+				
+				if(array_key_exists($s_flavor,$theme_flavors) && array_key_exists('screenshot',$theme_flavors[$s_flavor])){
+				  $a_info['screenshot'] = $theme_flavors[$s_flavor]['path']."/".$theme_flavors[$s_flavor]['screenshot'];
+			  }//Should we use the flavor screenshot?
+			  
+			}//Is a sub-flavor set?
+		}//Are there flavors to select from?
 		
 		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['maintheme']['#default_value'])?'checked':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' . 
-		             theme('vsite_design_theme_picker', array_merge((array)$o_theme->info, array('theme_name'=>$o_theme->name)) ,$s_sub_theme) . 
+		             theme('vsite_design_theme_picker', $a_info ,$s_sub_theme) . 
 		           '</li>';
 	}
 	$output .= '</ul>';
@@ -326,60 +339,6 @@ function vsite_design_swap_screenshot($s_theme_name){
   ctools_ajax_render ( $commands );
 }
 
-/**
-   * Imports an image as a filefield image of a given node
-   * 
-   * Usage example:
-   * --------------
-   * $node = node_load(array('nid' => 61));
-   * $image = drupal_get_path('module', 'vsite_design').'/theme/images/default_logo.jpg';
-   * simport_node_add_imagefield_image($image, 'field_img', $node);
-   * 
-   * @param $source  the path to the source image
-   * @param $field_name the name of the cck field 
-   * @param $node the node object to upload the image to (passed by reference)
-   */
-function _vsite_design_add_imagefield_image($source, $field_name, &$node){
-  
-  // get the cck filefield
-  $field = content_fields($field_name, $node -> type);
-  
-  // validators (can add our own validators if we want)
-  $validators = array_merge(filefield_widget_upload_validators($field), imagefield_widget_upload_validators($field));
-  
-  // where to store the file
-  $files_path = filefield_widget_file_path($field);
-    
-  if(og_is_group_type($node->type)){
-    $vsite = spaces_load('og',$node->nid);
-    $files_path .= $vsite->purl;
-    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
-    $files_path .= '/files';
-    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
-  }//If this is the group node lets put it in the group directory
-    
-  // create the file object
-  if(!@filesize($source)){
-    error_log("could not get file size for [$source] ");
-    return false; 
-  }//if the file does not exsit dont try and save
-    
-  $file = field_file_save_file($source, $validators, $files_path);
-  
-  // attach it to the filefield field
-  $node->$field_name = array(
-  0 => array(
-  'fid' => $file['fid'],
-  'uid' => $node -> uid,
-  'list' => 1,
-    )
-  ); 
-    
-  // save the node
-  node_save($node);
-    
-  return $file['destination'];
-}
 
 /**
  * Fetch metadata on a specific theme plugin / or all themes
@@ -394,10 +353,10 @@ function _vsite_design_add_imagefield_image($source, $field_name, &$node){
  */
 function vsite_design_get_flavors($theme_name = false) {
   
-  ctools_include('plugins');
   static $a_plugins;
   
   if(!isset($a_plugins)){
+  	ctools_include('plugins');
     $a_plugins = ctools_get_plugins('vsite_design', 'flavor');
   }
   
@@ -457,4 +416,60 @@ function _vsite_design_get_conditional_styles($a_conditional_css,$s_base_path){
   }
 
   return $conditional_styles;
+}
+
+
+/**
+   * Imports an image as a filefield image of a given node
+   * 
+   * Usage example:
+   * --------------
+   * $node = node_load(array('nid' => 61));
+   * $image = drupal_get_path('module', 'vsite_design').'/theme/images/default_logo.jpg';
+   * simport_node_add_imagefield_image($image, 'field_img', $node);
+   * 
+   * @param $source  the path to the source image
+   * @param $field_name the name of the cck field 
+   * @param $node the node object to upload the image to (passed by reference)
+   */
+function _vsite_design_add_imagefield_image($source, $field_name, &$node){
+  
+  // get the cck filefield
+  $field = content_fields($field_name, $node -> type);
+  
+  // validators (can add our own validators if we want)
+  $validators = array_merge(filefield_widget_upload_validators($field), imagefield_widget_upload_validators($field));
+  
+  // where to store the file
+  $files_path = filefield_widget_file_path($field);
+    
+  if(og_is_group_type($node->type)){
+    $vsite = spaces_load('og',$node->nid);
+    $files_path .= $vsite->purl;
+    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
+    $files_path .= '/files';
+    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
+  }//If this is the group node lets put it in the group directory
+    
+  // create the file object
+  if(!@filesize($source)){
+    error_log("could not get file size for [$source] ");
+    return false; 
+  }//if the file does not exsit dont try and save
+    
+  $file = field_file_save_file($source, $validators, $files_path);
+  
+  // attach it to the filefield field
+  $node->$field_name = array(
+  0 => array(
+  'fid' => $file['fid'],
+  'uid' => $node -> uid,
+  'list' => 1,
+    )
+  ); 
+    
+  // save the node
+  node_save($node);
+    
+  return $file['destination'];
 }

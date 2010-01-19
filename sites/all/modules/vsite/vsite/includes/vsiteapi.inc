@@ -150,5 +150,7 @@ function vsite_vsite_themes(){
  * @return TRUE if it should be listed as faculty theme, false otherwise
  */
 function _vsite_is_vsite_theme($atheme){
-  return (ereg("scholar_theme_[0-9][0-9]",$atheme -> name));
+	$theme_flavors = vsite_design_get_flavors();
+	
+  return (ereg("scholar_theme_[0-9][0-9]",$atheme -> name) && !array_key_exists($atheme->name,$theme_flavors));
 }
