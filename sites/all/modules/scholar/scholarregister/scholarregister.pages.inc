@@ -9,7 +9,7 @@ function scholarregister_signup_form(){
   drupal_get_messages();
   
   //check if user is SuperUser
-   $superuser = user_access('create vsites');
+   $superuser = vsite_users_create_site_access();
   
   ctools_include('ajax');
   ctools_add_js('ajax-responder');
@@ -194,7 +194,7 @@ content.</p>';
     }
   }
   
-  if (user_access('create vsites')){
+  if (vsite_users_create_site_access()){
     if($vsite){
       global $user;
       //give super user adminstrative rights to site
@@ -202,7 +202,7 @@ content.</p>';
       // unset any messages
       drupal_get_messages();
       // set message
-      drupal_set_message(t("The web site registration was successful! The site is live and you are now logged in."));
+      drupal_set_message(t("The web site registration was successful! The site is live and you are logged in."));
       //re-direct user to site home
       return drupal_goto($vsite -> purl);
     }
@@ -228,3 +228,4 @@ function _scholarregister_vsite_error(){
   return ctools_ajax_command_replace('#submit-suffix', 'The web site cannot be created. Please fix the errors and try again.');
   ctools_ajax_render($commands);
 }
+
