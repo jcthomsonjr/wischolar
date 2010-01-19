@@ -11,10 +11,6 @@ $flags[] = array (
   'name' => 'featuredposts',
   'title' => 'Featured Posts',
   'global' => '1',
-  'types' => 
-  array (
-    0 => 'class',
-  ),
   'flag_short' => 'Featured Post',
   'flag_long' => 'Make this a Featured Post',
   'flag_message' => '',
