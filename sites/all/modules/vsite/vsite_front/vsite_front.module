@@ -38,48 +38,20 @@ function vsite_front_spaces_settings(){
   );
 }
 
-
 /**
- * Implementation of hook flag_default_flags
- * @return array - default flag
+ * Implementation of hook flag_alter
  */
-function vsite_front_flag_default_flags(){
-  //vsite_include('vsiteapi');
-  //$scholar_types = array_keys(vsite_content_types());
-  $types = og_get_types('group_post');
-  $flags = array();
-  $flags[] = array(
-    'content_type' => 'node', 
-    'name' => 'vsite_frontpage', 
-    'title' => 'Save to Front Page', 
-    'types' => $types, 
-    'roles' => array(
-      0 => '2' 
-    ), 
-    'global' => TRUE, 
-    'flag_short' => 'Save to Front', 
-    'flag_long' => 'Save post to front page', 
-    'flag_confirmation' => 'Saved to Front Page', 
-    'unflag_short' => 'Remove from Front', 
-    'unflag_long' => 'Remove post from Front Page', 
-    'flag_message' => 'Saved to Front Page!',
-    'unflag_message' => 'Removed from Front Page',
-    'status' => TRUE, 
-    'show_on_page' => FALSE, 
-    'show_on_teaser' => FALSE, 
-    'show_on_form' => FALSE, 
-    'link_type' => 'toggle',  //normal, toggle, confirm
-    'locked' => array(
-      'types',
-      'name', 
-      'show_on_page', 
-      'show_on_teaser', 
-      'show_on_form', 
-      'global' 
-    ) 
-  );
-  
-  return $flags;
+function vsite_front_flag_alter(&$flag){
+  if (!($viste = vsite_get_vsite()) || $flag -> name !== 'vsite_frontpage'){
+    return;
+  }
+  vsite_include('vsiteapi');
+
+  $types = vsite_content_types();
+
+  if (count($types)){
+    $flag -> types = array_keys($types);
+  }
 }
 
 
