@@ -386,8 +386,10 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	$form['og_register']['og_register']['#type'] = 'value';
 	  	$form['og_register']['#type'] = 'value';
 	  	
-	  	$form['roles']['#type'] = 'value';
-	  	$form['roles']['#value'] = array_search('scholar user',user_roles());
+	  	//using default role is 'scholar user' for new users created with ucreate
+	  	$rid = array_search('scholar user',user_roles()); //Should use variable_get('ucreate_default_roles', array()) ??
+	  	$form['roles']['#type'] = 'value';	  	
+	  	$form['roles']['#value'] = array($rid  => $rid);
 	  	
 	  	$form['name']['#weight'] = 1;
 	  	$form['name']['#description'] = "The shortname used to login usually first initial + last name";
