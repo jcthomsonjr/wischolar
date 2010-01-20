@@ -244,22 +244,39 @@ function vsite_users_strongarm(){
   $conf = array();
   $conf['content_profile_use_vsite_users_profile'] = 1;
   $conf['content_profile_vsite_users_profile'] = array(
-    'weight' => 0, 
-    'user_display' => 'full', 
-    'edit_link' => 0, 
-    'edit_tab' => 'sub',
-    'add_link' => 0, 
-    'registration_use' => 1, 
-    'admin_user_create_use' => 1, 
-    'registration_hide' => array(
-      'other' 
-    ) 
+  'weight' => 0,
+  'user_display' => 'full',
+  'edit_link' => 0,
+  'edit_tab' => 'sub',
+  'add_link' => 0,
+  'registration_use' => 1,
+  'admin_user_create_use' => 1,
+  'registration_hide' => array(
+  'other'
+  )
   );
-  
+
   $conf["show_preview_changes_vsite_users_profile"] = FALSE;
   $conf["show_diff_inline_vsite_users_profile"] = FALSE;
-  
+  $conf['ucreate_default_roles'] = vsite_users_ucreate_role();
+
   return $conf;
+}
+/**
+ * Define default role for 
+ *
+ * @param unknown_type $name
+ * @return unknown
+ */
+
+function vsite_users_ucreate_role($name = 'scholar user'){
+  $rid =array_search($name, user_roles());
+  foreach(user_roles() as $key => $val){
+    if ($key > 2 && $key == $rid){
+      $default_role[$rid] = $rid;
+    }
+  }
+  return $default_role;
 }
 
 /**
@@ -386,10 +403,9 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	$form['og_register']['og_register']['#type'] = 'value';
 	  	$form['og_register']['#type'] = 'value';
 	  	
-	  	//using default role is 'scholar user' for new users created with ucreate
-	  	$rid = array_search('scholar user',user_roles()); //Should use variable_get('ucreate_default_roles', array()) ??
+	  	//using a default role for new users created with ucreate (set in hook_strongarm)
 	  	$form['roles']['#type'] = 'value';	  	
-	  	$form['roles']['#value'] = array($rid  => $rid);
+	  	$form['roles']['#value'] = variable_get('ucreate_default_roles', array());
 	  	
 	  	$form['name']['#weight'] = 1;
 	  	$form['name']['#description'] = "The shortname used to login usually first initial + last name";
