@@ -294,7 +294,7 @@ function theme_vsite_design_theme_form($form) {
 			if($s_flavor = $form[$o_theme->name.'_flavor']['#default_value']){
 				$theme_flavors = vsite_design_get_flavors();
 				
-				if(array_key_exists($s_flavor,$theme_flavors) && array_key_exists('screenshot',$theme_flavors[$s_flavor])){
+				if(array_key_exists($s_flavor,$theme_flavors) && array_key_exists('screenshot',$theme_flavors[$s_flavor]) && $theme_flavors[$s_flavor]['module'] == $o_theme->name){
 				  $a_info['screenshot'] = $theme_flavors[$s_flavor]['path']."/".$theme_flavors[$s_flavor]['screenshot'];
 			  }//Should we use the flavor screenshot?
 			  
@@ -384,6 +384,7 @@ function vsite_design_ctools_plugin_flavor() {
   return array(
     'load themes' => true,
     'info file' => true,
+    'extension' => 'flav',
   );
 }
 

@@ -132,8 +132,7 @@ function vsite_vsite_create($name, $domain, $preset){
 
 /**
  * returns an array of available themes for faculty to chose
- * For now it suppose that the theme name will follow this pattern
- * scholar_theme_01, scholar_theme__02 ... scholar_theme_99
+ * 
  * @see _cp_is_scholar_theme
  * @todo private themes ?!
  */
@@ -150,7 +149,5 @@ function vsite_vsite_themes(){
  * @return TRUE if it should be listed as faculty theme, false otherwise
  */
 function _vsite_is_vsite_theme($atheme){
-	$theme_flavors = vsite_design_get_flavors();
-	
-  return (ereg("scholar_theme_[0-9][0-9]",$atheme -> name) && !array_key_exists($atheme->name,$theme_flavors));
+  return ('vsite' == $atheme->info['og_theme_type']);
 }
