@@ -238,3 +238,10 @@ function vsite_support_mail($key, &$message, $params) {
       break;
   }
 }
+
+function vsite_support_preprocess_views_view(&$vars) {
+  if (context_isset('cp', 'feature')){
+     $vars['header'] =  theme('context_links', context_links());
+     //$vars['empty'] = 
+  }
+}
