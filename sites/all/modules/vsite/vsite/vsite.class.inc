@@ -83,10 +83,10 @@ class vsite extends space_og implements space {
 
         if($is_active){
 	        vsite_include('vsiteapi');
-	        $a_scholar_types = vsite_content_types(array(1,2));
 	        $form = !isset($node->nid) || isset($node->date) ? TRUE : FALSE;
-	
-	        if($form && !array_key_exists($node->type,$a_scholar_types)){
+          $a_disabled_scholar_types = vsite_content_types(0);
+          	
+	        if($form && array_key_exists($node->type,$a_disabled_scholar_types)){
 	          return false;
 	        }//If this is disabled then you can't see it's form...sorry
         }//If you are within this vsite
