@@ -225,6 +225,6 @@ function scholarregister_vsite_create($name, $mail, $domain){
 }
 
 function _scholarregister_vsite_error(){
- return ctools_ajax_command_replace('#submit-suffix', '<div id="submit-suffix">The web site cannot be created. Please fix the errors and try again.</div>');
+ return ctools_ajax_command_html('#submit-suffix', 'The web site cannot be created. Please fix the errors and try again.');
 }
 
