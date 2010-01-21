@@ -171,29 +171,30 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     $form_state['vsite'] = $vsite;
     // 3. send e-mail to the user (unless specified not to by super user)
     $send_mail =  ($form_state ['values'] ['send_mail'] ===1) ? scholarregister_notify_user($vsite, $user) : FALSE;
-  }
+  
   // 4. let user know this was all sucessful
-
-  //ctools_add_js ( 'ajax-responder' );
-  $commands = array ();
-  global $base_url;
-  $message  = '<div id="success-message">';
-  $message .= '<p>Success! Your site has been created.</p>';
-  $message .= '<p>The url of your site is ' . $base_url . '/' . $domain . " " . l(t("Go there now"), $base_url . '/' . $domain);
-  $message .= '<p>Check your email account for further details on how to login in to start adding features and
+    //ctools_add_js ( 'ajax-responder' );
+    $commands = array ();
+    global $base_url;
+    $message  = '<div id="success-message">';
+    $message .= '<p>Success! Your site has been created.</p>';
+    $message .= '<p>The url of your site is ' . $base_url . '/' . $domain . " " . l(t("Go there now"), $base_url . '/' . $domain);
+    $message .= '<p>Check your email account for further details on how to login in to start adding features and
 content.</p>';
-  $message .= '</div>';
-  $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
-  $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true);
-  //dpm($commands);
-
+    $message .= '</div>';
+    $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
+    $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true);
+    //dpm($commands);
+  }
+  
   //call any other submit functions here
   foreach($form['#submit'] as $fnc){
     if (__FUNCTION__ !== $fnc){
       call_user_func($fnc, $form, $form_state);
     }
   }
-  
+
+  //additional tasks and workflow if super user is creating site
   if (vsite_users_create_site_access()){
     if($vsite){
       global $user;
@@ -206,13 +207,9 @@ content.</p>';
       //re-direct user to site home
       return drupal_goto($vsite -> purl);
     }
-    
-    else{
-      _scholarregister_vsite_error();
-    }
   }
-    
- ctools_ajax_render ( $commands );
+
+  ctools_ajax_render ( $commands );
 }
 
 
