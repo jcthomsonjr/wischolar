@@ -149,5 +149,5 @@ function vsite_vsite_themes(){
  * @return TRUE if it should be listed as faculty theme, false otherwise
  */
 function _vsite_is_vsite_theme($atheme){
-  return ('vsite' == $atheme->info['og_theme_type']);
+  return ('vsite' == $atheme->info['og_theme_type'] && !empty($atheme->status));
 }
