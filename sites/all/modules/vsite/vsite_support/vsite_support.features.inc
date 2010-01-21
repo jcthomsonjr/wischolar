@@ -19,6 +19,15 @@ function vsite_support_context_default_contexts() {
 }
 
 /**
+ * Implementation of hook_flag_default_flags().
+ */
+function vsite_support_flag_default_flags() {
+  module_load_include('inc', 'vsite_support', 'vsite_support.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_vsite_support_flag_default_flags', $args);
+}
+
+/**
  * Implementation of hook_node_info().
  */
 function vsite_support_node_info() {

@@ -140,6 +140,52 @@ function _vsite_support_context_default_contexts() {
 }
 
 /**
+ * Helper to implementation of hook_flag_default_flags().
+ */
+function _vsite_support_flag_default_flags() {
+$flags = array();
+// Exported flag: "Flag question, answers and support requests".
+$flags[] = array (
+  'content_type' => 'node',
+  'name' => 'vsite_support',
+  'title' => 'Flag question, answers and support requests',
+  'global' => '1',
+  'types' => 
+  array (
+    0 => 'support_answer',
+    1 => 'feature_request',
+    2 => 'support_question',
+  ),
+  'flag_short' => 'like it',
+  'flag_long' => 'like it',
+  'flag_message' => 'Your vote is registered ',
+  'unflag_short' => 'undo',
+  'unflag_long' => '',
+  'unflag_message' => 'your vote is canceled',
+  'unflag_denied_text' => '',
+  'link_type' => 'toggle',
+  'roles' => 
+  array (
+    'flag' => 
+    array (
+      0 => 2,
+    ),
+    'unflag' => 
+    array (
+      0 => 2,
+    ),
+  ),
+  'show_on_page' => 1,
+  'show_on_teaser' => 1,
+  'show_on_form' => 0,
+  'access_author' => '',
+  'i18n' => 0,
+  'api_version' => 2,
+);
+return $flags;
+}
+
+/**
  * Helper to implementation of hook_user_default_permissions().
  */
 function _vsite_support_user_default_permissions() {
