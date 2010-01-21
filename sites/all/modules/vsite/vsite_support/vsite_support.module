@@ -26,6 +26,7 @@ function vsite_support_menu(){
     'weight' => 5
   );
 
+  /*
   $items['cp/support/questions'] = array(
     'title' => 'Collaborative FAQ',
     'page callback' => 'vsite_support_questions',
@@ -41,7 +42,7 @@ function vsite_support_menu(){
     'weight' => 1,
   );
 
-
+*/
   if(module_exists('contact')){
     $items['cp/support/contact'] = array(
       'title' => 'Contact Us',
@@ -183,7 +184,7 @@ function vsite_support_site_contact_access(){
 }
 
 function vsite_support_questions(){
-  return views_page($view_name = 'vsite_support_faq', $display = 'default');
+  return views_page($view_name = 'vsite_support', $display = 'page_1');
 }
 
 function vsite_support_questions_node($node){
