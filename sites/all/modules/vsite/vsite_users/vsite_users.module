@@ -23,14 +23,9 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL){
 /**
  * Implementation of hook_profile_alter()
  */
-function vsite_users_profile_alter(&$account){ 
-  //if user is not site owner remove access summary information
- // if (!vsite_get_vsite_by_owner($account->uid) && $account->uid !== "1"){
- //if ($account->uid !== "1"){
-  
-    //removing existing summary information (history, blog, etc.)
-    unset($account->content['summary']);
-  //}
+function vsite_users_profile_alter(&$account){
+  //removing existing summary information (history, blog, etc.)
+  unset($account->content['summary']);
 }
 
 /**
