@@ -634,3 +634,19 @@ function node_vsite_admin_link($type, $object) {
   }
   return $links;
 }
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_front_spaces_settings(){
+	
+	//Override home if the front page feature is enabled
+  $a_settings = module_exists('scholar_front')?array(
+    'home' => array(
+      'class' => 'vsite_front_settings_home',
+      'file' => drupal_get_path('module', 'vsite') .'/include/vsite_home.settings.inc',
+    ),
+  ):array();
+  
+  return $a_settings;
+}
