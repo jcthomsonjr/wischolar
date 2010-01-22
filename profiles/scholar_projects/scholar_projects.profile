@@ -4,17 +4,17 @@
 /**
  * Implementation of hook_profile_details().
  */
-function scholar_profile_details() {
+function scholar_projects_profile_details() {
   return array(
-    'name' => 'Scholar',
-    'description' => 'Scholar Web Sites by IQSS'
+    'name' => 'Projects',
+    'description' => 'Projects Web Sites by IQSS'
   );
 }
 
 /**
  * Implementation of hook_profile_modules().
  */
-function scholar_profile_modules() {
+function scholar_projects_profile_modules() {
   return array(
     'block', 
     'blog',
@@ -37,9 +37,8 @@ function scholar_profile_modules() {
 /**
  * Returns an array list of core contributed modules.
  */
-function _scholar_core_modules() {
+function _scholar_projects_core_modules() {
  $contrib_modules = array(
-  // sites/all
     'activity',
     'addthis',
     'advanced_help',
@@ -53,10 +52,6 @@ function _scholar_core_modules() {
     'data_node',
     'data_ui',
     'feeds',
-    //'feedapi',
-    //'feedapi_node',
-    //'feedapi_inherit',
-    //'parser_common_syndication',
     'filefield_paths',
     'file_aliases',
     'features',
@@ -133,10 +128,10 @@ function _scholar_core_modules() {
 /**
  * Returns an array list of dsi modules.
  */
-function _scholar_scholar_modules() {
+function _scholar_projects_scholar_modules() {
   return array(
     'vsite',
-    'scholar',
+    'scholar_projects',
     'vsite_content',
     'vsite_front',
     'vsite_layout',
@@ -157,22 +152,15 @@ function _scholar_scholar_modules() {
     'iqss_scholar',
   
     'cp',
-    //'cp_node_forms',
     'scholarboot',
     'bkn',
-    'cite_distribute',
-   // 'cs_meta',
-    'repec_meta',
-    'googlescholar_meta',
-    'dyntextfield',
+
     'scholarregister',
     'iqss_project',
-
+   // 'simport',
     
-   // features TODO does this gets installed in the  next step (enable features?)
-   // keep here for testing purposes only
+   //features
     'scholar_dvn',
-    'scholar_biocv',
     'scholar_links',
     'scholar_blog',
     'scholar_announcements',
@@ -189,9 +177,9 @@ function _scholar_scholar_modules() {
 /**
  * Implementation of hook_profile_task_list().
  */
-function scholar_profile_task_list() {
+function scholar_projects_profile_task_list() {
   $tasks = array(
-    'scholar-configure' => st('Scholar  configuration'),
+    'scholar_projects-configure' => st('Projects  configuration'),
   );
   return $tasks;
 }
@@ -199,14 +187,13 @@ function scholar_profile_task_list() {
 /**
  * Implementation of hook_profile_tasks().
  */
-function scholar_profile_tasks(&$task, $url) {
-  include_once(dirname(__FILE__) . '/scholar.testingcontent.inc');
+function scholar_projects_profile_tasks(&$task, $url) {
 
   $output = '';
 
   if ($task == 'profile') {
-    $modules = _scholar_core_modules();
-    $modules = array_merge($modules, _scholar_scholar_modules());
+    $modules = _scholar_projects_core_modules();
+    $modules = array_merge($modules, _scholar_projects_scholar_modules());
 
     $files = module_rebuild_cache();
     $operations = array();
@@ -215,7 +202,7 @@ function scholar_profile_tasks(&$task, $url) {
     }
     $batch = array(
     'operations' => $operations,
-    'finished' => '_scholar_profile_batch_finished',
+    'finished' => '_scholar_projects_profile_batch_finished',
     'title' => st('Installing @drupal', array('@drupal' => drupal_install_profile_name())),
     'error_message' => st('The installation has encountered an error.'),
     );
@@ -228,9 +215,9 @@ function scholar_profile_tasks(&$task, $url) {
 
   // Run additional configuration tasks
   // @todo Review all the cache/rebuild options at the end, some of them may not be needed
-  if ($task == 'scholar-configure') {
+  if ($task == 'scholar_projects-configure') {
     include_once 'profiles/scholar_profiles_common.inc';
-    install_include(_scholar_core_modules());
+    install_include(_scholar_projects_core_modules());
     // create roles
     _scholar_profiles_create_roles();
     // rebuild access (required by og)
@@ -245,7 +232,7 @@ function scholar_profile_tasks(&$task, $url) {
 
 
     // configure wisywig/tinymce
-    _scholar_profiles_wysiwyg_config();
+     _scholar_profiles_wysiwyg_config();
 
     // configure the contact module
     _scholar_profiles_contact_config();
@@ -265,9 +252,9 @@ function scholar_profile_tasks(&$task, $url) {
     //features_rebuild();
 
     // enable the themes
-    _scholar_enable_themes();
+    _scholar_projects_enable_themes();
 
-    variable_set('scholar_content_type', 'vsite');
+    variable_set('scholar_content_type', 'scholar_project');
     // set default to america/new yourk
     variable_set(date_default_timezone_name, "America/New_York");
 
@@ -290,9 +277,11 @@ function scholar_profile_tasks(&$task, $url) {
  *
  * Advance installer task to language import.
  */
-function _scholar_profile_batch_finished($success, $results) {
-  variable_set('install_task', 'scholar-configure');
+function _scholar_projects_profile_batch_finished($success, $results) {
+  variable_set('install_task', 'scholar_projects-configure');
 }
+
+
 
 /**
  * enable a couple of themes
@@ -300,14 +289,14 @@ function _scholar_profile_batch_finished($success, $results) {
  * them based on some predefined pattern (i.e. scholar_theme_*)
  *
  */
-function _scholar_enable_themes(){
+function _scholar_projects_enable_themes(){
   
   // the default theme is the project theme
   install_default_theme('scholar_project');
   
   //get list of themes to be enabled - TODO: should 'kshepsle', 'rbates' be enabled for non IQSS installs?
   $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_project', 'kshepsle', 'rbates'); 
-  $themes = array_merge($themes, __scholar_get_scholar_theme_names());
+  $themes = array_merge($themes, __scholar_projects_get_scholar_theme_names());
   
   //enable the themes
   install_enable_theme($themes);
@@ -321,7 +310,7 @@ function _scholar_enable_themes(){
  *
  * @return unknown
  */
-function __scholar_get_scholar_theme_names(){
+function __scholar_projects_get_scholar_theme_names(){
 	$return = array();
 	$sql = "SELECT * FROM {system} WHERE type = '%s' AND name LIKE '%s%%'";
 	$result = db_query($sql, 'theme', 'scholar_theme_');
@@ -330,3 +319,4 @@ function __scholar_get_scholar_theme_names(){
 	}
 	return $return;
 }
+
