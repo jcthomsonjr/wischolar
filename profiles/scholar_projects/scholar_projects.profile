@@ -133,7 +133,9 @@ function _scholar_projects_scholar_modules() {
     'vsite',
     'scholar_projects',
     'vsite_content',
+    'vsite_domain',
     'vsite_front',
+    'vsite_ga',
     'vsite_layout',
     'vsite_menus',
     'vsite_design',
@@ -171,6 +173,7 @@ function _scholar_projects_scholar_modules() {
     'scholar_software',
     'scholar_pages',
     'scholar_reader',
+    'scholar_front',
   );
 }
 

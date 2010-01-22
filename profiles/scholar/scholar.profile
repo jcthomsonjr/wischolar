@@ -138,6 +138,8 @@ function _scholar_scholar_modules() {
     'vsite',
     'scholar',
     'vsite_content',
+    'vsite_domain',
+    'vsite_ga',
     'vsite_front',
     'vsite_layout',
     'vsite_menus',
@@ -183,6 +185,7 @@ function _scholar_scholar_modules() {
     'scholar_software',
     'scholar_pages',
     'scholar_reader',
+    'scholar_front',
   );
 }
 
