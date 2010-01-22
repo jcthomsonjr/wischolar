@@ -184,16 +184,31 @@ return $flags;
 function _vsite_support_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: create feature_request content
+  $permissions[] = array(
+    'name' => 'create feature_request content',
+    'roles' => array(
+      '0' => 'authenticated user',
+      '1' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: create support_answer content
   $permissions[] = array(
     'name' => 'create support_answer content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+      '1' => 'scholar admin',
+    ),
   );
 
   // Exported permission: create support_question content
   $permissions[] = array(
     'name' => 'create support_question content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+      '1' => 'scholar admin',
+    ),
   );
 
   return $permissions;
