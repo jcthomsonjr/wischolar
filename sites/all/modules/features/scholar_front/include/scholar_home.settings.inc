@@ -4,8 +4,7 @@ require_once( drupal_get_path('module', 'spaces').'/spaces.spaces.inc');
 /**
  * Provides home override
  */
-class scholar_front_settings_home extends space_setting_home implements space_setting {
-
+class vsite_front_settings_home extends space_setting_home implements space_setting {
 
   function form($space, $value = array()) {
   	//No Form the is disabled
