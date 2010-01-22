@@ -23,9 +23,14 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL){
 /**
  * Implementation of hook_profile_alter()
  */
-function vsite_users_profile_alter(&$account){
-  //removing existing summary information (history, blog, etc.)
-  unset($account->content['summary']);
+function vsite_users_profile_alter(&$account){ 
+  //if user is not site owner remove access summary information
+ // if (!vsite_get_vsite_by_owner($account->uid) && $account->uid !== "1"){
+ //if ($account->uid !== "1"){
+  
+    //removing existing summary information (history, blog, etc.)
+    unset($account->content['summary']);
+  //}
 }
 
 /**
@@ -125,9 +130,10 @@ function vsite_users_menu(){
  * Implements hook_menu_alter
  */
 function vsite_users_menu_alter(&$a_menu){
-  unset($a_menu['user/%user/groups']); //no longer need this tab. see vsite_users_show_groups_list()
+  /*$a_menu['user/%user/groups']['page arguments'] = array(1);
+  $a_menu['user/%user/groups']['page callback']  = 'vsite_users_show_groups';*/
+ // $a_menu['user/%user/groups']['access callback']  = FALSE;  //TODO: unset tab for now because using 'View' tab to display this info, except for admin
 }
-
 /**
  * Show the sites that a user belongs to in segmented list
  * 
@@ -219,6 +225,19 @@ function vsite_mail_alter(&$message) {
 }
 
 /**
+ * Show the sites that a user belongs to
+ * 
+ * @param $account user
+ * @return
+ */
+/*function vsite_users_show_groups($account){
+  if(module_exists('spaces_og')){
+    og_user('view',false,$account);
+    return theme('user_profile', $account);
+  }
+}*/
+
+/**
  * hook strongarm()
  */
 function vsite_users_strongarm(){
@@ -265,9 +284,9 @@ function vsite_users_ucreate_role($name = 'scholar user'){
  * @return user
  */
 function vsite_user_edit(){
-  $vsite = vsite_get_vsite();
+	$vsite = vsite_get_vsite();
   if(!$vsite) return false;
-
+  
   return user_edit(user_load($vsite->group->uid));
 }
 
@@ -276,9 +295,9 @@ function vsite_user_edit(){
  * @return user
  */
 function vsite_user_edit_access(){
-  $vsite = vsite_get_vsite();
+	$vsite = vsite_get_vsite();
   if(!$vsite) return false;
-
+  
   return user_edit_access(user_load($vsite->group->uid));
 }
 
@@ -287,10 +306,10 @@ function vsite_user_edit_access(){
  * @return form
  */
 function vsite_user_content_profile_edit_page($s_type){
-  $vsite = vsite_get_vsite();
-  if(!$vsite) return false;
-
-  return content_profile_page_edit($s_type,user_load($vsite->group->uid));
+	$vsite = vsite_get_vsite();
+	if(!$vsite) return false;
+	
+	return content_profile_page_edit($s_type,user_load($vsite->group->uid));
 }
 
 /**
@@ -394,7 +413,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	$form['mail']['#weight'] = 2;
 	  	$form['mail_confirm']['#weight'] = 3;
 	  	$form['welcome_message_body']['#weight'] = 4;
-	  	
+	  	$form['#redirect'] = 'usertest';
 	  	//Add Registration info to form
 	  	content_profile_registration_form_alter($form, $form_state,'user_register');
 	
@@ -430,6 +449,8 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
     	if(array_key_exists('contact',$form)) vsite_users_hide_form_value($form['contact']);
 	    if(array_key_exists('biblio_fieldset',$form))  vsite_users_hide_form_value($form['biblio_fieldset']);
 	    if(array_key_exists('timezone',$form))  vsite_users_hide_form_value($form['timezone']);
+	   
+	    $form['#redirect'] = 'usertest'; 
 	    
     break;
   }
