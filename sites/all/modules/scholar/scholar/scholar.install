@@ -31,3 +31,33 @@ function scholar_update_6001() {
 
   return $ret;
 }
+
+
+/**
+ * Update script 6002.
+ * 
+ * Enable the new scholar_front
+ */
+function scholar_update_6002() {
+  $ret = array();
+  
+  module_rebuild_cache();
+  module_enable(array("scholar_front"));
+  
+  return $ret;
+}
+
+
+/**
+ * Update script 6003
+ * 
+ * Uninstall the now defunct vsite_front
+ */
+function scholar_update_6003() {
+  $ret = array();
+  
+  module_disable(array("vsite_front"));
+  drupal_uninstall_module("vsite_front");
+  
+  return $ret;
+}
