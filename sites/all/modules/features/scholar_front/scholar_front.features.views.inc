@@ -3,12 +3,12 @@
 /**
  * Helper to implementation of hook_views_default_views().
  */
-function _vsite_front_views_default_views() {
+function _scholar_front_views_default_views() {
   $views = array();
 
-  // Exported view: vsite_front
+  // Exported view: scholar_front
   $view = new view;
-  $view->name = 'vsite_front';
+  $view->name = 'scholar_front';
   $view->description = 'A list of content flagged for the Front Page';
   $view->tag = '';
   $view->view_php = '';
@@ -21,7 +21,7 @@ function _vsite_front_views_default_views() {
     'flag_content_rel' => array(
       'label' => '',
       'required' => 1,
-      'flag' => 'vsite_frontpage',
+      'flag' => 'scholar_frontpage',
       'user_scope' => 'any',
       'id' => 'flag_content_rel',
       'table' => 'node',

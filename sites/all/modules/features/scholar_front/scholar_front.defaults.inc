@@ -3,12 +3,12 @@
 /**
  * Helper to implementation of hook_flag_default_flags().
  */
-function _vsite_front_flag_default_flags() {
+function _scholar_front_flag_default_flags() {
 $flags = array();
 // Exported flag: "Save to Front Page".
 $flags[] = array (
   'content_type' => 'node',
-  'name' => 'vsite_frontpage',
+  'name' => 'scholar_frontpage',
   'title' => 'Save to Front Page',
   'global' => true,
   'flag_short' => 'Save to Front',
@@ -45,7 +45,7 @@ $flags[] = array (
     'show_on_form' => 'show_on_form',
     'global' => 'global',
   ),
-  'module' => 'vsite_front',
+  'module' => 'scholar_front',
   'api_version' => 2,
   'status' => true,
   'is_new' => true,

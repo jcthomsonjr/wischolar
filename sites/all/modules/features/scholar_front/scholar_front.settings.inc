@@ -3,7 +3,7 @@
 /**
  * Provides front page settings for each site
  */
-class vsite_front_settings_front implements space_setting {
+class scholar_front_settings_front implements space_setting {
   var $id;
 
   function __construct($id = NULL){
