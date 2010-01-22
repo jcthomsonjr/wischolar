@@ -83,11 +83,9 @@ class vsite_front_settings_front implements space_setting {
 
       // do they want to include the bio title
       $form['bio_title'] = array(
-        //'#prefix' => '<div id="edit-settings-front-bio-title-wrapper" class="description">' . $description,
-       // '#suffix' => '</div>',
         '#type' => 'checkbox',
         '#title' => t('Include title'),
-        '#description' => t('Do you want to include the title of the post in the page?'),
+        '#description' => t('Do you want to include the title of the post in the page?')."<br /><br /><div class='info'>{$description}</div>",
         '#default_value' => isset($value['bio_title']) ? $value['bio_title'] : 1,
         '#process' => array(
           'ctools_dependent_process'
