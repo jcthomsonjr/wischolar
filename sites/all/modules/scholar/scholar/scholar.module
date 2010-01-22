@@ -113,34 +113,6 @@ function scholar_spaces_presets(){
   return $items;
 }
 
-
-function scholar_menu(){
-  $items = array();
-  $items['admin/settings/scholar'] = array(
-    'type' => MENU_NORMAL_ITEM,
-    'title' => 'Scholar settings',
-    'description' => 'Setting for scholars.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholar_settings_form'),
-    'file' => 'scholar.admin.inc',
-    'access callback' => 'user_access',
-    'access arguments' => array('administer site configuration'),
-    'weight' => 10,
-  );
-
-  $items['admin/settings/scholar/settings'] = array(
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'title' => 'Settings',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholar_settings_form'),
-    'file' => 'scholar.admin.inc',
-    'access callback' => 'user_access',
-    'access arguments' => array('administer site configuration'),
-    'weight' => 0,
-  );
-  return $items;
-}
-
 /**
  * Implementation of hook_form_alter()
  **/
