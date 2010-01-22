@@ -2,8 +2,6 @@
 name        = Scholars Web Sites - Theme 05
 description = Whimsical Theme with old paper backgrounds and old research materials, etc.
 
-og_theme_type   = "vsite"
-
 screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
@@ -42,6 +40,8 @@ settings[zen_breadcrumb_title]     = 0
 settings[zen_rebuild_registry]     = 1
 settings[zen_wireframes]           = 1
 
-widgets[vsite_menus_0] = left
-widgets[vsite_widgets_2] = header_right
-widgets[vsite_widgets_0] = false
+scholar[widgets][vsite_menus_0] = left
+scholar[widgets][vsite_widgets_2] = header_right
+scholar[widgets][vsite_widgets_0] = false
+
+scholar[theme_type]   = "scholar"

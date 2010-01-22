@@ -302,7 +302,12 @@ function cp_feature_customize($feature_name){
     $output = array();
     $output[] = ctools_modal_command_dismiss();
   }else{
-  	$output[0]['output'] .= '<script type="text/javascript">Drupal.cpAddCToolsColumns();' . "</script>\n";
+  	foreach ($output as $n_key => $a_settings) {
+  		if(isset($a_settings['command']) && $a_settings['command'] == 'modal_display'){
+  		  $output[$n_key]['output'] .= '<script type="text/javascript">Drupal.cpAddCToolsColumns();' . "</script>\n";	//Add the col script to the output
+  			break;
+  		}
+  	}
   }
 
   ctools_ajax_render($output);

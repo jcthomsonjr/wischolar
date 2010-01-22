@@ -21,11 +21,11 @@ class vsite_front_settings_front implements space_setting {
     vsite_include('vsiteapi');
     ctools_include('dependent');
     ctools_include('form');
-
+    
     // the "add new *" links
     $items = vsite_create_links('/front');
     $links = theme('ctools_dropdown', t('add new'), $items, FALSE, 'panels-display-links');
-
+    
     $form = array(
       '#title' => 'Front Page'
     );
@@ -39,6 +39,8 @@ class vsite_front_settings_front implements space_setting {
      * 3. one of your posts
      * 4. Hand-pick as you go
      */
+    
+    //Init the dependent dropdown (called here in case we are in a modal popup)
 
     // is scholar_biocv feature turned on for this vsite ?
     $biocv_feature = array_key_exists("scholar_biocv", $vsite->features);
@@ -49,7 +51,7 @@ class vsite_front_settings_front implements space_setting {
       'flag' => t('Hand-pick content as you go')
     );
     if (!$biocv_feature){
-      unset($options['Bio']);
+      unset($options['bio']);
     }
 
     $form['frontpage'] = array(
@@ -57,7 +59,8 @@ class vsite_front_settings_front implements space_setting {
       '#type' => 'radios',
       '#options' => $options,
       '#default_value' => isset($value['frontpage']) ? $value['frontpage'] : 'bio',
-      '#tree' => TRUE
+      '#tree' => TRUE,
+      '#weight' => 1,
     );
 
     // BIO
@@ -80,8 +83,8 @@ class vsite_front_settings_front implements space_setting {
 
       // do they want to include the bio title
       $form['bio_title'] = array(
-        '#prefix' => '<div id="edit-settings-front-bio-title-wrapper" class="description">' . $description,
-        '#suffix' => '</div>',
+        //'#prefix' => '<div id="edit-settings-front-bio-title-wrapper" class="description">' . $description,
+       // '#suffix' => '</div>',
         '#type' => 'checkbox',
         '#title' => t('Include title'),
         '#description' => t('Do you want to include the title of the post in the page?'),
@@ -93,10 +96,12 @@ class vsite_front_settings_front implements space_setting {
           'radio:settings[front][frontpage]' => array(
             'bio'
           )
-        )
+        ),
+        '#weight' => 2,
       );
     }
-    // post
+    
+    // Do they want to Select A Post
     $auto_element = vsite_node_autocomplete_element("Select a post");
     $auto_element['#description'] = t('Select the post your want to set as a front page or create a new one') . $links;
     $auto_element['#process'] = array(
@@ -107,6 +112,9 @@ class vsite_front_settings_front implements space_setting {
         'html'
       )
     );
+    $auto_element['#weight'] = 2;
+    
+    
     $def_node = intval($value['front_nid']) ? node_load($value['front_nid']) : false;
     if ($def_node)
       $auto_element['#default_value'] = $def_node->title . " [nid:{$value['front_nid']}]";
@@ -133,7 +141,8 @@ class vsite_front_settings_front implements space_setting {
         'radio:settings[front][frontpage]' => array(
           'feature'
         )
-      )
+      ),
+      '#weight' => 2,
     );
 
     return $form;

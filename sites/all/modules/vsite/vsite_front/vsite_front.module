@@ -133,3 +133,18 @@ function vsite_front_nodeapi(&$node, $op, $a3, $a4){
       break;
   }
 }
+
+/**
+ * Add the JS needed by our feature popup
+ */
+function vsite_front_form_alter(&$form, $form_state, $form_id) { 
+  switch($form_id){
+    case 'spaces_features_form':
+    	//These are needed for the modal popup
+      ctools_add_js('dropdown');
+      ctools_add_css('dropdown');
+      ctools_add_js('dependent');
+      drupal_add_js("misc/autocomplete.js");
+    break;
+  }
+}

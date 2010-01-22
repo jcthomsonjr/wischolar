@@ -133,14 +133,32 @@ function vsite_vsite_create($name, $domain, $preset){
 /**
  * returns an array of available themes for faculty to chose
  * 
+ * @param $theme_type string
+ *    The ID of the site type that you would like to recieve themes for
+ * 
  * @see _cp_is_scholar_theme
  * @todo private themes ?!
  */
-function vsite_vsite_themes(){
+function vsite_vsite_themes($theme_type = "scholar"){
   $allthemes = list_themes();
+  _vsite_get_theme_type($theme_type);
+  
   return (array_filter($allthemes,"_vsite_is_vsite_theme"));
 }
 
+/**
+ * Set the theme_type to filter by
+ * 
+ * THIS FUNCTION IS PRIVATE
+ * as such it should not be called from outside this file
+ */
+function _vsite_get_theme_type( $s_set_theme_type = false ){
+	static $s_theme_type;
+	
+	if($s_set_theme_type) $s_theme_type = $s_set_theme_type;
+	
+	return $s_theme_type;
+}
 
 /**
  * a callback function for array_filter() in iq_og_fac_themes
@@ -149,5 +167,8 @@ function vsite_vsite_themes(){
  * @return TRUE if it should be listed as faculty theme, false otherwise
  */
 function _vsite_is_vsite_theme($atheme){
-  return ('vsite' == $atheme->info['og_theme_type'] && !empty($atheme->status));
+  return (array_key_exists('scholar',$atheme->info) 
+       && array_key_exists('theme_type',$atheme->info['scholar']) 
+       && _vsite_get_theme_type() == $atheme->info['scholar']['theme_type'] 
+       && !empty($atheme->status));
 }

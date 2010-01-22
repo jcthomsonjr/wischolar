@@ -240,7 +240,7 @@ function _vsite_layout_alter_theme_regions(&$a_widgets){
 		if(!$s_path) return;
 		
 		$a_info = drupal_parse_info_file($s_path."/".$space->group->og_theme.".info");
-		$a_settings = (is_array($a_info) && array_key_exists('widgets',$a_info))?$a_info['widgets']:array();
+		$a_settings = (is_array($a_info) && array_key_exists('scholar',$a_info) && array_key_exists('widgets',$a_info['scholar']))?$a_info['scholar']['widgets']:array();
 	}
 	
 	foreach ($a_settings as $s_widget => $s_region){

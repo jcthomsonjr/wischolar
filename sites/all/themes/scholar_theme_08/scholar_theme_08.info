@@ -3,7 +3,6 @@ name        = Scholars Web Sites - Theme 08
 description = A flexible width theme
 flavor_name = "Blue"
 plugins[vsite_design][flavor] = flavors
-og_theme_type   = "vsite"
 
 screenshot = screenshot.png
 core       = 6.x
@@ -44,8 +43,9 @@ settings[zen_rebuild_registry]     = 1
 settings[zen_wireframes]           = 1
 
 
-widgets[vsite_menus_0] = left
-widgets[vsite_widgets_0] = header_main
-widgets[vsite_widgets_1] = header_left
-widgets[vsite_widgets_2] = header_right
-widgets[vsite_widgets_3] = right
+scholar[widgets][vsite_menus_0] = left
+scholar[widgets][vsite_widgets_0] = header_main
+scholar[widgets][vsite_widgets_1] = header_left
+scholar[widgets][vsite_widgets_2] = header_right
+scholar[widgets][vsite_widgets_3] = right
+scholar[theme_type]   = "scholar"
