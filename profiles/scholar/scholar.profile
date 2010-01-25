@@ -67,6 +67,7 @@ function _scholar_core_modules() {
     'jquery_ui',
     'jquery_update',
     'lightbox2',
+    'mollom',
     'og',
     'og_access',
     'og_views', 
