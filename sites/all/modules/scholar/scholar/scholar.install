@@ -61,3 +61,25 @@ function scholar_update_6003() {
   
   return $ret;
 }
+
+/**
+ * Update script 6004
+ * 
+ * Update to the new feed engine
+ */
+function scholar_update_6004() {
+  $ret = array();
+  
+  if(!module_exists('scholar_reader')){
+  	module_disable(array("scholar_feeds"));
+    drupal_uninstall_module("scholar_feeds");
+    
+    if(!module_exists('data')) module_enable(array("data"));
+    if(!module_exists('feeds')) module_enable(array("feeds"));
+    if(!module_exists('feeds_defaults')) module_enable(array("feeds_defaults"));
+    module_enable(array("scholar_reader"));
+  }
+  
+  
+  return $ret;
+}
