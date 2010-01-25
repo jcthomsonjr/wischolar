@@ -238,8 +238,9 @@ function vsite_preprocess_views_view(&$vars) {
  * @return string
  */
 function vsite_empty_view_message($s_node_type, $space){
+  global $user;
 	
-  if (!empty($s_node_type) && node_access('create', $s_node_type) && ($space->type == 'og')) {
+  if (!empty($s_node_type) && node_access('create', $s_node_type) && ($space->type == 'og') && vsite_is_admin($user, $space->sid)) {
     $types = node_get_types();
     if ($type = $types[$s_node_type]) {
       $output .= '<div class="empty-content"><p>' .t('Please add your first <span class="show-content-type">!type</span> to get started:', array('!type' => $type->name)) .'</p>';
@@ -250,6 +251,20 @@ function vsite_empty_view_message($s_node_type, $space){
   }
 	
   return $output;
+}
+
+/**
+ * Returns true or false whether user has site admin rights (not neccessarily owner of site)
+ */
+function vsite_is_admin($user, $sid = NULL){
+  if (!$sid) {
+    $vsite = vsite_get_vsite();
+    $sid = $vsite->sid;
+  }
+  if ($user->og_groups[$sid]['is_active'] == '1' && $user->og_groups[$sid]['is_admin']){
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -279,6 +294,8 @@ function vsite_get_vsite(){
     return NULL;
   }
 }
+
+
 
 /**
  * API function for returning the vsite object if the user is the site owner
