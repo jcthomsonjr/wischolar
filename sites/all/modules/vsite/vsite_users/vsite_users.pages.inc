@@ -78,7 +78,8 @@ function vsite_users_add_user(){
   
   if (empty($output)) {
     $output = array();
-    $output[] = ctools_modal_command_dismiss();
+    $output[] = ctools_modal_command_dismiss();  //close the modal pop-up
+    $output[] = ctools_ajax_command_reload();  //reload the parent window to display the confirmation message
   }else{
   	//$output[0]['output'] = "<div style='wdith:550px;float:left;'>".$output[0]['output']."</div><div id='user_lookup' style='float:left;'>This is for good</div>";
   }
