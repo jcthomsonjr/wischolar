@@ -65,7 +65,6 @@ class scholar_reader_handler_field_description extends views_handler_field {
         return strip_tags($output);
       case 'filter_html':
         $tags = explode(' ', $this->options['allowed_tags']);
-        dpm($tags);
         $output = filter_xss($output, $tags);
         
         return _filter_htmlcorrector($output);

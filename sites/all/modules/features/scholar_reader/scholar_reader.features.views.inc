@@ -213,6 +213,8 @@ function _scholar_reader_views_default_views() {
       'id' => 'description',
       'table' => 'feeds_data_scholar_feed_importer',
       'field' => 'description',
+      'filter_html' => 'filter_html',
+      'allowed_tags' => 'img div br p a strong b',
       'override' => array(
         'button' => 'Override',
       ),

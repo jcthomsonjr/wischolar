@@ -160,7 +160,7 @@ function _scholar_reader_data_default() {
       ),
       'description' => array(
         'label' => '',
-        'views_field_handler' => 'views_handler_field',
+        'views_field_handler' => 'scholar_reader_handler_field_description',
         'views_filter_handler' => 'views_handler_filter_string',
         'views_argument_handler' => 'views_handler_argument',
         'views_sort_handler' => 'views_handler_sort',
