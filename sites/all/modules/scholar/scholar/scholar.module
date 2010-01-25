@@ -1,31 +1,35 @@
 <?php
 
 include_once('scholar.features.inc');
+
 /**
  * hook strongarm
  */
 function scholar_strongarm(){
   $conf = array();
-
+  
   // User settings
   $conf['user_register'] = 0; // No registration is allowed; this is a closed group
+  
 
   $conf['spaces_default_presets'] = array(
-    'og' => 'scholar',
-    //'user' => '',
-    //'site' => ''
-  );
-
+    'og' => 'scholar' 
+  )//'user' => '',
+  //'site' => ''
+  ;
+  
   $conf['spaces_disabled_presets'] = array(
-    'og' => array (
-            'private' => 1,
-            'controlled' => 1,
-            'public' => 1,
-        )
+    'og' => array(
+      'private' => 1, 
+      'controlled' => 1, 
+      'public' => 1 
+    ) 
   );
   
- $conf['vsite_installation_name'] = 'scholar';
+  $conf['vsite_installation_name'] = 'scholar';
   
+  $conf['mollom_private_key'] = '32a73b2d09c7576f1a5d4ca73ca9dead';
+  $conf['mollom_public_key'] = 'fa9e0e813449535e5fcf06d6dda0d0f3';
   return $conf;
 }
 
