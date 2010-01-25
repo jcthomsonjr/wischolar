@@ -5,25 +5,28 @@
  */
 function vsite_project_strongarm(){
   $conf = array();
-
+  
   // User settings
   $conf['user_register'] = 0; // No registration is allowed; this is a closed group
+  
 
   $conf['spaces_default_presets'] = array(
-    'og' => 'scholar',
-    //'user' => '',
-    //'site' => ''
-  );
-
+    'og' => 'project' 
+  )//'user' => '',
+  //'site' => ''
+  ;
+  
   $conf['spaces_disabled_presets'] = array(
-    'og' => array (
-            'private' => 1,
-            'controlled' => 1,
-            'public' => 1,
-        )
+    'og' => array(
+      'private' => 1, 
+      'controlled' => 1, 
+      'public' => 1 
+    ) 
   );
   
- $conf['vsite_installation_name'] = 'project';
+  $conf['vsite_installation_name'] = 'project';
+  
+  
   
   return $conf;
 }
@@ -37,7 +40,7 @@ function vsite_project_spaces_presets(){
   $options = vsite_content_types();
 
   $items['project'] = array(
-    'name' => 'generic site preset', 
+    'name' => 'Project Web Site preset', 
     'description' => 'Project site preset', 
     'type' => 'og', 
     'preset' => array(
