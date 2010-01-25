@@ -407,7 +407,7 @@ function _vsite_design_get_conditional_styles($a_conditional_css,$s_base_path){
       foreach ($a_files as $s_file) {
        // Don't allow non-existent stylesheets to clutter the logs with 404.
        if (file_exists("$s_base_path/$s_file")) {
-          $output .= "<link type=\"text/css\" rel=\"stylesheet\" media=\"{$media}\" href=\"{$s_base_path}/{$s_file}{$query_string}\" />\n";
+          $output .= "<link type=\"text/css\" rel=\"stylesheet\" media=\"{$media}\" href=\"/{$s_base_path}/{$s_file}{$query_string}\" />\n";
        }
       }
     }
