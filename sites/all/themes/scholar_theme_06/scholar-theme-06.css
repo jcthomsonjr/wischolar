@@ -5,7 +5,7 @@ html {
 body {
     background-color: #44514f;
     color:#2F2F2F;
-    font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
+    font:.9em/150% didot, palatino, 'palatino linotype','times new roman', times, serif;
     }
 
 #wrapper {
@@ -13,7 +13,7 @@ body {
   }
 
 #container {
-    width: 840px;
+    width: 950px;
     margin: 0 auto;
     background:url(images/bg.png) top center repeat-y #434f4d;
     }
@@ -27,12 +27,10 @@ a:hover {
     }
 
 
-h1, h2, h3, #sidebar-right a, #header {
-    font-family: baskerville, georgia, serif;
-    font-weight: normal;
+h1, h2, h3, #header {
     color:#484b63;
+    font-weight: bold;
     }
-
 
 h2 {
     font-size: 1.7em;
@@ -62,19 +60,14 @@ img {
 
 /* LAYOUT ELEMENTS */
 
-.column {
-  padding: 10px 32px;
+#sidebar-left, #header-left, #sidebar-right, #header-right {
+  width: 180px;
+  line-height: 130%;
   }
-
-#content-main, #header-main {
-  padding: 10px 0;
-  }
-
 
 #sidebar-left, #header-left {
-  width: 160px;
-  right: 202px;
-  padding-right: 10px;
+  right: 246px;
+  padding-left: 36px;
   }
 
 body.header-left-main #header-wrapper {
@@ -82,8 +75,7 @@ body.header-left-main #header-wrapper {
   }
 
 #sidebar-right, #header-right {
-  width:160px;
-  padding-left: 10px;
+  padding-right: 36px;
   }
 
 #header-right {
@@ -91,8 +83,8 @@ body.header-left-main #header-wrapper {
   }
 
 #content-wrapper, #header-wrapper {
-  padding-left: 202px;
-  padding-right: 202px;
+  padding-left: 246px;
+  padding-right: 246px;
   }
 
 #header-wrapper {
@@ -117,9 +109,12 @@ body.no-sidebars #content-wrapper {
 #header {
     background: #44514F url(images/top.png) no-repeat 50% 100%;
     color: #F7F3EA;
-    padding-bottom: 40px;
+    padding-bottom: 18px;
     }
 
+#header h1, #header h2, #header p {
+  text-shadow: #222 0 0 .4em;
+  }
 
 #header h1 {
   margin-top: 16px;
@@ -190,7 +185,7 @@ body.two-sidebars #content {
 /* Footer*/
 #footer {
   text-align: center;
-  background: url(images/bottom.png) no-repeat 50% 0 #44514F;
+  background: url(images/bottom.png) no-repeat 1px 0 #44514F;
   padding-top: 30px;
   padding-bottom: 30px;
   }
