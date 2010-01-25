@@ -259,12 +259,17 @@ function theme_views_view_field__vsite_activity__title($view, $field, $row) {
   $field->options['alter']['path'] =  true;
 	$s_content = $field->render($row);
 	
-	$tokens = $field->get_render_tokens();
-
-  $options = array(
+	$options = array(
     'html' => 'true',
     'purl' => array('disabled' => true),
   );
+  
+  $tokens = array();
+  $alt = $field->options['alter']['alt'];
+  if (!empty($alt) && $alt !== '') {
+    $tokens = $this->get_render_tokens($alt);
+    $alt = $this->render_altered($alt, $tokens);
+  }
 
   // $path will be run through check_url() by l() so we do not need to
   // sanitize it ourselves.
@@ -283,9 +288,7 @@ function theme_views_view_field__vsite_activity__title($view, $field, $row) {
     $path = strtr($path, array('#' . $url['fragment'] => ''));
     $options['fragment'] = $url['fragment'];
   }
-
-  $alt = $field->options['alter']['alt'];
-  $alt = strtr($alt, $tokens);
+    
   if ($alt) {
     $options['attributes']['title'] = $alt;
     $options['attributes']['alt'] = $alt;
