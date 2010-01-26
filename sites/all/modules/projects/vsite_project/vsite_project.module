@@ -24,11 +24,14 @@ function vsite_project_strongarm(){
     ) 
   );
   
+  // this helps to show user the appropriate name for features
+  // i.e. project_news
   $conf['vsite_installation_name'] = 'project';
   
   // the content type which powers this kind of web site.
   $conf['scholar_content_type'] = 'project';
   
+  // mollom settings
   $conf['mollom_private_key'] = '89a61a5f00b4f996c0133e16dc9cb857';
   $conf['mollom_public_key'] = '8429265e3d1b10dccc1a62ebf3eddb78';
   
