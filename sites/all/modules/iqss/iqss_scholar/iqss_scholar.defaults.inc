@@ -13,9 +13,6 @@ function _iqss_scholar_config_variables(){
 	  'pinserver_registration_path' => 'site/register',
     'pinserver_auth_str' => 'Good signature from "authzproxy"',  
     'pinserver_support_contact' => 'scholars_dev_support@help.hmdc.harvard.edu',
-	  
-	  //The menu entry to render as the home page
-	  'scholar_home_menu_entry' => 'iqss_scholar_home',
 	);
 }
 
