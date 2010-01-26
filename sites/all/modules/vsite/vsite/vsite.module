@@ -61,7 +61,7 @@ function vsite_vsiteboot(){
   if ($s_path && $s_result = menu_execute_active_handler($s_path)) {
   	
   	if(!in_array($s_result,array(MENU_ACCESS_DENIED,MENU_NOT_FOUND))){
-  	  drupal_set_title(variable_get('scholar_home_page_title',$router_item['title']));
+  	  drupal_set_title(variable_get('scholar_home_page_title','Scholars\'s Web Sites Project'));
   	  return $s_result;
   	}
   }
