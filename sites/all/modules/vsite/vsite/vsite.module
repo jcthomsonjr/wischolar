@@ -58,14 +58,12 @@ function vsite_vsiteboot(){
   //
   
   $s_path = variable_get('scholar_home_menu_entry',false);
-  if ($s_path && $router_item = menu_get_item($s_path)) {
-    if ($router_item['access']) {
-      if ($router_item['file']) {
-        require_once($router_item['file']);
-      }
-      drupal_set_title(variable_get('scholar_home_page_title',$router_item['title']));
-      return call_user_func_array($router_item['page_callback'], $router_item['page_arguments']);
-    }
+  if ($s_path && $s_result = menu_execute_active_handler($s_path)) {
+  	
+  	if(!in_array($s_result,array(MENU_ACCESS_DENIED,MENU_NOT_FOUND))){
+  	  drupal_set_title(variable_get('scholar_home_page_title',$router_item['title']));
+  	  return $s_result;
+  	}
   }
   
   drupal_set_title('Scholars\'s Web Sites Project');
