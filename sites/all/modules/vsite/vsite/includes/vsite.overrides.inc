@@ -21,6 +21,10 @@ function vsite_string_overrides(){
   'No posts in this group.' => 'No posts in this web site.',
   'No public posts in this group.' => 'No public posts in this web site.',
   'A brief description for the group details block and the group directory.' => 'A brief description for the web site details block and the group directory.',
+  
+    //overrides for cp/users/members view
+    'Admin: Create' => 'Make administrator',
+    'Admin: Remove' => 'Remove admistrator status',
 
   //TODO: are these administrative??? May not be necessary
   'How should membership requests be handled in this group? When you select <em>closed</em>, users will not be able to join <strong>or</strong> leave.' => 'How should membership requests be handled in this web site? When you select <em>closed</em>, users will not be able to join <strong>or</strong> leave.',
