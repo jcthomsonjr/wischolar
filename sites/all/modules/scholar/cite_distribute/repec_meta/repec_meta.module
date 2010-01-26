@@ -252,7 +252,9 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
   //checking for custom domain
   if (module_exists('vsite_domain') && count($node->og_groups)){
     $vsite = spaces_load('og', key($node->og_groups));
-    $file_url = isset($vsite->settings['generic']['vsite_domain']) ? 'http://' . $vsite->settings['generic']['vsite_domain'] : BASE_URL . '/' . $path;
+    $file_url = $vsite->get_absolute_url() . $path;
+  }  else{
+    $file_url = BASE_URL . '/' . $path;  
   }
   
   $template = '';
