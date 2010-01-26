@@ -239,7 +239,7 @@ function _scholar_events_views_default_views() {
   // Exported view: scholar_events_upcoming
   $view = new view;
   $view->name = 'scholar_events_upcoming';
-  $view->description = 'Atrium > Upcoming events';
+  $view->description = 'Scholar > Upcoming events';
   $view->tag = 'scholarfeature';
   $view->view_php = '';
   $view->base_table = 'node';
