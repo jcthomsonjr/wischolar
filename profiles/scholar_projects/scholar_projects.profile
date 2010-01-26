@@ -159,7 +159,7 @@ function _scholar_projects_scholar_modules() {
     'bkn',
 
     'scholarregister',
-    'iqss_project',
+   // 'iqss_project',
    // 'simport',
     
    //features

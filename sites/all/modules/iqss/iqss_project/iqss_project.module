@@ -156,17 +156,28 @@ function iqss_project_theme(){
   }
 }
  
+function iqss_project_menu(){
+  $items = array();
+ 
+  // nodeautocomplete callback for scholar 
+  $items['iqss_scholar_home'] = array(
+    'type' => MENU_CALLBACK, 
+    'title' => 'Scholars\'s Web Sites Project', 
+    'page callback' => 'iqss_project_homepage', 
+    'access arguments' => array(
+      'access content' 
+    ), 
+  );
+  
+  return $items;
+}
 
 
-function iqss_project_preprocess_page(&$vars){
-  if (drupal_is_front_page()){
-    $vars['row1'] = theme('project_big_text');
-    $vars['row2'] = theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate') ;
-    $vars['row3'] = theme('project_site_examples');
-    $block = views_page($view_name = 'iqss_project_sites', $display = 'block_1');
-    //$block = module_invoke('iqss_project', 'block', 'view', 2);
-    //print $block['content'];
-    $vars['row3'] = '<div id="search-person">'. drupal_get_form('iqss_project_search_sites_form') .'</div>';
-    
-  }
+function iqss_project_homepage(){
+	
+  $vars['row1'] = theme('project_big_text');
+  $vars['row2'] = theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate') ;
+  $vars['row3'] = theme('project_site_examples');
+  
+  return theme('node',$vars);
 }
