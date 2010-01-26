@@ -24,7 +24,7 @@ function vsite_string_overrides(){
   
     //overrides for cp/users/members view
     'Admin: Create' => 'Make administrator',
-    'Admin: Remove' => 'Remove admistrator status',
+    'Admin: Remove' => 'Remove administrator status',
 
   //TODO: are these administrative??? May not be necessary
   'How should membership requests be handled in this group? When you select <em>closed</em>, users will not be able to join <strong>or</strong> leave.' => 'How should membership requests be handled in this web site? When you select <em>closed</em>, users will not be able to join <strong>or</strong> leave.',
