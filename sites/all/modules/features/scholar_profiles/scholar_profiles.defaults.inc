@@ -85,6 +85,42 @@ function _scholar_profiles_content_default_fields() {
 }
 
 /**
+ * Helper to implementation of hook_context_default_contexts().
+ */
+function _scholar_profiles_context_default_contexts() {
+  $items = array();
+
+  $items[] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'profiles',
+    'description' => 'scholar > profiles',
+    'node' => array(
+      '0' => 'person',
+    ),
+    'menu_trail' => array(
+      'people' => 'people',
+    ),
+    'views' => array(
+      '0' => 'scholar_profiles',
+    ),
+    'menu' => 'people',
+    'block' => array(
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Categories',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
+}
+
+/**
  * Helper to implementation of hook_menu_default_items().
  */
 function _scholar_profiles_menu_default_items() {

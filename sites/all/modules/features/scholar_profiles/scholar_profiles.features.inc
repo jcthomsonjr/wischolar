@@ -10,6 +10,15 @@ function scholar_profiles_content_default_fields() {
 }
 
 /**
+ * Implementation of hook_context_default_contexts().
+ */
+function scholar_profiles_context_default_contexts() {
+  module_load_include('inc', 'scholar_profiles', 'scholar_profiles.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_scholar_profiles_context_default_contexts', $args);
+}
+
+/**
  * Implementation of hook_menu_default_items().
  */
 function scholar_profiles_menu_default_items() {
