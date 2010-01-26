@@ -147,7 +147,10 @@ function _scholar_projects_scholar_modules() {
     'vsite_support',
     'vsite_widgets',
     'vsite_generic_settings',
-    
+
+  //Projects Specific
+    'vsite_projects',
+  
   // scholar specific
     'biblio',
 
