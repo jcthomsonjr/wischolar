@@ -100,6 +100,8 @@ function scholar_reader_feed_validate($form, &$form_state) {
   
   $form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = str_ireplace("feed:http://","http://",$form_state['values']['feeds']['FeedsHTTPFetcher']['source']); //For Safari Users
   
+  $form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = str_ireplace("feed://","http://",$form_state['values']['feeds']['FeedsHTTPFetcher']['source']); //For Safari Users
+  
   $success = (valid_url($form_state['values']['feeds']['FeedsHTTPFetcher']['source'],true) && ($status = drupal_http_request($form_state['values']['feeds']['FeedsHTTPFetcher']['source'])) && !strlen($status->error));
   if(!$success){
   	form_error($form, t('Can\'t connect to '.$form_state['values']['feeds']['FeedsHTTPFetcher']['source'].'. Invalid feed URL, please check that the URL is valid.'), 'error');
