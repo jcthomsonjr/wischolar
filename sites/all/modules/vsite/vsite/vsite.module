@@ -370,8 +370,9 @@ function vsite_theme_registry_alter(&$theme_registry){
  * Implementation of hook_form_alter()
  **/
 function vsite_form_alter(&$form, $form_state, $form_id) {
+	$scholar_content_type = variable_get('scholar_content_type', 'vsite');
   switch ($form_id) {
-  	case 'vsite_node_form':
+  	case $scholar_content_type.'_node_form':
   		//Customize the "Site Information" form
   		if(arg(0) != 'cp') break;
   		$form['buttons']['submit']['#value'] = t('Save settings');
