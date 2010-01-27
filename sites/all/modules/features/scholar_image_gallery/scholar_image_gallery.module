@@ -97,13 +97,13 @@ function scholar_image_gallery_nodeapi(&$node, $op, $a3, $a4){
 	if($node->type != 'gallery') return;
   switch($op){
     case 'delete':
-      $views = views_attach_get_node_views($node->type, 'full');
-      foreach ($views as $info) {
-        $view = views_get_view($info['name']);
-        $view->execute('full');
-        foreach ($view->result as $nid) {
-        	
-        }
+//      $views = views_attach_get_node_views($node->type, 'full');
+//      foreach ($views as $info) {
+//        $view = views_get_view($info['name']);
+//        $view->execute('full');
+//        foreach ($view->result as $nid) {
+//        	
+//        }
         
         break;
       }
