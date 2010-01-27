@@ -10,6 +10,8 @@ function googlescholar_meta_install() {
 }
 
 function googlescholar_meta_uninstall() {
+  //cleanup - remove flag
+  cite_distribute_remove_flag('googlescholar_meta');
   //remove the autoflag setting
  variable_del('googlescholar_autoflag');
 }
