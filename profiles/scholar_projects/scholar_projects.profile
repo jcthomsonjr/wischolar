@@ -134,7 +134,6 @@ function _scholar_projects_core_modules() {
 function _scholar_projects_scholar_modules() {
   return array(
     'vsite',
-    'scholar_projects',
     'vsite_content',
     'vsite_domain',
     'vsite_front',
@@ -151,7 +150,7 @@ function _scholar_projects_scholar_modules() {
     'vsite_generic_settings',
 
   //Projects Specific
-    'vsite_projects',
+    'scholar_project',
   
   // scholar specific
     'biblio',

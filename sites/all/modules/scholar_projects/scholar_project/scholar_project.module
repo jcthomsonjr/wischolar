@@ -59,17 +59,19 @@ function scholar_project_spaces_presets(){
     'type' => 'og', 
     'preset' => array(
       'features' => array(
-        'scholar_publications' => '0', 
-        'scholar_biocv' => '0', 
-        'scholar_classes' => '0', 
+        'scholar_front' => '2', 
         'scholar_pages' => '2', 
+        'scholar_announcements' => '2', 
+        'scholar_events' => '2',
+        'scholar_profiles' => '0', 
+        'scholar_publications' => '0', 
+        'scholar_classes' => '0', 
         'scholar_image_gallery' => '0', 
         'scholar_reader' => '0', 
-        'scholar_announcements' => '2', 
         'scholar_blog' => '0', 
         'scholar_dvn' => '0', 
         'scholar_links' => '0', 
-        'scholar_software' => '0' 
+        'scholar_software' => '0', 
       ), 
       'settings' => array(
         'theme' => array(
@@ -103,21 +105,23 @@ function scholar_project_spaces_presets(){
       
       'locked' => array(
         'features' => array(
-          'scholar_software' => 1 
+          'scholar_front' => 1 
         ) 
       ), 
       'weights' => array(
-        'scholar_publications' => '-10', 
-        'scholar_biocv' => '-9', 
-        'scholar_classes' => '-8', 
-        'scholar_pages' => '-7', 
+        'scholar_front' => '-13', 
+        'scholar_pages' => '-12', 
+        'scholar_announcements' => '-11', 
+        'scholar_events' => '-10',
+        'scholar_profiles' => '-9', 
+        'scholar_publications' => '-8', 
+        'scholar_classes' => '-7', 
         'scholar_image_gallery' => '-6', 
         'scholar_reader' => '-5', 
-        'scholar_announcements' => '-4', 
-        'scholar_blog' => '-3', 
-        'scholar_dvn' => '-2', 
-        'scholar_links' => '-1', 
-        'scholar_software' => '0' 
+        'scholar_blog' => '-4', 
+        'scholar_dvn' => '-3', 
+        'scholar_links' => '-2', 
+        'scholar_software' => '-1', 
       ), 
       'og' => array(
         'og_selective' => '3', 
