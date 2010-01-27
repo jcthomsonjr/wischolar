@@ -11,21 +11,6 @@ function scholar_project_strongarm(){
   // User settings
   $conf['user_register'] = 0; // No registration is allowed; this is a closed group
   
-
-  $conf['spaces_default_presets'] = array(
-    'og' => 'project' 
-  )//'user' => '',
-  //'site' => ''
-  ;
-  
-  $conf['spaces_disabled_presets'] = array(
-    'og' => array(
-      'private' => 1, 
-      'controlled' => 1, 
-      'public' => 1 
-    ) 
-  );
-  
   // this helps to show user the appropriate name for features
   // i.e. project_news
   $conf['vsite_installation_name'] = 'project';
