@@ -1,5 +1,7 @@
 <?php
 
+include_once('scholar_project.features.inc');
+
 /**
  * hook strongarm
  */
@@ -30,6 +32,7 @@ function scholar_project_strongarm(){
   
   // the content type which powers this kind of web site.
   $conf['scholar_content_type'] = 'project';
+  $conf['og_content_type_usage_project'] = 'group';
   
   // mollom settings
   $conf['mollom_private_key'] = '89a61a5f00b4f996c0133e16dc9cb857';
@@ -38,6 +41,7 @@ function scholar_project_strongarm(){
   $conf['scholar_home_page_title'] = "IQSS Projects Access";
   $conf['scholar_home_menu_entry'] = "user";
   
+  $conf['scholar_default_preset'] = "project";
   return $conf;
 }
 

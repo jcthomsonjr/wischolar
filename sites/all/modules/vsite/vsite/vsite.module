@@ -562,7 +562,7 @@ function vsite_group_load($n_vsite_id = false){
 	$o_group_node = node_load($n_vsite_id);
 	$vsite = vsite_get_vsite();
 	
-	if($o_group_node->type == 'vsite' &&  //Make sure that they have update permissions or they are accessing the node withing the context of thier own site
+	if($o_group_node->type == variable_get('scholar_content_type', 'vsite') &&  //Make sure that they have update permissions or they are accessing the node withing the context of thier own site
 	  ($o_group_node->nid == $vsite->group->nid || node_access('update',$o_group_node))){  //Does not replace the functonality of 'access callback' but provides a stopgap
 		 return $o_group_node;
 	}

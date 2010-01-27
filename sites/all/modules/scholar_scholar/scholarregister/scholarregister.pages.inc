@@ -157,7 +157,8 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   }
 
   // 2. Create the site
-  $vsite = scholarregister_vsite_create($name, $domain, 'scholar');
+  $preset = variable_get('scholar_default_preset', 'scholar');
+  $vsite = scholarregister_vsite_create($name, $domain, $preset);
 
   if (!$vsite){
     // first delete the user we just created
