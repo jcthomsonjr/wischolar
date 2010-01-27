@@ -71,6 +71,7 @@ class vsite extends space_og implements space {
    * nodes that have been marked "disabled" by site owners.  Non Nodes use the parent function
    */
   public function menu_access($op, $object = NULL, $is_active = TRUE) {
+  	return TRUE;
     switch ($op) {
       case 'node':
         $node = $object;
@@ -99,6 +100,7 @@ class vsite extends space_og implements space {
    * implementation of feature_access()
    */
   public function feature_access($feature = NULL) {
+  	return TRUE;
     if (isset($this->features[$feature])) {
       if ($this->features[$feature] == SPACES_FEATURE_DISABLED) {
         return FALSE;
@@ -111,7 +113,7 @@ class vsite extends space_og implements space {
       //allow access to all feature menu items on this page for display purposes
       return true; 
     }//Is this feature a part of the site?
-    return FALSE;
+    return TRUE;
   }
   
   /**

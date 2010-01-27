@@ -248,15 +248,16 @@ function _vsite_user_default_permissions() {
     ),
   );
 
-  // Exported permission: search content
+  // Exported permission: create vsite content
   $permissions[] = array(
-    'name' => 'search content',
-    'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
+    'name' => 'create vsite content',
+    'roles' => array(),
+  );
+
+  // Exported permission: edit own vsite content
+  $permissions[] = array(
+    'name' => 'edit own vsite content',
+    'roles' => array(),
   );
 
   // Exported permission: upload files
