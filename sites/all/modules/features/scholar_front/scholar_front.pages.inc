@@ -20,6 +20,7 @@ function scholar_front_home(){
 
         break;
       case 'feature' :
+      	vsite_include('vsiteapi');
         $node_options = $vsite->settings['front']['node_options'];
         if (!$node_options){
           $node_options = vsite_content_types();
