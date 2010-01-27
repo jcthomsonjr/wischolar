@@ -319,6 +319,8 @@ drupal_set_message(t('Installed RePEc Meta tables successfully.'));
  * Implementation of hook_uninstall().
  */
 function repec_meta_uninstall() {
+    //cleanup - remove flag
+  cite_distribute_remove_flag('repec_meta');
   
    //install repec meta tables
   drupal_uninstall_schema('repec_meta');
