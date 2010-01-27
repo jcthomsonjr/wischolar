@@ -193,6 +193,20 @@ function cite_distribute_flag($event, $flag, $content_id, $account) {
 }
 
 /**
+ * Cleanup function submodules can use during hook_uninstall
+ * @param $module - module name
+ */
+function cite_distribute_remove_flag($module = NULL){
+  if(isset($module)){
+    $flag = flag_get_flag($module);
+    if($flag){
+      //delete the flag
+      $flag->delete();
+    }
+  }
+}
+
+/**
  * Implementation hook_nodeapi()
  * TODO: not sure I will need this hook since the processing of
  * the template files are now being instantiated by flags
