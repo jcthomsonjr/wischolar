@@ -1,3 +1,30 @@
 <?php
 
 include_once('scholar_profiles.features.inc');
+
+/**
+ *  hook_strongarm().
+ */
+function scholar_profiles_strongarm() {
+
+ 
+  $conf['node_options_person'] = array('status', 'revision');
+  $conf['upload_person'] = FALSE;
+  
+  $conf["show_preview_changes_person"] = FALSE;
+  $conf["show_diff_inline_person"] = FALSE;
+ 
+  // Comments
+  $conf['comment_link'] = COMMENT_NODE_DISABLED;
+ 
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_person_pattern"] = "[space-og-path]/profiles/[title-raw]";
+ 
+  //auto_nodetitle settings
+  $conf['ant_pattern_person'] = "[field_person_firstname-raw] [field_person_middlename-raw] [field_person_lastname-raw]";
+  $conf['ant_person'] = '1';
+  $conf['ant_php_person'] = '1';
+  
+  return $conf;
+}
