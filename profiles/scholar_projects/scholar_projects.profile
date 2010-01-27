@@ -175,7 +175,7 @@ function _scholar_projects_scholar_modules() {
     'scholar_events',
     'scholar_image_gallery',
     'scholar_publications',
-    //'scholar_feeds',
+    'scholar_profiles',
     'scholar_software',
     'scholar_pages',
     'scholar_reader',
