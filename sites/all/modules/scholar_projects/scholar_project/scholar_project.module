@@ -42,9 +42,15 @@ function scholar_project_strongarm(){
   $conf['mollom_public_key'] = '8429265e3d1b10dccc1a62ebf3eddb78';
   
   $conf['scholar_home_page_title'] = "IQSS Projects Access";
-  $conf['scholar_home_menu_entry'] = "user";
+  $conf['scholar_home_menu_entry'] = "scholar_projects_home";
   
   $conf['scholar_default_preset'] = "project";
+  
+  // default theme
+  $conf['theme_default'] = 'scholar_projects_front';
+  
+  // site front page
+  $conf['site_frontpage'] = 'scholar_projects_home';
   return $conf;
 }
 
