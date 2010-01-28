@@ -19,11 +19,14 @@ function scholar_project_strongarm(){
   $conf['scholar_content_type'] = 'project';
   $conf['og_content_type_usage_project'] = 'group';
 
-  /*
+  // the default project site theme
+  $conf['scholar_default_theme'] = 'scholar_theme_01';
+  
   $conf['spaces_default_presets'] = array(
     'og' => 'project' 
   );
-  
+
+
   $conf['spaces_disabled_presets'] = array(
     'og' => array(
       'private' => 1, 
@@ -32,7 +35,7 @@ function scholar_project_strongarm(){
     ) 
   );
 
-  */
+
   
   // mollom settings
   $conf['mollom_private_key'] = '89a61a5f00b4f996c0133e16dc9cb857';
