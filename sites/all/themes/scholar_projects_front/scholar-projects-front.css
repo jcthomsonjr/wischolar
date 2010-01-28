@@ -3,7 +3,7 @@ html {
     }
 
 body {
-    background: url(images/body-bg.png) repeat-x #80a8b2;
+    background: url(images/body-bg.png) repeat-x #9ac0c9;
     color:#313030;
     font:.9em/165% arial, helvetica, sans-serif;
     padding-top: 26px;
@@ -58,7 +58,7 @@ div.form-item {
 /* HEADER ELEMENTS */
 
 #header {
-    height: 113px;
+    height: 89px;
     }
 
 #header-right {
@@ -102,7 +102,7 @@ ul#top-front li {
   }
 
 ul#top-front li a, ul#top-front li a:visited {
-  color: #000;
+  color: #fff;
   }
 
 ul#top-front li a:hover {
@@ -125,10 +125,21 @@ li#get-form a {
 
 /* Content Area */
 
+
 .front #wrapper {
-  background: url(images/wrapper.png) no-repeat 50% 121px transparent;
+  background: url(images/wrapper.png) no-repeat 50% 81px transparent;
   }
 
+#content-wrapper, body.no-sidebars #content-wrapper {
+  background: #fff;
+  border: 1px solid #000;
+  overflow: hidden;
+  padding: 30px;
+  }
+
+.front #content-wrapper {
+  background: transparent;
+  }
 #content-row-1 {
   /*background: url(images/front-row1-bg.png) no-repeat;*/
   width: 982px;
@@ -153,7 +164,7 @@ li#get-form a {
   background: url(images/version-2.png) no-repeat transparent;
   position: absolute;
   top: 1px;
-  right: 1px;
+  right: 0;
   text-indent: -999em;
   }
 
@@ -171,7 +182,7 @@ li#get-form a {
   }
 
 #content-row-2 {
-  background:#e1e1e1;
+  /*background:#e1e1e1;*/
   height: 349px;
   }
 
@@ -207,7 +218,7 @@ li#get-form a {
   }
 
 
-#block-views-iqss_project_sites-block_1, #footer {
+#block-views-iqss_project_sites-block_1 {
   background: url(images/front-row3-bg.png) repeat-x #fefefe;
   min-height: 500px;
   position:relative;
@@ -345,14 +356,18 @@ li#get-form a {
 
 
 #footer {
-  background: #fefefe;
-  min-height: 100px;
+  padding-top: 10px;
   }
 
-#footer a, #footer a:visited {
-  color: #1A708F;
+p.copy, p.copy a, p.copy a:visited {
+  color: #fff;
+  }
+
+p.copy a, p.copy a:visited {
   text-decoration: underline;
   }
+
+
 
 /* Different Tables for admin use */
 
