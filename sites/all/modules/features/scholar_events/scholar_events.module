@@ -39,7 +39,7 @@ function scholar_events_strongarm() {
 function scholar_events_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
-      return array('mini' => array('info' => t('Atrium calendar: Mini calendar')));
+      return array('mini' => array('info' => t('Mini calendar')));
     default:
       $function = "_scholar_events_block_{$delta}";
       if (function_exists($function)) {
@@ -79,3 +79,32 @@ function _scholar_events_block_mini($op, $edit) {
     return $block;
   }
 }
+
+
+/**
+ * hook vsite_widgets
+ */
+function scholar_events_vsite_widgets(){
+  $items = array();
+  $items['scholar_events_mini'] = array(
+      'module' => 'scholar_events',
+      'delta' => 'mini',
+      'weight' => 20,
+      'region' => 'header_right',
+      'status' => '0',
+      'label' => 'Mini calendar',
+      'type' => 'context_ui',
+      );
+      
+  $items['views_scholar_events_upcoming-block_1'] = array(
+      'module' => 'views',
+      'delta' => 'scholar_events_upcoming-block_1',
+      'weight' => 21,
+      'region' => 'header_right',
+      'status' => '0',
+      'label' => 'Upcoming events',
+      'type' => 'context_ui',
+      );
+  return $items;
+}
+

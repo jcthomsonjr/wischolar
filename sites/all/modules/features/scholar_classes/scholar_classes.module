@@ -2,28 +2,6 @@
 
 include_once('scholar_classes.features.inc');
 
-function scholar_classes_scholar_vocabulary_defaults() {
-  return array (
-    0 => array (
-    'name' => 'class_categories',
-    'content_types' => array ('class' => 1),
-    'properties' => array (),
-    'terms' => array (
-      0 => array (
-    	'name' => 'Statistics',
-    	'desription' => 'Statistics',
-    	'properties' => array ()
-      ),
-      1 => array (
-    	'name' => 'Political Economy',
-    	'desription' => 'Political Economy',
-    	'properties' => array ()
-      ),
-    )
-  )
- );
-}
-
 /**
  * hook link_alter (admin at the end of links)
  */
