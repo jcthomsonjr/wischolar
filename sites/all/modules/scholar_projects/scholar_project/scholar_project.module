@@ -150,12 +150,16 @@ function scholar_project_spaces_presets(){
 function scholar_project_nodeapi(&$node, $op){
   global $conf;
   switch ($op){
+    case 'presave';
+    $node->og_theme = $conf['scholar_default_theme']; //set default theme
+    break;
+    
     case 'insert':
       //adding default theme to new project site
-      $space = spaces_load('og', $node->nid);
+      /*$space = spaces_load('og', $node->nid);
       $space-> group -> og_theme = $conf['scholar_default_theme']; //set default theme
       $space->settings['theme']['flavor'] = ''; // for default flavor this value should be empty string???
-      spaces_save($space);
+      spaces_save($space);*/
   }
 }
 
