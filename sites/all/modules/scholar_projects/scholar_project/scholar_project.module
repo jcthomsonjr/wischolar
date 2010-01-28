@@ -155,6 +155,12 @@ function scholar_project_nodeapi(&$node, $op){
       $node->og_theme = $conf['scholar_default_theme']; //set default theme
     }
     break;
+    case 'insert':
+      // default flavor value should be empty string for consistency (see vsite_design_settings.theme.inc - $a_options)
+      $space = spaces_load('og', $node -> nid);
+      $space->settings['theme']['flavor'] = '';
+      spaces_save($space);
+      break;
   }
 }
 
