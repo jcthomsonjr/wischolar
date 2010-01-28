@@ -51,9 +51,9 @@ function _scholar_project_content_default_fields() {
     'description_field' => '0',
     'widget' => array(
       'collapsible' => '2',
-      'resolution' => '200x200',
+      'resolution' => '360x280',
       'enforce_ratio' => 1,
-      'croparea' => '500x500',
+      'croparea' => '135x105',
       'file_extensions' => 'png gif jpg jpeg',
       'file_path' => '',
       'progress_indicator' => 'bar',
