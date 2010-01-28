@@ -144,4 +144,84 @@ function scholar_project_spaces_presets(){
   return $items;
 }
 
+/**
+ * Define the project blocks with hook block
+ */
+function scholar_project_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0]['info'] = t('Project site logo');
+    $blocks[1]['info'] = t('Project site info');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        return _scholar_project_logo_wdgt();
+      case 1:
+       return _scholar_project_basicinfo_wdgt();
+    }
+  }
+}
+
+/**
+ * Define the avalible vsite widgets
+ * @return array
+ */
+function scholar_project_vsite_widgets(){
+  
+  return array(
+    'scholar_project_0' => array(
+      'module' => 'scholar_project',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'header_left',
+      'status' => '0',
+      'label' => 'Project Site Logo',
+      'type' => 'context_ui',
+    ),
+    'scholar_project_1' => array(
+      'module' => 'scholar_project',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'header_main',
+      'status' => '0',
+      'label' => 'Project site info',
+      'type' => 'context_ui',
+    ),
+  );
+
+}
+
+/**
+ * Scholar Basic Info Widget Content
+ * @return array
+ */
+function _scholar_project_basicinfo_wdgt(){
+  $scholar = vsite_get_vsite();
+
+  $block = array();
+  $block['subject'] = t('');
+  $block['content'] = 'Project Site ('.$scholar->purl.")";
+
+  if(!strlen($scholar->group->title)) return $block;
+            
+  $output =  "<h1>{$scholar->group->title}</h1>
+              <h2>{$scholar->group->og_description}</h2>";
+
+  $block['content'] = $output;
+
+  return $block;
+}
+
+/**
+ * Scholar Logo Widget Content
+ * @return array
+ */
+function _scholar_project_logo_wdgt(){
+
+  $block['subject'] = t(''); // intentionally blank
+  $block['content'] = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_logo',vsite_get_vsite(),'field_project_logo' ,'vsite_design_landscape_logo').'</a></div>';
+
+  return $block;
+}
 

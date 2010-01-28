@@ -149,7 +149,7 @@ function iqss_project_theme(){
     $vars['sites'][]= array(
       'headline' => $og_node -> title,
       'sub_headline' => $og_node -> og_description,
-      'photo' =>  theme_vsite_design_logo($vsite, $preset = 'iqss_project_front_logo', $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = TRUE),
+      'photo' =>  theme_vsite_logo($vsite, $s_logo_field = "field_vsite_logo", $preset = 'iqss_project_front_logo', $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = TRUE),
 
       //'photo' => theme('imagecache', 'iqss_project_front_logo', $s_image_path, $alt, $title,  $attributes),
     );

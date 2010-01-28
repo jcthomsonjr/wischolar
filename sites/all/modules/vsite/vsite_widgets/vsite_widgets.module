@@ -7,27 +7,21 @@ include_once('vsite_widgets.features.inc');
  */
 function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
   if ($op == 'list') {
-    $blocks[0]['info'] = t('Scholar site logo');
-    $blocks[1]['info'] = t('Scholar site info');
-    $blocks[2]['info'] = t('Scholar site shield');
-    $blocks[3]['info'] = t('Scholar site search');
-    $blocks[4]['info'] = t('AddThis button');
-    $blocks[5]['info'] = t('Google Translate');
+    $blocks[0]['info'] = t('Scholar site shield');
+    $blocks[1]['info'] = t('Scholar site search');
+    $blocks[2]['info'] = t('AddThis button');
+    $blocks[3]['info'] = t('Google Translate');
     return $blocks;
   }
   elseif ($op == 'view') {
     switch ($delta) {
       case 0:
-        return vsite_widgets_logo();
-      case 1:
-       return vsite_widgets_basicinfo();
-      case 2:
        return vsite_widgets_shield();
-      case 3:
+      case 1:
        return vsite_widgets_search();
-      case 4:
+      case 2:
       	return vsite_widgets_addthis();
-      case 5:
+      case 3:
       	return vsite_widget_googletranslate();
     }
   }
@@ -124,52 +118,6 @@ function vsite_widget_googletranslate(){
 	
 }
 
-function vsite_widgets_logo(){
-	$output = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_design_logo', vsite_get_vsite() ,'vsite_design_landscape_logo').'</a></div>';
-
-	$block['subject'] = t(''); // intentionally blank
-	$block['content'] = $output;
-
-	return $block;
-}
-
-function vsite_widgets_basicinfo(){
-	$scholar = vsite_get_vsite();
-
-	$block = array();
-	$block['subject'] = t('');
-	$block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
-
-	if(!strlen($scholar->group->title)){
-	  $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
-    $s_headline = "";
-    $s_subheadline ="";
-
-    if(is_array($content_profile->vsite_users_last_name)) $s_headline = "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}";
-
-    if(is_array($content_profile->vsite_users_title)) $s_subheadline = $content_profile->vsite_users_title[0]['value'];
-    
-    $block['content'] =  (strlen($s_headline) >2)?
-                         "<h1>{$s_headline}</h1>
-							            <h2>{$s_subheadline}</h2>
-							            <p></p>":"";
-    return $block;
-	}//Retrieve Defaults
-	
-	$s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0 && 
-	           ($scholar->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
-
-	$s_address = count($scholar->group->field_vsite_address)?$scholar->group->field_vsite_address[0]['value']:"";   
-	        
-	$output =  "<h1>{$scholar->group->title}</h1>
-							<h2>{$scholar->group->og_description}</h2>
-							<p>{$s_address}&nbsp;{$s_email}</p>";
-
-	$block['content'] = $output;
-
-	return $block;
-}
-
 function vsite_widgets_shield(){
   	$scholar = vsite_get_vsite();
 	$output = '';
@@ -191,27 +139,10 @@ function vsite_widgets_shield(){
 function vsite_widgets_vsite_widgets(){
 
 	return array(
-    'vsite_widgets_0' => array(
-      'module' => 'vsite_widgets',
-      'delta' => '0',
-      'weight' => 20,
-      'region' => 'header_left',
-      'status' => '0',
-      'label' => 'Scholar site logo',
-      'type' => 'context_ui',
-    ),
-    'vsite_widgets_1' => array(
-      'module' => 'vsite_widgets',
-      'delta' => '1',
-      'weight' => 20,
-      'region' => 'header_main',
-      'status' => '0',
-      'label' => 'Scholar site info',
-      'type' => 'context_ui',
-    ),
+  
     'vsite_widgets_2' => array(
       'module' => 'vsite_widgets',
-      'delta' => '2',
+      'delta' => '0',
       'weight' => 20,
       'region' => 'header_right',
       'status' => '0',
@@ -221,7 +152,7 @@ function vsite_widgets_vsite_widgets(){
 
    'vsite_widgets_3' => array(
       'module' => 'vsite_widgets',
-      'delta' => '3',
+      'delta' => '1',
       'weight' => -5,
       'region' => 'right',
       'status' => '0',
@@ -231,7 +162,7 @@ function vsite_widgets_vsite_widgets(){
     
     'vsite_widgets_5' => array(
       'module' => 'vsite_widgets',
-      'delta' => '5',
+      'delta' => '3',
       'weight' => 40,
       'region' => false,
       'status' => '0',

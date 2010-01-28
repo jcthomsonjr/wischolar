@@ -67,7 +67,7 @@ function _scholar_project_content_default_fields() {
       'custom_title' => 0,
       'title_type' => 'textfield',
       'default_image' => NULL,
-      'use_default_image' => 1,
+      'use_default_image' => 0,
       'label' => 'Logo',
       'weight' => '31',
       'description' => '',

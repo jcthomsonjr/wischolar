@@ -13,41 +13,6 @@ function vsite_design_menu(){
 }
 
 /**
- * hook init
- * @return unknown_type
- */
-function vsite_design_init(){
-
-  $vsite = vsite_get_vsite();
-  if($vsite && (!strlen($vsite->group->title) || !strlen($vsite->group->og_description) || $vsite->group->title == $vsite->purl)){
-  	
-  	
-  	if(($profile = content_profile_load('vsite_users_profile',$vsite->group->uid))){
-	  	
-	  	if((!strlen($vsite->group->title) || $vsite->group->title == $vsite->purl) && is_array($profile->vsite_users_first_name[0])){
-	  		$vsite->group->title = $profile->vsite_users_first_name[0]['value']." ".$profile->vsite_users_last_name[0]['value'];
-	  	} //Save default headline
-	  	
-	    if((!strlen($vsite->group->og_description) || $vsite->group->og_description == "$vsite->purl's web site") && is_array($profile->vsite_users_title[0])){
-	       $vsite->group->og_description = $profile->vsite_users_title[0]['value'];
-	    }//Save default title
-	    
-	    node_save($vsite->group); //Save to group node
-  	}//Create Presets
-  }//Has a default title been created
-
-  if($vsite && !count($vsite->group->field_vsite_logo)){
-
-  	if(($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) && ($a_files = filefield_get_node_files($profile,'field_user_profile_photo')) && is_array($a_files)){	
-  		//Save default logo to the settings and site node
-  		$a_image = current($a_files);
-  		
-      $s_vsite_dest = _vsite_design_add_imagefield_image($a_image['filepath'],'field_vsite_logo',$vsite->group);
-    }
-  }
-}
-
-/**
  * hook_theme
  */
 function vsite_design_theme(){
@@ -68,12 +33,6 @@ function vsite_design_theme(){
   
   $items['vsite_design_theme_form'] = array(
     'arguments' => array('form' => NULL),
-  );
-  
-  $items['vsite_design_logo'] = array(
-    'arguments' => array('scholar' => NULL, 'preset' => NULL, 'alt' => NULL, 'title' => NULL, 'attributes' => NULL),
-    'path' => drupal_get_path('module', 'vsite')."/includes/",
-    'file' => 'vsiteapi.inc',
   );
   
   $items['vsite_design_theme_shieldpicker'] = array(
@@ -417,60 +376,4 @@ function _vsite_design_get_conditional_styles($a_conditional_css,$s_base_path){
   }
 
   return $conditional_styles;
-}
-
-
-/**
-   * Imports an image as a filefield image of a given node
-   * 
-   * Usage example:
-   * --------------
-   * $node = node_load(array('nid' => 61));
-   * $image = drupal_get_path('module', 'vsite_design').'/theme/images/default_logo.jpg';
-   * simport_node_add_imagefield_image($image, 'field_img', $node);
-   * 
-   * @param $source  the path to the source image
-   * @param $field_name the name of the cck field 
-   * @param $node the node object to upload the image to (passed by reference)
-   */
-function _vsite_design_add_imagefield_image($source, $field_name, &$node){
-  
-  // get the cck filefield
-  $field = content_fields($field_name, $node -> type);
-  
-  // validators (can add our own validators if we want)
-  $validators = array_merge(filefield_widget_upload_validators($field), imagefield_widget_upload_validators($field));
-  
-  // where to store the file
-  $files_path = filefield_widget_file_path($field);
-    
-  if(og_is_group_type($node->type)){
-    $vsite = spaces_load('og',$node->nid);
-    $files_path .= $vsite->purl;
-    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
-    $files_path .= '/files';
-    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
-  }//If this is the group node lets put it in the group directory
-    
-  // create the file object
-  if(!@filesize($source)){
-    error_log("could not get file size for [$source] ");
-    return false; 
-  }//if the file does not exsit dont try and save
-    
-  $file = field_file_save_file($source, $validators, $files_path);
-  
-  // attach it to the filefield field
-  $node->$field_name = array(
-  0 => array(
-  'fid' => $file['fid'],
-  'uid' => $node -> uid,
-  'list' => 1,
-    )
-  ); 
-    
-  // save the node
-  node_save($node);
-    
-  return $file['destination'];
 }

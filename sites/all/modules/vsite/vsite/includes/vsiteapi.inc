@@ -56,6 +56,7 @@ function vsite_create_links($addition = ''){
  * Theme that returns the html for a scholar logo
  * 
  * @param viste $scholar
+ * @param string $s_logo_field
  * @param string $preset
  * @param string $alt
  * @param string $title
@@ -64,12 +65,12 @@ function vsite_create_links($addition = ''){
  * @param boolean $b_as_link
  * @return string
  */
-function theme_vsite_design_logo($scholar = false, $preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
+function theme_vsite_logo($scholar = false, $s_logo_field = "field_vsite_logo", $preset = false, $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = false){
   $s_image_path;
   $s_out;
   if(!$scholar) $scholar = vsite_get_vsite();
   
-  if(!$scholar || !($a_files = filefield_get_node_files($scholar->group,'field_vsite_logo')) || !count($a_files)){
+  if(!$scholar || !($a_files = filefield_get_node_files($scholar->group,$s_logo_field)) || !count($a_files)){
   	$s_image_path = drupal_get_path('module','vsite_design')."/theme/images/default_logo.jpg";
   }else{
   	$a_image = current($a_files);
@@ -171,4 +172,59 @@ function _vsite_is_vsite_theme($atheme){
        && array_key_exists('theme_type',$atheme->info['scholar']) 
        && _vsite_get_theme_type() == $atheme->info['scholar']['theme_type'] 
        && !empty($atheme->status));
+}
+
+/**
+   * Imports an image as a filefield image of a given node
+   * 
+   * Usage example:
+   * --------------
+   * $node = node_load(array('nid' => 61));
+   * $image = drupal_get_path('module', 'vsite_design').'/theme/images/default_logo.jpg';
+   * simport_node_add_imagefield_image($image, 'field_img', $node);
+   * 
+   * @param $source  the path to the source image
+   * @param $field_name the name of the cck field 
+   * @param $node the node object to upload the image to (passed by reference)
+   */
+function vsite_add_imagefield_image($source, $field_name, &$node){
+  
+  // get the cck filefield
+  $field = content_fields($field_name, $node -> type);
+  
+  // validators (can add our own validators if we want)
+  $validators = array_merge(filefield_widget_upload_validators($field), imagefield_widget_upload_validators($field));
+  
+  // where to store the file
+  $files_path = filefield_widget_file_path($field);
+    
+  if(og_is_group_type($node->type)){
+    $vsite = spaces_load('og',$node->nid);
+    $files_path .= $vsite->purl;
+    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
+    $files_path .= '/files';
+    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
+  }//If this is the group node lets put it in the group directory
+    
+  // create the file object
+  if(!@filesize($source)){
+    error_log("could not get file size for [$source] ");
+    return false; 
+  }//if the file does not exsit dont try and save
+    
+  $file = field_file_save_file($source, $validators, $files_path);
+  
+  // attach it to the filefield field
+  $node->$field_name = array(
+  0 => array(
+  'fid' => $file['fid'],
+  'uid' => $node -> uid,
+  'list' => 1,
+    )
+  ); 
+    
+  // save the node
+  node_save($node);
+    
+  return $file['destination'];
 }

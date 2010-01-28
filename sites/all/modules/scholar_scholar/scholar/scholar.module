@@ -3,6 +3,43 @@
 include_once('scholar.features.inc');
 
 /**
+ * Scholar Specific init function
+ * @return unknown_type
+ */
+function scholar_init(){
+
+  $vsite = vsite_get_vsite();
+  //Populate the scholar site node with some default information using the user object
+  if($vsite && (!strlen($vsite->group->title) || !strlen($vsite->group->og_description) || $vsite->group->title == $vsite->purl)){
+    
+    
+    if(($profile = content_profile_load('vsite_users_profile',$vsite->group->uid))){
+      
+      if((!strlen($vsite->group->title) || $vsite->group->title == $vsite->purl) && is_array($profile->vsite_users_first_name[0])){
+        $vsite->group->title = $profile->vsite_users_first_name[0]['value']." ".$profile->vsite_users_last_name[0]['value'];
+      } //Save default headline
+      
+      if((!strlen($vsite->group->og_description) || $vsite->group->og_description == "$vsite->purl's web site") && is_array($profile->vsite_users_title[0])){
+         $vsite->group->og_description = $profile->vsite_users_title[0]['value'];
+      }//Save default title
+      
+      node_save($vsite->group); //Save to group node
+    }//Create Presets
+  }//Has a default title been created
+
+  if($vsite && !count($vsite->group->field_vsite_logo)){
+
+    if(($profile = content_profile_load('vsite_users_profile',$vsite->group->uid)) && ($a_files = filefield_get_node_files($profile,'field_user_profile_photo')) && is_array($a_files)){  
+      //Save default logo to the settings and site node
+      $a_image = current($a_files);
+      
+      vsite_include('vsiteapi');
+      $s_vsite_dest = vsite_add_imagefield_image($a_image['filepath'],'field_vsite_logo',$vsite->group);
+    }
+  }//Copy thier image to the site logo if they have not defined one
+}
+
+/**
  * hook strongarm
  */
 function scholar_strongarm(){
@@ -146,4 +183,102 @@ function scholar_form_alter(&$form, $form_state, $form_id) {
     default:
     	
   }
+}
+
+/**
+ * Define the avalible vsite widgets
+ * @return array
+ */
+function scholar_vsite_widgets(){
+  //Note the names "vsite_widgets_0" were left to preserve peoples saved settings
+  return array(
+    'vsite_widgets_0' => array(
+      'module' => 'scholar',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'header_left',
+      'status' => '0',
+      'label' => 'Scholar site logo',
+      'type' => 'context_ui',
+    ),
+    'vsite_widgets_1' => array(
+      'module' => 'scholar',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'header_main',
+      'status' => '0',
+      'label' => 'Scholar site info',
+      'type' => 'context_ui',
+    ),
+  );
+
+}
+
+/**
+ * Define the scholar blocks with hook block
+ */
+function scholar_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0]['info'] = t('Scholar site logo');
+    $blocks[1]['info'] = t('Scholar site info');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        return _scholar_logo_wdgt();
+      case 1:
+       return _scholar_basicinfo_wdgt();
+    }
+  }
+}
+
+/**
+ * Scholar Basic Info Widget Content
+ * @return array
+ */
+function _scholar_basicinfo_wdgt(){
+  $scholar = vsite_get_vsite();
+
+  $block = array();
+  $block['subject'] = t('');
+  $block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
+
+  if(!strlen($scholar->group->title)){
+    $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
+
+    $s_headline = (is_array($content_profile->vsite_users_last_name))? "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}":"";
+    $s_subheadline = (is_array($content_profile->vsite_users_title))?  $content_profile->vsite_users_title[0]['value']:"";
+    
+    $block['content'] =  (strlen($s_headline) >2)?
+                         "<h1>{$s_headline}</h1>
+                          <h2>{$s_subheadline}</h2>
+                          <p></p>":"";
+    return $block;
+  }//Retrieve Defaults
+  
+  $s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0 && 
+             ($scholar->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
+
+  $s_address = count($scholar->group->field_vsite_address)?$scholar->group->field_vsite_address[0]['value']:"";   
+          
+  $output =  "<h1>{$scholar->group->title}</h1>
+              <h2>{$scholar->group->og_description}</h2>
+              <p>{$s_address}&nbsp;{$s_email}</p>";
+
+  $block['content'] = $output;
+
+  return $block;
+}
+
+/**
+ * Scholar Logo Widget Content
+ * @return array
+ */
+function _scholar_logo_wdgt(){
+
+  $block['subject'] = t(''); // intentionally blank
+  $block['content'] = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_logo',vsite_get_vsite(),'field_vsite_logo' ,'vsite_design_landscape_logo').'</a></div>';
+
+  return $block;
 }

@@ -209,6 +209,12 @@ function vsite_theme($cache, $type, $theme, $path) {
     'path' => $path . '/theme',
     'file' => 'theme.inc',
   );
+  
+  $items['vsite_logo'] = array(
+    'arguments' => array('scholar' => NULL, 's_logo_field' => NULL, 'preset' => NULL, 'alt' => NULL, 'title' => NULL, 'attributes' => NULL),
+    'path' => $path."/includes/",
+    'file' => 'vsiteapi.inc',
+  );
 
   return $items;
 }
