@@ -14,6 +14,12 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL){
     '#value' => vsite_users_show_groups_list($account),
     );
       break;
+      
+     case 'logout':
+       if ($vsite = vsite_get_vsite_by_owner($account->uid)) {
+         drupal_goto($vsite->get_absolute_url());
+       }
+    break;
     
     case 'form':
       break;       
