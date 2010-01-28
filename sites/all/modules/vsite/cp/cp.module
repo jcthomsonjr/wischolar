@@ -459,7 +459,7 @@ function cp_toolbar_menu_links(){
   if ( context_get('vsite', 'section') == 'cp'){
     $user_links [] = array (
       'title' => t ( 'Back to <strong>!sitename</strong>', array( '!sitename' => vsite_get_vsite()->title )),
-      'href' => "/" ,
+      'href' => "" ,
       'html' => TRUE
     );
   }

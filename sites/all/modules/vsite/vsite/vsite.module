@@ -415,6 +415,10 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
   		_spaces_og_make_hidden($form['revision_information']);
   		_spaces_og_make_hidden($form['author']);
   		_spaces_og_make_hidden($form['options']);
+  		
+  		if(array_search('_spaces_og_group_node_form_submit',$form['#submit'])){
+  			unset($form['#submit'][array_search('_spaces_og_group_node_form_submit',$form['#submit'])]);
+  		}//Don't need this submit form if they are not chaning purl or presets
   	break;
     default:
       if ($form['#id'] == 'node-form' && (arg(0) .'/'. arg(1) != 'admin/content')) {
@@ -675,4 +679,3 @@ function vsite_spaces_settings(){
   
   return $a_settings;
 }
-
