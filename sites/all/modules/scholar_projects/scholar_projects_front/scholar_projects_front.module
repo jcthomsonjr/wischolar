@@ -2,11 +2,11 @@
 
 include_once('scholar_projects_front.features.inc');
 
-/*
+
 function scholar_projects_front_context_active_contexts_alter(&$contexts){
   dpm($contexts); 
 }
-*/
+
 
 /**
  * hook block
@@ -178,7 +178,9 @@ function scholar_projects_front_menu(){
 
 
 function scholar_projects_front_homepage(){
-	
+  $vars['row1'] = scholar_projects_front_row1();
+  $vars['row2'] = scholar_projects_front_row2();
+  return $vars['row1']['content'] . $vars['row2']['content'];
   $vars['row1'] = theme('project_big_text');
   $vars['row2'] = theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate') ;
   $vars['row3'] = theme('project_site_examples');
