@@ -99,7 +99,7 @@ function _scholar_events_context_default_contexts() {
         'weight' => 20,
         'region' => 'right',
         'status' => '0',
-        'label' => 'Mini calendar',
+        'label' => 'Atrium calendar: Mini calendar',
         'type' => 'context_ui',
       ),
       'views_scholar_events_upcoming-block_1' => array(
