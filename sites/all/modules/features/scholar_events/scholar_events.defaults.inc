@@ -82,7 +82,7 @@ function _scholar_events_context_default_contexts() {
   $items[] = array(
     'namespace' => 'scholar',
     'attribute' => 'feature',
-    'value' => 'calendar',
+    'value' => 'events',
     'description' => '',
     'node' => array(
       '0' => 'event',
@@ -99,7 +99,7 @@ function _scholar_events_context_default_contexts() {
         'weight' => 20,
         'region' => 'right',
         'status' => '0',
-        'label' => 'Atrium calendar: Mini calendar',
+        'label' => 'Mini calendar',
         'type' => 'context_ui',
       ),
       'views_scholar_events_upcoming-block_1' => array(
@@ -108,7 +108,7 @@ function _scholar_events_context_default_contexts() {
         'weight' => 21,
         'region' => 'right',
         'status' => '0',
-        'label' => 'scholar_events_upcoming: Block',
+        'label' => 'Upcoming events',
         'type' => 'context_ui',
       ),
     ),
