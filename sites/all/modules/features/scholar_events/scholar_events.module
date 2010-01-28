@@ -86,21 +86,29 @@ function _scholar_events_block_mini($op, $edit) {
  */
 function scholar_events_vsite_widgets(){
   $items = array();
+  
+  /**
+   * this needs some work 
+   * because the block view expect a date argument
+   * see _scholar_events_block_mini() above
+   * 
   $items['scholar_events_mini'] = array(
       'module' => 'scholar_events',
       'delta' => 'mini',
       'weight' => 20,
-      'region' => 'header_right',
+      'region' => false,
       'status' => '0',
       'label' => 'Mini calendar',
       'type' => 'context_ui',
       );
       
+   */
+      
   $items['views_scholar_events_upcoming-block_1'] = array(
       'module' => 'views',
       'delta' => 'scholar_events_upcoming-block_1',
       'weight' => 21,
-      'region' => 'header_right',
+      'region' => false,
       'status' => '0',
       'label' => 'Upcoming events',
       'type' => 'context_ui',
