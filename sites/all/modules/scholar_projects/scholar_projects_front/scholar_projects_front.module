@@ -2,33 +2,76 @@
 
 include_once('scholar_projects_front.features.inc');
 
-function scholar_projects_front_menu(){
-  $items = array();
- 
-  // nodeautocomplete callback for scholar 
-  $items['scholar_projects_home'] = array(
-    'type' => MENU_CALLBACK, 
-    'title' => 'Scholars\'s Web Sites Project', 
-    'page callback' => 'scholar_projects_front_homepage', 
-    'access arguments' => array(
-      'access content' 
-    ), 
-  );
-  
-  return $items;
+/*
+function scholar_projects_front_context_active_contexts_alter(&$contexts){
+  dpm($contexts); 
+}
+*/
+
+/**
+ * hook block
+ */
+function scholar_projects_front_block($op = 'list', $delta = 0, $edit = array()){
+  switch ($op) {
+    case 'list' :
+      $blocks[0]['info'] = t('row 1');
+      $blocks[1]['info'] = t('row 2');
+      $blocks[2]['info'] = t('row 3');
+      //$blocks[3]['info'] = t('scholar project front block');
+      return $blocks;
+    case 'view' :
+      switch ($delta) {
+        case 0 :
+          $block = scholar_projects_front_row1();
+          break;
+        case 1 :
+          $block = scholar_projects_front_row2();
+          break;
+
+        case 2 :
+          $block = scholar_projects_front_row3();
+          break;
+        case 3 :
+          $block = scholar_projects_front_row4();
+          break;
+
+      }
+
+      return $block;
+  }
 }
 
-
-function scholar_projects_front_homepage(){
-	
-  $vars['row1'] = theme('project_big_text');
-  $vars['row2'] = theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate') ;
-  //$vars['row3'] = theme('project_site_examples');
-  
-  return $vars['row1'] . $vars['row2'];
+function scholar_projects_front_row1(){
+  $block = array();
+  $block['subject'] = '';
+  $block['content'] = '<div id="content-row-1">' . theme('project_big_text') . '</div>';
+  return $block;
 }
 
+function scholar_projects_front_row2(){
+  $block = array();
+  $block['subject'] = '';
+  $block['content'] = '<div id="content-row-2">' . theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate') . '</div>' ;
+  
+  return $block;
+}
 
+function scholar_projects_front_row3(){
+  $block = array();
+  $block['subject'] = '';
+  $output = '<h3>New Sites</h3>
+  <div id="search-person">'. drupal_get_form('scholar_projects_front_search_sites_form') .'</div>
+  <div id="new-sites">';
+  $block['content'] =  '<div id="content-row-3">' . $output . theme('project_site_examples') . '</div>';
+  return $block;
+}
+
+function scholar_projects_front_row4(){
+  $block = array();
+  $block['subject'] = '';
+  $block['content'] = theme('project_site_examples');
+  return $block;
+}
 
 
 function scholar_projects_front_theme(){
@@ -117,3 +160,28 @@ function scholar_projects_front_theme(){
   }
 }
  
+function scholar_projects_front_menu(){
+  $items = array();
+ 
+  // nodeautocomplete callback for scholar 
+  $items['scholar_projects_home'] = array(
+    'type' => MENU_CALLBACK, 
+    'title' => 'Scholars\'s Web Sites Project', 
+    'page callback' => 'scholar_projects_front_homepage', 
+    'access arguments' => array(
+      'access content' 
+    ), 
+  );
+  
+  return $items;
+}
+
+
+function scholar_projects_front_homepage(){
+	
+  $vars['row1'] = theme('project_big_text');
+  $vars['row2'] = theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate') ;
+  $vars['row3'] = theme('project_site_examples');
+  
+  return theme('node',$vars);
+}
