@@ -163,10 +163,9 @@ function _scholar_projects_scholar_modules() {
     'scholarboot',
     'bkn',
 
-    'scholarregister',
-   // 'iqss_project',
-   // 'simport',
-    
+   // not for now
+   // 'scholarregister',
+
    //features
     'scholar_dvn',
     'scholar_links',
