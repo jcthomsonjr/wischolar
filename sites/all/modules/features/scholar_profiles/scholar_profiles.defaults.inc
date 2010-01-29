@@ -11,16 +11,17 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_firstname',
     'type_name' => 'person',
     'display_settings' => array(
+      'weight' => '-3',
+      'parent' => '',
       'label' => array(
         'format' => 'above',
-        'exclude' => 0,
       ),
       'teaser' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       '4' => array(
@@ -61,7 +62,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'First Name',
-      'weight' => '-4',
+      'weight' => '-3',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -73,16 +74,17 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_lastname',
     'type_name' => 'person',
     'display_settings' => array(
+      'weight' => '-1',
+      'parent' => '',
       'label' => array(
         'format' => 'above',
-        'exclude' => 0,
       ),
       'teaser' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       '4' => array(
@@ -123,7 +125,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Last Name',
-      'weight' => '-2',
+      'weight' => '-1',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -135,16 +137,17 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_middlename',
     'type_name' => 'person',
     'display_settings' => array(
+      'weight' => '-2',
+      'parent' => '',
       'label' => array(
         'format' => 'above',
-        'exclude' => 0,
       ),
       'teaser' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       '4' => array(
@@ -185,7 +188,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Middle Name or Initial',
-      'weight' => '-3',
+      'weight' => '-2',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -197,16 +200,17 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_photo',
     'type_name' => 'person',
     'display_settings' => array(
+      'weight' => '-4',
+      'parent' => '',
       'label' => array(
-        'format' => 'above',
-        'exclude' => 0,
+        'format' => 'hidden',
       ),
       'teaser' => array(
-        'format' => 'default',
+        'format' => 'vsite_design_landscape_logo_linked',
         'exclude' => 0,
       ),
       'full' => array(
-        'format' => 'default',
+        'format' => 'vsite_design_landscape_logo_default',
         'exclude' => 0,
       ),
       '4' => array(
@@ -255,7 +259,7 @@ function _scholar_profiles_content_default_fields() {
       'default_image' => NULL,
       'use_default_image' => 0,
       'label' => 'Photo',
-      'weight' => '4',
+      'weight' => '-4',
       'description' => '',
       'type' => 'imagefield_crop_widget',
       'module' => 'imagefield_crop',
@@ -267,16 +271,17 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_website',
     'type_name' => 'person',
     'display_settings' => array(
+      'weight' => '3',
+      'parent' => '',
       'label' => array(
-        'format' => 'above',
-        'exclude' => 0,
+        'format' => 'inline',
       ),
       'teaser' => array(
-        'format' => 'default',
+        'format' => 'url',
         'exclude' => 0,
       ),
       'full' => array(
-        'format' => 'default',
+        'format' => 'url',
         'exclude' => 0,
       ),
       '4' => array(
@@ -297,30 +302,36 @@ function _scholar_profiles_content_default_fields() {
       ),
     ),
     'widget_active' => '1',
-    'type' => 'text',
+    'type' => 'link',
     'required' => '0',
     'multiple' => '0',
-    'module' => 'text',
+    'module' => 'link',
     'active' => '1',
-    'text_processing' => '0',
-    'max_length' => '',
-    'allowed_values' => '',
-    'allowed_values_php' => '',
+    'attributes' => array(
+      'target' => 'default',
+      'rel' => '',
+      'class' => '',
+    ),
+    'display' => array(
+      'url_cutoff' => '80',
+    ),
+    'url' => 0,
+    'title' => 'none',
+    'title_value' => '',
+    'enable_tokens' => 0,
     'widget' => array(
-      'rows' => 5,
-      'size' => '120',
       'default_value' => array(
         '0' => array(
-          'value' => '',
-          '_error_element' => 'default_value_widget][field_person_website][0][value',
+          'title' => '',
+          'url' => '',
         ),
       ),
       'default_value_php' => NULL,
       'label' => 'Web Site',
-      'weight' => '-1',
+      'weight' => '3',
       'description' => '',
-      'type' => 'text_textfield',
-      'module' => 'text',
+      'type' => 'link',
+      'module' => 'link',
     ),
   );
 
