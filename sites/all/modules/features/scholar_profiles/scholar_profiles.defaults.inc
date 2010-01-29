@@ -328,7 +328,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Web Site',
-      'weight' => '2',
+      'weight' => '4',
       'description' => '',
       'type' => 'link',
       'module' => 'link',
