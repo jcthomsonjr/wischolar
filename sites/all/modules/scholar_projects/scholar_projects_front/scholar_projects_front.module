@@ -24,9 +24,9 @@ function scholar_projects_front_theme(){
   'path' => $path,
   );
 
-  $items['project_maintain'] = array(
+  $items['project_wordout'] = array(
   'arguments' => array('tree' => array()),
-  'template' => 'project-maintain',
+  'template' => 'project-wordout',
   'path' => $path,
   );
 
@@ -104,7 +104,7 @@ function scholar_projects_front_homepage(){
          '</div>' .
          '<div id="content-row-2">' .
            theme('project_create') .
-           theme('project_maintain') .
+           theme('project_wordout') .
            theme('project_control') .
            theme('project_events') .
          '</div>' ;
