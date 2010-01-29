@@ -1,29 +1,29 @@
 <?php
 
 function scholar_projects_front_theme(){
-  
+
   $path = drupal_get_path('module', 'scholar_projects_front') . '/theme';
-  
+
   //top bocks
   $items['project_slideshow'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'project-slideshow',
     'path' => $path,
   );
-  
+
     $items['project_big_text'] = array(
     'arguments' => array(),
     'template' => 'project-big-text',
     'path' => $path,
   );
-  
+
   //middle blocks
   $items['project_create'] = array(
   'arguments' => array('tree' => array()),
   'template' => 'project-create',
   'path' => $path,
   );
-  
+
   $items['project_maintain'] = array(
   'arguments' => array('tree' => array()),
   'template' => 'project-maintain',
@@ -35,24 +35,24 @@ function scholar_projects_front_theme(){
     'template' => 'project-control',
     'path' => $path,
   );
-  
-  $items['project_collaborate'] = array(
+
+  $items['project_events'] = array(
     'arguments' => array('tree' => array()),
-    'template' => 'project-collaborate',
+    'template' => 'project-events',
     'path' => $path,
   );
-  
+
   //bottom block
     $items['project_site_examples'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'project-site-examples',
     'path' => $path,
   );
-  
+
   return $items;
  }
 
- 
+
  /// the example sites  ... not used for now
  function scholar_projects_front_preprocess_project_site_examples(&$vars){
   $vars['sites'] = array();
@@ -79,20 +79,20 @@ function scholar_projects_front_theme(){
     );
   }
 }
- 
+
 function scholar_projects_front_menu(){
   $items = array();
- 
-  // nodeautocomplete callback for scholar 
+
+  // nodeautocomplete callback for scholar
   $items['scholar_projects_home'] = array(
-    'type' => MENU_CALLBACK, 
-    'title' => 'Scholars\'s Web Sites Project', 
-    'page callback' => 'scholar_projects_front_homepage', 
+    'type' => MENU_CALLBACK,
+    'title' => 'Scholars\'s Web Sites Project',
+    'page callback' => 'scholar_projects_front_homepage',
     'access arguments' => array(
-      'access content' 
-    ), 
+      'access content'
+    ),
   );
-  
+
   return $items;
 }
 
