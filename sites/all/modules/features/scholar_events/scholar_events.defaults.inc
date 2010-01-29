@@ -14,7 +14,7 @@ function _scholar_events_content_default_fields() {
       'weight' => '-3',
       'parent' => '',
       'label' => array(
-        'format' => 'above',
+        'format' => 'inline',
       ),
       'teaser' => array(
         'format' => 'long',
@@ -45,7 +45,7 @@ function _scholar_events_content_default_fields() {
     'repeat_collapsed' => '',
     'default_format' => 'long',
     'widget' => array(
-      'default_value' => 'blank',
+      'default_value' => 'now',
       'default_value_code' => '',
       'default_value2' => 'same',
       'default_value_code2' => '',
