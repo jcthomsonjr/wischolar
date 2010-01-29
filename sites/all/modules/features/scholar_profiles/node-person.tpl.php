@@ -1,4 +1,4 @@
-<?php 
+<?php
 $file_path = $node -> field_person_photo[0]['filepath'];
 $logo_teaser = theme('imagecache','image_s', $file_path);
 $logo_teaser = l($logo_teaser, 'node/'. $node -> nid, array('absolute' => FALSE, 'html' => TRUE));
@@ -13,6 +13,12 @@ $person_logo = $page ? $logo_page : $logo_teaser;
       <h3 class="title">
         <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
       </h3>
+    <?php endif; ?>
+    <?php if ($page): ?>
+      <?php drupal_set_title();?>
+      <h2 class="title">
+        <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
+      </h2>
     <?php endif; ?>
     <?php if ($unpublished): ?>
       <div class="unpublished"><?php print t('Unpublished'); ?></div>
