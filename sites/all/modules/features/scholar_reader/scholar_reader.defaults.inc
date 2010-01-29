@@ -24,7 +24,7 @@ function _scholar_reader_context_default_contexts() {
     'block' => array(
       'vsite_widgets_4' => array(
         'module' => 'vsite_widgets',
-        'delta' => '4',
+        'delta' => '2',
         'weight' => 20,
         'region' => 'left',
         'status' => '0',

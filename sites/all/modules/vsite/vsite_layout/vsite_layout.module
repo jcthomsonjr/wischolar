@@ -126,18 +126,28 @@ function vsite_layout_get_pagetypes($space){
 	if($a_page_types) return $a_page_types;
 
   $features = spaces_features($space->type, TRUE);
-  $a_page_types = array('all' => t('Default Settings'), 'front' => t('Front Page'));
+  $a_page_types = array('all' => t('Default Settings'));
+  
   if(!is_array($space->features)){
-  	$a_return = $a_page_types;
+  	$a_ret = $a_page_types;
   	unset($a_page_types);
-  	return $a_return;
-  }
+  	return $a_ret;
+  } 
 
+  $a_features = array();
   foreach ($space->features as $s_feature_key => $privacy){
     if(!array_key_exists($s_feature_key,$features) || $privacy == FEATURE_DISABLED) continue;
-    $a_page_types[$s_feature_key] = $features[$s_feature_key]->info['name'];
+    
+    //Move front to the ... front of the list
+    if(strstr($s_feature_key,'front')){
+    	$a_features = array_merge(array($s_feature_key => $features[$s_feature_key]->info['name']),$a_features);
+    	continue;
+    } 
+    
+    $a_features[$s_feature_key] = $features[$s_feature_key]->info['name'];
   }
-
+  
+  $a_page_types = array_merge($a_page_types,$a_features);
   return $a_page_types;
 }
 
@@ -209,11 +219,7 @@ function vsite_layout_filtered_widgets($page_type='all'){
 	//The Default Widgets avalible everywhere
 	$a_widgets = $contexts['vsite-section-public']->block;
 	
-	if($page_type == 'all'){
-    //$a_widgets; //Just the widgets avalible everywhere
-	}elseif($page_type == 'front'){
-	  $a_widgets = array_merge($a_widgets,$contexts['vsite-subsection-front']->block); //Everywhere plus the front page
-	}elseif(($feature_contexts = drupal_map_assoc(spaces_features_items('context', $page_type))) && count($feature_contexts) && array_key_exists(current($feature_contexts),$contexts) && is_array($contexts[current($feature_contexts)]->block)){
+	if(($feature_contexts = drupal_map_assoc(spaces_features_items('context', $page_type))) && count($feature_contexts) && array_key_exists(current($feature_contexts),$contexts) && is_array($contexts[current($feature_contexts)]->block)){
 		$a_widgets = array_merge($a_widgets,$contexts[current($feature_contexts)]->block);  //Everywhere plus the feature
 	}
 	
@@ -279,27 +285,41 @@ function vsite_layout_region_widgets($scolar = false,$page_type='all'){
   $a_site_settings = false;
   if(array_key_exists('layout',$scholar->settings) && array_key_exists($page_type,$scholar->settings['layout'])){
   	$a_site_settings = $scholar->settings['layout'][$page_type];
-  	$a_order = array_keys($a_site_settings);
+  	_widget_settings_order(array_keys($a_site_settings));
   }
 
   $a_region_widgets = array();
   foreach($a_widgets as $s_widget_key => $widget){
   	$widget = (array)$widget;
   	if(!$a_site_settings && $widget['region']){
-      $a_region_widgets[$widget['region']][] = $widget;
+      $a_region_widgets[$widget['region']][$s_widget_key] = $widget;
   	}elseif ($a_site_settings && array_key_exists($s_widget_key,$a_site_settings)){
-  		$a_region_widgets[$a_site_settings[$s_widget_key]][" ".array_search($s_widget_key,$a_order)] = $widget;
+  		$a_region_widgets[$a_site_settings[$s_widget_key]][$s_widget_key] = $widget;
   	}else{
-  		$a_region_widgets['unused'][] = $widget;
+  		$a_region_widgets['unused'][$s_widget_key] = $widget;
   	}
   }
 
-  foreach ($a_region_widgets as $region => $a_widgets) ksort($a_region_widgets[$region]);
+  if($a_site_settings) foreach ($a_region_widgets as $region => $a_widgets) uksort($a_region_widgets[$region],"_widget_settings_sort");
 
   $a_cached_region_widgets[$page_type] = $a_region_widgets;
   return $a_region_widgets;
 }
 
+//Util function for storing the order
+function _widget_settings_order($order = false){
+	static $a_order;
+	if($order) $a_order = $order;
+	
+	return $a_order;
+}
+
+//Utility function for sorting the widgets
+function _widget_settings_sort($a,$b){
+	$a_order = _widget_settings_order();
+	
+	return (array_search($a,$a_order) < array_search($b,$a_order)) ? -1 : 1;
+}
 
 /**
  * Alter the blocks avalible on a given page,  Apply users saved settings
@@ -337,9 +357,6 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
 	if($feature_context && $s_feature_module){
 		$a_region_widgets = vsite_layout_region_widgets($space,$s_feature_module);
 	}//Is a feature  context active
-
-  //If we are not in a feature and we are on the front page get it's settings
-  if(!isset($a_region_widgets) && array_key_exists('vsite-subsection-front',$contexts)) $a_region_widgets = vsite_layout_region_widgets($space,'front');
 
   //If we still don't have the settings get the default settings
   if(!isset($a_region_widgets)) $a_region_widgets = vsite_layout_region_widgets($space);
@@ -399,10 +416,9 @@ function _check_for_overrides(&$widgets,$s_region,$space = null){
     if($s_page_nm == 'all' || !count($widgets)) continue;
     $a_page_settings = (is_array($space->settings['layout'][$s_page_nm]))?$space->settings['layout'][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
 
-    foreach ($widgets as $key => $wgt){
-    	$s_wgt_name = $wgt['module']."_".$wgt['delta'];
+    foreach ($widgets as $s_wgt_name => $wgt){
     	if(!array_key_exists($s_wgt_name,$a_page_settings) || $a_page_settings[$s_wgt_name] != $s_region){
-    		$widgets[$key]['overides'][] = $s_page_readable;
+    		$widgets[$s_wgt_name]['overides'][] = $s_page_readable;
     	}
     }
 	}
@@ -437,10 +453,9 @@ function _check_for_disabled_widgets(&$widgets, $a_feature_contexts, $space = nu
   	$a_page_widgets = array_merge($a_page_widgets,$a_customized_widgets[$space->group->nid][$s_context]);
   }//Gather the settings into the static var
   
-  foreach ($widgets as $key => $wgt){
-    $s_wgt_name = $wgt['module']."-".$wgt['delta'];
+  foreach ($widgets as $s_wgt_name => $wgt){
     if(array_key_exists($s_wgt_name,$a_page_widgets) && array_key_exists('status',$a_page_widgets[$s_wgt_name])){
-      $widgets[$key]['hidden'] = !$a_page_widgets[$s_wgt_name]['status'];
+      $widgets[$s_wgt_name]['hidden'] = !$a_page_widgets[$s_wgt_name]['status'];
     }
   }
   

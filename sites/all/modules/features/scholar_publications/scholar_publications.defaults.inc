@@ -114,7 +114,7 @@ function _scholar_publications_context_default_contexts() {
       ),
       'vsite_widgets_4' => array(
         'module' => 'vsite_widgets',
-        'delta' => '4',
+        'delta' => '2',
         'weight' => 50,
         'region' => 'left',
         'status' => '0',

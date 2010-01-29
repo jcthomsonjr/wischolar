@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Provides front page settings for each site
+ * Provides page settings for each site
  */
 class vsite_layout_settings_layout implements space_setting {
   var $id;
