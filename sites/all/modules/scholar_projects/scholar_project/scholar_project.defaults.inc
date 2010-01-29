@@ -71,8 +71,8 @@ function _scholar_project_content_default_fields() {
       'label' => 'Logo',
       'weight' => '31',
       'description' => '',
-      'type' => 'imagefield_crop_widget',
-      'module' => 'imagefield_crop',
+      'type' => 'imagefield_widget',
+      'module' => 'imagefield',
     ),
   );
 
