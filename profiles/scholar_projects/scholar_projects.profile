@@ -152,6 +152,7 @@ function _scholar_projects_scholar_modules() {
   //Projects Specific
     'scholar_project',
     'scholar_projects_front',
+    'auto_nodetitle',
   
   // scholar specific
     'biblio',
