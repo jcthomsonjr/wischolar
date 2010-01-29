@@ -242,3 +242,23 @@ function _scholar_project_logo_wdgt(){
   return $block;
 }
 
+/**
+ * Implementation of hook_form_alter()
+ **/
+function scholar_project_form_alter(&$form, $form_state, $form_id) {
+  $scholar_content_type = variable_get('scholar_content_type', 'vsite');
+  switch ($form_id) {
+    case $scholar_content_type.'_node_form':
+      //Customize the "Site Information" form
+      if(arg(0) != 'cp') break;
+      if(array_key_exists('title',$form)) $form['title']['#title'] = "Headline";
+      if(array_key_exists('og_description',$form)){
+      	$form['og_description']['#title'] = "Sub Headline";
+      	$form['og_description']['#required'] = false;
+      }
+      _spaces_og_make_hidden($form['body_field']);
+    break;
+    default:
+   
+  }
+}
