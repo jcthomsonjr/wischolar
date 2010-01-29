@@ -302,10 +302,10 @@ function _scholar_projects_profile_batch_finished($success, $results) {
 function _scholar_projects_enable_themes(){
   
   // the default theme is the project theme
-  install_default_theme('scholar_project');
+  // install_default_theme('scholar_projects_front');
   
   //get list of themes to be enabled - TODO: should 'kshepsle', 'rbates' be enabled for non IQSS installs?
-  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_project', 'kshepsle', 'rbates'); 
+  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_projects_front', 'kshepsle', 'rbates', 'qualitative_methods'); 
   $themes = array_merge($themes, __scholar_projects_get_scholar_theme_names());
   
   //enable the themes
