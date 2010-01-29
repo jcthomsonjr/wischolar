@@ -15,9 +15,9 @@ $person_logo = $page ? $logo_page : $logo_teaser;
       </h3>
     <?php endif; ?>
     <?php if ($page): ?>
-      <?php drupal_set_title();?>
+      <?php drupal_set_title(check_plain(''));?>
       <h2 class="title">
-        <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
+       <?php print $title; ?>
       </h2>
     <?php endif; ?>
     <?php if ($unpublished): ?>

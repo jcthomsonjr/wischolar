@@ -1,19 +1,48 @@
-﻿body {
+﻿@font-face {
+	font-family: 'MyriadProBold';
+	src: url('fonts/MyriadPro-Bold.eot');
+	src: local('fonts/Myriad Pro Bold'), local('fonts/MyriadPro-Bold'), url('fonts/MyriadPro-Bold.woff') format('woff'), url('fonts/MyriadPro-Bold.otf') format('opentype'), url('fonts/MyriadPro-Bold.svg#MyriadPro-Bold') format('svg');
+}
+
+@font-face {
+	font-family: 'MyriadProRegular';
+	src: url('fonts/MyriadPro-Regular.eot');
+	src: local('fonts/Myriad Pro Regular'), local('fonts/MyriadPro-Regular'), url('fonts/MyriadPro-Regular.woff') format('woff'), url('fonts/MyriadPro-Regular.otf') format('opentype'), url('fonts/MyriadPro-Regular.svg#MyriadPro-Regular') format('svg');
+}
+
+@font-face {
+	font-family: 'MyriadProItalic';
+	src: url('fonts/MyriadPro-It.eot');
+	src: local('fonts/Myriad Pro Italic'), local('fonts/MyriadPro-It'), url('fonts/MyriadPro-It.woff') format('woff'), url('fonts/MyriadPro-It.otf') format('opentype'), url('fonts/MyriadPro-It.svg#MyriadPro-It') format('svg');
+}
+
+body {
   background-color: #373c3e;
-  font:14px/17px myriad, sans-serif;
+  font:14px/17px 'MyriadProRegular', sans-serif;
   color: #050505;
   }
 
 
 /*TYPOGRAPHY*/
 
-h1 {
-  width:334px;
-  height:45px;
-  background: url(images/logotext.png) no-repeat transparent;
-  text-indent: -999em;
-  margin-top: 13px;
-  margin-bottom: 9px;
+#header h1, #header h2 {
+  color: #fff;
+  margin-bottom: 0;
+  font-weight: normal;
+  }
+
+#header h1 {
+  margin-top:13px;
+  font-size: 23px;
+  }
+
+#header h2 {
+  font-size: 20px;
+  margin-top: 10px;
+  }
+
+#header #block-vsite_menus-0 {
+  margin-top: 10px;
   }
 
 #sidebar-left h3, #sidebar-right h3 {
@@ -40,6 +69,10 @@ h1 {
 #container {
   width: 970px;
   margin: 0 auto;
+  }
+
+#header {
+  height:117px;
   }
 
 #sidebar-left, #sidebar-right {
@@ -77,6 +110,17 @@ h1 {
 .two-sidebars #content-main {
   width:582px;
   }
+
+#header-left {
+  width: 170px;
+  right:210px;
+  }
+
+#header-wrapper {
+  padding-left: 190px;
+  }
+
+
 
 /* HTML ITEMS */
 
