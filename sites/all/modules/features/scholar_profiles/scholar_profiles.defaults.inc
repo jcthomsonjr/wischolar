@@ -404,3 +404,36 @@ function _scholar_profiles_menu_default_items() {
 
   return $items;
 }
+
+/**
+ * Helper to implementation of hook_user_default_permissions().
+ */
+function _scholar_profiles_user_default_permissions() {
+  $permissions = array();
+
+  // Exported permission: create person content
+  $permissions[] = array(
+    'name' => 'create person content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: delete own person content
+  $permissions[] = array(
+    'name' => 'delete own person content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: edit own person content
+  $permissions[] = array(
+    'name' => 'edit own person content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  return $permissions;
+}
