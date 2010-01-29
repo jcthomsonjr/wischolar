@@ -1,6 +1,44 @@
 <?php
 
 /**
+ * Helper to implementation of hook_context_default_contexts().
+ */
+function _scholar_front_context_default_contexts() {
+  $items = array();
+
+  $items[] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'front',
+    'description' => 'The front page context',
+    'path' => array(
+      'home' => 'home',
+    ),
+    'block' => array(
+      'views_scholar_events_upcoming-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_events_upcoming-block_1',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Upcoming events',
+        'type' => 'context_ui',
+      ),
+      'views_scholar_announcements-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_announcements-block_1',
+        'weight' => 21,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Latest Announcements',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
+}
+
+/**
  * Helper to implementation of hook_flag_default_flags().
  */
 function _scholar_front_flag_default_flags() {
@@ -11,6 +49,9 @@ $flags[] = array (
   'name' => 'scholar_frontpage',
   'title' => 'Save to Front Page',
   'global' => true,
+  'types' => 
+  array (
+  ),
   'flag_short' => 'Save to Front',
   'flag_long' => 'Save post to front page',
   'flag_message' => 'Saved to Front Page!',
@@ -35,7 +76,7 @@ $flags[] = array (
   'show_on_form' => false,
   'access_author' => '',
   'i18n' => 0,
-  'flag_confirmation' => 'Saved to Front Page',
+  'module' => 'scholar_front',
   'locked' => 
   array (
     'types' => 'types',
@@ -45,10 +86,7 @@ $flags[] = array (
     'show_on_form' => 'show_on_form',
     'global' => 'global',
   ),
-  'module' => 'scholar_front',
   'api_version' => 2,
-  'status' => true,
-  'is_new' => true,
 );
 return $flags;
 }
