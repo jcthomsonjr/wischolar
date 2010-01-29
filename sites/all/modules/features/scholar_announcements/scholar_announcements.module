@@ -44,3 +44,20 @@ function scholar_announcements_context_links_alter(&$links) {
     $links['announcement']['query'] = drupal_get_destination();
   }
 }
+
+/**
+ * hook vsite_widgets
+ */
+function scholar_announcements_vsite_widgets(){
+  $items = array();
+  $items['views_scholar_announcements-block_1'] = array(
+        'module' => 'views',
+        'delta' => 'scholar_announcements-block_1',
+        'weight' => -21,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Latest Announcements',
+        'type' => 'context_ui',
+      );
+  return $items;
+}
