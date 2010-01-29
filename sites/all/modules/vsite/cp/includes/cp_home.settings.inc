@@ -4,12 +4,11 @@ require_once( drupal_get_path('module', 'spaces').'/spaces.spaces.inc');
 /**
  * Provides home override
  */
-class vsite_front_settings_home extends space_setting_home implements space_setting {
+class cp_settings_home extends space_setting_home implements space_setting {
 
-	public $menu_name = false; //Remove from Menus
-	
+
   function form($space, $value = array()) {
-  	//No Form the is disabled
+    //No Form the is disabled
   }
 
   function validate($space, $value) {

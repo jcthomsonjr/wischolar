@@ -628,7 +628,11 @@ function cp_spaces_settings() {
 
 	//Setting that allows you to store the confirm time of messages, they can then be re-shown on intervals or hidden after they have been seen once
   $a_settings = array(
-    'messages_confirmed' => array()
+    'messages_confirmed' => array(),
+    'home' => array(
+      'class' => 'cp_settings_home',
+      'file' => drupal_get_path('module', 'cp') .'/includes/cp_home.settings.inc',
+    ),
   );
 
   return $a_settings;
@@ -693,3 +697,4 @@ function cp_vsite_generic_settings($value = array()){
 
 	return $a_settings;
 }
+
