@@ -109,11 +109,22 @@ ul#top-front li a:hover {
   text-decoration: underline;
   }
 
-li#get-form, li#coming-soon {
-  background:url(images/coming-soon-button.png) no-repeat;
+li#get-form {
+  background:url(images/get-your-site-button.png) no-repeat transparent;
   width: 169px;
   height: 42px;
   text-indent: -999em;
+  position:relative;
+  }
+
+li#get-form span {
+  width:92px;
+  height:18px;
+  background: url(images/coming-soon.png) no-repeat transparent;
+  display:block;
+  position: absolute;
+  top: 38px;
+  left: 40px;
   }
 
 li#get-form a {
