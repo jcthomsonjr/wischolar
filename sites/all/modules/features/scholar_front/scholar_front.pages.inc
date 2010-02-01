@@ -156,7 +156,7 @@ function scholar_front_home_feature($node_options){
  */
 function scholar_front_home_html($front_nid){
   $node = node_load($front_nid);
-  $result = node_view($node, $teaser = FALSE, $page = FALSE, $links = FALSE);
+  $result = node_view($node, $teaser = FALSE, $page = FALSE, $links = TRUE);
   return $result;
 }
 
