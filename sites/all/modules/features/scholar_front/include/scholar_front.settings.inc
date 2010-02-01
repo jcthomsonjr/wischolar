@@ -61,6 +61,7 @@ class scholar_front_settings_front implements space_setting {
       '#default_value' => isset($value['frontpage']) ? $value['frontpage'] : 'bio',
       '#tree' => TRUE,
       '#weight' => 1,
+      '#attributes' => array('class' => 'no_modal_col'),
     );
 
     // BIO

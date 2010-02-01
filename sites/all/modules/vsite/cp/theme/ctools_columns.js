@@ -12,7 +12,7 @@ if (Drupal.jsEnabled) {
 			  if(form.find('fieldset div.fieldset-wrapper > div.description').length != 0) form.find('fieldset').prepend(form.find('fieldset div.fieldset-wrapper > div.description'));
 		      if(form.find('fieldset div.fieldset-wrapper > legend').length != 0) form.find('fieldset').prepend(form.find('fieldset div.fieldset-wrapper > legend'));
 			  
-		      if(form.find('fieldset div.fieldset-wrapper table').length == 0){
+		      if(form.find('fieldset div.fieldset-wrapper table').length == 0  && form.find('fieldset div.fieldset-wrapper .no_modal_col').length == 0){
 				  form.find('fieldset div.fieldset-wrapper').prepend(col);
 				  form.find('fieldset > .form-item').each(function(index,domElement) {
 					  var el = $(domElement);
@@ -27,7 +27,7 @@ if (Drupal.jsEnabled) {
 						  $('.modal_col:first').append($('.modal_col:last .form-item:first'));
 					  }
 				  });
-		      }//Make sure there are no tables, we don't mess with those
+		      }//Make sure there are no tables, and we havn't explicitly said no modal cols, we don't mess with those
 			  
 		  }//Don't try this if there are a lot of fieldsets / or none
 		  
@@ -41,7 +41,7 @@ if (Drupal.jsEnabled) {
 				
 				cur_fs = cur_fs.find('div.fieldset-wrapper');
 				
-				if(cur_fs.find('table').length == 0){
+				if(cur_fs.find('table').length == 0 && cur_fs.find('.no_modal_col').length == 0){
 					if(cur_fs.find('.form-item').length > 3){
 						var col = $("<div class='modal_col'></div>");
 						var col_height = (form.height() > (cur_fs.height() * 2))?Math.round(form.height()/2):cur_fs.height();
@@ -60,7 +60,7 @@ if (Drupal.jsEnabled) {
 						  }
 						});
 					}
-			    }//Make sure there are no tables, we don't mess with those
+			    }//Make sure there are no tables, and we havn't explicitly said no modal cols, we don't mess with those
 		    });
 		  }
 	  }else{
