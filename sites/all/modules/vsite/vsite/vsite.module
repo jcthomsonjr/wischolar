@@ -305,19 +305,43 @@ function vsite_get_vsite(){
 
 
 /**
- * API function for returning the vsite object if the user is the site owner
- * otherwise returns NULL
+ * API function for returning the vsite object(s) if the user is owns site(s). If user owns:
+ * single vsite - returns vsite object
+ * multiple vsites - returns array of vsite objects
+ * none - returns NULL
  * @param  $uid - user id
  */
 function vsite_get_vsite_by_owner($uid){
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
-  $sid = db_result(db_query("SELECT nid FROM {node} WHERE type = '%s' AND uid = %d LIMIT 0, 1", $scholar_content_type, (int)$uid));
-  $space =  spaces_load('og', $sid);
-  if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
-    return $space;
+  $sites = array();
+  $sql = db_query("SELECT nid FROM {node} WHERE type = '%s' AND uid = %d", $scholar_content_type, (int)$uid);
+
+  while($res = db_fetch_array($sql)){
+    $sites[] = $res['nid'];
   }
-  else {
-    return NULL;
+
+  switch (count($sites)){
+    case 1:
+      $space =  spaces_load('og', $sites[0]);
+      if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
+        return $space;
+      }
+      break;
+      
+    case 0:
+      return NULL;
+      break;
+
+      //assumes that user owns multiple sites
+    default:
+      if(!empty($sites)){
+        foreach($sites as $site){
+          $space =  spaces_load('og', $site);
+          if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
+            $spaces[] = $space;
+          }
+        }
+     }
   }
 }
 
