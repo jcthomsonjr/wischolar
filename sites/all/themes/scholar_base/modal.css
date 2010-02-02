@@ -14,14 +14,12 @@ div.ctools-modal-content {
   border: none;
   text-align: left;
   background: #fff;
-  overflow:auto;
   }
 
 #modal-content {
   border: none;
   background: #fff;
   padding-bottom: 0;
-  margin-bottom: -6px;
   }
 
 
@@ -43,8 +41,10 @@ div.ctools-modal-content .modal-header a {
 }
 
 div.ctools-modal-content .modal-content {
-  padding: 0;
+  padding: 1em 1em 0 1em;
+  overflow: auto;
   width: 575px;
+  height: 400px;
 }
 
 div.ctools-modal-content .modal-form {
@@ -112,6 +112,11 @@ div.ctools-modal-content fieldset {
   border-bottom: 1px solid #ccc;
   clear: left;
 }
+
+div.ctools-modal-content #edit-settings-front-node-options-wrapper .form-checkboxes .form-item {
+  float: left;
+  margin-right: 7px;
+  }
 
 div.ctools-modal-content .resizable-textarea {
   width: auto;
