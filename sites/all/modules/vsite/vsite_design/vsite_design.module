@@ -13,6 +13,17 @@ function vsite_design_menu(){
 }
 
 /**
+ * Implementation of hook_perm().
+ *
+ * The access to the private / public themes are granted based on this
+ * special permissions
+ */
+function pvsite_design_perm() {
+  return array('access private scholar themes');
+}
+
+
+/**
  * hook_theme
  */
 function vsite_design_theme(){

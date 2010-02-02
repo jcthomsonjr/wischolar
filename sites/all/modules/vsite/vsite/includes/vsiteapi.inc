@@ -171,6 +171,7 @@ function _vsite_is_vsite_theme($atheme){
   return (array_key_exists('scholar',$atheme->info) 
        && array_key_exists('theme_type',$atheme->info['scholar']) 
        && _vsite_get_theme_type() == $atheme->info['scholar']['theme_type'] 
+       && ($atheme->info['scholar']['theme_access'] != "private" || user_access('access private scholar themes'))
        && !empty($atheme->status));
 }
 

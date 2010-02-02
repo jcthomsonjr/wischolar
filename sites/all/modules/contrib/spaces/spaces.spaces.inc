@@ -271,6 +271,9 @@ class space_customizer_block implements space_customizer {
             // Clear out values that haven't changed from defaults
             if ($v === $value['defaults'][$identifier][$region][$bid][$k]) {
               unset($block[$k]);
+              if($k == 'subject'){
+              	unset($customizer['subject'][$bid]);
+              }//unset the subject if it matches the default
             }
             // Store subjects "flatly"
             else if ($k == 'subject') {
