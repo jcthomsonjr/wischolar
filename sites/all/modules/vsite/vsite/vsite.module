@@ -306,7 +306,7 @@ function vsite_get_vsite(){
 
 /**
  * API function for returning the vsite object(s) if the user is owns site(s). If user owns:
- * vsite - returns array of vsite object(s) with sid as key
+ * vsite - returns array of vsite object(s)
  * none - returns NULL
  * @param  $uid 
  */
@@ -323,7 +323,7 @@ function vsite_get_vsite_by_owner($uid){
     case 1:
       $space =  spaces_load('og', $sites[0]);
       if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
-        return array($sites[0] => $space);
+        return array($space);
       }
       break;
       
@@ -337,7 +337,7 @@ function vsite_get_vsite_by_owner($uid){
         foreach($sites as $site){
           $space =  spaces_load('og', $site);
           if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
-            $spaces[$site] = $space;
+            $spaces[] = $space;
           }
         }
         return $spaces;
