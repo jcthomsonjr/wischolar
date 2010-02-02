@@ -310,7 +310,9 @@ function vsite_get_vsite(){
  * none - returns NULL
  * @param  $uid 
  */
-function vsite_get_vsite_by_owner($uid){
+function vsite_get_vsite_by_owner($uid = NULL){
+  if ($uid == NULL) return NULL;
+  
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
   $sites = array();
   $sql = db_query("SELECT nid FROM {node} WHERE type = '%s' AND uid = %d", $scholar_content_type, (int)$uid);
