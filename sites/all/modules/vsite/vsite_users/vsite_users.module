@@ -17,7 +17,14 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL){
       
      case 'logout':
        if ($vsite = vsite_get_vsite_by_owner($account->uid)) {
-         drupal_goto($vsite->get_absolute_url());
+         //if user owns one site
+         if (count($vsite) == 1){
+           drupal_goto($vsite[0] -> get_absolute_url());
+         }
+         //if user owns multiple sites- TODO: redirect user where???
+         else{ 
+           drupal_goto();
+         }
        }
     break;
     
@@ -29,14 +36,9 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL){
 /**
  * Implementation of hook_profile_alter()
  */
-function vsite_users_profile_alter(&$account){ 
-  //if user is not site owner remove access summary information
- // if (!vsite_get_vsite_by_owner($account->uid) && $account->uid !== "1"){
- //if ($account->uid !== "1"){
-  
-    //removing existing summary information (history, blog, etc.)
-    unset($account->content['summary']);
-  //}
+function vsite_users_profile_alter(&$account){
+  //removing existing summary information (history, blog, etc.)
+  unset($account->content['summary']);
 }
 
 /**
