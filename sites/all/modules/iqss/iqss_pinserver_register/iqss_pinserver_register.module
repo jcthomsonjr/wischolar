@@ -103,7 +103,7 @@ function iqss_pinserver_register_notify($user, $vsite, $alter = TRUE){
  */
 function iqss_pinserver_register_menu_alter(&$items){
  //alter the page callback function  
-  $items['site/register']['page callback'] = 'iqss_pinserver_register_form_access';
+  $items['site/register']['page callback'] = 'iqss_pinserver_register_form_access';  //change the callback function
   $items['site/register']['module'] = 'iqss_pinserver_register';
   
   //values to remove
@@ -118,14 +118,13 @@ function iqss_pinserver_register_menu_alter(&$items){
  * Checks if user has authenticated through the pinserver
  * before rendering the signup form
  */
-function iqss_pinserver_register_form_access(){//unset($_SESSION['pinserver']);
-/*  print_r($_SESSION);
-print($_SESSION['pinserver']['reg_time'] . ' - ');
-  print($_SESSION['pinserver']['huid']);die;*/
+function iqss_pinserver_register_form_access(){
+  global $user;
+
   $inc_file = drupal_get_path('module', 'scholarregister') . '/' . 'scholarregister.pages.inc';
   include_once($inc_file);
 
-  //first make sure pinserver settings are saved  path to .gnupg directory exists
+  //system check logic
   $settings_info = pinserver_check_system_settings();
   switch ($settings_info['value']){
     case true;
@@ -134,34 +133,70 @@ print($_SESSION['pinserver']['reg_time'] . ' - ');
     case false:
       error_log($settings_info['message']);
       $support_mail = strlen(PIN_SUPPORT_CONTACT) ?  PIN_SUPPORT_CONTACT :  'scholar_dev@help.hmdc.harvard.edu';
-      drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail))); 
-            drupal_goto();
+      drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail)));
+      drupal_goto();
       break;
   }
-  //check if user has logged in via the pinserver
-  if (pinserver_check_status()){
-    //see if the uid exists in pinvserver table, if so then user already has a vsite
-    $uid = iqss_pinserver_register_check_row();
-    //send the user somehwere, either to the registration form or to project home page
-    return $go_somewhere = ($uid) ? iqss_pinserver_register_vsite_exists($uid)  :  drupal_get_form('scholarregister_signup_form');
+
+  /*** Check what to do before loading scholarregister form ***/
+
+  //user is logged in and already owns a site
+  if($vsite = vsite_get_vsite_by_owner($user->uid)){
+    return iqss_pinserver_register_vsite_exists($vsite, $user->uid);
   }
-  else{
-    //otherwise the user still needs to authenticate thorugh the pin server
-    pinserver_redirect();
+
+  //maybe user is site owner,  but has not logged in locally or via the pinserver, so send to pinserver
+  if (!pinserver_check_status()){
+    return pinserver_redirect();
+  }
+
+  //user has successfully logged in via the pinserver
+  if (pinserver_check_status()){
+    //determine if user already has a site
+    if($vsite = vsite_get_vsite_by_owner( iqss_pinserver_register_check_row())){
+      return iqss_pinserver_register_vsite_exists($vsite, $user->uid);
+    }
+    else {
+      //user owns no web sites and has successfully logged in via the pinserver, show the form
+      return drupal_get_form('scholarregister_signup_form');
+    }
   }
 }
 
 /**
  * If this function is called then we know that the user already has a web site
  */
-function iqss_pinserver_register_vsite_exists($uid){
-  global $base_url;
+function iqss_pinserver_register_vsite_exists($vsite, $uid){
+  $multple_sites=  variable_get('scholar_create_multiple_sites', 0);
+  
   //remove the session vars
   pinserver_remove_session();
-  $vsite = vsite_get_vsite_by_owner($uid);
-  $message = 'You already have a registered web site.' . l(' Go there now.', $vsite->get_absolute_url());
-  drupal_set_message(t("$message"));
-  drupal_goto();
+  
+  //user has owns one site
+  if (count($vsite) == 1){
+    switch ($multple_sites){
+      case 0:
+        return drupal_set_message(t('You already have a registered web site.' . l(' Go there now.', $vsite[0] ->get_absolute_url())));
+        break;
+
+      case 1:
+        return drupal_get_form('scholarregister_signup_form');
+        break;
+    }
+  }
+  
+  //user owns multiple sites
+    if (count($vsite) > 1) {
+      switch ($multple_sites){
+      case 0:
+        //this should never happen unless the $multiple_sites value is switched from 1 to 0 after site has been live
+        return  drupal_goto('user');
+        break;
+      case 1:
+        return drupal_get_form('scholarregister_signup_form');
+        break;              
+    }
+  }
 }
 
 
@@ -216,7 +251,9 @@ function iqss_pinserver_register_add_row($uid){
   $object->uid = (int)$uid;
   $object->huid= $_SESSION['pinserver']['huid'];
   $object->reg_time = time();
+  if(!db_result(db_query("SELECT uid FROM {iqss_pinserver_register} WHERE huid = %d", $_SESSION['pinserver']['huid']))){
   drupal_write_record('iqss_pinserver_register', $object);
+  }
 }
 
 /**
