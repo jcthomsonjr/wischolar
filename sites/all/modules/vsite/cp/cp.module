@@ -331,6 +331,7 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
     ctools_include('modal');
     ctools_modal_add_js();
     drupal_add_js(drupal_get_path('module', 'cp') .'/theme/ctools_columns.js');
+    $customizers = spaces_customizers();
     /*
      * 1. change title of the feature depending on the installation
      * 2. make "customize" link a ctool popup link
@@ -338,9 +339,31 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
     foreach (array_keys($site -> features) as $f_name){
       $installation_name = variable_get('vsite_installation_name', 'scholar');
       $form['features'][$f_name]['#title'] =  str_replace('scholar', $installation_name, $form['features'][$f_name]['#title'] );
+      
+      if($site->features[$f_name] != 1){
+      	$feature = $form['features'][$f_name];
+      	unset($form['features'][$f_name]);
+      	if($site->features[$f_name] > 1){
+      		$form['features'] = array_merge(array($f_name => $feature),$form['features']);
+      	}else{
+      		$form['features'] = array_merge($form['features'],array($f_name => $feature));
+      	}
+      }//Move to correct order
+      $customizable = false;
+	    foreach ($customizers as $id => $customizer) {
+		    if ($customizer->form($site, $f_name)) {
+		      $customizable = true;
+		      break;
+		    }
+		  }//Is this feature customizable
+      
       if (isset($form['customize'][$f_name])){
-        $link = ctools_modal_text_button('customize', 'cp/features/'. $f_name, 'customize '.$f_name);
-        $form['customize'][$f_name]['#value'] = $link;
+	      if(!(spaces_feature_settings($f_name) || $customizable)){
+	        unset($form['customize'][$f_name]); //Not customizable
+	      }else{
+          $link = ctools_modal_text_button('customize', 'cp/features/'. $f_name, 'customize '.$f_name);
+          $form['customize'][$f_name]['#value'] = $link;
+	      }
       }
     }
   }
