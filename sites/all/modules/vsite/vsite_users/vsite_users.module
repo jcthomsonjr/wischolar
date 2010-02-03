@@ -135,13 +135,17 @@ function vsite_users_menu(){
 }
 
 /**
- * Implements hook_menu_alter
+ * Implements hook_menu_alter()
  */
 function vsite_users_menu_alter(&$a_menu){
-  /*$a_menu['user/%user/groups']['page arguments'] = array(1);
-  $a_menu['user/%user/groups']['page callback']  = 'vsite_users_show_groups';*/
- // $a_menu['user/%user/groups']['access callback']  = FALSE;  //TODO: unset tab for now because using 'View' tab to display this info, except for admin
+  global $user;
+  if ($user -> uid !== '1'){
+    // blocking the Groups tab if user is not admin (from spaces_og.module)
+    $a_menu['user/%user/groups']['access callback']  = FALSE;
+    $a_menu['user/%user/groups']['access arguments'] = NULL;
+  }
 }
+
 /**
  * Show the sites that a user belongs to in segmented list
  * 
