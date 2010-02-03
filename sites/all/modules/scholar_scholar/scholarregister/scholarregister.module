@@ -22,7 +22,7 @@ function scholarregister_user($op, &$edit, &$account, $category = NULL){
             ));
           }
         }
-        else{
+       if (count($vsite) > 1){
           //asssumes user is owner of multiple vsites
           drupal_goto('user');
         }
@@ -40,7 +40,7 @@ function scholarregister_user($op, &$edit, &$account, $category = NULL){
       }
       else{
         // returning vsite owner, redirect user to site home page
-        $vsite->redirect('home');
+        drupal_goto('user');
       }
       break;
   }
