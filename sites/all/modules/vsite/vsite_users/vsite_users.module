@@ -17,13 +17,10 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL){
 
     case 'logout':
       if ($vsite = vsite_get_vsite()){
-        if ($vsite -> group -> nid == $account -> nid){
-          return  drupal_goto($vsite -> get_absolute_url());
-        }
-        //non site owners - TODO: redirect user where???
-        else{
-          drupal_goto();
-        }
+        return  drupal_goto($vsite -> get_absolute_url());
+      }
+      else{
+        drupal_goto();
       }
       break;
 
