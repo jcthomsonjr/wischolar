@@ -35,6 +35,8 @@ class vsite_design_settings_theme implements space_setting {
   function form($space, $value = array()){
   	if(is_string($value)) $value = array('maintheme' => $value); //Backwards Compatibility
   	
+  	if($space->group->og_theme != $value['maintheme']) $value['maintheme'] = $space->group->og_theme;
+  	
   	$this->include_externals();
   	
     // all the enabled themes
