@@ -421,7 +421,8 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	$form['mail']['#weight'] = 2;
 	  	$form['mail_confirm']['#weight'] = 3;
 	  	$form['welcome_message_body']['#weight'] = 4;
-	  	$form['#redirect'] = 'usertest';
+	  	//  $form['#redirect'] = ''; 
+	  	
 	  	//Add Registration info to form
 	  	content_profile_registration_form_alter($form, $form_state,'user_register');
 	
@@ -458,7 +459,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	    if(array_key_exists('biblio_fieldset',$form))  vsite_users_hide_form_value($form['biblio_fieldset']);
 	    if(array_key_exists('timezone',$form))  vsite_users_hide_form_value($form['timezone']);
 	   
-	    $form['#redirect'] = 'usertest'; 
+	  //  $form['#redirect'] = ''; 
 	    
     break;
   }
