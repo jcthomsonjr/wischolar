@@ -135,11 +135,11 @@ function vsite_users_menu(){
  */
 function vsite_users_menu_alter(&$a_menu){
   global $user;
-  if ($user -> uid !== '1'){
+  //if ($user -> uid !== '1'){
     // blocking the Groups tab if user is not admin (from spaces_og.module)
     $a_menu['user/%user/groups']['access callback']  = FALSE;
     $a_menu['user/%user/groups']['access arguments'] = NULL;
-  }
+ // }
 }
 
 /**
@@ -221,7 +221,7 @@ function vsite_mail_alter(&$message) {
 			    '!login_uri' => url('user', array('absolute' => TRUE, 'language' => $message['language'])),
 			    '!edit_uri' => url('user/'. $o_user->uid .'/edit', array('absolute' => TRUE, 'language' => $message['language'])),
       	  '!password' => $password,
-      	  '!firstname' => $_POST['vsite_users_first_name'][0]['value'], //$o_profile->vsite_users_first_name[0]['value'],
+     	  '!firstname' => $_POST['vsite_users_first_name']['value'], //$o_profile->vsite_users_first_name[0]['value'],
 			  );
 
 			  //This is unused: Alternatively using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n
@@ -421,28 +421,39 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	$form['mail']['#weight'] = 2;
 	  	$form['mail_confirm']['#weight'] = 3;
 	  	$form['welcome_message_body']['#weight'] = 4;
-	  	//  $form['#redirect'] = ''; 
 	  	
 	  	//Add Registration info to form
-	  	content_profile_registration_form_alter($form, $form_state,'user_register');
-	
-	  	if(array_key_exists('vsite_users_first_name',$form)){
-	  	  $form['vsite_users_first_name']['#weight'] = -3;
-	  	} 
-	  	if(array_key_exists('vsite_users_last_name',$form)) $form['vsite_users_last_name']['#weight'] = -2;
-	  	if(array_key_exists('vsite_users_title',$form)) $form['vsite_users_title']['#type'] = 'value';
-	  	if(array_key_exists('field_user_profile_photo',$form)) $form['field_user_profile_photo']['#type'] = 'value';
+	  	$form['vsite_users_first_name'] = array(
+	  	'#type' => 'textfield',
+	  	'#title' => t('First Name'),
+	  	'#required' => TRUE,
+	  	'#weight' => -3,
+	  	'#description' => t(''),
+	  	);
+
+	  	$form['vsite_users_last_name'] = array(
+	  	'#type' => 'textfield',
+	  	'#title' => t('Last Name'),
+	  	'#required' => TRUE,
+	  	'#weight' => -2,
+	  	'#description' => ''
+	  	);
 	  	
+	  //No longer adding profile fields this way because of redirection bug
+	  // ( see nodeapi in content_profile.module)
+	  //content_profile_registration_form_alter($form, $form_state,'user_register');	
+
 	  	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
 	  	
 	  	if(is_array($form['#validate']) && array_search('ucreate_user_form_validate',$form['#validate']) !== false) unset($form['#validate'][array_search('ucreate_user_form_validate',$form['#validate'])]); //Hijack this submit validate
 	  	
 	  	//Add Validate handler
-	  	array_unshift($form['#submit'], 'vsite_users_user_form_validate');
+	  	array_unshift($form['#validate'], 'vsite_users_user_form_validate');
 	  	
 	  	//Add submit handler for registration info
 	  	array_unshift($form['#submit'], 'vsite_users_user_form_submit');
-  	break;
+  	break;  	
+  	
     case 'user_profile_form':
     	//Redirect the save password form to the profile page
     	if(!array_key_exists('redirect_from_reset',$form)) $form['redirect_from_reset'] = array('#type' => 'hidden', '#default_value' => false);
@@ -458,9 +469,6 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
     	if(array_key_exists('contact',$form)) vsite_users_hide_form_value($form['contact']);
 	    if(array_key_exists('biblio_fieldset',$form))  vsite_users_hide_form_value($form['biblio_fieldset']);
 	    if(array_key_exists('timezone',$form))  vsite_users_hide_form_value($form['timezone']);
-	   
-	  //  $form['#redirect'] = ''; 
-	    
     break;
   }
 }
@@ -508,22 +516,34 @@ function vsite_users_user_form_submit($form, &$form_state) {
   //Create the user and store it in the form for other submit functions
   $form_state['user'] = ucreate_user_create($form_state['values']);
   
+  //Create the profile node for the new user
+  $node = new stdClass();
+  $node -> vsite_users_first_name[0]['value'] = $form_state['values']['vsite_users_first_name'];
+  $node -> vsite_users_last_name[0]['value'] = $form_state['values']['vsite_users_last_name'];
+  if (empty($node->title) && (!module_exists('auto_nodetitle') || auto_nodetitle_get_setting($type) != AUTO_NODETITLE_OPTIONAL)) {
+    $node->title = $form_state['user']->name;
+  }
+  $node->uid = $form_state['user']->uid;
+  $node->name = $form_state['user']->name;
+  $node -> type = count(content_profile_get_types() == 1) ? key(content_profile_get_types()) : 'vsite_users_profile';
+  $node -> status = 1; //not sure this is necessary?
+  $node = node_submit($node);
+  node_save($node);
 }
 
 /**
  * Submit handler used to check the passed reset value, if it is present we will redirect
  */
 function vsite_users_redirect_reset_submit($form, &$form_state) {
-  if(is_array($form_state['values']) 
-  && array_key_exists('redirect_from_reset',$form_state['values']) 
+  if(is_array($form_state['values'])
+  && array_key_exists('redirect_from_reset',$form_state['values'])
   && $form_state['values']['redirect_from_reset']){
-  	if (arg(0) != 'cp'){
-  	  drupal_goto('user/'.$form['#uid'].'/edit/vsite_users_profile');
-  	}else{
-  		drupal_goto('cp/users/myaccount/personal');
-  	}
+    if (arg(0) != 'cp'){
+      drupal_goto('user/'.$form['#uid'].'/edit/vsite_users_profile');
+    }else{
+      drupal_goto('cp/users/myaccount/personal');
+    }
   }
-  
 }
 
 /**
