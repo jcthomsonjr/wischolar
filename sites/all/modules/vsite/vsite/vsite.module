@@ -514,11 +514,19 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
       && ($form_id == $form['type']['#value'] .'_node_form')) {
         
         if(module_exists('override_node_options') && array_key_exists('revision_information',$form) && array_key_exists('options',$form)){
+        	$form['options']['#access'] = true;
+        	
           if(array_key_exists('log',$form['revision_information'])){
           	$form['options']['log'] = $form['revision_information']['log'];
           	if(!is_array($form['#validate'])) $form['#validate'] = array();
           	if(!in_array('cp_validate_node_flags',$form['#validate'])) $form['#validate'][] = 'vsite_validate_node_flags';
-          }
+          }//Add the description box for new revision
+          
+          if(array_key_exists('revision',$form['revision_information'])){
+            $form['options']['revision'] = $form['revision_information']['revision'];
+            $form['options']['revision']['#access'] = user_access('view revisions');
+            if(!is_array($form['#validate'])) $form['#validate'] = array();
+          }//Add the "new revision" checkbox
           
         	_spaces_og_make_hidden($form['revision_information']);
         }//Move the revision information under the options tab
@@ -539,7 +547,7 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
             } 
           }
           
-          $form['options']['vsite_make_featured'] = array('#type' => 'checkbox', '#title' => "Make this Featured", "#default_value" => false);
+          $form['options']['vsite_make_featured'] = array('#type' => 'checkbox', '#title' => "Make this Featured", "#default_value" => false, "#description" => "Make this a featured item. Featured items can be configured to show on the front page within the front page settings.");
           if($nid){
             $flag = flag_get_flag('featuredposts');
             $form['options']['vsite_make_featured']['#default_value'] = $flag->is_flagged($nid);

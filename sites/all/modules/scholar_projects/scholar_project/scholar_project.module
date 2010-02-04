@@ -256,6 +256,7 @@ function scholar_project_form_alter(&$form, $form_state, $form_id) {
       	$form['og_description']['#title'] = "Sub Headline";
       	$form['og_description']['#required'] = false;
       }
+      unset($form['body_field']['format']);
       _spaces_og_make_hidden($form['body_field']);
     break;
     default:
