@@ -600,7 +600,8 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
             $src = "node/$node->nid";
             $alias = pathauto_create_alias('node', 'return', $placeholders, $src, $node->nid, $node->type, $node->language);
             
-            $processor = purl_get_processor(PURL_PATH);
+            $s_proccessor = defined('PURL_VSITE_PATH')?PURL_VSITE_PATH:PURL_PATH;
+            $processor = purl_get_processor($s_proccessor);
             $parsed = purl_parse($processor, $alias);
             foreach ($parsed as $element){
             	$alias = $processor->remove($alias,$element);
