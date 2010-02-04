@@ -221,7 +221,7 @@ function vsite_mail_alter(&$message) {
 			    '!login_uri' => url('user', array('absolute' => TRUE, 'language' => $message['language'])),
 			    '!edit_uri' => url('user/'. $o_user->uid .'/edit', array('absolute' => TRUE, 'language' => $message['language'])),
       	  '!password' => $password,
-     	  '!firstname' => $_POST['vsite_users_first_name']['value'], //$o_profile->vsite_users_first_name[0]['value'],
+     	  '!firstname' => $_POST['vsite_users_first_name'], //$o_profile->vsite_users_first_name[0]['value'],
 			  );
 
 			  //This is unused: Alternatively using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n
