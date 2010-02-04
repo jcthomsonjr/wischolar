@@ -7,6 +7,7 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = qualitative-methods.css
+conditional-stylesheets[if lte IE 7][all][] = qualitative-methods-ie.css
 regions[header_top]    	= header top
 regions[header_left]    = header left
 regions[header_main]    = header main
