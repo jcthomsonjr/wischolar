@@ -446,11 +446,6 @@ function cp_preprocess_page(&$vars) {
       $user_links [] = array (
         'title' => t ( 'Logout' ), 'href' => "logout"
       );
-      /*
-      $user_links [] = array (
-        'title' => t ( 'Back to <strong>!sitename</strong>', array( '!sitename' => $vsite->title )), 'href' => "/"
-      );
-      */
       $vars ['cp_toolbar'] = theme('links', $user_links);
       $vars ['body_classes'] .= ' cp-toolbar-mini';
 

@@ -9,3 +9,8 @@ function vsite_domain_enable() {
 //  if(!$weight) $weight = -24;
 //  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite_domain'", ($weight - 1));  
 }
+
+function vsite_domain_install() {
+  // Execute our defined updates.
+  variable_set('purl_base_domain',$_SERVER['HTTP_HOST']);
+}

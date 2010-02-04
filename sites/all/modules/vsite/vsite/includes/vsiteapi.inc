@@ -229,3 +229,55 @@ function vsite_add_imagefield_image($source, $field_name, &$node){
     
   return $file['destination'];
 }
+
+/**
+ * Get an array of referrer nids, by node.type & field.type
+ * @param nid
+ *     the nid we want to find referres for
+ * @param fieldnames
+ *     array of fieldnames to be checked for referrers
+ * @param nodetypes
+ *     array of node types to be checked for referrers
+ */
+
+function vsite_get_referrers($nid,  $fieldnames = array(), $nodetypes = array()) {
+  
+	if ($nodetypes) {
+    $filter_nodetypes = "AND n.type IN (" .  rtrim(str_repeat(" '%s' ,", count($nodetypes)),',') . ")";
+  }
+  else {
+    $filter_nodetypes = '';
+  }
+  
+  $fields = content_fields();
+  // Set default values of fieldnames.
+  if (!count($fieldnames)) {
+    $fieldnames = array_keys($fields);
+  }
+
+  $values = array();
+  foreach ($fieldnames as $fieldname) {
+    if ($fields[$fieldname]['type'] == 'nodereference') {
+      $db_info = content_database_info($fields[$fieldname]);
+
+  
+        $query = "SELECT       n.nid, n.vid, n.title
+                  FROM         {" . $db_info['table'] . "} nr
+                  INNER JOIN   {node} n ON n.vid = nr.vid AND n.status = 1 " . $filter_nodetypes . "
+                  WHERE        nr." . $db_info['columns']['nid']['column'] . " = %d
+                  ORDER BY     n.created DESC";
+      
+        
+
+      $query = db_rewrite_sql($query);
+      $result = db_query($query, array_merge($nodetypes,array($nid)));
+
+      while ($value = db_fetch_array($result)) {
+        // avoid duplicate referrers by using nid as key
+        $values[$value['nid']] = $value;
+      }
+    }
+  }
+  return $values;
+}
+

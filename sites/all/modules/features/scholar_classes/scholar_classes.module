@@ -41,6 +41,21 @@ function scholar_classes_context_links_alter(&$links) {
 
 
 /**
+ * Hook nodeapi
+ * Used to trickle deltes to an classes dependent class-materials
+ */
+function scholar_classes_nodeapi(&$node, $op, $a3, $a4){
+  if($node->type != 'class') return;
+  switch($op){
+    case 'delete':
+      vsite_include('vsite');
+      $a_referers = vsite_get_referrers($node->nid,array(),array('class_material'));
+      foreach ($a_referers as $nid => $info) node_delete($nid);
+    break;
+  }
+}
+
+/**
  * Implementation of hook_strongarm().
  */
 function scholar_classes_strongarm() {

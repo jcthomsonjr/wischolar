@@ -8,6 +8,9 @@
 // Change the default domain proccessor to our custom processor
 define('PURL_VSITE_DOMAIN', 'vsite_domain');
 
+// Change the default domain proccessor to our custom processor
+define('PURL_VSITE_PATH', 'vsite_path');
+
 /**
  * Implements hook_init
  */
@@ -22,13 +25,13 @@ function vsite_domain_strongarm(){
   $conf = array();
  
   //Spaces Default Redirection should be by PATH
-  $conf['purl_method_spaces_og'] = PURL_PATH;
+  $conf['purl_method_spaces_og'] = PURL_VSITE_PATH;
   
   //We also are adding a method that is by domain
   $conf['purl_method_vsite_domain'] = PURL_VSITE_DOMAIN;
   
   //We want path and vsite_domain enabled and we want domain to be init first and have the first say at what site we are on
-  $conf['purl_types'] = array(PURL_VSITE_DOMAIN, PURL_PATH);
+  $conf['purl_types'] = array(PURL_VSITE_DOMAIN, PURL_VSITE_PATH);
   
   return $conf;
 }
@@ -47,6 +50,7 @@ function vsite_domain_purl_provider() {
     'callback arguments' => array('og'),
     'example' => 'my-space',
   );
+  
   return $items;
 }
 
@@ -108,13 +112,14 @@ if(!class_exists('purl_vsite_domain')){
     }
     
 	  /**
-	   * If a purl_path has been set we should rewrite the current url
+	   * If a purl_path/domain has been set we should rewrite the current url
 	   * so that aliased paths will be picked up
 	   */
 	  public function adjust(&$q, $item) {
 	  	if(!($vsite = vsite_get_vsite()) || !strlen($vsite->purl)) return;
 	  	
 	    if ($_GET['q'] == trim($_REQUEST['q'], '/')) {
+	    	purl_vsite_path::$a_disabled[$vsite->purl] = $vsite->purl;
 	    	$args = explode('/', $_GET['q']);
   
 	      // Add the value to the front of the query string
@@ -130,20 +135,50 @@ if(!class_exists('purl_vsite_domain')){
 	      } 
 	    }//It has not been aliased yet
 	    
-	    //Invalidate other sites path aliases
-//	    $processor = purl_get_processor(PURL_PATH);
-//	    if(current(explode('/', $_GET['q'])) !== (string) $vsite->purl){
-//			  $value = $processor->detect();
-//			  $parsed = purl_parse($processor, $value);
-//			  
-//			  if (is_array($parsed) && count($parsed) && current(explode('/', $_GET['q'])) == key($parsed)){
-//			    $_REQUEST['q'] = $_GET['q'] = substr($_GET['q'],strlen(key($parsed))+1);
-//			  }
-//	    }//Path proccessor and the url does not have the current sites alias in it
 	  }
   }
 }
 
+
+/**
+ * Create the processor that will override the purl_path enables path + domain
+ */
+if(!class_exists('purl_vsite_path')){
+  
+  /**
+   *  Full path + domain handling for scholar
+   */
+  class purl_vsite_path extends purl_path implements purl_processor {
+    
+  	public static $a_disabled = array();
+     
+    public function method() {
+      return PURL_VSITE_PATH;
+    }
+    
+	  /**
+	   * Make sure the domain is valid
+	   */
+	  public function parse($valid_values, $q) {
+	    $a_parsed = parent::parse($valid_values, $q);
+	    
+	  	foreach ($a_parsed as $s_site => $a_settings) {
+	  		if($a_settings->provider == 'spaces_og' && variable_get('purl_base_domain',false)){
+	  			$vsite = spaces_load('og',$a_settings->id);
+	  			if(in_array($a_settings->value,self::$a_disabled) ||
+	  			   (strlen($vsite->settings['generic']['vsite_domain']) &&
+	  			   str_replace('http://','',$_SERVER['HTTP_HOST']) != $vsite->settings['generic']['vsite_domain']) ||
+	  			   (!strlen($vsite->settings['generic']['vsite_domain']) && 
+	  			   str_replace('http://','',$_SERVER['HTTP_HOST']) != str_replace('http://','',variable_get('purl_base_domain','scholar.iq.harvard.edu')))
+	  			   ){
+	  			  unset($a_parsed[$s_site]);
+	  			}
+	  		}
+	  	}//Do not return space's without the correct domain
+	  	return $a_parsed;
+	  }
+  }
+}
 
 /**
  * Implement Hook vsite_generic_settings
@@ -151,10 +186,10 @@ if(!class_exists('purl_vsite_domain')){
  */
 function vsite_domain_vsite_generic_settings($space, $value = array()){
   $a_settings = array();
+  $s_vsite_domain = ((is_array($value) && array_key_exists('vsite_domain',$value)) ? $value['vsite_domain']:'');
   
-  //Should Vsite Contact forms allow anon. contact?
   $a_settings['vsite_domain'] = array(
-    'form' => purl_form('vsite_domain', $space->group->nid, ((is_array($value) && array_key_exists('vsite_domain',$value)) ? $value['vsite_domain']:'')),
+    'form' => purl_form('vsite_domain', $space->group->nid, $s_vsite_domain),
     'submit' => 'vsite_domain_vsite_generic_settings_domain_submit',
   );
   
@@ -163,6 +198,15 @@ function vsite_domain_vsite_generic_settings($space, $value = array()){
   $a_settings['vsite_domain']['form']['value']['#required'] = false; //Not required
   $a_settings['vsite_domain']['form']['#element_validate'] = array('vsite_domain_vsite_generic_settings_domain_validate'); //Use our validate function
   $a_settings['vsite_domain']['form']['#access'] = user_access('change vsite domain');
+  
+  $a_settings['vsite_domain']['form']['vsite_domain_proccessing'] = array(
+	  '#type' => 'radios',
+	  '#title' => t('Domain Type'),
+	  '#default_value' => db_result(db_query("SELECT id FROM {purl} WHERE id = '%s' AND provider = '%s' ", $space->group->nid, 'vsite_domain'))?0:1,
+	  '#options' => array(t('Domain Owner'), t('Domain Group')),
+    '#weight' => -20,
+    '#description' => "Is your site the only one that uses this domain or is it one site of several that share the domain?",
+	);
   
   return $a_settings;
 }
@@ -194,7 +238,7 @@ function vsite_domain_vsite_generic_settings_domain_submit($space, &$value){
         'value' => $value['vsite_domain']['value'],
       );
       
-      if(strlen($modifier['value'])){
+      if(strlen($modifier['value']) && $value['vsite_domain']['vsite_domain_proccessing'] == 0){
       	//Save the new purl
         if (purl_validate($modifier)) {
 			    $id = db_result(db_query("SELECT id FROM {purl} WHERE id = '%s' AND provider = '%s' ", $modifier['id'], $modifier['provider']));

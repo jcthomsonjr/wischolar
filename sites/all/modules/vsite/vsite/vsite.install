@@ -49,3 +49,14 @@ function vsite_update_6002() {
   
   return $return;
 }
+
+function vsite_update_6003() {
+  
+  $return = array("Default domain updated and set to ".$_SERVER['HTTP_HOST']);
+  //Set the default domain to always be the base domain
+  // ie.) scholar.iq.harvard.edu in prod
+  //      dev.whatever or localhost for dev
+  variable_set('purl_base_domain','http://'.str_replace('http://','',$_SERVER['HTTP_HOST']));
+  
+  return $return;
+}
