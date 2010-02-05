@@ -17,10 +17,10 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL){
 
     case 'logout':
       if ($vsite = vsite_get_vsite()){
-        return  drupal_goto($vsite -> get_absolute_url());
+        return  drupal_goto($vsite -> get_absolute_url()); // route user to 'home' page of the site that they were visting
       }
       else{
-        drupal_goto();
+        drupal_goto(); // otherwise send to scholar home page
       }
       break;
 
