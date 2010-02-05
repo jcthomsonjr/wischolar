@@ -2,10 +2,8 @@
 
 /**
  * Implemenation of hook_menu()
- *
  * @return unknown
  */
-
 function scholarregister_menu(){
   $items = array();
   $items['site/register'] = array(
@@ -13,7 +11,7 @@ function scholarregister_menu(){
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholarregister_signup_form'),
     'file' => 'scholarregister.pages.inc',
-    'access arguments' => array('access content'),
+    'access callback' => 'scholarregister_form_access',
   );
 
   $items['scholarregister/domain_js'] = array(
@@ -40,6 +38,61 @@ function scholarregister_menu(){
   return $items;
 }
 
+/**
+ * Scholar register form access handler
+ *@return unknown
+ */
+function scholarregister_form_access(){
+  if (!user_access('access content')){
+    return false; 
+  }
+
+  //user is logged in and already owns a site
+  if($vsite = vsite_get_vsite_by_owner($user->uid)){
+    return iqss_pinserver_register_vsite_exists($vsite);
+  }
+  else {
+    //anonymous user or non site owner, normal scholarregister form validation rules apply
+    return true;
+  }
+}
+
+/**
+ * Handles access rules for when site owner is attempting to create a another site
+ */
+function scholarregister_vsite_exists($vsite){
+  
+  //check global variable whether user can create multiple sites
+  $multple_sites=  variable_get('scholar_create_multiple_sites', 0); //the default is 1 site only
+
+  //user has owns one site
+  if (count($vsite) == 1){
+    switch ($multple_sites){
+      case 0:
+        drupal_set_message(t('You already have a registered web site.' . l(' Go there now.', $vsite[0] ->get_absolute_url())));
+        drupal_goto();
+        return false;
+        break;
+
+      case 1:
+        return true;
+        break;
+    }
+  }
+  
+  //user owns multiple sites
+    if (count($vsite) > 1) {
+      switch ($multple_sites){
+      case 0:
+        //this should never happen unless the $multiple_sites value is switched from 1 to 0 after site has been live
+        return  drupal_goto('user');
+        break;
+      case 1:
+        return drupal_get_form('scholarregister_signup_form');
+        break;              
+    }
+  }
+}
 
 /**
  * ajax callback for name
