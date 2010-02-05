@@ -4,6 +4,7 @@
  * Construct the registration form
  */
 function scholarregister_signup_form(){
+  global $user;
   drupal_add_css(drupal_get_path('module', 'scholarregister') . '/theme/scholarregister.css');
   // clear any drupal_messages. Ajax takes care of them
   drupal_get_messages();
@@ -18,6 +19,20 @@ function scholarregister_signup_form(){
   $form['#prefix'] = '<div id = "user_register">';
   $form['#suffix'] = '</div>';
   
+ 
+  //this is a current site owner creating another site, use existing account information when creating new site
+  if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1){
+    $form['create_multiple_site']['#type'] = 'value';
+    $form['create_multiple_site']['#value'] = 1;   
+  }
+  //non site owner trying to create a site, use the existing user account information when creating the new site
+   elseif(!vsite_get_vsite_by_owner($user->uid) && in_array('scholar user', $user -> roles)){
+    $form['create_scholar_user_site']['#type'] = 'value';
+    $form['create_scholar_user_site']['#value'] = 1;   
+  }
+  
+  // otherwise this is an anonymouse user, show the normal form
+  else{
   // username
   $form['name'] = array(
       '#type' => 'textfield', 
@@ -44,8 +59,10 @@ function scholarregister_signup_form(){
   );
   ctools_ajax_associate_url_to_element($form, $form['mail'], url('scholarregister/mail_js'), 'ctools-use-ajax-onchange');
   
-  global $base_url;
-  // domain name
+  } //else clause ends here
+  
+  // domain field
+  global $base_url;  
   $form['domain'] = array(
       '#type' => 'textfield', 
       '#title' => ($superuser) ?  t('Select a Domain Name') :  t('Your Domain Name'), 
@@ -62,7 +79,7 @@ function scholarregister_signup_form(){
   ctools_ajax_associate_url_to_element($form, $form['domain'], url('scholarregister/domain_js'), 'ctools-use-ajax-onchange');
   
   
-    //if user is superuser then load additional fields
+    //if user is superuser then load any additional fields (password, etc.)
   if ($superuser){
     //TODO: this module should have it's own css???
     $path = drupal_get_path('module', 'iqss_pinserver_register');
@@ -118,39 +135,64 @@ function scholarregister_signup_form_validate($form, &$form_state){
     ctools_ajax_render($commands);
   }
   
-  $name = $form_state['values']['name'];
+  //since we introduced multiple site capability, we need to check which fields 
+  //will be present in the form, then call the appropriate validation function
+  $fields = array('name', 'mail',' domain');
+  foreach ($fields as $field){
+    if ($form_state['values'][$field]){
+      if(call_user_func('scholarregister_validate_' . $field, $form_state['values'][$field] )){
+        $commands[] = _scholarregister_vsite_error();
+      }
+    }
+  }
+  ctools_ajax_render($commands);
+  
+/*  $name = $form_state['values']['name'];
   $mail = $form_state['values']['mail'];
   $domain = $form_state['values']['domain'];
   
   // if any of the above value fail validation, exit with an appropriate message
   if (scholarregister_validate_name($name) || scholarregister_validate_mail($mail) || scholarregister_validate_domain($domain)) {
     $commands[] = _scholarregister_vsite_error();
-    ctools_ajax_render($commands);
-  }
+    
+  }*/
 }
 
 /**
  * the submit handler for the registration form
  */
 function scholarregister_signup_form_submit($form, &$form_state) {
+      //capture domain field
+      $domain = $form_state ['values'] ['domain'];
 
-  $name = $form_state ['values'] ['name'];
-  $mail = $form_state ['values'] ['mail'];
-  $domain = $form_state ['values'] ['domain'];
+    if ($form ['values']['create_multiple_site'] ||  $form ['values'] ['create_scholar_user_site']){
+      global $user;
+      $name = $user -> name;
+      $mail  = $user -> mail;       
+      ///this is a 'scholar user' user who is creating a site for first time
+      if ($form ['values'] ['create_scholar_user_site']){        
+          install_include(array('user'));
+          $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
+          install_add_user_to_role($uid, $rid); //need to add 'scholar admin' role         
+      }           
+    }
+  
+    //anonymous user creating a site
+    else{
+      $name = $form_state ['values'] ['name'];
+      $mail = $form_state ['values'] ['mail'];
+      $password =  !empty($form_state ['values'] ['password']) ? $form_state ['values'] ['password'] : user_password();
+      $roles = variable_get('scholar_manager_role', 'scholar admin');
 
-  $password =  !empty($form_state ['values'] ['password']) ? $form_state ['values'] ['password'] : user_password();
-  $roles = variable_get('scholar_manager_role', 'scholar admin');
-
-  //1. Create the user account
-  install_include(array(
-  'user'
-  ));
-  $user = install_add_user($name, $password, $mail, $roles = array($roles), $status = 1);
-  if (!$user){ // unlikely
-    $commands [] = _scholarregister_vsite_error();
-    ctools_ajax_render ( $commands );
-  }
-
+      //1. Create the user account
+      install_include(array('user'));
+      $user = install_add_user($name, $password, $mail, $roles = array($roles), $status = 1);
+      if (!$user){ // unlikely
+        $commands [] = _scholarregister_vsite_error();
+        ctools_ajax_render ( $commands );
+      }
+    }
+ 
   //add $user object to $form_state  and can be used by other submit functions called after this
   if(is_object($user)){
     $form_state['new_user'] = $user;
