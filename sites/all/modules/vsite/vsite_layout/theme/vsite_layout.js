@@ -25,31 +25,31 @@ Drupal.behaviors.scholarlayout = function() {
 	    		$('#edit-settings-layout-page-type').val($("#edit-settings-layout-secret-hidden-ahah").val());
 	    	}
 	    });
-
-	    $(".close-this").click(function(e){
-	    	var parent = $(this).parent("li");
-	    	$("body").append("<div class='poof'></div>");
-
-	    	// set the x and y offset of the poof animation <div> from cursor position (in pixels)
-	        var xOffset = 24;
-	        var yOffset = 24;
-
-	        $('.poof').css({
-	          left: e.pageX - xOffset + 'px',
-	          top: e.pageY - yOffset + 'px'
-	        }).show(); // display the poof <div>
-	        animatePoof(); // run the sprite animation
-
-	        parent.appendTo("#scholarlayout-top-widgets");
-	    	scholarlayout_afterdrag(e,null);
-
-	        parent.fadeIn('fast');
-	        //$(" .close-this")
-	    });
-
-
     }
+    scholarlayout_add_removal_hooks();
 };
+
+function scholarlayout_add_removal_hooks(){
+	$(".close-this:not(.close-this-processed)").addClass('close-this-processed').click(function(e){
+    	var parent = $(this).parent("li");
+    	$("body").append("<div class='poof'></div>");
+
+    	// set the x and y offset of the poof animation <div> from cursor position (in pixels)
+        var xOffset = 24;
+        var yOffset = 24;
+
+        $('.poof').css({
+          left: e.pageX - xOffset + 'px',
+          top: e.pageY - yOffset + 'px'
+        }).show(); // display the poof <div>
+        animatePoof(); // run the sprite animation
+
+        parent.appendTo("#scholarlayout-top-widgets");
+    	scholarlayout_afterdrag(e,null);
+
+        parent.fadeIn('fast');
+    });
+}
 
 var scholarlayout_change_bound = false;
 function scholarlayout_afterdrag(event, ui) {
