@@ -1,0 +1,214 @@
+@font-face {
+	font-family: 'GoudyTrajanRegular';
+	src: url('fonts/GoudyTrajan-Regular.eot');
+	src: local('fonts/Goudy Trajan Regular'), local('fonts/GoudyTrajan-Regular'), url('fonts/GoudyTrajan-Regular.woff') format('woff'), url('fonts/GoudyTrajan-Regular.otf') format('opentype'), url('fonts/GoudyTrajan-Regular.svg#GoudyTrajan-Regular') format('svg');
+}
+
+
+
+body {
+    background: #2f341f;
+    color:#37352B;
+    font:.9em/1.5em georgia, serif;
+    }
+
+/* TYPOGRAPHY*/
+
+a, a:visited {
+    color:#a3a18c;
+    text-decoration: none;
+    }
+
+a:hover {
+    text-decoration: underline;
+    }
+
+h2, h3, h4 {
+  margin-bottom: 0;
+  margin-top: 1em;
+  font-weight:normal;
+  font-style: italic;
+  }
+
+h2.title {
+  margin-top: 0;
+  margin-bottom: 1em;
+  }
+
+.links li {
+  font-size: .8em;
+  }
+
+#sidebar-right h3.title, #sidebar-left h3.title, #sidebar-left #block-vsite_menus-0 li a {
+  color: #50cae9;
+  font: 13px/normal "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
+  font-weight: normal;
+  text-transform:uppercase;
+  letter-spacing: .5px;
+  border-bottom:1px solid #c6c7c2;
+  }
+
+#sidebar-right li a, #sidebar-left li a {
+  color: #757575;
+  font-weight:normal;
+  }
+
+p.copy {
+  margin-top: 0;
+  }
+
+
+/* LAYOUT ELEMENTS */
+
+#container {
+  width: 938px;
+  margin: 0 auto;
+  padding-top: 1px;
+  }
+
+
+#sidebar-left, #sidebar-right {
+  font-size: .8em;
+  line-height: 1.1em;
+  width: 186px;
+  padding:30px 22px;
+  }
+
+#sidebar-left, #header-left {
+  right: 250px;
+  }
+
+#content-wrapper, #header-wrapper {
+  padding-left: 230px;
+  padding-right: 250px;
+  }
+
+#content-wrapper {
+  background: url(images/container.png) repeat-y 0 0 #fff;
+  overflow: hidden;
+  }
+
+#footer {
+   }
+
+#header {
+  height: 135px;
+  }
+
+body.sidebar-left #content-wrapper {
+  background-position: -708px 0;
+  }
+
+body.sidebar-right #content-wrapper {
+  background-position: 708px 0;
+  }
+
+body.no-sidebars #content-wrapper  {
+  background:#fff;
+  }
+
+
+/* SIDEBAR ELEMENTS */
+
+
+/* HEADER ELEMENTS */
+
+
+#header .column {
+  padding-top: 23px;
+  }
+
+#header-wrapper {
+  height: 123px;
+  }
+
+.header-main #header-wrapper, .header-main-right #header-wrapper {
+  padding-right:298px;
+  }
+
+.header-main #header-main, .header-main-right #header-main {
+  padding-left: 43px;
+  }
+
+#header h1, #header h2, #header p {
+    font-size: 27px;
+    line-height: 31px;
+    font-weight:normal;
+    color:#fff;
+    font-family:'GoudyTrajanRegular', serif;
+    margin: 0;
+    }
+
+#header h2 {
+  font-size: 18px;
+  line-height: 21px;
+  font-style:normal;
+  }
+
+#header p {
+  font-size: 13px;
+  line-height: 17px;
+  }
+
+#header h1 a, #header h1 a:visited {
+    color:#a3a18c;
+    }
+
+#header h1 a:hover {
+    color:#282828;
+    text-decoration: none;
+    }
+
+#navbar {
+  margin:0 29px;
+  width: auto;
+  }
+
+#navbar li {
+    float:left;
+    padding-right: 1px;
+    }
+
+#navbar #block-vsite_menus-0 li a {
+  line-height: 25px;
+  text-transform:uppercase;
+  color: #544f4f;
+  font-weight:normal;
+  font-size: 11px;
+  display:block;
+  padding: 3px 15px;
+  }
+
+#sidebar-left #block-vsite_menus-0 li a, #sidebar-left #block-vsite_menus-0 li a:visited {
+  color: #7e9f06;
+  border: none;
+  display:block;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  }
+
+#sidebar-left #block-vsite_menus-0 li a:hover {
+  text-decoration:none;
+  background: #485616;
+  color:#fff;
+  }
+
+#logo img {
+  height: 100px;
+  }
+
+#scholar-shield img {
+  height: 52px;
+  }
+
+/* MAIN CONTENT AREA */
+
+
+
+/* Nodes */
+
+.submitted {
+  color: #a1b1b1;
+  border-bottom: 1px solid #a1b1b1;
+  display:block;
+  }
