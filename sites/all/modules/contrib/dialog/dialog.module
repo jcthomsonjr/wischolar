@@ -1,5 +1,17 @@
 <?php
-// $Id: dialog.module,v 1.1 2009/12/07 01:46:11 rz Exp $
+// $Id: dialog.module,v 1.1.2.2 2010/01/13 03:32:19 rz Exp $
+
+/**
+ * Implementation of hook_theme().
+ */
+function dialog_theme() {
+  return array(
+    'dialog_content' => array(
+      'arguments' => array('content' => NULL),
+      'template' => 'dialog-content',
+    ),
+  );
+}
 
 /**
  * Add all the necessary javascript (and css) to be able to display a dialog
@@ -44,7 +56,7 @@ function dialog_command_display($title, $html, $options = array()) {
   return array(
     'command' => 'dialog_display',
     'title' => $title,
-    'output' => $html,
+    'output' => theme('dialog_content', $html),
     'options' => $options,
   );
 }
@@ -128,4 +140,65 @@ function dialog_form_render($form_state, $output) {
 
   $commands[] = dialog_command_display($title, $output);
   return $commands;
+}
+
+
+/**
+ * Generic dialog replacement for drupal_get_form().  Suitable for use as the
+ * page callback in a menu item.
+ * 
+ * This function introduces a new form callback function to handle the 
+ * post-submit dialog commands, in the ajax context.  This function takes the
+ * form of form_id_dialog_success.  If this function is found, it will be 
+ * automatically called after a valid submission of the form has been detected.
+ * If the function does not exist, a redirect will be issued based on the 
+ * redirect value in the form_state array.  As the final fallback, if the 
+ * redirect value is missing or empty, a client-side reload command is issued.
+ *
+ * @param $id
+ *   The form_id that would normally be passed to drupal_get_form.
+ * @param $js
+ *   The %ctools_js wildcard parameter to specify when the call is being made
+ *   in a javascript context.
+ * @param ...
+ *   Any additional parameters will be passed on to the form builder function.
+ */
+function dialog_get_form($form_id, $js) {
+  $args = func_get_args();
+  $form_id = array_shift($args);
+  $js = array_shift($args);
+
+  if ($js) {
+    ctools_include('ajax');
+    $form_state = array(
+      'ajax' => TRUE,
+      'title' => drupal_get_title(),
+      'args' => $args,
+    );
+    $output = dialog_form_wrapper($form_id, $form_state);
+    if (empty($output)) {
+      $func = $form_id .'_dialog_success';
+      if (function_exists($func)) {
+        $output = $func($form_state);
+      }
+      else if (!empty($form_state['redirect'])) {
+        $output[] = ctools_ajax_command_redirect($form_state['redirect']);
+      }
+      else {
+        $output[] = ctools_ajax_command_reload();
+      }
+    }
+    ctools_ajax_render($output);
+  }
+  else {
+    return drupal_get_form($form_id);
+  }
+}
+
+/**
+ * Process variables for dialog-content.tpl.php.
+ */
+function template_preprocess_dialog_content(&$variables) {
+  $variables['help'] = theme('help');  
+  $variables['messages'] = theme('status_messages');
 }

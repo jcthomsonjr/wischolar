@@ -1,4 +1,4 @@
-// $Id: dialog.js,v 1.1.2.1 2009/12/20 01:40:54 rz Exp $
+// $Id: dialog.js,v 1.1.2.2 2010/01/25 16:34:26 rz Exp $
 /**
  * @file
  *
@@ -28,10 +28,7 @@
       });
     }
 
-    Drupal.Dialog.dialog
-      .html(Drupal.theme('DialogThrobber'))
-      .dialog('option', 'title', Drupal.t('Loading...'))
-      .dialog('open');
+    Drupal.CTools.AJAX.commands.dialog_loading();
   };
 
   /**
@@ -231,10 +228,14 @@
       .dialog('option', 'title', command.title)
       .dialog('show');
 
-    if (command.options) {
-      for (i in command.options) {
-        $el.dialog('option', i, command.options[i]);
-      }
+    var defaultOptions = {
+      height: 'auto',
+      width: 600,
+      position: 'center'
+    };
+    var o = $.extend(defaultOptions, command.options);
+    for (i in o) {
+      $el.dialog('option', i, o[i]);
     }
 
     Drupal.attachBehaviors($el);
