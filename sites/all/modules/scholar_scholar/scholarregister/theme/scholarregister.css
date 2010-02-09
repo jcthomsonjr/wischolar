@@ -1,5 +1,6 @@
 body.page-site-register {
   margin-top: 45px;
+  line-height: 115%;
   }
 
 body.page-site-register #wrapper, body.page-site-register #extradiv {
@@ -52,6 +53,9 @@ body.page-site-register #header h1 {
   height:64px;
   }
 
+body.page-site-register .form-item {
+  margin: 0;
+  }
 
 body.page-site-register #content-main, body.page-site-register #content-wrapper {
   padding: 0;
@@ -74,8 +78,12 @@ body.page-site-register #user_register, body.page-site-register #domain-field {
   padding-bottom: 1px;
   }
 
-#scholarregister-signup-form #name-field, #scholarregister-signup-form #mail-field {
-  width: 324px;
+#edit-password-wrapper {
+  position: relative;
+  }
+
+#scholarregister-signup-form #name-field, #scholarregister-signup-form #mail-field, #edit-password-pass1-wrapper, #edit-password-pass2-wrapper, #edit-password-pass1-wrapper, #edit-password-pass2-wrapper {
+  width: 329px;
   float:left;
   margin: 0;
   position: relative;
@@ -85,25 +93,8 @@ body.page-site-register #user_register, body.page-site-register #domain-field {
   float: right;
   }
 
-#scholarregister-signup-form .form-item .status, #scholarregister-signup-form .form-item .error {
-  position: absolute;
-  top: 0;
-  right: 0;
-  }
-
 .form-actions {
   text-align: right;
-  }
-
-body.page-site-register .status {
-  color:#68b41e;
-  }
-
-body.page-site-register .error {
-  color:#ff0000;
-  background: transparent;
-  padding: 0;
-  border: none;
   }
 
 body.page-site-register {
@@ -119,4 +110,20 @@ body.page-site-register #success-message p {
 
 #name-field input, #mail-field input {
   width: 315px;
+  }
+
+body.page-site-register div.password-description {
+  max-width: none;
+  }
+
+body.page-site-register div.error, body.page-site-register div.warning {
+  clear: both;
+  }
+
+body.page-site-register div.warning li {
+  list-style: disc inside;
+  }
+
+body.page-site-register #edit-submit {
+  float:right;
   }
