@@ -21,14 +21,14 @@ function scholarregister_signup_form(){
   
  
   //this is a current site owner creating another site, use existing account information when creating new site
-  if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1){
+  if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1 && !$superuser){
     $form['create_multiple_sites']['#type'] = 'value';
     $form['create_multiple_sites']['#value'] = 1;   
   }
   //non site owner trying to create a site, use the existing user account information when creating the new site
-   elseif(!vsite_get_vsite_by_owner($user->uid) && in_array('scholar user', $user -> roles)){
-    $form['create_scholar_user_site']['#type'] = 'value';
-    $form['create_scholar_user_site']['#value'] = 1;   
+   elseif(!vsite_get_vsite_by_owner($user->uid) && in_array('authenticated user', $user -> roles) && !$superuser){
+    $form['create_site_is_authenticated']['#type'] = 'value';
+    $form['create_site_is_authenticated']['#value'] = 1;   
   }
   
   // otherwise this is an anonymouse user, show the normal form
@@ -81,9 +81,8 @@ function scholarregister_signup_form(){
   
     //if user is superuser then load any additional fields (password, etc.)
   if ($superuser){
-    //TODO: this module should have it's own css???
-    $path = drupal_get_path('module', 'iqss_pinserver_register');
-    drupal_add_css($path .'/iqss_pinserver_register.css', 'module', 'all', FALSE); 
+    $path = drupal_get_path('module', 'scholarregister');
+    drupal_add_css($path .'/scholarregister.css', 'module', 'all', FALSE); 
     
       //add dynamic password validation
     _user_password_dynamic_validation();
@@ -110,11 +109,11 @@ function scholarregister_signup_form(){
       '#weight' => 20
       );
       
-      if (!$superuser){
-        $form['submit'] ['#attributes'] = array('class' => 'ctools-use-ajax' );
-        $form['submit'] ['#suffix'] = '<div id="submit-suffix"></div>';
-      }
-      
+    if (!$superuser){
+      $form['submit'] ['#attributes'] = array('class' => 'ctools-use-ajax' );
+      $form['submit'] ['#suffix'] = '<div id="submit-suffix"></div>';
+    }
+    
   return $form;
 }
 
@@ -154,12 +153,12 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       //capture domain field
       $domain = $form_state ['values'] ['domain'];
 
-     if ($form ['create_multiple_sites']['#value'] ||  $form ['create_scholar_user_site']['#value']){
-      global $user;
+     if ($form ['create_multiple_sites']['#value']  == 1 ||  $form ['create_site_is_authenticated']['#value'] == 1){
+      global $user;  //TODO: will this work for super user???
       $name = $user -> name;
       $mail  = $user -> mail;       
       ///this is a 'scholar user' user who is creating a site for first time
-      if ($form ['values'] ['create_scholar_user_site']){        
+      if ($form ['create_site_is_authenticated']['#value'] == 1){        
           install_include(array('user'));
           $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
           install_add_user_to_role($uid, $rid); //need to add 'scholar admin' role         
