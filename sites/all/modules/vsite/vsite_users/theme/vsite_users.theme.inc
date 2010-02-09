@@ -43,7 +43,8 @@ function theme_vsite_users_profile_node_form($form){
 function theme_vsite_users_list_sites($my_sites, $member_sites){
   //TODO : Need to add proper markup/ styling
   
-  $output = '<div class="form-item"><label>' . "My Web Site:"  .'</label>';
+  $plural = count($my_sites) > 1 ? 's' : '';  
+  $output = '<div class="form-item"><label>' . "My Web Site" . $plural . ':'  . '</label>';
 
   //print sites that I own
   if (!empty($my_sites)){
