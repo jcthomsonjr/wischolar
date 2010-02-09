@@ -92,7 +92,8 @@ p.copy {
    }
 
 #header {
-  height: 135px;
+  height: 140px;
+  overflow:auto;
   }
 
 body.sidebar-left #content-wrapper {
@@ -118,21 +119,17 @@ body.no-sidebars #content-wrapper  {
   padding-top: 23px;
   }
 
-#header-wrapper {
-  height: 123px;
-  }
-
-.header-main #header-wrapper, .header-main-right #header-wrapper {
+body.header-main #header-wrapper, body.header-main-right #header-wrapper {
   padding-right:298px;
   }
 
-.header-main #header-main, .header-main-right #header-main {
-  padding-left: 43px;
+body.header-main #header-main, body.header-main-right #header-main {
+  padding-left: 22px;
   }
 
 #header h1, #header h2, #header p {
-    font-size: 27px;
-    line-height: 31px;
+    font-size: 23px;
+    line-height: 28px;
     font-weight:normal;
     color:#fff;
     font-family:'GoudyTrajanRegular', serif;
@@ -140,14 +137,15 @@ body.no-sidebars #content-wrapper  {
     }
 
 #header h2 {
-  font-size: 18px;
-  line-height: 21px;
+  font-size: 16px;
+  line-height: 18px;
   font-style:normal;
   }
 
 #header p {
-  font-size: 13px;
-  line-height: 17px;
+  font-size: 11px;
+  line-height: 18px;
+  margin-bottom: 5px;
   }
 
 #header h1 a, #header h1 a:visited {
@@ -160,23 +158,35 @@ body.no-sidebars #content-wrapper  {
     }
 
 #navbar {
-  margin:0 29px;
   width: auto;
+  background: url(images/navbar.png) 0 0 repeat-x transparent;
+  height: 48px;
   }
 
 #navbar li {
     float:left;
     padding-right: 1px;
+    line-height: 48px;
     }
 
-#navbar #block-vsite_menus-0 li a {
+#navbar #block-vsite_menus-0 li a, #navbar #block-vsite_menus-0 li a:visited {
   line-height: 25px;
   text-transform:uppercase;
-  color: #544f4f;
+  color: #fff;
   font-weight:normal;
   font-size: 11px;
   display:block;
-  padding: 3px 15px;
+  padding: 11px 17px;
+  border-right: 1px solid #3b4611;
+  }
+
+#navbar #block-vsite_menus-0 li.first a {
+  padding-left: 22px;
+  }
+
+#navbar #block-vsite_menus-0 li a:active, #navbar #block-vsite_menus-0 li a:hover, #navbar #block-vsite_menus-0 li a.active, #navbar #block-vsite_menus-0 li.active-trail a {
+  background: url(images/navbar.png) 0 -48px repeat-x transparent;
+  text-decoration:none;
   }
 
 #sidebar-left #block-vsite_menus-0 li a, #sidebar-left #block-vsite_menus-0 li a:visited {
