@@ -49,7 +49,7 @@ function scholarregister_form_access(){
 
   //user is logged in and already owns a site
   if($vsite = vsite_get_vsite_by_owner($user->uid)){
-    return iqss_pinserver_register_vsite_exists($vsite);
+    return scholarregister_vsite_exists($vsite);
   }
   else {
     //anonymous user or non site owner, normal scholarregister form validation rules apply
