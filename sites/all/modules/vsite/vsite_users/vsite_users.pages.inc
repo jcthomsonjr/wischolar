@@ -5,8 +5,11 @@ function vsite_users_members(){
   $arg = $site->group->nid;
   ctools_include('ajax');
   ctools_include('modal');
+  drupal_add_js('misc/autocomplete.js');
+  ctools_add_js('dependent');
   ctools_modal_add_js();
-  $output = ctools_modal_text_button('Add new user', 'cp/users/add', 'add a new user', 'context-button');
+  
+  $output = ctools_modal_text_button('Add a user to your site', 'cp/users/add', 'add a user', 'context-button');
   $output = theme('item_list', array(
     $output 
   ), $title = NULL, $type = 'ul', $attributes = array(
@@ -29,6 +32,9 @@ function vsite_users_edit_user($account){
   ctools_include('ajax');
   ctools_include('modal');
   ctools_modal_add_js();
+  
+  drupal_add_js('misc/jquery.form.js');
+  drupal_add_js('misc/ahah.js');
   
   $form_state = array(
     're_render' => TRUE,
@@ -53,19 +59,7 @@ function vsite_users_edit_user($account){
 function vsite_users_add_user(){
   ctools_include('ajax');
   ctools_include('modal');
-  
-//  ctools_add_js('misc/jquery.form.js');
-//  ctools_add_js('misc/ahah.js');
-//  ctools_add_js(array('ahah' => array('edit-vsite-users-first-name' => array('url' => '/site01/cp/users/user_lookup', 
-//                                      'event' => 'change', 
-//                                      'keypress' => '', 
-//                                      'wrapper' => 'user_lookup', 
-//                                      'selector' => '#edit-vsite-users-first-name', 
-//                                      'effect' => 'fade', 
-//                                      'method' => 'replace', 
-//                                      'progress' => Array('type' => 'throbber' ), 
-//                                      'button' => '' ))), 'setting');
-  
+
   $form_state = array(
     're_render' => FALSE,
     'ajax' => TRUE,
@@ -73,7 +67,7 @@ function vsite_users_add_user(){
 
   // pass all arguments needed by the callback function (ctools thing)
   $form_state['args'] = array(NULL);
-
+  
   $output = ctools_modal_form_wrapper('ucreate_user_form', $form_state);
   
   if (empty($output)) {
@@ -92,14 +86,43 @@ function vsite_users_add_user(){
 /**
  * callback function for our user lookup
  */
-function vsite_users_lookup_user(){
-	$output = "<h3>Add an existing user</h3>";
+function vsite_users_lookup_user($string = ''){
+	$a_profile_content_types = content_profile_get_types();
+	$a_info = content_types();
+	$s_join_statement = "";
+	$s_field = "CONCAT(name,' (',mail,')')";
+	$a_join_where = array();
+	$n_num_param = 1;
 	
-	$output .= "<ul>";
-	$output .= "<li><a class='add' href='add the user' /><span class='name'>Richard Brandon</span><span class='email'>rbrandon@iq.harvard.edu</span>";
-	$output .= "<li><a class='add' href='add the user' /><span class='name'>Mikey Brandon</span><span class='email'>mbrock@iq.harvard.edu</span>";
-	$output .= "</ul>";
-	
-	print drupal_to_js(array('status' => TRUE, 'data' => $output));
-  exit;
+	$matches = array();
+  if ($string) {
+  	
+		foreach ($a_profile_content_types as $s_type =>$info) {
+			if(!array_key_exists('vsite_users_last_name',$a_info[$s_type]['fields'])) continue;
+	   
+		  $s_join_statement .= " LEFT JOIN node n ON n.uid = users.uid ";
+      $table_info = content_database_info($a_info[$s_type]['fields']['vsite_users_last_name']);
+      $s_table = $table_info['table'];
+      $s_join_statement .= " LEFT JOIN {$s_table} {$s_table} ON {$s_table}.nid = n.nid ";
+      
+			foreach(array('vsite_users_last_name','vsite_users_first_name') as $fld){
+				$n_num_param++;
+				$a_join_where[] = 'LOWER('.$s_table.".".$a_info[$s_type]['fields'][$fld]['field_name']."_value) LIKE LOWER('%s%%')";
+			}
+			
+			$s_field = 'IF('.$s_table.".".$a_info[$s_type]['fields']['vsite_users_last_name']['field_name'].'_value IS NULL, CONCAT(name,\' (\',mail,\')\'),CONCAT('.$s_table.".".$a_info[$s_type]['fields']['vsite_users_first_name']['field_name'].'_value," ",'.$s_table.".".$a_info[$s_type]['fields']['vsite_users_last_name']['field_name'].'_value," (",mail,")")) as name ';
+		  break;
+		}
+		$n_num_param++;
+		$a_join_where[] = "LOWER(mail) LIKE LOWER('%s%%')";
+		
+		$s_where = count($a_join_where)? " OR ".join(" OR ",$a_join_where):"";
+  	
+    $result = db_query_range("SELECT name as id, {$s_field} FROM {users} users {$s_join_statement} WHERE LOWER(name) LIKE LOWER('%s%%') ".$s_where, split("@@",str_repeat($string."@@",$n_num_param)), 0, 10);
+    while ($user = db_fetch_object($result)) {
+      $matches[$user->id] = check_plain($user->name);
+    }
+  }
+
+  drupal_json($matches);
 }

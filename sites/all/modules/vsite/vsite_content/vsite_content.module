@@ -38,7 +38,24 @@ function vsite_content_menu(){
       'access callback' => 'vsite_content_content_access',
       'access arguments' => array($type, $feature_name),
       'type' => MENU_LOCAL_TASK, 
-    );    
+    );
+    
+    if($type == 'gallery'){
+    	$items['cp/content/'.$type.'/'.$type] = array(
+	      'title' => "Galleries",
+	      'access callback' => 'vsite_content_content_access',
+	      'access arguments' => array($type, $feature_name),
+	      'type' => MENU_DEFAULT_LOCAL_TASK, 
+	    );
+	    $items['cp/content/'.$type.'/image'] = array(
+        'title' => "All images in Galleries",
+        'access callback' => 'vsite_content_content_access',
+        'access arguments' => array($type, $feature_name),
+        'type' => MENU_LOCAL_TASK, 
+	      'weight' => 50,
+      );
+    }
+    
   }
 
 
@@ -57,7 +74,6 @@ function vsite_content_vsite_content_types_alter(&$content_types){
       unset($content_types[$type]);
     }
   }
-  
 }
 
 /**
@@ -91,7 +107,7 @@ function vsite_content_views_pre_build(&$view){
     vsite_content_taxonomy_filter($view, $vsite);
     
     
-    $type = arg(2);
+    $type = strlen(arg(3))?arg(3):arg(2);
     if ($type && $type !== 'all') {
       $view->set_arguments(array(
           $type 

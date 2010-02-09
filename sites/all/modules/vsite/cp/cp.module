@@ -142,17 +142,6 @@ function cp_menu(){
   $space = vsite_get_vsite();
   $b_default_setting_created = false;
 
-//  $items['cp/settings'] = array(
-//       'title' => 'Settings',
-//       //'page callback' => 'cp_route',
-//       'page callback' => 'drupal_get_form',
-//       'page arguments' => array('cp_settings_form', 'site'),
-//       'file' => 'cp.settings.inc',
-//       'file path' => drupal_get_path('module', 'cp'). '/includes',
-//       'weight' => 0,
-//     );
-
-
   // we go on all settings and make a menu entry for all of them
   foreach (spaces_settings($space->type, TRUE) as $setting) {
   	//Explicitly remove from menus

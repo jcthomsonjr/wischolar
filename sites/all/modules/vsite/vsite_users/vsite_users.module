@@ -439,9 +439,6 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	'#description' => ''
 	  	);
 	  	
-	  //No longer adding profile fields this way because of redirection bug
-	  // ( see nodeapi in content_profile.module)
-	  //content_profile_registration_form_alter($form, $form_state,'user_register');	
 
 	  	if(is_array($form['#submit']) && array_search('ucreate_user_form_submit',$form['#submit']) !== false) unset($form['#submit'][array_search('ucreate_user_form_submit',$form['#submit'])]); //Hijack this submit
 	  	
@@ -452,6 +449,51 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	
 	  	//Add submit handler for registration info
 	  	array_unshift($form['#submit'], 'vsite_users_user_form_submit');
+	  	ctools_include('dependent');
+	  	
+			foreach(element_children($form) as $s_key){
+		    if(!in_array($form[$s_key]['#type'],array('textarea','textfield'))) continue;
+			  $form[$s_key]['#process'] = array('ctools_dependent_process');
+		    $form[$s_key]['#dependency'] = array('radio:create_type' => array('new'));
+		  }
+		  
+		  $form['create_type'] = array(
+	      '#title' => "",
+	      '#type' => 'radios',
+	      '#options' => array('existing' => "",'new' => ""),
+	      '#default_value' => (array_key_exists('input',$form_state) && array_key_exists('create_type',$form_state['input']))?$form_state['input']['create_type']:'existing',
+	      '#tree' => TRUE,
+	      '#weight' => -6,
+		    '#attributes' => array('style' => "display:none;")
+	    );
+	  	
+	  	$form['lookup_user'] = array(
+        '#type' => 'textfield',
+        '#title' => "Find an Existing User",
+        '#maxlength' => 80,
+        '#autocomplete_path' => 'cp/users/user_lookup', 
+        '#element_validate' => array('vsite_node_autocomplete_validate'),
+        '#weight' => -5,
+	  	  '#process' => array('ctools_dependent_process'),
+	  	  '#dependency' => array('radio:create_type' => array('existing')),
+	  	  '#description' => "Type in a persons name, login, or e-mail address to search for their account.",
+      );
+      
+      $form['add_new_user'] = array(
+        '#type' => 'item',
+        '#value' => '<a href="#" onClick="$(\'#edit-create-type-new\').attr(\'checked\', true); $(\'#edit-create-type-new\').change(); $(this).parent(\'div.form-item\').hide(); $(\'#edit-lookup-user\').val(\'\'); return false;" class="context-button" title="add a new user">Add new user</a>',
+        '#description' => 'If you can\'t find their account, click "Add new user" to create a new account',
+        '#weight' => -4,
+      );
+      
+      if(array_key_exists('input',$form_state) && array_key_exists('create_type',$form_state['input']) && $form_state['input']['create_type'] == 'existing'){
+      	$form['vsite_users_first_name']['#required'] = 
+      	$form['vsite_users_last_name']['#required'] =
+      	$form['mail']['#required'] =
+      	$form['mail_confirm']['#required'] =
+      	$form['name']['#required'] = false;
+      }
+	  	
   	break;  	
   	
     case 'user_profile_form':
@@ -485,7 +527,12 @@ function vsite_users_hide_form_value(&$element){
  * Validation handler for ucreate_user_form()
  */
 function vsite_users_user_form_validate($form, &$form_state){
-  if ($form_state['values']['mail'] != $form_state['values']['mail_confirm']) {
+	$account = false;
+	if(strlen($form_state['values']['lookup_user']) && !($account = user_load(array('name' => $form_state['values']['lookup_user'])))){
+		form_set_error('lookup_user', t('A user with the username "'.$form_state['values']['lookup_user'].'" can not be found.'));
+	}elseif ($account){
+	  $form_state['values']['name'] = "Richard";
+	}elseif ($form_state['values']['mail'] != $form_state['values']['mail_confirm']) {
     form_set_error('email_confirm', t('E-mail addresses don\'t match'));
   }
 }
@@ -494,10 +541,15 @@ function vsite_users_user_form_validate($form, &$form_state){
  * Submit handler for ucreate_user_form().
  */
 function vsite_users_user_form_submit($form, &$form_state) {
-  if(($account = user_load(array('name' => $form_state['values']['name']))) || ($account = user_load(array('mail' => $form_state['values']['mail'])))){
-		$vsite = vsite_get_vsite();
+	$vsite = vsite_get_vsite();
+	if(strlen($form_state['values']['lookup_user'])){
+		$account = user_load(array('name' => $form_state['values']['lookup_user']));
+		$s_message = t('[!name] is now a member of [!group]', array('!name' => $account->name, '!group' =>  $vsite->group->title));
+	}
+	
+  if($account || ($account = user_load(array('name' => $form_state['values']['name']))) || ($account = user_load(array('mail' => $form_state['values']['mail'])))){
   	og_save_subscription($vsite->group->nid, $account->uid, array('is_active' => 1));
-	  drupal_set_message(t('A user with the name [!name] and e-mail address[!email] already existed, they are now a member of [!group]', array('!name' => $account->name, '!email' => $account->mail, '!group' =>  $vsite->group->title)));
+	  drupal_set_message($s_message?$s_message:t('A user with the name [!name] and e-mail address[!email] already existed, they are now a member of [!group]', array('!name' => $account->name, '!email' => $account->mail, '!group' =>  $vsite->group->title)));
 	  return true;
   }
 	
