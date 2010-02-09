@@ -145,16 +145,6 @@ function scholarregister_signup_form_validate($form, &$form_state){
       }
     }
   }
-  
-/*  $name = $form_state['values']['name'];
-  $mail = $form_state['values']['mail'];
-  $domain = $form_state['values']['domain'];
-  
-  // if any of the above value fail validation, exit with an appropriate message
-  if (scholarregister_validate_name($name) || scholarregister_validate_mail($mail) || scholarregister_validate_domain($domain)) {
-    $commands[] = _scholarregister_vsite_error();
-    
-  }*/
 }
 
 /**
