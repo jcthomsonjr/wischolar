@@ -635,7 +635,7 @@ function vsite_users_vsite_generic_settings($space, $value = array()){
 }
 
 /**
- * Check if user has access to create sites (e.g. superuser access)
+ * Check if user has access to create sites
  */
 function vsite_users_create_site_access($account = NULL){
   $permission = 'create ' . variable_get('scholar_content_type', 'vsite') . ' content';
