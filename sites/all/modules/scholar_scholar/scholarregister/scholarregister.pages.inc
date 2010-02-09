@@ -145,7 +145,6 @@ function scholarregister_signup_form_validate($form, &$form_state){
       }
     }
   }
-  ctools_ajax_render($commands);
   
 /*  $name = $form_state['values']['name'];
   $mail = $form_state['values']['mail'];
