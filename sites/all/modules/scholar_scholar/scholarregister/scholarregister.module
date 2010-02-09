@@ -158,12 +158,12 @@ function scholarregister_validate_mail($mail) {
   }
   
   //THIS BLOCK SHOULD BE REMOVED AFTER NEXT RELEASE
-/*  if(!module_exists('pinserver')){
+  if(!module_exists('pinserver')){
     if (substr(trim($mail),-12) !== '.harvard.edu' && substr(trim($mail),-12) !== '@harvard.edu'
     && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '.hbs.edu'){
       return  'Please enter an harvard email address ';
     }
-  }*/
+  }
   
 }
 
@@ -177,7 +177,7 @@ function scholarregister_validate_domain($domain){
   if ($error = user_validate_name($domain)){  // the same validation as the username
     return $error;
   }
-  elseif (!purl_validate($modifier) || _scholarregister_name_exists($domain)){
+  elseif (!purl_validate($modifier) || _scholarregister_domain_exists($domain)){
     return "domain \"$domain\" is taken or invalid";
   }
 }
