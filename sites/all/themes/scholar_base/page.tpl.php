@@ -43,7 +43,7 @@
 
           <?php if (!empty($header_right)): ?>
           <div id="header-right" class="column">
-             <?php print $header_right; ?>
+            <?php print $header_right; ?>
           </div><!-- /header-right -->
             <?php endif; ?>
         </div><!-- /header wrapper -->

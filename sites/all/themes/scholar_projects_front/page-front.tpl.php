@@ -10,6 +10,7 @@
   <?php print $styles; ?>
   <?php print $scripts; ?>
 </head>
+
 <body class="<?php print $body_classes; ?>">
   <div id="wrapper">
     <div id="container">

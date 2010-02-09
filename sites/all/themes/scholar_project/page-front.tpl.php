@@ -15,19 +15,21 @@
     <div id="container">
 
       <div id="header">
-        <div id="header-left" class="column">
-          <h1><a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home"><?php print $site_name; ?></a></h1>
-        </div><!-- /header-left -->
-        <div id="header-right" class="column">
-          <?php print $header_right; ?>
-            <ul id="top-front">
-              <!--<li>What's New</li>
-              <li>Features</li>-->
-              <li><?php print l('About', 'help/vsitehelp/Scholar-Web-Sites-Project-Documentation'); ?> </li>
-              <li><?php print  ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user'); ?></li>
-              <li id="get-form"><a href="site/register">Get your site now!</a></li>
-             </ul>
-         </div><!-- /header-right -->
+        <div id="header-wrapper">
+          <div id="header-left" class="column">
+            <h1><a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home"><?php print $site_name; ?></a></h1>
+          </div><!-- /header-left -->
+          <div id="header-right" class="column">
+            <?php print $header_right; ?>
+              <ul id="top-front">
+                <!--<li>What's New</li>
+                <li>Features</li>-->
+                <li><?php print l('About', 'help/vsitehelp/Scholar-Web-Sites-Project-Documentation'); ?> </li>
+                <li><?php print  ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user'); ?></li>
+                <li id="get-form"><a href="site/register">Get your site now!</a></li>
+               </ul>
+           </div><!-- /header-right -->
+         </div><!-- /header-wrapper -->
       </div> <!-- /header -->
 
       <div id="content-wrapper">

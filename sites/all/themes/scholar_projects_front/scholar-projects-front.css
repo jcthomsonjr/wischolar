@@ -35,25 +35,17 @@ h3 {
 /* LAYOUT ELEMENTS */
 
 .column {
-  position: static;
-  padding: 0;
-  }
-
-
-#sidebar-left, #header-left {
-    width: auto;
-    }
-
-#content-wrapper, #header-wrapper, #header-left, #header-right {
-    padding: 0;
-    margin: 0;
-    }
-
+   }
 
 div.form-item {
   border: none;
   }
 
+#header-wrapper, #header-left {
+  padding: 0;
+  margin:0;
+  right: 0;
+  }
 
 /* HEADER ELEMENTS */
 
@@ -61,9 +53,19 @@ div.form-item {
     height: 89px;
     }
 
+#header-wrapper {
+  padding:0;
+  }
+
+#header-left {
+  margin-left: 0;
+  right: 0;
+  }
+
 #header-right {
   float: right;
   width: 542px;
+  margin-right: 0;
   }
 
 #header h1 {
@@ -141,21 +143,20 @@ li#get-form a {
   background: url(images/wrapper.png) no-repeat 50% 81px transparent;
   }
 
-#content-wrapper, body.no-sidebars #content-wrapper {
+#content-wrapper {
   background: #fff;
   border: 1px solid #000;
   overflow: hidden;
-  padding: 30px;
   }
 
 .front #content-wrapper {
   padding:0 !important;
   }
 
-
 .front #content-wrapper {
   background: transparent;
   }
+
 #content-row-1 {
   /*background: url(images/front-row1-bg.png) no-repeat;*/
   width: 982px;
