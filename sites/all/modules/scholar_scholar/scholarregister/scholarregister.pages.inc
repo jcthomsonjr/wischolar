@@ -22,8 +22,8 @@ function scholarregister_signup_form(){
  
   //this is a current site owner creating another site, use existing account information when creating new site
   if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1){
-    $form['create_multiple_site']['#type'] = 'value';
-    $form['create_multiple_site']['#value'] = 1;   
+    $form['create_multiple_sites']['#type'] = 'value';
+    $form['create_multiple_sites']['#value'] = 1;   
   }
   //non site owner trying to create a site, use the existing user account information when creating the new site
    elseif(!vsite_get_vsite_by_owner($user->uid) && in_array('scholar user', $user -> roles)){
@@ -164,7 +164,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       //capture domain field
       $domain = $form_state ['values'] ['domain'];
 
-    if ($form ['values']['create_multiple_site'] ||  $form ['values'] ['create_scholar_user_site']){
+     if ($form ['create_multiple_sites']['#value'] ||  $form ['create_scholar_user_site']['#value']){
       global $user;
       $name = $user -> name;
       $mail  = $user -> mail;       
