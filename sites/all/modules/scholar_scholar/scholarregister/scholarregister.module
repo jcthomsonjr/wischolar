@@ -40,7 +40,7 @@ function scholarregister_menu(){
 
 /**
  * Scholar register form access
- *@return unknown
+ *@return boolean
  */
 function scholarregister_form_access(){
   global $user;  
@@ -54,6 +54,7 @@ function scholarregister_form_access(){
 
 /**
  * Handles access rules for when site owner is attempting to create a another site
+ * @return  boolean
  */
 function scholarregister_vsite_exists_access($vsites = array()){
   global $user;  
@@ -88,6 +89,9 @@ function scholarregister_vsite_exists_access($vsites = array()){
   }
 }
 
+/**
+ * Provides redirect path and message for form access denied scenarios
+ */
 function scholarregister_get_redirect($vsites = array()){
   switch (count($vsites)){
     case 0:
