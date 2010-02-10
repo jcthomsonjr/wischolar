@@ -5,7 +5,7 @@ function vsite_design_menu(){
   $items['cp/settings/theme/swap_screenshot/%'] = array(
     'page callback' => 'vsite_design_swap_screenshot',
     'page arguments' => array(4),
-    'access arguments' => 'cp_access_cp',
+    'access callback' => 'cp_access_cp',
     'type' => MENU_CALLBACK,
   );
 
