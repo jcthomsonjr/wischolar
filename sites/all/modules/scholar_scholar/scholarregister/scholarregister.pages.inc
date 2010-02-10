@@ -5,20 +5,26 @@
  */
 function scholarregister_signup_form(){
   global $user;
-  drupal_add_css(drupal_get_path('module', 'scholarregister') . '/theme/scholarregister.css');
-  // clear any drupal_messages. Ajax takes care of them
-  drupal_get_messages();
-  
-  //check if user is SuperUser
-   $superuser = vsite_users_create_site_access();
-  
-  ctools_include('ajax');
-  ctools_add_js('ajax-responder');
-  
   $form = array();
-  $form['#prefix'] = '<div id = "user_register">';
-  $form['#suffix'] = '</div>';
+    //check if user is superuser
+   $superuser = vsite_users_create_site_access();
+   
+    //check if user should be re-directed somewhere
+   if ($vsites = vsite_get_vsite_by_owner($user->uid)){
+     if (!scholarregister_vsite_exists_access($vsites) && !$superuser){
+       $form_state['redirect'] = scholarregister_get_redirect($vsites);
+       drupal_redirect_form($form, $form_state['redirect']);
+     }
+   }
+
+  drupal_add_css(drupal_get_path('module', 'scholarregister') . '/theme/scholarregister.css');
   
+  // clear any drupal_messages. Ajax takes care of them
+  drupal_get_messages();  
+  ctools_include('ajax');
+  ctools_add_js('ajax-responder');   
+  $form['#prefix'] = '<div id = "user_register">';
+  $form['#suffix'] = '</div>';  
  
   //this is a current site owner creating another site, use existing account information when creating new site
   if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1 && !$superuser){
@@ -76,8 +82,7 @@ function scholarregister_signup_form(){
       '#prefix' => '<div id="domain-field">', 
       '#suffix' => '<div id="domain-suffix"></div></div>', 
   );  
-  ctools_ajax_associate_url_to_element($form, $form['domain'], url('scholarregister/domain_js'), 'ctools-use-ajax-onchange');
-  
+  ctools_ajax_associate_url_to_element($form, $form['domain'], url('scholarregister/domain_js'), 'ctools-use-ajax-onchange');  
   
     //if user is superuser then load any additional fields (password, etc.)
   if ($superuser){
@@ -153,8 +158,9 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       //capture domain field
       $domain = $form_state ['values'] ['domain'];
 
+      //This if/else clause determines which user account to give owership when creating a new site 
      if ($form ['create_multiple_sites']['#value']  == 1 ||  $form ['create_site_is_authenticated']['#value'] == 1){
-      global $user;  //TODO: will this work for super user???
+      global $user;  //Will this work for super user? Yes, because these values would not be set if user is superuser.
       $name = $user -> name;
       $mail  = $user -> mail;       
       ///this is a 'scholar user' user who is creating a site for first time
@@ -165,7 +171,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       }           
     }
   
-    //anonymous user creating a site
+    //superuser or anonymous user creating a site. take the values in the form to create a new user and give site ownership
     else{
       $name = $form_state ['values'] ['name'];
       $mail = $form_state ['values'] ['mail'];
@@ -181,7 +187,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       }
     }
  
-  //add $user object to $form_state  and can be used by other submit functions called after this
+  //add $user object to $form_state  so it can be used by subsequent submit functions
   if(is_object($user)){
     $form_state['new_user'] = $user;
   }
