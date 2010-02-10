@@ -1,0 +1,128 @@
+<?php
+
+include_once('scholar_book.features.inc');
+
+
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function scholar_book_strongarm() {
+  // Book
+  $conf['book_allowed_types'] = array('book');
+
+  $conf['node_options_book'] = array('status', 'revision');
+  //$conf['notifications_content_type_book'] = array('thread', 'grouptype', 'nodetype', 'author');
+  //$conf['og_notifications_content_types'][] = 'book';
+  $conf['upload_book'] = TRUE;
+
+  // Comments
+  $conf['comment_book'] = COMMENT_NODE_DISABLED;
+
+  // FeedAPI
+  //$conf['feedapi_settings_book'] = array('enabled' => FALSE);
+
+  // Disable Diff button
+  $conf["show_preview_changes_book"] = FALSE;
+  $conf["show_diff_inline_book"] = TRUE;
+
+  // Make archivable
+  //$conf['atrium_archivable'] = array('book');
+
+  // Enable for recent activity views
+  //$conf['atrium_update_type_book'] = TRUE;
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_book_pattern"] = "[space-og-path]/book/[title-raw]";
+
+  return $conf;
+}
+
+/*
+function scholar_book_menu() {
+  $items = array();
+  $items['documents'] = array(
+    'title' => 'Documents',
+    'page callback' => 'scholar_book_overview',
+    'page arguments' => array(),
+    'access callback' => 'spaces_feature_access',
+    'access arguments' => array('scholar_book'),
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'features'
+  );
+  return $items;
+}
+
+
+function scholar_book_overview() {
+  return views_embed_view('scholar_book_list', 'default');
+  
+  context_set('spaces', 'feature', 'book');
+  $space = spaces_get_space();
+  if (!empty($space->settings['scholar_book'])) {
+    $nid = $space->settings['scholar_book'];
+    if (is_numeric($nid) && $node = node_load($nid)) {
+      menu_set_active_item("node/{$node->nid}");
+      return node_view($node, FALSE, TRUE, TRUE);
+    }
+  }
+  return views_embed_view('scholar_book', 'page_1');
+}
+*/
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_book_spaces_settings() {
+  return array(
+    'scholar_book' => array(
+      'class' => 'scholar_book_space_setting',
+      'file' => drupal_get_path('module', 'scholar_book') .'/scholar_book.spaces.inc',
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function scholar_book_form_alter(&$form, &$form_state, $form_id){
+  
+  // Book mods
+  if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type)) {
+    $node = $form['#node'];
+    
+    if (! empty($form['book'])) {
+      // Fieldset mods
+      $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
+      $form['book']['#collapsible'] = $form['book']['#collapsed'] = FALSE;
+      
+      if (! empty($form['book']['bid']['#options'])) {
+        // Remove "none" option -- do not allow book pages to be orphaned
+        unset($form['book']['bid']['#options'][0]);
+        // Filter book options by current space
+        if ($view = views_get_view('scholar_book_list')) {
+          $view->set_display();
+          $view->set_items_per_page(0);
+          $view->execute();
+          
+          // Collect books in this space into an array
+          $books = array();
+          $books[$node->nid] = 1;
+          if (is_array($view->result) && count($view->result)) {
+            foreach ( $view->result as $row ) {
+              $books[$row->nid] = 1;
+            }
+          }
+          
+          // Use collected array to filter options
+          foreach ( $form['book']['bid']['#options'] as $k => $v ) {
+            if (is_numeric($k) && ! isset($books[$k])) {
+              unset($form['book']['bid']['#options'][$k]);
+            }
+          }
+        }
+      }
+    }
+  }
+
+}
