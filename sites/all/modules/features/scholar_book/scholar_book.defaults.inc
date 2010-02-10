@@ -14,6 +14,10 @@ function _scholar_book_context_default_contexts() {
     'node' => array(
       '0' => 'book',
     ),
+    'views' => array(
+      '0' => 'scholar_books',
+    ),
+    'menu' => 'documents',
   );
   return $items;
 }
@@ -28,10 +32,12 @@ function _scholar_book_menu_default_items() {
     'title' => 'Documents',
     'path' => 'documents',
     'weight' => '0',
+    'description' => 'list of documents',
   );
   // Translatables
   array(
     t('Documents'),
+    t('list of documents'),
   );
 
 
