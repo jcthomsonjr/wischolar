@@ -240,7 +240,7 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id){
 	    global $user;
 	    $form['menu']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
 	    $form['menu']['parent']['#options'] = $a_choices;
-	    $form['menu']['parent']['#description'] = "Select the menu that you would like this entry to show in";
+	    $form['menu']['parent']['#description'] = "Select the menu where you would like this entry to show";
 	    unset($form['menu']['hidden']);
 	    
 	    if (module_exists('path')) {
