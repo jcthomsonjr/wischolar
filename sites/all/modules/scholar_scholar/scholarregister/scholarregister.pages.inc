@@ -206,9 +206,9 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   else{
     // site created successfully add the form values for additional submit fuctions
     $form_state['vsite'] = $vsite;
-    // 3. send e-mail to the user (unless specified not to by super user)
-    $send_mail =  ($form_state ['values'] ['send_mail'] ===1) ? scholarregister_notify_user($vsite, $user) : FALSE;
-  
+    // 3. send e-mail to the user (unless specified not to by super user) 
+    $send_mail =  (!$form_state ['values'] ['send_mail'] || $form_state ['values'] ['send_mail'] === 1) ? scholarregister_notify_user($vsite, $user) : FALSE;
+    
   // 4. let user know this was all sucessful
     //ctools_add_js ( 'ajax-responder' );
     $commands = array ();
