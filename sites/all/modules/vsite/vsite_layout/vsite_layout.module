@@ -258,6 +258,9 @@ function _vsite_layout_alter_theme_regions(&$a_widgets){
 	
 }
 
+/**
+ * Custom sort by block weight
+ */
 function _vsite_layout_sort_by_weight($a, $b){
     if ($a['weight'] == $b['weight']) {
         return 0;
@@ -432,31 +435,49 @@ function _check_for_overrides(&$widgets,$s_region,$space = null){
  * @param $space space to check for overides
  */
 function _check_for_disabled_widgets(&$widgets, $a_feature_contexts, $space = null){
-	if(!count($a_feature_contexts) || !count($widgets)) return; //Nothing to do
+	if(!count($widgets)) return; //Nothing to do because there are no widgets to act on
   if(!$space) $space = vsite_get_vsite(); //Get current Viste
 
-  if(!is_array($space->customizer) || !is_array($space->customizer['block'])                       //Make sure there are settings saved 
-  || !count(array_intersect($a_feature_contexts,array_keys($space->customizer['block'])))) return; //No settings saved to filter for this context 
+  //The following block of code customizes / disables a widget based on the feature settings
+  if(count($a_feature_contexts) && is_array($space->customizer) && is_array($space->customizer['block'])          //Make sure there are settings saved 
+  && count(array_intersect($a_feature_contexts,array_keys($space->customizer['block'])))){                        //that should be used to filter for this context 
   
-  static $a_customized_widgets = array(); //Just store this once since it will not change
-  if(!array_key_exists($space->group->nid,$a_customized_widgets)) $a_customized_widgets[$space->group->nid] = array(); //Store flattened settings by site / context
+	  static $a_customized_widgets = array(); //Just store this once since it will not change
+	  if(!array_key_exists($space->group->nid,$a_customized_widgets)) $a_customized_widgets[$space->group->nid] = array(); //Store flattened settings by site / context
+	  
+	  //The widgets for this combo of contexts
+	  $a_page_widgets = array();
+	    
+	  foreach (array_intersect($a_feature_contexts,array_keys($space->customizer['block'])) as $s_context){
+	  	if(!array_key_exists($s_context,$a_customized_widgets[$space->group->nid])){
+	  		$a_customized_widgets[$space->group->nid][$s_context] = array(); //Store the blocks in the static variable
+	      foreach ($space->customizer['block'][$s_context] as $a_context_widgets) $a_customized_widgets[$space->group->nid][$s_context] = array_merge($a_customized_widgets[$space->group->nid][$s_context],$a_context_widgets);
+	  	} //Gather the settings into the static var
+	  	
+	  	$a_page_widgets = array_merge($a_page_widgets,$a_customized_widgets[$space->group->nid][$s_context]);
+	  }
+	  
+	  foreach ($widgets as $s_wgt_name => $wgt){
+	    if(array_key_exists($s_wgt_name,$a_page_widgets) && array_key_exists('status',$a_page_widgets[$s_wgt_name])){
+	      $widgets[$s_wgt_name]['hidden'] = !$a_page_widgets[$s_wgt_name]['status'];
+	    }
+	  }//Use the settings to change the widget
+  }
   
-  //The widgets for this combo of contexts
-  $a_page_widgets = array();
-    
-  foreach (array_intersect($a_feature_contexts,array_keys($space->customizer['block'])) as $s_context){
-  	if(!array_key_exists($s_context,$a_customized_widgets[$space->group->nid])){
-  		$a_customized_widgets[$space->group->nid][$s_context] = array(); //Store the blocks in the static variable
-      foreach ($space->customizer['block'][$s_context] as $a_context_widgets) $a_customized_widgets[$space->group->nid][$s_context] = array_merge($a_customized_widgets[$space->group->nid][$s_context],$a_context_widgets);
-  	} 
-  	
-  	$a_page_widgets = array_merge($a_page_widgets,$a_customized_widgets[$space->group->nid][$s_context]);
-  }//Gather the settings into the static var
   
   foreach ($widgets as $s_wgt_name => $wgt){
-    if(array_key_exists($s_wgt_name,$a_page_widgets) && array_key_exists('status',$a_page_widgets[$s_wgt_name])){
-      $widgets[$s_wgt_name]['hidden'] = !$a_page_widgets[$s_wgt_name]['status'];
+    if(array_key_exists($wgt['module'],$space->features) && $space->features[$wgt['module']] == FEATURE_DISABLED){	
+    	//if this block is provided by a feature and that feature is disabled do not show the block
+    	$widgets[$s_wgt_name]['hidden'] = true; 
+    
+    }elseif($wgt['module'] == 'views'){
+    	//if this block is provided by views then check it's access
+      list($name, $display_id) = explode('-', $wgt['delta']);
+      if (($view = views_get_view($name)) && !$view->access($display_id)) {
+        $widgets[$s_wgt_name]['hidden'] = true; 
+      }
+      if(is_object($view)) $view->destroy();
     }
-  }
+  }//If the parent is a feature and it is disabled then lets not show this block or if views does not give access (usually using the feature access)
   
 }
