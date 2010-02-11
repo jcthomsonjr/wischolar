@@ -20,7 +20,7 @@ function iqss_pinserver_register_form_alter(&$form, $form_state, $form_id){ //dp
     $form['mail']['#description'] =  t('A valid e-mail address is required. All e-mails from the Scholar Web Sites Project will be sent to this address.');
 
      //if user is superuser then load additional fields
-  if (vsite_users_create_site_access()){
+  if (vsite_create_site_access()){
     $form['huid'] = array(
     '#type' => 'textfield',
     '#size' => 45,
@@ -70,7 +70,7 @@ function iqss_pinserver_register_notify($user, $vsite, $alter = TRUE){
   '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
-  $domain  =  $vsite -> purl; // TODO : What about custom domain ?? $user ->domain;
+  $domain  =  $vsite -> get_absolute_url();
   $scholar_site_url =  url($domain, $options = array('absolute' => TRUE));
   $timestamp = time();
 
@@ -102,16 +102,16 @@ function iqss_pinserver_register_notify($user, $vsite, $alter = TRUE){
  * Implementation of hook_menu_alter()
  */
 function iqss_pinserver_register_menu_alter(&$items){
- //alter the page callback function  
+  //alter the page callback function
   $items['site/register']['page callback'] = 'iqss_pinserver_register_form_access';  //change the callback function
   $items['site/register']['module'] = 'iqss_pinserver_register';
-  
+
   //values to remove
-  $remove_values = array('page arguments', 'file');  
+  $remove_values = array('page arguments', 'file');
   foreach($remove_values as $val){
-  unset($items['site/register'][$val]);
+    unset($items['site/register'][$val]);
   }
- // dpm($items['site/register']);
+  // dpm($items['site/register']);
 }
 
 /**
@@ -139,10 +139,12 @@ function iqss_pinserver_register_form_access(){
   }
 
   /*** Check what to do before loading scholarregister form ***/
+  
+
 
   //user is logged in and already owns a site
-  if($vsite = vsite_get_vsite_by_owner($user->uid)){
-    return iqss_pinserver_register_vsite_exists($vsite, $user->uid);
+  if(vsite_get_vsite_by_owner($user->uid)){
+     return scholarregister_form_process();
   }
 
   //maybe user is site owner,  but has not logged in locally or via the pinserver, so send to pinserver
@@ -152,9 +154,9 @@ function iqss_pinserver_register_form_access(){
 
   //user has successfully logged in via the pinserver
   if (pinserver_check_status()){
-    //determine if user already has a site
-    if($vsite = vsite_get_vsite_by_owner( iqss_pinserver_register_check_row())){
-      return iqss_pinserver_register_vsite_exists($vsite, $user->uid);
+    //user has just logged in via pinsever, determine if user already has a site
+    if($vsites = vsite_get_vsite_by_owner( iqss_pinserver_register_check_row())){
+      return scholarregister_form_process();
     }
     else {
       //user owns no web sites and has successfully logged in via the pinserver, show the form
@@ -162,43 +164,6 @@ function iqss_pinserver_register_form_access(){
     }
   }
 }
-
-/**
- * If this function is called then we know that the user already has a web site
- */
-function iqss_pinserver_register_vsite_exists($vsite, $uid){
-  $multple_sites=  variable_get('scholar_create_multiple_sites', 0);
-  
-  //remove the session vars
-  pinserver_remove_session();
-  
-  //user has owns one site
-  if (count($vsite) == 1){
-    switch ($multple_sites){
-      case 0:
-        return drupal_set_message(t('You already have a registered web site.' . l(' Go there now.', $vsite[0] ->get_absolute_url())));
-        break;
-
-      case 1:
-        return drupal_get_form('scholarregister_signup_form');
-        break;
-    }
-  }
-  
-  //user owns multiple sites
-    if (count($vsite) > 1) {
-      switch ($multple_sites){
-      case 0:
-        //this should never happen unless the $multiple_sites value is switched from 1 to 0 after site has been live
-        return  drupal_goto('user');
-        break;
-      case 1:
-        return drupal_get_form('scholarregister_signup_form');
-        break;              
-    }
-  }
-}
-
 
 /**
  * Called when registration form is submitted
@@ -227,16 +192,15 @@ function iqss_pinserver_register_submit($form, $form_state){
     // Regenerate the session ID to prevent against session fixation attacks.
     sess_regenerate();
 
-    //user_module_invoke('login', $edit, $user);   //need to call hook_user here???
- 
+    //need to call hook_user here???
+    //user_module_invoke('login', $edit, $user);   
+     
     //remove pinserver session vars
-    pinserver_remove_session();
-    
-    //need to clear messages???
+    pinserver_remove_session();    
+    //clear messages
     drupal_get_messages();
     //set message
     drupal_set_message(t("Your web site registration was successful! Your site is live and you are now logged in")); 
- 
     //re-direct user to home page
     drupal_goto($form_state['vsite'] -> purl . '/home');
   }
