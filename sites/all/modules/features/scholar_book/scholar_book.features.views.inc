@@ -271,7 +271,8 @@ function _scholar_book_views_default_views() {
     ),
   ));
   $handler->override_option('access', array(
-    'type' => 'none',
+    'type' => 'spaces_feature',
+    'spaces_feature' => 'scholar_book',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',
@@ -334,6 +335,12 @@ function _scholar_book_views_default_views() {
     'description' => '',
     'weight' => 0,
   ));
+  $handler = $view->new_display('block', 'Block', 'block_1');
+  $handler->override_option('items_per_page', 5);
+  $handler->override_option('use_more', 1);
+  $handler->override_option('use_more_always', 0);
+  $handler->override_option('block_description', 'Documents');
+  $handler->override_option('block_caching', -1);
 
   $views[$view->name] = $view;
 

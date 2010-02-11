@@ -23,6 +23,16 @@ function scholar_book_strongarm() {
   // Pathauto
   $conf["pathauto_node_book_pattern"] = "[space-og-path]/book/[title-raw]";
 
+  // vertical tabs
+  $conf['vertical_tabs_fieldsets_book'] =
+  array (
+    0 => 'menu',
+    2 => 'author',
+    3 => 'options',
+    5 => 'path',
+    6 => 'attachments',
+  );
+  
   return $conf;
 }
 
@@ -104,7 +114,7 @@ function scholar_book_spaces_settings() {
  */
 function scholar_book_form_alter(&$form, &$form_state, $form_id){
   
-  // Book mods
+  // alter book forms
   if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type)) {
     $node = $form['#node'];
     
@@ -142,4 +152,21 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
     }
   }
 
+}
+
+/**
+ *  Implementation of hook_vsite_sidgets().
+ */
+function scholar_book_vsite_widgets(){
+  $items = array();
+  $items['views_scholar_book-block_1'] = array(
+        'module' => 'views',
+        'delta' => 'scholar_book-block_1',
+        'weight' => 20,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Documents',
+        'type' => 'context_ui',
+      );
+  return $items;
 }
