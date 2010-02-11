@@ -163,7 +163,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       if ($form ['create_site_is_authenticated']['#value'] == 1){        
           install_include(array('user'));
           $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
-          install_add_user_to_role($uid, $rid); //need to add 'scholar admin' role         
+          install_add_user_to_role($user ->uid, $rid); //need to add 'scholar admin' role         
       }           
     }
   
