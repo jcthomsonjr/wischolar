@@ -64,13 +64,8 @@ function scholarregister_form_process(){
     if (!scholarregister_vsite_exists_access($vsites) && !$create_site_access){
       return drupal_goto(_scholarregister_get_redirect($vsites));  //redirect user away from the form
     }
-    else{
-      return drupal_get_form('scholarregister_signup_form'); //load the form
-    }
   }
-  else{
-    return drupal_get_form('scholarregister_signup_form'); //load the form
-  }
+  return drupal_get_form('scholarregister_signup_form'); //load the form
 }
 
 /**
