@@ -8,8 +8,7 @@ function scholarregister_menu(){
   $items = array();
   $items['site/register'] = array(
     'title' => 'Create your web site',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholarregister_signup_form'),
+    'page callback' => 'scholarregister_form_process',
     'file' => 'scholarregister.pages.inc',
     'access callback' => 'scholarregister_form_access',
   );
@@ -53,13 +52,35 @@ function scholarregister_form_access(){
 }
 
 /**
+ * Determine whether to redirect user or load form when trying to access registration form
+ */
+function scholarregister_form_process(){
+  global $user;
+  //check if user has create site permission
+  $create_site_access = vsite_create_site_access();
+
+  //check if user should be re-directed somewhere
+  if ($vsites = vsite_get_vsite_by_owner($user->uid)){
+    if (!scholarregister_vsite_exists_access($vsites) && !$create_site_access){
+      return drupal_goto(_scholarregister_get_redirect($vsites));  //redirect user away from the form
+    }
+    else{
+      return drupal_get_form('scholarregister_signup_form'); //load the form
+    }
+  }
+  else{
+    return drupal_get_form('scholarregister_signup_form'); //load the form
+  }
+}
+
+/**
  * Handles access rules for when site owner is attempting to create a another site
  * @return  boolean
  */
 function scholarregister_vsite_exists_access($vsites = array()){
   global $user;  
-  $superuser = vsite_users_create_site_access($user);  
-  if ($superuser) return true; // return true for superuser even if they own a site already
+  $create_site_access = vsite_create_site_access($user);  
+  if ($create_site_access) return true; // return true for superuser even if they own a site already
   
   //check global variable whether user can create multiple sites
   $multple_sites=  variable_get('scholar_create_multiple_sites', 0); //the default is one site only
@@ -90,11 +111,13 @@ function scholarregister_vsite_exists_access($vsites = array()){
 }
 
 /**
- * Provides redirect path and message for form access denied scenarios
+ * Provides redirect path and message for regsitration form access denied scenarios
+ * @param  $vsites array created from vsite_get_vsite_by_owner() 
  */
-function scholarregister_get_redirect($vsites = array()){
+function _scholarregister_get_redirect($vsites = array()){
   switch (count($vsites)){
     case 0:
+      error_log('scholarregister_get_redirect() was called with an empty array as the first argument');
       return null;
       break;
 
@@ -105,6 +128,7 @@ function scholarregister_get_redirect($vsites = array()){
       break;
 
     default:
+      drupal_set_message(t('You have already registered the maximum number of web sites.' ));
       return 'user';
       break;
   }
@@ -174,12 +198,12 @@ function scholarregister_validate_mail($mail) {
   }
   
   //THIS BLOCK SHOULD BE REMOVED AFTER NEXT RELEASE
-  if(!module_exists('pinserver')){
+  /*if(!module_exists('pinserver')){
     if (substr(trim($mail),-12) !== '.harvard.edu' && substr(trim($mail),-12) !== '@harvard.edu'
     && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '.hbs.edu'){
       return  'Please enter an harvard email address ';
     }
-  }
+  }*/
 }
 
 function scholarregister_validate_domain($domain){
@@ -245,6 +269,7 @@ function scholarregister_notify_user($vsite, $user){
     '!scholar_site_url' => $scholar_site_url,
     //'!login_url' => url("user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
     '!login_url' => user_pass_reset_url($user),
+    '!site_login_uri' => url($vsite -> purl . '/home', array('absolute' => TRUE)), 
     '!uri' => $base_url,
     '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
     '!mailto' => $user->mail,
@@ -263,7 +288,7 @@ function scholarregister_notify_user($vsite, $user){
   );
 
 
-  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url \n\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !login_uri in the future using:\n\nusername: !username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
+  $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !site_login_uri in the future using:\n\nusername: !username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
 
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
