@@ -19,9 +19,9 @@ function _scholar_book_context_default_contexts() {
     ),
     'menu' => 'documents',
     'block' => array(
-      'scholar_book_book' => array(
+      'scholar_book_booktoc' => array(
         'module' => 'scholar_book',
-        'delta' => 'book',
+        'delta' => 'booktoc',
         'weight' => 20,
         'region' => 'right',
         'status' => '0',

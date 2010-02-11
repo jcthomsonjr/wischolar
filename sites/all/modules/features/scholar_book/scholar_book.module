@@ -3,13 +3,38 @@
 include_once('scholar_book.features.inc');
 
 /**
+ * Implementation of hook_strongarm().
+ */
+function scholar_book_strongarm() {
+  // only book pages can be used in books
+  $conf['book_allowed_types'] = array('book');
+
+  $conf['node_options_book'] = array('status', 'revision');
+
+  $conf['upload_book'] = TRUE;
+
+  // Comments
+  $conf['comment_book'] = COMMENT_NODE_DISABLED;
+
+  // Disable Diff button
+  $conf["show_preview_changes_book"] = FALSE;
+  $conf["show_diff_inline_book"] = TRUE;
+
+  // Pathauto
+  $conf["pathauto_node_book_pattern"] = "[space-og-path]/book/[title-raw]";
+
+  return $conf;
+}
+
+
+/**
  * Implementation of hook_block().
  */
 function scholar_book_block($op = 'list', $delta = 0) {
   switch ($op) {
     case 'list':
       $blocks = array();
-      $blocks['book'] = array('info' => t('Scholar: Book'));
+      $blocks['booktoc'] = array('info' => t('Scholar: Book'));
       return $blocks;
     case 'view':
       $function = "_scholar_book_block_{$delta}";
@@ -20,11 +45,13 @@ function scholar_book_block($op = 'list', $delta = 0) {
   }
 }
 
-function _scholar_book_block_book() {
-  //context_set('atrium', 'book', 'rendering');
+/**
+ * callback function for "booktoc" block
+ */
+function _scholar_book_block_booktoc() {
 
   $block['subject'] = t('Documents');
-  $space = spaces_get_space();
+  $space = spaces_get_space();  // doesnt have to be vsite
   $block = array();
   if ($space) {
   	$node = menu_get_object();
@@ -34,22 +61,23 @@ function _scholar_book_block_book() {
       $block['content'] = $output;
     }
   }
-
-  //context_set('atrium', 'book', FALSE);
-
+  
   return $block;
 }
 
+/**
+ * Implementation of hook_nodeapi().
+ */
 function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
   switch ($op) {
     case 'view' :
-      // Book Navigation
+      // unset the book navigation links
       if (module_exists('book') && book_type_is_allowed($node->type)) {
         unset($node->content['book_navigation']);
       }
       
       if (menu_get_object() === $node) {
-        // Set the context for the root book node type when on a book child page
+        // set the context to the roob book node
         if (! empty($node->book['bid'])) {
           $type = db_result(db_query("SELECT type FROM {node} WHERE nid = %d", $node->book['bid']));
           context_set_by_condition('node', $type, TRUE);
@@ -58,63 +86,6 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
       break;
   }
 }
-
-/**
- * Implementation of hook_strongarm().
- */
-function scholar_book_strongarm() {
-  // Book
-  $conf['book_allowed_types'] = array('book');
-
-  $conf['node_options_book'] = array('status', 'revision');
-  //$conf['notifications_content_type_book'] = array('thread', 'grouptype', 'nodetype', 'author');
-  //$conf['og_notifications_content_types'][] = 'book';
-  $conf['upload_book'] = TRUE;
-
-  // Comments
-  $conf['comment_book'] = COMMENT_NODE_DISABLED;
-
-  // Disable Diff button
-  $conf["show_preview_changes_book"] = FALSE;
-  $conf["show_diff_inline_book"] = TRUE;
-
-  // Pathauto (optional) settings
-  $conf["pathauto_node_book_pattern"] = "[space-og-path]/book/[title-raw]";
-
-  return $conf;
-}
-
-/*
-function scholar_book_menu() {
-  $items = array();
-  $items['documents'] = array(
-    'title' => 'Documents',
-    'page callback' => 'scholar_book_overview',
-    'page arguments' => array(),
-    'access callback' => 'spaces_feature_access',
-    'access arguments' => array('scholar_book'),
-    'type' => MENU_NORMAL_ITEM,
-    'menu_name' => 'features'
-  );
-  return $items;
-}
-
-
-function scholar_book_overview() {
-  return views_embed_view('scholar_book_list', 'default');
-  
-  context_set('spaces', 'feature', 'book');
-  $space = spaces_get_space();
-  if (!empty($space->settings['scholar_book'])) {
-    $nid = $space->settings['scholar_book'];
-    if (is_numeric($nid) && $node = node_load($nid)) {
-      menu_set_active_item("node/{$node->nid}");
-      return node_view($node, FALSE, TRUE, TRUE);
-    }
-  }
-  return views_embed_view('scholar_book', 'page_1');
-}
-*/
 
 /**
  * Implementation of hook_spaces_settings().
