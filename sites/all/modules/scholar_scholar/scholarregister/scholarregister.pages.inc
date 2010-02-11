@@ -6,17 +6,9 @@
 function scholarregister_signup_form(){
   global $user;
   $form = array();
-    //check if user is superuser
-   $superuser = vsite_users_create_site_access();
-   
-    //check if user should be re-directed somewhere
-   if ($vsites = vsite_get_vsite_by_owner($user->uid)){
-     if (!scholarregister_vsite_exists_access($vsites) && !$superuser){
-       $form_state['redirect'] = scholarregister_get_redirect($vsites);
-       drupal_redirect_form($form, $form_state['redirect']);
-     }
-   }
-
+   //check if user is has create site permission
+  $create_site_access = vsite_create_site_access();   
+  
   drupal_add_css(drupal_get_path('module', 'scholarregister') . '/theme/scholarregister.css');
   
   // clear any drupal_messages. Ajax takes care of them
@@ -27,12 +19,12 @@ function scholarregister_signup_form(){
   $form['#suffix'] = '</div>';  
  
   //this is a current site owner creating another site, use existing account information when creating new site
-  if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1 && !$superuser){
+  if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1 && !$create_site_access){
     $form['create_multiple_sites']['#type'] = 'value';
     $form['create_multiple_sites']['#value'] = 1;   
   }
   //non site owner trying to create a site, use the existing user account information when creating the new site
-   elseif(!vsite_get_vsite_by_owner($user->uid) && in_array('authenticated user', $user -> roles) && !$superuser){
+   elseif(!vsite_get_vsite_by_owner($user->uid) && in_array('authenticated user', $user -> roles) && !$create_site_access){
     $form['create_site_is_authenticated']['#type'] = 'value';
     $form['create_site_is_authenticated']['#value'] = 1;   
   }
@@ -43,7 +35,7 @@ function scholarregister_signup_form(){
   $form['name'] = array(
       '#type' => 'textfield', 
       '#size' => 45, 
-      '#title' => ($superuser) ? t('Choose Site Owner\'s Username') : t('Desired user name'), 
+      '#title' => ($create_site_access) ? t('Choose Site Owner\'s Username') : t('Desired user name'), 
       '#required' => TRUE, 
       '#description' => t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores.'), 
       '#prefix' => '<div id="name-field">', 
@@ -55,7 +47,7 @@ function scholarregister_signup_form(){
   $form['mail'] = array(
       '#type' => 'textfield', 
       '#size' => 45, 
-      '#title' => ($superuser) ? t('Site Owner\'s email address') :  t('Your email address'), 
+      '#title' => ($create_site_access) ? t('Site Owner\'s email address') :  t('Your email address'), 
       '#required' => TRUE, 
       '#description' => t('A valid %harvard e-mail address is required. All e-mails from the Scholar Web Sites Project will be sent to this address.', array(
           '%harvard' => 'Harvard' 
@@ -71,7 +63,7 @@ function scholarregister_signup_form(){
   global $base_url;  
   $form['domain'] = array(
       '#type' => 'textfield', 
-      '#title' => ($superuser) ?  t('Select a Domain Name') :  t('Your Domain Name'), 
+      '#title' => ($create_site_access) ?  t('Select a Domain Name') :  t('Your Domain Name'), 
       '#required' => TRUE, 
       '#field_prefix' => $base_url . '/', 
       '#size' => 20, 
@@ -84,8 +76,8 @@ function scholarregister_signup_form(){
   );  
   ctools_ajax_associate_url_to_element($form, $form['domain'], url('scholarregister/domain_js'), 'ctools-use-ajax-onchange');  
   
-    //if user is superuser then load any additional fields (password, etc.)
-  if ($superuser){
+    //if user is user with special access then load any additional fields (password, etc.)
+  if ($create_site_access){
     $path = drupal_get_path('module', 'scholarregister');
     drupal_add_css($path .'/scholarregister.css', 'module', 'all', FALSE); 
     
@@ -114,7 +106,7 @@ function scholarregister_signup_form(){
       '#weight' => 20
       );
       
-    if (!$superuser){
+    if (!$create_site_access){
       $form['submit'] ['#attributes'] = array('class' => 'ctools-use-ajax' );
       $form['submit'] ['#suffix'] = '<div id="submit-suffix"></div>';
     }
@@ -160,7 +152,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
 
       //This if/else clause determines which user account to give owership when creating a new site 
      if ($form ['create_multiple_sites']['#value']  == 1 ||  $form ['create_site_is_authenticated']['#value'] == 1){
-      global $user;  //Will this work for super user? Yes, because these values would not be set if user is superuser.
+      global $user;
       $name = $user -> name;
       $mail  = $user -> mail;       
       ///this is a 'scholar user' user who is creating a site for first time
@@ -171,7 +163,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       }           
     }
   
-    //superuser or anonymous user creating a site. take the values in the form to create a new user and give site ownership
+    //user with special access or anonymous user creating a site. uses values in form to create new user and give site ownership
     else{
       $name = $form_state ['values'] ['name'];
       $mail = $form_state ['values'] ['mail'];
@@ -198,7 +190,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
 
   if (!$vsite){
     // first delete the user we just created
-    // user_delete($user, $user -> uid);  // TODO test this
+    // user_delete($user, $user -> uid); 
     $commands [] = _scholarregister_vsite_error();
     ctools_ajax_render ( $commands );
   }
@@ -206,7 +198,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   else{
     // site created successfully add the form values for additional submit fuctions
     $form_state['vsite'] = $vsite;
-    // 3. send e-mail to the user (unless specified not to by super user) 
+    // 3. send e-mail to the user (unless specified not to by user with special access) 
     $send_mail =  (!$form_state ['values'] ['send_mail'] || $form_state ['values'] ['send_mail'] === 1) ? scholarregister_notify_user($vsite, $user) : FALSE;
     
   // 4. let user know this was all sucessful
@@ -231,11 +223,11 @@ content.</p>';
     }
   }
 
-  //additional tasks and workflow if super user is creating site
-  if (vsite_users_create_site_access()){
+  //additional tasks and workflow if user with special access is creating site
+  if (vsite_create_site_access()){
     if($vsite){
       global $user;
-      //give super user adminstrative rights to site
+      //give user admin rights to site
       og_save_subscription($vsite->sid, $user->uid, array('is_active' => 1, 'is_admin' => 1));
       // unset any messages
       drupal_get_messages();
