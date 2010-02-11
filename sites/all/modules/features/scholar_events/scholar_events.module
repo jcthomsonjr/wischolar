@@ -9,6 +9,10 @@ include_once('scholar_events.features.inc');
  */
 function scholar_events_strongarm() {
   $conf = array();
+  
+  // looks like Monday should be the first day of the week for calendar
+  // to work correctly (display)
+  $conf['date_first_day'] = '1';
 
   foreach (array('event') as $type) {
 
