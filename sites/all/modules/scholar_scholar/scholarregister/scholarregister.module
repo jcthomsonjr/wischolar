@@ -131,6 +131,28 @@ function _scholarregister_get_redirect($vsites = array()){
 }
 
 /**
+ * Private function - adds name and email values as items in registration form.
+ */
+function _scholarregister_add_form_items(&$form){
+  global $user;
+   //TODO: alter div id's??
+  $form['name'] = array(
+  '#type' => 'item',
+  '#title' =>  t('Your username'),
+  '#value' => $user -> name,
+  '#prefix' => '<div id="name-item">',
+  '#suffix' => '</div>',
+  );
+  $form['mail'] = array(
+  '#type' => 'item',
+  '#title' =>  t('Your email address'),
+  '#value' => $user -> mail,
+  '#prefix' => '<div id="mail-item">',
+  '#suffix' => '</div>',
+  );
+}
+
+/**
  * ajax callback for name
  */
 function scholarregister_name_js() {
@@ -215,7 +237,6 @@ function scholarregister_validate_domain($domain){
     return "domain \"$domain\" is taken or invalid";
   }
 }
-
 
 /**
  * wrapper function for executing ajax commands
