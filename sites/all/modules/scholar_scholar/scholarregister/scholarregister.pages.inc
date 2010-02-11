@@ -7,7 +7,7 @@ function scholarregister_signup_form(){
   global $user;
   $form = array();
    //check if user is has create site permission
-  $create_site_access = vsite_create_site_access();   
+  $create_site_access = node_access('create', variable_get('scholar_content_type', 'vsite'));
   
   drupal_add_css(drupal_get_path('module', 'scholarregister') . '/theme/scholarregister.css');
   
@@ -231,7 +231,7 @@ content.</p>';
   }
 
   //additional tasks and workflow if user with special access is creating site
-  if (vsite_create_site_access()){
+  if (node_access('create', variable_get('scholar_content_type', 'vsite'))){
     if($vsite){
       global $user;
       //give user admin rights to site
