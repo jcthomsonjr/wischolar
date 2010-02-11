@@ -60,12 +60,13 @@ function scholar_book_block($op = 'list', $delta = 0) {
  */
 function _scholar_book_block_booktoc() {
 
-  $block['subject'] = t('Documents');
+
   $space = spaces_get_space();  // doesnt have to be vsite
   $block = array();
   if ($space) {
   	$node = menu_get_object();
     if ($node && book_type_is_allowed($node->type)) {
+      $block['subject'] = 'Documents';
       $output = '';
       $output .= menu_tree(book_menu_name($node->book['bid']));
       $block['content'] = $output;
@@ -160,13 +161,13 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
 function scholar_book_vsite_widgets(){
   $items = array();
   $items['views_scholar_book-block_1'] = array(
-        'module' => 'views',
-        'delta' => 'scholar_book-block_1',
-        'weight' => 20,
-        'region' => false,
-        'status' => '0',
-        'label' => 'Documents',
-        'type' => 'context_ui',
+      'module' => 'views',
+      'delta' => 'scholar_books-block_1',
+      'weight' => 21,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Documents',
+      'type' => 'context_ui',
       );
   return $items;
 }

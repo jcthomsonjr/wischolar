@@ -336,10 +336,11 @@ function _scholar_book_views_default_views() {
     'weight' => 0,
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
+  $handler->override_option('title', 'Recent Documents');
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_more', 1);
   $handler->override_option('use_more_always', 0);
-  $handler->override_option('block_description', 'Documents');
+  $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
 
   $views[$view->name] = $view;

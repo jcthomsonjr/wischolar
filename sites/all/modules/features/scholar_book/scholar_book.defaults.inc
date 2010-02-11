@@ -28,15 +28,6 @@ function _scholar_book_context_default_contexts() {
         'label' => 'Scholar: Book',
         'type' => 'context_ui',
       ),
-      'views_scholar_books-block_1' => array(
-        'module' => 'views',
-        'delta' => 'scholar_books-block_1',
-        'weight' => 21,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Documents',
-        'type' => 'context_ui',
-      ),
     ),
   );
   return $items;
