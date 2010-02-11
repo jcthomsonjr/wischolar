@@ -21,12 +21,16 @@ function scholarregister_signup_form(){
   //this is a current site owner creating another site, use existing account information when creating new site
   if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1 && !$create_site_access){
     $form['create_multiple_sites']['#type'] = 'value';
-    $form['create_multiple_sites']['#value'] = 1;   
+    $form['create_multiple_sites']['#value'] = 1; 
+    
+    _scholarregister_add_form_items($form);  
   }
   //non site owner trying to create a site, use the existing user account information when creating the new site
    elseif(!vsite_get_vsite_by_owner($user->uid) && in_array('authenticated user', $user -> roles) && !$create_site_access){
     $form['create_site_is_authenticated']['#type'] = 'value';
     $form['create_site_is_authenticated']['#value'] = 1;   
+    
+    _scholarregister_add_form_items($form);    
   }
   
   // otherwise this is an anonymouse user, show the normal form
@@ -206,10 +210,13 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     $commands = array ();
     global $base_url;
     $message  = '<div id="success-message">';
-    $message .= '<p>Success! Your site has been created.</p>';
+    $message .= '<p>Success! Your new site has been created.</p>';
     $message .= '<p>The url of your site is ' . $base_url . '/' . $domain . " " . l(t("Go there now"), $base_url . '/' . $domain);
+    if ($form ['create_multiple_sites']['#value']  !== 1 && in_array('authenticated user', $user -> roles)){ 
+     // don't t send this if user is authenticated user
     $message .= '<p>Check your email account for further details on how to login in to start adding features and
 content.</p>';
+    }
     $message .= '</div>';
     $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
     $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true);
