@@ -139,7 +139,6 @@ function scholarregister_name_js() {
   if ($error = scholarregister_validate_name($name)){
     scholarregister_ctools_message('#name-suffix', $error, 'error');
   }
-  
   // username is available
   scholarregister_ctools_message('#name-suffix', "available", 'status');
 }
@@ -242,16 +241,7 @@ function scholarregister_notify_user($vsite, $user){
      //add vsite and user object
    $params['vsite'] = $vsite;
    $params['user'] = $user;
-  
-  // change users password
-  /*
-  $password = user_password();
-  $edit = array(
-    'pass' => $password
-  );
-  user_save($user, $edit);
-  */
-  $params['subject'] = t("A Scholars' Web Site has been created for you", array(
+   $params['subject'] = t("A Scholars' Web Site has been created for you", array(
     '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
@@ -259,11 +249,9 @@ function scholarregister_notify_user($vsite, $user){
   $timestamp = time();
   
   $msg_variables = array(
-    // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
     '!username' => $user->name,
     '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
     '!scholar_site_url' => $scholar_site_url,
-    //'!login_url' => url("user/reset/$user->uid/$timestamp/". user_pass_rehash($user->pass, $timestamp, $user->login), array('absolute' => TRUE)),
     '!login_url' => user_pass_reset_url($user),
     '!site_login_uri' => url($vsite -> purl . '/home', array('absolute' => TRUE)), 
     '!uri' => $base_url,
@@ -283,7 +271,6 @@ function scholarregister_notify_user($vsite, $user){
     '!password' => $password
   );
 
-
   $body .= t("Hi !username,\n\nYour web site at !site has been activated.\n\nYour web site url is !scholar_site_url\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !site_login_uri in the future using:\n\nusername: !username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
 
   $params['body'] = $body;
@@ -292,7 +279,9 @@ function scholarregister_notify_user($vsite, $user){
   }
 }
 
-
+/**
+ * Implementation of hook_mail()
+ */
 function scholarregister_mail($key, &$message, $params) {
   $message['subject'] = $params['subject'];
   $message['body'] = $params['body'];
