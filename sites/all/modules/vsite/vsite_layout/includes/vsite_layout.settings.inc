@@ -93,8 +93,7 @@ class vsite_layout_settings_layout implements space_setting {
 	      if(is_array($space->settings['layout']) && array_key_exists('all',$space->settings['layout'])){
 	        $a_prev_settings = $space->settings['layout'][$s_page_type];
 	      }else{
-	        $a_prev_settings = _vsite_layout_generate_default_settings_ary();
-	        foreach($a_prev_settings as $nm => $rgn) if($rgn == false) unset($a_prev_settings[$nm]);
+	        $a_prev_settings = _vsite_layout_generate_default_settings_ary('all',false);
 	      }//Use saved settings or default settings
 	      $a_new_all_wgts = array_diff(array_keys($setting),array_keys($a_prev_settings));
 	      $a_rem_all_wgts = array_diff(array_keys($a_prev_settings),array_keys($setting));

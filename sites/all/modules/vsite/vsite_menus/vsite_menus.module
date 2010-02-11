@@ -242,6 +242,7 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id){
 	    $form['menu']['parent']['#options'] = $a_choices;
 	    $form['menu']['parent']['#description'] = "Select the menu where you would like this entry to show";
 	    unset($form['menu']['hidden']);
+	    $form['menu']['weight']['#type'] = 'value'; //Make the weight hidden
 	    
 	    if (module_exists('path')) {
 		    $form['path']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));

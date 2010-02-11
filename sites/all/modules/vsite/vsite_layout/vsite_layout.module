@@ -401,13 +401,17 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
  * Create a default settings array from defaults
  *
  * @param string $s_page_type
+ * @param bool   $b_include_regionless  include widgets without regions
  * @return array
  */
-function _vsite_layout_generate_default_settings_ary($s_page_type = 'all'){
+function _vsite_layout_generate_default_settings_ary($s_page_type = 'all', $b_include_regionless = true){
   $a_default = array();
 
   $a_widgets = vsite_layout_filtered_widgets($s_page_type);
-  foreach ($a_widgets as $s_setting_id => $widget) $a_default[$s_setting_id] = $widget['region'];
+  foreach ($a_widgets as $s_setting_id => $widget){
+  	if(!$b_include_regionless && $widget['region'] == false) continue;
+  	$a_default[$s_setting_id] = $widget['region'];
+  } 
 
   return $a_default;
 }
@@ -480,4 +484,38 @@ function _check_for_disabled_widgets(&$widgets, $a_feature_contexts, $space = nu
     }
   }//If the parent is a feature and it is disabled then lets not show this block or if views does not give access (usually using the feature access)
   
+}
+
+/**
+ * hook form_alter
+ */
+function vsite_layout_form_alter(&$form, &$form_state, $form_id) {
+
+	//Add extra submit handler to spaces_features_form
+  if (arg(0) == 'cp' && $form_id == 'spaces_features_form'){
+  	if(!is_array($form['#submit'])) $form['#submit'] = array();
+  	array_push($form['#submit'],'vsite_layout_spaces_features_form');
+  }//End  spaces_features_form
+}
+
+/**
+ * Submit handler to handle setting up default layout for new features
+ */
+function vsite_layout_spaces_features_form($form, &$form_state){
+	if (empty($form_state['values']['features'])) return; //Are there features to act on?
+  
+  // Retrieve the space object from the form
+  $space = $form_state['values']['space'];
+  if(!array_key_exists('layout',$space->settings) || !array_key_exists('all',$space->settings['layout'])) return;  //Do we have default layout settings?
+  
+  $b_save = false;
+  foreach ($form_state['values']['features'] as $s_feature_name => $n_privacy) {
+    if(!in_array($n_privacy,array(SPACES_OG_PUBLIC,SPACES_OG_PRIVATE)) || array_key_exists($s_feature_name,$space->settings['layout'])) continue; //If it is disabled or already has setings skip it
+    
+    $a_default = _vsite_layout_generate_default_settings_ary($s_feature_name,false);
+    $space->settings['layout'][$s_feature_name] = array_merge($a_default,$space->settings['layout']['all']); //Combine default and all settings
+    $b_save = true;
+  }
+  
+  if($b_save) spaces_save($space); //Save changes if we made them 
 }

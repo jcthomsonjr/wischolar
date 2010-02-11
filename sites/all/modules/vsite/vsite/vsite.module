@@ -519,17 +519,27 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
         if(module_exists('override_node_options') && array_key_exists('revision_information',$form) && array_key_exists('options',$form)){
         	$form['options']['#access'] = true;
         	
+        	ctools_include('dependent');
           if(array_key_exists('log',$form['revision_information'])){
           	$form['options']['log'] = $form['revision_information']['log'];
+          	$form['options']['log']['#weight'] = 5;
+          	$form['options']['log']['#process'] = array('ctools_dependent_process');
+          	$form['options']['log']['#dependency'] = array('edit-revision-1' => array(1));
           	if(!is_array($form['#validate'])) $form['#validate'] = array();
           	if(!in_array('cp_validate_node_flags',$form['#validate'])) $form['#validate'][] = 'vsite_validate_node_flags';
           }//Add the description box for new revision
           
           if(array_key_exists('revision',$form['revision_information'])){
             $form['options']['revision'] = $form['revision_information']['revision'];
+            $form['options']['revision']['#weight'] = 4;
+            $form['options']['revision']['#default_value'] = false;
+            $form['options']['revision']['#description'] = "Create a new revision and your existing version will be saved in case you need it for reference or you need to revert to it.";
             $form['options']['revision']['#access'] = user_access('view revisions');
             if(!is_array($form['#validate'])) $form['#validate'] = array();
           }//Add the "new revision" checkbox
+          
+          $form['options']['sticky']['#description'] = "Sticky posts stay at the top of lists with non-sticky items ordered below them";
+          
           
         	_spaces_og_make_hidden($form['revision_information']);
         }//Move the revision information under the options tab
