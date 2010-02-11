@@ -2,7 +2,62 @@
 
 include_once('scholar_book.features.inc');
 
+/**
+ * Implementation of hook_block().
+ */
+function scholar_book_block($op = 'list', $delta = 0) {
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      $blocks['book'] = array('info' => t('Scholar: Book'));
+      return $blocks;
+    case 'view':
+      $function = "_scholar_book_block_{$delta}";
+      if (function_exists($function)) {
+        return call_user_func($function);
+      }
+      break;
+  }
+}
 
+function _scholar_book_block_book() {
+  //context_set('atrium', 'book', 'rendering');
+
+  $block['subject'] = t('Documents');
+  $space = spaces_get_space();
+  $block = array();
+  if ($space) {
+  	$node = menu_get_object();
+    if ($node && book_type_is_allowed($node->type)) {
+      $output = '';
+      $output .= menu_tree(book_menu_name($node->book['bid']));
+      $block['content'] = $output;
+    }
+  }
+
+  //context_set('atrium', 'book', FALSE);
+
+  return $block;
+}
+
+function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
+  switch ($op) {
+    case 'view' :
+      // Book Navigation
+      if (module_exists('book') && book_type_is_allowed($node->type)) {
+        unset($node->content['book_navigation']);
+      }
+      
+      if (menu_get_object() === $node) {
+        // Set the context for the root book node type when on a book child page
+        if (! empty($node->book['bid'])) {
+          $type = db_result(db_query("SELECT type FROM {node} WHERE nid = %d", $node->book['bid']));
+          context_set_by_condition('node', $type, TRUE);
+        }
+      }
+      break;
+  }
+}
 
 /**
  * Implementation of hook_strongarm().
@@ -19,18 +74,9 @@ function scholar_book_strongarm() {
   // Comments
   $conf['comment_book'] = COMMENT_NODE_DISABLED;
 
-  // FeedAPI
-  //$conf['feedapi_settings_book'] = array('enabled' => FALSE);
-
   // Disable Diff button
   $conf["show_preview_changes_book"] = FALSE;
   $conf["show_diff_inline_book"] = TRUE;
-
-  // Make archivable
-  //$conf['atrium_archivable'] = array('book');
-
-  // Enable for recent activity views
-  //$conf['atrium_update_type_book'] = TRUE;
 
   // Pathauto (optional) settings
   $conf["pathauto_node_book_pattern"] = "[space-og-path]/book/[title-raw]";

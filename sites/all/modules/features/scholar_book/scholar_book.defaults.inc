@@ -18,6 +18,17 @@ function _scholar_book_context_default_contexts() {
       '0' => 'scholar_books',
     ),
     'menu' => 'documents',
+    'block' => array(
+      'scholar_book_book' => array(
+        'module' => 'scholar_book',
+        'delta' => 'book',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar: Book',
+        'type' => 'context_ui',
+      ),
+    ),
   );
   return $items;
 }
