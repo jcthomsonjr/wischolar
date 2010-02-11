@@ -106,12 +106,13 @@ function scholarregister_vsite_exists_access($vsites = array()){
 }
 
 /**
- * Provides redirect path and message for regsitration form access denied scenarios
+ * Private function - Provides redirect path and message for certain regstration form access conditions
  * @param  $vsites array created from vsite_get_vsite_by_owner() 
  */
 function _scholarregister_get_redirect($vsites = array()){
   switch (count($vsites)){
     case 0:
+      //This should not happen unless $vsites was not passed properly or is empty array
       error_log('scholarregister_get_redirect() was called with an empty array as the first argument');
       return null;
       break;
