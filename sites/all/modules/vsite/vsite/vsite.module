@@ -402,16 +402,6 @@ function vsite_get_vsite_by_owner($uid = NULL){
 }
 
 /**
- *  Check if user has access to create sites.
- * @return  boolean
- */
-function vsite_create_site_access($account = NULL){
-  $permission = 'create ' . variable_get('scholar_content_type', 'vsite') . ' content';
-  return user_access($permission, $account);
-}
-
-
-/**
  * API function for testing wether we are on the front page of a vsite
  * TODO there are different ways of doing this
  * - as a full context "context_vsite_home" which has blocks etc
@@ -422,7 +412,6 @@ function vsite_is_front(){
   $active_menu = menu_get_item();
   return ($vsite && $active_menu['path'] == 'home') ? TRUE : FALSE;
 }
-
 
 /**
  * hook preprocess page
