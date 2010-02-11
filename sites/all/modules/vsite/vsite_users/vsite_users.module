@@ -634,11 +634,3 @@ function vsite_users_vsite_generic_settings($space, $value = array()){
   return $a_settings;
 }
 
-/**
- * Check if user has access to create sites . This function can be used
- * to check if current user has superuser access
- */
-function vsite_users_create_site_access($account = NULL){
-  $permission = 'create ' . variable_get('scholar_content_type', 'vsite') . ' content';
-  return user_access($permission, $account);
-}
