@@ -57,7 +57,7 @@ function scholarregister_form_access(){
 function scholarregister_form_process(){
   global $user;
   //check if user has create site permission
-  $create_site_access = vsite_create_site_access();
+  $create_site_access = node_access('create', variable_get('scholar_content_type', 'vsite'));
 
   //check if user should be re-directed somewhere
   if ($vsites = vsite_get_vsite_by_owner($user->uid)){
@@ -73,10 +73,11 @@ function scholarregister_form_process(){
  * @return  boolean
  */
 function scholarregister_vsite_exists_access($vsites = array()){
-  global $user;  
-  $create_site_access = vsite_create_site_access($user);  
-  if ($create_site_access) return true; // return true for superuser even if they own a site already
-  
+  //if user has permissions to create sites, return true
+  if ( node_access('create', variable_get('scholar_content_type', 'vsite' ))) {
+    return true;
+  }
+
   //check global variable whether user can create multiple sites
   $multple_sites=  variable_get('scholar_create_multiple_sites', 0); //the default is one site only
 
@@ -92,15 +93,15 @@ function scholarregister_vsite_exists_access($vsites = array()){
     }
   }
   //user owns multiple sites
-    if (count($vsites) > 1) {
-      switch ($multple_sites){
+  if (count($vsites) > 1) {
+    switch ($multple_sites){
       case 0:
         //this should never happen unless the $multiple_sites value is switched from 1 to 0 after site has been live
-        return  false; 
+        return  false;
         break;
       case 1:
         return  true;
-        break;              
+        break;
     }
   }
 }
