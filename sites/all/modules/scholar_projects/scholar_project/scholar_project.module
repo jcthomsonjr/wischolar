@@ -48,6 +48,15 @@ function scholar_project_strongarm(){
   
   // site front page
   //$conf['site_frontpage'] = 'scholar_projects_home';
+  
+  // project node settings
+  $conf['upload_project'] = FALSE;
+  
+  $conf["show_preview_changes_project"] = FALSE;
+  $conf["show_diff_inline_project"] = FALSE;
+ 
+  // Comments
+  $conf['comment_project'] = COMMENT_NODE_DISABLED;
   return $conf;
 }
 
