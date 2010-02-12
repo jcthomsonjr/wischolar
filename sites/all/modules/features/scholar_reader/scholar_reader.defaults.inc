@@ -333,13 +333,17 @@ function _scholar_reader_user_default_permissions() {
   // Exported permission: override feed promote to front page option
   $permissions[] = array(
     'name' => 'override feed promote to front page option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
 
   // Exported permission: override feed published option
   $permissions[] = array(
     'name' => 'override feed published option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
 
   // Exported permission: override feed revision option
@@ -351,7 +355,9 @@ function _scholar_reader_user_default_permissions() {
   // Exported permission: override feed sticky option
   $permissions[] = array(
     'name' => 'override feed sticky option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
   );
 
   return $permissions;
