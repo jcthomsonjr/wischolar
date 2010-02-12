@@ -111,11 +111,13 @@ function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $tr
            WHERE m.plid = '%d'  AND n.status = 1
            ORDER by m.weight, n.title
            ";
+    
+    $content = "<ul>";
     $children = db_query(db_rewrite_sql($sql), $mlid);
     //Do we need to show the root ?
-    if ($mlid != $mlid_start) {
+    //if ($mlid != $mlid_start) {
       $content .= "<li class=\"booktoc tree-level-". ($step - 1) ."\">" . l(truncate_utf8($tit, $trimval, TRUE, TRUE), 'node/'. $nid , $attributes = array(), $query = NULL, $fragment = NULL, $absolute = FALSE, $html = FALSE );
-    }
+    //}
     $step++;
     while ($child = db_fetch_object($children)) {
       $c .= _scholar_book_recursive($child->mlid, $child->nid, $child->title, $step, $max_recursions, $trimval, $mlid_start);
@@ -125,7 +127,7 @@ function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $tr
       $content .= "<ul class=\"booktoc\">\n". $c ."</ul>\n"; 
     }
     $output .= '</li>';
-    //$content .= "</ul>";
+    $content .= "</ul>";
     return $content;
   }
   else {
