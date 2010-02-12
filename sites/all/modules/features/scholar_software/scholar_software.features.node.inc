@@ -8,11 +8,13 @@ function _scholar_software_node_info() {
     'software' => array(
       'name' => t('Software'),
       'module' => 'features',
-      'description' => t(''),
+      'description' => '',
       'has_title' => '1',
       'title_label' => t('Title'),
       'has_body' => '1',
       'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
     ),
   );
   return $items;
