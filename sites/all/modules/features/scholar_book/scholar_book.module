@@ -63,6 +63,7 @@ function scholar_book_block($op = 'list', $delta = 0) {
 /**
  * callback function for "booktoc" block
  */
+/*
 function _scholar_book_block_booktoc() {
 
   $space = spaces_get_space();  // doesnt have to be vsite
@@ -79,6 +80,57 @@ function _scholar_book_block_booktoc() {
   
   return $block;
 }
+*/
+
+function _scholar_book_block_booktoc() {
+  $space = spaces_get_space();  // doesnt have to be vsite
+  $block = array();
+  if ($space) {
+  	$node = menu_get_object();
+  	$node = node_load($node -> book['bid']);
+
+    if ($node && book_type_is_allowed($node->type)) {
+      $block['subject'] = 'Table of Content';
+      $output = '';
+      $max_recursions = variable_get('booktoc_deep', 5)+2;
+      $output .= _scholar_book_recursive($node->book['mlid'], $node->nid, $node->title, 1, $max_recursions, 256, $node->book['mlid']);
+      $block['content'] = $output;
+    }
+  }
+  
+  return $block;  
+}
+
+function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $trimval, $mlid_start) {
+  if ($step<$max_recursions) {
+    $sql= "SELECT DISTINCT n.nid as nid, m.plid as plid, m.mlid as mlid,  n.title as title ,m.weight 
+           FROM {book} as b
+           inner join {menu_links} as m ON b.mlid = m.mlid
+           inner join {node} as n ON n.nid = b.nid
+           WHERE m.plid = '%d'  AND n.status = 1
+           ORDER by m.weight, n.title
+           ";
+    $children = db_query(db_rewrite_sql($sql), $mlid);
+    //Do we need to show the root ?
+    //if ($mlid != $mlid_start) {
+      $content .= "<li class=\"booktoc tree-level-". ($step - 1) ."\">" . l(truncate_utf8($tit, $trimval, TRUE, TRUE), 'node/'. $nid , $attributes = array(), $query = NULL, $fragment = NULL, $absolute = FALSE, $html = FALSE ) ."</li>";
+   // }
+    $step++;
+    while ($child = db_fetch_object($children)) {
+      $c .= _scholar_book_recursive($child->mlid, $child->nid, $child->title, $step, $max_recursions, $trimval, $mlid_start);
+    }
+    //now write content only if necessary 
+    if (strlen($c) > 2) {
+      $content .= "<ul class=\"booktoc\">\n". $c ."</ul>\n"; 
+    }
+    return $content;
+  }
+  else {
+    return '';
+  }
+}
+
+
 
 /**
  * Implementation of hook_nodeapi().
