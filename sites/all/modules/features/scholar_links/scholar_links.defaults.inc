@@ -193,5 +193,35 @@ function _scholar_links_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override link promote to front page option
+  $permissions[] = array(
+    'name' => 'override link promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override link published option
+  $permissions[] = array(
+    'name' => 'override link published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override link revision option
+  $permissions[] = array(
+    'name' => 'override link revision option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override link sticky option
+  $permissions[] = array(
+    'name' => 'override link sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   return $permissions;
 }
