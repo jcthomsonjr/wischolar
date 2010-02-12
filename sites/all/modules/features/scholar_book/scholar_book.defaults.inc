@@ -54,3 +54,84 @@ function _scholar_book_menu_default_items() {
 
   return $items;
 }
+
+/**
+ * Helper to implementation of hook_user_default_permissions().
+ */
+function _scholar_book_user_default_permissions() {
+  $permissions = array();
+
+  // Exported permission: add content to books
+  $permissions[] = array(
+    'name' => 'add content to books',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: create book content
+  $permissions[] = array(
+    'name' => 'create book content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: create new books
+  $permissions[] = array(
+    'name' => 'create new books',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: delete own book content
+  $permissions[] = array(
+    'name' => 'delete own book content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: edit own book content
+  $permissions[] = array(
+    'name' => 'edit own book content',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override book promote to front page option
+  $permissions[] = array(
+    'name' => 'override book promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override book published option
+  $permissions[] = array(
+    'name' => 'override book published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override book revision option
+  $permissions[] = array(
+    'name' => 'override book revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override book sticky option
+  $permissions[] = array(
+    'name' => 'override book sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
+  return $permissions;
+}
