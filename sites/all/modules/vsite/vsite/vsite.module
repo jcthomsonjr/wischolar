@@ -414,6 +414,17 @@ function vsite_is_front(){
 }
 
 /**
+ * Implementation of hook_preprocess_node()
+ */
+function vsite_preprocess_node(&$vars){
+  $node = $vars['node'];
+  
+  // we dont print "submitted" info unless the feature explicitely asks
+  if (!variable_get('node_submitted_info_' . $node -> type, FALSE)){
+    $vars['submitted'] = '';
+  }
+}
+/**
  * hook preprocess page
  */
 function vsite_preprocess_page(&$vars){
