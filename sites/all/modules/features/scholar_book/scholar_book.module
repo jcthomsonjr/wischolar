@@ -2,6 +2,11 @@
 
 include_once('scholar_book.features.inc');
 
+function scholar_book_init(){
+  drupal_add_css(drupal_get_path('module', 'scholar_book') .'/scholar-book.css');
+}
+
+
 /**
  * Implementation of hook_strongarm().
  */
