@@ -183,7 +183,8 @@ function scholar_publications_overview(){
   $page_title = (is_array($vsite->customizer['menu']) && isset($vsite->customizer['menu']['publications'])) ? $vsite->customizer['menu']['publications'] : "Publications";
   variable_set('biblio_base_title', $page_title);
         
-  $s_bib_out =  biblio_db_search();
+  $a_args = func_get_args();
+  $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
   
   global $pager_total_items;
   if(is_array($pager_total_items) && $pager_total_items[0] > 0){
@@ -267,6 +268,21 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
   }
 }
 
+/**
+ * Define the scholar publication blocks with hook block
+ */
+function scholar_publications_block($op = 'list', $delta = false, $edit = array()) {
+  if ($op == 'list') {
+    $blocks['co_authors']['info'] = t('Co-Authors List');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 'co_authors':
+        return _scholar_publications_co_author_wgt();
+    }
+  }
+}
 
 /**
  * hook vsite_sidgets
@@ -281,6 +297,16 @@ function scholar_publications_vsite_widgets(){
         'region' => false,
         'status' => '0',
         'label' => 'Recent publications',
+        'type' => 'context_ui',
+      );
+      
+  $items['scholar_publications_co_authors'] = array(
+        'module' => 'scholar_publications',
+        'delta' => 'co_authors',
+        'weight' => 20,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Co-Authors List',
         'type' => 'context_ui',
       );
   return $items;
@@ -420,4 +446,51 @@ function _scholar_publications_add_owner_checkbox(&$form_element){
 	}
 }
 
+/**
+ * Block information for the co-author widget
+ * @return unknown_type
+ */
+function _scholar_publications_co_author_wgt(){
+	$vsite = vsite_get_vsite();
+  $result = db_query_range("SELECT bcd.name as name, COUNT(*) as num_site_publications, (SELECT COUNT(*) FROM {biblio_contributor_data} s_bcd INNER JOIN {biblio_contributor} s_bc ON s_bc.cid = s_bcd.cid WHERE s_bcd.cid = bcd.cid) as total_publications, bcd.drupal_uid as uid, bcd.cid as cid  
+                                     FROM {biblio_contributor_data} bcd
+                                     INNER JOIN {biblio_contributor} bc ON bc.cid = bcd.cid
+                                     INNER JOIN {og_ancestry} oa ON oa.nid = bc.nid
+                                     WHERE oa.group_nid = %d AND (bcd.drupal_uid IS NULL OR bcd.drupal_uid != %d)
+                                     GROUP BY bcd.cid ORDER BY lastname ASC  ", array($vsite->group->nid, $vsite->group->uid), 0, 10);
+  $b_show = false;
+  $output = "<ul class='co_authors'>";
+  while ($data = db_fetch_object($result)) {
+  	$b_show = true;
+  	$owner_site = false;
+  	$s_site_url = false;
+  	if($data->uid){
+  		$target_site = vsite_get_vsite_by_owner($data->uid);
+  		if(count($target_site) && ($owner_site = array_shift($target_site))) $s_site_url = $owner_site->get_absolute_url('publications');
+  	}
+  	
+  	$s_pub_by_site = '';
+  	if($data->total_publications>$data->num_site_publications){
+  	   $sub_result =  db_query_range("SELECT COUNT(*) as num_pub, oa.group_nid as sid FROM {biblio_contributor} bc INNER JOIN {og_ancestry} oa ON oa.nid = bc.nid WHERE bc.cid = %d AND oa.group_nid != %d GROUP BY oa.group_nid ORDER  BY num_pub DESC", array($data->cid,$vsite->group->nid), 0, 7);
+  	   while ($pub_count = db_fetch_object($sub_result)) {
+  	     $space =  spaces_load('og', $pub_count->sid);	 
+  	     if(is_object($space)){
+  	       $s_site_name = ($owner_site && $owner_site->group->nid == $pub_count->sid)?'their site':"site ({$space->group->title})";
+  	       $s_pub_by_site .= "<li>".l("{$pub_count->num_pub} pub.",$space->get_absolute_url("publications/author/".$data->cid),array('attributes' => array("target" => "_blank")))." on {$s_site_name}</li>";
+  	     }	
+  	   }
+  	}
+  	
+  	$output .= "\n<li>"
+  	            ."<a hreft='#' class='more' onClick=\"$(this).siblings('ul.more_co_author_info').slideToggle('slow',function(){ $(this).siblings('a.more').html((this.style.display == 'none')?'[+]':'[-]')}); return false;\">[+]</a> "
+  	            .($s_site_url?l($data->name,$s_site_url,array('attributes' => array("target" => "_blank"))):$data->name)
+  	            ."<ul class='more_co_author_info' style=\"display:none;\">"
+  	              ."<li>".l("{$data->num_site_publications} pub.","publications/author/".$data->cid)." on this site</li>"
+  	              .$s_pub_by_site
+  	            ."</ul></li>";
+  }
+  $output .= "</ul>";
+  
+  return $b_show?array('subject' => "Co-Authors",'content' => $output):array();
+}
 

@@ -374,14 +374,7 @@ function vsite_get_vsite_by_owner($uid = NULL){
     $sites[] = $res['nid'];
   }
 
-  switch (count($sites)){
-    case 1:
-      $space =  spaces_load('og', $sites[0]);
-      if ($space && $space -> type == 'og' && $space -> group -> type == $scholar_content_type ){
-        return array($space);
-      }
-      break;
-      
+  switch (count($sites)){      
     case 0:
       return NULL;
       break;
