@@ -76,6 +76,7 @@ function iqss_pinserver_register_validate($form, &$form_state){
  * A submit function for registration form
  */
 function iqss_pinserver_register_submit($form, $form_state){
+  global $user;
   //new user and vsite should have already been created, check to make sure the user information is present
   if (!isset($form_state['new_user'] ->uid) || $form_state['new_user'] ->uid == '0'){
     error_log("WARNING: The module could not insert the new user information into the database because
@@ -88,8 +89,7 @@ function iqss_pinserver_register_submit($form, $form_state){
     iqss_pinserver_register_add_row($form_state['new_user'] ->uid, $huid);
     
     if ((in_array('anonymous user', $user -> roles) && !node_access('create', variable_get('scholar_content_type', 'vsite')))){
-    // log user in
-    global $user;
+    // log user in    
     $user = $form_state['new_user'];
     watchdog('user', 'Session opened for %name.', array('%name' => $user->name));
     // Update the user table timestamp noting user has logged in.
@@ -230,16 +230,11 @@ function iqss_pinserver_register_form_access(){
         $user->login = time();
         db_query("UPDATE {users} SET login = %d WHERE uid = %d", $user->login, $user->uid);
         // Regenerate the session ID to prevent against session fixation attacks.
-        sess_regenerate();
-        return scholarregister_form_process();
+        sess_regenerate();       
       }
     }
-    
-    //autheticated user (non site owner) who passed through the pinserver
-    if (in_array('authenticated user', $user -> roles) && !vsite_get_vsite_by_owner( $user -> uid)){
-      return scholarregister_form_process();
-    }
-  }
+     return scholarregister_form_process();
+  } 
 }
 
 /**
