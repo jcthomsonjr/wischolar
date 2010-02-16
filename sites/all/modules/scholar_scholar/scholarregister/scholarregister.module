@@ -132,28 +132,6 @@ function _scholarregister_get_redirect($vsites = array()){
 }
 
 /**
- * Private function - adds name and email values as items in registration form.
- */
-function _scholarregister_add_form_items(&$form){
-  global $user;
-   //TODO: alter div id's??
-  $form['name'] = array(
-  '#type' => 'item',
-  '#title' =>  t('Your username'),
-  '#value' => $user -> name,
-  '#prefix' => '<div id="name-item">',
-  '#suffix' => '</div>',
-  );
-  $form['mail'] = array(
-  '#type' => 'item',
-  '#title' =>  t('Your email address'),
-  '#value' => $user -> mail,
-  '#prefix' => '<div id="mail-item">',
-  '#suffix' => '</div>',
-  );
-}
-
-/**
  * ajax callback for name
  */
 function scholarregister_name_js() {
@@ -298,7 +276,7 @@ function scholarregister_notify_user($vsite, $user){
   
    t("Hi !username,\n\nYour new web site at !site has been activated. Your web site url is !scholar_site_url\n\nYou will be able to log into your site at !site_login_uri with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables)  
    :
-  t("Hi !username,\n\nYour new web site at !site has been activated.\n\nYour web site url is !scholar_site_url\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !site_login_uri in the future using:\n\nusername: !username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
+  t("Hi !username,\n\nYour new web site at !site has been activated.\n\nYour web site url is !scholar_site_url\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in to !site_login_uri with:\n\nusername: !username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
 
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
@@ -343,5 +321,22 @@ function _scholarregister_mail_exists($mail){
   $existing_mail = db_result(db_query($query, $mail));
 
   return $existing_mail ? TRUE : FALSE;
+}
+
+function _scholarregister_success_message($form, $domain){
+  global $base_url;
+  global $user;
+  
+  $word_replace = node_access('create', variable_get('scholar_content_type', 'vsite')) ? 'the' : 'your';
+  
+  $message  = '<div id="success-message">';
+  $message .= '<p>Success! ' . ucfirst($word_replace) . ' new site has been created.</p>';
+  $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';
+  
+  if (in_array('anonymous user', $user -> roles)){
+    $message .= '<p>Check your email account for further details on how to login in to start adding features and content.</p>';
+  }
+  $message .= '</div>';
+  return $message;
 }
 
