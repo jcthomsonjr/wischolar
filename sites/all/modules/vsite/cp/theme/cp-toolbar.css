@@ -35,8 +35,7 @@
 
 #cp-toolbar-toolbar li a {
   padding-left: 30px !important;
-  background-repeat: no-repeat;
-  background-color: transparent;
+  background: url(images/topmenu-icons.png) no-repeat 0 0 transparent;
   font-size: 10px !important;
   line-height: 24px !important;
   font-weight: normal !important;
@@ -49,27 +48,31 @@
   text-decoration:none !important;
   }
 
-a#admin-link-cp-content {
-  background-image: url(images/topmenu-content.png);
+#cp-toolbar-toolbar li a#admin-link-cp-features {
+  background-position: 0 0;
   }
 
-a#admin-link-cp-news {
-  background-image: url(images/topmenu-news.png);
+#cp-toolbar-toolbar li a#admin-link-cp-appearance {
+  background-position: 0 -28px;
   }
 
-a#admin-link-cp-settings {
-  background-image: url(images/topmenu-settings.png);
+#cp-toolbar-toolbar li a#admin-link-cp-settings {
+  background-position: 0 -56px;
   }
 
-a#admin-link-cp-users {
-  background-image: url(images/topmenu-users.png);
-  }
-a#admin-link-cp-support {
-  background-image: url(images/topmenu-support.png);
+#cp-toolbar-toolbar li a#admin-link-cp-content {
+  background-position: 0 -84px;
   }
 
-a#admin-link-cp-features {
-  background-image: url(images/topmenu-features.png);
+#cp-toolbar-toolbar li a#admin-link-cp-users {
+  background-position: 0 -112px;
+  }
+#cp-toolbar-toolbar li a#admin-link-cp-news {
+  background-position: 0 -140px;
+  }
+
+#cp-toolbar-toolbar li a#admin-link-cp-support {
+  background-position: 0 -168px;
   }
 
 #cp-toolbar-user li a, #cp-toolbar-user li a:visited {
