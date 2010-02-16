@@ -69,10 +69,6 @@ body.admin-menu #wrapper {
   margin-top: 22px;
   }
 
-body.navbar-on #wrapper {
-  margin-top: 41px;
-  }
-
 #header-left, #header-right, #header-main {
   float: none;
   position: static !important;
@@ -182,14 +178,18 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
   }
 
 
-#sidebar-left #block-vsite_menus-0 {
+#block-vsite_menus-0 {
   padding: 0 0 16px 0;
+  }
+
+#header #navbar {
+  margin-left: -22px;
+  width: auto;
   }
 
 #block-vsite_menus-0 ul.menu {
   padding-top: 30px;
   }
-
 
 #block-vsite_menus-0 ul.menu li a {
   display:block;
@@ -200,8 +200,19 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
   padding-left: 16px;
   }
 
+#header #block-vsite_menus-0 ul.menu li {
+  display:block;
+  }
+
+
+#header #block-vsite_menus-0 ul.menu li a {
+  color: #F1F4EA;
+  padding-left: 22px;
+  }
+
 #block-vsite_menus-0 ul.menu li a:hover {
   background: rgba(210, 218, 184, 0.76);
+  text-decoration: none;
   }
 
 #block-vsite_menus-0 ul.menu li.active-trail {
@@ -243,6 +254,11 @@ body.sidebar-left p.copy, body.two-sidebars p.copy {
   background: rgba(210, 218, 184, 0.3);
   margin: 0 -1000em 30px -194px;
   padding: 30px 1000em 30px 194px;
+  }
+
+.no-sidebars .node-teaser, .sidebar-right .node-teaser {
+  margin-left: -30px;
+  padding-left: 30px;
   }
 
 #extradiv {
