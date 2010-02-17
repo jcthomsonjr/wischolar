@@ -121,11 +121,13 @@ function vsite_vsite_create($name, $domain, $preset){
       ), 
       'preset' => $preset, 
       'og_description' => "$domain's web site", 
-      'theme' => _vsite_get_random_theme(),  //returns a random theme from a selected list
+      //'og_theme' => 'scholar_theme_01',
   );
   $node = install_create_node($title = $domain, $body = NULL, $properties = $properties);
-  
+    
   $vsite = spaces_load("og", $sid = $node -> nid, $is_active = FALSE);
+  $vsite -> group -> og_theme = _vsite_get_random_theme();
+  spaces_save($vsite);
   
   return $vsite;
 }
