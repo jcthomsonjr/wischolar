@@ -196,10 +196,9 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     //ctools_add_js ( 'ajax-responder' );
     $commands = array ();
     global $base_url;
-    $message = _scholarregister_success_message($form, $domain);
+    $message = scholarregister_message($form, $domain);
     $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
     $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true);
-    //dpm($commands);
   }
   
   //additional tasks and workflow if user with special access is creating site
@@ -217,7 +216,6 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       call_user_func($fnc, $form, $form_state);
     }
   }
-
   ctools_ajax_render ( $commands );
 }
 
