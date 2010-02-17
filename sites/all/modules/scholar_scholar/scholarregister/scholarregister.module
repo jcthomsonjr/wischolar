@@ -323,20 +323,26 @@ function _scholarregister_mail_exists($mail){
   return $existing_mail ? TRUE : FALSE;
 }
 
-function _scholarregister_success_message($form, $domain){
+/**
+ * Implementation of hook_scholarregister_message()
+ * @return the message shown after a successful  web site registration
+ */
+function scholarregister_message($form, $domain){
   global $base_url;
   global $user;
   
   $word_replace = node_access('create', variable_get('scholar_content_type', 'vsite')) ? 'the' : 'your';
-  
+    
   $message  = '<div id="success-message">';
   $message .= '<p>Success! ' . ucfirst($word_replace) . ' new site has been created.</p>';
-  $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';
-  
+  $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';  
   if (in_array('anonymous user', $user -> roles)){
     $message .= '<p>Check your email account for further details on how to login in to start adding features and content.</p>';
   }
   $message .= '</div>';
+  
+  //give other modules a chance to alter message
+  module_invoke_all('scholarregister_message',  $message, $form, $domain);   
   return $message;
 }
 
