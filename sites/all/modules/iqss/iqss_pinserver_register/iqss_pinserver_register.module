@@ -305,3 +305,19 @@ function _iqss_pinserver_register_huid_field(&$form){
   '#suffix' => '<div id="huid-suffix"></div></div>',
   );
 }
+
+/**
+ * Implementation of hook_scholarregister_message()
+ */
+function iqss_pinserver_register_scholarregister_message(&$message, $form, $domain){
+  global $base_url;
+  global $user;
+
+  $word_replace = node_access('create', variable_get('scholar_content_type', 'vsite')) ? 'the' : 'your';
+  
+  $message  = '<div id="success-message">';
+  $message .= '<p>Success! ' . ucfirst($word_replace) . ' new site has been created.</p>';
+  $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';
+  $message .= '<p>You are now logged in. Check your email account for further details on how to get started with adding features and customizing your site.</p>';
+  $message .= '</div>';
+}
