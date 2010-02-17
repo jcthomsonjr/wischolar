@@ -121,7 +121,7 @@ function vsite_vsite_create($name, $domain, $preset){
       ), 
       'preset' => $preset, 
       'og_description' => "$domain's web site", 
-      'theme' => variable_get('scholar_default_theme', 'scholar_theme_01'), 
+      'theme' => _vsite_get_random_theme(),  //returns a random theme from a selected list
   );
   $node = install_create_node($title = $domain, $body = NULL, $properties = $properties);
   
@@ -129,7 +129,6 @@ function vsite_vsite_create($name, $domain, $preset){
   
   return $vsite;
 }
-
 
 /**
  * returns an array of available themes for faculty to chose
@@ -173,6 +172,27 @@ function _vsite_is_vsite_theme($atheme){
        && _vsite_get_theme_type() == $atheme->info['scholar']['theme_type'] 
        && ($atheme->info['scholar']['theme_access'] != "private" || user_access('access private scholar themes'))
        && !empty($atheme->status));
+}
+
+/**
+ * returns a random theme from a selected list
+ */
+function _vsite_get_random_theme($themes = array()){
+
+  $selected_themes = array(
+  'scholar_theme_01',
+  'scholar_theme_02',
+  'scholar_theme_03',
+  'scholar_theme_06',
+  );
+    
+  $all_themes = array_keys(list_themes());
+  $themes = array_intersect( $selected_themes, $all_themes );
+  shuffle($themes);
+  if(count($themes)) {
+    return $themes[0];
+  }
+  return  variable_get('scholar_default_theme', 'scholar_theme_01');
 }
 
 /**
