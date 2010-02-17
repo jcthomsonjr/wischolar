@@ -26,23 +26,6 @@ function vsite_support_menu(){
     'weight' => 5
   );
 
-  /*
-  $items['cp/support/questions'] = array(
-    'title' => 'Collaborative FAQ',
-    'page callback' => 'vsite_support_questions',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => 0,
-  );
-
-
-  $items['cp/support/featurerequests'] = array(
-    'title' => 'Feature requests',
-    'page callback' => 'vsite_support_feature_requests',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 1,
-  );
-
-*/
   if(module_exists('contact')){
     $items['cp/support/contact'] = array(
       'title' => 'Contact Us',
@@ -50,6 +33,7 @@ function vsite_support_menu(){
       'file' => 'contact.pages.inc',
       'type' => MENU_LOCAL_TASK,
       'file path' => drupal_get_path('module','contact'),
+      'weight' => 10,
     );
 
     $items['contact_owner'] = array(
@@ -192,18 +176,6 @@ function vsite_support_questions_node($node){
 
 }
 
-/*
-function vsite_support_preprocess_node(&$vars){
- if (! empty($vars['nid']) && $vars['type'] == 'support_question' || $vars['type'] == 'feature_request'){
-   $vars['node_url'] = url('cp/support/questions/'. $vars['nid']);
- }
-}
-*/
-
-function vsite_support_feature_requests(){
-  return views_page($view_name = 'vsite_support_feature_reqs', $display = 'default');
-}
-
 /**
  * Implementation of hook_strongarm().
  */
@@ -239,3 +211,19 @@ function vsite_support_mail($key, &$message, $params) {
   }
 }
 
+/**
+ * Implementation of hook_form alter().
+ */
+function vsite_support_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'support_question_node_form':
+      //Customize the "support_question" node form
+      $form['#redirect'] = 'cp/support/questions';
+    break;
+    case 'feature_request_node_form':
+      //Customize the "feature_request" node form
+      $form['#redirect'] = 'cp/support/featurerequests';
+    break;
+    
+  }
+}

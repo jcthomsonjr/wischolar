@@ -534,7 +534,10 @@ function vsite_users_user_form_validate($form, &$form_state){
 	  $form_state['values']['name'] = "Richard";
 	}elseif ($form_state['values']['mail'] != $form_state['values']['mail_confirm']) {
     form_set_error('email_confirm', t('E-mail addresses don\'t match'));
+  }elseif($form_state['input']['create_type'] == 'existing' && !strlen($form_state['values']['lookup_user'])){
+  	form_set_error('lookup_user', t('No user has been entered, search for a user or click "Add new user"'));
   }
+  
 }
 
 /**

@@ -116,14 +116,58 @@ function _vsite_support_context_default_contexts() {
       '1' => 'vsite_support:page_1',
       '2' => 'vsite_support:page_2',
     ),
+  );
+  
+  $items[] = array(
+    'namespace' => 'cp',
+    'attribute' => 'support',
+    'value' => 'support_question',
+    'description' => '',
+    'node' => array(
+      '1' => 'support_question',
+    ),
+    'path' => array(
+      'cp/support/questions' => 'cp/support/questions',
+    ),
+    'views' => array(
+      '0' => 'vsite_support',
+      '1' => 'vsite_support:page_1',
+    ),
     'block' => array(
-      'views_2a17815f62da05b62035d31b9de3c969' => array(
+      'views_vsite_support_best_questions' => array(
         'module' => 'views',
-        'delta' => '2a17815f62da05b62035d31b9de3c969',
+        'delta' => 'vsite_support-block_1',
         'weight' => 20,
         'region' => 'right',
         'status' => '0',
-        'label' => 'Feature Requests: Moste voted',
+        'label' => 'Questions: Best Questions',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  
+  $items[] = array(
+    'namespace' => 'cp',
+    'attribute' => 'support',
+    'value' => 'feature_request',
+    'description' => '',
+    'node' => array(
+      '0' => 'feature_request',
+    ),
+    'path' => array(
+      'cp/support/featurerequests' => 'cp/support/featurerequests',
+    ),
+    'views' => array(
+      '2' => 'vsite_support:page_2',
+    ),
+    'block' => array(
+      'views_vsite_support_best_feature' => array(
+        'module' => 'views',
+        'delta' => 'vsite_support-block_2',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Feature Requests: Most Wanted',
         'type' => 'context_ui',
       ),
     ),

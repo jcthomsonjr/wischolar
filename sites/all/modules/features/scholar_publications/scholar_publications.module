@@ -468,26 +468,33 @@ function _scholar_publications_co_author_wgt(){
   		$target_site = vsite_get_vsite_by_owner($data->uid);
   		if(count($target_site) && ($owner_site = array_shift($target_site))) $s_site_url = $owner_site->get_absolute_url('publications');
   	}
+
+  	///////////////////////
+  	//Simple Format
+  	///////////////////////
+    $output .= "\n<li>".($s_site_url?l($data->name,$s_site_url,array('attributes' => array("target" => "_blank"))):$data->name)."</li>";
   	
-  	$s_pub_by_site = '';
-  	if($data->total_publications>$data->num_site_publications){
-  	   $sub_result =  db_query_range("SELECT COUNT(*) as num_pub, oa.group_nid as sid FROM {biblio_contributor} bc INNER JOIN {og_ancestry} oa ON oa.nid = bc.nid WHERE bc.cid = %d AND oa.group_nid != %d GROUP BY oa.group_nid ORDER  BY num_pub DESC", array($data->cid,$vsite->group->nid), 0, 7);
-  	   while ($pub_count = db_fetch_object($sub_result)) {
-  	     $space =  spaces_load('og', $pub_count->sid);	 
-  	     if(is_object($space)){
-  	       $s_site_name = ($owner_site && $owner_site->group->nid == $pub_count->sid)?'their site':"site ({$space->group->title})";
-  	       $s_pub_by_site .= "<li>".l("{$pub_count->num_pub} pub.",$space->get_absolute_url("publications/author/".$data->cid),array('attributes' => array("target" => "_blank")))." on {$s_site_name}</li>";
-  	     }	
-  	   }
-  	}
-  	
-  	$output .= "\n<li>"
-  	            ."<a hreft='#' class='more' onClick=\"$(this).siblings('ul.more_co_author_info').slideToggle('slow',function(){ $(this).siblings('a.more').html((this.style.display == 'none')?'[+]':'[-]')}); return false;\">[+]</a> "
-  	            .($s_site_url?l($data->name,$s_site_url,array('attributes' => array("target" => "_blank"))):$data->name)
-  	            ."<ul class='more_co_author_info' style=\"display:none;\">"
-  	              ."<li>".l("{$data->num_site_publications} pub.","publications/author/".$data->cid)." on this site</li>"
-  	              .$s_pub_by_site
-  	            ."</ul></li>";
+      ///////////////////////
+      //Complex Format
+      ///////////////////////
+//  	$s_pub_by_site = '';
+//  	if($data->total_publications>$data->num_site_publications){
+//  	   $sub_result =  db_query_range("SELECT COUNT(*) as num_pub, oa.group_nid as sid FROM {biblio_contributor} bc INNER JOIN {og_ancestry} oa ON oa.nid = bc.nid WHERE bc.cid = %d AND oa.group_nid != %d GROUP BY oa.group_nid ORDER  BY num_pub DESC", array($data->cid,$vsite->group->nid), 0, 7);
+//  	   while ($pub_count = db_fetch_object($sub_result)) {
+//  	     $space =  spaces_load('og', $pub_count->sid);	 
+//  	     if(is_object($space)){
+//  	       $s_site_name = ($owner_site && $owner_site->group->nid == $pub_count->sid)?'their site':"site ({$space->group->title})";
+//  	       $s_pub_by_site .= "<li>".l("{$pub_count->num_pub} pub.",$space->get_absolute_url("publications/author/".$data->cid),array('attributes' => array("target" => "_blank")))." on {$s_site_name}</li>";
+//  	     }	
+//  	   }
+//  	}
+//  	$output .= "\n<li>"
+//  	           // ."<a hreft='#' class='more' onClick=\"$(this).siblings('ul.more_co_author_info').slideToggle('slow',function(){ $(this).siblings('a.more').html((this.style.display == 'none')?'[+]':'[-]')}); return false;\">[+]</a> "
+//  	            .($s_site_url?l($data->name,$s_site_url,array('attributes' => array("target" => "_blank"))):$data->name)
+//  	            ."<ul class='more_co_author_info' style=\"display:none;\">"
+//  	              ."<li>".l("{$data->num_site_publications} pub.","publications/author/".$data->cid)." on this site</li>"
+//  	              .$s_pub_by_site
+//  	            ."</ul></li>";
   }
   $output .= "</ul>";
   
