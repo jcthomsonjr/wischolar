@@ -147,8 +147,7 @@ function iqss_pinserver_register_mail_alter(&$message){
 }
 
 function iqss_pinserver_register_notify($user, $vsite, $alter = TRUE){
-  global $language;
-  global $base_url;
+  global $language, $base_url;
 
   $params = array();
   $params['from'] = variable_get('site_mail', ini_get('sendmail_from'));
@@ -310,8 +309,7 @@ function _iqss_pinserver_register_huid_field(&$form){
  * Implementation of hook_scholarregister_message()
  */
 function iqss_pinserver_register_scholarregister_message(&$message, $form, $domain){
-  global $base_url;
-  global $user;
+  global $user, $base_url;
 
   $word_replace = node_access('create', variable_get('scholar_content_type', 'vsite')) ? 'the' : 'your';
   $logged_in = in_array('authenticated user', $user -> roles) ? 'You are now logged in. ' : '';  
