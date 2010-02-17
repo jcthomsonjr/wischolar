@@ -328,9 +328,8 @@ function _scholarregister_mail_exists($mail){
  * @return the message shown after a successful  web site registration
  */
 function scholarregister_message($form, $domain){
-  global $base_url;
-  global $user;
-  
+  global $user, $base_url;
+
   $word_replace = node_access('create', variable_get('scholar_content_type', 'vsite')) ? 'the' : 'your';
     
   $message  = '<div id="success-message">';
