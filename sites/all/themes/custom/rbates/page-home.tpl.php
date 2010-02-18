@@ -69,7 +69,7 @@
 						<li class="africa_research"><a href="pages/africa-research-program">Africa Research Project</a></li>
 						<li class="publications"><a href="publications">Publications</a></li>
 						<li class="classes"><a href="classes">Classes</a></li>
-						<li class="contact"><a href="contact">Contact</a></li>
+						<li class="contact"><a href="contact_owner">Contact</a></li>
 						<li class="about"><a href="about">About</a></li>
 						<li class="links"><a href="links">Links</a></li>
 					</ul>
