@@ -768,3 +768,14 @@ function node_vsite_admin_link($type, $object) {
   }
   return $links;
 }
+
+/**
+ * hook filefield_paths_form_submit
+ * This will make sure that the file alias is displayed in the teaser and node views
+ * 
+ * @param $form_state
+ * @param $ffp
+ */
+function viste_filefield_paths_form_submit(&$form_state, $ffp){
+	$v = $b;
+}
