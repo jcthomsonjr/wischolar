@@ -242,18 +242,19 @@ function _scholar_basicinfo_wdgt(){
 
   $block = array();
   $block['subject'] = t('');
-  $block['content'] = 'Scholar Web Site ('.$scholar->purl.")";
+  $block['content'] = l('Scholar Web Site ('.$scholar->purl. ')', $scholar -> get_absolute_url()) ;
 
   if(!strlen($scholar->group->title)){
     $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
 
     $s_headline = (is_array($content_profile->vsite_users_last_name))? "{$content_profile->vsite_users_first_name[0]['value']} {$content_profile->vsite_users_last_name[0]['value']}":"";
     $s_subheadline = (is_array($content_profile->vsite_users_title))?  $content_profile->vsite_users_title[0]['value']:"";
+
+    $s_headline_markup = (strlen($s_headline) >2) ?  "<h1>" . l($s_headline, $scholar -> get_absolute_url()). "</h1>"  : "";
+    $s_subheadline_markup = (strlen($s_headline_markup) && strlen($s_subheadline)) ?  "<h2>" . l($s_headline, $scholar -> get_absolute_url()). "</h2>" : "";
+    $p_tags = (strlen($s_headline_markup) || strlen($s_subheadline_markup)) ? "<p></p>" : "";
     
-    $block['content'] =  (strlen($s_headline) >2)?
-                         "<h1>{$s_headline}</h1>
-                          <h2>{$s_subheadline}</h2>
-                          <p></p>":"";
+    $block['content'] = $s_headline_markup . $s_subheadline_markup . $p_tags;
     return $block;
   }//Retrieve Defaults
   
@@ -262,12 +263,11 @@ function _scholar_basicinfo_wdgt(){
 
   $s_address = count($scholar->group->field_vsite_address)?$scholar->group->field_vsite_address[0]['value']:"";   
           
-  $output =  "<h1>{$scholar->group->title}</h1>
-              <h2>{$scholar->group->og_description}</h2>
-              <p>{$s_address}&nbsp;{$s_email}</p>";
+  $output =   "<h1>" . l($scholar->group->title, $scholar -> get_absolute_url()) ."</h1>" .
+                     "<h2>" . l($scholar->group->og_description, $scholar -> get_absolute_url()). "</h2>" .
+                     " <p>{$s_address}&nbsp;{$s_email}</p>";
 
   $block['content'] = $output;
-
   return $block;
 }
 
