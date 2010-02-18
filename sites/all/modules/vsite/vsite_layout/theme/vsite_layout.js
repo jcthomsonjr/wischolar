@@ -25,6 +25,9 @@ Drupal.behaviors.scholarlayout = function() {
 	    		$('#edit-settings-layout-page-type').val($("#edit-settings-layout-secret-hidden-ahah").val());
 	    	}
 	    });
+	    
+	    $(window).resize(function() { vsite_layout_setScrollArrows(); });
+
     }
     scholarlayout_add_removal_hooks();
     vsite_layout_setScrollArrows();
