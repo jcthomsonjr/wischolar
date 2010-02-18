@@ -54,6 +54,9 @@ function scholar_project_strongarm(){
   
   $conf["show_preview_changes_project"] = FALSE;
   $conf["show_diff_inline_project"] = FALSE;
+  
+  // setting determines if a non admin user can create multiple sites
+  $conf['scholar_create_multiple_sites'] = 1;
  
   // Comments
   $conf['comment_project'] = COMMENT_NODE_DISABLED;
