@@ -81,17 +81,6 @@ function scholar_publications_menu(){
     'menu_name' => 'features',
   );
   
-  /*
-  $items['publications/list'] = array(
-    'title' => 'List publications',
-    'page callback' => 'scholar_publications_overview',
-    'page arguments' => array(1),
-    'access arguments' => array('access biblio content'), 
-    'weight' => 0,
-    'type' => MENU_DEFAULT_LOCAL_TASK
-  );
-  */
-  
   // import export
    $items['publications/import'] = array(
     'title'             => 'Import',
@@ -185,6 +174,11 @@ function scholar_publications_overview(){
         
   $a_args = func_get_args();
   $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
+  
+  if(isset($_REQUEST['format'])){
+  	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
+  	return biblio_export($_REQUEST['format']);
+  }
   
   global $pager_total_items;
   if(is_array($pager_total_items) && $pager_total_items[0] > 0){
