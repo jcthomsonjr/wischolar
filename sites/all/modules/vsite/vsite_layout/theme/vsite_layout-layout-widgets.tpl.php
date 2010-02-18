@@ -8,7 +8,7 @@
  *  $wgts_class -> the class of the ul
  */
 ?>
-
+<div class="widget-prev"></div><div class="widget-next"></div>
 <ul id="<?php print $wgts_id; ?>" class = "<?php print $wgts_class; ?>">
 	<?php foreach($wgts as $s_widget_key => $w):?>
 	  <?php $s_class = (isset($w['hidden']) && $w['hidden'])? 'scholarlayout-item disabled':'scholarlayout-item'; ?>

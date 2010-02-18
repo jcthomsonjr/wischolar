@@ -57,7 +57,8 @@
   height:114px;
   background:#eaebe9;
   width: 100%;
-  padding-left: 10px;
+  padding-left: 22px;
+  overflow: hidden;
   }
 
 li.scholarlayout-item {
@@ -188,4 +189,23 @@ li.scholarlayout-item {
 
 .ahah-progress-throbber {
   width: 150px;
+  }
+
+.widget-prev,.widget-next {
+  width: 30px;
+  background: url(images/widget-arrows.png) 0 50% no-repeat #d5d6d4;
+  position: absolute;
+  left:0;
+  height: 114px;
+  cursor: pointer;
+  }
+
+.widget-next {
+  left: auto;
+  right: 0;
+  background-position: -30px 50%;
+  }
+
+#scholarlayout-container .widget-prev, #scholarlayout-container .widget-next{
+  display:none;
   }
