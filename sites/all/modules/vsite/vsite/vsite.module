@@ -161,10 +161,12 @@ function vsite_strongarm(){
   //$conf['upload_max_resolution'] = 0;
 
   //mollom settings
-  $a_mollom_forms = array('contact_mail_page','contact_mail_user','user_register','user_pass');
-  $forms = _mollom_protectable_forms();
-  foreach ($forms as $form_id => $details) {
-  	$conf['mollom_'.$form_id] = (in_array($form_id,$a_mollom_forms))? MOLLOM_MODE_CAPTCHA:MOLLOM_MODE_DISABLED;
+  if(module_exists('mollom')){
+	  $a_mollom_forms = array('contact_mail_page','contact_mail_user','user_register','user_pass');
+	  $forms = _mollom_protectable_forms();
+	  foreach ($forms as $form_id => $details) {
+	  	$conf['mollom_'.$form_id] = (in_array($form_id,$a_mollom_forms))? MOLLOM_MODE_CAPTCHA:MOLLOM_MODE_DISABLED;
+	  }
   }
 
   $node_types = node_get_types();
