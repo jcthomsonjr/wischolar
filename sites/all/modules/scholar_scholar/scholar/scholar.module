@@ -74,6 +74,9 @@ function scholar_strongarm(){
     ) 
   );
   
+  // setting determines if a non admin user can create multiple sites
+  $conf['scholar_create_multiple_sites'] = 0;
+  
   // the default preset
   $conf['scholar_default_preset'] = "scholar";
   return $conf;
