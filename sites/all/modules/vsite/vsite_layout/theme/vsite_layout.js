@@ -123,13 +123,13 @@ function vsite_layout_setScrollArrows(){
 	}else{
       $('div.widget-prev, div.widget-next').removeClass('disabled');
 	  $('div.widget-prev').click(function() {
-		$('ul#scholarlayout-top-widgets').prepend($('ul#scholarlayout-top-widgets li:last')).css('marginLeft',"-"+nWidgetWidth+"px").width('120%');
-  	    $('ul#scholarlayout-top-widgets').animate({ marginLeft: "0px", width: "100%" }, 1000 );
+		$('ul#scholarlayout-top-widgets').prepend($('ul#scholarlayout-top-widgets li:last')).css('marginLeft',"-"+nWidgetWidth+"px").width('125%');
+  	    $('ul#scholarlayout-top-widgets').animate({ marginLeft: "0px", width: "110%" }, 750 );
       });
 	
 	  $('div.widget-next').click(function() {
-        $('ul#scholarlayout-top-widgets').animate({ marginLeft: "-"+nWidgetWidth+"px", width: "120%" }, 1000, function() {
-	      $('ul#scholarlayout-top-widgets').append($('ul#scholarlayout-top-widgets li:first')).css('marginLeft','0px').width('100%');
+        $('ul#scholarlayout-top-widgets').animate({ marginLeft: "-"+nWidgetWidth+"px", width: "125%" }, 750, function() {
+	      $('ul#scholarlayout-top-widgets').append($('ul#scholarlayout-top-widgets li:first')).css('marginLeft','0px').width('110%');
 	    });
 	  });
 	}
