@@ -242,6 +242,7 @@ function _scholar_basicinfo_wdgt(){
 
   $block = array();
   $block['subject'] = t('');
+  $block['content'] = l('Scholar Web Site ('.$scholar->purl. ')', $scholar -> get_absolute_url()) ; //will get overridden
 
   if(!strlen($scholar->group->title)){
     $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
@@ -255,7 +256,7 @@ function _scholar_basicinfo_wdgt(){
     
     $block['content'] = $s_headline_markup . $s_subheadline_markup . $p_tags;
     return $block;
-  }//Retrieve Defaults
+  }
   
   $s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0 && 
              ($scholar->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
