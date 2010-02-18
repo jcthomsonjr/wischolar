@@ -193,17 +193,25 @@ li.scholarlayout-item {
 
 .widget-prev,.widget-next {
   width: 30px;
-  background: url(images/widget-arrows.png) 0 50% no-repeat #d5d6d4;
+  background: url(images/widget-prev.png) 0 50% no-repeat #d5d6d4;
   position: absolute;
   left:0;
   height: 114px;
   cursor: pointer;
   }
 
+.widget-prev:hover,.widget-next:hover {
+  background-position: -30px 50%;
+  }
+
 .widget-next {
   left: auto;
   right: 0;
-  background-position: -30px 50%;
+  background-image: url(images/widget-next.png);
+  }
+
+.disabled {
+  background-position: -60px 50%;
   }
 
 #scholarlayout-container .widget-prev, #scholarlayout-container .widget-next{
