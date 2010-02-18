@@ -454,6 +454,7 @@ function biblio_export($format = "tagged", $nid = null, $popup = false, $version
         }
         if (!$popup) {
           print biblio_bibtex_export($node);
+          error_log(biblio_bibtex_export($node));
         }
         else{
           $popup_data .=  biblio_bibtex_export($node);

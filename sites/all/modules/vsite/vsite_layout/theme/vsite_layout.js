@@ -27,6 +27,7 @@ Drupal.behaviors.scholarlayout = function() {
 	    });
     }
     scholarlayout_add_removal_hooks();
+    vsite_layout_setScrollArrows();
 };
 
 function scholarlayout_add_removal_hooks(){
@@ -63,6 +64,9 @@ function scholarlayout_afterdrag(event, ui) {
 	    } );
 	   	$('#edit-settings-layout-'+region.id).val(ids);
 	  });
+	  
+	  //Reset top box after widgets have been moved
+	  vsite_layout_setScrollArrows();
 
 	  if(!$("#scholarforms_save_warning").length && event) $("#cp-settings-layout").before($('<div id="scholarforms_save_warning" class="warning"><span class="warning tabledrag-changed">*</span> Your changes have not yet been saved. Click "Save Settings" for your changes to take effect</div>'));
 };
@@ -105,30 +109,20 @@ function animatePoof() {
     setTimeout("$('.poof').remove()", frames * frameRate);
 }
 
-function scrollTop(){
-  //Get our elements for faster access and set overlay width
-  var div = $('div#cp-content'),
-               ul = $('ul#scholarlayout-top-widgets'),
-               // unordered list's left margin
-               ulPadding = 15;
-
-  //Get menu width
-  var divWidth = div.width();
-
-  //Remove scrollbars
-  div.css({overflow: 'hidden'});
-
-  //Find last image container
-  var lastLi = ul.find('li:last-child');
-
-  //When user move mouse over menu
-  div.mousemove(function(e){
-
-    //As images are loaded ul width increases,
-    //so we recalculate it each time
-    var ulWidth = lastLi[0].offsetLeft + lastLi.outerWidth() + ulPadding;
-
-    var left = (e.pageX - div.offset().left) * (ulWidth-divWidth) / divWidth;
-    div.scrollLeft(left);
-  });
+function vsite_layout_setScrollArrows(){
+	var nContainerWidth = $('ul#scholarlayout-top-widgets').width();
+	var nWidgetWidth = $('ul#scholarlayout-top-widgets li:not(.disabled)').length * $('ul#scholarlayout-top-widgets li:first').width();
+	
+	if(nContainerWidth > nWidgetWidth){
+      $('div.widget-prev, div.widget-next').addClass('disabled').unbind('click');
+      
+	}else{
+      $('div.widget-prev, div.widget-next').removeClass('disabled');
+	  $('div.widget-prev').click(function() {
+		  $('ul#scholarlayout-top-widgets').prepend($('ul#scholarlayout-top-widgets li:last'));
+	  });
+	  $('div.widget-next').click(function() {
+		  $('ul#scholarlayout-top-widgets').append($('ul#scholarlayout-top-widgets li:first'));
+	  });
+	}
 }
