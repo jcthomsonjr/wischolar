@@ -1,13 +1,12 @@
 <?php
-// $Id: audio.inc,v 1.1.2.2 2009/07/27 01:54:34 deciphered Exp $
-
+// $Id: audio.inc,v 1.1.2.4 2010/01/11 06:07:16 deciphered Exp $
 /**
  * @file
  * Provides FileField Paths integration with the Audio module.
  */
 
 /**
- * Implementation of hook_filefield_paths_form_alter().
+ * Implements hook_filefield_paths_form_alter().
  */
 function audio_filefield_paths_form_alter(&$form, &$ffp) {
   if (isset($form['#id']) && $form['#id'] == 'node-type-form' && isset($form['#node_type']) && $form['#node_type']->module == 'audio') {
@@ -37,7 +36,7 @@ function audio_filefield_paths_form_alter(&$form, &$ffp) {
 }
 
 /**
- * Implementation of hook_filefield_paths_form_submit().
+ * Implements hook_filefield_paths_form_submit().
  */
 function audio_filefield_paths_form_submit(&$form_state, &$ffp) {
   if ($form_state['values']['form_id'] == 'node_type_form') {
@@ -48,7 +47,7 @@ function audio_filefield_paths_form_submit(&$form_state, &$ffp) {
 }
 
 /**
- * Implementation of hook_filefield_paths_get_fields().
+ * Implements hook_filefield_paths_get_fields().
  */
 function audio_filefield_paths_get_fields(&$node, &$ffp) {
   if (is_object($node) && isset($node->audio['file'])) {
@@ -66,35 +65,31 @@ function audio_filefield_paths_get_fields(&$node, &$ffp) {
 }
 
 /**
- * Implementation of hook_filefield_paths_batch_update().
+ * Implements hook_filefield_paths_batch_update().
  */
-function audio_filefield_paths_batch_update($field_name, $type_name, &$objects) {
-  if (empty($field_name)) {
-    $result = db_query(
-      "SELECT a.nid FROM {audio} a LEFT JOIN {node} n ON a.nid = n.nid WHERE n.type = '%s'", $type_name
-    );
+function audio_filefield_paths_batch_update($field, $type, &$objects) {
+  $result = db_query(
+    "SELECT a.nid FROM {audio} a LEFT JOIN {node} n ON a.nid = n.nid WHERE n.type = '%s'", $type
+  );
 
-    // Build array of Node IDs.
-    while ($node = db_fetch_object($result)) {
-      $objects[] = $node->nid;
-    }
+  // Build array of Node IDs.
+  while ($node = db_fetch_object($result)) {
+    $objects[] = $node->nid;
   }
 }
 
 /**
- * Implementation of hook_filefield_paths_update().
+ * Implements hook_filefield_paths_update().
  */
-function audio_filefield_paths_update($oid, $field_name) {
-  if (empty($field_name)) {
-    $node = node_load($oid);
+function audio_filefield_paths_update($oid, $field) {
+  $node = node_load($oid);
 
-    // Flag files for update.
-    $node->audio['file']->source = 'filefield_paths';
+  // Flag files for update.
+  $node->audio['file']->source = 'filefield_paths';
 
-    // Set Form ID.
-    $node->form_id = $node->type .'_node_form';
+  // Set Form ID.
+  $node->form_id = $node->type . '_node_form';
 
-    // Process Node.
-    filefield_paths_nodeapi($node, 'update', NULL, NULL);
-  }
+  // Process Node.
+  filefield_paths_nodeapi($node, 'update', NULL, NULL);
 }
