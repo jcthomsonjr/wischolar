@@ -9,85 +9,22 @@ function _scholar_reader_views_default_views() {
   // Exported view: scholar_reader
   $view = new view;
   $view->name = 'scholar_reader';
-  $view->description = '';
+  $view->description = 'scholar > reader';
   $view->tag = 'features';
   $view->view_php = '';
-  $view->base_table = 'feeds_data_scholar_feed_importer';
+  $view->base_table = 'node';
   $view->is_cacheable = FALSE;
   $view->api_version = 2;
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('relationships', array(
     'feed_nid' => array(
-      'label' => 'feeds_data_scholar_feed_importer.feed_nid -> node.nid',
-      'required' => 1,
       'id' => 'feed_nid',
       'table' => 'feeds_data_scholar_feed_importer',
       'field' => 'feed_nid',
-      'relationship' => 'none',
     ),
   ));
   $handler->override_option('fields', array(
-    'nid' => array(
-      'label' => 'Nid',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'strip_tags' => 0,
-        'html' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'link_to_node' => 0,
-      'exclude' => 1,
-      'id' => 'nid',
-      'table' => 'node',
-      'field' => 'nid',
-      'relationship' => 'feed_nid',
-    ),
-    'title' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 1,
-        'path' => 'feeds/[nid]',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'strip_tags' => 0,
-        'html' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'link_to_node' => 0,
-      'exclude' => 0,
-      'id' => 'title',
-      'table' => 'node',
-      'field' => 'title',
-      'relationship' => 'feed_nid',
-    ),
     'url' => array(
       'label' => '',
       'alter' => array(
@@ -140,24 +77,15 @@ function _scholar_reader_views_default_views() {
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
-      'date_format' => 'medium',
+      'date_format' => 'time ago',
       'custom_date_format' => '',
       'exclude' => 0,
-      'set_precision' => FALSE,
-      'precision' => 0,
-      'decimal' => '.',
-      'separator' => ',',
-      'prefix' => '',
-      'suffix' => '',
       'id' => 'timestamp',
       'table' => 'feeds_data_scholar_feed_importer',
       'field' => 'timestamp',
       'relationship' => 'none',
-      'override' => array(
-        'button' => 'Override',
-      ),
     ),
-    'title_1' => array(
+    'title' => array(
       'label' => '',
       'alter' => array(
         'alter_text' => 0,
@@ -181,7 +109,7 @@ function _scholar_reader_views_default_views() {
       'hide_empty' => 0,
       'empty_zero' => 0,
       'exclude' => 0,
-      'id' => 'title_1',
+      'id' => 'title',
       'table' => 'feeds_data_scholar_feed_importer',
       'field' => 'title',
       'relationship' => 'none',
@@ -206,32 +134,20 @@ function _scholar_reader_views_default_views() {
         'strip_tags' => 0,
         'html' => 0,
       ),
-      'empty' => '250',
+      'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
       'truncate' => '0',
       'filter_html' => 'strip_html',
-      'allowed_tags' => 'img div br p a strong b',
+      'allowed_tags' => '',
       'exclude' => 0,
       'id' => 'description',
       'table' => 'feeds_data_scholar_feed_importer',
       'field' => 'description',
+      'relationship' => 'none',
       'override' => array(
         'button' => 'Override',
       ),
-      'relationship' => 'none',
-    ),
-  ));
-  $handler->override_option('sorts', array(
-    'timestamp' => array(
-      'order' => 'DESC',
-      'id' => 'timestamp',
-      'table' => 'feeds_data_scholar_feed_importer',
-      'field' => 'timestamp',
-      'override' => array(
-        'button' => 'Override',
-      ),
-      'relationship' => 'none',
     ),
   ));
   $handler->override_option('arguments', array(
@@ -255,7 +171,6 @@ function _scholar_reader_views_default_views() {
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
         '2' => 0,
-        '5' => 0,
         '3' => 0,
         '4' => 0,
       ),
@@ -266,18 +181,17 @@ function _scholar_reader_views_default_views() {
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
         'blog' => 0,
-        'features_test' => 0,
-        'feed' => 0,
-        'feed_item' => 0,
         'announcement' => 0,
         'bio' => 0,
         'cv' => 0,
+        'book' => 0,
         'class' => 0,
         'class_material' => 0,
         'gallery' => 0,
         'image' => 0,
         'link' => 0,
         'page' => 0,
+        'feed' => 0,
         'software' => 0,
         'vsite' => 0,
         'feature_request' => 0,
@@ -290,18 +204,10 @@ function _scholar_reader_views_default_views() {
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '10' => 0,
+        '4' => 0,
         '1' => 0,
         '2' => 0,
         '3' => 0,
-        '4' => 0,
-        '5' => 0,
-        '6' => 0,
-        '7' => 0,
-        '8' => 0,
-        '9' => 0,
-        '11' => 0,
-        '12' => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -317,40 +223,6 @@ function _scholar_reader_views_default_views() {
     ),
   ));
   $handler->override_option('filters', array(
-    'current' => array(
-      'operator' => 'all',
-      'value' => '',
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'current',
-      'table' => 'spaces',
-      'field' => 'current',
-      'relationship' => 'feed_nid',
-      'override' => array(
-        'button' => 'Override',
-      ),
-    ),
-    'status' => array(
-      'operator' => '=',
-      'value' => '1',
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'status',
-      'table' => 'node',
-      'field' => 'status',
-      'relationship' => 'feed_nid',
-      'override' => array(
-        'button' => 'Override',
-      ),
-    ),
     'type' => array(
       'operator' => 'in',
       'value' => array(
@@ -365,10 +237,35 @@ function _scholar_reader_views_default_views() {
       'id' => 'type',
       'table' => 'node',
       'field' => 'type',
-      'relationship' => 'feed_nid',
-      'override' => array(
-        'button' => 'Override',
+      'relationship' => 'none',
+    ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
       ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'relationship' => 'none',
+    ),
+    'current' => array(
+      'operator' => 'all',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('access', array(
@@ -378,12 +275,14 @@ function _scholar_reader_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Latest  Feed Items');
-  $handler->override_option('items_per_page', 20);
-  $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('use_pager', '1');
-  $handler->override_option('style_options', array(
-    'grouping' => '',
+  $handler = $view->new_display('page', 'all feeds', 'page_1');
+  $handler->override_option('row_plugin', 'node');
+  $handler->override_option('row_options', array(
+    'relationship' => 'none',
+    'build_mode' => 'teaser',
+    'links' => 1,
+    'comments' => 0,
   ));
   $handler->override_option('path', 'reader');
   $handler->override_option('menu', array(
@@ -399,38 +298,19 @@ function _scholar_reader_views_default_views() {
     'description' => '',
     'weight' => 0,
   ));
-  $handler = $view->new_display('block', 'Latest feed items', 'block_1');
+  $handler = $view->new_display('node_content', 'teaser view', 'node_content_1');
+  $handler->override_option('items_per_page', 3);
+  $handler->override_option('types', array(
+    'feed' => 'feed',
+  ));
+  $handler->override_option('modes', array(
+    '0' => 'teaser',
+  ));
+  $handler->override_option('argument_mode', 'nid');
+  $handler->override_option('default_argument', '');
+  $handler->override_option('show_title', 0);
+  $handler = $view->new_display('node_content', 'Full Node View', 'node_content_2');
   $handler->override_option('fields', array(
-    'nid' => array(
-      'label' => 'Nid',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'strip_tags' => 0,
-        'html' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'link_to_node' => 0,
-      'exclude' => 1,
-      'id' => 'nid',
-      'table' => 'node',
-      'field' => 'nid',
-      'relationship' => 'feed_nid',
-    ),
     'url' => array(
       'label' => '',
       'alter' => array(
@@ -460,7 +340,38 @@ function _scholar_reader_views_default_views() {
       'field' => 'url',
       'relationship' => 'none',
     ),
-    'title_1' => array(
+    'timestamp' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'date_format' => 'time ago',
+      'custom_date_format' => '',
+      'exclude' => 0,
+      'id' => 'timestamp',
+      'table' => 'feeds_data_scholar_feed_importer',
+      'field' => 'timestamp',
+      'relationship' => 'none',
+    ),
+    'title' => array(
       'label' => '',
       'alter' => array(
         'alter_text' => 0,
@@ -484,17 +395,173 @@ function _scholar_reader_views_default_views() {
       'hide_empty' => 0,
       'empty_zero' => 0,
       'exclude' => 0,
-      'id' => 'title_1',
+      'id' => 'title',
+      'table' => 'feeds_data_scholar_feed_importer',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
+    'description' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '250',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'truncate' => '0',
+      'filter_html' => '0',
+      'allowed_tags' => '',
+      'exclude' => 0,
+      'id' => 'description',
+      'table' => 'feeds_data_scholar_feed_importer',
+      'field' => 'description',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+  ));
+  $handler->override_option('items_per_page', 25);
+  $handler->override_option('types', array(
+    'feed' => 'feed',
+  ));
+  $handler->override_option('modes', array(
+    '0' => 'full',
+  ));
+  $handler->override_option('argument_mode', 'nid');
+  $handler->override_option('default_argument', '');
+  $handler = $view->new_display('block', 'Feeds subscriptions', 'block_1');
+  $handler->override_option('relationships', array());
+  $handler->override_option('fields', array(
+    'title' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('arguments', array());
+  $handler->override_option('title', 'Feed subscriptions');
+  $handler->override_option('block_description', '');
+  $handler->override_option('block_caching', -1);
+  $handler = $view->new_display('block', 'Latest feed items', 'block_2');
+  $handler->override_option('fields', array(
+    'url' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 1,
+      'id' => 'url',
+      'table' => 'feeds_data_scholar_feed_importer',
+      'field' => 'url',
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 1,
+        'path' => '[url]',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 0,
+      'id' => 'title',
       'table' => 'feeds_data_scholar_feed_importer',
       'field' => 'title',
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('sorts', array(
+    'timestamp' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'timestamp',
+      'table' => 'feeds_data_scholar_feed_importer',
+      'field' => 'timestamp',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('arguments', array());
-  $handler->override_option('title', 'Latest feeds');
-  $handler->override_option('items_per_page', 8);
-  $handler->override_option('use_more', 1);
-  $handler->override_option('use_more_always', 0);
+  $handler->override_option('title', 'Latest news');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
 

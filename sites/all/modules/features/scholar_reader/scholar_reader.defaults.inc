@@ -22,7 +22,7 @@ function _scholar_reader_context_default_contexts() {
     ),
     'menu' => 'reader',
     'block' => array(
-      'vsite_widgets_4' => array(
+      'vsite_widgets_2' => array(
         'module' => 'vsite_widgets',
         'delta' => '2',
         'weight' => 20,
@@ -40,13 +40,22 @@ function _scholar_reader_context_default_contexts() {
         'label' => 'Categories',
         'type' => 'context_ui',
       ),
-      'views_scholar_reader-block_1' => array(
+      'views_scholar_reader-block_2' => array(
         'module' => 'views',
-        'delta' => 'scholar_reader-block_1',
+        'delta' => 'scholar_reader-block_2',
         'weight' => 21,
         'region' => 'right',
         'status' => '0',
         'label' => 'scholar_reader: Latest feed items',
+        'type' => 'context_ui',
+      ),
+      'views_scholar_reader-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_reader-block_1',
+        'weight' => 22,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'scholar_reader: Feeds subscriptions',
         'type' => 'context_ui',
       ),
     ),
