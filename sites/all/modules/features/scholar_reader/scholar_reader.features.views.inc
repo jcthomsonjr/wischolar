@@ -199,22 +199,23 @@ function _scholar_reader_views_default_views() {
         'suffix' => '',
         'target' => '',
         'help' => '',
-        'trim' => 0,
-        'max_length' => '',
+        'trim' => 1,
+        'max_length' => '250',
         'word_boundary' => 1,
         'ellipsis' => 1,
         'strip_tags' => 0,
         'html' => 0,
       ),
-      'empty' => '',
+      'empty' => '250',
       'hide_empty' => 0,
       'empty_zero' => 0,
+      'truncate' => '0',
+      'filter_html' => 'strip_html',
+      'allowed_tags' => 'img div br p a strong b',
       'exclude' => 0,
       'id' => 'description',
       'table' => 'feeds_data_scholar_feed_importer',
       'field' => 'description',
-      'filter_html' => 'filter_html',
-      'allowed_tags' => 'img div br p a strong b',
       'override' => array(
         'button' => 'Override',
       ),
@@ -380,6 +381,10 @@ function _scholar_reader_views_default_views() {
   $handler->override_option('title', 'Latest  Feed Items');
   $handler->override_option('items_per_page', 20);
   $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+  ));
   $handler->override_option('path', 'reader');
   $handler->override_option('menu', array(
     'type' => 'normal',
