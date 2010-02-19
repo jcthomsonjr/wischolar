@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.2 2009/10/21 22:49:47 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.4 2010/01/27 15:26:32 alexb Exp $
 
 /**
  * @file
@@ -20,7 +20,7 @@ abstract class FeedsConfigurable {
   /*
   CTools export type of this object.
 
-  @todo: should live in FeedsImporter. Not all child classes
+  @todo Should live in FeedsImporter. Not all child classes
   of FeedsConfigurable are exportable. Same goes for $disabled.
 
   Export type can be one of
@@ -60,13 +60,12 @@ abstract class FeedsConfigurable {
   protected function __construct($id) {
     // Set this object's id.
     $this->id = $id;
-
     // Per default we assume that a Feeds object is not saved to
     // database nor is it exported to code.
     $this->export_type = FEEDS_EXPORT_NONE;
-
     // Make sure configuration is populated.
     $this->config = $this->configDefaults();
+    $this->disabled = FALSE;
   }
 
   /**
@@ -128,7 +127,7 @@ abstract class FeedsConfigurable {
   /**
    * Return default configuration.
    *
-   * @todo: rename to getConfigDefaults().
+   * @todo rename to getConfigDefaults().
    *
    * @return
    *   Array where keys are the variable names of the configuration elements and

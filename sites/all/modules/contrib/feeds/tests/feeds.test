@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.6 2009/12/03 20:55:05 alexb Exp $
+// $Id: feeds.test,v 1.8 2010/01/18 19:20:40 alexb Exp $
 
 /**
  * @file
@@ -29,10 +29,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
    * Set up test.
    */
   public function setUp() {
-    // @todo: once we have default configurations shipping with feeds, we do not
-    // need feeds_ui.
     parent::setUp('feeds', 'feeds_ui', 'ctools');
-
     $this->drupalLogin(
       $this->drupalCreateUser(
         array(
@@ -99,7 +96,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->drupalGet('node');
     $this->assertText('Open Atrium Translation Workflow: Two Way Translation Updates');
     $this->assertText('Tue, 10/06/2009');
-    $this->assertText('A new translation process for Open Atrium and integration with Localize Drupal');
+    $this->assertText('A new translation process for Open Atrium &amp; integration with Localize Drupal');
     $this->assertText('Week in DC Tech: October 5th Edition');
     $this->assertText('Mon, 10/05/2009');
     $this->assertText('There are some great technology events happening this week');
@@ -121,7 +118,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('Week in DC Tech: September 21 Edition');
     $this->assertText('Mon, 09/21/2009');
     $this->assertText('an interesting variety of technology events happening in Washington, DC ');
-    $this->assertText('s Software Freedom Day: Impressions and Photos');
+    $this->assertText('s Software Freedom Day: Impressions &amp; Photos');
     $this->assertText('Mon, 09/21/2009');
     $this->assertText('Presenting on Features in Drupal and Open Atrium');
     $this->assertText('Scaling the Open Atrium UI');
@@ -240,7 +237,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->drupalGet('node');
     $this->assertText('Open Atrium Translation Workflow: Two Way Translation Updates');
     $this->assertText('Tue, 10/06/2009');
-    $this->assertText('A new translation process for Open Atrium and integration with Localize Drupal');
+    $this->assertText('A new translation process for Open Atrium &amp; integration with Localize Drupal');
     $this->assertText('Week in DC Tech: October 5th Edition');
     $this->assertText('Mon, 10/05/2009');
     $this->assertText('There are some great technology events happening this week');
@@ -262,7 +259,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('Week in DC Tech: September 21 Edition');
     $this->assertText('Mon, 09/21/2009');
     $this->assertText('an interesting variety of technology events happening in Washington, DC ');
-    $this->assertText('s Software Freedom Day: Impressions and Photos');
+    $this->assertText('s Software Freedom Day: Impressions &amp; Photos');
     $this->assertText('Mon, 09/21/2009');
     $this->assertText('Presenting on Features in Drupal and Open Atrium');
     $this->assertText('Scaling the Open Atrium UI');
@@ -347,10 +344,7 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
    * Set up test.
    */
   public function setUp() {
-    // @todo: once we have default configurations shipping with feeds, we do not
-    // need feeds_ui.
     parent::setUp('feeds', 'feeds_ui', 'ctools', 'data', 'data_ui', 'views');
-
     $this->drupalLogin(
       $this->drupalCreateUser(
         array(
@@ -436,7 +430,7 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
     // Assert accuracy of aggregated information.
     $this->drupalGet('admin/content/data/view/feeds_data_rss');
     $this->assertText('Open Atrium Translation Workflow: Two Way Translation Updates');
-    $this->assertText('A new translation process for Open Atrium and integration with Localize Drupal');
+    $this->assertText('A new translation process for Open Atrium &amp; integration with Localize Drupal');
     $this->assertText('Week in DC Tech: October 5th Edition');
     $this->assertText('There are some great technology events happening this week');
     $this->assertText('Mapping Innovation at the World Bank with Open Atrium');
@@ -451,7 +445,7 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
     $this->assertText('In addition to authentication, the Siteminder system');
     $this->assertText('Week in DC Tech: September 21 Edition');
     $this->assertText('an interesting variety of technology events happening in Washington, DC ');
-    $this->assertText('s Software Freedom Day: Impressions and Photos');
+    $this->assertText('s Software Freedom Day: Impressions &amp; Photos');
     $this->assertText('Presenting on Features in Drupal and Open Atrium');
     $this->assertText('Scaling the Open Atrium UI');
     $this->assertText('The first major change is switching');
@@ -473,7 +467,6 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
     $this->assertText('Deleted 10 items.');
 
     // Assert DB status, now there should be no items.
-    // @todo: fails, is there something cached?
     $count = db_result(db_query('SELECT COUNT(*) FROM {feeds_data_rss}'));
     $this->assertEqual($count, 0, 'Accurate number of items in database.');
 
@@ -485,8 +478,8 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
     $count = db_result(db_query('SELECT COUNT(*) FROM {feeds_data_rss}'));
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
-    // @todo: Standalone import form testing.
-    // @todo: Create a second feed and test.
+    // @todo Standalone import form testing.
+    // @todo Create a second feed and test.
   }
 }
 
@@ -574,7 +567,7 @@ class FeedsCSVtoUsersTest extends FeedsWebTestCase {
     $this->assertText('Gomez');
     $this->assertText('Pugsley');
 
-    // @todo: test status setting, update existing and role settings.
+    // @todo Test status setting, update existing and role settings.
   }
 }
 
@@ -739,8 +732,8 @@ class FeedsSchedulerTestCase extends FeedsWebTestCase {
     $count = db_result(db_query('SELECT COUNT(*) FROM {node} WHERE type = "story" AND status = 1'));
     $this->assertEqual($count, 200, 'The total of 200 story nodes has not changed.');
 
-    // @todo: use debug time feature in FeedsScheduler and test behavior in future.
-    // @todo: how do I call an API function on the test system from the test script?
+    // @todo Use debug time feature in FeedsScheduler and test behavior in future.
+    // @todo How do I call an API function on the test system from the test script?
   }
 }
 

@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.15 2009/12/03 21:27:40 alexb Exp $
+$Id: README.txt,v 1.17 2010/02/08 15:30:30 alexb Exp $
 
 
 "It feeds"
@@ -35,9 +35,11 @@ Features
 Requirements
 ============
 
-- CTools 1.1
-- Drupal 6.14 or higher.
-- PHP 5.2.x
+- CTools 1.x
+  http://drupal.org/project/ctools
+- Drupal 6.x
+  http://drupal.org/project/drupal
+- PHP 5.2.x recommended
 
 Installation
 ============
@@ -71,13 +73,8 @@ http://drupal.org/node/622700
 Testing
 =======
 
-For all tests to pass, run tests with the latest releases of these modules
-available in the Drupal search path:
-
-- Views
-- Data
-
-This list does not include modules that are required by Feeds anyway.
+See "The developer's guide to Feeds":
+http://drupal.org/node/622700
 
 Performance
 ===========

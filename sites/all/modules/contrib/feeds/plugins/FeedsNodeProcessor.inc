@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.17 2009/12/03 20:55:05 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.21 2010/01/28 19:52:34 alexb Exp $
 
 /**
  * @file
@@ -14,12 +14,12 @@ class FeedsNodeProcessor extends FeedsProcessor {
   /**
    * Implementation of FeedsProcessor::process().
    */
-  public function process(FeedsParserResult $parserResult, FeedsSource $source) {
+  public function process(FeedsImportBatch $batch, FeedsSource $source) {
 
     // Count number of created and updated nodes.
     $created = $updated = 0;
 
-    foreach ($parserResult->value['items'] as $item) {
+    while ($item = $batch->shiftItem()) {
 
       // Create/update if item does not exist or update existing is enabled.
       if (!($nid = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
@@ -46,6 +46,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
         // Populate and prepare node object.
         $node->type = $this->config['content_type'];
+        $node->created = FEEDS_REQUEST_TIME;
         $node->feeds_node_item = new stdClass();
         $node->feeds_node_item->hash = $hash;
         $node->feeds_node_item->id = $this->id;
@@ -84,7 +85,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
   /**
    * Implementation of FeedsProcessor::clear().
-   * @todo: use batch API.
    */
   public function clear(FeedsSource $source) {
     // Count number of deleted nodes.
@@ -97,6 +97,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     }
 
     // Set message.
+    drupal_get_messages('status');
     if ($deleted) {
       drupal_set_message(t('Deleted !number nodes.', array('!number' => $deleted)));
     }
@@ -115,7 +116,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if ($time == FEEDS_EXPIRE_NEVER) {
       return;
     }
-    // @todo: expires 50 at a time at the moment.
+    // @todo Expires 50 at a time at the moment.
     // Create a way of letting the caller know whether all nodes could be
     // deleted. Has to be thought through in a larger context of batch
     // processing support for import and expiry.
@@ -147,7 +148,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $types = node_get_types('names');
     $type = isset($types['story']) ? 'story' : key($types);
     return array(
-      'content_type' => $type, // @todo: provide default content type feed_item.
+      'content_type' => $type,
       'update_existing' => 0,
       'expire' => FEEDS_EXPIRE_NEVER,
       'mappings' => array(),

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.6 2009/12/12 01:09:44 alexb Exp $
+// $Id: feeds.pages.inc,v 1.8 2009/12/21 01:05:31 alexb Exp $
 
 /**
  * @file
@@ -9,7 +9,7 @@
 /**
  * Render a page of available feed configuration.
  *
- * @todo: respect permissions.
+ * @todo Respect permissions.
  */
 function feeds_page() {
   $rows = array();
@@ -47,7 +47,7 @@ function feeds_import_form(&$form_state, $importer_id) {
 
   $form = array();
   $form['#importer_id'] = $importer_id;
-  // @todo: Move this into fetcher?
+  // @todo Move this into fetcher?
   $form['#attributes']['enctype'] = 'multipart/form-data';
   $form['feeds'] = array(
     '#type' => 'fieldset',
@@ -67,7 +67,7 @@ function feeds_import_form(&$form_state, $importer_id) {
  * Has to live in feeds.module, needs to be callable from node form.
  */
 function feeds_import_form_validate($form, &$form_state) {
-  // @todo: this may be a problem here, as we don't have a feed_nid at this point.
+  // @todo This may be a problem here, as we don't have a feed_nid at this point.
   feeds_source($form['#importer_id'])->configFormValidate($form_state['values']['feeds']);
 }
 
@@ -100,6 +100,7 @@ function feeds_import_tab_form(&$form_state, $node) {
   $form = array();
   $form['#feed_nid'] = $node->nid;
   $form['#importer_id'] = $importer_id;
+  $form['#redirect'] = 'node/'. $node->nid;
   return confirm_form($form, t('Import all content from feed?'), 'node/'. $node->nid, '', t('Import'), t('Cancel'), 'confirm feeds update');
 }
 
@@ -118,16 +119,16 @@ function feeds_import_tab_form_submit($form, $form_state) {
  */
 function feeds_delete_tab_form(&$form_state, $importer_id, $node = NULL) {
   if (empty($node)) {
-    $path = 'import/'. $feed_id .'/delete-items';
+    $form['#redirect'] = 'import/'. $importer_id;
   }
   else {
     $importer_id = feeds_get_importer_id($node->type);
     $form['#feed_nid'] = $node->nid;
-    $path = 'node/'. $node->nid;
+    $form['#redirect'] = 'node/'. $node->nid;
   }
   // Form cannot pass on feed object.
   $form['#importer_id'] = $importer_id;
-  return confirm_form($form, t('Delete all items from feed?'), $path, '', t('Delete'), t('Cancel'), 'confirm feeds update');
+  return confirm_form($form, t('Delete all items from feed?'), $form['#redirect'], '', t('Delete'), t('Cancel'), 'confirm feeds update');
 }
 
 /**

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.6 2009/12/12 01:20:32 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.10 2010/01/28 21:00:45 alexb Exp $
 
 /**
  * @file
@@ -9,57 +9,7 @@
 // Including FeedsImporter.inc automatically includes dependencies.
 require_once(dirname(__FILE__) .'/FeedsConfigurable.inc');
 require_once(dirname(__FILE__) .'/FeedsSource.inc');
-
-/**
- * A Feeds result class.
- *
- * @see class FeedsFetcherResult
- * @see class FeedsParserResult
- */
-abstract class FeedsResult {
-
-  // An array of valid values for $type.
-  protected $valid_types = array();
-  // The type of this result.
-  protected $type;
-  // The value of this result.
-  protected $value;
-
-  /**
-   * Constructor: create object, validate class variables.
-   *
-   * @param $value
-   *   The value of this result.
-   * @param $type
-   *   The type of this result. Must be one of $valid_types.
-   */
-  public function __construct($value, $type) {
-    $this->__set('type', $type);
-    $this->__set('value', $value);
-  }
-
-  /**
-   * Control access to class variables.
-   */
-  public function __set($name, $value) {
-    if ($name == 'valid_types') {
-      throw new Exception(t('Cannot write FeedsResult::valid_types.'));
-    }
-    if ($name == 'type') {
-      if (!in_array($value, $this->valid_types)) {
-        throw new Exception(t('Invalid type "!type"', array('!type' => $value)));
-      }
-    }
-    $this->$name = $value;
-  }
-
-  /**
-   * Control access to class variables.
-   */
-  public function __get($name) {
-    return $this->$name;
-  }
-}
+require_once(dirname(__FILE__) .'/FeedsBatch.inc');
 
 /**
  * Class defining an importer object. This is the main hub for Feeds module's
@@ -123,19 +73,49 @@ class FeedsImporter extends FeedsConfigurable {
   }
 
   /**
+   * Callback for scheduler to invoke task. Do not execute if this importer is
+   * not persistent at all.
+   *
+   * @param $feed_info
+   *   FeedsScheduler feed infor array.
+   *
+   * @see FeedsScheduler::work().
+   */
+  public function work($feed_info) {
+    if ($this->export_type == FEEDS_EXPORT_NONE) {
+      return;
+    }
+    switch ($feed_info['callback']) {
+      case 'import':
+        feeds_source($feed_info['importer_id'], $feed_info['feed_nid'])->import();
+        break;
+      case 'expire':
+        $this->expire();
+        break;
+    }
+  }
+
+  /**
    * Get the refresh period for import() or expire().
    */
   public function getSchedulePeriod($callback) {
-    if ($callback == 'import') {
-      return $this->config['import_period'];
+    switch ($callback) {
+      case 'import':
+        return $this->config['import_period'];
+      case 'expire':
+        // If a processor has expiry time set, run expiry every hour.
+        if (FEEDS_EXPIRE_NEVER != $this->processor->expiryTime()) {
+          return 3600;
+        }
+        return FEEDS_SCHEDULE_NEVER;
     }
-    if ($callback == 'expire') {
-      // If a processor has expiry time set, run expiry every hour.
-      if (FEEDS_EXPIRE_NEVER != $this->processor->expiryTime()) {
-        return 3600;
-      }
-      return FEEDS_SCHEDULE_NEVER;
-    }
+  }
+
+  /**
+   * Expose available schedule callbacks.
+   */
+  public function getScheduleCallbacks() {
+    return array('import', 'expire');
   }
 
   /**
@@ -163,7 +143,7 @@ class FeedsImporter extends FeedsConfigurable {
     if ($config = ctools_export_load_object('feeds_importer', 'conditions', array('id' => $this->id))) {
       $config = array_shift($config);
       $this->export_type = $config->export_type;
-      $this->disabled = $config->disabled;
+      $this->disabled = isset($config->disabled) ? $config->disabled : FALSE;
       $this->config = $config->config;
       return TRUE;
     }
@@ -184,7 +164,7 @@ class FeedsImporter extends FeedsConfigurable {
    * @param $plugin_key
    *   A fetcher, parser or processor plugin.
    *
-   * @todo: error handling, handle setting to the same plugin.
+   * @todo Error handling, handle setting to the same plugin.
    */
   public function setPlugin($plugin_key) {
     // $plugin_type can be either 'fetcher', 'parser' or 'processor'
@@ -243,7 +223,7 @@ class FeedsImporter extends FeedsConfigurable {
       'processor' => array(
         'plugin_key' => 'FeedsNodeProcessor',
       ),
-      'content_type' => 'page', // @todo: provide default content type feed.
+      'content_type' => 'page',
       'update' => 0,
       'import_period' => 1800, // Refresh every 30 minutes by default.
       'expire_period' => 3600, // Expire every hour by default, this is a hidden setting.

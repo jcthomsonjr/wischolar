@@ -1,5 +1,5 @@
 <?php
-// $Id: common_syndication_parser.inc,v 1.1 2009/10/20 21:01:35 alexb Exp $
+// $Id: common_syndication_parser.inc,v 1.7 2010/01/28 19:57:54 alexb Exp $
 
 /**
  * @file
@@ -182,7 +182,7 @@ function _parser_common_syndication_atom10_parse($feed_XML) {
     $item = array();
     $item['title'] = _parser_common_syndication_title($title, $body);
     $item['description'] = $body;
-    $item['author'] = $original_author;
+    $item['author_name'] = $original_author;
     $item['timestamp'] = _parser_common_syndication_parse_date(isset($news->published) ? "{$news->published}" : "{$news->issued}");
     $item['url'] = trim($original_url);
     if (valid_url($item['url']) && !valid_url($item['url'], TRUE) && !empty($base)) {
@@ -228,7 +228,7 @@ function _parser_common_syndication_RDF10_parse($feed_XML) {
 
   // Process the <rss:channel> resource containing feed metadata:
   foreach ($feed_XML->children($canonical_namespaces['rss'])->channel as $rss_channel) {
-    $parsed_source = (object)array(
+    $parsed_source = array(
       'title'       => _parser_common_syndication_title((string)$rss_channel->title),
       'description' => (string)$rss_channel->description,
       'options'     => (object)array('link' => (string)$rss_channel->link),
@@ -280,7 +280,7 @@ function _parser_common_syndication_RDF10_parse($feed_XML) {
 
     // If no author name found, use the feed title:
     if (empty($item['author'])) {
-      $item['author'] = $parsed_source['title'];
+      $item['author_name'] = $parsed_source['title'];
     }
 
     // If no GUID found, use the URL of the feed.
@@ -292,7 +292,7 @@ function _parser_common_syndication_RDF10_parse($feed_XML) {
     $item['rdf'] = (object)array();
     foreach ($rdf_data as $rdf_property => $rdf_value) {
       // looks nicer in the mapper UI
-      // @todo: revisit, not used with feedapi mapper anymore.
+      // @todo Revisit, not used with feedapi mapper anymore.
       $rdf_property = str_replace(':', '_', $rdf_property);
       $item['rdf'][$rdf_property] = $rdf_value;
     }
@@ -330,6 +330,12 @@ function _parser_common_syndication_RDF10_item($rdf_data, $mappings) {
  * Parse RSS2.0 feeds.
  */
 function _parser_common_syndication_RSS20_parse($feed_XML) {
+
+  $ns = array (
+    "content" => "http://purl.org/rss/1.0/modules/content/",
+     "dc" => "http://purl.org/dc/elements/1.1/",
+  );
+
   $parsed_source = array();
   // Detect the title.
   $parsed_source['title'] = isset($feed_XML->channel->title) ? _parser_common_syndication_title("{$feed_XML->channel->title}") : "";
@@ -343,7 +349,8 @@ function _parser_common_syndication_RSS20_parse($feed_XML) {
     $category = $news->xpath('category');
     // Get children for current namespace.
     if (version_compare(phpversion(), '5.1.2', '>')) {
-      $content = (array)$news->children('http://purl.org/rss/1.0/modules/content/');
+      $content = (array)$news->children($ns["content"]);
+      $dc      = (array)$news->children($ns["dc"]);
     }
     $news = (array) $news;
     $news['category'] = $category;
@@ -374,8 +381,14 @@ function _parser_common_syndication_RSS20_parse($feed_XML) {
       $body = "{$news['title']}";
     }
 
-    if (!empty($feed_XML->channel->title)) {
-      $original_author = "{$feed_XML->channel->title}";
+    if (!empty($news['author'])) {
+      $original_author = "{$news['author']}";
+    }
+    elseif (isset($dc["creator"])) {
+      $original_author = (string)$dc["creator"];
+    }
+    else {
+      $original_author = NULL;
     }
 
     if (!empty($news['link'])) {
@@ -414,7 +427,7 @@ function _parser_common_syndication_RSS20_parse($feed_XML) {
     $item = array();
     $item['title'] = _parser_common_syndication_title($title, $body);
     $item['description'] = $body;
-    $item['author'] = $original_author;
+    $item['author_name'] = $original_author;
     if (isset($news['pubDate'])) {
       $item['timestamp'] = _parser_common_syndication_parse_date($news['pubDate']);
     }
@@ -439,6 +452,9 @@ function _parser_common_syndication_RSS20_parse($feed_XML) {
  *  The timestamp of the string or the current time if can't be parsed
  */
 function _parser_common_syndication_parse_date($date_str) {
+  // PHP < 5.3 doesn't like the GMT- notation for parsing timezones.
+  $date_str = str_replace("GMT-", "-", $date_str);
+  $date_str = str_replace("GMT+", "+", $date_str);
   $parsed_date = strtotime($date_str);
   if ($parsed_date === FALSE || $parsed_date == -1) {
     $parsed_date = _parser_common_syndication_parse_w3cdtf($date_str);

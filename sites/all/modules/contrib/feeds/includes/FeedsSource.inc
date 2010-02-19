@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.4 2009/12/12 01:20:32 alexb Exp $
+// $Id: FeedsSource.inc,v 1.6 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * @file
@@ -62,8 +62,9 @@ interface FeedsSourceInterface {
  * instance of a FeedsSource class exists once per feed_nid to be imported.
  *
  * As with FeedsImporter, the idea with FeedsSource is that it can be used
- * without actually saving the object to the database (@todo: needs to be
- * tested).
+ * without actually saving the object to the database (
+ *
+ * @todo Test whether FeedsSource can be used without saving it.
  */
 class FeedsSource extends FeedsConfigurable {
 
@@ -101,15 +102,16 @@ class FeedsSource extends FeedsConfigurable {
   /**
    * Import a feed: execute, fetching, parsing and processing stage.
    *
-   * @todo: Iron out and document potential Exceptions.
-   * @todo: Support batching.
-   * @todo: catch exceptions outside of import(), clear() and expire().
+   * @todo Iron out and document potential Exceptions.
+   * @todo Support batching.
+   * @todo catch exceptions outside of import(), clear() and expire().
    */
   public function import() {
     try {
-      $result = $this->importer->fetcher->fetch($this);
-      $result = $this->importer->parser->parse($result, $this);
-      $this->importer->processor->process($result, $this);
+      $feed = $this->importer->fetcher->fetch($this);
+      $this->importer->parser->parse($feed, $this);
+      $this->importer->processor->process($feed, $this);
+      unset($feed);
     }
     catch (Exception $e) {
       drupal_set_message($e->getMessage(), 'error');
@@ -158,12 +160,13 @@ class FeedsSource extends FeedsConfigurable {
 
   /**
    * Load configuration and unpack.
+   *
+   * @todo Patch CTools to move constants from export.inc to ctools.module.
    */
   public function load() {
     if ($config = db_result(db_query('SELECT config FROM {feeds_source} WHERE id = "%s" AND feed_nid = %d', $this->id, $this->feed_nid))) {
       // While FeedsSource cannot be exported, we still use CTool's export.inc
       // export definitions.
-      // @todo: patch CTools to move constants from export.inc to ctools.module.
       ctools_include('export');
       $this->export_type = EXPORT_IN_DATABASE;
       $this->config = unserialize($config);
