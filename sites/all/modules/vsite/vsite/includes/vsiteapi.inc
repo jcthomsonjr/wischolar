@@ -181,7 +181,7 @@ function _vsite_is_vsite_theme($atheme){
  */
 function _vsite_get_random_theme(){
   $themes = array();
-  $selected_themes = array('scholar_theme_01', 'scholar_theme_02', 'scholar_theme_03', 'scholar_theme_06');
+  $selected_themes = variable_get('scholar_selected_themes', array('scholar_theme_01'));
   $all_themes = array_keys(list_themes());
   $themes = array_intersect( $selected_themes, $all_themes );
   shuffle($themes);
