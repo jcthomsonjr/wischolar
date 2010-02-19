@@ -18,9 +18,15 @@ function scholar_project_strongarm(){
   // the content type which powers this kind of web site.
   $conf['scholar_content_type'] = 'project';
   $conf['og_content_type_usage_project'] = 'group';
+  
+  // setting determines if a non admin user can create multiple sites
+  $conf['scholar_create_multiple_sites'] = 1;  
 
   // the default project site theme
   $conf['scholar_default_theme'] = 'scholar_theme_10';
+  
+  // list of themes, one will be randonly selected as default for new sites created
+  $conf['scholar_selected_themes'] = array('scholar_theme_10', 'scholar_theme_11');   
   
   $conf['spaces_default_presets'] = array(
     'og' => 'project' 
@@ -54,12 +60,6 @@ function scholar_project_strongarm(){
   
   $conf["show_preview_changes_project"] = FALSE;
   $conf["show_diff_inline_project"] = FALSE;
-  
-  // setting determines if a non admin user can create multiple sites
-  $conf['scholar_create_multiple_sites'] = 1;
-  
-  // list of themes which one will be randonly selected as default for new sites
-  $conf['scholar_selected_themes'] = array('scholar_theme_10', 'scholar_theme_11');
   
   // Comments
   $conf['comment_project'] = COMMENT_NODE_DISABLED;
