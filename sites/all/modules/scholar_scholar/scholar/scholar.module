@@ -77,6 +77,9 @@ function scholar_strongarm(){
   // setting determines if a non admin user can create multiple sites
   $conf['scholar_create_multiple_sites'] = 0;
   
+   // list of themes which one will be randonly selected as default for new sites
+  $conf['scholar_selected_themes'] = array('scholar_theme_01', 'scholar_theme_02', 'scholar_theme_03', 'scholar_theme_06');
+  
   // the default preset
   $conf['scholar_default_preset'] = "scholar";
   return $conf;
