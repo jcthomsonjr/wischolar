@@ -663,6 +663,27 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       }
       
       break;
+      case 'view':
+      	//////////
+      	//INTEGRATE FILE ALIAS and UPLOAD and ITWEAK unfortunatly there is no more elegant way to do this
+      	//////////
+	      if (module_exists('itweak_upload') && module_exists('file_aliases') && isset($node->itweak_upload)){ 
+	      	$tmp_node = clone $node;
+	      	$tmp_node->files = $tmp_node->itweak_upload;
+		      if(($ffp = filefield_paths_get_fields($tmp_node, $op)) != FALSE) {
+		        $count = array();
+			      foreach ($ffp['#files'] as &$file) {
+			        if ($ffp['#settings'][$file['name']]['filealias']['display'] == TRUE) {
+			          $filefield_paths_alias = 'filefield_paths/alias/' . $file['field']['fid'];
+			          if (($alias = drupal_get_path_alias($filefield_paths_alias)) != $filefield_paths_alias) {
+			          	//If alias exists replace it
+			          	$node->content['itweak_upload']['#value'] = str_replace($file['field']['filepath'], $alias, $node->content['itweak_upload']['#value']);
+			          }
+			        }
+			      }
+		      }
+	      }
+      break;
   }
 }
 
@@ -778,15 +799,4 @@ function node_vsite_admin_link($type, $object) {
     }
   }
   return $links;
-}
-
-/**
- * hook filefield_paths_form_submit
- * This will make sure that the file alias is displayed in the teaser and node views
- * 
- * @param $form_state
- * @param $ffp
- */
-function viste_filefield_paths_form_submit(&$form_state, $ffp){
-	$v = $b;
 }

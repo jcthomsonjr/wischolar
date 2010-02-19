@@ -27,3 +27,10 @@ function file_aliases_upload_views_handlers(&$handlers) {
 function file_aliases_upload_views_data_alter(&$data) {
   $data['node']['upload_fid']['field']['handler'] = 'file_aliases_views_handler_field_upload_fid';
 }
+
+/**
+ * Implements file_aliases_hook_nodeform_alter().
+ */
+function file_aliases_upload_nodeform_alter(&$form, &$file, &$path, &$alias, &$count) {
+  $form['attachments']['wrapper']['files'][$file['field']['fid']]['description']['#description'] = str_replace($file['field']['filepath'], $alias, $form['attachments']['wrapper']['files'][$file['field']['fid']]['description']['#description']);
+}

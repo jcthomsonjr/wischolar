@@ -650,6 +650,7 @@ $caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumbnail_
         $teaser_images_max = variable_get('itweak_upload_teaser_images_' . $node->type, 0);
         if ($teaser_images_max === '') $teaser_images_max = -1;
         $cnt_other = _itweak_upload_preprocess_files($node->files, $thumbnails, $files_display, $derivative, $caption, $options);
+        $node->itweak_upload = $thumbnails;
 
         // Add regular attachment list
         if ($cnt_other) {

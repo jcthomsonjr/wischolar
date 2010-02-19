@@ -88,7 +88,7 @@ function _vsite_filefield_paths_config(){
     'tolower' => 0, 
     'pathauto' => 0, 
     'transliterate' => 0,
-    'display' => 0,
+    'display' => 1,
   );
   
   
