@@ -462,9 +462,18 @@ function vsite_theme_registry_alter(&$theme_registry){
 
 /**
  * Implementation of hook_form_alter()
+ * @todo a lot going on here. refactor the code in smaller functions
  **/
 function vsite_form_alter(&$form, $form_state, $form_id) {
-	$scholar_content_type = variable_get('scholar_content_type', 'vsite');
+  if ($form['#id'] == 'node-form') {
+    // Hiding the  body splitting checkbox in the node forms
+    if (!empty($form['body_field'])) {
+      $form['body_field']['teaser_js']['#type'] = 'hidden';
+      $form['body_field']['teaser_include']['#type'] = 'hidden';
+    }
+  }
+  
+  $scholar_content_type = variable_get('scholar_content_type', 'vsite');
   switch ($form_id) {
   	case $scholar_content_type.'_node_form':
   		//Customize the "Site Information" form
