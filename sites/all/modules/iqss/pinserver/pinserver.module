@@ -269,7 +269,6 @@ function pinserver_check_token(){
     $stderr .= fgets($pipes[2], 1024);
   }
   fclose($pipes[2]);
-
   $return_value = proc_close($process);
 
   /** 
@@ -277,16 +276,9 @@ function pinserver_check_token(){
    * File should be placed below root, recommended only for development/testing. 
    */
   if(GPG_ERROR_LOG !== ''){
-//    if (is_file(GPG_ERROR_LOG)) {
-      // Read stderr from gpg process. 
-      while (!feof($pipes[2])) {
-        $stderr .= fgets($pipes[2], 1024);
-      }
-      fclose($pipes[2]);
-      $fp = fopen(GPG_ERROR_LOG, 'w');
-      fwrite($fp, $stderr);
-      fclose($fp);
-   // }
+    $fp = fopen(GPG_ERROR_LOG, 'w');
+    fwrite($fp, $stderr);
+    fclose($fp);
   }
 
   // If good signature statement is not found within gpg output 
