@@ -1,17 +1,17 @@
 <?php
-// $Id: file_aliases.views.inc,v 1.1 2009/07/28 00:03:44 deciphered Exp $
+// $Id: file_aliases.views.inc,v 1.1.2.1 2010/01/07 08:59:05 deciphered Exp $
 /**
  * @file
  * Contains views data and handlers for the File Aliases module.
  */
 
 /**
- * Implementation of hook_views_handlers().
+ * Implements hook_views_handlers().
  */
 function file_aliases_views_handlers() {
   $handlers = array(
     'info' => array(
-      'path' => drupal_get_path('module', 'file_aliases') .'/includes',
+      'path' => drupal_get_path('module', 'file_aliases') . '/includes',
     ),
     'handlers' => array(
       'file_aliases_views_handler_field_file' => array(
@@ -22,7 +22,7 @@ function file_aliases_views_handlers() {
 
   // Invoke file_aliases_hook_views_handlers().
   foreach (module_list() as $module) {
-    if (function_exists($function = 'file_aliases_'. $module .'_views_handlers')) {
+    if (function_exists($function = 'file_aliases_' . $module . '_views_handlers')) {
       $function($handlers['handlers']);
     }
   }
@@ -31,7 +31,7 @@ function file_aliases_views_handlers() {
 }
 
 /**
- * Implementation of hook_views_data_alter().
+ * Implements hook_views_data_alter().
  */
 function file_aliases_views_data_alter(&$data) {
   $data['files']['filealias'] = array(
@@ -45,7 +45,7 @@ function file_aliases_views_data_alter(&$data) {
 
   // Invoke file_aliases_hook_views_data_alter().
   foreach (module_list() as $module) {
-    if (function_exists($function = 'file_aliases_'. $module .'_views_data_alter')) {
+    if (function_exists($function = 'file_aliases_' . $module . '_views_data_alter')) {
       $function($data);
     }
   }

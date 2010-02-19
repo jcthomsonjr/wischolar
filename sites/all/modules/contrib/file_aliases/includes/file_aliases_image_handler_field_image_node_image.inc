@@ -1,5 +1,5 @@
 <?php
-// $Id: file_aliases_image_handler_field_image_node_image.inc,v 1.1 2009/07/28 00:03:44 deciphered Exp $
+// $Id: file_aliases_image_handler_field_image_node_image.inc,v 1.1.2.1 2010/01/07 08:59:05 deciphered Exp $
 /**
  * @file
  * Views handler for image field.
@@ -54,7 +54,7 @@ class file_aliases_image_handler_field_image_node_image extends image_handler_fi
     // regenerated.
     image_load($node);
 
-    if (($alias = drupal_get_path_alias('filefield_paths/alias/'. $values->{$this->aliases['fid']})) !== 'filefield_paths/alias/'. $values->{$this->aliases['fid']} && _file_aliases_display_alias('image', 'image')) {
+    if (($alias = drupal_get_path_alias('filefield_paths/alias/' . $values->{$this->aliases['fid']})) !== 'filefield_paths/alias/' . $values->{$this->aliases['fid']} && _file_aliases_display_alias('image', 'image')) {
       // Calculate relative path.
       $path = (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PUBLIC) ? '' : base_path();
       foreach (explode('/', file_directory_path()) as $dir) {

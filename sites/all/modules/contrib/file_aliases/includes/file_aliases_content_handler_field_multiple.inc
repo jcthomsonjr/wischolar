@@ -1,5 +1,5 @@
 <?php
-// $Id: file_aliases_content_handler_field_multiple.inc,v 1.1 2009/07/28 00:03:44 deciphered Exp $
+// $Id: file_aliases_content_handler_field_multiple.inc,v 1.1.2.1 2010/01/07 08:59:05 deciphered Exp $
 
 /**
  * @file
@@ -154,10 +154,10 @@ class file_aliases_content_handler_field_multiple extends file_aliases_content_h
     foreach ($db_info['columns'] as $column => $attributes) {
       $query_columns[] = "$attributes[column] AS $column";
     }
-    $query = 'SELECT '. implode(', ', $query_columns) .
-             ' FROM {'. $db_info['table'] ."}".
-             " WHERE vid IN (". implode(',', $vids) .')'.
-             " ORDER BY nid ASC, delta ". ($options['multiple']['multiple_reversed'] ? 'DESC' : 'ASC');
+    $query = 'SELECT ' . implode(', ', $query_columns) .
+             ' FROM {' . $db_info['table'] . "}".
+             " WHERE vid IN (" . implode(',', $vids) . ')' .
+             " ORDER BY nid ASC, delta " . ($options['multiple']['multiple_reversed'] ? 'DESC' : 'ASC');
     $result = db_query($query);
 
     while ($item = db_fetch_array($result)) {
@@ -227,6 +227,8 @@ class file_aliases_content_handler_field_multiple extends file_aliases_content_h
       // Some formatters need to behave differently depending on the build_mode
       // (for instance: preview), so we provide one.
       $node->build_mode = NODE_BUILD_NORMAL;
+
+      $field['module'] = 'file_aliases_' . $field['module'];
 
       // Render items.
       $formatter_name = $options['format'];

@@ -1,12 +1,12 @@
 <?php
-// $Id: filefield.inc,v 1.2 2009/10/28 04:47:55 deciphered Exp $
+// $Id: filefield.inc,v 1.2.2.1 2010/01/07 08:59:05 deciphered Exp $
 /**
  * @file
  * Contains FileField module integration for the File Aliases module.
  */
 
 /**
- * Implementation of file_aliases_hook_process().
+ * Implements file_aliases_hook_process().
  */
 function file_aliases_filefield_process(&$node, &$file, &$path, &$alias, &$count) {
   $count[$file['name']] = isset($count[$file['name']]) ? $count[$file['name']] + 1 : 1;
@@ -18,7 +18,7 @@ function file_aliases_filefield_process(&$node, &$file, &$path, &$alias, &$count
 }
 
 /**
- * Implementation of file_aliases_hook_views_handlers().
+ * Implements file_aliases_hook_views_handlers().
  */
 function file_aliases_filefield_views_handlers(&$handlers) {
   $handlers['file_aliases_content_handler_field_multiple'] = array(
@@ -30,18 +30,18 @@ function file_aliases_filefield_views_handlers(&$handlers) {
 }
 
 /**
- * Implementation of file_aliases_hook_views_data_alter().
+ * Implements file_aliases_hook_views_data_alter().
  */
 function file_aliases_filefield_views_data_alter(&$data) {
   foreach (content_fields() as $field) {
-    if ($field['module'] == 'filefield' && isset($data['node_data_'. $field['field_name']])) {
-      $data['node_data_'. $field['field_name']][$field['field_name'] .'_fid']['field']['handler'] = 'file_aliases_content_handler_field_multiple';
+    if ($field['module'] == 'filefield' && isset($data['node_data_' . $field['field_name']])) {
+      $data['node_data_' . $field['field_name']][$field['field_name'] . '_fid']['field']['handler'] = 'file_aliases_content_handler_field_multiple';
     }
   }
 }
 
 /**
- * Implementation of hook_theme_registry_alter().
+ * Implements hook_theme_registry_alter().
  */
 function file_aliases_theme_registry_alter(&$theme_registry) {
   $theme_registry['imagefield_image']['theme path'] = drupal_get_path('module', 'file_aliases');
@@ -61,7 +61,7 @@ function theme_file_aliases_imagefield_image($file, $alt = '', $title = '', $att
   }
 
   if (!file_exists($file['filepath'])) {
-    return '<!-- File not found: '. $file['filepath'] .' -->';
+    return '<!-- File not found: ' . $file['filepath'] . ' -->';
   }
 
   if ($getsize && (list($width, $height, $type, $image_attributes) = @getimagesize($file['filepath']))) {
@@ -86,11 +86,11 @@ function theme_file_aliases_imagefield_image($file, $alt = '', $title = '', $att
   $url = file_create_url(isset($file['alias']) ? $file['alias'] : $file['filepath']) . $query_string;
   $attributes['src'] = $url;
   $attributes = drupal_attributes($attributes);
-  return '<img '. $attributes .' />';
+  return '<img ' . $attributes . ' />';
 }
 
 /**
- * Implementation of CCK's hook_field($op = 'sanitize').
+ * Implements CCK's hook_field($op = 'sanitize').
  */
 function file_aliases_filefield_field($op, $node, $field, &$items, $teaser, $page) {
   if ($op == 'sanitize') {
@@ -121,9 +121,9 @@ function file_aliases_filefield_field($op, $node, $field, &$items, $teaser, $pag
         $path .= '../';
       }
 
-      if (($alias = drupal_get_path_alias('filefield_paths/alias/'. $items[$delta]['fid'])) !== 'filefield_paths/alias/'. $items[$delta]['fid'] && _file_aliases_display_alias($field['type_name'], $field['field_name'])) {
+      if (($alias = drupal_get_path_alias('filefield_paths/alias/' . $items[$delta]['fid'])) !== 'filefield_paths/alias/' . $items[$delta]['fid'] && _file_aliases_display_alias($field['type_name'], $field['field_name'])) {
         $items[$delta]['origpath'] = $items[$delta]['filepath'];
-        $items[$delta]['filepath'] = file_directory_path() .'/'. $path . $alias;
+        $items[$delta]['filepath'] = file_directory_path() . '/' . $path . $alias;
       }
 
       // TODO: This is only necessary for Views, which doesn't call the "load"

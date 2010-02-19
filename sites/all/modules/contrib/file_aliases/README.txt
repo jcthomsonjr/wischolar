@@ -1,9 +1,8 @@
-// $Id: README.txt,v 1.1 2009/07/28 00:03:44 deciphered Exp $
+// $Id: README.txt,v 1.1.2.2 2010/01/11 06:14:39 deciphered Exp $
 
-The File Aliases module extends the default functionality of the FileField
-module and the core Upload module by adding a token customizable alias, allowing
-files to have cleaner paths - while files will still live under the defined File
-system path, aliases make the file appear to exist anywhere you wish.
+The File Aliases module allows you to use token customizable aliases for your
+uploaded files, giving you the ability to keep your file system organized as per
+usual while providing clean looking paths (i.e., no more '/sites/default/files/').
 
 File Aliases was written and is maintained by Stuart Clark (deciphered).
 - http://stuar.tc/lark
@@ -13,21 +12,19 @@ Features
 ----------------
 
 * Customizable File Alias field using Node tokens.
+* Support for:
+  * Drupal core Upload module.
+  * FileField module.
+  * ImageField module.
+  * Image module.
+  * Comment Upload module.
 * Support for Private and Public file systems.
+* Support for Views output (Fields and Nodes).
+* Support for FileField Paths Retroactive and Active Updating.
 
 
 Required Modules
 ----------------
 
-* FileField Paths - http://drupal.org/project/filefield_paths
-
-
-Known issues
-----------------
-
-* Fields in Views
-
-  Currently using the Fields output in Views will point to the physical location
-  of the file, not the File Alias.
-  Views Node output will display the File Alias as expected.
+* FileField Paths (6.x-1.4 or greater) - http://drupal.org/project/filefield_paths
 

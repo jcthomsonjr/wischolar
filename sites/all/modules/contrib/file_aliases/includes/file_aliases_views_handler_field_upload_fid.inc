@@ -1,5 +1,5 @@
 <?php
-// $Id: file_aliases_views_handler_field_upload_fid.inc,v 1.1 2009/07/28 00:03:44 deciphered Exp $
+// $Id: file_aliases_views_handler_field_upload_fid.inc,v 1.1.2.1 2010/01/07 08:59:05 deciphered Exp $
 /**
  * @file
  * Field handler to provide a list of uploads.
@@ -34,7 +34,7 @@ class file_aliases_views_handler_field_upload_fid extends views_handler_field_up
    */
   function render_link($data, $values) {
     if (!empty($this->options['link_to_file']) && $data !== NULL && $data !== '') {
-      if (($alias = drupal_get_path_alias('filefield_paths/alias/'. $values->fid)) !== 'filefield_paths/alias/'. $values->fid && _file_aliases_display_alias($values->type, 'upload')) {
+      if (($alias = drupal_get_path_alias('filefield_paths/alias/' . $values->fid)) !== 'filefield_paths/alias/' . $values->fid && _file_aliases_display_alias($values->type, 'upload')) {
         return l($data, $alias, array('html' => TRUE));
       }
       else {

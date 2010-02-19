@@ -1,12 +1,12 @@
 <?php
-// $Id: file_aliases.install,v 1.2 2009/07/28 00:03:44 deciphered Exp $
+// $Id: file_aliases.install,v 1.2.2.1 2010/01/07 08:59:05 deciphered Exp $
 /**
  * @file
  * Contains installation functions for the File Aliases module.
  */
 
 /**
- * Implementation of hook_schema_alter().
+ * Implements hook_schema_alter().
  *
  * @param $schema
  *   The system-wide schema
@@ -21,7 +21,7 @@ function file_aliases_schema_alter(&$schema) {
 }
 
 /**
- * Implementation of hook_install().
+ * Implements hook_install().
  */
 function file_aliases_install() {
   db_add_field($ret = array(), 'filefield_paths', 'filealias', array('type' => 'text', 'size' => 'medium', 'not null' => TRUE, 'serialize' => TRUE));
@@ -31,7 +31,7 @@ function file_aliases_install() {
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function file_aliases_uninstall() {
   db_drop_field($ret = array(), 'filefield_paths', 'filealias');
@@ -39,7 +39,7 @@ function file_aliases_uninstall() {
 }
 
 /**
- * Implementation of hook_update_N().
+ * Implements hook_update_N().
  */
 function file_aliases_update_6100() {
   $ret = array();
