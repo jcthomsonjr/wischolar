@@ -33,9 +33,9 @@ function _iqss_project_context_default_contexts() {
         'label' => 'row 2',
         'type' => 'context_ui',
       ),
-      'views_iqss_project_sites-block_1' => array(
+      'views_iqss_project_sites-block_2' => array(
         'module' => 'views',
-        'delta' => 'iqss_project_sites-block_1',
+        'delta' => 'iqss_project_sites-block_2',
         'weight' => 22,
         'region' => 'content_top',
         'status' => '0',
@@ -45,6 +45,48 @@ function _iqss_project_context_default_contexts() {
     ),
   );
   return $items;
+}
+
+/**
+ * Helper to implementation of hook_flag_default_flags().
+ */
+function _iqss_project_flag_default_flags() {
+$flags = array();
+// Exported flag: "Featured web sites".
+$flags[] = array (
+  'content_type' => 'node',
+  'name' => 'featured_web_sites',
+  'title' => 'Featured web sites',
+  'global' => '1',
+  'types' => 
+  array (
+    0 => 'vsite',
+  ),
+  'flag_short' => 'feature',
+  'flag_long' => 'make it featured web site',
+  'flag_message' => 'featured',
+  'unflag_short' => 'unfeature',
+  'unflag_long' => 'remove from featured web site',
+  'unflag_message' => 'unfeature',
+  'unflag_denied_text' => '',
+  'link_type' => 'toggle',
+  'roles' => 
+  array (
+    'flag' => 
+    array (
+    ),
+    'unflag' => 
+    array (
+    ),
+  ),
+  'show_on_page' => 0,
+  'show_on_teaser' => 0,
+  'show_on_form' => 0,
+  'access_author' => '',
+  'i18n' => 0,
+  'api_version' => 2,
+);
+return $flags;
 }
 
 /**
