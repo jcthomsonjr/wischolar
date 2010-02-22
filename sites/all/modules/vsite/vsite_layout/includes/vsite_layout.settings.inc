@@ -5,6 +5,8 @@
  */
 class vsite_layout_settings_layout implements space_setting {
   var $id;
+  var $parent_menu = 'appearance';
+  
   function __construct($id = NULL) {
     if ($id) {
       $this->id = $id;

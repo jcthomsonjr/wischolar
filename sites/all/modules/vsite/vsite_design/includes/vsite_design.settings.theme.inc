@@ -5,6 +5,7 @@
  */
 class vsite_design_settings_theme implements space_setting {
   var $id;
+  var $parent_menu = 'appearance';
 
   function __construct($id = NULL){
     if ($id) {

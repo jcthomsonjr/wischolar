@@ -37,12 +37,12 @@ function vsite_layout_spaces_settings(){
 function vsite_layout_menu(){
   $items = array();
 
-  $items["cp/settings/layout/region_widgets_js"] = array(
+  $items["cp/appearance/layout/region_widgets_js"] = array(
     'page callback' => 'vsite_layout_region_widgets_callback',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-  $items["cp/settings/layout/top_widgets_js"] = array(
+  $items["cp/appearance/layout/top_widgets_js"] = array(
     'page callback' => 'vsite_layout_top_widgets_callback',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
@@ -55,7 +55,7 @@ function vsite_layout_menu(){
  * hook menu alter
  */
 function vsite_layout_menu_alter(&$items) {
-  $items["cp/settings/layout"]['page callback'] = 'vsite_layout_layout';
+  $items["cp/appearance/layout"]['page callback'] = 'vsite_layout_layout';
 }
 
 /**

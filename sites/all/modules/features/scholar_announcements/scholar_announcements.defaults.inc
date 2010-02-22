@@ -41,7 +41,7 @@ function _scholar_announcements_context_default_contexts() {
         'module' => 'vsite_widgets',
         'delta' => '2',
         'weight' => 50,
-        'region' => 'left',
+        'region' => 'right',
         'status' => '0',
         'label' => 'AddThis button',
         'type' => 'context_ui',
