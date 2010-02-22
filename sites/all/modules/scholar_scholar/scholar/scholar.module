@@ -182,6 +182,7 @@ function scholar_form_alter(&$form, $form_state, $form_id) {
       $form['title']['#description'] = "Usually the scholar's first and last name, e.g. \"Bob Patterson\"";
       $form['og_description']['#title'] = "Web site subtitle";
       $form['og_description']['#description'] = "Usually the scholar's title or position, e.g. \"Professor of Mathematics\"";
+      $form['og_description']['#required'] = false;
       $form['field_vsite_address'][0]['#title'] = "Address line";
       $form['field_vsite_address'][0]['#description'] = "Usually the scholar's office address, e.g. \"1737 Cambridge St. Cambridge, MA 02138\"";
 
