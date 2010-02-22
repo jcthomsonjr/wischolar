@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * Content node submission form.
@@ -8,12 +8,12 @@ function vsite_users_content_profile_node_form($form) {
 
   $buttons = drupal_render($form['buttons']);
   drupal_add_css('<style type="text/css"> .vertical-tabs { display: none; } </style>');
-  
+
   $vert_tabs = drupal_render($form['vertical_tabs']);
-  
+
   // Everything else gets rendered here
   // field and the submit buttons.
-  
+
   $output .= "  <div class=\"standard\">\n";
   $output .= drupal_render($form);
   $output .= "  </div>\n";
@@ -26,7 +26,7 @@ function vsite_users_content_profile_node_form($form) {
 
 /**
  * vsite_users_profile should use the cp layout
- * 
+ *
  * @param $form
  * @return string
  */
@@ -42,32 +42,43 @@ function theme_vsite_users_profile_node_form($form){
  */
 function theme_vsite_users_list_sites($my_sites, $member_sites){
   //TODO : Need to add proper markup/ styling
-  
-  $plural = count($my_sites) > 1 ? 's' : '';  
-  $output = '<div class="form-item"><label>' . "My Web Site" . $plural . ':'  . '</label>';
+
+  $plural = count($my_sites) > 1 ? 's' : '';
+
+  if ($plural) {
+    $nomysites="pural";
+    }
+    else {
+    $nomysites="single";
+    }
 
   //print sites that I own
   if (!empty($my_sites)){
-    $output .=  '<ul>';
+    $output = '<p class="nomarg ' . $nomysites . '">' . "My Web Site" . $plural . ':'  . '</p>';
+    $output .=  '<ul class="' . $nomysites . '">';
     foreach($my_sites as $site){
       $output .=  '<li>';
       $output .=  l($site['name'], $site['url']);  //should have a max of 1
-      $output .=  '<li>';
+      $output .=  '</li>';
     }
-    $output .=  '<ul>';
+    $output .=  '</ul>';
   }
-  
+
   else{
-  $output .= "  <div class=\"standard\">\n"; 
-  $output .= 'none';
-  $output .= "</div>\n";
+  $output .= '';
 }
-  
-   $output .= '<div class="form-item"><label>' . "Web Sites That I am a Member of:"  .'</label>';
-   
+
+  $plural_sites = count($member_sites) > 1 ? 's' : '';
+  if ($plural_sites) {
+    $noothersites="pural";
+    }
+    else {
+    $noothersite="single";
+    }
     //print sites I am a member of
   if (!empty($member_sites)){
-      $output .=  '<ul>';
+      $output .= '<p class="nomarg ' . $noothersites . '">' . "Web site" . $plural_sites . " I am a member of:"  .'</p>';
+      $output .=  '<ul class="' . $noothersites . '">';
     foreach($member_sites as $site){
       $output .=  '<li>';
       $output .=  l($site['name'], $site['url']);
@@ -76,9 +87,7 @@ function theme_vsite_users_list_sites($my_sites, $member_sites){
     $output .=  '<ul>';
   }
 else{
-  $output .= "  <div class=\"standard\">\n"; 
-  $output .= 'none';
-  $output .= "</div>\n";
+  $output .= '';
 }
   return $output;
 }
