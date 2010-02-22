@@ -14,7 +14,7 @@ define(PIN_APP_NAME, variable_get('pinserver_app_name','')); //application name 
 define(PIN_IP_VAL, variable_get('pinserver_ip_validation', 1)); //Validate IP address or not. 
 define(GPG_DIR, variable_get('pinserver_gpg_dir', dirname(__FILE__) . '/.gnupg')); //absolute path to directory to verify detached signature
 define(GPG_BIN, variable_get('pinserver_gpg_bin','/usr/bin/gpg')); //absolute path to gpg binary
-define(GPG_ERROR_LOG, variable_get('pinserver_error_log',''));  //absolute path (file included) to gpp stderr output for testing
+define(GPG_ERROR_LOG, variable_get('pinserver_error_log','/tmp/gpgerror'));  //absolute path (file included) to gpp stderr output for testing
 
 /**
  * Implementation of hook_menu(). 
@@ -86,7 +86,7 @@ function pinserver_check_user(){
 
   // First, parse and validate the PIN token.
   $token_data = pinserver_check_token();
- 
+ print_r($token_data);
   // If any errors are returned, redirect to an error page.
   if (is_array($token_data) && count($token_data['errors']) > 0) {
     $errors = implode(',', array_unique($token_data['errors']));
@@ -284,6 +284,7 @@ function pinserver_check_token(){
   // If good signature statement is not found within gpg output 
   // or exit code from process is not 0, then it is a bad signature. 
   if (strpos($stderr,  $values['good_sig']) === false || $return_value != 0) {
+  	print "Good[{$values['good_sig']}] Mine[$stderr]";
     $values['errors'][] = 'signature'; 
   }
 
@@ -304,9 +305,9 @@ function pinserver_check_token(){
   
   if (PIN_IP_VAL == 1) {
     // Verify current user's IP address. 
-    if ( $values['ip'] !== $_SERVER['REMOTE_ADDR'] ) { 
-      $values['errors'][] = 'ip-mismatch';
-    }
+//    if ( $values['ip'] !== $_SERVER['REMOTE_ADDR'] ) { 
+//      $values['errors'][] = 'ip-mismatch';
+//    }
   }
   
   // Verify time parameter is not longer than 2 minutes old. 

@@ -45,7 +45,7 @@ class vsite_layout_settings_layout implements space_setting {
 	    '#description' => t('Select the widgets to display everywhere in your site (Default settings) the front page or a specific section (feature) of your site'),
 	    '#ahah' => array(
 	          'event' => 'go_ahah',
-	          'path' => 'cp/settings/layout/region_widgets_js',
+	          'path' => 'cp/appearance/layout/region_widgets_js',
 	          'wrapper' => 'scholarlayout-container',
 	          'progress' => array('type' => 'throbber', 'message' => t('Loading Page...')),
 	          'effect' => 'fade',
@@ -58,7 +58,7 @@ class vsite_layout_settings_layout implements space_setting {
 	    '#value' => $s_page_type,
 	    '#ahah' => array(
 	          'event' => 'go_ahah',
-	          'path' => 'cp/settings/layout/top_widgets_js',
+	          'path' => 'cp/appearance/layout/top_widgets_js',
 	          'wrapper' => 'scholarlayout-top-widgets',
 	          'effect' => 'fade',
 	          'progress' => array('type' => 'none'),

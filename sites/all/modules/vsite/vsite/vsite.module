@@ -202,8 +202,10 @@ function vsite_strongarm(){
     $conf["allowed_html_{$format}"] = '<div> <span> <br> <a> <em> <strong> <cite> <code> <strike> <ul> <ol> <li> <dl> <dt> <dd> <img> <blockquote> <p> <h1> <h2> <h3> <h4> <h5> <h6> <table> <caption> <thead> <th> <td> <tr> <sup> <sub>';
     $conf['filter_default_format'] = $format;
   }
-
-
+  
+  //Use lightbox for the popups
+  $conf['addthis_widget_version'] = 200;
+  
   // mollom settings
 
   return $conf;
