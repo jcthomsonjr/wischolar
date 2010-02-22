@@ -11,7 +11,7 @@ define(PIN_SUPPORT_CONTACT, variable_get('pinserver_support_contact',''));  //wh
 define(PIN_AUTH_STR, variable_get('pinserver_auth_str', '')); //String to check whether using just PIN or PIN with AuthzProxy
 define(PIN_HASH_HUID, variable_get('pinserver_hash_huid', 0)); //Determine whether to encrypt Harvard id before passing to $_SESSION. Defaults is no.
 define(PIN_APP_NAME, variable_get('pinserver_app_name','')); //application name given by directory services
-define(PIN_IP_VAL, variable_get('pinserver_ip_validation', 0)); //Validate IP address or not. Default is no. 
+define(PIN_IP_VAL, variable_get('pinserver_ip_validation', 1)); //Validate IP address or not. 
 define(GPG_DIR, variable_get('pinserver_gpg_dir', dirname(__FILE__) . '/.gnupg')); //absolute path to directory to verify detached signature
 define(GPG_BIN, variable_get('pinserver_gpg_bin','/usr/bin/gpg')); //absolute path to gpg binary
 define(GPG_ERROR_LOG, variable_get('pinserver_error_log',''));  //absolute path (file included) to gpp stderr output for testing
@@ -302,9 +302,9 @@ function pinserver_check_token(){
     $values['errors'][] = 'name';
   }  
   
-  if (PIN_IP_VAL != 1) {
+  if (PIN_IP_VAL == 1) {
     // Verify current user's IP address. 
-    if ( $values['ip'] != $_SERVER['REMOTE_ADDR'] ) { 
+    if ( $values['ip'] !== $_SERVER['REMOTE_ADDR'] ) { 
       $values['errors'][] = 'ip-mismatch';
     }
   }
