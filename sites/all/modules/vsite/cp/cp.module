@@ -171,6 +171,7 @@ function cp_menu(){
 	      unset($a_setting['type']);
 	      $a_setting['title'] = $a_menu_names['cp/'.$s_parent];
 	      $items['cp/'.$s_parent] = $a_setting;
+        $items['cp/'.$s_parent]['weight'] = 1;
 	    }
 
 	    if(isset($setting->weight)) $items['cp/'.$s_parent.'/'. $setting -> id]['weight'] = $setting->weight;
@@ -196,6 +197,7 @@ function cp_menu(){
       unset($a_settings['type']);
       $a_settings['name'] = $a_menu_names['cp/'.$s_parent];
       $items['cp/'.$s_parent] = $a_settings;
+      $items['cp/'.$s_parent]['weight'] = 1;
     }//Default created yet?  also make sure there are no dynamic params
   }
 
