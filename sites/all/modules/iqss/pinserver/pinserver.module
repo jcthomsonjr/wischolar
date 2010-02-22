@@ -36,8 +36,8 @@ function pinserver_menu() {
     'access callback' => TRUE,
   );
     
-  $items['admin/user/pinserver'] = array(
-    'title' => t('Pinserver settings'),
+  $items['admin/settings/pinserver'] = array(
+    'title' => t('Pinserver'),
     'description' => t('Modify Harvard Pinserver configuration, access, and logging'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => 0,
@@ -384,17 +384,13 @@ function pinserver_error($type, $values) {
  * @param  array $values - all errors that occured due to a problem with the token or token processing. 
  */
 function theme_pinserver_token_error($values = NULL) {
-  $message = '<p>Communication with the Harvard PIN server failed. ';
-  if (in_array('time-elapsed', $values)) {
-    $message .= 'High traffic volumes may be responsible. We apologize for the inconvenience. ';
-  }
+  $message = '<p>Communication with the Harvard PIN server failed.';
   if (in_array('ip-mismatch', $values)) {
-    $message .= 'Note: Use of a VPN or tunnel connection may cause problems with PIN authentication. ';
+    $message .= ' Note: Use of a VPN or tunnel connection may cause problems with PIN authentication.';
   }
-  global $base_url;
-  $message .= 'Please '. l('try again', PIN_URL .'?__authen_application='. PIN_APP_NAME);
+  $message .= ' Please '. l('try again', PIN_URL .'?__authen_application='. PIN_APP_NAME);
   if (valid_email_address(PIN_SUPPORT_CONTACT)) {
-    $message .= ' or <a href="mailto:'. PIN_SUPPORT_CONTACT .'">contact us</a>';
+    $message .= ' or ' . l('contact us.', 'contact');
   }
   $message .= '.</p>';
   return $message;
