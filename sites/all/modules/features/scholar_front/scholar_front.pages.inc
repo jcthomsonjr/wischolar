@@ -96,8 +96,11 @@ function scholar_front_home(){
     	{$result}
 MESSAGE;
     }
+    
+    $items = vsite_create_links();
+    $result = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links').$result;
 
-    return $result;
+    return $output.$result;
   }
 }
 
