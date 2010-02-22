@@ -34,7 +34,7 @@
         print $field_user_profile_photo_rendered;
         } ?>
       <h3><?php print $vsite_users_first_name[0]['value'] . ' ' . $vsite_users_last_name[0]['value'];?></h3>
-      <p><?php print $vsite_users_title[0]['value'];?></p>
+      <p><?php print $vsite_users_title_rendered;?></p>
 
     </div>
     <?php print $links; ?>
