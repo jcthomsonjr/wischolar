@@ -16,7 +16,7 @@ function scholar_front_home(){
         if ($vsite->settings['front']['bio_title']){
           drupal_set_title(t('%title', array('%title' => $bio_node->title)));
         }
-        $result =  node_view($bio_node,false,true,false);
+        $result =  node_view($bio_node,false,true,true);
 
         break;
       case 'feature' :
@@ -159,7 +159,7 @@ function scholar_front_home_feature($node_options){
  */
 function scholar_front_home_html($front_nid){
   $node = node_load($front_nid);
-  $result = node_view($node, $teaser = FALSE, $page = FALSE, $links = TRUE);
+  $result = node_view($node, $teaser = FALSE, $page = TRUE, $links = TRUE);
   return $result;
 }
 
