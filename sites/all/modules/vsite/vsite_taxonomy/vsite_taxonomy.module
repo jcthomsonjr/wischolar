@@ -125,7 +125,8 @@ function vsite_taxonomy_context_default_contexts_alter(&$contexts){
  */
 function vsite_taxonomy_block_view(){
   $vsite = vsite_get_vsite();
-  $block['subject'] = "Categories";
+  $block = array();
+  //$block['subject'] = "Categories";
   // menu and node associated with the active context (if any)
   //$active_menus = context_active_values("menu");
   $active_nodes = context_active_values("node");
@@ -157,6 +158,8 @@ function vsite_taxonomy_block_view(){
       $terms_html = theme('item_list', $items, NULL, 'ul');
       //$terms_html = vsite_taxonomy_terms($v, $node_type, $active_menu, $admin, $count = TRUE);
     }
+    
+    $terms_html = "<h3 class=\"title\">Categories</h3>".$terms_html;
 
     $block['content'] = $terms_html;
   }
