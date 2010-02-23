@@ -27,6 +27,9 @@ function _iqss_project_views_default_views() {
       'table' => 'node',
       'field' => 'flag_content_rel',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
   ));
   $handler->override_option('fields', array(
@@ -238,21 +241,6 @@ function _iqss_project_views_default_views() {
     'weight' => 0,
   ));
   $handler = $view->new_display('block', 'Featured web sites', 'block_2');
-  $handler->override_option('relationships', array(
-    'flag_content_rel' => array(
-      'label' => 'flag',
-      'required' => 1,
-      'flag' => 'featured_web_sites',
-      'user_scope' => 'any',
-      'id' => 'flag_content_rel',
-      'table' => 'node',
-      'field' => 'flag_content_rel',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
-    ),
-  ));
   $handler->override_option('fields', array(
     'field_vsite_logo_fid' => array(
       'label' => '',

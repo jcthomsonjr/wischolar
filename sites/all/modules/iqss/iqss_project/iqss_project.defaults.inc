@@ -84,6 +84,7 @@ $flags[] = array (
   'show_on_form' => 0,
   'access_author' => '',
   'i18n' => 0,
+  'module' => 'iqss_project',
   'api_version' => 2,
 );
 return $flags;
