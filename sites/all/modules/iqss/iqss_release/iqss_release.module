@@ -1,8 +1,16 @@
 <?php
+
+
+
+
+//////////////////////////////////////////
+// UPDATE FUNCTIONS  Scholar - Beta 2
+//////////////////////////////////////////
+
 /**
  * flags web sites to be pushed in the front (featured sites)
  */
-function iqss_release_flag(){
+function iqss_release_add_featured_vsites_flags(){
   $owners = array (
     28, // Chris Winship
     9,  // Beth Simmons
@@ -20,4 +28,14 @@ function iqss_release_flag(){
     $flag->flag('flag', $nid);
   }
   
+}
+
+
+//////////////////////////////////////////
+// UPDATE Handler
+//////////////////////////////////////////
+
+iqss_release_handle_updates(){
+	
+	
 }

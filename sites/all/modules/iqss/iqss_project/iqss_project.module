@@ -52,33 +52,8 @@ function iqss_project_theme(){
   );
   
   return $items;
- }
-
- 
-function iqss_project_preprocess_(&$vars){
-	print "EHEH";
-  $vars['sites'] = array();
-  $view = views_get_view('iqss_project_sites');
-  $view->init();
-  $view->set_display('block_2');
-
-  $view->display['block_2']->handler->options['items_per_page'] = 6;  // not working
-
-  $view->execute();
-
-  $results = array_slice($view -> result, 0, 6);
-  foreach ( $results as $result ) {
-    $sid = $result -> nid;
-    $vsite = spaces_load('og', $sid, FALSE);
-    $og_node = $vsite -> group;
-
-    $vars['sites'][]= array(
-      'headline' => $og_node -> title,
-      'sub_headline' => $og_node -> og_description,
-      'photo' =>  theme_vsite_logo($vsite, $s_logo_field = "field_vsite_logo", $preset = 'iqss_project_front_logo', $alt = '' , $title = '', $attributes = array(), $bypass_browser_cache =false, $b_as_link = TRUE),
-    );
-  }
 }
+
  
 function iqss_project_menu(){
   $items = array();
