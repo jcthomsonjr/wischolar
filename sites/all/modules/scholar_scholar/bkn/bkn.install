@@ -58,3 +58,27 @@ function bkn_uninstall() {
   }
 }
 
+function bkn_schema_alter(&$schema) {
+  // Add field to existing biblio schema.
+  $ident_desc = array(
+    'type' => 'varchar',
+    'not null' => TRUE,
+    'default' => '',
+    'length' => 200,
+    'description' => t('The Identifier recieved from bkn.'),
+  );
+  
+  $schema['biblio_contributor_data']['fields']['bkn_identifier'] = $ident_desc;
+  
+  $ident_desc['description'] = "The name provided from bkn";
+  $schema['biblio_contributor_data']['fields']['bkn_fullname'] = $ident_desc;
+  
+  $schema['biblio_contributor_data']['fields']['bkn_url'] = array(
+    'type' => 'text',
+    'not null' => false,
+    'default' => null,
+    'description' => t('The URL recieved from bkn.'),
+  );
+  
+}
+
