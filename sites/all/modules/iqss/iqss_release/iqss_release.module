@@ -1,10 +1,9 @@
 <?php
 
-
-
-
 //////////////////////////////////////////
-// UPDATE FUNCTIONS  Scholar - Beta 2
+// UPDATE FUNCTIONS  
+// Scholar - Beta 2
+// Functions should return (bool) success
 //////////////////////////////////////////
 
 /**
@@ -28,14 +27,79 @@ function iqss_release_add_featured_vsites_flags(){
     $flag->flag('flag', $nid);
   }
   
+  return true;
 }
 
+/**
+ * Add the taxonomies that are associated with a vsite object
+ */
+function iqss_release_add_vsite_taxonimies(){
+	module_load_include('inc', 'vsite', 'includes/vsiteboot');
+  
+  _vsite_object_create_taxonomys();
+  
+  return true;
+}
 
+/**
+ * Set the default domain, we will assume you are installing on the default domain, otherwise you will need to change this
+ */
+function iqss_release_set_default_domain(){
+	
+  //Set the default domain 
+  // ie.) scholar.iq.harvard.edu in prod
+  //      dev.whatever or localhost for dev
+  variable_set('purl_base_domain','http://'.str_replace('http://','',$_SERVER['HTTP_HOST']));
+  
+  return "Default domain updated and set to ".$_SERVER['HTTP_HOST'];
+}
+
+/**
+ * Update the filefield settings so that file alias' will 
+ * be used for files displayed on a node
+ */
+function iqss_release_update_filefield_settings(){
+	
+  //set the "upload" paths
+  $types = og_get_types('group_post');
+  
+  $file_alias = array(
+    'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]', 
+    'tolower' => 0, 
+    'pathauto' => 0, 
+    'transliterate' => 0,
+    'display' => 1,
+  );
+  
+  foreach ( $types as $type ) {
+    db_query("UPDATE {filefield_paths} SET filealias = '%s' WHERE type = '%s' ", serialize($file_alias), $type);
+  }
+  
+  return "the upload file alias settings were updated in the filefield_paths table" ;
+}
 //////////////////////////////////////////
 // UPDATE Handler
 //////////////////////////////////////////
 
-iqss_release_handle_updates(){
+//Run all of the updates
+function _iqss_release_handle_updates(){
 	
+	$a_updates = _iqss_release_get_updates();
+	$s_status = "";
 	
+  foreach ($a_updates as $s_func) {
+  	$b_return = $s_func();
+  	$s_status .= "Update: $s_func   Success: ".(is_bool($b_return)?(($b_return)?"Yes":"No"):$b_return)."\n";
+  }
+  
+  dpm($s_status);
+}
+
+//The functions to be run (in order)
+function _iqss_release_get_updates(){
+	return array(
+    'iqss_release_add_featured_vsites_flags',//Add Featured vsites flags
+	  'iqss_release_add_vsite_taxonimies', //Add Vsite Taxonomies
+	  'iqss_release_set_default_domain', //Set the default domain
+  );
 }

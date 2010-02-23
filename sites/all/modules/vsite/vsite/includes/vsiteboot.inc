@@ -171,7 +171,7 @@ function _vsite_object_create_taxonomys(){
     
 	// Create the vsite tax for affiliation
   $vocab = array(
-    'name' => 'Vsite Affiliation', 
+    'name' => 'Sites Affiliation / Department', 
     'multiple' => 1, 
     'required' => 0, 
     'hierarchy' => 0, 
@@ -181,6 +181,7 @@ function _vsite_object_create_taxonomys(){
     'nodes' => array('vsite' => 1),  
     'tags' => false,
     'help' => t('Vsite Affiliation taxonomy'),
+    'description' => t("A comma-separated list of affiliation that your site may have, for ex.(IQSS or 'Harvard Business School')"),
   );
   taxonomy_save_vocabulary($vocab);
   
@@ -195,7 +196,8 @@ function _vsite_object_create_taxonomys(){
   
   // Create the vsite tax for intrests
   $vocab = array(
-    'name' => 'Vsite Intrests', 
+    'name' => 'Related Interests',
+    'description' => t("A comma-separated list of topics that may relate to the content of your site. ex.(statistics, casual inference)"),
     'multiple' => 0, 
     'required' => 0, 
     'hierarchy' => 0, 

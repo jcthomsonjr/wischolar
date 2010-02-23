@@ -55,6 +55,8 @@ function vsite_vsiteboot(){
     _vsite_object_create_taxonomys();
 
     variable_set('scholar_installed', 1);
+    //Set the default domain typically the one you are installing with, otherwise you will need to change this in the settings
+    variable_set('purl_base_domain','http://'.str_replace('http://','',$_SERVER['HTTP_HOST']));
   }
 
   //
@@ -489,15 +491,8 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
 
       if(array_key_exists('taxonomy',$form)){
       	if($n_affil_tag = variable_get('vsite_taxonomy_affiliation',false)){
-          $form['taxonomy'][$n_affil_tag]['#title'] = "Sites Affiliation / Department";
-          $form['taxonomy'][$n_affil_tag]['#description'] = "A comma-separated list of affiliation that your site may have, for ex.(IQSS or 'Harvard Business School') ";
-      	}
-
-      	if($n_interest_tag = variable_get('vsite_taxonomy_interests',false)){
-          $form['taxonomy']['tags'][$n_interest_tag]['#title'] = "Related Interests";
-          $form['taxonomy']['tags'][$n_interest_tag]['#description'] = "A comma-separated list of topics that may relate to the content of your site. ex.(statistics, casual inference)";
-      	}
-
+      		unset($form['taxonomy'][$n_affil_tag]);
+      	}//Remove the affiliation form till we get some defaults in here
       	$form['taxonomy']['#collapsible'] = false;
       }
       $form['#redirect'] = false;
