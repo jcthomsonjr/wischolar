@@ -13,7 +13,6 @@ function repec_meta_schema() {
     'tid' => array(
       'description' => t('RePEc template ID'),
       'type' => 'int',
-      'length' => 10,
       'not null' => TRUE,
       'unsigned' => TRUE,
       'default' => 0,
@@ -46,7 +45,6 @@ function repec_meta_schema() {
     'id' => array(
       'description' => t('ID Field'),
       'type' => 'int',
-      'length' => 10,
       'not null' => TRUE,
       'unsigned' => TRUE,
       'default' => 0,
@@ -55,7 +53,6 @@ function repec_meta_schema() {
     'weight' => array(
       'description' => t('ID Field'),
       'type' => 'int',
-      'length' => 10,
       'not null' => TRUE,
       'unsigned' => TRUE,
       'default' => 0,
@@ -64,7 +61,6 @@ function repec_meta_schema() {
      'tid' => array(
       'description' => t('Weight Field'),
       'type' => 'int',
-      'length' => 10,
       'not null' => TRUE,
       'unsigned' => TRUE,
       'default' => 0,
@@ -114,8 +110,7 @@ function repec_meta_schema() {
     ),
   ),
   
-   //'primary' => array('tid'),
-  
+   //'primary' => array('tid'),  
 );
 
 
@@ -125,7 +120,6 @@ function repec_meta_schema() {
     'bid' => array(
       'description' => t('Biblio template type ID'),
       'type' => 'int',
-      'length' => 10,
       'not null' => TRUE,
       'unsigned' => TRUE,
       'default' => 0,
@@ -142,7 +136,6 @@ function repec_meta_schema() {
      'rid' => array(
       'description' => t('RePEc template type name'),
       'type' => 'int',
-      'length' => 10,
       'not null' => TRUE,
       'unsigned' => TRUE,
       'default' => 0,
