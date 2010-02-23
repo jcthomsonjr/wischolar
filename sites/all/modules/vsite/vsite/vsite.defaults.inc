@@ -150,7 +150,7 @@ function _vsite_content_default_fields() {
       'title_type' => 'textfield',
       'default_image' => array(
         'filename' => 'default_logo.jpg',
-        'filepath' => 'sites/all/modules/vsite/vsite_design/theme/images',
+        'filepath' => 'sites/all/modules/vsite/vsite_design/theme/images/default_logo.jpg',
         'filemime' => 'image/jpeg',
         'source' => 'default_image_upload',
         'filesize' => 37046,
