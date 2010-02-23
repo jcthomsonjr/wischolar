@@ -1,0 +1,23 @@
+<?php
+/**
+ * flags web sites to be pushed in the front (featured sites)
+ */
+function iqss_release_flag(){
+  $owners = array (
+    28, // Chris Winship
+    9,  // Beth Simmons
+    14, // Jeffry Friedden
+    671, // James Robinson
+    21,  //Steve Levitsky
+    6,  // Maria Polinsky
+    8, // robert Bates
+    1, // Ken Shepsle
+  );
+  
+  $flag = flag_get_flag('featured_web_sites') or die('no "featured_web_sites" flag defined');
+
+  foreach ($owners as $nid){
+    $flag->flag('flag', $nid);
+  }
+  
+}
