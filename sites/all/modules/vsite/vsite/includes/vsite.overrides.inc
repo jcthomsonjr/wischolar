@@ -129,12 +129,19 @@ function vsite_string_overrides(){
   'Spaces preset defaults were saved successfully.' => 'Web site preset defaults were saved successfully.',
   'Customizations saved for space !title.' => 'Customizations saved for web site !title.',  
   
-  // Biblio
+  //biblio
   'Biblio' => 'Publication',
   
-  // vbo
+  //vbo
   'Delete node' => 'Delete',
-  );
+  
+  //date Picker 
+  // 'SUMOTUWETHFRSA' => 'S M T W T F S',
 
+  //book
+  'book' => 'booklet',
+  'Book' => 'Booklet',  
+  );
+ 
   return $overrides;
 }
