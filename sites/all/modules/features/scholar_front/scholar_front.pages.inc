@@ -58,7 +58,7 @@ function scholar_front_home(){
 
     	//Created in the last 26 hours?
     	$s_welcome_message = (time() - $vsite->group->created < 93600)?"Welcome to your new website!":"";
-     	$s_short_message = (time() - $vsite->group->created < 93600)?"Not sure what to do now? Need help <span>gettings started?</span>":"Need quick access to <span>common settings?</span>";
+     	$s_short_message = (time() - $vsite->group->created < 93600)?"Not sure what to do now? Need help <span>getting started?</span>":"Need quick access to <span>common settings?</span>";
 
     	//Add Content
     	$s_content = l("Add content",'cp/content');
