@@ -170,18 +170,6 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
 }
 
 /**
- * Implementation of hook_spaces_settings().
- */
-function scholar_book_spaces_settings() {
-  return array(
-    'scholar_book' => array(
-      'class' => 'scholar_book_space_setting',
-      'file' => drupal_get_path('module', 'scholar_book') .'/scholar_book.spaces.inc',
-    ),
-  );
-}
-
-/**
  * Implementation of hook_form_alter().
  */
 function scholar_book_form_alter(&$form, &$form_state, $form_id){
