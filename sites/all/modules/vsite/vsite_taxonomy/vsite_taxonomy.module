@@ -126,7 +126,7 @@ function vsite_taxonomy_context_default_contexts_alter(&$contexts){
 function vsite_taxonomy_block_view(){
   $vsite = vsite_get_vsite();
   $block = array();
-  //$block['subject'] = "Categories";
+  
   // menu and node associated with the active context (if any)
   //$active_menus = context_active_values("menu");
   $active_nodes = context_active_values("node");
