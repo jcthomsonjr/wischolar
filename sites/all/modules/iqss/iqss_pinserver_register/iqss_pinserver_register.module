@@ -112,11 +112,15 @@ function iqss_pinserver_register_submit($form, $form_state){
  * Check if huid exists
  */
 function iqss_pinserver_register_huid_validate($huid){
+  //harvard id must be numeric
+  if(!is_numeric($huid)){
+    return "The Harvard ID must be numeric.";
+  }
   //need to check if huid already exist in table
-   if(iqss_pinserver_register_check_row($huid)){
-      return "The Harvard ID you have entered already exists in the database.";
-   }
-   return false;
+  if(iqss_pinserver_register_check_row($huid)){
+    return "The Harvard ID you have entered already exists in the database.";
+  }
+  return false;
 }
 
 /**
