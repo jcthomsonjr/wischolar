@@ -102,24 +102,6 @@ function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
-/*
-function vsite_taxonomy_context_default_contexts_alter(&$contexts){
-  $contexts_map = spaces_features_map();
-
-  foreach($contexts_map['context'] as $context_name => $feature_name){
-    $contexts[$context_name]->block['vsite_taxonomy_0'] = array(
-        'module' => 'vsite_taxonomy',
-        'delta' => '0',
-        'weight' => -20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Scholar site categories',
-        'type' => 'context_ui',
-      );
-  }
-}
-*/
-
 /**
  * callback function for "Site categories" block
  */

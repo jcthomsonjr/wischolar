@@ -95,12 +95,12 @@ function scholar_front_home(){
       </div>
     	{$result}
 MESSAGE;
-    }
-    
-    $items = vsite_create_links();
-    $result = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links').$result;
 
-    return $output.$result;
+    	$items = vsite_create_links();
+      $result = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links').$result;
+    }
+
+    return $result;
   }
 }
 
