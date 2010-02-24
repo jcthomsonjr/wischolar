@@ -44,7 +44,7 @@ function vsite_create_links($addition = ''){
   	$type_url_str = str_replace('_', '-', $type);
     $links[] = array(
         'title' => t('!type', array(
-            '!type' => $type 
+            '!type' => $name
         )), 
         'href' => "node/add/$type_url_str" . $addition
     );
