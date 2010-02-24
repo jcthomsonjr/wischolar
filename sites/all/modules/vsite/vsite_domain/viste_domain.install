@@ -5,12 +5,9 @@
  */
 function vsite_domain_enable() {
 	
-//  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'purl'"));
-//  if(!$weight) $weight = -24;
-//  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite_domain'", ($weight - 1));  
 }
 
 function vsite_domain_install() {
-  // Execute our defined updates.
+  //Set the default domain typically the one you are installing with, otherwise you will need to change this in the settings
   variable_set('purl_base_domain',$_SERVER['HTTP_HOST']);
 }

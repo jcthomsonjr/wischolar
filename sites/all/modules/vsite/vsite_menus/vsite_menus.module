@@ -143,12 +143,16 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   }
       
   foreach ($a_settings_menu as $key => $link) {
-  	if(in_array($link['link']['link_path'],$a_disabled_links)) unset($a_settings_menu[$key]);
+  	if(in_array($link['link']['link_path'],$a_disabled_links)){
+  		unset($a_settings_menu[$key]);
+  		continue;
+  	}//remove disabled feature links
+  	
 	  $b_check_is_custom_active = false;
 	  
 	  if(in_array($link['link']['link_path'],array_keys($a_custom_title))){
 	  	$a_settings_menu[$key]['link']['title'] = $a_settings_menu[$key]['link']['link_title'] = $a_custom_title[$link['link']['link_path']];
-	  }
+	  }//Apply Custom Title
 	    
 	  if($link['link']['options'] && is_array($link['link']['options']) && is_array($link['link']['options']['attributes']) && array_key_exists('site',$link['link']['options']['attributes'])){
 	 		//Has the site been set?

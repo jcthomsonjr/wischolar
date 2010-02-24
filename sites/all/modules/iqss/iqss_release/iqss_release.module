@@ -7,6 +7,47 @@
 //////////////////////////////////////////
 
 /**
+ * Update to the new feed engine
+ */
+function iqss_release_install_scholar_reader() {
+	
+  if(!module_exists('scholar_reader')){
+    module_disable(array("scholar_feeds"));
+    drupal_uninstall_module("scholar_feeds");
+    
+    if(!module_exists('data')) module_enable(array("data"));
+    if(!module_exists('feeds')) module_enable(array("feeds"));
+    if(!module_exists('feeds_defaults')) module_enable(array("feeds_defaults"));
+    module_enable(array("scholar_reader"));
+  }
+  
+  return true;
+}
+
+/**
+ *  Change the preset from vsite to scholar
+ */
+function iqss_release_change_preset_to_scholar() {
+  // change preset type to "scholar" for existing sites
+  return db_query("UPDATE {spaces} SET preset = 'scholar'  WHERE preset = 'vsite'");
+}
+
+/**
+ * Enable the scholar_front module
+ */
+function iqss_release_enable_module_scholar_front() {
+  
+	module_rebuild_cache();
+  module_enable(array("scholar_front"));
+  
+  //disable the old module
+  module_disable(array("vsite_front"));
+  drupal_uninstall_module("vsite_front");
+  
+  return true;
+}
+
+/**
  * flags web sites to be pushed in the front (featured sites)
  */
 function iqss_release_add_featured_vsites_flags(){
@@ -101,5 +142,8 @@ function _iqss_release_get_updates(){
     'iqss_release_add_featured_vsites_flags',//Add Featured vsites flags
 	  'iqss_release_add_vsite_taxonimies', //Add Vsite Taxonomies
 	  'iqss_release_set_default_domain', //Set the default domain
+	  'iqss_release_change_preset_to_scholar', // change preset type to "scholar" for existing sites
+	  'iqss_release_enable_module_scholar_front', //Enable the scholar_front module
+	  'iqss_release_install_scholar_reader',  //Installs scholar reader and disables scholar feeds
   );
 }
