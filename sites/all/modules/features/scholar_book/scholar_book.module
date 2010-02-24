@@ -236,8 +236,10 @@ function scholar_book_vsite_widgets(){
  */
 function scholar_book_context_links_alter(&$links) {
   if (! empty ( $links ['book'] )) {
-    $links ['book']['title'] =  'Booklet page';
-    $links ['book']['query'] =  drupal_get_destination();
+    $links ['book']['title'] =  'Booklet';
+    if(arg(0) == 'documents'){
+      $links ['book']['query'] =  drupal_get_destination();
+    }
   }
 }
 
