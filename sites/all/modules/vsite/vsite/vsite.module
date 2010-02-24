@@ -568,9 +568,12 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
         	}
 
           if($vsite->settings['front']['frontpage'] == 'flag'){
-            $form['options']['vsite_promote_to_front'] = array('#type' => 'checkbox', '#title' => "Promote to front page", "#default_value" => false);
+            $form['options']['vsite_promote_to_front'] = array('#type' => 'checkbox', 
+                '#title' => "Promote to front page", 
+                "#default_value" => false,
+                "#description" => t("If checked this post will be shown in your front page"));
             if($nid){
-            	$flag = flag_get_flag('vsite_frontpage');
+            	$flag = flag_get_flag('scholar_frontpage');
               $form['options']['vsite_promote_to_front']['#default_value'] = $flag->is_flagged($nid);
             }
           }
@@ -649,7 +652,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       // Response to the flag checkboxes added to the form in vsite_form_alter().
       if (isset($node->vsite_promote_to_front)) {
         $s_action = ($node->vsite_promote_to_front == 1)?'flag':'unflag';
-		    $flag = flag_get_flag('vsite_frontpage');
+		    $flag = flag_get_flag('scholar_frontpage');
 		    $flag->flag($s_action,$node->nid);
       }
 
