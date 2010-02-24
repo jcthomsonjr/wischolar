@@ -335,15 +335,6 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
       $installation_name = variable_get('vsite_installation_name', 'scholar');
       $form['features'][$f_name]['#title'] =  str_replace('scholar', $installation_name, $form['features'][$f_name]['#title'] );
       
-      if($site->features[$f_name] != 1){
-      	$feature = $form['features'][$f_name];
-      	unset($form['features'][$f_name]);
-      	if($site->features[$f_name] > 1){
-      		$form['features'] = array_merge(array($f_name => $feature),$form['features']);
-      	}else{
-      		$form['features'] = array_merge($form['features'],array($f_name => $feature));
-      	}
-      }//Move to correct order
       $customizable = false;
 	    foreach ($customizers as $id => $customizer) {
 		    if ($customizer->form($site, $f_name)) {
