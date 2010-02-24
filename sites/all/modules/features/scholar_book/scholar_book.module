@@ -230,3 +230,14 @@ function scholar_book_vsite_widgets(){
       );
   return $items;
 }
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_book_context_links_alter(&$links) {
+  if (! empty ( $links ['book'] )) {
+    $links ['book']['title'] =  'Booklet page';
+    $links ['book']['query'] =  drupal_get_destination();
+  }
+}
+
