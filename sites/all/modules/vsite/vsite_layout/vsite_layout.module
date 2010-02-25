@@ -475,9 +475,13 @@ function _check_for_disabled_widgets(&$widgets, $a_feature_contexts, $space = nu
     	$widgets[$s_wgt_name]['hidden'] = true; 
     
     }elseif($wgt['module'] == 'views'){
+    	$account = $GLOBALS['user'];
+    	//Insetad of checking as admin use the site owner so they see the same blocks
+    	if($account->uid == 1) $account = user_load(array('uid' => $space->group->uid)); 
+    	
     	//if this block is provided by views then check it's access
       list($name, $display_id) = explode('-', $wgt['delta']);
-      if (($view = views_get_view($name)) && !$view->access($display_id)) {
+      if (($view = views_get_view($name)) && !$view->access($display_id,$account)) {
         $widgets[$s_wgt_name]['hidden'] = true; 
       }
       if(is_object($view)) $view->destroy();

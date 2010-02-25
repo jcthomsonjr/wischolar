@@ -321,6 +321,7 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
   if (arg(0) == 'cp' && $form_id == 'spaces_features_form'){
     // we dont need settings here
     unset($form['settings']);
+    unset($form['buttons']['reset']); //Remove reset to defaults button
     $site = $form['space']['#value'];
     ctools_include('ajax');
     ctools_include('modal');
@@ -353,7 +354,7 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
       }
     }
   }
-
+  
   if (arg(0) == 'cp' && $form_id == 'spaces_customize_form'){
   	if(array_key_exists('customizers',$form))$form['customizers']['#weight'] = 0;
   	if(array_key_exists('settings',$form))$form['settings']['#weight'] = 10;
