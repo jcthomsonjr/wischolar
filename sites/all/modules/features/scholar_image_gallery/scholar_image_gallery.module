@@ -21,12 +21,12 @@ function scholar_image_gallery_vsite_content_types_alter(&$content_types){
  */
 function scholar_image_gallery_context_links_alter(&$links) {
   if (!empty($links['image'])) {
-    $active_node = menu_get_object();
-    if (is_object($active_node) && $active_node -> nid && $active_node -> type == 'gallery'){
-      $links['image']['href'] = 'node/add/image/'. $active_node -> nid . '?' . 'destination=node/'. $active_node -> nid;
-    } else {
+    //$active_node = menu_get_object();
+    //if (is_object($active_node) && $active_node -> nid && $active_node -> type == 'gallery'){
+    //  $links['image']['href'] = 'node/add/image/'. $active_node -> nid . '?' . 'destination=node/'. $active_node -> nid;
+    //} else {
       unset($links['image']);
-    }
+    //}
   }
 }
 
