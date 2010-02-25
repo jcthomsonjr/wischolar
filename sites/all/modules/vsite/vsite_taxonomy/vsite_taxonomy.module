@@ -89,7 +89,7 @@ function vsite_taxonomy_content_by_category($term_name, $content_type){
 function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
-      $blocks[0]['info'] = t('Categories');
+      $blocks[0]['info'] = t('Categories - A widget used to quickly filter categorized content');
       return $blocks;
     case 'view':
       switch ($delta) {
