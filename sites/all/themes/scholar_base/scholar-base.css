@@ -75,7 +75,6 @@ ul {
 
 ul li {
   list-style:none;
-  padd
   }
 
 ol {
@@ -83,11 +82,11 @@ ol {
   padding-left:0;
   }
 
-#content ul {
+#content .node ul {
   padding-left: 2em;
   }
 
-#content ul li {
+#content .node ul li {
   list-style: disc outside;
   padding:0 0 0 3px;
   }
@@ -429,9 +428,11 @@ a.delete {
   }
 
 .item-list ul.context-links li, #ctools-dropdown-1 {
-  list-style: none;
+  list-style:none;
   margin:0 0 0 .7em;
   float:right;
+  list-style: none;
+  padding: 0;
   }
 
 a.context-button, html.js div.ctools-dropdown a.ctools-dropdown-text-link, .addcategory a {
