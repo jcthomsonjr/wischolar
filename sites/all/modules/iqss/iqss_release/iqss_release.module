@@ -6,7 +6,22 @@
 // Functions should return (bool) success
 //////////////////////////////////////////
 
-// calendar, litecal, scholar_events
+
+/**
+ * Enable the Pinserver modules
+ */
+function iqss_release_release_pinserver() {
+  
+	$a_enable = array();
+  if(!module_exists('pinserver')) $a_enable[] = 'pinserver';
+  if(!module_exists('iqss_pinserver_register')) $a_enable[] = 'iqss_pinserver_register';
+   
+  if(count($a_enable)) module_enable($a_enable);
+  
+  
+  return "Scholar Pinserver / Pin Register - ".(count($a_enable)?"Module(s) Enabled":"Nothing to do");
+}
+
 /**
  * Enable the scholar_events module
  */
@@ -20,7 +35,7 @@ function iqss_release_relase_scholar_events() {
     module_enable(array("scholar_events"));
   }
   
-  return true;
+  return "Scholar Events - Module Enabled";
 }
 
 /**
@@ -38,7 +53,7 @@ function iqss_release_install_scholar_reader() {
     module_enable(array("scholar_reader"));
   }
   
-  return true;
+  return "Scholar Reader - Module Enabled";
 }
 
 /**
@@ -61,7 +76,7 @@ function iqss_release_enable_module_scholar_front() {
   module_disable(array("vsite_front"));
   drupal_uninstall_module("vsite_front");
   
-  return true;
+  return "Scholar Front - Module Enabled";
 }
 
 /**
@@ -135,19 +150,30 @@ function iqss_release_update_filefield_settings(){
   
   return "the upload file alias settings were updated in the filefield_paths table" ;
 }
+
+/**
+ * Enable the 'auto_nodetitle' module as we will be using it in scholars in the future
+ */
+function iqss_release_enable_auto_nodetitle(){
+	if(!module_exists('auto_nodetitle')) module_enable(array("auto_nodetitle"));
+	
+	return "Auto Node Title - Module Enabled";
+}
 //////////////////////////////////////////
 // UPDATE Handler
 //////////////////////////////////////////
 
 //Run all of the updates
-function _iqss_release_handle_updates(){
+function iqss_release_handle_updates($s_preset){
 	
 	$a_updates = _iqss_release_get_updates();
-	$s_status = "";
+	$a_preset_updates = array_key_exists($s_preset,$a_updates)?$a_updates[$s_preset]:array();
+	
+	$s_status = count($a_preset_updates)?"":"No updates found to run for preset [$s_preset].";
 	
   foreach ($a_updates as $s_func) {
   	$b_return = $s_func();
-  	$s_status .= "Update: $s_func   Success: ".(is_bool($b_return)?(($b_return)?"Yes":"No"):$b_return)."\n";
+  	$s_status .= "Update: $s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n";
   }
   
   dpm($s_status);
@@ -156,12 +182,21 @@ function _iqss_release_handle_updates(){
 //The functions to be run (in order)
 function _iqss_release_get_updates(){
 	return array(
-    'iqss_release_add_featured_vsites_flags',//Add Featured vsites flags
-	  'iqss_release_add_vsite_taxonimies', //Add Vsite Taxonomies
-	  'iqss_release_set_default_domain', //Set the default domain
-	  'iqss_release_change_preset_to_scholar', // change preset type to "scholar" for existing sites
-	  'iqss_release_enable_module_scholar_front', //Enable the scholar_front module
-	  'iqss_release_install_scholar_reader',  //Installs scholar reader and disables scholar feeds
-	  'iqss_release_relase_scholar_events', //Enable the scholar events module
+	  'scholar' => array(
+	    'iqss_release_add_featured_vsites_flags',//Add Featured vsites flags
+		  'iqss_release_add_vsite_taxonimies', //Add Vsite Taxonomies
+		  'iqss_release_set_default_domain', //Set the default domain
+		  'iqss_release_change_preset_to_scholar', // change preset type to "scholar" for existing sites
+		  'iqss_release_enable_module_scholar_front', //Enable the scholar_front module
+		  'iqss_release_install_scholar_reader',  //Installs scholar reader and disables scholar feeds
+		  'iqss_release_relase_scholar_events', //Enable the scholar events module
+      'iqss_release_update_filefield_settings', //Update the filefield settings so that file alias' will be used for files displayed on a node
+	    'iqss_release_enable_auto_nodetitle', //Enable the 'auto_nodetitle' module as we will be using it in scholars in the future
+	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
+	  ),
+	  'projects' => array(
+	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
+      'iqss_release_update_filefield_settings', //Update the filefield settings so that file alias' will be used for files displayed on a node
+    ),
   );
 }

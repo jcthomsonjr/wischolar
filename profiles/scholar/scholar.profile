@@ -159,6 +159,7 @@ function _scholar_scholar_modules() {
     
   // scholar specific
     'biblio',
+    'auto_nodetitle',
 
   //IQSS Specific
     'iqss_scholar',
