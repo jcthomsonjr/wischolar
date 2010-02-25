@@ -6,6 +6,23 @@
 // Functions should return (bool) success
 //////////////////////////////////////////
 
+// calendar, litecal, scholar_events
+/**
+ * Enable the scholar_events module
+ */
+function iqss_release_relase_scholar_events() {
+  
+  if(!module_exists('scholar_events')){
+    
+    if(!module_exists('calendar')) module_enable(array("calendar"));
+    if(!module_exists('litecal')) module_enable(array("litecal"));
+    
+    module_enable(array("scholar_events"));
+  }
+  
+  return true;
+}
+
 /**
  * Update to the new feed engine
  */
@@ -145,5 +162,6 @@ function _iqss_release_get_updates(){
 	  'iqss_release_change_preset_to_scholar', // change preset type to "scholar" for existing sites
 	  'iqss_release_enable_module_scholar_front', //Enable the scholar_front module
 	  'iqss_release_install_scholar_reader',  //Installs scholar reader and disables scholar feeds
+	  'iqss_release_relase_scholar_events', //Enable the scholar events module
   );
 }
