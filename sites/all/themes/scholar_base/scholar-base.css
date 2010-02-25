@@ -53,11 +53,9 @@ body {
 
 /* TYPE STYLES */
 
-p, div.messages, #content-main .views-row {
+p, div.messages, #content-main .views-row, ul, ol {
 	margin-bottom: 1.5em;
 	}
-
-
 
 #header h1, #header h2, #header p {
   margin: 0 0 .1em 0;
@@ -71,14 +69,32 @@ p.copy {
   text-align: center;
   }
 
-ul, li {
-	list-style: none;
-	padding: 0;
-	}
+ul {
+  padding-left:0;
+  }
+
+ul li {
+  list-style:none;
+  padd
+  }
+
+ol {
+  margin-left:18px;
+  padding-left:0;
+  }
+
+#content ul {
+  padding-left: 2em;
+  }
+
+#content ul li {
+  list-style: disc outside;
+  padding:0 0 0 3px;
+  }
 
 #navbar li, #header-top li, .views-admin-links li, ul.inline li {
-    display:inline;
-    }
+  display:inline;
+  }
 
 a, a:visited {
 	text-decoration: none;
@@ -89,7 +105,6 @@ p.copy a, p.copy a:visited {
   font-style: normal;
   text-decoration: none;
   color: #76797C;
-
   }
 
 p.copy a:hover {
@@ -162,7 +177,6 @@ ul.links li a:hover {
 div.terms {
   clear: left !important;
   }
-
 
 
 /* LAYOUT */
