@@ -342,7 +342,7 @@ function _vsite_content_context_links() {
     // the "add new *" links
     vsite_include('vsiteapi');
     $items = vsite_create_links();
-    $output = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'panels-display-links');
+    $output = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links');
  
   }
   return $output;
