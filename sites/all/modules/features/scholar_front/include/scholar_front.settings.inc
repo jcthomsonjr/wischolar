@@ -24,7 +24,7 @@ class scholar_front_settings_front implements space_setting {
 
     // the "add new *" links
     $items = vsite_create_links('/front');
-    $links = theme('ctools_dropdown', t('add new'), $items, FALSE, 'panels-display-links');
+    $links = theme('ctools_dropdown', t('add new'), $items, FALSE, 'context-links');
 
     $form = array(
       '#title' => 'Front Page'
