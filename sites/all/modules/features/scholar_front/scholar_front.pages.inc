@@ -52,8 +52,8 @@ function scholar_front_home(){
     	$s_info = l("Add your personal information",'cp/users/myaccount/personal');
     	$s_features = l("Enable or disable features for your site",'cp/features');
     	$s_members = l("Manage who may use your site",'cp/users/members');
-    	$s_theme = l("Change the look of your site",'cp/settings/theme');
-    	$s_layout = l("Move elements in your page layout",'cp/settings/layout');
+    	$s_theme = l("Change the look of your site",'cp/appearance');
+    	$s_layout = l("Move elements in your page layout",'cp/appearance/layout');
     	$s_docs = l("View documentation","help/vsitehelp/Scholar-Web-Sites-Project-Documentation");
 
     	//Created in the last 26 hours?
@@ -61,7 +61,7 @@ function scholar_front_home(){
      	$s_short_message = (time() - $vsite->group->created < 93600)?"Not sure what to do now? Need help <span>getting started?</span>":"Need quick access to <span>common settings?</span>";
 
     	//Add Content
-    	$s_content = l("Add content",'cp/content');
+    	$s_content = l("Add/manage content",'cp/content');
     	$s_bio = ($vsite->feature_access('scholar_biocv') && !content_profile_load('bio', $vsite->group->uid))?"<li>".l("Add your bio",'node/add/bio',array('query' => array('destination'=>'biocv')))."</li>":"";
     	$s_cv = ($vsite->feature_access('scholar_biocv') && !content_profile_load('cv', $vsite->group->uid))?"<li>".l("Add your cv",'node/add/cv',array('query' => array('destination'=>'biocv')))."</li>":"";
 
