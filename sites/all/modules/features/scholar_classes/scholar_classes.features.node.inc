@@ -8,11 +8,13 @@ function _scholar_classes_node_info() {
     'class' => array(
       'name' => t('Class'),
       'module' => 'features',
-      'description' => t(''),
+      'description' => '',
       'has_title' => '1',
       'title_label' => t('Title'),
       'has_body' => '1',
       'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
     ),
     'class_material' => array(
       'name' => t('Class Material'),
@@ -22,6 +24,8 @@ function _scholar_classes_node_info() {
       'title_label' => t('Title'),
       'has_body' => '1',
       'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
     ),
   );
   return $items;
