@@ -181,7 +181,8 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
     if (! empty($form['book'])) {
       // Fieldset mods
       $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
-      $form['book']['#collapsible'] = $form['book']['#collapsed'] = FALSE;
+      //$form['book']['#collapsible'] = $form['book']['#collapsed'] = FALSE;
+      unset($form['book']['weight']);
       
       if (! empty($form['book']['bid']['#options'])) {
         // Remove "none" option -- do not allow book pages to be orphaned
