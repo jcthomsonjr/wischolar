@@ -12,14 +12,10 @@
  */
 function iqss_release_release_pinserver() {
   
-	$a_enable = array();
-  if(!module_exists('pinserver')) $a_enable[] = 'pinserver';
-  if(!module_exists('iqss_pinserver_register')) $a_enable[] = 'iqss_pinserver_register';
-   
-  if(count($a_enable)) module_enable($a_enable);
+  $n_count = _iqss_release_enable_modules(array('pinserver','iqss_pinserver_register'));
   
   
-  return "Scholar Pinserver / Pin Register - ".(count($a_enable)?"Module(s) Enabled":"Nothing to do");
+  return "Scholar Pinserver / Pin Register - ".($n_count?"Module(s) Enabled":"Nothing to do");
 }
 
 /**
@@ -28,11 +24,7 @@ function iqss_release_release_pinserver() {
 function iqss_release_relase_scholar_events() {
   
   if(!module_exists('scholar_events')){
-    
-    if(!module_exists('calendar')) module_enable(array("calendar"));
-    if(!module_exists('litecal')) module_enable(array("litecal"));
-    
-    module_enable(array("scholar_events"));
+  	$n_count = _iqss_release_enable_modules(array('calendar','litecal','scholar_events'));
   }
   
   return "Scholar Events - Module Enabled";
@@ -47,10 +39,7 @@ function iqss_release_install_scholar_reader() {
     module_disable(array("scholar_feeds"));
     drupal_uninstall_module("scholar_feeds");
     
-    if(!module_exists('data')) module_enable(array("data"));
-    if(!module_exists('feeds')) module_enable(array("feeds"));
-    if(!module_exists('feeds_defaults')) module_enable(array("feeds_defaults"));
-    module_enable(array("scholar_reader"));
+    $n_count = _iqss_release_enable_modules(array('data','feeds','feeds_defaults','scholar_reader'));
   }
   
   return "Scholar Reader - Module Enabled";
@@ -64,13 +53,25 @@ function iqss_release_change_preset_to_scholar() {
   return db_query("UPDATE {spaces} SET preset = 'scholar'  WHERE preset = 'vsite'");
 }
 
+
+/**
+ * Enable jquery update so that the most current
+ * version of jquery is run
+ */
+function iqss_release_update_jquery(){
+	$n_count = _iqss_release_enable_modules(array('jquery_update'));
+	
+	return true;
+}
+
 /**
  * Enable the scholar_front module
  */
 function iqss_release_enable_module_scholar_front() {
   
 	module_rebuild_cache();
-  module_enable(array("scholar_front"));
+	
+	$n_count = _iqss_release_enable_modules(array('scholar_front'));
   
   //disable the old module
   module_disable(array("vsite_front"));
@@ -155,29 +156,58 @@ function iqss_release_update_filefield_settings(){
  * Enable the 'auto_nodetitle' module as we will be using it in scholars in the future
  */
 function iqss_release_enable_auto_nodetitle(){
-	if(!module_exists('auto_nodetitle')) module_enable(array("auto_nodetitle"));
+	
+	$n_count = _iqss_release_enable_modules(array('auto_nodetitle'));
 	
 	return "Auto Node Title - Module Enabled";
 }
+
+
+
 //////////////////////////////////////////
 // UPDATE Handler
 //////////////////////////////////////////
 
 //Run all of the updates
 function iqss_release_handle_updates($s_preset){
+	$n_start = time();
 	
 	$a_updates = _iqss_release_get_updates();
 	$a_preset_updates = array_key_exists($s_preset,$a_updates)?$a_updates[$s_preset]:array();
 	
-	$s_status = count($a_preset_updates)?"":"No updates found to run for preset [$s_preset].";
+	$s_status = "";
 	
-  foreach ($a_updates as $s_func) {
+  foreach ($a_preset_updates as $s_func) {
   	$b_return = $s_func();
   	$s_status .= "Update: $s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n";
   }
   
   dpm($s_status);
+  
+  //Clear the cache
+  module_load_include('inc', 'system', 'system.admin');
+  $form = $form_state = array();
+  system_clear_cache_submit($form, $form_state);
+  
+  return count($a_preset_updates)?"Updates for preset [$s_preset] have completed.  [".(time()-$n_start)."] seconds ":"No updates found to run for preset [$s_preset].";
 }
+
+function iqss_release_menu(){
+	$items = array();
+
+  $items["iqss_release/%"] = array(
+    'page callback' => 'iqss_release_handle_updates',
+    'page arguments' => array(1),
+    'access arguments' => array('execute iqss release'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+//////////////////////////////////////////
+// UPDATE List and Order
+//////////////////////////////////////////
 
 //The functions to be run (in order)
 function _iqss_release_get_updates(){
@@ -193,10 +223,49 @@ function _iqss_release_get_updates(){
       'iqss_release_update_filefield_settings', //Update the filefield settings so that file alias' will be used for files displayed on a node
 	    'iqss_release_enable_auto_nodetitle', //Enable the 'auto_nodetitle' module as we will be using it in scholars in the future
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
+	    'iqss_release_update_jquery',  //Enable Jquery Update so the newest version of jquery is avalible
 	  ),
 	  'projects' => array(
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
       'iqss_release_update_filefield_settings', //Update the filefield settings so that file alias' will be used for files displayed on a node
     ),
   );
+}
+
+//////////////////////////////////////////
+// UTIL FUNCTIONS
+//////////////////////////////////////////
+
+function _iqss_release_enable_modules($a_modules){
+	include_once './includes/install.inc';
+	
+	$a_new = array();
+	$a_enable = array();
+	
+	foreach($a_modules as $s_module){
+		if(module_exists($s_module)) continue;
+		
+	  if (drupal_get_installed_schema_version($s_module) == SCHEMA_UNINSTALLED) {
+      $a_new[] = $s_module;
+    }else{
+    	$a_enable[] = $s_module;
+    }
+	}
+	
+	//Enable Modules
+	if(count($a_enable)) module_enable($a_enable);
+	
+	//Install new modules
+  if(count($a_new)){
+  	// Install new modules.
+	  foreach ($a_new as $s_module) {
+	    if (!drupal_check_module($s_module)) {
+	      unset($a_new[$s_module]);
+	    }
+	  }
+	  
+	  if(count($a_new)) drupal_install_modules($a_new);
+  }
+	
+  return count($a_new) + count($a_enable);
 }

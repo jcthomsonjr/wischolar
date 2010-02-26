@@ -121,8 +121,11 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
 	  
 	  if($n_found < count($a_settings_menu)){
 	    foreach ($a_settings_menu as $n_key => $n_mlid) {
-	      if(!is_int($n_mlid)) continue;
-	      $a_settings_menu[$n_key] = array('link' => menu_link_load($n_mlid), 'below' => false);
+	      if(!is_int($n_mlid) || !($o_link = menu_link_load($n_mlid))){
+	      	unset($a_settings_menu[$n_key]);
+	      	continue;
+	      } 
+	      $a_settings_menu[$n_key] = array('link' => $o_link, 'below' => false);
 	    }
 	  }
   }//send default?
