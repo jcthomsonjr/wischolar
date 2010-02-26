@@ -86,7 +86,8 @@ function scholarlayout_add_sortable(layoutRegions){
 	$.each(allRegions, function(i, value){
 	  $(value).sortable({
         connectWith: allRegions,
-	    stop: scholarlayout_afterdrag
+	    stop: scholarlayout_afterdrag,
+	    tolerance: 'pointer'
 	  });
 	});
 
