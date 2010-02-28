@@ -140,7 +140,8 @@ function vsite_string_overrides(){
 
   //book
   'book' => 'booklet',
-  'Book' => 'Booklet',  
+  'Book' => 'Booklet',
+  'Book Page' => 'Booklet' 
   );
  
   return $overrides;
