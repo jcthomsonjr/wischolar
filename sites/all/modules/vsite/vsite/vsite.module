@@ -470,8 +470,7 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
   if ($form['#id'] == 'node-form') {
     // Hiding the  body splitting checkbox in the node forms
     if (!empty($form['body_field'])) {
-      $form['body_field']['teaser_js']['#type'] = 'hidden';
-      $form['body_field']['teaser_include']['#type'] = 'hidden';
+      $form['body_field']['teaser_include'] = array('#type' => 'value', '#value' => 1);
     }
   }
   
