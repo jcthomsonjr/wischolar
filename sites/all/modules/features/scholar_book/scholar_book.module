@@ -173,46 +173,76 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
  * Implementation of hook_form_alter().
  */
 function scholar_book_form_alter(&$form, &$form_state, $form_id){
-  
-  // alter book forms
-  if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type)) {
+
+  // alter book forms  - new booklet
+  if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type) ){
     $node = $form['#node'];
-    
-    if (! empty($form['book'])) {
+
+    //adding new booklet
+    if ((!isset($_GET['parent'] ) ||  empty($_GET['parent'] ))  && ! empty($form['book']) && !$form['nid']['#value']) {
       // Fieldset mods
+      $remove = array('#type', '#title', '#attributes', 'bid', 'weight', 'plid' );
+      foreach ($remove as $element){
+        unset($form['book'][$element]);
+      }
+      $form['book']['plid']['#type'] = 'hidden';
+      $form['book']['plid']['#value'] = -1;
+
+      $form['book']['bid']['#type'] = 'value';
+      $form['book']['bid']['#value'] = 'new';
+
+      $form['book']['weight']['#type'] = 'value';
+      $form['book']['weight']['#value'] = 0;
+
+      $form['title']['#title'] = t('Booklet Title');
+    }
+
+    //adding or editing child booklet page
+    if (!empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']){
+      // Fieldset mods
+      $form['title']['#title'] = t('Booklet page title');
       $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
-      //$form['book']['#collapsible'] = $form['book']['#collapsed'] = FALSE;
-      unset($form['book']['weight']);
-      
-      if (! empty($form['book']['bid']['#options'])) {
-        // Remove "none" option -- do not allow book pages to be orphaned
-        unset($form['book']['bid']['#options'][0]);
-        // Filter book options by current space
-        if ($view = views_get_view('scholar_book_list')) {
-          $view->set_display();
-          $view->set_items_per_page(0);
-          $view->execute();
-          
-          // Collect books in this space into an array
-          $books = array();
-          $books[$node->nid] = 1;
-          if (is_array($view->result) && count($view->result)) {
-            foreach ( $view->result as $row ) {
-              $books[$row->nid] = 1;
-            }
+      $form['book']['#title'] = '';
+      $form['book']['#collapsible'] = TRUE;
+      $form['book']['#collapsed'] =  FALSE; // since this is new node user should always see options expanded by default
+
+      if (! empty($form['book']['bid']['#options'])) unset( $form['book']['bid']['#options']['new']);
+
+      $form['book']['plid']['#title'] = t('Parent Booklet');
+      $form['book']['plid']['#description'] = t('The parent page in the booklet. The maximum depth for a booklet and all child pages is 9. Some pages in the selected book may not be available as parents if selecting them would exceed this limit.');
+
+      //reset weight to a '#type' = 'value'
+      unset( $form['book']['weight']);
+      $form['book']['weight']['#type'] = 'value';
+      $form['book']['weight']['#value'] = 0;
+
+      //alter description
+      $form['book']['bid']['#description'] = t('This page will be a part of the selected booklet.');
+
+      // Filter book options by current space
+      if ($view = views_get_view('scholar_book_list')) {
+        $view->set_display();
+        $view->set_items_per_page(0);
+        $view->execute();
+
+        // Collect books in this space into an array
+        $books = array();
+        $books[$node->nid] = 1;
+        if (is_array($view->result) && count($view->result)) {
+          foreach ( $view->result as $row ) {
+            $books[$row->nid] = 1;
           }
-          
-          // Use collected array to filter options
-          foreach ( $form['book']['bid']['#options'] as $k => $v ) {
-            if (is_numeric($k) && ! isset($books[$k])) {
-              unset($form['book']['bid']['#options'][$k]);
-            }
+        }
+
+        // Use collected array to filter options
+        foreach ( $form['book']['bid']['#options'] as $k => $v ) {
+          if (is_numeric($k) && ! isset($books[$k])) {
+            unset($form['book']['bid']['#options'][$k]);
           }
         }
       }
     }
   }
-
 }
 
 /**
