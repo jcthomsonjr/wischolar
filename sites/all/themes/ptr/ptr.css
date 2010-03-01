@@ -1,5 +1,6 @@
 html,body {
   height: 100%;
+  min-width:900px;
   }
 
 body {
@@ -19,29 +20,40 @@ body.two-sidebars {
   background-image: url(images/body-two-sidebars.png);
   }
 
+
 #wrapper {
   background: url(images/wrapper-no-sidebars.png) no-repeat 50% 0 transparent;
   }
 
 body.sidebar-left #wrapper {
-  background-image: url(images/wrapper-sidebar-left.png);
+  background-image: url(images/wrapper-left-sidebar.png);
   }
 
-body.sidebar-right #wrapper, body.two-sidebars #wrapper {
+body.sidebar-right #wrapper {
   background-image: url(images/wrapper-sidebar-right.png);
+  }
+
+body.two-sidebars #wrapper {
+  background-image: url(images/wrapper-two-sidebars.png);
   }
 
 #footer {
   background: url(images/footer-no-sidebars.png) no-repeat 50% 0 transparent;
+  min-width:900px;
   }
 
 body.sidebar-left #footer {
   background-image: url(images/footer-sidebar-left.png);
   }
 
-body.sidebar-right #footer,body.two-sidebars #footer {
+body.sidebar-right #footer {
   background-image: url(images/footer-sidebar-right.png);
   }
+
+body.two-sidebars #footer {
+  background-image: url(images/footer-two-sidebars.png);
+  }
+
 /* MAIN LAYOUT COMPONENTS */
 
 
@@ -49,19 +61,24 @@ body.sidebar-right #footer,body.two-sidebars #footer {
   width: 900px;
   margin: 0 auto;
   padding-top: 1px;
-  overflow:auto;
   padding-bottom: 40px;
   }
 
 #content-main {
   background: #fff;
-  padding: 30px;
+  padding: 11px 30px;
   }
 
-#content-wrapper, #header-wrapper {
+#content-wrapper {
   padding-left:200px;
   padding-right:260px;
   }
+
+#header-wrapper {
+  padding-left:200px;
+  padding-right:220px;
+  }
+
 
 #header {
  height: 141px;
@@ -98,7 +115,7 @@ body.sidebar-left #footer, body.no-sidebars #footer {
   width: 172px;
   height: 56px;
   text-indent: -999em;
-  margin: 26px auto 0 auto;
+  margin: 23px 0 0 200px;
   }
 
 #header h2 {
@@ -129,6 +146,10 @@ p.copy {
   margin-top: 20px;
   }
 
+.sidebar-right p.copy {
+  margin-right: 179px;
+  }
+
 p.copy a, p.copy a:visited {
   color: #222;
   text-decoration:underline;
@@ -151,14 +172,18 @@ p.copy a, p.copy a:visited {
   }
 
 #scholar-shield {
-  margin: 12px 0 0 0;
-  text-align: left;
+  margin: 26px 0 0 0;
+  text-align: center;
+  }
+
+#scholar-shield img {
+  height: 68px;
   }
 
 /* SIDEBARS */
 
 #sidebar-left, #sidebar-right, #header-left, #header-right {
-  padding: 30px 0;
+  padding: 11px 0;
   }
 
 
@@ -167,7 +192,7 @@ p.copy a, p.copy a:visited {
   right:260px;
   }
 
-#block-vsite_menus-0 {
+#sidebar-right .block, #sidebar-left .block {
   padding: 0 0 16px 0;
   }
 
