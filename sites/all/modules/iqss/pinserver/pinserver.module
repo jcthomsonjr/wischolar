@@ -86,7 +86,7 @@ function pinserver_check_user(){
 
   // First, parse and validate the PIN token.
   $token_data = pinserver_check_token();
- print_r($token_data);
+ 
   // If any errors are returned, redirect to an error page.
   if (is_array($token_data) && count($token_data['errors']) > 0) {
     $errors = implode(',', array_unique($token_data['errors']));
@@ -304,10 +304,10 @@ function pinserver_check_token(){
   }  
   
   if (PIN_IP_VAL == 1) {
-    // Verify current user's IP address. 
-//    if ( $values['ip'] !== $_SERVER['REMOTE_ADDR'] ) { 
-//      $values['errors'][] = 'ip-mismatch';
-//    }
+    // Verify current user's IP address.
+    if ( $values['ip'] !== $_SERVER['REMOTE_ADDR'] ) {
+      $values['errors'][] = 'ip-mismatch';
+    }
   }
   
   // Verify time parameter is not longer than 2 minutes old. 
@@ -387,6 +387,7 @@ function pinserver_error($type, $values) {
 function theme_pinserver_token_error($values = NULL) {
   $message = '<p>Communication with the Harvard PIN server failed.';
   if (in_array('ip-mismatch', $values)) {
+    error_log("The pinserver module found an ip-mismatch comparing url IP {$_GET['__authen_ip']} to remote address {$_SERVER['REMOTE_ADDR']} ");
     $message .= ' Note: Use of a VPN or tunnel connection may cause problems with PIN authentication.';
   }
   $message .= ' Please '. l('try again', PIN_URL .'?__authen_application='. PIN_APP_NAME);
