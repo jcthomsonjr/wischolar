@@ -380,11 +380,15 @@ function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_sta
  * In CP keep the form from redirecting to the node or redirect to home
  */
 function vsite_users_form_vsite_users_profile_node_submit($form, &$form_state){
-	$o_profile = false;
-	if($scholar = vsite_get_vsite()){
-	  $o_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
-	}
-	if(is_array($form_state['values'])  //The form has been submitted 
+  //customize the confirmation message for add/edit form
+  drupal_get_messages($type = NULL, $clear_queue = TRUE);
+  drupal_set_message(t('Your personal information has been saved.'));
+
+  $o_profile = false;
+  if($scholar = vsite_get_vsite()){
+    $o_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
+  }
+  if(is_array($form_state['values'])  //The form has been submitted
   && !$o_profile ){                   //There was not already a profile
     $form_state['redirect'] = 'home';
   }elseif(isset($form_state['redirect'])){
