@@ -57,6 +57,7 @@ function vsite_ga_vsite_generic_settings($space, $value = array()){
  * Implementation of hook_footer() to insert Javascript at the end of the page.
 */
 function vsite_ga_footer(){
+  if(!count(_vsite_ga_ga_id_vars())) return;  //if no ga ids are saved, then return
   global $user;
  
   //add role tracking
@@ -69,7 +70,7 @@ function vsite_ga_footer(){
   }
 
   //add context/feature tracking
-  $feature = arg(0) !== 'home' ? arg(0): false ; //TODO : find better way to to this
+  $feature = arg(0) !== 'home' ? arg(0) : false;
   if($feature){
     $feature_info['feature'] = 'feature:' . $feature;
     if(is_array($feature_info)){
@@ -95,11 +96,6 @@ function vsite_ga_footer(){
     }
   }
 
-  //get GA ID variables if they exist
-  $ga_vars = _vsite_ga_ga_id_vars();
-  if(empty($ga_vars)){
-    return;
-  }
   // Build tracker code for footer.
   $script = 'try{';
 
@@ -122,28 +118,32 @@ function vsite_ga_footer(){
 }
 
 function vsite_ga_init() {
+  if(!count(_vsite_ga_ga_id_vars())) return;  //if no ga ids are saved, then return
   global $user;
 
-    //These ga file location values may change in the future, but not soon enough that they should be in a system settings form
-    $js_file = 'ga.js';
-    $location= 'http://www.google-analytics.com/'. $js_file;
-    
-    if (variable_get('vsite_ga_cache', 0) == 1 && (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PUBLIC) && $source = _vsite_ga_cache($location)) {  
-         
+  //These ga file location values may change in the future, but not soon enough that they should be in a system settings form
+  $js_file = 'ga.js';
+  $location= 'http://www.google-analytics.com/'. $js_file;
+
+  //only download ga.js file if caching setting is set to 1
+  if (variable_get('vsite_ga_cache', 0) == 1 && (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PUBLIC)) {
+    if( $source = _vsite_ga_cache($location) ){
       //if module set to cache mode and file is present, include it within the footer, otherwise log an error
-      $implement = is_file($source) ? drupal_add_js('/' . $source, 'module', 'footer') : error_log(t("ERROR: vsite_ga is set to cache mode but the js file is missing from the local directory"));      
-    }
-    else {
-      $script = 'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");';
-      $script .= 'document.write(unescape("%3Cscript src=\'" + gaJsHost + "google-analytics.com/'. $js_file .'\' type=\'text/javascript\'%3E%3C/script%3E"));';
-      drupal_add_js($script, 'inline',  'footer');
+      $implement = is_file($source) ? drupal_add_js('/' . $source, 'module', 'footer') : error_log(t("ERROR: vsite_ga is set to cache mode but the js file is missing from the local directory"));
     }
   }
+  //otherwise get the ga.js file from google
+  else {
+    $script = 'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");';
+    $script .= 'document.write(unescape("%3Cscript src=\'" + gaJsHost + "google-analytics.com/'. $js_file .'\' type=\'text/javascript\'%3E%3C/script%3E"));';
+    drupal_add_js($script, 'inline',  'footer');
+  }
+}
 
 /**
  * Function to download the ga.js file from google
  */
- function _vsite_ga_cache($location) {
+function _vsite_ga_cache($location) {
   $directory = file_directory_path() .'/googleanalytics';
   $file_destination = $directory .'/'. basename($location);
   if (!file_exists($file_destination)) {
@@ -151,29 +151,30 @@ function vsite_ga_init() {
     if ($result->code == 200) {
       // Check that the files directory is writable
       if (file_check_directory($directory, FILE_CREATE_DIRECTORY)) {
-        return file_save_data($result->data, $directory .'/'. basename($location), FILE_EXISTS_REPLACE);
+        $save = file_save_data($result->data, $file_destination, FILE_EXISTS_REPLACE);
       }
     }
   }
-  else {
-    return $file_destination;
-  }
+  return $file_destination;
 }
 
 /**
- * Check for Google Analytics ID variables
+ * Check for global and site-specific Google Analytics ID variables
  */
 function _vsite_ga_ga_id_vars(){
   $ga_vars = array();
 
-  if (strlen(variable_get('vsite_ga_global_id' , ''))) {
+  //global id
+  if (trim(strlen(variable_get('vsite_ga_global_id' , '')))) {
     $ga_vars['global_id'] =    variable_get('vsite_ga_global_id' , '');
   }
-
+  
+  //site-specific id
   $vsite = vsite_get_vsite();
   if(is_object($vsite) && isset($vsite->settings['generic']['google_analytics_id'])){
-    $ga_vars['vsite_id'] = $vsite->settings['generic']['google_analytics_id'];
+    if (trim(strlen($vsite->settings['generic']['google_analytics_id']))){
+      $ga_vars['vsite_id'] = $vsite->settings['generic']['google_analytics_id'];
+    }
   }
   return $ga_vars;
 }
-
