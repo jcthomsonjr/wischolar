@@ -270,6 +270,12 @@ function vsite_users_strongarm(){
 
   // Comments
   $conf['comment_vsite_users_profile'] = COMMENT_NODE_DISABLED;
+  
+  // Automatic node title for profile nodes
+  $conf['ant_vsite_users_profile'] = 1;
+  $conf['ant_pattern_vsite_users_profile'] = '[vsite_users_first_name-raw] [vsite_users_last_name-raw]';
+  $conf['ant_php_vsite_users_profile'] = 0;
+  
   return $conf;
 }
 /**
