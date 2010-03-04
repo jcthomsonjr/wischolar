@@ -26,7 +26,7 @@
                 <li>Features</li>-->
                 <li><?php print l('About', 'help/vsitehelp/Scholar-Web-Sites-Project-Documentation'); ?> </li>
                 <li><?php print  ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user'); ?></li>
-                <li id="get-form"><a href="site/register">Get your site now!</a></li>
+                <li id="<?php print $front_button_id ?>"> <?php print $front_button_link ?> </li>           
                </ul>
            </div><!-- /header-right -->
          </div><!-- /header-wrapper -->
@@ -39,8 +39,6 @@
             <?php if ($content) print $content; ?>
 
               <?php print $content_top;?>
-
-
 
           </div><!-- /content main -->
       </div> <!-- / content wrapper -->
