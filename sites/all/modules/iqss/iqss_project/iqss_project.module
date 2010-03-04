@@ -80,3 +80,20 @@ function iqss_project_homepage(){
   return $s_content;
   
 }
+
+/**
+ * Implementation of hook_preprocess_page()
+ */
+function iqss_project_preprocess_page(&$vars){
+  if (!module_exists('scholarregister')) return;
+  global $user;
+  
+  if ($vsites = vsite_get_vsite_by_owner($user->uid)){
+    $allow = scholarregister_vsite_exists_access($vsites);
+    $site_link = (count($vsites) > 1) ? 'user' : $vsites[0] -> purl;
+  }
+  $vars['front_button_id'] = ($allow) ? 'get-form' : 'get-site' ;
+  $vars['front_button_link'] = ($allow) ? l('Get your site now!', 'site/register') : l('Go to your site', $site_link);
+}
+
+
