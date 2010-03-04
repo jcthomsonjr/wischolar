@@ -66,6 +66,12 @@ function scholar_project_strongarm(){
   return $conf;
 }
 
+
+function scholar_project_preprocess_page($vars){
+  $vars['body_classes'] .= ' scholar-projects-distro';
+}
+
+
 /**
  * hook spaces_presets
  */
