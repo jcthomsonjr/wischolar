@@ -198,46 +198,63 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
     }
 
     //adding or editing child booklet page
-    if (!empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']){
-      // Fieldset mods
-      $form['title']['#title'] = t('Booklet page title');
-      $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
-      $form['book']['#title'] = '';
-      $form['book']['#collapsible'] = TRUE;
-      $form['book']['#collapsed'] =  FALSE; // since this is new node user should always see options expanded by default
+    if (!empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']){ dpm($form['book']);
+    // Fieldset mods
+    $form['title']['#title'] = t('Booklet page title');
+    $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
+    $form['book']['#title'] = t('Booklet information');
+    $form['book']['#collapsible'] = TRUE;
+    $form['book']['#collapsed'] =  FALSE; // since this is new node user should always see options expanded by default
 
-      if (! empty($form['book']['bid']['#options'])) unset( $form['book']['bid']['#options']['new']);
+    if (! empty($form['book']['bid']['#options'])) unset( $form['book']['bid']['#options']['new']);
 
-      $form['book']['plid']['#title'] = t('Parent Booklet');
-      $form['book']['plid']['#description'] = t('The parent page in the booklet. The maximum depth for a booklet and all child pages is 9. Some pages in the selected book may not be available as parents if selecting them would exceed this limit.');
+    //make existing ['bid'] element into a "value" and create new "item" element to display info to the user
+    $val = $form['book']['bid']['#default_value']; //get the top level book id
+    $form['book']['bid']['#type'] = 'value';
+    $form['book']['bid']['#value'] = $val;
 
-      //reset weight to a '#type' = 'value'
-      unset( $form['book']['weight']);
-      $form['book']['weight']['#type'] = 'value';
-      $form['book']['weight']['#value'] = 0;
+    //cleanup the other bid elements
+    foreach ($form['book']['bid'] as $key => $element){
+      if (!in_array($key, array('#type', '#value', '#description', '#options'))){
+        unset($form['book']['bid'][$key]);
+      }
+    }
 
-      //alter description
-      $form['book']['bid']['#description'] = t('This page will be a part of the selected booklet.');
+    //add a new form element to display info top level book to user
+    $form['book']['top_level']['#type'] = 'item';
+    $form['book']['top_level']['#value'] =  '<p>' . t('This page will be posted to booklet: !booklet </strong>', array('!booklet' => '<strong>'. $form['book']['bid']['#options'][$val] .  '</strong>')) . '</p>';
+    $form['book']['top_level']['#weight'] = -10;
+    // $form['book']['top-level']['#title'] = t('Booklet');  // not needed
+    // $form['book']['top-level']['#description'] =t('This page will be a part of the selected booklet.');  // not needed
 
-      // Filter book options by current space
-      if ($view = views_get_view('scholar_book_list')) {
-        $view->set_display();
-        $view->set_items_per_page(0);
-        $view->execute();
+    //customize plid form element
+    $form['book']['plid']['#title'] = t('Parent item');
+    $form['book']['plid']['#description'] = t('Set the parent item of this page. Your selection will determine the place where this page will reside in this booklet\'s hierarchy. You can think of the booklet\'s hierarchy as the "table of contents" for your booklet. You could select the top-level booklet itself or another page within the booklet. The maximum depth for a booklet and all child pages is 9.');
 
-        // Collect books in this space into an array
-        $books = array();
-        $books[$node->nid] = 1;
-        if (is_array($view->result) && count($view->result)) {
-          foreach ( $view->result as $row ) {
-            $books[$row->nid] = 1;
-          }
+    //reset weight to a '#type' = 'value'
+    unset( $form['book']['weight']);
+    $form['book']['weight']['#type'] = 'value';
+    $form['book']['weight']['#value'] = 1;
+
+    // Filter book options by current space
+    if ($view = views_get_view('scholar_book_list')) {
+      $view->set_display();
+      $view->set_items_per_page(0);
+      $view->execute();
+
+      // Collect books in this space into an array
+      $books = array();
+      $books[$node->nid] = 1;
+      if (is_array($view->result) && count($view->result)) {
+        foreach ( $view->result as $row ) {
+          $books[$row->nid] = 1;
         }
+      }
 
-        // Use collected array to filter options
-        foreach ( $form['book']['bid']['#options'] as $k => $v ) {
-          if (is_numeric($k) && ! isset($books[$k])) {
-            unset($form['book']['bid']['#options'][$k]);
+      // Use collected array to filter options
+      foreach ( $form['book']['bid']['#options'] as $k => $v ) {
+        if (is_numeric($k) && ! isset($books[$k])) {
+          unset($form['book']['bid']['#options'][$k]);
           }
         }
       }
