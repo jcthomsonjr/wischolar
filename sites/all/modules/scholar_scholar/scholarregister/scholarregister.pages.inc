@@ -39,7 +39,7 @@ function scholarregister_signup_form(){
   // username
   $form['name'] = array(
       '#type' => 'textfield', 
-      '#size' => 45, 
+      '#size' => 35, 
       '#title' => ($create_site_access) ? t('Choose Site Owner\'s Username') : t('Desired user name'), 
       '#required' => TRUE, 
       '#description' => t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores.'), 
@@ -51,7 +51,7 @@ function scholarregister_signup_form(){
   // last name
   $form['mail'] = array(
       '#type' => 'textfield', 
-      '#size' => 45, 
+      '#size' => 35, 
       '#title' => ($create_site_access) ? t('Site Owner\'s email address') :  t('Your email address'), 
       '#required' => TRUE, 
       '#description' => t('A valid %harvard e-mail address is required. All e-mails from the Scholar Web Sites Project will be sent to this address.', array(
@@ -71,7 +71,8 @@ function scholarregister_signup_form(){
       '#title' => ($create_site_access) ?  t('Select a Domain Name') :  t('Your Domain Name'), 
       '#required' => TRUE, 
       '#field_prefix' => $base_url . '/', 
-      '#size' => 20, 
+      '#size' => 35, 
+      '#weight' => 20, 
       '#default_value' => $form_values['name'], 
       '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be at least four characters long, and comprise of alphanumeric characters only.', array(
           '%site' => $base_url . '/jdoe' 
@@ -96,7 +97,7 @@ function scholarregister_signup_form(){
   $form['submit'] = array(
       '#type' => 'submit', 
       '#value' => t('Create your site'), 
-      '#weight' => 20,
+      '#weight' => 40,
       '#attributes' => array('class' => 'ctools-use-ajax' ),
       '#suffix' => '<div id="submit-suffix"></div>'      
       );
@@ -260,6 +261,7 @@ function _scholarregister_send_mail_field(&$form){
   $form['send_mail'] = array(
   '#title' => 'Send an email notification to the site owner upon creating the site.',
   '#type' => 'checkbox',
+  '#weight' => 30,
   '#default_value' => 1, //default should be  1 or 0 ???
   );
 }
