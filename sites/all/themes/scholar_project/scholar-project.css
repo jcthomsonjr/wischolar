@@ -16,7 +16,7 @@ body.section-user {
   background: #444;
   }
 
-.section-user #container {
+.section-user #container, .section-users #container {
     background: #fff;
     overflow: auto;
     width: 446px;
@@ -26,26 +26,53 @@ body.section-user {
     border-radius: 8px;
     }
 
-.section-user input.form-submit {
+.section-user input.form-submit, .section-users input.form-submit {
   float:right;
   }
 
-.section-user h2.title {
+.section-user h2.title, .section-users h2.title {
   display:none;
   }
 
-.section-user div.tabs {
+.section-user div.tabs, .section-users div.tabs, .section-user .messages {
   margin: 0 -30px 5px -30px;
   }
 
-.section-user div.tabs ul.primary {
+.section-user div.tabs ul.primary, .section-users div.tabs ul.primary {
   padding-left: 36px;
   }
 
-.section-user div.tabs ul.primary li a {
+.section-user div.tabs ul.primary li a, .section-users div.tabs ul.primary li a {
   font-weight: normal;
   font-size: .8em;
   }
+
+.section-user fieldset, .section-users fieldset  {
+  padding: 0;
+  border: none;
+  background: transparent;
+  }
+
+.section-user div.tabs, .section-users div.tabs {
+  height: auto;
+  }
+
+.section-user h3, .section-users h3 {
+  font-size: 1.1em;
+  }
+
+
+form#user-profile-form {
+  clear: both;
+  padding-top: 1.5em;
+  }
+
+#vsite-users-title-items th, #vsite-users-title-items td, #vsite-users-title-items tr.even, #vsite-users-title-items tr.odd {
+  border: none;
+  background: #fff;
+  padding: 0;
+  }
+
 
 a, a:visited {
     color:#990000;
