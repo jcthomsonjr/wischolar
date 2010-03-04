@@ -46,9 +46,6 @@ function iqss_pinserver_register_form_alter(&$form, $form_state, $form_id){
       $form['#submit'][] = 'iqss_pinserver_register_submit';
       $form['#validate'][] = 'iqss_pinserver_register_validate';
 
-      //place domain field at bottom of form
-      $form['domain']['#weight'] = 10;
-
       if (!in_array('authenticated user', $user -> roles)){
         //add password field
         _scholarregister_password_field($form);
@@ -324,8 +321,9 @@ function _iqss_pinserver_register_huid_field(&$form){
   //harvard id field
   $form['huid'] = array(
   '#type' => 'textfield',
-  '#size' => 35,
   '#title' => t('Harvard ID'),
+  '#size' => 35,
+  '#weight' => 10,
   '#required' => FALSE,
   '#description' => t('Optional: Enter the %harvard ID of the web site owner', array('%harvard' => 'Harvard')),
   '#prefix' => '<div id="huid-field">',
