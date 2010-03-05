@@ -6,8 +6,7 @@
  * Theme implementation for displaying Scholars' Web Sites Project front page
  * 
  * Custom variables:
- * - $front_button_id: ID name for <li> that displays the front link/button. Returns either 'get-form' or 'get-site'.
- * - $front_button_link : Returns the <a href link for the front button either 'site/register', 'user' or $vsite ->purl
+ *  $front_button_link : Returns the link (and text) for the front button, link points to 'site/register', 'user' or $vsite ->purl
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -35,7 +34,7 @@
                 <li>Features</li>-->
                 <li><?php print l('About', 'help/vsitehelp/Scholar-Web-Sites-Project-Documentation'); ?> </li>
                 <li><?php print  ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user'); ?></li>
-                <li id="<?php print $front_button_id ?>"> <?php print $front_button_link ?> </li>           
+                <li id="get-form"> <?php print $front_button_link ?> </li>      
                </ul>
            </div><!-- /header-right -->
          </div><!-- /header-wrapper -->
