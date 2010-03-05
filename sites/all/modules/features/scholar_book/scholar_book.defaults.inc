@@ -28,6 +28,15 @@ function _scholar_book_context_default_contexts() {
         'label' => 'Scholar: Book',
         'type' => 'context_ui',
       ),
+      'vsite_widgets_2' => array(
+        'module' => 'vsite_widgets',
+        'delta' => '2',
+        'weight' => 21,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'ShareThis Button - Allows you to share posts using popular online services',
+        'type' => 'context_ui',
+      ),
     ),
   );
   return $items;
