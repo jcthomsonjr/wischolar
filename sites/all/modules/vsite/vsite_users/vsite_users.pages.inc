@@ -48,6 +48,9 @@ function vsite_users_edit_user($account){
 
   if (empty($output)) {
     $output = array();
+    drupal_get_messages();
+    drupal_set_message(t('The changes to the user account have been saved.'));
+    $output[] = ctools_ajax_command_reload(); 
   }
   
   ctools_ajax_render($output);
