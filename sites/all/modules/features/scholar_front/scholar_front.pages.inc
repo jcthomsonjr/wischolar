@@ -158,8 +158,11 @@ function scholar_front_home_feature($node_options){
  * @param $front_nid the nid of the node
  */
 function scholar_front_home_html($front_nid){
+  $result = '';
   $node = node_load($front_nid);
-  $result = node_view($node, $teaser = FALSE, $page = TRUE, $links = TRUE);
+  if (node_access('view', $node)){
+    $result = node_view($node, $teaser = FALSE, $page = TRUE, $links = TRUE);
+  }
   return $result;
 }
 
