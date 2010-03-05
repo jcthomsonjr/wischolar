@@ -109,3 +109,31 @@ function scholar_projects_front_homepage(){
            theme('project_events') .
          '</div>' ;
 }
+/**
+ * Implementation of hook_preprocess_page()
+ */
+function scholar_projects_front_preprocess_page(&$vars){
+  if (!module_exists('scholarregister')) return;
+  global $user;
+
+  //we always allow admin and users with "vsite create access" to see site registration button.
+  //and we allow anonymous users to create a new user account and new site
+  if ( node_access('create', variable_get('scholar_content_type', 'vsite' )) || in_array('anonymous user', $user -> roles)) {
+    $allow = TRUE;
+  }
+
+  // all authenticated users
+  else{
+    // site-owners
+    if ($vsites = vsite_get_vsite_by_owner($user->uid)){
+      $allow = scholarregister_vsite_exists_access($vsites);
+      $site_link = (count($vsites) > 1) ? 'user' : $vsites[0] -> purl;
+    }
+    //  non-site owners
+    else{
+      $allow = TRUE;
+    }
+  }
+  //link for front page button
+  $vars['front_button_link'] = ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
+}
