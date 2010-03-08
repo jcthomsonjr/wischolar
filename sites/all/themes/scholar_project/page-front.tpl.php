@@ -34,10 +34,10 @@
                 <li>Features</li>-->
                 <li><?php print l('About', 'help/vsitehelp/Scholar-Web-Sites-Project-Documentation'); ?> </li>
                 <li><?php print  ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user'); ?></li>
-                <?php if ($front_button_link ) : ?>
-                <li id="get-form"> <?php print $front_button_link ?> </li>      
-                <?php endif; ?>                
+                <li id="get-form"> <?php  if ($front_button_link ) { print $front_button_link; }
+                else{ print 'Get your web site!'; } ?> </li>                
                 </ul>
+              <?php  if (!$front_button_link ) print '<span> Coming Soon </span>'; ?>
            </div><!-- /header-right -->
          </div><!-- /header-wrapper -->
       </div> <!-- /header -->
