@@ -247,14 +247,21 @@ function repec_meta_make_template($node, $module_mode, $iteration = NULL){
 function repec_meta_template_process($node, $template_id, $template_type, $archive_code){
 
   $handle = 'RePEc:' . $archive_code . ':' . $template_type . ':' .  $node->nid;  
-  $path = (!empty($node ->path)) ? $node ->path : 'node/'. $node->nid;
+  $path = 'node/'. $node -> nid;  //using $node->nid notation here because pathauto changes URL when title changes
   
-  //checking for custom domain
-  if (module_exists('vsite_domain') && count($node->og_groups)){
+  //get node's URL
+  if (module_exists('vsite') && (count($node->og_groups) == 1)){
     $vsite = spaces_load('og', key($node->og_groups));
     $file_url = $vsite->get_absolute_url() . $path;
-  }  else{
-    $file_url = BASE_URL . '/' . $path;  
+  }
+  elseif(module_exists('vsite') && (count($node->og_groups) > 1)){
+    //this should not happen
+    error_log("Alert: repec_meta has detected that node {$node->nid} belongs to multiple groups");
+    $vsite = vsite_get_vsite();    
+    $file_url = ( $vsite ) ? $vsite->get_absolute_url() . $path : '';
+  }
+  else{
+    $file_url = BASE_URL . '/' . $path;
   }
   
   $template = '';
