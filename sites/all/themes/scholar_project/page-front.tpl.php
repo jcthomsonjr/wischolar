@@ -34,8 +34,10 @@
                 <li>Features</li>-->
                 <li><?php print l('About', 'help/vsitehelp/Scholar-Web-Sites-Project-Documentation'); ?> </li>
                 <li><?php print  ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user'); ?></li>
+                <?php if ($front_button_link ) : ?>
                 <li id="get-form"> <?php print $front_button_link ?> </li>      
-               </ul>
+                <?php endif; ?>                
+                </ul>
            </div><!-- /header-right -->
          </div><!-- /header-wrapper -->
       </div> <!-- /header -->
