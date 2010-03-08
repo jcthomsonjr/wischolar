@@ -4,7 +4,7 @@
 /**
  * @file page-front.tpl.php
  * Theme implementation for displaying Scholars' Web Sites Project front page
- * 
+ *
  * Custom variables:
  *  $front_button_link : Returns the link (and text) for the front button, link points to 'site/register', 'user' or $vsite ->purl
  */
@@ -35,9 +35,8 @@
                 <li><?php print l('About', 'help/vsitehelp/Scholar-Web-Sites-Project-Documentation'); ?> </li>
                 <li><?php print  ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user'); ?></li>
                 <li id="get-form"> <?php  if ($front_button_link ) { print $front_button_link; }
-                else{ print 'Get your web site!'; } ?> </li>                
+                else{ print '<span id="coming-soon"> Coming Soon </span>'; } ?> </li>
                 </ul>
-              <?php  if (!$front_button_link ) print '<span> Coming Soon </span>'; ?>
            </div><!-- /header-right -->
          </div><!-- /header-wrapper -->
       </div> <!-- /header -->
