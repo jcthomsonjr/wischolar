@@ -203,11 +203,13 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   }
   
   //additional tasks and workflow if user with special access is creating site
-  if ((in_array('authenticated user', $user -> roles) && node_access('create', variable_get('scholar_content_type', 'vsite')))){ 
+  if ((in_array('authenticated user', $user -> roles) && node_access('create', variable_get('scholar_content_type', 'vsite')))){
     if($vsite){
       global $user;
-      //give user admin rights to site
-      og_save_subscription($vsite->sid, $user->uid, array('is_active' => 1, 'is_admin' => 1));
+      if($user -> uid !== '1'){
+        //if user has create permissions and not admin give user admin rights to og/vsite
+        og_save_subscription($vsite->sid, $user->uid, array('is_active' => 1, 'is_admin' => 1));
+      }
     }
   }
   
