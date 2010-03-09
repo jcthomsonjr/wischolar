@@ -161,8 +161,13 @@ function cp_menu(){
         'file path' => drupal_get_path('module', 'cp'). '/includes',
       );
 
-	    if(!in_array($s_parent,$a_default_setting_created)){
-	      $a_default_setting_created[] = $s_parent;
+	    if(!array_key_exists($s_parent,$a_default_setting_created) || ((isset($setting->weight)?$setting->weight:0) < $a_default_setting_created[$s_parent]['weight'])){
+	      
+	    	if(array_key_exists($s_parent,$a_default_setting_created)){
+	    		$items[$a_default_setting_created[$s_parent]['menu']]['type'] = MENU_LOCAL_TASK;
+	    	}//Remove existing def. local task
+	    	
+	    	$a_default_setting_created[$s_parent] = array('weight' => (isset($setting->weight)?$setting->weight:0), 'menu' => 'cp/'.$s_parent.'/'. $setting -> id);
 	      $a_setting = $items['cp/'.$s_parent.'/'. $setting -> id];
 	      //Create Local Task
 	      $items['cp/'.$s_parent.'/'. $setting -> id]['type'] = MENU_DEFAULT_LOCAL_TASK;
@@ -186,8 +191,8 @@ function cp_menu(){
     $s_parent = isset($a_settings['parent'])?$a_settings['parent']:'settings';
     $items['cp/'.$s_parent.'/'. $a_settings['path']] = $a_settings;
 
-    if(!in_array($s_parent,$a_default_setting_created) && !strstr($a_settings['path'],'%')){
-      $a_default_setting_created[] = $s_parent;
+    if(!array_key_exists($s_parent,$a_default_setting_created) && !strstr($a_settings['path'],'%')){
+      $a_default_setting_created[$s_parent] = array('weight' => 0, 'menu' => 'cp/'.$s_parent.'/'. $a_settings['path']);
 
       //Create Local Task
       $a_settings['type'] = MENU_DEFAULT_LOCAL_TASK;
