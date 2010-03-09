@@ -364,6 +364,7 @@ function _iqss_project_views_default_views() {
       ),
     ),
   ));
+  $handler->override_option('title', 'Featured');
   $handler->override_option('items_per_page', 6);
   $handler->override_option('use_pager', '0');
   $handler->override_option('use_more', 1);
