@@ -7,6 +7,19 @@
 //////////////////////////////////////////
 
 /**
+ * Revert the "projects" view to use the new version 
+ */
+function iqss_release_revert_iqss_project_view(){
+	
+	$view = views_get_view('iqss_project_sites');
+	$view->delete();
+  views_object_cache_clear('view', 'iqss_project_sites');
+	
+  return "iqss_project_sites view reverted to code version";
+}
+
+
+/**
  * copy existing site logos to node
  */
 function iqss_release_move_site_logos() {
@@ -265,6 +278,7 @@ function _iqss_release_get_updates(){
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
 	    'iqss_release_update_jquery',  //Enable Jquery Update so the newest version of jquery is avalible
 	    'iqss_release_move_site_logos', //Attach the existing site logos to the vsite object
+	    'iqss_release_revert_iqss_project_view', //Revert this view to use our new version
 	  ),
 	  'projects' => array(
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
