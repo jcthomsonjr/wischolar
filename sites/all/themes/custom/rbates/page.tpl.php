@@ -43,7 +43,7 @@
 
           <?php if (!empty($header_right)): ?>
           <div id="header-right" class="column">
-             <?php print $header_right; ?>
+            <?php print $header_right; ?>
           </div><!-- /header-right -->
             <?php endif; ?>
         </div><!-- /header wrapper -->
@@ -105,7 +105,7 @@
       <?php if ($footer) : ?>
         <?php print $footer; ?>
       <?php endif; ?>
-     <?php
+      <?php
         global $user, $base_url;
         purl_disable(TRUE);
         $home_link =  l('The Scholars\' Web Sites Project, IQSS, Harvard University',$base_url);

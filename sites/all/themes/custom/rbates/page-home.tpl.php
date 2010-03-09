@@ -11,11 +11,15 @@
   <?php print $scripts; ?>
   <script type="text/javascript">
 			$(document).ready(function() {
-				$('#map li').mouseover(function(){
+				$('#map li').hover(function(){
 					var thisclass= $(this).attr("class");
 					$(this).parent().attr("class","");
 					$(this).parent().addClass("map-" +  thisclass);
-				});
+				},
+				function () {
+        $(this).parent().removeClass();
+          }
+				);
 			});
    </script>
 </head>
@@ -29,7 +33,7 @@
   <div id="wrapper">
     <div id="container">
 
-    <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) : ?>
+      <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) : ?>
 
       <div id="header">
         <?php if (!empty($header_top)): ?>
@@ -52,29 +56,28 @@
 
           <?php if (!empty($header_right)): ?>
           <div id="header-right" class="column">
-             <?php print $header_right; ?>
+            <?php print $header_right; ?>
           </div><!-- /header-right -->
             <?php endif; ?>
         </div><!-- /header wrapper -->
         <?php if (!empty($navbar)): ?>
-        <div id="navbar">
-          <?php print $navbar; ?>
-        </div><!-- /navbar -->
+
         <?php endif; ?>
       </div> <!-- /header -->
       <?php endif; ?>
-      <div id="content-wrapper">
+
+      <div id="bates-front-menu">
         <div id="bg">
 					<ul id="map">
-						<li class="africa_research"><a href="pages/africa-research-program">Africa Research Project</a></li>
-						<li class="publications"><a href="publications">Publications</a></li>
+						<li class="publications"><a href="publications">Vita with Publications</a></li>
+						<li class="bio"><a href="biocv">Bio</a></li>
+						<li class="data"><a href="data">Data</a></li>
 						<li class="classes"><a href="classes">Classes</a></li>
 						<li class="contact"><a href="contact_owner">Contact</a></li>
-						<li class="about"><a href="about">About</a></li>
-						<li class="links"><a href="links">Links</a></li>
 					</ul>
 				</div>
-      </div> <!-- / content wrapper -->
+      </div> <!-- / bates-front-menu -->
+      <div id="content-wrapper-bottom"></div>
       <div id="footer">
       <?php if ($footer_message): ?>
         <div id="footer-message"><?php print $footer_message; ?></div>
@@ -88,7 +91,7 @@
         $home_link =  l('The Scholars\' Web Sites Project, IQSS, Harvard University',$base_url);
         $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE)) : "";
       ?>
-      <p class="copy">The Scholars' Web Sites Project, IQSS, Harvard University. Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University.</p>
+      <p class="copy"><?php print $home_link; ?>. Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University. <?php print $login_link;?></p>
       </div> <!-- /#footer -->
     </div> <!-- /container -->
   </div> <!-- /wrapper -->
