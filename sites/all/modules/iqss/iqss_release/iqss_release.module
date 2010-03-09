@@ -84,6 +84,18 @@ function iqss_release_relase_scholar_events() {
 }
 
 /**
+ * Enable the iqss_scholar module
+ */
+function iqss_release_relase_iqss_scholar() {
+  
+  if(!module_exists('iqss_scholar')){
+    $n_count = _iqss_release_enable_modules(array('iqss_scholar'));
+  }
+  
+  return "Scholar Settings - Module Enabled";
+}
+
+/**
  * Update to the new feed engine
  */
 function iqss_release_install_scholar_reader() {
@@ -297,6 +309,7 @@ function _iqss_release_get_updates(){
 	    'iqss_release_move_site_logos', //Attach the existing site logos to the vsite object
 	    'iqss_release_revert_iqss_project_view', //Revert this view to use our new version
 	    'iqss_release_enable_new_themes', //Enable the new themes for this release
+	    'iqss_release_relase_iqss_scholar',  //Enable the scholar settings module
 	  ),
 	  'projects' => array(
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
