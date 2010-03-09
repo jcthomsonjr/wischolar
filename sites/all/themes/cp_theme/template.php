@@ -108,5 +108,6 @@ function cp_theme_spaces_customize_item($form) {
  * @return unknown_type
  */
 function cp_theme_views_view_field__og_members__name($view, $field, $row) {
-	return ctools_modal_text_button(check_plain($row->{$field->field_alias}), 'cp/users/edit/'. $row->{$field->aliases['uid']} , 'edit '.$row->{$field->field_alias});
+	return check_plain($row->{$field->field_alias});
+	//return ctools_modal_text_button(check_plain($row->{$field->field_alias}), 'cp/users/edit/'. $row->{$field->aliases['uid']} , 'edit '.$row->{$field->field_alias});
 }

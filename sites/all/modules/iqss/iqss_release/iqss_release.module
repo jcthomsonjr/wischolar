@@ -6,6 +6,46 @@
 // Functions should return (bool) success
 //////////////////////////////////////////
 
+/**
+ * copy existing site logos to node
+ */
+function iqss_release_move_site_logos() {
+  
+  $scholar_content_type = variable_get('scholar_content_type', 'vsite');
+  $sites = array();
+  $sql = db_query("SELECT nid FROM {node} WHERE type = '%s' ", $scholar_content_type );
+
+  $sites = array();
+  while($res = db_fetch_array($sql)){
+    $sites[] = $res['nid'];
+  }
+
+  $spaces = array();
+  if (count($sites)){
+      foreach($sites as $site){
+        $space =  spaces_load('og', $site);
+        if ($space){
+          $spaces[] = $space;
+        }
+      }
+  }//Get the sites
+	
+  $n_imgs = 0;
+  if(count($spaces)){
+  	foreach ($spaces as $vsite){
+		  if($vsite && !count($vsite->group->field_vsite_logo)){
+		    if($vsite->settings['logo'] && $vsite->settings['logo']['current_logo']){
+		      vsite_include('vsiteapi');
+		      $s_vsite_dest = vsite_add_imagefield_image($vsite->settings['logo']['current_logo'],'field_vsite_logo',$vsite->group);
+		      $n_imgs++;
+		    }
+		  }//Copy thier image to the site logo if they have not defined one
+  	}
+  }
+  
+  
+  return "Attach existing site images to the vsite node - ".$n_imgs." images needed moving for ".count($spaces)." sites";
+}
 
 /**
  * Enable the Pinserver modules
@@ -224,6 +264,7 @@ function _iqss_release_get_updates(){
 	    'iqss_release_enable_auto_nodetitle', //Enable the 'auto_nodetitle' module as we will be using it in scholars in the future
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
 	    'iqss_release_update_jquery',  //Enable Jquery Update so the newest version of jquery is avalible
+	    'iqss_release_move_site_logos', //Attach the existing site logos to the vsite object
 	  ),
 	  'projects' => array(
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
