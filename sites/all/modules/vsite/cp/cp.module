@@ -411,8 +411,6 @@ function cp_preprocess_page(&$vars) {
   // 2 new variables for top and left menus
   $vars ['cp_toolbar'] = $vars ['cp_left'] = '';
 
-  $vsite = vsite_get_vsite ();
-
   if (context_get ( 'toolbar', 'value' ) == "full") {
 
       $links = cp_toolbar_menu_links ();

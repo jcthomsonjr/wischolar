@@ -215,6 +215,22 @@ function iqss_release_enable_auto_nodetitle(){
 	return "Auto Node Title - Module Enabled";
 }
 
+/**
+ * Enable the themes that are new to this release
+ */
+function iqss_release_enable_new_themes(){
+  
+	$a_new_themes = array('scholar_theme_08','scholar_theme_09','scholar_theme_10','scholar_theme_11');
+	
+	foreach ($a_new_themes as $s_theme){
+		system_initialize_theme_blocks($s_theme);
+    db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", $s_theme);
+	}
+		
+  list_themes(TRUE);
+  menu_rebuild();
+  drupal_rebuild_theme_registry();
+}
 
 
 //////////////////////////////////////////
@@ -258,6 +274,7 @@ function iqss_release_menu(){
   return $items;
 }
 
+
 //////////////////////////////////////////
 // UPDATE List and Order
 //////////////////////////////////////////
@@ -279,6 +296,7 @@ function _iqss_release_get_updates(){
 	    'iqss_release_update_jquery',  //Enable Jquery Update so the newest version of jquery is avalible
 	    'iqss_release_move_site_logos', //Attach the existing site logos to the vsite object
 	    'iqss_release_revert_iqss_project_view', //Revert this view to use our new version
+	    'iqss_release_enable_new_themes', //Enable the new themes for this release
 	  ),
 	  'projects' => array(
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
