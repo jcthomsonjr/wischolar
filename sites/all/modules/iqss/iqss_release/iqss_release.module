@@ -28,14 +28,14 @@ function iqss_release_apply_file_alias_filters(){
 	
 	$n_aliases = 0;
 	foreach($a_fields as $field){
+		$a_objects = array();
 	  if (function_exists($function = $field['module'] . '_filefield_paths_batch_update')) {
-	  	$a_objects = array();
 	    $function($field['name'], $field['content_type'], $a_objects);
 	  }
 	  
 	  if (function_exists($function = $field['module'] . '_filefield_paths_update')) {
 	  	foreach ($a_objects as $oid) $function($oid, $field['name']);
-	  	$n_aliases++;
+	  	$n_aliases += count($a_objects);
 	  }
 	}
   
@@ -262,9 +262,11 @@ function iqss_release_enable_new_themes(){
     db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", $s_theme);
 	}
 		
-  list_themes(TRUE);
-  menu_rebuild();
-  drupal_rebuild_theme_registry();
+//  list_themes(TRUE);
+//  menu_rebuild();
+//  drupal_rebuild_theme_registry();
+  
+  return "Enabled ".count($a_new_themes)." new themes";
 }
 
 
