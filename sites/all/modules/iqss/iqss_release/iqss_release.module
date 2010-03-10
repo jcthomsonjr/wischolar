@@ -300,7 +300,7 @@ function iqss_release_handle_updates($s_preset){
 	$a_info = _iqss_release_process_updates($s_preset);
 	
 	$s_message = "";
-	foreach($a_info['messages'] as $a_status) $s_message .= $a_status['message'];
+	foreach($a_info['messages'] as $a_status) $s_message .= $a_status['message']."\n";
 	dpm($s_message);
 	
   //Clear the cache
@@ -322,7 +322,7 @@ function _iqss_release_process_updates($s_preset){
   
   foreach ($a_preset_updates as $s_func) {
     $b_return = $s_func();
-    $a_status[] = array('message' => "$s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n",
+    $a_status[] = array('message' => "$s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return),
                         'status' => (is_bool($b_return)?$b_return:true));
   }
   
