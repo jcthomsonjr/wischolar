@@ -123,6 +123,20 @@ function iqss_release_relase_iqss_scholar() {
  */
 function iqss_release_install_scholar_reader() {
 	
+  //ENABLE Scholar Reader on the sites that had feed enabled
+  $sql = db_query("SELECT nid FROM {node} WHERE type = '%s' ", variable_get('scholar_content_type', 'vsite') );
+
+  $sites = array();
+  while($res = db_fetch_array($sql)) $sites[] = $res['nid'];
+
+  $a_migrate_settings = array();
+  foreach($sites as $site){
+    $space =  spaces_load('og', $site);
+    if($space && array_key_exists('scholar_feeds',$space->features)){
+      $a_migrate_settings[$space->group->nid] = $space->features['scholar_feeds'];
+    }
+  }//Get the sites
+  
   if(!module_exists('scholar_reader')){
     module_disable(array("scholar_feeds"));
     drupal_uninstall_module("scholar_feeds");
@@ -130,7 +144,13 @@ function iqss_release_install_scholar_reader() {
     $n_count = _iqss_release_enable_modules(array('data','feeds','feeds_defaults','scholar_reader'));
   }
   
-  return "Scholar Reader - Module Enabled";
+  foreach($a_migrate_settings as $nid => $setting){
+    $space =  spaces_load('og', $nid);
+    $space->features['scholar_reader'] = $setting;
+    spaces_save($space);
+  }//Get the sites
+  
+  return "Scholar Reader - Module Enabled\nScholar Reader Settings migrated on [".count($a_migrate_settings)."] sites";
 }
 
 /**
@@ -299,7 +319,7 @@ function _iqss_release_process_updates($s_preset){
   
   foreach ($a_preset_updates as $s_func) {
     $b_return = $s_func();
-    $s_status .= "$s_func\t  Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n";
+    $s_status .= "$s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n";
   }
   
   return array( 'status' => count($a_preset_updates)?"Updates for preset [$s_preset] have completed.  [".(time()-$n_start)."] seconds ":"No updates found to run for preset [$s_preset].",
