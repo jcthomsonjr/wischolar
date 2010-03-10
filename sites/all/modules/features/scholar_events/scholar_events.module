@@ -73,13 +73,16 @@ function scholar_events_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 function _scholar_events_block_mini($op, $edit) {
   if ($op == 'view') {
     $block = array();
+    // if in a node view, get date from the cck field
+    // otherwise now();
     $date = context_get('node', 'field_date');
+    $date = $date ? $date : date_now();
     if ($date) {
       $year = date_format($date, 'Y');
       $month = date_format($date, 'm');
       $args = "$year-$month";
       $block['content'] = views_embed_view('scholar_events', 'block_1', $args);
-    }
+    } 
     return $block;
   }
 }
@@ -95,7 +98,7 @@ function scholar_events_vsite_widgets(){
    * this needs some work 
    * because the block view expect a date argument
    * see _scholar_events_block_mini() above
-   * 
+   **/
   $items['scholar_events_mini'] = array(
       'module' => 'scholar_events',
       'delta' => 'mini',
@@ -106,7 +109,7 @@ function scholar_events_vsite_widgets(){
       'type' => 'context_ui',
       );
       
-   */
+
       
   $items['views_scholar_events_upcoming-block_1'] = array(
       'module' => 'views',
