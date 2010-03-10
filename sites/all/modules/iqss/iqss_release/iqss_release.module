@@ -144,6 +144,7 @@ function iqss_release_install_scholar_reader() {
     $n_count = _iqss_release_enable_modules(array('data','feeds','feeds_defaults','scholar_reader'));
   }
   
+  
   foreach($a_migrate_settings as $nid => $setting){
     $space =  spaces_load('og', $nid);
     $space->features['scholar_reader'] = $setting;
@@ -298,7 +299,9 @@ function iqss_release_enable_new_themes(){
 function iqss_release_handle_updates($s_preset){
 	$a_info = _iqss_release_process_updates($s_preset);
 	
-	dpm($a_info['messages']);
+	$s_message = "";
+	foreach($a_info['messages'] as $a_status) $s_message .= $a_status['message'];
+	dpm($s_message);
 	
   //Clear the cache
   module_load_include('inc', 'system', 'system.admin');
@@ -315,15 +318,16 @@ function _iqss_release_process_updates($s_preset){
   $a_updates = _iqss_release_get_updates();
   $a_preset_updates = array_key_exists($s_preset,$a_updates)?$a_updates[$s_preset]:array();
   
-  $s_status = "";
+  $a_status = array();
   
   foreach ($a_preset_updates as $s_func) {
     $b_return = $s_func();
-    $s_status .= "$s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n";
+    $a_status[] = array('message' => "$s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n",
+                        'status' => (is_bool($b_return)?$b_return:true));
   }
   
   return array( 'status' => count($a_preset_updates)?"Updates for preset [$s_preset] have completed.  [".(time()-$n_start)."] seconds ":"No updates found to run for preset [$s_preset].",
-                'messages' => $s_status);
+                'messages' => $a_status);
 }
 
 function iqss_release_menu(){

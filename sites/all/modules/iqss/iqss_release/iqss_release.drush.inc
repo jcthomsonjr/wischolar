@@ -34,7 +34,8 @@ function drush_iqss_release_release($s_preset = false) {
 
   require_once(drupal_get_path('module', 'iqss_release') .'/iqss_release.module');
   $a_info = _iqss_release_process_updates($s_preset);
-  drush_print($a_info['messages']);
-   
+  
+  foreach ($a_info['messages'] as $a_status) drush_log($a_status['message'],($a_status['status']?'success':'error'));
+  
 	drush_print($a_info['status']);
 }
