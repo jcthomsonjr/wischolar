@@ -93,10 +93,19 @@ function _scholar_events_context_default_contexts() {
     ),
     'menu' => 'calendar',
     'block' => array(
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Categories - A widget used to quickly filter categorized content',
+        'type' => 'context_ui',
+      ),
       'vsite_widgets_2' => array(
         'module' => 'vsite_widgets',
         'delta' => '2',
-        'weight' => 20,
+        'weight' => 21,
         'region' => 'right',
         'status' => '0',
         'label' => 'ShareThis Button - Allows you to share posts using popular online services',
@@ -105,7 +114,7 @@ function _scholar_events_context_default_contexts() {
       'scholar_events_mini' => array(
         'module' => 'scholar_events',
         'delta' => 'mini',
-        'weight' => 21,
+        'weight' => 22,
         'region' => 'right',
         'status' => '0',
         'label' => 'Mini Calendar - A small calendar used to display your sites upcoming events',
@@ -114,7 +123,7 @@ function _scholar_events_context_default_contexts() {
       'views_scholar_events_upcoming-block_1' => array(
         'module' => 'views',
         'delta' => 'scholar_events_upcoming-block_1',
-        'weight' => 22,
+        'weight' => 23,
         'region' => 'right',
         'status' => '0',
         'label' => 'Upcoming events',
