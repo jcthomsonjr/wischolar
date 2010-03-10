@@ -206,7 +206,7 @@ function _vsite_object_create_taxonomys(){
     'weight' => 0, 
     'nodes' => array('vsite' => 1),  
     'tags' => TRUE,
-    'help' => t('Vsite Interests taxonomy'),
+    'help' => t('A comma-separated list of topics that may relate to the content of your site. ex.(statistics, casual inference)'),
   );
   taxonomy_save_vocabulary($vocab);
   
