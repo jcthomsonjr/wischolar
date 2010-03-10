@@ -274,28 +274,36 @@ function iqss_release_enable_new_themes(){
 // UPDATE Handler
 //////////////////////////////////////////
 
-//Run all of the updates
+//Callback for the menu
 function iqss_release_handle_updates($s_preset){
-	$n_start = time();
+	$a_info = _iqss_release_process_updates($s_preset);
 	
-	$a_updates = _iqss_release_get_updates();
-	$a_preset_updates = array_key_exists($s_preset,$a_updates)?$a_updates[$s_preset]:array();
+	dpm($a_info['messages']);
 	
-	$s_status = "";
-	
-  foreach ($a_preset_updates as $s_func) {
-  	$b_return = $s_func();
-  	$s_status .= "Update: $s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n";
-  }
-  
-  dpm($s_status);
-  
   //Clear the cache
   module_load_include('inc', 'system', 'system.admin');
   $form = $form_state = array();
   system_clear_cache_submit($form, $form_state);
   
-  return count($a_preset_updates)?"Updates for preset [$s_preset] have completed.  [".(time()-$n_start)."] seconds ":"No updates found to run for preset [$s_preset].";
+  return $a_info['status'];
+}
+
+//Run all of the updates
+function _iqss_release_process_updates($s_preset){
+  $n_start = time();
+  
+  $a_updates = _iqss_release_get_updates();
+  $a_preset_updates = array_key_exists($s_preset,$a_updates)?$a_updates[$s_preset]:array();
+  
+  $s_status = "";
+  
+  foreach ($a_preset_updates as $s_func) {
+    $b_return = $s_func();
+    $s_status .= "$s_func\t  Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return)."\n";
+  }
+  
+  return array( 'status' => count($a_preset_updates)?"Updates for preset [$s_preset] have completed.  [".(time()-$n_start)."] seconds ":"No updates found to run for preset [$s_preset].",
+                'messages' => $s_status);
 }
 
 function iqss_release_menu(){
