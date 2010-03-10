@@ -18,6 +18,29 @@ function iqss_release_revert_iqss_project_view(){
   return "iqss_project_sites view reverted to code version";
 }
 
+/**
+ * Apply the new file_alias filter to existing files
+ */
+function iqss_release_apply_file_alias_filters(){
+  
+	$a_fields = array( array('name' => "field_cv_attach", 'module' => 'filefield', 'content_type' => 'cv'),
+	                   array('name' => "field_gallery_image", 'module' => 'filefield', 'content_type' => 'image'));
+	
+	$n_aliases = 0;
+	foreach($a_fields as $field){
+	  if (function_exists($function = $field['module'] . '_filefield_paths_batch_update')) {
+	  	$a_objects = array();
+	    $function($field['name'], $field['content_type'], $a_objects);
+	  }
+	  
+	  if (function_exists($function = $field['module'] . '_filefield_paths_update')) {
+	  	foreach ($a_objects as $oid) $function($oid, $field['name']);
+	  	$n_aliases++;
+	  }
+	}
+  
+  return "[$n_aliases] File Aliases rebuilt";
+}
 
 /**
  * copy existing site logos to node
@@ -310,6 +333,7 @@ function _iqss_release_get_updates(){
 	    'iqss_release_revert_iqss_project_view', //Revert this view to use our new version
 	    'iqss_release_enable_new_themes', //Enable the new themes for this release
 	    'iqss_release_relase_iqss_scholar',  //Enable the scholar settings module
+	    'iqss_release_apply_file_alias_filters', //Rebuild the file aliases
 	  ),
 	  'projects' => array(
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
