@@ -206,11 +206,11 @@ function _scholar_profiles_content_default_fields() {
         'format' => 'hidden',
       ),
       'teaser' => array(
-        'format' => 'vsite_design_landscape_logo_linked',
+        'format' => 'vsite_design_square_80_80_linked',
         'exclude' => 1,
       ),
       'full' => array(
-        'format' => 'vsite_design_landscape_logo_default',
+        'format' => 'vsite_design_square_80_80_default',
         'exclude' => 1,
       ),
       '4' => array(
