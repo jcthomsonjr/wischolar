@@ -174,17 +174,6 @@ function iqss_release_update_jquery(){
 }
 
 /**
- * Set file directory path
- */
-function iqss_release_set_file_directory_path(){
-	
-  variable_set('file_directory_path', conf_path() .'/files');
-  
-  return "File directory path set to [".variable_get('file_directory_path',false)."]";
-}
-
-
-/**
  * Enable the scholar_front module
  */
 function iqss_release_enable_module_scholar_front() {
@@ -378,7 +367,6 @@ function _iqss_release_get_updates(){
 	    'iqss_release_enable_new_themes', //Enable the new themes for this release
 	    'iqss_release_relase_iqss_scholar',  //Enable the scholar settings module
 	    'iqss_release_apply_file_alias_filters', //Rebuild the file aliases
-	    'iqss_release_set_file_directory_path', //Set the default file directory path
 	  ),
 	  'projects' => array(
 	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
