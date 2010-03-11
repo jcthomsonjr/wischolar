@@ -1,3 +1,5 @@
+/*LAYOUT */
+
 body.page-site-register {
   margin-top: 45px;
   line-height: 115%;
@@ -29,6 +31,10 @@ body.page-site-register #extradiv {
   background: url(images/register-bottom.png) no-repeat transparent;
   }
 
+
+
+/*HEADER */
+
 body.page-site-register #header {
   height: auto;
   float:left;
@@ -53,16 +59,6 @@ body.page-site-register #header h1 {
   height:64px;
   }
 
-body.page-site-register .form-item {
-  margin: 0;
-  }
-
-body.page-site-register #content-main, body.page-site-register #content-wrapper {
-  padding: 0;
-  float: none;
-  clear: none;
-  }
-
 body.page-site-register h2.title {
   float:right;
   color:#9f9e9e;
@@ -72,46 +68,76 @@ body.page-site-register h2.title {
   margin-right: 10px;
   }
 
-body.page-site-register #user_register, body.page-site-register #domain-field {
-  clear: both;
-  padding: 25px 0;
+
+/*FORM */
+
+body.page-site-register #content-main,
+body.page-site-register #content-wrapper,
+body.page-site-register .form-item,
+body.page-site-register #name-field,
+body.page-site-register #mail-field,
+body.page-site-register #edit-password-wrapper {
+  margin: 0;
+  padding:0;
   }
 
-#edit-password-wrapper {
+body.page-site-register #content-main,
+body.page-site-register #content-wrapper
+ {
+  float: none;
+  clear: none;
+  }
+
+body.page-site-register #user_register,
+body.page-site-register #domain-field,
+body.page-site-register #edit-password-wrapper {
+  clear: both;
+  padding: 25px 0;
   position: relative;
   }
 
-#scholarregister-signup-form #name-field, #scholarregister-signup-form #mail-field, #edit-password-pass1-wrapper, #edit-password-pass2-wrapper, #edit-password-pass1-wrapper, #edit-password-pass2-wrapper {
+#scholarregister-signup-form #name-field,
+#scholarregister-signup-form #mail-field {
+  padding-bottom: 25px;
+  }
+
+#scholarregister-signup-form #name-field,
+#scholarregister-signup-form #mail-field,
+#edit-password-pass1-wrapper,
+#edit-password-pass2-wrapper,
+#edit-password-pass1-wrapper,
+#edit-password-pass2-wrapper {
   width: 329px;
   float:left;
   margin: 0;
   position: relative;
   }
 
-#scholarregister-signup-form #mail-field {
+#scholarregister-signup-form #mail-field,
+#edit-password-pass2-wrapper {
   float: right;
   }
-  
-body.page-site-register #name-item{
+
+body.page-site-register #name-item {
  padding-top: 10px;
  }
-  
+
 body.page-site-register #name-item label{
   float: left;
   padding-top: 3px;
   padding-right: 7px;
   }
-  
+
 body.page-site-register #mail-item{
   padding-top: 10px;
   }
-  
+
 body.page-site-register #mail-item label{
   float: left;
   padding-top: 3px;
   padding-right: 7px;
   }
-  
+
 .form-actions {
   text-align: right;
   }
@@ -127,8 +153,10 @@ body.page-site-register #success-message p {
   color:#7e7e7e;
   }
 
-#name-field input, #mail-field input {
+#name-field input, #mail-field input,
+#edit-password-wrapper input {
   width: 315px;
+  margin: 0;
   }
 
 body.page-site-register div.password-description {
