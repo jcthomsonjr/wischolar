@@ -3,7 +3,7 @@ $file_path = $node -> field_person_photo[0]['filepath'];
 if($file_path){
 	$logo_teaser = theme('imagecache','image_s', $file_path);
 	$logo_teaser = l($logo_teaser, 'node/'. $node -> nid, array('absolute' => FALSE, 'html' => TRUE));
-	$logo_page = theme('imagecache','vsite_design_square_80_80', $file_path);
+	$logo_page = theme('imagecache','square_80_80', $file_path);
 	$person_logo = $page ? $logo_page : $logo_teaser;
 }
 ?>
