@@ -2,7 +2,7 @@
 $file_path = $node -> field_person_photo[0]['filepath'];
 $logo_teaser = theme('imagecache','image_s', $file_path);
 $logo_teaser = l($logo_teaser, 'node/'. $node -> nid, array('absolute' => FALSE, 'html' => TRUE));
-$logo_page = theme('imagecache','vsite_design_landscape_logo', $file_path);
+$logo_page = theme('imagecache','vsite_design_square_80_80', $file_path);
 $person_logo = $page ? $logo_page : $logo_teaser;
 ?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>">
