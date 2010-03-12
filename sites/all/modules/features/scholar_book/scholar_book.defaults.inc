@@ -83,6 +83,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'create book content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -99,6 +100,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'delete own book content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -107,6 +109,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'edit own book content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -115,6 +118,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'override book promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -123,6 +127,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'override book published option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -131,6 +136,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'override book revision option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -139,6 +145,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'override book sticky option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
