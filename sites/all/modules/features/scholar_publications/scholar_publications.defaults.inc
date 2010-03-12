@@ -156,9 +156,9 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'access biblio content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
       '3' => 'scholar user',
     ),
   );
@@ -194,6 +194,7 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'override biblio promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -202,6 +203,7 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'override biblio published option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -210,6 +212,7 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'override biblio revision option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -218,6 +221,7 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'override biblio sticky option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -225,9 +229,9 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'show download links',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
       '3' => 'scholar user',
     ),
   );
@@ -236,9 +240,9 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'show export links',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
       '3' => 'scholar user',
     ),
   );
@@ -247,9 +251,9 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'show filter tab',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
       '3' => 'scholar user',
     ),
   );
@@ -258,9 +262,9 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'show own download links',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
       '3' => 'scholar user',
     ),
   );
@@ -269,9 +273,9 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'show sort links',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
       '3' => 'scholar user',
     ),
   );
@@ -281,6 +285,7 @@ function _scholar_publications_user_default_permissions() {
     'name' => 'submit repec widget',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -288,9 +293,9 @@ function _scholar_publications_user_default_permissions() {
   $permissions[] = array(
     'name' => 'view full text',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar admin',
       '3' => 'scholar user',
     ),
   );
