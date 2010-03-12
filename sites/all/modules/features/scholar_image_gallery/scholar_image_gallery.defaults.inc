@@ -279,6 +279,7 @@ function _scholar_image_gallery_user_default_permissions() {
     'name' => 'create gallery content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -287,6 +288,7 @@ function _scholar_image_gallery_user_default_permissions() {
     'name' => 'create image content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -295,6 +297,7 @@ function _scholar_image_gallery_user_default_permissions() {
     'name' => 'delete own gallery content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -303,6 +306,7 @@ function _scholar_image_gallery_user_default_permissions() {
     'name' => 'delete own image content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -311,6 +315,7 @@ function _scholar_image_gallery_user_default_permissions() {
     'name' => 'edit own gallery content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -319,6 +324,7 @@ function _scholar_image_gallery_user_default_permissions() {
     'name' => 'edit own image content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -327,6 +333,7 @@ function _scholar_image_gallery_user_default_permissions() {
     'name' => 'override gallery promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -335,6 +342,7 @@ function _scholar_image_gallery_user_default_permissions() {
     'name' => 'override gallery sticky option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
