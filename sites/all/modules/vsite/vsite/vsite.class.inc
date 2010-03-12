@@ -100,6 +100,12 @@ class vsite extends space_og implements space {
    */
   public function feature_access($feature = NULL) {
   	
+  	if(self::$override_allow_feature_access){
+      //allow access to all feature menu items on this page for display purposes
+      //Used in CP so that all features menu entries will be displayed for sorting
+      return true; 
+    }
+    
     if (isset($this->features[$feature])) {
       if ($this->features[$feature] == SPACES_FEATURE_DISABLED) {
         return FALSE;
@@ -108,9 +114,6 @@ class vsite extends space_og implements space {
       }else if ($this->features[$feature] == SPACES_OG_PUBLIC) {
         return TRUE; 
       }
-    }elseif(self::$override_allow_feature_access){
-      //allow access to all feature menu items on this page for display purposes
-      return true; 
     }//Is this feature a part of the site?
     return false;
   }
