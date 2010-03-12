@@ -75,6 +75,7 @@ function _scholar_software_user_default_permissions() {
     'name' => 'create software content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -83,6 +84,7 @@ function _scholar_software_user_default_permissions() {
     'name' => 'delete own software content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -91,6 +93,7 @@ function _scholar_software_user_default_permissions() {
     'name' => 'edit own software content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -99,6 +102,7 @@ function _scholar_software_user_default_permissions() {
     'name' => 'override software promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -107,6 +111,7 @@ function _scholar_software_user_default_permissions() {
     'name' => 'override software published option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -115,6 +120,7 @@ function _scholar_software_user_default_permissions() {
     'name' => 'override software revision option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -123,6 +129,7 @@ function _scholar_software_user_default_permissions() {
     'name' => 'override software sticky option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
