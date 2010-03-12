@@ -86,10 +86,16 @@ function scholar_biocv_bio(){
   //ADD CV Link if Req
   $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);
   if($cv_node && $b_use_attachment && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
-  	$alias = drupal_get_path_alias('filefield_paths/alias/' . $cv_node->field_cv_attach[0]['fid']);
-  	$s_file_path = strlen($alias)?$alias:$cv_node->field_cv_attach[0]['filepath'];
+  	$s_filefield_alias = 'filefield_paths/alias/' . $cv_node->field_cv_attach[0]['fid'];
+  	$alias = drupal_get_path_alias($s_filefield_alias);
   	
-    $s_out .= t("<h3>").l('Download CV', file_create_url($s_file_path),array('attributes' => array('class' => "cv-direct-download"))).t("</h3>please use the above link to download a PDF copy of my CV</p>");
+  	if($alias && $s_filefield_alias != $alias){
+  	  $s_file_path = str_replace($cv_node->field_cv_attach[0]['filepath'], $alias, file_create_url($cv_node->field_cv_attach[0]['filepath']));
+  	}else{
+  	 	$s_file_path = file_create_url($cv_node->field_cv_attach[0]['filepath']);
+  	}
+  	
+    $s_out .= t("<h3>").l('Download CV', $s_file_path,array('attributes' => array('class' => "cv-direct-download"))).t("</h3>please use the above link to download a PDF copy of my CV</p>");
   }
   
   
