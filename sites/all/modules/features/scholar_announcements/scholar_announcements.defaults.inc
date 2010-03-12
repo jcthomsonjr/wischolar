@@ -84,6 +84,7 @@ function _scholar_announcements_user_default_permissions() {
     'name' => 'create announcement content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -92,6 +93,7 @@ function _scholar_announcements_user_default_permissions() {
     'name' => 'delete own announcement content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -100,6 +102,7 @@ function _scholar_announcements_user_default_permissions() {
     'name' => 'edit own announcement content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -108,6 +111,7 @@ function _scholar_announcements_user_default_permissions() {
     'name' => 'override announcement promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -116,6 +120,7 @@ function _scholar_announcements_user_default_permissions() {
     'name' => 'override announcement published option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -124,6 +129,7 @@ function _scholar_announcements_user_default_permissions() {
     'name' => 'override announcement revision option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -132,6 +138,7 @@ function _scholar_announcements_user_default_permissions() {
     'name' => 'override announcement sticky option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
