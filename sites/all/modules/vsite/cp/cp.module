@@ -706,3 +706,18 @@ function cp_vsite_generic_settings($value = array()){
 	return $a_settings;
 }
 
+/**
+ * Alter the scholar feature views
+ * (fixes customize 'quirk') for block customizer
+ * If there is no content for the view then the view is not rendered and the subject is blank
+ * if the subject is blank then you can't edit it so we solve that here by providing stupid empty text
+ * @param $view
+ */
+function cp_views_pre_render(&$view) {
+	if(context_get('vsite', 'section') != 'cp') return;
+	
+  $views = spaces_features_map('views');
+  if(in_array($view->name,array_keys($views))  && !$view->display['default']->handler->get_option('empty')){
+    $view->display['default']->handler->set_option('empty',t(' '));
+  }//Provide some empty text if none exists so that views are always rendered in cp 
+}
