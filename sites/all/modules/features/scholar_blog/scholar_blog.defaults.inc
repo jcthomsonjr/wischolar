@@ -102,25 +102,35 @@ function _scholar_blog_user_default_permissions() {
     'name' => 'override blog promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
   // Exported permission: override blog published option
   $permissions[] = array(
     'name' => 'override blog published option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: override blog revision option
   $permissions[] = array(
     'name' => 'override blog revision option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: override blog sticky option
   $permissions[] = array(
     'name' => 'override blog sticky option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   return $permissions;
