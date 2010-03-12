@@ -123,6 +123,11 @@ function _vsite_news_views_default_views() {
       'field' => 'value_vsite_news',
       'relationship' => 'none',
     ),
+    'access_uid' => array(   
+      'id' => 'access_uid',   
+      'table' => 'activity',    
+      'field' => 'access_uid',    
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
