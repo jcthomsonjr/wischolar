@@ -11,6 +11,7 @@ function _scholar_pages_user_default_permissions() {
     'name' => 'create page content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -19,6 +20,7 @@ function _scholar_pages_user_default_permissions() {
     'name' => 'delete own page content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -27,6 +29,7 @@ function _scholar_pages_user_default_permissions() {
     'name' => 'edit own page content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -35,6 +38,7 @@ function _scholar_pages_user_default_permissions() {
     'name' => 'override page promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -43,6 +47,7 @@ function _scholar_pages_user_default_permissions() {
     'name' => 'override page published option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -51,6 +56,7 @@ function _scholar_pages_user_default_permissions() {
     'name' => 'override page revision option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -59,6 +65,7 @@ function _scholar_pages_user_default_permissions() {
     'name' => 'override page sticky option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
