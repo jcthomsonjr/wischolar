@@ -174,6 +174,7 @@ function _scholar_links_user_default_permissions() {
     'name' => 'create link content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -182,6 +183,7 @@ function _scholar_links_user_default_permissions() {
     'name' => 'delete own link content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -190,6 +192,7 @@ function _scholar_links_user_default_permissions() {
     'name' => 'edit own link content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -198,6 +201,7 @@ function _scholar_links_user_default_permissions() {
     'name' => 'override link promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -206,6 +210,7 @@ function _scholar_links_user_default_permissions() {
     'name' => 'override link published option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -220,6 +225,7 @@ function _scholar_links_user_default_permissions() {
     'name' => 'override link sticky option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
