@@ -163,7 +163,8 @@ function  iqss_pinserver_register_huid_js() {
  */
 function iqss_pinserver_register_mail_alter(&$message){
 
-  if ($message['id'] == 'scholarregister_scholar-register-notify'){
+  if ($message['id'] == 'scholarregister_scholar-register-notify'){ 
+
     //altering the contents of the welcome email
     $params = iqss_pinserver_register_notify($message['user'], $message['vsite']);    
     $message['subject'] = $params['subject'];
@@ -173,6 +174,7 @@ function iqss_pinserver_register_mail_alter(&$message){
 
 function iqss_pinserver_register_notify($user, $vsite, $alter = TRUE){
   global $language, $base_url;
+  
 
   $params = array();
   $params['from'] = variable_get('site_mail', ini_get('sendmail_from'));
@@ -181,16 +183,14 @@ function iqss_pinserver_register_notify($user, $vsite, $alter = TRUE){
   '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
   ));
 
-  $domain  =  $vsite -> get_absolute_url();
-  $scholar_site_url =  url($domain, $options = array('absolute' => TRUE));
+  $scholar_site_url =  url($vsite -> purl, array('absolute' => TRUE));
   $timestamp = time();
 
   $msg_variables = array(
-  // '!personal_message' => strlen($s_personal_message) ? $s_personal_message . "\n================================================\n\n" : "",
   '!username' => $user->name,
   '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
   '!scholar_site_url' => $scholar_site_url,
-  '!login_url' => user_pass_reset_url($user),
+  '!reset_url' => url('user/password', array('absolute' => TRUE)),
   '!uri' => $base_url,
   '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
   '!mailto' => $user->mail,
@@ -202,7 +202,7 @@ function iqss_pinserver_register_notify($user, $vsite, $alter = TRUE){
   '!help_settings' => $base_url . '/help/vsitehelp/Site-Settings',
   );
 
-  $params['body'] = t("Hi !username,\n\nYour new web site has been activated! Your web site url is: !scholar_site_url\n\nFor help with getting started, go to: !help_getting_started\n\nYour scholar web site comes with built-in features to allow you to post and manage a wide range of content. For more information regarding features, go to:\n  !help_features \n\nYou also have the ability to customize the look and layout of your site. The theme selector in the allows you to easily select a theme for your site. In addition you can further customize your theme by selecting a color scheme or \"flavor\". For more information regarding themes and other site settings, go to:  !help_settings\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
+  $params['body'] = t("Hi !username,\n\nYour new web site has been activated! Your web site url is: !scholar_site_url\n\nTo begin developing your site, go to your site's home page. If you are not already logged in, log into your account by clicking on the \"Login\" on your site's front page.\n\nYour username is: !username\n\nIf you forgot your password, you can reset it by going to !reset_url\n\nOnce you are logged in, click in the link titled \"Not sure what to do now? Need help getting started?\" on your site's front page. You'll see some useful links to help you get started. Think of this list as a checklist of things to do.\n\nMake note of the menu on the upper right hand side of the screen. Whenever you are logged in and viewing your site, this menu will appear. The \"Control Panel\" link  within this menu will take you to your site's Control Panel where all of your site administration tasks can be accomplished, such as enabling features and selecting your site's theme.\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
   
   return $params;
 }
