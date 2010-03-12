@@ -320,6 +320,7 @@ function _scholar_reader_user_default_permissions() {
     'name' => 'create feed content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -328,6 +329,7 @@ function _scholar_reader_user_default_permissions() {
     'name' => 'delete own feed content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -336,6 +338,7 @@ function _scholar_reader_user_default_permissions() {
     'name' => 'edit own feed content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -344,6 +347,7 @@ function _scholar_reader_user_default_permissions() {
     'name' => 'override feed promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -352,6 +356,7 @@ function _scholar_reader_user_default_permissions() {
     'name' => 'override feed published option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -366,6 +371,7 @@ function _scholar_reader_user_default_permissions() {
     'name' => 'override feed sticky option',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
