@@ -1,3 +1,15 @@
+@font-face {
+	font-family: 'IMFELLEnglishPRORegular';
+	src: url('fonts/FeENrm28C.eot');
+	src: local('fonts/IM FELL English PRO'), local('fonts/IM_FELL_English_PRO_Roman'), url('fonts/FeENrm28C.woff') format('woff'), url('fonts/FeENrm28C.ttf') format('truetype'), url('fonts/FeENrm28C.svg#IM_FELL_English_PRO_Roman') format('svg');
+}
+
+@font-face {
+	font-family: 'IMFELLEnglishPROItalic';
+	src: url('fonts/FeENit27C.eot');
+	src: local('fonts/IM FELL English PRO'), local('fonts/IM_FELL_English_PRO_Italic'), url('fonts/FeENit27C.woff') format('woff'), url('fonts/fonts/FeENit27C.ttf') format('truetype'), url('fonts/FeENit27C.svg#IM_FELL_English_PRO_Italic') format('svg');
+}
+
 html {
     min-width: 910px;
     }
@@ -5,7 +17,7 @@ html {
 body {
     background-color: #44514f;
     color:#2F2F2F;
-    font:.9em/150% didot, palatino, 'palatino linotype','times new roman', times, serif;
+    font:.9em/150% palatino, 'palatino linotype','times new roman', times, serif;
     }
 
 #wrapper {
@@ -30,6 +42,7 @@ a:hover {
 h1, h2, h3, #header {
     color:#484b63;
     font-weight: bold;
+    font-family: 'IMFELLEnglishPRORegular', palatino, 'palatino linotype','times new roman', times, serif;
     }
 
 h2 {
@@ -120,11 +133,14 @@ body.no-sidebars #content-wrapper {
   margin-top: 16px;
   margin-bottom: .3em;
   text-transform: uppercase;
-  font-size: 40px;
+  font-size: 31px;
   text-shadow: #222 0 0 .4em;
   color: #F7F3EA;
   }
 
+#header h2 {
+  font-size:21px;
+  }
 
 #header a, #header a:visited,#header h2, #header p {
     text-decoration: none;
