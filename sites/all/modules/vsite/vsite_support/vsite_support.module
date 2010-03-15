@@ -21,21 +21,38 @@ function vsite_support_menu(){
 
   $items['cp/support'] = array(
     'title' => 'Support',
-    'page callback' => 'vsite_support_questions',
+    'page callback' => 'contact_site_page',
+    'file' => 'contact.pages.inc',
+    'file path' => drupal_get_path('module','contact'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => 5
   );
 
+  $items['cp/support'] = array(
+    'title' => 'Support',
+    'page callback' => 'contact_site_page',
+    'file' => 'contact.pages.inc',
+    'file path' => drupal_get_path('module','contact'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 5
+  );
+  
   if(module_exists('contact')){
     $items['cp/support/contact'] = array(
       'title' => 'Contact Us',
       'page callback' => 'contact_site_page',
       'file' => 'contact.pages.inc',
-      'type' => MENU_LOCAL_TASK,
+      'type' => MENU_DEFAULT_LOCAL_TASK,
       'file path' => drupal_get_path('module','contact'),
-      'weight' => 10,
+      'weight' => -1,
     );
 
+    $items['cp/support/help'] = array(
+      'title' => 'Help',
+	    'page callback' => 'vsite_support_user_doc',
+	    'type' => MENU_LOCAL_TASK,
+	  );
+    
     $items['contact_owner'] = array(
 	    'title' => 'Contact',
 	    'page callback' => 'vsite_support_site_contact',
@@ -53,6 +70,14 @@ function vsite_support_menu(){
     if(!isset($item['menu_name'])) $items[$path]['menu_name'] = 'cp';
     if(!isset($item['access callback'])) $items[$path]['access callback'] = 'cp_access_cp';
   }
+  
+  // View main help.
+  $items['about'] = array(
+    'page callback' => 'advanced_help_topic_page',
+    'page arguments' => array('vsitehelp', 'Scholar-Web-Sites-Project-Documentation'),
+    'access arguments' => array('view advanced help topic'),
+    'type' => MENU_CALLBACK,
+  );
 
   return $items;
 }
@@ -226,4 +251,13 @@ function vsite_support_form_alter(&$form, $form_state, $form_id) {
     break;
     
   }
+}
+
+function vsite_support_user_doc(){
+	
+	$content = ' '.
+	           "<p>Click ".l('here','help/vsitehelp/User-Documention',array('purl' => array('disabled' => true)))." to view the User Documentation help page.<p>"
+	           .' ';
+	
+	return $content;
 }

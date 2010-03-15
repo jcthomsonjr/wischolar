@@ -105,8 +105,8 @@ function _vsite_support_context_default_contexts() {
     'value' => 'support',
     'description' => '',
     'node' => array(
-      '0' => 'feature_request',
-      '1' => 'support_question',
+//      '0' => 'feature_request',  //UNCOMMENT THESE TWO LINES WHEN WE ADD BACK SUPPORT QUESTIONS
+//      '1' => 'support_question',
     ),
     'path' => array(
       'cp/support/*' => 'cp/support/*',
