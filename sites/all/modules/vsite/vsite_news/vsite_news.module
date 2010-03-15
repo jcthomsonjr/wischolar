@@ -48,6 +48,7 @@ function vsite_news_menu(){
     'weight' => 0,
   ); 
   
+  /*
   $items['cp/news/feeds'] = array(
     'title' => 'Latest feeds',
     'page callback' => 'vsite_news_feeds',
@@ -55,6 +56,7 @@ function vsite_news_menu(){
     'type' => MENU_LOCAL_TASK,
     'weight' => 3,
   );
+  */
   
   /*
   $items['cp/news/following'] = array(
@@ -86,9 +88,12 @@ function vsite_news_menu(){
   
   return $items;
 }
+
+/*
 function vsite_news_feeds(){
   return views_page('scholar_feed_items','default');
 }
+*/
 
 /*
 function vsite_news_following(){
