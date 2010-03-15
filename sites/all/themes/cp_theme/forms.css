@@ -27,17 +27,14 @@ fieldset {
 	margin-left: 190px;
 	}
 
-/*FireFox 3*/
-@-moz-document url-prefix() {
-  .section-cp .fieldset-wrapper, .section-cp div.description {
-  margin-top:-28px;
-    }
-  }
-
 .section-cp .fieldset-wrapper .fieldset-wrapper,
 .section-cp .og-vocab-taxonomy .fieldset-wrapper,  {
 	margin: 0;
 	}
+
+html.js #modal-content fieldset.collapsible .fieldset-wrapper {
+  overflow:hidden;
+  }
 
 .section-cp .og-vocab-taxonomy {
   margin: 10px -3px;
