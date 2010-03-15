@@ -36,7 +36,7 @@ function vsite_support_menu(){
     'type' => MENU_NORMAL_ITEM,
     'weight' => 5
   );
-  
+
   if(module_exists('contact')){
     $items['cp/support/contact'] = array(
       'title' => 'Contact Us',
@@ -52,7 +52,7 @@ function vsite_support_menu(){
 	    'page callback' => 'vsite_support_user_doc',
 	    'type' => MENU_LOCAL_TASK,
 	  );
-    
+
     $items['contact_owner'] = array(
 	    'title' => 'Contact',
 	    'page callback' => 'vsite_support_site_contact',
@@ -70,7 +70,7 @@ function vsite_support_menu(){
     if(!isset($item['menu_name'])) $items[$path]['menu_name'] = 'cp';
     if(!isset($item['access callback'])) $items[$path]['access callback'] = 'cp_access_cp';
   }
-  
+
   // View main help.
   $items['about'] = array(
     'page callback' => 'advanced_help_topic_page',
@@ -249,15 +249,15 @@ function vsite_support_form_alter(&$form, $form_state, $form_id) {
       //Customize the "feature_request" node form
       $form['#redirect'] = 'cp/support/featurerequests';
     break;
-    
+
   }
 }
 
 function vsite_support_user_doc(){
-	
+
 	$content = ' '.
-	           "<p>Click ".l('here','help/vsitehelp/User-Documention',array('purl' => array('disabled' => true)))." to view the User Documentation help page.<p>"
+	           "<div class=\"view-vsite-support\"><p>Click ".l('here','help/vsitehelp/User-Documention',array('purl' => array('disabled' => true)))." to view the User Documentation help page.<p>"
 	           .' ';
-	
+
 	return $content;
 }
