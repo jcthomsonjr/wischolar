@@ -198,7 +198,7 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
     }
 
     //adding or editing child booklet page
-    if (!empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']){ dpm($form['book']);
+    if (!empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']){
     // Fieldset mods
     $form['title']['#title'] = t('Booklet page title');
     $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
