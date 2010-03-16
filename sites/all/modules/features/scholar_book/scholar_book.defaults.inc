@@ -75,6 +75,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'add content to books',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -92,6 +93,7 @@ function _scholar_book_user_default_permissions() {
     'name' => 'create new books',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
