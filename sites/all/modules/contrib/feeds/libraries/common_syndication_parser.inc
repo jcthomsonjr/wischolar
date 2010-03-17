@@ -296,10 +296,10 @@ function _parser_common_syndication_RDF10_parse($feed_XML) {
       // looks nicer in the mapper UI
       // @todo Revisit, not used with feedapi mapper anymore.
       $rdf_property = str_replace(':', '_', $rdf_property);
-      $item['rdf'][$rdf_property] = $rdf_value;
+      $item['rdf']->$rdf_property = $rdf_value;
     }
 
-    $parsed_source['items'][] = $item;
+    $parsed_source['items'][] = (object)$item;
   }
 
   return $parsed_source;
