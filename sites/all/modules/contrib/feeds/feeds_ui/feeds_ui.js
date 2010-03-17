@@ -1,4 +1,4 @@
-// $Id: feeds_ui.js,v 1.1 2009/10/20 21:01:35 alexb Exp $
+// $Id: feeds_ui.js,v 1.5 2010/02/23 04:59:06 alexb Exp $
 
 Drupal.behaviors.feeds = function() {
 
@@ -53,7 +53,7 @@ Drupal.behaviors.feeds = function() {
   // Replace checkbox with .feeds-ui-checkbox-link class with a link.
   $('.feeds-ui-checkbox-link:not(.processed)').each(function(i) {
     $(this).addClass('processed').after(
-      '<a href="#" onclick="return false;" class="feeds-ui-trigger-remove">' + $(this).children(' label').text() + '</a>'
+      '<a href="#" onclick="return false;" class="feeds-ui-trigger-remove">' + $('label', this).text() + '</a>'
     ).hide();
   });
 
@@ -86,5 +86,22 @@ Drupal.behaviors.feeds = function() {
     // handler.
     $('#' + $(this).attr('id')).attr('checked', 1);
     $('input.form-submit.feeds-ui-hidden-submit').click();
+  });
+
+  // Show pubsub settings conditionally.
+  // @todo Generalize dependencies between form elements.
+  if ($('#edit-use-pubsubhubbub').attr('checked')) {
+    $('#edit-designated-hub-wrapper').show();
+  }
+  else {
+    $('#edit-designated-hub-wrapper').hide();
+  }
+  $('#edit-use-pubsubhubbub').click(function() {
+    if ($(this).attr('checked')) {
+      $('#edit-designated-hub-wrapper').show(100);
+    }
+    else {
+      $('#edit-designated-hub-wrapper').hide(100);
+    }
   });
 };

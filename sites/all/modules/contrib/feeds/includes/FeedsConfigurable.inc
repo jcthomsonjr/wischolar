@@ -1,10 +1,16 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.4 2010/01/27 15:26:32 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.10 2010/02/19 23:11:06 alexb Exp $
 
 /**
  * @file
  * FeedsConfigurable and helper functions.
  */
+
+/**
+ * Used when an object does not exist in the DB or code but should.
+ */
+class FeedsNotExistingException extends Exception {
+}
 
 /**
  * A configurable class.
@@ -69,6 +75,17 @@ abstract class FeedsConfigurable {
   }
 
   /**
+   * Determine whether this object is persistent. I. e. it is defined either
+   * in code or in the database.
+   */
+  public function existing() {
+    if ($this->export_type == FEEDS_EXPORT_NONE) {
+      throw new FeedsNotExistingException(t('Object is not persistent.'));
+    }
+    return $this;
+  }
+
+  /**
    * Save a configuration. Concrete extending classes must implement a save
    * operation.
    */
@@ -85,12 +102,13 @@ abstract class FeedsConfigurable {
    * Set configuration.
    *
    * @param $config
-   *   Array containing configuration information. Will be filtered by the keys
-   *   returned by configDefaults().
+   *   Array containing configuration information. Config array will be filtered
+   *   by the keys returned by configDefaults() and populated with default
+   *   values that are not included in $config.
    */
   public function setConfig($config) {
-    $default_keys = $this->configDefaults();
-    $this->config = array_intersect_key($config, $default_keys);
+    $defaults = $this->configDefaults();
+    $this->config = array_intersect_key($config, $defaults) + $defaults;
   }
 
   /**
@@ -134,9 +152,7 @@ abstract class FeedsConfigurable {
    *   values are their default values.
    */
   public function configDefaults() {
-    $fake_form_state = array();
-    $form = $this->configForm($fake_form_state);
-    return element_children($form);
+    return array();
   }
 
   /**
@@ -175,6 +191,7 @@ abstract class FeedsConfigurable {
  *   Rendered config form, if available. Empty string otherwise.
  */
 function feeds_get_config_form($configurable) {
+  $form_state = array();
   if ($configurable->configForm($form_state)) {
     return drupal_get_form(get_class($configurable) .'_feeds_config_form', $configurable);
   }
@@ -200,6 +217,7 @@ function feeds_config_form(&$form_state, $configurable) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
+    '#weight' => 100,
   );
   return $form;
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.4 2009/12/20 23:48:38 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.6 2010/02/17 22:58:18 alexb Exp $
 
 /**
  * @file
@@ -38,8 +38,17 @@ class FeedsUserProcessor extends FeedsProcessor {
         }
 
         // Save the user.
-        // @todo Is this really the best way to use this function?
         user_save($account, (array) $account);
+        if ($account->uid && $account->openid) {
+          $authmap = array(
+            'uid' => $account->uid,
+            'module' => 'openid',
+            'authname' => $account->openid,
+          );
+          if (SAVED_UPDATED != drupal_write_record('authmap', $authmap, array('uid', 'module'))) {
+            drupal_write_record('authmap', $authmap);
+          }
+        }
 
         if ($uid) {
           $updated++;
@@ -63,16 +72,14 @@ class FeedsUserProcessor extends FeedsProcessor {
     else {
       drupal_set_message(t('There are no new users.'));
     }
+
+    return FEEDS_BATCH_COMPLETE;
   }
 
   /**
-   * Implement clear.
-   *
-   * @param $source
-   *   FeedsSource of this term. FeedsTermProcessor does not heed this
-   *   parameter, it deletes all terms from a vocabulary.
+   * Implementation of FeedsProcessor::clear().
    */
-  public function clear(FeedsSource $source) {
+  public function clear(FeedsBatch $batch, FeedsSource $source) {
     // Do not support deleting users as we have no way of knowing which ones we
     // imported.
     throw new Exception(t('User processor does not support deleting users.'));
@@ -166,6 +173,13 @@ class FeedsUserProcessor extends FeedsProcessor {
         'description' => t('The created (e. g. joined) data of the user.'),
        ),
     );
+    if (module_exists('openid')) {
+      $targets['openid'] = array(
+        'name' => t('OpenID identifier'),
+        'description' => t('The OpenID identifier of the user. <strong>CAUTION:</strong> Use only for migration purposes, misconfiguration of the OpenID identifier can lead to severe security breaches like users gaining access to accounts other than their own.'),
+        'optional_unique' => TRUE,
+       );
+    }
     return $targets;
   }
 
@@ -179,15 +193,18 @@ class FeedsUserProcessor extends FeedsProcessor {
     foreach ($this->uniqueTargets($source_item) as $target => $value) {
       switch ($target) {
         case 'name':
-          $nid = db_result(db_query('SELECT uid FROM {users} WHERE name = "%s"', $value));
+          $uid = db_result(db_query('SELECT uid FROM {users} WHERE name = "%s"', $value));
           break;
         case 'mail':
-          $nid = db_result(db_query('SELECT uid FROM {users} WHERE mail = "%s"', $value));
+          $uid = db_result(db_query('SELECT uid FROM {users} WHERE mail = "%s"', $value));
+          break;
+        case 'openid':
+          $uid = db_result(db_query("SELECT uid FROM {authmap} WHERE authname = '%s' AND module = 'openid'", $value));
           break;
       }
-      if ($nid) {
+      if ($uid) {
         // Return with the first nid found.
-        return $nid;
+        return $uid;
       }
     }
     return 0;

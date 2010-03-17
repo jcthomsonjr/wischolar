@@ -1,5 +1,5 @@
 <?php
-// $Id: data.module,v 1.34.2.19 2009/11/18 20:57:00 alexb Exp $
+// $Id: data.module,v 1.34.2.20 2010/01/19 14:16:33 alexb Exp $
 /**
  * @file
  * Hooks and API functions for data module.
@@ -396,7 +396,7 @@ function _data_load_table($name = NULL, $reset = FALSE) {
  * data_tables.
  */
 function _data_override($name) {
-  if (!db_result(db_query('SELECT name FROM {data_tables} WHERE name = "%s"', $name))) {
+  if (!db_result(db_query("SELECT name FROM {data_tables} WHERE name = '%s'", $name))) {
     if ($table = _data_load_table($name)) {
       drupal_write_record('data_tables', $table);
     }

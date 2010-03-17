@@ -1,5 +1,5 @@
 <?php
-// $Id: data.test,v 1.5.2.4 2009/10/15 15:38:02 alexb Exp $
+// $Id: data.test,v 1.5.2.5 2010/01/25 20:51:02 alexb Exp $
 /**
  * @file
  * Data module tests.
@@ -63,8 +63,22 @@ class DataTestCaseAPI extends DataTestCase {
     $data = $handler->load(array('id' => 1));
     $this->assertEqual($data[0]['char0'], 'test', 'Saved data matches changed data.');
 
+    // Manipulate second record, update and load.
+    $data[0]['char0'] = 'test_update';
+    $handler->update($data[0], array('id'));
+    $data = $handler->load(array('id' => 1));
+    $this->assertEqual($data[0]['char0'], 'test_update', 'Updated data matches changed data.');
+
+    // Delete first record and insert it again.
+    $data = $handler->load(array('id' => 0));
+    $handler->delete(array('id' => 0));
+    $this->assertFalse($handler->load(array('id' => 0)), 'Data deleted.');
+    $handler->insert($data[0]);
+    $data = $handler->load(array('id' => 0));
+    $this->assertEqual($data[0]['char0'], 'test00', 'Inserted data matches.');
+
     // Load a record by string.
-    $data = $handler->load(array('char0' => 'test'));
+    $data = $handler->load(array('char0' => 'test_update'));
     $this->assertEqual($data[0]['id'], 1, 'Loaded data by string type key.');
 
     // Delete table.

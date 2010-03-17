@@ -1,6 +1,26 @@
-// $Id: CHANGELOG.txt,v 1.37 2010/02/08 19:51:54 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.52 2010/02/23 15:27:54 alexb Exp $
 
-Feeds 6.x 1.0 xxxxx xx, xxxx-xx-xx
+Feeds 6.x 1.0 Alpha 12, 2010-02-23
+----------------------------------
+
+- #600584 alex_b: PubSubHubbub support.
+- alex_b: Debug log.
+- alex_b: Add sourceSave() and sourceDelete() methods notifying plugin
+  implementers of a source being saved or deleted.
+- #717168 nicholasThompson: Fix feeds UI JS doesn't select labels correctly.
+- #708228 Scott Reynolds, alex_b: Break FeedsImportBatch into separate classes.
+  NOTE: Review your FeedsFetcher implementation for changes in the
+  FeedsImportBatch class, small adjustments may be necessary.
+- alex_b: Support mapping to OpenID, using OpenID as a unique mapping target.
+- alex_b: Handle exceptions outside of Importer/Source facade methods.
+- #600584 alex_b: Use Batch API.
+  NOTE: third party plugins/extensions implementing FeedsProcessor::process(),
+  FeedsProcessor::clear() or FeedsImporter::expire() need to adjust their
+  implementations. Modules that directly use Feeds' API for importing or
+  clearing sources need may want to use feeds_batch_set() instead of
+  feeds_source()->import() or feeds_source()->clear().
+
+Feeds 6.x 1.0 Alpha 11, 2010-02-10
 ----------------------------------
 
 - #701432 pounard, Will White: Fix array_shift() expects parameter 1 is Array

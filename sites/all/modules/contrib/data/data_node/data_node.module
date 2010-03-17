@@ -1,5 +1,5 @@
 <?php
-// $Id: data_node.module,v 1.1.2.4 2009/10/16 00:57:57 alexb Exp $
+// $Id: data_node.module,v 1.1.2.6 2010/01/20 21:44:22 alexb Exp $
 /**
  * @file
  * Hooks and API functions for Data Node module.
@@ -103,7 +103,7 @@ function data_node_menu() {
  * Implementation of hook_perm().
  */
 function data_node_perm() {
-  return array('manage data relations');
+  return array('edit data node relations');
 }
 
 /**
@@ -320,7 +320,7 @@ function data_node_add($table, $id, $nid) {
  */
 function data_node_get_nids($table, $id) {
   $list = array();
-  $result = db_query('SELECT nid FROM {data_table_node} WHERE data_table_name = "%s" AND id = %d', $table->get('name'), $id);
+  $result = db_query("SELECT nid FROM {data_table_node} WHERE data_table_name = '%s' AND id = %d", $table->get('name'), $id);
   while ($row = db_fetch_object($result)) {
     $list[] = $row->nid;
   }
@@ -331,7 +331,7 @@ function data_node_get_nids($table, $id) {
  * Remove a relationship between a data table and a node.
  */
 function data_node_remove($table, $id, $nid) {
-  db_query('DELETE FROM {data_table_node} WHERE data_table_name = "%s" AND id = %d AND nid = %d', $table->get('name'), $id, $nid);
+  db_query("DELETE FROM {data_table_node} WHERE data_table_name = '%s' AND id = %d AND nid = %d", $table->get('name'), $id, $nid);
 }
 
 /**
@@ -341,7 +341,7 @@ function data_node_get_nodes($table) {
   $nodes = array();
   $meta = $table->get('meta');
   if ($meta['data_node']['content_type']) {
-    $result = db_query('SELECT nid, title FROM {node} WHERE type = "%s" ORDER BY title ASC', $meta['data_node']['content_type']);
+    $result = db_query("SELECT nid, title FROM {node} WHERE type = '%s' ORDER BY title ASC", $meta['data_node']['content_type']);
     while ($node = db_fetch_object($result)) {
       $nodes[$node->nid] = $node->title;
     }
