@@ -1,0 +1,12 @@
+Index: sites/all/modules/contrib/itweak_upload/itweak_upload.module
+===================================================================
+--- sites/all/modules/contrib/itweak_upload/itweak_upload.module	(revision 2596)
++++ sites/all/modules/contrib/itweak_upload/itweak_upload.module	(working copy)
+@@ -650,6 +650,7 @@
+         $teaser_images_max = variable_get('itweak_upload_teaser_images_' . $node->type, 0);
+         if ($teaser_images_max === '') $teaser_images_max = -1;
+         $cnt_other = _itweak_upload_preprocess_files($node->files, $thumbnails, $files_display, $derivative, $caption, $options);
++        $node->itweak_upload = $thumbnails;
+ 
+         // Add regular attachment list
+         if ($cnt_other) {
