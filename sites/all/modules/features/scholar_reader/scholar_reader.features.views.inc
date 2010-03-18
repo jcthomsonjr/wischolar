@@ -221,6 +221,16 @@ function _scholar_reader_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('use_pager', '1');
+  $handler->override_option('row_options', array(
+    'inline' => array(
+      'url' => 'url',
+      'timestamp' => 'timestamp',
+      'title' => 'title',
+      'description' => 'description',
+    ),
+    'separator' => '',
+    'hide_empty' => 0,
+  ));
   $handler = $view->new_display('page', 'all feeds', 'page_1');
   $handler->override_option('relationships', array(
     'feed_nid' => array(
