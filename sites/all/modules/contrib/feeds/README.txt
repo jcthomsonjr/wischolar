@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.17 2010/02/08 15:30:30 alexb Exp $
+$Id: README.txt,v 1.25 2010/02/23 15:16:48 alexb Exp $
 
 
 "It feeds"
@@ -7,17 +7,15 @@ $Id: README.txt,v 1.17 2010/02/08 15:30:30 alexb Exp $
 FEEDS
 =====
 
-The new incarnation of FeedAPI and Feed Element Mapper. Work in progress.
-
-Contact alex_b for details:
-http://drupal.org/user/53995
+An import and aggregation framework for Drupal.
+http://drupal.org/project/feeds
 
 Features
 ========
 
 - Pluggable import configurations consisting of fetchers (get data) parsers
   (read and transform data) and processors (create content on Drupal).
--- HTTP upload.
+-- HTTP upload (with optional PubSubHubbub support).
 -- File upload.
 -- CSV, RSS, Atom parsing.
 -- Creates nodes or terms.
@@ -47,12 +45,29 @@ Installation
 - Install Feeds, Feeds Admin UI and Feeds defaults.
 - Make sure cron is correctly configured http://drupal.org/cron
 - Navigate to admin/build/feeds.
-- Enable one or more default configuration or create your own: from scratch or
-  by cloning.
+- Enable one or more importers, create your own by adding a new one, modify an
+  existing one by clicking on 'override' or copy and modify an existing one by
+  clicking on 'clone'.
 - Go to import/ to import data.
 - To use SimplePie parser, download SimplePie and place simplepie.inc into
   feeds/libraries.
   http://simplepie.org/
+
+PubSubHubbub support
+====================
+
+Feeds supports the PubSubHubbub publish/subscribe protocol. Follow these steps
+to set it up for your site.
+http://code.google.com/p/pubsubhubbub/
+
+- Go to admin/build/feeds and edit (override) the importer configuration you
+  would like to use for PubSubHubbub.
+- Choose the HTTP Fetcher if it is not already selected.
+- On the HTTP Fetcher, click on 'settings' and check "Use PubSubHubbub".
+- Optionally you can use a designated hub such as http://superfeedr.com/ or your
+  own. If a designated hub is specified, every feed on this importer
+  configuration will be subscribed to this hub, no matter what the feed itself
+  specifies.
 
 Libraries support
 =================
@@ -76,11 +91,22 @@ Testing
 See "The developer's guide to Feeds":
 http://drupal.org/node/622700
 
+Debugging
+=========
+
+Set the Drupal variable 'feeds_debug' to TRUE (i. e. using drush). This will
+create a file /tmp/feeds_[my_site_location].log. Use "tail -f" on the command
+line to get a live view of debug output.
+
+Note: at the moment, only PubSubHubbub related actions are logged.
+
 Performance
 ===========
 
-Untested. There is support for drupal_queue module in the works.
-http://drupal.org/node/599180
+Use Drupal Queue to improve Feeds' performance when scheduling many very active
+feeds. An example for "many very active feeds" would be 300 news feeds with an
+average of four items a day.
+http://drupal.org/project/drupal_queue
 
 Hidden settings
 ===============
@@ -88,6 +114,10 @@ Hidden settings
 Hidden settings are variables that you can define by adding them to the $conf
 array in your settings.php file.
 
+Name:        feeds_debug
+Default:     FALSE
+Description: Set to TRUE for enabling debug output to
+             /DRUPALTMPDIR/feeds_[sitename].log
 
 Name:        feeds_importer_class
 Default:     'FeedsImporter'
@@ -124,6 +154,11 @@ Description: The table used by FeedsDataProcessor to store feed items. Usually a
              FeedsDataProcessor builds a table name from a prefix (feeds_data_)
              and the importer's id ($importer_id). This default table name can
              be overridden by defining a variable with the same name.
+
+Name:        feeds_node_batch_size
+Default:     50
+             The number of nodes feed node processor creates or deletes in one
+             page load.
 
 Glossary
 ========

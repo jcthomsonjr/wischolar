@@ -1,5 +1,5 @@
 <?php
-// $Id: data_search.module,v 1.1.2.4 2009/10/19 20:15:01 alexb Exp $
+// $Id: data_search.module,v 1.1.2.5 2010/01/22 23:03:32 alexb Exp $
 
 /**
  * Implementation of hook_menu()
@@ -59,6 +59,13 @@ function data_search_views_data_alter(&$data) {
     $data['search_index']['table']['join'][$name] = array(
       'left_field' => $base_field,
       'field' => 'sid',
+    );
+    $data['search_dataset']['table']['join'][$name] = array(
+      'left_table' => 'search_index',
+      'left_field' => 'sid',
+      'field' => 'sid',
+      'extra' => 'search_index.type = search_dataset.type',
+      'type' => 'INNER',
     );
   }
 }

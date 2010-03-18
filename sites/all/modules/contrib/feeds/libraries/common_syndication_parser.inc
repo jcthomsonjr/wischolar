@@ -299,7 +299,7 @@ function _parser_common_syndication_RDF10_parse($feed_XML) {
       $item['rdf']->$rdf_property = $rdf_value;
     }
 
-    $parsed_source['items'][] = (object)$item;
+    $parsed_source['items'][] = (array)$item;
   }
 
   return $parsed_source;

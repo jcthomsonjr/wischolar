@@ -1,59 +1,87 @@
 <?php
-// $Id: FeedsBatch.inc,v 1.3 2010/02/08 19:48:15 alexb Exp $
+// $Id: FeedsBatch.inc,v 1.6 2010/02/23 04:59:07 alexb Exp $
 
 /**
- * A FeedsImportBatch is the actual content retrieved from a FeedsSource. On
+ * A FeedsBatch object holds the state of an import or clear batch. Used in
+ * FeedsSource class.
+ */
+class FeedsBatch {
+  // Public counters for easier access.
+  public $total;
+  public $created;
+  public $updated;
+  public $deleted;
+  public function __construct() {
+    $this->total = 0;
+    $this->created = 0;
+    $this->updated = 0;
+    $this->deleted = 0;
+  }
+}
+
+/**
+ * A FeedsImportBatch wraps the actual content retrieved from a FeedsSource. On
  * import, it is created on the fetching stage and passed through the parsing
  * and processing stage where it is normalized and consumed.
  *
- * @see FeedsSource class
- * @see FeedsFetcher class
+ * A Fetcher must return a FeedsImportBatch object on fetch(). To that end it
+ * can use one of the existing FeedsImportBatch classes (FeedsImportBatch,
+ * FeedsFileBatch or FeedsHTTPBatch) or provide its own as a direct or indirect
+ * extension of FeedsImportBatch.
+ *
+ * A Parser must populate a FeedsImportBatch object through the set methods upon
+ * parse(). For instance:
+ *
+ * $batch->setItems($parsed_rows);
+ * $batch->setTitle('My imported document');
+ *
+ * Finally, a processor can work off the information produced on the parsing
+ * stage by consuming items with $batch->shiftItem().
+ *
+ * while ($item = $batch->shiftItem()) {
+ *   $object = $this->map($item);
+ *   $object->save();
+ * }
+ *
+ * Note: Knowledge of the internal structure of a single item in the $items
+ * array is managed by the mapping API specified in FeedsParser class and
+ * FeedsProcessor class.
+ *
+ * @see FeedsFileBatch
+ * @see FeedsHTTPBatch
  */
-class FeedsImportBatch {
-
-  protected $url;
-  protected $file_path;
-  protected $raw;
-  protected $items;
+class FeedsImportBatch extends FeedsBatch {
+  protected $title;
+  protected $description;
   protected $link;
+  protected $items;
+  protected $raw;
 
-  /**
-   * Constructor.
-   *
-   * Either $url or $file_path must be given.
-   */
-  public function __construct($url = NULL, $file_path = NULL) {
-    $this->url = $url;
-    $this->file_path = $file_path;
+  public function __construct($raw = '') {
+    $this->raw = $raw;
+    $this->title = '';
+    $this->description = '';
+    $this->link = '';
     $this->items = array();
   }
 
   /**
    * @return
-   *   The raw content of the feed.
+   *   The raw content from the source as a string.
+   *
+   * @throws Exception
+   *   Extending classes MAY throw an exception if a problem occurred.
    */
   public function getRaw() {
-    if (empty($this->raw)) {
-      // Prefer file.
-      if ($this->file_path) {
-        $this->raw = file_get_contents(realpath($this->file_path));
-      }
-      elseif ($this->url) {
-        feeds_include_library('http_request.inc', 'http_request');
-        $result = http_request_get($this->url);
-        if ($result->code != 200) {
-          throw new Exception(t('Download of @url failed with code !code.', array('@url' => $this->url, '!code' => $result->code)));
-        }
-        $this->raw = $result->data;
-      }
-    }
     return $this->raw;
   }
 
   /**
    * @return
-   *   Path to the feed. This path is relative to Drupal's root directory.
-   *   If the feed is not local, getFilePath downloads it to file directory.
+   *   A path to a file containing the raw content as a source.
+   *
+   * @throws Exception
+   *   If an unexpected problem occurred.
    */
   public function getFilePath() {
     if (!isset($this->file_path)) {
@@ -64,16 +92,6 @@ class FeedsImportBatch {
       }
     }
     return $this->file_path;
-  }
-
-  /**
-   * @return
-   *   URL to the document.
-   */
-  public function getURL() {
-    if (!isset($this->url) && isset($this->file)) {
-      return $_GLOBALS['base_url'] .'/'. $this->file;
-    }
   }
 
   /**
@@ -98,7 +116,7 @@ class FeedsImportBatch {
    *   feed). Falls back to URL if not available.
    */
   public function getLink() {
-    return isset($this->link) ? $this->link : $this->getURL();
+    return $this->link;
   }
 
   /**
@@ -133,12 +151,13 @@ class FeedsImportBatch {
 
   /**
    * Set items.
-   * 
+   *
    * @param $items
    *   An array of the items in the feed. Cannot be NULL.
    */
   public function setItems($items) {
     $this->items = $items;
+    $this->total = count($items);
   }
 
   /**

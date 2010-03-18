@@ -18,6 +18,7 @@ function scholar_projects_profile_modules() {
   return array(
     'block', 
     'blog',
+    'book',
     'comment', 
     'contact',
     'filter', 
@@ -163,14 +164,13 @@ function _scholar_projects_scholar_modules() {
     'cp',
     'scholarboot',
     'bkn',
-
-   // not for now
-   // 'scholarregister',
+    'scholarregister',
 
    //features
     'scholar_dvn',
     'scholar_links',
     'scholar_blog',
+    'scholar_book',
     'scholar_announcements',
     'scholar_classes',
     'scholar_events',

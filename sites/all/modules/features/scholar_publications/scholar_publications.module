@@ -342,14 +342,39 @@ function scholar_publications_theme_registry_alter(&$theme_registry){
  * @return unknown_type
  */
 function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'classic', $inline = false) {
-	$s_output = theme_biblio_entry($node, $base, $style, $inline);
 	
-	$links = module_invoke_all('link', 'node', $node, '');
+	$s_output  = "\n".'<div class="biblio-entry">'."\n" ;
+  if (!$node->status) $s_output .= '<div id="node-'.$node->nid.'" class="node node-unpublished">';
+
+  // first add the styled entry...
+  $s_output .= theme('biblio_style', $node, $base, $style, $inline);
+
+  // now add the various links
+  if ($node->biblio_abst_e) $s_output .= '<span class="biblio-abstract-link">'. l(" Abstract", "node/$node->nid") ."\n</span>";
+  
+  $annotation_field = variable_get('biblio_annotations', 'none');
+  if ($annotation_field != 'none' && $node-> $annotation_field) {
+    $s_output .=  '<div class="biblio-annotation">' . check_markup($node->$annotation_field, $node->format, FALSE) . '</div>';
+  }
+  
+  $openurl_base = variable_get('biblio_baseopenurl', '');
+  if ($openurl_base) $s_output .= theme('biblio_openurl', biblio_openurl($node));
+
+  // add links to attached files (if any)
+  if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
+  
+  if (!$node->status) $s_output .= '</div>';
+
+  $links = module_invoke_all('link', 'node', $node, '');
   drupal_alter('link', $links, $node);
   
-	$s_output .= theme('links', $links);
-	
-	return $s_output;
+  $s_output .= theme('links', $links);
+  
+  $s_output .= "\n</div>";
+  
+  
+  
+  return $s_output;
 }
 
 /**
