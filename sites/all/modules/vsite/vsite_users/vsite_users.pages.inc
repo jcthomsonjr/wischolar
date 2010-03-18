@@ -134,7 +134,7 @@ function vsite_users_lookup_user($string = ''){
       $group['admin'] = 'admin'; //admin is not group a member but should also be excluded from select list
       $result = db_query("SELECT ou.nid, u.name as name FROM {og_uid} ou RIGHT JOIN {users} u USING (uid) HAVING ou.nid = %d", $vsite -> sid);
       while ($members = db_fetch_object($result)) {
-        $group[$members -> name] = check_plain($members -> name);
+        $group[$members -> name] = $members -> name;
       }
     }
     //filter out users who are already in the group
