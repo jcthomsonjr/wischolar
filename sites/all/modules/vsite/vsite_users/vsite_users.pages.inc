@@ -126,6 +126,18 @@ function vsite_users_lookup_user($string = ''){
       $matches[$user->id] = check_plain($user->name);
     }
   }
-
-  drupal_json($matches);
+  
+    static $vsite, $group;
+    if (!is_object($vsite)) $vsite= vsite_get_vsite();
+    //existing members should be excluded from select list
+    if(!is_array($group)){
+      $group['admin'] = 'admin'; //admin is not group a member but should also be excluded from select list
+      $result = db_query("SELECT ou.nid, u.name as name FROM {og_uid} ou RIGHT JOIN {users} u USING (uid) HAVING ou.nid = %d", $vsite -> sid);
+      while ($members = db_fetch_object($result)) {
+        $group[$members -> name] = check_plain($members -> name);
+      }
+    }
+    //filter out users who are already in the group
+    $filtered_matches = array_diff_key($matches, $group);
+    drupal_json($filtered_matches);
 }
