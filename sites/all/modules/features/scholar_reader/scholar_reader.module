@@ -2,6 +2,10 @@
 
 include_once('scholar_reader.features.inc');
 
+function scholar_reader_init(){
+  drupal_add_css(drupal_get_path('module', 'scholar_reader') .'/theme/scholar-reader.css');
+}
+
 /**
  * hook strongarm
  */
@@ -87,7 +91,7 @@ function scholar_reader_form_alter(&$form, $form_state, $form_id) {
 
 /**
  * Validate the feed
- * 
+ *
  * @param $form
  * @param $form_state
  */
@@ -95,13 +99,13 @@ function scholar_reader_feed_validate($form, &$form_state) {
   if (!strlen($form_state['values']['feeds']['FeedsHTTPFetcher']['source'])) {
     return;
   }
-	
+
   $form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = trim($form_state['values']['feeds']['FeedsHTTPFetcher']['source']);
-  
+
   $form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = str_ireplace("feed:http://","http://",$form_state['values']['feeds']['FeedsHTTPFetcher']['source']); //For Safari Users
-  
+
   $form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = str_ireplace("feed://","http://",$form_state['values']['feeds']['FeedsHTTPFetcher']['source']); //For Safari Users
-  
+
   $success = (valid_url($form_state['values']['feeds']['FeedsHTTPFetcher']['source'],true) && ($status = drupal_http_request($form_state['values']['feeds']['FeedsHTTPFetcher']['source'])) && !strlen($status->error));
   if(!$success){
   	form_error($form, t('Can\'t connect to '.$form_state['values']['feeds']['FeedsHTTPFetcher']['source'].'. Invalid feed URL, please check that the URL is valid.'), 'error');
