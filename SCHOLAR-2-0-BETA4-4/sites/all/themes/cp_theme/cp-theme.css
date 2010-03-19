@@ -1,0 +1,345 @@
+body {
+  color:#5a5959;
+  font-size: .8em;
+  }
+
+body, #top, #footer {
+  overflow: hidden;
+  }
+
+/*TINYMCE TYPOGRAPHY */
+
+body#tinymce {
+	background: #fff;
+	margin: 10px;
+	font-size: .9em;
+	overflow: auto;
+	}
+
+body#tinymce h2, body#tinymce h3, body#tinymce h4, body#tinymce p, body#tinymce ul, body#tinymce ol {
+  margin-bottom: 1.5em;
+  }
+
+body#tinymce ul, body#tinymce ol {
+  padding-left: 1.5em;
+  }
+
+body#tinymce ul li {
+  list-style: disc outside;
+  }
+
+body#tinymce ol li {
+  list-style: decimal outside;
+  }
+
+
+#container {
+	margin: 0;
+	width: 100%;
+	}
+
+#main-content, #top, #footer, #cp-sidemenu, #cp-content, #sidebar-right {
+	padding: 0;
+	margin: 0;
+	left: 0;
+	right: 0;
+	top: 40px;
+	bottom: 42px;
+	position: absolute;
+	float:none;
+	width: 100%;
+	overflow: hidden;
+	}
+
+#main-content, #main, #cp-content {
+	background: #fff;
+	float: none;
+	}
+
+#top, #footer {
+	top: 0;
+	bottom: auto;
+	height: 42px;
+	background:url(images/top-bottom-bg.png) repeat-x #000 0 -9px;
+	}
+
+#footer {
+	bottom: 0;
+	top: auto;
+	width: auto;
+	}
+
+#cp-sidemenu, #cp-content, #sidebar-right {
+	top: 0;
+	bottom: 0;
+	}
+
+#cp-sidemenu {
+  width: 200px;
+  right: auto;
+  background:#f2f3f3;
+  border-right: 1px solid #bfc6c6;
+  }
+
+
+#cp-content {
+  left: 201px;
+  width: auto;
+  }
+
+body.sidebar-right #cp-content, body.two-sidebars #cp-content {
+  right: 201px;
+  }
+
+body.no-sidebars #cp-content, body.sidebar-right #cp-content {
+  left:0;
+  }
+
+#sidebar-right {
+  width: 175px;
+  padding: 35px 10px 0 15px;
+  background: #f2f3f3;
+  border-left: 1px solid #b8c0c0;
+  margin: 0;
+  right:0;
+  left:auto;
+  }
+
+.frame {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  }
+
+.innerframe {
+  position: absolute;
+  width: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+  top: 0;
+  bottom: 0;
+  }
+
+#cp-content .innerframe form, .view-display-id-page_1, .views-processed , .view-vsite-support{
+  margin: 30px;
+  }
+
+#cp-content .innerframe .view-display-id-default form {
+  margin: 0 0 1.5em 0;
+  }
+
+.page-cp-settings #cp-content .innerframe form .resizable-textarea  {
+  width: 99%;
+  }
+
+.help {
+  margin-left: 5px;
+  margin-top: 12px;
+  position: absolute;
+  }
+
+.views-admin-links {
+  float: right;
+  }
+
+
+.item-list ul.context-links {
+  padding: 30px 0 0 30px
+  }
+
+
+.view-display-id-page_1 .item-list ul.context-links, html.js div.ctools-dropdown {
+  padding: 0 0 30px 0;
+  }
+
+html.js div.ctools-dropdown div.ctools-dropdown-container {
+  border: 1px solid #ccc;
+  border-top: none;
+  padding: 5px 0 0 0;
+  background: #fff;
+  margin: 4px 0 0 9px;
+  }
+
+html.js div.ctools-dropdown div.ctools-dropdown-container ul li a {
+  padding: 3px 5px;
+  text-transform:capitalize;
+  width: auto;
+  }
+
+html.js div.ctools-dropdown div.ctools-dropdown-container ul li a:hover {
+  background: #ddd;
+  color: #000 !important;
+  }
+
+.context-button, .item-list ul.context-links li, #ctools-dropdown-1 {
+  float: none;
+  }
+
+/* For use with admin_menu module only */
+
+body.admin-menu #top {
+  top: 22px;
+  }
+
+body.admin-menu #main-content {
+  top: 62px;
+  }
+
+/* First Column */
+
+#cp-sidemenu li {
+  padding: 0;
+  list-style: none !important;
+  }
+
+#cp-sidemenu li a, #cp-sidemenu li a:visited {
+  color: #626161;
+  font-weight: bold;
+  padding: 13px 23px;
+  border-bottom: 1px solid #bfc6c6;
+  display:block;
+  font-size: 14px;
+  }
+
+#cp-sidemenu li a:hover {
+  background: #fff;
+  text-decoration: none;
+  }
+
+#cp-sidemenu li.active a,
+#cp-sidemenu li.active-trail a {
+  /*background: url(images/cp-sidemenu-active.png) 0 100% repeat-x #b8c0c0;*/
+  background: #b8c0c0;
+  color: #000;
+  text-decoration: none;
+  text-shadow:0 1px 0 rgba(206, 214, 221, 0.75);
+  border-color:#a4abab;
+  }
+
+
+/* Main Content */
+
+.pad {
+  margin: 30px 0 0 30px;
+  }
+
+/* Exposed View Form */
+
+#cp-content .innerframe form#views-exposed-form-vsite-content-default {
+  margin: 0;
+  padding: 20px 20px 10px 20px;
+  background:#EAEBE9;
+  font-size: .8em;
+  }
+
+
+
+/* FOOTER Get rid of all this once the footer content is in a module */
+
+#footer h3 {
+  float: left;
+  width: 463px;
+  height: 15px;
+  text-indent: -999em;
+  background: url(images/footer-logo.png) no-repeat transparent;
+  margin-left: 33px;
+  margin-top: 14px;
+  }
+
+#footer ul {
+  float: right;
+  color: #ddd;
+  font-size: 12px;
+  margin-top: 13px;
+  margin-right: 10px;
+  }
+
+#footer a, #foot a:visited {
+  color: #ddd;
+  text-decoration: underline;
+  }
+
+#footer li {
+  display:inline;
+  margin-left: 8px;
+  border-right: 1px solid #ddd;
+  padding-right: 8px;
+  text-align: right;
+  }
+
+#footer li.last {
+  border: none;
+  }
+
+
+
+/* Typography */
+
+.submitted {
+  color: #657a7a;
+  }
+
+p {
+  margin-bottom: 1em;
+  }
+
+
+
+
+
+
+
+/* SPECIFIC PAGE VIEWS */
+
+
+/* Activity Area */
+
+.view-vsite-activity .views-field-message, .view-vsite-activity .views-field-title {
+  font-weight: bold;
+  }
+
+.view-vsite-activity .views-field-title a {
+  text-decoration: underline;
+  }
+
+.view-vsite-activity .views-field-created span:after {
+  content: '.';
+  }
+
+.view-vsite-activity .views-field-message span:after {
+  content: ':';
+  }
+
+/* Content Area */
+#cp-content .innerframe form#views-bulk-operations-form--1 {
+  margin: 0px;
+}
+
+.section-cp fieldset.vsite_content_filter_box {
+  border: 0px;
+  margin-bottom:0px;
+}
+
+.section-cp fieldset.vsite_content_filter_box .fieldset-wrapper{
+	margin-bottom:5px;
+}
+
+
+.view-vsite-news-follow-candidate td {
+  padding: 10px 4px;
+  border: 2px solid #ececec;
+  }
+
+.view-vsite-news-follow-candidate .views-field-field-vsite-logo-fid img {
+  float: left;
+  margin-right: 4px;
+  }
+
+.view-vsite-news-follow-candidate .flag {
+  text-decoration: underline;
+  }
+
+.view-vsite-news-follow-candidate .unflag-action {
+  color: #000;
+  }
