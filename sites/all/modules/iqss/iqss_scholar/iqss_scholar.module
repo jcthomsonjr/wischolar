@@ -22,10 +22,13 @@ define(IQSS_DEV,0);
 define(IQSS_LOCAL_DEV,1);
 define(IQSS_STAGING,2);
 define(IQSS_PRODUCTION,3);
+define(IQSS_PROJECT_PRODUCTION,4);
 
 function isqq_scholar_current_location(){
 	
 	switch($_SERVER['HTTP_HOST']){
+		case 'projects.iq.harvard.edu':
+      return IQSS_PROJECT_PRODUCTION;
 		case 'scholar-test.iq.harvard.edu':
 		  return IQSS_STAGING;	
 		case 'scholar-dev1.iq.harvard.edu':

@@ -44,6 +44,11 @@ function _iqss_scholar_config_by_domain(){
 			$config['pinserver_gpg_dir'] = '/nfs/www/edu-harvard-iq-scholar/' . '.gnupg';
 			$config['error_level'] = 0; //Log in background only
 	  break;
+		case IQSS_PROJECT_PRODUCTION:
+			$config['pinserver_app_name'] = 'FAS_IQSS_SCHOLARSWEB_PROJECTS';
+			$config['pinserver_gpg_dir'] = '/nfs/www/edu-harvard-iq-projects/' . '.gnupg';
+      $config['error_level'] = 0; //Log in background only
+		break;
 	}
 	return $config;
 }
