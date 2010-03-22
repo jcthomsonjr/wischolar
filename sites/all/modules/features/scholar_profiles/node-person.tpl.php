@@ -9,8 +9,10 @@ if($file_path){
 ?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>">
   <div class="node-inner">
+     <div class="profile-img">
       <?= (($person_logo)?$person_logo:"") ?>
-    <?php print $picture; ?>
+      <?php print $picture; ?>
+    </div>
     <?php if (!$page): ?>
       <h3 class="title">
         <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
