@@ -48,21 +48,50 @@ function gkimport_get_csv_files(){
 }
 
 function gkimport_pubs_taxonomy($filepath){
-  install_include(array('taxonomy')); // not sure if I can use this because it is OG taxonomy
+  install_include(array('taxonomy'));
   if (( $handle = fopen($path . $filepath, "r")) !== FALSE) {
+    $all_terms = array();
+    $account = user_load(array('name' => 'gking'));
+    $space = vsite_get_vsite_by_owner($account -> uid);
+    
+    //create vocabulary(s)
+    $properties = array(
+    'tags' => 1,
+    'description' => 'Gary King Research Interests',
+    'help' => 'Gary King Research Interests',
+    );
+    $content_types = array(
+    'biblio' => 'biblio',
+    );
+
+    $vid = install_taxonomy_add_vocabulary('Research Interests', $content_types, $properties);
+    og_vocab_write_record($space[0] -> group -> nid, $vid);
+
+    //parse csv data
     while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
-      $all_terms[] = $data[0];
+      $all_data[] = $data;
+      $all_terms[] = trim($data[0]);
     }
-    //list of terms
+    
+    //refine list of terms - remove duplicates
     $terms = array_unique($all_terms);
-    //dpm($terms);
+
+    foreach($terms as $term){
+      if (trim(strlen($term))){
+        install_taxonomy_add_term($vid, trim($term)); // add terms to vocab
+      }
+    }
+
+    dpm($all_data);
+    dpm($terms);
     //now save the terms and save term to node
   }
 }
 
 /**
- * DEVELOPMENT ONLY - DELETE THIS WHEN FINISHED
+ * THESE FUCNTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
  */
+
 /*function gkimport_cleanup($pass = ''){
   if (md5($pass) !== '81e7108bfde4c43094d5340d9b306de5'){
     return drupal_set_message(t("Invalid password: cannot complete function"));
@@ -73,4 +102,13 @@ function gkimport_pubs_taxonomy($filepath){
   
   return drupal_set_message(t("Site has been cleaned of users and nodes"));
   
+}*/
+
+/*
+function gkimport_cleanup_tax(){
+  db_query("DELETE from {term_data} WHERE tid > %d", 22);
+   db_query("DELETE from {term_hierarchy} WHERE tid > %d", 22);
+  db_query("DELETE from {vocabulary_node_types} WHERE vid > %d", 8);
+  db_query("DELETE from {vocabulary} WHERE vid > %d", 7); 
+  db_query("DELETE from {og_vocab} WHERE vid > %d", 6);   
 }*/
