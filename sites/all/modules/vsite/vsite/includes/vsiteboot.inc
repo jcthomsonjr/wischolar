@@ -93,9 +93,8 @@ function _vsite_filefield_paths_config(){
   
   
   foreach ( $types as $type ) {
-    //if (variable_get("upload_$type", "0") === "1"){
+    $file_alias['display'] = ($type == 'image')?0:1; //turn on display for all but image
     db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path), serialize($file_alias));
-    //}
   }
   
   //set the "filefield" paths
