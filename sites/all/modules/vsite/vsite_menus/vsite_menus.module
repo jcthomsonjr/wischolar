@@ -244,15 +244,14 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id){
 	    if(!in_array('primary',$disabled_choices)) $a_choices[variable_get('scholar_primary_menu',false).":0"] = t($a_primary['title']);
 	    if(!in_array('secondary',$disabled_choices)) $a_choices[variable_get('scholar_secondary_menu',false).":0"] = t($a_secondary['title']);
 	    
-	    global $user;
-	    $form['menu']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
+	    $form['menu']['#access'] = ($o_scholar->admin_access() || user_access('administer menu'));
 	    $form['menu']['parent']['#options'] = $a_choices;
 	    $form['menu']['parent']['#description'] = "Select the menu where you would like this entry to show";
 	    unset($form['menu']['hidden']);
 	    $form['menu']['weight']['#type'] = 'value'; //Make the weight hidden
 	    
 	    if (module_exists('path')) {
-		    $form['path']['#access'] = (array_search('scholar admin',$user->roles) || user_access('administer menu'));
+		    $form['path']['#access'] = ($o_scholar->admin_access() || user_access('administer menu'));
 		    
 		    if (module_exists('pathauto')) {
 			    //BELOW HERE -- Create PathAuto Form Modifications
@@ -270,7 +269,7 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id){
 			      }
 			    }
 			    // If there is a pattern AND the user is allowed to create aliases AND the path textbox is present on this form
-			    if(!empty($pattern) &&isset($form['path']['path']) && (array_search('scholar admin',$user->roles) || user_access('administer menu'))){
+			    if(!empty($pattern) &&isset($form['path']['path']) && ($o_scholar->admin_access() || user_access('administer menu'))){
 			    
 			      $output = t('An alias will be generated for you. If you wish to create your own, untick this option.');
 			
