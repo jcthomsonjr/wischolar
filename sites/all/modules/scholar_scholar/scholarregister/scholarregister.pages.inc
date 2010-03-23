@@ -271,9 +271,9 @@ function _scholarregister_send_mail_field(&$form){
 /**
  * Create a scholar vsite
  */
-function scholarregister_vsite_create($name, $mail, $domain){
+function scholarregister_vsite_create($name, $domain, $preset){
   vsite_include('vsiteapi');
-  return vsite_vsite_create($name, $mail, $domain);
+  return vsite_vsite_create($name, $domain, $preset);
 }
 
 function _scholarregister_vsite_error(){
