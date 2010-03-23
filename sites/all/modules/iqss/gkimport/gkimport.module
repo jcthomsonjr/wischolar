@@ -1,0 +1,76 @@
+<?php
+
+
+function gkimport_create_site(){
+  vsite_include('vsiteapi');
+  install_include(array('user'));
+   
+  //gary's site base info
+  $settings = array(
+  'name' => 'gking',
+  'mail' => 'king@harvard.edu',
+  'pass' => 'test',
+  'roles' => array(variable_get('scholar_manager_role', 'scholar admin')),
+  'domain' => 'gking',
+  'preset' => variable_get('scholar_default_preset', 'scholar'),
+  );
+  
+  //if user already exists then skip  
+  if(db_result(db_query("SELECT name from {users} WHERE name = '%s'", $settings['name']))){
+    drupal_set_message(t("A user account already exists for %name", array('%name' => $settings['name'])));
+  }
+  
+  //otherwise create user account/roles
+  else{
+  $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
+  $user = install_add_user($settings['name'], $settings['pass'], $settings['mail'], $settings['roles'], $status = 1);
+  $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
+  if ($vsite) drupal_set_message(t("A web site has been created for %name", array('%name' => $settings['name'])));
+  }
+}
+
+function gkimport_get_csv_files(){
+  
+  $files =array('pubs_taxonomy.csv');
+  $path = dirname(__FILE__) . '/files/';
+
+  foreach($files as $file){
+    $filepath = $path . $file;
+    
+    switch($file){
+      case 'pubs_taxonomy.csv':
+        gkimport_pubs_taxonomy($filepath);
+        break;      
+      
+      
+    }
+  } 
+}
+
+function gkimport_pubs_taxonomy($filepath){
+  install_include(array('taxonomy')); // not sure if I can use this because it is OG taxonomy
+  if (( $handle = fopen($path . $filepath, "r")) !== FALSE) {
+    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
+      $all_terms[] = $data[0];
+    }
+    //list of terms
+    $terms = array_unique($all_terms);
+    //dpm($terms);
+    //now save the terms and save term to node
+  }
+}
+
+/**
+ * DEVELOPMENT ONLY - DELETE THIS WHEN FINISHED
+ */
+/*function gkimport_cleanup($pass = ''){
+  if (md5($pass) !== '81e7108bfde4c43094d5340d9b306de5'){
+    return drupal_set_message(t("Invalid password: cannot complete function"));
+  }
+  db_query("DELETE from {users} WHERE uid > %d", 1);
+  db_query("DELETE from {node} WHERE nid > %d", 0);
+  db_query("DELETE from {node_revisions} WHERE nid > %d", 0); 
+  
+  return drupal_set_message(t("Site has been cleaned of users and nodes"));
+  
+}*/
