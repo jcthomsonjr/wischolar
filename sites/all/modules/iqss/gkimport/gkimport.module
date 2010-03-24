@@ -5,6 +5,7 @@
  * Begins import process
   */
 function gkimport_import(){
+  //gkimport_clean();
   gkimport_create_site();
   gkimport_parse_files();
 }
@@ -52,14 +53,14 @@ function gkimport_create_site(){
  */
 function gkimport_parse_files(){
   //NOTE: Please do not change the order of these files as it can cause problems
-  $files =array('pubs_taxonomy.csv', 'gkpubstest.bib');  //files to parse
+  $files =array('pubs_taxonomy.csv', 'gkpubs.bib');  //files to parse
   $path = dirname(__FILE__) . '/files/';
   
   foreach($files as $file){
     $filepath = $path . $file;
     
     switch($file){      
-      case 'gkpubstest.bib':
+      case 'gkpubs.bib':
         gkimport_import_pubs($file);
         break;     
       
@@ -192,7 +193,7 @@ function gkimport_pubs_taxonomy($filepath){
 }
 
 /**
- * THESE FUCNTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
+ * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
  */
 
 /**
@@ -202,9 +203,8 @@ function gkimport_pubs_taxonomy($filepath){
 /*
 
 function gkimport_clean(){
-  gkimport_cleanup($pass = '');
+  gkimport_cleanup($pass = '566eto');
 }
-
 
 function gkimport_cleanup($pass = ''){
   if (md5($pass) !== '81e7108bfde4c43094d5340d9b306de5'){
@@ -241,4 +241,5 @@ function gkimport_clean_og(){
    db_query("TRUNCATE TABLE {og_ancestry}");
    db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');
 	
-}*/
+}
+*/
