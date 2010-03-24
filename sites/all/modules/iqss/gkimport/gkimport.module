@@ -35,7 +35,7 @@ function gkimport_create_site(){
     return FALSE;
   }
 
-  //otherwise create user account/roles
+  //otherwise create user account/roles/site
   else{
     $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
     $user = install_add_user($settings['name'], $settings['pass'], $settings['mail'], $settings['roles'], $status = 1);
