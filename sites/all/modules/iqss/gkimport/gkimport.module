@@ -1,10 +1,23 @@
 <?php
 
 
+/**
+ * Begins import process
+  */
+function gkimport_import(){
+  gkimport_create_site();
+  gkimport_parse_files();
+}
+
+/**
+ * Function to create gking user account and web site
+ * @return 
+ *  If vsite created , then  vsite object, otherwise false
+ */
 function gkimport_create_site(){
   vsite_include('vsiteapi');
   install_include(array('user'));
-   
+
   //gary's site base info
   $settings = array(
   'name' => 'gking',
@@ -14,39 +27,128 @@ function gkimport_create_site(){
   'domain' => 'gking',
   'preset' => variable_get('scholar_default_preset', 'scholar'),
   );
-  
-  //if user already exists then skip  
+
+  //if user already exists then skip
   if(db_result(db_query("SELECT name from {users} WHERE name = '%s'", $settings['name']))){
     drupal_set_message(t("A user account already exists for %name", array('%name' => $settings['name'])));
+    return FALSE;
   }
-  
+
   //otherwise create user account/roles
   else{
-  $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
-  $user = install_add_user($settings['name'], $settings['pass'], $settings['mail'], $settings['roles'], $status = 1);
-  $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
-  if ($vsite) drupal_set_message(t("A web site has been created for %name", array('%name' => $settings['name'])));
+    $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
+    $user = install_add_user($settings['name'], $settings['pass'], $settings['mail'], $settings['roles'], $status = 1);
+    $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
+    if ($vsite){
+      drupal_set_message(t("A web site has been created for %name", array('%name' => $settings['name'])));
+      return $vsite;
+    }
   }
 }
 
-function gkimport_get_csv_files(){
-  
-  $files =array('pubs_taxonomy.csv');
+/**
+ * Looks for files and calls approproiate handler functions
+ * to import data
+ */
+function gkimport_parse_files(){
+  //NOTE: Please do not change the order of these files as it can cause problems
+  $files =array('pubs_taxonomy.csv', 'gkpubstest.bib');  //files to parse
   $path = dirname(__FILE__) . '/files/';
-
+  
   foreach($files as $file){
     $filepath = $path . $file;
     
-    switch($file){
+    switch($file){      
+      case 'gkpubstest.bib':
+        gkimport_import_pubs($file);
+        break;     
+      
       case 'pubs_taxonomy.csv':
         gkimport_pubs_taxonomy($filepath);
-        break;      
-      
-      
+        break;     
     }
   } 
 }
 
+/**
+ * Imports publication nodes from a Bibtex file
+ */
+function gkimport_import_pubs($filename, $owner = 'gking' ){
+  module_load_include('inc', 'biblio', 'biblio.import.export');
+  
+  $account = user_load(array('name' => $owner));
+
+  $file =new stdClass();
+  $file -> filepath = dirname(__FILE__) . '/files/' . $filename;
+  
+  //params for biblio import
+  $p = array(
+  'import_file' => $file,
+  'filetype' => 'bib',
+  'userid' => $account -> uid,
+  'terms' => NULL,
+  'batch_proc' => FALSE,
+  'session_id' => microtime(),
+  'dummy' => array(),
+  'context' => array(
+    'message' => t('Parsing file')
+    ),
+  );
+//parse bibtex file and create publication nodes
+ $content = biblio_import($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
+}
+
+/**
+ * Implementation of hook_nodeapi()
+ */
+function gkimport_nodeapi(&$node, $op){
+  if ($node -> type != 'biblio') return;
+  $name = 'gking';
+  $account = user_load(array('name' => $name));
+  switch ($op) {
+    case 'presave':
+      //add the taxonomy term to the node
+        if (!vsite_get_vsite()){ 
+         // install_include(array('taxonomy'));          
+         // $site_vid = install_taxonomy_get_vid($name . '_vocabulary'); 
+         // $node -> taxonomy['tags'][  $site_vid ] = '';
+          $vid = variable_get('gkimport_vocab_id', '');          
+          $node -> taxonomy['tags'][$vid] = trim(gkimport_match_terms($node -> title)); //add the term here       
+        }
+      break;
+      
+    case 'insert':
+      if (!vsite_get_vsite()){      
+      $spaces = vsite_get_vsite_by_owner($account -> uid); 
+      if (count($spaces) == 1){
+        //added publication to the og
+        $ins = db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);
+       }
+      else{
+        return dpm("Error occured: users has more than 1 web site"); // this is very unlikely
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * gkimport_match_terms()
+ * 
+ * @param  
+ *  Title of node
+ * @return 
+ *  Return the term for matching title otherwise return NULL
+ */
+function gkimport_match_terms($title){
+  //term match data
+  $tmd = variable_get('gkimport_taxonomy_data', array());
+   return isset($tmd[$title]) ? $tmd[$title] : NULL;
+}
+
+/**
+ * Import taxonomy terms and save csv information to a system variable
+ */
 function gkimport_pubs_taxonomy($filepath){
   install_include(array('taxonomy'));
   if (( $handle = fopen($path . $filepath, "r")) !== FALSE) {
@@ -66,25 +168,26 @@ function gkimport_pubs_taxonomy($filepath){
 
     $vid = install_taxonomy_add_vocabulary('Research Interests', $content_types, $properties);
     og_vocab_write_record($space[0] -> group -> nid, $vid);
+    variable_set('gkimport_vocab_id', $vid); //keep track of vid because other vocabs may have same name
 
     //parse csv data
     while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
       $all_data[] = $data;
-      $all_terms[] = trim($data[0]);
+      $term_match_data[$data[3]] = $data[0];  //set title to term mapping data in an array
+      $all_terms[] = trim($data[0]);      
     }
     
     //refine list of terms - remove duplicates
     $terms = array_unique($all_terms);
+    //set title to term mapping data in system variable to be used later
+    variable_set('gkimport_taxonomy_data', $term_match_data);
 
-    foreach($terms as $term){
+ //add all terms to vocab
+ foreach($terms as $term){
       if (trim(strlen($term))){
-        install_taxonomy_add_term($vid, trim($term)); // add terms to vocab
+        install_taxonomy_add_term($vid, trim($term));
       }
     }
-
-    dpm($all_data);
-    dpm($terms);
-    //now save the terms and save term to node
   }
 }
 
@@ -92,23 +195,50 @@ function gkimport_pubs_taxonomy($filepath){
  * THESE FUCNTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
  */
 
-/*function gkimport_cleanup($pass = ''){
+/**
+ * Cleanup function for development only
+ */
+
+/*
+
+function gkimport_clean(){
+  gkimport_cleanup($pass = '');
+}
+
+
+function gkimport_cleanup($pass = ''){
   if (md5($pass) !== '81e7108bfde4c43094d5340d9b306de5'){
     return drupal_set_message(t("Invalid password: cannot complete function"));
   }
-  db_query("DELETE from {users} WHERE uid > %d", 1);
+  //$account = user_load(array('name' => 'gking'));
+  
+  db_query("DELETE from {users} WHERE name = '%s'", 'gking');
   db_query("DELETE from {node} WHERE nid > %d", 0);
   db_query("DELETE from {node_revisions} WHERE nid > %d", 0); 
+  db_query("DELETE from {url_alias} WHERE dst LIKE '%%%s%%'", 'gking');
   
-  return drupal_set_message(t("Site has been cleaned of users and nodes"));
+  gkimport_cleanup_tax();
+  gkimport_clean_og();
   
-}*/
+  return drupal_set_message(t("gking site has been removed"));
+  
+}
 
-/*
+
 function gkimport_cleanup_tax(){
   db_query("DELETE from {term_data} WHERE tid > %d", 22);
-   db_query("DELETE from {term_hierarchy} WHERE tid > %d", 22);
+  db_query("DELETE from {term_hierarchy} WHERE tid > %d", 22);
   db_query("DELETE from {vocabulary_node_types} WHERE vid > %d", 8);
-  db_query("DELETE from {vocabulary} WHERE vid > %d", 7); 
-  db_query("DELETE from {og_vocab} WHERE vid > %d", 6);   
+  db_query("DELETE from {vocabulary} WHERE vid > %d", 7);
+  db_query("DELETE from {og_vocab} WHERE vid > %d", 6);
+  db_query("TRUNCATE TABLE {term_node}");
+}
+
+function gkimport_clean_og(){
+   db_query("TRUNCATE TABLE {og}");
+   db_query("TRUNCATE TABLE {og_uid}");
+   db_query("TRUNCATE TABLE {og_vocab}");
+   db_query("TRUNCATE TABLE {og_ancestry}");
+   db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');
+	
 }*/
