@@ -12,7 +12,7 @@ function _scholar_software_context_default_contexts() {
     'value' => 'software',
     'description' => '',
     'node' => array(
-      '0' => 'software',
+      '0' => 'project_project',
     ),
     'views' => array(
       '0' => 'scholar_software',
