@@ -1,21 +1,22 @@
 <?php
 
-
+include_once('gkimport.drush.inc');
 /**
  * Begins import process
   */
-function gkimport_import(){
+function gkimport_import($drush_run = 0){
+  variable_set('gkimport_drush_run', $drush_run);  
   gkimport_clean();
   gkimport_create_site();
   gkimport_parse_files();
-}
+ }
 
 /**
  * Function to create gking user account and web site
  * @return 
  *  If vsite created , then  vsite object, otherwise false
  */
-function gkimport_create_site(){
+function gkimport_create_site(){ 
   vsite_include('vsiteapi');
   install_include(array('user'));
 
@@ -39,9 +40,12 @@ function gkimport_create_site(){
   else{
     $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
     $user = install_add_user($settings['name'], $settings['pass'], $settings['mail'], $settings['roles'], $status = 1);
+    if ($user) {
+     $mesage = variable_get('gkimport_drush_run', 0) === 1 ?  drush_print(t('Created user account: !username', array('!username' => $settings['name']))) : ''; 
+    }
     $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
     if ($vsite){
-      drupal_set_message(t("A web site has been created for %name", array('%name' => $settings['name'])));
+      $mesage = variable_get('gkimport_drush_run', 0) === 1 ? drush_print(t('Created web site: !domain', array('!domain' => $settings['domain']))) : '';     
       return $vsite;
     }
   }
@@ -89,7 +93,7 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
   'filetype' => 'bib',
   'userid' => $account -> uid,
   'terms' => NULL,
-  'batch_proc' => TRUE, //set to TRUE to batch process import, otherwise set to false
+  'batch_proc' => (variable_get('gkimport_drush_run', 0) === 1)  ? FALSE : TRUE, //set to TRUE to batch process import, otherwise set to false
   'session_id' => microtime(),
   'dummy' => array(),
   'context' => array(
@@ -113,12 +117,14 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
     );
     batch_set($batch_op);
     $base = variable_get('biblio_base', 'biblio');
-    batch_process("$base/import");
+    batch_process("$base/import");    
   }
   //non-batch process the bibtex import
-  else{
+  else{ 
     //parse bibtex file and create publication nodes
-    $content = biblio_import($p['import_file'], $p['import_file'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
+    $content = biblio_import($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
+    $mesage = variable_get('gkimport_drush_run', 0) === 1 ?  drush_print(t('Created !num publications total', array('!num' => count($content)))) : ''; 
+    
   }
 }
 
@@ -146,8 +152,9 @@ function gkimport_nodeapi(&$node, $op){
       $spaces = vsite_get_vsite_by_owner($account -> uid); 
       if (count($spaces) == 1){
         //added publication to the og
-        $ins = db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);
-       }
+        $ins = db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);      
+        if  (variable_get('gkimport_drush_run', 0) === 1)  drush_print(t("Created publication: !title", array('!title'=> $node->title)));      
+      }
       else{
         return dpm("Error occured: users has more than 1 web site"); // this is very unlikely
         }
@@ -181,6 +188,7 @@ function gkimport_pubs_taxonomy($filepath){
     $space = vsite_get_vsite_by_owner($account -> uid);
     
     //create vocabulary(s)
+     $vocab_name =  'Research Interests';
     $properties = array(
     'tags' => 1,
     'description' => 'Gary King Research Interests',
@@ -189,11 +197,14 @@ function gkimport_pubs_taxonomy($filepath){
     $content_types = array(
     'biblio' => 'biblio',
     );
-
-    $vid = install_taxonomy_add_vocabulary('Research Interests', $content_types, $properties);
+      
+    $vid = install_taxonomy_add_vocabulary($vocab_name, $content_types, $properties);
+    if ($vid){
     og_vocab_write_record($space[0] -> group -> nid, $vid);
     variable_set('gkimport_vocab_id', $vid); //keep track of vid because other vocabs may have same name
-    
+     $message =  (variable_get('gkimport_drush_run', 0) === 1) ? 
+     drush_print(t("Created vocabulary: !vocab_name", array('!vocab_name' => $vocab_name))) : '';     
+    }
     $term_match_data = array();
     
     //parse csv data
@@ -209,7 +220,6 @@ function gkimport_pubs_taxonomy($filepath){
       }
       $all_data[] = $data;
       $all_terms[] = trim($data[0]);      
-      
     }
     
     //refine list of terms - remove duplicates
@@ -221,6 +231,7 @@ function gkimport_pubs_taxonomy($filepath){
  foreach($terms as $term){
       if (trim(strlen($term))){
         install_taxonomy_add_term($vid, trim($term));
+        if  (variable_get('gkimport_drush_run', 0) === 1)  drush_print(t("Added term: !term", array('!term'=> $term)));
       }
     }
   }
