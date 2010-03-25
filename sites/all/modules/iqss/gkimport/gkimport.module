@@ -5,7 +5,7 @@
  * Begins import process
   */
 function gkimport_import(){
-  //gkimport_clean();
+  gkimport_clean();
   gkimport_create_site();
   gkimport_parse_files();
 }
@@ -55,20 +55,21 @@ function gkimport_parse_files(){
   //NOTE: Please do not change the order of these files as it can cause problems
   $files =array('pubs_taxonomy.csv', 'gkpubs.bib');  //files to parse
   $path = dirname(__FILE__) . '/files/';
-  
+
   foreach($files as $file){
     $filepath = $path . $file;
-    
-    switch($file){      
-      case 'gkpubs.bib':
-        gkimport_import_pubs($file);
-        break;     
-      
+
+    switch($file){
+
       case 'pubs_taxonomy.csv':
         gkimport_pubs_taxonomy($filepath);
-        break;     
+        break;
+
+      case 'gkpubs.bib':
+        gkimport_import_pubs($file);
+        break;
     }
-  } 
+  }
 }
 
 /**
@@ -76,27 +77,49 @@ function gkimport_parse_files(){
  */
 function gkimport_import_pubs($filename, $owner = 'gking' ){
   module_load_include('inc', 'biblio', 'biblio.import.export');
-  
   $account = user_load(array('name' => $owner));
-
+  
   $file =new stdClass();
   $file -> filepath = dirname(__FILE__) . '/files/' . $filename;
-  
-  //params for biblio import
+  $file->filename = $filename;
+
+  //settings params for biblio import
   $p = array(
   'import_file' => $file,
   'filetype' => 'bib',
   'userid' => $account -> uid,
   'terms' => NULL,
-  'batch_proc' => FALSE,
+  'batch_proc' => TRUE, //set to TRUE to batch process import, otherwise set to false
   'session_id' => microtime(),
   'dummy' => array(),
   'context' => array(
-    'message' => t('Parsing file')
+  'message' => t('Parsing file')
     ),
   );
-//parse bibtex file and create publication nodes
- $content = biblio_import($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
+  //batch process the bibtex import
+  if ( $p['batch_proc'] === TRUE){
+    $session_id = microtime();
+    $batch_op = array(
+    'title' => t('Importing '. $p['import_file'] ->filename),
+    'operations' => array(
+    array('biblio_import', array($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'])),
+    array('biblio_import_batch_operations', array($p['session_id'], $p['userid'], $p['terms'])),
+    ),
+    'progressive' => TRUE,
+    'finished' => 'biblio_import_batch_finished',
+    'init_message' => t('Parsing file...'),
+    'progress_message' => t('Importing Gary\'s Publications...'),
+    'file' => './'. drupal_get_path('module', 'biblio') .'/biblio.import.export.inc'
+    );
+    batch_set($batch_op);
+    $base = variable_get('biblio_base', 'biblio');
+    batch_process("$base/import");
+  }
+  //non-batch process the bibtex import
+  else{
+    //parse bibtex file and create publication nodes
+    $content = biblio_import($p['import_file'], $p['import_file'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
+  }
 }
 
 /**
@@ -170,12 +193,23 @@ function gkimport_pubs_taxonomy($filepath){
     $vid = install_taxonomy_add_vocabulary('Research Interests', $content_types, $properties);
     og_vocab_write_record($space[0] -> group -> nid, $vid);
     variable_set('gkimport_vocab_id', $vid); //keep track of vid because other vocabs may have same name
-
+    
+    $term_match_data = array();
+    
     //parse csv data
-    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
-      $all_data[] = $data;
+    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {      
+      //if title exists already in the array, and another term is to be added
+      if (key_exists($data[3], $term_match_data)){
+                $val = $term_match_data[$data[3]];
+                 $term_match_data[$data[3]] = $val . ', ' . trim($data[0]);
+                 continue;
+      }
+      else{
       $term_match_data[$data[3]] = $data[0];  //set title to term mapping data in an array
+      }
+      $all_data[] = $data;
       $all_terms[] = trim($data[0]);      
+      
     }
     
     //refine list of terms - remove duplicates
@@ -183,7 +217,7 @@ function gkimport_pubs_taxonomy($filepath){
     //set title to term mapping data in system variable to be used later
     variable_set('gkimport_taxonomy_data', $term_match_data);
 
- //add all terms to vocab
+ //add all terms to vocab - TODO not sure if we need to pre-create all terms before nodes created ???
  foreach($terms as $term){
       if (trim(strlen($term))){
         install_taxonomy_add_term($vid, trim($term));
@@ -200,7 +234,7 @@ function gkimport_pubs_taxonomy($filepath){
  * Cleanup function for development only
  */
 
-/*
+
 
 function gkimport_clean(){
   gkimport_cleanup($pass = '566eto');
@@ -242,4 +276,3 @@ function gkimport_clean_og(){
    db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');
 	
 }
-*/
