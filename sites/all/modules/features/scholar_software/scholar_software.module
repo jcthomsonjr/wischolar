@@ -74,7 +74,7 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     // If this release is recommended, set all other ones to not recommended.
     if ($node->field_scholar_software_recommend[0]['value'] == 1) {
       $view = views_get_view('scholar_software_releases');
-      $view->set_arguments(array($node->field_scholar_software_project[0]['nid'], $node->field_scholar_software_api[0]['value']));
+      $view->set_arguments(array($node->field_scholar_software_project[0]['nid']));
       $view->execute('block_1');
       foreach ($view->result as $data) {
         if (!isset($node->nid) || $data->nid != $node->nid) {
@@ -109,11 +109,8 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 /**
  * Option field callback for version options.
  */
-function scholar_software_cck_options($type = 'core') {
+function scholar_software_cck_options($type = 'major') {
   switch ($type) {
-    case 'core':
-      return drupal_map_assoc(array('5.x', '6.x', '7.x'));
-
     case 'major':
       $major = range(0, 50);
       unset($major[0]);
@@ -213,10 +210,9 @@ function scholar_software_release_node_form_submit($form, &$form_state) {
  */
 function scholar_software_generate_version($node, $raw = FALSE) {
   $project = node_load($node->field_scholar_software_project[0]['nid']);
-  $core  = $node->field_scholar_software_api[0]['value'];
   $major = $node->field_versionmajor[0]['value'];
   $patch = $node->field_versionpatch[0]['value'];
   $extra = $node->field_versionextra[0]['value'];
-  $version = "{$core}-{$major}.{$patch}" . (!empty($extra) ? "-{$extra}" : '');
+  $version = "{$major}.{$patch}" . (!empty($extra) ? "-{$extra}" : '');
   return $raw ? $version : "{$project->title} $version";
 }

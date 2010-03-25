@@ -13,10 +13,9 @@ class scholar_software_handler_field_release_tag extends views_handler_field {
   function construct() {
     parent::construct();
     $fields = array(
-      0 => array('alias'=> 'core', 'field_name' => 'field_scholar_software_api'),
-      1 => array('alias'=> 'major', 'field_name' => 'field_versionmajor'),
-      2 => array('alias'=> 'patch', 'field_name' => 'field_versionpatch'),
-      3 => array('alias'=> 'extra', 'field_name' => 'field_versionextra'),
+      0 => array('alias'=> 'major', 'field_name' => 'field_versionmajor'),
+      1 => array('alias'=> 'patch', 'field_name' => 'field_versionpatch'),
+      2 => array('alias'=> 'extra', 'field_name' => 'field_versionextra'),
     );
 
     foreach ($fields as $field) {
@@ -29,12 +28,11 @@ class scholar_software_handler_field_release_tag extends views_handler_field {
   }
 
   function render($values) {
-    $core  = check_plain($values->{$this->aliases['core']});
     $major = check_plain($values->{$this->aliases['major']});
     $patch = check_plain($values->{$this->aliases['patch']});
     $extra = check_plain($values->{$this->aliases['extra']});
 
-    $release = "$core-$major.$patch" . (!empty($extra) ? "-$extra" : '');
+    $release = "$major.$patch" . (!empty($extra) ? "-$extra" : '');
     return $release;
   }
 }

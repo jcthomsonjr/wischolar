@@ -13,6 +13,7 @@ function _scholar_software_context_default_contexts() {
     'description' => '',
     'node' => array(
       '0' => 'scholar_software_project',
+      '1' => 'scholar_software_release',
     ),
     'views' => array(
       '0' => 'scholar_software_projects',
@@ -197,54 +198,6 @@ function _scholar_software_content_default_fields() {
       'description' => 'Example: http://r.harvard.edu/src/PACKAGE.CookingRecipes',
       'type' => 'text_textfield',
       'module' => 'text',
-    ),
-  );
-
-  // Exported field: field_scholar_software_api
-  $fields[] = array(
-    'field_name' => 'field_scholar_software_api',
-    'type_name' => 'scholar_software_release',
-    'display_settings' => array(
-      'weight' => '-10',
-      'parent' => '',
-      'label' => array(
-        'format' => 'hidden',
-      ),
-      'teaser' => array(
-        'format' => 'hidden',
-        'exclude' => 1,
-      ),
-      'full' => array(
-        'format' => 'hidden',
-        'exclude' => 1,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'text',
-    'required' => '1',
-    'multiple' => '0',
-    'module' => 'text',
-    'active' => '1',
-    'text_processing' => '0',
-    'max_length' => '',
-    'allowed_values' => '',
-    'allowed_values_php' => 'return scholar_software_cck_options(\'core\');',
-    'widget' => array(
-      'default_value' => array(
-        '0' => array(
-          'value' => '6.x',
-        ),
-      ),
-      'default_value_php' => NULL,
-      'label' => 'Core compatibility',
-      'weight' => '-10',
-      'description' => '',
-      'type' => 'optionwidgets_select',
-      'module' => 'optionwidgets',
     ),
   );
 
@@ -523,6 +476,11 @@ function _scholar_software_content_default_fields() {
     'multiple' => '0',
     'module' => 'number',
     'active' => '1',
+    'min' => '0',
+    'max' => '50',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => 'return scholar_software_cck_options(\'major\');',
     'widget' => array(
       'default_value' => array(
         '0' => array(
@@ -566,7 +524,12 @@ function _scholar_software_content_default_fields() {
     'required' => '1',
     'multiple' => '0',
     'module' => 'number',
-    'active' => '1',
+	  'active' => '1',
+    'min' => '0',
+    'max' => '50',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => 'return scholar_software_cck_options(\'patch\');',
     'widget' => array(
       'default_value' => array(
         '0' => array(

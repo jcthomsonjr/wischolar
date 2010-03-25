@@ -6,7 +6,7 @@
 function _scholar_software_node_info() {
   $items = array(
     'scholar_software_project' => array(
-      'name' => t('Software'),
+      'name' => t('Software Project'),
       'module' => 'features',
       'description' => t('A software project page. Provides a summary of project information and releases for download.'),
       'has_title' => '1',
@@ -17,7 +17,7 @@ function _scholar_software_node_info() {
       'help' => '',
     ),
     'scholar_software_release' => array(
-      'name' => t('Release'),
+      'name' => t('Software Project Release'),
       'module' => 'features',
       'description' => t('A single release package for a feature.'),
       'has_title' => '1',
