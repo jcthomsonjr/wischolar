@@ -12,7 +12,7 @@ function _scholar_software_context_default_contexts() {
     'value' => 'software',
     'description' => '',
     'node' => array(
-      '0' => 'project_project',
+      '0' => 'software',
     ),
     'views' => array(
       '0' => 'scholar_software',
@@ -70,128 +70,63 @@ function _scholar_software_menu_default_items() {
 function _scholar_software_user_default_permissions() {
   $permissions = array();
 
-  // Exported permission: access projects
+  // Exported permission: create software content
   $permissions[] = array(
-    'name' => 'access projects',
-    'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'scholar admin',
-      '2' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: browse project listings
-  $permissions[] = array(
-    'name' => 'browse project listings',
-    'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'scholar admin',
-      '2' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: delete own projects
-  $permissions[] = array(
-    'name' => 'delete own projects',
+    'name' => 'create software content',
     'roles' => array(
       '0' => 'scholar admin',
       '1' => 'scholar user',
     ),
   );
 
-  // Exported permission: maintain projects
+  // Exported permission: delete own software content
   $permissions[] = array(
-    'name' => 'maintain projects',
+    'name' => 'delete own software content',
     'roles' => array(
       '0' => 'scholar admin',
       '1' => 'scholar user',
     ),
   );
 
-  // Exported permission: override project_project authored by option
+  // Exported permission: edit own software content
   $permissions[] = array(
-    'name' => 'override project_project authored by option',
+    'name' => 'edit own software content',
     'roles' => array(
       '0' => 'scholar admin',
       '1' => 'scholar user',
     ),
   );
 
-  // Exported permission: override project_project authored on option
+  // Exported permission: override software promote to front page option
   $permissions[] = array(
-    'name' => 'override project_project authored on option',
+    'name' => 'override software promote to front page option',
     'roles' => array(
       '0' => 'scholar admin',
       '1' => 'scholar user',
     ),
   );
 
-  // Exported permission: override project_project published option
+  // Exported permission: override software published option
   $permissions[] = array(
-    'name' => 'override project_project published option',
+    'name' => 'override software published option',
     'roles' => array(
       '0' => 'scholar admin',
       '1' => 'scholar user',
     ),
   );
 
-  // Exported permission: override project_project revision option
+  // Exported permission: override software revision option
   $permissions[] = array(
-    'name' => 'override project_project revision option',
+    'name' => 'override software revision option',
     'roles' => array(
       '0' => 'scholar admin',
       '1' => 'scholar user',
     ),
   );
 
-  // Exported permission: override project_project sticky option
+  // Exported permission: override software sticky option
   $permissions[] = array(
-    'name' => 'override project_project sticky option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override project_release authored by option
-  $permissions[] = array(
-    'name' => 'override project_release authored by option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override project_release authored on option
-  $permissions[] = array(
-    'name' => 'override project_release authored on option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override project_release published option
-  $permissions[] = array(
-    'name' => 'override project_release published option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override project_release revision option
-  $permissions[] = array(
-    'name' => 'override project_release revision option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override project_release sticky option
-  $permissions[] = array(
-    'name' => 'override project_release sticky option',
+    'name' => 'override software sticky option',
     'roles' => array(
       '0' => 'scholar admin',
       '1' => 'scholar user',
