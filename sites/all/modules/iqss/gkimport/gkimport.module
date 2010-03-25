@@ -1,6 +1,7 @@
 <?php
 
 include_once('gkimport.drush.inc');
+
 /**
  * Begins import process
   */
@@ -77,107 +78,6 @@ function gkimport_parse_files(){
 }
 
 /**
- * Imports publication nodes from a Bibtex file
- */
-function gkimport_import_pubs($filename, $owner = 'gking' ){
-  module_load_include('inc', 'biblio', 'biblio.import.export');
-  $account = user_load(array('name' => $owner));
-  
-  $file =new stdClass();
-  $file -> filepath = dirname(__FILE__) . '/files/' . $filename;
-  $file->filename = $filename;
-
-  //settings params for biblio import
-  $p = array(
-  'import_file' => $file,
-  'filetype' => 'bib',
-  'userid' => $account -> uid,
-  'terms' => NULL,
-  'batch_proc' => (variable_get('gkimport_drush_run', 0) === 1)  ? FALSE : TRUE, //set to TRUE to batch process import, otherwise set to false
-  'session_id' => microtime(),
-  'dummy' => array(),
-  'context' => array(
-  'message' => t('Parsing file')
-    ),
-  );
-  //batch process the bibtex import
-  if ( $p['batch_proc'] === TRUE){
-    $session_id = microtime();
-    $batch_op = array(
-    'title' => t('Importing '. $p['import_file'] ->filename),
-    'operations' => array(
-    array('biblio_import', array($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'])),
-    array('biblio_import_batch_operations', array($p['session_id'], $p['userid'], $p['terms'])),
-    ),
-    'progressive' => TRUE,
-    'finished' => 'biblio_import_batch_finished',
-    'init_message' => t('Parsing file...'),
-    'progress_message' => t('Importing Gary\'s Publications...'),
-    'file' => './'. drupal_get_path('module', 'biblio') .'/biblio.import.export.inc'
-    );
-    batch_set($batch_op);
-    $base = variable_get('biblio_base', 'biblio');
-    batch_process("$base/import");    
-  }
-  //non-batch process the bibtex import
-  else{ 
-    //parse bibtex file and create publication nodes
-    $content = biblio_import($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
-    $mesage = variable_get('gkimport_drush_run', 0) === 1 ?  drush_print(t('Created !num publications total', array('!num' => count($content)))) : ''; 
-    
-  }
-}
-
-/**
- * Implementation of hook_nodeapi()
- */
-function gkimport_nodeapi(&$node, $op){
-  if ($node -> type != 'biblio') return;
-  $name = 'gking';
-  $account = user_load(array('name' => $name));
-  switch ($op) {
-    case 'presave':
-      //add the taxonomy term to the node
-        if (!vsite_get_vsite()){ 
-         // install_include(array('taxonomy'));          
-         // $site_vid = install_taxonomy_get_vid($name . '_vocabulary'); 
-         // $node -> taxonomy['tags'][  $site_vid ] = '';
-          $vid = variable_get('gkimport_vocab_id', '');          
-          $node -> taxonomy['tags'][$vid] = trim(gkimport_match_terms($node -> title)); //add the term here       
-        }
-      break;
-      
-    case 'insert':
-      if (!vsite_get_vsite()){      
-      $spaces = vsite_get_vsite_by_owner($account -> uid); 
-      if (count($spaces) == 1){
-        //added publication to the og
-        $ins = db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);      
-        if  (variable_get('gkimport_drush_run', 0) === 1)  drush_print(t("Created publication: !title", array('!title'=> $node->title)));      
-      }
-      else{
-        return dpm("Error occured: users has more than 1 web site"); // this is very unlikely
-        }
-      }
-      break;
-  }
-}
-
-/**
- * gkimport_match_terms()
- * 
- * @param  
- *  Title of node
- * @return 
- *  Return the term for matching title otherwise return NULL
- */
-function gkimport_match_terms($title){
-  //term match data
-  $tmd = variable_get('gkimport_taxonomy_data', array());
-   return isset($tmd[$title]) ? $tmd[$title] : NULL;
-}
-
-/**
  * Import taxonomy terms and save csv information to a system variable
  */
 function gkimport_pubs_taxonomy($filepath){
@@ -238,14 +138,106 @@ function gkimport_pubs_taxonomy($filepath){
 }
 
 /**
- * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
+ * Matches title and returns the corresponding term(s)
+ * @param  
+ *  Title of node
+ * @return 
+ *  Return the term for matching title otherwise return NULL
  */
+function gkimport_match_terms($title){
+  //term match data
+  $tmd = variable_get('gkimport_taxonomy_data', array());
+   return isset($tmd[$title]) ? $tmd[$title] : NULL;
+}
 
 /**
- * Cleanup function for development only
+ * Imports publication nodes from a Bibtex file
  */
+function gkimport_import_pubs($filename, $owner = 'gking' ){
+  module_load_include('inc', 'biblio', 'biblio.import.export');
+  $account = user_load(array('name' => $owner));
+  
+  $file =new stdClass();
+  $file -> filepath = dirname(__FILE__) . '/files/' . $filename;
+  $file->filename = $filename;
 
+  //settings params for biblio import
+  $p = array(
+  'import_file' => $file,
+  'filetype' => 'bib',
+  'userid' => $account -> uid,
+  'terms' => NULL,
+  'batch_proc' => (variable_get('gkimport_drush_run', 0) === 1)  ? FALSE : TRUE, //set to TRUE to batch process import, otherwise set to false
+  'session_id' => microtime(),
+  'dummy' => array(),
+  'context' => array(
+  'message' => t('Parsing file')
+    ),
+  );
+  //batch process the bibtex import
+  if ( $p['batch_proc'] === TRUE){
+    $session_id = microtime();
+    $batch_op = array(
+    'title' => t('Importing '. $p['import_file'] ->filename),
+    'operations' => array(
+    array('biblio_import', array($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'])),
+    array('biblio_import_batch_operations', array($p['session_id'], $p['userid'], $p['terms'])),
+    ),
+    'progressive' => TRUE,
+    'finished' => 'biblio_import_batch_finished',
+    'init_message' => t('Parsing file...'),
+    'progress_message' => t('Importing Gary\'s Publications...'),
+    'file' => './'. drupal_get_path('module', 'biblio') .'/biblio.import.export.inc'
+    );
+    batch_set($batch_op);
+    $base = variable_get('biblio_base', 'biblio');
+    batch_process("$base/import");    
+  }
+  //non-batch process the bibtex import
+  else{ 
+    //parse bibtex file and create publication nodes
+    $content = biblio_import($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
+    $message = variable_get('gkimport_drush_run', 0) === 1 ?  drush_print(t('Created !num publications total', array('!num' => count($content)))) : '';     
+  }
+}
 
+/**
+ * Implementation of hook_nodeapi()
+ */
+function gkimport_nodeapi(&$node, $op){
+  if ($node -> type != 'biblio') return;
+  $name = 'gking';
+  $account = user_load(array('name' => $name));
+  switch ($op) {
+    case 'presave':
+      //add the taxonomy term to the node
+        if (!vsite_get_vsite()){ 
+         // install_include(array('taxonomy'));          
+         // $site_vid = install_taxonomy_get_vid($name . '_vocabulary'); 
+         // $node -> taxonomy['tags'][  $site_vid ] = '';
+          $vid = variable_get('gkimport_vocab_id', '');          
+          $node -> taxonomy['tags'][$vid] = trim(gkimport_match_terms($node -> title)); //add the term here       
+        }
+      break;      
+    case 'insert':
+      if (!vsite_get_vsite()){      
+      $spaces = vsite_get_vsite_by_owner($account -> uid); 
+      if (count($spaces) == 1){
+        //added publication to the og
+        $ins = db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);      
+        if  (variable_get('gkimport_drush_run', 0) === 1)  drush_print(t("Created publication: !title", array('!title'=> $node->title)));      
+      }
+      else{
+        return dpm("Error occured: users has more than 1 web site"); // this is very unlikely
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
+ */
 
 function gkimport_clean(){
   gkimport_cleanup($pass = '566eto');
@@ -266,9 +258,7 @@ function gkimport_cleanup($pass = ''){
   gkimport_clean_og();
   
   return drupal_set_message(t("gking site has been removed"));
-  
 }
-
 
 function gkimport_cleanup_tax(){
   db_query("DELETE from {term_data} WHERE tid > %d", 22);
@@ -284,6 +274,5 @@ function gkimport_clean_og(){
    db_query("TRUNCATE TABLE {og_uid}");
    db_query("TRUNCATE TABLE {og_vocab}");
    db_query("TRUNCATE TABLE {og_ancestry}");
-   db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');
-	
+   db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');	
 }
