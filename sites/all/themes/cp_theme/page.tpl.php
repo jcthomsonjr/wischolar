@@ -63,7 +63,7 @@
           <li><?php print l('Documentation', 'http://scholar.iq.harvard.edu/help/vsitehelp/Scholar-Web-Sites-Project-Documentation');?></li>
           <li><?php print l('Feedback', 'cp/support/contact');?></li>
           <!-- <li><?php //print l('Terms', 'terms');?></li>-->
-          <li class="last">Version 2.0 Beta</li>
+          <li class="last">Version 2.0.4</li>
         </ul>
         <?php if ($footer_message){ ?>
           	<div id="footer-message"><?php print $footer_message; ?></div>
