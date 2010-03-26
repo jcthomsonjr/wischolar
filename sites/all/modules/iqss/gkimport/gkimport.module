@@ -10,8 +10,109 @@ function gkimport_import($drush_run = 0){
   gkimport_clean();
   gkimport_create_site();
   gkimport_parse_files();
+//  gkimport_parse_abstracts();
  }
 
+function gkimport_test(){
+  
+  $path = drupal_get_path('module', 'gkimport');
+  $fullpath = '/nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/files';
+  // $url = 'http://gking.harvard.edu/files/abs/counterf-abs.shtml';
+  $node = node_load(3335);
+
+  $notes = substr($node -> biblio_notes,  0, 1) !== '{' ? '{' . $node -> biblio_notes : $node -> biblio_notes;
+  $notes = substr($notes, -1,1 ) !== '}' ? $notes . '}' : $notes;  
+  
+  preg_match('/({)(http:\/\/.*?)(})/', $notes, $matches);
+  if (count($matches) && strlen($matches[2])){
+    $url = trim($matches[2]);
+    $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
+    $file = $fullpath . '/' . $filename;
+
+    $cmd =  "cd $fullpath && wget $url";
+    shell_exec($cmd);
+
+    if (is_file($file)){
+      $text = gkimport_clean_abstract_contents(file_get_contents($file));
+      $delete =  unlink($file);
+      $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
+    }
+    //  preg_match('/(<p>.*)(<p>)/', $contents, $matches);
+  }
+  
+  else{
+    dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
+  }
+    //track non matches
+  }
+
+/**
+ * Imports abstract text into publication nodes
+ */
+ function gkimport_parse_abstracts(){
+   $drush_run = variable_get('gkimport_drush_run', 0);
+   $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
+   //check to see that variable contains data
+   if (empty($nids)) {
+     $message =  'An error has occurred: gkimport_publications variable is an empty array';
+     return  ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
+   }
+
+   $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
+   $path = drupal_get_path('module', 'gkimport');
+   $fullpath = '/nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/files';
+
+   foreach($nids as $nid){
+     $node = node_load(array('nid' => $nid));
+
+     //make curly brackets uniform around urls
+     $notes = substr($node -> biblio_notes,  0, 1) !== '{' ? '{' . $node -> biblio_notes : $node -> biblio_notes;
+     $notes = substr($notes, -1,1 ) !== '}' ? $notes . '}' : $notes;
+      
+     //check to see if http url exists in biblio notes field
+     preg_match('/({)(http:\/\/.*?)(})/', $notes, $matches);
+     if (count($matches) && strlen($matches[2])){
+       $url = trim($matches[2]);
+       $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
+       $file = $fullpath . '/' . $filename;
+        
+       // download the file
+       $cmd =  "cd $fullpath && wget $url";
+       shell_exec($cmd);
+
+       if (is_file($file)){         
+         // clean up the text
+         $text = gkimport_clean_abstract_contents(file_get_contents($file));
+         // remove the file
+         $delete =  unlink($file); 
+         //update the biblio table. TODO: node_save() may be too expensive here???
+         $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
+       }
+     }
+     //list nodes without http accessable abstract files (field could be NULL or contain hdl:// referencing)
+     else{
+       if ( $drush_run  === 1)  {
+         drush_print(t("Error parsing node {$node -> nid} abstract url."));
+       }else{
+         dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
+       }
+     }
+   }
+ }
+
+ /**
+ * Remove uneeded html tags and javascript
+ * from abstract text(s)
+ */
+function  gkimport_clean_abstract_contents($contents){
+  $remove_js = array('displayBodyClasses()', 'displayHeader()', 'displayFooter()');  
+  $text = strip_tags($contents);  
+  foreach($remove_js as $js){
+    $text = str_ireplace($js, '', $text);    
+  }
+   return  trim($text);
+ }
+ 
 /**
  * Function to create gking user account and web site
  * @return 
@@ -197,7 +298,10 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
   else{ 
     //parse bibtex file and create publication nodes
     $content = biblio_import($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
-    $message = variable_get('gkimport_drush_run', 0) === 1 ?  drush_print(t('Created !num publications total', array('!num' => count($content)))) : '';     
+    if ($content){
+     variable_set('gkimport_pub_nodes', $content);   //an enumerative array of node id's of publications created during the import 
+    $message = variable_get('gkimport_drush_run', 0) === 1 ?  drush_print(t('Created !num publications total', array('!num' => count($content)))) : '';
+    }  
   }
 }
 
