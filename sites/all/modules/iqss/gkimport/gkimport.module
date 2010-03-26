@@ -10,7 +10,7 @@ function gkimport_import($drush_run = 0){
   gkimport_clean();
   gkimport_create_site();
   gkimport_parse_files();
-//  gkimport_parse_abstracts();
+  gkimport_parse_abstracts();
  }
 
 /**
@@ -18,6 +18,7 @@ function gkimport_import($drush_run = 0){
  */
  function gkimport_parse_abstracts(){
    $drush_run = variable_get('gkimport_drush_run', 0);
+    $error_nodes = array();
    $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
    //check to see that variable contains data
    if (empty($nids)) {
@@ -27,7 +28,7 @@ function gkimport_import($drush_run = 0){
 
    $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
    $path = drupal_get_path('module', 'gkimport');
-   $fullpath = '/nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/files';
+   $fullpath = '/nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/tmp';
 
    foreach($nids as $nid){
      $node = node_load(array('nid' => $nid));
@@ -44,7 +45,7 @@ function gkimport_import($drush_run = 0){
        $file = $fullpath . '/' . $filename;
         
        // download the file
-       $cmd =  "cd $fullpath && wget $url";
+       $cmd =  "cd $fullpath && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
        shell_exec($cmd);
 
        if (is_file($file)){         
@@ -52,19 +53,28 @@ function gkimport_import($drush_run = 0){
          $text = gkimport_clean_abstract_contents(file_get_contents($file));
          // remove the file
          $delete =  unlink($file); 
+   
          //update the biblio table. TODO: node_save() may be too expensive here???
          $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
        }
      }
      //list nodes without http accessable abstract files (field could be NULL or contain hdl:// referencing)
      else{
+     $_SESSION['error_nodes'][] = $nid; //this is an array which captures all of the publication node id's without abstracts
        if ( $drush_run  === 1)  {
-         drush_print(t("Error parsing node {$node -> nid} abstract url."));
+         //drush_print(t("Error parsing node {$node -> nid} abstract url."));
        }else{
          dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
        }
      }
    }
+   //cleanup any remaining files
+   $cmd =  'rm /nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/tmp/*';
+   shell_exec($cmd);
+    if ( $drush_run  === 1) {
+      drush_print(t("Here is an array which lists all of the publication node ids without abstracts"));
+      drush_print_r($_SESSION['error_nodes']);
+    }
  }
 
  /**
