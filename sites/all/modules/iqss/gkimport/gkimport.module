@@ -6,12 +6,15 @@ include_once('gkimport.drush.inc');
  * Begins import process
   */
 function gkimport_import($drush_run = 0){
-  variable_set('gkimport_drush_run', $drush_run);  
-  //gkimport_clean(); //NOTE: THIS should be removed when run on production
+  variable_set('gkimport_drush_run', $drush_run);
+ // gkimport_clean(); //NOTE: THIS should be removed when run on production
   gkimport_create_site();
   gkimport_parse_files();
   gkimport_parse_abstracts();
- }
+
+  $message = 'Import completed';
+  $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
+}
 
 /**
  * Imports abstract text into publication nodes
@@ -73,8 +76,8 @@ function gkimport_import($drush_run = 0){
    shell_exec($cmd);
    variable_set('gkimport_na_pub_nodes', $_SESSION['gkimport_na_pub_nodes']);
     if ( $drush_run  === 1) {
-      drush_print(t("Here is an array listing all gking publication node IDs created without abstracts:"));
-      drush_print_r($_SESSION['gkimport_na_pub_nodes']);
+      drush_print(t("!num publications have been imported without abstract text.", array('!num' => count($_SESSION['gkimport_na_pub_nodes']))));
+      drush_print(t("The node ID's for these publications have been saved in system variable: gkimport_na_pub_nodes"));
     }
  }
 
