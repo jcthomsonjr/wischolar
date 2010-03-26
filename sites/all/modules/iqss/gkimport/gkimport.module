@@ -7,7 +7,7 @@ include_once('gkimport.drush.inc');
   */
 function gkimport_import($drush_run = 0){
   variable_set('gkimport_drush_run', $drush_run);
- // gkimport_clean(); //NOTE: THIS should be removed when run on production
+  //gkimport_clean(); //NOTE: THIS should be removed when run on production
   gkimport_create_site();
   gkimport_parse_files();
   gkimport_parse_abstracts();
@@ -31,12 +31,13 @@ function gkimport_import($drush_run = 0){
 
    $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
    $path = drupal_get_path('module', 'gkimport');
-   $fullpath =  $_SERVER['DOCUMENT_ROOT'] .'/' . $path . '/tmp';  $line = (__LINE__); //mark this line for error reporting
+   $fullpath_tmp =  '/nfs/www/edu-harvard-iq-scholar-dev3' . '/' . $path . '/tmp';  $line = (__LINE__); //mark this line for error reporting
    
    //make sure path exists before proceeding
-   if (!is_dir($fullpath)){
-      $message =  'An error has occurred: full path specified is not a directory on line !line';
-     return  ($drush_run  === 1) ?  drush_print(t("$message", array('!line' => $line))) : drupal_set_message(t("$message", array('!line' => $line)));
+   if (!is_dir($fullpath_tmp)){
+     $message =  'An error has occurred: full path specified (!directory) is not a directory on line !line';
+     return  ($drush_run  === 1) ?  drush_print(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line))) : 
+     drupal_set_message(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line)));
    }
       
    foreach($nids as $nid){
@@ -51,10 +52,10 @@ function gkimport_import($drush_run = 0){
      if (count($matches) && strlen($matches[2])){
        $url = trim($matches[2]);
        $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
-       $file = $fullpath . '/' . $filename;
+       $file = $fullpath_tmp . '/' . $filename;
         
        // download the file
-       $cmd =  "cd $fullpath && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
+       $cmd =  "cd $fullpath_tmp && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
        shell_exec($cmd);
 
        if (is_file($file)){         
@@ -78,7 +79,7 @@ function gkimport_import($drush_run = 0){
      }
    }
    //cleanup any remaining files
-   $cmd =  'rm /nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/tmp/*';
+   $cmd =  "rm $fullpath_tmp" . '/*';
    shell_exec($cmd);
    variable_set('gkimport_na_pub_nodes', $_SESSION['gkimport_na_pub_nodes']);
     if ( $drush_run  === 1) {
