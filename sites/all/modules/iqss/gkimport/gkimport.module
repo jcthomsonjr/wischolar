@@ -7,7 +7,7 @@ include_once('gkimport.drush.inc');
   */
 function gkimport_import($drush_run = 0){
   variable_set('gkimport_drush_run', $drush_run);
-  //gkimport_clean(); //NOTE: THIS should be removed when run on production
+  //gkimport_clean(); // NOTE: This should be removed when run on production
   gkimport_create_site();
   gkimport_parse_files();
   gkimport_parse_abstracts();
@@ -332,19 +332,18 @@ function gkimport_nodeapi(&$node, $op){
  * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
  */
 
+/*
 function gkimport_clean(){
-  gkimport_cleanup($pass = '566eto');
+  gkimport_cleanup();
 }
 
-function gkimport_cleanup($pass = ''){
-  if (md5($pass) !== '81e7108bfde4c43094d5340d9b306de5'){
-    return drupal_set_message(t("Invalid password: cannot complete function"));
-  }
-  //$account = user_load(array('name' => 'gking'));
+function gkimport_cleanup(){
+
+  $account = user_load(array('name' => 'gking'));
   
   db_query("DELETE from {users} WHERE name = '%s'", 'gking');
-  db_query("DELETE from {node} WHERE nid > %d", 0);
-  db_query("DELETE from {node_revisions} WHERE nid > %d", 0); 
+  db_query("DELETE from {node} WHERE nid > %d AND uid = %d", 0 , (int)$account -> uid);
+  db_query("DELETE from {node_revisions} WHERE nid > %d AND uid = %d", 0 , (int)$account -> uid);
   db_query("DELETE from {url_alias} WHERE dst LIKE '%%%s%%'", 'gking');
   
   gkimport_cleanup_tax();
@@ -368,4 +367,4 @@ function gkimport_clean_og(){
    db_query("TRUNCATE TABLE {og_vocab}");
    db_query("TRUNCATE TABLE {og_ancestry}");
    db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');	
-}
+}*/
