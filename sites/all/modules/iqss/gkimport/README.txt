@@ -14,7 +14,7 @@ and remote html files.
 SYSTEM VARIABLES
 --------------------------
 
-1) gkimport_taxonomy_data -- an array of publications containing the node title as the key and term(s) as the value (some publicaitons do not have terms).
+1) gkimport_taxonomy_data -- an array of publications containing the node title as the key and term(s) as the value (some publications do not have terms).
 2) gkimport_pub_nodes -- an array of node ID's of publications created from the biblio import (from a bibTex file)
 3) gkimport_na_pub_nodes -- an array listing all publication node IDs created without abstracts
 4) gkimport_drush_run -- integer, 1 if running script from Drush, 0 otherwise
