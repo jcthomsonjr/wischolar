@@ -60,7 +60,7 @@ function gkimport_import($drush_run = 0){
      }
      //list nodes without http accessable abstract files (field could be NULL or contain hdl:// referencing)
      else{
-     $_SESSION['error_nodes'][] = $nid; //this is an array which captures all of the publication node id's without abstracts
+     $_SESSION['gkimport_na_pub_nodes'][] = $nid; //this is an array which captures all of the publication node id's without abstracts
        if ( $drush_run  === 1)  {
          //drush_print(t("Error parsing node {$node -> nid} abstract url."));
        }else{
@@ -71,9 +71,10 @@ function gkimport_import($drush_run = 0){
    //cleanup any remaining files
    $cmd =  'rm /nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/tmp/*';
    shell_exec($cmd);
+   variable_set('gkimport_na_pub_nodes', $_SESSION['gkimport_na_pub_nodes']);
     if ( $drush_run  === 1) {
       drush_print(t("Here is an array listing all gking publication node IDs created without abstracts:"));
-      drush_print_r($_SESSION['error_nodes']);
+      drush_print_r($_SESSION['gkimport_na_pub_nodes']);
     }
  }
 
