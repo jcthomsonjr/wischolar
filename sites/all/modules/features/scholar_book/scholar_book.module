@@ -41,7 +41,7 @@ function scholar_book_strongarm() {
     5 => 'path',
     6 => 'attachments',
   );
-  
+
   return $conf;
 }
 
@@ -82,20 +82,20 @@ function _scholar_book_block_booktoc() {
       $block['content'] = $output;
     }
   }
-  
-  return $block;  
+
+  return $block;
 }
 
 function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $trimval, $mlid_start) {
   if ($step<$max_recursions) {
-    $sql= "SELECT DISTINCT n.nid as nid, m.plid as plid, m.mlid as mlid,  n.title as title ,m.weight 
+    $sql= "SELECT DISTINCT n.nid as nid, m.plid as plid, m.mlid as mlid,  n.title as title ,m.weight
            FROM {book} as b
            inner join {menu_links} as m ON b.mlid = m.mlid
            inner join {node} as n ON n.nid = b.nid
            WHERE m.plid = '%d'  AND n.status = 1
            ORDER by m.weight, n.title
            ";
-    
+
 
     $children = db_query(db_rewrite_sql($sql), $mlid);
     //Do we need to show the root ?
@@ -107,9 +107,9 @@ function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $tr
       $c .= _scholar_book_recursive($child->mlid, $child->nid, $child->title, $step, $max_recursions, $trimval, $mlid_start);
     }
 
-    //now write content only if necessary 
+    //now write content only if necessary
     if (strlen($c) > 2) {
-      $content .= "<ul class=\"booktoc\">\n". $c ."</ul>\n"; 
+      $content .= "<ul class=\"booktoc\">\n". $c ."</ul>\n";
     }
     $output .= '</li>';
 
@@ -141,19 +141,19 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
       if (book_type_is_allowed($node->type)) {
         $block_toc = module_invoke('scholar_book', 'block', 'view', 'booktoc');
         //$output = theme_box($block_toc['subject'], $block_toc['content'], $region = 'main');
-        $output = '<h2 class="title">' . $block_toc['subject'] . '</h2><div>' . $block_toc['content'] . '</div>';
+        $output = '<div class="book-menu"><h3 class="title">' . $block_toc['subject'] . '</h3>' . $block_toc['content'] . '</div>';
         $weight = content_extra_field_weight($node->type, 'booktoc');
         $node->content['booktoc'] = array(
-          '#weight' => ! empty($weight) ? $weight : - 10, 
-          '#value' => $output 
+          '#weight' => ! empty($weight) ? $weight : - 10,
+          '#value' => $output
         );
       }
-      
+
       // unset the book navigation links
       if (module_exists('book') && book_type_is_allowed($node->type)) {
         unset($node->content['book_navigation']);
       }
-      
+
       if (menu_get_object() === $node) {
         // set the context to the roob book node
         if (! empty($node->book['bid'])) {
