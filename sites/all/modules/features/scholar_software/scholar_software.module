@@ -38,7 +38,7 @@ function scholar_software_vsite_admin_link($type, $object) {
 function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   
 	if ($op == 'presave' && $node->type == 'scholar_software_project') {
-    if (empty($node->field_scholar_software_method[0]['value'])) {
+    if (!$node->field_scholar_software_method[0]['value']) {
       $node->field_scholar_software_repository[0]['value'] = '';
     }
   }
@@ -84,6 +84,10 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       '#value' => l($project->title, 'node/' . $project->nid),
       '#weight' => -11,
     );
+  } else if ($op == 'view' && $node->type == 'scholar_software_project') {
+  	require_once( drupal_get_path('module','scholar_software')."/package_handlers/rbuild.inc" );
+    	$rbuild = new rbuild("http://r.iq.harvard.edu/src/contrib");
+    	dpm($rbuild->getPackage());
   }
 }
 
@@ -122,6 +126,7 @@ function scholar_software_cck_options($type = 'major') {
 function scholar_software_form_scholar_software_project_node_form_alter(&$form, $form_state) {
   drupal_add_js(drupal_get_path('module', 'scholar_software') . '/scholar_software.js');
   $form['#validate'][] = 'scholar_software_project_node_form_validate';
+  $form['#submit'][] = 'scholar_software_project_node_form_submit';
 }
 
 /**
@@ -131,6 +136,15 @@ function scholar_software_project_node_form_validate($form, &$form_state) {
   // Ensure repository URL is set if using a non-manual method.
   if (!empty($form_state['values']['field_scholar_software_method'][0]['value']) && empty($form_state['values']['field_scholar_software_repository'][0]['value'])) {
     form_set_error($form_state['values']['field_scholar_software_repository'][0]['_error_element'], t('Please provide a valid repository URL for this project.'));
+  }
+}
+
+/**
+ * Submit handler for scholar_software_project_node_form.
+ */
+function scholar_software_project_node_form_submit($form, &$form_state) {
+  if (!empty($form_state['values']['field_scholar_software_method'][0]['value'])) {
+    
   }
 }
 
@@ -169,4 +183,11 @@ function scholar_software_generate_version($node, $raw = FALSE) {
   $extra = $node->field_versionextra[0]['value'];
   $version = "{$major}.{$patch}" . (!empty($extra) ? "-{$extra}" : '');
   return $raw ? $version : "{$project->title} $version";
+}
+
+/**
+ * Return the valid package handlers
+ */
+function scholar_software_get_handlers() {
+  
 }
