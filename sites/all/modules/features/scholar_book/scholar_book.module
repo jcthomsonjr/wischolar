@@ -1,5 +1,9 @@
 <?php
 
+define("SCHOLAR_BOOK_MAXLEN", 50);   // how lond are the node title in toc
+
+
+
 include_once('scholar_book.features.inc');
 
 function scholar_book_init(){
@@ -41,17 +45,7 @@ function scholar_book_strongarm() {
   return $conf;
 }
 
-/*
-function scholar_book_preprocess_node(&$vars){
-  $node = $vars['node'];
-  if (book_type_is_allowed($node->type)){
-    $node = node_load($node -> book['bid']);
-    $max_recursions = variable_get('booktoc_deep', 5)+2;
-    $vars['book_toc'] = _scholar_book_recursive($node->book['mlid'], $node->nid, $node->title, 1, $max_recursions, 256, $node->book['mlid']);
-    
-  }
-}
-*/
+
 /**
  * Implementation of hook_block().
  */
@@ -70,27 +64,6 @@ function scholar_book_block($op = 'list', $delta = 0) {
   }
 }
 
-/**
- * callback function for "booktoc" block
- */
-/*
-function _scholar_book_block_booktoc() {
-
-  $space = spaces_get_space();  // doesnt have to be vsite
-  $block = array();
-  if ($space) {
-  	$node = menu_get_object();
-    if ($node && book_type_is_allowed($node->type)) {
-      $block['subject'] = 'Table of Content';
-      $output = '';
-      $output .= menu_tree(book_menu_name($node->book['bid']));
-      $block['content'] = $output;
-    }
-  }
-  
-  return $block;
-}
-*/
 
 function _scholar_book_block_booktoc() {
   $space = spaces_get_space();  // doesnt have to be vsite
@@ -100,10 +73,12 @@ function _scholar_book_block_booktoc() {
   	$node = node_load($node -> book['bid']);
 
     if ($node && book_type_is_allowed($node->type)) {
-      $block['subject'] = 'Table of Content';
+      // bloc subject will be the title of the top level node (as a link)
+      $subject =  truncate_utf8($node -> title, SCHOLAR_BOOK_MAXLEN, $wordsafe = TRUE, $dots = TRUE);
+      $block['subject'] = l($subject, "node/" . $node -> nid);
       $output = '';
-      $max_recursions = variable_get('booktoc_deep', 5)+2;
-      $output .= _scholar_book_recursive($node->book['mlid'], $node->nid, $node->title, 1, $max_recursions, 256, $node->book['mlid']);
+      $max_recursions = MENU_MAX_DEPTH; //variable_get('booktoc_deep', 5)+2;
+      $output .= _scholar_book_recursive($node->book['mlid'], $node->nid, $node->title, 1, $max_recursions, SCHOLAR_BOOK_MAXLEN, $node->book['mlid']);
       $block['content'] = $output;
     }
   }
@@ -145,7 +120,17 @@ function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $tr
   }
 }
 
-
+/**
+* Implementation of hook_content_extra_fields.
+*/
+function scholar_book_content_extra_fields() {
+  $extras['booktoc'] = array(
+    'label' => t('Book toc'),
+    'description' => t('Book toc displayed when a node is viewed.'),
+    'weight' => -10,
+  );
+  return $extras;
+}
 
 /**
  * Implementation of hook_nodeapi().
@@ -153,6 +138,17 @@ function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $tr
 function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
   switch ($op) {
     case 'view' :
+      if (book_type_is_allowed($node->type)) {
+        $block_toc = module_invoke('scholar_book', 'block', 'view', 'booktoc');
+        //$output = theme_box($block_toc['subject'], $block_toc['content'], $region = 'main');
+        $output = '<h2 class="title">' . $block_toc['subject'] . '</h2><div>' . $block_toc['content'] . '</div>';
+        $weight = content_extra_field_weight($node->type, 'booktoc');
+        $node->content['booktoc'] = array(
+          '#weight' => ! empty($weight) ? $weight : - 10, 
+          '#value' => $output 
+        );
+      }
+      
       // unset the book navigation links
       if (module_exists('book') && book_type_is_allowed($node->type)) {
         unset($node->content['book_navigation']);
