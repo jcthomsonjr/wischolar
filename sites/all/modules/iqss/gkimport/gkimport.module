@@ -31,8 +31,14 @@ function gkimport_import($drush_run = 0){
 
    $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
    $path = drupal_get_path('module', 'gkimport');
-   $fullpath = '/nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/tmp';
-
+   $fullpath =  $_SERVER['DOCUMENT_ROOT'] .'/' . $path . '/tmp';  $line = (__LINE__); //mark this line for error reporting
+   
+   //make sure path exists before proceeding
+   if (!is_dir($fullpath)){
+      $message =  'An error has occurred: full path specified is not a directory on line !line';
+     return  ($drush_run  === 1) ?  drush_print(t("$message", array('!line' => $line))) : drupal_set_message(t("$message", array('!line' => $line)));
+   }
+      
    foreach($nids as $nid){
      $node = node_load(array('nid' => $nid));
 
