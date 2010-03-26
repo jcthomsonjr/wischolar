@@ -17,9 +17,9 @@ function _scholar_software_node_info() {
       'help' => '',
     ),
     'scholar_software_release' => array(
-      'name' => t('Software Project Release'),
+      'name' => t('Software Release'),
       'module' => 'features',
-      'description' => t('A single release package for a feature.'),
+      'description' => t('A single release package for a project.'),
       'has_title' => '1',
       'title_label' => t('Release'),
       'has_body' => '1',

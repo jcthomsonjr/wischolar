@@ -117,6 +117,7 @@ function _scholar_core_modules() {
     'imagefield_crop',
     'link',
     'text',
+    'number',
     'nodereference',
     'nodereference_url',
     'optionwidgets',

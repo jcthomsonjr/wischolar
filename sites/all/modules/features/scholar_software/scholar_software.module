@@ -2,20 +2,6 @@
 
 include_once('scholar_software.features.inc');
 
-/**
- * Implementation of hook_strongarm().
- */
-function scholar_software_strongarm() {
-  return array(
-    'content_extra_weights_scholar_software_project' => array (
-      'title' => '-5',
-      'body_field' => '5',
-      'revision_information' => '6',
-      'comment_settings' => '7',
-      'menu' => '8',
-    ),
-  );
-}
 
 /**
  * Implementation of hook_views_api().
@@ -28,17 +14,18 @@ function scholar_software_views_api() {
 }
 
 /**
- * Implementation of hook_link().
+ * Implementation of hook_scholar_admin_link() on behalf of the node module.
  */
-function scholar_software_link($type, $object, $teaser = FALSE) {
-  // Only allow releases to be added if packaging method is 0 => 'Manual'.
+function scholar_software_vsite_admin_link($type, $object) {
   $links = array();
   if ($type == 'node' && $object->type == 'scholar_software_project' && empty($object->field_scholar_software_method[0]['value'])) {
-    $item = menu_get_item('node/add/scholar_software-release');
+
+    $item = menu_get_item('node/add/scholar-software-release');
     if ($item && $item['access']) {
-      $links['scholar_software-add-release'] = array(
-        'title' => t('Add new @release', array('@release' => strtolower($item['title']))),
-        'href' => 'node/add/scholar_software-release',
+      $links['scholar-software-add-release'] = array(
+        'title' => t('Add new Release'),
+        'href' => 'node/add/scholar-software-release',
+        'query' => array('software_name' => $object->field_scholar_software_name[0]['value']),
       );
     }
   }
@@ -49,21 +36,8 @@ function scholar_software_link($type, $object, $teaser = FALSE) {
  * Implementation of hook_nodeapi().
  */
 function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  if ($op == 'view' && $node->type == 'scholar_software_project' && menu_get_object()->nid === $node->nid) {
-    $url = url("scholar_software", array('purl' => array('disabled' => TRUE), 'absolute' => TRUE));
-    $project = check_plain($node->field_scholar_software_name[0]['value']);
-    $node->content['project_info'] = array(
-      '#type' => 'fieldset',
-      'info' => array(
-        '#access' => node_access('update', $node),
-        '#title' => t("For <code>@project.info</code>", array('@project' => $project)),
-        '#type' => 'item',
-        '#value' => "<code>project status url = {$url}</code>",
-      ),
-      '#weight' => -10,
-    );
-  }
-  else if ($op == 'presave' && $node->type == 'scholar_software_project') {
+  
+	if ($op == 'presave' && $node->type == 'scholar_software_project') {
     if (empty($node->field_scholar_software_method[0]['value'])) {
       $node->field_scholar_software_repository[0]['value'] = '';
     }
@@ -87,7 +61,8 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   }
   else if ($op == 'view' && $node->type == 'scholar_software_release') {
     drupal_add_css(drupal_get_path('module', 'scholar_software') . '/scholar_software.css');
-    $download_url = url($node->field_scholar_software_file[0]['filepath'], array('purl' => array('disabled' => TRUE), 'absolute' => TRUE));
+    
+    $download_url = file_create_url($node->field_scholar_software_file[0]['filepath']);
     $contents = file_exists($node->field_scholar_software_file[0]['filepath']) ? file_get_contents($node->field_scholar_software_file[0]['filepath']) : '';
     $info = array();
     $info[] = t('Download: !url', array('!url' => l($download_url, $download_url, array('absolute' => TRUE))));
@@ -101,8 +76,14 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       ),
       '#weight' => -10,
     );
+    
     $project = node_load($node->field_scholar_software_project[0]['nid']);
-    drupal_set_breadcrumb(array(l(t('Home'), NULL), l($project->title, 'node/' . $project->nid)));
+    $node->content['scholar_software_project'] = array(
+      '#type' => 'item',
+      '#title' => 'Software Project',
+      '#value' => l($project->title, 'node/' . $project->nid),
+      '#weight' => -11,
+    );
   }
 }
 
@@ -134,33 +115,6 @@ function scholar_software_cck_options($type = 'major') {
   }
 }
 
-/**
- * Parse a package name into values: core, major, patch and extra.
- */
-function scholar_software_parse_package_name($package_filename) {
-  // example: scholar_software-6.x-2.0-rc3.tar.gz
-  if (preg_match('/^(?<project>\w+)-(?<core>\d+\.x)-(?<major>\d+)\.(?<patch>\d+)-?(?<extra>\w+)?\.(tar\.gz|tgz)$/', $package_filename, $matches)) {
-    return $matches;
-  };
-  return array();
-}
-
-/**
- * Parse a package name into values: core, major, patch and extra.
- */
-function scholar_software_parse_tag_name($tag) {
-  // example: drupal-6--1-0-alpha1
-  if (preg_match('/^(?P<project>\w+)-(?P<core>\d+)--(?P<major>\d+)-(?P<patch>\d+)-?(?P<extra>\w+)?$/', $tag, $matches)) {
-    $parsed = array_intersect_key($matches, array('core' => '', 'major' => '', 'patch' => '', 'extra' => ''));
-    if (!empty($parsed)) {
-      $parsed['core'] = "{$parsed['core']}.x";
-      $parsed['original'] = $tag;
-      $parsed['version'] = "{$parsed['core']}-{$parsed['major']}.{$parsed['patch']}" . (!empty($parsed['extra']) ? "-{$parsed['extra']}" : '');
-      return $parsed;
-    }
-  }
-  return array();
-}
 
 /**
  * Implementation of hook_form_alter() for scholar_software_project_node_form.
