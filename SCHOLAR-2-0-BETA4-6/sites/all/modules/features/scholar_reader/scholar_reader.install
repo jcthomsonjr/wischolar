@@ -1,0 +1,33 @@
+<?php
+/**
+ * @file
+ * Install hooks.
+ */
+
+/**
+ * Implementation of hook_schema().
+ */
+function scholar_reader_schema() {
+  // Install data tables.
+  include_once('scholar_reader.features.inc');
+  $tables = scholar_reader_data_default();
+  $schema = array();
+  foreach ($tables as $name => $table) {
+    $schema[$name] = $table->table_schema;
+  }
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function scholar_reader_install() {
+  drupal_install_schema('scholar_reader');
+}
+
+/**
+ * Implementation of hook_uninstall();
+ */
+function scholar_reader_uninstall() {
+  drupal_uninstall_schema('scholar_reader');
+}
