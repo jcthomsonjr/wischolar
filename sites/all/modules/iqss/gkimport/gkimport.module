@@ -7,7 +7,7 @@ include_once('gkimport.drush.inc');
   */
 function gkimport_import($drush_run = 0){
   variable_set('gkimport_drush_run', $drush_run);  
-  gkimport_clean();
+  //gkimport_clean(); //NOTE: THIS should be removed when run on production
   gkimport_create_site();
   gkimport_parse_files();
   gkimport_parse_abstracts();
@@ -72,7 +72,7 @@ function gkimport_import($drush_run = 0){
    $cmd =  'rm /nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/tmp/*';
    shell_exec($cmd);
     if ( $drush_run  === 1) {
-      drush_print(t("Here is an array which lists all of the publication node ids without abstracts"));
+      drush_print(t("Here is an array listing all gking publication node IDs created without abstracts:"));
       drush_print_r($_SESSION['error_nodes']);
     }
  }
@@ -296,8 +296,9 @@ function gkimport_nodeapi(&$node, $op){
          // install_include(array('taxonomy'));          
          // $site_vid = install_taxonomy_get_vid($name . '_vocabulary'); 
          // $node -> taxonomy['tags'][  $site_vid ] = '';
-          $vid = variable_get('gkimport_vocab_id', '');          
-          $node -> taxonomy['tags'][$vid] = trim(gkimport_match_terms($node -> title)); //add the term here       
+          $vid = variable_get('gkimport_vocab_id', '');
+          $term = trim(gkimport_match_terms($node -> title));
+          if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here  
         }
       break;      
     case 'insert':
