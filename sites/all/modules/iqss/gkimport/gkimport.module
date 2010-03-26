@@ -13,39 +13,6 @@ function gkimport_import($drush_run = 0){
 //  gkimport_parse_abstracts();
  }
 
-function gkimport_test(){
-  
-  $path = drupal_get_path('module', 'gkimport');
-  $fullpath = '/nfs/www/edu-harvard-iq-scholar-dev3/' . $path . '/files';
-  // $url = 'http://gking.harvard.edu/files/abs/counterf-abs.shtml';
-  $node = node_load(3335);
-
-  $notes = substr($node -> biblio_notes,  0, 1) !== '{' ? '{' . $node -> biblio_notes : $node -> biblio_notes;
-  $notes = substr($notes, -1,1 ) !== '}' ? $notes . '}' : $notes;  
-  
-  preg_match('/({)(http:\/\/.*?)(})/', $notes, $matches);
-  if (count($matches) && strlen($matches[2])){
-    $url = trim($matches[2]);
-    $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
-    $file = $fullpath . '/' . $filename;
-
-    $cmd =  "cd $fullpath && wget $url";
-    shell_exec($cmd);
-
-    if (is_file($file)){
-      $text = gkimport_clean_abstract_contents(file_get_contents($file));
-      $delete =  unlink($file);
-      $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
-    }
-    //  preg_match('/(<p>.*)(<p>)/', $contents, $matches);
-  }
-  
-  else{
-    dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
-  }
-    //track non matches
-  }
-
 /**
  * Imports abstract text into publication nodes
  */
