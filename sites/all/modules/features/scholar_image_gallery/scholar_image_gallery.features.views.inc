@@ -188,16 +188,15 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('empty', 'No images have been added to this gallery.');
+  $handler->override_option('empty', 'sssssssssssss');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 6);
   $handler->override_option('use_pager', '1');
-  $handler->override_option('style_plugin', 'grid');
+  $handler->override_option('style_plugin', 'list');
   $handler->override_option('style_options', array(
     'grouping' => '',
-    'columns' => '3',
-    'alignment' => 'horizontal',
+    'type' => 'ul',
   ));
   $handler = $view->new_display('node_content', 'Full gallery', 'node_content_1');
   $handler->override_option('fields', array(
@@ -341,11 +340,6 @@ function _scholar_image_gallery_views_default_views() {
   ));
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', '0');
-  $handler->override_option('style_options', array(
-    'grouping' => '',
-    'columns' => '4',
-    'alignment' => 'horizontal',
-  ));
   $handler->override_option('types', array(
     'gallery' => 'gallery',
   ));
@@ -399,11 +393,6 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('empty', '');
   $handler->override_option('items_per_page', 4);
   $handler->override_option('use_pager', '0');
-  $handler->override_option('style_options', array(
-    'grouping' => '',
-    'columns' => '2',
-    'alignment' => 'horizontal',
-  ));
   $handler->override_option('block_description', 'Recent images');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('page', 'Galleries', 'page_1');

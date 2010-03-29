@@ -9,6 +9,12 @@ function scholar_image_gallery_init() {
   drupal_add_css(drupal_get_path('module', 'scholar_image_gallery') .'/scholar_image_gallery.css');
 }
 
+function scholar_image_gallery_link_alter(&$links, $node){
+  if(isset($links['image_field_gallery'])){
+    unset($links['image_field_gallery']);
+  }
+}
+
 /**
  * hook  vsite_content_types_alter
  */
@@ -19,14 +25,9 @@ function scholar_image_gallery_vsite_content_types_alter(&$content_types){
 /**
  * Implementation of hook_context_links_alter().
  */
-function scholar_image_gallery_context_links_alter(&$links) {
-  if (!empty($links['image'])) {
-    //$active_node = menu_get_object();
-    //if (is_object($active_node) && $active_node -> nid && $active_node -> type == 'gallery'){
-    //  $links['image']['href'] = 'node/add/image/'. $active_node -> nid . '?' . 'destination=node/'. $active_node -> nid;
-    //} else {
-      unset($links['image']);
-    //}
+function scholar_image_gallery_context_links_alter(&$links){
+  if (! empty($links['image'])) {
+    unset($links['image']);
   }
 }
 
@@ -100,91 +101,33 @@ function scholar_image_gallery_nodeapi(&$node, $op, $a3, $a4){
   }
 }
 
-
 /**
- * Helper to implemetation of hook_imagecache_default_presets().
+ * implementation of hook_views_pre_render
+ * @param unknown_type $view
  */
-/*
-function scholar_image_gallery_imagecache_default_presets() {
-  $items = array(
-    'reg' => array(
-      'presetname' => 'reg',
-      'actions' => array(
-        '0' => array(
-          'actionid' => '2',
-          'presetid' => '1',
-          'weight' => '0',
-          'module' => 'imagecache',
-          'action' => 'imagecache_deprecated_scale',
-          'data' => array(
-            'fit' => 'inside',
-            'width' => '500',
-            'height' => '1000',
-          ),
-        ),
-      ),
-    ),
-    'short' => array(
-      'presetname' => 'short',
-      'actions' => array(
-        '0' => array(
-          'actionid' => '5',
-          'presetid' => '3',
-          'weight' => '0',
-          'module' => 'imagecache',
-          'action' => 'imagecache_deprecated_scale',
-          'data' => array(
-            'fit' => 'outside',
-            'width' => '150',
-            'height' => '150',
-          ),
-        ),
-        '1' => array(
-          'actionid' => '6',
-          'presetid' => '3',
-          'weight' => '0',
-          'module' => 'imagecache',
-          'action' => 'imagecache_crop',
-          'data' => array(
-            'width' => '150',
-            'height' => '75',
-            'xoffset' => 'center',
-            'yoffset' => 'center',
-          ),
-        ),
-      ),
-    ),
-    'thumb' => array(
-      'presetname' => 'thumb',
-      'actions' => array(
-        '0' => array(
-          'actionid' => '3',
-          'presetid' => '2',
-          'weight' => '0',
-          'module' => 'imagecache',
-          'action' => 'imagecache_deprecated_scale',
-          'data' => array(
-            'fit' => 'outside',
-            'width' => '200',
-            'height' => '150',
-          ),
-        ),
-        '1' => array(
-          'actionid' => '4',
-          'presetid' => '2',
-          'weight' => '0',
-          'module' => 'imagecache',
-          'action' => 'imagecache_crop',
-          'data' => array(
-            'width' => '200',
-            'height' => '150',
-            'xoffset' => 'center',
-            'yoffset' => 'center',
-          ),
-        ),
-      ),
-    ),
-  );
-  return $items;
+function scholar_image_gallery_views_pre_render(&$view){
+  if ($view->name == 'scholar_image_gallery') {
+    if ($view->current_display == 'node_content_1' || $view->current_display == 'node_content_2') {
+      
+      // ask nodreference_url module for the correct link
+      $link = nodereference_url_build_all_links($view->current_node, FALSE);
+      $link = theme('links', $link);
+      
+      // display a series of links depending on the number of images in the gallery
+      $links = array();
+      switch (count($view->result)) {
+        case 0 :
+          $links = $link . $link . $link;
+          break;
+        case 1 :
+          $links = $link . $link;
+          break;
+        default :
+          $links = $link;
+      }
+      
+      $view->attachment_after = $links;
+      //$view -> display['default'] -> handler -> options['empty'] = theme('links', $links);
+    }
+  }
 }
-*/
