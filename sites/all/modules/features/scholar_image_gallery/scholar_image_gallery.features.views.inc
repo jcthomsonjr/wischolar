@@ -188,7 +188,6 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('empty', 'sssssssssssss');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 6);
@@ -390,7 +389,6 @@ function _scholar_image_gallery_views_default_views() {
   ));
   $handler->override_option('arguments', array());
   $handler->override_option('title', 'Recent images');
-  $handler->override_option('empty', '');
   $handler->override_option('items_per_page', 4);
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', 'Recent images');
@@ -446,7 +444,6 @@ function _scholar_image_gallery_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('empty', '');
   $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array());
   $handler->override_option('row_plugin', 'node');
