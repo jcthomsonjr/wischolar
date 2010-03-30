@@ -4,14 +4,18 @@
   padding: 0;
   }
 
-#content .node .view-scholar-image-gallery ul li,
-li.image_field_gallery {
+.section-images #content .node ul li {
   list-style: none;
   padding:0;
   float:left;
   clear: none;
-  margin: 0 10px 10px 0;
+  margin: 0 5px 5px 0;
+  }
+
+#content .node-type-gallery .view-content .view-scholar-image-gallery ul li,
+li.image_field_gallery {
   height: 183px;
+  margin: 0 10px 10px 0;
   }
 
 .view-display-id-node_content_1 .views-field-field-gallery-image-fid {
@@ -55,6 +59,29 @@ div.views-field-field-gallery-image-fid img:hover {
  background: #ffff66;
   }
 
+
+/* Gallery Teaser */
+
+#content .node-type-gallery .view-display-id-node_content_2 .view-empty ul li,
+.view-display-id-node_content_2 li.image_field_gallery
+{
+  height: 71px;
+  padding: 4px !important;
+  border: 1px solid #adadad;
+  }
+
+.view-display-id-node_content_2 ul.links li.image_field_gallery a,
+.view-display-id-node_content_2 ul.links li.image_field_gallery a:visited {
+  background-position:50% -8px;
+  height: 24px;
+  width: 71px;
+  padding: 47px 0 0 0;
+  border: none;
+  }
+
+.view-display-id-node_content_2 ul.links li.image_field_gallery a:hover {
+  background-position: 50% -138px;
+  }
 
 /* Force the table grid to equal column
   widths no matter what is in them.*/
