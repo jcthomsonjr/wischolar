@@ -1,0 +1,190 @@
+<?php
+
+include_once('scholar_image_gallery.features.inc');
+
+/**
+ * Implementation of hook_init().
+ */
+function scholar_image_gallery_init() {
+  drupal_add_css(drupal_get_path('module', 'scholar_image_gallery') .'/scholar_image_gallery.css');
+}
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function scholar_image_gallery_vsite_content_types_alter(&$content_types){
+  unset($content_types['image']);
+}
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_image_gallery_context_links_alter(&$links) {
+  if (!empty($links['image'])) {
+    //$active_node = menu_get_object();
+    //if (is_object($active_node) && $active_node -> nid && $active_node -> type == 'gallery'){
+    //  $links['image']['href'] = 'node/add/image/'. $active_node -> nid . '?' . 'destination=node/'. $active_node -> nid;
+    //} else {
+      unset($links['image']);
+    //}
+  }
+}
+
+
+/**
+ * hook strongarm
+ * @return unknown_type
+ */
+function scholar_image_gallery_strongarm(){
+  $conf = array();
+  $conf['upload_image'] = 0;
+  $conf['upload_gallery'] = 0;
+  
+  $conf["show_preview_changes_gallery"] = FALSE;
+  $conf["show_diff_inline_gallery"] = FALSE;
+  $conf["show_preview_changes_image"] = FALSE;
+  $conf["show_diff_inline_image"] = FALSE;
+  
+  // Comments
+  $conf['comment_image'] = COMMENT_NODE_DISABLED;
+  $conf['comment_gallery'] = COMMENT_NODE_DISABLED;
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_image_pattern"] = "[space-og-path]/galleries/[field_gallery-path]/[title-raw]";
+  $conf["pathauto_node_gallery_pattern"] = "[space-og-path]/galleries/[title-raw]";
+  
+  return $conf;
+}
+
+/**
+ * hook vsite_sidgets
+ * @return unknown_type
+ */
+function scholar_image_gallery_vsite_widgets(){
+  $items = array();
+  $items['scholar_image_gallery-block_1'] = array(
+    'module' => 'scholar_image_gallery',
+    'delta' => 'scholar_image_gallery-block_1',
+    'weight' => 20,
+    'region' => false,
+    'status' => '0',
+    'label' => 'Recent images',
+    'type' => 'context_ui'
+  );
+  return $items;
+}
+
+/**
+ * hook vsite_taxonomy_content_types_alter
+ * @return unknown_type
+ */
+function scholar_image_gallery_vsite_taxonomy_content_types_alter(&$types){
+  // no taxonomy for gallery/images
+  unset($types['gallery']);
+  unset($types['image']);
+}
+
+
+/**
+ * Hook nodeapi
+ * Used to trickle deltes to an image galleries dependent image childern
+ */
+function scholar_image_gallery_nodeapi(&$node, $op, $a3, $a4){
+	if($node->type != 'gallery') return;
+  switch($op){
+    case 'delete':
+    	vsite_include('vsite');
+    	$a_referers = vsite_get_referrers($node->nid,array(),array('image'));
+    	foreach ($a_referers as $nid => $info) node_delete($nid);
+    break;
+  }
+}
+
+
+/**
+ * Helper to implemetation of hook_imagecache_default_presets().
+ */
+/*
+function scholar_image_gallery_imagecache_default_presets() {
+  $items = array(
+    'reg' => array(
+      'presetname' => 'reg',
+      'actions' => array(
+        '0' => array(
+          'actionid' => '2',
+          'presetid' => '1',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_deprecated_scale',
+          'data' => array(
+            'fit' => 'inside',
+            'width' => '500',
+            'height' => '1000',
+          ),
+        ),
+      ),
+    ),
+    'short' => array(
+      'presetname' => 'short',
+      'actions' => array(
+        '0' => array(
+          'actionid' => '5',
+          'presetid' => '3',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_deprecated_scale',
+          'data' => array(
+            'fit' => 'outside',
+            'width' => '150',
+            'height' => '150',
+          ),
+        ),
+        '1' => array(
+          'actionid' => '6',
+          'presetid' => '3',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_crop',
+          'data' => array(
+            'width' => '150',
+            'height' => '75',
+            'xoffset' => 'center',
+            'yoffset' => 'center',
+          ),
+        ),
+      ),
+    ),
+    'thumb' => array(
+      'presetname' => 'thumb',
+      'actions' => array(
+        '0' => array(
+          'actionid' => '3',
+          'presetid' => '2',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_deprecated_scale',
+          'data' => array(
+            'fit' => 'outside',
+            'width' => '200',
+            'height' => '150',
+          ),
+        ),
+        '1' => array(
+          'actionid' => '4',
+          'presetid' => '2',
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_crop',
+          'data' => array(
+            'width' => '200',
+            'height' => '150',
+            'xoffset' => 'center',
+            'yoffset' => 'center',
+          ),
+        ),
+      ),
+    ),
+  );
+  return $items;
+}
+*/

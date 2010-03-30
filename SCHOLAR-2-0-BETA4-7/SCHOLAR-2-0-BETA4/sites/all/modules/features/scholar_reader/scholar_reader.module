@@ -1,0 +1,112 @@
+<?php
+
+include_once('scholar_reader.features.inc');
+
+/**
+ * hook strongarm
+ */
+function scholar_reader_strongarm(){
+  $conf = array();
+
+  $conf["show_preview_changes_feed"] = FALSE;
+  $conf["show_diff_inline_feed"] = FALSE;
+
+  $conf['node_options_feed'] = array('status');
+  $conf['upload_feed'] = FALSE;
+
+  // Comments
+  $conf['comment_feed'] = COMMENT_NODE_DISABLED;
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_feed_pattern"] = "[space-og-path]/feeds/[title-raw]";
+  
+  //Max number of feeds to proccess at once (per cron)
+  $conf['feeds_schedule_num'] = 30;
+  return $conf;
+}
+
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_reader_context_links_alter(&$links) {
+  if (!empty($links['feed'])) {
+    $links['feed']['query'] = drupal_get_destination();
+  }
+}
+
+/**
+ * hook vsite_sidgets
+
+ */
+function scholar_reader_vsite_widgets(){
+  $items = array();
+  $items['views_scholar_reader-block_1'] = array(
+        'module' => 'views',
+        'delta' => 'scholar_reader-block_1',
+        'weight' => 20,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Latest feeds',
+        'type' => 'context_ui',
+      );
+  return $items;
+}
+
+/**
+ * Implementation of hook_views_api().
+ */
+function scholar_reader_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'scholar_reader') .'/views',
+  );
+}
+
+/**
+ * Implementation of hook_data_views_handlers_alter().
+ */
+function scholar_reader_data_views_handlers_alter(&$handlers) {
+  dpm($handlers);
+  $handlers['field']['scholar_reader_handler_field_description'] = 'scholar_reader_handler_field_description';
+}
+
+
+
+/// the code below was used for feedapi. remove ?
+
+
+
+/**
+ * Implementation of hook_form_alter().
+ * Used to add validation to the feed addition
+ */
+function scholar_reader_form_alter(&$form, $form_state, $form_id) {
+  // Content type form.
+  if ($form_id == 'feed_node_form' && $form['type']['#value'] == 'feed') {
+    $form['#validate'][] = 'scholar_reader_feed_validate';
+  }
+}
+
+/**
+ * Validate the feed
+ * 
+ * @param $form
+ * @param $form_state
+ */
+function scholar_reader_feed_validate($form, &$form_state) {
+  if (!strlen($form_state['values']['feeds']['FeedsHTTPFetcher']['source'])) {
+    return;
+  }
+	
+  $form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = trim($form_state['values']['feeds']['FeedsHTTPFetcher']['source']);
+  
+  $form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = str_ireplace("feed:http://","http://",$form_state['values']['feeds']['FeedsHTTPFetcher']['source']); //For Safari Users
+  
+  $form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = str_ireplace("feed://","http://",$form_state['values']['feeds']['FeedsHTTPFetcher']['source']); //For Safari Users
+  
+  $success = (valid_url($form_state['values']['feeds']['FeedsHTTPFetcher']['source'],true) && ($status = drupal_http_request($form_state['values']['feeds']['FeedsHTTPFetcher']['source'])) && !strlen($status->error));
+  if(!$success){
+  	form_error($form, t('Can\'t connect to '.$form_state['values']['feeds']['FeedsHTTPFetcher']['source'].'. Invalid feed URL, please check that the URL is valid.'), 'error');
+  }
+}
