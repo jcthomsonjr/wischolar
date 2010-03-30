@@ -1,0 +1,146 @@
+<?php
+
+include_once('scholar_front.features.inc');
+
+function scholar_front_init(){
+  $active_menu = menu_get_item();
+  if ($active_menu['path'] == 'cp/settings/front'){
+    drupal_add_css(drupal_get_path('module', 'scholar_front') .'/theme/scholar_front.css');
+  }
+}
+
+function scholar_front_menu(){
+  $items = array();
+  $items['home'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => '',
+    'page callback' => 'scholar_front_home',
+    'file' => 'scholar_front.pages.inc',
+    'access arguments' => array('access content'),
+    'weight' => 0,
+  );  
+  return $items;
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_front_spaces_settings(){
+  return array(
+    'front' => array(
+      'class' => 'scholar_front_settings_front', 
+      'file' => drupal_get_path('module', 'scholar_front') . '/include/scholar_front.settings.inc' 
+    ),
+  );
+}
+
+/**
+ * Implementation of hook flag_alter
+ */
+function scholar_front_flag_alter(&$flag){
+  if (!($viste = vsite_get_vsite()) || $flag -> name !== 'scholar_frontpage'){
+    return;
+  }
+  vsite_include('vsiteapi');
+
+  $types = vsite_content_types();
+
+  if (count($types)){
+    $flag -> types = array_keys($types);
+  }
+}
+
+
+/**
+ * Implementation of hook_link().
+ */
+function scholar_front_vsite_admin_link($type, $object){
+  $links = array();
+  global $user;
+  //check font page settings here, only execute if front page setting equals flag
+  $vsite = vsite_get_vsite();
+  if ($vsite->settings['front']['frontpage'] !== 'flag' || 
+      !($vsite -> admin_access()) ||
+      !flag_fetch_definition($type)){
+    return $links;
+  }
+
+
+
+  // Get frontpage flags
+  $flag = flag_get_flag('scholar_frontpage');
+
+
+  if (!$flag->applies_to_content_object($object)) {
+    // Flag does not apply to this content.
+    return false;
+  }
+
+  $content_id = $flag->get_content_id($object);
+  // The flag links are actually fully rendered theme functions.
+  // The HTML attribute is set to TRUE to allow whatever the themer desires.
+  $links['flag-'. $flag->name] = array(
+  'title' => $flag->theme($flag->is_flagged($content_id) ? 'unflag' : 'flag', $content_id),
+  'html' => TRUE,
+  );
+
+  if (isset($links)) {
+    return $links;
+  }
+}
+
+/**
+ * Implementation of hook_nodeapi()
+ */
+function scholar_front_nodeapi(&$node, $op, $a3, $a4){
+  switch($op){
+    case 'presave':
+      $uri = request_uri();
+      $pattern = '/(node\/add\/)(.+?)(\/front)/';
+      preg_match($pattern, $uri, $matches);
+      // set new property in node object indicating to set as front page
+      if ($matches) $node -> front  = 1;
+      break;
+
+    case 'insert':
+      if ($node -> front == 1){
+        //$vsite = spaces_load('og', $node->og_groups[0]);
+        $vsite = vsite_get_vsite();
+
+        //modify the vsite settings
+        unset($vsite -> settings['front']);
+        $vsite -> settings['front']['frontpage'] = 'html';
+        $vsite -> settings['front']['front_nid'] = $node->nid;
+
+        //save the changes
+        spaces_save($vsite);
+
+        $link =  l('Control Panel Settings.', $vsite -> purl. '/cp/settings/front' );
+        $msg_variables = array (
+        '@type' => node_get_types('name', $node),
+        '%title' => $node -> title,
+        '!link' => $link,
+        );
+
+        //redirect the user to thier home page with message
+        drupal_set_message(t('@type <em>%title</em> has been created. You have selected this post to be your site\'s front page. To change your front page content, go the !link', $msg_variables));
+        drupal_goto($vsite -> purl . '/home');
+      }
+      break;
+  }
+}
+
+/**
+ * Add the JS needed by our feature popup
+ */
+function scholar_front_form_alter(&$form, $form_state, $form_id) { 
+  switch($form_id){
+    case 'spaces_features_form':
+    	//These are needed for the modal popup
+      ctools_add_js('dropdown');
+      ctools_add_css('dropdown');
+      ctools_add_js('dependent');
+      drupal_add_js("misc/autocomplete.js");
+    break;
+  }
+}
