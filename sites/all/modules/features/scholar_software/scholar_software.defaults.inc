@@ -13,7 +13,6 @@ function _scholar_software_context_default_contexts() {
     'description' => '',
     'node' => array(
       '0' => 'scholar_software_project',
-      '1' => 'scholar_software_release',
     ),
     'views' => array(
       '0' => 'scholar_software_projects',

@@ -40,7 +40,15 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 	if ($op == 'presave' && $node->type == 'scholar_software_project') {
     if (!$node->field_scholar_software_method[0]['value']) {
       $node->field_scholar_software_repository[0]['value'] = '';
-    }
+    }else{
+	    $a_handlers = scholar_software_get_handlers();
+	    if(array_key_exists($node->field_scholar_software_method[0]['value'],$a_handlers)){
+	      $a_handler_info = $a_handlers[$node->field_scholar_software_method[0]['value']];
+	      if($a_handler_info['path']) require_once($a_handler_info['path']);
+	      $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
+	      $o_handler->alterProject($node);
+	    }
+	  }
   }
   else if ($op == 'presave' && $node->type == 'scholar_software_release') {
     $node->title = scholar_software_generate_version($node);
@@ -84,10 +92,16 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       '#value' => l($project->title, 'node/' . $project->nid),
       '#weight' => -11,
     );
-  } else if ($op == 'view' && $node->type == 'scholar_software_project') {
-  	require_once( drupal_get_path('module','scholar_software')."/package_handlers/rbuild.inc" );
-    	$rbuild = new rbuild("http://r.iq.harvard.edu/src/contrib");
-    	dpm($rbuild->getPackage());
+  } else if ($op == 'insert' && $node->type == 'scholar_software_project'){
+    if ($node->field_scholar_software_method[0]['value']) {
+      $a_handlers = scholar_software_get_handlers();
+      if(array_key_exists($node->field_scholar_software_method[0]['value'],$a_handlers)){
+        $a_handler_info = $a_handlers[$node->field_scholar_software_method[0]['value']];
+        if($a_handler_info['path']) require_once($a_handler_info['path']);
+        $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
+        $o_handler->initReleases($node);
+      }
+    }//Add the initial releases
   }
 }
 
@@ -102,11 +116,13 @@ function scholar_software_cck_options($type = 'major') {
       return $major;
 
     case 'method':
-      return array(
-        0 => t('Manual upload'),
-        'rbuild' => t('rbuild repository'),
-      );
-
+    	$a_handlers = scholar_software_get_handlers();
+    	$a_methods = array(0 => t('Manual upload'));
+    	foreach ($a_handlers as $s_key => $a_info){
+    		$a_methods[$s_key] = $a_info['name'];
+    	}
+    	
+      return $a_methods;
     case 'patch':
       return range(0, 50);
 
@@ -126,7 +142,6 @@ function scholar_software_cck_options($type = 'major') {
 function scholar_software_form_scholar_software_project_node_form_alter(&$form, $form_state) {
   drupal_add_js(drupal_get_path('module', 'scholar_software') . '/scholar_software.js');
   $form['#validate'][] = 'scholar_software_project_node_form_validate';
-  $form['#submit'][] = 'scholar_software_project_node_form_submit';
 }
 
 /**
@@ -136,15 +151,6 @@ function scholar_software_project_node_form_validate($form, &$form_state) {
   // Ensure repository URL is set if using a non-manual method.
   if (!empty($form_state['values']['field_scholar_software_method'][0]['value']) && empty($form_state['values']['field_scholar_software_repository'][0]['value'])) {
     form_set_error($form_state['values']['field_scholar_software_repository'][0]['_error_element'], t('Please provide a valid repository URL for this project.'));
-  }
-}
-
-/**
- * Submit handler for scholar_software_project_node_form.
- */
-function scholar_software_project_node_form_submit($form, &$form_state) {
-  if (!empty($form_state['values']['field_scholar_software_method'][0]['value'])) {
-    
   }
 }
 
@@ -190,4 +196,21 @@ function scholar_software_generate_version($node, $raw = FALSE) {
  */
 function scholar_software_get_handlers() {
   
+  $handlers = module_invoke_all('scholar_software_handlers');
+  drupal_alter('vsite_admin_link', $handlers);
+  
+  return $handlers;
+}
+
+/**
+ * Implementation of hook_scholar_software_handlers()
+ */
+function scholar_software_scholar_software_handlers() {
+  return array(
+    'rbuild' => array(
+      'name' => "rbuild repository",
+      'path' => drupal_get_path('module', 'scholar_software') . '/package_handlers/rbuild.inc',
+      'class' => 'rbuild',
+    ),
+  );
 }
