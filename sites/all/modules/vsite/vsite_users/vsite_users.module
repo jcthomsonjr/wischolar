@@ -300,10 +300,9 @@ function vsite_users_ucreate_role($name = 'scholar user'){
  * @return user
  */
 function vsite_user_edit(){
-	$vsite = vsite_get_vsite();
-  if(!$vsite) return false;
+	global $user;
   
-  return user_edit(user_load($vsite->group->uid));
+  return user_edit($user);
 }
 
 /**
@@ -322,10 +321,9 @@ function vsite_user_edit_access(){
  * @return form
  */
 function vsite_user_content_profile_edit_page($s_type){
-	$vsite = vsite_get_vsite();
-	if(!$vsite) return false;
+	global $user;
 	
-	return content_profile_page_edit($s_type,user_load($vsite->group->uid));
+	return content_profile_page_edit($s_type,$user);
 }
 
 /**
@@ -369,17 +367,6 @@ function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_sta
 	
 	$form['buttons']['preview']['#access'] = FALSE;
   $form['buttons']['delete']['#access'] = FALSE;
-	
-	$vsite = vsite_get_vsite();
-  if($vsite && isset($form['uid'])){
-    $form['uid']['#value'] = $vsite->group->uid;
-  }
-  
-  // Set the author value - note that this works only for admins.
-  if ($vsite && ($user = user_load($vsite->group->uid))) {
-    $form['author']['name']['#default_value'] = $user->name;
-    $form['name'] = array('#type' => 'value', '#value' => $user->name);
-  }
 }
 
 /**
@@ -391,11 +378,12 @@ function vsite_users_form_vsite_users_profile_node_submit($form, &$form_state){
   drupal_set_message(t('Your personal information has been saved.'));
 
   $o_profile = false;
-  if($scholar = vsite_get_vsite()){
+  if(($scholar = vsite_get_vsite()) && $form_state['values']['uid'] == $scholar->group->uid){
     $o_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);
   }
   if(is_array($form_state['values'])  //The form has been submitted
-  && !$o_profile ){                   //There was not already a profile
+  && !$o_profile
+  && $form_state['values']['uid'] == $scholar->group->uid ){                   //There was not already a profile
     $form_state['redirect'] = 'home';
   }elseif(isset($form_state['redirect'])){
     unset($form_state['redirect']); //No Redirect for you
