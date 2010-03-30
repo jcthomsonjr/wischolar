@@ -23,6 +23,9 @@ function scholar_reader_strongarm(){
 
   // Pathauto (optional) settings
   $conf["pathauto_node_feed_pattern"] = "[space-og-path]/feeds/[title-raw]";
+  
+  //Max number of feeds to proccess at once (per cron)
+  $conf['feeds_schedule_num'] = 30;
   return $conf;
 }
 
