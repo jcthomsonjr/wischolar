@@ -76,32 +76,6 @@ function _scholar_image_gallery_views_default_views() {
       'field' => 'field_gallery_image_fid',
       'relationship' => 'none',
     ),
-    'created' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'strip_tags' => 0,
-        'html' => 0,
-      ),
-      'date_format' => 'time ago',
-      'custom_date_format' => '2',
-      'exclude' => 0,
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
-      'relationship' => 'none',
-    ),
   ));
   $handler->override_option('sorts', array(
     'created' => array(
@@ -197,6 +171,14 @@ function _scholar_image_gallery_views_default_views() {
     'grouping' => '',
     'type' => 'ul',
   ));
+  $handler->override_option('row_options', array(
+    'inline' => array(
+      'edit_node' => 'edit_node',
+      'delete_node' => 'delete_node',
+    ),
+    'separator' => '',
+    'hide_empty' => 0,
+  ));
   $handler = $view->new_display('node_content', 'Full gallery', 'node_content_1');
   $handler->override_option('fields', array(
     'title' => array(
@@ -265,32 +247,6 @@ function _scholar_image_gallery_views_default_views() {
         'button' => 'Use default',
       ),
     ),
-    'created' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'strip_tags' => 0,
-        'html' => 0,
-      ),
-      'date_format' => 'time ago',
-      'custom_date_format' => '2',
-      'exclude' => 0,
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
-      'relationship' => 'none',
-    ),
     'edit_node' => array(
       'label' => '',
       'alter' => array(
@@ -358,6 +314,7 @@ function _scholar_image_gallery_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('items_per_page', 0);
   $handler->override_option('types', array(
     'gallery' => 'gallery',
   ));
@@ -521,6 +478,7 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array());
   $handler->override_option('row_plugin', 'node');
+  $handler->override_option('row_options', array());
   $handler->override_option('path', 'images');
   $handler->override_option('menu', array(
     'type' => 'normal',
