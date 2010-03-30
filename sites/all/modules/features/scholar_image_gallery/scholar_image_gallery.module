@@ -115,7 +115,9 @@ function scholar_image_gallery_views_pre_render(&$view){
       
       // display a series of links depending on the number of images in the gallery
       $links = array();
-      switch (count($view->result)) {
+      $count = count($view->result);
+      
+      switch ($count) {
         case 0 :
           $links = $link . $link . $link;
           break;
@@ -126,8 +128,13 @@ function scholar_image_gallery_views_pre_render(&$view){
           $links = $link;
       }
       
-      $view->attachment_after = $links;
-      //$view -> display['default'] -> handler -> options['empty'] = theme('links', $links);
+      // looks like attachment_after happens only if there is result already
+      if ($count) {
+        $view->attachment_after = $links;
+      }
+      else {
+        $view->display['default']->handler->options['empty'] = $links;
+      }
     }
   }
 }
