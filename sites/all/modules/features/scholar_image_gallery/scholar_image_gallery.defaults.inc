@@ -204,6 +204,30 @@ function _scholar_image_gallery_context_default_contexts() {
  */
 function _scholar_image_gallery_imagecache_default_presets() {
   $items = array(
+    'gallery_small_thumb' => array(
+      'presetname' => 'gallery_small_thumb',
+      'actions' => array(
+        '0' => array(
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_scale',
+          'data' => array(
+            'width' => '100%',
+            'height' => '85',
+            'upscale' => 0,
+          ),
+        ),
+        '1' => array(
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_scale_and_crop',
+          'data' => array(
+            'width' => '71',
+            'height' => '71',
+          ),
+        ),
+      ),
+    ),
     'gallery_thumb' => array(
       'presetname' => 'gallery_thumb',
       'actions' => array(
@@ -228,21 +252,7 @@ function _scholar_image_gallery_imagecache_default_presets() {
         ),
       ),
     ),
-    'reg' => array(
-      'presetname' => 'reg',
-      'actions' => array(
-        '0' => array(
-          'weight' => '0',
-          'module' => 'imagecache',
-          'action' => 'imagecache_deprecated_scale',
-          'data' => array(
-            'fit' => 'inside',
-            'width' => '500',
-            'height' => '1000',
-          ),
-        ),
-      ),
-    ),
+    'reg' => array(),
     'thumb' => array(
       'presetname' => 'thumb',
       'actions' => array(
