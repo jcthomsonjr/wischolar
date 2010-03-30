@@ -1,7 +1,5 @@
 <?php
 // $Id: FeedsScheduler.inc,v 1.15 2010/02/22 03:28:59 alexb Exp $
-define('RB_TMP_ERROR_MODE',3);
-define('RB_TMP_ERROR_LOCATION','/nfs/www/edu-harvard-iq-scholar/log_tmp/feeds.log');
 
 /**
  * @file
@@ -104,15 +102,11 @@ class FeedsScheduler implements FeedsSchedulerInterface {
     if ($importers = feeds_importer_load_all()) {
       $num = $this->queue() ? variable_get('feeds_schedule_queue_num', 200) : variable_get('feeds_schedule_num', 5);
       foreach ($importers as $importer) {
-      	error_log("Running Importer [".print_r($importer->getConfig(),true)."]\n",RB_TMP_ERROR_MODE,RB_TMP_ERROR_LOCATION);
         foreach ($importer->getScheduleCallbacks() as $callback) {
-        	error_log("Callback [".$callback."]\n",RB_TMP_ERROR_MODE,RB_TMP_ERROR_LOCATION);
           $period = $importer->getSchedulePeriod($callback);
-          error_log("period [".$period."]\n",RB_TMP_ERROR_MODE,RB_TMP_ERROR_LOCATION);
           if ($period != FEEDS_SCHEDULE_NEVER) {
             $result = db_query_range('SELECT feed_nid, id, callback, last_executed_time FROM {feeds_schedule} WHERE id = "%s" AND callback = "%s" AND scheduled = 0 AND (last_executed_time < %d OR last_executed_time = 0) ORDER BY last_executed_time ASC', $importer->id, $callback, FEEDS_REQUEST_TIME - $period, 0, $num);
             while ($job = db_fetch_array($result)) {
-            	error_log("job [".$job['feed_nid']."]\n",RB_TMP_ERROR_MODE,RB_TMP_ERROR_LOCATION);
               $this->schedule($job);
               // @todo Add time limit.
             }
@@ -201,10 +195,8 @@ class FeedsScheduler implements FeedsSchedulerInterface {
    */
    protected function schedule($job) {
      db_query("UPDATE {feeds_schedule} SET scheduled = %d WHERE id = '%s' AND feed_nid = %d AND callback = '%s'", FEEDS_REQUEST_TIME, $job['id'], $job['feed_nid'], $job['callback']);
-     error_log("In Schedule [".$job['feed_nid']."]\n",RB_TMP_ERROR_MODE,RB_TMP_ERROR_LOCATION);
      if (db_affected_rows()) {
        if ($this->queue()) {
-       	error_log("queue [".$job['feed_nid']."]\n",RB_TMP_ERROR_MODE,RB_TMP_ERROR_LOCATION);
          if (!$queue->createItem($job)) {
            $this->unschedule($job);
            watchdog('FeedsScheduler', 'Error adding item to queue.', WATCHDOG_CRITICAL);
@@ -212,7 +204,6 @@ class FeedsScheduler implements FeedsSchedulerInterface {
          }
        }
        else {
-       	error_log("work [".$job['feed_nid']."]\n",RB_TMP_ERROR_MODE,RB_TMP_ERROR_LOCATION);
          $this->work($job);
        }
      }
