@@ -64,6 +64,7 @@ class rbuild implements scholar_software_handler{
   	$a_package = $this->getPackage();
   	
   	foreach ($a_releases as $s_version => $s_file_name){
+  		//Create Release
   		$release_node = new stdClass();
   		$release_node->type = 'scholar_software_release';
   		$release_node->uid = $project_node->uid;
