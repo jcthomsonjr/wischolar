@@ -1,14 +1,34 @@
 <?php
+// $Id: vertical_tabs.install,v 1.1.2.11 2010/02/03 19:06:46 davereid Exp $
 
 /**
- * Implementation of hook_install().
+ * @file
+ * Install, update and uninstall functions for the vertical_tabs module.
+ */
+
+/**
+ * Implement hook_install().
  */
 function vertical_tabs_install() {
-  // Make this module pretty heavy.
-  db_query("UPDATE {system} SET weight = 300 WHERE name = 'vertical_tabs'");
+  // Make this module's weight heavy so it runs after most form alterations.
+  db_query("UPDATE {system} SET weight = 300 WHERE type = 'module' AND name = 'vertical_tabs'");
+}
 
+/**
+ * Implement hook_enable().
+ */
+function vertical_tabs_enable() {
   // Generate color stylesheet.
   vertical_tabs_install_color_generate();
+}
+
+/**
+ * Implement hook_uninstall().
+ */
+function vertical_tabs_uninstall() {
+  variable_del('vertical_tabs_forms');
+  variable_del('vertical_tabs_default');
+  variable_del('vertical_tabs_minimum');
 }
 
 /**
@@ -16,7 +36,7 @@ function vertical_tabs_install() {
  */
 function vertical_tabs_update_6100() {
   $ret = array();
-  $ret[] = update_sql("UPDATE {system} SET weight = 300 WHERE name = 'vertical_tabs'");
+  $ret[] = update_sql("UPDATE {system} SET weight = 300 WHERE type = 'module' AND name = 'vertical_tabs'");
   variable_del('vertical_tabs_settings_form');
   return $ret;
 }
@@ -34,6 +54,38 @@ function vertical_tabs_update_6101() {
  */
 function vertical_tabs_update_6102() {
   vertical_tabs_install_color_generate();
+  return array();
+}
+
+/**
+ * Remove any variables of deleted node types.
+ */
+function vertical_tabs_update_6103() {
+  $query = db_query("SELECT name FROM {variable} WHERE name LIKE 'vertical_tabs_fieldsets_%%'");
+  $node_types = node_get_types('names');
+  while ($variable = db_result($query)) {
+    $node_type = substr($variable, 24);
+    if (!isset($node_types[$node_type])) {
+      variable_del($variable);
+    }
+  }
+  return array();
+}
+
+/**
+ * Delete the node type fieldset configurations.
+ */
+function vertical_tabs_update_6104() {
+  $config = variable_get('vertical_tabs_forms', array());
+  $node_types = array_keys(node_get_types('names'));
+  foreach ($node_types as $node_type) {
+    $node_type_setting = 'vertical_tabs_fieldsets_' . $node_type;
+    if (!variable_get($node_type_setting, array())) {
+      $config[$node_type . '_node_form'] = FALSE;
+    }
+    variable_del($node_type_setting);
+  }
+  variable_set('vertical_tabs_forms', $config);
   return array();
 }
 
