@@ -197,7 +197,7 @@ function scholar_software_generate_version($node, $raw = FALSE) {
 function scholar_software_get_handlers() {
   
   $handlers = module_invoke_all('scholar_software_handlers');
-  drupal_alter('vsite_admin_link', $handlers);
+  drupal_alter('scholar_software_handlers', $handlers);
   
   return $handlers;
 }
@@ -207,10 +207,6 @@ function scholar_software_get_handlers() {
  */
 function scholar_software_scholar_software_handlers() {
   return array(
-    'rbuild' => array(
-      'name' => "rbuild repository",
-      'path' => drupal_get_path('module', 'scholar_software') . '/package_handlers/rbuild.inc',
-      'class' => 'rbuild',
-    ),
+    //Add default handlers here if any in the future
   );
 }

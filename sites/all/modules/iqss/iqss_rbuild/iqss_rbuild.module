@@ -1,2 +1,36 @@
 <?php 
+function iqss_rbuild_strongarm(){
+  $conf = array();
+  
+  //Default URL for rbuild
+  $conf['iqss_rbuild_default_url'] = "http://r.iq.harvard.edu/src/contrib/";
+  
+  return $conf;
+}
+    
+/**
+ * Implementation of hook_scholar_software_handlers()
+ */
+function iqss_rbuild_scholar_software_handlers() {
+  return array(
+    'rbuild' => array(
+      'name' => "rbuild repository",
+      'path' => drupal_get_path('module', 'iqss_rbuild') . '/include/rbuild.inc',
+      'class' => 'rbuild',
+    ),
+  );
+}
 
+/**
+ * Form Alter for the project node
+ */
+function iqss_rbuild_form_scholar_software_project_node_form_alter(&$form, &$form_state) {
+  drupal_add_js(drupal_get_path('module', 'iqss_rbuild') . '/iqss_rbuild.js');
+  drupal_add_js(array("iqss_rbuild" => 
+    array(
+      'repo_url' => variable_get('iqss_rbuild_default_url',""),
+      'title_default' => "This will be updated from the rbuild package",
+    )
+  ),'setting');
+	
+}

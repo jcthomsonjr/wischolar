@@ -55,7 +55,7 @@ function _scholar_software_content_default_fields() {
     'field_name' => 'field_scholar_software_method',
     'type_name' => 'scholar_software_project',
     'display_settings' => array(
-      'weight' => '-2',
+      'weight' => '-12',
       'parent' => '',
       'label' => array(
         'format' => 'hidden',
@@ -91,7 +91,7 @@ function _scholar_software_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Packaging method',
-      'weight' => '-2',
+      'weight' => '-12',
       'description' => 'Choose the packaging method used for this project.',
       'type' => 'optionwidgets_select',
       'module' => 'optionwidgets',
