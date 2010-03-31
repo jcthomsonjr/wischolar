@@ -35,9 +35,9 @@ function scholar_links_context_links_alter(&$links) {
 /**
  * Implementation of hook_form_alter
  */
-function scholar_links_form_alter(&$form, $form_state, $form_id) {
+function scholar_links_form_alter(&$form, $form_state, $form_id){
   // change the label of the href field (too late to rename the field now)
-	if ($form_id === 'link_node_form'){
-      $form['field_link_href'][0]['#title'] = t('URL (Web address)');
-	}
+  if ($form_id === 'link_node_form') {
+    $form['field_link_href'][0]['#title'] = t('URL (Web address)');
+  }
 }
