@@ -416,6 +416,7 @@ function _scholar_profiles_user_default_permissions() {
     'name' => 'create person content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -424,6 +425,7 @@ function _scholar_profiles_user_default_permissions() {
     'name' => 'delete own person content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
@@ -432,6 +434,33 @@ function _scholar_profiles_user_default_permissions() {
     'name' => 'edit own person content',
     'roles' => array(
       '0' => 'scholar admin',
+    ),
+  );
+
+  // Exported permission: override person promote to front page option
+  $permissions[] = array(
+    'name' => 'override person promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override person published option
+  $permissions[] = array(
+    'name' => 'override person published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override person sticky option
+  $permissions[] = array(
+    'name' => 'override person sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
