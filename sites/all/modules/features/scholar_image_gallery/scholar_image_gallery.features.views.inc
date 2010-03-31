@@ -231,7 +231,7 @@ function _scholar_image_gallery_views_default_views() {
       'empty_zero' => 0,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'imagefield__lightbox2__gallery_thumb__original',
+      'format' => 'imagefield__lightbox2__thumb__original',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
