@@ -189,5 +189,41 @@ function _scholar_events_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override event promote to front page option
+  $permissions[] = array(
+    'name' => 'override event promote to front page option',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override event published option
+  $permissions[] = array(
+    'name' => 'override event published option',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override event revision option
+  $permissions[] = array(
+    'name' => 'override event revision option',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override event sticky option
+  $permissions[] = array(
+    'name' => 'override event sticky option',
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
+  );
+
   return $permissions;
 }
