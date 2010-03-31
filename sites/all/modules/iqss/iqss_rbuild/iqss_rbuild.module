@@ -21,16 +21,141 @@ function iqss_rbuild_scholar_software_handlers() {
   );
 }
 
+function _iqss_rbuild_add_project_node_form_js(){
+	drupal_add_js(drupal_get_path('module', 'iqss_rbuild') . '/iqss_rbuild.js');
+  drupal_add_js(array("iqss_rbuild" => 
+    array(
+      'repo_url' => variable_get('iqss_rbuild_default_url',""),
+      'title_default' => "Title will be sync'ed with the rbuild package",
+    )
+  ),'setting');
+}
+
 /**
  * Form Alter for the project node
  */
 function iqss_rbuild_form_scholar_software_project_node_form_alter(&$form, &$form_state) {
-  drupal_add_js(drupal_get_path('module', 'iqss_rbuild') . '/iqss_rbuild.js');
-  drupal_add_js(array("iqss_rbuild" => 
-    array(
-      'repo_url' => variable_get('iqss_rbuild_default_url',""),
-      'title_default' => "This will be updated from the rbuild package",
-    )
-  ),'setting');
+  _iqss_rbuild_add_project_node_form_js();
+  
+  if(!is_array($form['#submit'])) $form['#submit'] = array();
+	array_unshift($form['#submit'], 'iqss_rbuild_scholar_software_project_node_submit');
+	array_unshift($form['#validate'], 'iqss_rbuild_scholar_software_project_node_validate');
+}
+
+function iqss_rbuild_scholar_software_project_node_submit($form, &$form_state) {
+	if($form_state['values']['field_scholar_software_method'][0]['value'] == 'rbuild'){
+		$form_state['values']['field_scholar_software_repo'][0]['value'] = variable_get('iqss_rbuild_default_url',"");
+	}
+}
+
+function iqss_rbuild_scholar_software_project_node_validate($form, &$form_state) {
+	_iqss_rbuild_add_project_node_form_js();
 	
+  if($form_state['values']['field_scholar_software_method'][0]['value'] == 'rbuild'){
+    $form_state['values']['field_scholar_software_repo'][0]['value'] = variable_get('iqss_rbuild_default_url',"");
+  }
+  
+  $a_handlers = scholar_software_get_handlers();
+  if($form_state['values']['field_scholar_software_method'][0]['value'] == 'rbuild' && array_key_exists($form_state['values']['field_scholar_software_method'][0]['value'],$a_handlers)){
+    $a_handler_info = $a_handlers[$form_state['values']['field_scholar_software_method'][0]['value']];
+    if($a_handler_info['path']) require_once($a_handler_info['path']);
+    $o_handler = new $a_handler_info['class']($form_state['values']['field_scholar_software_repo'][0]['value'], $form_state['values']['field_scholar_software_name'][0]['value']);
+    $o_handler->validate();
+  }
+}
+
+
+
+/**
+ * Import a release node from rbuild server
+ * @param $project_node
+ * @param $s_version
+ * @param $s_file_name
+ * @param $a_package
+ */
+function iqss_rbuild_add_release_node($project_node, $s_version, $s_file_name, $a_package, $s_url, &$context){
+  
+	//Create Release
+  $release_node = new stdClass();
+  $release_node->type = 'scholar_software_release';
+  $release_node->uid = $project_node->uid;
+  $release_node->pathauto_perform_alias = 1;
+  $release_node->og_groups = $project_node->og_groups;
+  $release_node->spaces_og = $project_node->spaces_og;
+  $release_node->status = 1;
+  $release_node->active = 1;
+  $release_node->field_scholar_software_project[0]['nid'] = $project_node->nid;
+  list($major,$patch,$extra) = _iqss_rbuild_parseVersion($s_version);
+  $release_node->field_versionmajor[0]['value'] = $major;
+  $release_node->field_versionpatch[0]['value'] = $patch;
+  $release_node->field_versionextra[0]['value'] = $extra;
+  $release_node->field_scholar_software_recommend[0]['value'] = ($s_version == $a_package['version'])?1:0;
+  $release_node->field_scholar_software_security[0]['value'] = 0;
+      
+  $file = _iqss_rbuild_importFile($s_url."/".$s_file_name, $s_file_name, $project_node->uid);
+  $release_node->field_scholar_software_file[0] = array(
+    'fid' => $file->fid,
+    'title' => basename($file->filename),
+    'filename' => $file->filename,
+    'filepath' => $file->filepath,
+    'filesize' => $file->filesize,
+    'mimetype' => $file->filemime,
+    'description' => basename($file->filename),
+    'list' => 1,
+  );
+  
+  //Save the new release to db
+  node_save($release_node);
+  
+  $context['results'][] = $release_node->nid .' : '. $release_node->title;
+  $context['message'] = $release_node->title;
+}
+
+function iqss_rbuild_batch_finished($success, $results, $operations){
+	if($success){
+		drupal_set_message(format_plural(count($results), 'One release processed.', '@count releases processed.'));
+	}else{
+		drupal_set_message(t("Unable to import all release information"));
+	}
+}
+
+/**
+ * Parse the version components from a version string
+ * @param $s_version 
+ * @return array
+ */
+function _iqss_rbuild_parseVersion($s_version){
+  $extra = "";
+  list($major,$patch) = explode(".",$s_version,2);
+  
+  if(strstr($patch,"-")) list($patch,$extra) = explode("-",$patch,2); 
+    
+  return array(intval($major),intval($patch),strval($extra));
+}
+
+/**
+ * Import a release file from an external server
+ * @param $s_external_path
+ * @param $uid
+ * @return (object) file
+ */
+function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid){
+  $mime = 'application/octet-stream'; //GZip Files
+
+  $s_contents = file_get_contents($s_external_path);
+  $s_filepath = file_save_data($s_contents,$s_file_name);
+  
+  $file = new stdClass();
+  $file->filename = basename($s_filepath);
+  $file->filepath = $s_filepath;
+  $file->filemime = $mime;
+  $file->filesize = filesize($s_filepath);
+  
+  $file->uid = $uid;
+  $file->status = FILE_STATUS_PERMANENT;
+  $file->timestamp = time();
+  drupal_write_record('files', $file);
+  $file->fid = db_result(db_query("SELECT fid FROM {files} WHERE filepath = '%s'", $file->filepath));
+  
+  return $file;
 }

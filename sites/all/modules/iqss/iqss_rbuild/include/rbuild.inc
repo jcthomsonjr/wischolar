@@ -11,13 +11,13 @@ class rbuild implements scholar_software_handler{
 
   function __construct($s_url, $s_app_key = false){
   	
-  	if(!array_key_exists($this->create_url($s_url),self::$a_cached_packages)){
+  	if($s_url && !array_key_exists($this->create_url($s_url),self::$a_cached_packages)){
   		self::$a_cached_packages[$this->create_url($s_url)] = $this->rbuild_parse( $this->create_url($s_url));
   	}//Cache all projects
   	
   	if(count(self::$a_cached_packages[$this->create_url($s_url)])){
   		$this->a_packages = self::$a_cached_packages[$this->create_url($s_url)];
-  	}else{
+  	}elseif($s_url){
   		$this->a_packages = $this->rbuild_parse( $this->create_url($s_url,$s_app_key));
   	}//Use cached packages or try this project directly
     $this->s_app_key = $s_app_key;
@@ -63,39 +63,29 @@ class rbuild implements scholar_software_handler{
   	$a_releases  = $this->rbuild_get_release_files();
   	$a_package = $this->getPackage();
   	
+  	$a_operations = array();
   	foreach ($a_releases as $s_version => $s_file_name){
   		//Create Release
-  		$release_node = new stdClass();
-  		$release_node->type = 'scholar_software_release';
-  		$release_node->uid = $project_node->uid;
-  		$release_node->pathauto_perform_alias = 1;
-  		$release_node->og_initial_groups = $project_node->og_initial_groups;
-  		$release_node->spaces_og = $project_node->spaces_og;
-  		$release_node->status = 1;
-  		$release_node->active = 1;
-  		$release_node->field_scholar_software_project[0]['nid'] = $project_node->nid;
-  		list($major,$patch,$extra) = $this->parseVersion($s_version);
-  		$release_node->field_versionmajor[0]['value'] = $major;
-  		$release_node->field_versionpatch[0]['value'] = $patch;
-  		$release_node->field_versionextra[0]['value'] = $extra;
-  		$release_node->field_scholar_software_recommend[0]['value'] = ($s_version == $a_package['version'])?1:0;
-  		$release_node->field_scholar_software_security[0]['value'] = 0;
-  		
-  		$file = $this->importFile($this->s_url."/".$s_file_name, $s_file_name, $project_node->uid);
-  		$release_node->field_scholar_software_file[0] = array(
-	      'fid' => $file->fid,
-	      'title' => basename($file->filename),
-	      'filename' => $file->filename,
-	      'filepath' => $file->filepath,
-	      'filesize' => $file->filesize,
-	      'mimetype' => $file->filemime,
-	      'description' => basename($file->filename),
-	      'list' => 1,
-	    );
-  		//Save the new release to db
-	    node_save($release_node);
+  		$a_operations[] = array('iqss_rbuild_add_release_node', array($project_node, $s_version,$s_file_name,$a_package, $this->s_url));
   	}
   	
+  	$a_batch = array(
+			'title' => t('Importing'),
+			'operations' => $a_operations,
+			'finished' => 'iqss_rbuild_batch_finished',
+		);
+		
+  	batch_set($a_batch);
+    //batch_process();
+  }
+  
+  /**
+   * Validate the rbuild submission
+   */
+  public function validate(){
+    if(!($a_package = $this->getPackage())){
+      form_set_error('rbuild identifier',"Invalid Application Shortname [$this->s_app_key] not found at [$this->s_url]");
+    }
   }
   
   /**
@@ -178,45 +168,6 @@ class rbuild implements scholar_software_handler{
 	  return $a_releases;
   }
   
-  /**
-   * Parse the version components from a version string
-   * @param $s_version 
-   * @return array
-   */
-  private function parseVersion($s_version){
-  	$extra = "";
-  	list($major,$patch) = explode(".",$s_version,2);
-  	
-  	if(strstr($patch,"-")) list($patch,$extra) = explode("-",$patch,2); 
-  	
-  	return array(intval($major),intval($patch),strval($extra));
-  }
-  
-  /**
-   * Import a release file from an external server
-   * @param $s_external_path
-   * @param $uid
-   * @return (object) file
-   */
-  private function importFile($s_external_path, $s_file_name, $uid){
-  	$mime = 'application/octet-stream'; //GZip Files
 
-  	$s_contents = file_get_contents($s_external_path);
-	  $s_filepath = file_save_data($s_contents,$s_file_name);
-	
-	  $file = new stdClass();
-	  $file->filename = basename($s_filepath);
-	  $file->filepath = $s_filepath;
-	  $file->filemime = $mime;
-	  $file->filesize = filesize($s_filepath);
-	
-	  $file->uid = $uid;
-	  $file->status = FILE_STATUS_PERMANENT;
-	  $file->timestamp = time();
-	  drupal_write_record('files', $file);
-	  $file->fid = db_result(db_query("SELECT fid FROM {files} WHERE filepath = '%s'", $file->filepath));
-	  
-	  return $file;
-  }
   
 }
