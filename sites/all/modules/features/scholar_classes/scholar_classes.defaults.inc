@@ -6,12 +6,85 @@
 function _scholar_classes_content_default_fields() {
   $fields = array();
 
+  // Exported field: field_class_link
+  $fields[] = array(
+    'field_name' => 'field_class_link',
+    'type_name' => 'class',
+    'display_settings' => array(
+      'weight' => '-2',
+      'parent' => '',
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'link',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'link',
+    'active' => '1',
+    'attributes' => array(
+      'target' => 'default',
+      'rel' => '',
+      'class' => '',
+    ),
+    'display' => array(
+      'url_cutoff' => '80',
+    ),
+    'url' => 0,
+    'title' => 'optional',
+    'title_value' => '',
+    'enable_tokens' => 0,
+    'widget' => array(
+      'default_value' => array(
+        '0' => array(
+          'title' => '',
+          'url' => '',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Link',
+      'weight' => '-2',
+      'description' => 'External link for this class',
+      'type' => 'link',
+      'module' => 'link',
+    ),
+  );
+
   // Exported field: field_class_semester
   $fields[] = array(
     'field_name' => 'field_class_semester',
     'type_name' => 'class',
     'display_settings' => array(
-      'weight' => '4',
+      'weight' => '-4',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -61,7 +134,7 @@ Summer',
       ),
       'default_value_php' => NULL,
       'label' => 'Semester',
-      'weight' => '4',
+      'weight' => '-4',
       'description' => '',
       'type' => 'optionwidgets_buttons',
       'module' => 'optionwidgets',
@@ -73,7 +146,7 @@ Summer',
     'field_name' => 'field_class_year',
     'type_name' => 'class',
     'display_settings' => array(
-      'weight' => '5',
+      'weight' => '-3',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -130,7 +203,7 @@ Summer',
       'year_range' => '-3:+3',
       'label_position' => 'above',
       'label' => 'Offered',
-      'weight' => '5',
+      'weight' => '-3',
       'description' => '',
       'type' => 'date_text',
       'module' => 'date',
@@ -222,6 +295,7 @@ Summer',
   // Translatables
   array(
     t('Class'),
+    t('Link'),
     t('Offered'),
     t('Semester'),
   );
