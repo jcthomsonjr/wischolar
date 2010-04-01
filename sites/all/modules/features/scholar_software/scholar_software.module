@@ -1,5 +1,4 @@
 <?php
-
 include_once('scholar_software.features.inc');
 
 
@@ -218,4 +217,46 @@ function scholar_software_scholar_software_handlers() {
   return array(
     //Add default handlers here if any in the future
   );
+}
+
+/**
+ * Implementation of hook_cron().
+ */
+function scholar_software_cron() {
+  $n_interval = variable_get('scholar_software_cron_update_interval',90000); //Default: Every 25 hours
+  $n_time = time();
+	$result = db_query(
+      "SELECT nid
+       FROM {content_type_scholar_software_project} content_type_scholar_software_project ");
+    
+  while ($a_result = db_fetch_array($result)) {
+    $o_project = node_load($a_result['nid']);
+    
+    if($o_project->changed + $n_interval < $n_time){
+    	scholar_software_proccess_cron($o_project);
+    }//Time to check for update?
+  }
+	
+  
+      
+}
+
+
+/**
+ * Perform any cron actions that should take place on all software packages
+ */
+function scholar_software_proccess_cron($node) {
+  //Global actions here
+  
+	//Method Actions here
+  $a_handlers = scholar_software_get_handlers();
+  if(array_key_exists($node->field_scholar_software_method[0]['value'],$a_handlers)){
+    $a_handler_info = $a_handlers[$node->field_scholar_software_method[0]['value']];
+    if($a_handler_info['path']) require_once($a_handler_info['path']);
+    $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
+    if(method_exists($o_handler,'proccessCron')) $o_handler->proccessCron($node);
+  }
+  
+  //Save node
+  node_save($node);
 }

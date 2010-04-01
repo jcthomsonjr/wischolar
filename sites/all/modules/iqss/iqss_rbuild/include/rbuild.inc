@@ -89,6 +89,28 @@ class rbuild implements scholar_software_handler{
   }
   
   /**
+   * Proccess Cron Update
+   */
+  public function proccessCron(&$node){
+    if(!($a_package = $this->getPackage())) return;
+    
+    //Refresh Title and Description
+    $this->alterProject($node);
+    
+    //Add any new releases
+    list($major,$patch,$extra) = _iqss_rbuild_parseVersion($a_package['version']);
+    $result = db_result(db_query("SELECT nid FROM {content_type_scholar_software_release} 
+                                  WHERE field_scholar_software_project_nid = %d AND field_versionmajor_value = %d AND field_versionpatch_value = %d AND field_versionextra_value = '%s' ",
+                                  array($node->nid,$major,$patch,$extra)));
+                                  
+    if(!$result){
+    	//Add new Release
+    	$a_results = array();
+    	iqss_rbuild_add_release_node($node, $a_package['version'], $this->s_app_key."_".$a_package['version'].".tar.gz", $a_package, $this->s_url, &$a_results);
+    }
+  }
+  
+  /**
    * Simple util function to create the url path
    * 
    * @param string $s_url
