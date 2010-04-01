@@ -320,6 +320,7 @@ function _scholar_software_views_default_views() {
         'alt' => '',
         'prefix' => '',
         'suffix' => '',
+        'target' => '',
         'help' => '',
         'trim' => 0,
         'max_length' => '',
@@ -328,7 +329,10 @@ function _scholar_software_views_default_views() {
         'strip_tags' => 0,
         'html' => 0,
       ),
-      'text' => 'Release notes',
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'text' => 'Release info',
       'exclude' => 0,
       'id' => 'view_node',
       'table' => 'node',
@@ -475,7 +479,7 @@ function _scholar_software_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('items_per_page', 25);
+  $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('style_options', array(
