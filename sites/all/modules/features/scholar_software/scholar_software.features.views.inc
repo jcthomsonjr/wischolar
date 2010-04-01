@@ -565,7 +565,7 @@ function _scholar_software_views_default_views() {
       'reduce_duplicates' => 0,
     ),
   ));
-  $handler->override_option('title', 'Releases');
+  $handler->override_option('title', 'Recommended Release');
   $handler->override_option('items_per_page', 0);
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', '');
