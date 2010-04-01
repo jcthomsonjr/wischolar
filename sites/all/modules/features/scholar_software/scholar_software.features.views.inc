@@ -110,6 +110,20 @@ function _scholar_software_views_default_views() {
       'field' => 'type',
       'relationship' => 'none',
     ),
+    'current' => array(
+      'operator' => 'all',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -126,6 +140,13 @@ function _scholar_software_views_default_views() {
     'grouping' => '',
     'columns' => '2',
     'alignment' => 'vertical',
+  ));
+  $handler->override_option('row_plugin', 'node');
+  $handler->override_option('row_options', array(
+    'relationship' => 'none',
+    'build_mode' => 'teaser',
+    'links' => 1,
+    'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('path', 'scholar_software');
@@ -431,6 +452,20 @@ function _scholar_software_views_default_views() {
       'id' => 'type',
       'table' => 'node',
       'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'current' => array(
+      'operator' => 'all',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
       'relationship' => 'none',
     ),
   ));

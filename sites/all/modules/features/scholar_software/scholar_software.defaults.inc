@@ -1,50 +1,6 @@
 <?php
 
 /**
- * Helper to implementation of hook_context_default_contexts().
- */
-function _scholar_software_context_default_contexts() {
-  $items = array();
-
-  $items[] = array(
-    'namespace' => 'scholar',
-    'attribute' => 'feature',
-    'value' => 'software',
-    'description' => '',
-    'node' => array(
-      '0' => 'scholar_software_project',
-    ),
-    'views' => array(
-      '0' => 'scholar_software_projects',
-      '1' => 'scholar_software_releases',
-      '2' => 'scholar_software_updates',
-    ),
-    'menu' => 'software',
-    'block' => array(
-      'vsite_taxonomy_0' => array(
-        'module' => 'vsite_taxonomy',
-        'delta' => '0',
-        'weight' => -20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Scholar site categories',
-        'type' => 'context_ui',
-      ),
-      'vsite_widgets_4' => array(
-        'module' => 'vsite_widgets',
-        'delta' => '2',
-        'weight' => 50,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'AddThis button',
-        'type' => 'context_ui',
-      ),
-    ),
-  );
-  return $items;
-}
-
-/**
  * Helper to implementation of hook_content_default_fields().
  */
 function _scholar_software_content_default_fields() {
@@ -149,7 +105,7 @@ function _scholar_software_content_default_fields() {
     ),
   );
 
-  // Exported field: field_scholar_software_repositor
+  // Exported field: field_scholar_software_repo
   $fields[] = array(
     'field_name' => 'field_scholar_software_repo',
     'type_name' => 'scholar_software_project',
@@ -475,9 +431,10 @@ function _scholar_software_content_default_fields() {
     'multiple' => '0',
     'module' => 'number',
     'active' => '1',
+    'prefix' => '',
+    'suffix' => '',
     'min' => '0',
     'max' => '50',
-    'max_length' => '',
     'allowed_values' => '',
     'allowed_values_php' => 'return scholar_software_cck_options(\'major\');',
     'widget' => array(
@@ -523,10 +480,11 @@ function _scholar_software_content_default_fields() {
     'required' => '1',
     'multiple' => '0',
     'module' => 'number',
-	  'active' => '1',
+    'active' => '1',
+    'prefix' => '',
+    'suffix' => '',
     'min' => '0',
     'max' => '50',
-    'max_length' => '',
     'allowed_values' => '',
     'allowed_values_php' => 'return scholar_software_cck_options(\'patch\');',
     'widget' => array(
@@ -546,7 +504,6 @@ function _scholar_software_content_default_fields() {
 
   // Translatables
   array(
-    t('Core compatibility'),
     t('Extra version'),
     t('Machine name'),
     t('Major version'),
@@ -557,10 +514,53 @@ function _scholar_software_content_default_fields() {
     t('Recommended'),
     t('Repository URL'),
     t('Security release'),
-    t('Type'),
   );
 
   return $fields;
+}
+
+/**
+ * Helper to implementation of hook_context_default_contexts().
+ */
+function _scholar_software_context_default_contexts() {
+  $items = array();
+
+  $items[] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'software',
+    'description' => '',
+    'node' => array(
+      '0' => 'scholar_software_project',
+    ),
+    'views' => array(
+      '0' => 'scholar_software_projects',
+      '1' => 'scholar_software_releases',
+      '2' => 'scholar_software_updates',
+    ),
+    'menu' => 'software',
+    'block' => array(
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      ),
+      'vsite_widgets_4' => array(
+        'module' => 'vsite_widgets',
+        'delta' => '2',
+        'weight' => 50,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'AddThis button',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
 }
 
 /**
