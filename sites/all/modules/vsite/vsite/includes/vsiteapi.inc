@@ -37,8 +37,13 @@ function vsite_content_types($privacy = array(2), $vsite = NULL){
 }
 
 
-function vsite_create_links($addition = ''){
-  $types = vsite_content_types(array(2, 1));
+function vsite_create_links($privacy = NULL){
+  if (!$privacy){
+    $types = vsite_content_types(array(2, 1));
+  }
+  else {
+    $types = vsite_content_types(array($privacy));
+  }
   drupal_alter('vsite_content_types', $types);
   foreach ( $types as $type => $name ) {
   	$type_url_str = str_replace('_', '-', $type);
