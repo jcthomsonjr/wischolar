@@ -27,6 +27,13 @@ class FeedsDataProcessor extends FeedsProcessor {
         $data['timestamp'] = FEEDS_REQUEST_TIME;
         $data = $this->map($item, $data);
 
+        //If this feed_item is expired then do not save it, 
+        //since it will just be deleted next time the expire runs
+        $n_expire = $this->expiryTime();
+        if ($n_expire != FEEDS_EXPIRE_NEVER &&
+            $data['timestamp'] != FEEDS_REQUEST_TIME &&
+            $data['timestamp'] < (FEEDS_REQUEST_TIME - $n_expire)) continue;
+        
         // Save data.
         if ($id) {
           $data['id'] = $id;
