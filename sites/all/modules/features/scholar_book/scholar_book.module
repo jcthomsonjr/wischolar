@@ -1,13 +1,60 @@
 <?php
 
-define("SCHOLAR_BOOK_MAXLEN", 50);   // how lond are the node title in toc
+/**
+ * scholar_book.module
+ * @todo fix toc location settings (need fix in the vsite_layout to allow 
+ * developers to alter the context)
+ */
 
-
+define("SCHOLAR_BOOK_MAXLEN", 50);   // how long are the node title in toc
 
 include_once('scholar_book.features.inc');
 
+/**
+ * implementation of hook_init()
+ */
 function scholar_book_init(){
   drupal_add_css(drupal_get_path('module', 'scholar_book') .'/scholar-book.css');
+}
+
+/**
+ * hook link_alter (admin at the end of links)
+ */
+//
+//function scholar_book_link_alter(&$links, $node){
+//  if (empty($links['book_add_child'])) {
+//    return;
+//  }
+//
+//  /**
+//   * if book feature is private/public, you can add only content 
+//   * types that belong to private/public features
+//   */
+//  vsite_include('vsiteapi');
+//  $vsite = vsite_get_vsite();
+//  $privacy = $vsite -> features['scholar_book'];
+//  
+//  $items = vsite_create_links($privacy);
+//
+//  // preserve the "parent" querystring
+//  $query = $links['book_add_child']['query'];
+//  foreach ( $items as &$item ) {
+//    $item['query'] = $query;
+//  }
+//  $result = theme('ctools_dropdown', t('Add child ...'), $items, FALSE, 'context-links') . $result;
+//  
+//  $links['book_add_child'] = array(
+//    'title' => $result, 
+//    'html' => TRUE 
+//  );
+//}
+
+function scholar_book_link_alter(&$links, $node){
+  if (empty($links['book_add_child'])) {
+    return;
+  }
+  
+  $links['book_add_child']['attributes']['class'] = 'context-button';
 }
 
 
@@ -16,8 +63,14 @@ function scholar_book_init(){
  */
 function scholar_book_strongarm() {
   // only book pages can be used in books
-  $conf['book_allowed_types'] = array('book');
 
+  /*
+  $book_types = $types = og_get_types('group_post');
+  $conf['book_allowed_types'] = array_keys($book_types);
+  */
+
+  $conf['book_allowed_types'] = array('book');
+  
   $conf['node_options_book'] = array('status', 'revision');
 
   $conf['upload_book'] = TRUE;
@@ -33,16 +86,21 @@ function scholar_book_strongarm() {
   $conf["pathauto_node_book_pattern"] = "[space-og-path]/book/[title-raw]";
 
   // vertical tabs
-  $conf['vertical_tabs_fieldsets_book'] =
-  array (
-    0 => 'menu',
-    2 => 'author',
-    3 => 'options',
-    5 => 'path',
-    6 => 'attachments',
-  );
+  $conf['vertical_tabs_forms']['book_node_form'] = array('book' => FALSE);
 
   return $conf;
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_book_spaces_settings() {
+  return array(
+    'scholar_book' => array(
+      'class' => 'scholar_book_settings_feature',
+      'file' => drupal_get_path('module', 'scholar_book') .'/scholar_book.settings.feature.inc',
+    ),
+  );
 }
 
 
@@ -139,21 +197,26 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
   switch ($op) {
     case 'view' :
       if (book_type_is_allowed($node->type)) {
-        $block_toc = module_invoke('scholar_book', 'block', 'view', 'booktoc');
-        //$output = theme_box($block_toc['subject'], $block_toc['content'], $region = 'main');
-        $output = '<div class="book-menu"><h3 class="title">' . $block_toc['subject'] . '</h3>' . $block_toc['content'] . '</div>';
-        $weight = content_extra_field_weight($node->type, 'booktoc');
-        $node->content['booktoc'] = array(
-          '#weight' => ! empty($weight) ? $weight : - 10,
-          '#value' => $output
-        );
+        vsite_include('vsiteapi');
+        $vsite = vsite_get_vsite();
+        if (isset($vsite->settings['scholar_book']['scholar_book_toc_location']) && $vsite->settings['scholar_book']['scholar_book_toc_location']) {
+          
+          $block_toc = module_invoke('scholar_book', 'block', 'view', 'booktoc');
+          //$output = theme_box($block_toc['subject'], $block_toc['content'], $region = 'main');
+          $output = '<div class="book-menu"><h3 class="title">' . $block_toc['subject'] . '</h3>' . $block_toc['content'] . '</div>';
+          $weight = content_extra_field_weight($node->type, 'booktoc');
+          $node->content['booktoc'] = array(
+            '#weight' => ! empty($weight) ? $weight : - 10, 
+            '#value' => $output 
+          );
+        }
       }
-
+      
       // unset the book navigation links
       if (module_exists('book') && book_type_is_allowed($node->type)) {
         unset($node->content['book_navigation']);
       }
-
+      
       if (menu_get_object() === $node) {
         // set the context to the roob book node
         if (! empty($node->book['bid'])) {
@@ -173,7 +236,6 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
   // alter book forms  - new booklet
   if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type) ){
     $node = $form['#node'];
-
     //adding new booklet
     if ((!isset($_GET['parent'] ) ||  empty($_GET['parent'] ))  && ! empty($form['book']) && !$form['nid']['#value']) {
       // Fieldset mods
@@ -286,4 +348,17 @@ function scholar_book_context_links_alter(&$links) {
     }
   }
 }
+
+/**
+ * implementation of hook_context_active_contexts_alter
+ */
+//function scholar_book_context_active_contexts_alter(&$contexts){
+//  if (count($contexts) && isset($contexts['scholar-feature-book'])) {
+//    vsite_include('vsiteapi');
+//    $vsite = vsite_get_vsite();
+//    if (isset($vsite->settings['scholar_book']['scholar_book_toc_location']) && $vsite->settings['scholar_book']['scholar_book_toc_location']) {
+//      unset($contexts['scholar-feature-book']->block['scholar_book_booktoc']);
+//    }
+//  }
+//}
 
