@@ -95,11 +95,12 @@ function scholar_front_vsite_admin_link($type, $object){
 function scholar_front_nodeapi(&$node, $op, $a3, $a4){
   switch($op){
     case 'presave':
-      $uri = request_uri();
-      $pattern = '/(node\/add\/)(.+?)(\/front)/';
-      preg_match($pattern, $uri, $matches);
       // set new property in node object indicating to set as front page
-      if ($matches) $node -> front  = 1;
+      if (isset($_GET['action'])){
+        if ($_GET['action'] === 'setfront'){
+          $node -> front  = 1;
+        }
+      }
       break;
 
     case 'insert':
@@ -115,7 +116,7 @@ function scholar_front_nodeapi(&$node, $op, $a3, $a4){
         //save the changes
         spaces_save($vsite);
 
-        $link =  l('Control Panel Settings.', $vsite -> purl. '/cp/settings/front' );
+        $link =  l('Control Panel Settings.', $vsite -> purl. '/cp/features' );
         $msg_variables = array (
         '@type' => node_get_types('name', $node),
         '%title' => $node -> title,

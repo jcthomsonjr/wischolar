@@ -23,7 +23,10 @@ class scholar_front_settings_front implements space_setting {
     ctools_include('form');
 
     // the "add new *" links
-    $items = vsite_create_links('/front');
+    $items = vsite_create_links();
+    foreach($items as &$item){
+      $item['query'] = 'action=setfront';
+    }
     $links = theme('ctools_dropdown', t('add new'), $items, FALSE, 'context-links');
 
     $form = array(
