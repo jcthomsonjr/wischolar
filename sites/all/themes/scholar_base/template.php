@@ -21,6 +21,13 @@ function scholar_base_preprocess_page($vars){
 
 }
 
+/**
+  * Removes 'inline' class from links in nodes
+  */
+function scholar_base_preprocess_node(&$vars, $hook) {
+  $vars['links'] = theme('links', $vars['node']->links, array('class' => 'links'));
+  }
+
 function __scholar_base_is_empty($s){
   return $s ? TRUE : FALSE;
 }
@@ -32,6 +39,7 @@ function phptemplate_node_submitted($node){
      '@datetime' => format_date($node->created),
   ));
 }
+
 
 /**
  * Generates a themed set of links for node types associated with
