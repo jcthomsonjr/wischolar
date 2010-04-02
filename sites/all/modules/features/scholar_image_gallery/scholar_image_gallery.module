@@ -111,7 +111,7 @@ function scholar_image_gallery_views_pre_render(&$view){
       
       // ask nodreference_url module for the correct link
       $link = nodereference_url_build_all_links($view->current_node, FALSE);
-      $link = theme('links', $link);
+      $link = theme('links', $link, $attributes = array('class' => 'image-upload'));
       
       // display a series of links depending on the number of images in the gallery
       $links = array();
