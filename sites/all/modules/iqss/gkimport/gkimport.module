@@ -2,6 +2,8 @@
 
 include_once('gkimport.drush.inc');
 
+define(FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev3'); //base file system path to drupal root
+
 /**
  * Begins import process
   */
@@ -11,96 +13,13 @@ function gkimport_import($drush_run = 0){
   gkimport_create_site();
   gkimport_parse_files();
   gkimport_parse_abstracts();
+  gkimport_upload_pdfs();
+  gkimport_update_aliases(); 
 
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
 
-/**
- * Imports abstract text into publication nodes
- */
- function gkimport_parse_abstracts(){
-   $drush_run = variable_get('gkimport_drush_run', 0);
-    $error_nodes = array();
-   $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
-   //check to see that variable contains data
-   if (empty($nids)) {
-     $message =  'An error has occurred: gkimport_publications variable is an empty array';
-     return  ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
-   }
-
-   $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
-   $path = drupal_get_path('module', 'gkimport');
-   $fullpath_tmp =  '/nfs/www/edu-harvard-iq-scholar-dev3' . '/' . $path . '/tmp';  $line = (__LINE__); //mark this line for error reporting
-   
-   //make sure path exists before proceeding
-   if (!is_dir($fullpath_tmp)){
-     $message =  'An error has occurred: full path specified (!directory) is not a directory on line !line';
-     return  ($drush_run  === 1) ?  drush_print(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line))) : 
-     drupal_set_message(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line)));
-   }
-      
-   foreach($nids as $nid){
-     $node = node_load(array('nid' => $nid));
-
-     //make curly brackets uniform around urls
-     $notes = substr($node -> biblio_notes,  0, 1) !== '{' ? '{' . $node -> biblio_notes : $node -> biblio_notes;
-     $notes = substr($notes, -1,1 ) !== '}' ? $notes . '}' : $notes;
-      
-     //check to see if http url exists in biblio notes field
-     preg_match('/({)(http:\/\/.*?)(})/', $notes, $matches);
-     if (count($matches) && strlen($matches[2])){
-       $url = trim($matches[2]);
-       $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
-       $file = $fullpath_tmp . '/' . $filename;
-        
-       // download the file
-       $cmd =  "cd $fullpath_tmp && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
-       shell_exec($cmd);
-
-       if (is_file($file)){         
-         // clean up the text
-         $text = gkimport_clean_abstract_contents(file_get_contents($file));
-         // remove the file
-         $delete =  unlink($file); 
-   
-         //update the biblio table. TODO: node_save() may be too expensive here???
-         $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
-       }
-     }
-     //list nodes without http accessable abstract files (field could be NULL or contain hdl:// referencing)
-     else{
-     $_SESSION['gkimport_na_pub_nodes'][] = $nid; //this is an array which captures all of the publication node id's without abstracts
-       if ( $drush_run  === 1)  {
-         //drush_print(t("Error parsing node {$node -> nid} abstract url."));
-       }else{
-         dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
-       }
-     }
-   }
-   //cleanup any remaining files
-   $cmd =  "rm $fullpath_tmp" . '/*';
-   shell_exec($cmd);
-   variable_set('gkimport_na_pub_nodes', $_SESSION['gkimport_na_pub_nodes']);
-    if ( $drush_run  === 1) {
-      drush_print(t("!num publications have been imported without abstract text.", array('!num' => count($_SESSION['gkimport_na_pub_nodes']))));
-      drush_print(t("The node ID's for these publications have been saved in system variable: gkimport_na_pub_nodes"));
-    }
- }
-
- /**
- * Remove uneeded html tags and javascript
- * from abstract text(s)
- */
-function  gkimport_clean_abstract_contents($contents){
-  $remove_js = array('displayBodyClasses()', 'displayHeader()', 'displayFooter()');  
-  $text = strip_tags($contents);  
-  foreach($remove_js as $js){
-    $text = str_ireplace($js, '', $text);    
-  }
-   return  trim($text);
- }
- 
 /**
  * Function to create gking user account and web site
  * @return 
@@ -167,6 +86,103 @@ function gkimport_parse_files(){
 }
 
 /**
+ * Imports abstract text into publication nodes
+ */
+ function gkimport_parse_abstracts(){
+   $drush_run = variable_get('gkimport_drush_run', 0);
+    $error_nodes = array();
+   $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
+   //check to see that variable contains data
+   if (empty($nids)) {
+     $message =  'An error has occurred: gkimport_publications variable is an empty array';
+     return  ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
+   }
+
+   $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
+   $path = drupal_get_path('module', 'gkimport');
+   $fullpath_tmp =  FS_PATH . '/' . $path . '/tmp';  $line = (__LINE__); //mark this line for error reporting
+   
+   //make sure path exists before proceeding
+   if (!is_dir($fullpath_tmp)){
+     $message =  'An error has occurred: full path specified (!directory) is not a directory on line !line';
+     return  ($drush_run  === 1) ?  drush_print(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line))) : 
+     drupal_set_message(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line)));
+   }
+      
+   foreach($nids as $nid){
+     $node = node_load(array('nid' => $nid));
+
+  $matches = gkimport_parse_abstract_url($node);
+     
+     if (count($matches) && strlen($matches[2])){
+       $url = trim($matches[2]);
+       $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
+       $file = $fullpath_tmp . '/' . $filename;
+        
+       // download the file
+       $cmd =  "cd $fullpath_tmp && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
+       shell_exec($cmd);
+
+       if (is_file($file)){         
+         // clean up the text
+         $text = gkimport_clean_abstract_contents(file_get_contents($file));
+         // remove the file
+         $delete =  unlink($file); 
+   
+         //update the biblio table. TODO: node_save() may be too expensive here???
+         $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
+       }
+     }
+     //list nodes without http accessable abstract files (field could be NULL or contain hdl:// referencing)
+     else{
+     $_SESSION['gkimport_na_pub_nodes'][] = $nid; //this is an array which captures all of the publication node id's without abstracts
+       if ( $drush_run  === 1)  {
+         //drush_print(t("Error parsing node {$node -> nid} abstract url."));
+       }else{
+         dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
+       }
+     }
+   }
+   //cleanup any remaining files
+   $cmd =  "rm $fullpath_tmp" . '/*';
+   shell_exec($cmd);
+   variable_set('gkimport_na_pub_nodes', $_SESSION['gkimport_na_pub_nodes']);
+    if ( $drush_run  === 1) {
+      drush_print(t("!num publications have been imported without abstract text.", array('!num' => count($_SESSION['gkimport_na_pub_nodes']))));
+      drush_print(t("The node ID's for these publications have been saved in system variable: gkimport_na_pub_nodes"));
+    }
+ }
+
+/**
+ * Parse abstract URL
+ * 
+ * @return 
+ *  an array per the regex matches
+ */
+function gkimport_parse_abstract_url($node){
+  //make curly brackets uniform around urls
+     $notes = substr($node -> biblio_notes,  0, 1) !== '{' ? '{' . $node -> biblio_notes : $node -> biblio_notes;
+     $notes = substr($notes, -1,1 ) !== '}' ? $notes . '}' : $notes;
+      
+     //check to see if http url exists in biblio notes field
+     preg_match('/({)(http:\/\/.*?)(})/', $notes, $matches);
+     return $matches;
+ }
+
+ /**
+ * Remove uneeded html tags and javascript
+ * from abstract text(s)
+ */
+function  gkimport_clean_abstract_contents($contents){
+  $remove_js = array('displayBodyClasses()', 'displayHeader()', 'displayFooter()');  
+  $text = strip_tags($contents);  
+  foreach($remove_js as $js){
+    $text = str_ireplace($js, '', $text);    
+  }
+   return  trim($text);
+ }
+
+/**
  * Import taxonomy terms and save csv information to a system variable
  */
 function gkimport_pubs_taxonomy($filepath){
@@ -215,6 +231,9 @@ function gkimport_pubs_taxonomy($filepath){
     $terms = array_unique($all_terms);
     //set title to term mapping data in system variable to be used later
     variable_set('gkimport_taxonomy_data', $term_match_data);
+     
+    //save all publicaiton data from the csv to a system variable to be used later
+    variable_set('gkimport_all_pub_data', $all_data);
 
  //add all terms to vocab - TODO not sure if we need to pre-create all terms before nodes created ???
  foreach($terms as $term){
@@ -293,6 +312,82 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
   }
 }
 
+
+function gkimport_upload_pdfs(){
+  $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
+  //check to see that variable contains data
+  if (!empty($nids)) {
+    foreach ($nids as $nid){
+      $node = node_load($nid);
+      foreach(variable_get('gkimport_all_pub_data', array()) as $data ){
+        if (trim($node -> title) == trim($data[3])){ //$data[3] is the node title
+          $file = gkimport_get_pdf($node, $data[2]); //$data[2] is url to pdf
+          continue;
+        }
+      }
+    }
+  }
+}
+
+function gkimport_get_pdf($node, $url){
+  $path = drupal_get_path('module', 'gkimport');
+  $fullpath_tmp =  FS_PATH . '/' . $path . '/tmp';
+  $files_dir = FS_PATH . '/' . variable_get('file_directory_path', '') . '/gking/files';
+  $source = $files_dir  . '/' . basename($url);
+
+  // download the file
+  $cmd =  "cd  $files_dir && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
+  shell_exec($cmd);
+
+  if (is_file($source)){
+    $file = new stdClass();
+    $file -> uid = $node -> uid;
+    $file -> nid = $node -> nid;
+    $file -> vid = $node -> vid;
+    $file -> description = basename($source);
+    $file ->list = 1;
+    $file -> weight = 0;
+    $file -> filename = basename($source);
+    $file -> filepath = variable_get('file_directory_path', '') . '/gking/files/' . basename($source);
+    $file -> filemime = file_get_mimetype($source);
+    $file -> filesize = filesize($source);
+    $file -> status =1;
+    $file -> timestamp = filemtime($source);
+
+    //write data to files table
+    drupal_write_record('files', $file);
+    $fid = db_last_insert_id('files', 'fid');
+    //write data to upload table
+    drupal_write_record('upload', $file);
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/$fid", 'gking/files/' . basename($source));
+
+    //return file object
+    return $file;
+  }
+}
+
+function gkimport_update_aliases(){
+  $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
+  //check to see that variable contains data
+  if (!empty($nids)) {
+    foreach ($nids as $nid){
+      $node = node_load($nid);
+      $matches = gkimport_parse_abstract_url($node);      
+      //save custom path
+      if (count($matches) && strlen($matches[2])){
+        $path = strstr($matches[2], 'files');        
+        if (strlen($path)){
+          $src = db_result(db_query("SELECT src FROM {url_alias} WHERE src = '%s'", "node/{$node -> nid}"));
+          $sql = ($src) ? db_query("UPDATE {url_alias} SET dst = '%s' WHERE src = '%s'", $path, $src) :
+          db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", $path);
+          
+          drush_print("Added path: $path for node {$node -> nid}");          
+        }
+      }
+    }
+  }
+}
+
 /**
  * Implementation of hook_nodeapi()
  */
@@ -303,25 +398,34 @@ function gkimport_nodeapi(&$node, $op){
   switch ($op) {
     case 'presave':
       //add the taxonomy term to the node
-        if (!vsite_get_vsite()){ 
-         // install_include(array('taxonomy'));          
-         // $site_vid = install_taxonomy_get_vid($name . '_vocabulary'); 
-         // $node -> taxonomy['tags'][  $site_vid ] = '';
-          $vid = variable_get('gkimport_vocab_id', '');
-          $term = trim(gkimport_match_terms($node -> title));
-          if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here  
-        }
-      break;      
-    case 'insert':
-      if (!vsite_get_vsite()){      
-      $spaces = vsite_get_vsite_by_owner($account -> uid); 
-      if (count($spaces) == 1){
-        //added publication to the og
-        $ins = db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);      
-        if  (variable_get('gkimport_drush_run', 0) === 1)  drush_print(t("Created publication: !title", array('!title'=> $node->title)));      
+      if (!vsite_get_vsite()){
+        // install_include(array('taxonomy'));
+        // $site_vid = install_taxonomy_get_vid($name . '_vocabulary');
+        // $node -> taxonomy['tags'][  $site_vid ] = '';
+        $vid = variable_get('gkimport_vocab_id', '');
+        $term = trim(gkimport_match_terms($node -> title));
+        if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here
       }
-      else{
-        return dpm("Error occured: users has more than 1 web site"); // this is very unlikely
+      break;
+    case 'insert':
+      if (!vsite_get_vsite()){
+        $spaces = vsite_get_vsite_by_owner($account -> uid);
+        if (count($spaces) == 1){
+          //added publication to the og
+          $ins = db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);
+          if  (variable_get('gkimport_drush_run', 0) === 1)  drush_print(t("Imported publication: !title", array('!title'=> $node->title)));
+
+          //save custom path
+          $matches = gkimport_parse_abstract_url($node);
+          if (count($matches) && strlen($matches[2])){
+            //$node -> path = strstr($matches[2], 'files');
+            $src = db_result(db_query("SELECT src FROM {url_alias} WHERE src = '%s'", "node/{$node -> nid}"));
+            $sql = ($src) ? db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", strstr($matches[2], 'files'))
+            : db_query("UPDATE {url_alias} SET dst = '%s' WHERE src = '%s'", strstr($matches[2], 'files'), $src);
+          }
+        }
+        else{
+          return dpm("Error occured: users has more than 1 web site"); // this is very unlikely
         }
       }
       break;
@@ -331,7 +435,6 @@ function gkimport_nodeapi(&$node, $op){
 /**
  * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
  */
-
 /*
 function gkimport_clean(){
   gkimport_cleanup();
@@ -342,8 +445,8 @@ function gkimport_cleanup(){
   $account = user_load(array('name' => 'gking'));
   
   db_query("DELETE from {users} WHERE name = '%s'", 'gking');
-  db_query("DELETE from {node} WHERE nid > %d AND uid = %d", 0 , (int)$account -> uid);
-  db_query("DELETE from {node_revisions} WHERE nid > %d AND uid = %d", 0 , (int)$account -> uid);
+  db_query("DELETE from {node} WHERE uid = %d", (int)$account -> uid);
+  db_query("DELETE from {node_revisions} WHERE uid = %d", (int)$account -> uid);
   db_query("DELETE from {url_alias} WHERE dst LIKE '%%%s%%'", 'gking');
   
   gkimport_cleanup_tax();
@@ -353,11 +456,11 @@ function gkimport_cleanup(){
 }
 
 function gkimport_cleanup_tax(){
-  db_query("DELETE from {term_data} WHERE tid > %d", 22);
-  db_query("DELETE from {term_hierarchy} WHERE tid > %d", 22);
-  db_query("DELETE from {vocabulary_node_types} WHERE vid > %d", 8);
-  db_query("DELETE from {vocabulary} WHERE vid > %d", 7);
-  db_query("DELETE from {og_vocab} WHERE vid > %d", 6);
+  db_query("DELETE from {term_data} WHERE tid > %d", 0);
+  db_query("DELETE from {term_hierarchy} WHERE tid > %d", 0);
+  db_query("DELETE from {vocabulary_node_types} WHERE vid > %d", 0);
+  db_query("DELETE from {vocabulary} WHERE vid > %d", 0);
+  db_query("DELETE from {og_vocab} WHERE vid > %d", 0);
   db_query("TRUNCATE TABLE {term_node}");
 }
 
@@ -366,5 +469,10 @@ function gkimport_clean_og(){
    db_query("TRUNCATE TABLE {og_uid}");
    db_query("TRUNCATE TABLE {og_vocab}");
    db_query("TRUNCATE TABLE {og_ancestry}");
+   db_query("TRUNCATE TABLE {og_ancestry}");
+   db_query("TRUNCATE TABLE {url_alias}");
+   db_query("TRUNCATE TABLE {files}");
    db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');	
+   
+   file_save_upload();
 }*/
