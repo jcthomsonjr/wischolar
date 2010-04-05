@@ -26,7 +26,6 @@ function scholar_book_init(){
   drupal_add_css(drupal_get_path('module', 'scholar_book') .'/scholar-book.css');
 }
 
-
 /**
  * implementation of hook_link_alter
  */
@@ -83,8 +82,6 @@ function scholar_book_spaces_settings() {
     ),
   );
 }
-
-
 
 
 /**
@@ -289,11 +286,23 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
     $form['book']['weight']['#value'] = 1;
 
     // Filter book options by current space
+    _scholar_book_options_filter($form);
+
+  }
+}
+
+/**
+ * Function to filter the book options when add/edit a node 
+ * i.e. show only books which belong to the current space
+ * @see scholar_book_form_alter()
+ */
+function _scholar_book_options_filter(&$form){
+    
     if ($view = views_get_view('scholar_book_list')) {
       $view->set_display();
       $view->set_items_per_page(0);
       $view->execute();
-
+      
       // Collect books in this space into an array
       $books = array();
       $books[$node->nid] = 1;
@@ -302,12 +311,11 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
           $books[$row->nid] = 1;
         }
       }
-
+      
       // Use collected array to filter options
       foreach ( $form['book']['bid']['#options'] as $k => $v ) {
         if (is_numeric($k) && ! isset($books[$k])) {
           unset($form['book']['bid']['#options'][$k]);
-          }
         }
       }
     }
