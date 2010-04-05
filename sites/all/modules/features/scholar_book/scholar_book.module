@@ -223,71 +223,89 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
  * Implementation of hook_form_alter().
  */
 function scholar_book_form_alter(&$form, &$form_state, $form_id){
-
+  
   // alter book forms  - new booklet
-  if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type) ){
+  if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type)) {
     $node = $form['#node'];
     //adding new booklet
-    if ((!isset($_GET['parent'] ) ||  empty($_GET['parent'] ))  && ! empty($form['book']) && !$form['nid']['#value']) {
+    if ((! isset($_GET['parent']) || empty($_GET['parent'])) && ! empty($form['book']) && ! $form['nid']['#value']) {
       // Fieldset mods
-      $remove = array('#type', '#title', '#attributes', 'bid', 'weight', 'plid' );
-      foreach ($remove as $element){
+      $remove = array(
+        '#type', 
+        '#title', 
+        '#attributes', 
+        'bid', 
+        'weight', 
+        'plid' 
+      );
+      foreach ( $remove as $element ) {
         unset($form['book'][$element]);
       }
       $form['book']['plid']['#type'] = 'hidden';
-      $form['book']['plid']['#value'] = -1;
-
+      $form['book']['plid']['#value'] = - 1;
+      
       $form['book']['bid']['#type'] = 'value';
       $form['book']['bid']['#value'] = 'new';
-
+      
       $form['book']['weight']['#type'] = 'value';
       $form['book']['weight']['#value'] = 0;
-
+      
       $form['title']['#title'] = t('Booklet Title');
     }
-
+    
     //adding or editing child booklet page
-    if (!empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']){
-    // Fieldset mods
-    $form['title']['#title'] = t('Booklet page title');
-    $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
-    $form['book']['#title'] = t('Booklet information');
-    $form['book']['#collapsible'] = TRUE;
-    $form['book']['#collapsed'] =  FALSE; // since this is new node user should always see options expanded by default
+    if (! empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']) {
+      // Fieldset mods
+      $form['title']['#title'] = t('Booklet page title');
+      $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
+      $form['book']['#title'] = t('Booklet information');
+      $form['book']['#collapsible'] = TRUE;
+      $form['book']['#collapsed'] = FALSE; // since this is new node user should always see options expanded by default
+      
 
-    if (! empty($form['book']['bid']['#options'])) unset( $form['book']['bid']['#options']['new']);
-
-    //make existing ['bid'] element into a "value" and create new "item" element to display info to the user
-    $val = $form['book']['bid']['#default_value']; //get the top level book id
-    $form['book']['bid']['#type'] = 'value';
-    $form['book']['bid']['#value'] = $val;
-
-    //cleanup the other bid elements
-    foreach ($form['book']['bid'] as $key => $element){
-      if (!in_array($key, array('#type', '#value', '#description', '#options'))){
-        unset($form['book']['bid'][$key]);
+      if (! empty($form['book']['bid']['#options']))
+        unset($form['book']['bid']['#options']['new']);
+        
+      //make existing ['bid'] element into a "value" and create new "item" element to display info to the user
+      $val = $form['book']['bid']['#default_value']; //get the top level book id
+      $form['book']['bid']['#type'] = 'value';
+      $form['book']['bid']['#value'] = $val;
+      
+      //cleanup the other bid elements
+      foreach ( $form['book']['bid'] as $key => $element ) {
+        if (! in_array($key, array(
+          '#type', 
+          '#value', 
+          '#description', 
+          '#options' 
+        ))) {
+          unset($form['book']['bid'][$key]);
+        }
       }
+      
+      //add a new form element to display info top level book to user
+      $form['book']['top_level']['#type'] = 'item';
+      $form['book']['top_level']['#value'] = '<p>' . t('This page will be posted to booklet: !booklet </strong>', array(
+        '!booklet' => '<strong>' . $form['book']['bid']['#options'][$val] . '</strong>' 
+      )) . '</p>';
+      $form['book']['top_level']['#weight'] = - 10;
+      // $form['book']['top-level']['#title'] = t('Booklet');  // not needed
+      // $form['book']['top-level']['#description'] =t('This page will be a part of the selected booklet.');  // not needed
+      
+
+      //customize plid form element
+      $form['book']['plid']['#title'] = t('Parent item');
+      $form['book']['plid']['#description'] = t('Set the parent item of this page. Your selection will determine the place where this page will reside in this booklet\'s hierarchy. You can think of the booklet\'s hierarchy as the "table of contents" for your booklet. You could select the top-level booklet itself or another page within the booklet. The maximum depth for a booklet and all child pages is 9.');
+      
+      //reset weight to a '#type' = 'value'
+      unset($form['book']['weight']);
+      $form['book']['weight']['#type'] = 'value';
+      $form['book']['weight']['#value'] = 1;
+      
+      // Filter book options by current space
+      _scholar_book_options_filter($form);
+    
     }
-
-    //add a new form element to display info top level book to user
-    $form['book']['top_level']['#type'] = 'item';
-    $form['book']['top_level']['#value'] =  '<p>' . t('This page will be posted to booklet: !booklet </strong>', array('!booklet' => '<strong>'. $form['book']['bid']['#options'][$val] .  '</strong>')) . '</p>';
-    $form['book']['top_level']['#weight'] = -10;
-    // $form['book']['top-level']['#title'] = t('Booklet');  // not needed
-    // $form['book']['top-level']['#description'] =t('This page will be a part of the selected booklet.');  // not needed
-
-    //customize plid form element
-    $form['book']['plid']['#title'] = t('Parent item');
-    $form['book']['plid']['#description'] = t('Set the parent item of this page. Your selection will determine the place where this page will reside in this booklet\'s hierarchy. You can think of the booklet\'s hierarchy as the "table of contents" for your booklet. You could select the top-level booklet itself or another page within the booklet. The maximum depth for a booklet and all child pages is 9.');
-
-    //reset weight to a '#type' = 'value'
-    unset( $form['book']['weight']);
-    $form['book']['weight']['#type'] = 'value';
-    $form['book']['weight']['#value'] = 1;
-
-    // Filter book options by current space
-    _scholar_book_options_filter($form);
-
   }
 }
 
@@ -297,30 +315,30 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
  * @see scholar_book_form_alter()
  */
 function _scholar_book_options_filter(&$form){
+  
+  if ($view = views_get_view('scholar_book_list')) {
+    $view->set_display();
+    $view->set_items_per_page(0);
+    $view->execute();
     
-    if ($view = views_get_view('scholar_book_list')) {
-      $view->set_display();
-      $view->set_items_per_page(0);
-      $view->execute();
-      
-      // Collect books in this space into an array
-      $books = array();
-      $books[$node->nid] = 1;
-      if (is_array($view->result) && count($view->result)) {
-        foreach ( $view->result as $row ) {
-          $books[$row->nid] = 1;
-        }
+    // Collect books in this space into an array
+    $books = array();
+    $books[$node->nid] = 1;
+    if (is_array($view->result) && count($view->result)) {
+      foreach ( $view->result as $row ) {
+        $books[$row->nid] = 1;
       }
-      
-      // Use collected array to filter options
-      foreach ( $form['book']['bid']['#options'] as $k => $v ) {
-        if (is_numeric($k) && ! isset($books[$k])) {
-          unset($form['book']['bid']['#options'][$k]);
-        }
+    }
+    
+    // Use collected array to filter options
+    foreach ( $form['book']['bid']['#options'] as $k => $v ) {
+      if (is_numeric($k) && ! isset($books[$k])) {
+        unset($form['book']['bid']['#options'][$k]);
       }
     }
   }
 }
+
 
 /**
  *  Implementation of hook_vsite_sidgets().
