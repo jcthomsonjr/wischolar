@@ -2,8 +2,14 @@
 
 /**
  * scholar_book.module
- * @todo fix toc location settings (need fix in the vsite_layout to allow 
- * developers to alter the context)
+ * 
+ * Shows a "table of contents" widget when in a "book" context. 
+ * Implements spaces settings to allow users to select the toc location
+ * (in the content area or as widget).
+ * 
+ * @todo: book outline
+ * 
+ * 
  */
 
 define("SCHOLAR_BOOK_MAXLEN", 50);   // how long are the node title in toc
@@ -21,11 +27,14 @@ function scholar_book_init(){
 }
 
 
+/**
+ * implementation of hook_link_alter
+ */
 function scholar_book_link_alter(&$links, $node){
   if (empty($links['book_add_child'])) {
     return;
   }
-  
+  // present it as a context link
   $links['book_add_child']['attributes']['class'] = 'context-button';
 }
 
@@ -96,6 +105,10 @@ function scholar_book_block($op = 'list', $delta = 0) {
   }
 }
 
+/**
+ * callback function for the booktoc block
+ * @see _scholar_book_booktoc
+ */
 function _scholar_book_block_booktoc() {
   $vsite = vsite_get_vsite(); 
   if ($vsite && scholar_book_toc_location() == SCHOLAR_BOOK_TOC_WIDGET){
@@ -104,6 +117,9 @@ function _scholar_book_block_booktoc() {
 }
 
 
+/**
+ * toc main function. 
+ */
 function _scholar_book_booktoc() {
 
   	$node = menu_get_object();
@@ -122,9 +138,11 @@ function _scholar_book_booktoc() {
 }
 
 
-
+/**
+ * toc helper function
+ */
 function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $trimval, $mlid_start) {
-  if ($step<$max_recursions) {
+  if ($step < $max_recursions) {
     $sql= "SELECT DISTINCT n.nid as nid, m.plid as plid, m.mlid as mlid,  n.title as title ,m.weight
            FROM {book} as b
            inner join {menu_links} as m ON b.mlid = m.mlid
@@ -176,12 +194,7 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
   switch ($op) {
     case 'view' :
       if (book_type_is_allowed($node->type)) {
-        vsite_include('vsiteapi');
-        $vsite = vsite_get_vsite();
-        $location = scholar_book_toc_location();
-        if ($location == SCHOLAR_BOOK_TOC_CONTENT){
-        //if (isset($vsite->settings['scholar_book']['scholar_book_toc_location']) && $vsite->settings['scholar_book']['scholar_book_toc_location']) {
-          
+        if (scholar_book_toc_location() == SCHOLAR_BOOK_TOC_CONTENT){
           $block_toc =_scholar_book_booktoc();
           //$output = theme_box($block_toc['subject'], $block_toc['content'], $region = 'main');
           $output = '<div class="book-menu"><h3 class="title">' . $block_toc['subject'] . '</h3>' . $block_toc['content'] . '</div>';
@@ -330,6 +343,10 @@ function scholar_book_context_links_alter(&$links) {
   }
 }
 
+
+/**
+ * helper function to return vsite settings for book's toc location
+ */
 function scholar_book_toc_location(){
   vsite_include('vsiteapi');
   $vsite = vsite_get_vsite();
