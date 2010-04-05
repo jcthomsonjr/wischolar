@@ -49,8 +49,11 @@ class rbuild implements scholar_software_handler{
   	if(!($a_package = $this->getPackage())) return;
   	
   	//Update the title with what is in rbuild
-  	$node->title = $a_package['title'];
-  	$node->body = $a_package['description'];
+  	$s_key = (strlen($this->s_app_key) && substr($a_package['title'],0,strlen($this->s_app_key)) != $this->s_app_key)?"$this->s_app_key :":"";
+  	$node->title = $s_key.$a_package['title'];
+  	
+  	$s_contributors  = strlen($a_package['author'])?"Contributors: ".strip_tags($a_package['author'])."<br /><br />":"";
+  	$node->body = $s_contributors.$a_package['description'];
   }
   
   /**
