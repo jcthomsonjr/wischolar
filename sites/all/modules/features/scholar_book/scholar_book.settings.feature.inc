@@ -21,7 +21,7 @@ class scholar_book_settings_feature implements space_setting {
       '#type' => 'checkbox', 
       '#title' => t('Table of content location'), 
       '#default_value' => isset($value['scholar_book_toc_location']) ? $value['scholar_book_toc_location'] : 0,
-      '#description' => t('description'),
+      '#description' => t('Check if you want the booklet\'s table of contents in the content area of the page'),
     );
     return $form;
   }
