@@ -332,7 +332,7 @@ function gkimport_upload_pdfs(){
 function gkimport_get_pdf($node, $url){
   $path = drupal_get_path('module', 'gkimport');
   $fullpath_tmp =  FS_PATH . '/' . $path . '/tmp';
-  $files_dir = FS_PATH . '/' . variable_get('file_directory_path', '') . '/gking/files';
+  $files_dir = FS_PATH . '/' . variable_get('file_directory_path', conf_path() .'/files') . '/gking/files';
   $source = $files_dir  . '/' . basename($url);
 
   // download the file
@@ -359,7 +359,7 @@ function gkimport_get_pdf($node, $url){
     $fid = db_last_insert_id('files', 'fid');
     //write data to upload table
     drupal_write_record('upload', $file);
-    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/$fid", 'gking/files/' . basename($source));
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/$fid", 'files/' . basename($source));
 
     //return file object
     return $file;
@@ -473,6 +473,6 @@ function gkimport_clean_og(){
    db_query("TRUNCATE TABLE {url_alias}");
    db_query("TRUNCATE TABLE {files}");
    db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');	
-   
-   file_save_upload();
-}*/
+  
+}
+*/
