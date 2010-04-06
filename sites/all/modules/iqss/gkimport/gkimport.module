@@ -16,58 +16,11 @@ function gkimport_import($drush_run = 0){
   gkimport_upload_pdfs();
   gkimport_update_aliases(); 
   
-  gkimport_parse_profiles();
+  gkimport_create_profiles();
 
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
-
-/**
- * Get profile data and save as profile nodes
- */
-function gkimport_parse_profiles(){
-  $file = dirname(__FILE__) . '/files/group.html';
-  $profile = file_get_contents($file);
-
-  $group = 'Current Research Associates'; //intialize group as this string for first set of profiles
-
-  //check to see if http url exists in biblio notes field
-  preg_match_all('/<li>(.*?)<\/li>/s',$profile, $matches);
-
-  foreach($matches[1] as $info){
-    preg_match('/>(.*?)<\/a>(.*)/s',$info, $data);  //$data[1]  = name   //$data[2]  = description
-
-    $name = strip_tags(trim($data[1]));
-    if (!strlen($name)) continue;  //if no name then continue to next loop
-
-    //take the first occurrance of name in group to mark group sections
-    switch($name){
-      case 'Christopher Adolph':
-        $group = 'Alumni: Students';
-        break;
-
-      case 'Greg Adams':
-        $group = 'Alumni: Post-Docs';
-        break;
-
-      case 'Lada Adamic':
-        $group = 'Collaborators';
-
-      default:
-        break; // do nothing
-    }
-
-    //clean up description text and remove comma if at beginning
-    $description =  strip_tags(trim($data[2]));
-    $profiles[] = array(
-    'name' => $name,
-    'description' => ($description[0] == ',') ? substr($description, 1): $description,
-    'group' => $group,
-    );
-  }
-  return dpm($profiles);
-}
-	
 
 /**
  * Function to create gking user account and web site
@@ -434,6 +387,85 @@ function gkimport_update_aliases(){
         }
       }
     }
+  }
+}
+
+function gkimport_parse_profiles(){
+  $file = dirname(__FILE__) . '/files/group.html';
+  $profile = file_get_contents($file);
+
+  $group = 'Current Research Associates'; //intialize group as this string for first set of profiles
+
+  //check to see if http url exists in biblio notes field
+  preg_match_all('/<li>(.*?)<\/li>/s',$profile, $matches);
+
+  foreach($matches[1] as $info){
+    preg_match('/>(.*?)<\/a>(.*)/s',$info, $data);  //$data[1]  = name   //$data[2]  = description
+
+    $name = strip_tags(trim($data[1]));
+    if (!strlen($name)) continue;  //if no name then continue to next loop
+
+    //take the first occurrance of name in group to mark group sections
+    switch($name){
+      case 'Christopher Adolph':
+        $group = 'Alumni: Students';
+        break;
+
+      case 'Greg Adams':
+        $group = 'Alumni: Post-Docs';
+        break;
+
+      case 'Lada Adamic':
+        $group = 'Collaborators';
+
+      default:
+        break; // do nothing
+    }
+
+    //clean up description text and remove comma if at beginning
+    $description =  strip_tags(trim($data[2]));
+    $profiles[] = array(
+    'name' => $name,
+    'description' => ($description[0] == ',') ? substr($description, 1): $description,
+    'group' => $group,
+    );
+  }
+  return $profiles;
+}
+
+/**
+ * Get profile data and save as profile nodes
+ */
+function gkimport_create_profiles(){
+  
+  $account = user_load(array('name' => 'gking'));
+  $vsites = vsite_get_vsite_by_owner($account -> uid);
+  $sid = $vsites[0] -> group -> nid;
+
+  $profiles = gkimport_parse_profiles();
+  
+  foreach($profiles as $profile){
+    
+    //TODO : need to split firstname and lastname
+    
+  // Create a new node
+  $form_state = array();
+  module_load_include('inc', 'node', 'node.pages');
+  $node = array('type' => 'person');
+  $form_state['values']['field_person_firstname'][0] = array('value' => $profile['name']);
+  $form_state['values']['field_person_lastname'][0] =  array('value' => $profile['name']);
+  $form_state['values']['body'] = $profile['description'];
+   
+ // $form_state['values']['og_initial_groups'] = array($sid => $sid);
+//  $form_state['values']['og_groups'][$sid] = $sid;
+//  $form_state['values']['og_nodeapi'] = '';
+ // $form_state['values']['og_public'] = 1;
+  
+  $form_state['values']['name'] = $account -> name;
+  $form_state['values']['op'] = t('Save');
+  drupal_execute('person_node_form', $form_state, (object)$node);
+  $nid = db_result(db_query("SELECT MAX(nid) FROM {node}"));
+  db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $nid, $sid);
   }
 }
 
