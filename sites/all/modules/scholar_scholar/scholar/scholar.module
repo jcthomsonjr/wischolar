@@ -21,9 +21,9 @@ function scholar_init(){
         if((!strlen($vsite->group->og_description) || $vsite->group->og_description == "$vsite->purl's web site") && is_array($profile->vsite_users_title[0])){
          $vsite->group->og_description = $profile->vsite_users_title[0]['value'];
         }//Save default title
+        
+        node_save($vsite->group); //Save to group node
       } //Save default headline
-
-      node_save($vsite->group); //Save to group node
     }//Create Presets
   }//Has a default title been created
 

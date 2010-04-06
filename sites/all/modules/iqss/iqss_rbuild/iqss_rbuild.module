@@ -125,6 +125,8 @@ function iqss_rbuild_add_release_node($project_node, $s_version, $s_file_name, $
     'list' => 1,
   );
   
+  if(!$file->process_file) $release_node->field_scholar_software_file[0]['status'] = 1; //Tell file_fields to leave this alone
+  
   //Save the new release to db
   node_save($release_node);
   
@@ -160,23 +162,39 @@ function _iqss_rbuild_parseVersion($s_version){
  * @param $uid
  * @return (object) file
  */
-function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid){
+function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid, $b_get_file_contents = false){
   $mime = 'application/octet-stream'; //GZip Files
 
-  $s_contents = file_get_contents($s_external_path);
-  $s_filepath = file_save_data($s_contents,$s_file_name);
+  $s_filepath = $s_external_path;
+  if($b_get_file_contents){
+	  $s_contents = file_get_contents($s_external_path);
+	  $s_filepath = file_save_data($s_contents,$s_file_name);
+  }
+  
+  $n_filesize =  @filesize($s_filepath);
+  if(!$n_filesize){
+    foreach (get_headers($s_external_path) as $s_header){
+    	list($s_key,$s_val) = explode(":",$s_header,2);
+    	if(strtolower(trim($s_key)) == "content-length"){
+    		$n_filesize = intval($s_val);
+    		break;
+    	}
+    }
+  }
   
   $file = new stdClass();
   $file->filename = basename($s_filepath);
   $file->filepath = $s_filepath;
   $file->filemime = $mime;
-  $file->filesize = filesize($s_filepath);
+  $file->filesize = $n_filesize;
   
   $file->uid = $uid;
   $file->status = FILE_STATUS_PERMANENT;
   $file->timestamp = time();
   drupal_write_record('files', $file);
   $file->fid = db_result(db_query("SELECT fid FROM {files} WHERE filepath = '%s'", $file->filepath));
+  
+  $file->process_file = $b_get_file_contents;
   
   return $file;
 }

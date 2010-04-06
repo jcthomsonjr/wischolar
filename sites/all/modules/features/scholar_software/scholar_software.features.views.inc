@@ -9,7 +9,7 @@ function _scholar_software_views_default_views() {
   // Exported view: scholar_software_projects
   $view = new view;
   $view->name = 'scholar_software_projects';
-  $view->description = 'Feature Server > Projects';
+  $view->description = 'Software > Projects';
   $view->tag = 'scholar_software';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -131,16 +131,10 @@ function _scholar_software_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Projects');
+  $handler->override_option('title', 'Software');
   $handler->override_option('empty', 'There are currently no projects available.');
   $handler->override_option('items_per_page', 20);
   $handler->override_option('use_pager', '1');
-  $handler->override_option('style_plugin', 'grid');
-  $handler->override_option('style_options', array(
-    'grouping' => '',
-    'columns' => '2',
-    'alignment' => 'vertical',
-  ));
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
     'relationship' => 'none',
@@ -152,7 +146,7 @@ function _scholar_software_views_default_views() {
   $handler->override_option('path', 'scholar_software');
   $handler->override_option('menu', array(
     'type' => 'normal',
-    'title' => 'Projects',
+    'title' => 'Software',
     'description' => '',
     'weight' => '0',
     'name' => 'features',
@@ -169,7 +163,7 @@ function _scholar_software_views_default_views() {
   // Exported view: scholar_software_releases
   $view = new view;
   $view->name = 'scholar_software_releases';
-  $view->description = 'Feature Server > Releases';
+  $view->description = 'Software > Releases';
   $view->tag = 'scholar_software';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -283,6 +277,7 @@ function _scholar_software_views_default_views() {
         'alt' => '',
         'prefix' => '',
         'suffix' => '',
+        'target' => '',
         'help' => '',
         'trim' => 0,
         'max_length' => '',
@@ -291,9 +286,12 @@ function _scholar_software_views_default_views() {
         'strip_tags' => 0,
         'html' => 0,
       ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
       'link_to_node' => 0,
       'label_type' => 'widget',
-      'format' => 'url_plain',
+      'format' => 'scholar_software_url_plain',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',

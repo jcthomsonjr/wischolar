@@ -35,81 +35,94 @@ function scholar_software_vsite_admin_link($type, $object) {
  * Implementation of hook_nodeapi().
  */
 function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  
-	if ($op == 'presave' && $node->type == 'scholar_software_project') {
-    if (!$node->field_scholar_software_method[0]['value']) {
-      $node->field_scholar_software_repository[0]['value'] = '';
-    }else{
-	    $a_handlers = scholar_software_get_handlers();
-	    if(array_key_exists($node->field_scholar_software_method[0]['value'],$a_handlers)){
-	      $a_handler_info = $a_handlers[$node->field_scholar_software_method[0]['value']];
-	      if($a_handler_info['path']) require_once($a_handler_info['path']);
-	      $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
-	      $o_handler->alterProject($node);
-	    }
-	  }
-  }
-  else if ($op == 'presave' && $node->type == 'scholar_software_release') {
-    $node->title = scholar_software_generate_version($node);
-
-    // If this release is recommended, set all other ones to not recommended.
-    if ($node->field_scholar_software_recommend[0]['value'] == 1) {
-      $view = views_get_view('scholar_software_releases');
-      $view->set_arguments(array($node->field_scholar_software_project[0]['nid']));
-      $view->execute('block_1');
-      foreach ($view->result as $data) {
-        if (!isset($node->nid) || $data->nid != $node->nid) {
-          $release = node_load($data->nid);
-          $release->field_scholar_software_recommend[0]['value'] = 0;
-          node_save($release);
-        }
-      }
-    }
-  }
-  else if ($op == 'view' && $node->type == 'scholar_software_release') {
-    drupal_add_css(drupal_get_path('module', 'scholar_software') . '/scholar_software.css');
+  switch($node->type){
+  	case 'scholar_software_project':
+  		switch($op){
+  			case 'presave':
+		  		if (!$node->field_scholar_software_method[0]['value']) {
+			      $node->field_scholar_software_repository[0]['value'] = '';
+			    }else{
+			      $a_handlers = scholar_software_get_handlers();
+			      if(array_key_exists($node->field_scholar_software_method[0]['value'],$a_handlers)){
+			        $a_handler_info = $a_handlers[$node->field_scholar_software_method[0]['value']];
+			        if($a_handler_info['path']) require_once($a_handler_info['path']);
+			        $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
+			        $o_handler->alterProject($node);
+			      }
+			    }
+  		  break;
+  			case 'insert':
+  				if ($node->field_scholar_software_method[0]['value']) {
+			      $a_handlers = scholar_software_get_handlers();
+			      if(array_key_exists($node->field_scholar_software_method[0]['value'],$a_handlers)){
+			        $a_handler_info = $a_handlers[$node->field_scholar_software_method[0]['value']];
+			        if($a_handler_info['path']) require_once($a_handler_info['path']);
+			        $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
+			        $o_handler->initReleases($node);
+			      }
+			    }//Add the initial releases
+			  break;
+  			case 'delete':
+		  		$result = db_query(
+			      "SELECT nid
+			       FROM {content_type_scholar_software_release} content_type_scholar_software_release
+			       WHERE field_scholar_software_project_nid = %d ", $node->nid);
+		    
+			    while ($a_result = db_fetch_array($result)) {
+			      node_delete($a_result['nid']);
+			    }
+        break;
+  		}
+    break;
+    case 'scholar_software_release':
+      switch($op){
+        case 'presave':
+		      $node->title = scholar_software_generate_version($node);
+			
+			    // If this release is recommended, set all other ones to not recommended.
+			    if ($node->field_scholar_software_recommend[0]['value'] == 1) {
+			      $view = views_get_view('scholar_software_releases');
+			      $view->set_arguments(array($node->field_scholar_software_project[0]['nid']));
+			      $view->execute('block_1');
+			      foreach ($view->result as $data) {
+			        if (!isset($node->nid) || $data->nid != $node->nid) {
+			          $release = node_load($data->nid);
+			          $release->field_scholar_software_recommend[0]['value'] = 0;
+			          node_save($release);
+			        }
+			      }
+			    }
+        break;
+        case 'view':
+        	drupal_add_css(drupal_get_path('module', 'scholar_software') . '/scholar_software.css');
     
-    $download_url = file_create_url($node->field_scholar_software_file[0]['filepath']);
-    $contents = file_exists($node->field_scholar_software_file[0]['filepath']) ? file_get_contents($node->field_scholar_software_file[0]['filepath']) : '';
-    $info = array();
-    $info[] = t('Download: !url', array('!url' => l($download_url, $download_url, array('absolute' => TRUE))));
-    $info[] = t('md5 hash: !md5', array('!md5' => md5($contents)));
-    $info[] = t('Size: !size', array('!size' => format_size($node->field_scholar_software_file[0]['filesize'])));
-    $node->content['scholar_software_info'] = array(
-      '#type' => 'fieldset',
-      'content' => array(
-        '#type' => 'markup',
-        '#value' => theme('item_list', $info, NULL, 'ul', array('id' => 'scholar_software-release-info')),
-      ),
-      '#weight' => -10,
-    );
-    
-    $project = node_load($node->field_scholar_software_project[0]['nid']);
-    $node->content['scholar_software_project'] = array(
-      '#type' => 'item',
-      '#title' => 'Software Project',
-      '#value' => l($project->title, 'node/' . $project->nid),
-      '#weight' => -11,
-    );
-  } else if ($op == 'insert' && $node->type == 'scholar_software_project'){
-    if ($node->field_scholar_software_method[0]['value']) {
-      $a_handlers = scholar_software_get_handlers();
-      if(array_key_exists($node->field_scholar_software_method[0]['value'],$a_handlers)){
-        $a_handler_info = $a_handlers[$node->field_scholar_software_method[0]['value']];
-        if($a_handler_info['path']) require_once($a_handler_info['path']);
-        $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
-        $o_handler->initReleases($node);
+			    $s_filepath = $node->field_scholar_software_file[0]['filepath'];
+			    $download_url = (substr($s_filepath,0,7) == 'http://')? $s_filepath:file_create_url($s_filepath);  //Absolute?
+			
+			    $contents = file_exists($node->field_scholar_software_file[0]['filepath']) ? file_get_contents($node->field_scholar_software_file[0]['filepath']) : '';
+			    $info = array();
+			    $info[] = t('Download: !url', array('!url' => l($download_url, $download_url, array('absolute' => TRUE))));
+			    $info[] = t('md5 hash: !md5', array('!md5' => md5($contents)));
+			    $info[] = t('Size: !size', array('!size' => format_size($node->field_scholar_software_file[0]['filesize'])));
+			    $node->content['scholar_software_info'] = array(
+			      '#type' => 'fieldset',
+			      'content' => array(
+			        '#type' => 'markup',
+			        '#value' => theme('item_list', $info, NULL, 'ul', array('id' => 'scholar_software-release-info')),
+			      ),
+			      '#weight' => -10,
+			    );
+			    
+			    $project = node_load($node->field_scholar_software_project[0]['nid']);
+			    $node->content['scholar_software_project'] = array(
+			      '#type' => 'item',
+			      '#title' => 'Software Project',
+			      '#value' => l($project->title, 'node/' . $project->nid),
+			      '#weight' => -11,
+			    );
+        break;
       }
-    }//Add the initial releases
-  } else if ($op == 'delete' && $node->type == 'scholar_software_project'){
-	  $result = db_query(
-	    "SELECT nid
-	     FROM {content_type_scholar_software_release} content_type_scholar_software_release
-	     WHERE field_scholar_software_project_nid = %d ", $node->nid);
-	  
-	  while ($a_result = db_fetch_array($result)) {
-	    node_delete($a_result['nid']);
-	  }
+    break;
   }
 }
 
@@ -150,6 +163,20 @@ function scholar_software_cck_options($type = 'major') {
 function scholar_software_form_scholar_software_project_node_form_alter(&$form, $form_state) {
   drupal_add_js(drupal_get_path('module', 'scholar_software') . '/scholar_software.js');
   $form['#validate'][] = 'scholar_software_project_node_form_validate';
+  
+  
+}
+
+
+/**
+ *  Implementation of hook_form_alter().
+ */
+function scholar_software_form_alter(&$form, $form_state, $form_id) {
+	if (isset($form['#node']) && $form['#node']->type === 'scholar_software_project' && $form_id == 'scholar_software_project_node_form') {
+		if(count(($a_options = scholar_software_cck_options('method'))) == 1){
+			$form['field_scholar_software_method'] = array('#type' => 'value', '#value' => key($a_options));
+		}//Hide the method select box if there is only one option
+	}
 }
 
 /**
@@ -259,4 +286,52 @@ function scholar_software_proccess_cron($node) {
   
   //Save node
   node_save($node);
+}
+
+/**
+ * Implementation of CCK's hook_field_formatter_info().
+ */
+function scholar_software_field_formatter_info() {
+  return array(
+    'scholar_software_url_plain' => array(
+      'label' => t('Scholar Software: URL to file'),
+      'field types' => array('filefield'),
+      'description' => t('Displays the full URL to the file.'),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_theme().
+ * @todo: autogenerate theme registry entrys for widgets.
+ */
+function scholar_software_theme() {
+  return array(
+    'scholar_software_formatter_scholar_software_url_plain' => array(
+      'arguments' => array('element' => NULL),
+    ),
+ );
+}
+
+/**
+ * Theme function for the 'url_plain' formatter.
+ */
+function theme_scholar_software_formatter_scholar_software_url_plain($element) {
+  // Inside a View this function may be called with null data. In that case,
+  // just return.
+  if (empty($element['#item'])) {
+    return '';
+  }
+
+  $field = content_fields($element['#field_name']);
+  $item = $element['#item'];
+ 
+  if (empty($item['filepath']) && !empty($item['fid'])) {
+    $item = array_merge($item, field_file_load($item['fid']));
+  }
+  
+  //Absolute URL to offsite file?
+  if(substr($item['filepath'],0,7) == 'http://') return $item['filepath'];
+
+  return empty($item['filepath']) ? '' : file_create_url($item['filepath']);
 }
