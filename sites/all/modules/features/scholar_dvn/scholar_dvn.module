@@ -15,6 +15,13 @@ function scholar_dvn_menu(){
 }
 
 function scholar_dvn_data(){
+  $output = "<iframe src =\"" . "http://dvn.iq.harvard.edu/dvn/dv/thailanddataverse" . "". "\" width=\"800px\" height=\"3000\">
+  <p>Your browser does not support iframes.</p>
+  </iframe>";
+
+  return $output;
+  
+  // not used
   $vsite = vsite_get_vsite();
   if (array_key_exists('scholar_dvn', $vsite->settings)) {
     // simply redirect to dvn 
