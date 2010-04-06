@@ -15,10 +15,59 @@ function gkimport_import($drush_run = 0){
   gkimport_parse_abstracts();
   gkimport_upload_pdfs();
   gkimport_update_aliases(); 
+  
+  gkimport_parse_profiles();
 
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
+
+/**
+ * Get profile data and save as profile nodes
+ */
+function gkimport_parse_profiles(){
+  $file = dirname(__FILE__) . '/files/group.html';
+  $profile = file_get_contents($file);
+
+  $group = 'Current Research Associates'; //intialize group as this string for first set of profiles
+
+  //check to see if http url exists in biblio notes field
+  preg_match_all('/<li>(.*?)<\/li>/s',$profile, $matches);
+
+  foreach($matches[1] as $info){
+    preg_match('/>(.*?)<\/a>(.*)/s',$info, $data);  //$data[1]  = name   //$data[2]  = description
+
+    $name = strip_tags(trim($data[1]));
+    if (!strlen($name)) continue;  //if no name then continue to next loop
+
+    //take the first occurrance of name in group to mark group sections
+    switch($name){
+      case 'Christopher Adolph':
+        $group = 'Alumni: Students';
+        break;
+
+      case 'Greg Adams':
+        $group = 'Alumni: Post-Docs';
+        break;
+
+      case 'Lada Adamic':
+        $group = 'Collaborators';
+
+      default:
+        break; // do nothing
+    }
+
+    //clean up description text and remove comma if at beginning
+    $description =  strip_tags(trim($data[2]));
+    $profiles[] = array(
+    'name' => $name,
+    'description' => ($description[0] == ',') ? substr($description, 1): $description,
+    'group' => $group,
+    );
+  }
+  return dpm($profiles);
+}
+	
 
 /**
  * Function to create gking user account and web site
