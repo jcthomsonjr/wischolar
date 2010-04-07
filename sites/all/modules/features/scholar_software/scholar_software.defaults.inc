@@ -562,7 +562,7 @@ function _scholar_software_context_default_contexts() {
         'module' => 'views',
         'delta' => 'scholar_software_releases-block_1',
         'weight' => 20,
-        'region' => 'content_bottom',
+        'region' => false,
         'status' => '0',
         'label' => 'Recommended Software Releases',
         'type' => 'context_ui',

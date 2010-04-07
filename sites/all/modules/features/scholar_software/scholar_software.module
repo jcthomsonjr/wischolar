@@ -72,6 +72,24 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 			      node_delete($a_result['nid']);
 			    }
         break;
+	  		case 'view' :
+	  			$view = views_get_view('scholar_software_releases');
+	  			$view->set_arguments(array($node->nid));
+	  			$a_content = $view->execute_display('block_1');
+		      $node->content['scholar_software_recommended_releases'] = array(
+		        '#weight' => content_extra_field_weight($node->type, 'scholar_software_recommended_releases'), 
+		        '#value' => $a_content['content'],
+		      );
+		      
+		      $view = views_get_view('scholar_software_releases');
+          $view->set_arguments(array($node->nid));
+          $a_content = $view->execute_display('block_2');
+          $node->content['scholar_software_recent_releases'] = array(
+            '#weight' => content_extra_field_weight($node->type, 'scholar_software_recent_releases'), 
+            '#value' => $a_content['content'],
+          );
+		      
+	      break;
   		}
     break;
     case 'scholar_software_release':
@@ -334,4 +352,29 @@ function theme_scholar_software_formatter_scholar_software_url_plain($element) {
   if(substr($item['filepath'],0,7) == 'http://') return $item['filepath'];
 
   return empty($item['filepath']) ? '' : file_create_url($item['filepath']);
+}
+
+
+/**
+* Implementation of hook_content_extra_fields.
+*/
+function scholar_software_content_extra_fields($s_type) {
+	
+	$extras = array();
+	
+	if($s_type = 'scholar_software_project'){
+	  $extras['scholar_software_recommended_releases'] = array(
+	      'label' => t('Recommended Software Releases'),
+	      'description' => t('Show a software\'s Recommended Software Releases.'),
+	      'weight' => 20,
+	  );
+	  
+	  $extras['scholar_software_recent_releases'] = array(
+        'label' => t('Recent Releases'),
+        'description' => t('Show a software\'s recent Software Releases.'),
+        'weight' => 25,
+    );
+	}
+	
+  return $extras;
 }

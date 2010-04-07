@@ -243,8 +243,8 @@ function _iqss_rbuild_get_doc($o_project,$s_url_extra = 'index.html'){
 	
 	if(!array_key_exists($s_key,$a_doc_data)){
 		//Get data from cache
-//		$o_cache_obj = cache_get($s_key,'cache_iqss_rbuild');
-//		$a_cache = $o_cache_obj->data;
+		$o_cache_obj = cache_get($s_key,'cache_iqss_rbuild');
+		$a_cache = $o_cache_obj->data;
 		
 		if(!$a_cache || $a_cache['version'] != $s_featured_version){
 			$a_cache = array('version' => $s_featured_version);
