@@ -14,8 +14,7 @@ function gkimport_import($drush_run = 0){
   gkimport_parse_files();
   gkimport_parse_abstracts();
   gkimport_upload_pdfs();
-  gkimport_update_aliases(); 
-  
+  gkimport_update_aliases();
   gkimport_create_profiles();
 
   $message = 'Import completed';
@@ -208,7 +207,7 @@ function gkimport_pubs_taxonomy($filepath){
     $vid = install_taxonomy_add_vocabulary($vocab_name, $content_types, $properties);
     if ($vid){
     og_vocab_write_record($space[0] -> group -> nid, $vid);
-    variable_set('gkimport_vocab_id', $vid); //keep track of vid because other vocabs may have same name
+    variable_set('gkimport_ri_vocab_id', $vid); //keep track of vid because other vocabs may have same name
      $message =  (variable_get('gkimport_drush_run', 0) === 1) ? 
      drush_print(t("Created vocabulary: !vocab_name", array('!vocab_name' => $vocab_name))) : '';     
     }
@@ -437,53 +436,105 @@ function gkimport_parse_profiles(){
  * Get profile data and save as profile nodes
  */
 function gkimport_create_profiles(){
-  
+  module_load_include('inc', 'node', 'node.pages');
   $account = user_load(array('name' => 'gking'));
   $vsites = vsite_get_vsite_by_owner($account -> uid);
   $sid = $vsites[0] -> group -> nid;
 
-  $profiles = gkimport_parse_profiles();
-  
+  //create new vocab for Research Group
+  $vid =  _gkimport_create_rg_vocab($vsites[0]);
+  $profiles = array_reverse(gkimport_parse_profiles());
+
   foreach($profiles as $profile){
-    
-    //TODO : need to split firstname and lastname
-    
-  // Create a new node
-  $form_state = array();
-  module_load_include('inc', 'node', 'node.pages');
-  $node = array('type' => 'person');
-  $form_state['values']['field_person_firstname'][0] = array('value' => $profile['name']);
-  $form_state['values']['field_person_lastname'][0] =  array('value' => $profile['name']);
-  $form_state['values']['body'] = $profile['description'];
-   
- // $form_state['values']['og_initial_groups'] = array($sid => $sid);
-//  $form_state['values']['og_groups'][$sid] = $sid;
-//  $form_state['values']['og_nodeapi'] = '';
- // $form_state['values']['og_public'] = 1;
-  
-  $form_state['values']['name'] = $account -> name;
-  $form_state['values']['op'] = t('Save');
-  drupal_execute('person_node_form', $form_state, (object)$node);
-  $nid = db_result(db_query("SELECT MAX(nid) FROM {node}"));
-  db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $nid, $sid);
+    //split firstname and lastname
+    $name = _gkimport_split_name($profile['name']);
+    $description = _gkimport_remove_line_breaks($profile['description']);
+    drush_print("Adding Person: " .  $name['firstname'] . ' ' .  $name['lastname']);
+
+    $node = new stdClass();
+    $node -> type = 'person';
+    $node -> status = 1;
+    $node -> teaser_include = 1;
+    $node -> name = $account -> name;
+    $node -> uid = $account -> uid;
+    $node-> og_groups = array($sid => $sid);
+    // $node-> og_groups_both  = array($sid => $account -> name); // is this the right value??
+    $node -> field_person_firstname[0] = array('value' => trim($name['firstname']));
+    $node -> field_person_lastname[0] = array('value' => trim($name['lastname']));
+    $node -> body = $description;
+    $node -> teaser = $description;
+    $node -> taxonomy['tags'] = array( $vid  => $profile['group']);
+    node_save($node);
+  }
+}
+
+function _gkimport_remove_line_breaks($text){
+  $clean_text = '';
+
+  $arr = explode( "\n", $text );
+  if (count($arr)){
+    foreach ($arr as $t){
+      $clean_text .= trim($t) . ' ';
+    }
+  }
+  return trim($clean_text);
+}
+
+/**
+ * Helper function to split name into firstname/ lastname
+ */
+function _gkimport_split_name($name){
+  $fullname = explode(' ', $name);
+  $firstname = $fullname[0];
+  array_shift($fullname); //remove the first name from this array (assumes there is not multiple first names)
+  $lastname = implode(' ', $fullname);
+
+  return array('firstname' => $firstname, 'lastname' => implode(' ', $fullname));
+}
+	
+/**
+ * Helper function to create Research Group vocabulary
+ * @param  object $vsite
+ * @return 
+ *  integer -vocabulary id
+ */
+function _gkimport_create_rg_vocab($vsite){
+    install_include(array('taxonomy'));
+
+    //create vocabulary(s)
+  $vocab_name =  'Research Group';
+  $properties = array(
+  'tags' => 1,
+  'description' => 'Gary King Research Group',
+  'help' => 'Gary King Research Group',
+  );
+  $content_types = array(
+  'person' => 'person',
+  );
+
+  $vid = install_taxonomy_add_vocabulary($vocab_name, $content_types, $properties);
+  if ($vid){
+    og_vocab_write_record($vsite -> group -> nid, $vid);
+    variable_set('gkimport_rg_vocab_id', $vid); //keep track of vid because other vocabs may have same name
+    return $vid;
   }
 }
 
 /**
  * Implementation of hook_nodeapi()
  */
-function gkimport_nodeapi(&$node, $op){
+function gkimport_nodeapi(&$node, $op){ 
   if ($node -> type != 'biblio') return;
   $name = 'gking';
   $account = user_load(array('name' => $name));
   switch ($op) {
-    case 'presave':
+    case 'presave': 
       //add the taxonomy term to the node
-      if (!vsite_get_vsite()){
+      if (!vsite_get_vsite()){ 
         // install_include(array('taxonomy'));
         // $site_vid = install_taxonomy_get_vid($name . '_vocabulary');
         // $node -> taxonomy['tags'][  $site_vid ] = '';
-        $vid = variable_get('gkimport_vocab_id', '');
+        $vid = variable_get('gkimport_ri_vocab_id', '');
         $term = trim(gkimport_match_terms($node -> title));
         if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here
       }
@@ -491,11 +542,16 @@ function gkimport_nodeapi(&$node, $op){
     case 'insert':
       if (!vsite_get_vsite()){
         $spaces = vsite_get_vsite_by_owner($account -> uid);
-        if (count($spaces) == 1){
+        if (count($spaces) == 1){          
+        $check = db_result(db_query("SELECT nid FROM {og_ancestry} WHERE nid = %d", $node -> nid));         
           //added publication to the og
-          $ins = db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);
-          if  (variable_get('gkimport_drush_run', 0) === 1)  drush_print(t("Imported publication: !title", array('!title'=> $node->title)));
-
+          if($check){
+              db_query("UPDATE {og_ancestry} SET group_nid = %d WHERE nid = %d", $spaces[0] -> group -> nid, $node ->nid);                     
+          }
+          else{
+          db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $node ->nid, $spaces[0] -> group -> nid);
+          }
+         drush_print(t("Imported publication: !title", array('!title'=> $node->title)));
           //save custom path
           $matches = gkimport_parse_abstract_url($node);
           if (count($matches) && strlen($matches[2])){
@@ -517,43 +573,10 @@ function gkimport_nodeapi(&$node, $op){
  * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
  */
 /*
-function gkimport_clean(){
-  gkimport_cleanup();
-}
+function gkimport_clean(){  
+  //remove download files
+  $filespath = '/nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/files/gking/files/*.*';
+  $cmd = "rm $filespath";
+  shell_exec($cmd);  
+}*/
 
-function gkimport_cleanup(){
-
-  $account = user_load(array('name' => 'gking'));
-  
-  db_query("DELETE from {users} WHERE name = '%s'", 'gking');
-  db_query("DELETE from {node} WHERE uid = %d", (int)$account -> uid);
-  db_query("DELETE from {node_revisions} WHERE uid = %d", (int)$account -> uid);
-  db_query("DELETE from {url_alias} WHERE dst LIKE '%%%s%%'", 'gking');
-  
-  gkimport_cleanup_tax();
-  gkimport_clean_og();
-  
-  return drupal_set_message(t("gking site has been removed"));
-}
-
-function gkimport_cleanup_tax(){
-  db_query("DELETE from {term_data} WHERE tid > %d", 0);
-  db_query("DELETE from {term_hierarchy} WHERE tid > %d", 0);
-  db_query("DELETE from {vocabulary_node_types} WHERE vid > %d", 0);
-  db_query("DELETE from {vocabulary} WHERE vid > %d", 0);
-  db_query("DELETE from {og_vocab} WHERE vid > %d", 0);
-  db_query("TRUNCATE TABLE {term_node}");
-}
-
-function gkimport_clean_og(){
-   db_query("TRUNCATE TABLE {og}");
-   db_query("TRUNCATE TABLE {og_uid}");
-   db_query("TRUNCATE TABLE {og_vocab}");
-   db_query("TRUNCATE TABLE {og_ancestry}");
-   db_query("TRUNCATE TABLE {og_ancestry}");
-   db_query("TRUNCATE TABLE {url_alias}");
-   db_query("TRUNCATE TABLE {files}");
-   db_query("DELETE FROM {purl} WHERE value = '%s'", 'gking');	
-  
-}
-*/
