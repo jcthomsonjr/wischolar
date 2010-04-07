@@ -479,6 +479,8 @@ function _scholar_software_views_default_views() {
   ));
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
+  $handler->override_option('use_more', 0);
+  $handler->override_option('use_more_always', 0);
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('style_options', array(
     'grouping' => '',
@@ -619,7 +621,7 @@ function _scholar_software_views_default_views() {
   ));
   $handler->override_option('path', 'node/%/releases');
   $handler->override_option('menu', array(
-    'type' => 'tab',
+    'type' => 'none',
     'title' => 'All releases',
     'description' => '',
     'weight' => '0',
@@ -631,6 +633,14 @@ function _scholar_software_views_default_views() {
     'description' => '',
     'weight' => 0,
   ));
+  $handler = $view->new_display('block', 'Recent Releases', 'block_2');
+  $handler->override_option('items_per_page', 5);
+  $handler->override_option('use_pager', '0');
+  $handler->override_option('use_more', 1);
+  $handler->override_option('use_more_text', 'more releases');
+  $handler->override_option('block_description', '');
+  $handler->override_option('block_caching', -1);
+  $handler->override_option('title', 'Recent Releases');
 
   $views[$view->name] = $view;
 

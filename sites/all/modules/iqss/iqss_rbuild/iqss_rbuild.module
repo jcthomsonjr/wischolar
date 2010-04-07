@@ -95,6 +95,7 @@ function iqss_rbuild_scholar_software_project_node_validate($form, &$form_state)
  * @param $a_package
  */
 function iqss_rbuild_add_release_node($project_node, $s_version, $s_file_name, $a_package, $s_url, &$context){
+  $n_start_time = time();
   
 	//Create Release
   $release_node = new stdClass();
@@ -126,6 +127,8 @@ function iqss_rbuild_add_release_node($project_node, $s_version, $s_file_name, $
   );
   
   if(!$file->process_file) $release_node->field_scholar_software_file[0]['status'] = 1; //Tell file_fields to leave this alone
+  
+  if($file->timestamp < $n_start_time) $release_node->created = $file->timestamp;
   
   //Save the new release to db
   node_save($release_node);
@@ -171,14 +174,17 @@ function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid, $b_get_fi
 	  $s_filepath = file_save_data($s_contents,$s_file_name);
   }
   
+  $n_time = false;
   $n_filesize =  @filesize($s_filepath);
   if(!$n_filesize){
     foreach (get_headers($s_external_path) as $s_header){
     	list($s_key,$s_val) = explode(":",$s_header,2);
     	if(strtolower(trim($s_key)) == "content-length"){
     		$n_filesize = intval($s_val);
-    		break;
     	}
+      if(strtolower(trim($s_key)) == "last-modified"){
+        $n_time = strtotime($s_val);
+      }
     }
   }
   
@@ -190,7 +196,7 @@ function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid, $b_get_fi
   
   $file->uid = $uid;
   $file->status = FILE_STATUS_PERMANENT;
-  $file->timestamp = time();
+  $file->timestamp = $n_time?$n_time:time();
   drupal_write_record('files', $file);
   $file->fid = db_result(db_query("SELECT fid FROM {files} WHERE filepath = '%s'", $file->filepath));
   

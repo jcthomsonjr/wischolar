@@ -73,22 +73,23 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 			    }
         break;
 	  		case 'view' :
-	  			$view = views_get_view('scholar_software_releases');
-	  			$view->set_arguments(array($node->nid));
-	  			$a_content = $view->execute_display('block_1');
-		      $node->content['scholar_software_recommended_releases'] = array(
-		        '#weight' => content_extra_field_weight($node->type, 'scholar_software_recommended_releases'), 
-		        '#value' => $a_content['content'],
-		      );
-		      
-		      $view = views_get_view('scholar_software_releases');
-          $view->set_arguments(array($node->nid));
-          $a_content = $view->execute_display('block_2');
-          $node->content['scholar_software_recent_releases'] = array(
-            '#weight' => content_extra_field_weight($node->type, 'scholar_software_recent_releases'), 
-            '#value' => $a_content['content'],
-          );
-		      
+	  			if($a4){
+		  			$view = views_get_view('scholar_software_releases');
+		  			$view->set_arguments(array($node->nid));
+		  			$a_content = $view->execute_display('block_1');
+			      $node->content['scholar_software_recommended_releases'] = array(
+			        '#weight' => content_extra_field_weight($node->type, 'scholar_software_recommended_releases'), 
+			        '#value' => "<h3>{$a_content['subject']}</h3>".$a_content['content'],
+			      );
+			      
+			      $view = views_get_view('scholar_software_releases');
+	          $view->set_arguments(array($node->nid));
+	          $a_content = $view->execute_display('block_2');
+	          $node->content['scholar_software_recent_releases'] = array(
+	            '#weight' => content_extra_field_weight($node->type, 'scholar_software_recent_releases'), 
+	            '#value' => "<h3>{$a_content['subject']}</h3>".$a_content['content'],
+	          );
+	  			}//Displaying stand alone page
 	      break;
   		}
     break;
@@ -114,30 +115,32 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         case 'view':
         	drupal_add_css(drupal_get_path('module', 'scholar_software') . '/scholar_software.css');
     
-			    $s_filepath = $node->field_scholar_software_file[0]['filepath'];
-			    $download_url = (substr($s_filepath,0,7) == 'http://')? $s_filepath:file_create_url($s_filepath);  //Absolute?
-			
-			    $contents = file_exists($node->field_scholar_software_file[0]['filepath']) ? file_get_contents($node->field_scholar_software_file[0]['filepath']) : '';
-			    $info = array();
-			    $info[] = t('Download: !url', array('!url' => l($download_url, $download_url, array('absolute' => TRUE))));
-			    $info[] = t('md5 hash: !md5', array('!md5' => md5($contents)));
-			    $info[] = t('Size: !size', array('!size' => format_size($node->field_scholar_software_file[0]['filesize'])));
-			    $node->content['scholar_software_info'] = array(
-			      '#type' => 'fieldset',
-			      'content' => array(
-			        '#type' => 'markup',
-			        '#value' => theme('item_list', $info, NULL, 'ul', array('id' => 'scholar_software-release-info')),
-			      ),
-			      '#weight' => -10,
-			    );
-			    
-			    $project = node_load($node->field_scholar_software_project[0]['nid']);
-			    $node->content['scholar_software_project'] = array(
-			      '#type' => 'item',
-			      '#title' => 'Software Project',
-			      '#value' => l($project->title, 'node/' . $project->nid),
-			      '#weight' => -11,
-			    );
+        	if($a4){
+				    $s_filepath = $node->field_scholar_software_file[0]['filepath'];
+				    $download_url = (substr($s_filepath,0,7) == 'http://')? $s_filepath:file_create_url($s_filepath);  //Absolute?
+				
+				    $contents = file_exists($node->field_scholar_software_file[0]['filepath']) ? file_get_contents($node->field_scholar_software_file[0]['filepath']) : '';
+				    $info = array();
+				    $info[] = t('Download: !url', array('!url' => l($download_url, $download_url, array('absolute' => TRUE))));
+				    $info[] = t('md5 hash: !md5', array('!md5' => md5($contents)));
+				    $info[] = t('Size: !size', array('!size' => format_size($node->field_scholar_software_file[0]['filesize'])));
+				    $node->content['scholar_software_release_info'] = array(
+				      '#type' => 'fieldset',
+				      'content' => array(
+				        '#type' => 'markup',
+				        '#value' => theme('item_list', $info, NULL, 'ul', array('id' => 'scholar_software-release-info')),
+				      ),
+				      '#weight' => content_extra_field_weight($node->type, 'scholar_software_release_info'),
+				    );
+				    
+				    $project = node_load($node->field_scholar_software_project[0]['nid']);
+				    $node->content['scholar_software_parent_project'] = array(
+				      '#type' => 'item',
+				      '#title' => 'Software Project',
+				      '#value' => l($project->title, 'node/' . $project->nid),
+				      '#weight' => content_extra_field_weight($node->type, 'scholar_software_parent_project'),
+				    );
+        	}//Displaying standalone page
         break;
       }
     break;
@@ -362,7 +365,7 @@ function scholar_software_content_extra_fields($s_type) {
 	
 	$extras = array();
 	
-	if($s_type = 'scholar_software_project'){
+	if($s_type == 'scholar_software_project'){
 	  $extras['scholar_software_recommended_releases'] = array(
 	      'label' => t('Recommended Software Releases'),
 	      'description' => t('Show a software\'s Recommended Software Releases.'),
@@ -373,6 +376,18 @@ function scholar_software_content_extra_fields($s_type) {
         'label' => t('Recent Releases'),
         'description' => t('Show a software\'s recent Software Releases.'),
         'weight' => 25,
+    );
+	}elseif ($s_type == 'scholar_software_release'){
+		$extras['scholar_software_release_info'] = array(
+        'label' => t('Release Info'),
+        'description' => t('Information about the release file.'),
+        'weight' => -10,
+    );
+    
+    $extras['scholar_software_parent_project'] = array(
+        'label' => t('Parent Project'),
+        'description' => t('Info about the Parent Project.'),
+        'weight' => -11,
     );
 	}
 	

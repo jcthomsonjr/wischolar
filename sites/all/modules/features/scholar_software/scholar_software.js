@@ -12,7 +12,7 @@ Drupal.behaviors.scholar_software = function() {
           $('#edit-field-scholar-software-repo-0-value-wrapper').hide();
           break;
         default:
-          $('#edit-field-scholar-software-repo-0-value-wrapper').show();
+          $('#edit-field-scholar-software-repo-0-value-wrapper').hide();  //Switch to show for that to be the default
           break;
       }
     });
