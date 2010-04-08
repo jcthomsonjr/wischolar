@@ -1,0 +1,268 @@
+body {
+  background: url(images/body-bg.png) repeat-y 50% 0 #fff;
+  font: 14px/17px verdana, arial, helvetica, sans-serif;
+  color: #000;
+  }
+
+
+/* TYPOGRAPHY */
+
+
+
+h1, h2, h3, h4, #block-vsite_menus-0 li a {
+  font-weight: bold;
+  letter-spacing: -.06em
+  }
+
+h2 {
+  font-size: 19px;
+  }
+
+h3 {
+  font-size: 16px;
+  line-height: 1em;
+  }
+
+h4 {
+  font-size: 14px;
+  line-height: 1em;
+  }
+
+h2.title, h3.title {
+  line-height: 1em;
+  margin-top: 12px;
+  margin-bottom: 17px;
+  }
+
+a, a:visited {
+  color:#34666e;
+  }
+
+a:hover {
+  text-decoration: underline;
+  }
+
+#block-vsite_menus-0 li a, #block-vsite_menus-0 li a:visited {
+  color:#e16c0e;
+  }
+
+
+/* BASIC LAYOUT */
+
+.column {
+  padding: 0 16px;
+  }
+
+#content-main {
+  padding: 0 8px;
+  }
+
+#navbar, #content, #sidebar-left, #sidebar-right, #header-left, #header-main, #header-right {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  background: url(images/heading.png) repeat-x 0 0 #fff;
+  }
+
+#header-left {
+  }
+
+#navbar {
+  -moz-border-radius-topleft: 0px;
+  -moz-border-radius-topright: 0px;
+  -webkit-border-radius-topleft: 0px;
+  -webkit-border-radius-topright: 0px;
+  background: #f0f0f0;
+  border: 1px solid #e5e5e5;
+  border-top: none;
+  }
+
+#container {
+  width: 984px;
+  margin: 0 auto;
+  padding: 1px 8px;
+  position: relative;
+  }
+
+#header {
+  height:19px;
+  }
+
+
+/* HEADER */
+
+#navbar {
+  top:0;
+  left: 8px;
+  width: 982px;
+  padding: 0;
+  position:absolute;
+  height: 44px;
+  }
+
+#header-wrapper {
+  margin-top: 45px;
+  }
+
+#header #header-main, #header #header-right, #header #header-left {
+  padding-bottom: 8px;
+  height: 240px;
+  margin-top:6px;
+  }
+
+#block-scholar-1 h1, #block-vsite_menus-0 ul {
+  float: left;
+  }
+
+#block-scholar-1 h1, #block-vsite_menus-0 ul li {
+  margin: 0 14px;
+  line-height: 44px;
+  }
+
+#block-vsite_menus-0 ul li.last {
+  margin-right: 0;
+  }
+
+#block-scholar-1 h1 {
+  margin-left: 20px;
+  font-size:17px;
+  }
+
+#block-scholar-1 h1 a, #block-scholar-1 h1 a:visited {
+  color:#000;
+  }
+
+#block-scholar-1 h2, #block-scholar-1 p {
+  display:none;
+  }
+
+#content-wrapper .block {
+  margin-bottom: 8px;
+  }
+
+#content, #sidebar-right, #header-right, #sidebar-left, #header-left {
+  padding: 0 16px 16px 16px;
+  }
+
+#sidebar-right, #header-right, #sidebar-left, #header-left {
+  width: 229px;
+  }
+
+#sidebar-left {
+  right: 277px;
+  }
+
+#content-wrapper, #header-wrapper {
+  padding-right: 277px;
+  padding-left: 261px;
+  }
+
+#content-main {
+  padding-bottom: 105px;
+  }
+
+body.sidebar-left #content-wrapper,
+body.header-left-main #header-wrapper {
+  padding-right:8px;
+  }
+
+body.sidebar-right #content-wrapper,
+body.header-right-main #header-wrapper {
+  padding-left:8px;
+  }
+
+/* FOOTER */
+
+#footer {
+    height: 97px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    right:0;
+    background:url(images/footer.png) 0 0 repeat-x transparent;
+    padding-top: 0;
+    }
+
+p.copy {
+  clear: both;
+  }
+
+#footer #gking-footer {
+  width:984px;
+  margin: 44px auto 0 auto;
+  }
+
+#gking-footer .block {
+  float: left;
+  margin-right: 70px;
+  }
+
+#gking-footer #vsite-widgets-search-form {
+  width: 302px;
+  background-image: none;
+  }
+
+
+#gking-footer #vsite-widgets-search-form .form-item {
+  padding: 0;
+  margin: 0;
+  border:none;
+  float: left;
+  }
+
+#gking-footer #vsite-widgets-search-form #edit-search-wrapper input {
+  width: 231px;
+  height: auto;
+  border: 1px solid #ddd;
+  border-left-color: #c3c3c3;
+  border-right-color: #c3c3c3;
+  border-top-color: #7c7c7c;
+  }
+
+#gking-footer #vsite-widgets-search-form input.form-submit {
+  float: right;
+  background: #79939c;
+  color: #fff;
+  -moz-border-radius:0px;
+  text-transform:uppercase;
+  padding: 2px 5px !important;
+  margin: 0;
+  border: none;
+  text-indent: 0;
+  width: auto;
+  height: auto;
+  }
+
+#gking-footer #vsite-widgets-search-form label {
+  display:none;
+  }
+
+#twitter-link {
+  font-size: 11px;
+  color: #4f4f4f;
+  text-transform:uppercase;
+  width: 219px;
+  }
+
+#twitter-link a {
+  width: 77px;
+  height: 18px;
+  display:block;
+  float:right;
+  text-indent: -999em;
+  background: url(images/twitter.png);
+  }
+
+
+/* FRONT PAGE */
+
+.page-home #header #header-main {
+  background: url(images/front-photo.jpg) 0 0 no-repeat transparent;
+  margin-top: 2px;
+  padding-top:54px;
+  padding-left: 271px;
+  height: 198px;
+  }
+
+.page-home #header-wrapper {
+  padding-right: 548px;
+  }
