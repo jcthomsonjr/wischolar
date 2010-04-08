@@ -9,12 +9,12 @@ define(FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev3'); //base file system pat
   */
 function gkimport_import($drush_run = 0){
   variable_set('gkimport_drush_run', $drush_run);
-  //gkimport_clean(); // NOTE: This should be removed when run on production
+ // gkimport_clean(); // NOTE: This should be removed when run on production
   gkimport_create_site();
-  gkimport_parse_files();
-  gkimport_parse_abstracts();
-  gkimport_upload_pdfs();
-  gkimport_update_aliases();
+  //gkimport_parse_files();
+  //gkimport_parse_abstracts();
+  //gkimport_upload_pdfs();
+  //gkimport_update_aliases();
   gkimport_create_profiles();
 
   $message = 'Import completed';
@@ -437,20 +437,49 @@ function gkimport_parse_profiles(){
  */
 function gkimport_create_profiles(){
   module_load_include('inc', 'node', 'node.pages');
+  install_include(array('taxonomy'));
   $account = user_load(array('name' => 'gking'));
   $vsites = vsite_get_vsite_by_owner($account -> uid);
   $sid = $vsites[0] -> group -> nid;
 
   //create new vocab for Research Group
   $vid =  _gkimport_create_rg_vocab($vsites[0]);
+  
+  //create terms
+  _gkimport_create_rg_terms($vid);
+  
   $profiles = array_reverse(gkimport_parse_profiles());
 
   foreach($profiles as $profile){
+  //get term id for profile
+  $tid = install_taxonomy_get_tid(trim($profile['group']), $vid);
+  
     //split firstname and lastname
     $name = _gkimport_split_name($profile['name']);
-    $description = _gkimport_remove_line_breaks($profile['description']);
-    drush_print("Adding Person: " .  $name['firstname'] . ' ' .  $name['lastname']);
+    $check = db_result(db_query("SELECT CONCAT_WS(' ' , nid, field_person_firstname_value, field_person_lastname_value) as 
+   check_name FROM {content_type_person} WHERE field_person_firstname_value = '%s' AND field_person_lastname_value = '%s'",
+   $name['firstname'] , $name['lastname']));
+    
+   //THIS SECTION RUNS WHEN DUPLICATE NAME IS FOUND
+   if(strlen( $check )) {    
+   $check_name = explode(' ', $check);
+   drush_print("Duplicate name encountered:  " . trim($check_name[1]) . ' '  . trim($check_name[2] . ' ' . $profile['group']));   
 
+   //add taxonomy term only
+   $nid = trim($check_name[0]);  
+   db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $nid, $tid);
+   db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid); 
+   
+   //TODO: need transfer body text to field_person_institution if $profile['group'] == 'Current Research Associates'
+   if($profile['group'] == 'Current Research Associates'){
+     // do something
+   }
+   continue;   
+   }
+   
+    drush_print("Adding Person: " .  $name['firstname'] . ' ' .  $name['lastname'] . ' ' .  $profile['group']);
+    $description = _gkimport_remove_line_breaks($profile['description']);    
+    
     $node = new stdClass();
     $node -> type = 'person';
     $node -> status = 1;
@@ -461,11 +490,28 @@ function gkimport_create_profiles(){
     // $node-> og_groups_both  = array($sid => $account -> name); // is this the right value??
     $node -> field_person_firstname[0] = array('value' => trim($name['firstname']));
     $node -> field_person_lastname[0] = array('value' => trim($name['lastname']));
+    
+    //get institution
+ // if($profile['group'] == 'Current Research Associates'){
     $node -> body = $description;
     $node -> teaser = $description;
-    $node -> taxonomy['tags'] = array( $vid  => $profile['group']);
+ // }
+
+  //else{
+    //$node -> field_person_institution[0] = array('value' => $description));
+  //}
+  
+    //$node -> taxonomy['tags'] = array( $vid  => $profile['group']);
     node_save($node);
+    db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);  
   }
+  //special exception
+  $special_nid = db_result(db_query("SELECT nid FROM {content_type_person} WHERE field_person_firstname_value = '%s' 
+  AND field_person_lastname_value = '%s'", 'Christopher' , 'Adolph'));
+  $special_tid =  install_taxonomy_get_tid( 'Collaborators', $vid);
+   db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $special_nid, $special_tid);
+   db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $special_nid, $special_nid, $special_tid); 
+   drush_print("Added Christopher Adolph to Collaborators group");  
 }
 
 function _gkimport_remove_line_breaks($text){
@@ -520,6 +566,14 @@ function _gkimport_create_rg_vocab($vsite){
   }
 }
 
+function _gkimport_create_rg_terms($vid){
+  install_include(array('taxonomy'));
+  $terms = array('Current Research Associates', 'Alumni: Students', 'Alumni: Post-Docs', 'Collaborators');
+  foreach($terms as $term){
+  install_taxonomy_add_term($vid, $term); 
+  }
+}
+
 /**
  * Implementation of hook_nodeapi()
  */
@@ -527,8 +581,8 @@ function gkimport_nodeapi(&$node, $op){
   if ($node -> type != 'biblio') return;
   $name = 'gking';
   $account = user_load(array('name' => $name));
-  switch ($op) {
-    case 'presave': 
+  switch ($op) { 
+    case 'presave':  dpm($node);
       //add the taxonomy term to the node
       if (!vsite_get_vsite()){ 
         // install_include(array('taxonomy'));
