@@ -268,12 +268,15 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
 function scholar_publications_block($op = 'list', $delta = false, $edit = array()) {
   if ($op == 'list') {
     $blocks['co_authors']['info'] = t('Co-Authors List');
+    $blocks['pub_by_type']['info'] = t('Recent Publications by type');
     return $blocks;
   }
   elseif ($op == 'view') {
     switch ($delta) {
       case 'co_authors':
         return _scholar_publications_co_author_wgt();
+      case 'pub_by_type':
+        return _scholar_publications_pub_by_type_wgt();
     }
   }
 }
@@ -466,8 +469,53 @@ function _scholar_publications_add_owner_checkbox(&$form_element){
 }
 
 /**
+ * Block information for the publictaion by type widget
+ * @return string
+ */
+function _scholar_publications_pub_by_type_wgt(){
+	jquery_ui_add(array('ui.tabs'));
+	drupal_add_js('$("#pub_type_tabs").tabs();','inline');
+	
+	$vsite = vsite_get_vsite();
+  
+	$types = db_query_range(" SELECT COUNT(*) as num, bib.biblio_type as b_type, bibtyp.name as name
+                                     FROM {node} n
+                                     INNER JOIN {og_ancestry} oa ON oa.nid = n.nid AND oa.group_nid = %d
+                                     INNER JOIN {biblio} bib ON bib.nid = n.nid
+                                     INNER JOIN {biblio_types} bibtyp ON bibtyp.tid = bib.biblio_type
+                                     WHERE n.type = '%s'
+                                     GROUP BY bib.biblio_type ORDER BY num DESC ", array($vsite->group->nid,'biblio' ), 0, 4);
+	$output = "";
+	$tabs = "<ul>";
+	while ($type = db_fetch_object($types)) {
+	  if($type->num < 1) continue;
+	  
+		$tabs .= "<li><a href=\"#pub_type_tabs_{$type->name}\">{$type->name}</a>({$type->num})</li>";
+		$result = db_query_range(" SELECT n.nid nid
+	                                     FROM {node} n
+	                                     INNER JOIN {og_ancestry} oa ON oa.nid = n.nid AND oa.group_nid = %d
+	                                     INNER JOIN {biblio} bib ON bib.nid = n.nid AND bib.biblio_type = %d
+	                                     WHERE n.type = '%s'
+	                                     ORDER BY n.created DESC ", array($vsite->group->nid,$type->b_type,'biblio' ), 0, 5);
+	  
+	  $output .= "<div id='pub_type_tabs_{$type->name}'>";
+	  while ($data = db_fetch_object($result)) {
+	  	$node = node_load($data->nid);
+	  	$output .= "\n<div class=\"biblio-entry\">".node_view($node,true,false)."</div>";
+	  }
+	  $output .= "</div>";
+	}
+	$tabs .= "</ul>";
+	if(!$output) return array();
+	
+	$output = "<div id='pub_type_tabs'>".$tabs.$output."</div>";
+  
+  return array('subject' => "Recent Publications",'content' => $output);
+}
+
+/**
  * Block information for the co-author widget
- * @return unknown_type
+ * @return string
  */
 function _scholar_publications_co_author_wgt(){
 	$vsite = vsite_get_vsite();
