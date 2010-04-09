@@ -1142,6 +1142,7 @@ function spaces_customizers($reset = FALSE) {
   static $spaces_customizers;
   if (!isset($spaces_customizers) || $reset) {
     $customizers = module_invoke_all('spaces_customizers');
+    drupal_alter('spaces_customizers',$customizers);
     foreach ($customizers as $customizer_name => $info) {
       // Load any includes before instantiating its class.
       if (is_array($info)) {
