@@ -2,19 +2,23 @@
 
 include_once('gkimport.drush.inc');
 
-define(FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev3'); //base file system path to drupal root
+define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev3'); //file system path to drupal root (NO TRAILING SLASH)
+define(GKIMPORT_DOWNLOAD, FALSE);  // TRUE tells module to download files with wget, otherwise assumes files stored locally
 
 /**
  * Begins import process
   */
 function gkimport_import($drush_run = 0){
   variable_set('gkimport_drush_run', $drush_run);
- // gkimport_clean(); // NOTE: This should be removed when run on production
+  $mode = (GKIMPORT_DOWNLOAD) ? 'TRUE' : 'FALSE';
+  drush_print("Begining import... (download mode is set to $mode)");
+  
+  gkimport_clean(); // NOTE: This should be removed when run on production
   gkimport_create_site();
-  //gkimport_parse_files();
-  //gkimport_parse_abstracts();
-  //gkimport_upload_pdfs();
-  //gkimport_update_aliases();
+  gkimport_parse_files();
+  gkimport_parse_abstracts();
+  gkimport_upload_pdfs();
+  gkimport_update_aliases();
   gkimport_create_profiles();
 
   $message = 'Import completed';
@@ -89,70 +93,70 @@ function gkimport_parse_files(){
 /**
  * Imports abstract text into publication nodes
  */
- function gkimport_parse_abstracts(){
-   $drush_run = variable_get('gkimport_drush_run', 0);
-    $error_nodes = array();
-   $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
-   //check to see that variable contains data
-   if (empty($nids)) {
-     $message =  'An error has occurred: gkimport_publications variable is an empty array';
-     return  ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
-   }
+function gkimport_parse_abstracts(){
+  $drush_run = variable_get('gkimport_drush_run', 0);
+  $error_nodes = array();
+  $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
+  //check to see that variable contains data
+  if (empty($nids)) {
+    $message =  'An error has occurred: gkimport_publications variable is an empty array';
+    return  ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
+  }
 
-   $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
-   $path = drupal_get_path('module', 'gkimport');
-   $fullpath_tmp =  FS_PATH . '/' . $path . '/tmp';  $line = (__LINE__); //mark this line for error reporting
-   
-   //make sure path exists before proceeding
-   if (!is_dir($fullpath_tmp)){
-     $message =  'An error has occurred: full path specified (!directory) is not a directory on line !line';
-     return  ($drush_run  === 1) ?  drush_print(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line))) : 
-     drupal_set_message(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line)));
-   }
-      
-   foreach($nids as $nid){
-     $node = node_load(array('nid' => $nid));
+  $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
+  $path = drupal_get_path('module', 'gkimport');
+  $fullpath_tmp =  GKIMPORT_FS_PATH . '/' . $path . '/tmp';  $line = (__LINE__); //mark this line for error reporting
 
-  $matches = gkimport_parse_abstract_url($node);
-     
-     if (count($matches) && strlen($matches[2])){
-       $url = trim($matches[2]);
-       $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
-       $file = $fullpath_tmp . '/' . $filename;
-        
-       // download the file
-       $cmd =  "cd $fullpath_tmp && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
-       shell_exec($cmd);
+  //make sure path exists before proceeding
+  if (!is_dir($fullpath_tmp)){
+    $message =  'An error has occurred: full path specified (!directory) is not a directory on line !line';
+    return  ($drush_run  === 1) ?  drush_print(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line))) :
+    drupal_set_message(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line)));
+  }
 
-       if (is_file($file)){         
-         // clean up the text
-         $text = gkimport_clean_abstract_contents(file_get_contents($file));
-         // remove the file
-         $delete =  unlink($file); 
-   
-         //update the biblio table. TODO: node_save() may be too expensive here???
-         $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
-       }
-     }
-     //list nodes without http accessable abstract files (field could be NULL or contain hdl:// referencing)
-     else{
-     $_SESSION['gkimport_na_pub_nodes'][] = $nid; //this is an array which captures all of the publication node id's without abstracts
-       if ( $drush_run  === 1)  {
-         //drush_print(t("Error parsing node {$node -> nid} abstract url."));
-       }else{
-         dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
-       }
-     }
-   }
-   //cleanup any remaining files
-   $cmd =  "rm $fullpath_tmp" . '/*';
-   shell_exec($cmd);
-   variable_set('gkimport_na_pub_nodes', $_SESSION['gkimport_na_pub_nodes']);
-    if ( $drush_run  === 1) {
-      drush_print(t("!num publications have been imported without abstract text.", array('!num' => count($_SESSION['gkimport_na_pub_nodes']))));
-      drush_print(t("The node ID's for these publications have been saved in system variable: gkimport_na_pub_nodes"));
+  foreach($nids as $nid){
+    $node = node_load(array('nid' => $nid));
+    $matches = gkimport_parse_abstract_url($node);
+    
+    if (count($matches) && strlen($matches[2])){
+      $url = trim($matches[2]);
+      $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
+      $file = $fullpath_tmp . '/' . $filename;
+
+      // download the file
+      if(GKIMPORT_DOWNLOAD){
+        $cmd =  "cd $fullpath_tmp && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
+        shell_exec($cmd);
+      }
+      if (is_file($file)){
+        // clean up the text
+        $text = gkimport_clean_abstract_contents(file_get_contents($file));
+
+        //update the biblio table. TODO: node_save() may be too expensive here???
+        $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
+      }
     }
- }
+    //list nodes without http accessable abstract files (field could be NULL or contain hdl:// referencing)
+    else{
+      $_SESSION['gkimport_na_pub_nodes'][] = $nid; //this is an array which captures all of the publication node id's without abstracts
+      if ( $drush_run  === 1)  {
+        //drush_print(t("Error parsing node {$node -> nid} abstract url."));
+      }else{
+        dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
+      }
+    }
+  }
+  //cleanup any remaining files
+   if(GKIMPORT_DOWNLOAD){
+     $cmd =  "rm $fullpath_tmp" . '/*';
+     shell_exec($cmd);
+   }
+  variable_set('gkimport_na_pub_nodes', $_SESSION['gkimport_na_pub_nodes']);
+  if ( $drush_run  === 1) {
+    drush_print(t("!num publications have been imported without abstract text.", array('!num' => count($_SESSION['gkimport_na_pub_nodes']))));
+    drush_print(t("The node ID's for these publications have been saved in system variable: gkimport_na_pub_nodes"));
+  }
+}
 
 /**
  * Parse abstract URL
@@ -332,13 +336,16 @@ function gkimport_upload_pdfs(){
 
 function gkimport_get_pdf($node, $url){
   $path = drupal_get_path('module', 'gkimport');
-  $fullpath_tmp =  FS_PATH . '/' . $path . '/tmp';
-  $files_dir = FS_PATH . '/' . variable_get('file_directory_path', conf_path() .'/files') . '/gking/files';
+  $fullpath_tmp =  GKIMPORT_FS_PATH . '/' . $path . '/tmp';
+  $files_dir = GKIMPORT_FS_PATH . '/' . variable_get('file_directory_path', conf_path() .'/files') . '/gking/files';
   $source = $files_dir  . '/' . basename($url);
+  
 
   // download the file
-  $cmd =  "cd  $files_dir && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
-  shell_exec($cmd);
+  if(GKIMPORT_DOWNLOAD){
+    $cmd =  "cd  $files_dir && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
+    shell_exec($cmd);
+  }
 
   if (is_file($source)){
     $file = new stdClass();
@@ -349,7 +356,7 @@ function gkimport_get_pdf($node, $url){
     $file ->list = 1;
     $file -> weight = 0;
     $file -> filename = basename($source);
-    $file -> filepath = variable_get('file_directory_path', '') . '/gking/files/' . basename($source);
+     $file -> filepath = variable_get('file_directory_path', conf_path() .'/files') . '/gking/files/' . basename($source);
     $file -> filemime = file_get_mimetype($source);
     $file -> filesize = filesize($source);
     $file -> status =1;
@@ -360,8 +367,11 @@ function gkimport_get_pdf($node, $url){
     $fid = db_last_insert_id('files', 'fid');
     //write data to upload table
     drupal_write_record('upload', $file);
+    db_query("DELETE FROM  {url_alias} WHERE dst = '%s' ", 'files/' . basename($source));
     db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/$fid", 'files/' . basename($source));
 
+    drush_print("Added custom path for file: " . basename($source));
+    
     //return file object
     return $file;
   }
@@ -379,10 +389,11 @@ function gkimport_update_aliases(){
         $path = strstr($matches[2], 'files');        
         if (strlen($path)){
           $src = db_result(db_query("SELECT src FROM {url_alias} WHERE src = '%s'", "node/{$node -> nid}"));
-          $sql = ($src) ? db_query("UPDATE {url_alias} SET dst = '%s' WHERE src = '%s'", $path, $src) :
+          db_query("DELETE FROM {url_alias} WHERE dst = '%s' ", $path);
+          db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src);
           db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", $path);
           
-          drush_print("Added path: $path for node {$node -> nid}");          
+          drush_print("Added custom path $path for node {$node -> nid}");          
         }
       }
     }
@@ -480,7 +491,7 @@ function gkimport_create_profiles(){
        }
        $description = _gkimport_remove_line_breaks($profile['description']);  
        db_query("UPDATE {node_revisions} SET body = '%s',  teaser = '%s',  uid = %d WHERE nid = %d", $description, $description, (int)$account -> uid, (int)$nid);
-       drush_print("Updating description: for $nid - $description");
+       //drush_print("Updating description: for $nid - $description");
     }
    continue;   
    }
@@ -634,11 +645,14 @@ function gkimport_nodeapi(&$node, $op){
 /**
  * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
  */
-/*
-function gkimport_clean(){  
-  //remove download files
-  $filespath = '/nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/files/gking/files/*.*';
-  $cmd = "rm $filespath";
-  shell_exec($cmd);  
-}*/
+
+function gkimport_clean(){
+  $path = GKIMPORT_FS_PATH . '/sites/scholar/files/gking/files';
+  if(GKIMPORT_DOWNLOAD && is_dir($path)){
+    $filespath = '/nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/files/gking/files/*.*';
+    $cmd = "rm $filespath" . '/*.*';
+    shell_exec($cmd);
+    drush_print("Ran shell command: $cmd");
+  }
+}
 
