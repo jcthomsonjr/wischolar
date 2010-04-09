@@ -396,12 +396,13 @@ function gkimport_parse_profiles(){
   $group = 'Current Research Associates'; //intialize group as this string for first set of profiles
 
   //check to see if http url exists in biblio notes field
-  preg_match_all('/<li>(.*?)<\/li>/s',$profile, $matches);
+  preg_match_all('/<li>(.*?)<\/li>/s',$profile, $matches); 
 
   foreach($matches[1] as $info){
-    preg_match('/>(.*?)<\/a>(.*)/s',$info, $data);  //$data[1]  = name   //$data[2]  = description
-
-    $name = strip_tags(trim($data[1]));
+    preg_match('/href=\"(.*?)"(.*?)>(.*?)<\/a>(.*)/s',$info, $data); //$data[1]  = website  //$data[3]  = name   //$data[4]  = description
+    $website = valid_url(trim($data[1]), TRUE) ? trim($data[1]) : '';
+        
+    $name = strip_tags(trim($data[3]));
     if (!strlen($name)) continue;  //if no name then continue to next loop
 
     //take the first occurrance of name in group to mark group sections
@@ -422,11 +423,12 @@ function gkimport_parse_profiles(){
     }
 
     //clean up description text and remove comma if at beginning
-    $description =  strip_tags(trim($data[2]));
+    $description =  strip_tags(trim($data[4]));
     $profiles[] = array(
     'name' => $name,
     'description' => ($description[0] == ',') ? substr($description, 1): $description,
     'group' => $group,
+    'website' => $website,
     );
   }
   return $profiles;
@@ -472,8 +474,14 @@ function gkimport_create_profiles(){
    
    //TODO: need transfer body text to field_person_institution if $profile['group'] == 'Current Research Associates'
    if($profile['group'] == 'Current Research Associates'){
-     // do something
-   }
+     $inst = db_result(db_query("SELECT body from {node_revisions} WHERE nid = %d", $nid));
+     if(strlen($inst)){       
+       db_query("UPDATE {content_type_person} SET field_person_institution_value = '%s' WHERE nid = %d ", $inst, $nid);
+       }
+       $description = _gkimport_remove_line_breaks($profile['description']);  
+       db_query("UPDATE {node_revisions} SET body = '%s',  teaser = '%s',  uid = %d WHERE nid = %d", $description, $description, (int)$account -> uid, (int)$nid);
+       drush_print("Updating description: for $nid - $description");
+    }
    continue;   
    }
    
@@ -490,18 +498,18 @@ function gkimport_create_profiles(){
     // $node-> og_groups_both  = array($sid => $account -> name); // is this the right value??
     $node -> field_person_firstname[0] = array('value' => trim($name['firstname']));
     $node -> field_person_lastname[0] = array('value' => trim($name['lastname']));
+    if(strlen($profile['website'])){
+    $node -> field_person_website[0] = array('url' => $profile['website']);
+    }
     
     //get institution
- // if($profile['group'] == 'Current Research Associates'){
+  if($profile['group'] == 'Current Research Associates'){
     $node -> body = $description;
-    $node -> teaser = $description;
- // }
-
-  //else{
-    //$node -> field_person_institution[0] = array('value' => $description));
-  //}
-  
-    //$node -> taxonomy['tags'] = array( $vid  => $profile['group']);
+    $node -> teaser = $description;    
+ }
+  else{
+    $node -> field_person_institution[0] = array('value' => $description);
+  }
     node_save($node);
     db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);  
   }
