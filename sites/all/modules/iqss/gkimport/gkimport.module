@@ -70,8 +70,8 @@ function gkimport_create_site(){
 function  gkimport_customize_site($vsite){
   include_once('includes/install.inc');
   drupal_install_modules(array('scholar_profiles'));
-  $vsite -> features['scholar_links'] = 2;
-  $vsite -> features['scholar_profiles'] = 2;
+  $vsite -> features['scholar_links'] = SPACES_OG_PUBLIC;
+  $vsite -> features['scholar_profiles'] = SPACES_OG_PUBLIC;
   return spaces_save($vsite);
 }
 
