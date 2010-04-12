@@ -17,15 +17,15 @@ body {
     }
 
 
-#header h1, body.page-site-register #header h1 {
+#header h1 {
   width: 421px;
   height: 64px;
-  background: url(images/project-logo.png) 0 -64px no-repeat;
-  margin-left: 0px
+  margin-left: 0px;
+  background: url(images/project-logo.png) 0 0 no-repeat;
   }
 
-.front #header h1 {
-  background-position: 0 0;
+body.section-user #header h1 {
+  background-position: 0 -64px;
   }
 
 #header h1 a, #header h1 a:visited {
@@ -60,18 +60,32 @@ ul#top-front li a:hover {
   background: url(images/wrapper.png) no-repeat 50% 81px transparent;
   }
 
-.front #content-wrapper {
+.front #content-wrapper, #content-main {
   background: #fff;
   border: 1px solid #000;
-  overflow: hidden;
   }
 
-.front #content-wrapper {
-  padding:0 !important;
+body.page-site-register #content-wrapper,
+body.page-site-register #content-main,
+body.section-user #content-wrapper,
+body.section-user #content-main
+{
+  border: none;
+  background: transparent;
   }
 
 .front #content-wrapper {
   background: transparent;
+  }
+
+body.no-sidebars #content-main #content {
+  padding: 30px;
+  }
+
+.front #content-wrapper,
+body.page-site-register #content-main #content,
+body.section-user #content-main #content {
+  padding:0 !important;
   }
 
 #content-row-1 {
@@ -239,6 +253,9 @@ ul#top-front li a:hover {
   cursor: pointer;
   }
 
+#block-views-iqss_project_sites-block_2 {
+  min-height: 327px;
+  }
 
 #footer {
   padding-top: 10px;
@@ -252,5 +269,5 @@ p.copy {
 
 p.copy a, p.copy a:visited {
   text-decoration: underline;
-  color: #fff;
+  color: #fff !important;
   }
