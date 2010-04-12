@@ -20,6 +20,8 @@ function gkimport_import($drush_run = 0){
   gkimport_upload_pdfs();
   gkimport_update_aliases();
   gkimport_create_profiles();
+  gkimport_import_bio();
+  gkimport_import_links();
 
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
@@ -60,9 +62,17 @@ function gkimport_create_site(){
     $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
     if ($vsite){
       $mesage = variable_get('gkimport_drush_run', 0) === 1 ? drush_print(t('Created web site: !domain', array('!domain' => $settings['domain']))) : '';     
-      return $vsite;
+      return gkimport_customize_site($vsite);
     }
   }
+}
+
+function  gkimport_customize_site($vsite){
+  include_once('includes/install.inc');
+  drupal_install_modules(array('scholar_profiles'));
+  $vsite -> features['scholar_links'] = 2;
+  $vsite -> features['scholar_profiles'] = 2;
+  return spaces_save($vsite);
 }
 
 /**
@@ -639,6 +649,69 @@ function gkimport_nodeapi(&$node, $op){
         }
       }
       break;
+  }
+}
+
+function gkimport_import_bio(){
+  $path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/bio.txt';
+  if(!is_file($path)){
+    return drush_print("No file found for bio text");
+  }
+  $text = file_get_contents($path);
+  
+  $account = user_load(array('name' => 'gking')); 
+  
+  $node = new stdClass();
+  $node -> type = 'bio';
+  $node -> title = 'Gary King Short Bio';
+  $node -> body = _gkimport_remove_line_breaks($text);
+  $node -> name = $account -> name;
+  $node -> uid = $account -> uid;
+  node_save($node);
+  gkimport_node_to_og($node -> nid, $account);
+  if ($node -> nid) drush_print("Added Bio: {$node -> title}");
+}
+
+function gkimport_import_links(){
+  $path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/links.csv';
+  if(!is_file($path)){
+    return drush_print("No file found for links");
+  }
+
+  $account = user_load(array('name' => 'gking'));
+  if($spaces = vsite_get_vsite_by_owner($account -> uid)){
+    $sid = $spaces[0] -> group -> nid;
+  }
+
+  if (( $handle = fopen($path, "r")) !== FALSE) {
+    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
+      //if title exists already in the array, and another term is to be added
+
+      $node = new stdClass();
+      $node -> type = 'link';
+      $node -> title = $data[0];
+      $node -> field_link_href[0] = array('url' => $data[1]);
+      $node -> name = $account -> name;
+      $node -> uid = $account -> uid;
+      node_save($node);
+      gkimport_node_to_og($node -> nid, $account, $sid);
+      drush_print("Added link: {$node -> title}");
+    }
+  }
+}
+/**
+ * Add a node to an OG
+ */
+function gkimport_node_to_og($nid, $account, $sid = NULL){
+  
+if(!$sid){  
+  if($spaces = vsite_get_vsite_by_owner($account -> uid)){
+  $sid = $spaces[0] -> group -> nid;  
+  }
+}
+if($sid){  
+    db_query("DELETE FROM {og_ancestry} WHERE nid = %d AND group_nid = %d", $nid, $sid);
+    db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $nid, $sid);
   }
 }
 
