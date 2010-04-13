@@ -66,7 +66,9 @@ function cp_settings_form_submit($form, &$form_state){
   $settings = spaces_settings();
   if (!empty($form_state['values']['settings'])) {
     foreach ($form_state['values']['settings'] as $setting => $value) {
-      $space->settings[$setting] = $settings[$setting]->submit($space, $value);
+      $new_setting = $settings[$setting]->submit($space, $value);
+      $space = vsite_get_vsite(); //refresh
+      $space->settings[$setting] = $new_setting;
       if(!$form_state['redirect'] && is_callable(array($settings[$setting], 'modifyRedirect'),false)) $form_state['redirect'] = $settings[$setting]->modifyRedirect($value);
     }
   }

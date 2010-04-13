@@ -17,6 +17,19 @@ function vsite_menus_spaces_settings(){
 }
 
 /**
+ * Implementation of hook_spaces_customizers().
+ */
+function vsite_menus_spaces_customizers_alter(&$customizers) {
+	if(array_key_exists('menu',$customizers)){
+		$customizers['menu']['class'] = 'vsite_menus_customizer_menu';
+		$customizers['menu']['file'] = drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.customizer.inc';
+	}
+	
+	return $customizers;
+}
+
+
+/**
  * Implements hook_menu_node_insert().
  */
 function vsite_menus_menu_node_insert($item, $node) {

@@ -45,6 +45,10 @@ class vsite_menus_menus implements space_setting {
     $a_disabled_features = array_intersect_key(spaces_features_map('node'),vsite_content_types(FEATURE_DISABLED));
     $a_disabled_links = array_keys(array_intersect(spaces_features_map('menu'),$a_disabled_features));
     
+    $a_feature_links = spaces_features_map('menu');
+    $customizers = spaces_customizers();
+    $menu_customizer = $customizers['menu']; //menu customizer
+    
     foreach ($choices as $s_menu => $s_menu_name){
     	vsite::$override_allow_feature_access = true;
 	    $a_tree = menu_tree_all_data(variable_get("scholar_{$s_menu}_menu",false));    
@@ -52,7 +56,7 @@ class vsite_menus_menus implements space_setting {
 	    
 	    foreach ($a_tree as $element) {
 	      if ($element['link']['hidden']) continue;
-	        
+	      
 	      $mnode = menu_node_get_node($element['link']['mlid']);
 	      if($mnode){
 	        $a_groups = og_get_node_groups($mnode);
@@ -67,6 +71,11 @@ class vsite_menus_menus implements space_setting {
 	        $s_current = $s_menu;
 	        $n_count = 100; //put it after the last item
 	      }
+	      
+	      if(array_key_exists($element['link']['href'],$a_feature_links)){
+	      	$form['menu_items'][$element['link']['mlid']]['customizer'] = $menu_customizer->vsite_menu_form($space, $a_feature_links[$element['link']['href']]);
+	      }//If this is a feature link allow customization
+	      
 	      $form['menu_items'][$element['link']['mlid']]['#weight'] = $n_count;
 	      $form['menu_items'][$element['link']['mlid']]['menu'] = array(
 	        '#type' => 'radios',
@@ -101,9 +110,29 @@ class vsite_menus_menus implements space_setting {
 
   function submit($space, $value) {
     
+  	self::submit_customizers($space,$value);
+  	
     $value = self::create_menus($value); 
     
     return $value;
+  }
+  
+  private static function submit_customizers($space,&$value){
+  	
+  	$a_feature_links = spaces_features_map('menu');
+  	$customizers = spaces_customizers();
+    $menu_customizer = $customizers['menu']; //menu customizer
+  	
+  	foreach ($value['menu_items'] as $mlid => $menu_info){
+  		if(!$menu_info['customizer']) continue;
+  		
+  		if(array_key_exists(key($menu_info['customizer']),$a_feature_links)){
+  			$space->customizer['menu'] = $menu_customizer->submit($space,$a_feature_links[key($menu_info['customizer'])],current($menu_info['customizer']));
+  		}
+  		unset($value['menu_items'][$mlid]['customizer']);
+  	}
+  	
+  	spaces_save($space); //Save the customizers
   }
   
   public static function create_menus($value){

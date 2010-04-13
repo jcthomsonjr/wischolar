@@ -21,6 +21,12 @@ function theme_vsite_menus_radios($element) {
       $content .= "<th>Delete</th></tr>";
     }
     
+    if(array_key_exists('customizer',$item)){
+    	foreach(element_children($item['customizer']) as $key){
+    		unset($item['customizer'][$key]['#title'],$item['customizer'][$key]['title']['#title']); //Don't show titles
+    	}
+    	$item['menu']['#title'] = drupal_render($item['customizer']);
+    }
     $content .= "<tr class='draggable'><td>{$item['menu']['#title']}</td>";
     
     $content .= "<td>".drupal_render($item['weight'])."</td>";
