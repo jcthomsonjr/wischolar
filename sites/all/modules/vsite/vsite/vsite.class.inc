@@ -173,3 +173,14 @@ class vsite extends space_og implements space {
 		}//If this site is configured for domains use that as default, otherwise leave the default as "spaces_og"
 	}
 }
+
+/**
+ * We extend the interface here to allow for upgrades to the settings interface
+ * @author rbrandon
+ *
+ */
+interface vsite_setting extends space_setting
+{
+	//Pass the space by reference in-case it would like to modify somthing other than the settings array
+  function submit_modify_space(&$space, $value);
+}

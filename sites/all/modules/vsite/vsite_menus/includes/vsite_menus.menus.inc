@@ -2,7 +2,7 @@
 /**
  * Provides theme selection for each site
  */
-class vsite_menus_menus implements space_setting {
+class vsite_menus_menus implements vsite_setting {
   
   var $id;
   function __construct($id = NULL) {
@@ -110,14 +110,14 @@ class vsite_menus_menus implements space_setting {
 
   function submit($space, $value) {
     
-  	self::submit_customizers($space,$value);
-  	
-    $value = self::create_menus($value); 
-    
-    return $value;
+    return self::create_menus($value); 
   }
   
-  private static function submit_customizers($space,&$value){
+  function submit_modify_space(&$space, $value){
+  	self::apply_customizers($space,$value);
+  }
+  
+  private static function apply_customizers(&$space,$value){
   	
   	$a_feature_links = spaces_features_map('menu');
   	$customizers = spaces_customizers();
@@ -127,12 +127,9 @@ class vsite_menus_menus implements space_setting {
   		if(!$menu_info['customizer']) continue;
   		
   		if(array_key_exists(key($menu_info['customizer']),$a_feature_links)){
-  			$space->customizer['menu'] = $menu_customizer->submit($space,$a_feature_links[key($menu_info['customizer'])],current($menu_info['customizer']));
+  			$space->customizer['menu'] = $menu_customizer->submit($space,$a_feature_links[key($menu_info['customizer'])],$menu_info['customizer']);
   		}
-  		unset($value['menu_items'][$mlid]['customizer']);
   	}
-  	
-  	spaces_save($space); //Save the customizers
   }
   
   public static function create_menus($value){
