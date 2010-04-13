@@ -11,17 +11,20 @@ define(GKIMPORT_DOWNLOAD, FALSE);  // TRUE tells module to download files with w
 function gkimport_import($drush_run = 0){
   variable_set('gkimport_drush_run', $drush_run);
   $mode = (GKIMPORT_DOWNLOAD) ? 'TRUE' : 'FALSE';
-  drush_print("Begining import... (download mode is set to $mode)");
+  drush_print("Download mode is set to $mode");
+  drush_print("Begining import...");
   
   gkimport_clean(); // NOTE: This should be removed when run on production
   gkimport_create_site();
   gkimport_parse_files();
+  gkimport_software_pubs_set();
   gkimport_parse_abstracts();
   gkimport_upload_pdfs();
   gkimport_update_aliases();
   gkimport_create_profiles();
   gkimport_import_bio();
   gkimport_import_links();
+  gkimport_import_classes();
 
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
@@ -70,8 +73,21 @@ function gkimport_create_site(){
 function  gkimport_customize_site($vsite){
   include_once('includes/install.inc');
   drupal_install_modules(array('scholar_profiles'));
+  //update the title
+  $node_tables = array('node', 'node_revisions');
+  foreach($node_tables as $table){
+   db_query("UPDATE { $table } SET title = '%s' WHERE nid = %d", 'Gary King', $vsite -> group -> nid);
+  }
+  //update the address
+  $address = '1737 Cambridge St. Cambridge, MA 02138';
+  $sid = $vsite -> group ->nid;
+  $vsite -> group -> og_description = "Albert J. Weatherhead III University Professor at Harvard University";
   $vsite -> features['scholar_links'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_profiles'] = SPACES_OG_PUBLIC;
+  db_query("UPDATE {content_type_vsite} SET field_vsite_address_value = '%s' WHERE nid = %d", $address, $sid);
+  //$cid = 'content:' . $sid . ':' . $sid;
+  cache_clear_all("content:$sid:$sid", 'cache_content');
+  drush_print("Customized site");
   return spaces_save($vsite);
 }
 
@@ -506,7 +522,7 @@ function gkimport_create_profiles(){
    continue;   
    }
    
-    drush_print("Adding Person: " .  $name['firstname'] . ' ' .  $name['lastname'] . ' ' .  $profile['group']);
+    drush_print("Adding Person: " .  $name['firstname'] . ' ' .  $name['lastname'] . ' - ' .  $profile['group']);
     $description = _gkimport_remove_line_breaks($profile['description']);    
     
     $node = new stdClass();
@@ -535,12 +551,12 @@ function gkimport_create_profiles(){
     db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);  
   }
   //special exception
+  drush_print("Adding person: Christopher Adolph to Collaborators");  
   $special_nid = db_result(db_query("SELECT nid FROM {content_type_person} WHERE field_person_firstname_value = '%s' 
   AND field_person_lastname_value = '%s'", 'Christopher' , 'Adolph'));
   $special_tid =  install_taxonomy_get_tid( 'Collaborators', $vid);
    db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $special_nid, $special_tid);
-   db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $special_nid, $special_nid, $special_tid); 
-   drush_print("Added Christopher Adolph to Collaborators group");  
+   db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $special_nid, $special_nid, $special_tid);    
 }
 
 function _gkimport_remove_line_breaks($text){
@@ -713,6 +729,88 @@ if($sid){
     db_query("DELETE FROM {og_ancestry} WHERE nid = %d AND group_nid = %d", $nid, $sid);
     db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $nid, $sid);
   }
+}
+
+function gkimport_import_classes(){  
+    $path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/classes.csv';
+  if(!is_file($path)){
+    return drush_print("No file found for classes");
+  }
+   $account = user_load(array('name' => 'gking'));
+  if($spaces = vsite_get_vsite_by_owner($account -> uid)){
+    $sid = $spaces[0] -> group -> nid;
+  }
+
+  if (( $handle = fopen($path, "r")) !== FALSE) {
+    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
+      //if title exists already in the array, and another term is to be added
+
+      $node = new stdClass();
+      $node -> type = 'class';
+      $node -> title = $data[0];
+      $node -> body = $data[1];
+      $node -> teaser = $data[1];
+      $node -> field_class_link[0] = array(
+      'url' => $data[2],
+      'title' => 'Syllibus',
+      );
+      $node -> name = $account -> name;
+      $node -> uid = $account -> uid;
+      node_save($node);
+      gkimport_node_to_og($node -> nid, $account, $sid);
+      drush_print("Added class: {$node -> title}");
+    }
+  }	
+}
+
+
+function gkimport_software_pubs_set(){
+  install_include(array('taxonomy'));
+  $vid = install_taxonomy_get_vid('gking_vocabulary');
+  $tid = install_taxonomy_add_term($vid, 'Software');
+  foreach(_gkimport_software_pubs() as $title){
+    $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ",$title));
+    if ($nid){
+      $node = node_load($nid);
+      drush_print("Found match for software term: $nid {$node -> title}");
+      db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $nid, $tid);
+      db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid);
+    }
+    else{
+      $missing_titles[] = $title;
+    }
+  }
+  variable_set("gkimport_software_pubs_not_found", $missing_titles); //list of software pubs that do not exist
+  //drush_print_r($missing_titles);
+}
+
+/**
+ * An array of titles for publications that should have a term "software" added
+ */
+function _gkimport_software_pubs(){
+  
+return array(
+'CEM: Coarsened Exact Matching Software',
+'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
+'Zelig: Everyone\'s Statistical Software',
+'JudgeIt: A Program for Evaluating Electoral Systems',
+'ReadMe: Software for Automated Content Analysis',
+'Amelia II: A Program for Missing Data',
+'VA: Software for Analyzing Verbal Autopsy Data',
+'YourCast: Time Series Cross-Sectional Forecasting with Your Assumptions',
+'WhatIf: Software for Evaluating Counterfactuals',
+'The Dangers of Extreme Counterfactuals',
+'When Can History Be Our Guide? The Pitfalls of Counterfactual Inference',
+'Enhancing the Validity and Cross-cultural Comparability of Measurement in Survey Research',
+'ReLogit: Rare Events Logistic Regression',
+'CLARIFY: Software for Interpreting and Presenting Statistical Results',
+'EI: A Program for Ecological Inference',
+'EzI: A(n Easy) Program for Ecological Inference',
+'COUNT: A Program for Estimating Event Count and Duration Regressions',
+'MAXLIK, a set of Gauss programs, annotated for pedagogical purposes, to implement the maximum likelihood models in Unifying Political Methodology: The Likelihood Theory of Statistical Inference',
+'Dataverse Network Project',
+'The Harvard Geospatial Library Project',
+);    
 }
 
 /**
