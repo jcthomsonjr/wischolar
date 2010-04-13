@@ -98,12 +98,13 @@
       <div id="content-wrapper-bottom"></div>
       <?php if ($footer || $footer_message) : ?>
       <div id="footer">
-      <?php if ($footer_message): ?>
+        <p class="copy">Copyright © President & Fellows of Harvard University. A project of the <?php print l('Institute for Quantitative Social Sciences', 'http://iq.harvard.edu') . '. ' . l('Contact & Feedback', 'contact'); ?> </li></p>
+      <?php if ($footer_message){ ?>
         <div id="footer-message"><?php print $footer_message; ?></div>
-      <?php endif; ?>
-      <?php if ($footer): ?>
+      <?php }; ?>
+      <?php if ($footer){ ?>
         <?php print $footer; ?>
-      <?php endif; ?>
+      <?php }; ?>
       </div> <!-- /#footer -->
       <?php endif; ?>
     </div> <!-- /container -->
