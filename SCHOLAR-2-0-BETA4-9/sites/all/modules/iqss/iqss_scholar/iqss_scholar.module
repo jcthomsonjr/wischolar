@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * implement hook strongarm
+ * 
+ * This should be used for IQSS only settings
+ * @return array
+ */
+function iqss_scholar_strongarm(){
+  require_once drupal_get_path('module','iqss_scholar').'/iqss_scholar.defaults.inc';
+  
+	$conf = array();
+  
+	$conf = array_merge($conf,_iqss_scholar_config_variables());
+	
+	$conf = array_merge($conf,_iqss_scholar_config_by_domain());
+  
+	return $conf;
+}
+
+define(IQSS_DEV,0);
+define(IQSS_LOCAL_DEV,1);
+define(IQSS_STAGING,2);
+define(IQSS_PRODUCTION,3);
+define(IQSS_PROJECT_PRODUCTION,4);
+
+function isqq_scholar_current_location(){
+	
+	switch($_SERVER['HTTP_HOST']){
+		case 'projects.iq.harvard.edu':
+      return IQSS_PROJECT_PRODUCTION;
+		case 'scholar-test.iq.harvard.edu':
+		  return IQSS_STAGING;	
+		case 'scholar-dev1.iq.harvard.edu':
+		case 'scholar-dev2.iq.harvard.edu':
+		case 'scholar-dev3.iq.harvard.edu':
+      return IQSS_DEV;  
+    case 'localhost':
+      return IQSS_LOCAL_DEV;  
+	}
+	
+  switch($_SERVER['SERVER_ADDR']){
+    case '127.0.0.1':
+    case '::1':
+      return IQSS_LOCAL_DEV;  
+  	case '140.247.115.239':
+    default:
+      return IQSS_PRODUCTION;  
+  }
+}
