@@ -505,7 +505,6 @@ function _scholar_software_content_default_fields() {
   // Translatables
   array(
     t('Extra version'),
-    t('Machine name'),
     t('Major version'),
     t('Package'),
     t('Packaging method'),
@@ -514,6 +513,7 @@ function _scholar_software_content_default_fields() {
     t('Recommended'),
     t('Repository URL'),
     t('Security release'),
+    t('Software key'),
   );
 
   return $fields;
@@ -603,25 +603,37 @@ function _scholar_software_user_default_permissions() {
   // Exported permission: create scholar_software_project content
   $permissions[] = array(
     'name' => 'create scholar_software_project content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: create scholar_software_release content
   $permissions[] = array(
     'name' => 'create scholar_software_release content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: edit own scholar_software_project content
   $permissions[] = array(
     'name' => 'edit own scholar_software_project content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: edit own scholar_software_release content
   $permissions[] = array(
     'name' => 'edit own scholar_software_release content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: override scholar_software_project authored by option

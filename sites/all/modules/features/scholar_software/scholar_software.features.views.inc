@@ -634,13 +634,13 @@ function _scholar_software_views_default_views() {
     'weight' => 0,
   ));
   $handler = $view->new_display('block', 'Recent Releases', 'block_2');
+  $handler->override_option('title', 'Recent Releases');
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', '0');
   $handler->override_option('use_more', 1);
   $handler->override_option('use_more_text', 'more releases');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler->override_option('title', 'Recent Releases');
 
   $views[$view->name] = $view;
 
