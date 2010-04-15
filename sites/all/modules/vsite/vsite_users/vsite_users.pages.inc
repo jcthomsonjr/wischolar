@@ -127,11 +127,12 @@ function vsite_users_lookup_user($string = ''){
     }
   }
   
-    static $vsite, $group;
+    static $vsite, $group, $admin;
+    $admin = db_result(db_query("SELECT name FROM {users} WHERE uid = %d", 1));
     if (!is_object($vsite)) $vsite= vsite_get_vsite();
     //existing members should be excluded from select list
-    if(!is_array($group)){
-      $group['admin'] = 'admin'; //admin is not group a member but should also be excluded from select list
+    if(!is_array($group)){      
+      $group[$admin] = $admin; //admin is not group a member but should also be excluded from select list
       $result = db_query("SELECT ou.nid, u.name as name FROM {og_uid} ou RIGHT JOIN {users} u USING (uid) HAVING ou.nid = %d", $vsite -> sid);
       while ($members = db_fetch_object($result)) {
         $group[$members -> name] = $members -> name;
