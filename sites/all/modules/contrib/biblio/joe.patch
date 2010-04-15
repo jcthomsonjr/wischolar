@@ -1,14 +1,13 @@
 Index: biblio_theme.inc
 ===================================================================
---- biblio_theme.inc	(revision 2902)
+--- biblio_theme.inc	(revision 3048)
 +++ biblio_theme.inc	(working copy)
-@@ -807,7 +807,8 @@
+@@ -807,7 +807,7 @@
      foreach ($node->files as $file) {
        if ($file->list) {
          $file_count++;
--        $href = file_create_url($file->filepath);
-+        if(function_exists('drupal_get_path_alias')) $alias = drupal_get_path_alias('filefield_paths/alias/' . $file -> fid);
-+        $href = ($alias) ?  $alias : file_create_url($file->filepath);
+-        if(function_exists('drupal_get_path_alias')) $alias = drupal_get_path_alias('filefield_paths/alias/' . $file -> fid);
++        $alias = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'",'filefield_paths/alias/' . $file -> fid));        
+         $href = ($alias) ?  $alias : file_create_url($file->filepath);
          $text = $file->description ? $file->description : $file->filename;
          $files .= l($text, $href) .'&nbsp;('. format_size($file->filesize).')';
-       }
