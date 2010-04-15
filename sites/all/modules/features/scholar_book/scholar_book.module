@@ -173,15 +173,17 @@ function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $tr
 }
 
 /**
-* Implementation of hook_content_extra_fields.
-*/
-function scholar_book_content_extra_fields() {
-  $extras['booktoc'] = array(
-    'label' => t('Book toc'),
-    'description' => t('Book toc displayed when a node is viewed.'),
-    'weight' => -10,
-  );
-  return $extras;
+ * Implementation of hook_content_extra_fields.
+ */
+function scholar_book_content_extra_fields($type_name){
+  if (book_type_is_allowed($type_name)) {
+    $extras['booktoc'] = array(
+      'label' => t('Book toc'), 
+      'description' => t('Book toc displayed when a node is viewed.'), 
+      'weight' => - 10 
+    );
+    return $extras;
+  }
 }
 
 /**
