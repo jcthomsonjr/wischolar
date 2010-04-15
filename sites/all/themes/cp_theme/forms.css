@@ -190,6 +190,50 @@ fieldset.group-account-basics {
   padding: 0;
   }
 
+/* DRAGGABLE AREAS */
+
+#menu_sort_table {
+  margin-bottom: 1em;
+  }
+
+.draggable td {
+  padding: 4px 0;
+  vertical-align: middle;
+  font-weight: bold;
+  }
+
+.draggable a.tabledrag-handle {
+  cursor:move;
+  float:left;
+  height:1.7em;
+  margin:-0.4em 0 -0.4em -0.5em;
+  padding:0.42em 1.5em 0.42em 0.5em;
+  text-decoration:none;
+  }
+
+.draggable fieldset {
+  clear: none;
+  margin: 0;
+  }
+
+.draggable input.form-text {
+  font-weight: bold;
+  color: #666;
+  font-size:1em;
+  }
+
+.draggable select {
+  font-size: 10px;
+  height: 14px;
+  padding-top: 1px;
+  }
+
+.tabledrag-changed {
+  float: right;
+  margin:-19px -6px 0 0;
+  padding:0;
+  }
+
 /* Various Views */
 
 /*
@@ -275,6 +319,7 @@ fieldset.vsite_content_filter_box {
   margin: 0;
   }
 */
+
 .vsite_content_filter_box .fieldset-wrapper, #views-bulk-operations-select .fieldset-wrapper {
   margin-left: 0;
   margin-top: -6px;

@@ -9,6 +9,11 @@
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("#pub_type_tabs").tabs({ fx: { opacity: 'toggle' } });
+      });
+  </script>
 </head>
 
 <body class="<?php print $body_classes; ?>">
@@ -74,7 +79,12 @@
             <?php endif; ?>
             <?php print $help; ?>
             <?php print $messages; ?>
-            <?php print $content; ?>
+            <div class="block">
+            <?php $block = module_invoke('scholar_publications', 'block', 'view', 'pub_by_type'); ?>
+              <h3 class="title"><?php print $block['subject']; ?></h3>
+              <?php print $block['content']; ?>
+            </div>
+            <?php //print $content;?>
           </div> <!-- /content -->
 
           <?php if (!empty($content_bottom)): ?>
@@ -101,16 +111,22 @@
       <div id="footer">
         <div id="gking-footer">
           <div class="block">
-            <?php $gksearch = vsite_widgets_search(); ?>
-            <?php echo $gksearch['content'];?>
+            <?php
+              $gksearch = vsite_widgets_search();
+              echo $gksearch['content'];
+              ?>
           </div>
           <div class="block">
-            <?php $gkgoogtr = vsite_widget_googletranslate(); ?>
-            <?php echo $gkgoogtr['content'];?>
+            <?php
+              $gkgoogtr = vsite_widget_googletranslate();
+              echo $gkgoogtr['content'];
+              ?>
           </div>
           <div class="block">
-            <?php $gkaddthis = vsite_widgets_addthis(); ?>
-            <?php echo $gkaddthis['content'];?>
+            <?php
+              $gkaddthis = vsite_widgets_addthis();
+              echo $gkaddthis['content'];
+              ?>
           </div>
           <div id="twitter-link" class="block">
           Follow Gary King on <a href="http://twitter.com/garyking">Twitter</a>

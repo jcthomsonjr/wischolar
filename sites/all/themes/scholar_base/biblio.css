@@ -223,6 +223,55 @@ ul.biblio-export-buttons,ul.biblio-export-buttons li {
 #biblio-header {
 	display: block;
 }
+
+
+/* BIBLIO UI TABS */
+
+.ui-tabs {
+	zoom: 1;
+	}
+
+.ui-tabs .ui-tabs-nav {
+	padding-top: 10px;
+	}
+
+.ui-tabs .ui-tabs-nav li {
+	float: left;
+	list-style: none;
+	line-height: 1.5em;
+	}
+
+.ui-tabs .ui-tabs-nav li a {
+	font-weight: bold;
+  padding-right: .6em;
+  color:#96a5a6;
+  border-right: 2px solid #96a5a6;
+  margin-right: .6em;
+	}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
+	color: #000;
+	}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a {
+	cursor: text;
+	}
+
+.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {
+	cursor: pointer;
+	}
+
+	/* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
+.ui-tabs .ui-tabs-panel {
+	clear:both;
+	padding-top: 1em;
+	}
+
+.ui-tabs .ui-tabs-hide {
+	display: none !important;
+	}
+
+
 /*
 #biblio-header ul.tabs {
 	border-bottom: 1px solid #BBBBBB;
