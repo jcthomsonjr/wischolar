@@ -124,7 +124,7 @@ function scholarregister_signup_form_validate($form, &$form_state){
   
   //since we introduced multiple site capability, we need to check which fields 
   //will be present in the form, then call the appropriate validation function
-  $fields = array('name', 'mail',' domain');
+  $fields = array('name', 'mail', 'domain');
   foreach ($fields as $field){
     if ($form_state['values'][$field]){
       if(call_user_func('scholarregister_validate_' . $field, $form_state['values'][$field] )){
