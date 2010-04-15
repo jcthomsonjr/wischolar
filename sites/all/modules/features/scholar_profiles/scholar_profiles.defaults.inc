@@ -69,6 +69,72 @@ function _scholar_profiles_content_default_fields() {
     ),
   );
 
+  // Exported field: field_person_institution
+  $fields[] = array(
+    'field_name' => 'field_person_institution',
+    'type_name' => 'person',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => 5,
+      'size' => '60',
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_person_institution][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Institution',
+      'weight' => '31',
+      'description' => '',
+      'type' => 'text_textfield',
+      'module' => 'text',
+    ),
+  );
+
   // Exported field: field_person_lastname
   $fields[] = array(
     'field_name' => 'field_person_lastname',
@@ -338,6 +404,7 @@ function _scholar_profiles_content_default_fields() {
   // Translatables
   array(
     t('First Name'),
+    t('Institution'),
     t('Last Name'),
     t('Middle Name or Initial'),
     t('Photo'),
