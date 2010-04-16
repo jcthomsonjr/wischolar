@@ -47,6 +47,7 @@ h2, h2.title {
 
 h2.title {
   margin-bottom: .4em;
+  margin-top: 0;
   }
 
 /* LAYOUT */
@@ -67,6 +68,10 @@ h2.title {
 
 #sidebar-right, #header-right {
   padding-right: 0;
+  }
+
+#sidebar-left, #sidebar-right {
+  padding-top: 50px;
   }
 
 body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
@@ -95,7 +100,7 @@ body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
     }
 
 #header h1 {
-    font-size: 3em;
+    font-size: 37px;
     line-height: 1em;
     }
 
@@ -109,7 +114,7 @@ body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
     }
 
 #header h2 {
-    font-size: 1.3em;
+    font-size: 18px;
     line-height: 1em;
     margin-top: .2em;
     }
@@ -117,6 +122,10 @@ body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
 #header a, #header a:visited {
     text-decoration: none;
     }
+
+#navbar .block ul.menu {
+  text-align: center;
+  }
 
 #navbar li {
     margin-right: 1.5em;
@@ -177,11 +186,10 @@ body.sidebar-left #footer, body.two-sidebars #footer {
   text-align: left;
   }
 
-
 /* Nodes */
 
 #content-main .node, body.section-node-edit #content, body.section-node-add #content, #comments, .biblio-entry {
-    padding: 10px;
+    padding: 1.5em;
     background: #fff;
     margin-bottom: 10px;
     }

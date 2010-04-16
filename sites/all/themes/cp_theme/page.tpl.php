@@ -9,9 +9,6 @@
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
-  <!--[if lte IE 7]>
-  <script type="text/javascript" src="<?php print $base_path . $directory;?>/js/ie-warning.js"></script>
-  <![endif]-->
 </head>
 <body class="<?php print $body_classes; ?>">
   <div id="container">
@@ -60,7 +57,7 @@
         <h3>The Scholars' Web Sites Project <span>IQSS, Harvard University</span></h3>
         <ul>
           <li>&copy; 2008-<?php echo date(Y);?> President &amp; Fellows Harvard University</li>
-          <li><?php print l('Documentation', 'http://scholar.iq.harvard.edu/help/vsitehelp/Scholar-Web-Sites-Project-Documentation');?></li>
+          <li><?php print l('Documentation', 'http://scholar.harvard.edu/help/vsitehelp/Scholar-Web-Sites-Project-Documentation');?></li>
           <li><?php print l('Feedback', 'cp/support/contact');?></li>
           <!-- <li><?php //print l('Terms', 'terms');?></li>-->
           <li class="last">Version 2.0.4</li>
@@ -76,7 +73,9 @@
   <?php if ($closure_region){ ?>
     <div id="closure-blocks"><?php print $closure_region; ?></div>
   <?php }; ?>
-
+   <!--[if lte IE 7]>
+  <div id="ie-warning"><p>The control panel does not currently support Internet Explorer 7 or lower. You should update your browser to version 8 or use one of the recommended browsers. Recommended browsers are current versions of <a href="http://www.getfirefox.com">Firefox</a>, <a href="http://www.apple.com/safari">Safari</a>, or <a href="http://www.google.com/chrome">Chrome</a></p></div>
+  <![endif]-->
   <?php print $closure; ?>
 </body>
 </html>

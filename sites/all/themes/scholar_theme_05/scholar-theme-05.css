@@ -30,7 +30,6 @@ body.two-sidebars {
     z-index:50;
     }
 
-
 #container {
     width: 960px;
     margin: 0 auto;
@@ -84,29 +83,36 @@ h2.title {
 
 /* LAYOUT */
 
-.column {
+#header-main, #content-main {
   padding: 10px 35px;
   }
 
 #sidebar-left, #header-left {
   width: 130px;
-  right: 254px;
-  padding-right: 10px !important;
-  padding-left: 44px !important;
+  right: 194px;
+  padding-right: 10px;
+  padding-left: 34px;
+  }
 
+#sidebar-left {
+  right: 244px;
+  top: -100px;
   }
 
 #sidebar-right, #header-right {
   width: 154px;
-  padding-left: 20px !important;
-  padding-right: 34px !important;
+  padding-left: 20px;
+  padding-right: 34px;
   }
 
 #header-wrapper, #content-wrapper {
   width: auto;
-  margin: 0 auto;
-  padding-left: 184px;
-  padding-right: 279px;
+  padding-left: 174px;
+  padding-right: 228px;
+  }
+
+#content-wrapper {
+  padding-right: 278px;
   }
 
 #sidebar-left, #sidebar-right {
@@ -116,11 +122,6 @@ h2.title {
 
 #sidebar-left li, #sidebar-right li {
   margin-bottom: .7em;
-  }
-
-body.header-main #sidebar-left, body.header-main-right #sidebar-left {
-  position:relative;
-  top: -164px;
   }
 
 body.sidebar-left #content-wrapper {
@@ -144,35 +145,31 @@ body.navbar #content-main {
 
 /* HEADER ELEMENTS */
 
-#header-wrapper {
-  padding-right: 396px !important;
-  }
 
 #header {
     padding-top: 41px;
-    height: 173px;
     background:url(images/header-no-sidebar.jpg) no-repeat top center #6d2a01;
     }
 
-#header #header-main {
-    background: url(images/crest.png) no-repeat transparent 21px 0;
-    min-height: 112px;
-    padding-left: 152px !important;
-    padding-top: 10px;
-    }
 
-#header-left {
-  right: 354px;
+#header-main {
+  background: transparent;
+  padding-left: 10px;
+  padding-right:10px;
   }
 
-#header-right {
+#header #header-right {
+    padding-top: 20px;
     text-align: center;
     }
 
-body.header-main #header-main {
-    width:384px;
-    margin-top: 43px;
-    }
+body.sidebar-left #header, body.two-sidebars #header {
+  padding-left: 173px;
+  }
+
+body.header-left-main #header {
+  padding-right: 248px;
+  }
 
 body.sidebar-left #header {
     background-image:url(images/header-left-sidebar.jpg);
@@ -186,8 +183,10 @@ body.two-sidebars #header {
     background-image:url(images/header-both-sidebar.jpg);
     }
 
-body.header-main-right #header-wrapper, body.header-main #header-wrapper {
-  margin-left:184px;
+body.header-main #block-scholar-1, body.header-main-right #block-scholar-1 {
+  padding-left: 149px;
+  background: url(images/crest.png) no-repeat 21px 0 transparent;
+  min-height: 112px;
   }
 
 body.sidebar-right #header-wrapper {
@@ -226,6 +225,7 @@ body.sidebar-right #header-wrapper {
   width: 900px;
   margin-left: 5px;
   padding-left: 33px;
+  padding-top: 20px;
   }
 
 #navbar li {

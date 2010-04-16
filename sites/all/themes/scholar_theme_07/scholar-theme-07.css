@@ -1,5 +1,11 @@
+@font-face {
+	font-family: 'ArmWrestlerBold';
+	src: url('fonts/ArmWrestler.eot');
+	src: local('fonts/ArmWrestler'), local('fonts/ArmWrestler-Bold'), url('fonts/ArmWrestler.woff') format('woff'), url('fonts/ArmWrestler.ttf') format('truetype'), url('fonts/ArmWrestler.svg#ArmWrestler-Bold') format('svg');
+}
+
 body {
-    background: url(images/fabric-strip.jpg) repeat-y 50% 0 #4C2F0D;
+    background: url(images/fabric-strip.jpg) repeat-y 50% 0 #39240c;
     color:#282828;
     font:.9em/165% "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
@@ -39,21 +45,31 @@ body.front #container {
     }
 
 a, a:visited {
-    color:#353535;
-    text-decoration: underline;
+    color:#B8690B;
+    text-decoration: none;
     }
 
 a:hover {
-    color:#3399CC;
+    color:#000;
     }
 
 
-h1, h2, h3, #sidebar-right a, #navbar, #header {
+h1, .title {
+  font: 25px/1em 'ArmWrestlerBold', sans-serif;
+  text-transform:uppercase;
+  letter-spacing: -1px;
+  font-weight:normal;
+  }
+
+h1 a, h1 a:visited {
+  color: #FBF3E6;
+  }
+
+h2, h3, #sidebar-right a, #navbar, #header {
     font-weight: normal;
     }
 
-
-h1 a, h2 a, h3 a, #sidebar-right a {
+h3 a, #sidebar-right a {
     font-style: bold;
     }
 
@@ -62,10 +78,17 @@ h2, h3, h4 {
   margin-top: 1em;
   }
 
-h2.title {
+h2.title, h3.title {
   margin-bottom: 1em;
+  color: #444;
+  font-size: 1.2em;
+  letter-spacing:0;
   }
 
+h3.title {
+  font-size: 1em;
+
+  }
 
 /* LAYOUT ELEMENTS */
 
@@ -111,7 +134,6 @@ h2.title {
 
 #header {
     height: 141px;
-    font-family: georgia, serif;
     }
 
 #header .column {
@@ -125,13 +147,7 @@ h2.title {
   height: 114px;
   }
 
-
-#header h1 {
-    font-size: 2.5em;
-    line-height: 1em;
-    }
-
-#header, #header h1, #header h2, #header h3, #header a, #header a:visited, #header h1 a, #header h1 a:visited {
+#header, #header h1, #header h2, #header h3, #header a, #header a:visited {
     color:#fff;
     }
 
@@ -166,7 +182,6 @@ h2.title {
 #navbar li {
     font-size: 1.1em;
     line-height: normal;
-    font-family:"Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     float:left;
     }
 
