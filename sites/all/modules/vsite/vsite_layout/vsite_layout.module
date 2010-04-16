@@ -108,93 +108,11 @@ function vsite_layout_layout(){
  * block names in the header_left
  */
 function vsite_layout_preprocess_vsite_layout_layout(&$vars){
-
-  $vsite_layout_widgets = array();
-
-  $regions = array_keys(system_region_list('scholar_base'));
-
-  foreach($regions as $region){
-    $vsite_layout_widgets[$region] = array();
-  }
-
-  $s_page_type =  (isset($_GET['page_type']))? $_GET['page_type']:'all';
-  $a_feature_contexts = drupal_map_assoc(spaces_features_items('context', $s_page_type));
-  
-  $vsite_layout_widgets = vsite_layout_region_widgets(false,$s_page_type);
-
-  foreach($regions as $region){
-    $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
-    $wgts = array_key_exists($region,$vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
-    if($s_page_type == 'all') _check_for_overrides($wgts,$region);
-    
-    _check_for_disabled_widgets($wgts,$a_feature_contexts);
-    $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
-  }
-
-  //$vars['vsite_layout_form'] = drupal_get_form('vsite_layout_layoutsettings');
   
   $vsite = vsite_get_vsite();
-  $region_data_cache = cache_get("vsite_layout_".$vsite->group->og_theme."_layout_data");
-  $a_rows = $a_columns = array();
-  foreach ($region_data_cache->data as $s_region => $a_loc_info){
-  	$a_rows[ floor($a_loc_info['top']/25) ][] = $s_region;
-  	$a_columns[ floor($a_loc_info['left']/75) ][] = $s_region;
-  }
+  require_once( drupal_get_path('module', 'vsite_layout') . '/includes/layout_block_mapping.inc' );
+  $vars['vsite_layout_regions'] = _vsite_layout_calculate_layout($vsite->group->og_theme);
   
-  
-  ksort($a_rows); ksort($a_columns);
-  
-  dpm($a_rows);
-  dpm($a_columns);
-  dpm($vars);
-  
-  $a_row_widths = array_keys($a_rows);
-  $a_col_widths = array_keys($a_columns);
-  $a_rows = array_values($a_rows);
-  $a_columns = array_values($a_columns);
-  dpm($region_data_cache);
-  
-  $s_out = "";
-  for ($i=0;$i<count($a_rows);$i++){
-  	$a_row_items = $a_rows[$i];
-  	for ($j=0;$j<count($a_columns);$j++){
-  		$s_current = array_shift(array_intersect($a_rows[$i],$a_columns[$j]));
-  		if(in_array($s_current,$a_row_items)){
-  			$s_out .= $vars['vsite_layout_' . $s_current];
-  		}
-  	}
-  	$s_out .= "<br><hr><br>";
-  }
-  
-  
-//  $s_out = "<table>";
-//  for ($i=0;$i<count($a_rows);$i++){
-//  	$s_out .= "<tr>";
-//  	for ($j=0;$j<count($a_columns);$j++){
-//  		$s_content = array_shift(array_intersect($a_rows[$i],$a_columns[$j]));
-//  		if(!$s_content){
-//  			$n_cols_left = 0;
-//  			$s_left = false;
-//  			while(($j - ++$n_cols_left) >=0 && !$s_left){
-//  				$s_left = array_shift(array_intersect($a_rows[$i],$a_columns[$j-$n_cols_left]));
-//  			}
-//  			
-//  			if($s_left && floor(($region_data_cache->data[$s_left]['left'] + $region_data_cache->data[$s_left]['width'] - 10)/75) > $a_col_widths[$j] ){
-//  				$s_content = $s_left;
-//  			}else{
-//  				$n_rows_up = 0;
-//	  			while(($i - ++$n_rows_up) >=0 && !$s_content){
-//	          $s_content = array_shift(array_intersect($a_rows[$i-$n_rows_up],$a_columns[$j]));
-//	        }
-//  			}  			
-//  		}
-//  		$s_out .= "<td>".$s_content."</td>";
-//  	}
-//  	$s_out .= "</tr>";
-//  }
-//  $s_out .= "</table>";
-  
-  $vars['vsite_layout_regions'] = $s_out;
   
 }
 

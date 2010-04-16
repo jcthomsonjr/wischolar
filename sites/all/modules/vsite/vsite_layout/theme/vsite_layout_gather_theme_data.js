@@ -1,5 +1,5 @@
 Drupal.behaviors.scholarlayoutGatherThemeData = function() {
-    var layoutRegions = { content_main:"#content-main", header_left:"#header-left", header_main:"#header-main", header_right:"#header-right", navbar:"#navbar", left:"#sidebar-left", right:"#sidebar-right"};
+    var layoutRegions = { header_left:"#header-left", header_main:"#header-main", header_right:"#header-right", navbar:"#navbar", left:"#sidebar-left", right:"#sidebar-right", content_main:"#content-main"};
 
     
     scholar_layout_send_region_data(layoutRegions);
