@@ -47,25 +47,9 @@ function vsite_layout_menu(){
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-  
-  $items["layout_get_mapping_data"] = array(
-    'page callback' => 'vsite_layout_render_map',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-    'file' => 'layout_block_mapping.inc',
-    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes'
-  );
-  $items['cp/vsite_layout_cache_theme_data_js'] = array(
-    'page callback' => 'vsite_layout_cache_theme_data_js',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-    'file' => 'layout_block_mapping.inc',
-    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes'
-  );
 
   return $items;
 }
-
 
 /**
  * hook menu alter
@@ -108,12 +92,30 @@ function vsite_layout_layout(){
  * block names in the header_left
  */
 function vsite_layout_preprocess_vsite_layout_layout(&$vars){
+
+  $vsite_layout_widgets = array();
+
+  $regions = array_keys(system_region_list('scholar_base'));
+
+  foreach($regions as $region){
+    $vsite_layout_widgets[$region] = array();
+  }
+
+  $s_page_type =  (isset($_GET['page_type']))? $_GET['page_type']:'all';
+  $a_feature_contexts = drupal_map_assoc(spaces_features_items('context', $s_page_type));
   
-  $vsite = vsite_get_vsite();
-  require_once( drupal_get_path('module', 'vsite_layout') . '/includes/layout_block_mapping.inc' );
-  $vars['vsite_layout_regions'] = _vsite_layout_calculate_layout($vsite->group->og_theme);
-  
-  
+  $vsite_layout_widgets = vsite_layout_region_widgets(false,$s_page_type);
+
+  foreach($regions as $region){
+    $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
+    $wgts = array_key_exists($region,$vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
+    if($s_page_type == 'all') _check_for_overrides($wgts,$region);
+    
+    _check_for_disabled_widgets($wgts,$a_feature_contexts);
+    $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
+  }
+
+  //$vars['vsite_layout_form'] = drupal_get_form('vsite_layout_layoutsettings');
 }
 
 function vsite_layout_get_pagetypes($space){
@@ -390,10 +392,6 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
 	    }
 	  }//For each widget in a region
   }//For Each region in the settings
-  
-  //For CP Layout
-  require_once( drupal_get_path('module', 'vsite_layout') . '/includes/layout_block_mapping.inc' );
-  vsite_layout_alter_context_for_block_mapping($contexts);
   
 	return true;
 }

@@ -17,7 +17,7 @@ class vsite_layout_settings_layout implements space_setting {
   }
 
   function form($space, $value = array()) {
-    
+
 	  $s_page_type = 	(isset($_GET['page_type']))? $_GET['page_type']:'all';
   	
   	$form = array('#title' => 'Site Layout');
