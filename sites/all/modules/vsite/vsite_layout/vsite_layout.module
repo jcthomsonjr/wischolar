@@ -47,9 +47,25 @@ function vsite_layout_menu(){
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
+  
+  $items["layout_get_mapping_data"] = array(
+    'page callback' => 'vsite_layout_render_map',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'layout_block_mapping.inc',
+    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes'
+  );
+  $items['cp/vsite_layout_cache_theme_data_js'] = array(
+    'page callback' => 'vsite_layout_cache_theme_data_js',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'layout_block_mapping.inc',
+    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes'
+  );
 
   return $items;
 }
+
 
 /**
  * hook menu alter
@@ -116,6 +132,70 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars){
   }
 
   //$vars['vsite_layout_form'] = drupal_get_form('vsite_layout_layoutsettings');
+  
+  $vsite = vsite_get_vsite();
+  $region_data_cache = cache_get("vsite_layout_".$vsite->group->og_theme."_layout_data");
+  $a_rows = $a_columns = array();
+  foreach ($region_data_cache->data as $s_region => $a_loc_info){
+  	$a_rows[ floor($a_loc_info['top']/25) ][] = $s_region;
+  	$a_columns[ floor($a_loc_info['left']/75) ][] = $s_region;
+  }
+  
+  
+  ksort($a_rows); ksort($a_columns);
+  
+  dpm($a_rows);
+  dpm($a_columns);
+  dpm($vars);
+  
+  $a_row_widths = array_keys($a_rows);
+  $a_col_widths = array_keys($a_columns);
+  $a_rows = array_values($a_rows);
+  $a_columns = array_values($a_columns);
+  dpm($region_data_cache);
+  
+  $s_out = "";
+  for ($i=0;$i<count($a_rows);$i++){
+  	$a_row_items = $a_rows[$i];
+  	for ($j=0;$j<count($a_columns);$j++){
+  		$s_current = array_shift(array_intersect($a_rows[$i],$a_columns[$j]));
+  		if(in_array($s_current,$a_row_items)){
+  			$s_out .= $vars['vsite_layout_' . $s_current];
+  		}
+  	}
+  	$s_out .= "<br><hr><br>";
+  }
+  
+  
+//  $s_out = "<table>";
+//  for ($i=0;$i<count($a_rows);$i++){
+//  	$s_out .= "<tr>";
+//  	for ($j=0;$j<count($a_columns);$j++){
+//  		$s_content = array_shift(array_intersect($a_rows[$i],$a_columns[$j]));
+//  		if(!$s_content){
+//  			$n_cols_left = 0;
+//  			$s_left = false;
+//  			while(($j - ++$n_cols_left) >=0 && !$s_left){
+//  				$s_left = array_shift(array_intersect($a_rows[$i],$a_columns[$j-$n_cols_left]));
+//  			}
+//  			
+//  			if($s_left && floor(($region_data_cache->data[$s_left]['left'] + $region_data_cache->data[$s_left]['width'] - 10)/75) > $a_col_widths[$j] ){
+//  				$s_content = $s_left;
+//  			}else{
+//  				$n_rows_up = 0;
+//	  			while(($i - ++$n_rows_up) >=0 && !$s_content){
+//	          $s_content = array_shift(array_intersect($a_rows[$i-$n_rows_up],$a_columns[$j]));
+//	        }
+//  			}  			
+//  		}
+//  		$s_out .= "<td>".$s_content."</td>";
+//  	}
+//  	$s_out .= "</tr>";
+//  }
+//  $s_out .= "</table>";
+  
+  $vars['vsite_layout_regions'] = $s_out;
+  
 }
 
 function vsite_layout_get_pagetypes($space){
@@ -392,6 +472,10 @@ function vsite_layout_context_active_contexts_alter(&$contexts){
 	    }
 	  }//For each widget in a region
   }//For Each region in the settings
+  
+  //For CP Layout
+  require_once( drupal_get_path('module', 'vsite_layout') . '/includes/layout_block_mapping.inc' );
+  vsite_layout_alter_context_for_block_mapping($contexts);
   
 	return true;
 }

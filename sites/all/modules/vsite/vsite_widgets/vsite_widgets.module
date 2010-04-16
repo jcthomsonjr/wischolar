@@ -23,6 +23,9 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
       	return vsite_widgets_addthis();
       case 3:
       	return vsite_widget_googletranslate();
+      default:
+      	//Default used by cp to fill empty regions [see: vsite_layout_alter_context_for_block_mapping()]
+      	return vsite_widgets_search();
     }
   }
 }
