@@ -1,0 +1,293 @@
+<?php
+
+include_once('scholar_book.features.inc');
+
+function scholar_book_init(){
+  drupal_add_css(drupal_get_path('module', 'scholar_book') .'/scholar-book.css');
+}
+
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function scholar_book_strongarm() {
+  // only book pages can be used in books
+  $conf['book_allowed_types'] = array('book');
+
+  $conf['node_options_book'] = array('status', 'revision');
+
+  $conf['upload_book'] = TRUE;
+
+  // Comments
+  $conf['comment_book'] = COMMENT_NODE_DISABLED;
+
+  // Disable Diff button
+  $conf["show_preview_changes_book"] = FALSE;
+  $conf["show_diff_inline_book"] = TRUE;
+
+  // Pathauto
+  $conf["pathauto_node_book_pattern"] = "[space-og-path]/book/[title-raw]";
+
+  // vertical tabs
+  $conf['vertical_tabs_fieldsets_book'] =
+  array (
+    0 => 'menu',
+    2 => 'author',
+    3 => 'options',
+    5 => 'path',
+    6 => 'attachments',
+  );
+  
+  return $conf;
+}
+
+/*
+function scholar_book_preprocess_node(&$vars){
+  $node = $vars['node'];
+  if (book_type_is_allowed($node->type)){
+    $node = node_load($node -> book['bid']);
+    $max_recursions = variable_get('booktoc_deep', 5)+2;
+    $vars['book_toc'] = _scholar_book_recursive($node->book['mlid'], $node->nid, $node->title, 1, $max_recursions, 256, $node->book['mlid']);
+    
+  }
+}
+*/
+/**
+ * Implementation of hook_block().
+ */
+function scholar_book_block($op = 'list', $delta = 0) {
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      $blocks['booktoc'] = array('info' => t('Scholar: Book'));
+      return $blocks;
+    case 'view':
+      $function = "_scholar_book_block_{$delta}";
+      if (function_exists($function)) {
+        return call_user_func($function);
+      }
+      break;
+  }
+}
+
+/**
+ * callback function for "booktoc" block
+ */
+/*
+function _scholar_book_block_booktoc() {
+
+  $space = spaces_get_space();  // doesnt have to be vsite
+  $block = array();
+  if ($space) {
+  	$node = menu_get_object();
+    if ($node && book_type_is_allowed($node->type)) {
+      $block['subject'] = 'Table of Content';
+      $output = '';
+      $output .= menu_tree(book_menu_name($node->book['bid']));
+      $block['content'] = $output;
+    }
+  }
+  
+  return $block;
+}
+*/
+
+function _scholar_book_block_booktoc() {
+  $space = spaces_get_space();  // doesnt have to be vsite
+  $block = array();
+  if ($space) {
+  	$node = menu_get_object();
+  	$node = node_load($node -> book['bid']);
+
+    if ($node && book_type_is_allowed($node->type)) {
+      $block['subject'] = 'Table of Content';
+      $output = '';
+      $max_recursions = variable_get('booktoc_deep', 5)+2;
+      $output .= _scholar_book_recursive($node->book['mlid'], $node->nid, $node->title, 1, $max_recursions, 256, $node->book['mlid']);
+      $block['content'] = $output;
+    }
+  }
+  
+  return $block;  
+}
+
+function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $trimval, $mlid_start) {
+  if ($step<$max_recursions) {
+    $sql= "SELECT DISTINCT n.nid as nid, m.plid as plid, m.mlid as mlid,  n.title as title ,m.weight 
+           FROM {book} as b
+           inner join {menu_links} as m ON b.mlid = m.mlid
+           inner join {node} as n ON n.nid = b.nid
+           WHERE m.plid = '%d'  AND n.status = 1
+           ORDER by m.weight, n.title
+           ";
+    
+
+    $children = db_query(db_rewrite_sql($sql), $mlid);
+    //Do we need to show the root ?
+    if ($mlid != $mlid_start) {
+      $content .= "<li class=\"booktoc tree-level-". ($step - 1) ."\">" . l(truncate_utf8($tit, $trimval, TRUE, TRUE), 'node/'. $nid , $attributes = array(), $query = NULL, $fragment = NULL, $absolute = FALSE, $html = FALSE );
+    }
+    $step++;
+    while ($child = db_fetch_object($children)) {
+      $c .= _scholar_book_recursive($child->mlid, $child->nid, $child->title, $step, $max_recursions, $trimval, $mlid_start);
+    }
+
+    //now write content only if necessary 
+    if (strlen($c) > 2) {
+      $content .= "<ul class=\"booktoc\">\n". $c ."</ul>\n"; 
+    }
+    $output .= '</li>';
+
+    return $content;
+  }
+  else {
+    return '';
+  }
+}
+
+
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
+  switch ($op) {
+    case 'view' :
+      // unset the book navigation links
+      if (module_exists('book') && book_type_is_allowed($node->type)) {
+        unset($node->content['book_navigation']);
+      }
+      
+      if (menu_get_object() === $node) {
+        // set the context to the roob book node
+        if (! empty($node->book['bid'])) {
+          $type = db_result(db_query("SELECT type FROM {node} WHERE nid = %d", $node->book['bid']));
+          context_set_by_condition('node', $type, TRUE);
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function scholar_book_form_alter(&$form, &$form_state, $form_id){
+
+  // alter book forms  - new booklet
+  if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type) ){
+    $node = $form['#node'];
+
+    //adding new booklet
+    if ((!isset($_GET['parent'] ) ||  empty($_GET['parent'] ))  && ! empty($form['book']) && !$form['nid']['#value']) {
+      // Fieldset mods
+      $remove = array('#type', '#title', '#attributes', 'bid', 'weight', 'plid' );
+      foreach ($remove as $element){
+        unset($form['book'][$element]);
+      }
+      $form['book']['plid']['#type'] = 'hidden';
+      $form['book']['plid']['#value'] = -1;
+
+      $form['book']['bid']['#type'] = 'value';
+      $form['book']['bid']['#value'] = 'new';
+
+      $form['book']['weight']['#type'] = 'value';
+      $form['book']['weight']['#value'] = 0;
+
+      $form['title']['#title'] = t('Booklet Title');
+    }
+
+    //adding or editing child booklet page
+    if (!empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']){
+    // Fieldset mods
+    $form['title']['#title'] = t('Booklet page title');
+    $form['book']['#weight'] = ! empty($form['body_field']['#weight']) ? $form['body_field']['#weight'] : 0;
+    $form['book']['#title'] = t('Booklet information');
+    $form['book']['#collapsible'] = TRUE;
+    $form['book']['#collapsed'] =  FALSE; // since this is new node user should always see options expanded by default
+
+    if (! empty($form['book']['bid']['#options'])) unset( $form['book']['bid']['#options']['new']);
+
+    //make existing ['bid'] element into a "value" and create new "item" element to display info to the user
+    $val = $form['book']['bid']['#default_value']; //get the top level book id
+    $form['book']['bid']['#type'] = 'value';
+    $form['book']['bid']['#value'] = $val;
+
+    //cleanup the other bid elements
+    foreach ($form['book']['bid'] as $key => $element){
+      if (!in_array($key, array('#type', '#value', '#description', '#options'))){
+        unset($form['book']['bid'][$key]);
+      }
+    }
+
+    //add a new form element to display info top level book to user
+    $form['book']['top_level']['#type'] = 'item';
+    $form['book']['top_level']['#value'] =  '<p>' . t('This page will be posted to booklet: !booklet </strong>', array('!booklet' => '<strong>'. $form['book']['bid']['#options'][$val] .  '</strong>')) . '</p>';
+    $form['book']['top_level']['#weight'] = -10;
+    // $form['book']['top-level']['#title'] = t('Booklet');  // not needed
+    // $form['book']['top-level']['#description'] =t('This page will be a part of the selected booklet.');  // not needed
+
+    //customize plid form element
+    $form['book']['plid']['#title'] = t('Parent item');
+    $form['book']['plid']['#description'] = t('Set the parent item of this page. Your selection will determine the place where this page will reside in this booklet\'s hierarchy. You can think of the booklet\'s hierarchy as the "table of contents" for your booklet. You could select the top-level booklet itself or another page within the booklet. The maximum depth for a booklet and all child pages is 9.');
+
+    //reset weight to a '#type' = 'value'
+    unset( $form['book']['weight']);
+    $form['book']['weight']['#type'] = 'value';
+    $form['book']['weight']['#value'] = 1;
+
+    // Filter book options by current space
+    if ($view = views_get_view('scholar_book_list')) {
+      $view->set_display();
+      $view->set_items_per_page(0);
+      $view->execute();
+
+      // Collect books in this space into an array
+      $books = array();
+      $books[$node->nid] = 1;
+      if (is_array($view->result) && count($view->result)) {
+        foreach ( $view->result as $row ) {
+          $books[$row->nid] = 1;
+        }
+      }
+
+      // Use collected array to filter options
+      foreach ( $form['book']['bid']['#options'] as $k => $v ) {
+        if (is_numeric($k) && ! isset($books[$k])) {
+          unset($form['book']['bid']['#options'][$k]);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ *  Implementation of hook_vsite_sidgets().
+ */
+function scholar_book_vsite_widgets(){
+  $items = array();
+  $items['views_scholar_book-block_1'] = array(
+      'module' => 'views',
+      'delta' => 'scholar_books-block_1',
+      'weight' => 21,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Documents',
+      'type' => 'context_ui',
+      );
+  return $items;
+}
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_book_context_links_alter(&$links) {
+  if (! empty ( $links ['book'] )) {
+    $links ['book']['title'] =  'Booklet';
+    if(arg(0) == 'documents'){
+      $links ['book']['query'] =  drupal_get_destination();
+    }
+  }
+}
+
