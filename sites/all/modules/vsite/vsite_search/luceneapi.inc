@@ -28,7 +28,7 @@ function vsite_search_luceneapi_document_alter($doc, $item, $module, $type = NUL
 	  // Index group posts
 	  if (!empty($item->og_groups)) {
 	  	// The version of the ZF Components Search Lucene API is using does not support this feature. Unfortunately we have to delimit multiple values withing a single field.
-	  	$group_nids = join(':', $item->og_groups);
+	  	$group_nids = join(':', array_keys($item->og_groups));
 	  	
 	  	/**
 	  	 * Adds the field to the Lucene document.  Valid field types are "keyword",
@@ -36,7 +36,7 @@ function vsite_search_luceneapi_document_alter($doc, $item, $module, $type = NUL
 	     * documentation at http://drupal.org/node/655724 for more information on
 	     * the index types.
 	     */
-	    luceneapi_field_add($doc, 'unindexed', 'im_og_gid', $group_nids);   
+	    luceneapi_field_add($doc, 'keyword', 'im_og_gid', $group_nids);   
 	  }
   }
 }
