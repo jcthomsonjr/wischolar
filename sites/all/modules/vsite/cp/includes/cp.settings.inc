@@ -1,7 +1,10 @@
 <?php
 
 /**
- * Enter description here...
+ * Helper function to create a FAPI system settings form
+ * @param string $form_id
+ * @param string $setting_id
+ * @return mixed FAPI array representing the form
  */
 function cp_settings_form($form_id, $setting_id){
   
