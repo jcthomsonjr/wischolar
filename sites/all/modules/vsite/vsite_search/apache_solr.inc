@@ -41,9 +41,9 @@ function vsite_search_apachesolr_modify_query(&$query, &$params, $caller) {
    * Retrieve the current group context.  If the user is viewing content within a group context, use the group's nid as a filter for the facets
    * to restrict results to within this group.
    */
-  $group = og_get_group_context();
-  if(!empty($group)) {
+  $vsite = vsite_get_vsite();
+  if(!empty($vsite)) {
     // Add filter for group_id
-    $query->add_filter('im_og_gid', $group->nid);
+    $query->add_filter('im_og_gid', $vsite->group->nid);
   }
 }
