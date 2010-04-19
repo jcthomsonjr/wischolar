@@ -122,7 +122,7 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars){
     $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
   }
 
-  $vars['vsite_layout_content'] = theme('vsite_layout_layout_widgets',array(), 'scholarlayout-content', 'scholarlayout-widgets-list');
+  $vars['vsite_layout_content'] = theme('vsite_layout_layout_widgets',array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list');
   $vars['vsite_layout_footer'] = theme('vsite_layout_layout_widgets',array(), 'scholarlayout-footer', 'scholarlayout-widgets-list');
 }
 
