@@ -6,4 +6,5 @@
   <?php print $vsite_layout_left; ?>
   <?php print $vsite_layout_content; ?>
   <?php print $vsite_layout_right; ?>
+  <?php print $vsite_layout_footer; ?>
 </div>
