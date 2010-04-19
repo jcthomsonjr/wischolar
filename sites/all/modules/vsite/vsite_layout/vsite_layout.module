@@ -68,8 +68,10 @@ function vsite_layout_layout(){
   drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.css');
   
   $space = vsite_get_vsite();
-  if(file_exists(drupal_get_path('theme',$space->group->og_theme)."/cp-layout-map.css")){
-  	drupal_add_css(drupal_get_path('theme',$space->group->og_theme)."/cp-layout-map.css");
+  $a_info = drupal_parse_info_file(drupal_get_path('theme',$space->group->og_theme)."/".$space->group->og_theme.".info");
+  if(array_key_exists('cp_layout_css',$a_info)){
+  	//cp_layout_css
+  	drupal_add_css(drupal_get_path('theme',$space->group->og_theme)."/".$a_info['cp_layout_css']);
   }
   
   
