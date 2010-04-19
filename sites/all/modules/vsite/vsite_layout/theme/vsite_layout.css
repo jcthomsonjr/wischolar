@@ -1,95 +1,71 @@
 #scholarlayout-container {
   width: 848px;
-  height: 711px;
-  /*background: url(images/layout-map.png) no-repeat #fff 0 0;*/
+  height: 575px;
   position: relative;
-  margin-left: 17px;
-  margin-top: 0;
+  margin-left: 0;
+  margin-top: 20px;
+  overflow:hidden;
   }
 
 #scholarlayout-container .scholarlayout-widgets-list {
   position: absolute;
-  width: 202px;
-  height: 121px;
-  top: 26px;
-  left: 42px;
   padding: 0;
   margin: 0;
-  border: 2px solid grey;
+  border: 1px dashed #babbbb;
   }
 
 #scholarlayout-container .scholarlayout-widgets-list:hover {
-  background: #c4e5a3;
+  background: #eff6f6;
   }
-
-
-#scholarlayout-container #scholarlayout-header-main, #scholarlayout-container #scholarlayout-content-main {
-  width: 244px;
-  left: 247px;
-  }
-
-#scholarlayout-container #scholarlayout-header-right,
-#scholarlayout-container #scholarlayout-right {
-  left: 493px;
-  }
-
-#scholarlayout-container #scholarlayout-content-main,
-#scholarlayout-container #scholarlayout-left,
-#scholarlayout-container #scholarlayout-right {
-  top: 182px;
-  height: 356px;
-  }
-
-
-#scholarlayout-container #scholarlayout-navbar,#scholarlayout-container #scholarlayout-footer {
-  width: 653px;
-  height: 30px;
-  top: 150px;
-  }
-
- #scholarlayout-container #scholarlayout-footer {
-  top: 541px;
-  height: 42px;
-  left: 43px;
-  }
-
 
 #scholarlayout-top-widgets {
-  height:114px;
+  height:106px;
   background:#eaebe9;
   width: 100%;
   padding-left: 22px;
   overflow: hidden;
+  margin-bottom: 0;
+  }
+
+#cp-settings-site {
+  padding-top: 10px;
+  background:url(images/cp-settings-site.png) repeat-x 0 0 transparent;
   }
 
 li.scholarlayout-item {
-  font-size: 11px;
+  font-size: 15px;
+  line-height: 1em;
   font-weight: bold;
-  color:#444545;
+  color:#565e66;
   cursor: pointer;
+  text-transform: capitalize;
   }
 
 #scholarlayout-top-widgets li.scholarlayout-item {
   float: left;
   width: 118px;
-  height: 23px;
+  height: 21px;
   text-align: center;
   color:#444545;
-  padding-top: 91px;
+  padding-top: 85px;
   background:url(images/widget-bg.png) no-repeat transparent 50% 10px;
   line-height: 86%;
+  font-size: 11px;
+
   }
 
 #scholarlayout-container li.scholarlayout-item {
   margin: 0;
-  padding: 4px 4px 4px 31px;
-  border: 1px solid #8a8888;
-  background: url(images/widget-placed-bg.png) no-repeat 3px 2px #eaebe9;
+  padding: 4px 20px 8px 31px;
+  background: url(images/widget-placed-bg.png) no-repeat 0 50% #f0f3f3;
   min-height: 21px;
+  position:relative;
+  border-bottom: 1px solid #444;
   }
 
 #scholarlayout-container li.scholarlayout-item:hover {
-  background-color: #d1ea02;
+  background-position: -502px 50%;
+  background-color: #f8f9e2;
   }
 
 .scholarlayout-item-settings {
@@ -98,11 +74,18 @@ li.scholarlayout-item {
   margin-left: 2px;
   display:block;
   position: relative;
+  text-transform: none;
   }
 
 .scholarlayout-item-settings span {
   padding-right: 7px;
-  background: url(images/arrow-aqua.png) no-repeat 100% 2px;
+  background: url(images/arrow-aqua.png) no-repeat 100% 50%;
+  }
+
+li.scholarlayout-item .close-this {
+  position: absolute;
+  top: 4px;
+  right: 7px;
   }
 
 #scholarlayout-top-widgets .scholarlayout-item-settings,.scholarlayout-item-settings ul {
@@ -110,30 +93,20 @@ li.scholarlayout-item {
   }
 
 .scholarlayout-item-settings:hover ul {
-  top: -25px
+  top: auto;
+  bottom: -9px;
   }
 
 .scholarlayout-item-settings ul {
   position:absolute;
   padding: 10px;
-  background: #fff;
-  right: -115px;
-  border: 1px solid #8a8888;
-  color: #90a0a0;
-  z-index: 10;
-  }
-
-.scholarlayout-item-settings ul li {
-  padding-left: 19px;
-  background: url(images/check-mark-exceptions.png) no-repeat 0 0 transparent;
-  line-height: 19px;
-  }
-
-
-.close-this {
-  float:right;
-  position: relative;
-  top:-2px;
+  left: 110%;
+  padding: 5px 20px;
+  background:#f8f9e2;
+  border: 1px solid #444;
+  border-left: none;
+  text-transform: capitalize;
+  margin:0;
   }
 
 #scholarlayout-top-widgets .close-this {
@@ -163,14 +136,19 @@ li.scholarlayout-item {
   height: 37px;
   }
 
+#edit-settings-layout-page-type-wrapper label,
+#edit-settings-layout-page-type-wrapper .description {
+  color: #fff;
+  }
+
+
 #edit-settings-layout-page-type-wrapper label, #edit-settings-layout-page-type-wrapper select {
   float: left;
   margin-right: 6px;
   }
 
 #edit-settings-layout-page-type-wrapper .description {
-  clear: left;
-  width: 665px;
+  float: left;
   }
 
 #cp-content .innerframe #cp-settings-form {
@@ -178,10 +156,7 @@ li.scholarlayout-item {
   }
 
 #cp-settings-form .form-submit {
-  position:absolute;
-  top: 854px;
-  left: 55px;
-  z-index: 10;
+  margin-left:20px;
   }
 
 #cp-settings-form #edit-reset {
@@ -197,7 +172,7 @@ li.scholarlayout-item {
   background: url(images/widget-prev.png) 0 50% no-repeat #d5d6d4;
   position: absolute;
   left:0;
-  height: 114px;
+  height: 106px;
   cursor: pointer;
   }
 
