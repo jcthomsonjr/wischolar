@@ -4,5 +4,6 @@
   <?php print $vsite_layout_header_right; ?>
   <?php print $vsite_layout_navbar; ?>
   <?php print $vsite_layout_left; ?>
+  <?php print $vsite_layout_content; ?>
   <?php print $vsite_layout_right; ?>
 </div>
