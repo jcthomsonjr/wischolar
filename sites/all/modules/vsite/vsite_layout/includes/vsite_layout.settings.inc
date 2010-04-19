@@ -6,7 +6,7 @@
 class vsite_layout_settings_layout implements space_setting {
   var $id;
   var $parent_menu = 'appearance';
-  
+
   function __construct($id = NULL) {
     if ($id) {
       $this->id = $id;
@@ -19,7 +19,7 @@ class vsite_layout_settings_layout implements space_setting {
   function form($space, $value = array()) {
 
 	  $s_page_type = 	(isset($_GET['page_type']))? $_GET['page_type']:'all';
-  	
+
   	$form = array('#title' => 'Site Layout');
 
 	  $regions = array_keys(system_region_list('scholar_base'));
@@ -39,10 +39,10 @@ class vsite_layout_settings_layout implements space_setting {
 
 	  $form['page_type'] = array(
 	    '#type' => 'select',
-	    '#title' => t('Pages in your site'),
+	    '#title' => t('Widget layout'),
 	    '#default_value' => $s_page_type,
 	    '#options' => $a_page_types,
-	    '#description' => t('Select the widgets to display everywhere in your site (Default settings) the front page or a specific section (feature) of your site'),
+	    '#description' => t('Customize layout for your front page or any specific section of your site. "Default settings" cover everything else.'),
 	    '#ahah' => array(
 	          'event' => 'go_ahah',
 	          'path' => 'cp/appearance/layout/region_widgets_js',
@@ -65,7 +65,7 @@ class vsite_layout_settings_layout implements space_setting {
 	          'method' => 'replaceWith',
 	    ),
 	  );
-	  
+
 	  $form['layout_markup'] = array(
 	    '#value' => theme('vsite_layout_layout'),
 	  );
@@ -94,7 +94,7 @@ class vsite_layout_settings_layout implements space_setting {
 
 	    if($s_page_type == 'all'){
 	    	//See what alterations you need to carry through
-	    	
+
 	      $a_prev_settings = array();
 	      if(is_array($space->settings['layout']) && array_key_exists('all',$space->settings['layout'])){
 	        $a_prev_settings = $space->settings['layout'][$s_page_type];
@@ -121,7 +121,7 @@ class vsite_layout_settings_layout implements space_setting {
 	            unset($a_new_settings[$s_widget_name]);
 	          }//Already on this page?
 	        }//Remove widgets
-	        
+
 	        //Widgets that have changed positions
 	        foreach ($setting as $s_widget_name => $s_region){
 	        	if(array_key_exists($s_widget_name,$a_new_settings) &&  //The Widget is in the subpage
@@ -129,32 +129,32 @@ class vsite_layout_settings_layout implements space_setting {
 	        	   || (in_array($s_widget_name,$a_new_all_wgts) && $s_region == $a_new_settings[$s_widget_name]))){  //OR The widget was just added from the bucket
 	        	  //Put it into the new location if it has moved
 	        		$a_new_settings[$s_widget_name] = $s_region;
-	        		
+
 	        		//Get the Offset of the widget within the region on the homepage
 	        	  $n_pos = array_search($s_widget_name,array_keys(array_intersect($setting, array($s_region))));
-	        	  
+
 	        	  if($n_pos != self::getSubpageRelitiveOffset($s_widget_name,$s_region,$a_new_settings,$setting)){
-	        	  	
+
 	        	  	//Move this setting to the end of the stack
 	        	  	unset($a_new_settings[$s_widget_name]);
 	        	  	$a_new_settings[$s_widget_name] = $s_region;
-	        	  	
+
 		        	  $offset = -1;
 		        		while(self::getSubpageRelitiveOffset($s_widget_name,$s_region,$a_new_settings,$setting) > $n_pos){
 		        			unset($a_new_settings[$s_widget_name]);
 		        			$a_keys = array_keys($a_new_settings);
 		        			array_splice($a_keys,$offset,0,$s_widget_name); //Insert Key in correct place
 		        			array_splice($a_new_settings,$offset,0,$s_region); //Insert Value in correct place
-		        			
+
 		        			$a_new_settings = array_combine($a_keys,$a_new_settings); //Preserve Keys
 		        			$offset--;
 		        		}//move the element up till it is in the correct location
 
 	        	  }//If the Widget's offset does not match that of the one on the homepage
-	        		
+
 	        	}//The widget is on the subpage, and it was in the prev location or it has just been added to the page
 	        }
-	        
+
 	        $space->settings['layout'][$s_page_nm] = $a_new_settings;
 	      }//Check Each Page Type
 	    }//Add new all widgets to all templates
@@ -165,7 +165,7 @@ class vsite_layout_settings_layout implements space_setting {
 
 	  return $space->settings['layout'];
   }
-  
+
   function modifyRedirect($form_values){
   	if (!empty($form_values)) {
       $s_page_type = $form_values['page_type'];
@@ -177,7 +177,7 @@ class vsite_layout_settings_layout implements space_setting {
   	}
     return $_GET['q'];
   }
-  
+
   /**
    * Filter return the 0-indexed offset of a widget within a region
    * @param $s_name string The Widget ID
@@ -187,12 +187,12 @@ class vsite_layout_settings_layout implements space_setting {
    * @return number
    */
   private static function getSubpageRelitiveOffset($s_name,$s_region,$a_subpage,$a_home){
-  	
+
   	return array_search( $s_name, //Offset of this widget
   	         array_keys(          //Return the keys as a 0 indexed array
   	           array_intersect(   //Remove the items that are in other regions
   	             array_intersect_key($a_subpage,$a_home) //Remove those items that don't exist in the home array
   	             ,array($s_region))));
-  }  
+  }
 }
 
