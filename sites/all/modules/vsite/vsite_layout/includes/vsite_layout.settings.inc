@@ -65,6 +65,10 @@ class vsite_layout_settings_layout implements space_setting {
 	          'method' => 'replaceWith',
 	    ),
 	  );
+	  
+	  $form['layout_markup'] = array(
+	    '#value' => theme('vsite_layout_layout'),
+	  );
 
 	  return $form;
   }

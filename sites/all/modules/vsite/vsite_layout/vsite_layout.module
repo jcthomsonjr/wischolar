@@ -86,9 +86,7 @@ function vsite_layout_layout(){
   $args = func_get_args();
   $form = call_user_func_array('drupal_get_form',$args);
 
-  // layout
-  $layout = theme('vsite_layout_layout');
-  return $top . $form . $layout;
+  return $top . $form;
 }
 
 /**
