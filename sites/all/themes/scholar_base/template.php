@@ -67,35 +67,3 @@ function scholar_base_context_links($links) {
   }
   return $output;
 }
-
-/**
- * Renders the page based on the configured layout
- */
-function scholar_base_render_layout() {
-	global $custom_theme;
-	
-	$s_theme = (file_exists(drupal_get_path('theme', $custom_theme) . '/page.tpl.layout'))?$custom_theme:'scholar_base';
-	
-  $s_php = "?>".preg_replace_callback("|\{\{(.*)\}\}|","_scholar_base_render_page_component", file_get_contents(drupal_get_path('theme', $s_theme).'/page.tpl.layout') );
-  
-  return $s_php."<?";
-}
-
-/*
- * Returns the includes for the individual component
- */
-function _scholar_base_render_page_component($a_match){
-  global $custom_theme;
-  
-  $s_php = '';
-  
-  if(file_exists( drupal_get_path('theme', $custom_theme).'/page_component_tpls/'.$a_match[1].'.tpl.php')){
-  	//The theme is overriding this template
-  	$s_php = '<? include(drupal_get_path("theme","'.$custom_theme.'")."/page_component_tpls/'.$a_match[1].'.tpl.php") ?>';
-  }elseif (file_exists( drupal_get_path('theme', 'scholar_base').'/page_component_tpls/'.$a_match[1].'.tpl.php')){
-  	//Use the default template
-  	$s_php = '<? include(drupal_get_path("theme","scholar_base")."/page_component_tpls/'.$a_match[1].'.tpl.php") ?>';
-  }
-	
-	return $s_php;
-}
