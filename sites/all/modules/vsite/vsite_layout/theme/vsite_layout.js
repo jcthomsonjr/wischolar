@@ -87,7 +87,9 @@ function scholarlayout_add_sortable(layoutRegions){
 	  $(value).sortable({
         connectWith: allRegions,
 	    stop: scholarlayout_afterdrag,
-	    tolerance: 'pointer'
+	    tolerance: 'pointer',
+	    over: function(event, ui) { $(event.currentTarget).addClass('active'); },
+	    out: function(event, ui) { $(event.currentTarget).removeClass('active'); }
 	  });
 	});
 
