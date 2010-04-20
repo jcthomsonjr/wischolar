@@ -13,7 +13,7 @@ function vsite_layout_theme(){
 
     'vsite_layout_layout_widgets' => array(
     	'template' => 'vsite_layout-layout-widgets',
-  		'arguments' => array('wgts' => NULL, 'wgts_id' => NULL, 'wgts_class' => NULL),
+  		'arguments' => array('wgts' => NULL, 'wgts_id' => NULL, 'wgts_class' => NULL, 'region_name' => NULL),
     	'path' => drupal_get_path('module', 'vsite_layout'). '/theme'
     ),
   );
@@ -102,9 +102,9 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars){
 
   $vsite_layout_widgets = array();
 
-  $regions = array_keys(system_region_list('scholar_base'));
+  $regions = system_region_list('scholar_base');
 
-  foreach($regions as $region){
+  foreach($regions as $region => $s_label){
     $vsite_layout_widgets[$region] = array();
   }
 
@@ -113,16 +113,16 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars){
 
   $vsite_layout_widgets = vsite_layout_region_widgets(false,$s_page_type);
 
-  foreach($regions as $region){
+  foreach($regions as $region => $s_label){
     $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
     $wgts = array_key_exists($region,$vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
     if($s_page_type == 'all') _check_for_overrides($wgts,$region);
 
     _check_for_disabled_widgets($wgts,$a_feature_contexts);
-    $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list');
+    $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets',$wgts, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
   }
 
-  $vars['vsite_layout_content'] = theme('vsite_layout_layout_widgets',array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list');
+  $vars['vsite_layout_content'] = theme('vsite_layout_layout_widgets',array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
 }
 
 function vsite_layout_get_pagetypes($space){
@@ -193,13 +193,13 @@ function vsite_layout_region_widgets_callback(){
   $a_region_wgts = vsite_layout_region_widgets($scholar,$s_page_type);
   $a_themed_regions = array();
 
-  $regions = array_keys(system_region_list('scholar_base'));
-  foreach($regions as $region){
+  $regions = system_region_list('scholar_base');
+  foreach($regions as $region => $s_label){
   	$widgets = array_key_exists($region,$a_region_wgts)?$a_region_wgts[$region]:array();
     $wgts_id = 'scholarlayout-' . str_replace('_','-', $region);
     if($s_page_type == 'all') _check_for_overrides($widgets,$region,$scholar);
     _check_for_disabled_widgets($widgets,$a_feature_contexts,$scholar);
-    $a_themed_regions[$region] = theme('vsite_layout_layout_widgets',$widgets, $wgts_id, 'scholarlayout-widgets-list');
+    $a_themed_regions[$region] = theme('vsite_layout_layout_widgets',$widgets, $wgts_id, 'scholarlayout-widgets-list',ucwords($s_label));
   }
 
   $output= '<div id="scholarlayout-container">'.
