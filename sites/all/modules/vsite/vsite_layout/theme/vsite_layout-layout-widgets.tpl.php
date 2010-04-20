@@ -10,7 +10,7 @@
 ?>
 <div class="widget-prev"></div><div class="widget-next"></div>
 <dl id="<?php print $wgts_id; ?>" class = "<?php print $wgts_class; ?>">
-  <dt><?php print $s_region_name;?></dt>
+  <dt><?php print $region_name;?></dt>
 	<?php foreach($wgts as $s_widget_key => $w):?>
 	  <?php $s_class = (isset($w['hidden']) && $w['hidden'])? 'scholarlayout-item disabled':'scholarlayout-item'; ?>
 		<dd class="<?= $s_class ?>" id="<?php print $s_widget_key; ?>"> <?php print $w['label']; ?>
