@@ -205,7 +205,8 @@ function vsite_taxonomy_build_list_items(&$index, $tree){
  * Add vocabulary form callback
  */
 function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
-  
+  $taxs = module_invoke_all('vsite_vocabulary_default');
+  dpm($taxs);
   if ($ajax) {
     ctools_include('ajax');
     $form_state = array(
@@ -610,17 +611,10 @@ function vsite_taxonomy_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL){
 
   if ($op == 'insert' && $node->type == variable_get('scholar_content_type', 'vsite')) {
     // Features implement their own default taxonomies
-    $taxs = vsite_taxonomy_vocabulary_default();
-    $new_taxs = $taxs;
-    install_include(array(
-      'taxonomy'
-    ));
-    foreach ( $taxs as $yindex => $tax ) {
-      // make the vocab name unique
-      $new_taxs[$yindex]['name'] = $node->purl['value'] . '_' . $tax['name'];
-    }
+    $taxs = module_invoke_all('vsite_vocabulary_default');
+
     // create vocabs
-    vsite_taxonomy_taxonomy_import($node->nid, $new_taxs);
+    vsite_taxonomy_taxonomy_import($node->nid, $taxs);
   }
 }
 
@@ -675,7 +669,7 @@ function theme_vsite_taxonomy_term($term){
 /**
  * proivdes some default terms
  */
-function vsite_taxonomy_vocabulary_default(){
+function vsite_taxonomy_vsite_vocabulary_default(){
   $types = array();
   $content_types = og_get_types('group_post');
   foreach($content_types as $type){
@@ -686,7 +680,7 @@ function vsite_taxonomy_vocabulary_default(){
 
   return array (
     0 => array (
-    'name' => 'vocabulary',
+    'name' => 'tags',
     'content_types' => $types,
     'properties' => array ('tags' => 1),
     'terms' => array (
@@ -748,12 +742,15 @@ function vsite_taxonomy_vocabulary_default(){
  * @param $definition
  *   Definintion of the taxonomy structure.
  */
-function vsite_taxonomy_taxonomy_import($gid, $definition) {
-  foreach ($definition as $vocab_index => $vocab_definition) {
+function vsite_taxonomy_taxonomy_import($gid, $definition){
+  install_include(array(
+    'taxonomy' 
+  ));
+  foreach ( $definition as $vocab_index => $vocab_definition ) {
     $vid = install_taxonomy_add_vocabulary($vocab_definition['name'], $vocab_definition['content_types'], $vocab_definition['properties']);
     // make this a group taxonomy
     og_vocab_write_record($gid, $vid);
-    foreach ($vocab_definition['terms'] as $term_index => $term_definition) {
+    foreach ( $vocab_definition['terms'] as $term_index => $term_definition ) {
       install_taxonomy_add_term($vid, $term_definition['name'], $term_definition['description'], $term_definition['properties']);
     }
   }
