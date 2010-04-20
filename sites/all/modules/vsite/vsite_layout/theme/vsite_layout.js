@@ -88,8 +88,8 @@ function scholarlayout_add_sortable(layoutRegions){
         connectWith: allRegions,
 	    stop: scholarlayout_afterdrag,
 	    tolerance: 'pointer',
-	    over: function(event, ui) { $(event.currentTarget).addClass('active'); },
-	    out: function(event, ui) { $(event.currentTarget).removeClass('active'); }
+	    over: function(event, ui) { $(event.target).addClass('active'); },
+	    out: function(event, ui) { $(event.target).removeClass('active'); }
 	  });
 	});
 
