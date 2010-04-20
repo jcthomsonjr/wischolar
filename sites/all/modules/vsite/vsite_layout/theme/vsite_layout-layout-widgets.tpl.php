@@ -9,21 +9,11 @@
  */
 ?>
 <div class="widget-prev"></div><div class="widget-next"></div>
-<ul id="<?php print $wgts_id; ?>" class = "<?php print $wgts_class; ?>">
+<dl id="<?php print $wgts_id; ?>" class = "<?php print $wgts_class; ?>">
 	<?php foreach($wgts as $s_widget_key => $w):?>
 	  <?php $s_class = (isset($w['hidden']) && $w['hidden'])? 'scholarlayout-item disabled':'scholarlayout-item'; ?>
-		<li class="<?= $s_class ?>" id="<?php print $s_widget_key; ?>"> <?php print $w['label']; ?>
-		<!--
-		<span class="scholarlayout-item-settings">Edit
-      <ul class="item-settings-popup">
-        <li>Settings</li>
-        <li>Settings</li>
-        <li>Settings</li>
-        <li>Settings</li>
-        <li>Settings</li>
-      </ul>
-		 </span>
-		 -->
+		<dt><?php print $s_region_name;?></dt>
+		<dd class="<?= $s_class ?>" id="<?php print $s_widget_key; ?>"> <?php print $w['label']; ?>
 		 <div class="close-this">Remove</div>
 		 <?php
 		 if($w['overides']){
@@ -40,7 +30,7 @@
 		 }
 		 ?>
 
-		</li>
+		</dd>
 	<?php endforeach?>
-</ul>
+</dl>
 
