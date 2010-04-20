@@ -19,7 +19,7 @@
 		 if($w['overides']){
 		 	 ?>
 
-		   <span class="scholarlayout-item-settings">Appears here on all pages with these <span>exceptions</span>
+		   <span class="scholarlayout-item-settings">Appears here on all pages. <u>Exceptions</u>
         <ul class="item-settings-popup">
 		 	 <?php
 		 	  foreach ($w['overides'] as $overide) print "<li>{$overide}</li>";
