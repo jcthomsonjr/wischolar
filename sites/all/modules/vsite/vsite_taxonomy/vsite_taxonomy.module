@@ -15,6 +15,21 @@
 include_once('vsite_taxonomy.features.inc');
 
 /**
+ * common jquery ui .dialog() options
+ */
+function vsite_taxonomy_dialog_options(){
+  return array(
+    'minwidth' => '640', 
+    'height' => 'auto', 
+    'position' => array(
+      'right', 
+      'top' 
+    ), 
+    'resizable' => TRUE,
+  );
+}
+
+/**
  * Implementation of hook_enable
  */
 function vsite_taxonomy_enable() {
@@ -191,19 +206,26 @@ function vsite_taxonomy_build_list_items(&$index, $tree){
  * Add vocabulary form callback
  */
 function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
-
+  
   if ($ajax) {
-    ctools_include('ajax'); 
+    ctools_include('ajax');
     $form_state = array(
       'ajax' => TRUE, 
       'title' => t('Add vocabulary') 
     );
-
+    
     $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
     
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabulary was created'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
+    }
+    else {
+      foreach ( $output as $i => $command ) {
+        if ($command['command'] == 'dialog_display') {
+          $output[$i]['options'] = vsite_taxonomy_dialog_options();
+        }
+      }
     }
     ctools_ajax_render($output);
   
@@ -214,32 +236,39 @@ function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
 
 }
 
-
-
 /**
  * edit vocabulary form callback
  */
 function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
-
+  
   if ($ajax) {
-    ctools_include('ajax'); 
+    ctools_include('ajax');
     $form_state = array(
       'ajax' => TRUE, 
-      'title' => t('Add vocabulary') ,
-      'args' => array('edit' => (array)$vocabulary), 
+      'title' => t('Add vocabulary'), 
+      'args' => array(
+        'edit' => ( array ) $vocabulary 
+      ) 
     );
-
+    
     $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
     
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabulary settings changed ...'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
     }
+    else {
+      foreach ( $output as $i => $command ) {
+        if ($command['command'] == 'dialog_display') {
+          $output[$i]['options'] = vsite_taxonomy_dialog_options();
+        }
+      }
+    }
     ctools_ajax_render($output);
   
   }
   else {
-    return drupal_get_form('taxonomy_form_vocabulary', (array)$vocabulary);
+    return drupal_get_form('taxonomy_form_vocabulary', ( array ) $vocabulary);
   }
 
 }
@@ -247,20 +276,29 @@ function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
 /**
  * delete vocabulary confirmation form
  */
-function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE) {
-  if ($ajax){
-    ctools_include('ajax'); 
+function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE){
+  if ($ajax) {
+    ctools_include('ajax');
     $form_state = array(
       'ajax' => TRUE, 
-      'title' => t('Delete vocabulary') ,
-      'args' => array('vid' => $vid), 
+      'title' => t('Delete vocabulary'), 
+      'args' => array(
+        'vid' => $vid 
+      ) 
     );
-
+    
     $output = dialog_form_wrapper('taxonomy_vocabulary_confirm_delete', $form_state);
     
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabulary settings changed ...'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
+    }
+    else {
+      foreach ( $output as $i => $command ) {
+        if ($command['command'] == 'dialog_display') {
+          $output[$i]['options'] = vsite_taxonomy_dialog_options();
+        }
+      }
     }
     ctools_ajax_render($output);
   }
@@ -274,19 +312,28 @@ function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE) {
  */
 function vsite_taxonomy_add_term($vocabulary, $ajax = FALSE){
   
-  if ($ajax){
-    ctools_include('ajax'); 
+  if ($ajax) {
+    ctools_include('ajax');
     $form_state = array(
       'ajax' => TRUE, 
-      'title' => t('Add term') ,
-      'args' => array('vocabulary' => $vocabulary), 
+      'title' => t('Add term'), 
+      'args' => array(
+        'vocabulary' => $vocabulary 
+      ) 
     );
-
+    
     $output = dialog_form_wrapper('taxonomy_form_term', $form_state);
     
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabusafdsafdsaanged ...'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
+    }
+    else {
+      foreach ( $output as $i => $command ) {
+        if ($command['command'] == 'dialog_display') {
+          $output[$i]['options'] = vsite_taxonomy_dialog_options();
+        }
+      }
     }
     ctools_ajax_render($output);
   }
@@ -300,39 +347,48 @@ function vsite_taxonomy_add_term($vocabulary, $ajax = FALSE){
  */
 function vsite_taxonomy_edit_term($tid, $ajax = FALSE){
   $vsite = vsite_get_vsite();
-  $vsite_vocabs = $vsite -> get_vocabs($node_type);
+  $vsite_vocabs = $vsite->get_vocabs($node_type);
   $term = taxonomy_get_term($tid);
-
-  $access = array_key_exists($term -> vid, $vsite_vocabs);
-    
-
-  if ($ajax){
+  
+  $access = array_key_exists($term->vid, $vsite_vocabs);
+  
+  if ($ajax) {
     ctools_include('ajax');
     // wrong tid ? 
-    if (!$term){
+    if (! $term) {
       $commands = array();
       $commands[] = dialog_command_display(t('Page not found'));
-      ctools_ajax_render($commands);     
+      ctools_ajax_render($commands);
     }
     // no access ?
-    if (!$access){
+    if (! $access) {
       $commands = array();
       $commands[] = dialog_command_display(t('Access denied'));
-      ctools_ajax_render($commands); 
+      ctools_ajax_render($commands);
     }
     
     $form_state = array(
       'ajax' => TRUE, 
-      'title' => t('Add term') ,
-      'args' => array('vocabulary' => taxonomy_vocabulary_load($term -> vid), 'edit' => (array)$term), 
+      'title' => t('Add term'), 
+      'args' => array(
+        'vocabulary' => taxonomy_vocabulary_load($term->vid), 
+        'edit' => ( array ) $term 
+      ) 
+    )
+    ;
     
-    );
-
     $output = dialog_form_wrapper('taxonomy_form_term', $form_state);
     
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabusafdsafdsaanged ...'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
+    }
+    else {
+      foreach ( $output as $i => $command ) {
+        if ($command['command'] == 'dialog_display') {
+          $output[$i]['options'] = vsite_taxonomy_dialog_options();
+        }
+      }
     }
     ctools_ajax_render($output);
   }
