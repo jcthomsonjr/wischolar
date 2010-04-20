@@ -161,6 +161,10 @@ function vsite_taxonomy_vocabs(){
   return $output;
 }
 
+/**
+ * recursive function to build the tree of terms
+ * @see vsite_taxonomy_vocabs
+ */
 function vsite_taxonomy_build_list_items(&$index, $tree){
   $items = array();
   $current_depth = $tree[$index]->depth;
@@ -183,6 +187,9 @@ function vsite_taxonomy_build_list_items(&$index, $tree){
   return $items;
 }
 
+/**
+ * Add vocabulary form callback
+ */
 function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
 
   if ($ajax) {
@@ -207,6 +214,11 @@ function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
 
 }
 
+
+
+/**
+ * edit vocabulary form callback
+ */
 function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
 
   if ($ajax) {
@@ -232,6 +244,9 @@ function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
 
 }
 
+/**
+ * delete vocabulary confirmation form
+ */
 function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE) {
   if ($ajax){
     ctools_include('ajax'); 
@@ -254,6 +269,9 @@ function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE) {
   }
 }
 
+/**
+ * add term form callback
+ */
 function vsite_taxonomy_add_term($vocabulary, $ajax = FALSE){
   
   if ($ajax){
@@ -277,6 +295,9 @@ function vsite_taxonomy_add_term($vocabulary, $ajax = FALSE){
   }
 }
 
+/**
+ * edit term form callback
+ */
 function vsite_taxonomy_edit_term($tid, $ajax = FALSE){
   $vsite = vsite_get_vsite();
   $vsite_vocabs = $vsite -> get_vocabs($node_type);
@@ -331,7 +352,9 @@ function vsite_taxonomy_form_taxonomy_vocabulary_confirm_delete_alter(&$form, &$
 
 
 
-
+/**
+ * Implementation of hook_vsite_admin_link
+ */
 function vsite_taxonomy_vsite_admin_link($type, $object){
   $links = array();
   // edit/delete links for vocabularies
@@ -384,21 +407,29 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
   return $links;
 }
 
-
 /**
  * Implementation of hook_form_FORM_ID_alter().
- * Passes gid as a value in the taxonomy add/edit form
  */
-function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state) {
-
+function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state){
+  
+  //Passes gid as a value in the taxonomy add/edit form
   unset($form['settings']['og_vocab']);
-
+  
   $vsite = vsite_get_vsite();
   $form['settings']['og_vocab']['og'] = array(
-      '#type' => 'value',
-      '#value' => $vsite -> group -> nid,
-    ); 
-   $form['#submit'][] = 'x';
+    '#type' => 'value', 
+    '#value' => $vsite->group->nid 
+  );
+  
+  // filter the content type based on the vsite
+  $vocab_types = vsite_content_types();
+  drupal_alter('vsite_content_types', $vocab_types);
+  $form['content_types']['nodes']['#options'] = $vocab_types;
+  
+  // hide weight element
+  unset($form['settings']['weight']);
+  
+  $form['#submit'][] = 'x';
 
 }
 
