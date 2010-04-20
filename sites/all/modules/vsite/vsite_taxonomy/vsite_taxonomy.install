@@ -1,0 +1,11 @@
+<?php
+//$Id
+
+function vsite_taxonomy_update_6000(){
+  $res = array();
+  // Weight scholar to be after og_vocab
+  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'og_vocab'"));
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite_taxonomy'", ($weight + 1)); 
+  return $res;
+}
+
