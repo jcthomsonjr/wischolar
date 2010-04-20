@@ -397,6 +397,19 @@ function vsite_taxonomy_edit_term($tid, $ajax = FALSE){
 }
 
 /**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
+  // hide some advanced options from the term edit form
+  $vsite = vsite_get_vsite();
+  $form['advanced']['#collapsed'] = FALSE;
+  $hides = array('relations', 'synonyms', 'weight');
+  foreach($hides as $element){
+    unset($form['advanced'][$element]);
+  }
+}
+
+/**
  * Implementation of hook_form_FORM-ID_alter().
  *
  * Redirect the cancel back to og_vocab.
@@ -466,11 +479,14 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
  * Implementation of hook_form_FORM_ID_alter().
  */
 function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state){
+  $vsite = vsite_get_vsite();
+  if (!$vsite){
+    return ;
+  }
   
   //Passes gid as a value in the taxonomy add/edit form
   unset($form['settings']['og_vocab']);
   
-  $vsite = vsite_get_vsite();
   $form['settings']['og_vocab']['og'] = array(
     '#type' => 'value', 
     '#value' => $vsite->group->nid 
