@@ -78,6 +78,13 @@ class vsite_layout_settings_layout implements space_setting {
   function validate($space, $value) {
 
   }
+  
+  function reset($space,&$layout_setting) {
+  	//Reset the layout setting for the current theme
+    if(is_array($layout_setting) && array_key_exists($space->group->og_theme,$layout_setting)){
+    	unset($layout_setting[$space->group->og_theme]);
+    }
+  }
 
   function submit($space, $form_values) {
 	  // get the space and the settings we want to save

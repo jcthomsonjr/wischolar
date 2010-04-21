@@ -88,7 +88,13 @@ function cp_settings_form_reset($form, &$form_state) {
   $settings = spaces_settings();
   if (!empty($form_state['values']['settings'])) {
     foreach ($form_state['values']['settings'] as $setting => $value) {
-      unset($space->settings[$setting]);
+    	if(method_exists($settings[$setting],'reset')){
+    		//If the setting has the reset function let them decide what that means
+    		$settings[$setting]->reset($space, $space->settings[$setting] );
+    	}else{
+    		//If they don't have a reset function we will just remove all settings 
+        unset($space->settings[$setting]);
+    	}
     }
   }
   spaces_save($space);
