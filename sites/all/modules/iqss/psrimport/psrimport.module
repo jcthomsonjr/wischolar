@@ -1,42 +1,186 @@
 <?php
-
-
-DEFINE(PSR_SID, 0);
+include_once('psrimport.defaults.inc');
+include_once('psrimport.api.inc');
 
 /**
- * Implementation of hook_menu(). 
- */ 
-function psrimport_menu() {
-  $items = array();
+ * Begins import script
+ */
+function psrimport_import($drush_run = 0){
+  DEFINE(PSR_DRUSH_RUN, $drush_run);
+  psrimport_import_users();
+  psrimport_create_site();
+  psrimport_import_content(array('psr_profile'));
 
-  $items['psrimport/test'] = array(
-   // 'type' => MENU_CALLBACK,
-    'page callback' => 'psrimport_import',
-    'access callback' => TRUE,
-  );
-  
-  return $items;  
+  return psrimport_print( 'done' );
 }
 
-function psrimport_import($drush_run = 0){  
-DEFINE(PSR_DRUSH_RUN, $drush_run);  
- psrimport_create_site();  
-// psrimport_get_taxonomy();
-// psrimport_get_profiles();
-return _dprint( 'done' );
+/**
+ * Import the users and user data
+ */
+function psrimport_import_users(){
+  install_include(array('user'));
+  $psr_uid_map[] = array();
+  //get the vocab data
+  db_set_active('psrd5');
+  $res = db_query("SELECT * FROM {users} WHERE uid > %d", 1);
+  db_set_active('default');
+  while($data = db_fetch_object($res)){
+    if(in_array($data-> name, array('pmoynihan', 'gstone'))){
+      $status = 1;
+      $roles =array('scholar admin');
+    }
+    else{
+      $status = 0;
+      $roles =array('scholar user');
+    }
+    db_set_active('default');
+    $user = install_add_user($data -> name, user_password(), $data -> mail, $roles, $status);
+    psrimport_print("Added user: {$data -> name}");
+
+    $psrimport_uid_map[$user -> uid] = $data -> uid; // keep track of old to new user id's
+
+    //update created and access
+    db_query("UPDATE {users} SET created = %d, access = %d WHERE name = '%s' ", $data -> created, $data -> access, $data -> name);
+
+    // if active user then restore old password
+    if ($status == 1) {
+      db_query("UPDATE {users} SET pass = '%s' WHERE name = '%s' ", $data -> pass, $data -> name);
+    }
+  }
+  $psrimport_uid_map[1] = 1; //add user 1
+  variable_set('psrimport_uid_map', $psrimport_uid_map);
 }
+
+/**
+ * Create the vsite
+ */
+function psrimport_create_site(){
+  vsite_include('vsiteapi');
+  install_include(array('user'));
+  $vsite = vsite_vsite_create('pmoynihan',  'psr', variable_get('scholar_default_preset', 'project'));
+
+  if ($vsite){
+    psrimport_print("Created vsite: {$vsite -> title}");
+    define(PSR_SID, $vsite -> sid);
+  }
+}
+
+/**
+ * Controller function for importing content
+ *
+ * @param 
+ *  $types - array of psr content types
+ */
+function  psrimport_import_content($types = array()){
+  $type_map =psrimport_type_map();
+
+  //import content for specified types only
+  if (count($types)){
+    foreach($types as $type){
+      //create generic node
+      psrimport_import_node( $type, $type_map[$type]);    
+    }
+  }
+  else{
+    $type_map =psrimport_type_map();
+    foreach($type_map as $old_type => $new_type){
+       //create generic node
+      $node = srimport_import_node($old_type, $new_type);
+      if(function_exists('psrimport_' . $old_type)) call_user_func('psrimport_' . $old_type, $old_type, $new_type);
+    }
+  }
+}
+
+function psrimport_import_node($old_type, $new_type){
+ db_set_active('psrd5');
+    $res = db_query("SELECT nid FROM {node} WHERE type = '%s' ", $old_type);
+  while ($node_list = db_fetch_object($res)){
+    db_set_active('psrd5');
+    $data = db_fetch_object(db_query("SELECT n.nid, n.uid, n.status, n.created, n.title, nr.body, nr.teaser 
+    FROM {node_revisions} nr INNER JOIN {node} n USING(nid) HAVING n.nid = %d", $node_list  -> nid));
+    
+    //gerneric node data
+    $node = new stdClass(); 
+    $node -> type = $new_type;
+    $node -> title = $data -> title;
+    $node -> body = $data -> body;
+    $node -> teaser = $data -> teaser;
+    $node -> created = $data -> created;
+    $node -> status = $data -> status;
+    $node -> uid = array_search( $data -> uid, variable_get('psrimport_uid_map', array()));
+   
+    //now pass the node object by reference to add custom/cck field values
+     if(function_exists('psrimport_' . $old_type)) call_user_func('psrimport_' . $old_type, $node, $data ->nid, 'content_type_' . $old_type); 
+     
+     //now save the node  - don't forget about the stuff happening in nodeapi    
+     db_set_active('default');
+     node_save($node);
+     psrimport_print("Added node: {$node -> title}");
+  }
+}
+
+function psrimport_resource($new_type){
+
+}
+
+function psrimport_event($new_type){
+
+}
+
+function psrimport_psr_profile(&$node, $old_nid, $table){
+   db_set_active('psrd5');
+    $cck_data = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+    $psrimport_uid_map[$user -> uid] = $data -> uid;
+    $node -> title = trim($cck_data['field_first_name_value']) . ' ' . trim($cck_data['field_last_name_value']); //overriding title
+    $node -> field_person_firstname[0] = array('value' => trim($cck_data['field_first_name_value']));
+    $node -> field_person_lastname[0] = array('value' =>trim($cck_data['field_last_name_value']));
+    $node -> field_person_website[0] = array('url' => $cck_data['field_web_site_url']);
+    $node -> field_person_institution[0] = array('value' => $cck_data['field_affiliation_value']);
+    $node -> field_person_title[0] = array('value' => $cck_data['field_title_value']);
+}
+
+function psrimport_book($new_type){
+
+}
+function psrimport_opportunity($new_type){
+
+}
+function psrimport_psr_resource($new_type){
+
+}
+
+function psrimport_faq($new_type){
+
+}
+function psrimport_survey_news($new_type){
+
+}
+function psrimport_project_issue($new_type){
+
+}
+
+function psrimport_education($new_type){
+
+}
+
+function psrimport_story($new_type){
+
+}
+
+
+
 
 /**
  * Implementation of hook_vsite_vocabulary_default()
  */
 function psrimport_vsite_vocabulary_default(){
-  include_once('psrimport.defaults.inc');
+
   $vocabs = psrimport_vocabulary_defaults();
 
   //get the vocab data
-  db_set_active('psrd6');
+  db_set_active('psrd5');
 
-  foreach ($vocabs['standard'] as $old_vid => $new_type){    //Import Vocabs
+  foreach ($vocabs as $old_vid => $new_type){    //Import Vocabs
     $res = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid = %d LIMIT 1", $old_vid));
 
     $tax[] = array(
@@ -57,7 +201,7 @@ function psrimport_vsite_vocabulary_default(){
 
 function psrimport_get_terms($old_vid){
   //get the vocab data
-  db_set_active('psrd6');
+  db_set_active('psrd5');
 
   $term_data = array();
   //get all terms to merge into default vocab
@@ -73,321 +217,19 @@ function psrimport_get_terms($old_vid){
 }
 
 
-function psrimport_get_taxonomy(){
-    install_include(array('taxonomy'));
-   $account = user_load(array('name' => 'pmoynihan'));
-   $space = vsite_get_vsite_by_owner($account -> uid);
-  
-  //get vid of default vocab
-  $vocab = og_vocab_get_vocabularies($space[0] -> group -> nid);
-
-  if (count($vocab) !== 1) return _dprint("Error retrieving default vocabulary");
-  $vid = key($vocab);
-  variable_set('psr_default_vid', $vid);
-  _dprint("Default vocab id is $vid");
-
-  //include these vocabularies
-  $inc =  array(
-  3 => 'link', // 'Type of resource', //tags - Links/ Internet Resource or Tip
-  7 => 'event', //tags - Event/ Event
-  9 => 'announcement', //tags - Annoucements/ News
-  5 => 'person',  //tags Profiles  
- 10 => 'link', //combine with vocab 3 (term id 54, 55)'
-  );
-  
-  //new vocab type of page
-  $inc_new =  array(
-  1 => 'FAQ Topics', //Page
-  6 => 'Opportunity Type', //Page
-  );
-
-  //get the vocab data
-  db_set_active('psrd6');   
-    
-  foreach ($inc as $old_vid => $new_type){    
-    //Import Vocabs
-    $res = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid = %d LIMIT 1", $old_vid));
-
-    $vocab_name = $res -> name;
-    $content_types  = array($new_type => $new_type);    
-    $properties = array(
-    'description' =>  $res -> description,
-    'help' =>  $res -> description,
-    );
-
-    db_set_active('default');        
-    $vid = install_taxonomy_add_vocabulary($vocab_name, $content_types, $properties);
-  
-    //add to og
-    og_vocab_write_record($space[0] -> group -> nid, $vid);    
-    db_set_active('psrd6');            
-    $term_data = array();
-    //get all terms to merge into default vocab
-    $res = db_query("SELECT * FROM {term_data} WHERE vid = %d", $old_vid);
-    while ($data = db_fetch_object($res)){
-      $term_data[] = array(
-      'name' => $data -> name,
-      'description' => $data -> description,
-      'old_vid' => $data -> vid,
-      );
-    }  
-    
-  //add terms to vocabulary
-    _psrimport_add_terms($vid, $term_data);      
-      db_set_active('psrd6');
-  }
-}
-
-function _psrimport_add_terms($vid, $term_data){
-  //add the terms to the default vocabulary
-  db_set_active('default');
-  foreach($term_data as $term){
-    install_taxonomy_add_term($vid, $term['name'], $term['description'], $properties = array());
-    _dprint("Adding term: {$term['name']} to $vid");
-  }
-}
-
-function psrimport_type_map(){
-	return array(
-	'resource' => 'link', //120
-	'event' => 'event', //50	
-	'psr_profile' => 'person', //27
-	'page' => 'page', //25
-	'book' => 'page', //18
-	'opportunity' => 'announcement', // 'page', //13 
-	'psr_resource' => 'page', //13
-	'faq' => 'page', //12
-	'survey_news' => 'announcement', //9	
-	'project_issue' => 'page', //5
-	'education' => 'page', // 4
-	'story' => 'page', //1
-	'project_project' => '', //1
-	);
-}
-
-function psrimport_create_site(){
-  vsite_include('vsiteapi');
-  install_include(array('user'));
-
-  //site base info
-  $settings = array(
-  'name' => 'pmoynihan',
-  'mail' => 'jweiner@iq.harvard.edu',  //pmoynihan@iq.harvard.edu
-  'pass' => 'test',
-  'roles' => array(variable_get('scholar_manager_role', 'scholar admin')),
-  'domain' => 'psr',
-  'preset' => variable_get('scholar_default_preset', 'project'),
-  );
-  //'pmoynihan' other information
-  $other_settings = array(
-  'pass' => '9745d5b3ced82e9e5e75f21d3230d49f',
-  'created' => 1262790912,
-  );
-
-  //if user already exists then skip
-  if(db_result(db_query("SELECT name from {users} WHERE name = '%s'", $settings['name']))){
-    drupal_set_message(t("A user account already exists for %name", array('%name' => $settings['name'])));
-    return FALSE;
-  }
-
-  //otherwise create user account/roles/site
-  else{
-    $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
-    $user = install_add_user($settings['name'], $settings['pass'], $settings['mail'], $settings['roles'], $status = 1);
-    if ($user) {    
-      _dprint("Created user: {$user -> name}");
-      //retain old password and created timestamp for user account
-     db_query("UPDATE {users} SET pass = '%s', created = %d WHERE name = '%s' ", 
-     $other_settings['pass'], $other_settings['created'], $settings['name']);       
-    }
-    $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
-    if ($vsite){
-      _dprint("Created vsite: {$settings['domain']}" );
-      //$mesage = variable_get('gkimport_drush_run', 0) === 1 ? drush_print(t('Created web site: !domain', array('!domain' => $settings['domain']))) : '';     
-       define(PSR_SID, $vsite -> sid);
-    }
-  }
-}
-
-
-function _psrimport_get_old_terms($nid){
-  db_set_active('psrd6');
- $string = '';
-  $res = db_query("SELECT td.name, tn.nid FROM {term_data} td INNER JOIN {term_node} tn USING(tid) HAVING nid = %d", $nid);
-	while($data = db_fetch_array($res)){
-	  if(strlen(trim($data['name']))){
-	  $string .= trim($data['name']) . ',';
-	  }
-	}
-	db_set_active('default');
-	return substr($string, 0, -1);
-}
-function psrimport_get_profiles(){
-    db_set_active('default');
-  install_include(array('taxonomy'));
-  $name = 'pmoynihan';
-  $account = user_load(array('name' => $name));
-  if($spaces = vsite_get_vsite_by_owner($account -> uid)){
-    $sid = $spaces[0] -> group -> nid;
-  }
-
-  db_set_active('psrd6');
-
-  $res = db_query("SELECT nid FROM {node} WHERE type = '%s' ", 'psr_profile');
-  while ($data = db_fetch_object($res)){
-    $n = new stdClass(); //there are no revisions so we can just query node_revisions table
-    $n -> basic = db_fetch_array(db_query("SELECT * FROM {node_revisions} WHERE nid = %d", $data -> nid));
-    $n -> cck = db_fetch_array(db_query("SELECT * FROM {content_type_psr_profile} WHERE nid = %d", $data -> nid));
-   
-    
-    $oldnodes[] = $n;
-  }
-
-  db_set_active('default');
-
-  foreach($oldnodes as $old){    
-    $node = new stdClass();
- 
-    $node -> type = 'person';
-    $node -> field_person_firstname[0] = array('value' => trim($old -> cck['field_first_name_value']));
-    $node -> field_person_lastname[0] = array('value' =>trim($old -> cck['field_last_name_value']));
-    $node -> field_person_website[0] = array('url' => $old -> cck['field_web_site_url']);
-     
-     //TODO: need affiliation and title and orginal user who posted node
-     //$old -> values['field_affiliation_value']
-     //$old -> values['field_title_value']
-    $node -> old_nid = $old -> basic['nid'];
-    $node -> body = $old -> basic['body'];
-    $node -> teaser = $old-> basic['teaser'];
-    $node -> created = $old-> basic['created'];
-    $node -> name = $account -> name;
-    $node -> uid = $account -> uid;
-   // $node -> taxonomy['tags'][  variable_get('psr_default_vid', '') ] = $term;
-    
-    
-    node_save($node);
-   // if ($node -> nid) _dprint("Created profile: {$old -> cck['field_first_name_value']} {$old -> cck['field_last_name_value']}");    
-   // psrimport_node_to_og($node -> nid, $account, $sid); //add node to og
-   // db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, 40);
-  
-  }
-}
-
-/**
- * Add a node to an OG
- */
-function psrimport_node_to_og($nid, $account, $sid = NULL){
-  
-if(!$sid){  
-  if($spaces = vsite_get_vsite_by_owner($account -> uid)){
-  $sid = $spaces[0] -> group -> nid;  
-  }
-}
-if($sid){  
-    db_query("DELETE FROM {og_ancestry} WHERE nid = %d AND group_nid = %d", $nid, $sid);
-    db_query("INSERT INTO {og_ancestry} (nid, group_nid) VALUES (%d, %d)", $nid, $sid);
-  }
-}
-
-function _dprint($text){
-  switch(PSR_DRUSH_RUN){
-    case 0;
-    return print (t("$text"));
-    break;
-
-    case 1:
-      return drush_print (t("$text"));
-      break;
-
-    default:
-      return print (t("$text"));
-      break;
-  }
-}
-
-
 /**
  * Implementation of hook_nodeapi()
  */
-/*function psrimport_nodeapi(&$node, $op){ 
-  $vid = variable_get('psr_default_vid', FALSE);
-  $name = 'pmoynihan';
-  $account = user_load(array('name' => $name));
+function psrimport_nodeapi(&$node, $op){ 
+
   switch ($op) { 
     case 'insert':  
       //add the taxonomy term to the node
-      if (!vsite_get_vsite()){ 
-        // install_include(array('taxonomy'));
-        // $site_vid = install_taxonomy_get_vid($name . '_vocabulary');
-        // $node -> taxonomy['tags'][  $site_vid ] = '';
-
-        if ($node -> type == 'person'){
-           //$term = _psrimport_get_old_terms($node -> old_nid);
-          // db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, 40);
-        }
-      
-        elseif ($node -> type == 'link'){
-        $term = _psrimport_get_old_terms($node -> old_nid);
-        if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here
-        }
-        
-        elseif ($node -> type == 'announcement'){
-        $term = _psrimport_get_old_terms($node -> old_nid);
-        if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here
-        }
-        
-        elseif ($node -> type == 'event'){
-        $term = _psrimport_get_old_terms($node -> old_nid);
-        if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here
-        }
-        
-        else{
-          //do nothing
-        }
-      
+      if (!vsite_get_vsite()){        
+       psrimport_node_to_og($node -> nid);
       }
-      break;
-      
-      case 'insert':
-        
-       
-        break;
-      
+      break;     
   }
-}*/
-
-  /*    $res = db_fetch_object(db_query("SELECT * FROM {vocabulary} INNER JOIN {vocabulary_node_types} USING(vid) HAVING vid = %d LIMIT 1", $vid));
-
-    $vocab_data[] = array(
-    'vid' => $res -> vid,
-    'name' => $res -> name,
-    'content_types' => array(
-    $inc[$res->vid] => $inc[$res->vid],
-    ),
-    'properties' => array(
-    'tags' => 1,
-    'description' =>  $res -> description,
-    'help' =>  $res -> description,
-    ),
-    );*/
-
-  
- /*   $vocab_name =  'Research Interests';
-    $properties = array(
-    'tags' => 1,
-    'description' => 'Gary King Research Interests',
-    'help' => 'Gary King Research Interests',
-    );
-    $content_types = array(
-    'biblio' => 'biblio',
-    );
-      
-    $vid = install_taxonomy_add_vocabulary($vocab_name, $content_types, $properties);*/
- 
+}
 
 
-/*
-$exclude = array(
-8 => 'Project types',
-4 => 'Survey Methods Research Item Type',
-);*/
