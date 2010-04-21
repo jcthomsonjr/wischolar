@@ -26,6 +26,8 @@ function vsite_taxonomy_dialog_options(){
       'top' 
     ), 
     'resizable' => TRUE,
+    'closeText' => 'Hide this',
+    
   );
 }
 
@@ -236,35 +238,26 @@ function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
 }
 
 /**
- * edit vocabulary form callback
+ * edit/delete vocabulary form callback
  */
 function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
   $delete_mode = FALSE;
   if ((isset($_POST['op']) && $_POST['op'] == t('Delete')) || isset($_POST['confirm'])) {
     $delete_mode = TRUE;
-    //return drupal_get_form('taxonomy_vocabulary_confirm_delete', $vocabulary->vid);
+    return vsite_taxonomy_delete_vocabulary($vocabulary->vid, $ajax);
   }
-  
+
   if ($ajax) {
     ctools_include('ajax');
     $form_state = array(
       'ajax' => TRUE, 
-      'title' => t('Add vocabulary'), 
+      'title' => t('Edit vocabulary'), 
       'args' => array(
         'edit' => ( array ) $vocabulary 
       ) 
     );
     
-    if ($delete_mode){
-      $form_state['args']['vid'] = $vocabulary -> vid;
-      $output = dialog_form_wrapper('taxonomy_vocabulary_confirm_delete', $form_state);
-    } 
-    else {
-      $form_state['args']['edit'] = ( array ) $vocabulary;
-      $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
-    }
-    
-    //$output = $delete_mode ? dialog_form_wrapper('taxonomy_vocabulary_confirm_delete', $vocabulary->vid) : dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
+    $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
     
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabulary settings changed ...'), t('Reloading...'));
@@ -429,7 +422,7 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
  * Redirect the cancel back to og_vocab.
  */
 function vsite_taxonomy_form_taxonomy_vocabulary_confirm_delete_alter(&$form, &$form_state){
-  //dpm($form);
+  dpm($form_state);
 }
 
 
@@ -763,9 +756,9 @@ function vsite_taxonomy_taxonomy_import($gid, $definition){
     $vid = install_taxonomy_add_vocabulary($vocab_definition['name'], $vocab_definition['content_types'], $vocab_definition['properties']);
     // make this a group taxonomy
     og_vocab_write_record($gid, $vid);
-    if(count($vocab_definition['terms'] )){
-    foreach ( $vocab_definition['terms'] as $term_index => $term_definition ) {
-      install_taxonomy_add_term($vid, $term_definition['name'], $term_definition['description'], $term_definition['properties']);
+    if (count($vocab_definition['terms'])) {
+      foreach ( $vocab_definition['terms'] as $term_index => $term_definition ) {
+        install_taxonomy_add_term($vid, $term_definition['name'], $term_definition['description'], $term_definition['properties']);
       }
     }
   }
