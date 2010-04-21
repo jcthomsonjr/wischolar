@@ -763,8 +763,10 @@ function vsite_taxonomy_taxonomy_import($gid, $definition){
     $vid = install_taxonomy_add_vocabulary($vocab_definition['name'], $vocab_definition['content_types'], $vocab_definition['properties']);
     // make this a group taxonomy
     og_vocab_write_record($gid, $vid);
+    if(count($vocab_definition['terms'] )){
     foreach ( $vocab_definition['terms'] as $term_index => $term_definition ) {
       install_taxonomy_add_term($vid, $term_definition['name'], $term_definition['description'], $term_definition['properties']);
+      }
     }
   }
 }
