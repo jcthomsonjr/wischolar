@@ -24,7 +24,8 @@
           <h4>Exceptions:</h4>
           <ul>
             <?php
-            foreach ($w['overides'] as $overide) print "<li>{$overide}</li>";
+            $removethis = array("scholar", "Scholar");
+            foreach ($w['overides'] as $overide) print "<li>" . str_replace($removethis, '', $overide) . "</li>";
            ?>
 		 	    </ul>
 		 	  </div>

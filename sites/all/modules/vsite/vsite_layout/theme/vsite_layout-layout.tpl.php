@@ -1,10 +1,10 @@
 <script type="text/javascript">
   //Horizontal Sliding
   $(document).ready(function(){
-    $('.toggle').hover(function(){
-      $(".layout-exceptions", this).stop().animate({right:'-20px'},{queue:false,duration:300});
+    $('.with-overrides').hover(function(){
+      $(".layout-exceptions").stop().animate({right:'-20px'},{queue:false,duration:300});
     }, function() {
-      $(".layout-exceptions", this).stop().animate({right:'-101%'},{queue:false,duration:300});
+      $(".layout-exceptions").stop().animate({right:'-101%'},{queue:false,duration:300});
     });
   });
 </script>
@@ -18,4 +18,3 @@
   <?php print $vsite_layout_right; ?>
   <?php print $vsite_layout_footer; ?>
 </div>
-

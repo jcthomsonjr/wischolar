@@ -15,32 +15,18 @@
   background:#e8ebeb;
   }
 
-#scholarlayout-container dt {
-  color: #888;
-  position: absolute;
-  left: 8px;
-  top: -20px;
-  background: #cdf2f2;
-  }
-
 #scholarlayout-container .scholarlayout-widgets-list:hover {
   background: #eff6f6;
   }
 
 #scholarlayout-container dt {
+  background: #cdf2f2;
   color: #888;
   position: absolute;
   left: 8px;
   top: -26px;
   display:none;
   padding: 3px 6px;
-  }
-
-#scholarlayout-content-main dt {
-  display:block;
-  position: static;
-  padding: 0;
-  margin-left: 7px;
   }
 
 #scholarlayout-container dl.active, #scholarlayout-container dt {
@@ -74,7 +60,6 @@
   background:#eaebe9;
   width: 100%;
   padding-left: 22px;
-  overflow: hidden;
   margin-bottom: 0;
   }
 
@@ -112,7 +97,7 @@ dd.scholarlayout-item {
   min-height: 21px;
   position:relative;
   border-top: 1px solid #ccc;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #666;
   overflow:hidden;
   }
 
@@ -155,13 +140,21 @@ dd.scholarlayout-item .close-this {
   }
 
 .layout-exceptions h4, .layout-exceptions ul {
-  padding: 3px 15px;
+  padding: 0 15px;
+  font-size:10px;
+  text-transform: uppercase;
+  }
+
+.layout-exceptions h4 {
+  padding-top: 3px;
   }
 
 .layout-exceptions li {
-  list-style:disc inside;
-  margin-bottom: .5em;
-  text-transform: capitalize;
+  display:inline;
+  }
+
+.layout-exceptions li:after {
+  content:", ";
   }
 
 #scholarlayout-top-widgets .close-this {
