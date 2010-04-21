@@ -461,7 +461,7 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
     );   
   }
   elseif ($type == 'term') {
-    // edit/delete links for terms
+    /*
     $links[] = array(
       'title' => 'delete', 
       'href' => "vsite_taxonomy/term/delete/" . $object->vid . "/" . $object->tid, 
@@ -469,6 +469,7 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
         'class' => 'delete ctools-use-ajax' 
       )
     );
+    */
     
     $links[] = array(
       'title' => 'edit', 
