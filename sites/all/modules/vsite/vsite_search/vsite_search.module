@@ -81,9 +81,18 @@ function vsite_search_vsite_widgets(){
       'module' => 'luceneapi_facet',
       'delta' => 'luceneapi_node',
       'weight' => 0,
-      'region' => false,
-      'status' => '0',
+      'region' => 'right',
+      'status' => '1',
       'label' => t('Search Lucene Facets'),
+      'type' => 'context_ui',
+    );
+    $widgets['luceneapi_categories'] = array(
+      'module' => 'vsite_search',
+      'delta' => '0',
+      'weight' => 0,
+      'region' => 'right',
+      'status' => '1',
+      'label' => t('Lucene Categories'),
       'type' => 'context_ui',
     );
   }
