@@ -31,7 +31,7 @@ function vsite_search_luceneapi_facet_alter(&$facets, $realm, $module, $type = N
 		  foreach($vsite->group->og_vocabularies as $tid => $term) {
         $category_name = 'category_'.$term->vid;
         if(in_array($category_name, array_keys($facets))) {
-          //unset($facets[$category_name]);
+          unset($facets[$category_name]);
         }
 		  }
 
@@ -55,6 +55,38 @@ function vsite_search_luceneapi_facet_alter(&$facets, $realm, $module, $type = N
 			}
 		}
 	}
+}
+
+/**
+ * Provides access to the items after they are rendered.  This hook is useful
+ * for converting IDs to display names or adding the #options key to form
+ * elements.
+ *
+ * @param &$items
+ *   An array containing the rendered facet arrays.  In other words, they have
+ *   just been processed by the "callback" function in the $relam definition.
+ * @param $realm
+ *   A string containing the machine readable realm name the facets are being
+ *   rendered in.
+ * @param $module
+ *   A string containing the module handling the search.
+ * @param $type
+ *   A string containing the type of content $module indexes, NULL if no type.
+ * @return
+ *   NULL
+ */
+function vsite_search_luceneapi_facet_postrender_alter(&$items, $realm, $module, $type = NULL) {
+  // The example is only valid for "node" content.
+  if ('node' != $type) {
+    return;
+  }
+  
+  // TODO: If there is more than one category facet, merge them into one giant facet display
+  foreach($items as $facet_name => $facet) {
+  	if(preg_match("/^category_/", $facet_name)) {
+  		$items[$facet_name]['title'] = t('Categories');
+  	}
+  }
 }
 
 /**
@@ -112,14 +144,16 @@ function vsite_search_luceneapi_query_alter($query, $module, $type = NULL) {
   $vsite = vsite_get_vsite();
   if(!empty($vsite)) {
 		if($type == 'node') {
-			// Add a filter to the query to limit results to nodes belonging to this vsite
-	    luceneapi_subquery_add($query, luceneapi_query_get('term', $vsite->group->nid, 'im_og_gid'));
+			// Add a required filter to the query to limit results to nodes belonging to this vsite
+	    luceneapi_subquery_add($query, luceneapi_query_get('term', $vsite->group->nid, 'im_og_gid'), 'required', true);
 		}
   }
 
   /**
    * Features have a status of public, private, or disabled.  This extra layer of privacy does not implement node_access, and so for features that
    * are marked as private, the content types for these features need to be excluded from search.
+   * 
+   * TODO: Filter out these disabled/private content types, based on the parent feature
    */
   $vsite = vsite_get_vsite();
   foreach($vsite->features as $feature => $status) {
@@ -156,12 +190,6 @@ function vsite_search_luceneapi_query_alter($query, $module, $type = NULL) {
  *   An array of facets.
  */
 function vsite_search_luceneapi_facet_empty($facets, $realm, $module) {
-	// The following example is a simplified version of code in the
-  // luceneapi_node_luceneapi_facet_empty() function.  It allows the "Content
-  // type" facet to be displayed in the "block" realm even if no search has been
-  // executed.
-
-  // The example is only valid for "node" content in the "block" realm.
   $type = luceneapi_index_type_get($module);
   if ('node' != $type || 'block' != $realm) {
     return;

@@ -49,6 +49,9 @@ function vsite_search_block($op = 'list', $delta = 0, $edit = array()) {
     			}
     		}
     	}
+    	if(VSITE_SEARCH_LUCENE) {
+    		$blocks[0]['info'] = t('Categories');
+    	}
       return $blocks;
     case 'view':
     	if(VSITE_SEARCH_SOLR) {
@@ -61,6 +64,17 @@ function vsite_search_block($op = 'list', $delta = 0, $edit = array()) {
 	    	  'subject' => $blocks[$delta]->subject,
 	    	  'content' => $blocks[$delta]->content,
 	    	);
+    	}
+    	
+    	if(VSITE_SEARCH_LUCENE) {
+    		switch($delta) {
+    			case 0:
+		    		require_once(drupal_get_path('module', 'luceneapi_facet').'/luceneapi_facet.block.inc');
+		    		return array(
+		    		  'subject' => t('Scholar Site'),
+		    		  'content' => luceneapi_facet_block_view('vsite_search')
+		    		);
+    		}
     	}
   }
 }
@@ -86,6 +100,7 @@ function vsite_search_vsite_widgets(){
       'label' => t('Search Lucene Facets'),
       'type' => 'context_ui',
     );
+
     $widgets['luceneapi_categories'] = array(
       'module' => 'vsite_search',
       'delta' => '0',
