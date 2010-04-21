@@ -32,8 +32,7 @@ function vsite_widgets_search(){
     return;
   }
 
-  //$block['content'] = drupal_get_form('vsite_widgets_search_form');
-  $block['content'] = drupal_get_form('search_form');
+  $block['content'] = drupal_get_form('vsite_widgets_search_form');
   //$block['subject'] = "Search";
   return $block;
 
@@ -141,7 +140,7 @@ function vsite_widgets_vsite_widgets(){
 
 	return array(
   
-    'vsite_widgets_0' => array(
+    'vsite_widgets_2' => array(
       'module' => 'vsite_widgets',
       'delta' => '0',
       'weight' => 20,
@@ -151,7 +150,7 @@ function vsite_widgets_vsite_widgets(){
       'type' => 'context_ui',
     ),
 
-   'vsite_widgets_1' => array(
+   'vsite_widgets_3' => array(
       'module' => 'vsite_widgets',
       'delta' => '1',
       'weight' => -5,
@@ -161,7 +160,17 @@ function vsite_widgets_vsite_widgets(){
       'type' => 'context_ui',
     ),
     
-    'vsite_widgets_3' => array(
+//    'vsite_widgets_4' => array(
+//      'module' => 'vsite_widgets',
+//      'delta' => '1',
+//      'weight' => 2,
+//      'region' => 'right',
+//      'status' => '0',
+//      'label' => 'Add This Widget',
+//      'type' => 'context_ui',
+//    ),
+    
+    'vsite_widgets_5' => array(
       'module' => 'vsite_widgets',
       'delta' => '3',
       'weight' => 40,

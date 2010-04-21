@@ -22,7 +22,7 @@ function _scholar_reader_context_default_contexts() {
     ),
     'menu' => 'reader',
     'block' => array(
-      'vsite_widgets_2' => array(
+      'vsite_widgets_4' => array(
         'module' => 'vsite_widgets',
         'delta' => '2',
         'weight' => 20,
