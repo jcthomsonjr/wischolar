@@ -25,7 +25,7 @@
           <ul>
             <?php
             $removethis = array("scholar", "Scholar");
-            foreach ($w['overides'] as $overide) print "<li>" . str_replace($removethis, '', $overide) . "</li>";
+            foreach ($w['overides'] as $overide) print "<li>" . str_replace($removethis, '', $overide) . ", </li>";
            ?>
 		 	    </ul>
 		 	  </div>
