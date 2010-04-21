@@ -1,3 +1,13 @@
+<script type="text/javascript">
+  //Horizontal Sliding
+  $(document).ready(function(){
+    $('.toggle').hover(function(){
+      $(".layout-exceptions", this).stop().animate({right:'-20px'},{queue:false,duration:300});
+    }, function() {
+      $(".layout-exceptions", this).stop().animate({right:'-101%'},{queue:false,duration:300});
+    });
+  });
+</script>
 <div id="scholarlayout-container" class="pad">
   <?php print $vsite_layout_header_main; ?>
   <?php print $vsite_layout_header_left; ?>
@@ -8,3 +18,4 @@
   <?php print $vsite_layout_right; ?>
   <?php print $vsite_layout_footer; ?>
 </div>
+

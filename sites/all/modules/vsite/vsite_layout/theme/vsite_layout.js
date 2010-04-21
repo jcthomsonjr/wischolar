@@ -25,7 +25,7 @@ Drupal.behaviors.scholarlayout = function() {
 	    		$('#edit-settings-layout-page-type').val($("#edit-settings-layout-secret-hidden-ahah").val());
 	    	}
 	    });
-	    
+
 	    $(window).resize(function() { vsite_layout_setScrollArrows(); });
 
     }
@@ -67,7 +67,7 @@ function scholarlayout_afterdrag(event, ui) {
 	    } );
 	   	$('#edit-settings-layout-'+region.id).val(ids);
 	  });
-	  
+
 	  //Reset top box after widgets have been moved
 	  vsite_layout_setScrollArrows();
 
@@ -76,7 +76,6 @@ function scholarlayout_afterdrag(event, ui) {
 
 function scholarlayout_catchchanges() {
 	if(!$("#scholarforms_save_warning").length || confirm("Your changes have not been saved. Continue and lose your changes?")) return true;
-
 	return false;
 };
 
@@ -119,17 +118,17 @@ function vsite_layout_setScrollArrows(){
 	var nContainerWidth = $('ul#scholarlayout-top-widgets').width();
 	var nWidgetWidth = $('ul#scholarlayout-top-widgets li:first').width();
 	var nAllWidgetsWidth = $('ul#scholarlayout-top-widgets li:not(.disabled)').length * nWidgetWidth;
-	
+
 	if(nContainerWidth > nAllWidgetsWidth){
       $('div.widget-prev, div.widget-next').addClass('disabled').unbind('click');
-      
+
 	}else{
       $('div.widget-prev, div.widget-next').removeClass('disabled');
 	  $('div.widget-prev').click(function() {
 		$('ul#scholarlayout-top-widgets').prepend($('ul#scholarlayout-top-widgets li:last')).css('marginLeft',"-"+nWidgetWidth+"px").width('125%');
   	    $('ul#scholarlayout-top-widgets').animate({ marginLeft: "0px", width: "110%" }, 750 );
       });
-	
+
 	  $('div.widget-next').click(function() {
         $('ul#scholarlayout-top-widgets').animate({ marginLeft: "-"+nWidgetWidth+"px", width: "125%" }, 750, function() {
 	      $('ul#scholarlayout-top-widgets').append($('ul#scholarlayout-top-widgets li:first')).css('marginLeft','0px').width('110%');
