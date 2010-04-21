@@ -28,7 +28,7 @@ function _scholar_book_context_default_contexts() {
         'label' => 'Scholar: Book',
         'type' => 'context_ui',
       ),
-      'vsite_widgets_2' => array(
+      'vsite_widgets_4' => array(
         'module' => 'vsite_widgets',
         'delta' => '2',
         'weight' => 21,
