@@ -35,7 +35,8 @@ function vsite_widgets_search(){
     return;
   }
 
-  $block['content'] = drupal_get_form('vsite_widgets_search_form');
+  //$block['content'] = drupal_get_form('vsite_widgets_search_form');
+  $block['content'] = drupal_get_form('search_form');
   //$block['subject'] = "Search";
   return $block;
 
