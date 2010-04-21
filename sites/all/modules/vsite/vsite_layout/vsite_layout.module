@@ -533,3 +533,34 @@ function vsite_layout_spaces_features_form($form, &$form_state){
 
   if($b_save) spaces_save($space); //Save changes if we made them
 }
+
+
+/**
+ * Implemetation of hook_system_info_alter
+ * 
+ * Used to set the default vsite_layout regions on scholar themes
+ * 
+ * @param $info
+ * @param $file
+ */
+function vsite_layout_system_info_alter(&$info, $file){
+  if($file->type == 'module') return;
+  
+  //If this is a scholar theme then add the correct regions
+  if(array_key_exists('scholar',$info) && array_key_exists('theme_type',$info['scholar']) && $info['scholar']['theme_type'] == 'scholar'){
+    if(!is_array($info['regions'])) $info['regions'] = array();
+    
+    $info['regions']['header_top'] = "header top";
+    $info['regions']['header_left'] = "header left";
+    $info['regions']['header_main'] = "header main";
+    $info['regions']['header_right'] = "header right";
+    $info['regions']['navbar'] = "navigation bar";
+    $info['regions']['left'] = "left sidebar";
+    $info['regions']['right'] = "right sidebar";
+    $info['regions']['content_top'] = "content top";
+    $info['regions']['content_bottom'] = "content bottom";
+    $info['regions']['footer'] = "footer";
+    $info['regions']['closure_region'] = "closure";
+
+  }
+}
