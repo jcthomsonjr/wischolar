@@ -35,7 +35,7 @@ Drupal.behaviors.scholarlayout = function() {
 
 function scholarlayout_add_removal_hooks(){
 	$(".close-this:not(.close-this-processed)").addClass('close-this-processed').click(function(e){
-    	var parent = $(this).parent("li");
+    	var parent = $(this).parent("dd");
     	$("body").append("<div class='poof'></div>");
 
     	// set the x and y offset of the poof animation <div> from cursor position (in pixels)
@@ -57,7 +57,7 @@ function scholarlayout_add_removal_hooks(){
 
 var scholarlayout_change_bound = false;
 function scholarlayout_afterdrag(event, ui) {
-	  var regions = $("#scholarlayout-container > ul.scholarlayout-widgets-list");
+	  var regions = $("#scholarlayout-container > .scholarlayout-widgets-list");
 	  $.each(regions, function(i, region){
 	    var items = $("#"+region.id+" > .scholarlayout-item");
 	    var ids = "";
@@ -115,9 +115,9 @@ function animatePoof() {
 }
 
 function vsite_layout_setScrollArrows(){
-	var nContainerWidth = $('ul#scholarlayout-top-widgets').width();
-	var nWidgetWidth = $('ul#scholarlayout-top-widgets li:first').width();
-	var nAllWidgetsWidth = $('ul#scholarlayout-top-widgets li:not(.disabled)').length * nWidgetWidth;
+	var nContainerWidth = $('#scholarlayout-top-widgets').width();
+	var nWidgetWidth = $('#scholarlayout-top-widgets dd:first').width();
+	var nAllWidgetsWidth = $('#scholarlayout-top-widgets dd:not(.disabled)').length * nWidgetWidth;
 
 	if(nContainerWidth > nAllWidgetsWidth){
       $('div.widget-prev, div.widget-next').addClass('disabled').unbind('click');
@@ -125,13 +125,13 @@ function vsite_layout_setScrollArrows(){
 	}else{
       $('div.widget-prev, div.widget-next').removeClass('disabled');
 	  $('div.widget-prev').click(function() {
-		$('ul#scholarlayout-top-widgets').prepend($('ul#scholarlayout-top-widgets li:last')).css('marginLeft',"-"+nWidgetWidth+"px").width('125%');
-  	    $('ul#scholarlayout-top-widgets').animate({ marginLeft: "0px", width: "110%" }, 750 );
+		$('#scholarlayout-top-widgets').prepend($('#scholarlayout-top-widgets dd:last')).css('marginLeft',"-"+nWidgetWidth+"px").width('125%');
+  	    $('#scholarlayout-top-widgets').animate({ marginLeft: "0px", width: "110%" }, 750 );
       });
 
 	  $('div.widget-next').click(function() {
-        $('ul#scholarlayout-top-widgets').animate({ marginLeft: "-"+nWidgetWidth+"px", width: "125%" }, 750, function() {
-	      $('ul#scholarlayout-top-widgets').append($('ul#scholarlayout-top-widgets li:first')).css('marginLeft','0px').width('110%');
+        $('#scholarlayout-top-widgets').animate({ marginLeft: "-"+nWidgetWidth+"px", width: "125%" }, 750, function() {
+	      $('#scholarlayout-top-widgets').append($('#scholarlayout-top-widgets dd:first')).css('marginLeft','0px').width('110%');
 	    });
 	  });
 	}

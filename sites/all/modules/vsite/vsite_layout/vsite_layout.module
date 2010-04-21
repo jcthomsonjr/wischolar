@@ -201,6 +201,7 @@ function vsite_layout_region_widgets_callback(){
     _check_for_disabled_widgets($widgets,$a_feature_contexts,$scholar);
     $a_themed_regions[$region] = theme('vsite_layout_layout_widgets',$widgets, $wgts_id, 'scholarlayout-widgets-list',ucwords($s_label));
   }
+  $a_themed_regions['content'] = theme('vsite_layout_layout_widgets',array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
 
   $output= '<div id="scholarlayout-container">'.
            $a_themed_regions['header_main'].
@@ -208,7 +209,9 @@ function vsite_layout_region_widgets_callback(){
 				   $a_themed_regions['header_right'].
 				   $a_themed_regions['navbar'].
 				   $a_themed_regions['left'].
-				   $a_themed_regions['right']."</div>";
+				   $a_themed_regions['content'].
+				   $a_themed_regions['right'].
+				   $a_themed_regions['footer']."</div>";
 
 	drupal_json(array('status' => TRUE, 'data' => $output));
 }
@@ -293,8 +296,8 @@ function vsite_layout_region_widgets($scolar = false,$page_type='all'){
   if(!$scholar) return $a_widgets;
 
   $a_site_settings = false;
-  if(array_key_exists('layout',$scholar->settings) && array_key_exists($page_type,$scholar->settings['layout'])){
-  	$a_site_settings = $scholar->settings['layout'][$page_type];
+  if(array_key_exists('layout',$scholar->settings) && array_key_exists($scholar->group->og_theme,$scholar->settings['layout']) && array_key_exists($page_type,$scholar->settings['layout'][$scholar->group->og_theme])){
+  	$a_site_settings = $scholar->settings['layout'][$scholar->group->og_theme][$page_type];
   	_widget_settings_order(array_keys($a_site_settings));
   }
 
@@ -428,7 +431,7 @@ function _check_for_overrides(&$widgets,$s_region,$space = null){
 
 	foreach(vsite_layout_get_pagetypes($space) as $s_page_nm => $s_page_readable){
     if($s_page_nm == 'all' || !count($widgets)) continue;
-    $a_page_settings = (is_array($space->settings['layout'][$s_page_nm]))?$space->settings['layout'][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
+    $a_page_settings = (is_array($space->settings['layout'][$space->group->og_theme][$s_page_nm]))?$space->settings['layout'][$space->group->og_theme][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
 
     foreach ($widgets as $s_wgt_name => $wgt){
     	if(!array_key_exists($s_wgt_name,$a_page_settings) || $a_page_settings[$s_wgt_name] != $s_region){
@@ -517,14 +520,14 @@ function vsite_layout_spaces_features_form($form, &$form_state){
 
   // Retrieve the space object from the form
   $space = $form_state['values']['space'];
-  if(!array_key_exists('layout',$space->settings) || !array_key_exists('all',$space->settings['layout'])) return;  //Do we have default layout settings?
+  if(!array_key_exists('layout',$space->settings) || !array_key_exists($space->group->og_theme,$space->settings['layout']) || !array_key_exists('all',$space->settings['layout'][$space->group->og_theme])) return;  //Do we have default layout settings?
 
   $b_save = false;
   foreach ($form_state['values']['features'] as $s_feature_name => $n_privacy) {
-    if(!in_array($n_privacy,array(SPACES_OG_PUBLIC,SPACES_OG_PRIVATE)) || array_key_exists($s_feature_name,$space->settings['layout'])) continue; //If it is disabled or already has setings skip it
+    if(!in_array($n_privacy,array(SPACES_OG_PUBLIC,SPACES_OG_PRIVATE)) || array_key_exists($s_feature_name,$space->settings['layout'][$space->group->og_theme])) continue; //If it is disabled or already has setings skip it
 
     $a_default = _vsite_layout_generate_default_settings_ary($s_feature_name,false);
-    $space->settings['layout'][$s_feature_name] = array_merge($a_default,$space->settings['layout']['all']); //Combine default and all settings
+    $space->settings['layout'][$space->group->og_theme][$s_feature_name] = array_merge($a_default,$space->settings['layout'][$space->group->og_theme]['all']); //Combine default and all settings
     $b_save = true;
   }
 
