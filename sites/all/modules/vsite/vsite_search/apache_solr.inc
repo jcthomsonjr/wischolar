@@ -43,6 +43,7 @@ function vsite_search_apachesolr_modify_query(&$query, &$params, $caller) {
    */
   $vsite = vsite_get_vsite();
   if(!empty($vsite)) {
+  	drupal_set_message('Filtering on gid '.$vsite->group->nid);
     // Add filter for group_id
     $query->add_filter('im_og_gid', $vsite->group->nid);
   }

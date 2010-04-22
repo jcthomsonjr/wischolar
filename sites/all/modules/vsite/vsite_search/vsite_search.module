@@ -27,6 +27,54 @@ function vsite_search_init() {
 }
 
 /**
+ * Implementation of hook_form_alter()
+ * 
+ * Replaces the search form's submit handler with a custom submit handler to redirect to Apache Solr.
+ * 
+ * @param object $form
+ *   The FAPI form object
+ * @param mixes $form_state
+ *   Associative array representing the submitted form
+ * @param string $form_id
+ *   The unique id of the form
+ */
+function vsite_search_form_alter(&$form, $form_state, $form_id) {
+	if(VSITE_SEARCH_SOLR) {
+		if($form_id == 'search_form') {
+		  if (variable_get('apachesolr_search_make_default', 0)) {
+        if (!isset($form['#submit'])) {
+          $form['#submit'] = array('vsite_search_solr_search_form_submit');
+        }
+        else {
+          $key = array_search('search_form_submit', $form['#submit']);
+		      if ($key !== FALSE) {
+		        // Replace the search module's function.
+		        $form['#submit'][$key] = 'vsite_search_solr_search_form_submit';
+		      }
+		    }
+		  }
+		}
+	}
+}
+
+/**
+ * Submit handler for the core search form.  This function redirects searches to Apache Solr.
+ * @param object $form
+ *   The FAPI form object
+ * @param mixed $form_state
+ *   Associative array representing the submitted form
+ */
+function vsite_search_solr_search_form_submit($form, &$form_state) {
+  $keys = $form_state['values']['keys'];
+  // Handle Apache webserver clean URL quirks.
+  if (variable_get('clean_url', '0')) {
+    $keys = str_replace('+', '%2B', $keys);
+  }
+  // Redirect to Apache Solr, passing in the search keys
+  $form_state['redirect'] = 'search/apachesolr_search/'. trim($keys);	
+}
+
+/**
  * Implementation of hook_block()
  * 
  * @param string $op
