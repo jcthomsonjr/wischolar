@@ -174,7 +174,7 @@ function vsite_taxonomy_vocabs(){
     $output .= theme('item_list', $items, $vocab->name, 'ul', array('class' => 'vsite-taxonomy-terms slider'));
 
     // "Add term" link
-    $output .= '<span class="add">' . l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))) . '</span>';
+    $output .= '<div class="add">' . l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))) . '</div>';
 
     $output .= '</li>';
   }
@@ -441,13 +441,13 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
   $links = array();
   // edit/delete links for vocabularies
   if ($type == 'vocabulary') {
-    $links[] = array(
-      'title' => 'delete',
-      'href' => 'vsite/taxonomy/nojs/delete/vocabulary/' . $object -> vid,
-      'attributes' => array(
-        'class' => 'ctools-use-dialog delete',
-      )
-    );
+    //$links[] = array(
+    //  'title' => 'delete',
+    //  'href' => 'vsite/taxonomy/nojs/delete/vocabulary/' . $object -> vid,
+    //  'attributes' => array(
+    //    'class' => 'ctools-use-dialog delete',
+    //  )
+    //);
 
     $links[] = array(
       'title' => 'edit',
@@ -668,7 +668,7 @@ function theme_vsite_taxonomy_term($term){
     'title' => t($term->description)
   ));
 
-  $item = $term_link . '<span class = "count" > (' . $count . ')</span>';
+  $item = '<div class="term-head">' . $term_link . '<span class = "count" > (' . $count . ')</span>';
 
   // add term's admin links
   $item .= theme('links', vsite_get_admin_links('term', $term), $attributes = array(
@@ -676,7 +676,7 @@ function theme_vsite_taxonomy_term($term){
   ));
 
   if ($term -> description) {
-    $item .= '<div class="description">' . $term -> description . '</div>';
+    $item .= '<div class="description">' . $term -> description . '</div></div>';
     }
 
 
