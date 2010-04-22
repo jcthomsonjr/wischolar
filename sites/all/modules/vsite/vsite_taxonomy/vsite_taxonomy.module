@@ -176,7 +176,7 @@ function vsite_taxonomy_vocabs(){
     // "Add term" link
     $output .= '<div class="add">' . l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))) . '</div>';
 
-    $output .= '</li>';
+    $output .= '</li> <!--/row-->';
   }
 
   $output .= '<li class="add">' . l('Add new vocabulary', 'vsite/taxonomy/nojs/add/vocabulary',  array('attributes' => array('class' => 'ctools-use-dialog context-button'))) . '</li>';
@@ -676,9 +676,10 @@ function theme_vsite_taxonomy_term($term){
   ));
 
   if ($term -> description) {
-    $item .= '<div class="description">' . $term -> description . '</div></div>';
+    $item .= '<div class="description">' . $term -> description . '</div>';
     }
 
+  $item .= '</div><!--/term-head-->';
 
   return $item;
 }
