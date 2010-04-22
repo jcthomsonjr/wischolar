@@ -174,7 +174,7 @@ function vsite_taxonomy_vocabs(){
     $output .= theme('item_list', $items, $vocab->name, 'ul', array('class' => 'vsite-taxonomy-terms slider'));
 
     // "Add term" link
-    $output .= '<li class="add">' . l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))) . '</li>';
+    $output .= '<span class="add">' . l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))) . '</span>';
 
     $output .= '</li>';
   }
