@@ -1,4 +1,4 @@
-// $Id: dialog.js,v 1.1.2.2 2010/01/25 16:34:26 rz Exp $
+// $Id: dialog.js,v 1.1.2.3 2010/02/23 02:52:42 rz Exp $
 /**
  * @file
  *
@@ -231,11 +231,19 @@
     var defaultOptions = {
       height: 'auto',
       width: 600,
-      position: 'center'
+      position: 'center',
+      maxHeight: Math.floor($(window).height() * .8)
     };
     var o = $.extend(defaultOptions, command.options);
     for (i in o) {
       $el.dialog('option', i, o[i]);
+    }
+    if ($el.height() > o.maxHeight) {
+      $el.dialog('option', 'height', o.maxHeight);
+      $el.dialog('option', 'position', o.position);
+      // This is really ugly, but dialog gives us no way to call 
+      // _size() in a sane way!
+      $el.data('dialog')._size();
     }
 
     Drupal.attachBehaviors($el);
