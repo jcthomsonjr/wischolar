@@ -11,6 +11,11 @@
  * @todo justintime javascript
  */
 
+function vsite_taxonomy_init(){
+    drupal_add_css(drupal_get_path('module', 'vsite_taxonomy') . '/theme/vsite_taxonomy.css');
+  }
+
+
 
 include_once('vsite_taxonomy.features.inc');
 
@@ -19,15 +24,15 @@ include_once('vsite_taxonomy.features.inc');
  */
 function vsite_taxonomy_dialog_options(){
   return array(
-    'minwidth' => '640', 
-    'height' => 'auto', 
+    'minwidth' => '640',
+    'height' => 'auto',
     'position' => array(
-      'right', 
-      'top' 
-    ), 
+      'right',
+      'top'
+    ),
     'resizable' => TRUE,
     'closeText' => 'Hide this',
-    
+
   );
 }
 
@@ -37,7 +42,7 @@ function vsite_taxonomy_dialog_options(){
 function vsite_taxonomy_enable() {
   // Weight scholar to be after og_vocab
   $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'og_vocab'"));
-  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite_taxonomy'", ($weight + 1)); 
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite_taxonomy'", ($weight + 1));
 }
 
 
@@ -68,8 +73,8 @@ function vsite_taxonomy_determine_access(){
  */
 function vsite_taxonomy_menu() {
   $items = array ();
-  // main entry; lists vsite vocabs. It's a local task 
-  // menu so it shows in the cp/content 
+  // main entry; lists vsite vocabs. It's a local task
+  // menu so it shows in the cp/content
   $items ['cp/content/taxonomy'] = array (
   	'title' => 'Taxonomy',
   	'page callback' => 'vsite_taxonomy_vocabs',
@@ -77,7 +82,7 @@ function vsite_taxonomy_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 100,
   );
-  
+
   // Create a new vocabulary to be associated with the vsite
   $items['vsite/taxonomy/%ctools_js/add/vocabulary'] = array(
     'title'            => 'Create vocabulary',
@@ -89,7 +94,7 @@ function vsite_taxonomy_menu() {
     'file'             => 'taxonomy.admin.inc',
     'file path'        => drupal_get_path('module', 'taxonomy'),
   );
-  
+
 
   // Edit an existing vocabulary currently associated with the vsite
   $items['vsite/taxonomy/%ctools_js/edit/vocabulary/%taxonomy_vocabulary'] = array(
@@ -102,7 +107,7 @@ function vsite_taxonomy_menu() {
     'file'             => 'taxonomy.admin.inc',
     'file path'        => drupal_get_path('module', 'taxonomy'),
   );
-  
+
   // Edit an existing vocabulary currently associated with the vsite
   $items['vsite/taxonomy/%ctools_js/delete/vocabulary'] = array(
     'title'            => 'delete vocabulary',
@@ -117,7 +122,7 @@ function vsite_taxonomy_menu() {
 
   // Create a new term and associate it with the vocabulary.
   $items['vsite/taxonomy/%ctools_js/terms/%taxonomy_vocabulary/add_term'] = array(
-    'title'            => 'Add term',
+    'title'            => 'Add term to this vocabulary',
     'page callback'    => 'vsite_taxonomy_add_term',
     'page arguments'   => array(4,2),
     'access callback'  => 'vsite_taxonomy_determine_access',
@@ -138,7 +143,7 @@ function vsite_taxonomy_menu() {
     'file'             => 'taxonomy.admin.inc',
     'file path'        => drupal_get_path('module', 'taxonomy'),
   );
-  
+
   return $items;
 }
 
@@ -154,25 +159,27 @@ function vsite_taxonomy_vocabs(){
   $vocabs = $vsite ? $vsite->get_vocabs($type) : array();
 
   $output = '<div class="pad" id="vsite-taxonomy-wrapper">';
-  $output .= l('Add vocabulary', 'vsite/taxonomy/nojs/add/vocabulary',  array('attributes' => array('class' => 'ctools-use-dialog')));
-  
+
   foreach ( $vocabs as $vid => $vocab ) {
     $tree = taxonomy_get_tree($vid);
-    
+
     // get all terms for this vocab
     $items = vsite_taxonomy_build_list_items($index = 0, $tree);
-    
+    $output .='<div class="row">';
     // add the vocab's admin links
     $admin_links = vsite_get_admin_links('vocabulary', $vocab);
     $output .= theme('links', $admin_links, $attributes = array('class' => 'admin'));
-    
+
     // print the entire vocab (+ terms)
-    $output .= theme('item_list', $items, $vocab->name, 'ul', array('class' => 'vsite-taxonomy-terms'));
-    
+    $output .= theme('item_list', $items, $vocab->name, 'ul', array('class' => 'vsite-taxonomy-terms slider'));
+
     // "Add term" link
-    $output .= l('Add term', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog')) );
+    $output .= '<div class="add">' . l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))) . '</div>';
+
+    $output .= '</div>';
   }
-  
+
+  $output .= '<div class="add">' . l('Add new vocabulary', 'vsite/taxonomy/nojs/add/vocabulary',  array('attributes' => array('class' => 'ctools-use-dialog context-button'))) . '</div>';
 
   $output .= '</div>'; // close vsite-taxonomy-wrapper
   return $output;
@@ -191,8 +198,8 @@ function vsite_taxonomy_build_list_items(&$index, $tree){
     if ($tree[$index + 1]->depth > $current_depth) {
       $index ++;
       $items[] = array(
-        'data' => $item, 
-        'children' => vsite_taxonomy_build_list_items($index, $tree) 
+        'data' => $item,
+        'children' => vsite_taxonomy_build_list_items($index, $tree)
       );
     }
     else {
@@ -211,12 +218,12 @@ function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
   if ($ajax) {
     ctools_include('ajax');
     $form_state = array(
-      'ajax' => TRUE, 
-      'title' => t('Add vocabulary') 
+      'ajax' => TRUE,
+      'title' => t('Add vocabulary')
     );
-    
+
     $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
-    
+
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabulary was created'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
@@ -229,7 +236,7 @@ function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
       }
     }
     ctools_ajax_render($output);
-  
+
   }
   else {
     return drupal_get_form('taxonomy_form_vocabulary');
@@ -250,15 +257,15 @@ function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
   if ($ajax) {
     ctools_include('ajax');
     $form_state = array(
-      'ajax' => TRUE, 
-      'title' => t('Edit vocabulary'), 
+      'ajax' => TRUE,
+      'title' => t('Edit vocabulary'),
       'args' => array(
-        'edit' => ( array ) $vocabulary 
-      ) 
+        'edit' => ( array ) $vocabulary
+      )
     );
-    
+
     $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
-    
+
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabulary settings changed ...'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
@@ -271,7 +278,7 @@ function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
       }
     }
     ctools_ajax_render($output);
-  
+
   }
   else {
     return drupal_get_form('taxonomy_form_vocabulary', ( array ) $vocabulary);
@@ -286,15 +293,15 @@ function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE){
   if ($ajax) {
     ctools_include('ajax');
     $form_state = array(
-      'ajax' => TRUE, 
-      'title' => t('Delete vocabulary'), 
+      'ajax' => TRUE,
+      'title' => t('Delete vocabulary'),
       'args' => array(
-        'vid' => $vid 
-      ) 
+        'vid' => $vid
+      )
     );
-    
+
     $output = dialog_form_wrapper('taxonomy_vocabulary_confirm_delete', $form_state);
-    
+
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabulary settings changed ...'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
@@ -317,19 +324,19 @@ function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE){
  * add term form callback
  */
 function vsite_taxonomy_add_term($vocabulary, $ajax = FALSE){
-  
+
   if ($ajax) {
     ctools_include('ajax');
     $form_state = array(
-      'ajax' => TRUE, 
-      'title' => t('Add term'), 
+      'ajax' => TRUE,
+      'title' => t('Add term'),
       'args' => array(
-        'vocabulary' => $vocabulary 
-      ) 
+        'vocabulary' => $vocabulary
+      )
     );
-    
+
     $output = dialog_form_wrapper('taxonomy_form_term', $form_state);
-    
+
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabusafdsafdsaanged ...'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
@@ -355,12 +362,12 @@ function vsite_taxonomy_edit_term($tid, $ajax = FALSE){
   $vsite = vsite_get_vsite();
   $vsite_vocabs = $vsite->get_vocabs($node_type);
   $term = taxonomy_get_term($tid);
-  
+
   $access = array_key_exists($term->vid, $vsite_vocabs);
-  
+
   if ($ajax) {
     ctools_include('ajax');
-    // wrong tid ? 
+    // wrong tid ?
     if (! $term) {
       $commands = array();
       $commands[] = dialog_command_display(t('Page not found'));
@@ -372,19 +379,19 @@ function vsite_taxonomy_edit_term($tid, $ajax = FALSE){
       $commands[] = dialog_command_display(t('Access denied'));
       ctools_ajax_render($commands);
     }
-    
+
     $form_state = array(
-      'ajax' => TRUE, 
-      'title' => t('Add term'), 
+      'ajax' => TRUE,
+      'title' => t('Add term'),
       'args' => array(
-        'vocabulary' => taxonomy_vocabulary_load($term->vid), 
-        'edit' => ( array ) $term 
-      ) 
+        'vocabulary' => taxonomy_vocabulary_load($term->vid),
+        'edit' => ( array ) $term
+      )
     )
     ;
-    
+
     $output = dialog_form_wrapper('taxonomy_form_term', $form_state);
-    
+
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabusafdsafdsaanged ...'), t('Reloading...'));
       $output[] = ctools_ajax_command_reload();
@@ -435,51 +442,51 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
   // edit/delete links for vocabularies
   if ($type == 'vocabulary') {
     $links[] = array(
-      'title' => 'delete', 
+      'title' => 'delete',
       'href' => 'vsite/taxonomy/nojs/delete/vocabulary/' . $object -> vid,
       'attributes' => array(
-        'class' => 'ctools-use-dialog',
-      )  
+        'class' => 'ctools-use-dialog delete',
+      )
     );
-    
+
     $links[] = array(
-      'title' => 'edit', 
-      'href' => 'vsite/taxonomy/nojs/edit/vocabulary/' . $object -> vid, 
+      'title' => 'edit',
+      'href' => 'vsite/taxonomy/nojs/edit/vocabulary/' . $object -> vid,
       'attributes' => array(
-        'class' => 'ctools-use-dialog' 
-      ) 
-    ); 
-    
+        'class' => 'ctools-use-dialog edit-link'
+      )
+    );
+
     $current = menu_get_item();
-    
-    $links[] = array(
-      'title' => 'expand', 
-      'href' => $current['path'], 
-      'attributes' => array(
-        'class' => 'toggle' 
-      ) 
-    );   
+
+    //$links[] = array(
+    //  'title' => 'expand',
+    //  'href' => $current['path'],
+    //  'attributes' => array(
+    //  'class' => 'toggle'
+    //  )
+    //);
   }
   elseif ($type == 'term') {
     /*
     $links[] = array(
-      'title' => 'delete', 
-      'href' => "vsite_taxonomy/term/delete/" . $object->vid . "/" . $object->tid, 
+      'title' => 'delete',
+      'href' => "vsite_taxonomy/term/delete/" . $object->vid . "/" . $object->tid,
       'attributes' => array(
-        'class' => 'delete ctools-use-ajax' 
+        'class' => 'delete ctools-use-ajax'
       )
     );
     */
-    
+
     $links[] = array(
-      'title' => 'edit', 
-      'href' => 'vsite/taxonomy/nojs/terms/edit/' . $object->tid, 
+      'title' => 'edit',
+      'href' => 'vsite/taxonomy/nojs/terms/edit/' . $object->tid,
       'attributes' => array(
-        'class' => 'ctools-use-dialog' 
-      ) 
+        'class' => 'ctools-use-dialog edit-link'
+      )
     );
   }
-  
+
   return $links;
 }
 
@@ -491,23 +498,23 @@ function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state
   if (!$vsite){
     return ;
   }
-  
+
   //Passes gid as a value in the taxonomy add/edit form
   unset($form['settings']['og_vocab']);
-  
+
   $form['settings']['og_vocab']['og'] = array(
-    '#type' => 'value', 
-    '#value' => $vsite->group->nid 
+    '#type' => 'value',
+    '#value' => $vsite->group->nid
   );
-  
+
   // filter the content type based on the vsite
   $vocab_types = vsite_content_types();
   drupal_alter('vsite_content_types', $vocab_types);
   $form['content_types']['nodes']['#options'] = $vocab_types;
-  
+
   // hide weight element
   unset($form['settings']['weight']);
-  
+
   $form['#submit'][] = 'x';
 
 }
@@ -534,10 +541,10 @@ function vsite_taxonomy_content_by_category($term_name, $content_type){
     $term_name,
     $content_type
   ));
-  
-  // pager 
+
+  // pager
   $view -> pager['use_pager'] = 1;
-  
+
   $view->execute();
   drupal_set_title($term_name);
   return $view->render();
@@ -568,19 +575,19 @@ function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
 function vsite_taxonomy_block_view(){
   $vsite = vsite_get_vsite();
   $block = array();
-  
+
   // node types associated with the active context
   $active_node_types = context_active_values("node");
   if (count($active_node_types)) {
     $active_vocabs = array();
-    
+
     foreach ( $active_node_types as $node_type ) {
       $active_vocabs += $vsite->get_vocabs($node_type);
     }
-    
+
     if ($vsite && count($active_vocabs)) {
       foreach ( $active_vocabs as $vid => $vocab ) {
-        
+
         $tree = taxonomy_get_tree($vid);
         // $tree = array_slice($tree, 0, 20);
         $items = og_vocab_build_list_items($index = 0, $tree);
@@ -630,16 +637,16 @@ function vsite_taxonomy_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL){
  * Renames the vocabs label in the input form
  */
 function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
-  
+
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
     $vsite = vsite_get_vsite();
     if ($vsite)
       $v = $vsite->get_vocabs($form['#node']->type);
     $v = is_array($v) ? reset($v) : null;
-    
+
     $gv = variable_get('scholar_global_taxonomy', 0);
     unset($form['taxonomy']['tags'][$gv]);
-    
+
     if (! empty($form['taxonomy']) && $v) {
       $vid = $v->vid;
       $form['taxonomy']['tags'][$vid]['#title'] = 'tags';
@@ -658,18 +665,22 @@ function theme_vsite_taxonomy_term($term){
   $count = taxonomy_term_count_nodes($term->tid);
   $term_path = "taxonomy/term/$term->tid";
   $term_link = l($term->name, $term_path, array(
-    'title' => t($term->description) 
+    'title' => t($term->description)
   ));
-  
+
   // add term's admin links
   $item = theme('links', vsite_get_admin_links('term', $term), $attributes = array(
-    'class' => 'admin' 
+    'class' => 'admin'
   ));
-  
-  $item .= $term_link . '<span class = "count" > (' . $count . ')</span>';
-  $item .= '<div class="slider">' . $term -> description . '</div>';
 
-  
+  $item .= $term_link . '<span class = "count" > (' . $count . ')</span>';
+
+  if ($term -> description) {
+    $item .= '<div class="toggle">Description</div>';
+    $item .= '<div class="slider">' . $term -> description . '</div>';
+    }
+
+
   return $item;
 }
 
@@ -751,7 +762,7 @@ function vsite_taxonomy_vsite_vocabulary_default(){
  */
 function vsite_taxonomy_taxonomy_import($gid, $definition){
   install_include(array(
-    'taxonomy' 
+    'taxonomy'
   ));
   foreach ( $definition as $vocab_index => $vocab_definition ) {
     $vid = install_taxonomy_add_vocabulary($vocab_definition['name'], $vocab_definition['content_types'], $vocab_definition['properties']);
