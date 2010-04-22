@@ -101,6 +101,26 @@ function _scholar_biocv_context_default_contexts() {
 }
 
 /**
+ * Helper to implementation of hook_menu_default_items().
+ */
+function _scholar_biocv_menu_default_items() {
+  $items = array();
+
+  $items[] = array(
+    'title' => '',
+    'path' => 'biocv',
+    'weight' => '0',
+  );
+  // Translatables
+  array(
+    t(''),
+  );
+
+
+  return $items;
+}
+
+/**
  * Helper to implementation of hook_user_default_permissions().
  */
 function _scholar_biocv_user_default_permissions() {
