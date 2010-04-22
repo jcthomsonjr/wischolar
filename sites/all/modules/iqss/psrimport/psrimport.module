@@ -1,15 +1,18 @@
 <?php
 include_once('psrimport.defaults.inc');
 include_once('psrimport.api.inc');
-
+DEFINE(PSR_FS_PATH, '/nfs/www/iq_drupal'); //absolute path to psr site files directory
+DEFINE(PSRIMPORT_FS_PATH, '/nfs/www/edu-harvard-iq-scholar-dev3'); // absolute path to this module's drupal installation
+  
 /**
  * Begins import script
  */
 function psrimport_import($drush_run = 0){
   DEFINE(PSR_DRUSH_RUN, $drush_run);
+
   psrimport_import_users();
   psrimport_create_site();
-  psrimport_import_content(array('psr_profile'));
+  psrimport_import_content(array('article'));
 
   return psrimport_print( 'done' );
 }
@@ -62,6 +65,7 @@ function psrimport_create_site(){
   if ($vsite){
     psrimport_print("Created vsite: {$vsite -> title}");
     define(PSR_SID, $vsite -> sid);
+    psrimport_create_files_directory($vsite -> purl); 
   }
 }
 
@@ -71,22 +75,18 @@ function psrimport_create_site(){
  * @param 
  *  $types - array of psr content types
  */
-function  psrimport_import_content($types = array()){
-  $type_map =psrimport_type_map();
-
+function  psrimport_import_content($types = array()){ 
+  $type_map =psrimport_type_map(); //get map array of all content types
   //import content for specified types only
   if (count($types)){
     foreach($types as $type){
-      //create generic node
       psrimport_import_node( $type, $type_map[$type]);    
     }
   }
+  //import content for all types
   else{
-    $type_map =psrimport_type_map();
     foreach($type_map as $old_type => $new_type){
-       //create generic node
-      $node = srimport_import_node($old_type, $new_type);
-      if(function_exists('psrimport_' . $old_type)) call_user_func('psrimport_' . $old_type, $old_type, $new_type);
+      psrimport_import_node($old_type, $new_type);
     }
   }
 }
@@ -116,6 +116,8 @@ function psrimport_import_node($old_type, $new_type){
      db_set_active('default');
      node_save($node);
      psrimport_print("Added node: {$node -> title}");
+     //check for files
+     psrimport_get_files($node, $node_list -> nid);     
   }
 }
 
@@ -167,6 +169,10 @@ function psrimport_story($new_type){
 
 }
 
+function psrimport_article(&$node, $old_nid, $table){
+  return;
+
+}
 
 
 

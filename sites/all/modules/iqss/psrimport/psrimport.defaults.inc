@@ -34,6 +34,7 @@ function psrimport_type_map(){
   'survey_news' => 'announcement', //9
   'project_issue' => 'page', //5
   'education' => 'page', // 4
+  'article' => 'page', //2
   'story' => 'page', //1
   //'project_project' => '', //1
   );
