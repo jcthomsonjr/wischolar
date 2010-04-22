@@ -158,14 +158,14 @@ function vsite_taxonomy_vocabs(){
   $vsite = vsite_get_vsite();
   $vocabs = $vsite ? $vsite->get_vocabs($type) : array();
 
-  $output = '<div class="pad" id="vsite-taxonomy-wrapper">';
+  $output = '<ul class="pad" id="vsite-taxonomy-wrapper">';
 
   foreach ( $vocabs as $vid => $vocab ) {
     $tree = taxonomy_get_tree($vid);
 
     // get all terms for this vocab
     $items = vsite_taxonomy_build_list_items($index = 0, $tree);
-    $output .='<div class="row">';
+    $output .='<li class="row">';
     // add the vocab's admin links
     $admin_links = vsite_get_admin_links('vocabulary', $vocab);
     $output .= theme('links', $admin_links, $attributes = array('class' => 'admin'));
@@ -174,14 +174,14 @@ function vsite_taxonomy_vocabs(){
     $output .= theme('item_list', $items, $vocab->name, 'ul', array('class' => 'vsite-taxonomy-terms slider'));
 
     // "Add term" link
-    $output .= '<div class="add">' . l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))) . '</div>';
+    $output .= '<li class="add">' . l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/$vid/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))) . '</li>';
 
-    $output .= '</div>';
+    $output .= '</li>';
   }
 
-  $output .= '<div class="add">' . l('Add new vocabulary', 'vsite/taxonomy/nojs/add/vocabulary',  array('attributes' => array('class' => 'ctools-use-dialog context-button'))) . '</div>';
+  $output .= '<li class="add">' . l('Add new vocabulary', 'vsite/taxonomy/nojs/add/vocabulary',  array('attributes' => array('class' => 'ctools-use-dialog context-button'))) . '</li>';
 
-  $output .= '</div>'; // close vsite-taxonomy-wrapper
+  $output .= '</ul>'; // close vsite-taxonomy-wrapper
   return $output;
 }
 
@@ -668,16 +668,15 @@ function theme_vsite_taxonomy_term($term){
     'title' => t($term->description)
   ));
 
+  $item = $term_link . '<span class = "count" > (' . $count . ')</span>';
+
   // add term's admin links
-  $item = theme('links', vsite_get_admin_links('term', $term), $attributes = array(
+  $item .= theme('links', vsite_get_admin_links('term', $term), $attributes = array(
     'class' => 'admin'
   ));
 
-  $item .= $term_link . '<span class = "count" > (' . $count . ')</span>';
-
   if ($term -> description) {
-    $item .= '<div class="toggle">Description</div>';
-    $item .= '<div class="slider">' . $term -> description . '</div>';
+    $item .= '<div class="description">' . $term -> description . '</div>';
     }
 
 
