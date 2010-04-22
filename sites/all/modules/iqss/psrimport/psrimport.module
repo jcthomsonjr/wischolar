@@ -95,6 +95,10 @@ function  psrimport_import_content($types = array()){
   }
 }
 
+/**
+ * Built generic node information and make call to content type specific 
+ * function to add custom data (such as cck data) then save the node
+ */
 function psrimport_import_node($old_type, $new_type){
  db_set_active('psrd5');
     $res = db_query("SELECT nid FROM {node} WHERE type = '%s' ", $old_type);
@@ -250,20 +254,17 @@ function psrimport_get_terms($old_vid){
   return $term_data;
 }
 
-
 /**
  * Implementation of hook_nodeapi()
  */
-function psrimport_nodeapi(&$node, $op){ 
-
+function psrimport_nodeapi(&$node, $op){
   switch ($op) { 
     case 'insert':  
-      //add the taxonomy term to the node
+      //add node to og
       if (!vsite_get_vsite()){        
        psrimport_node_to_og($node -> nid);
       }
       break;     
-     
   }
 }
 
