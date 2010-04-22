@@ -24,15 +24,14 @@ include_once('vsite_taxonomy.features.inc');
  */
 function vsite_taxonomy_dialog_options(){
   return array(
-    'minwidth' => '640',
-    'height' => 'auto',
+    'width' => '600',
     'position' => array(
-      'right',
+      'center',
       'top'
     ),
-    'resizable' => TRUE,
-    'closeText' => 'Hide this',
-
+    'show' => 'slide, {direction: "down"},1000',
+    'resizable' => FALSE,
+    'closeText' => 'Close',
   );
 }
 
@@ -225,7 +224,7 @@ function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
     $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
 
     if (empty($output)) {
-      $output[] = dialog_command_display(t('Vocabulary was created'), t('Reloading...'));
+      $output[] = dialog_command_display(t('Vocabulary was created!'), t('(Reloading page)'));
       $output[] = ctools_ajax_command_reload();
     }
     else {
@@ -267,7 +266,7 @@ function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
     $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
 
     if (empty($output)) {
-      $output[] = dialog_command_display(t('Vocabulary settings changed ...'), t('Reloading...'));
+      $output[] = dialog_command_display(t('Vocabulary settings changed!'), t('(Reloading page)'));
       $output[] = ctools_ajax_command_reload();
     }
     else {
@@ -294,7 +293,7 @@ function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE){
     ctools_include('ajax');
     $form_state = array(
       'ajax' => TRUE,
-      'title' => t('Delete vocabulary'),
+      'title' => t('Delete this vocabulary'),
       'args' => array(
         'vid' => $vid
       )
@@ -303,7 +302,7 @@ function vsite_taxonomy_delete_vocabulary($vid, $ajax = FALSE){
     $output = dialog_form_wrapper('taxonomy_vocabulary_confirm_delete', $form_state);
 
     if (empty($output)) {
-      $output[] = dialog_command_display(t('Vocabulary settings changed ...'), t('Reloading...'));
+      $output[] = dialog_command_display(t('Vocabulary settings changed!'), t('(Reloading page)'));
       $output[] = ctools_ajax_command_reload();
     }
     else {
@@ -329,7 +328,7 @@ function vsite_taxonomy_add_term($vocabulary, $ajax = FALSE){
     ctools_include('ajax');
     $form_state = array(
       'ajax' => TRUE,
-      'title' => t('Add term'),
+      'title' => t('Add a new term to this vocabulary'),
       'args' => array(
         'vocabulary' => $vocabulary
       )
@@ -338,7 +337,7 @@ function vsite_taxonomy_add_term($vocabulary, $ajax = FALSE){
     $output = dialog_form_wrapper('taxonomy_form_term', $form_state);
 
     if (empty($output)) {
-      $output[] = dialog_command_display(t('Vocabusafdsafdsaanged ...'), t('Reloading...'));
+      $output[] = dialog_command_display(t('Saving your settings'), t('(Reloading page)'));
       $output[] = ctools_ajax_command_reload();
     }
     else {
@@ -393,7 +392,7 @@ function vsite_taxonomy_edit_term($tid, $ajax = FALSE){
     $output = dialog_form_wrapper('taxonomy_form_term', $form_state);
 
     if (empty($output)) {
-      $output[] = dialog_command_display(t('Vocabusafdsafdsaanged ...'), t('Reloading...'));
+      $output[] = dialog_command_display(t('Saving your settings'), t('(Reloading page)'));
       $output[] = ctools_ajax_command_reload();
     }
     else {
@@ -676,7 +675,7 @@ function theme_vsite_taxonomy_term($term){
   ));
 
   if ($term -> description) {
-    $item .= '<div class="description">' . $term -> description . '</div>';
+    $item .= '<div class="description">' . substr($term -> description,0,58) . ((strlen($term->description) >53)?"&hellip;":"") . '</div>';
     }
 
   $item .= '</div><!--/term-head-->';
