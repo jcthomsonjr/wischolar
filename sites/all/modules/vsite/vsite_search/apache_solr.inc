@@ -39,12 +39,30 @@ function vsite_search_apachesolr_modify_query(&$query, &$params, $caller) {
   
   /**
    * Retrieve the current group context.  If the user is viewing content within a group context, use the group's nid as a filter for the facets
-   * to restrict results to within this group.
+   * to restrict results to within this group.  Searches performed outside of a vsite (top level) will not be filtered by group.
    */
   $vsite = vsite_get_vsite();
   if(!empty($vsite)) {
-  	drupal_set_message('Filtering on gid '.$vsite->group->nid);
-    // Add filter for group_id
+  	// Add filter for group_id
     $query->add_filter('im_og_gid', $vsite->group->nid);
+    
+    // Add filters based on the vsite vocabularies
   }
+}
+
+/**
+ * Implementation of hook_apachesolr_facets().
+ */
+function vsite_search_apachesolr_facets() {
+  $vsite = vsite_get_vsite();
+  if(! empty($vsite)) {
+    foreach($vsite->group->og_vocabularies as $tid => $term) {
+      $key = 'im_vid_'.$term->vid;
+      $facets[$key] = array(
+        'info' => t('vSite Search: Filter by '.$term->name),
+        'facet_field' => $key,
+	    );
+    }
+  }
+  return $facets;
 }

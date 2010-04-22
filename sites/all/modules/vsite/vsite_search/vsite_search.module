@@ -27,6 +27,62 @@ function vsite_search_init() {
 }
 
 /**
+ * Implementation of hook_taxononomy()
+ * 
+ * This hook is called when either a vocabulary or a term is created or modified.  This implementation enables or disables facets corresponding to the 
+ * vocabulary being added or modified.
+ * 
+ * @param $op
+ * @param $type
+ * @param $array
+ * 
+ * @see vsite_search_luceneapi_facet_enable()
+ */
+function vsite_search_taxonomy($op, $type, $array = NULL) {
+  switch($type) {
+  	case 'vocabulary':
+  		switch($op) {
+  			case 'insert':
+  				if(VSITE_SEARCH_SOLR) {
+  					// Enable the matching Solr facet for this vocabulary
+  					$key = 'im_vid_'.$array['vid'];
+  					$facets = apachesolr_get_enabled_facets();
+  					$facets['apachesolr_search'][$key] = $key;
+  					apachesolr_save_enabled_facets($facets);
+            // This cache being stale can prevent new facet filters from working.
+            apachesolr_clear_cache();
+  				}
+  				
+  				if(VSITE_SEARCH_LUCENE) {
+  					// Enable the matching Lucene facet for this vocabulary
+  					$facet = 'category_'.$array['vid'];
+  					vsite_search_luceneapi_facet_enable('luceneapi_node', array('block', 'fieldset'), $facet);
+  				}
+  				break;
+  			case 'delete':
+  				if(VSITE_SEARCH_SOLR) {
+  					// Enable the matching Solr facet for this vocabulary
+            $key = 'im_vid_'.$array['vid'];
+            $facets = apachesolr_get_enabled_facets();
+            // Remove the facet corresponding to this vocabulary from the list of enabled facets
+            unset($facets['apachesolr_search'][$key]);
+            apachesolr_save_enabled_facets($facets);
+            // This cache being stale can prevent new facet filters from working.
+            apachesolr_clear_cache();
+  				}
+  				
+  				if(VSITE_SEARCH_LUCENE) {
+  					// Disable the matching Lucene facet for this vocabulary
+            $facet = 'category_'.$array['vid'];
+            vsite_search_luceneapi_facet_disable('luceneapi_node', array('block', 'fieldset'), $facet);
+  				}
+  				break;
+  		}
+  		break;
+  }	
+}
+
+/**
  * Implementation of hook_form_alter()
  * 
  * Replaces the search form's submit handler with a custom submit handler to redirect to Apache Solr.
@@ -292,66 +348,6 @@ function vsite_search_context_default_contexts() {
 	         'label' => 'Apache Solr Search: Current search',
 	         'type' => 'context_ui',
 	         'bid' => 'apachesolr_search_currentsearch',
-	      )),
-	      'apachesolr_search_im_vid_1' => (object)(array(
-	         'module' => 'apachesolr_search',
-	         'delta' => 'im_vid_1',
-	         'weight' => 24,
-	         'region' => 'right',
-	         'status' => '0',
-	         'label' => 'Apache Solr Search: Filter by taxonomy Scholar Taxonomy',
-	         'type' => 'context_ui',
-	         'bid' => 'apachesolr_search_im_vid_1',
-	      )),
-	      'apachesolr_search_im_vid_2' => (object)(array(
-	         'module' => 'apachesolr_search',
-	         'delta' => 'im_vid_2',
-	         'weight' => 25,
-	         'region' => 'right',
-	         'status' => '0',
-	         'label' => 'Apache Solr Search: Filter by taxonomy Sites Affiliation / Department',
-	         'type' => 'context_ui',
-	         'bid' => 'apachesolr_search_im_vid_2',
-	      )),
-	      'apachesolr_search_im_vid_3' => (object)(array(
-	         'module' => 'apachesolr_search',
-	         'delta' => 'im_vid_3',
-	         'weight' => 26,
-	         'region' => 'right',
-	         'status' => '0',
-	         'label' => 'Apache Solr Search: Filter by taxonomy Related Interests',
-	         'type' => 'context_ui',
-	         'bid' => 'apachesolr_search_im_vid_3',
-	      )),
-	      'apachesolr_search_im_vid_4' => (object)(array(
-	         'module' => 'apachesolr_search',
-	         'delta' => 'im_vid_4',
-	         'weight' => 27,
-	         'region' => 'right',
-	         'status' => '0',
-	         'label' => 'Apache Solr Search: Filter by taxonomy _vocabulary',
-	         'type' => 'context_ui',
-	         'bid' => 'apachesolr_search_im_vid_4',
-	      )),
-	      'apachesolr_search_im_vid_5' => (object)(array(
-	         'module' => 'apachesolr_search',
-	         'delta' => 'im_vid_5',
-	         'weight' => 28,
-	         'region' => 'right',
-	         'status' => '0',
-	         'label' => 'Apache Solr Search: Filter by taxonomy _vocabulary',
-	         'type' => 'context_ui',
-	         'bid' => 'apachesolr_search_im_vid_5',
-	      )),
-	      'apachesolr_search_im_vid_6' => (object)(array(
-	         'module' => 'apachesolr_search',
-	         'delta' => 'im_vid_6',
-	         'weight' => 29,
-	         'region' => 'right',
-	         'status' => '0',
-	         'label' => 'Apache Solr Search: Filter by taxonomy _vocabulary',
-	         'type' => 'context_ui',
-	         'bid' => 'apachesolr_search_im_vid_6',
 	      )),
 	      'apachesolr_search_type' => (object)(array(
 	         'module' => 'apachesolr_search',

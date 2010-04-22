@@ -2,8 +2,70 @@
 
 /**
  * @file
- *   This file contains Search Lucene-specific code, such as hook implementations.
+ *   This file contains Search Lucene-specific code, such as hook implementations and helper functions.
  */
+
+/**
+ * Helper function for enabling facets.
+ * 
+ * @param string $module
+ *   A string containing the module handling the search.
+ * @param array $names
+ *   An array of names that are part of the stored variable.  Supported values are 'block', 'fieldset'
+ * @param string $facet
+ *   A string representing the name of the facet to enable
+ * @see vsite_search_luceneapi_facet_clear_cache()
+ */
+function vsite_search_luceneapi_facet_enable($module, $names=array(), $facet) {
+	if(!empty($names)) {
+	  foreach($names as $name) {
+	  	$variable = sprintf('luceneapi_facet:%s:%s', $module, $name);
+	    $facet_conf = variable_get($variable, array());
+	    if(!empty($facet_conf)) {
+	      // Mark the facet as enabled
+	      $facet_conf[$facet] = $facet;
+	      variable_set($variable, $facet_conf);
+	    }
+	  }
+	  vsite_search_luceneapi_facet_clear_cache();
+	}  
+}
+
+/**
+ * Helper function for disabling facets.
+ * 
+ * @param string $module
+ *   A string containing the module handling the search.
+ * @param array $names
+ *   An array of names that are part of the stored variable.  Supported values are 'block', 'fieldset'
+ * @param string $facet
+ *   A string representing the name of the facet to disable
+ * @see vsite_search_luceneapi_facet_clear_cache()
+ */
+function vsite_search_luceneapi_facet_disable($module, $names=array(), $facet) {
+	if(!empty($names)) {
+		foreach($names as $name) {
+	    $variable = sprintf('luceneapi_facet:%s:%s', $module, $name);
+			$facet_conf = variable_get($variable, array());
+	    if(!empty($facet_conf)) {
+	      // Mark the facet as enabled
+	      $facet_conf[$facet] = 0;
+	      variable_set($variable, $facet_conf);
+	    }
+	  }
+	  vsite_search_luceneapi_facet_clear_cache();
+	}  
+}
+
+/**
+ * Helper function to clear cached facet items
+ */
+function vsite_search_luceneapi_facet_clear_cache() {
+  foreach (luceneapi_facet_realms_get() as $name => $realm) {
+    $cid = sprintf('%s:luceneapi_facet:%s:', $form_state['values']['module'], $name);
+    cache_clear_all($cid, LUCENEAPI_CACHE_TABLE, TRUE);
+  }
+}
 
 /**
  * Provides access to the facets before they are rendered.
