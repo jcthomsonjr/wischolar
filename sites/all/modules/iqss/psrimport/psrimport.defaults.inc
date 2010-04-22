@@ -39,3 +39,11 @@ function psrimport_type_map(){
   //'project_project' => '', //1
   );
 }
+
+function psrimport_features(){
+  $features = array_unique(psrimport_type_map());
+  
+  drush_print_r($features);
+	
+  
+}

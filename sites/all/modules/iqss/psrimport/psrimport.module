@@ -9,10 +9,11 @@ DEFINE(PSRIMPORT_FS_PATH, '/nfs/www/edu-harvard-iq-scholar-dev3'); // absolute p
  */
 function psrimport_import($drush_run = 0){
   DEFINE(PSR_DRUSH_RUN, $drush_run);
-
+  psrimport_print( 'Beginning import...' );
+  
   psrimport_import_users();
   psrimport_create_site();
-  psrimport_import_content(array('article'));
+  psrimport_import_content(array('event'));
 
   return psrimport_print( 'done' );
 }
@@ -66,6 +67,9 @@ function psrimport_create_site(){
     psrimport_print("Created vsite: {$vsite -> title}");
     define(PSR_SID, $vsite -> sid);
     psrimport_create_files_directory($vsite -> purl); 
+    //make sure these features are enabled
+    $features = array('scholar_links', 'scholar_pages', 'scholar_profiles', 'scholar_announcements', 'scholar_events'); 
+    psrimport_enable_features($vsite);
   }
 }
 
@@ -121,55 +125,79 @@ function psrimport_import_node($old_type, $new_type){
   }
 }
 
-function psrimport_resource($new_type){
-
+function psrimport_resource(&$node, $old_nid, $table){
+  db_set_active('psrd5');
+  $table = 'content_field_resource_link'; // resetting table to get links only, no other cck data
+  $cck_data = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+  $node -> field_link_href[0] = array('url' => $cck_data['field_resource_link_url']);
 }
 
-function psrimport_event($new_type){
-
+function psrimport_event(&$node, $old_nid, $table){
+   db_set_active('psrd5');
+   //since there are no address fields in content type link, take any exisiting data and merge with body text
+   $address_text = '';
+   $address =  db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+   if (strlen($address['field_event_address_street1'])) $address_text .= $address['field_event_address_street1'] . '<br />';
+   if (strlen($address['field_event_address_street2'])) $address_text .= $address['field_event_address_street2'] . '<br />';
+   if (strlen($address['field_event_address_apt'])) $address_text .= $address['field_event_address_apt'] . '<br />';
+   if (strlen($address['field_event_address_city'])) $address_text .= $address['field_event_address_city'] . ' ';
+   if (strlen($address['field_event_address_state'])) $address_text .= $address['field_event_address_state'] . ' ';
+   if (strlen($address['field_event_address_zip'])) $address_text .= $address['field_event_address_zip'] . ' ';
+   
+   //add address information to body text
+   if(strlen($address_text)) {
+       $node -> body .= '<p>Address Information:<br />' . $address_text . '<p>';
+   }
+     
+   //now add the event times
+   $table = 'event';
+   $times = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+   $start = date("Y-m-d", $times['event_start']). 'T' . date("H:i:s", $times['event_start']);
+   $end = date("Y-m-d", $times['event_end']). 'T' . date("H:i:s", $times['event_end']);
+   $node -> field_date[0] = array('value' => $start, 'value2' => $end);  // datetime example  - '2010-04-15T15:11:00'
 }
 
 function psrimport_psr_profile(&$node, $old_nid, $table){
-   db_set_active('psrd5');
-    $cck_data = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
-    $psrimport_uid_map[$user -> uid] = $data -> uid;
-    $node -> title = trim($cck_data['field_first_name_value']) . ' ' . trim($cck_data['field_last_name_value']); //overriding title
-    $node -> field_person_firstname[0] = array('value' => trim($cck_data['field_first_name_value']));
-    $node -> field_person_lastname[0] = array('value' =>trim($cck_data['field_last_name_value']));
-    $node -> field_person_website[0] = array('url' => $cck_data['field_web_site_url']);
-    $node -> field_person_institution[0] = array('value' => $cck_data['field_affiliation_value']);
-    $node -> field_person_title[0] = array('value' => $cck_data['field_title_value']);
+  db_set_active('psrd5');
+  $cck_data = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+  $node -> title = trim($cck_data['field_first_name_value']) . ' ' . trim($cck_data['field_last_name_value']); //overriding title
+  $node -> field_person_firstname[0] = array('value' => trim($cck_data['field_first_name_value']));
+  $node -> field_person_lastname[0] = array('value' =>trim($cck_data['field_last_name_value']));
+  $node -> field_person_website[0] = array('url' => $cck_data['field_web_site_url']);
+  $node -> field_person_institution[0] = array('value' => $cck_data['field_affiliation_value']);
+  $node -> field_person_title[0] = array('value' => $cck_data['field_title_value']);
 }
 
-function psrimport_book($new_type){
+function psrimport_book(&$node, $old_nid, $table){
 
 }
-function psrimport_opportunity($new_type){
+function psrimport_opportunity(&$node, $old_nid, $table){
 
 }
-function psrimport_psr_resource($new_type){
-
-}
-
-function psrimport_faq($new_type){
-
-}
-function psrimport_survey_news($new_type){
-
-}
-function psrimport_project_issue($new_type){
+function psrimport_psr_resource(&$node, $old_nid, $table){
 
 }
 
-function psrimport_education($new_type){
+function psrimport_faq(&$node, $old_nid, $table){
+
+}
+function psrimport_survey_news(&$node, $old_nid, $table){
+
+}
+function psrimport_project_issue(&$node, $old_nid, $table){
 
 }
 
-function psrimport_story($new_type){
+function psrimport_education(&$node, $old_nid, $table){
+
+}
+
+function psrimport_story(&$node, $old_nid, $table){
 
 }
 
 function psrimport_article(&$node, $old_nid, $table){
+  //no cck fields to retreive
   return;
 
 }
@@ -235,6 +263,7 @@ function psrimport_nodeapi(&$node, $op){
        psrimport_node_to_og($node -> nid);
       }
       break;     
+     
   }
 }
 

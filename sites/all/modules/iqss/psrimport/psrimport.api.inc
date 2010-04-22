@@ -7,7 +7,7 @@
  */
 function psrimport_node_to_og($nid){
   $sid = psrimport_get_sid();
-  
+  //$sid = 30;
 if(!$sid){  
   $account = user_load(array('name' => 'pmoynihan'));
   if($spaces = vsite_get_vsite_by_owner($account -> uid)){
@@ -45,6 +45,18 @@ function psrimport_create_files_directory($domain){
   if(file_check_directory($dst_domain_files, 1)){
     psrimport_print("Created files directory for $domain site: $dst_domain_files");
   }
+}
+
+/**
+ * Enable features for PSR site
+ */
+function psrimport_enable_features(&$vsite, $features = array()){
+  if (!count($features)) return;
+  vsite_include('vsiteapi');
+  foreach ($features as $feature){
+    $vsite -> features[$feature] = FEATURE_PUBLIC;
+  }
+  return spaces_save($vsite);
 }
 
 /**
@@ -87,7 +99,7 @@ function psrimport_get_files($node,  $old_nid, $domain = 'psr'){
         db_set_active('default');
         //write data to files table
         drupal_write_record('files', $file);
-        $fid = db_last_insert_id('files', 'fid');
+      //  $fid = db_last_insert_id('files', 'fid');
         //write data to upload table
         drupal_write_record('upload', $file);
         psrimport_print("Imported file: " . basename($src));
