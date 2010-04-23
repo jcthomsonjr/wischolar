@@ -14,7 +14,7 @@ function psrimport_import($drush_run = 0){
   
   psrimport_import_users();
   psrimport_create_site();
-  psrimport_import_content(array('psr_profile', 'faq'));
+  psrimport_import_content(array('psr_resource', 'faq'));
 
   psrimport_print( 'Import Completed' );
 }
@@ -115,6 +115,7 @@ function psrimport_import_node($old_type, $new_type){
     $node -> body = $data -> body;
     $node -> teaser = $data -> teaser;
     $node -> created = $data -> created;
+    $node -> changed = $data -> changed;
     $node -> status = $data -> status;
     $node -> uid = array_search( $data -> uid, variable_get('psrimport_uid_map', array()));
     
@@ -134,14 +135,13 @@ function psrimport_import_node($old_type, $new_type){
 }
 
 function psrimport_resource(&$node, $old_nid, $table){
-  db_set_active('psrd5');
-  $table = 'content_field_resource_link'; // resetting table to get links only, no other cck data
-  $cck_data = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
-  $node -> field_link_href[0] = array('url' => $cck_data['field_resource_link_url']);
+   //add links data to body
+  $node -> body .= psrimport_add_links('content_field_resource_link', 'field_resource_link_url', $old_nid);
 }
 
 function psrimport_event(&$node, $old_nid, $table){
    db_set_active('psrd5');
+  
    //since there are no address fields in content type link, take any exisiting data and merge with body text
    $address_text = '';
    $address =  db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
@@ -156,7 +156,17 @@ function psrimport_event(&$node, $old_nid, $table){
    if(strlen($address_text)) {
        $node -> body .= '<p>Address Information:<br />' . $address_text . '<p>';
    }
-     
+   
+   //check for sponsor information  
+   $additional_text = '';
+   $table = 'content_field_event_sponsor';
+   $sponsor =  db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));   
+   if (strlen( $sponsor['field_event_sponsor_value'])) $additional_text .= '<p>Sponsored by: ' . $sponsor['field_event_sponsor_value'] . '</p>';
+      
+   if(strlen($additional_text)){
+       $node -> body .= $additional_text;
+   }
+   
    //now add the event times
    $table = 'event';
    $times = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
@@ -182,6 +192,7 @@ function psrimport_page(&$node, $old_nid, $table){
 }
 
 function psrimport_book(&$node, $old_nid, $table){
+  //TODO: uses  table content_field_link
 
 }
 
@@ -199,23 +210,37 @@ function psrimport_opportunity(&$node, $old_nid, $table){
 }
 
 function psrimport_psr_resource(&$node, $old_nid, $table){
-
+  db_set_active('psrd5');
+  //currently no data cck fields in defaut table, thus not adding to node. but check in case any data found from subsquent sql dumps of database
+  $no_check = array('vid', 'nid');
+  $cck_check_data = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+  foreach($cck_check_data as $key => $val){
+    if (!in_array($key, $no_check)){
+      if(strlen($val)) psrimport_print("Error: value found for $key which is not being added to node data for old node $old_nid");
+    }
+  }
+  //add links data to body
+  $node -> body .= psrimport_add_links('content_field_psr_resource_link', 'field_psr_resource_link_url', $old_nid);
+  return;
 }
 
 function psrimport_faq(&$node, $old_nid, $table){
-    //no cck fields to retreive
+  //no cck fields to retreive
   return;
 }
 
 function psrimport_survey_news(&$node, $old_nid, $table){
-
+//add links data to body
+  $node -> body .= psrimport_add_links('content_field_news_link', 'field_news_link_url', $old_nid);
+  return;
 }
-function psrimport_project_issue(&$node, $old_nid, $table){
 
+function psrimport_project_issue(&$node, $old_nid, $table){
+//no being used
 }
 
 function psrimport_education(&$node, $old_nid, $table){
-
+  //not being used
 }
 
 function psrimport_conf_presentation(&$node, $old_nid, $table){
@@ -223,21 +248,38 @@ function psrimport_conf_presentation(&$node, $old_nid, $table){
 }
 
 function psrimport_story(&$node, $old_nid, $table){
-
-}
-
-function psrimport_article(&$node, $old_nid, $table){
   //no cck fields to retreive
   return;
 }
 
+function psrimport_article(&$node, $old_nid, $table){
+//add links data to body
+  $node -> body .= psrimport_add_links('content_field_article_link', 'field_article_link_url', $old_nid);
+  return;
+}
 
-function psrimport_conference(&$node, $old_nid, $table){
+function psrimport_conference(&$node, $old_nid, $table){  
+  db_set_active('psrd5');
   
+   //since there are no address fields in content type link, take any exisiting data and merge with body text
+   $address_text = '';
+   $address =  db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+   if (strlen($address['field_conference_address_street1'])) $address_text .= $address['field_conference_address_street1'] . '<br />';
+   if (strlen($address['field_conference_address_street2'])) $address_text .= $address['field_conference_address_street2'] . '<br />';
+   if (strlen($address['field_conference_address_apt'])) $address_text .= $address['field_conference_address_apt'] . '<br />';
+   if (strlen($address['field_conference_address_city'])) $address_text .= $address['field_conference_address_city'] . ' ';
+   if (strlen($address['field_conference_address_state'])) $address_text .= $address['field_conference_address_state'] . ' ';
+   if (strlen($address['field_conference_address_zip'])) $address_text .= $address['field_conference_address_zip'] . ' ';
+   if (strlen($address['field_notes_value'])) $address_text .= '<br />' .  $address['field_notes_value']; //add notes (if any)
+   
+   //add address information to body text
+   if(strlen($address_text)) {
+       $node -> body .= '<p>Address Information:<br />' . $address_text . '<p>';
+   }  
 }
 
 function psrimport_project_project(&$node, $old_nid, $table){
-  
+  //not being used
 }
 
 
@@ -245,7 +287,25 @@ function psrimport_webform(&$node, $old_nid, $table){
   
 }
 
+/**
+ * Queries cck links in a node and returns markup containing links
+ */
+function psrimport_add_links($table , $field, $old_nid){
+  db_set_active('psrd5');
+  $additional_text ='';
+  //multiple links
+  $res = db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid);
+  while($data = db_fetch_object($res)){
+    $links[] = $data -> $field;
+  }
 
+  if(count($links)){
+    $additional_text .= '<p>Link(s): </p>';
+    foreach($links as $link){
+      $additional_text .= '<p>' . $link .   '</p>';
+    }
+    return $additional_text;
+  }
 
 /**
  * Implementation of hook_vsite_vocabulary_default()

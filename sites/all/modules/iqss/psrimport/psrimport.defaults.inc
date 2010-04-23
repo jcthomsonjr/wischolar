@@ -32,8 +32,8 @@ function psrimport_type_map(){
   'psr_resource' => 'page', //13
   'faq' => 'page', //12
   'survey_news' => 'announcement', //9
-  'project_issue' => 'page', //5
-  'education' => 'page', // 4
+  //'project_issue' => 'page', //5 content type cannot be found in list of types on d5 psr site
+ // 'education' => 'page', // 4
   'conf_presentation' => '',  //3
   'article' => 'page', //2
   'story' => 'page', //1
