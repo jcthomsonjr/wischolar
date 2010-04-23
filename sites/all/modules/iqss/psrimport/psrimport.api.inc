@@ -180,6 +180,40 @@ function psrimport_get_new_vid($old_vid, $new_type = NULL){
   }     
 }
 
+/*** Field Helper Functions **/
+
+/**
+ * Return event times for node
+ */
+function psrimport_get_event_times($old_nid){
+  db_set_active('psrd5');  // datetime example  - '2010-04-15T15:11:00' 
+  $table = 'event';
+  $times = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+  $start = date("Y-m-d", $times['event_start']). 'T' . date("H:i:s", $times['event_start']);
+  $end = date("Y-m-d", $times['event_end']). 'T' . date("H:i:s", $times['event_end']);
+  return array('value' => $start, 'value2' => $end); 
+}
+
+/**
+ * Retruns cck links in a node and returns markup containing links
+ */
+function psrimport_get_links($table , $field, $old_nid){
+  db_set_active('psrd5');
+  $additional_text ='';
+  //multiple links
+  $res = db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid);
+  while($data = db_fetch_object($res)){
+    $links[] = $data -> $field;
+  }
+
+  if(count($links)){
+    $additional_text .= '<p>Link(s): </p>';
+    foreach($links as $link){
+      $additional_text .= '<p>' . $link .   '</p>';
+    }
+    return $additional_text;
+  }
+}
 
 /**
  * Abstraction function to print real time feedback

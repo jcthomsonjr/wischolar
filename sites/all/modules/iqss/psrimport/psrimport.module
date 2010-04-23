@@ -14,7 +14,7 @@ function psrimport_import($drush_run = 0){
   
   psrimport_import_users();
   psrimport_create_site();
-  psrimport_import_content(array('psr_resource', 'faq'));
+  psrimport_import_content(array('resource'));
 
   psrimport_print( 'Import Completed' );
 }
@@ -128,7 +128,7 @@ function psrimport_import_node($old_type, $new_type){
      //now save the node  - don't forget about the stuff happening in nodeapi    
      db_set_active('default');
      node_save($node);
-     psrimport_print("Added node: {$node -> title}");
+     psrimport_print("Added $old_type node: {$node -> title}");
      //check for files
      psrimport_get_files($node, $node_list -> nid);     
   }
@@ -136,7 +136,7 @@ function psrimport_import_node($old_type, $new_type){
 
 function psrimport_resource(&$node, $old_nid, $table){
    //add links data to body
-  $node -> body .= psrimport_add_links('content_field_resource_link', 'field_resource_link_url', $old_nid);
+  $node -> body .= psrimport_get_links('content_field_resource_link', 'field_resource_link_url', $old_nid);
 }
 
 function psrimport_event(&$node, $old_nid, $table){
@@ -167,12 +167,8 @@ function psrimport_event(&$node, $old_nid, $table){
        $node -> body .= $additional_text;
    }
    
-   //now add the event times
-   $table = 'event';
-   $times = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
-   $start = date("Y-m-d", $times['event_start']). 'T' . date("H:i:s", $times['event_start']);
-   $end = date("Y-m-d", $times['event_end']). 'T' . date("H:i:s", $times['event_end']);
-   $node -> field_date[0] = array('value' => $start, 'value2' => $end);  // datetime example  - '2010-04-15T15:11:00'
+ //now add the event times
+   $node -> field_date[0] = psrimport_get_event_times($old_nid);
 }
 
 function psrimport_psr_profile(&$node, $old_nid, $table){
@@ -220,7 +216,7 @@ function psrimport_psr_resource(&$node, $old_nid, $table){
     }
   }
   //add links data to body
-  $node -> body .= psrimport_add_links('content_field_psr_resource_link', 'field_psr_resource_link_url', $old_nid);
+  $node -> body .= psrimport_get_links('content_field_psr_resource_link', 'field_psr_resource_link_url', $old_nid);
   return;
 }
 
@@ -231,7 +227,7 @@ function psrimport_faq(&$node, $old_nid, $table){
 
 function psrimport_survey_news(&$node, $old_nid, $table){
 //add links data to body
-  $node -> body .= psrimport_add_links('content_field_news_link', 'field_news_link_url', $old_nid);
+  $node -> body .= psrimport_get_links('content_field_news_link', 'field_news_link_url', $old_nid);
   return;
 }
 
@@ -244,7 +240,32 @@ function psrimport_education(&$node, $old_nid, $table){
 }
 
 function psrimport_conf_presentation(&$node, $old_nid, $table){
+    db_set_active('psrd5'); 
   
+   //since there are no address fields in content type link, take any exisiting data and merge with body text
+   $address_text = '';
+   $presenter_text = '';
+
+   $data =  db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+   $presenter_text = '';
+  if (strlen($data['field_presenter_value'])) {
+    $presenter_text .= '<p>Presenter/Moderator: '  .  $data['field_presenter_value'] . ', '  . $data['field_presenter_affiliation_value'] . '</p>';
+  }
+   
+   if (strlen($data['field_conf_presentation_address_street1'])) $address_text .= $data['field_conf_presentation_address_street1'] . '<br />';
+   if (strlen($data['field_conf_presentation_address_street2'])) $address_text .= $data['field_conf_presentation_address_street2'] . '<br />';
+   if (strlen($data['field_conf_presentation_address_apt'])) $address_text .= $data['field_conf_presentation_address_apt'] . '<br />';
+   if (strlen($data['field_conf_presentation_address_city'])) $address_text .= $data['field_conf_presentation_address_city'] . ' ';
+   if (strlen($data['field_conf_presentation_address_state'])) $address_text .= $data['field_conf_presentation_address_state'] . ' ';
+   if (strlen($data['field_conf_presentation_address_zip'])) $address_text .= $data['field_conf_presentation_address_zip'] . ' ';
+   
+   //add address information to body text
+   if(strlen($address_text)) {
+       $node -> body .= $presenter_text . '<p>Address Information:<br />' . $address_text . '<p>';
+   }  
+  
+   //now add the event times TODO: date values are NULL
+   $node -> field_date[0] = psrimport_get_event_times($old_nid);  
 }
 
 function psrimport_story(&$node, $old_nid, $table){
@@ -254,7 +275,7 @@ function psrimport_story(&$node, $old_nid, $table){
 
 function psrimport_article(&$node, $old_nid, $table){
 //add links data to body
-  $node -> body .= psrimport_add_links('content_field_article_link', 'field_article_link_url', $old_nid);
+  $node -> body .= psrimport_get_links('content_field_article_link', 'field_article_link_url', $old_nid);
   return;
 }
 
@@ -275,8 +296,13 @@ function psrimport_conference(&$node, $old_nid, $table){
    //add address information to body text
    if(strlen($address_text)) {
        $node -> body .= '<p>Address Information:<br />' . $address_text . '<p>';
-   }  
+   }
+
+    //now add the event times
+   $node -> field_date[0] = psrimport_get_event_times($old_nid);   
 }
+
+
 
 function psrimport_project_project(&$node, $old_nid, $table){
   //not being used
@@ -286,26 +312,6 @@ function psrimport_project_project(&$node, $old_nid, $table){
 function psrimport_webform(&$node, $old_nid, $table){
   
 }
-
-/**
- * Queries cck links in a node and returns markup containing links
- */
-function psrimport_add_links($table , $field, $old_nid){
-  db_set_active('psrd5');
-  $additional_text ='';
-  //multiple links
-  $res = db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid);
-  while($data = db_fetch_object($res)){
-    $links[] = $data -> $field;
-  }
-
-  if(count($links)){
-    $additional_text .= '<p>Link(s): </p>';
-    foreach($links as $link){
-      $additional_text .= '<p>' . $link .   '</p>';
-    }
-    return $additional_text;
-  }
 
 /**
  * Implementation of hook_vsite_vocabulary_default()
