@@ -27,7 +27,7 @@ function vsite_search_luceneapi_facet_enable($module, $names=array(), $facet) {
 	      variable_set($variable, $facet_conf);
 	    }
 	  }
-	  vsite_search_luceneapi_facet_clear_cache();
+	  vsite_search_luceneapi_facet_clear_cache($module);
 	}  
 }
 
@@ -53,16 +53,16 @@ function vsite_search_luceneapi_facet_disable($module, $names=array(), $facet) {
 	      variable_set($variable, $facet_conf);
 	    }
 	  }
-	  vsite_search_luceneapi_facet_clear_cache();
+	  vsite_search_luceneapi_facet_clear_cache($module);
 	}  
 }
 
 /**
  * Helper function to clear cached facet items
  */
-function vsite_search_luceneapi_facet_clear_cache() {
+function vsite_search_luceneapi_facet_clear_cache($module) {
   foreach (luceneapi_facet_realms_get() as $name => $realm) {
-    $cid = sprintf('%s:luceneapi_facet:%s:', $form_state['values']['module'], $name);
+    $cid = sprintf('%s:luceneapi_facet:%s:', $module, $name);
     cache_clear_all($cid, LUCENEAPI_CACHE_TABLE, TRUE);
   }
 }
@@ -93,7 +93,7 @@ function vsite_search_luceneapi_facet_alter(&$facets, $realm, $module, $type = N
 		  foreach($vsite->group->og_vocabularies as $tid => $term) {
         $category_name = 'category_'.$term->vid;
         if(in_array($category_name, array_keys($facets))) {
-          unset($facets[$category_name]);
+          //unset($facets[$category_name]);
         }
 		  }
 
@@ -142,13 +142,29 @@ function vsite_search_luceneapi_facet_postrender_alter(&$items, $realm, $module,
   if ('node' != $type) {
     return;
   }
-  
-  // TODO: If there is more than one category facet, merge them into one giant facet display
-  foreach($items as $facet_name => $facet) {
-  	if(preg_match("/^category_/", $facet_name)) {
-  		$items[$facet_name]['title'] = t('Categories');
-  	}
-  }
+  if($realm == 'block') {
+	  // Fake a facet item that mimics one of the categories
+	  $items['all_categories'] = array(
+	    'title' => t('vSite Categories'),
+	    'element' => 'category',
+	    'field' => 'category',
+	    'type' => 'select',
+	    'selected' => array(),
+	    'count' => array(),
+	    'items' => array(),
+	  );
+	  
+	  // TODO: If there is more than one category facet, merge them into one giant facet display
+	  foreach($items as $facet_name => $facet) {
+	  	if(preg_match("/^category_/", $facet_name)) {
+	  		//$items[$facet_name]['title'] = t('Categories');
+	  		$items['all_categories']['count'] += $items[$facet_name]['count'];
+	  		$items['all_categories']['items'] += $items[$facet_name]['items'];
+	  		unset($items[$facet_name]);
+	  	}
+	  }
+	  drupal_set_message('Items:<br><pre>'.print_r($items,true).'</pre>');
+  }  
 }
 
 /**
@@ -182,7 +198,7 @@ function vsite_search_luceneapi_document_alter($doc, $item, $module, $type = NUL
 	     * documentation at http://drupal.org/node/655724 for more information on
 	     * the index types.
 	     */
-	    luceneapi_field_add($doc, 'keyword', 'im_og_gid', $item->og_groups);   
+	    luceneapi_field_add($doc, 'keyword', 'im_og_gid', $group_nids);   
 	  }
   }
 }
