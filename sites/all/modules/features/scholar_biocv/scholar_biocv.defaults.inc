@@ -114,8 +114,8 @@ function _scholar_biocv_menu_default_items() {
   );
   // Translatables
   array(
-    t('Bio'),
     t('A users Bio'),
+    t('Bio'),
   );
 
 
