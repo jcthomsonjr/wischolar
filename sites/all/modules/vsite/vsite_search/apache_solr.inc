@@ -49,20 +49,3 @@ function vsite_search_apachesolr_modify_query(&$query, &$params, $caller) {
     // Add filters based on the vsite vocabularies
   }
 }
-
-/**
- * Implementation of hook_apachesolr_facets().
- */
-function vsite_search_apachesolr_facets() {
-  $vsite = vsite_get_vsite();
-  if(! empty($vsite)) {
-    foreach($vsite->group->og_vocabularies as $tid => $term) {
-      $key = 'im_vid_'.$term->vid;
-      $facets[$key] = array(
-        'info' => t('vSite Search: Filter by '.$term->name),
-        'facet_field' => $key,
-	    );
-    }
-  }
-  return $facets;
-}

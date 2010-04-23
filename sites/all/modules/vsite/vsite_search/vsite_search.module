@@ -142,16 +142,7 @@ function vsite_search_block($op = 'list', $delta = 0, $edit = array()) {
     case 'list':
     	$blocks = array();
     	if(VSITE_SEARCH_SOLR) {
-    		// Retrieve all of the facets defined by hook_facet()
-    		$defined_facets = apachesolr_get_facet_definitions();
-    		// Loop through the enabled facets, and create a block based on each facet.  This is so that these blocks can be displayed in any region and at any time.
-    		foreach(apachesolr_get_enabled_facets() as $module => $facets) {
-    			if(!empty($facets)) {
-    				foreach($facets as $delta => $facet_name) {
-              $blocks[]['info'] = $defined_facets[$module][$delta]['info'];
-    				}
-    			}
-    		}
+    		$blocks[0]['info'] = t('Categories');
     	}
     	if(VSITE_SEARCH_LUCENE) {
     		$blocks[0]['info'] = t('Categories');
@@ -163,11 +154,37 @@ function vsite_search_block($op = 'list', $delta = 0, $edit = array()) {
     		 * Get the enabled filter facet blocks, performing an empty search based on the content type as a filter.
     		 * @see http://drupal.org/node/457826
     		 */ 
-	    	$blocks = apachesolr_search_browse(null, null, null, 'search/apachesolr_search');
-	    	return array(
-	    	  'subject' => $blocks[$delta]->subject,
-	    	  'content' => $blocks[$delta]->content,
-	    	);
+	    	//$blocks = apachesolr_search_browse(null, null, null, 'search/apachesolr_search');
+	    	//die('Delta = '.$delta.', Blocks:<br><pre>'.print_r($blocks,true).'</pre>');
+	    	//return array(
+	    	//  'subject' => $blocks[$delta]->subject,
+	    	//  'content' => $blocks[$delta]->content,
+	    	//);
+	    	switch($delta) {
+	    		case 0:
+			    	$response = apachesolr_static_response_cache();
+		        if (empty($response)) {
+		        	return;
+		        }
+	    			$query = apachesolr_current_query();
+	    			$vsite = vsite_get_vsite();
+	    			if($vsite) {
+	    				$content = '';
+	    				foreach($vsite->group->og_vocabularies as $vid => $vocab) {
+	    					$delta = 'im_vid_'.$vid;
+	    			    $block = apachesolr_search_taxonomy_facet_block($response, $query, $delta);
+	    			    //die('Block:<br><pre>'.print_r($block,true).'</pre>');	
+	    			    if(!empty($block)) {	
+	    			      $content .= $block['content'];
+	    			    } 
+	    				}
+	    			}
+	    			return array(
+	    			  'subject' => t('Categories'),
+	    			  'content' => $content
+	    			);
+	    			break;
+	    	}
     	}
     	
     	if(VSITE_SEARCH_LUCENE) {
@@ -220,22 +237,7 @@ function vsite_search_vsite_widgets(){
    * Define a series of widgets for Apache Solr support, if the module is enabled
    */
   if(VSITE_SEARCH_SOLR) {
-  	$response = apachesolr_static_response_cache();
-    if (empty($response)) {
-      return;
-    }
-    $query = apachesolr_current_query();
-    $block = apachesolr_facet_block($response, $query, 'apachesolr_og', $delta, $delta, t('Filter by Group'), 'apachesolr_og_group_name');
-  	
-  	$widgets['apachesolr_facet'] = array(
-  	  'module' => 'apachesolr',
-  	  'delta' => '0',
-  	  'weight' => 0,
-  	  'region' => 'right',
-  	  'status' => '0',
-  	  'label' => t('Apache Solr Facets'),
-  	  'type' => 'context_ui',
-  	);
+
   }  
   return $widgets;
 }
@@ -297,7 +299,7 @@ function vsite_search_context_default_contexts() {
    * Define Apache Solr-specific contexts
    */
   if(VSITE_SEARCH_SOLR) {
-  	$items[] = array(
+  	$items[0] = array(
 	    'namespace' => 'vsite',
 	    'attribute' => 'search',
 	    'value' => 'apachesolr_search',
@@ -369,10 +371,40 @@ function vsite_search_context_default_contexts() {
 	         'type' => 'context_ui',
 	         'bid' => 'apachesolr_search_uid',
 	      )),
+	      'vsite_search_categories' => (object)(array(
+	        'module' => 'vsite_search',
+	        'delta' => '0',
+	        'weight' => 0,
+	        'region' => 'right',
+	        'status' => '0',
+	        'label' => t('Categories'),
+	        'type' => 'context_ui',
+	      )),
 	    ),
 	    'type' => 2,
 	    'status' => 1,
 	  );
+	  /**
+	  $vsite = vsite_get_vsite();
+	  if($vsite) {
+	  	foreach($vsite->group->og_vocabularies as $vid => $vocab) {
+	  		// Append the context blocks for these categories
+	  		$delta = 'im_vid_'.$vid;
+	  		
+	  		$items[0]['block']['apachesolr_search_'.$delta] = (object)(array(
+		      'module' => 'apachesolr_search',
+		      'delta' => $delta,
+		      'weight' => 24,
+		      'region' => 'right',
+		      'status' => '0',
+		      'label' => 'Taxonomy vocabulary: Filter by taxonomy '.$vocab->name,
+		      'type' => 'context_ui',
+	  		  'bid' => 'apachesolr_search_'.$delta,
+		    ));
+	  	}
+	  }
+	  **/
   }
+  //die('Items:<br><pre>'.print_r($items,true).'</pre>');
   return $items;
 }
