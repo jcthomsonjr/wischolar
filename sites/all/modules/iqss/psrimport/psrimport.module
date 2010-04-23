@@ -14,9 +14,9 @@ function psrimport_import($drush_run = 0){
   
   psrimport_import_users();
   psrimport_create_site();
-  psrimport_import_content(array('faq'));
+  psrimport_import_content(array('psr_profile', 'faq'));
 
-  return psrimport_print( 'done' );
+  psrimport_print( 'Import Completed' );
 }
 
 /**
@@ -119,7 +119,7 @@ function psrimport_import_node($old_type, $new_type){
     $node -> uid = array_search( $data -> uid, variable_get('psrimport_uid_map', array()));
     
     //find all the terms associated with the node and place in temporary property ( see hook_nodeapi )
-    $node -> terms = psrimport_weed_terms($node_list  -> nid);
+    $node -> terms = _psrimport_weed_terms($node_list  -> nid);
    
     //now pass the node object by reference to add custom/cck field values
      if(function_exists('psrimport_' . $old_type)) call_user_func('psrimport_' . $old_type, $node, $data ->nid, 'content_type_' . $old_type); 
@@ -252,7 +252,7 @@ function psrimport_webform(&$node, $old_nid, $table){
  */
 function psrimport_vsite_vocabulary_default(){
 
-  $vocabs = psrimport_vocabulary_defaults();
+  $vocabs = psrimport_vocabulary_map();
 
   //get the vocab data
   db_set_active('psrd5');
@@ -276,63 +276,28 @@ function psrimport_vsite_vocabulary_default(){
   return $tax;
 }
 
-function psrimport_get_terms($old_vid){
-  //get the vocab data
-  db_set_active('psrd5');
+/**
+ * Implementation of hook_nodeapi()
+ */
+function psrimport_nodeapi(&$node, $op){
+  switch ($op) {
+    case 'insert':
 
-  $term_data = array();
-  //get all terms to merge into default vocab
-  $res = db_query("SELECT * FROM {term_data} WHERE vid = %d", $old_vid);
-  while ($data = db_fetch_object($res)){
-    $term_data[] = array(
-    'name' => $data -> name,
-    'description' => $data -> description,
-    'properties' => array (),
-    );
-  }
-  return $term_data;
-}
-
-
-
-function psrimport_terms_to_node($node, $terms = array()){
-  install_include(array('taxonomy'));
-  
-  if(count($terms)){
-    foreach($terms as $old_vid => $term){ 
-      //get new vid
-      $vid = psrimport_get_new_vid($old_vid, $node -> type);  
-      //get new tid    
-      $tid = install_taxonomy_get_tid($term, $vid);
-      
-/*      psrimport_print("New vid : $vid");
-      psrimport_print("New tid : $tid");
-      psrimport_print("New node : {$node ->nid}");*/
-      
-
-      db_query("DELETE FROM {term_node} WHERE nid = %d AND vid = %d AND tid = %d" , $node -> nid, $node -> nid, $tid);      
-      db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);
-    }
+      if (!vsite_get_vsite()){
+        //add node to og
+        psrimport_node_to_og($node -> nid);
+        //add terms
+        psrimport_terms_to_node($node, $node ->terms);
+      }
+      break;
   }
 }
 
-function psrimport_get_new_vid($old_vid, $new_type = NULL){
-   db_set_active('psrd5');
-   $vocab_name = db_result(db_query("SELECT name FROM {vocabulary} WHERE vid = %d", $old_vid));
-   
-   db_set_active('default');
-   if ($new_type){
-   $data = db_fetch_object(db_query_range("SELECT v.vid, v.name, vnt.type FROM {vocabulary} v
-    INNER JOIN {vocabulary_node_types} vnt USING(vid) HAVING v.name = '%s' AND vnt.type = '%s'", $vocab_name, $new_type, 0, 1 ));  
-   return $data -> vid;
-   }
-   else{
-     //very unlikely to have duplicate vocab names, but try to pass $new_type if possible to be sure to right vid 
-     return db_result(db_query_range("SELECT vid FROM {vocabulary} WHERE name = '%s' ", $vocab_name, 0, 1));     
-  }     
-}
-
-function psrimport_weed_terms($old_nid){
+/**
+ * Private function: Adds temporary property to node object
+ * to be used during hook nodeapi to add terms to a node
+ */
+function _psrimport_weed_terms($old_nid){
   $terms = array();
    //get the vocab data
   db_set_active('psrd5');
@@ -342,25 +307,3 @@ function psrimport_weed_terms($old_nid){
   } 
   return $terms; 
 }
-
-/**
- * Implementation of hook_nodeapi()
- */
-function psrimport_nodeapi(&$node, $op){
-  switch ($op) { 
-    case 'insert':  
-      
-      if (!vsite_get_vsite()){        
-       //add node to og
-        psrimport_node_to_og($node -> nid);
-        
-       // drush_print_r($node ->terms);
-        //add terms
-         psrimport_terms_to_node($node, $node ->terms);     
-           
-      }
-      break;     
-  }
-}
-
-

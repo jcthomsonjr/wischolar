@@ -4,7 +4,7 @@
  * Returns array where key is old vid and value is new content type
  * that it will belong to when imported 
  */
-function psrimport_vocabulary_defaults(){
+function psrimport_vocabulary_map(){
 
   //include these vocabularies
   return array(
@@ -13,7 +13,7 @@ function psrimport_vocabulary_defaults(){
   6 => 'announcement', //'Opportunity Type' page/Opportunity
   7 => 'event', //tags - Event/ Event
   9 => 'announcement', //tags - annoucements/ News
-  5 => 'person',  //tags Profiles
+  5 => 'person',  //tags Profiles 
   10 => 'page', // PSR Resouce
   );
 }
@@ -44,9 +44,6 @@ function psrimport_type_map(){
 }
 
 function psrimport_features(){
-  $features = array_unique(psrimport_type_map());
-  
-  drush_print_r($features);
-	
-  
+  $features = array_unique(psrimport_type_map());  
+  drush_print_r($features);  
 }

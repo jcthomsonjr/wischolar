@@ -1,6 +1,6 @@
 <?php
 
-/** API Funciton and utilities **/
+/** API Functions and utilities **/
 
 /**
  * Add a node to an OG
@@ -113,6 +113,73 @@ function psrimport_get_files($node,  $old_nid, $domain = 'psr'){
     }
   }
 }
+
+/*** Taxonomy API and Utils ***/
+
+function psrimport_get_terms($old_vid){
+  //get the vocab data
+  db_set_active('psrd5');
+
+  $term_data = array();
+  //get all terms to merge into default vocab
+  $res = db_query("SELECT * FROM {term_data} WHERE vid = %d", $old_vid);
+  while ($data = db_fetch_object($res)){
+    $term_data[] = array(
+    'name' => $data -> name,
+    'description' => $data -> description,
+    'properties' => array (),
+    );
+  }
+  return $term_data;
+}
+
+/**
+ * Get terms associated with the node from old database and assign equivilent term to node.
+ * Assumes that all terms have already been imported
+ *
+ * @param  object $node  - the new  node object  which must have value for $node ->nid
+ * @param  array  $terms - list of terms which must already exist
+ */
+function psrimport_terms_to_node($node, $terms = array()){
+  install_include(array('taxonomy'));
+  
+  if(count($terms)){
+    foreach($terms as $old_vid => $term){ 
+      //get new vid
+      $vid = psrimport_get_new_vid($old_vid, $node -> type);  
+      //get new tid    
+      $tid = install_taxonomy_get_tid($term, $vid);
+
+      db_query("DELETE FROM {term_node} WHERE nid = %d AND vid = %d AND tid = %d" , $node -> nid, $node -> nid, $tid);      
+      db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);
+    }
+  }
+}
+
+
+
+
+/**
+ * Returns new vocabulary id when passed old vocabulary id
+ * @return integer
+ *  vocabulary id
+ */
+function psrimport_get_new_vid($old_vid, $new_type = NULL){
+   db_set_active('psrd5');
+   $vocab_name = db_result(db_query("SELECT name FROM {vocabulary} WHERE vid = %d", $old_vid));
+   
+   db_set_active('default');
+   if ($new_type){
+   $data = db_fetch_object(db_query_range("SELECT v.vid, v.name, vnt.type FROM {vocabulary} v
+    INNER JOIN {vocabulary_node_types} vnt USING(vid) HAVING v.name = '%s' AND vnt.type = '%s'", $vocab_name, $new_type, 0, 1 ));  
+   return $data -> vid;
+   }
+   else{
+     //very unlikely to have duplicate vocab names, but try to pass $new_type if possible to be sure to right vid 
+     return db_result(db_query_range("SELECT vid FROM {vocabulary} WHERE name = '%s' ", $vocab_name, 0, 1));     
+  }     
+}
+
 
 /**
  * Abstraction function to print real time feedback
