@@ -107,13 +107,15 @@ function _scholar_biocv_menu_default_items() {
   $items = array();
 
   $items[] = array(
-    'title' => '',
+    'title' => 'Bio',
     'path' => 'biocv',
     'weight' => '0',
+    'description' => 'A users Bio',
   );
   // Translatables
   array(
-    t(''),
+    t('Bio'),
+    t('A users Bio'),
   );
 
 

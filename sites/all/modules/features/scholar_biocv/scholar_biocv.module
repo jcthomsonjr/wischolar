@@ -5,7 +5,7 @@ include_once('scholar_biocv.features.inc');
 function scholar_biocv_menu(){
   $items = array();
   $items['biocv'] = array(
-    'title callback' => 'scholar_biocv_menu_title',
+    'title' => 'Bio',
     'page callback' => 'scholar_biocv_bio',
     'access callback' => 'spaces_feature_access',
     'access arguments' => array('scholar_biocv'), 
@@ -48,19 +48,6 @@ function scholar_biocv_submenu_access(){
 }
 
 /**
- * CV/Bio Title Callback
- */
-function scholar_biocv_menu_title(){
-	$s_title = "";
-	$vsite = vsite_get_vsite();
-	
-	$s_title .= "Bio";//(content_profile_load('bio', $vsite->group->uid))?'Bio':"";
-	$s_title .= (content_profile_load('cv', $vsite->group->uid))? ((strlen($s_title)?' / ':"")."CV"):"";
-	
-	return $s_title;
-}
-
-/**
  * hook  vsite_content_types_alter
  */
 function scholar_biocv_vsite_content_types_alter(&$content_types){
@@ -77,6 +64,7 @@ function scholar_biocv_vsite_content_types_alter(&$content_types){
 function scholar_biocv_bio(){
   $vsite = vsite_get_vsite();
   drupal_set_title(t(''));
+  if(!$vsite) return;
   
   // load the bio node for the owner of this vsite
   $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
