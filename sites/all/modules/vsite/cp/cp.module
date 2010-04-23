@@ -7,7 +7,7 @@
  */
 
 /**
- * 
+ *
  * @var string
  *   Defines the name of the Control Panel theme
  */
@@ -16,7 +16,7 @@ define('CPTHEME', 'cp_theme');
 
 /**
  * Implementation of hook_block()
- * 
+ *
  * @param unknown_type $op
  * @param unknown_type $delta
  * @param unknown_type $edit
@@ -79,7 +79,7 @@ function cp_left_block_view(){
 
 /**
  * Implementation of hook_init()
- * 
+ *
  */
 function cp_init(){
   global $user;
@@ -125,7 +125,7 @@ function cp_init(){
   if ($admin) {
     //add the javascript for intercepting confirm pages
     drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.js');
-    drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.css');
+    drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/jquery_ui/jquery.ui/themes/openscholar/ui.all.css');
     //Add the JqueryUI JS for the confirm boxes
     jquery_ui_add(array(
       'ui.dialog',
@@ -160,7 +160,7 @@ function cp_views_api() {
 
 /**
  * Implementation of hook_menu()
- * 
+ *
  */
 function cp_menu(){
 	$spaces_path = drupal_get_path('module', 'spaces');
@@ -192,11 +192,11 @@ function cp_menu(){
       );
 
 	    if(!array_key_exists($s_parent,$a_default_setting_created) || ((isset($setting->weight)?$setting->weight:0) < $a_default_setting_created[$s_parent]['weight'])){
-	      
+
 	    	if(array_key_exists($s_parent,$a_default_setting_created)){
 	    		$items[$a_default_setting_created[$s_parent]['menu']]['type'] = MENU_LOCAL_TASK;
 	    	}//Remove existing def. local task
-	    	
+
 	    	$a_default_setting_created[$s_parent] = array('weight' => (isset($setting->weight)?$setting->weight:0), 'menu' => 'cp/'.$s_parent.'/'. $setting -> id);
 	      $a_setting = $items['cp/'.$s_parent.'/'. $setting -> id];
 	      //Create Local Task
@@ -217,7 +217,7 @@ function cp_menu(){
 
   foreach (module_invoke_all("cp_settings") as $a_settings) {
     if(!is_array($a_settings)) continue;
-    
+
     $s_parent = isset($a_settings['parent'])?$a_settings['parent']:'settings';
     $items['cp/'.$s_parent.'/'. $a_settings['path']] = $a_settings;
 
@@ -349,7 +349,7 @@ function cp_feature_customize($feature_name){
  */
 /**
  * Implementation of hook_form_alter()
- * 
+ *
  * @param $form
  *   FAPI object representing a form
  * @param $form_state
@@ -380,7 +380,7 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
     foreach (array_keys($site -> features) as $f_name){
       $installation_name = variable_get('vsite_installation_name', 'scholar');
       $form['features'][$f_name]['#title'] =  str_replace('scholar', $installation_name, $form['features'][$f_name]['#title'] );
-      
+
       $customizable = false;
 	    foreach ($customizers as $id => $customizer) {
 		    if ($customizer->form($site, $f_name)) {
@@ -388,7 +388,7 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
 		      break;
 		    }
 		  }//Is this feature customizable
-      
+
       if (isset($form['customize'][$f_name])){
 	      if(!(spaces_feature_settings($f_name) || $customizable)){
 	        unset($form['customize'][$f_name]); //Not customizable
@@ -399,7 +399,7 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
       }
     }
   }
-  
+
   if (arg(0) == 'cp' && $form_id == 'spaces_customize_form'){
   	if(array_key_exists('customizers',$form))$form['customizers']['#weight'] = 0;
   	if(array_key_exists('settings',$form))$form['settings']['#weight'] = 10;
@@ -434,7 +434,7 @@ function cp_form_alter(&$form, &$form_state, $form_id) {
 
 /**
  * Implementation of hook_theme()
- * 
+ *
  * @param unknown_type $cache
  * @param unknown_type $type
  * @param unknown_type $theme
@@ -456,9 +456,9 @@ function cp_theme($cache, $type, $theme, $path) {
 
 /**
  * Implementation of hook_preprocess_page()
- * 
+ *
  * Preprocess function for introducing the "cp_toolbar" and "cp_left" variables
- * 
+ *
  * @param mixed $vars
  *   Associative array containing variables to pass to the page in the theme layer
  */
@@ -471,18 +471,18 @@ function cp_preprocess_page(&$vars) {
     $links = theme ( 'cp_toolbar', $links );
     $vars ['cp_toolbar'] = $links;
     $vars ['body_classes'] .= ' cp-toolbar-full';
-  } 
+  }
   elseif (context_get ( 'toolbar', 'value' ) == "mini") {
     global $user;
     $user_links = array ();
     $user_links[] = array('title' => 'Control Panel', 'href' => 'cp/features');
     $user_links [] = array (
-      'title' => t ( 'Hello <strong>!username</strong>', array ('!username' => $user->name)), 
-      'href' => 'cp/users', 
+      'title' => t ( 'Hello <strong>!username</strong>', array ('!username' => $user->name)),
+      'href' => 'cp/users',
       'html' => TRUE
     );
     $user_links [] = array (
-      'title' => t ( 'Logout' ), 
+      'title' => t ( 'Logout' ),
       'href' => "logout",
     );
     $vars ['cp_toolbar'] = theme('links', $user_links);
@@ -492,12 +492,12 @@ function cp_preprocess_page(&$vars) {
 
 /**
  * Helper function to return user-specific links for the toolbar menu.
- * @return  
+ * @return
  *   Associative array of links for the current user
  */
 function cp_toolbar_menu_links(){
   $links = array();
-  
+
   // Retrieve the admin menu from the database.
   $tree = menu_tree_all_data('cp');
   $links[0]['toolbar'] = cp_menu_navigation_links($tree);
@@ -585,7 +585,7 @@ function cp_in_active_trail($path, $reset = FALSE) {
 
 /**
  * Implementation of hook_user()
- * 
+ *
  * @param string $op
  * @param object $edit
  * @param mixed $account
@@ -619,7 +619,7 @@ function _cp_init_theme(){
 
 /**
  * Implementation of hook_menu_link_alter()
- * 
+ *
  * Assures that regardless of installation order, the menu trees are created.
  * @param unknown_type $item
  * @param unknown_type $menu
@@ -684,9 +684,9 @@ function cp_is_confirm_overide_page($page = null){
 
 /**
  * Implementation of hook_spaces_settings().
- * 
+ *
  * @return mixed
- *   Associative array containing Spaces settings for Control Panels  
+ *   Associative array containing Spaces settings for Control Panels
  */
 function cp_spaces_settings() {
 
@@ -771,9 +771,9 @@ function cp_vsite_generic_settings($value = array()){
  */
 function cp_views_pre_render(&$view) {
 	if(context_get('vsite', 'section') != 'cp') return;
-	
+
   $views = spaces_features_map('views');
   if(in_array($view->name,array_keys($views))  && !$view->display['default']->handler->get_option('empty')){
     $view->display['default']->handler->set_option('empty',t(' '));
-  }//Provide some empty text if none exists so that views are always rendered in cp 
+  }//Provide some empty text if none exists so that views are always rendered in cp
 }

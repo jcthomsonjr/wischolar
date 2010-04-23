@@ -18,7 +18,7 @@ Drupal.behaviors.cp_confirm_overide_handler = function (context) {
 
 var cp_overide_add_click = function(return_value){
 	cp_override_processing_ajax = false;
-	
+
 	var s_container = $("div#cp-content").length ? "div#cp-content":"div.content";
 	for ( href in return_value.overideable_settings) {
 		if(return_value.overideable_settings[href]){
@@ -37,7 +37,7 @@ var cp_overide_add_click = function(return_value){
 					  $(this).dialog('close');
 					}});
 				  $('#cp_confirm_dialog').dialog('open');
-				  
+
 				  if($('div.ui-dialog-overlay').length && $('div.ui-dialog-overlay').width() && !$('div.ui-dialog-overlay').height()){
 					  $('div.ui-dialog-overlay').height(1000);
 				  }//If jquery fails to set the height lets do it for them
@@ -50,15 +50,17 @@ var cp_overide_add_click = function(return_value){
 
 var cp_add_dialog = function(){
 	if(!$('#cp_confirm_dialog').length){
-		$('<div id="cp_confirm_dialog" title="Please Confirm"><p><span class="ui-icon ui-icon-alert">Are you sure?</span></p></div>').appendTo("body");
+		$('<div id="cp_confirm_dialog" title="Please Confirm"><p>Are you sure?</p></div>').appendTo("body");
 		$('#cp_confirm_dialog').dialog({
  			bgiframe: true,
  			resizable: false,
  			draggable: false,
  			width: 468,
  			height:185,
+ 			position:'top',
  			modal: true,
  			autoOpen: false,
+ 			//show:'slide',
  			//hide: 'slide',
  			overlay: {
  				backgroundColor: '#000',
@@ -90,7 +92,7 @@ var cp_override_url_check = function(s_urls){
     });
 };
 
-function cp_override_getEventTarget(e) { 
-  e = e || window.event; 
-  return e.target || e.srcElement; 
-} 
+function cp_override_getEventTarget(e) {
+  e = e || window.event;
+  return e.target || e.srcElement;
+}

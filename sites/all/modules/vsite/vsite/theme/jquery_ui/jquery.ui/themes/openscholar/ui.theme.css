@@ -33,7 +33,7 @@
   }
 
 .ui-widget-content {
-	border: 1px solid #aaaaaa/*{borderColorContent}*/;
+	border: none;
 	}
 
 .ui-widget-content a {
@@ -53,13 +53,6 @@
 
 /* Interaction states
 ----------------------------------*/
-.ui-state-default, .ui-widget-content .ui-state-default {
-	border: 1px solid #d3d3d3/*{borderColorDefault}*/;
-	background: #e6e6e6/*{bgColorDefault}*/ url(images/ui-bg_glass_75_e6e6e6_1x400.png)/*{bgImgUrlDefault}*/ 50%/*{bgDefaultXPos}*/ 50%/*{bgDefaultYPos}*/ repeat-x/*{bgDefaultRepeat}*/;
-	font-weight: normal/*{fwDefault}*/;
-	color: #555555/*{fcDefault}*/;
-	outline: none;
-	}
 
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
 	color: #555555/*{fcDefault}*/;
@@ -924,6 +917,10 @@
 	-webkit-border-radius: 4px/*{cornerRadius}*/;
 	}
 
+button.ui-corner-all {
+  -moz-border-radius:20px;
+  -webkit-border-radius:20px;
+  }
 
 /* Overlays */
 .ui-widget-overlay {
