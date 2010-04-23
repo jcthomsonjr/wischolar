@@ -9,11 +9,12 @@ DEFINE(PSRIMPORT_FS_PATH, '/nfs/www/edu-harvard-iq-scholar-dev3'); // absolute p
  */
 function psrimport_import($drush_run = 0){
   DEFINE(PSR_DRUSH_RUN, $drush_run);
+ 
   psrimport_print( 'Beginning import...' );
   
   psrimport_import_users();
   psrimport_create_site();
-  psrimport_import_content(array('event'));
+  psrimport_import_content(array('faq'));
 
   return psrimport_print( 'done' );
 }
@@ -116,6 +117,9 @@ function psrimport_import_node($old_type, $new_type){
     $node -> created = $data -> created;
     $node -> status = $data -> status;
     $node -> uid = array_search( $data -> uid, variable_get('psrimport_uid_map', array()));
+    
+    //find all the terms associated with the node and place in temporary property ( see hook_nodeapi )
+    $node -> terms = psrimport_weed_terms($node_list  -> nid);
    
     //now pass the node object by reference to add custom/cck field values
      if(function_exists('psrimport_' . $old_type)) call_user_func('psrimport_' . $old_type, $node, $data ->nid, 'content_type_' . $old_type); 
@@ -172,19 +176,37 @@ function psrimport_psr_profile(&$node, $old_nid, $table){
   $node -> field_person_title[0] = array('value' => $cck_data['field_title_value']);
 }
 
+function psrimport_page(&$node, $old_nid, $table){
+  //no cck fields to retreive
+  return;
+}
+
 function psrimport_book(&$node, $old_nid, $table){
 
 }
-function psrimport_opportunity(&$node, $old_nid, $table){
 
+function psrimport_opportunity(&$node, $old_nid, $table){
+  db_set_active('psrd5');
+  $cck_data = db_fetch_array(db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid));
+  $additional_text = '';
+  $available_to = array(1 => 'Harvard Only', 2 => 'Anyone');
+  
+  //merge cck data into body text
+  if ($cck_data['field_harvard_only_value']) $additional_text .= '<p>This opportunity is available to: ' . $available_to[$cck_data['field_harvard_only_value']] . '</p>';
+  if(strlen($cck_data['field_opportunity_link_url'] )) $additional_text = '<p>Link: ' . $cck_data['field_opportunity_link_url'] . '</p>';
+  if(strlen($cck_data['field_opportunity_deadline_value'] )) $additional_text = '<p>Date of Deadline: ' . date_format_date(date_make_date($cck_data['field_opportunity_deadline_value']), 'custom', "F j, Y") . '</p>';
+  $node -> body .= $additional_text;
 }
+
 function psrimport_psr_resource(&$node, $old_nid, $table){
 
 }
 
 function psrimport_faq(&$node, $old_nid, $table){
-
+    //no cck fields to retreive
+  return;
 }
+
 function psrimport_survey_news(&$node, $old_nid, $table){
 
 }
@@ -196,6 +218,10 @@ function psrimport_education(&$node, $old_nid, $table){
 
 }
 
+function psrimport_conf_presentation(&$node, $old_nid, $table){
+  
+}
+
 function psrimport_story(&$node, $old_nid, $table){
 
 }
@@ -203,7 +229,20 @@ function psrimport_story(&$node, $old_nid, $table){
 function psrimport_article(&$node, $old_nid, $table){
   //no cck fields to retreive
   return;
+}
 
+
+function psrimport_conference(&$node, $old_nid, $table){
+  
+}
+
+function psrimport_project_project(&$node, $old_nid, $table){
+  
+}
+
+
+function psrimport_webform(&$node, $old_nid, $table){
+  
 }
 
 
@@ -254,15 +293,71 @@ function psrimport_get_terms($old_vid){
   return $term_data;
 }
 
+
+
+function psrimport_terms_to_node($node, $terms = array()){
+  install_include(array('taxonomy'));
+  
+  if(count($terms)){
+    foreach($terms as $old_vid => $term){ 
+      //get new vid
+      $vid = psrimport_get_new_vid($old_vid, $node -> type);  
+      //get new tid    
+      $tid = install_taxonomy_get_tid($term, $vid);
+      
+/*      psrimport_print("New vid : $vid");
+      psrimport_print("New tid : $tid");
+      psrimport_print("New node : {$node ->nid}");*/
+      
+
+      db_query("DELETE FROM {term_node} WHERE nid = %d AND vid = %d AND tid = %d" , $node -> nid, $node -> nid, $tid);      
+      db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);
+    }
+  }
+}
+
+function psrimport_get_new_vid($old_vid, $new_type = NULL){
+   db_set_active('psrd5');
+   $vocab_name = db_result(db_query("SELECT name FROM {vocabulary} WHERE vid = %d", $old_vid));
+   
+   db_set_active('default');
+   if ($new_type){
+   $data = db_fetch_object(db_query_range("SELECT v.vid, v.name, vnt.type FROM {vocabulary} v
+    INNER JOIN {vocabulary_node_types} vnt USING(vid) HAVING v.name = '%s' AND vnt.type = '%s'", $vocab_name, $new_type, 0, 1 ));  
+   return $data -> vid;
+   }
+   else{
+     //very unlikely to have duplicate vocab names, but try to pass $new_type if possible to be sure to right vid 
+     return db_result(db_query_range("SELECT vid FROM {vocabulary} WHERE name = '%s' ", $vocab_name, 0, 1));     
+  }     
+}
+
+function psrimport_weed_terms($old_nid){
+  $terms = array();
+   //get the vocab data
+  db_set_active('psrd5');
+  $res = db_query("SELECT tn.nid, tn.tid, td.vid, td.name FROM {term_node} tn INNER JOIN {term_data} td USING(tid) HAVING tn.nid = %d", $old_nid);
+  while ($data = db_fetch_object($res)){
+    $terms[$data -> vid] = $data -> name;    
+  } 
+  return $terms; 
+}
+
 /**
  * Implementation of hook_nodeapi()
  */
 function psrimport_nodeapi(&$node, $op){
   switch ($op) { 
     case 'insert':  
-      //add node to og
+      
       if (!vsite_get_vsite()){        
-       psrimport_node_to_og($node -> nid);
+       //add node to og
+        psrimport_node_to_og($node -> nid);
+        
+       // drush_print_r($node ->terms);
+        //add terms
+         psrimport_terms_to_node($node, $node ->terms);     
+           
       }
       break;     
   }
