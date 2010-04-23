@@ -32,11 +32,9 @@ function vsite_widgets_search(){
     return;
   }
 
-  //$block['content'] = drupal_get_form('vsite_widgets_search_form');
   $block['content'] = drupal_get_form('search_form');
   //$block['subject'] = "Search";
   return $block;
-
 }
 
 /**
@@ -46,7 +44,7 @@ function vsite_widgets_search_form($form_state) {
   if (arg(0) == 'sitesearch' && isset($_GET['keys'])) {
     $default = urldecode($_GET['keys']);
   }
-  $search =
+  //$search =
   $form = array();
 
   $form['submit'] = array(

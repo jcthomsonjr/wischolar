@@ -142,10 +142,11 @@ function vsite_search_luceneapi_facet_postrender_alter(&$items, $realm, $module,
   if ('node' != $type) {
     return;
   }
+  
   if($realm == 'block') {
 	  // Fake a facet item that mimics one of the categories
 	  $items['all_categories'] = array(
-	    'title' => t('vSite Categories'),
+	    'title' => t('Categories'),
 	    'element' => 'category',
 	    'field' => 'category',
 	    'type' => 'select',
@@ -154,16 +155,14 @@ function vsite_search_luceneapi_facet_postrender_alter(&$items, $realm, $module,
 	    'items' => array(),
 	  );
 	  
-	  // TODO: If there is more than one category facet, merge them into one giant facet display
+	  // If there is more than one category facet, merge them into one facet display
 	  foreach($items as $facet_name => $facet) {
 	  	if(preg_match("/^category_/", $facet_name)) {
-	  		//$items[$facet_name]['title'] = t('Categories');
 	  		$items['all_categories']['count'] += $items[$facet_name]['count'];
 	  		$items['all_categories']['items'] += $items[$facet_name]['items'];
 	  		unset($items[$facet_name]);
 	  	}
 	  }
-	  drupal_set_message('Items:<br><pre>'.print_r($items,true).'</pre>');
   }  
 }
 
