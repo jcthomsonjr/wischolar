@@ -68,55 +68,25 @@ function vsite_search_luceneapi_facet_clear_cache($module) {
 }
 
 /**
- * Provides access to the facets before they are rendered.
- *
- * @param &$facets
- *   An array containing facet definitions returned by hook_luceneapi_facet()
- *   implementations.
- * @param $realm
- *   A string containing the machine readable realm name the facets are being
- *   rendered in.
- * @param $module
- *   A string containing the search module that is collecting the available
- *   facets.  If Search Lucene Content is collecting facets, then $module will
- *   be "luceneapi_node".
- * @param $type
- *   A string containing the type of content $module indexes, NULL if no type.
- * @return
- *   NULL
- */
-function vsite_search_luceneapi_facet_alter(&$facets, $realm, $module, $type = NULL) {
-	if($realm == 'block') {
-		$vsite = vsite_get_vsite();
-		if(!empty($vsite)) {
-			// Remove the taxonomy facets for vocabularies that are not assigned to this vsite
-		  foreach($vsite->group->og_vocabularies as $tid => $term) {
-        $category_name = 'category_'.$term->vid;
-        if(in_array($category_name, array_keys($facets))) {
-          //unset($facets[$category_name]);
-        }
-		  }
-
-		  // Define the taxonomy facets for vocabularies assigned to this vsite
-			foreach($vsite->group->og_vocabularies as $tid => $term) {
-        $facets['category_'. $term->vid] = array(
-	        'title' => $term->name,
-	        'element' => 'category',
-	        'field' => 'category_'. $term->vid,
-	        'type' => 'select',
-	        'callback' => 'luceneapi_facet_multiterm_callback',
-	        'callback arguments' => array(
-	          luceneapi_facet_value_get('category', array()), 'category', TRUE
-	        ),
-	        'delimiter' => ' ',
-	        'description' => t(
-	          'Filter by terms in the %vocabulary vocabulary.',
-	          array('%vocabulary' => $term->name)
-	        ),
-	      );
-			}
-		}
-	}
+* Implementation of hook_luceneapi_facet.
+*/
+function vsite_search_luceneapi_facet($module, $type = NULL) {
+  if ($type == 'node') {
+    return array(
+      'category' => array(
+        'title' => t('Categories'),
+        'element' => 'category',
+        'field' => 'category',
+        'type' => 'select',
+        'callback' => 'luceneapi_facet_multiterm_callback',
+        'callback arguments' => array(
+          luceneapi_facet_value_get('category', array()), 'category', TRUE
+        ),
+        'delimiter' => ' ',
+        'description' => t('Filter by terms in all vsite vocabularies.')
+      ),
+    );
+  }
 }
 
 /**
@@ -139,31 +109,27 @@ function vsite_search_luceneapi_facet_alter(&$facets, $realm, $module, $type = N
  */
 function vsite_search_luceneapi_facet_postrender_alter(&$items, $realm, $module, $type = NULL) {
   // The example is only valid for "node" content.
-  if ('node' != $type) {
+  if ($type != 'node') {
     return;
   }
   
-  if($realm == 'block') {
-	  // Fake a facet item that mimics one of the categories
-	  $items['all_categories'] = array(
-	    'title' => t('Categories'),
-	    'element' => 'category',
-	    'field' => 'category',
-	    'type' => 'select',
-	    'selected' => array(),
-	    'count' => array(),
-	    'items' => array(),
-	  );
-	  
-	  // If there is more than one category facet, merge them into one facet display
-	  foreach($items as $facet_name => $facet) {
-	  	if(preg_match("/^category_/", $facet_name)) {
-	  		$items['all_categories']['count'] += $items[$facet_name]['count'];
-	  		$items['all_categories']['items'] += $items[$facet_name]['items'];
-	  		unset($items[$facet_name]);
-	  	}
-	  }
-  }  
+  if ($realm == 'block' && isset($items['category'])) {
+    $values = array_keys($items['category']['items']);
+    if (!empty($values)) {
+
+      // SQL that converts IDs to term names.
+      $sql = "SELECT tid AS id, name FROM {term_data} WHERE tid IN (". db_placeholders($values) .")";
+      
+      // Adds display names to items.
+      if ($result = db_query($sql, $values)) {
+        while ($row = db_fetch_object($result)) {
+          if (isset($items['category']['items'][$row->id])) {
+            $items['category']['items'][$row->id]['text'] = $row->name;
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -186,19 +152,31 @@ function vsite_search_luceneapi_facet_postrender_alter(&$items, $realm, $module,
  */
 function vsite_search_luceneapi_document_alter($doc, $item, $module, $type = NULL) {
   if ($type == 'node') {
-	  // Index group posts
-	  if (!empty($item->og_groups)) {
-	  	// The version of the ZF Components Search Lucene API is using does not support this feature. Unfortunately we have to delimit multiple values withing a single field.
-	  	$group_nids = join(':', array_keys($item->og_groups));
-	  	
-	  	/**
-	  	 * Adds the field to the Lucene document.  Valid field types are "keyword",
-	     * "unindexed", "binary", "text", and "unstored".  See the Lucene field type
-	     * documentation at http://drupal.org/node/655724 for more information on
-	     * the index types.
-	     */
-	    luceneapi_field_add($doc, 'keyword', 'im_og_gid', $group_nids);   
-	  }
+    try {
+    	/**
+       * By default the "category" field is indexed, but the values can not be
+       * retrieved. This modifies the field so the categories can be retrieved
+       * from the index.
+       */
+      $doc->getField('category')->isStored = TRUE;
+      
+	    // Index group posts
+	    if (!empty($item->og_groups)) {
+	      // The version of the ZF Components Search Lucene API is using does not support this feature. Unfortunately we have to delimit multiple values withing a single field.
+	      $group_nids = join(':', array_keys($item->og_groups));
+	      
+	      /**
+	       * Adds the field to the Lucene document.  Valid field types are "keyword",
+	       * "unindexed", "binary", "text", and "unstored".  See the Lucene field type
+	       * documentation at http://drupal.org/node/655724 for more information on
+	       * the index types.
+	       */
+	      luceneapi_field_add($doc, 'keyword', 'im_og_gid', $group_nids);   
+	    }
+    }
+    catch (Exception $e) {
+      luceneapi_throw_error($e);
+    }
   }
 }
 

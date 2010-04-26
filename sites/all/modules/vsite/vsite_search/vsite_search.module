@@ -52,12 +52,6 @@ function vsite_search_taxonomy($op, $type, $array = NULL) {
             // This cache being stale can prevent new facet filters from working.
             apachesolr_clear_cache();
   				}
-  				
-  				if(VSITE_SEARCH_LUCENE) {
-  					// Enable the matching Lucene facet for this vocabulary
-  					$facet = 'category_'.$array['vid'];
-  					vsite_search_luceneapi_facet_enable('luceneapi_node', array('block', 'fieldset'), $facet);
-  				}
   				break;
   			case 'delete':
   				if(VSITE_SEARCH_SOLR) {
@@ -69,12 +63,6 @@ function vsite_search_taxonomy($op, $type, $array = NULL) {
             apachesolr_save_enabled_facets($facets);
             // This cache being stale can prevent new facet filters from working.
             apachesolr_clear_cache();
-  				}
-  				
-  				if(VSITE_SEARCH_LUCENE) {
-  					// Disable the matching Lucene facet for this vocabulary
-            $facet = 'category_'.$array['vid'];
-            vsite_search_luceneapi_facet_disable('luceneapi_node', array('block', 'fieldset'), $facet);
   				}
   				break;
   		}
@@ -172,7 +160,7 @@ function vsite_search_block($op = 'list', $delta = 0, $edit = array()) {
 	    				$content = '';
 	    				foreach($vsite->group->og_vocabularies as $vid => $vocab) {
 	    					$delta = 'im_vid_'.$vid;
-	    			    $block = apachesolr_search_taxonomy_facet_block($response, $query, $delta);
+	    			    $block = vsite_search_taxonomy_facet_block($response, $query, $delta);
 	    			    //die('Block:<br><pre>'.print_r($block,true).'</pre>');	
 	    			    if(!empty($block)) {	
 	    			      $content .= $block['content'];
