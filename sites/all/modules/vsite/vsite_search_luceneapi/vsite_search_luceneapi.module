@@ -43,11 +43,11 @@ function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array())
 function vsite_search_luceneapi_link_alter(&$links, $node) {
   foreach($links as $name => $link) {
     if(preg_match("/^taxonomy_term_/", $name)) {
-    	$links[$name]['href'] = sprintf('search/apachesolr_search/');
-      $links[$name]['query'] = array(sprintf('category[%d]', substr($name,14)) => substr($name, 14));
+    	$tid = substr($name, 14);
+    	$links[$name]['href'] = sprintf('search/luceneapi_node/'.$link['title']);
+      $links[$name]['query'] = array('category' => array($tid => $tid));
     }
   }
-  drupal_set_message('Links:<br><pre>'.print_r($links,true).'</pre>');
 }
 
 /**
