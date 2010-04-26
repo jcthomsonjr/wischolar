@@ -128,8 +128,9 @@ function vsite_search_apachesolr_block($op = 'list', $delta = 0, $edit = array()
 	    			$content = '';
 	    			foreach($vsite->group->og_vocabularies as $vid => $vocab) {
 	    				$delta = 'im_vid_'.$vid;
-              $block = vsite_search_apachesolr_taxonomy_facet_block($response, $query, $delta);
+              $block = apachesolr_search_taxonomy_facet_block($response, $query, $delta);
 	    			  if(!empty($block)) {	
+	    			  	$content .= '<h3>'.$block['subject'].'</h3>';
 	    			    $content .= $block['content'];
 	    			  } 
             }
@@ -288,96 +289,5 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
   if(!empty($vsite)) {
     // Add filter for group_id
     $query->add_filter('im_og_gid', $vsite->group->nid);
-    
-    // Add filters based on the vsite vocabularies
-  }
-}
-
-/**
- * Generate the facet block for a taxonomy vid delta.
- */
-function vsite_search_apachesolr_taxonomy_facet_block($response, $query, $delta) {
-  $vid = substr($delta, 7);
-  if (!module_exists('taxonomy') || !is_numeric($vid)) {
-    return;
-  }
-
-  // Check that we have a response and a valid vid.
-  if (is_object($response->facet_counts->facet_fields->$delta) && ($vocab = taxonomy_vocabulary_load($vid))) {
-    $reflect_hierarchy = apachesolr_search_get_hierarchical_vocabularies();
-    $contains_active = FALSE;
-    $facets = array();
-
-    foreach ($response->facet_counts->facet_fields->$delta as $tid => $count) {
-       // TODO - for now we don't handle facet missing.
-      if ($tid != '_empty_') {
-        $active = $query->has_filter('tid', $tid);
-        if ($active) {
-          $contains_active = TRUE;
-        }
-        $facets[$tid] = array(
-          '#name' => 'tid',
-          '#value' => $tid,
-          '#exclude' => FALSE,
-          '#count' => $count,
-          '#parent' => 0,
-          '#children' => array(),
-          '#has_children' => FALSE,
-          '#active' => $active,
-        );
-      }
-    }
-
-    if ($facets && $reflect_hierarchy[$vocab->vid]) {
-      $placeholders = db_placeholders($facets);
-      $tids = array_keys($facets);
-      // @todo: faster as 2x separate queries?
-      $result = db_query("SELECT tid, parent FROM {term_hierarchy} WHERE parent > 0 AND (tid IN ($placeholders) OR parent IN ($placeholders))", array_merge($tids, $tids));
-      while ($term = db_fetch_object($result)) {
-        // Mark all terms that are parents for later CSS class.
-        // We assume data in the Solr index is complete - potential for some
-        // breakage here.
-        if (isset($facets[$term->parent])) {
-          $facets[$term->parent]['#has_children'] = TRUE;
-          if (isset($facets[$term->tid])) {
-            $facets[$term->tid]['#parent'] = $term->parent;
-            // Use a reference so we see the updated data.
-            $facets[$term->parent]['#children'][] = &$facets[$term->tid];
-          }
-        }
-      }
-
-      // Check for the case like starting on a taxonomy/term/$tid page
-      // where parents are not marked as active.
-      // @todo: can we make this more efficient?
-      do {
-        $added_active = FALSE;
-        foreach ($facets as $tid => $field) {
-          if ($field['#active'] && $field['#parent'] && !$facets[$field['#parent']]['#active']) {
-            // This parent has an active child.
-            $added_active = TRUE;
-            $query->add_filter('tid', $field['#parent']);
-            $facets[$field['#parent']]['#active'] = TRUE;
-          }
-        }
-      } while ($added_active);
-      foreach ($facets as $tid => $field) {
-        if (!empty($field['#parent'])) {
-          // We will render it via its parent.
-          unset($facets[$tid]);
-        }
-      }
-    }
-
-    $items = apachesolr_search_nested_facet_items($query, $facets, $response->response->numFound);
-    die('Facets:<br><pre>'.print_r($facets,true).'</pre>');
-    // Process all terms into an item list
-    if ($items && ($response->response->numFound > 1 || $contains_active)) {
-      $limit = isset($initial_limits['apachesolr_search'][$delta]) ? $initial_limits['apachesolr_search'][$delta] : $limit_default;
-      return array(
-        'subject' => t('Filter by @name', array('@name' => $vocab->name)),
-        'content' => theme('apachesolr_facet_list', $items, $limit),
-      );
-    }
   }
 }
