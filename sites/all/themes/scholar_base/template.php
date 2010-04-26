@@ -67,38 +67,3 @@ function scholar_base_context_links($links) {
   }
   return $output;
 }
-
-/**
- * Themes facets displayed in the block realm.
- *
- * @param $items
- *   An array of items being themed.
- * @param $module
- *   A string containing the module handling the search.
- * @return
- *   A string containing the themed list.
- */
-function scholar_base_luceneapi_facet_block($items, $module) {
-  foreach ($items as $item) {
-    foreach ($item['items'] as $value => $args) {
-    	if($item['element'] == 'category') {
-    		$term = taxonomy_get_term($value);
-    		if($term) {
-		    	$vocab = taxonomy_vocabulary_load($term->vid);
-		    	if($vocab) {
-		    		$item['items'][$vocab->name]['data'] = $vocab->name;
-		    		$item['items'][$vocab->name]['children'][$value] = theme($args['function'], $args['text'], $args['path'], $args['options'], $args['count']);
-		    		unset($item['items'][$value]);
-		    	}
-	    	}
-    	}
-	    else {
-	      $item['items'][$value] = theme(
-	        $args['function'], $args['text'], $args['path'], $args['options'], $args['count']
-	      );
-    	}
-    }
-    $output .= theme('item_list', $item['items'], check_plain($item['title']));
-  }
-  return $output;
-}
