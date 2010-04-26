@@ -3,29 +3,36 @@
 include_once('iqss_project.features.inc');
 
 function iqss_project_theme(){
-  
+
   $path = drupal_get_path('module', 'iqss_project') . '/theme';
-  
+
   //top bocks
+
+  $items['project_top_links'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-top-links',
+    'path' => $path,
+  );
+
   $items['project_slideshow'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'project-slideshow',
     'path' => $path,
   );
-  
+
     $items['project_big_text'] = array(
     'arguments' => array(),
     'template' => 'project-big-text',
     'path' => $path,
   );
-  
+
   //middle blocks
   $items['project_create'] = array(
   'arguments' => array('tree' => array()),
   'template' => 'project-create',
   'path' => $path,
   );
-  
+
   $items['project_maintain'] = array(
   'arguments' => array('tree' => array()),
   'template' => 'project-maintain',
@@ -37,48 +44,47 @@ function iqss_project_theme(){
     'template' => 'project-control',
     'path' => $path,
   );
-  
+
   $items['project_collaborate'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'project-collaborate',
     'path' => $path,
   );
-  
+
   //bottom block
     $items['project_site_examples'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'project-site-examples',
     'path' => $path,
   );
-  
+
   return $items;
 }
 
- 
+
 function iqss_project_menu(){
   $items = array();
- 
-  // nodeautocomplete callback for scholar 
+
+  // nodeautocomplete callback for scholar
   $items['iqss_scholar_home'] = array(
-    'type' => MENU_CALLBACK, 
-    'title' => 'Scholars\' Web Sites Project', 
-    'page callback' => 'iqss_project_homepage', 
+    'type' => MENU_CALLBACK,
+    'title' => 'Scholars\' Web Sites Project',
+    'page callback' => 'iqss_project_homepage',
     'access arguments' => array(
-      'access content' 
-    ), 
+      'access content'
+    ),
   );
-  
+
   return $items;
 }
 
 
 function iqss_project_homepage(){
-	
-  $s_content = '<div id="content-row-1">'.theme('project_big_text').'</div>';
+	$s_content = '<div id="content-row-1">'.theme('project_big_text').'</div>';
   $s_content .= '<div id="content-row-2">'.theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate'). '</div>' ;
 
   return $s_content;
-  
+
 }
 
 /**
@@ -108,6 +114,8 @@ function iqss_project_preprocess_page(&$vars){
   }
   //link for front page button
   $vars['front_button_link'] = ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
+  $vars['front_top_links'] = theme('project_top_links');
+
 }
 
 

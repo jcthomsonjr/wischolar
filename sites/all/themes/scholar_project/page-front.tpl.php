@@ -29,14 +29,7 @@
           </div><!-- /header-left -->
           <div id="header-right" class="column">
             <?php print $header_right; ?>
-              <ul id="top-front">
-                <!--<li>What's New</li>
-                <li>Features</li>-->
-                <li><?php print l('About', 'help/vsitehelp/Scholar-Web-Sites-Project-Documentation'); ?> </li>
-                <li><?php print  ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user'); ?></li>
-                <li id="get-form"> <?php  if ($front_button_link ) { print $front_button_link; }
-                else{ print '<span id="coming-soon"> Coming Soon </span>'; } ?> </li>
-                </ul>
+              <?php print $front_top_links;?>
            </div><!-- /header-right -->
          </div><!-- /header-wrapper -->
       </div> <!-- /header -->

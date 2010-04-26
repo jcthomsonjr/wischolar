@@ -5,6 +5,13 @@ function scholar_projects_front_theme(){
   $path = drupal_get_path('module', 'scholar_projects_front') . '/theme';
 
   //top bocks
+
+  $items['project_top_links'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-top-links',
+    'path' => $path,
+  );
+
   $items['project_slideshow'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'project-slideshow',
@@ -135,5 +142,6 @@ function scholar_projects_front_preprocess_page(&$vars){
     }
   }
   //link for front page button
-  $vars['front_button_link'] = ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
+    $vars['front_button_link'] = ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
+  $vars['front_top_links'] = theme('project_top_links');
 }
