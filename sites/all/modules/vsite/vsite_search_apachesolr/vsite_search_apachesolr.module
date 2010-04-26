@@ -47,6 +47,23 @@ function vsite_search_apachesolr_taxonomy($op, $type, $array = NULL) {
 }
 
 /**
+ * Implementation of hook_link_alter()
+ * 
+ * Replaces the standard taxonomy path with a path to a Solr search
+ * 
+ * @param mixed $links
+ * @param object $node
+ */
+function vsite_search_apachesolr_link_alter(&$links, $node) {
+	foreach($links as $name => $link) {
+		if(preg_match("/^taxonomy_term_/", $name)) {
+			$links[$name]['href'] = sprintf('search/apachesolr_search/');
+			$links[$name]['query'] = array('filters' => sprintf('tid:%d', substr($name, 14)));
+		}
+	}
+}
+
+/**
  * Implementation of hook_form_alter()
  * 
  * Replaces the search form's submit handler with a custom submit handler to redirect to Apache Solr.
