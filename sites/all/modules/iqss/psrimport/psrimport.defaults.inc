@@ -27,19 +27,19 @@ function psrimport_type_map(){
   'event' => 'event', //50
   'psr_profile' => 'person', //27
   'page' => 'page', //25
-  // 'book' => 'page', //18
+  // 'book' => 'book', //18
   'opportunity' => 'announcement', // 'page', //13
   'psr_resource' => 'page', //13
   'faq' => 'page', //12
   'survey_news' => 'announcement', //9
   //'project_issue' => 'page', //5 content type cannot be found in list of types on d5 psr site
- // 'education' => 'page', // 4
-  'conf_presentation' => '',  //3
+ // 'education' => 'page', // 4 content type cannot be found in list of types on d5 psr site
+  'conf_presentation' => 'event',  //3
   'article' => 'page', //2
   'story' => 'page', //1
-  'conference' => '', //1  
-  // 'project_project' => '', //1
-  // 'webform' => '', //1
+  'conference' => 'event', //1  
+  // 'project_project' => '', //1 content type cannot be found in list of types on d5 psr site
+  // 'webform' => '', //1 //not importing this
   );
 }
 

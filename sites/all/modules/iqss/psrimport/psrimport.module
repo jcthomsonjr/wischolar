@@ -9,12 +9,15 @@ DEFINE(PSRIMPORT_FS_PATH, '/nfs/www/edu-harvard-iq-scholar-dev3'); // absolute p
  */
 function psrimport_import($drush_run = 0){
   DEFINE(PSR_DRUSH_RUN, $drush_run);
- 
+  
   psrimport_print( 'Beginning import...' );
   
   psrimport_import_users();
   psrimport_create_site();
-  psrimport_import_content(array('resource'));
+  psrimport_import_content();
+  
+  //import books seperately
+  psrimport_import_books();
 
   psrimport_print( 'Import Completed' );
 }
@@ -69,8 +72,8 @@ function psrimport_create_site(){
     define(PSR_SID, $vsite -> sid);
     psrimport_create_files_directory($vsite -> purl); 
     //make sure these features are enabled
-    $features = array('scholar_links', 'scholar_pages', 'scholar_profiles', 'scholar_announcements', 'scholar_events'); 
-    psrimport_enable_features($vsite);
+    $features = array('scholar_links', 'scholar_pages', 'scholar_profiles', 'scholar_announcements', 'scholar_events', 'scholar_book'); 
+    psrimport_enable_features($vsite, $features);
   }
 }
 
@@ -107,21 +110,12 @@ function psrimport_import_node($old_type, $new_type){
     db_set_active('psrd5');
     $data = db_fetch_object(db_query("SELECT n.nid, n.uid, n.status, n.created, n.title, nr.body, nr.teaser 
     FROM {node_revisions} nr INNER JOIN {node} n USING(nid) HAVING n.nid = %d", $node_list  -> nid));
-    
-    //gerneric node data
-    $node = new stdClass(); 
-    $node -> type = $new_type;
-    $node -> title = $data -> title;
-    $node -> body = $data -> body;
-    $node -> teaser = $data -> teaser;
-    $node -> created = $data -> created;
-    $node -> changed = $data -> changed;
-    $node -> status = $data -> status;
-    $node -> uid = array_search( $data -> uid, variable_get('psrimport_uid_map', array()));
+
+    $node = psrimport_create_generic_node($data, $new_type);
     
     //find all the terms associated with the node and place in temporary property ( see hook_nodeapi )
-    $node -> terms = _psrimport_weed_terms($node_list  -> nid);
-   
+    $node -> terms = _psrimport_weed_terms($node_list  -> nid);  
+    
     //now pass the node object by reference to add custom/cck field values
      if(function_exists('psrimport_' . $old_type)) call_user_func('psrimport_' . $old_type, $node, $data ->nid, 'content_type_' . $old_type); 
      
@@ -133,6 +127,22 @@ function psrimport_import_node($old_type, $new_type){
      psrimport_get_files($node, $node_list -> nid);     
   }
 }
+
+function psrimport_create_generic_node($data, $type){
+    //gerneric node data
+    $node = new stdClass(); 
+    $node -> type = $type;
+    $node -> title = $data -> title;
+    $node -> body = $data -> body;
+    $node -> teaser = $data -> teaser;
+    $node -> created = $data -> created;
+    $node -> changed = $data -> changed;
+    $node -> status = $data -> status;
+    $node -> uid = array_search( $data -> uid, variable_get('psrimport_uid_map', array()));
+    
+    return $node;
+}
+
 
 function psrimport_resource(&$node, $old_nid, $table){
    //add links data to body
@@ -185,11 +195,6 @@ function psrimport_psr_profile(&$node, $old_nid, $table){
 function psrimport_page(&$node, $old_nid, $table){
   //no cck fields to retreive
   return;
-}
-
-function psrimport_book(&$node, $old_nid, $table){
-  //TODO: uses  table content_field_link
-
 }
 
 function psrimport_opportunity(&$node, $old_nid, $table){
@@ -347,8 +352,10 @@ function psrimport_vsite_vocabulary_default(){
  */
 function psrimport_nodeapi(&$node, $op){
   switch ($op) {
+    case 'presave':
+      break;
+    
     case 'insert':
-
       if (!vsite_get_vsite()){
         //add node to og
         psrimport_node_to_og($node -> nid);
@@ -372,4 +379,98 @@ function _psrimport_weed_terms($old_nid){
     $terms[$data -> vid] = $data -> name;    
   } 
   return $terms; 
+}
+
+
+function psrimport_import_books(){
+  global $book_node_map;
+  $book_node_map = array();
+  db_set_active('psrd5');
+  
+  //first get all top level books nids
+  $levels = array(
+   '=' => 1,
+   '>' => 0
+   );
+  
+  foreach($levels as $operator => $top_level){
+     db_set_active('psrd5');
+     $res = db_query("SELECT DISTINCT(nid) FROM {book} WHERE parent $operator %d", 0);
+    while ($node_list = db_fetch_object($res)){
+      db_set_active('psrd5');
+      $data = db_fetch_object(db_query("SELECT n.nid, n.uid, n.status, n.created, n.title, nr.body, nr.teaser
+    FROM {node_revisions} nr INNER JOIN {node} n USING(nid) HAVING n.nid = %d", $node_list  -> nid));
+
+      $node = psrimport_create_generic_node($data, 'book');
+     //find all the terms associated with the node and place in temporary property ( see hook_nodeapi )
+    $node -> terms = _psrimport_weed_terms($node_list  -> nid);  
+      
+         //set variable for this book - notating this because it is only book with multiple levels of child pages
+      if ($node -> title == 'Resources_Old')  variable_set('psrimport_multilevel_book_nid', $node_list  -> nid);
+      
+      psrimport_book($node, $node_list -> nid, $top_level);            
+      db_set_active('default');
+      node_save($node);
+            
+      $book_node_map[ $node_list -> nid ] = $node -> nid; // this array maps old nid to new nid - using in psrimport_book
+      psrimport_print("Added book node: {$node -> title}");
+      //check for files
+      psrimport_get_files($node, $node_list -> nid);
+    }
+  }
+}
+ 
+
+function psrimport_book(&$node, $old_nid, $top_level){
+  global $book_node_map;
+
+  switch($top_level){
+    //top level book nodes
+    case 1:
+      $node -> book =   array(
+      'nid' => 'new',
+      'bid' => 'new',
+      );
+       
+      break;
+  
+    //child book nodes
+    case 0:
+    $old_parent_nid = variable_get('psrimport_multilevel_book_nid', 0);  // old nid for parent node
+    $book_data = psrimport_get_book_data($book_node_map[ $old_parent_nid ]); //pass the new parent nid to the function    
+    
+    $node -> book = array(  
+    'nid' => 'new',    
+    'menu_name' => 'book-toc-' . $book_data -> bid,
+    'plid' => $book_data -> mlid, ///parent node's mlid
+    'bid' => $book_data -> bid,   
+    );    
+    break;        
+  }
+  
+  //find links(if any) and add to body     //TODO: uses  table content_field_link
+   db_set_active('psrd5');
+   $additional_text = '';
+   $res = db_query("SELECT * FROM {content_field_link} WHERE nid = %d ORDER by delta ASC", $old_nid);
+   while($data = db_fetch_object($res)){
+     if(strlen($data -> field_link_url)){
+     $additional_text .= '<li>' . l($data -> field_link_title, $data -> field_link_url) . '</li>';
+     }
+   }
+
+   if (strlen($additional_text)){
+     $node -> body .=  "<p>Link(s): <ul> $additional_text <ul><p>";
+   }
+ }
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $nid
+ * @return unknown
+ */
+function psrimport_get_book_data($nid){
+  db_set_active('default');
+  //mlid is parent mlid
+  $book_data =  db_fetch_object(db_query("SELECT ml.mlid, b.nid, b.bid FROM {menu_links} ml INNER JOIN {book} b USING(mlid) HAVING b.nid = %d", $nid));
+  return $book_data;
 }

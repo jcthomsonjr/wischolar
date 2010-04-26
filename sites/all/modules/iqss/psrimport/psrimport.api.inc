@@ -25,7 +25,7 @@ if($sid){
  */
   function psrimport_get_sid(){
   db_set_active('default');
-  if (PSR_SID) return PSR_SID;
+  if (is_int(PSR_SID) && (PSR_SID !== 0) ) return PSR_SID;
   $account = user_load(array('name' => 'pmoynihan'));
   if($spaces = vsite_get_vsite_by_owner($account -> uid)){
     return $spaces[0] -> group -> nid;
@@ -51,7 +51,7 @@ function psrimport_create_files_directory($domain){
  * Enable features for PSR site
  */
 function psrimport_enable_features(&$vsite, $features = array()){
-  if (!count($features)) return;
+  if (!is_array($features) || !count($features)) return false;
   vsite_include('vsiteapi');
   foreach ($features as $feature){
     $vsite -> features[$feature] = FEATURE_PUBLIC;
@@ -73,7 +73,9 @@ function psrimport_get_files($node,  $old_nid, $domain = 'psr'){
   db_set_active('psrd5');
   $dst = PSRIMPORT_FS_PATH . '/' . file_directory_path() . '/' .  $domain . '/files';
   $res = db_query("SELECT * FROM {files} WHERE nid = %d", $old_nid);
+  db_set_active('default');
   while ($data = db_fetch_object($res)){
+     
     //define source and check if file exists
     $src = PSR_FS_PATH . '/' . $data -> filepath;
     if (is_file($src)){
@@ -96,7 +98,7 @@ function psrimport_get_files($node,  $old_nid, $domain = 'psr'){
         $file -> status =1;
         $file -> timestamp = filemtime($src);
 
-        db_set_active('default');
+      
         //write data to files table
         drupal_write_record('files', $file);
       //  $fid = db_last_insert_id('files', 'fid');
@@ -112,6 +114,7 @@ function psrimport_get_files($node,  $old_nid, $domain = 'psr'){
       psrimport_print("Error: source file not found: $src");
     }
   }
+  return;
 }
 
 /*** Taxonomy API and Utils ***/
