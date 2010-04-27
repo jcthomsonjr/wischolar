@@ -128,55 +128,6 @@ function vsite_search_luceneapi_vsite_widgets(){
 }
 
 /**
- * hook context_default_contexts
- * @return unknown_type
- */
-function vsite_search_luceneapi_context_default_contexts() {
-  $items = array ();
-  $items[] = array(
-	  'namespace' => 'vsite',
-	  'attribute' => 'search',
-	  'value' => 'luceneapi_announcement_nodes',
-	  'description' => 'Shows the LuceneAPI facets block depending on the node type',
-	  'node' => array(
-	    '0' => 'announcement',
-	  ),
-	  'block' => array(
-	    'luceneapi_facet_luceneapi_node' => array(
-	      'module' => 'luceneapi_facet',
-	      'delta' => 'luceneapi_node',
-	      'weight' => 0,
-	      'region' => 'right',
-	      'status' => '0',
-	      'label' => 'Search Lucene Facets: Search Lucene',
-	      'type' => 'context_ui',
-	    ),
-	  ),
-	);
-	$items[] = array(
-	  'namespace' => 'vsite',
-	  'attribute' => 'search',
-	  'value' => 'luceneapi_announcement_views',
-	  'description' => 'Shows the LuceneAPI facets block depending on the node type',
-	  'views' => array(
-	    '0' => 'scholar_announcements',
-	  ),
-	  'block' => array(
-	    'luceneapi_facet_luceneapi_node' => array(
-	      'module' => 'luceneapi_facet',
-	      'delta' => 'luceneapi_node',
-	      'weight' => 0,
-	      'region' => 'right',
-	      'status' => '0',
-	      'label' => 'Search Lucene Facets: Search Lucene',
-	      'type' => 'context_ui',
-	    ),
-	  ),
-	);
-  return $items;
-}
-
-/**
  * Helper function for enabling facets.
  * 
  * @param string $module
