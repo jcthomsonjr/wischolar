@@ -9,7 +9,8 @@ DEFINE(PSRIMPORT_FS_PATH, '/nfs/www/edu-harvard-iq-scholar-dev3'); // absolute p
  */
 function psrimport_import($drush_run = 0){
   DEFINE(PSR_DRUSH_RUN, $drush_run);
-  
+  db_set_active('psrd5');
+     
   psrimport_print( 'Beginning import...' );
   
   psrimport_import_users();
@@ -107,11 +108,16 @@ function psrimport_import_node($old_type, $new_type){
  db_set_active('psrd5');
     $res = db_query("SELECT nid FROM {node} WHERE type = '%s' ", $old_type);
   while ($node_list = db_fetch_object($res)){
+    if ($node_list -> nid == '215') { //skip this node
+      continue;
+    }
     db_set_active('psrd5');
     $data = db_fetch_object(db_query("SELECT n.nid, n.uid, n.status, n.created, n.title, nr.body, nr.teaser 
     FROM {node_revisions} nr INNER JOIN {node} n USING(nid) HAVING n.nid = %d", $node_list  -> nid));
-
+    
     $node = psrimport_create_generic_node($data, $new_type);
+    //get the old path alias
+    $path = psrimport_get_path($node_list -> nid);  
     
     //find all the terms associated with the node and place in temporary property ( see hook_nodeapi )
     $node -> terms = _psrimport_weed_terms($node_list  -> nid);  
@@ -121,7 +127,9 @@ function psrimport_import_node($old_type, $new_type){
      
      //now save the node  - don't forget about the stuff happening in nodeapi    
      db_set_active('default');
-     node_save($node);
+     node_save($node);     
+     //update the url alias
+     psrimport_update_path($node -> nid, $path);
      psrimport_print("Added $old_type node: {$node -> title}");
      //check for files
      psrimport_get_files($node, $node_list -> nid);     
@@ -139,7 +147,7 @@ function psrimport_create_generic_node($data, $type){
     $node -> changed = $data -> changed;
     $node -> status = $data -> status;
     $node -> uid = array_search( $data -> uid, variable_get('psrimport_uid_map', array()));
-    
+   
     return $node;
 }
 
@@ -335,7 +343,9 @@ function psrimport_vsite_vocabulary_default(){
     'name' => $res -> name,
     'content_types' => array($new_type => $new_type),
     'properties' => array (
-    // 'tags' => 1,
+    'tags' => 0,
+    'multiple' => $res -> multiple,
+    'required' => $res -> required,
     'description' =>  $res -> description,
     'help' =>  $res -> description,
     ),
@@ -353,6 +363,7 @@ function psrimport_vsite_vocabulary_default(){
 function psrimport_nodeapi(&$node, $op){
   switch ($op) {
     case 'presave':
+      //dpm($node);
       break;
     
     case 'insert':
@@ -386,45 +397,62 @@ function psrimport_import_books(){
   global $book_node_map;
   $book_node_map = array();
   db_set_active('psrd5');
-  
-  //first get all top level books nids
-  $levels = array(
-   '=' => 1,
-   '>' => 0
-   );
-  
-  foreach($levels as $operator => $top_level){
-     db_set_active('psrd5');
-     $res = db_query("SELECT DISTINCT(nid) FROM {book} WHERE parent $operator %d", 0);
-    while ($node_list = db_fetch_object($res)){
-      db_set_active('psrd5');
-      $data = db_fetch_object(db_query("SELECT n.nid, n.uid, n.status, n.created, n.title, nr.body, nr.teaser
-    FROM {node_revisions} nr INNER JOIN {node} n USING(nid) HAVING n.nid = %d", $node_list  -> nid));
+  $second_level = array(17, 18, 68, 69);  // TODO: hard coded ok???
+  //$third_level = array(16, 19, 20, 21, 22, 24, 24, 26, 27, 28, 29, 30, 31 );  // TODO: hard coded ok???
+  for($level = 1; $level < 4; $level++) {
+    db_set_active('psrd5');
+    switch ($level){      
+      case 1:
+        //top level
+        $res = db_query("SELECT DISTINCT(nid), parent, weight FROM {book} WHERE parent = %d", 0);
+        break;
 
-      $node = psrimport_create_generic_node($data, 'book');
-     //find all the terms associated with the node and place in temporary property ( see hook_nodeapi )
-    $node -> terms = _psrimport_weed_terms($node_list  -> nid);  
-      
-         //set variable for this book - notating this because it is only book with multiple levels of child pages
-      if ($node -> title == 'Resources_Old')  variable_set('psrimport_multilevel_book_nid', $node_list  -> nid);
-      
-      psrimport_book($node, $node_list -> nid, $top_level);            
-      db_set_active('default');
-      node_save($node);
-            
-      $book_node_map[ $node_list -> nid ] = $node -> nid; // this array maps old nid to new nid - using in psrimport_book
-      psrimport_print("Added book node: {$node -> title}");
-      //check for files
-      psrimport_get_files($node, $node_list -> nid);
+      case 2:
+        //second level
+        $res =  db_query('SELECT DISTINCT(nid), parent, weight FROM {book} WHERE nid IN ('  .   rtrim(str_repeat("%d". ',' ,count($second_level)), ',') . ')' , $second_level);
+
+        break;
+
+      case 3:
+        //third level
+        //reset($second_level); 
+      //  drush_print_r($second_level);
+        //$res =  db_query('SELECT DISTINCT(nid), parent, weight FROM {book} WHERE nid IN ('  .   rtrim(str_repeat("%d". ',' ,count($third_level)), ',') . ')' , $third_level);
+        $res =  db_query('SELECT DISTINCT(nid), parent, weight FROM {book} WHERE parent != %d AND nid NOT IN ('  .   rtrim(str_repeat("%d". ',' ,count($second_level)), ',') . ')' , 0, $second_level);
+        break;
     }
+  while ($node_list = db_fetch_object($res)){
+    db_set_active('psrd5');
+    
+    if ($level == 3 && in_array( $node_list ->nid, $second_level)) continue;  //TODO: to address a bug with level 3 query
+    
+    $data = db_fetch_object(db_query("SELECT n.nid, n.uid, n.status, n.created, n.title, nr.body, nr.teaser
+    FROM {node_revisions} nr INNER JOIN {node} n USING(nid) HAVING n.nid = %d", $node_list  -> nid));
+    //get the old path alias
+    $path = psrimport_get_path($node_list -> nid);     
+    
+    $node = psrimport_create_generic_node($data, 'book');
+    //find all the terms associated with the node and place in temporary property ( see hook_nodeapi )
+    $node -> terms = _psrimport_weed_terms($node_list  -> nid);
+   
+    psrimport_book($node, $node_list->parent, $level, $node_list -> weight);
+    db_set_active('default');
+    node_save($node);
+     //update the url alias
+     psrimport_update_path($node -> nid, $path);
+    $book_node_map[ $node_list -> nid ] = $node -> nid; // this array maps old nid to new nid - using in psrimport_book
+    psrimport_print("Added book node: {$node -> title}");
+    //check for files
+    psrimport_get_files($node, $node_list -> nid);
+     }
   }
 }
  
 
-function psrimport_book(&$node, $old_nid, $top_level){
+function psrimport_book(&$node, $old_parent_nid, $level, $weight = 0){ 
   global $book_node_map;
 
-  switch($top_level){
+  switch($level){
     //top level book nodes
     case 1:
       $node -> book =   array(
@@ -435,15 +463,16 @@ function psrimport_book(&$node, $old_nid, $top_level){
       break;
   
     //child book nodes
-    case 0:
-    $old_parent_nid = variable_get('psrimport_multilevel_book_nid', 0);  // old nid for parent node
-    $book_data = psrimport_get_book_data($book_node_map[ $old_parent_nid ]); //pass the new parent nid to the function    
+    default:
+   
+    $book_data = psrimport_get_book_data($book_node_map[ $old_parent_nid ]); //pass the new parent nid to the function   
     
     $node -> book = array(  
     'nid' => 'new',    
     'menu_name' => 'book-toc-' . $book_data -> bid,
     'plid' => $book_data -> mlid, ///parent node's mlid
-    'bid' => $book_data -> bid,   
+    'bid' => $book_data -> bid,  
+    'weight' => $weight, 
     );    
     break;        
   }

@@ -48,7 +48,7 @@ function psrimport_create_files_directory($domain){
 }
 
 /**
- * Enable features for PSR site
+ * Enable features
  */
 function psrimport_enable_features(&$vsite, $features = array()){
   if (!is_array($features) || !count($features)) return false;
@@ -195,6 +195,20 @@ function psrimport_get_event_times($old_nid){
   $start = date("Y-m-d", $times['event_start']). 'T' . date("H:i:s", $times['event_start']);
   $end = date("Y-m-d", $times['event_end']). 'T' . date("H:i:s", $times['event_end']);
   return array('value' => $start, 'value2' => $end); 
+}
+
+/**
+ * Returns path (url alias) for a node on PSR site
+ */
+function psrimport_get_path($nid){
+  db_set_active('psrd5');
+  return db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", 'node/' . $nid));
+}
+
+function psrimport_update_path($nid, $path){
+  $src = 'node/' . $nid;
+  db_query("DELETE FROM {url_alias} WHERE src = '%s' " , $src);
+  db_query("INSERT INTO {url_alias} (src , dst) VALUES ('%s' , '%s')" , $src, $path);
 }
 
 /**
