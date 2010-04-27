@@ -214,3 +214,29 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
     $query->add_filter('im_og_gid', $vsite->group->nid);
   }
 }
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function vsite_search_apachesolr_strongarm() {
+  $conf = array();
+  $conf['apachesolr_cron_limit'] = 50;
+  $conf['apachesolr_enabled_facets'] = array(
+    'apachesolr_search' => array(
+      'uid' => 'uid',
+      'type' => 'type',
+      'created' => 'created',
+    ),
+  );
+  $conf['apachesolr_failure'] = 'show_error';
+  $conf['apachesolr_og_groupnode'] = 0;
+  $conf['apachesolr_read_only'] = 0;
+  $conf['apachesolr_rows'] = 10;
+  $conf['apachesolr_search_default_previous'] = 0;
+  $conf['apachesolr_search_make_default'] = 1;
+  $conf['apachesolr_search_spellcheck'] = 1;
+  $conf['apachesolr_search_taxonomy_links'] = 1;
+  $conf['apachesolr_search_taxonomy_previous'] = 0;
+  $conf['apachesolr_set_nodeapi_messages'] = 1;
+  return $conf;
+}

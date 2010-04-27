@@ -1,6 +1,21 @@
 <?php
 
 /**
+ * Helper to implementation of hook_ctools_plugin_api().
+ */
+function _vsite_search_apachesolr_ctools_plugin_api() {
+  $args = func_get_args();
+  $module = array_shift($args);
+  $api = array_shift($args);
+  if ($module == "context" && $api == "context") {
+    return array("version" => 2);
+  }
+  else if ($module == "strongarm" && $api == "strongarm") {
+    return array("version" => 1);
+  }
+}
+
+/**
  * Helper to implementation of hook_user_default_permissions().
  */
 function _vsite_search_apachesolr_user_default_permissions() {
@@ -123,4 +138,102 @@ function _vsite_search_apachesolr_context_default_contexts() {
     'status' => 1,
   );
   return $items;
+}
+
+/**
+ * Helper to implementation of hook_strongarm().
+ */
+function _vsite_search_apachesolr_strongarm() {
+  $export = array();
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_cron_limit';
+  $strongarm->value = '50';
+  $export['apachesolr_cron_limit'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_enabled_facets';
+  $strongarm->value = array(
+    'apachesolr_search' => array(
+      'uid' => 'uid',
+      'type' => 'type',
+      'created' => 'created',
+    ),
+  );
+  $export['apachesolr_enabled_facets'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_failure';
+  $strongarm->value = 'show_error';
+  $export['apachesolr_failure'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_og_groupnode';
+  $strongarm->value = '0';
+  $export['apachesolr_og_groupnode'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_read_only';
+  $strongarm->value = '0';
+  $export['apachesolr_read_only'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_rows';
+  $strongarm->value = '10';
+  $export['apachesolr_rows'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_search_default_previous';
+  $strongarm->value = '0';
+  $export['apachesolr_search_default_previous'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_search_make_default';
+  $strongarm->value = '1';
+  $export['apachesolr_search_make_default'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_search_spellcheck';
+  $strongarm->value = 1;
+  $export['apachesolr_search_spellcheck'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_search_taxonomy_links';
+  $strongarm->value = '1';
+  $export['apachesolr_search_taxonomy_links'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_search_taxonomy_previous';
+  $strongarm->value = '0';
+  $export['apachesolr_search_taxonomy_previous'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'apachesolr_set_nodeapi_messages';
+  $strongarm->value = '1';
+  $export['apachesolr_set_nodeapi_messages'] = $strongarm;
+
+  return $export;
 }
