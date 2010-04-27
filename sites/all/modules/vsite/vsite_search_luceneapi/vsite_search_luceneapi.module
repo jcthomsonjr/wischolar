@@ -6,6 +6,8 @@
  * @file
  */
 
+include_once('vsite_search_luceneapi.features.inc');
+
 /**
  * Implementation of hook_block()
  * 
@@ -486,6 +488,8 @@ function vsite_search_luceneapi_luceneapi_facet_empty_taxonomy($og_vocabs=array(
 
 /**
  * Implementation of hook_strongarm().
+ * 
+ * Remove this function for Strongarm 6.x-2.x
  */
 function vsite_search_luceneapi_strongarm() {
   $conf = array();

@@ -26,3 +26,16 @@ function vsite_search_apachesolr_ctools_plugin_api() {
   $args = func_get_args();
   return call_user_func_array('_vsite_search_apachesolr_ctools_plugin_api', $args);
 }
+
+/**
+ * Implementation of hook_strongarm().
+ * 
+ * Uncomment this function for Strongarm 6.x-2.x
+ */
+/**
+function vsite_search_apachesolr_strongarm() {
+  module_load_include('inc', 'vsite_search_apachesolr', 'vsite_search_apachesolr.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_vsite_search_apachesolr_strongarm', $args);
+}
+**/
