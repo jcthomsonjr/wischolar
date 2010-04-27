@@ -18,3 +18,12 @@ function vsite_search_luceneapi_context_default_contexts() {
   $args = func_get_args();
   return call_user_func_array('_vsite_search_luceneapi_context_default_contexts', $args);
 }
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function vsite_search_luceneapi_strongarm() {
+  module_load_include('inc', 'vsite_search_luceneapi', 'vsite_search_luceneapi.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_vsite_search_luceneapi_strongarm', $args);
+}
