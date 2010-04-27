@@ -127,8 +127,8 @@ function _scholar_profiles_content_default_fields() {
         ),
       ),
       'default_value_php' => NULL,
-      'label' => 'Institution',
-      'weight' => '31',
+      'label' => 'Affiliation',
+      'weight' => 0,
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -191,7 +191,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Last Name',
-      'weight' => '-3',
+      'weight' => '-2',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -254,7 +254,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Middle Name or Initial',
-      'weight' => '-2',
+      'weight' => '-3',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -325,10 +325,76 @@ function _scholar_profiles_content_default_fields() {
       'default_image' => NULL,
       'use_default_image' => 0,
       'label' => 'Photo',
-      'weight' => '-1',
+      'weight' => '3',
       'description' => '',
       'type' => 'imagefield_crop_widget',
       'module' => 'imagefield_crop',
+    ),
+  );
+
+  // Exported field: field_person_title
+  $fields[] = array(
+    'field_name' => 'field_person_title',
+    'type_name' => 'person',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => 5,
+      'size' => '60',
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_person_title][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Title',
+      'weight' => '-1',
+      'description' => '',
+      'type' => 'text_textfield',
+      'module' => 'text',
     ),
   );
 
@@ -394,7 +460,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Web Site',
-      'weight' => 0,
+      'weight' => '6',
       'description' => '',
       'type' => 'link',
       'module' => 'link',
@@ -403,11 +469,12 @@ function _scholar_profiles_content_default_fields() {
 
   // Translatables
   array(
+    t('Affiliation'),
     t('First Name'),
-    t('Institution'),
     t('Last Name'),
     t('Middle Name or Initial'),
     t('Photo'),
+    t('Title'),
     t('Web Site'),
   );
 
