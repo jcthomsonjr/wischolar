@@ -69,7 +69,7 @@ function psrimport_enable_features(&$vsite, $features = array()){
  * @param string $domain
  *  vsite domain or purl
  */
-function psrimport_get_files($node,  $old_nid, $domain = 'psr'){
+function psrimport_get_files($node,  $old_nid, $domain = 'psr'){ 
   db_set_active('psrd5');
   $dst = PSRIMPORT_FS_PATH . '/' . file_directory_path() . '/' .  $domain . '/files';
   $res = db_query("SELECT * FROM {files} WHERE nid = %d", $old_nid);
@@ -216,20 +216,28 @@ function psrimport_update_path($nid, $path){
  */
 function psrimport_get_links($table , $field, $old_nid){
   db_set_active('psrd5');
+  $links = array();
   $additional_text ='';
+  $link = '';
+  
   //multiple links
   $res = db_query("SELECT * FROM {$table} WHERE nid = %d", $old_nid);
-  while($data = db_fetch_object($res)){
-    $links[] = $data -> $field;
+  while($data = db_fetch_array($res)){
+    if (strlen($data[$field])){    
+    $links[] = $data[$field];
+    }
   }
 
-  if(count($links)){
+  if(count($links))  $link =  $links[0];    
+  if(count($links) > 1){
     $additional_text .= '<p>Link(s): </p>';
     foreach($links as $link){
       $additional_text .= '<p>' . $link .   '</p>';
-    }
-    return $additional_text;
+    }    
   }
+  //check resource nodes for missing links
+  //if (!strlen($link) && $table == 'content_field_resource_link') psrimport_print("No link found for node $old_nid");
+  return array('single' => $link, 'multiple' => $additional_text);
 }
 
 /**
@@ -250,4 +258,46 @@ function psrimport_print($text){
       return print (t("$text"));
       break;
   }
+}
+
+/**
+ * Internal function to import webform node and data to
+ * a system variable which can be used or imported later
+ */
+function _psrimport_get_webform_data(){
+  db_set_active('psrd5');
+
+  $webform = db_fetch_array(db_query("SELECT n.nid, n.title, n.created, n.changed, n.status, n.uid, nr.body, nr.format
+   FROM {node} n INNER JOIN {node_revisions} nr USING(nid) HAVING n.nid = %d", 9));
+
+  $sub = array();
+  $max =  db_result(db_query("SELECT MAX( sid )FROM webform_submitted_data"));
+
+  for($i = 1; $i <= $max; $i++){
+    $res = db_query("SELECT * FROM {webform_submitted_data} WHERE sid = %d", $i);
+    while($data = db_fetch_object($res)){
+      switch ($data -> cid){
+        case '1':
+          $sub[$i]['email'] = $data -> data;
+          break;
+
+        case '2':
+          $sub[$i]['affilation'] = $data -> data;
+          break;
+          
+        case 3:
+          if( strlen(trim($data -> data))) {
+            $sub[$i]['sessions'][] = trim($data -> data);
+          }
+          break;
+          
+        case 4:
+          $sub[$i]['name'] = $data -> data;
+          break;
+      }
+    }
+  }
+  variable_set('psrimport_webform_node', $webform);
+  variable_set('psrimport_webform_data', $sub);
+  psrimport_print("Captured webform data");
 }

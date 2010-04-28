@@ -9,7 +9,6 @@ DEFINE(PSRIMPORT_FS_PATH, '/nfs/www/edu-harvard-iq-scholar-dev3'); // absolute p
  */
 function psrimport_import($drush_run = 0){
   DEFINE(PSR_DRUSH_RUN, $drush_run);
-  db_set_active('psrd5');
      
   psrimport_print( 'Beginning import...' );
   
@@ -19,7 +18,8 @@ function psrimport_import($drush_run = 0){
   
   //import books seperately
   psrimport_import_books();
-
+  
+  _psrimport_get_webform_data();
   psrimport_print( 'Import Completed' );
 }
 
@@ -64,6 +64,7 @@ function psrimport_import_users(){
  * Create the vsite
  */
 function psrimport_create_site(){
+  db_set_active('default');
   vsite_include('vsiteapi');
   install_include(array('user'));
   $vsite = vsite_vsite_create('pmoynihan',  'psr', variable_get('scholar_default_preset', 'project'));
@@ -108,7 +109,7 @@ function psrimport_import_node($old_type, $new_type){
  db_set_active('psrd5');
     $res = db_query("SELECT nid FROM {node} WHERE type = '%s' ", $old_type);
   while ($node_list = db_fetch_object($res)){
-    if ($node_list -> nid == '215') { //skip this node
+    if (in_array($node_list -> nid, psrimport_skip_nodes() )) { //skip these nodes
       continue;
     }
     db_set_active('psrd5');
@@ -153,8 +154,12 @@ function psrimport_create_generic_node($data, $type){
 
 
 function psrimport_resource(&$node, $old_nid, $table){
+  
+  $link_data = psrimport_get_links('content_field_resource_link', 'field_resource_link_url', $old_nid); 
    //add links data to body
-  $node -> body .= psrimport_get_links('content_field_resource_link', 'field_resource_link_url', $old_nid);
+  $node -> body .= $link_data['multiple'];  
+ //psrimport_print("$old_nid ---- {$node -> title} ---- {$link_data['single']}" );
+ $node -> field_link_href[0] = array('url' => check_url($link_data['single']));   
 }
 
 function psrimport_event(&$node, $old_nid, $table){
@@ -229,7 +234,10 @@ function psrimport_psr_resource(&$node, $old_nid, $table){
     }
   }
   //add links data to body
-  $node -> body .= psrimport_get_links('content_field_psr_resource_link', 'field_psr_resource_link_url', $old_nid);
+  
+   $link_data = psrimport_get_links('content_field_psr_resource_link', 'field_psr_resource_link_url', $old_nid);
+   //add links data to body
+  $node -> body .= $link_data['multiple'];  
   return;
 }
 
@@ -240,7 +248,9 @@ function psrimport_faq(&$node, $old_nid, $table){
 
 function psrimport_survey_news(&$node, $old_nid, $table){
 //add links data to body
-  $node -> body .= psrimport_get_links('content_field_news_link', 'field_news_link_url', $old_nid);
+  $link_data = psrimport_get_links('content_field_news_link', 'field_news_link_url', $old_nid);
+   //add links data to body
+  $node -> body .= $link_data['multiple'];  
   return;
 }
 
@@ -288,7 +298,9 @@ function psrimport_story(&$node, $old_nid, $table){
 
 function psrimport_article(&$node, $old_nid, $table){
 //add links data to body
-  $node -> body .= psrimport_get_links('content_field_article_link', 'field_article_link_url', $old_nid);
+   $link_data = psrimport_get_links('content_field_article_link', 'field_article_link_url', $old_nid);
+   //add links data to body
+  $node -> body .= $link_data['multiple'];  
   return;
 }
 

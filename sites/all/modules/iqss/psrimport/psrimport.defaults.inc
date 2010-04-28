@@ -43,6 +43,19 @@ function psrimport_type_map(){
   );
 }
 
+/**
+ * Nodes to skip on import content because they type needs 
+ * to change to book or node doesn't translate to scholars
+ */
+function psrimport_skip_nodes(){
+	return array(
+	 215, //people listing html page
+	 47, //Course Guide for Harvard Students - 'page-book'
+	 16, //New Technologies and Survey Research Conference Presentations 'resource-book'
+	 24, //General Survey Reference 'resource-book'
+	);	 
+}
+
 function psrimport_features(){
   $features = array_unique(psrimport_type_map());  
   drush_print_r($features);  
