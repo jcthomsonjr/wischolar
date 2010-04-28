@@ -2,7 +2,7 @@
 
 include_once('gkimport.drush.inc');
 
-define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev3'); //file system path to drupal root (NO TRAILING SLASH)
+define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev1'); //file system path to drupal root (NO TRAILING SLASH)
 define(GKIMPORT_DOWNLOAD, FALSE);  // TRUE tells module to download files with wget, otherwise assumes files stored locally
 
 /**
@@ -14,7 +14,7 @@ function gkimport_import($drush_run = 0){
   drush_print("Download mode is set to $mode");
   drush_print("Begining import...");
   
-  gkimport_clean(); // NOTE: This should be removed when run on production
+ // gkimport_clean(); // NOTE: This should be removed when run on production
   gkimport_create_site();
   gkimport_parse_files();
   gkimport_software_pubs_set();
@@ -25,6 +25,7 @@ function gkimport_import($drush_run = 0){
   gkimport_import_bio();
   gkimport_import_links();
   gkimport_import_classes();
+  gkimport_assign_theme();
 
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
@@ -43,7 +44,7 @@ function gkimport_create_site(){
   $settings = array(
   'name' => 'gking',
   'mail' => 'jweiner@iq.harvard.edu',  // 'king@harvard.edu'
-  'pass' => 'test',
+  'pass' => user_password(),
   'roles' => array(variable_get('scholar_manager_role', 'scholar admin')),
   'domain' => 'gking',
   'preset' => variable_get('scholar_default_preset', 'scholar'),
@@ -768,10 +769,13 @@ function gkimport_software_pubs_set(){
   install_include(array('taxonomy'));
   $vid = install_taxonomy_get_vid('gking_vocabulary');
   $tid = install_taxonomy_add_term($vid, 'Software');
+  $biblio_type_id = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s' " , 'Software')); // should be 113
   foreach(_gkimport_software_pubs() as $title){
     $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ",$title));
     if ($nid){
       $node = node_load($nid);
+      db_query("UPDATE {biblio} SET biblio_type = %d WHERE nid =  %d" , $biblio_type_id, $nid); 
+      drush_print("Updated biblio type to Software for node: $nid {$node -> title}");
       drush_print("Found match for software term: $nid {$node -> title}");
       db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $nid, $tid);
       db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid);
@@ -788,29 +792,42 @@ function gkimport_software_pubs_set(){
  * An array of titles for publications that should have a term "software" added
  */
 function _gkimport_software_pubs(){
-  
-return array(
-'CEM: Coarsened Exact Matching Software',
-'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
-'Zelig: Everyone\'s Statistical Software',
-'JudgeIt: A Program for Evaluating Electoral Systems',
-'ReadMe: Software for Automated Content Analysis',
-'Amelia II: A Program for Missing Data',
-'VA: Software for Analyzing Verbal Autopsy Data',
-'YourCast: Time Series Cross-Sectional Forecasting with Your Assumptions',
-'WhatIf: Software for Evaluating Counterfactuals',
-'The Dangers of Extreme Counterfactuals',
-'When Can History Be Our Guide? The Pitfalls of Counterfactual Inference',
-'Enhancing the Validity and Cross-cultural Comparability of Measurement in Survey Research',
-'ReLogit: Rare Events Logistic Regression',
-'CLARIFY: Software for Interpreting and Presenting Statistical Results',
-'EI: A Program for Ecological Inference',
-'EzI: A(n Easy) Program for Ecological Inference',
-'COUNT: A Program for Estimating Event Count and Duration Regressions',
-'MAXLIK, a set of Gauss programs, annotated for pedagogical purposes, to implement the maximum likelihood models in Unifying Political Methodology: The Likelihood Theory of Statistical Inference',
-'Dataverse Network Project',
-'The Harvard Geospatial Library Project',
-);    
+  return array(
+  'CEM: Coarsened Exact Matching Software',
+  'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
+  'Zelig: Everyone\'s Statistical Software',
+  'JudgeIt: A Program for Evaluating Electoral Systems',
+  'ReadMe: Software for Automated Content Analysis',
+  'Amelia II: A Program for Missing Data',
+  'VA: Software for Analyzing Verbal Autopsy Data',
+  'YourCast: Time Series Cross-Sectional Forecasting with Your Assumptions',
+  'WhatIf: Software for Evaluating Counterfactuals',
+  'The Dangers of Extreme Counterfactuals',
+  'When Can History Be Our Guide? The Pitfalls of Counterfactual Inference',
+  'Enhancing the Validity and Cross-cultural Comparability of Measurement in Survey Research',
+  'ReLogit: Rare Events Logistic Regression',
+  'CLARIFY: Software for Interpreting and Presenting Statistical Results',
+  'EI: A Program for Ecological Inference',
+  'EzI: A(n Easy) Program for Ecological Inference',
+  'COUNT: A Program for Estimating Event Count and Duration Regressions',
+  'MAXLIK, a set of Gauss programs, annotated for pedagogical purposes, to implement the maximum likelihood models in Unifying Political Methodology: The Likelihood Theory of Statistical Inference',
+  'Dataverse Network Project',
+  'The Harvard Geospatial Library Project',
+  );
+}
+
+/**
+ * Assign the custom theme
+ */
+function gkimport_assign_theme(){
+  $theme_name = 'gking';
+  $account = user_load(array('name' => 'gking'));
+  $vsites = vsite_get_vsite_by_owner($account -> uid);
+  $sid = $vsites[0] -> group -> nid;
+  $vsite = spaces_load("og", $sid = $node -> nid, $is_active = FALSE);
+  $vsite -> group -> og_theme = $theme_name;
+  spaces_save($vsite);
+  drush_print("Assigned custom theme: $theme_name");
 }
 
 /**
@@ -820,7 +837,7 @@ return array(
 function gkimport_clean(){
   $path = GKIMPORT_FS_PATH . '/sites/scholar/files/gking/files';
   if(GKIMPORT_DOWNLOAD && is_dir($path)){
-    $filespath = '/nfs/www/edu-harvard-iq-scholar-dev3/sites/scholar/files/gking/files/*.*';
+    $filespath = GKIMPORT_FS_PATH . '/sites/scholar/files/gking/files/*.*';
     $cmd = "rm $filespath" . '/*.*';
     shell_exec($cmd);
     drush_print("Ran shell command: $cmd");
