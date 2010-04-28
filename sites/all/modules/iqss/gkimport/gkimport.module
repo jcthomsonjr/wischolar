@@ -65,6 +65,7 @@ function gkimport_create_site(){
     }
     $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
     if ($vsite){
+      define(GKIMPORT_SID, $vsite -> sid );
       $mesage = variable_get('gkimport_drush_run', 0) === 1 ? drush_print(t('Created web site: !domain', array('!domain' => $settings['domain']))) : '';     
       return gkimport_customize_site($vsite);
     }
@@ -821,19 +822,27 @@ function _gkimport_software_pubs(){
  */
 function gkimport_assign_theme(){
   $theme_name = 'gking';
-  $account = user_load(array('name' => 'gking'));
-  $vsites = vsite_get_vsite_by_owner($account -> uid);
-  $sid = $vsites[0] -> group -> nid;
-  $vsite = spaces_load("og", $sid = $node -> nid, $is_active = FALSE);
+  $vsite = spaces_load("og", gkimport_get_sid(), $is_active = FALSE);
   $vsite -> group -> og_theme = $theme_name;
   spaces_save($vsite);
   drush_print("Assigned custom theme: $theme_name");
 }
 
 /**
+ * Returns site id for gary's site
+ */
+function gkimport_get_sid(){
+ if (is_int(GKIMPORT_SID) && GKIMPORT_SID > 0) return GKIMPORT_SID;
+ 
+  $account = user_load(array('name' => 'gking'));
+  $vsites = vsite_get_vsite_by_owner($account -> uid);
+  return $vsites[0] -> group -> nid; 
+}
+
+/**
  * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
  */
-
+/*
 function gkimport_clean(){
   $path = GKIMPORT_FS_PATH . '/sites/scholar/files/gking/files';
   if(GKIMPORT_DOWNLOAD && is_dir($path)){
@@ -842,5 +851,5 @@ function gkimport_clean(){
     shell_exec($cmd);
     drush_print("Ran shell command: $cmd");
   }
-}
+}*/
 
