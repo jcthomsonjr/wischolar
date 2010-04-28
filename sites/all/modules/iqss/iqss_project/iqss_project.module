@@ -78,19 +78,23 @@ function iqss_project_menu(){
   return $items;
 }
 
-
 function iqss_project_homepage(){
-	$s_content = '<div id="content-row-1">'.theme('project_big_text').'</div>';
+  $s_content = '<div id="content-row-1">'.theme('project_big_text').'</div>';
   $s_content .= '<div id="content-row-2">'.theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate'). '</div>' ;
-
   return $s_content;
-
 }
 
 /**
  * Implementation of hook_preprocess_page()
  */
-function iqss_project_preprocess_page(&$vars){
+function scholar_projects_front_preprocess_page(&$vars){
+  $vars['front_top_links'] = theme('project_top_links');
+}
+
+/**
+ * Implementation of template_preprocess_hook()
+ */
+function template_preprocess_project_top_links(&$vars){
   if (!module_exists('scholarregister')) return;
   global $user;
 
@@ -114,8 +118,5 @@ function iqss_project_preprocess_page(&$vars){
   }
   //link for front page button
   $vars['front_button_link'] = ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
-  $vars['front_top_links'] = theme('project_top_links');
-
 }
-
 
