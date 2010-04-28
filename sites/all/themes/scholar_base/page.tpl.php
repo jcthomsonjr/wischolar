@@ -28,6 +28,7 @@
           <?php print $header_top; ?>
         </div><!-- /header-top -->
         <?php endif; ?>
+        <?php if ($header_main || $header_left || $header_right) : ?>
         <div id="header-wrapper">
           <?php if (!empty($header_main)): ?>
             <div id="header-main" class="column">
@@ -47,6 +48,7 @@
           </div><!-- /header-right -->
             <?php endif; ?>
         </div><!-- /header wrapper -->
+        <?php endif; ?>
         <?php if (!empty($navbar)): ?>
         <div id="navbar">
           <?php print $navbar; ?>
@@ -107,11 +109,10 @@
       <?php endif; ?>
       <?php
         global $user, $base_url;
-        purl_disable(TRUE);
-        $home_link =  l('Powered by <span class="poweredby">Open<span>Scholar</span></span>',$base_url);
-        $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE)) : "";
+        $home_link =  l('Powered by OpenScholar',$base_url, array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
+        $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE, 'alias' => FALSE)) : "";
       ?>
-      <p class="copy"><?php print $home_link; ?>. Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University. <?php print $login_link;?></p>
+      <p class="copy">Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University. <?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
       </div> <!-- /#footer -->
     </div> <!-- /container -->
   </div> <!-- /wrapper -->

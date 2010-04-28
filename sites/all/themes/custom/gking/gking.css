@@ -57,6 +57,10 @@ a:hover {
   padding: 0 8px;
   }
 
+.sidebar-right #content-main {
+  padding-left: 0;
+  }
+
 #navbar, #content, #sidebar-left, #sidebar-right, #header-left, #header-main, #header-right {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -87,9 +91,6 @@ a:hover {
   position: relative;
   }
 
-#header {
-  height:19px;
-  }
 
 
 /* HEADER */
@@ -104,12 +105,13 @@ a:hover {
   }
 
 #header-wrapper {
+  height: 260px;
   margin-top: 45px;
   }
 
 #header #header-main, #header #header-right, #header #header-left {
   padding-bottom: 8px;
-  height: 240px;
+  height: 238px;
   margin-top:6px;
   }
 
@@ -174,21 +176,27 @@ body.header-right-main #header-wrapper {
   padding-left:8px;
   }
 
+#header-wrapper {
+  padding-right: 270px;
+  }
+
+.page-home #header-main {
+  padding:0;
+  margin-right: 8px;
+  }
+
+
 /* FOOTER */
 
 #footer {
-    height: 97px;
+    height: 57px;
     position: fixed;
     left: 0;
     bottom: 0;
     right:0;
     background:url(images/footer.png) 0 0 repeat-x transparent;
-    padding-top: 0;
+    padding-top: 40px;
     }
-
-p.copy {
-  clear: both;
-  }
 
 #footer #gking-footer {
   width:984px;
@@ -257,16 +265,18 @@ p.copy {
   }
 
 
-/* FRONT PAGE */
-
-.page-home #header #header-main {
+#header #block-scholar_biocv-bio_blurb {
   background: url(images/front-photo.jpg) 0 0 no-repeat transparent;
-  margin-top: 2px;
+  position:relative;
   padding-top:54px;
   padding-left: 271px;
+  padding-right: 36px;
   height: 198px;
+  margin-top: -4px;
+  margin-left: 0;
   }
 
-.page-home #header-wrapper {
-  padding-right: 547px;
+
+#header #block-scholar_biocv-bio_blurb h3 {
+  display:none;
   }
