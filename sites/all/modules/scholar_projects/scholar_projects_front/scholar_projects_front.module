@@ -116,10 +116,18 @@ function scholar_projects_front_homepage(){
            theme('project_events') .
          '</div>' ;
 }
+
 /**
  * Implementation of hook_preprocess_page()
  */
 function scholar_projects_front_preprocess_page(&$vars){
+  $vars['front_top_links'] = theme('project_top_links');
+}
+
+/**
+ * Implementation of template_preprocess_hook()
+ */
+function template_preprocess_project_top_links(&$vars){
   if (!module_exists('scholarregister')) return;
   global $user;
 
@@ -142,6 +150,5 @@ function scholar_projects_front_preprocess_page(&$vars){
     }
   }
   //link for front page button
-    $vars['front_button_link'] = ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
-  $vars['front_top_links'] = theme('project_top_links');
+  $vars['front_button_link'] = ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
 }
