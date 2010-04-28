@@ -2,7 +2,8 @@
 
 function vsite_generic_settings_init(){
   $active_menu = menu_get_item();
-	if ($active_menu['page_callback'] == 'drupal_get_form' &&
+	if ($active_menu['page_callback'] == 'drupal_get_form' && 
+	    is_array($active_menu['page_arguments']) &&
 	    in_array('cp_settings_form',$active_menu['page_arguments']) && 
 	    in_array('generic',$active_menu['page_arguments'])){
 		$a_settings = module_invoke_all('vsite_generic_settings',vsite_get_vsite(),array());

@@ -78,7 +78,7 @@ class vsite_menus_menus implements vsite_setting {
 	      
 	      $form['menu_items'][$element['link']['mlid']]['#weight'] = $n_count;
 	      $form['menu_items'][$element['link']['mlid']]['menu'] = array(
-	        '#type' => 'radios',
+	        '#type' => 'select',
 	        '#title' => t($element['link']['title']),
 	        '#default_value' => $s_current,
 	        '#options' => $choices,
