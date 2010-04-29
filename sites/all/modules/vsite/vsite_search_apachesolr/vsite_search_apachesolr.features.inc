@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Implementation of hook_user_default_permissions().
  */
@@ -19,12 +20,12 @@ function vsite_search_apachesolr_context_default_contexts() {
 }
 
 /**
- * Implementation of hook_ctools_plugin_api().
+ * Implementation of hook_apachesolr_biblio_default_fields().
  */
-function vsite_search_apachesolr_ctools_plugin_api() {
+function vsite_search_apachesolr_apachesolr_biblio_default_fields() {
   module_load_include('inc', 'vsite_search_apachesolr', 'vsite_search_apachesolr.defaults');
   $args = func_get_args();
-  return call_user_func_array('_vsite_search_apachesolr_ctools_plugin_api', $args);
+  return call_user_func_array('_vsite_search_apachesolr_apachesolr_biblio_default_fields', $args);
 }
 
 /**

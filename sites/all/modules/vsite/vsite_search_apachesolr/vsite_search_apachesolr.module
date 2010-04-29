@@ -165,17 +165,6 @@ function vsite_search_apachesolr_block($op = 'list', $delta = 0, $edit = array()
 }
 
 /**
- * Implementation of hook_vsite_widgets()
- * 
- * @return
- *   Associative array representing a widget
- */
-function vsite_search_apachesolr_vsite_widgets(){
-  $widgets = array();
-  return $widgets;
-}
-
-/**
  * Implementation of hook_apachesolr_modify_query()
  * 
  * @param object $query
@@ -222,12 +211,20 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
  */
 function vsite_search_apachesolr_strongarm() {
   $conf = array();
+  $conf['apachesolr_biblio_index_authors'] = 1;
   $conf['apachesolr_cron_limit'] = 50;
   $conf['apachesolr_enabled_facets'] = array(
     'apachesolr_search' => array(
       'uid' => 'uid',
       'type' => 'type',
       'created' => 'created',
+    ),
+    'apachesolr_biblio' => array(
+      'sm_biblio_contributors' => 'sm_biblio_contributors',
+      'ss_biblio_publisher' => 'ss_biblio_publisher',
+      'ss_biblio_secondary_title' => 'ss_biblio_secondary_title',
+      'ss_biblio_type_of_work' => 'ss_biblio_type_of_work',
+      'ss_biblio_year' => 'ss_biblio_year',
     ),
   );
   $conf['apachesolr_failure'] = 'show_error';
