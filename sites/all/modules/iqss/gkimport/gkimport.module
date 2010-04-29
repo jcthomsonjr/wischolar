@@ -84,8 +84,17 @@ function  gkimport_customize_site($vsite){
   $address = '1737 Cambridge St. Cambridge, MA 02138';
   $sid = $vsite -> group ->nid;
   $vsite -> group -> og_description = "Albert J. Weatherhead III University Professor at Harvard University";
+  
+  //make sure these features are enabled
+  $vsite -> features['scholar_announcements'] = SPACES_OG_PUBLIC;
+  $vsite -> features['scholar_biocv'] = SPACES_OG_PUBLIC; 
+  $vsite -> features['scholar_classes'] = SPACES_OG_PUBLIC; 
+  $vsite -> features['scholar_dvn'] = SPACES_OG_PUBLIC;
+  $vsite -> features['scholar_image_gallery'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_links'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_profiles'] = SPACES_OG_PUBLIC;
+  $vsite -> features['scholar_publications'] = SPACES_OG_PUBLIC;
+
   db_query("UPDATE {content_type_vsite} SET field_vsite_address_value = '%s' WHERE nid = %d", $address, $sid);
   //$cid = 'content:' . $sid . ':' . $sid;
   cache_clear_all("content:$sid:$sid", 'cache_content');
