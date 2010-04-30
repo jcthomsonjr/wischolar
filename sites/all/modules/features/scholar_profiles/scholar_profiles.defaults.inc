@@ -11,7 +11,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_firstname',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-3',
+      'weight' => '-4',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -74,19 +74,20 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_institution',
     'type_name' => 'person',
     'display_settings' => array(
+      'weight' => 0,
+      'parent' => '',
       'label' => array(
-        'format' => 'above',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
+        'format' => 'inline',
       ),
       'teaser' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -140,7 +141,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_lastname',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-1',
+      'weight' => '-2',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -203,7 +204,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_middlename',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-2',
+      'weight' => '-3',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -266,17 +267,17 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_photo',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-4',
+      'weight' => '3',
       'parent' => '',
       'label' => array(
         'format' => 'hidden',
       ),
       'teaser' => array(
-        'format' => 'vsite_design_square_80_80_linked',
+        'format' => 'default',
         'exclude' => 1,
       ),
       'full' => array(
-        'format' => 'vsite_design_square_80_80_default',
+        'format' => 'default',
         'exclude' => 1,
       ),
       '4' => array(
@@ -337,19 +338,20 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_title',
     'type_name' => 'person',
     'display_settings' => array(
+      'weight' => '-1',
+      'parent' => '',
       'label' => array(
-        'format' => 'above',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
+        'format' => 'inline',
       ),
       'teaser' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -403,7 +405,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_website',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '3',
+      'weight' => '6',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
