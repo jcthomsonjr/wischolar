@@ -545,8 +545,8 @@ function gkimport_create_profiles(){
     $node -> uid = $account -> uid;
     $node-> og_groups = array($sid => $sid);
     // $node-> og_groups_both  = array($sid => $account -> name); // is this the right value??
-    $node -> field_person_firstname[0] = array('value' => trim($name['firstname']));
-    $node -> field_person_lastname[0] = array('value' => trim($name['lastname']));
+    $node -> field_person_firstname[0] = array('value' => trim(html_entity_decode($name['firstname'], ENT_COMPAT, 'UTF-8')));
+    $node -> field_person_lastname[0] = array('value' => trim(html_entity_decode($name['lastname'], ENT_COMPAT, 'UTF-8')));
     if(strlen($profile['website'])){
     $node -> field_person_website[0] = array('url' => $profile['website']);
     }
@@ -557,7 +557,7 @@ function gkimport_create_profiles(){
     $node -> teaser = $description;    
  }
   else{
-    $node -> field_person_institution[0] = array('value' => $description);
+    $node -> field_person_institution[0] = array('value' => html_entity_decode($description, ENT_COMPAT, 'UTF-8'));
   }
     node_save($node);
     db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);  
