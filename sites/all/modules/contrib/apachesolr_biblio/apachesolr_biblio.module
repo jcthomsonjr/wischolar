@@ -12,6 +12,24 @@ function apachesolr_biblio_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 10
   );
+  $items['admin/settings/biblio/solr/import'] = array(
+    'title' => 'Import Fields',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('apachesolr_biblio_default_fields_import_form'),
+    'access arguments' => array('administer biblio'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'apachesolr_biblio.export.inc',
+    'weight' => 2,
+  );
+  $items['admin/settings/biblio/solr/export'] = array(
+    'title' => 'Export Fields',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('apachesolr_biblio_default_fields_export_form'),
+    'access arguments' => array('administer biblio'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'apachesolr_biblio.export.inc',
+    'weight' => 3,
+  );
   return $items;
 }
 
@@ -43,7 +61,7 @@ function apachesolr_biblio_get_raw_fields() {
 // These are the fields as apachesolr_biblio knows abouit them.
 function apachesolr_biblio_get_fields() {
   // get current settings
-  $result = db_query("SELECT * FROM {apachesolr_biblio_fields");
+  $result = db_query("SELECT * FROM {apachesolr_biblio_fields}");
   $fields = array();
   while ($row = db_fetch_array($result)) {
     $fields[$row['fid']] = $row;
@@ -52,12 +70,36 @@ function apachesolr_biblio_get_fields() {
   return $fields;
 }
 
+/**
+ * Load a single field either by name or by field ID.
+ *
+ * @param string $name
+ *   The name of the field.
+ * @param int $fid
+ *   The field id.
+ */
+function apachesolr_biblio_get_field($name = NULL, $fid = NULL) {
+  $fields = apachesolr_biblio_get_fields();
+  if (isset($name)) {
+    foreach($fields as $fid => $field) {
+      if($field['name'] == $name) {
+        return $field;
+      }
+    }
+  }
+  elseif (isset($fid)) {
+    return $fields[$fid];
+  }
+  return FALSE;
+}
+
+
 function apachesolr_biblio_apachesolr_update_index(&$document, $node) {
   // Only do stuff with biblio nodes.
   if ($node->type != 'biblio') {
     return;
   }
-  $tz = date_default_timezone();
+  $tz = date_default_timezone_name();
   date_default_timezone_set('UTC');
   $fields = apachesolr_biblio_get_fields();
   foreach ($fields as $fid => $biblio) {
@@ -274,4 +316,17 @@ function apachesolr_biblio_block($op = 'list', $delta = 0, $edit = array()) {
       apachesolr_facetcount_save($edit);
       break;
   }
+}
+
+/**
+ * Implementation of hook_features_api().
+ */
+function apachesolr_biblio_features_api() {
+  return array(
+    'apachesolr_biblio' => array(
+      'default_hook' => 'apachesolr_biblio_default_fields',
+      'features_source' => TRUE,
+      'file' => drupal_get_path('module', 'apachesolr_biblio') . '/apachesolr_biblio.features.inc',
+    ),
+  );
 }

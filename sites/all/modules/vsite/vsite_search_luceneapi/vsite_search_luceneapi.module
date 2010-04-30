@@ -27,7 +27,7 @@ function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array())
 		      require_once(drupal_get_path('module', 'luceneapi_facet').'/luceneapi_facet.block.inc');
 		    	return array(
 		    	  'subject' => t('Scholar Site'),
-		    		'content' => luceneapi_facet_block_view('vsite_search')
+		    		'content' => luceneapi_facet_block_view('vsite_search_luceneap')
 		    	);
     	}
       break;
@@ -520,6 +520,14 @@ function vsite_search_luceneapi_strongarm() {
     'type' => 'type',
     'original_keys' => 'original_keys',
   );
+  $fields = luceneapi_biblio_get_fields();
+  foreach($fields as $fid => $field) {
+    $conf['luceneapi_facet:luceneapi_node:block'][$field['name']] = $field['name'];
+    $conf['luceneapi_facet:luceneapi_node:fieldset'][$field['name']] = $field['name'];
+  }
+  $conf['luceneapi_facet:luceneapi_node:block']['biblio_contributors'] = 'biblio_contributors';
+  $conf['luceneapi_facet:luceneapi_node:fieldset']['biblio_contributors'] = 'biblio_contributors';
+  
   $conf['luceneapi_node:excluded_types'] = array(
     'project' => 'project',
     'vsite' => 'vsite',

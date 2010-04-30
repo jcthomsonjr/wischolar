@@ -1,0 +1,315 @@
+<?php
+// $Id: luceneapi_biblio.module,v 1.1.2.2 2010/04/30 12:38:57 ebeyrent Exp $
+
+function luceneapi_biblio_menu() {
+  $items = array();
+  $items['admin/settings/biblio/lucene'] = array(
+    'title' => 'Search Lucene index',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('luceneapi_biblio_fields_form'),
+    'access arguments' => array('administer biblio'),
+    'file' => 'luceneapi_biblio.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10
+  );
+  $items['admin/settings/biblio/lucene/import'] = array(
+    'title' => 'Import Fields',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('luceneapi_biblio_default_fields_import_form'),
+    'access arguments' => array('administer biblio'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'luceneapi_biblio.export.inc',
+    'weight' => 2,
+  );
+  $items['admin/settings/biblio/lucene/export'] = array(
+    'title' => 'Export Fields',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('luceneapi_biblio_default_fields_export_form'),
+    'access arguments' => array('administer biblio'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'luceneapi_biblio.export.inc',
+    'weight' => 3,
+  );
+  return $items;
+}
+
+function luceneapi_biblio_theme() {
+  return array(
+    'luceneapi_biblio_fields_form' => array(
+        'file' => 'luceneapi_biblio.admin.inc',
+        'arguments' => array('form'),
+    ),
+  );
+}
+
+// These are the fields as luceneapi_biblio knows about them
+function luceneapi_biblio_get_raw_fields() {
+  // get all of the field info
+  $fields = array();
+  $result = db_query("SELECT bf.fid, bf.name, bf.type, bftd.title
+                      FROM {biblio_fields} AS bf
+                      INNER JOIN {biblio_field_type} AS bft ON bft.fid = bf.fid
+                      INNER JOIN {biblio_field_type_data} AS bftd ON bftd.ftdid = bft.ftdid
+                      WHERE bft.tid = 0
+                      ORDER BY bft.weight DESC");
+  while ($row = db_fetch_array($result)) {
+    $fields[$row['fid']] = $row;
+  }
+  return $fields;
+}
+
+// These are the fields as luceneapi_biblio knows abouit them.
+function luceneapi_biblio_get_fields() {
+  // get current settings
+  $result = db_query("SELECT * FROM {luceneapi_biblio_fields}");
+  $fields = array();
+  while ($row = db_fetch_array($result)) {
+    $fields[$row['fid']] = $row;
+  }
+  $fields['contributors'] = variable_get('luceneapi_biblio_index_authors', 1);
+  return $fields;
+}
+
+/**
+ * Load a single field either by name or by field ID.
+ *
+ * @param string $name
+ *   The name of the field.
+ * @param int $fid
+ *   The field id.
+ */
+function luceneapi_biblio_get_field($name = NULL, $fid = NULL) {
+  $fields = luceneapi_biblio_get_fields();
+  if (isset($name)) {
+    foreach($fields as $fid => $field) {
+      if($field['name'] == $name) {
+        return $field;
+      }
+    }
+  }
+  elseif (isset($fid)) {
+    return $fields[$fid];
+  }
+  return FALSE;
+}
+
+/**
+ * Convert date from timestamp into ISO 8601 format.
+ * http://lucene.apache.org/solr/api/org/apache/solr/schema/DateField.html
+ */
+function luceneapi_biblio_date_iso($date_timestamp) {
+  return gmdate('Y-m-d\TH:i:s\Z', $date_timestamp);
+}
+
+/**
+ * Allows for altering of the document object before it is added to the index.
+ * Invoking this hook allows developers to add additional fields, such as
+ * CCK data, to the index.
+ *
+ * @param $doc
+ *   A Zend_Search_Lucene_Document object being added to the index.
+ * @param $item
+ *   A mixed value modeling the content being added to the index, usually a
+ *   Drupal node object.
+ * @param $module
+ *   A string containing the Search Lucene API module that is indexing the
+ *   content.
+ * @param $type
+ *   A string containing the type of content indexed by $module.
+ * @return
+ *   NULL
+ */
+function luceneapi_biblio_luceneapi_document_alter($doc, $item, $module, $type = NULL) {
+  // Only do stuff with biblio nodes.
+  if ($item->type != 'biblio') {
+    return;
+  }
+  $tz = date_default_timezone_name();
+  date_default_timezone_set('UTC');
+  $fields = luceneapi_biblio_get_fields();
+  foreach ($fields as $fid => $biblio) {
+    if ($biblio['indexed'] && isset($item->{$biblio['name']})) {
+      $biblio['multiple'] = ($biblio['index_type'] == 'date') ? TRUE : FALSE;
+      $value = NULL;
+      if ($value = luceneapi_biblio_format_value($item->{$biblio['name']}, $biblio['index_type'])) {
+        if (is_array($value)) {
+          $values = join('|', $value);
+          luceneapi_field_add($doc, 'keyword', $biblio['name'], $values);
+        }
+        else {
+          luceneapi_field_add($doc, 'keyword', $biblio['name'], luceneapi_html_prepare($value));
+        }
+      }
+    }
+  }
+  date_default_timezone_set($tz);
+  // Handle authors.
+  if (variable_get('luceneapi_biblio_index_authors', 1)) {
+    $value = array();
+    
+    foreach ($item->biblio_contributors as $arrays) {
+      $first = TRUE;
+      $authors = array();
+      foreach ($arrays as $contributor_node) {
+        if (isset($contributor_node['name'])) {
+          if ($author = trim(luceneapi_html_prepare($contributor_node['name']))) {
+            $authors[] = $author;
+          }
+        }
+      }
+      luceneapi_field_add($doc, 'keyword', 'biblio_contributors', join('|', $authors));
+    }
+  }
+}
+
+function luceneapi_biblio_format_value($value, $format) {
+  switch ($format) {
+    case 'string':
+      // Do nothing
+      return $value;
+
+    case 'date':
+      // Dates have lots of special cases.
+      // First, there are four identified formats that have to be taken care of.
+      // 1999           represents 12 months in the year
+      // 1999 Mar
+      // 1999 Mar 6
+      // 1999 Mar-Jun   represents a range of months
+      // 2005 Nov 21-27  A range of days.
+      $values = array();
+      $parts = array_filter(split(' ', $value));
+      $months_lookup = array('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec', 'jan');
+      $months = isset($parts[1]) ? array_filter(split('-', $parts[1])) : NULL;
+      $days = isset($parts[2]) ? array_filter(split('-', $parts[2])) : NULL;
+      // This is the case that just a year is given, in which case we add 12
+      // values, one for each month of the year.
+      if (count($parts) == 1) {
+        foreach (array_slice($months_lookup, 0, 12) as $m) {
+          $values[] = luceneapi_biblio_date_iso(strtotime("$m $value"));
+        }
+      }
+      // In this case, there is a range of months.
+      else if (count($months) > 1) {
+        $startpos = array_search(strtolower($months[0]), $months_lookup);
+        $endpos = array_search(strtolower($months[1]), $months_lookup);
+        $month_range = range($startpos, $endpos);
+        $m = 0;
+        foreach ($month_range as $m) {
+          $v = $months_lookup[$m] . " {$parts[0]}";
+          $values[] = luceneapi_biblio_date_iso(strtotime($v));
+        }
+        if ($m) {
+          // Cap off the last month. Advance the month by one...
+          $v = $months_lookup[$m + 1];
+          // 11 is December!
+          if ($m == 11) {
+            // We have to advance the year, too.
+            $y = $parts[0] +1;
+          }
+          else {
+            $y = $parts[0];
+          }
+          $v .= " $y";
+          // ... and then shave one second off so that it is still in the last month.
+          $values[] = luceneapi_biblio_date_iso(strtotime($v) - 1);
+        }
+      }
+      // In this case there is a range of days. Add the first day.
+      else if (count($days) > 1) {
+        $values[] = luceneapi_biblio_date_iso(strtotime("{$parts[1]} {$days[0]}, {$parts[0]}"));
+      }
+      else {
+        $parts = array_filter($parts);
+        if (count($parts) == 2) {
+          $v = "{$parts[1]} {$parts[0]}";
+        }
+        elseif (count($parts) == 3) {
+          $v = "{$parts[1]} {$parts[2]}, {$parts[0]}";
+        }
+        
+        $values[] = luceneapi_biblio_date_iso(strtotime($v));
+      }
+
+      return $values;
+  }
+}
+
+/**
+* Implementation of hook_luceneapi_facet.
+*/
+function luceneapi_biblio_luceneapi_facet($module, $type = NULL) {
+  $facets = array();
+  if ($type == 'node') {
+    $fields = luceneapi_biblio_get_fields();
+    foreach($fields as $fid => $field) {
+      if($field['indexed']) {
+        $title = db_result(db_query("SELECT title FROM {biblio_field_type_data} WHERE ftdid = %d", $fid));
+        $facets[$field['name']] = array(
+          'description' => t('Biblio: Filter by !title', array('!title' => $title)),
+          'title' => $title,
+          'element' => $field['name'],
+          'field' => $field['name'],
+          'type' => 'select',
+          'callback' => 'luceneapi_facet_multiterm_callback',
+          'callback arguments' => array(
+            luceneapi_facet_value_get($field['name'], array()), $field['name'], TRUE
+          ),
+          'delimiter' => '|',
+        );
+      }
+    }
+    // Contributors are a special case.
+    $facets['biblio_contributors'] = array(
+      'description' => t('Biblio: Filter by Citation Contributor'),
+      'title' => t('Citation Contributor'),
+      'element' => 'biblio_contributors',
+      'field' => 'biblio_contributors',
+      'type' => 'select',
+      'callback' => 'luceneapi_facet_multiterm_callback',
+      'callback arguments' => array(
+        luceneapi_facet_value_get('biblio_contributors', array()), 'biblio_contributors', TRUE
+      ),
+      'delimeter' => '|',
+    );
+  }
+  return $facets;
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function luceneapi_biblio_block($op = 'list', $delta = 0, $edit = array()) {
+  $module = 'luceneapi_biblio';
+  switch ($op) {
+    case 'list':
+      $enabled_facets = luceneapi_facet_enabled_facets_get($module);
+      // Add the blocks
+      $blocks = array();
+      foreach ($enabled_facets as $delta => $facet_field) {
+        if (isset($facets[$delta])) {
+          $blocks[$delta] = $facets[$delta] + array('cache' => BLOCK_CACHE_PER_PAGE,);
+        }
+      }
+      return $blocks;
+
+    case 'view':
+      $enabled_facets = luceneapi_facet_enabled_facets_get($module);
+      return luceneapi_facet_block_realm_render(array($delta => $enabled_facets[$delta]), 'block', 'luceneapi_node');
+  }
+}
+
+/**
+ * Implementation of hook_features_api().
+ */
+/**
+function luceneapi_biblio_features_api() {
+  return array(
+    'luceneapi_biblio' => array(
+      'default_hook' => 'luceneapi_biblio_default_fields',
+      'features_source' => TRUE,
+      'file' => drupal_get_path('module', 'luceneapi_biblio') . '/luceneapi_biblio.features.inc',
+    ),
+  );
+}
+**/
+
