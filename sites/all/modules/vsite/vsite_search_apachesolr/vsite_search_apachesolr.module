@@ -203,6 +203,47 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
   if(!empty($vsite)) {
     // Add filter for group_id
     $query->add_filter('im_og_gid', $vsite->group->nid);
+    
+    /**
+     * Nodes that are related to a feature may need to be filtered out if the feature is configured to be private.  
+     * Bypass this check if the current uid is the site owner, or is a site member.
+     */
+    if(! og_is_group_member($vsite->group->nid, true)) {
+      $content_types = array();
+      foreach($vsite->features as $name => $status) {
+        // 0 = disabled, 1 = private, 2 = public
+        if($status < 2) {
+          $feature = features_get_features($name);
+          // Attempt to derive the content types that are part of this feature
+          if(!empty($feature->info['features']['node'])) {
+            foreach($feature->info['features']['node'] as $content_type) {
+              $content_types[] = $content_type;
+            }
+          }
+          elseif (!empty($feature->info['features']['views'])) {
+            foreach($feature->info['features']['views'] as $name) {
+              $view = views_get_view($name);
+              if($view) {
+                foreach($view->display as $display_name => $display_type) {
+                  if(!empty($display_type->display_options['filters']['type'])) {
+                    if($display_type->display_options['filters']['type']['operator'] == 'in') {
+                      $content_types += array_values($display_type->display_options['filters']['type']['value']);                      
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      $content_types = array_unique($content_types);
+      if(!empty($content_types)) {
+        foreach($content_types as $type) {
+          // Exclude the content types belonging to private features
+          $query->add_filter('type', $type, 'NOT');
+        }
+      }
+    }
   }
 }
 

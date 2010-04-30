@@ -352,7 +352,7 @@ function _vsite_search_apachesolr_apachesolr_biblio_default_fields() {
 	  'fid' => '24',
 	  'name' => 'biblio_keywords',
 	  'index_type' => 'string',
-	  'indexed' => '1',
+	  'indexed' => '0',
 	);
 	// Exported field: "biblio_other_number".
 	$fields[] = array (
