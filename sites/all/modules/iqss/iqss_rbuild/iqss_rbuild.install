@@ -5,8 +5,8 @@
  */
 function iqss_rbuild_schema() {
 	
-  $schema['cache_mollom'] = drupal_get_schema_unprocessed('system', 'cache');
-  $schema['cache_mollom']['description'] = 'Cache table for the IQSS Rbuild module to store information for docs it serves.';
+  $schema['cache_iqss_rbuild'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_iqss_rbuild']['description'] = 'Cache table for the IQSS Rbuild module to store information for docs it serves.';
 
   return $schema;
 }

@@ -14,6 +14,9 @@ function _iqss_scholar_config_variables(){
   'pinserver_auth_str' => 'Good signature from "authzproxy"',
   'pinserver_support_contact' => 'scholars_dev_support@help.hmdc.harvard.edu',
   'pinserver_hash_huid' => 0,
+  
+  //Remote Content Nodes
+  'iqss_remote_source_node_types' => array('bio'),
   );
 }
 

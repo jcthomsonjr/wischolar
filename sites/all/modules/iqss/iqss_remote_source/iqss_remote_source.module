@@ -1,0 +1,216 @@
+<?php
+define('IQSS_REMOTE_SOURCE_DEFAULT_CACHE_LENGTH', 60); //1 Minute
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function iqss_remote_source_nodeapi(&$node, $op){
+	$a_valid_node_types = variable_get('iqss_remote_source_node_types',array());
+	if(!in_array($node->type,$a_valid_node_types)) return;
+	
+  switch ($op) {
+  	case "load":
+  		$node->iqss_remote_source_path = iqss_remote_source_get_source_url($node->nid);
+  	break;
+    case 'view':
+    	if(iqss_remote_source_get_source_url($node->nid)){
+        $node->content['body']['#value'] = iqss_remote_source_retrieve($node);
+    	}
+    break;
+    case 'insert':
+    case 'update':
+    	if($node->nid){
+    		$val = strlen($node->iqss_remote_source_path)?$node->iqss_remote_source_path:false;
+    		iqss_remote_source_update_source($node->nid,$val);
+    	}
+    break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter(). Adds menu item fields to the node form.
+ */
+function iqss_remote_source_form_alter(&$form, $form_state, $form_id) {
+	$a_valid_node_types = variable_get('iqss_remote_source_node_types',array());
+  if(isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id && in_array($form['#node']->type,$a_valid_node_types)) {
+  	
+  	$form['iqss_remote_source'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Remote Source Settings'),
+      '#group' => 'iqss_remote_source',
+    );
+    $form['iqss_remote_source']['iqss_remote_source_path'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Remote Source URL'),
+      '#size' => 65,
+      '#description' => "You can provide a remote URL that provides the content for this node.",
+      '#default_value' => iqss_remote_source_get_source_url($form['#node']->nid),
+    );
+  }
+}
+
+/**
+ * Function to write record to table
+ * @param int $nid
+ */
+function iqss_remote_source_update_source($nid, $s_url = false){
+  $object = new stdClass();
+  $object->nid = (int)$nid;
+  $object->source_path= $s_url;
+  
+  $exists = (bool) iqss_remote_source_get_source_url($nid);
+  $update = array();
+  if($exists){
+  	$update = array("nid" => $nid);
+  }
+  
+  if($s_url && !$exists){
+  	drupal_write_record('iqss_remote_source',$object);
+  }elseif ($s_url){
+  	db_query("UPDATE {iqss_remote_source} SET source_path = '%s'  WHERE nid = %d ", array($object->source_path,$nid));
+  }elseif ($exists){
+    db_query("DELETE FROM {iqss_remote_source} WHERE nid = %d ", $update);
+  }
+  
+}
+
+/**
+ * Returns Source URL when passed node id
+ */
+function iqss_remote_source_get_source_url($node_id){
+	static $a_sources;
+	if(!is_array($a_sources)) $a_sources = array();
+	
+	if(!array_key_exists($node_id,$a_sources)){
+    $a_sources[$node_id] = db_result(db_query("SELECT source_path FROM {iqss_remote_source} WHERE nid = %d", (int)$node_id));
+	}
+	
+	return $a_sources[$node_id];
+}
+
+/**
+ * Retrieve the replacement contents for a node
+ * 
+ * @param $node The node
+ * @param $s_path The Subpath
+ * @return string
+ */
+function iqss_remote_source_retrieve($node){
+
+	list($s_current_path) = explode("?",$_SERVER['REQUEST_URI']); 
+  if(substr($s_current_path,-1) != "/") drupal_goto($_GET['q']."/");
+  
+  $s_path = $_GET['source_extra'];
+  $a_data = strlen($s_path)? _iqss_remote_source_get_data($node,$s_path):_iqss_remote_source_get_data($node);
+  
+  if(!$a_data['show_inline']){
+  	print $a_data['content'];
+  	exit(0);
+  }//Just print this file cached PDF or errant image
+  
+  return $a_data['content'];
+}
+
+//////////////////////////////////////////////////////////
+// PRIVATE UTIL FUNCTIONS
+//////////////////////////////////////////////////////////
+
+/**
+ * Get the html for a specified URL
+ * 
+ * @param $o_project
+ * @param $s_url_extra
+ * @return unknown_type
+ */
+function _iqss_remote_source_get_data($node,$s_url_extra = ''){
+  
+  $s_key = $node->nid.$s_url_extra;
+  
+  static $a_html_data;
+  if(!isset($a_html_data)) $a_html_data = array();
+  
+  if(!array_key_exists($s_key,$a_html_data)){
+    //Get data from cache
+    $o_cache_obj = cache_get($s_key,'cache_iqss_remote_source');
+    
+    if(time() < $o_cache_obj->expire){
+      $a_cache = $o_cache_obj->data;
+    }
+    
+    if(!$a_cache){
+      $a_cache = array();
+      list($a_cache['content'], $a_cache['last_modified'], $a_cache['show_inline'], $n_expire) = _iqss_remote_source_retrieve_remote_data($node,$s_url_extra,$o_cache_obj);
+      cache_set($s_key,$a_cache,'cache_iqss_remote_source', $n_expire); //Third param can be expire time
+    }//Validate cache and get new if required
+    $a_html_data[$s_key] = $a_cache;
+  }
+  
+  return $a_html_data[$s_key];
+}
+
+/**
+ * Go and get the data from the server
+ * @param $node
+ * @param $s_url_extra
+ * @return string / false on error
+ */
+function _iqss_remote_source_retrieve_remote_data($node, $s_url_extra,$o_cached_data){
+  if(!$node->iqss_remote_source_path) return false; //Valid URL?
+  
+  $s_url_extra = ltrim($s_url_extra,"/");
+  $s_docs_root = rtrim($node->iqss_remote_source_path,"/");
+  
+  $a_headers = get_headers("{$s_docs_root}/{$s_url_extra}",1);
+  $n_last_modified = array_key_exists('Last-Modified',$a_headers)?strtotime($a_headers['Last-Modified']):time();
+  
+  $n_expire = array_key_exists('expire',$a_headers)?strtotime($a_headers['expire']):(time()+IQSS_REMOTE_SOURCE_DEFAULT_CACHE_LENGTH);
+  
+  $b_inline = _iqss_remote_source_inline_content($a_headers['Content-Type']);
+  
+  if(is_object($o_cached_data) && is_array($o_cached_data->data) && $o_cached_data->data['last_modified'] == $n_last_modified){
+  	$s_contents = $o_cached_data->data['content'];
+  }else{
+    $s_contents = @file_get_contents("{$s_docs_root}/{$s_url_extra}");
+    if(strlen($s_contents)) $s_contents = _iqss_remote_source_modify_data($s_contents, $s_docs_root);
+  }
+  
+  return array($s_contents,$n_last_modified,$b_inline,$n_expire);
+}
+
+/**
+ * Modify the content returned from the remote server
+ * 
+ * @param $s_contents string
+ * @param $s_docs_root string
+ * @return string
+ */
+function _iqss_remote_source_modify_data($s_contents, $s_docs_root){
+  //Modify
+  $a_matches = array();
+  preg_match("/<body[^>]*>(.*)<\/body>/si",$s_contents,$a_matches);
+  if(count($a_matches)) $s_contents = $a_matches[1]; //Just the contents of the body tag
+  
+  $s_contents = preg_replace('#<script[^>]*>(.*)</script[^>]*>#Ui', '', $s_contents); //Remove script tags
+  
+  $s_contents = preg_replace('#(<img[^>]*src=")(.*"[^>]*>)#Ui', '${1}'.$s_docs_root.'/${2}', $s_contents); //Correct img tags
+  
+  $s_contents = preg_replace('#(<a[^>]*href=")(.*"[^>]*>)#Ui', '${1}?source_extra=${2}', $s_contents); //Correct href tags
+  
+  return $s_contents;
+}
+
+/**
+ * Should this content be displayed inline?
+ */
+function _iqss_remote_source_inline_content($s_content_type){
+  list($s_content_type) = explode(';',$s_content_type);
+	
+	if(!strlen($s_content_type)) return true;
+	
+	list($s_type,$s_sub_type) = explode("/",$s_content_type);
+	if($s_type == 'text') return true; //Always for text types
+	
+	$a_inline_content = array('text/html','text/plain');
+  
+  return in_array(strtolower($s_content_type),$a_inline_content);
+}
