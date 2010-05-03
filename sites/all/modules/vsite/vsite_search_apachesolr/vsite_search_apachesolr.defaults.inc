@@ -170,7 +170,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
   return $items;
 }
 
-function _vsite_search_apachesolr_apachesolr_biblio_default_fields() {
+function _vsite_search_apachesolr_default_biblio_fields() {
 	$fields = array();
 	// Exported field: "biblio_refereed".
 	$fields[] = array (

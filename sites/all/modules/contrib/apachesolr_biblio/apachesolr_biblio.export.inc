@@ -13,18 +13,19 @@
  *   An array of fields, or field name.
  * @param $module
  *   Optional. The name of the module that will be created if exporting to use
- *   in hook_apachesolr_biblio_default_fields().
+ *   in hook_default_biblio_fields().
  */
 function apachesolr_biblio_export_fields($fields = array(), $module = '') {
   $output = '$fields = array();'. "\n";
-  foreach ($fields as $fid => $selected_field) {
-    if (!is_object($field)) {
+  foreach ($fields as $fid => $field) {
+    if (!is_array($field)) {
       // Load the field definition
-      $field = apachesolr_biblio_get_field($selected_field['name']);
+      $field = apachesolr_biblio_get_field($field);
     }
-
-    $output .= '// Exported field: "'. $field['name'] . '"' . ".\n";
-    $output .= '$fields[] = ' . var_export($field, TRUE) . ";\n";
+    if(!empty($field)) {
+      $output .= '// Exported field: "'. $field['name'] . '"' . ".\n";
+      $output .= '$fields[] = ' . var_export($field, TRUE) . ";\n";
+    }
   }
   $output .= 'return $fields;';
   return $output;

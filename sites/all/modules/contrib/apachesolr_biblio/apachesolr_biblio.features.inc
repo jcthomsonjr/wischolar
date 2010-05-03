@@ -40,8 +40,8 @@ function apachesolr_biblio_features_export_options() {
  */
 function apachesolr_biblio_features_export_render($module = 'foo', $data, $features_export) {
   module_load_include('inc', 'apachesolr_biblio', '/apachesolr_biblio.export');
-  $code = apachesolr_biblio_export_fields($data, $features_export['project']);
-  return array('apachesolr_biblio_default_fields' => $code);
+  $code = apachesolr_biblio_export_fields($data, $module);
+  return array('default_biblio_fields' => $code);
 }
 
 /**
@@ -51,9 +51,10 @@ function apachesolr_biblio_features_export_render($module = 'foo', $data, $featu
  *   The name of module for which to revert content.
  */
 function apachesolr_biblio_features_revert($module = NULL) {
+  drupal_set_message('Module = '.$module);
   // Get default fields from features.
-  if (module_hook($module, 'apachesolr_biblio_default_fields')) {
-    $default_fields = module_invoke($module, 'apachesolr_biblio_default_fields');
+  if (module_hook($module, 'default_biblio_fields')) {
+    $default_fields = module_invoke($module, 'default_biblio_fields');
 
     // Reset fields that are defined in code.
     foreach ($default_fields as $default_field) {
