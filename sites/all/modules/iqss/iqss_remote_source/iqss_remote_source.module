@@ -1,5 +1,9 @@
 <?php
+//Max Amount of time to cache a document without checking to see if it has been updated
 define('IQSS_REMOTE_SOURCE_DEFAULT_CACHE_LENGTH', 60); //1 Minute
+
+//Max Size of non-html document to cache
+define('IQSS_REMOTE_SOURCE_MAX_CACHE_SIZE',45000); //~400k
 
 /**
  * Implementation of hook_nodeapi().
@@ -104,6 +108,7 @@ function iqss_remote_source_retrieve($node){
   $a_data = strlen($s_path)? _iqss_remote_source_get_data($node,$s_path):_iqss_remote_source_get_data($node);
   
   if(!$a_data['show_inline']){
+  	if(strlen($a_data['content_type'])) header('Content-type: '.$a_data['content_type']);
   	print $a_data['content'];
   	exit(0);
   }//Just print this file cached PDF or errant image
@@ -139,7 +144,7 @@ function _iqss_remote_source_get_data($node,$s_url_extra = ''){
     
     if(!$a_cache){
       $a_cache = array();
-      list($a_cache['content'], $a_cache['last_modified'], $a_cache['show_inline'], $n_expire) = _iqss_remote_source_retrieve_remote_data($node,$s_url_extra,$o_cache_obj);
+      list($a_cache['content'], $a_cache['last_modified'], $a_cache['show_inline'], $a_cache['content_type'], $n_expire) = _iqss_remote_source_retrieve_remote_data($node,$s_url_extra,$o_cache_obj);
       cache_set($s_key,$a_cache,'cache_iqss_remote_source', $n_expire); //Third param can be expire time
     }//Validate cache and get new if required
     $a_html_data[$s_key] = $a_cache;
@@ -167,6 +172,10 @@ function _iqss_remote_source_retrieve_remote_data($node, $s_url_extra,$o_cached_
   
   $b_inline = _iqss_remote_source_inline_content($a_headers['Content-Type']);
   
+  if(!$b_inline && intval($a_headers['Content-Length']) > IQSS_REMOTE_SOURCE_MAX_CACHE_SIZE){
+  	drupal_goto("{$s_docs_root}/{$s_url_extra}");
+  }
+  
   if(is_object($o_cached_data) && is_array($o_cached_data->data) && $o_cached_data->data['last_modified'] == $n_last_modified){
   	$s_contents = $o_cached_data->data['content'];
   }else{
@@ -174,7 +183,7 @@ function _iqss_remote_source_retrieve_remote_data($node, $s_url_extra,$o_cached_
     if(strlen($s_contents)) $s_contents = _iqss_remote_source_modify_data($s_contents, $s_docs_root);
   }
   
-  return array($s_contents,$n_last_modified,$b_inline,$n_expire);
+  return array($s_contents,$n_last_modified,$b_inline,$a_headers['Content-Type'],$n_expire);
 }
 
 /**
