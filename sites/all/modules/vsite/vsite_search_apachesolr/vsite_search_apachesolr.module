@@ -253,7 +253,7 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
 function vsite_search_apachesolr_strongarm() {
   $conf = array();
   $conf['apachesolr_biblio_index_authors'] = 1;
-  $conf['apachesolr_cron_limit'] = 50;
+  $conf['apachesolr_cron_limit'] = 200;
   $conf['apachesolr_enabled_facets'] = array(
     'apachesolr_search' => array(
       'uid' => 'uid',
