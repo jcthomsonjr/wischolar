@@ -101,18 +101,20 @@
       </div> <!-- / content wrapper -->
       <div id="content-wrapper-bottom"></div>
       <div id="footer">
-      <?php if ($footer_message): ?>
-        <div id="footer-message"><?php print $footer_message; ?></div>
-      <?php endif; ?>
-      <?php if ($footer) : ?>
-        <?php print $footer; ?>
-      <?php endif; ?>
-      <?php
-        global $user, $base_url;
-        $home_link =  l('Powered by OpenScholar',$base_url, array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
-        $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE, 'alias' => FALSE)) : "";
-      ?>
-      <p class="copy">Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University. <?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
+        <div id="footer-inner">
+          <?php if ($footer_message): ?>
+            <div id="footer-message"><?php print $footer_message; ?></div>
+          <?php endif; ?>
+          <?php if ($footer) : ?>
+            <?php print $footer; ?>
+          <?php endif; ?>
+          <?php
+            global $user, $base_url;
+            $home_link =  l('Powered by OpenScholar',$base_url, array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
+            $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE, 'alias' => FALSE)) : "";
+          ?>
+          <p class="copy">Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University. <?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
+        </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->
   </div> <!-- /wrapper -->

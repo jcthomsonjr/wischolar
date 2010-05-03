@@ -72,6 +72,7 @@ a:hover {
   }
 
 #header-left {
+  right: 293px;
   }
 
 #navbar {
@@ -102,6 +103,10 @@ a:hover {
   padding: 0;
   position:absolute;
   height: 44px;
+  }
+
+#header {
+  min-height: 51px;
   }
 
 #header-wrapper {
@@ -180,7 +185,7 @@ body.header-right-main #header-wrapper {
   padding-right: 270px;
   }
 
-.page-home #header-main {
+.header-main-right #header-main, .header-left-main-right #header-main {
   padding:0;
   margin-right: 8px;
   }
@@ -198,30 +203,36 @@ body.header-right-main #header-wrapper {
     padding-top: 40px;
     }
 
-#footer #gking-footer {
+#footer-inner {
   width:984px;
-  margin: 44px auto 0 auto;
+  margin: 0 auto;
   }
 
-#gking-footer .block {
+#footer .block, #footer p.copy {
   float: left;
   margin-right: 70px;
+  clear:none;
   }
 
-#gking-footer #vsite-widgets-search-form {
+#footer p.copy {
+  margin-right: 0;
+  width: 400px;
+  float:right;
+  }
+
+#footer-inner #vsite-widgets-search-form {
   width: 302px;
   background-image: none;
   }
 
-
-#gking-footer #vsite-widgets-search-form .form-item {
+#footer-inner #vsite-widgets-search-form .form-item {
   padding: 0;
   margin: 0;
   border:none;
   float: left;
   }
 
-#gking-footer #vsite-widgets-search-form #edit-search-wrapper input {
+#footer-inner #vsite-widgets-search-form #edit-search-wrapper input {
   width: 231px;
   height: auto;
   border: 1px solid #ddd;
@@ -230,7 +241,7 @@ body.header-right-main #header-wrapper {
   border-top-color: #7c7c7c;
   }
 
-#gking-footer #vsite-widgets-search-form input.form-submit {
+#footer-inner #vsite-widgets-search-form input.form-submit {
   float: right;
   background: #79939c;
   color: #fff;
@@ -244,7 +255,7 @@ body.header-right-main #header-wrapper {
   height: auto;
   }
 
-#gking-footer #vsite-widgets-search-form label {
+#footer-inner #vsite-widgets-search-form label {
   display:none;
   }
 

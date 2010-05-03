@@ -57,15 +57,11 @@ var cp_add_dialog = function(){
  			draggable: false,
  			width: 468,
  			height:185,
- 			position:'top',
+ 			position:top,
  			modal: true,
  			autoOpen: false,
  			//show:'slide',
  			//hide: 'slide',
- 			overlay: {
- 				backgroundColor: '#000',
- 				opacity: .6
- 			},
  			buttons: {
  				'Yes I\'m Sure': function() {
  					$(this).dialog('close');
