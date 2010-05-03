@@ -36,7 +36,7 @@ function iqss_remote_source_nodeapi(&$node, $op){
  */
 function iqss_remote_source_form_alter(&$form, $form_state, $form_id) {
 	$a_valid_node_types = variable_get('iqss_remote_source_node_types',array());
-  if(isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id && in_array($form['#node']->type,$a_valid_node_types)) {
+  if(isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id && user_access('manage iqss remote source') && in_array($form['#node']->type,$a_valid_node_types)) {
   	
   	$form['iqss_remote_source'] = array(
       '#type' => 'fieldset',
