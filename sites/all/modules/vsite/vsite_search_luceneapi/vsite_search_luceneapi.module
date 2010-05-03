@@ -329,23 +329,43 @@ function vsite_search_luceneapi_luceneapi_query_alter($query, $module, $type = N
   }
 
   /**
-   * Features have a status of public, private, or disabled.  This extra layer of privacy does not implement node_access, and so for features that
-   * are marked as private, the content types for these features need to be excluded from search.
-   * 
-   * TODO: Filter out these disabled/private content types, based on the parent feature
+   * Nodes that are related to a feature may need to be filtered out if the feature is configured to be private.  
+   * Bypass this check if the current uid is the site owner, or is a site member.
    */
-  $vsite = vsite_get_vsite();
-  foreach($vsite->features as $feature => $status) {
-    switch($status) {
-      case 0:
-        // disabled
-        break;
-      case 1:
-        // private
-        break;
-      case 2:
-        // public
-        break;
+  if(! og_is_group_member($vsite->group->nid, true)) {
+    $content_types = array();
+    foreach($vsite->features as $name => $status) {
+      // 0 = disabled, 1 = private, 2 = public
+      if($status < 2) {
+        $feature = features_get_features($name);
+        // Attempt to derive the content types that are part of this feature
+        if(!empty($feature->info['features']['node'])) {
+          foreach($feature->info['features']['node'] as $content_type) {
+            $content_types[] = $content_type;
+          }
+        }
+        elseif (!empty($feature->info['features']['views'])) {
+          foreach($feature->info['features']['views'] as $name) {
+            $view = views_get_view($name);
+            if($view) {
+              foreach($view->display as $display_name => $display_type) {
+                if(!empty($display_type->display_options['filters']['type'])) {
+                  if($display_type->display_options['filters']['type']['operator'] == 'in') {
+                    $content_types += array_values($display_type->display_options['filters']['type']['value']);                      
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    $content_types = array_unique($content_types);
+    if(!empty($content_types)) {
+      foreach($content_types as $type) {
+        // Exclude the content types belonging to private features
+        luceneapi_subquery_add($query, luceneapi_query_get('term', $type, 'type'), 'prohibited', true);
+      }
     }
   }
 }
