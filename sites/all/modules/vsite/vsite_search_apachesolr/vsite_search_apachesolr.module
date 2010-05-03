@@ -268,10 +268,12 @@ function vsite_search_apachesolr_strongarm() {
       'ss_biblio_year' => 'ss_biblio_year',
     ),
   );
+  $conf['apachesolr_facetstyle'] = 'links';
   $conf['apachesolr_failure'] = 'show_error';
   $conf['apachesolr_og_groupnode'] = 0;
   $conf['apachesolr_read_only'] = 0;
   $conf['apachesolr_rows'] = 10;
+  $conf['apachesolr_search_browse'] = 'blocks';
   $conf['apachesolr_search_default_previous'] = 0;
   $conf['apachesolr_search_make_default'] = 1;
   $conf['apachesolr_search_spellcheck'] = 1;
