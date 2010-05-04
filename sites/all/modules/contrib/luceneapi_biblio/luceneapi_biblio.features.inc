@@ -41,7 +41,7 @@ function luceneapi_biblio_features_export_options() {
 function luceneapi_biblio_features_export_render($module = 'foo', $data, $features_export) {
   module_load_include('inc', 'luceneapi_biblio', '/luceneapi_biblio.export');
   $code = luceneapi_biblio_export_fields($data, $features_export['project']);
-  return array('luceneapi_biblio_default_fields' => $code);
+  return array('default_biblio_fields' => $code);
 }
 
 /**
@@ -52,8 +52,8 @@ function luceneapi_biblio_features_export_render($module = 'foo', $data, $featur
  */
 function luceneapi_biblio_features_revert($module = NULL) {
   // Get default fields from features.
-  if (module_hook($module, 'luceneapi_biblio_default_fields')) {
-    $default_fields = module_invoke($module, 'luceneapi_biblio_default_fields');
+  if (module_hook($module, 'default_biblio_fields')) {
+    $default_fields = module_invoke($module, 'default_biblio_fields');
 
     // Reset fields that are defined in code.
     foreach ($default_fields as $default_field) {

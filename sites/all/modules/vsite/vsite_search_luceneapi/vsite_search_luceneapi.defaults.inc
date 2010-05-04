@@ -31,7 +31,7 @@ function _vsite_search_luceneapi_user_default_permissions() {
   return $permissions;
 }
 
-function _vsite_search_luceneapi_luceneapi_biblio_default_fields() {
+function _vsite_search_luceneapi_default_biblio_fields() {
   $fields = array();
   // Exported field: "biblio_refereed".
   $fields[] = array (
@@ -115,7 +115,7 @@ function _vsite_search_luceneapi_luceneapi_biblio_default_fields() {
     'fid' => '39',
     'name' => 'biblio_alternate_title',
     'index_type' => 'string',
-    'indexed' => '1',
+    'indexed' => '0',
   );
   // Exported field: "biblio_short_title".
   $fields[] = array (
@@ -213,7 +213,7 @@ function _vsite_search_luceneapi_luceneapi_biblio_default_fields() {
     'fid' => '24',
     'name' => 'biblio_keywords',
     'index_type' => 'string',
-    'indexed' => '1',
+    'indexed' => '0',
   );
   // Exported field: "biblio_other_number".
   $fields[] = array (
@@ -255,7 +255,7 @@ function _vsite_search_luceneapi_luceneapi_biblio_default_fields() {
     'fid' => '21',
     'name' => 'biblio_lang',
     'index_type' => 'string',
-    'indexed' => '1',
+    'indexed' => '0',
   );
   // Exported field: "biblio_type_of_work".
   $fields[] = array (
@@ -318,7 +318,7 @@ function _vsite_search_luceneapi_luceneapi_biblio_default_fields() {
     'fid' => '43',
     'name' => 'biblio_section',
     'index_type' => 'string',
-    'indexed' => '0',
+    'indexed' => '1',
   );
   // Exported field: "biblio_edition".
   $fields[] = array (

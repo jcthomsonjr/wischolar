@@ -18,18 +18,18 @@ include_once('vsite_search_luceneapi.features.inc');
 function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
-    	$blocks = array();
+      $blocks = array();
       $blocks[0]['info'] = t('Categories');
-    	return $blocks;
+      return $blocks;
     case 'view':
-    	switch($delta) {
+      switch($delta) {
         case 0:
-		      require_once(drupal_get_path('module', 'luceneapi_facet').'/luceneapi_facet.block.inc');
-		    	return array(
-		    	  'subject' => t('Scholar Site'),
-		    		'content' => luceneapi_facet_block_view('vsite_search_luceneap')
-		    	);
-    	}
+          require_once(drupal_get_path('module', 'luceneapi_facet').'/luceneapi_facet.block.inc');
+          return array(
+            'subject' => t('Scholar Site'),
+            'content' => luceneapi_facet_block_view('vsite_search_luceneap')
+          );
+      }
       break;
   }
 }
@@ -45,8 +45,8 @@ function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array())
 function vsite_search_luceneapi_link_alter(&$links, $node) {
   foreach($links as $name => $link) {
     if(preg_match("/^taxonomy_term_/", $name)) {
-    	$tid = substr($name, 14);
-    	$links[$name]['href'] = sprintf('search/luceneapi_node/'.$link['title']);
+      $tid = substr($name, 14);
+      $links[$name]['href'] = sprintf('search/luceneapi_node/'.$link['title']);
       $links[$name]['query'] = array('category' => array($tid => $tid));
     }
   }
@@ -59,8 +59,8 @@ function vsite_search_luceneapi_link_alter(&$links, $node) {
  *   Associative array representing a registry of theme and preprocess functions, and template suggestions
  */
 function vsite_search_luceneapi_theme_registry_alter(&$theme_registry) {
-	// Replace the themeable function with a custom preprocess function
-	$theme_registry['luceneapi_facet_block']['function'] = '_vsite_search_luceneapi_preprocess_category_facets';
+  // Replace the themeable function with a custom preprocess function
+  $theme_registry['luceneapi_facet_block']['function'] = '_vsite_search_luceneapi_preprocess_category_facets';
 }
 
 /**
@@ -351,7 +351,7 @@ function vsite_search_luceneapi_luceneapi_query_alter($query, $module, $type = N
               foreach($view->display as $display_name => $display_type) {
                 if(!empty($display_type->display_options['filters']['type'])) {
                   if($display_type->display_options['filters']['type']['operator'] == 'in') {
-                    $content_types += array_values($display_type->display_options['filters']['type']['value']);                      
+                    $content_types += array_values($display_type->display_options['filters']['type']['value']);
                   }
                 }
               }
@@ -514,14 +514,14 @@ function vsite_search_luceneapi_luceneapi_facet_empty_taxonomy($og_vocabs=array(
 function vsite_search_luceneapi_strongarm() {
   $conf = array();
   $conf['luceneapi:min_word_length'] = '0';
-	$conf['luceneapi:permissions_group'] = 6;
-	$conf['luceneapi:permissions_other'] = 4;
-	$conf['luceneapi_facet:luceneapi_node:fieldset:expand'] = 0;
-	$conf['luceneapi_facet:luceneapi_node:hard_limit'] = 20;
-	$conf['luceneapi_facet:luceneapi_node:limit'] = 0;
-	$conf['luceneapi_node:cache_threshold'] = 5000;
-	$conf['luceneapi_node:caching_enabled'] = 1;
-	$conf['luceneapi_node:default_operator'] = 1;
+  $conf['luceneapi:permissions_group'] = 6;
+  $conf['luceneapi:permissions_other'] = 4;
+  $conf['luceneapi_facet:luceneapi_node:fieldset:expand'] = 0;
+  $conf['luceneapi_facet:luceneapi_node:hard_limit'] = 20;
+  $conf['luceneapi_facet:luceneapi_node:limit'] = 0;
+  $conf['luceneapi_node:cache_threshold'] = 5000;
+  $conf['luceneapi_node:caching_enabled'] = 1;
+  $conf['luceneapi_node:default_operator'] = 1;
   $conf['luceneapi_node:hide_core_search'] = 1;
   $conf['luceneapi_node:nodeaccess'] = 1;
   $conf['luceneapi_node:optimize_on_update'] = 1;

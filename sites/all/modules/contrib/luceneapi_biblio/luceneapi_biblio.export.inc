@@ -1,5 +1,5 @@
 <?php
-// $Id: luceneapi_biblio.export.inc,v 1.1.2.1 2010/04/30 13:39:00 ebeyrent Exp $
+// $Id: luceneapi_biblio.export.inc,v 1.1.2.2 2010/05/04 13:47:53 ebeyrent Exp $
 
 /**
  * @file
@@ -17,10 +17,10 @@
  */
 function luceneapi_biblio_export_fields($fields = array(), $module = '') {
   $output = '$fields = array();'. "\n";
-  foreach ($fields as $fid => $selected_field) {
-    if (!is_object($field)) {
+  foreach ($fields as $fid => $field) {
+    if (!is_array($field)) {
       // Load the field definition
-      $field = luceneapi_biblio_get_field($selected_field['name']);
+      $field = luceneapi_biblio_get_field($field );
     }
 
     $output .= '// Exported field: "'. $field['name'] . '"' . ".\n";

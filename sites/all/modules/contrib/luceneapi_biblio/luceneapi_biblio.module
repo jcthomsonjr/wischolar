@@ -1,5 +1,5 @@
 <?php
-// $Id: luceneapi_biblio.module,v 1.1.2.2 2010/04/30 12:38:57 ebeyrent Exp $
+// $Id: luceneapi_biblio.module,v 1.1.2.3 2010/05/04 13:47:53 ebeyrent Exp $
 
 function luceneapi_biblio_menu() {
   $items = array();
@@ -65,6 +65,17 @@ function luceneapi_biblio_get_fields() {
   $fields = array();
   while ($row = db_fetch_array($result)) {
     $fields[$row['fid']] = $row;
+  }
+  // If there aren't any fields defined, load any default fields
+  if(empty($fields)) {
+    foreach(module_implements('default_biblio_fields') as $module) {
+      $default_fields = module_invoke($module, 'default_biblio_fields');
+      if(!empty($default_fields)) {
+        foreach($default_fields as $field) {
+          $fields[$field['fid']] = $field;
+        }
+      }
+    }
   }
   $fields['contributors'] = variable_get('luceneapi_biblio_index_authors', 1);
   return $fields;
@@ -301,15 +312,12 @@ function luceneapi_biblio_block($op = 'list', $delta = 0, $edit = array()) {
 /**
  * Implementation of hook_features_api().
  */
-/**
 function luceneapi_biblio_features_api() {
   return array(
     'luceneapi_biblio' => array(
-      'default_hook' => 'luceneapi_biblio_default_fields',
+      'default_hook' => 'default_biblio_fields',
       'features_source' => TRUE,
       'file' => drupal_get_path('module', 'luceneapi_biblio') . '/luceneapi_biblio.features.inc',
     ),
   );
 }
-**/
-
