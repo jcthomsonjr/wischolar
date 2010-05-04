@@ -135,6 +135,7 @@ function _scholar_software_views_default_views() {
   $handler->override_option('empty', 'There are currently no projects available.');
   $handler->override_option('items_per_page', 20);
   $handler->override_option('use_pager', '1');
+  $handler->override_option('distinct', 1);
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
     'relationship' => 'none',
@@ -639,6 +640,36 @@ function _scholar_software_views_default_views() {
   $handler->override_option('use_pager', '0');
   $handler->override_option('use_more', 1);
   $handler->override_option('use_more_text', 'more releases');
+  $handler->override_option('block_description', '');
+  $handler->override_option('block_caching', -1);
+  $handler = $view->new_display('block', 'All Recent Releases', 'block_3');
+  $handler->override_option('sorts', array(
+    'created' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('arguments', array());
+  $handler->override_option('access', array(
+    'type' => 'role',
+    'role' => array(
+      '1' => 1,
+      '2' => 2,
+    ),
+  ));
+  $handler->override_option('title', 'Recent Releases');
+  $handler->override_option('items_per_page', 5);
+  $handler->override_option('use_pager', '0');
+  $handler->override_option('distinct', 1);
+  $handler->override_option('style_plugin', 'default');
+  $handler->override_option('style_options', array());
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
 

@@ -558,9 +558,9 @@ function _scholar_software_context_default_contexts() {
         'label' => 'AddThis button',
         'type' => 'context_ui',
       ),
-      'views_scholar_software_releases-block_2' => array(
+      'views_scholar_software_releases-block_3' => array(
         'module' => 'views',
-        'delta' => 'scholar_software_releases-block_2',
+        'delta' => 'scholar_software_releases-block_3',
         'weight' => 20,
         'region' => 'right',
         'status' => '0',
