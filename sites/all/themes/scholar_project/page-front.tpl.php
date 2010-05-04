@@ -46,7 +46,7 @@
       </div> <!-- / content wrapper -->
 
       <div id="footer">
-        <p class="copy">Copyright © President & Fellows of Harvard University. A project of the <?php print l('Institute for Quantitative Social Sciences', 'http://iq.harvard.edu') . '. ' . l('Contact & Feedback', 'contact'); ?> </li></p>
+        <p class="copy">Copyright &copy; President & Fellows of Harvard University. A project of the <?php print l('Institute for Quantitative Social Sciences', 'http://iq.harvard.edu') . '. ' . l('Contact & Feedback', 'contact'); ?> </li></p>
       <?php if ($footer_message){ ?>
         <div id="footer-message"><?php print $footer_message; ?></div>
       <?php }; ?>

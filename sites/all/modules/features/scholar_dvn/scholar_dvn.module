@@ -5,7 +5,7 @@ include_once('scholar_dvn.features.inc');
  * Implementation of hook_init().
  */
 function scholar_dvn_init() {
-  drupal_add_js(drupal_get_path('module', 'scholar_dvn') .'/scholar_dvn.js');
+  //drupal_add_js(drupal_get_path('module', 'scholar_dvn') .'/scholar_dvn.js');
   drupal_add_css(drupal_get_path('module', 'scholar_dvn') .'/scholar_dvn.css');
 }
 
@@ -23,8 +23,8 @@ function scholar_dvn_menu(){
 }
 
 function scholar_dvn_data(){
-  $output = "<iframe id=\"feature-dataverse\" scrolling=\"no\" src =\"" . "http://dvn.iq.harvard.edu/dvn/dv/thailanddataverse" . "\">
-  </iframe>";
+  $output = "<div id=\"feature-dataverse\"><iframe name=\"res\" scrolling=\"auto\" src =\"" . "http://dvn.iq.harvard.edu/dvn/dv/thailanddataverse" . "\">
+  </iframe></div>";
 
   return $output;
 

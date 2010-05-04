@@ -30,8 +30,12 @@ h4 {
 
 h2.title, h3.title {
   line-height: 1em;
-  margin-top: 12px;
-  margin-bottom: 17px;
+  margin-top: 0;
+  margin-bottom: 0;
+  }
+
+.column .content {
+  margin-top: 31px;
   }
 
 a, a:visited {
@@ -50,25 +54,21 @@ a:hover {
 /* BASIC LAYOUT */
 
 .column {
-  padding: 0 16px;
-  }
-
-#content-main {
-  padding: 0 8px;
+  padding: 0;
   }
 
 .sidebar-right #content-main {
   padding-left: 0;
   }
 
-#navbar, #content, #sidebar-left, #sidebar-right, #header-left, #header-main, #header-right {
+#navbar, #content, .column .block {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   background: url(images/heading.png) repeat-x 0 0 #fff;
+  padding: 8px 16px 16px 16px;
   }
 
 #content-main #content {
-  float:left;
   }
 
 #header-left {
@@ -146,43 +146,55 @@ a:hover {
   display:none;
   }
 
+.page-home #header-right .block {
+  height: 222px;
+  }
+
+
+
+
 #content-wrapper .block {
   margin-bottom: 8px;
   }
 
-#content, #sidebar-right, #header-right, #sidebar-left, #header-left {
-  padding: 0 16px 16px 16px;
+#sidebar-right, #header-right, #sidebar-left, #header-left {
+  width: 261px;
   }
 
-#sidebar-right, #header-right, #sidebar-left, #header-left {
-  width: 229px;
-  }
 
 #sidebar-left {
-  right: 277px;
+  right: 269px;
+  padding-right: 8px;
+  }
+
+.page-home #sidebar-left {
+  width: 348px;
+  right: 356px;
+  }
+
+#sidebar-right {
+  padding-left: 8px;
   }
 
 #content-wrapper, #header-wrapper {
-  padding-right: 277px;
-  padding-left: 261px;
+  padding-right: 269px;
+  padding-left: 269px;
   }
 
 #content-main {
   padding-bottom: 105px;
   }
 
-body.sidebar-left #content-wrapper,
+.page-home #content-wrapper {
+  padding-left: 356px;
+  }
+
 body.header-left-main #header-wrapper {
   padding-right:8px;
   }
 
-body.sidebar-right #content-wrapper,
 body.header-right-main #header-wrapper {
   padding-left:8px;
-  }
-
-#header-wrapper {
-  padding-right: 270px;
   }
 
 .header-main-right #header-main, .header-left-main-right #header-main {
@@ -279,7 +291,7 @@ body.header-right-main #header-wrapper {
 #header #block-scholar_biocv-bio_blurb {
   background: url(images/front-photo.jpg) 0 0 no-repeat transparent;
   position:relative;
-  padding-top:54px;
+  padding-top:41px;
   padding-left: 271px;
   padding-right: 36px;
   height: 198px;
@@ -290,4 +302,8 @@ body.header-right-main #header-wrapper {
 
 #header #block-scholar_biocv-bio_blurb h3 {
   display:none;
+  }
+
+#header #block-scholar_biocv-bio_blurb .content {
+  margin-top: 0;
   }
