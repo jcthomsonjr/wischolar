@@ -558,6 +558,15 @@ function _scholar_software_context_default_contexts() {
         'label' => 'AddThis button',
         'type' => 'context_ui',
       ),
+      'views_scholar_software_releases-block_2' => array(
+        'module' => 'views',
+        'delta' => 'scholar_software_releases-block_2',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Software Releases',
+        'type' => 'context_ui',
+      ),
       'views_scholar_software_releases-block_1' => array(
         'module' => 'views',
         'delta' => 'scholar_software_releases-block_1',

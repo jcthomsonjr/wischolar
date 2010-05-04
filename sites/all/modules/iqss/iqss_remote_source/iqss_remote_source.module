@@ -6,6 +6,21 @@ define('IQSS_REMOTE_SOURCE_DEFAULT_CACHE_LENGTH', 60); //1 Minute
 define('IQSS_REMOTE_SOURCE_MAX_CACHE_SIZE',45000); //~400k
 
 /**
+ * Implements hook_menu().
+ */
+function iqss_remote_source_menu() {
+  $items['admin/settings/iqss-remote-source'] = array(
+    'title' => t('IQSS Remote Node Source'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('iqss_remote_source_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'iqss_remote_source.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
  * Implementation of hook_nodeapi().
  */
 function iqss_remote_source_nodeapi(&$node, $op){
@@ -36,20 +51,26 @@ function iqss_remote_source_nodeapi(&$node, $op){
  */
 function iqss_remote_source_form_alter(&$form, $form_state, $form_id) {
 	$a_valid_node_types = variable_get('iqss_remote_source_node_types',array());
-  if(isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id && user_access('manage iqss remote source') && in_array($form['#node']->type,$a_valid_node_types)) {
+  if(isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id && user_access('manage remote node source') && in_array($form['#node']->type,$a_valid_node_types)) {
   	
-  	$form['iqss_remote_source'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Remote Source Settings'),
-      '#group' => 'iqss_remote_source',
-    );
-    $form['iqss_remote_source']['iqss_remote_source_path'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Remote Source URL'),
-      '#size' => 65,
-      '#description' => "You can provide a remote URL that provides the content for this node.",
-      '#default_value' => iqss_remote_source_get_source_url($form['#node']->nid),
-    );
+  	//If we are in a vsite then check to see if it is configured to have this functionality
+  	$vsite = vsite_get_vsite();
+  	if(!$vsite || in_array($vsite->group->nid, explode(",",variable_get('iqss_remote_source_valid_ogs','')))){
+  	
+	  	$form['iqss_remote_source'] = array(
+	      '#type' => 'fieldset',
+	      '#title' => t('Remote Source Settings'),
+	      '#group' => 'iqss_remote_source',
+	    );
+	    $form['iqss_remote_source']['iqss_remote_source_path'] = array(
+	      '#type' => 'textfield',
+	      '#title' => t('Remote Source URL'),
+	      '#size' => 65,
+	      '#description' => "You can provide a remote URL that provides the content for this node.",
+	      '#default_value' => iqss_remote_source_get_source_url($form['#node']->nid),
+	    );
+  	}
+  	
   }
 }
 
