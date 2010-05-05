@@ -881,16 +881,55 @@ function gkimport_get_sid(){
 }
 
 /**
- * THESE FUNCTIONS ARE FOR DEVELOPMENT ONLY - DELETE WHEN FINISHED
+ * Saves layout settings from saved string
  */
-/*
-function gkimport_clean(){
-  $path = GKIMPORT_FS_PATH . '/sites/scholar/files/gking/files';
-  if(GKIMPORT_DOWNLOAD && is_dir($path)){
-    $filespath = GKIMPORT_FS_PATH . '/sites/scholar/files/gking/files/*.*';
-    $cmd = "rm $filespath" . '/*.*';
-    shell_exec($cmd);
-    drush_print("Ran shell command: $cmd");
+function gkimport_save_site_layout($drush_run = 0){
+  define(GKIMPORT_DRUSH_RUN, $drush_run);
+  $layout_file = dirname (__FILE__) . '/files/layout.txt';
+  $s_settings = file_get_contents($layout_file);
+  $vsite = spaces_load("og", gkimport_get_sid());  
+  if($vsite && strlen($s_settings)){
+    $vsite -> settings['layout']['gking'] = unserialize(trim($s_settings));
+    spaces_save($vsite);
+    gkimport_print("Site layout settings have been imported");
   }
-}*/
+  else{
+    gkimport_print("Error: layout settings could not be imported");
+  }
+}
+/**
+ * Exports current layout settings to serialized string
+ */
+function gkimport_export_site_layout($drush_run = 0){
+  define(GKIMPORT_DRUSH_RUN, $drush_run);
+  $layout_file = dirname (__FILE__) . '/files/layout.txt';
+  $vsite = spaces_load("og", gkimport_get_sid());
+  if ($vsite){
+    if(file_put_contents($layout_file, serialize($vsite -> settings['layout']['gking']))){
+      gkimport_print("Site layout settings have been exported");
+    }
+    else{
+      gkimport_print("Error: layout settings could not be exported");
+    }
+  }
+}
 
+/**
+ * Abstraction layer function to check if run from drush 
+ * command before printing feedback or error text
+ */
+function gkimport_print($text){
+  switch(GKIMPORT_DRUSH_RUN){
+    case 0;
+    return print (t("$text"));
+    break;
+
+    case 1:
+      return drush_print (t("$text"));
+      break;
+
+    default:
+      return print (t("$text"));
+      break;
+  }
+}
