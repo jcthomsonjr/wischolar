@@ -182,6 +182,11 @@ function _scholar_software_views_default_views() {
       'field' => 'field_scholar_software_file_fid',
       'relationship' => 'none',
     ),
+    'field_scholar_software_project_nid' => array(
+      'id' => 'field_scholar_software_project_nid',
+      'table' => 'node_data_field_scholar_software_project',
+      'field' => 'field_scholar_software_project_nid',
+    ),
   ));
   $handler->override_option('fields', array(
     'nid' => array(
@@ -643,6 +648,234 @@ function _scholar_software_views_default_views() {
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'All Recent Releases', 'block_3');
+  $handler->override_option('relationships', array(
+    'field_scholar_software_file_fid' => array(
+      'label' => 'Package',
+      'required' => 1,
+      'delta' => -1,
+      'id' => 'field_scholar_software_file_fid',
+      'table' => 'node_data_field_scholar_software_file',
+      'field' => 'field_scholar_software_file_fid',
+      'relationship' => 'none',
+    ),
+    'field_scholar_software_project_nid' => array(
+      'label' => 'Project',
+      'required' => 1,
+      'delta' => -1,
+      'id' => 'field_scholar_software_project_nid',
+      'table' => 'node_data_field_scholar_software_project',
+      'field' => 'field_scholar_software_project_nid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('fields', array(
+    'nid' => array(
+      'label' => 'Nid',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'link_to_node' => 0,
+      'exclude' => 1,
+      'id' => 'nid',
+      'table' => 'node',
+      'field' => 'nid',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_scholar_software_project_nid' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'none',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_scholar_software_project_nid',
+      'table' => 'node_data_field_scholar_software_project',
+      'field' => 'field_scholar_software_project_nid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'release_tag' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 1,
+        'path' => 'node/[nid]',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 0,
+      'id' => 'release_tag',
+      'table' => 'views',
+      'field' => 'release_tag',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'filesize' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'file_size_display' => 'formatted',
+      'exclude' => 1,
+      'id' => 'filesize',
+      'table' => 'files',
+      'field' => 'filesize',
+      'relationship' => 'field_scholar_software_file_fid',
+    ),
+    'created' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'date_format' => 'custom',
+      'custom_date_format' => 'M j Y',
+      'exclude' => 0,
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'field_scholar_software_file_fid' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => '<a href=\'[field_scholar_software_file_fid]\'>Download</a> ([filesize])',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'none',
+      'format' => 'scholar_software_url_plain',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_scholar_software_file_fid',
+      'table' => 'node_data_field_scholar_software_file',
+      'field' => 'field_scholar_software_file_fid',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+  ));
   $handler->override_option('sorts', array(
     'created' => array(
       'order' => 'DESC',
@@ -665,11 +898,22 @@ function _scholar_software_views_default_views() {
     ),
   ));
   $handler->override_option('title', 'Recent Releases');
-  $handler->override_option('items_per_page', 5);
+  $handler->override_option('items_per_page', 3);
   $handler->override_option('use_pager', '0');
   $handler->override_option('distinct', 1);
   $handler->override_option('style_plugin', 'default');
-  $handler->override_option('style_options', array());
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+  ));
+  $handler->override_option('row_options', array(
+    'inline' => array(
+      'release_tag' => 'release_tag',
+      'filesize' => 'filesize',
+      'created' => 'created',
+    ),
+    'separator' => '',
+    'hide_empty' => 0,
+  ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
 
