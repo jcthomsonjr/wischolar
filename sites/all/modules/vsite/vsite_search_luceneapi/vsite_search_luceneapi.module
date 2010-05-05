@@ -27,7 +27,7 @@ function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array())
           require_once(drupal_get_path('module', 'luceneapi_facet').'/luceneapi_facet.block.inc');
           return array(
             'subject' => t('Scholar Site'),
-            'content' => luceneapi_facet_block_view('vsite_search_luceneap')
+            'content' => luceneapi_facet_block_view('vsite_search_luceneapi')
           );
       }
       break;
@@ -540,6 +540,7 @@ function vsite_search_luceneapi_strongarm() {
     'type' => 'type',
     'original_keys' => 'original_keys',
   );
+  // Enable all of the search lucene biblio facets
   $fields = luceneapi_biblio_get_fields();
   foreach($fields as $fid => $field) {
     $conf['luceneapi_facet:luceneapi_node:block'][$field['name']] = $field['name'];
