@@ -1,5 +1,21 @@
 <?php
 
+
+/**
+ *  hook_strongarm().
+ */
+function vsite_menus_strongarm() {
+
+  //Pathauto override to allow underscores and hyphens in urls
+  // 2 = allow
+  // 0 = replace with nothing
+  // 1 = replace with variable 'pathauto_separator'
+  $conf['pathauto_punctuation_hyphen'] = 2;
+  $conf['pathauto_punctuation_underscore'] = 2;
+ 
+  return $conf;
+}
+
 function vsite_menus_init(){
    drupal_add_css(drupal_get_path('module', 'vsite_menus') .'/theme/vsite_menus.css');
 }
