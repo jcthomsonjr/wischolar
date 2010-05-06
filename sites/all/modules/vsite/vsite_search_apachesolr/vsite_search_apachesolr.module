@@ -191,12 +191,13 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
     // Add filter for group_id
     $query->add_filter('im_og_gid', $vsite->group->nid);
     
+    $content_types = array();
+    
     /**
      * Nodes that are related to a feature may need to be filtered out if the feature is configured to be private.  
      * Bypass this check if the current uid is the site owner, or is a site member.
      */
     if(! og_is_group_member($vsite->group->nid, true)) {
-      $content_types = array();
       foreach($vsite->features as $name => $status) {
         // 0 = disabled, 1 = private, 2 = public
         if($status < 2) {
@@ -222,14 +223,11 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
             }
           }
         }
+        $content_types = array_unique($content_types);
       }
-      $content_types = array_unique($content_types);
       
       // Get the content types from the current context
       $node_types = array_unique(context_active_values('node'));
-      
-      drupal_set_message('Exclude:<br><pre>'.print_r($content_types,true).'</pre>');
-      drupal_set_message('Include:<br><pre>'.print_r($node_types,true).'</pre>');
       if(!empty($node_types)) {
         /**
          * If there is more than one content type active in this context, additional filters need to be applied to the Solr query object
@@ -251,7 +249,20 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
           }
         }
         else {
-          $query->add_filter('type', $node_types[0]);
+          if(in_array($node_types[0], $content_types)) {
+            // Exclude the content types belonging to private features
+            $query->add_filter('type', $node_types[0], 'NOT');
+          }
+          else {
+            $query->add_filter('type', $node_types[0]);
+          }
+        }
+      }
+      else {
+        if(!empty($content_types)) {
+          foreach($content_types as $type) {
+            $query->add_filter('type', $type, 'NOT');
+          }
         }
       }
     }
