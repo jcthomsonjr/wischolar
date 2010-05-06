@@ -498,7 +498,7 @@ function _scholar_publications_pub_by_type_wgt(){
                                      GROUP BY bib.biblio_type ORDER BY num DESC ", array($vsite->group->nid,'biblio' ), 0, 4);
 	$output = "";
 	$i = 0;
-	$tabs = "<ul>";
+	$tabs = "<h3 class=\"title tabs\">Recent</h3><ul>";
 	while ($type = db_fetch_object($types)) {
 	  if($type->num < 1) continue;
 		$tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type->name}s</a></li>";//FIX THE PLURAL
