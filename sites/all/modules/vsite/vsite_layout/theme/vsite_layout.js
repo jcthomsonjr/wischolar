@@ -31,6 +31,7 @@ Drupal.behaviors.scholarlayout = function() {
     }
     scholarlayout_add_removal_hooks();
     vsite_layout_setScrollArrows();
+    vsite_layout_setExceptionScroller();
 };
 
 function scholarlayout_add_removal_hooks(){
@@ -135,4 +136,17 @@ function vsite_layout_setScrollArrows(){
 	    });
 	  });
 	}
+}
+
+//Horizontal Sliding Exceptions
+function vsite_layout_setExceptionScroller(){
+	  
+	  $('span.toggle-exceptions').click(function(){
+		  $(this).siblings('div.layout-exceptions').stop().animate({right:'-20px'},{queue:false,duration:300});
+	  });
+	  
+	  $('div.layout-exceptions').click(function(){
+		  $(this).stop().animate({right:'-101%'},{queue:false,duration:300});
+	  });
+	  
 }
