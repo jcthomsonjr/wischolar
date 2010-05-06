@@ -14,7 +14,7 @@ function apachesolr_biblio_features_export($data, &$export, $module_name = '') {
   // Add biblio module as a dependency.
   $export['dependencies']['features'] = 'biblio';
   foreach ($data as $fid => $field) {
-    if ($solr_field = apachesolr_biblio_get_field($fid)) {
+    if ($solr_field = apachesolr_biblio_get_field(null, $fid)) {
       $export['features']['apachesolr_biblio_field'][$solr_field['name']] = $solr_field['name'];
     }
   } 
