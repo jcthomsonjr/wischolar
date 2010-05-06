@@ -445,16 +445,17 @@ function vsite_menu_create_vsite_menu_link($s_path, $s_title, $b_primary_menu = 
  * @param $b_primary_menu (boolean) true for promary menu, false for secondary
  * @param $n_weight (number) menu weight
  * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
+ * @param $vsite (object)  optional - pass the vsite object manually allows for altering /adding menu links programatically
  * 
  * @return (number) the mlid of the affected menu or false on failure 
  */
-function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primary_menu = true, $n_weight = 0, $n_plid = 0 ){
-	$vsite = vsite_get_vsite();
-	if(!$vsite || !strlen($s_path) || !strlen($s_title)) return false;
-  
-	$s_menu = $b_primary_menu? variable_get('scholar_primary_menu',false):variable_get('scholar_secondary_menu',false);
+function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primary_menu = true, $n_weight = 0, $n_plid = 0, $vsite = NULL){
+  if(!$vsite) $vsite = $vsite_get_vsite();
+  if(!$vsite || !strlen($s_path) || !strlen($s_title)) return false;
+
+  $s_menu = $b_primary_menu? variable_get('scholar_primary_menu',false):variable_get('scholar_secondary_menu',false);
 	
-	$a_settings = array(
+   $a_settings = array(
    'delete' => 0, 
    'module' => 'menu',
    'has_children' => 0,
@@ -475,7 +476,6 @@ function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primar
   );
   
   if(intval($n_mlid)) $a_settings['mlid'] = $n_mlid;
-  
-  return menu_link_save($a_settings);
-  
+    
+  return menu_link_save($a_settings);  
 }
