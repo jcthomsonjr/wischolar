@@ -419,3 +419,63 @@ function vsite_menus_vsite_widgets(){
   );
 }
 
+/**
+ * Creates a custom menu link created in the context of a vsite
+ * 
+ * @param $s_path (string) link path
+ * @param $s_title (string) link title
+ * @param $b_primary_menu (boolean) true for promary menu, false for secondary
+ * @param $n_weight (number) menu weight
+ * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
+ * 
+ * @return (number) the mlid of the created menu item or false on failure 
+ */
+function vsite_menu_create_vsite_menu_link($s_path, $s_title, $b_primary_menu = true, $n_weight = 0, $n_plid = 0){
+	//Create the menu item
+	return vsite_menu_update_vsite_menu_link(false, $s_path, $s_title, $b_primary_menu, $n_weight, $n_plid);
+}
+
+
+/**
+ * Updates an custom menu link created in the context of a vsite
+ * 
+ * @param $n_mlid (number) existing link id
+ * @param $s_path (string) link path
+ * @param $s_title (string) link title
+ * @param $b_primary_menu (boolean) true for promary menu, false for secondary
+ * @param $n_weight (number) menu weight
+ * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
+ * 
+ * @return (number) the mlid of the affected menu or false on failure 
+ */
+function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primary_menu = true, $n_weight = 0, $n_plid = 0 ){
+	$vsite = vsite_get_vsite();
+	if(!$vsite || !strlen($s_path) || !strlen($s_title)) return false;
+  
+	$s_menu = $b_primary_menu? variable_get('scholar_primary_menu',false):variable_get('scholar_secondary_menu',false);
+	
+	$a_settings = array(
+   'delete' => 0, 
+   'module' => 'menu',
+   'has_children' => 0,
+   'customized' => 0,
+   'options' => array(
+     'attributes' => array(
+       'site' => $vsite->group->nid,
+       'title' => $s_title,
+     ),
+   ),
+   'expanded' => 0,
+   'link_title' => $s_title,
+   'parent' => $s_menu.':'.$n_plid,  //(Menu Key and Parent link ID 0 for no parent    ie. scholar_secondary_menu:0 for secondary menu at root level)
+   'weight' => $n_weight,  //(Link Weight)
+   'plid' => $n_plid,  //(Parent Link ID again or 0 for root)
+   'menu_name' => $s_menu,
+   'link_path' => $s_path,  
+  );
+  
+  if(intval($n_mlid)) $a_settings['mlid'] = $n_mlid;
+  
+  return menu_link_save($a_settings);
+  
+}
