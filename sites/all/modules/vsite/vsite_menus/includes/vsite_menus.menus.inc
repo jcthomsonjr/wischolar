@@ -96,7 +96,7 @@ class vsite_menus_menus implements vsite_setting {
 	        '#attributes' => array('class' => 'element-weight'),
 	      );
 	      $form['menu_items'][$element['link']['mlid']]['delete'] = array(
-	        '#type' => (menu_node_get_node($element['link']['mlid'], FALSE))?'checkbox':'hidden',
+	        '#type' => (isset($element['link']['options']['attributes']['site']))?'checkbox':'hidden',
 	        '#default_value' => 0,
 	      );
 	    }//Each Menu Item

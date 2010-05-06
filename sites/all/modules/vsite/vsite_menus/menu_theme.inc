@@ -24,6 +24,7 @@ function theme_vsite_menus_radios($element) {
     	$item['menu']['#title'] = drupal_render($item['customizer']);
     }
     $content .= "<tr class='draggable'><td>{$item['menu']['#title']}</td>";
+    unset($item['menu']['#title']); //Already rendered
     
     $content .= "<td>".drupal_render($item['weight'])."</td>";
     $content .= "<td>".drupal_render($item['menu'])."</td>";
