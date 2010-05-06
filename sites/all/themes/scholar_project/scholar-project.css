@@ -1,16 +1,18 @@
 body {
-    background: url(images/body-bg.png) repeat-x #fff;
+    background: #efefef;
     color:#313030;
     font:.9em/165% arial, helvetica, sans-serif;
-    padding-top: 26px;
     }
 
+#wrapper {
+  background: url(images/wrapper-bg.png) repeat-x #efefef;
+  padding-top: 26px;
+  }
 
 #container {
-    width: 982px;
+    width: 995px;
     margin: 0 auto;
     }
-
 
 body.section-user {
   background: #444;
@@ -106,7 +108,7 @@ div.form-item {
 /* HEADER ELEMENTS */
 
 #header {
-    height: 113px;
+    height: 105px;
     }
 
 #header-wrapper {
@@ -125,17 +127,17 @@ div.form-item {
   }
 
 #header h1 {
-  width: 329px;
-  height: 77px;
-  background: url(images/project-logo.png) no-repeat;
+  width: 223px;
+  height: 76px;
+  background: url(images/scholars-at-harvard-logo.png) no-repeat;
   text-indent: -999em;
-  margin-left: 4px
+  margin-left: 13px
   }
 
 #header h1 a, #header h1 a:visited {
   display:block;
-  width: 329px;
-  height: 77px;
+  width: 223px;
+  height: 76px;
   }
 
 #header h2 {
@@ -160,7 +162,7 @@ ul#top-front li {
   }
 
 ul#top-front li a, ul#top-front li a:visited {
-  color: #000;
+  color: #FFF;
   }
 
 ul#top-front li a:hover {
@@ -193,10 +195,14 @@ ul#top-front li#get-form a:hover {
 
 /* Content Area */
 
+#content-row-1, #content-row-2 {
+  width: 981px;
+  padding: 0 7px;
+  }
+
 #content-row-1 {
-  background: url(images/front-row1-bg.png) no-repeat;
-  width: 982px;
-  height: 418px;
+  background: url(images/contain.png) no-repeat;
+  height: 416px;
   padding-top: 1px;
   position: relative;
   }
@@ -215,8 +221,8 @@ ul#top-front li#get-form a:hover {
   background: url(images/triangle-video-tutorial.png) no-repeat transparent;
   background: url(images/version-2.png) no-repeat transparent;
   position: absolute;
-  top: 1px;
-  right: 1px;
+  top: 0px;
+  right: 8px;
   text-indent: -999em;
   }
 
@@ -241,17 +247,19 @@ ul#top-front li#get-form a:hover {
   }
 
 #content-row-2 {
-  background:#e1e1e1;
-  height: 349px;
+  background: url(images/contain.png) no-repeat 0 100%;
+  height: 348px;
+  padding-bottom: 26px;
   }
 
 #content-row-2 .featureblock {
   float: left;
   width:196px;
   height: 295px;
-  margin:1px 0 0 1px;
+  margin: 0;
   background-color: #fff;
   padding: 26px 24px;
+  border: 1px solid #BCBCBC;
   }
 
 #content-row-2 .featureblock h3, #content-row-2 .featureblock p {
@@ -261,40 +269,46 @@ ul#top-front li#get-form a:hover {
   }
 
 #feature-academic-content {
-  background:url(images/front-row2-create-anything.jpg)
+  background:url(images/front-row2-create-anything.jpg);
   }
 
-#feature-biblio {
-  background:url(images/front-row2-biblio.jpg)
+#content-row-2 #feature-biblio {
+  background:url(images/front-row2-biblio.jpg);
+  border-left: none;
   }
 
-#feature-look-feel {
-  background:url(images/front-row2-lookfeel.jpg)
+#content-row-2 #feature-look-feel {
+  background:url(images/front-row2-lookfeel.jpg);
+  border-left: none;
   }
 
-#feature-collaborate {
-  background:url(images/front-row2-collaborate.jpg)
+#content-row-2 #feature-collaborate {
+  background:url(images/front-row2-collaborate.jpg);
+  border-left: none;
+  }
+
+
+#block-views-iqss_project_sites-block_2 {
+  background:url(images/featured-top.png) no-repeat 0 0;
+  }
+
+#block-views-iqss_project_sites-block_2 ul, #block-views-iqss_project_sites-block_2 .more-link {
+  background:url(images/featured-main.png);
+  width: 100%;
+  height: 253px;
   }
 
 
 #block-views-iqss_project_sites-block_2, #footer {
-  background: url(images/front-row3-bg.png) repeat-x #fefefe;
-  min-height: 500px;
   position:relative;
-  border: 1px solid #e1e1e1;
-  border-top: none;
-  border-bottom: none;
-  line-height: 110%;
   }
 
 
 #block-views-iqss_project_sites-block_2 h3 {
-  background: url(images/triangle-featured.png) no-repeat transparent;
-  width: 57px;
-  height: 57px;
+  background: transparent;
   text-indent: -999em;
-  float:left;
-  margin: 0 0 0 -1px;
+  display:none;
+  margin: 0;
   }
 
 #block-views-iqss_project_sites-block_2 .views-exposed-form {
@@ -302,7 +316,7 @@ ul#top-front li#get-form a:hover {
   height: 40px;
   background: url(images/search-person.png) no-repeat 100% 0 transparent;
   float:right;
-  margin: 5px 18px 10px 0;
+  margin: 13px 28px 17px 0;
   position:relative;
   }
 
@@ -367,7 +381,7 @@ ul#top-front li#get-form a:hover {
 #block-views-iqss_project_sites-block_2 .views-row {
   float: left;
   width: 134px;
-  margin-left: 24px;
+  margin-left: 30px;
   clear: none;
   font-size: 13px;
   }
@@ -401,30 +415,38 @@ ul#top-front li#get-form a:hover {
   }
 
 
+#block-views-iqss_project_sites-block_2 .views-admin-links ul{
+  background: transparent;
+  height: auto;
+  }
+
 #block-views-iqss_project_sites-block_2 .more-link {
-  text-indent: -999em;
-  float: right;
-  margin-right: 18px;
-  text-align: left;
+  text-align: right;
+  background-position: 0 100%;
+  padding-bottom: 30px;
+  height: auto;
   }
 
 #block-views-iqss_project_sites-block_2 .more-link a {
-  display:block;
-  width: 67px;
-  height: 32px;
-  background: url(images/more.png) no-repeat transparent;
-  cursor: pointer;
+  background: url(images/arrow-black.png) no-repeat 100% 50% #fff;
+  padding-right: 15px;
+  color: #000;
+  text-transform: capitalize;
+  font-weight: bold;
+  margin-right: 28px;
   }
 
 
 #footer {
-  background: #fefefe;
-  min-height: 100px;
   }
 
 #footer a, #footer a:visited {
   color: #1A708F;
   text-decoration: underline;
+  }
+
+p.copy {
+  width: auto;
   }
 
 /* Different Tables for admin use */
