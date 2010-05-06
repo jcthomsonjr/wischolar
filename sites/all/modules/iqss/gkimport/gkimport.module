@@ -27,6 +27,7 @@ function gkimport_import($drush_run = 0){
   gkimport_import_links();
   gkimport_import_classes();
   gkimport_assign_theme(); 
+  gkimport_save_site_layout();
 
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
@@ -91,6 +92,7 @@ function  gkimport_customize_site($vsite){
   $vsite -> features['scholar_biocv'] = SPACES_OG_PUBLIC; 
   $vsite -> features['scholar_classes'] = SPACES_OG_PUBLIC; 
   $vsite -> features['scholar_dvn'] = SPACES_OG_PUBLIC;
+  $vsite -> features['scholar_events'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_image_gallery'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_links'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_profiles'] = SPACES_OG_PUBLIC;
@@ -864,7 +866,7 @@ function gkimport_import_contact_page(){
  */
 function _gkimport_get_contact_body(){
   $str = <<<CONTENT
-<h2>Online, Phone and FAX</h2> <ul> <li>Email: <a href="mailto:king@harvard.edu">King@Harvard.edu</a></li> <li>URL: <a href="http://GKing.Harvard.Edu">http://GKing.Harvard.Edu</a></li> <li>Assistant: (617) 495-9271 </li> <li>Direct: (617) 495-2027 </li> <li>eFax: (617) 812-8581 </li> </ul> <h2>Mailing Address</h2> <ul> <li><a href="http://iq.harvard.edu"> Institute for Quantitative Social Science</a><br> 1737 Cambridge Street<br> <a href="http://www.harvard.edu">Harvard University</a><br> <a href="http://www.ci.cambridge.ma.us/">Cambridge</a>, <a href="http://www.mass.gov"> MA</a> <a href="http://maps.google.com/maps?sourceid=mozclient&amp;oe=utf-8&amp;q=02138&amp;um=1&amp;ie=UTF-8&amp;split=0&amp;gl=us&amp;ei=26nsSczkNcrHtgeOm63EBQ&amp;sa=X&amp;oi=geocode_result&amp;ct=title&amp;resnum=1"> 02138</a> </li> </ul> <h2>Maps</h2> <ul> <li><a href="http://map.harvard.edu">Harvard University</a></li> <li><a href="http://www.harvardsquare.com/home/about/Maps.aspx">Harvard Square</a></li> <li><a href="http://www.mbta.com/">The T</a></li> </ul> <h2>Harvard Directory</h2> <ul> <li><a href="https://www.directory.harvard.edu/phonebook/">Search for people at Harvard</a></li> </ul>
+<h2>Online, Phone and FAX</h2> <ul> <li>Email: <a href="contact_owner">Contact Gary King</a></li> <li>URL: <a href="http://GKing.Harvard.Edu">http://GKing.Harvard.Edu</a></li> <li>Assistant: (617) 495-9271 </li> <li>Direct: (617) 495-2027 </li> <li>eFax: (617) 812-8581 </li> </ul> <h2>Mailing Address</h2> <ul> <li><a href="http://iq.harvard.edu"> Institute for Quantitative Social Science</a><br> 1737 Cambridge Street<br> <a href="http://www.harvard.edu">Harvard University</a><br> <a href="http://www.ci.cambridge.ma.us/">Cambridge</a>, <a href="http://www.mass.gov"> MA</a> <a href="http://maps.google.com/maps?sourceid=mozclient&amp;oe=utf-8&amp;q=02138&amp;um=1&amp;ie=UTF-8&amp;split=0&amp;gl=us&amp;ei=26nsSczkNcrHtgeOm63EBQ&amp;sa=X&amp;oi=geocode_result&amp;ct=title&amp;resnum=1"> 02138</a> </li> </ul> <h2>Maps</h2> <ul> <li><a href="http://map.harvard.edu">Harvard University</a></li> <li><a href="http://www.harvardsquare.com/home/about/Maps.aspx">Harvard Square</a></li> <li><a href="http://www.mbta.com/">The T</a></li> </ul> <h2>Harvard Directory</h2> <ul> <li><a href="https://www.directory.harvard.edu/phonebook/">Search for people at Harvard</a></li> </ul>
 CONTENT;
   return $str;
 }
@@ -931,5 +933,6 @@ function gkimport_print($text){
     default:
       return print (t("$text"));
       break;
-  }
+  } 
 }
+
