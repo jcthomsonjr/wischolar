@@ -22,30 +22,30 @@ include_once('vsite_search_apachesolr.features.inc');
  */
 function vsite_search_apachesolr_taxonomy($op, $type, $array = NULL) {
   switch($type) {
-  	case 'vocabulary':
-  		switch($op) {
-  			case 'insert':
-  				// Enable the matching Solr facet for this vocabulary
-  				$key = 'im_vid_'.$array['vid'];
-  				$facets = apachesolr_get_enabled_facets();
-  				$facets['apachesolr_search'][$key] = $key;
-  				apachesolr_save_enabled_facets($facets);
+    case 'vocabulary':
+      switch($op) {
+        case 'insert':
+          // Enable the matching Solr facet for this vocabulary
+          $key = 'im_vid_'.$array['vid'];
+          $facets = apachesolr_get_enabled_facets();
+          $facets['apachesolr_search'][$key] = $key;
+          apachesolr_save_enabled_facets($facets);
           // This cache being stale can prevent new facet filters from working.
           apachesolr_clear_cache();
-  				break;
-  			case 'delete':
-	  			// Enable the matching Solr facet for this vocabulary
+          break;
+        case 'delete':
+          // Enable the matching Solr facet for this vocabulary
           $key = 'im_vid_'.$array['vid'];
-	        $facets = apachesolr_get_enabled_facets();
-	        // Remove the facet corresponding to this vocabulary from the list of enabled facets
-	        unset($facets['apachesolr_search'][$key]);
-	        apachesolr_save_enabled_facets($facets);
-	        // This cache being stale can prevent new facet filters from working.
-	        apachesolr_clear_cache();
-  				break;
-  		}
-  		break;
-  }	
+          $facets = apachesolr_get_enabled_facets();
+          // Remove the facet corresponding to this vocabulary from the list of enabled facets
+          unset($facets['apachesolr_search'][$key]);
+          apachesolr_save_enabled_facets($facets);
+          // This cache being stale can prevent new facet filters from working.
+          apachesolr_clear_cache();
+          break;
+      }
+      break;
+  }
 }
 
 /**
@@ -57,12 +57,12 @@ function vsite_search_apachesolr_taxonomy($op, $type, $array = NULL) {
  * @param object $node
  */
 function vsite_search_apachesolr_link_alter(&$links, $node) {
-	foreach($links as $name => $link) {
-		if(preg_match("/^taxonomy_term_/", $name)) {
-			$links[$name]['href'] = sprintf('search/apachesolr_search/');
-			$links[$name]['query'] = array('filters' => sprintf('tid:%d', substr($name, 14)));
-		}
-	}
+  foreach($links as $name => $link) {
+    if(preg_match("/^taxonomy_term_/", $name)) {
+      $links[$name]['href'] = sprintf('search/apachesolr_search/');
+      $links[$name]['query'] = array('filters' => sprintf('tid:%d', substr($name, 14)));
+    }
+  }
 }
 
 /**
@@ -79,19 +79,19 @@ function vsite_search_apachesolr_link_alter(&$links, $node) {
  */
 function vsite_search_apachesolr_form_alter(&$form, $form_state, $form_id) {
   if($form_id == 'search_form') {
-	  if (variable_get('apachesolr_search_make_default', 0)) {
+    if (variable_get('apachesolr_search_make_default', 0)) {
       if (!isset($form['#submit'])) {
         $form['#submit'] = array('vsite_search_apachesolr_solr_search_form_submit');
       }
       else {
         $key = array_search('search_form_submit', $form['#submit']);
-		    if ($key !== FALSE) {
-		      // Replace the search module's function.
-		      $form['#submit'][$key] = 'vsite_search_apachesolr_solr_search_form_submit';
-		    }
-		  }
-		}
-	}
+        if ($key !== FALSE) {
+          // Replace the search module's function.
+          $form['#submit'][$key] = 'vsite_search_apachesolr_solr_search_form_submit';
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -121,50 +121,54 @@ function vsite_search_apachesolr_solr_search_form_submit($form, &$form_state) {
 function vsite_search_apachesolr_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
-    	$blocks = array();
-    	$blocks[0]['info'] = t('Categories');
+      $blocks = array();
+      $blocks[0]['info'] = t('Categories');
+      $blocks[1]['info'] = t('Faceted Browsing');
       return $blocks;
     case 'view':
-	    switch($delta) {
-	      case 0:
-			    $response = apachesolr_static_response_cache();
-		      if (empty($response)) {
-		        // No search has been performed; fetch the current context to prepare for faceted browsing
-		        $content = '';
-            
-		        /**
-             * Get the enabled filter facet blocks, performing an empty search based on the content type as a filter.
-             * @see http://drupal.org/node/457826
-             */ 
-		        $blocks = apachesolr_search_browse(null, null, null, 'search/apachesolr_search');
-            foreach($blocks as $block) {
+      switch($delta) {
+        case 0:
+          $query = apachesolr_current_query();
+          $vsite = vsite_get_vsite();
+          if($vsite) {
+            $content = '';
+            foreach($vsite->group->og_vocabularies as $vid => $vocab) {
+              $delta = 'im_vid_'.$vid;
+              $block = apachesolr_search_taxonomy_facet_block($response, $query, $delta);
+              if(!empty($block)) {	
+                $content .= '<h3>'.$block['subject'].'</h3>';
+                $content .= $block['content'];
+              } 
+            }
+          }
+          return array(
+            'subject' => t('Categories'),
+            'content' => $content
+          );
+          break;
+        case 1:
+          // No search has been performed; fetch the current context to prepare for faceted browsing
+          $content = '';
+          
+          /**
+           * Get the enabled filter facet blocks, performing an empty search based on the content type as a filter.
+           * @see http://drupal.org/node/457826
+           */ 
+          $blocks = apachesolr_search_browse(null, null, null, 'search/apachesolr_search');
+          foreach($blocks as $block) {
+            if(strlen($block->content) > 0) {
               $content .= '<h3 class="title">'.$block->subject.'</h3>';
               $content .= $block->content;
             }
+          }
+          if(strlen($content) > 0) {
             return array(
               'subject' => '',
               'content' => $content,
             );
-		      }
-	    		$query = apachesolr_current_query();
-	    		$vsite = vsite_get_vsite();
-	    		if($vsite) {
-	    			$content = '';
-	    			foreach($vsite->group->og_vocabularies as $vid => $vocab) {
-	    				$delta = 'im_vid_'.$vid;
-              $block = apachesolr_search_taxonomy_facet_block($response, $query, $delta);
-	    			  if(!empty($block)) {	
-	    			  	$content .= '<h3>'.$block['subject'].'</h3>';
-	    			    $content .= $block['content'];
-	    			  } 
-            }
           }
-	    		return array(
-	    		  'subject' => t('Categories'),
-	    			'content' => $content
-	    		);
-	    		break;
-	    }
+          break;
+      }
       break;   
   }
 }
@@ -178,27 +182,6 @@ function vsite_search_apachesolr_block($op = 'list', $delta = 0, $edit = array()
  *   Controlling params for the query object
  */
 function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $caller) {
-  // Get the content types from the current context
-  $node_types = array_unique(context_active_values('node'));
-  if(!empty($node_types)) {
-    /**
-     * If there is more than one content type active in this context, additional filters need to be applied to the Solr query object
-     * as an "or" condition instead of an "an" condition.  To do this, we need to utilize a Solr subquery.
-     * 
-     * If there's only one content type to filter by, simply add the new filter.
-     */
-    if(count($node_types) > 1) {
-      $subquery = apachesolr_drupal_query();
-      foreach($node_types as $type) {
-        $subquery->add_filter('type', $type);
-        $query->add_subquery($subquery, 'OR');
-      }
-    }
-    else {
-      $query->add_filter('type', $node_types[0]);
-    }
-  }
-  
   /**
    * Retrieve the current group context.  If the user is viewing content within a group context, use the group's nid as a filter for the facets
    * to restrict results to within this group.  Searches performed outside of a vsite (top level) will not be filtered by group.
@@ -241,10 +224,56 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
         }
       }
       $content_types = array_unique($content_types);
-      if(!empty($content_types)) {
-        foreach($content_types as $type) {
-          // Exclude the content types belonging to private features
-          $query->add_filter('type', $type, 'NOT');
+      
+      // Get the content types from the current context
+      $node_types = array_unique(context_active_values('node'));
+      
+      drupal_set_message('Exclude:<br><pre>'.print_r($content_types,true).'</pre>');
+      drupal_set_message('Include:<br><pre>'.print_r($node_types,true).'</pre>');
+      if(!empty($node_types)) {
+        /**
+         * If there is more than one content type active in this context, additional filters need to be applied to the Solr query object
+         * as an "or" condition instead of an "an" condition.  To do this, we need to utilize a Solr subquery.
+         * 
+         * If there's only one content type to filter by, simply add the new filter.
+         */
+        if(count($node_types) > 1) {
+          $subquery = apachesolr_drupal_query();
+          foreach($node_types as $type) {
+            if(in_array($type, $content_types)) {
+              // Exclude the content types belonging to private features
+              $query->add_filter('type', $type, 'NOT');
+            }
+            else {
+              $subquery->add_filter('type', $type);
+              $query->add_subquery($subquery, 'OR');
+            }
+          }
+        }
+        else {
+          $query->add_filter('type', $node_types[0]);
+        }
+      }
+    }
+    else {
+      // Get the content types from the current context
+      $node_types = array_unique(context_active_values('node'));
+      if(!empty($node_types)) {
+        /**
+         * If there is more than one content type active in this context, additional filters need to be applied to the Solr query object
+         * as an "or" condition instead of an "an" condition.  To do this, we need to utilize a Solr subquery.
+         * 
+         * If there's only one content type to filter by, simply add the new filter.
+         */
+        if(count($node_types) > 1) {
+          $subquery = apachesolr_drupal_query();
+          foreach($node_types as $type) {
+            $subquery->add_filter('type', $type);
+            $query->add_subquery($subquery, 'OR');
+          }
+        }
+        else {
+          $query->add_filter('type', $node_types[0]);
         }
       }
     }
