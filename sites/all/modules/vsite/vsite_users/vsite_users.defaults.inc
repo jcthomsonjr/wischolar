@@ -290,15 +290,6 @@ function _vsite_users_user_default_permissions() {
       '1' => 'scholar user',
     ),
   );
-  
-  // Exported permission: manage remote node source
-  $permissions[] = array(
-    'name' => 'manage remote node source',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
    
   return $permissions;
 }
