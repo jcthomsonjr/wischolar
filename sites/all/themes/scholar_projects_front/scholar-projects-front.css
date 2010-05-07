@@ -1,8 +1,12 @@
 body {
-    background: url(images/body-bg.png) repeat-x #9ac0c9;
+    background: #9ac0c9;
      }
 
 /* LAYOUT ELEMENTS */
+
+#wrapper {
+  background: url(images/wrapper-bg.png) repeat-x #9ac0c9;
+  }
 
 #header-wrapper, #header-left {
   padding: 0;
@@ -13,24 +17,25 @@ body {
 /* HEADER ELEMENTS */
 
 #header {
-    height: 89px;
+    background: url(images/projects-header.png) no-repeat 0 0 transparent;
+    height: 92px;
     }
 
 
 #header h1 {
-  width: 421px;
-  height: 64px;
+  width: 233px;
+  height: 76px;
   margin-left: 0px;
-  background: url(images/project-logo.png) 0 0 no-repeat;
+  background: url(images/projects-at-harvard-logo.png) 0 0 no-repeat;
   }
 
 body.section-user #header h1 {
-  background-position: 0 -64px;
+  background-image: url(images/projects-at-harvard-logo-on-white.png);
   }
 
 #header h1 a, #header h1 a:visited {
-  width: 421px;
-  height: 64px;
+  width: 233px;
+  height: 76px;
   }
 
 body.page-site-register h2.title {
@@ -56,14 +61,6 @@ ul#top-front li a:hover {
 
 /* Content Area */
 
-.front #wrapper {
-  background: url(images/wrapper.png) no-repeat 50% 81px transparent;
-  }
-
-.front #content-wrapper, #content-main {
-  background: #fff;
-  border: 1px solid #000;
-  }
 
 body.page-site-register #content-wrapper,
 body.page-site-register #content-main,
@@ -88,41 +85,38 @@ body.section-user #content-main #content {
   padding:0 !important;
   }
 
-#content-row-1 {
-  width: 982px;
-  height: 418px;
-  padding-top: 1px;
-  position: relative;
+#content-row-1, #content-row-2 {
+  background-image: url(images/contain.png);
   }
 
-#content-row-2 {
-  background:transparent
+#tutorial-link {
+  top: 1px;
   }
 
 #content-row-2 .featureblock {
-  border-right: 1px solid #ccc;
-  width: 195px;
+  border-color: #396173;
   }
 
 #content-row-2 #feature-academic-content {
-  background:url(images/front-row2-create-anything.jpg)
+  background:url(images/front-row2-create-anything.jpg);
   }
 
 #content-row-2 #feature-biblio {
-  background:url(images/front-row2-biblio.jpg)
+  background:url(images/front-row2-biblio.jpg);
   }
 
 #content-row-2 #feature-look-feel {
-  background:url(images/front-row2-lookfeel.jpg)
+  background:url(images/front-row2-lookfeel.jpg);
   }
 
 #content-row-2 #feature-wordout {
-  background:url(images/front-row2-wordout.jpg)
+  background:url(images/front-row2-wordout.jpg);
   }
 
 #content-row-2 #feature-collaborate, #content-row-2 #feature-events {
   background:url(images/front-row2-collaborate.jpg);
-  border: none;
+  border-left: none;
+  border-right: none;
   }
 
 #content-row-2 #feature-events {

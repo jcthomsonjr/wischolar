@@ -61,38 +61,55 @@ select option {
 /* Search box */
 
 
-#block-vsite_widgets-1 {
+#search-form {
   padding-bottom: 5px;
   }
 
-#vsite-widgets-search-form {
+#search-form div.form-item {
+  border: none;
+  padding: 0;
+  margin: 0;
+  }
+
+#search-form label {
+  display:none;
+  }
+
+#search-form .container-inline {
   background: url(images/searchglass.gif) no-repeat 100% 0;
   height: 18px;
   line-height:normal;
-  max-width: 300px;
+  max-width: 278px;
+  padding-right:22px;
   }
 
-#vsite-widgets-search-form div.form-item {
-  padding: 0;
-  border: none;
-  margin-right: 18px;
+#search-form #edit-keys-wrapper {
+  width: 100%;
   }
 
-#vsite-widgets-search-form #edit-search {
+#search-form #edit-keys-wrapper, #search-form input#edit-submit {
+  float:left;
+  position: relative;
+  }
+
+#search-form #edit-keys-wrapper {
+  width: 100%;
+  }
+
+#search-form #edit-keys {
   height: 14px;
   padding: 3px 4px 0 0;
   border: none;
   border-left: 1px solid #b7c2ce;
   background: transparent;
-  width:98%;
+  width:100%;
   }
 
 #header-right #vsite-widgets-search-form #edit-search {
   width: 43px;
   }
 
-#vsite-widgets-search-form input#edit-submit, #vsite-widgets-search-form input.form-submit {
-  float:right;
+#search-form input#edit-submit, #search-form input.form-submit {
   background: transparent;
   font-size: 10px;
   width: 18px;
@@ -100,6 +117,7 @@ select option {
   border: none;
   padding: 0 !important;
   text-indent: -999em;
+  margin-right: -100%;
   }
 
 
