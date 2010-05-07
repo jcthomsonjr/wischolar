@@ -306,11 +306,33 @@ body.header-right-main #header-wrapper {
 
 /* Publications Tabs */
 
-h3.tabs, ul.ui-tabs-nav {
+.ui-tabs .ui-tabs-nav {
+  border-bottom: 1px solid #cecece;
+  margin: 0 -16px;
+  padding: 0 16px 9px 16px;
+  }
+
+.ui-tabs-nav li {
   float: left;
-  display:inline !important;
-  clear: none;
-  margin-bottom: 0;
+  margin: 0 10px 0 0;
+  padding-right: 10px;
+  border-right: 2px solid #96a5a6;
+  }
+
+.ui-tabs-nav li a {
+  padding:0;
+  font-weight: bold;
+  }
+
+.ui-tabs-nav li.ui-state-default a, .ui-tabs-nav li.ui-state-default a:visited {
+  color:#96a5a6;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 0;
+  }
+
+.ui-tabs-nav li.ui-tabs-selected a, .ui-tabs-nav li.ui-tabs-selected a:visited {
+  color: #000 !important;
   }
 
 .ui-tabs-panel {
@@ -347,4 +369,16 @@ h3.tabs, ul.ui-tabs-nav {
   -webkit-border-radius: 0;
   margin: 0;
   float:right;
+  }
+
+
+/* BIBLIO */
+
+.node-type-biblio h3.title {
+  margin-bottom: 0;
+  font-size: 14px;
+  }
+
+.biblio-title a, .biblio-title a:visited {
+  color: #000;
   }
