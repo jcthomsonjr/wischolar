@@ -209,6 +209,17 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
         $content_types = array_unique($content_types);
       }
       
+      $paths = array_unique(context_active_values('path'));
+      if(!empty($paths)) {
+        foreach($paths as $path) {
+          //die('Path = '.$path);
+          if(preg_match('/^category\/tags\//', $path)) {
+            $pieces = explode('/', $_GET['q']);
+            $query->add_filter('tid', $pieces[2]);
+          }          
+        }
+      }
+      
       // Get the content types from the current context
       $node_types = array_unique(context_active_values('node'));
       if(!empty($node_types)) {
@@ -223,7 +234,8 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
           foreach($node_types as $type) {
             if(in_array($type, $content_types)) {
               // Exclude the content types belonging to private features
-              $query->add_filter('type', $type, 'NOT');
+              $subquery->add_filter('type', $type);
+              $query->add_subquery($subquery, 'NOT');
             }
             else {
               $subquery->add_filter('type', $type);

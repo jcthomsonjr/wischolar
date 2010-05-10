@@ -900,6 +900,61 @@ function _vsite_search_apachesolr_context_default_contexts() {
       ),
     ),
   );
+  
+  $items[] = array(
+    'namespace' => 'vsite',
+    'attribute' => 'search',
+    'value' => 'apachesolr_browse_taxonomy',
+    'system' => 0,
+    'description' => '',
+    'path' => array(
+      'category/tags/*' => 'category/tags/*',
+    ),
+    'block' => array(
+      'apachesolr_mlt-001' => (object)(array(
+         'module' => 'apachesolr',
+         'delta' => 'mlt-001',
+         'weight' => 20,
+         'region' => 'right',
+         'status' => '0',
+         'label' => 'Apache Solr recommendations: More like this',
+         'type' => 'context_ui',
+         'bid' => 'apachesolr_mlt-001',
+      )),
+      'apachesolr_sort' => (object)(array(
+         'module' => 'apachesolr',
+         'delta' => 'sort',
+         'weight' => 21,
+         'region' => 'right',
+         'status' => '0',
+         'label' => 'Apache Solr Core: Sorting',
+         'type' => 'context_ui',
+         'bid' => 'apachesolr_sort',
+      )),
+      'apachesolr_search_uid' => (object)(array(
+         'module' => 'apachesolr_search',
+         'delta' => 'uid',
+         'weight' => 22,
+         'region' => 'right',
+         'status' => '0',
+         'label' => 'Node attribute: Filter by author',
+         'type' => 'context_ui',
+         'bid' => 'apachesolr_search_uid',
+      )),
+      'vsite_search_apachesolr_1' => (object)(array(
+         'module' => 'vsite_search_apachesolr',
+         'delta' => '1',
+         'weight' => 23,
+         'region' => 'right',
+         'status' => '0',
+         'label' => 'Faceted Browsing',
+         'type' => 'context_ui',
+         'bid' => 'vsite_search_apachesolr_1',
+      )),
+    ),
+    'type' => 2,
+    'status' => 1,
+  );
   return $items;
 }
 
