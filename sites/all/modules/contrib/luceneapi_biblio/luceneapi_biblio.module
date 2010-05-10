@@ -260,7 +260,7 @@ function luceneapi_biblio_luceneapi_facet($module, $type = NULL) {
           'title' => $title,
           'element' => $field['name'],
           'field' => $field['name'],
-          'type' => 'select',
+          'type' => 'checkbox',
           'callback' => 'luceneapi_facet_multiterm_callback',
           'callback arguments' => array(
             luceneapi_facet_value_get($field['name'], array()), $field['name'], TRUE
@@ -275,10 +275,12 @@ function luceneapi_biblio_luceneapi_facet($module, $type = NULL) {
       'title' => t('Citation Contributor'),
       'element' => 'biblio_contributors',
       'field' => 'biblio_contributors',
-      'type' => 'select',
+      'type' => 'checkbox',
       'callback' => 'luceneapi_facet_multiterm_callback',
       'callback arguments' => array(
-        luceneapi_facet_value_get('biblio_contributors', array()), 'biblio_contributors', TRUE
+        luceneapi_facet_value_get('biblio_contributors', array()), 
+        'biblio_contributors', 
+        TRUE,
       ),
       'delimeter' => '|',
     );
