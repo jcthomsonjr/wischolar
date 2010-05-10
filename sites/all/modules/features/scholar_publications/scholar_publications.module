@@ -23,7 +23,7 @@ function scholar_publications_init(){
 	    scholar_publications_settings_feature::customize($space,'export_links', $conf['biblio_export_links']);
 	    scholar_publications_settings_feature::customize($space,'google_link', $conf['biblio_google_link']);
 	    scholar_publications_settings_feature::customize($space,'no_publication_date', $conf['biblio_no_year_text']);
-	    //scholar_publications_settings_feature::customize($space,'inlinemode_in_links', $conf['biblio_inlinemode_in_links']);
+	    scholar_publications_settings_feature::customize($space,'note_in_teaser', $conf['scholar_publication_note_in_teaser']);
 	    scholar_publications_settings_feature::customize($space,'link_title_url', $conf['biblio_link_title_url']);
 	    scholar_publications_settings_feature::customize($space,'author_links', $conf['biblio_author_links']);
 
@@ -38,7 +38,7 @@ function scholar_publications_init(){
  */
 function scholar_publications_strongarm() {
 
-
+  $conf['biblio_sort_tabs'] = array('author'=>'author', 'title'=>'title', 'type'=>'type', 'year'=>'year'); //Change the default
   $conf['node_options_biblio'] = array('status', 'revision');
   $conf['upload_biblio'] = TRUE;
 
@@ -145,6 +145,11 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
   	}else{
   	  scholar_publications_hide_form_value($form['biblio_doi_lookup']);
       scholar_publications_hide_form_value($form['biblio_cut_paste']);
+    }
+    
+    if(is_array($form['biblio_notes_field']) && is_array($form['biblio_notes_field']['biblio_notes'])){
+    	$form['biblio_notes'] = $form['biblio_notes_field']['biblio_notes'];
+      unset($form['biblio_notes_field']);
     }
 
   	if(array_key_exists('other_fields',$form)) scholar_publications_hide_form_value($form['other_fields']);
@@ -376,6 +381,8 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
 
   // add links to attached files (if any)
   if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
+  
+  if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_markup($node->biblio_notes, $node->format, FALSE) ."\n</span>";
 
   if (!$node->status) $s_output .= '</div>';
 

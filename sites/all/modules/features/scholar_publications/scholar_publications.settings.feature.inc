@@ -58,41 +58,14 @@ class scholar_publications_settings_feature implements space_setting {
       '#default_value' => !array_key_exists('google_link',$value)?variable_get('biblio_google_link', 1):$value['google_link'],
       '#description' => t('This adds the necessary metadata to your web site to allow Google Scholar to properly index your publication.'),
     );
-
-    /*
-    $form['links_target_new_window'] = array(
+    
+    $form['note_in_teaser'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Open links in new browser'),
-      '#return_value' => 1,
-      '#default_value' => !array_key_exists('links_target_new_window',$value)?variable_get('biblio_links_target_new_window', 0):$value['links_target_new_window'],
-      '#description' => t('Links in your publication entry would be opened in a new browser window ')
+      '#title' => t('Show the "note" content in teaser?'),
+      //'#description' => t('This alters the bibliographic format of your publications.'),
+      '#default_value' => !array_key_exists('note_in_teaser',$value)?false:$value['note_in_teaser'],
+      '#description' => t('If this is checked and you add a note to a publicaction then it will show as part of a publications teaser.'),
     );
-
-
-    $form['inlinemode_in_links'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Carry "inline" mode through to all links'),
-        '#return_value' => 1,
-        '#default_value' => !array_key_exists('inlinemode_in_links',$value)?variable_get('biblio_inlinemode_in_links', 0):$value['inlinemode_in_links'],
-        '#description' => t('This allows an "inline" mode to be applied to all links such as titles, authors and keywords')
-    );
-        */
-
-//    $form['link_title_url'] = array(
-//      '#type' => 'checkbox',
-//      '#title' => t('Create hyperlinks to external URLs (if they are available)'),
-//      '#return_value' => 1,
-//      '#default_value' => !array_key_exists('link_title_url',$value)?variable_get('biblio_link_title_url', 0):$value['link_title_url'],
-//      '#description' => t('If an off-site URL is available, users clicking on the title of the publication would be directed to the off-site URL. This could be useful if the complete work is available online.'),
-//    );
-
-//    $form['author_links'] = array(
-//      '#type' => 'checkbox',
-//      '#title' => t('Create hyperlinks to authors'),
-//      '#return_value' => 1,
-//      '#default_value' => !array_key_exists('author_links',$value)?variable_get('biblio_author_links', 1):$value['author_links'],
-//      '#description' => t('Creates a hyperlink on each author name which, when clicked, selects all entries which contain that author'),
-//    );
 
     $form['rowsperpage'] = array(
       '#type' => 'textfield',
@@ -119,8 +92,8 @@ class scholar_publications_settings_feature implements space_setting {
     $form['sort_tabs'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Allow additional sorting of your publications by'),
-      '#default_value' => !array_key_exists('sort_tabs',$value)?variable_get('biblio_sort_tabs', array('author'=>'author', 'title'=>'title', 'type'=>'type', 'year'=>'year', 'keyword'=>'keyword')):$value['sort_tabs'],
-      '#options' => array('author' => t('Author'), 'keyword' => t('Keyword'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
+      '#default_value' => !array_key_exists('sort_tabs',$value)?variable_get('biblio_sort_tabs', array('author'=>'author', 'title'=>'title', 'type'=>'type', 'year'=>'year')):$value['sort_tabs'],
+      '#options' => array('author' => t('Author'), 'title' => t('Title'), 'type' => t('Type'), 'year' => t('Year')),
       //'#description' => t('You turn the sorting links at the top of the /biblio page here.'),
     );
 

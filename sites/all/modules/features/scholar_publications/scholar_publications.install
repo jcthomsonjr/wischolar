@@ -19,3 +19,14 @@ function _scholar_publications_set_system_weight($weight) {
 	
   return db_query("UPDATE {system} SET weight = %d WHERE name = 'scholar_publications'", $weight);
 }
+
+/**
+ * Add the common field notes to all publication types
+ * @param $sandbox
+ */
+function scholar_publications_update_6001(&$sandbox){
+	 
+  $result[] =  db_query("UPDATE {biblio_field_type} SET common = 1 WHERE ftdid = %d ", 27);
+  
+  return $result;
+}
