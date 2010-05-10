@@ -46,7 +46,7 @@ function og_custom_view_callback($view_name, $type, $nid, $js = FALSE){
     );
     
   $form_state['t'] = 'header';
-  $form_state['args'] = array('header');
+  $form_state['args'] = array(array('type' => 'header'));
     
     $output = dialog_form_wrapper($form_id, $form_state);
     if (empty($output)) {
@@ -67,7 +67,7 @@ function og_custom_view_callback($view_name, $type, $nid, $js = FALSE){
 function og_custom_view_form($form_id,$t){
   dpm($t);
   $form = array();
-  $form[$t] = array(
+  $form[$t['type']] = array(
     '#type' => 'textarea', 
     '#title' => t('bar'), 
   );
@@ -83,5 +83,41 @@ function og_custom_view_form($form_id,$t){
 
 function og_custom_view_form_submit($form, &$form_state){
   dpm($form_state);
+}
+
+/**
+ * save an entry in the database
+ * @param unknown_type $nid
+ * @param unknown_type $view_name
+ * @param unknown_type $type
+ * @param unknown_type $value
+ */
+function og_custom_view_set($nid, $view_name, $type, $value){
+  
+  $table = 'og_custom_view';
+  $record = new stdClass();
+  $record -> nid = $nid;
+  $record -> view_name = $view_name;
+  $record -> type = $type;
+  $record -> value = $value;
+  
+  if (!og_custom_view_get($nid, $view_name, $type, $value)){
+    drupal_write_record($table, $object);
+  }
+  else {
+    drupal_write_record($table, $object, array('nid', 'view_name', 'type'));
+  }
+}
+
+/**
+ * get an entry from the database
+ * @param unknown_type $nid
+ * @param unknown_type $view_name
+ * @param unknown_type $type
+ */
+function og_custom_view_get($nid, $view_name, $type){
+  $sql = "SELECT value FROM {og_views_custom} WHERE nid=%d AND view_name='%s' AND type='%s'";
+  $result = db_result(db_query($sql, $nid, $view_name, $type));
+  return $result;
 }
 

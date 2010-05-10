@@ -381,6 +381,8 @@ function og_vocab_taxonomy($op, $type, $edit = NULL) {
       }
     }
     elseif ($op == 'delete') {
+      dpm('yes');
+      dpm(current($edit) . 'xxx');
       og_vocab_remove_record($edit['vid']);
     }
   }
