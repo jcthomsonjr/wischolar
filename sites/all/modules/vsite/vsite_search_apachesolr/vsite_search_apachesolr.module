@@ -119,7 +119,7 @@ function vsite_search_apachesolr_block($op = 'list', $delta = 0, $edit = array()
               $delta = 'im_vid_'.$vid;
               $block = apachesolr_search_taxonomy_facet_block($response, $query, $delta);
               if(!empty($block)) {	
-                $content .= '<h3>'.$block['subject'].'</h3>';
+                $content .= '<h3>'.t($block['subject']).'</h3>';
                 $content .= $block['content'];
               } 
             }
@@ -140,7 +140,7 @@ function vsite_search_apachesolr_block($op = 'list', $delta = 0, $edit = array()
           $blocks = apachesolr_search_browse(null, null, null, 'search/apachesolr_search');
           foreach($blocks as $block) {
             if(strlen($block->content) > 0) {
-              $content .= '<h3 class="title">'.$block->subject.'</h3>';
+              $content .= '<h3 class="title">'.t($block->subject).'</h3>';
               $content .= $block->content;
             }
           }
@@ -213,10 +213,12 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
       if(!empty($paths)) {
         foreach($paths as $path) {
           //die('Path = '.$path);
-          if(preg_match('/^category\/tags\//', $path)) {
+          if(preg_match('/^category\/tags\//', $path) || preg_match('/^category\//', $path)) {
             $pieces = explode('/', $_GET['q']);
-            $query->add_filter('tid', $pieces[2]);
-          }          
+            if(is_numeric($pieces[2])) {
+              $query->add_filter('tid', $pieces[2]);
+            }
+          }      
         }
       }
       
