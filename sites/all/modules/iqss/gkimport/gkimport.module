@@ -27,7 +27,8 @@ function gkimport_import($drush_run = 0){
   gkimport_import_links();
   gkimport_import_classes();
   gkimport_assign_theme(); 
-  gkimport_save_site_layout();
+  gkimport_save_site_layout($drush_run);
+  gkimport_save_sample_pages();
 
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
@@ -45,7 +46,7 @@ function gkimport_create_site(){
   //gary's site base info
   $settings = array(
   'name' => 'gking',
-  'mail' => 'king@harvard.edu',
+  'mail' => 'jweiner@hmdc.harvard.edu', //'king@harvard.edu',
   'pass' => user_password(),
   'roles' => array(variable_get('scholar_manager_role', 'scholar admin')),
   'domain' => 'gking',
@@ -97,7 +98,8 @@ function  gkimport_customize_site($vsite){
   $vsite -> features['scholar_links'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_profiles'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_publications'] = SPACES_OG_PUBLIC;
-
+  $vsite -> features['scholar_software'] = SPACES_OG_PUBLIC;
+  
   db_query("UPDATE {content_type_vsite} SET field_vsite_address_value = '%s' WHERE nid = %d", $address, $sid);
   //$cid = 'content:' . $sid . ':' . $sid;
   cache_clear_all("content:$sid:$sid", 'cache_content');
@@ -111,7 +113,7 @@ function  gkimport_customize_site($vsite){
  */
 function gkimport_parse_files(){
   //NOTE: Please do not change the order of these files as it can cause problems
-  $files =array('pubs_taxonomy.csv', 'gkpubs.bib');  //files to parse
+  $files =array('pubs_taxonomy.csv', 'gkpubs.bib', 'talks.csv');  //files to parse
   $path = dirname(__FILE__) . '/files/';
 
   foreach($files as $file){
@@ -126,6 +128,11 @@ function gkimport_parse_files(){
       case 'gkpubs.bib':
         gkimport_import_pubs($file);
         break;
+        
+      case 'talks.csv':
+        gkimport_import_talks($filepath);
+        break;
+        
     }
   }
 }
@@ -556,7 +563,7 @@ function gkimport_create_profiles(){
     //get institution
   if($profile['group'] == 'Current Research Associates'){
     $node -> body = $description;
-    $node -> teaser = $description;    
+    $node -> teaser = node_teaser($description);    
  }
   else{
     $node -> field_person_institution[0] = array('value' => html_entity_decode($description, ENT_COMPAT, 'UTF-8'));
@@ -761,7 +768,7 @@ function gkimport_import_classes(){
       $node -> type = 'class';
       $node -> title = $data[0];
       $node -> body = $data[1];
-      $node -> teaser = $data[1];
+      $node -> teaser = node_teaser($data[1]);
       $node -> field_class_link[0] = array(
       'url' => $data[2],
       'title' => 'Syllibus',
@@ -848,14 +855,19 @@ function gkimport_import_contact_page(){
   $node -> type = 'page';
   $node -> title = 'Contact';
   $node -> body = _gkimport_get_contact_body();
+  $node -> teaser = node_teaser(_gkimport_get_contact_body());
   $node -> name = $account -> name;
   $node -> uid = $account -> uid;
-  $node -> menu = array(
+ /* 
+ //NOT ADDING MENU LINK
+ $node -> menu = array(
     'module' => 'menu',
-    'link_title' => 'Contact2',
+    'link_title' => 'Contact',
     'parent' =>'features:0',
     'menu_name' => 'features',
+    'weight' => 10,
   );
+  */
   node_save($node);
   gkimport_node_to_og($node -> nid, $account, $sid);
   drush_print("Added Contact Page");
@@ -866,7 +878,7 @@ function gkimport_import_contact_page(){
  */
 function _gkimport_get_contact_body(){
   $str = <<<CONTENT
-<h2>Online, Phone and FAX</h2> <ul> <li>Email: <a href="contact_owner">Contact Gary King</a></li> <li>URL: <a href="http://GKing.Harvard.Edu">http://GKing.Harvard.Edu</a></li> <li>Assistant: (617) 495-9271 </li> <li>Direct: (617) 495-2027 </li> <li>eFax: (617) 812-8581 </li> </ul> <h2>Mailing Address</h2> <ul> <li><a href="http://iq.harvard.edu"> Institute for Quantitative Social Science</a><br> 1737 Cambridge Street<br> <a href="http://www.harvard.edu">Harvard University</a><br> <a href="http://www.ci.cambridge.ma.us/">Cambridge</a>, <a href="http://www.mass.gov"> MA</a> <a href="http://maps.google.com/maps?sourceid=mozclient&amp;oe=utf-8&amp;q=02138&amp;um=1&amp;ie=UTF-8&amp;split=0&amp;gl=us&amp;ei=26nsSczkNcrHtgeOm63EBQ&amp;sa=X&amp;oi=geocode_result&amp;ct=title&amp;resnum=1"> 02138</a> </li> </ul> <h2>Maps</h2> <ul> <li><a href="http://map.harvard.edu">Harvard University</a></li> <li><a href="http://www.harvardsquare.com/home/about/Maps.aspx">Harvard Square</a></li> <li><a href="http://www.mbta.com/">The T</a></li> </ul> <h2>Harvard Directory</h2> <ul> <li><a href="https://www.directory.harvard.edu/phonebook/">Search for people at Harvard</a></li> </ul>
+<h2>Online, Phone and FAX</h2> <ul> <li>Email: <a href="../contact_owner">Contact Gary King</a></li> <li>URL: <a href="http://GKing.Harvard.Edu">http://GKing.Harvard.Edu</a></li> <li>Assistant: (617) 495-9271 </li> <li>Direct: (617) 495-2027 </li> <li>eFax: (617) 812-8581 </li> </ul> <h2>Mailing Address</h2> <ul> <li><a href="http://iq.harvard.edu"> Institute for Quantitative Social Science</a><br> 1737 Cambridge Street<br> <a href="http://www.harvard.edu">Harvard University</a><br> <a href="http://www.ci.cambridge.ma.us/">Cambridge</a>, <a href="http://www.mass.gov"> MA</a> <a href="http://maps.google.com/maps?sourceid=mozclient&amp;oe=utf-8&amp;q=02138&amp;um=1&amp;ie=UTF-8&amp;split=0&amp;gl=us&amp;ei=26nsSczkNcrHtgeOm63EBQ&amp;sa=X&amp;oi=geocode_result&amp;ct=title&amp;resnum=1"> 02138</a> </li> </ul> <h2>Maps</h2> <ul> <li><a href="http://map.harvard.edu">Harvard University</a></li> <li><a href="http://www.harvardsquare.com/home/about/Maps.aspx">Harvard Square</a></li> <li><a href="http://www.mbta.com/">The T</a></li> </ul> <h2>Harvard Directory</h2> <ul> <li><a href="https://www.directory.harvard.edu/phonebook/">Search for people at Harvard</a></li> </ul>
 CONTENT;
   return $str;
 }
@@ -914,6 +926,69 @@ function gkimport_export_site_layout($drush_run = 0){
       gkimport_print("Error: layout settings could not be exported");
     }
   }
+}
+
+function gkimport_save_sample_pages(){
+  //save a sample announcement
+  $account = user_load(array('name' => 'gking'));
+  $sid = gkimport_get_sid();
+  $node = new stdClass();
+  $node -> type = 'announcement';
+  $node -> title = 'Office Hours extended to 3PM on Thursdays through April 4, 2010';
+  $node -> body = 'Test announcement';
+  $node -> teaser = 'Test announcement';
+  $node -> name = $account -> name;
+  $node -> uid = $account -> uid;
+  node_save($node);
+  gkimport_node_to_og($node -> nid, $account, $sid);
+  drush_print("Added sample announcement");
+
+  cache_clear_all();
+  
+  //mark a couple nodes as featured nodes
+  //choose any 3 publications
+  $flag = flag_get_flag('featuredposts');
+  $res = db_query_range("SELECT nid FROM {node} WHERE type = '%s' AND user = '%s' ", 'biblio', $account -> name);
+  while ($data = db_fetch_object($res)){
+    // Flag the node
+    $flag->flag('flag', $data -> nid);
+    drush_print("Flagged node {$data -> nid} as featured post");    
+  }
+}
+
+function gkimport_import_talks($file){
+  if (!strlen($file)) $file = dirname(__FILE__) . '/files/talks.csv';  //TODO: remove this
+  if (( $handle = fopen($file, "r")) !== FALSE) {
+    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
+      $talks[]= array(
+      'Title' => $data[0],
+      'Location' => $data[1],
+      'Date' => $data[2],
+      'Slides' => $data[3],
+      'Printable slides' => $data[4],
+      'Related research' => $data[5],
+      'Paper1' => $data[6],
+      'Paper2' => $data[7],
+      'Website' => $data[8],
+      'Book' => $data[8],
+      'DVN paper' => $data[9],
+      'Data Citation paper' => $data[10],
+      'Zelig paper' => $data[11],
+      'Text Extraction paper' => $data[12],
+      'Verbal Autopsy paper' => $data[13],
+      'Design paper' => $data[14],
+      'Matched Pair Methods paper' => $data[15],
+      'Paper abstract' => $data[16],
+      );
+    }
+  }
+ 
+  //loop though the presenetation data
+  foreach($talks as $talk){
+  //construct and save the node here     
+    
+  }
+ // dpm($talks);
 }
 
 /**
