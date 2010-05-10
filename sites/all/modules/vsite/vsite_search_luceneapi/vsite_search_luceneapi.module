@@ -20,35 +20,27 @@ function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array())
     case 'list':
       $blocks = array();
       $blocks[0]['info'] = t('Categories');
+      $blocks[1]['info'] = t('Faceted Browsing');
       return $blocks;
     case 'view':
       switch($delta) {
         case 0:
           require_once(drupal_get_path('module', 'luceneapi_facet').'/luceneapi_facet.block.inc');
+          $content = luceneapi_facet_realm_render('block', 'luceneapi_node', 'node', TRUE);
           return array(
             'subject' => t('Scholar Site'),
             'content' => luceneapi_facet_block_view('vsite_search_luceneapi')
           );
+        case 1:
+          require_once(drupal_get_path('module', 'luceneapi_facet').'/luceneapi_facet.block.inc');
+          //$content = luceneapi_facet_realm_render('block', 'luceneapi_node', 'node', TRUE);
+          //die('Cotnent = <br><pre>'.print_r($content,true).'</pre>');
+          return array(
+            'subject' => t('Scholar Site'),
+            //'content' => luceneapi_facet_realm_render('block', 'luceneapi_node', 'node', TRUE)
+          );
       }
       break;
-  }
-}
-
-/**
- * Implementation of hook_link_alter()
- * 
- * Replaces the standard taxonomy path with a path to a Solr search
- * 
- * @param mixed $links
- * @param object $node
- */
-function vsite_search_luceneapi_link_alter(&$links, $node) {
-  foreach($links as $name => $link) {
-    if(preg_match("/^taxonomy_term_/", $name)) {
-      $tid = substr($name, 14);
-      $links[$name]['href'] = sprintf('search/luceneapi_node/'.$link['title']);
-      $links[$name]['query'] = array('category' => array($tid => $tid));
-    }
   }
 }
 
@@ -401,15 +393,15 @@ function vsite_search_luceneapi_luceneapi_facet_empty($facets, $realm, $module) 
   // Load the current vsite and use the group id as a filter to only show content/facets for this particular vsite
   $vsite = vsite_get_vsite();
   if(!empty($vsite)) {
-    $items += vsite_search_luceneapi_facet_empty_content_types($vsite->group->nid, $context['node']);
+    $items += vsite_search_luceneapi_luceneapi_facet_empty_content_types($vsite->group->nid, $context['node']);
     //$items += vsite_search_luceneapi_facet_empty_authors($gid, $context['node']);
-    $items += vsite_search_luceneapi_facet_empty_taxonomy(array_keys($vsite->group->og_vocabularies), $context['node']);
+    //$items += vsite_search_luceneapi_facet_empty_taxonomy(array_keys($vsite->group->og_vocabularies), $context['node']);
   }
   return $items;
 }
 
 function vsite_search_luceneapi_luceneapi_facet_empty_content_types($gid=0, $content_types=array()) {
-  if($gid) {
+  if($gid && !empty($content_types)) {
     $sql = 'SELECT n.type, COUNT(*) AS num'
          .' FROM {node} n'
          .' LEFT JOIN {node_type} t ON n.type = t.type'
