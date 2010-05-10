@@ -947,13 +947,13 @@ function gkimport_save_sample_pages(){
   
   //mark a couple nodes as featured nodes
   //choose any 3 publications
-  $flag = flag_get_flag('featuredposts');
-  $res = db_query_range("SELECT nid FROM {node} WHERE type = '%s' AND user = '%s' ", 'biblio', $account -> name);
+/*  $flag = flag_get_flag('featuredposts');
+  $res = db_query("SELECT nid FROM {node} WHERE type = '%s' AND uid = '%s' ", 'biblio', $account -> uid);
   while ($data = db_fetch_object($res)){
     // Flag the node
     $flag->flag('flag', $data -> nid);
-    drush_print("Flagged node {$data -> nid} as featured post");    
-  }
+    drush_print("Flagged node {$data -> nid} as featured post");
+  }*/
 }
 
 function gkimport_import_talks($file){
