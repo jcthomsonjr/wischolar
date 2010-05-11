@@ -136,7 +136,7 @@ class rbuild implements scholar_software_handler{
    * @return array
    */
   private function rbuild_parse($url){
-    $package_file = file_get_contents($url);
+    $package_file = _iqss_rbuild_get_file_contents($url);
     
     $packages_raw = split("\n\n\n", $package_file);
     
@@ -176,7 +176,7 @@ class rbuild implements scholar_software_handler{
   private function rbuild_get_release_files(){
   	
   	$a_releases = array();
-	  if ($index_file = file_get_contents($this->s_url."/")) {
+	  if ($index_file = _iqss_rbuild_get_file_contents($this->s_url."/")) {
 	  	$a_matches = array();
 	  	preg_match_all('/(a href\=")('.$this->s_app_key.'([\._-\d]*)\.tar\.gz)(")/i',$index_file,$a_matches);
 	    foreach ($a_matches[2] as $n_index => $filename){
