@@ -177,7 +177,7 @@ function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid, $b_get_fi
   $n_time = false;
   $n_filesize =  @filesize($s_filepath);
   if(!$n_filesize){
-    foreach (get_headers($s_external_path) as $s_header){
+    foreach (_iqss_rbuild_get_file_headers($s_external_path) as $s_header){
     	list($s_key,$s_val) = explode(":",$s_header,2);
     	if(strtolower(trim($s_key)) == "content-length"){
     		$n_filesize = intval($s_val);
@@ -339,4 +339,20 @@ function _iqss_rbuild_get_file_contents($s_url){
   curl_close($ch);
 	
   return $data;
+}
+
+function _iqss_rbuild_get_file_headers($s_url){
+	$ch = curl_init();
+
+	curl_setopt($ch, CURLOPT_URL,            $s_url);
+	curl_setopt($ch, CURLOPT_HEADER,         true);
+	curl_setopt($ch, CURLOPT_NOBODY,         true);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_TIMEOUT,        10);
+	
+	$r = curl_exec($ch);
+	$a_header = explode("\n",$r);
+	curl_close($ch);
+	
+	return $a_header;
 }

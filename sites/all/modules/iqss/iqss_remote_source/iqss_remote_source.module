@@ -189,7 +189,7 @@ function _iqss_remote_source_retrieve_remote_data($node, $s_url_extra,$o_cached_
   $s_url_extra = ltrim($s_url_extra,"/");
   $s_docs_root = rtrim($node->iqss_remote_source_path,"/");
   
-  $a_headers = get_headers("{$s_docs_root}/{$s_url_extra}",1);
+  $a_headers = _iqss_remote_source_get_file_headers("{$s_docs_root}/{$s_url_extra}",1);
   $n_last_modified = array_key_exists('Last-Modified',$a_headers)?strtotime($a_headers['Last-Modified']):time();
   
   $n_expire = array_key_exists('expire',$a_headers)?strtotime($a_headers['expire']):(time()+IQSS_REMOTE_SOURCE_DEFAULT_CACHE_LENGTH);
@@ -266,4 +266,26 @@ function _iqss_remote_source_get_file_contents($s_url){
   curl_close($ch);
   
   return $data;
+}
+
+function _iqss_remote_source_get_file_headers($s_url){
+  $ch = curl_init();
+
+  curl_setopt($ch, CURLOPT_URL,            $s_url);
+  curl_setopt($ch, CURLOPT_HEADER,         true);
+  curl_setopt($ch, CURLOPT_NOBODY,         true);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_TIMEOUT,        10);
+  
+  $r = curl_exec($ch);
+  $a_tmp_header = explode("\n",$r);
+  curl_close($ch);
+  
+  $a_header = array();
+  foreach ($a_tmp_header as $n_key => $s_head){
+  	list($s_key,$s_val) = (strstr($s_head,":"))? explode(":",$s_head,2) : array($n_key,$s_head);
+  	$a_header[$s_key] = $s_val;
+  }
+  
+  return $a_header;
 }
