@@ -698,7 +698,7 @@ function gkimport_import_bio(){
   $account = user_load(array('name' => 'gking'));  
   $node = new stdClass();
   $node -> type = 'bio';
-  $node -> title = 'Gary King Short Bio';
+  $node -> title = 'Gary King Bio';
   $node -> body = _gkimport_remove_line_breaks($text);
   $node -> name = $account -> name;
   $node -> uid = $account -> uid;
