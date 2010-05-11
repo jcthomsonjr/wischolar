@@ -64,7 +64,7 @@ function theme_iqss_gking_term_description($term){
   $term_path = "taxonomy/term/$term->tid";
   $term_link = l('>', $term_path);
 
-  $item = '<span class="term_title">' . $term->name . '</span>'. $term->description . $term_link;
+  $item = '<span class="term_title">' . $term->name . '</span> '. $term->description . $term_link;
 
   return $item;
 }
