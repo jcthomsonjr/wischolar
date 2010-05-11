@@ -11,7 +11,7 @@
   <?php print $scripts; ?>
 </head>
 
-<body onload="resizeIframe();" class="<?php print $body_classes; ?>">
+<body class="<?php print $body_classes; ?>">
     <?php if ($cp_toolbar) : ?>
     <div id="top">
   	   <?php print $cp_toolbar;?>
@@ -19,9 +19,7 @@
   	 <?php endif;?>
   <div id="wrapper">
     <div id="container">
-
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) : ?>
-
       <div id="header">
         <?php if (!empty($header_top)): ?>
         <div id="header-top">

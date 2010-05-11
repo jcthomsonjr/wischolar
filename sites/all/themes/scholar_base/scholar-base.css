@@ -1,19 +1,21 @@
-/* $Id: scholar-base.css,v 1.9 2008/09/21 15:09:48 swortis Exp $ */
-
 * {
-	margin: 0;
-	padding:0;
-	}
+  margin: 0;
+  padding:0;
+  }
 
 body {
-	background: #FFF;
-	font: .9em/1.5em arial, helvetica, sans-serif;
-	}
+  background: #FFF;
+  font: .9em/1.5em arial, helvetica, sans-serif;
+  }
 
 #tinymce {
   background: #fff !important;
   min-width: 0 !important;
   margin: 5px !important;
+  }
+
+body.admin-menu {
+  position: static !important;
   }
 
 #admin-menu {
@@ -52,8 +54,8 @@ body {
 /* TYPE STYLES */
 
 p, div.messages, #content-main .views-row, ul, ol {
-	margin-bottom: 1.5em;
-	}
+  margin-bottom: 1.5em;
+  }
 
 #header h1, #header h2, #header p {
   margin: 0 0 .1em 0;
@@ -111,9 +113,9 @@ ol {
   }
 
 a, a:visited {
-	text-decoration: none;
-	color: #005C9C;
-	}
+  text-decoration: none;
+  color: #005C9C;
+  }
 
 p.copy {
   line-height: 29px;
@@ -220,7 +222,7 @@ div.terms {
   margin: 0 1em .9em 0;
   }
 
-.img-flR
+.img-flR {
   float: right;
   margin: 0 0 .9em 1em;
   }
@@ -237,17 +239,13 @@ div.terms {
 #container { }
 
 
-
-
-
-
 /* Top admin bar */
 
 #top {
-	height: 42px;
-	background:url(images/top-bottom-bg.png) repeat-x #000 0 -9px;
-	position:relative;
-	}
+  height: 42px;
+  background:url(images/top-bottom-bg.png) repeat-x #000 0 -9px;
+  position:relative;
+  }
 
 #top a, #top a:visited, #top ul.links li a, #top ul.links li a:visited {
   font-family: arial, sans-serif !important;
@@ -321,16 +319,16 @@ body.cp-toolbar-mini #top ul.links li a:hover {
 
 
 #header-top, #navbar, #content-main, #header-main {
-	width: 100%;
-	}
+  width: 100%;
+  }
 
 body.no-sidebars #content-main, body.header-main #header-main {
   padding: 0;
   }
 
 #header-wrapper, #navbar, #content-wrapper, #footer {
-	clear: both;
-	}
+  clear: both;
+  }
 
 .column {
   float: left;
@@ -344,8 +342,8 @@ body.no-sidebars #content-main, body.header-main #header-main {
   }
 
 #header-left, #header-right, #sidebar-left, #sidebar-right {
-	width: 200px;
-	}
+  width: 200px;
+  }
 
 #content-wrapper, #header-wrapper {
   padding-left: 220px; /* left width incl. padding */
@@ -353,13 +351,13 @@ body.no-sidebars #content-main, body.header-main #header-main {
   }
 
 #header-left, #sidebar-left {
-	right: 240px; /* left width incl. padding plus center padding */
-	margin-left: -100%;
-	}
+  right: 240px; /* left width incl. padding plus center padding */
+  margin-left: -100%;
+  }
 
 #header-right, #sidebar-right {
-	margin-right: -100%;
-	}
+  margin-right: -100%;
+  }
 
 body.sidebar-right #content-wrapper {
    padding-left: 0;
