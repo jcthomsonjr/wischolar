@@ -203,7 +203,7 @@ function _iqss_remote_source_retrieve_remote_data($node, $s_url_extra,$o_cached_
   if(is_object($o_cached_data) && is_array($o_cached_data->data) && $o_cached_data->data['last_modified'] == $n_last_modified){
   	$s_contents = $o_cached_data->data['content'];
   }else{
-    $s_contents = @file_get_contents("{$s_docs_root}/{$s_url_extra}");
+    $s_contents = _iqss_remote_source_get_file_contents("{$s_docs_root}/{$s_url_extra}");
     if(strlen($s_contents)) $s_contents = _iqss_remote_source_modify_data($s_contents, $s_docs_root);
   }
   
@@ -246,4 +246,24 @@ function _iqss_remote_source_inline_content($s_content_type){
 	$a_inline_content = array('text/html','text/plain');
   
   return in_array(strtolower($s_content_type),$a_inline_content);
+}
+
+function _iqss_remote_source_get_file_contents($s_url){
+  
+  //Initialize the Curl session
+  $ch = curl_init();
+
+  //Set curl to return the data instead of printing it to the browser.
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  
+  //Set the URL
+  curl_setopt($ch, CURLOPT_URL, $URL);
+  
+  //Execute the fetch
+  $data = curl_exec($ch);
+  
+  //Close the connection
+  curl_close($ch);
+  
+  return $data;
 }
