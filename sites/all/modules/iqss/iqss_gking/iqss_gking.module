@@ -1,0 +1,95 @@
+<?
+
+/**
+ * Implementation of hook_theme
+ */
+function iqss_gking_theme() {
+  return array(
+    'iqss_gking_term_description' => array(
+      'arguments' => array('term' => NULL),
+    ),
+  );
+}
+
+/**
+ * Define the gking blocks with hook block
+ */
+function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
+  if ($op == 'list') {
+    $blocks['areas_of_research']['info'] = t('Areas of Research');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 'areas_of_research':
+        return _iqss_gking_areas_of_research_wgt();
+    }
+  }
+}
+
+
+function iqss_gking_context_default_contexts_alter(&$contexts){
+	if(!iqss_gking_on_gking_site()) return;
+	
+	//Add this block to the front context on Garys site
+	$a_block_info = iqss_gking_block();
+	$contexts['scholar-feature-front']->block['iqss_gking_areas_of_research'] = array(
+	  'module' => 'iqss_gking',
+		'delta' => 'areas_of_research',
+		'weight' => 0,
+		'region' => 'left',
+		'status' => 0,
+	  'label' => $a_block_info['areas_of_research']['info'],
+	  'type' => 'context_ui',
+	);
+	
+}
+
+/**
+ * Function that determines if we are in gking's site
+ */
+function iqss_gking_on_gking_site(){
+  $vsite = vsite_get_vsite();
+  
+  return ($vsite && $vsite->purl == 'gking');
+}
+
+
+/**
+ * theme a term with description
+ * @param object $term
+ */
+function theme_iqss_gking_term_description($term){
+  
+  $term_path = "taxonomy/term/$term->tid";
+  $term_link = l('>', $term_path);
+
+  $item = '<span class="term_title">' . $term->name . '</span>'. $term->description . $term_link;
+
+  return $item;
+}
+
+/**
+ * Return the block contents for the area of research block
+ */
+function _iqss_gking_areas_of_research_wgt(){
+	
+	$vsite = vsite_get_vsite();
+	if(!iqss_gking_on_gking_site()) return array();
+	
+	$output = "";
+  foreach ($vsite->get_vocabs($type) as $n_vid => $o_vocab){
+  	if($o_vocab->name != "Research Interests") continue;
+  	
+  	$tree = taxonomy_get_tree($n_vid);
+    $items = vsite_taxonomy_build_list_items($index = 0, $tree, 'iqss_gking_term_description');
+    
+    $output .= theme('item_list', $items);
+  	
+  	dpm($items);
+  	break;
+  }
+  
+	return array('subject' => "Areas of Research",'content' => $output);
+}
+

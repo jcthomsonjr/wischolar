@@ -193,6 +193,7 @@ function _scholar_scholar_modules() {
     'scholar_pages',
     'scholar_reader',
     'scholar_front',
+    'scholar_profiles',
   );
 }
 

@@ -190,12 +190,12 @@ function vsite_taxonomy_vocabs(){
  * recursive function to build the tree of terms
  * @see vsite_taxonomy_vocabs
  */
-function vsite_taxonomy_build_list_items(&$index, $tree){
+function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_taxonomy_term'){
   $items = array();
   $current_depth = $tree[$index]->depth;
   while ( $index < count($tree) && $tree[$index]->depth >= $current_depth ) {
     $term = $tree[$index];
-    $item = theme('vsite_taxonomy_term', $term);
+    $item = theme($s_term_theme, $term);
     if ($tree[$index + 1]->depth > $current_depth) {
       $index ++;
       $items[] = array(
