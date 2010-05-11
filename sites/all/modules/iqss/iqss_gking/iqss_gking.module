@@ -1,5 +1,13 @@
 <?
 
+
+/**
+ * implementation of hook_init()
+ */
+function scholar_book_init(){
+  drupal_add_css(drupal_get_path('module', 'iqss_gking') .'/iqss_gking.css');
+}
+
 /**
  * Implementation of hook_theme
  */
@@ -36,7 +44,7 @@ function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
  */
 function iqss_gking_context_default_contexts_alter(&$contexts){
 	if(!iqss_gking_on_gking_site()) return;
-	
+
 	//Add this block to the front context on Garys site
 	$a_block_info = iqss_gking_block();
 	$contexts['scholar-feature-front']->block['iqss_gking_areas_of_research'] = array(
@@ -48,7 +56,7 @@ function iqss_gking_context_default_contexts_alter(&$contexts){
 	  'label' => $a_block_info['areas_of_research']['info'],
 	  'type' => 'context_ui',
 	);
-	
+
 }
 
 function iqss_gking_context_active_contexts_alter(&$contexts){
@@ -75,7 +83,7 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
  */
 function iqss_gking_on_gking_site(){
   $vsite = vsite_get_vsite();
-  
+
   return ($vsite && $vsite->purl == 'gking');
 }
 
@@ -85,9 +93,9 @@ function iqss_gking_on_gking_site(){
  * @param object $term
  */
 function theme_iqss_gking_term_description($term){
-  
+
   $term_path = "taxonomy/term/$term->tid";
-  $term_link = l('>', $term_path);
+  $term_link = l('Learn More', $term_path);
 
   $item = '<span class="term_title">' . $term->name . '</span> '. $term->description . $term_link;
 
@@ -98,22 +106,22 @@ function theme_iqss_gking_term_description($term){
  * Return the block contents for the area of research block
  */
 function _iqss_gking_areas_of_research_wgt(){
-	
+
 	$vsite = vsite_get_vsite();
 	if(!iqss_gking_on_gking_site()) return array();
-	
+
 	$output = "";
   foreach ($vsite->get_vocabs($type) as $n_vid => $o_vocab){
   	if($o_vocab->name != "Research Interests") continue;
-  	
+
   	$tree = taxonomy_get_tree($n_vid);
     $items = vsite_taxonomy_build_list_items($index = 0, $tree, 'iqss_gking_term_description');
-    
+
     $output .= theme('item_list', $items);
-  	
+
   	break;
   }
-  
+
 	return array('subject' => "Areas of Research",'content' => $output);
 }
 

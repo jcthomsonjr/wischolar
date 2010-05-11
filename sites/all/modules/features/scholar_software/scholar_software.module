@@ -67,7 +67,7 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 			      "SELECT nid
 			       FROM {content_type_scholar_software_release} content_type_scholar_software_release
 			       WHERE field_scholar_software_project_nid = %d ", $node->nid);
-		    
+
 			    while ($a_result = db_fetch_array($result)) {
 			      node_delete($a_result['nid']);
 			    }
@@ -78,15 +78,15 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 		  			$view->set_arguments(array($node->nid));
 		  			$a_content = $view->execute_display('block_1');
 			      $node->content['scholar_software_recommended_releases'] = array(
-			        '#weight' => content_extra_field_weight($node->type, 'scholar_software_recommended_releases'), 
+			        '#weight' => content_extra_field_weight($node->type, 'scholar_software_recommended_releases'),
 			        '#value' => "<h3>{$a_content['subject']}</h3>".$a_content['content'],
 			      );
-			      
+
 			      $view = views_get_view('scholar_software_releases');
 	          $view->set_arguments(array($node->nid));
 	          $a_content = $view->execute_display('block_2');
 	          $node->content['scholar_software_recent_releases'] = array(
-	            '#weight' => content_extra_field_weight($node->type, 'scholar_software_recent_releases'), 
+	            '#weight' => content_extra_field_weight($node->type, 'scholar_software_recent_releases'),
 	            '#value' => "<h3>{$a_content['subject']}</h3>".$a_content['content'],
 	          );
 	  			}//Displaying stand alone page
@@ -97,7 +97,7 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       switch($op){
         case 'presave':
 		      $node->title = scholar_software_generate_version($node);
-			
+
 			    // If this release is recommended, set all other ones to not recommended.
 			    if ($node->field_scholar_software_recommend[0]['value'] == 1) {
 			      $view = views_get_view('scholar_software_releases');
@@ -114,11 +114,11 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         break;
         case 'view':
         	drupal_add_css(drupal_get_path('module', 'scholar_software') . '/scholar_software.css');
-    
+
         	if($a4){
 				    $s_filepath = $node->field_scholar_software_file[0]['filepath'];
 				    $download_url = (substr($s_filepath,0,7) == 'http://')? $s_filepath:file_create_url($s_filepath);  //Absolute?
-				
+
 				    $contents = file_exists($node->field_scholar_software_file[0]['filepath']) ? file_get_contents($node->field_scholar_software_file[0]['filepath']) : '';
 				    $info = array();
 				    $info[] = t('Download: !url', array('!url' => l($download_url, $download_url, array('absolute' => TRUE))));
@@ -132,7 +132,7 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 				      ),
 				      '#weight' => content_extra_field_weight($node->type, 'scholar_software_release_info'),
 				    );
-				    
+
 				    $project = node_load($node->field_scholar_software_project[0]['nid']);
 				    $node->content['scholar_software_parent_project'] = array(
 				      '#type' => 'item',
@@ -163,7 +163,7 @@ function scholar_software_cck_options($type = 'major') {
     	foreach ($a_handlers as $s_key => $a_info){
     		$a_methods[$s_key] = $a_info['name'];
     	}
-    	
+
       return $a_methods;
     case 'patch':
       return range(0, 50);
@@ -184,8 +184,8 @@ function scholar_software_cck_options($type = 'major') {
 function scholar_software_form_scholar_software_project_node_form_alter(&$form, $form_state) {
   drupal_add_js(drupal_get_path('module', 'scholar_software') . '/scholar_software.js');
   $form['#validate'][] = 'scholar_software_project_node_form_validate';
-  
-  
+
+
 }
 
 
@@ -251,10 +251,10 @@ function scholar_software_generate_version($node, $raw = FALSE) {
  * Return the valid package handlers
  */
 function scholar_software_get_handlers() {
-  
+
   $handlers = module_invoke_all('scholar_software_handlers');
   drupal_alter('scholar_software_handlers', $handlers);
-  
+
   return $handlers;
 }
 
@@ -276,10 +276,10 @@ function scholar_software_cron() {
 	$result = db_query(
       "SELECT nid
        FROM {content_type_scholar_software_project} content_type_scholar_software_project ");
-    
+
   while ($a_result = db_fetch_array($result)) {
     $o_project = node_load($a_result['nid']);
-    
+
     if($o_project->changed + $n_interval < $n_time){
     	scholar_software_proccess_cron($o_project);
     }//Time to check for update?
@@ -292,7 +292,7 @@ function scholar_software_cron() {
  */
 function scholar_software_proccess_cron($node) {
   //Global actions here
-  
+
 	//Method Actions here
   $a_handlers = scholar_software_get_handlers();
   if(array_key_exists($node->field_scholar_software_method[0]['value'],$a_handlers)){
@@ -301,7 +301,7 @@ function scholar_software_proccess_cron($node) {
     $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
     if(method_exists($o_handler,'proccessCron')) $o_handler->proccessCron($node);
   }
-  
+
   //Save node
   node_save($node);
 }
@@ -343,11 +343,11 @@ function theme_scholar_software_formatter_scholar_software_url_plain($element) {
 
   $field = content_fields($element['#field_name']);
   $item = $element['#item'];
- 
+
   if (empty($item['filepath']) && !empty($item['fid'])) {
     $item = array_merge($item, field_file_load($item['fid']));
   }
-  
+
   //Absolute URL to offsite file?
   if(substr($item['filepath'],0,7) == 'http://') return $item['filepath'];
 
@@ -359,18 +359,18 @@ function theme_scholar_software_formatter_scholar_software_url_plain($element) {
 * Implementation of hook_content_extra_fields.
 */
 function scholar_software_content_extra_fields($s_type) {
-	
+
 	$extras = array();
-	
+
 	if($s_type == 'scholar_software_project'){
 	  $extras['scholar_software_recommended_releases'] = array(
 	      'label' => t('Recommended Software Releases'),
 	      'description' => t('Show a software\'s Recommended Software Releases.'),
 	      'weight' => 20,
 	  );
-	  
+
 	  $extras['scholar_software_recent_releases'] = array(
-        'label' => t('Recent Releases'),
+        'label' => t('Recent Software Releases'),
         'description' => t('Show a software\'s recent Software Releases.'),
         'weight' => 25,
     );
@@ -380,14 +380,14 @@ function scholar_software_content_extra_fields($s_type) {
         'description' => t('Information about the release file.'),
         'weight' => -10,
     );
-    
+
     $extras['scholar_software_parent_project'] = array(
         'label' => t('Parent Project'),
         'description' => t('Info about the Parent Project.'),
         'weight' => -11,
     );
 	}
-	
+
   return $extras;
 }
 
