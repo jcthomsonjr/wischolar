@@ -173,6 +173,52 @@ function luceneapi_biblio_luceneapi_document_alter($doc, $item, $module, $type =
   }
 }
 
+/**
+ * Implementation of hook_luceneapi_postrender_alter().
+ */
+function luceneapi_biblio_luceneapi_facet_postrender_alter(&$items, $realm, $module, $type = NULL) {
+  if ($realm == 'fieldset') {
+    foreach($items as $name => $facet) {
+      if(preg_match('/^biblio_/', $name)) {
+        $options = array();
+        switch($name) {
+          case 'biblio_contributors':
+            $result = db_query("SELECT name FROM {biblio_contributor_data}");
+            $options[] = '';
+            while($row = db_fetch_object($result)) {
+              $options[$row->name] = $row->name;
+            }
+            asort($options);
+            $items['biblio_contributors']['#options'] = $options;  
+            $items['biblio_contributors']['#default_value'] = '';
+            break;
+          case 'biblio_type_of_work':
+            $options[] = '';
+            $result = db_query("SELECT name FROM {biblio_types} WHERE tid > 0 ORDER BY name ASC");
+            while($row = db_fetch_object($result)) {
+              $options[$row->name] = $row->name;
+            }
+            $items['biblio_type_of_work']['#options'] = $options;
+            break;
+          default:
+            $result = db_query("SELECT %s FROM {biblio}", $name);
+            while($row = db_fetch_object($result)) {
+              $options[$row->$name] = $row->$name;
+            }
+            if(count($options) < 2) {
+              unset($items[$name]);
+            }
+            else {
+              asort($options);
+              $items[$name]['#options'] = $options;
+            }
+            break;
+        }
+      }
+    }
+  }
+}
+
 function luceneapi_biblio_format_value($value, $format) {
   switch ($format) {
     case 'string':
@@ -260,7 +306,7 @@ function luceneapi_biblio_luceneapi_facet($module, $type = NULL) {
           'title' => $title,
           'element' => $field['name'],
           'field' => $field['name'],
-          'type' => 'checkbox',
+          'type' => 'select',
           'callback' => 'luceneapi_facet_multiterm_callback',
           'callback arguments' => array(
             luceneapi_facet_value_get($field['name'], array()), $field['name'], TRUE
@@ -275,7 +321,7 @@ function luceneapi_biblio_luceneapi_facet($module, $type = NULL) {
       'title' => t('Citation Contributor'),
       'element' => 'biblio_contributors',
       'field' => 'biblio_contributors',
-      'type' => 'checkbox',
+      'type' => 'select',
       'callback' => 'luceneapi_facet_multiterm_callback',
       'callback arguments' => array(
         luceneapi_facet_value_get('biblio_contributors', array()), 
