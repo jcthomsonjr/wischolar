@@ -170,7 +170,7 @@ function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid, $b_get_fi
 
   $s_filepath = $s_external_path;
   if($b_get_file_contents){
-	  $s_contents = file_get_contents($s_external_path);
+	  $s_contents = _iqss_rbuild_get_file_contents($s_external_path);
 	  $s_filepath = file_save_data($s_contents,$s_file_name);
   }
   
@@ -279,7 +279,7 @@ function _iqss_rbuild_retrieve_doc($o_project, $s_version, $s_url_extra){
   if(!strlen($s_version)) return false; //Valid Version?
   
   $s_docs_root = "{$a_proj_pp['scheme']}://{$a_proj_pp['host']}/docs/".strtolower($o_project->field_scholar_software_name[0]['value'])."/{$s_version}/";
-  $s_contents = @file_get_contents("{$s_docs_root}{$s_url_extra}");
+  $s_contents = _iqss_rbuild_get_file_contents("{$s_docs_root}{$s_url_extra}");
   if(!strlen($s_contents)) return false;
   
   return _iqss_rbuild_modify_doc($s_contents, $s_docs_root);
@@ -319,4 +319,24 @@ function _iqss_rbuild_get_featured_release($o_project){
   }
   
   return $s_version;
+}
+
+function _iqss_rbuild_get_file_contents($s_url){
+	
+	//Initialize the Curl session
+  $ch = curl_init();
+
+  //Set curl to return the data instead of printing it to the browser.
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  
+  //Set the URL
+  curl_setopt($ch, CURLOPT_URL, $URL);
+  
+  //Execute the fetch
+  $data = curl_exec($ch);
+  
+  //Close the connection
+  curl_close($ch);
+	
+  return $data;
 }
