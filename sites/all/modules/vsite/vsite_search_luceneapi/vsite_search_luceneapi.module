@@ -71,7 +71,7 @@ function _vsite_search_luceneapi_preprocess_category_facets(&$items, $module) {
         if($term) {
           $vocab = taxonomy_vocabulary_load($term->vid);
           if($vocab) {
-            $item['items'][$vocab->name]['data'] = $vocab->name;
+            $item['items'][$vocab->name]['data'] = t($vocab->name);
             $item['items'][$vocab->name]['children'][$value] = theme($args['function'], $args['text'], $args['path'], $args['options'], $args['count']);
             unset($item['items'][$value]);
           }
@@ -229,22 +229,29 @@ function vsite_search_luceneapi_luceneapi_facet_postrender_alter(&$items, $realm
     return;
   }
   
-  if ($realm == 'block' && isset($items['category'])) {
-    $values = array_keys($items['category']['items']);
-    if (!empty($values)) {
-
-      // SQL that converts IDs to term names.
-      $sql = "SELECT tid AS id, name FROM {term_data} WHERE tid IN (". db_placeholders($values) .")";
-      
-      // Adds display names to items.
-      if ($result = db_query($sql, $values)) {
-        while ($row = db_fetch_object($result)) {
-          if (isset($items['category']['items'][$row->id])) {
-            $items['category']['items'][$row->id]['text'] = $row->name;
+  if ($realm == 'block') {
+    if(isset($items['category'])) {
+      $values = array_keys($items['category']['items']);
+      if (!empty($values)) {
+  
+        // SQL that converts IDs to term names.
+        $sql = "SELECT tid AS id, name FROM {term_data} WHERE tid IN (". db_placeholders($values) .")";
+        
+        // Adds display names to items.
+        if ($result = db_query($sql, $values)) {
+          while ($row = db_fetch_object($result)) {
+            if (isset($items['category']['items'][$row->id])) {
+              $items['category']['items'][$row->id]['text'] = t($row->name);
+            }
           }
         }
       }
     }
+  }
+  
+  foreach($items as $name => $facet) {
+    $items[$name]['title'] = t($facet['title']);
+    $items[$name]['#description'] = t($facet['#description']);
   }
 }
 

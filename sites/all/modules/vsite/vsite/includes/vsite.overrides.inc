@@ -131,7 +131,9 @@ function vsite_string_overrides(){
   
   //biblio
   'Biblio' => 'Publication',
+  'Secondary Title' => 'Publication Type',
   'Browse by Secondary Title' => 'Browse by Publication Type',
+  'Biblio: Filter by Secondary Title' => 'Biblio: Filter by Publication Type',
   
   //vbo
   'Delete node' => 'Delete',

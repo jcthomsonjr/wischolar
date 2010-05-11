@@ -1,5 +1,5 @@
 <?php
-// $Id: luceneapi_biblio.module,v 1.1.2.3 2010/05/04 13:47:53 ebeyrent Exp $
+// $Id: luceneapi_biblio.module,v 1.1.2.5 2010/05/11 15:35:55 ebeyrent Exp $
 
 function luceneapi_biblio_menu() {
   $items = array();
@@ -192,6 +192,16 @@ function luceneapi_biblio_luceneapi_facet_postrender_alter(&$items, $realm, $mod
             $items['biblio_contributors']['#options'] = $options;  
             $items['biblio_contributors']['#default_value'] = '';
             break;
+          case 'biblio_year':
+            $result = db_query("SELECT biblio_year as year FROM {biblio}");
+            $options[] = '';
+            while($row = db_fetch_object($result)) {
+              $options[$row->year] = $row->year;
+            }
+            asort($options);
+            $items['biblio_year']['#options'] = $options;  
+            $items['biblio_year']['#default_value'] = '';
+            break;
           case 'biblio_type_of_work':
             $options[] = '';
             $result = db_query("SELECT name FROM {biblio_types} WHERE tid > 0 ORDER BY name ASC");
@@ -211,6 +221,7 @@ function luceneapi_biblio_luceneapi_facet_postrender_alter(&$items, $realm, $mod
             else {
               asort($options);
               $items[$name]['#options'] = $options;
+              $items[$name]['#default_value'] = '';
             }
             break;
         }
@@ -303,7 +314,7 @@ function luceneapi_biblio_luceneapi_facet($module, $type = NULL) {
         $title = db_result(db_query("SELECT title FROM {biblio_field_type_data} WHERE ftdid = %d", $fid));
         $facets[$field['name']] = array(
           'description' => t('Biblio: Filter by !title', array('!title' => $title)),
-          'title' => $title,
+          'title' => t($title),
           'element' => $field['name'],
           'field' => $field['name'],
           'type' => 'select',
