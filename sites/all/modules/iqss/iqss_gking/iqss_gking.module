@@ -4,7 +4,7 @@
 /**
  * implementation of hook_init()
  */
-function scholar_book_init(){
+function iqss_gking_init(){
   drupal_add_css(drupal_get_path('module', 'iqss_gking') .'/iqss_gking.css');
 }
 
@@ -61,10 +61,10 @@ function iqss_gking_context_default_contexts_alter(&$contexts){
 
 function iqss_gking_context_active_contexts_alter(&$contexts){
   if(!iqss_gking_on_gking_site()) return;
-  
+
   $router_item = menu_get_item();
   if($router_item['path'] != 'taxonomy/term/%') return;
-  
+
   //Add this block category pages on Garys site
   $contexts['vsite-section-public']->block['iqss_gking_taxonomy_content_types'] = array(
     'module' => 'iqss_gking',
@@ -75,7 +75,7 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
     'label' => 'Content Types',
     'type' => 'context_ui',
   );
-  
+
 }
 
 /**
@@ -126,10 +126,10 @@ function _iqss_gking_areas_of_research_wgt(){
 }
 
 function _iqss_gking_taxonomy_content_types_wgt(){
-	
+
 	$output = "Bingo Bingo";
-	
-	
-	
+
+
+
 	return array('subject' => "Subject Types",'content' => $output);
 }
