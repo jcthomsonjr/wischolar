@@ -9,10 +9,13 @@ define(GKIMPORT_DOWNLOAD, FALSE);  // TRUE tells module to download files with w
  * Begins import process
   */
 function gkimport_import($drush_run = 0){
-  variable_set('gkimport_drush_run', $drush_run);
+  define(GKIMPORT_DRUSH_RUN, $drush_run);
   $mode = (GKIMPORT_DOWNLOAD) ? 'TRUE' : 'FALSE';
   drush_print("Download mode is set to $mode");
   drush_print("Begining import...");
+  
+  //make sure following modules are enabled for gary's site
+  module_enable(array('iqss_gking', 'iqss_rbuild'));
 
   gkimport_create_site();
   gkimport_parse_files();
@@ -63,12 +66,12 @@ function gkimport_create_site(){
     $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
     $user = install_add_user($settings['name'], $settings['pass'], $settings['mail'], $settings['roles'], $status = 1);
     if ($user) {
-     $mesage = variable_get('gkimport_drush_run', 0) === 1 ?  drush_print(t('Created user account: !username', array('!username' => $settings['name']))) : ''; 
+     $mesage = GKIMPORT_DRUSH_RUN === 1 ?  drush_print(t('Created user account: !username', array('!username' => $settings['name']))) : ''; 
     }
     $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
     if ($vsite){
       define(GKIMPORT_SID, $vsite -> sid );
-      $mesage = variable_get('gkimport_drush_run', 0) === 1 ? drush_print(t('Created web site: !domain', array('!domain' => $settings['domain']))) : '';     
+      $mesage = GKIMPORT_DRUSH_RUN === 1 ? drush_print(t('Created web site: !domain', array('!domain' => $settings['domain']))) : '';     
       return gkimport_customize_site($vsite);
     }
   }
@@ -104,7 +107,7 @@ function  gkimport_customize_site($vsite){
   cache_clear_all("content:$sid:$sid", 'cache_content');
   
   spaces_save($vsite);
-  gkimport_print("Customized site feautures and information"); 
+  gkimport_print("Customized site features and information"); 
   
   //reload the vsite
   $vsite = spaces_load("og", gkimport_get_sid());
@@ -123,24 +126,27 @@ function  gkimport_customize_site($vsite){
   'documents' => 10,
   'images' => 11,
   'feeds' => 12,
-  );
+  ); 
+  
   //customize names for selected menu primary items
   $vsite->customizer['menu']['biocv'] = 'Bio & C.V.';
   $vsite->customizer['menu']['classes'] = 'Class Materials';
   $vsite->customizer['menu']['people'] = 'Research Group';
   $vsite->customizer['menu']['publications'] = 'Writings'; 
-  
-  install_include(array('menu'));
-  
-  foreach ($item_weights as $item => $weight){
-    //get the mlid 
-    $a_mlid = install_menu_get_items($item);
-    $mlid = $a_mlid[0]['mlid'];    
-    //set custom weight for the menu item
-    $vsite -> customizer['menu']['menu_items'][$mlid]['weight'] = $weight;
+
+   //set custom weight for menu items
+  if( $vsite -> settings['menus']){
+    install_include(array('menu'));
+    foreach ($item_weights as $item => $weight){
+      //get the mlid
+      $a_mlid = install_menu_get_items($item);
+      $mlid = $a_mlid[0]['mlid'];
+      //set custom weight for the menu item
+      $vsite -> settings['menus']['menu_items'][$mlid]['weight'] = $weight;
+    }
   }
   spaces_save($vsite);
-  gkimport_print("Customized primary menu names and weights");   
+  gkimport_print("Customized primary menu names and weights");
 }
 
 /**
@@ -177,13 +183,13 @@ function gkimport_parse_files(){
  * Imports abstract text into publication nodes
  */
 function gkimport_parse_abstracts(){
-  $drush_run = variable_get('gkimport_drush_run', 0);
+  $drush_run = GKIMPORT_DRUSH_RUN;
   $error_nodes = array();
   $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
   //check to see that variable contains data
   if (empty($nids)) {
     $message =  'An error has occurred: gkimport_publications variable is an empty array';
-    return  ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
+    return  (GKIMPORT_DRUSH_RUN  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
   }
 
   $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
@@ -295,7 +301,7 @@ function gkimport_pubs_taxonomy($filepath){
     if ($vid){
     og_vocab_write_record($space[0] -> group -> nid, $vid);
     variable_set('gkimport_ri_vocab_id', $vid); //keep track of vid because other vocabs may have same name
-     $message =  (variable_get('gkimport_drush_run', 0) === 1) ? 
+     $message =  (GKIMPORT_DRUSH_RUN  === 1) ? 
      drush_print(t("Created vocabulary: !vocab_name", array('!vocab_name' => $vocab_name))) : '';     
     }
     $term_match_data = array();
@@ -328,7 +334,7 @@ function gkimport_pubs_taxonomy($filepath){
  foreach($terms as $term){
       if (trim(strlen($term))){
         install_taxonomy_add_term($vid, trim($term), $term_desc[$term]);
-        if  (variable_get('gkimport_drush_run', 0) === 1)  drush_print(t("Added term: !term", array('!term'=> $term)));
+        if  (GKIMPORT_DRUSH_RUN === 1)  drush_print(t("Added term: !term", array('!term'=> $term)));
       }
     }
   }
@@ -364,7 +370,7 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
   'filetype' => 'bib',
   'userid' => $account -> uid,
   'terms' => NULL,
-  'batch_proc' => (variable_get('gkimport_drush_run', 0) === 1)  ? FALSE : TRUE, //set to TRUE to batch process import, otherwise set to false
+  'batch_proc' => (GKIMPORT_DRUSH_RUN === 1)  ? FALSE : TRUE, //set to TRUE to batch process import, otherwise set to false
   'session_id' => microtime(),
   'dummy' => array(),
   'context' => array(
@@ -396,7 +402,7 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
     $content = biblio_import($p['import_file'], $p['filetype'], $p['userid'], $p['terms'], $p['batch_proc'], $p['session_id'], $p['context']);
     if ($content){
      variable_set('gkimport_pub_nodes', $content);   //an enumerative array of node id's of publications created during the import 
-    $message = variable_get('gkimport_drush_run', 0) === 1 ?  drush_print(t('Created !num publications total', array('!num' => count($content)))) : '';
+    $message = GKIMPORT_DRUSH_RUN === 1 ?  drush_print(t('Created !num publications total', array('!num' => count($content)))) : '';
     }  
   }
 }
