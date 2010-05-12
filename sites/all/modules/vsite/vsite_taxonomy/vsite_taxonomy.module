@@ -144,6 +144,14 @@ function vsite_taxonomy_menu() {
     'file'             => 'taxonomy.admin.inc',
     'file path'        => drupal_get_path('module', 'taxonomy'),
   );
+  
+  $items['categories/%/%'] = array(
+    //'title' => 'xxx',
+    'page callback' => 'vsite_taxonomy_content_by_category',
+    'page arguments' => array(1,2),
+    'access arguments' => array('access content'),
+  );
+  
 
   return $items;
 }
@@ -529,7 +537,7 @@ function taxonomy_form_vocabulary_dialog_success($form_state) {
 */
 
 
-function vsite_taxonomy_content_by_category($term_name, $content_type){
+function vsite_taxonomy_content_by_category($tid, $content_type){
 
   $map = spaces_features_map($type = 'node');
 
@@ -576,102 +584,64 @@ function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
 function vsite_taxonomy_block_view(){
   $vsite = vsite_get_vsite();
   $block = array();
-
-  // node types associated with the active context
-  $active_node_types = context_active_values("node");
-  if (count($active_node_types)) {
-    $active_vocabs = array();
-
-    foreach ( $active_node_types as $node_type ) {
-      $active_vocabs += $vsite->get_vocabs($node_type);
-    }
-
-    if ($vsite && count($active_vocabs)) {
-      foreach ( $active_vocabs as $vid => $vocab ) {
-
-        $tree = taxonomy_get_tree($vid);
-        // $tree = array_slice($tree, 0, 20);
-        $items = og_vocab_build_list_items($index = 0, $tree);
-        if ($items) {
-          $output .= theme('item_list', $items, $vocab->name);
+  $terms_html = "";
+  og_vocab_build_list_items();
+  // menu and node associated with the active context (if any)
+  $active_nodes = context_active_values("node");
+  
+  if ($vsite && count($active_nodes)) {
+  	
+  	// get the vocabulary for these types
+  	$vcs = array();
+  	foreach ($active_nodes as $s_type) $vcs += $vsite->get_vocabs($s_type);
+    dpm($vcs);
+  	
+    foreach ($vcs as $n_vid => $taxonomy){
+      
+      $terms = taxonomy_get_tree($taxonomy->vid);
+      $items = array();
+      foreach ( $terms as $term ) {
+        $nr_nodes = taxonomy_term_count_nodes($term->tid, $s_type); // only terms for this content type
+        if ($nr_nodes) {
+          $href = 'categories/'. $term -> tid . '/'. $s_type;
+          $item = vsite_taxonomy_term_item($term, $href, $s_type, TRUE);
+      
+          $items[] = array(
+            'data' => $item,
+            'id' => 'vsite_taxonomy_item_' . $term->tid
+          );
         }
       }
-      $block['content'] = $output;
-      $block['subject'] = t('Site Categories');
-      return $block;
+
+      if (count($items)) {
+        $terms_html .= "<h3 class=\"title\">".ucfirst($taxonomy->name)."</h3>".theme('item_list', $items, NULL, 'ul');
+      }
+      
     }
+    $block['content'] = $terms_html;
   }
 
+  return $block;
 }
 
-///////////////
-// TMP RWB START
-///////////////
-//
-//function vsite_taxonomy_block_view(){
-//  $vsite = vsite_get_vsite();
-//  $block = array();
-//  
-//  // menu and node associated with the active context (if any)
-//  //$active_menus = context_active_values("menu");
-//  $active_nodes = context_active_values("node");
-//  if (count($active_nodes)) {
-//    $node_type = reset($active_nodes);
-//    //$active_menu = reset($active_menus);
-//
-//    // get the vocabulary for this group
-//    if($vsite) $vcs = $vsite->get_vocabs($node_type);
-//    if (count($vcs)) {
-//      $v = reset($vcs);
-//      $terms = taxonomy_get_tree($v->vid);
-//      $items = array();
-//      foreach ( $terms as $term ) {
-//        $nr_nodes = taxonomy_term_count_nodes($term->tid, $node_type); // only terms for this content type
-//        if ($nr_nodes) {
-//          $href = 'categories/'. $term -> name . '/'. $node_type;
-//          $item = vsite_taxonomy_term_item($term, $href, $admin, $node_type, TRUE);
-//      
-//          $items[] = array(
-//            'data' => $item,
-//            'id' => 'vsite_taxonomy_item_' . $term->tid
-//          );
-//        }
-//      }
-//
-//      if (! count($items)) {
-//        return;
-//      }
-//      $terms_html = "<h3 class=\"title\">Categories</h3>".theme('item_list', $items, NULL, 'ul');
-//      
-//    }
-//    $block['content'] = $terms_html;
-//  }
-//
-//  return $block;
-//}
-//
-///**
-// * markup for one taxonomy term
-// */
-//function vsite_taxonomy_term_item($term, $href, $node_type = FALSE, $count = FALSE){
-//
-//  //$href = 'categories/statistics/class';
-//  $term_link = l($term->name, $href, array(
-//    'title' => t($term->description)
-//  ));
-//
-//  $nr_nodes = $node_type ? taxonomy_term_count_nodes($term->tid, $node_type) : taxonomy_term_count_nodes($term->tid);
-//  if ($count) {
-//    $item = $term_link . '<span class = "count" > (' . $nr_nodes . ')</span>';
-//  }
-//
-//  return $item;
-//}
 
-///////////////
-// TMP RWB END
-///////////////
+/**
+ * markup for one taxonomy term
+ */
+function vsite_taxonomy_term_item($term, $href, $node_type = FALSE, $count = FALSE){
 
+  //$href = 'categories/statistics/class';
+  $term_link = l($term->name, $href, array(
+    'title' => t($term->description)
+  ));
+
+  $nr_nodes = $node_type ? taxonomy_term_count_nodes($term->tid, $node_type) : taxonomy_term_count_nodes($term->tid);
+  if ($count) {
+    $item = $term_link . '<span class = "count" > (' . $nr_nodes . ')</span>';
+  }
+
+  return $item;
+}
 
 
 /**
