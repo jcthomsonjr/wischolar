@@ -102,8 +102,45 @@ function  gkimport_customize_site($vsite){
   db_query("UPDATE {content_type_vsite} SET field_vsite_address_value = '%s' WHERE nid = %d", $address, $sid);
   //$cid = 'content:' . $sid . ':' . $sid;
   cache_clear_all("content:$sid:$sid", 'cache_content');
+  
   spaces_save($vsite);
-  gkimport_print("Customized site feautures and information");
+  gkimport_print("Customized site feautures and information"); 
+  
+  //reload the vsite
+  $vsite = spaces_load("og", gkimport_get_sid());
+  //define custom weights for primary menu links
+  $item_weights = array(
+  'biocv' => 0,
+  'publications' =>1,
+  'scholar_software' => 2,
+  'data' => 3,
+  'people' => 4,
+  'classes' => 5,
+  'links' => 6,
+  'calendar' => 7,
+  'blog' => 8,
+  'announcements' => 9,
+  'documents' => 10,
+  'images' => 11,
+  'feeds' => 12,
+  );
+  //customize names for selected menu primary items
+  $vsite->customizer['menu']['biocv'] = 'Bio & C.V.';
+  $vsite->customizer['menu']['classes'] = 'Class Materials';
+  $vsite->customizer['menu']['people'] = 'Research Group';
+  $vsite->customizer['menu']['publications'] = 'Writings'; 
+  
+  install_include(array('menu'));
+  
+  foreach ($item_weights as $item => $weight){
+    //get the mlid 
+    $a_mlid = install_menu_get_items($item);
+    $mlid = $a_mlid[0]['mlid'];    
+    //set custom weight for the menu item
+    $vsite -> customizer['menu']['menu_items'][$mlid]['weight'] = $weight;
+  }
+  spaces_save($vsite);
+  gkimport_print("Customized primary menu names and weights");   
 }
 
 /**
@@ -1034,4 +1071,3 @@ function gkimport_print($text){
       break;
   } 
 }
-
