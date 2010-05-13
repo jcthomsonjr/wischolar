@@ -382,7 +382,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   // add links to attached files (if any)
   if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
   
-  if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_markup($node->biblio_notes, $node->format, FALSE) ."\n</span>";
+  if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
 
   if (!$node->status) $s_output .= '</div>';
 
@@ -519,7 +519,7 @@ function _scholar_publications_pub_by_type_wgt(){
 	  $output .= "<div id='pub_type_tabs-{$i}'>";
 	  while ($data = db_fetch_object($result)) {
 	  	$node = node_load($data->nid);
-	  	$output .= "\n<div class=\"biblio-entry\">".node_view($node,true,false)."</div>";
+	  	$output .= "\n<div class=\"biblio-entry\">". theme('biblio_entry', $node, variable_get('biblio_base', 'biblio') , biblio_get_style()) ."</div>";
 	  }
 	  $output .= "</div>";
 	  $i++;
