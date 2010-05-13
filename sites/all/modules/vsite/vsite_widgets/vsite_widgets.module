@@ -178,8 +178,51 @@ function vsite_widgets_vsite_widgets(){
       'label' => 'Google Translate',
       'type' => 'context_ui',
     ),
-
-
+    
+    /**
+    'vsite_widgets_publications_years' => array(
+      'module' => 'vsite_widgets',
+      'delta' => '4',
+      'weight' => 40,
+      'region' => 'right',
+      'status' => '1',
+      'label' => 'Publications by Year',
+      'type' => 'context_ui',
+    ),
+    **/
+    // Publication Types
+    'views_publication_types-block_1' => array(
+      'module' => 'views',
+      'delta' => 'publication_types-block_1',
+      'weight' => 10,
+      'region' => 'right',
+      'status' => '1',
+      'label' => 'Publication Types (Widget)',
+      'type' => 'context_ui',
+    ),
+    
+    // Publication Years
+    'views_publication_years-block_1' => array(
+      'module' => 'views',
+      'delta' => 'publication_years-block_1',
+      'weight' => 11,
+      'region' => 'right',
+      'status' => '1',
+      'label' => 'Publication Years (Widget)',
+      'type' => 'context_ui',
+    ),
+    
+    // Publication Contributors
+    'views_publication_contributors-block_1' => array(
+      'module' => 'views',
+      'delta' => 'publication_contributors-block_1',
+      'weight' => 11,
+      'region' => 'right',
+      'status' => '1',
+      'label' => 'Publication Contributors (Widget)',
+      'type' => 'context_ui',
+    ),
+    
     // Featured posts
     'views_vsite_featuredposts-block_1' => array(
       'module' => 'views',

@@ -25,7 +25,7 @@
 
 // Modified for use in biblio by Ron Jerome
 //
-// $Id: biblio_style_vancouver.inc,v 1.1.2.15 2009/10/28 12:30:15 rjerome Exp $
+// $Id: biblio_style_vancouver.inc,v 1.1.2.17 2010/05/03 00:57:36 rjerome Exp $
 /**
  * Get the style information
  *
@@ -77,12 +77,8 @@ function biblio_style_vancouver($node, $base = 'biblio', $inline = false) {
     case 106: //Magazine Article
       if(!empty($authors)) {
         $output .= '<span class="biblio-authors">';
-        if (!preg_match("/\.*$/", $authors)) {
-          $output .= $authors . ".";
-        }
-        else {
-          $output .= $authors;
-        }
+        $output .= $authors;
+        if (!preg_match("/\. *$/", $authors)) $output .= ".";
         $output .=  "</span>";
       }
 
@@ -90,7 +86,7 @@ function biblio_style_vancouver($node, $base = 'biblio', $inline = false) {
       {
         if (!empty($authors)) $output .= " ";
         $output .= '<span class="biblio-title-vancouver">';
-        $url = biblio_get_title_url_info($node);
+        $url = biblio_get_title_url_info($node, $base, $inline);
         $output .= l($node->title, $url['link'], $url['options']);
         $output .= "</span>";
         if (!preg_match("/[?!.]$/", $node->title)) $output .= ".";
@@ -178,19 +174,15 @@ function biblio_style_vancouver($node, $base = 'biblio', $inline = false) {
     case 103: //Conference Paper
       if(!empty($authors)) {
         $output .= '<span class="biblio-authors">';
-        if (!preg_match("/\.*$/", $authors)) {
-          $output .= $authors . ".";
-        }
-        else {
-          $output .= $authors;
-        }
+        $output .= $authors;
+        if (!preg_match("/\. *$/", $authors)) $output .= ".";
         $output .= '</span>';
       }
       if (!empty($node->title))      // title
       {
         if (!empty($authors))  $output .= " ";
         $output .= '<span class="biblio-title-vancouver">';
-        $url = biblio_get_title_url_info($node);
+        $url = biblio_get_title_url_info($node, $base, $inline);
         $output .= l($node->title, $url['link'], $url['options']);
         $output .= "</span>";
         if (!preg_match("/[?!.]$/", $node->title)) $output .= ".";
@@ -329,12 +321,8 @@ function biblio_style_vancouver($node, $base = 'biblio', $inline = false) {
       if (!empty($authors))      // author
       {
         $output .= '<span class="biblio-authors">';
-        if (!preg_match("/\.*$/", $authors)) {
-          $output .= $authors . ".";
-        }
-        else{
           $output .= $authors;
-        }
+          if (!preg_match("/\. *$/", $authors))  $output .= ".";
         $output .= '</span>';
       }
 
@@ -345,7 +333,7 @@ function biblio_style_vancouver($node, $base = 'biblio', $inline = false) {
 
         // TODO: book/volume/report/etc titles should be formatted in heading caps, however, this doesn't yet work correctly if the publication title contains HTML entities
           $output .= '<span class="biblio-title-vancouver">';
-          $url = biblio_get_title_url_info($node);
+          $url = biblio_get_title_url_info($node, $base, $inline);
           $output .= l($node->title, $url['link'], $url['options']);
           $output .= "</span>";
        }

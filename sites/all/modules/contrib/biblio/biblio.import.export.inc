@@ -1,6 +1,6 @@
 <?PHP
 
-// $Id: biblio.import.export.inc,v 1.7.2.70 2009/10/09 20:19:12 rjerome Exp $
+// $Id: biblio.import.export.inc,v 1.7.2.73 2010/05/13 02:31:00 rjerome Exp $
 /**
  * @file
  * Functions that are used to import and export biblio data.
@@ -115,7 +115,7 @@ function biblio_import_form() {
         '#title' => t('Copy these terms to the biblio keyword database'),
         '#return_value' => 1,
         '#default_value' =>  variable_get('biblio_copy_taxo_terms_to_keywords', 0),
-        '#description' => t('If this option is selected, the selected taxonomy terms will be copied to the '.variable_get('biblio_base_title', 'Biblio').' keyword database and be displayed as keywords (as well as taxonomy terms) for this entry.')
+        '#description' => t('If this option is selected, the selected taxonomy terms will be copied to the @biblio_title keyword database and be displayed as keywords (as well as taxonomy terms) for this entry.', array('@biblio_title' => variable_get('biblio_base_title', 'Biblio')))
       );
 
     } else {
@@ -291,7 +291,7 @@ function biblio_import_from_url($URL) {
   }
   else
   {
-    $errorMessage = t("Error occurred: Failed to open ") . $URL; // network error
+    $errorMessage = t("Error occurred: Failed to open ") . check_plain($URL); // network error
     drupal_set_message($errorMessage, 'error');
   }
 
@@ -403,27 +403,31 @@ function biblio_import($import_file, $type, $userid = 1, $terms = NULL, $batch =
  *   none
  */
 function biblio_export($format = "tagged", $nid = null, $popup = false, $version = 8) {
-  module_load_include('inc', 'biblio', 'endnote8_export');
-  module_load_include('inc', 'biblio', 'biblio.contributors');
-  module_load_include('inc', 'biblio', 'biblio.keywords');
-  $params = array ();
+  $params = array();
+  $nids   = array();
   if ($nid === null && isset ($_SESSION['last_biblio_query']) && !empty ($_SESSION['last_biblio_query'])) {
     $query = $_SESSION['last_biblio_query'];
     $params = $_SESSION['last_biblio_query_terms'];
+    $result = db_query($query, $params);
+    while ($node = db_fetch_object($result)) {
+      $nids[] = $node->nid;
+    }
   }
   elseif (!empty ($nid)) {
-    $query = db_rewrite_sql("SELECT DISTINCT(n.nid) FROM {node} n  WHERE n.nid=%d ");
-    $params[] = $nid;
-  } else {
+    $nids[] = $nid;
+  }
+  else {
     return;
   }
-  $result = db_query($query, $params);
+
+  return _biblio_export($nids, $format, $popup, $version);
+}
+
+function _biblio_export($nids, $format = "tagged", $popup = false, $version = 8) {
+  module_load_include('inc', 'biblio', 'endnote8_export');
   $count = 0;
-  while ($node = db_fetch_object($result)) {
-    $node = node_load($node->nid, FALSE, TRUE);
-//    $node->biblio_contributors = biblio_load_contributors($node->vid);
-//    $node->biblio_keywords = biblio_load_keywords($node->vid);
-//    if (module_exists("upload")) $node->files = upload_load($node);
+  foreach($nids as $nid) {
+    $node = node_load($nid, FALSE, TRUE);
     $count++;
     set_time_limit(30);
     switch ($format) {

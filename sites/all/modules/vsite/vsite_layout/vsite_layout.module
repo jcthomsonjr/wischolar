@@ -272,6 +272,13 @@ function _vsite_layout_alter_theme_regions(&$a_widgets){
  * Custom sort by block weight
  */
 function _vsite_layout_sort_by_weight($a, $b){
+  if(is_object($a)) {
+    $a = (array)$a;
+  }
+  if(is_object($b)) {
+    $b = (array)$b;
+  }
+  
     if ($a['weight'] == $b['weight']) {
         return 0;
     }

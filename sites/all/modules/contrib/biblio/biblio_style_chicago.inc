@@ -10,7 +10,7 @@
 
 // Modified for use in biblio by Ron Jerome
 //
-// $Id: biblio_style_chicago.inc,v 1.4.2.12 2009/10/22 18:17:34 rjerome Exp $
+// $Id: biblio_style_chicago.inc,v 1.4.2.14 2010/05/03 00:57:36 rjerome Exp $
 /**
  * Get the style information
  *
@@ -73,10 +73,10 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
     case 105: //Newspaper Article
     case 106: //Magazine Article
       if(!empty($authors)) {
-        if (!preg_match("/\.*$/", $authors))
-        $output .= $authors . ".";
-        else
+        $output .= '<span class="biblio-authors">';
         $output .= $authors;
+        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        $output .= '</span>';
       }
 
       if (!empty($node->title))      // title
@@ -84,7 +84,7 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
         if (!empty($authors)) $output .= " ";
         $output .= '"' ;
         $output .= '<span class="biblio-title-chicago">';
-        $url = biblio_get_title_url_info($node);
+        $url = biblio_get_title_url_info($node, $base, $inline);
         $output .= l($node->title, $url['link'], $url['options']);
         $output .= "</span>";
         if (!preg_match("/[?!.]$/", $node->title)) $output .= ".";
@@ -166,12 +166,10 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
     case 101: //Book Chapter
     case 103: //Conference Paper
       if(!empty($authors)) {
-        if (!preg_match("/\.*$/", $authors)) {
-          $output .= $authors . ".";
-        }
-        else {
-          $output .= $authors;
-        }
+        $output .= '<span class="biblio-authors">';
+        $output .= $authors;
+        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        $output .= '</span>';
       }
       if (!empty($node->title))      // title
       {
@@ -179,7 +177,7 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
 
         $output .= '"<i>' ;
         $output .= '<span class="biblio-title-chicago">';
-        $url = biblio_get_title_url_info($node);
+        $url = biblio_get_title_url_info($node, $base, $inline);
         $output .= l($node->title, $url['link'], $url['options']);
         $output .= "</span>";
         $output .= '</i>';
@@ -301,17 +299,15 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
 
       if (!empty($authors))      // author
       {
-        if (!preg_match("/\.*$/", $authors)) {
-          $output .= $authors . ".";
-        }
-        else {
-          $output .= $authors;
-        }
+        $output .= '<span class="biblio-authors">';
+        $output .= $authors;
+        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        $output .= '</span>';
       }
 
       if (!empty($node->title))      // title
       {
-        $url = biblio_get_title_url_info($node);
+        $url = biblio_get_title_url_info($node, $base, $inline);
         if (!empty($authors))
         $output .= " ";
 

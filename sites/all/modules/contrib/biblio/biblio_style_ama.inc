@@ -15,7 +15,7 @@
 
 // Modified for use in biblio by Ron Jerome
 //
-// $Id: biblio_style_ama.inc,v 1.1.2.13 2009/12/15 20:15:45 rjerome Exp $
+// $Id: biblio_style_ama.inc,v 1.1.2.17 2010/05/03 00:57:36 rjerome Exp $
 /**
  * Get the style information
  *
@@ -65,12 +65,10 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
     case 105: //Newspaper Article
     case 106: //Magazine Article
       if(!empty($authors)) {
-        if (!preg_match("/\.*$/", $authors)) {
-          $output .= $authors . ".";
-        }
-        else {
-          $output .= $authors;
-        }
+        $output .= '<span class="biblio-authors">';
+        $output .= $authors;
+        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        $output .=  "</span>";
       }
 
       if (!empty($node->title))      // title
@@ -78,7 +76,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
         if (!empty($authors)) $output .= " ";
         $output .= '"' ;
         $output .= '<span class="biblio-title-ama">';
-        $url = biblio_get_title_url_info($node);
+        $url = biblio_get_title_url_info($node, $base, $inline);
         $output .= l($node->title, $url['link'], $url['options']);
         $output .= "</span>";
         if (!preg_match("/[?!.]$/", $node->title)) $output .= ".";
@@ -89,11 +87,11 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
       // if this is not the case, the output string will begin with a space. However, any preceding/trailing whitespace will be removed at the cleanup stage (see below)
 
       if (!empty($node->biblio_alternate_title))      // abbreviated journal name
-      $output .= " " . $markupPatternsArray["italic-prefix"] . $node->biblio_alternate_title . $markupPatternsArray["italic-suffix"];
+      $output .= " <i>" . $node->biblio_alternate_title . "</i>";
 
       // if there's no abbreviated journal name, we'll use the full journal name
       elseif (!empty($node->biblio_secondary_title))      // publication (= journal) name
-      $output .= " " . $markupPatternsArray["italic-prefix"] . $node->biblio_secondary_title . $markupPatternsArray["italic-suffix"];
+      $output .= " <i>"  . $node->biblio_secondary_title . "</i>";
 
       if ($node->biblio_type == 105 || $node->biblio_type == 106 AND !preg_match("/^\d+$/", $node->biblio_volume)) // for newspaper articles (and magazine articles if w/o volume number), volume (=month) and issue (=day) information is printed before the year
       {
@@ -177,12 +175,10 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
     case 101: //Book Chapter
     case 103: //Conference Paper
       if(!empty($authors)) {
-        if (!preg_match("/\.*$/", $authors)) {
-          $output .= $authors . ".";
-        }
-        else {
-          $output .= $authors;
-        }
+        $output .= '<span class="biblio-authors">';
+        $output .= $authors;
+        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        $output .= '</span>';
       }
       if (!empty($node->title))      // title
       {
@@ -190,7 +186,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
 
         $output .= '"<i>' ;
         $output .= '<span class="biblio-title-ama">';
-        $url = biblio_get_title_url_info($node);
+        $url = biblio_get_title_url_info($node, $base, $inline);
         $output .= l($node->title, $url['link'], $url['options']);
         $output .= "</span>";
         $output .= '</i>';
@@ -234,7 +230,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
         $output .= " In:";
 
         // TODO: container titles should be formatted in heading caps, however, this doesn't yet work correctly if the publication title contains HTML entities
-        $output .= " " . $markupPatternsArray["italic-prefix"] . $publication . $markupPatternsArray["italic-suffix"];
+        $output .= " <i>" . $publication . "</i>";
         //        $output .= " " . $markupPatternsArray["italic-prefix"] . changeCase("heading", $publication) . $markupPatternsArray["italic-suffix"]; // function 'changeCase()' is defined in 'include.inc.php'
       }
 
@@ -268,7 +264,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
         $output .= " " . $node->biblio_edition . $editionSuffix;
       }
 
-      if (!preg_match("/[?!.][ \"" . $markupPatternsArray["italic-suffix"] . "]*$", $output)) $output .= ".";
+      if (!preg_match("/[?!.][ \"" . $markupPatternsArray["italic-suffix"] . "]*$/", $output)) $output .= ".";
 
       if (!empty($node->biblio_place_published))      // place
       $output .= " " . $node->biblio_place_published;
@@ -310,8 +306,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
         $output .= "(" . $node->biblio_issue . ")"; // is it correct to format series issues similar to journal article issues?
       }
 
-      if (!preg_match("/\. *$/", $output))
-      $output .= ".";
+      if (!preg_match("/\. *$/", $output)) $output .= ".";
 
       break;
 
@@ -324,10 +319,10 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
 
       if (!empty($authors))      // author
       {
-        if (!preg_match("/\. *$/", $authors))
-        $output .= $authors . ".";
-        else
+        $output .= '<span class="biblio-authors">';
         $output .= $authors;
+        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        $output .= '</span>';
       }
 
       if (!empty($node->title))      // title
@@ -338,7 +333,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
         $output .= '<i>';
         // TODO: book/volume/report/etc titles should be formatted in heading caps, however, this doesn't yet work correctly if the publication title contains HTML entities
         $output .= '<span class="biblio-title-ama">';
-        $url = biblio_get_title_url_info($node);
+        $url = biblio_get_title_url_info($node, $base, $inline);
         $output .= l($node->title, $url['link'], $url['options']);
         $output .= "</span>";
         $output .= '</i>';
