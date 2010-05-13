@@ -111,40 +111,33 @@ function  gkimport_customize_site($vsite){
   
   //reload the vsite
   $vsite = spaces_load("og", gkimport_get_sid());
-  //define custom weights for primary menu links
-  $item_weights = array(
-  'biocv' => 0,
-  'publications' =>1,
-  'scholar_software' => 2,
-  'data' => 3,
-  'people' => 4,
-  'classes' => 5,
-  'links' => 6,
-  'calendar' => 7,
-  'blog' => 8,
-  'announcements' => 9,
-  'documents' => 10,
-  'images' => 11,
-  'feeds' => 12,
+  //define custom settings for primary menu links
+  $item_settings = array(
+  'biocv' => array('weight' => 0, 'primary' => TRUE, 'title' =>'Bio & C.V.'),
+  'publications' =>array('weight' => 1, 'primary' => TRUE, 'title' =>'Writings'),
+  'scholar_software' => array('weight' => 2, 'primary' => TRUE, 'title' =>'Software'),
+  'data' => array('weight' => 3, 'primary' => TRUE, 'title' =>'Dataverse'),
+  'people' => array('weight' => 4, 'primary' => TRUE, 'title' =>'Research Group'),
+  'classes' => array('weight' => 5, 'primary' => TRUE, 'title' =>'Class Materials'),
+  'links' => array('weight' => 6, 'primary' => TRUE, 'title' =>'Links'),
+  'calendar' => array('weight' => 7, 'primary' => FALSE, 'title' =>'Calendar'),
+  'blog' => array('weight' => 8, 'primary' => FALSE, 'title' =>'Blog'),
+  'announcements' => array('weight' => 9, 'primary' => FALSE, 'title' =>'Announcements'),
+  'documents' => array('weight' => 10, 'primary' => FALSE, 'title' =>'Documents'),
+  'images' => array('weight' => 11, 'primary' => FALSE, 'title' =>'Images'),
+  'feeds' => array('weight' => 12, 'primary' => FALSE, 'title' =>'Feeds'),
   ); 
-  
-  //customize names for selected menu primary items
-  $vsite->customizer['menu']['biocv'] = 'Bio & C.V.';
-  $vsite->customizer['menu']['classes'] = 'Class Materials';
-  $vsite->customizer['menu']['people'] = 'Research Group';
-  $vsite->customizer['menu']['publications'] = 'Writings'; 
 
-   //set custom weight for menu items
-  if( $vsite -> settings['menus']){
+  //set custom weight for menu items
     install_include(array('menu'));
-    foreach ($item_weights as $item => $weight){
+    foreach ($item_settings as $item => $setting){
       //get the mlid
       $a_mlid = install_menu_get_items($item);
       $mlid = $a_mlid[0]['mlid'];
       //set custom weight for the menu item
-      $vsite -> settings['menus']['menu_items'][$mlid]['weight'] = $weight;
+      vsite_menu_update_vsite_menu_link($mlid, $item, $setting['title'], $b_primary_menu = $setting['primary'], $setting['weight'], $n_plid = 0, $vsite->group->nid);
     }
-  }
+  
   spaces_save($vsite);
   gkimport_print("Customized primary menu names and weights");
 }
