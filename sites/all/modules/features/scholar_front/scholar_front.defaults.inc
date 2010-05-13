@@ -33,6 +33,15 @@ function _scholar_front_context_default_contexts() {
         'label' => 'Latest Announcements',
         'type' => 'context_ui',
       ),
+      'scholar_reader_my_twitter_feed' => array(
+        'module' => 'scholar_reader',
+        'delta' => 'my_twitter_feed',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Twitter Feed',
+        'type' => 'context_ui',
+      ),
     ),
   );
   return $items;

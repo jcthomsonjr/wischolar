@@ -90,6 +90,7 @@ function _scholar_core_modules() {
     'token',
     'trigger',
     'transliteration',
+    'twitter_pull',
     'ucreate',
     'ucreate_og',
     'views', 

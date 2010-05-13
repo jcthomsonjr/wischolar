@@ -2,13 +2,6 @@
 
 include_once('scholar_front.features.inc');
 
-function scholar_front_init(){
-  $active_menu = menu_get_item();
-  if ($active_menu['path'] == 'cp/settings/front'){
-    drupal_add_css(drupal_get_path('module', 'scholar_front') .'/theme/scholar_front.css');
-  }
-}
-
 function scholar_front_menu(){
   $items = array();
   $items['home'] = array(

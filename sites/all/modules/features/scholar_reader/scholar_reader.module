@@ -54,6 +54,17 @@ function scholar_reader_vsite_widgets(){
         'label' => 'Latest feeds',
         'type' => 'context_ui',
       );
+      
+  $items['scholar_reader_my_twitter_feed'] = array(
+        'module' => 'scholar_reader',
+        'delta' => 'my_twitter_feed',
+        'weight' => 20,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Twitter Feed',
+        'type' => 'context_ui',
+      );
+      
   return $items;
 }
 
@@ -113,4 +124,65 @@ function scholar_reader_feed_validate($form, &$form_state) {
   if(!$success){
   	form_error($form, t('Can\'t connect to '.$form_state['values']['feeds']['FeedsHTTPFetcher']['source'].'. Invalid feed URL, please check that the URL is valid.'), 'error');
   }
+}
+
+/**
+ * hook default__contexts_alter
+ */
+function scholar_reader_context_default_contexts_alter(&$contexts){
+  
+  $vsite = vsite_get_vsite();
+  if(!$vsite || !strlen($vsite->settings['reader']['twitter_username'])){
+    unset($contexts['scholar-feature-front']->block['scholar_reader_my_twitter_feed']);
+    unset($contexts['vsite-section-public']->block['scholar_reader_my_twitter_feed']);
+  }//Is there a bio created for this site? If not unset the applicable block
+  
+  
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_reader_spaces_settings(){
+  return array(
+    'reader' => array(
+      'class' => 'scholar_reader_settings_reader', 
+      'file' => drupal_get_path('module', 'scholar_reader') . '/include/scholar_reader.settings.inc' 
+    ),
+  );
+}
+
+/**
+ * Define the scholar reader blocks with hook block
+ */
+function scholar_reader_block($op = 'list', $delta = false, $edit = array()) {
+  if ($op == 'list') {
+    $blocks['my_twitter_feed']['info'] = t('Twitter Feed');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 'my_twitter_feed':
+        return _scholar_reader_twitter_wgt();
+    }
+  }
+}
+
+
+/**
+ * Renders twitter block for users
+ */
+function _scholar_reader_twitter_wgt(){
+	
+	if(!($vsite = vsite_get_vsite())) return array();
+	
+	//Do they have thier feed set?
+	if(!strlen($vsite->settings['reader']['twitter_username'])) return array();
+	
+	$tag = (!in_array(substr($vsite->settings['reader']['twitter_username'],0,1),array('#','@')))? '@'.$vsite->settings['reader']['twitter_username']:$vsite->settings['reader']['twitter_username'];
+	
+	$output = twitter_pull_render ($tag, "Twitter");
+	
+	
+	return array('subject' => "",'content' => $output);
 }
