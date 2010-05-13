@@ -148,11 +148,10 @@ function vsite_taxonomy_menu() {
   $items['categories/%/%'] = array(
     //'title' => 'xxx',
     'page callback' => 'vsite_taxonomy_content_by_category',
-    'page arguments' => array(1,2),
+    'page arguments' => array(2, 1),
     'access arguments' => array('access content'),
   );
   
-
   return $items;
 }
 
@@ -450,13 +449,6 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
   $links = array();
   // edit/delete links for vocabularies
   if ($type == 'vocabulary') {
-    //$links[] = array(
-    //  'title' => 'delete',
-    //  'href' => 'vsite/taxonomy/nojs/delete/vocabulary/' . $object -> vid,
-    //  'attributes' => array(
-    //    'class' => 'ctools-use-dialog delete',
-    //  )
-    //);
 
     $links[] = array(
       'title' => 'edit',
@@ -468,24 +460,8 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
 
     $current = menu_get_item();
 
-    //$links[] = array(
-    //  'title' => 'expand',
-    //  'href' => $current['path'],
-    //  'attributes' => array(
-    //  'class' => 'toggle'
-    //  )
-    //);
   }
   elseif ($type == 'term') {
-    /*
-    $links[] = array(
-      'title' => 'delete',
-      'href' => "vsite_taxonomy/term/delete/" . $object->vid . "/" . $object->tid,
-      'attributes' => array(
-        'class' => 'delete ctools-use-ajax'
-      )
-    );
-    */
 
     $links[] = array(
       'title' => 'edit',
@@ -537,24 +513,32 @@ function taxonomy_form_vocabulary_dialog_success($form_state) {
 */
 
 
-function vsite_taxonomy_content_by_category($tid, $content_type){
+function vsite_taxonomy_content_by_category($tid, $s_feature){
 
-  $map = spaces_features_map($type = 'node');
-
-  context_set_by_condition('node', $content_type, TRUE);
+	if(!context_set_by_condition('path',$s_feature, true)){
+  	context_set_by_condition('node', $s_feature, true);
+  }//Assume that it is a menu path, if not try content type
 
   $view = views_get_view('vsite_taxonomy_view');
   $view->init();
   $view->set_display('default');
   $view->set_arguments(array(
-    $term_name,
-    $content_type
+    $tid
   ));
-
+  
+  //Filter by content types
+  $a_context_types = context_active_values("node");
+  if(count($a_context_types)){
+    $filter = $view->get_item('default','filter','type');
+    $filter['value'] = $a_context_types;
+    $view->set_item('default','filter','type',$filter);
+  }
+  
   // pager
   $view -> pager['use_pager'] = 1;
 
   $view->execute();
+  
   drupal_set_title($term_name);
   return $view->render();
 }
@@ -585,16 +569,16 @@ function vsite_taxonomy_block_view(){
   $vsite = vsite_get_vsite();
   $block = array();
   $terms_html = "";
-  og_vocab_build_list_items();
   // menu and node associated with the active context (if any)
   $active_nodes = context_active_values("node");
+  $a_path = context_active_values("path");
+  $s_filter = (count($a_path))? current($a_path): current($active_nodes);
   
   if ($vsite && count($active_nodes)) {
   	
   	// get the vocabulary for these types
   	$vcs = array();
   	foreach ($active_nodes as $s_type) $vcs += $vsite->get_vocabs($s_type);
-    dpm($vcs);
   	
     foreach ($vcs as $n_vid => $taxonomy){
       
@@ -603,7 +587,7 @@ function vsite_taxonomy_block_view(){
       foreach ( $terms as $term ) {
         $nr_nodes = taxonomy_term_count_nodes($term->tid, $s_type); // only terms for this content type
         if ($nr_nodes) {
-          $href = 'categories/'. $term -> tid . '/'. $s_type;
+          $href = 'categories/'. $s_filter . '/'. $term -> tid;
           $item = vsite_taxonomy_term_item($term, $href, $s_type, TRUE);
       
           $items[] = array(
