@@ -514,7 +514,7 @@ function _scholar_publications_pub_by_type_wgt(){
 	                                     INNER JOIN {og_ancestry} oa ON oa.nid = n.nid AND oa.group_nid = %d
 	                                     INNER JOIN {biblio} bib ON bib.nid = n.nid AND bib.biblio_type = %d
 	                                     WHERE n.type = '%s'
-	                                     ORDER BY n.created DESC ", array($vsite->group->nid,$type->b_type,'biblio' ), 0, 5);
+	                                     ORDER BY n.created DESC ", array($vsite->group->nid,$type->b_type,'biblio' ), 0, 8);
 
 	  $output .= "<div id='pub_type_tabs-{$i}'>";
 	  while ($data = db_fetch_object($result)) {
