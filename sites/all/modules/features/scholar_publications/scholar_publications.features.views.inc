@@ -9,7 +9,7 @@ function _scholar_publications_views_default_views() {
   // Exported view: publication_contributors
   $view = new view;
   $view->name = 'publication_contributors';
-  $view->description = 'Publication Contributors';
+  $view->description = 'Publications By Co-Author';
   $view->tag = 'widgets';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -238,19 +238,18 @@ function _scholar_publications_views_default_views() {
     'weight' => 0,
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
-  $handler->override_option('title', 'Publication Contributors');
+  $handler->override_option('title', 'Publications By Co-Author');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', 'mini');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-
   $views[$view->name] = $view;
 
   // Exported view: publication_types
   $view = new view;
   $view->name = 'publication_types';
-  $view->description = 'Publication Types';
+  $view->description = 'Publications By Type';
   $view->tag = 'widgets';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -568,16 +567,15 @@ function _scholar_publications_views_default_views() {
       ),
     ),
   ));
-  $handler->override_option('title', 'Publication Types');
+  $handler->override_option('title', 'Publications By Type');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-
   $views[$view->name] = $view;
 
   // Exported view: publication_years
   $view = new view;
   $view->name = 'publication_years';
-  $view->description = 'Publication Years';
+  $view->description = 'Publications By Year';
   $view->tag = 'widgets';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -698,7 +696,7 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Year of Publication');
+  $handler->override_option('title', 'Publications By Year');
   $handler->override_option('style_options', array(
     'grouping' => '',
   ));
