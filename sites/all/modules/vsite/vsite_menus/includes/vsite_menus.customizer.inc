@@ -8,6 +8,7 @@ class vsite_menus_customizer_menu extends space_customizer_menu implements space
 
   public function form($space, $feature) {
     /** Remove default form **/
+  	return array('#type' => 'value', '#value' => array()); //Expects an array response
   }
   
   public function vsite_menu_form($space,$feature){
