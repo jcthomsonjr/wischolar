@@ -845,7 +845,7 @@ function gkimport_software_pubs_set(){
  */
 function gkimport_software_term_pubs_set(){
   install_include(array('taxonomy'));
-  $vid = install_taxonomy_get_vid('gking_vocabulary');
+  $vid = install_taxonomy_get_vid('tags');
   $tid = install_taxonomy_add_term($vid, 'Software');
   
   foreach(_gkimport_software_term_pubs() as $title){
@@ -871,6 +871,7 @@ function _gkimport_software_pubs(){
   'Anchors: Software for Anchoring Vignettes Data',
   'Amelia II: A Program for Missing Data',
   "Zelig: Everyone's Statistical Software",
+  'CLARIFY: Software for Interpreting and Presenting Statistical Results',
   'AMELIA: A Program for Missing Data',
   'MAXLIK, a set of Gauss programs, annotated for pedagogical purposes, to implement the maximum likelihood models in Unifying Political Methodology: The Likelihood Theory of Statistical Inference',
   'EI: Program for Ecological Inference',
