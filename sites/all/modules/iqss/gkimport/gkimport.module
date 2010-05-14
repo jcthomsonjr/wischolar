@@ -100,6 +100,7 @@ function  gkimport_customize_site($vsite){
   $vsite -> features['scholar_links'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_profiles'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_publications'] = SPACES_OG_PUBLIC;
+  $vsite -> features['scholar_reader'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_software'] = SPACES_OG_PUBLIC;
   
   db_query("UPDATE {content_type_vsite} SET field_vsite_address_value = '%s' WHERE nid = %d", $address, $sid);
@@ -125,7 +126,7 @@ function  gkimport_customize_site($vsite){
   'announcements' => array('weight' => 9, 'primary' => FALSE, 'title' =>'Announcements'),
   'documents' => array('weight' => 10, 'primary' => FALSE, 'title' =>'Documents'),
   'images' => array('weight' => 11, 'primary' => FALSE, 'title' =>'Images'),
-  'feeds' => array('weight' => 12, 'primary' => FALSE, 'title' =>'Feeds'),
+  'reader' => array('weight' => 12, 'primary' => FALSE, 'title' =>'Feeds'),
   ); 
 
   //set custom weight for menu items
@@ -818,11 +819,11 @@ function gkimport_import_classes(){
   }	
 }
 
-
+/**
+ * Change the biblio type of selected nodes  to 
+ * "software" per Gary's bibtex file
+ */
 function gkimport_software_pubs_set(){
-  install_include(array('taxonomy'));
-  $vid = install_taxonomy_get_vid('gking_vocabulary');
-  $tid = install_taxonomy_add_term($vid, 'Software');
   $biblio_type_id = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s' " , 'Software')); // should be 113
   foreach(_gkimport_software_pubs() as $title){
     $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ",$title));
@@ -830,7 +831,23 @@ function gkimport_software_pubs_set(){
       $node = node_load($nid);
       db_query("UPDATE {biblio} SET biblio_type = %d WHERE nid =  %d" , $biblio_type_id, $nid); 
       drush_print("Updated biblio type to Software for node: $nid {$node -> title}");
-      drush_print("Found match for software term: $nid {$node -> title}");
+      drush_print("Found match for software term: $nid {$node -> title}");    
+    }    
+  }
+  
+   gkimport_software_term_pubs_set();
+}
+/**
+ * Assign the term "Software" to selected article and software publications
+ */
+function gkimport_software_term_pubs_set(){
+  install_include(array('taxonomy'));
+  $vid = install_taxonomy_get_vid('gking_vocabulary');
+  $tid = install_taxonomy_add_term($vid, 'Software');
+  
+  foreach(_gkimport_software_term_pubs() as $title){
+    $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ",$title));
+    if ($nid){
       db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $nid, $tid);
       db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid);
     }
@@ -838,20 +855,36 @@ function gkimport_software_pubs_set(){
       $missing_titles[] = $title;
     }
   }
-  variable_set("gkimport_software_pubs_not_found", $missing_titles); //list of software pubs that do not exist
-  //drush_print_r($missing_titles);
+  variable_set("gkimport_software_term_pubs_not_found", $missing_titles); //list of software pubs that do not exist
 }
 
 /**
  * An array of titles for publications that should have a term "software" added
  */
-function _gkimport_software_pubs(){
+function _gkimport_software_pubs(){  
+  //from the bibtex file
+  return array(
+  'CEM: Coarsened Exact Matching Software',
+  'Anchors: Software for Anchoring Vignettes Data',
+  'Amelia II: A Program for Missing Data',
+  "Zelig: Everyone's Statistical Software",
+  'AMELIA: A Program for Missing Data',
+  'MAXLIK, a set of Gauss programs, annotated for pedagogical purposes, to implement the maximum likelihood models in Unifying Political Methodology: The Likelihood Theory of Statistical Inference',
+  'EI: Program for Ecological Inference',
+  'JudgeIt: A Program for Evaluating Electoral Systems and Redistricting Plans',
+  'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
+  );
+ }
+
+function _gkimport_software_term_pubs(){  
+  //from the web page
   return array(
   'CEM: Coarsened Exact Matching Software',
   'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
   'Zelig: Everyone\'s Statistical Software',
-  'JudgeIt: A Program for Evaluating Electoral Systems',
+  'JudgeIt: A Program for Evaluating Electoral Systems and Redistricting Plans',
   'ReadMe: Software for Automated Content Analysis',
+  'AMELIA: A Program for Missing Data',
   'Amelia II: A Program for Missing Data',
   'VA: Software for Analyzing Verbal Autopsy Data',
   'YourCast: Time Series Cross-Sectional Forecasting with Your Assumptions',
@@ -861,7 +894,7 @@ function _gkimport_software_pubs(){
   'Enhancing the Validity and Cross-cultural Comparability of Measurement in Survey Research',
   'ReLogit: Rare Events Logistic Regression',
   'CLARIFY: Software for Interpreting and Presenting Statistical Results',
-  'EI: A Program for Ecological Inference',
+  'EI: Program for Ecological Inference',
   'EzI: A(n Easy) Program for Ecological Inference',
   'COUNT: A Program for Estimating Event Count and Duration Regressions',
   'MAXLIK, a set of Gauss programs, annotated for pedagogical purposes, to implement the maximum likelihood models in Unifying Political Methodology: The Likelihood Theory of Statistical Inference',
