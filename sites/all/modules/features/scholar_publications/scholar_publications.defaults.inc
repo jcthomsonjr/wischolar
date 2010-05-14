@@ -121,33 +121,6 @@ function _scholar_publications_context_default_contexts() {
         'label' => 'ShareThis Button - Allows you to share posts using popular online services',
         'type' => 'context_ui',
       ),
-      'views_publication_types-block_1' => array(
-        'module' => 'views',
-        'delta' => 'publication_types-block_1',
-        'weight' => 23,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'publication_types: Block',
-        'type' => 'context_ui',
-      ),
-      'views_publication_years-block_1' => array(
-        'module' => 'views',
-        'delta' => 'publication_years-block_1',
-        'weight' => 24,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'publication_years: Block',
-        'type' => 'context_ui',
-      ),
-      'views_094a9e96b205ba24d6545ef18c518129' => array(
-        'module' => 'views',
-        'delta' => '094a9e96b205ba24d6545ef18c518129',
-        'weight' => 25,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'publication_contributors: Block',
-        'type' => 'context_ui',
-      ),
     ),
   );
   return $items;

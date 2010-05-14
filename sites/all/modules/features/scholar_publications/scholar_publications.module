@@ -322,6 +322,39 @@ function scholar_publications_vsite_widgets(){
         'label' => 'Publications by type',
         'type' => 'context_ui',
       );
+
+  // Publication Types
+  $items['views_publication_types-block_1'] = array(
+    'module' => 'views',
+    'delta' => 'publication_types-block_1',
+    'weight' => 10,
+    'region' => 'right',
+    'status' => '1',
+    'label' => 'Publication Types (Widget)',
+    'type' => 'context_ui',
+  );
+    
+  // Publication Years
+  $items['views_publication_years-block_1'] = array(
+    'module' => 'views',
+    'delta' => 'publication_years-block_1',
+    'weight' => 11,
+    'region' => 'right',
+    'status' => '1',
+    'label' => 'Publication Years (Widget)',
+    'type' => 'context_ui',
+  );
+    
+  // Publication Contributors
+  $items['views_publication_contributors-block_1'] = array(
+    'module' => 'views',
+    'delta' => 'publication_contributors-block_1',
+    'weight' => 11,
+    'region' => 'right',
+    'status' => '1',
+    'label' => 'Publication Contributors (Widget)',
+    'type' => 'context_ui',
+  );
   return $items;
 }
 
