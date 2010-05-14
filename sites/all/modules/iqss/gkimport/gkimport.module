@@ -15,7 +15,7 @@ function gkimport_import($drush_run = 0){
   drush_print("Begining import...");
   
   //make sure following modules are enabled for gary's site
-  module_enable(array('iqss_gking', 'iqss_rbuild'));
+  module_enable(array('iqss_gking', 'iqss_rbuild', 'twitter_pull', 'dialog'));
 
   gkimport_create_site();
   gkimport_parse_files();
@@ -143,6 +143,7 @@ function  gkimport_customize_site($vsite){
    $vsite -> settings['reader']['twitter_username'] = 'kinggary';
        
   spaces_save($vsite);
+  cache_clear_all();
   gkimport_print("Customized primary menu names and weights");
 }
 
