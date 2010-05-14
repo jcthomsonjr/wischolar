@@ -181,8 +181,8 @@ function _scholar_reader_twitter_wgt(){
 	
 	$tag = (!in_array(substr($vsite->settings['reader']['twitter_username'],0,1),array('#','@')))? '@'.$vsite->settings['reader']['twitter_username']:$vsite->settings['reader']['twitter_username'];
 	
-	$output = twitter_pull_render ($tag, "Twitter");
+	$output = twitter_pull_render ($tag);
 	
 	
-	return array('subject' => "",'content' => $output);
+	return array('subject' => "Twitter",'content' => $output);
 }
