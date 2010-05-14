@@ -139,6 +139,9 @@ function  gkimport_customize_site($vsite){
       vsite_menu_update_vsite_menu_link($mlid, $item, $setting['title'], $b_primary_menu = $setting['primary'], $setting['weight'], $n_plid = 0, $vsite->group->nid);
     }
   
+    //save settings for Gary's twitter account
+   $vsite -> settings['reader']['twitter_username'] = 'kinggary';
+       
   spaces_save($vsite);
   gkimport_print("Customized primary menu names and weights");
 }
