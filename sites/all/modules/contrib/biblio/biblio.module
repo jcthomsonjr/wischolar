@@ -1,5 +1,5 @@
 <?php
-// $Id: biblio.module,v 1.123.2.178 2010/05/12 01:55:40 rjerome Exp $
+// $Id: biblio.module,v 1.123.2.179 2010/05/14 01:58:08 rjerome Exp $
 /**
  *   biblio.module for Drupal
  *
@@ -641,8 +641,8 @@ function biblio_menu() {
   $items["$base/view/%"] = array(
     'page callback'     => 'biblio_view_node',
     'page arguments'    => array($wildcard),
-    'access callback'   => 'node_access',
-    'access arguments'  => array('view', $wildcard),
+    'access callback'   => 'user_access',
+    'access arguments'  => array('access biblio content'),
     'file'              => 'biblio.pages.inc',
     'type'              => MENU_CALLBACK
    );
