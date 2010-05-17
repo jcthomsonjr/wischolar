@@ -16,7 +16,7 @@ class scholar_reader_settings_reader implements space_setting {
   }
 
   function form($vsite, $value = array()){
-    
+
     $form = array(
       '#title' => 'Feed Settings'
     );
@@ -27,20 +27,20 @@ class scholar_reader_settings_reader implements space_setting {
       '#title' => t('Twitter Feed'),
       '#type' => 'textfield',
       '#default_value' => isset($value['twitter_username']) ? $value['twitter_username'] : '',
-      '#description' => "If you have your twitter username set then a widget will become avalible with your latest tweets.  If you put a hashtag ie.(#openscholar) then the feed will alternativly include everything with that tag.  You can place this anywhere on your site."
+      '#description' => "To pull your Twitter posts into your site add your username to the above field (examples: 'harvard_scholar', or '@harvard_scholar'). To pull in both your Twitter posts <em>and</em> every Twitter post that <strong>refers</strong> to you, use a hashtag instead (example: '#harvard_scholar'). Once this setting is saved, you can place the Twitter widget anywhere on your site by clicking the layout."
     );
 
     return $form;
   }
 
   function validate($vsite, $value){
-    
+
     return $value;
 
   }
 
   function submit($vsite, $value){
-    
+
   	return $value;
   }
 }

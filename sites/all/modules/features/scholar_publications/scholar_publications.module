@@ -146,7 +146,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
   	  scholar_publications_hide_form_value($form['biblio_doi_lookup']);
       scholar_publications_hide_form_value($form['biblio_cut_paste']);
     }
-    
+
     if(is_array($form['biblio_notes_field']) && is_array($form['biblio_notes_field']['biblio_notes'])){
     	$form['biblio_notes'] = $form['biblio_notes_field']['biblio_notes'];
       unset($form['biblio_notes_field']);
@@ -324,7 +324,7 @@ function scholar_publications_vsite_widgets(){
         'type' => 'context_ui',
       );
   **/
-      
+
   // Publication Types
   $items['views_publication_types-block_1'] = array(
     'module' => 'views',
@@ -335,7 +335,7 @@ function scholar_publications_vsite_widgets(){
     'label' => 'Publications By Type',
     'type' => 'context_ui',
   );
-    
+
   // Publication Years
   $items['views_publication_years-block_1'] = array(
     'module' => 'views',
@@ -346,7 +346,7 @@ function scholar_publications_vsite_widgets(){
     'label' => 'Publications By Year',
     'type' => 'context_ui',
   );
-    
+
   // Publication Contributors
   $items['views_publication_contributors-block_1'] = array(
     'module' => 'views',
@@ -416,7 +416,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
 
   // add links to attached files (if any)
   if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
-  
+
   if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
 
   if (!$node->status) $s_output .= '</div>';
@@ -527,7 +527,6 @@ function _scholar_publications_add_owner_checkbox(&$form_element){
  */
 function _scholar_publications_pub_by_type_wgt(){
 	jquery_ui_add(array('ui.tabs'));
-	drupal_add_js('$(document).ready(function(){ $("#pub_type_tabs").tabs({ fx: { opacity: \'toggle\' } }); });','inline');
 
 	$vsite = vsite_get_vsite();
 
