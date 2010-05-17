@@ -101,9 +101,11 @@ function psrimport_get_files($node,  $old_nid, $domain = 'psr'){
       
         //write data to files table
         drupal_write_record('files', $file);
-      //  $fid = db_last_insert_id('files', 'fid');
+        $fid = db_last_insert_id('files', 'fid');
         //write data to upload table
         drupal_write_record('upload', $file);
+        //set file alias TODO: alias should be processed from the token
+        path_set_alias( "filefield_paths/alias/$fid", "files/psr/$filename");
         psrimport_print("Imported file: " . basename($src));
       }
       else{
