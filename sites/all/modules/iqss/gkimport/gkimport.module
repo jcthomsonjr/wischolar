@@ -129,38 +129,25 @@ function  gkimport_customize_site($vsite){
   'reader' => array('weight' => 12, 'primary' => FALSE,  'custom_title' => FALSE, 'title' =>'Feeds'),
   ); 
 
-  $vsite -> settings['menus']['primary'] = array();
-  $vsite -> settings['menus']['secondary'] = array();
   
+  $a_menu_items = array();
  //set custom weight for menu items
     install_include(array('menu'));
     foreach ($item_settings as $item => $setting){
       //get the mlid
       $a_mlid = install_menu_get_items($item);
       $mlid = $a_mlid[0]['mlid'];
+      if(!$mlid) continue;
+      
       //set custom title
       if ($setting['custom_title']) $vsite -> customizer['menu'][$item] = $setting['title'];
       
-      //set primary and secondary menu items and weights
-      switch($setting['primary']){
-        case TRUE;
-         $vsite -> settings['menus']['primary'][] = $mlid;
-        break;
-        
-        case FALSE:
-           $vsite -> settings['menus']['secondary'][] = $mlid;
-          break;        
-      }
- 
-      //set custom weight for the menu item
-     // vsite_menu_update_vsite_menu_link($mlid, $item, $setting['title'], $b_primary_menu = $setting['primary'], $setting['weight'], $n_plid = 0, $vsite->group->nid);
+      $a_menu_items[$mlid] = array('menu' => (($setting['primary'])?'primary':'secondary'), 'weight' => $setting['weight']);
     }
+    
+  require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
+  $vsite -> settings['menus'] = vsite_menus_menus::create_menus(array('menu_items' => $a_menu_items));
            
-      gkimport_print("Primary menu list");
-      drush_print_r($vsite -> settings['menus']['primary']);
-       
-      gkimport_print("Secondary menu list");
-      drush_print_r($vsite -> settings['menus']['secondary']);
     
     //save settings for Gary's twitter account
    $vsite -> settings['reader']['twitter_username'] = 'kinggary';
@@ -1122,7 +1109,7 @@ function gkimport_enable_modules($module_list = array()){
   foreach ( $module_list as $module){
     if (module_exists($module)) continue;
     //check if module is installed but not enabled
-    $installed = db_result(db_query("SELECT name FROM {system} WHERE name = '%s' , type = '%s' and status = %d ", $module, 'module', 0));
+    $installed = db_result(db_query("SELECT name FROM {system} WHERE name = '%s' AND type = '%s' AND status = %d ", $module, 'module', 0));
     $enable = ($installed) ? module_enable(array($module)) : drupal_install_modules(array($module));
     gkimport_print("Enabled module: $module");
     $modules_enabled[] = $module;
