@@ -13,12 +13,9 @@ function gkimport_import($drush_run = 0){
   $mode = (GKIMPORT_DOWNLOAD) ? 'TRUE' : 'FALSE';
   drush_print("Download mode is set to $mode");
   drush_print("Begining import...");
-
-  //make sure following modules are enabled for gary's site
- include_once('includes/install.inc');
- module_rebuild_cache();
- module_enable(array('iqss_gking', 'iqss_rbuild', 'dialog', 'twitter_pull'));
-
+  
+  $module_list = array('iqss_gking', 'iqss_rbuild', 'dialog', 'twitter_pull');
+  gkimport_enable_modules($module_list);
 
   gkimport_create_site();
   gkimport_parse_files();
@@ -38,20 +35,6 @@ function gkimport_import($drush_run = 0){
   $message = 'Import completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
-
-/*function gkimport_test(){
-  $account = user_load(array('name' => 'gking'));
-  $no_abstracts = variable_get('gkimport_na_pub_nodes', array());
-  $file = drupal_get_path('module', 'gkimport') . '/files/fix_bibtex.csv';
-  $text = "\"Node ID\",\"Title\",\"Has Abstract\"\n";
-	//generate csv file from pub nodes
-      $result = db_query("SELECT * FROM {node} WHERE type = '%s' AND uid = %d ", 'biblio', $account -> uid);
-      while ($data = db_fetch_object($result)){
-        $has_abstract = in_array($data -> nid, $no_abstracts) ? 'No' : 'Yes';
-        $text .= "\"{$data -> nid}\",\"{$data -> title}\",\"$has_abstract\"\n";    
-      }
-      file_put_contents($file, $text);
-}*/
 
 /**
  * Function to create gking user account and web site
@@ -1127,6 +1110,24 @@ function _gkimport_pub_term_descriptions(){
   'Unifying Statistical Analysis' => 'Development of a unified approach to statistical modeling, inference, interpretation, presentation, analysis, and software; integrated with most of the other projects listed here.',
   );
 
+}
+
+
+function gkimport_enable_modules($module_list = array()){
+  if(!is_array($module_list) || count($module_list)) return false;
+  $modules_enabled = array();
+  //make sure following modules are enabled for gary's site
+  include_once('includes/install.inc');
+  module_rebuild_cache();
+  foreach ( $module_list as $module){
+    if (module_exists($module)) continue;
+    //check if module is installed but not enabled
+    $installed = db_result(db_query("SELECT name FROM {system} WHERE name = '%s' , type = '%s' and status = %d ", $module, 'module', 0));
+    $enable = ($installed) ? module_enable(array($module)) : drupal_install_modules(array($module));
+    gkimport_print("Enabled module: $module");
+    $modules_enabled[] = $module;
+  }
+  return $modules_enabled;
 }
 
 /**
