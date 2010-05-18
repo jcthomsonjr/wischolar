@@ -1114,7 +1114,7 @@ function _gkimport_pub_term_descriptions(){
 
 
 function gkimport_enable_modules($module_list = array()){
-  if(!is_array($module_list) || count($module_list)) return false;
+  if(!is_array($module_list) || !count($module_list)) return false;
   $modules_enabled = array();
   //make sure following modules are enabled for gary's site
   include_once('includes/install.inc');
