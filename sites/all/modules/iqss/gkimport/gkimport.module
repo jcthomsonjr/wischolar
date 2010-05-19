@@ -20,7 +20,7 @@ function gkimport_import($drush_run = 0){
   gkimport_create_site();
   gkimport_parse_files();
   gkimport_software_pubs_set();
-  gkimport_parse_abstracts();
+  //gkimport_parse_abstracts(); //no longer needed with formatted bibtex file
   gkimport_upload_pdfs();
   gkimport_update_aliases();
   gkimport_create_profiles();
@@ -116,7 +116,7 @@ function  gkimport_customize_site($vsite){
   $item_settings = array(
   'biocv' => array('weight' => 0, 'primary' => TRUE, 'custom_title' => TRUE, 'title' =>'Bio & C.V.'),
   'publications' =>array('weight' => 1, 'primary' => TRUE,  'custom_title' => TRUE, 'title' =>'Writings'),
-  'scholar_software' => array('weight' => 2, 'primary' => TRUE, 'custom_title' => TRUE, 'title' =>'Software'),
+  'scholar_software' => array('weight' => 2, 'primary' => TRUE, 'custom_title' => FALSE, 'title' =>'Software'),
   'data' => array('weight' => 3, 'primary' => TRUE, 'custom_title' => FALSE, 'title' =>'Dataverse'),
   'people' => array('weight' => 4, 'primary' => TRUE, 'custom_title' => TRUE, 'title' =>'Research Group'),
   'classes' => array('weight' => 5, 'primary' => TRUE, 'custom_title' => TRUE, 'title' =>'Class Materials'),
@@ -163,7 +163,7 @@ function  gkimport_customize_site($vsite){
  */
 function gkimport_parse_files(){
   //NOTE: Please do not change the order of these files as it can cause problems
-  $files =array('pubs_taxonomy.csv', 'gkpubs.bib', 'talks.csv');  //files to parse
+  $files =array('pubs_taxonomy.csv', 'gkpubsformatted_complete.bib', 'talks.csv');  //files to parse
   $path = dirname(__FILE__) . '/files/';
 
   foreach($files as $file){
@@ -175,7 +175,7 @@ function gkimport_parse_files(){
         gkimport_pubs_taxonomy($filepath);
         break;
 
-      case 'gkpubs.bib':
+      case 'gkpubsformatted_complete.bib':
         gkimport_import_pubs($file);
         break;
         
@@ -481,17 +481,15 @@ function gkimport_update_aliases(){
   if (!empty($nids)) {
     foreach ($nids as $nid){
       $node = node_load($nid);
-      $matches = gkimport_parse_abstract_url($node);      
-      //save custom path
-      if (count($matches) && strlen($matches[2])){
-        $path = strstr($matches[2], 'files');        
-        if (strlen($path)){
+      if (strlen($node -> biblio_url)){
+        $path =  explode('http://gking.harvard.edu/', $node -> biblio_url);
+        if (strlen($path[1])){
           $src = db_result(db_query("SELECT src FROM {url_alias} WHERE src = '%s'", "node/{$node -> nid}"));
-          db_query("DELETE FROM {url_alias} WHERE dst = '%s' ", $path);
-          db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src);
-          db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", $path);
-          
-          drush_print("Added custom path $path for node {$node -> nid}");          
+          db_query("DELETE FROM {url_alias} WHERE dst = '%s' ", $path[1]);
+          db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src[1]);
+          db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", $path[1]);
+
+          drush_print("Added custom path {$path[1]} for node {$node -> nid}");
         }
       }
     }
@@ -1115,6 +1113,18 @@ function gkimport_enable_modules($module_list = array()){
     $modules_enabled[] = $module;
   }
   return $modules_enabled;
+}
+
+/**
+ * Utilty function to fix abstracts spacing
+ */
+function gkimport_fix_abstacts_spacing(){
+  $res = db_query("SELECT nid, biblio_abst_e from {biblio}");
+  while($data = db_fetch_object($res)){
+    if(!strlen($data ->biblio_abst_e)) continue;
+  $abs_formatted = (str_replace('  ', ' ', _gkimport_remove_line_breaks($data ->biblio_abst_e)));
+  db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $abs_formatted, $data -> nid);  
+  }
 }
 
 /**
