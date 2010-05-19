@@ -62,14 +62,14 @@ function scholar_image_gallery_strongarm(){
  */
 function scholar_image_gallery_vsite_widgets(){
   $items = array();
-  $items['scholar_image_gallery-block_1'] = array(
-    'module' => 'scholar_image_gallery',
+  $items['views_scholar_image_gallery-block_1'] = array(
+    'module' => 'views',
     'delta' => 'scholar_image_gallery-block_1',
     'weight' => 20,
     'region' => false,
     'status' => '0',
     'label' => 'Recent images',
-    'type' => 'context_ui'
+    'type' => 'context_ui',
   );
   return $items;
 }
