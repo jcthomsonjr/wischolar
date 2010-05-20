@@ -22,17 +22,7 @@
     </div>
   <?php endif; ?>
   <div class="content">
-    <?php if (!$page && $field_biblio_image): ?>
-    <div class="bookcover">
-      <?php print $field_biblio_image_rendered;?>
-    </div>
-  <?php endif;?>
     <?php print $content; ?>
-    <?php if ($page && $field_biblio_image): ?>
-    <div class="bookcover">
-      <?php print $field_biblio_image_rendered;?>
-    </div>
-  <?php endif;?>
   </div>
   <?php print $links; ?>
 </div> <!-- /node -->

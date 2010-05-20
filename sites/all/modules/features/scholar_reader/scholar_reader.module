@@ -23,7 +23,7 @@ function scholar_reader_strongarm(){
 
   // Pathauto (optional) settings
   $conf["pathauto_node_feed_pattern"] = "[space-og-path]/feeds/[title-raw]";
-  
+
   //Max number of feeds to proccess at once (per cron)
   $conf['feeds_schedule_num'] = 30;
   return $conf;
@@ -54,7 +54,7 @@ function scholar_reader_vsite_widgets(){
         'label' => 'Latest feeds',
         'type' => 'context_ui',
       );
-      
+
   $items['scholar_reader_my_twitter_feed'] = array(
         'module' => 'scholar_reader',
         'delta' => 'my_twitter_feed',
@@ -64,7 +64,7 @@ function scholar_reader_vsite_widgets(){
         'label' => 'Twitter Feed',
         'type' => 'context_ui',
       );
-      
+
   return $items;
 }
 
@@ -130,14 +130,14 @@ function scholar_reader_feed_validate($form, &$form_state) {
  * hook default__contexts_alter
  */
 function scholar_reader_context_default_contexts_alter(&$contexts){
-  
+
   $vsite = vsite_get_vsite();
   if(!$vsite || !strlen($vsite->settings['reader']['twitter_username'])){
     unset($contexts['scholar-feature-front']->block['scholar_reader_my_twitter_feed']);
     unset($contexts['vsite-section-public']->block['scholar_reader_my_twitter_feed']);
   }//Is there a bio created for this site? If not unset the applicable block
-  
-  
+
+
 }
 
 /**
@@ -146,8 +146,8 @@ function scholar_reader_context_default_contexts_alter(&$contexts){
 function scholar_reader_spaces_settings(){
   return array(
     'reader' => array(
-      'class' => 'scholar_reader_settings_reader', 
-      'file' => drupal_get_path('module', 'scholar_reader') . '/include/scholar_reader.settings.inc' 
+      'class' => 'scholar_reader_settings_reader',
+      'file' => drupal_get_path('module', 'scholar_reader') . '/include/scholar_reader.settings.inc'
     ),
   );
 }
@@ -157,7 +157,7 @@ function scholar_reader_spaces_settings(){
  */
 function scholar_reader_block($op = 'list', $delta = false, $edit = array()) {
   if ($op == 'list') {
-    $blocks['my_twitter_feed']['info'] = t('Twitter Feed');
+    $blocks['my_twitter_feed']['info'] = t('Twitter Updates');
     return $blocks;
   }
   elseif ($op == 'view') {
@@ -173,15 +173,15 @@ function scholar_reader_block($op = 'list', $delta = false, $edit = array()) {
  * Renders twitter block for users
  */
 function _scholar_reader_twitter_wgt(){
-	
+
 	if(!($vsite = vsite_get_vsite())) return array();
-	
+
 	//Do they have thier feed set?
 	if(!strlen($vsite->settings['reader']['twitter_username'])) return array();
-	
+
 	$tag = (!in_array(substr($vsite->settings['reader']['twitter_username'],0,1),array('#','@')))? '@'.$vsite->settings['reader']['twitter_username']:$vsite->settings['reader']['twitter_username'];
-	
+
 	$output = twitter_pull_render ($tag);
-	
-	return array('subject' => "Twitter",'content' => $output);
+
+	return array('subject' => "Twitter Updates",'content' => $output);
 }
