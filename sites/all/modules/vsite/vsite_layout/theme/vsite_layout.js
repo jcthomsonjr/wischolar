@@ -32,6 +32,7 @@ Drupal.behaviors.scholarlayout = function() {
     scholarlayout_add_removal_hooks();
     vsite_layout_setScrollArrows();
     vsite_layout_setExceptionScroller();
+    vsite_layout_setWidgetAutoWidth();
 };
 
 function scholarlayout_add_removal_hooks(){
@@ -71,6 +72,9 @@ function scholarlayout_afterdrag(event, ui) {
 
 	  //Reset top box after widgets have been moved
 	  vsite_layout_setScrollArrows();
+	  
+	  //Reset widget widths
+	  vsite_layout_setWidgetAutoWidth();
 
 	  if(!$("#scholarforms_save_warning").length && event) $("#cp-settings-layout").before($('<div id="scholarforms_save_warning" class="warning"><span class="warning tabledrag-changed">*</span> Your changes have not yet been saved. Click "Save Settings" for your changes to take effect</div>'));
 };
@@ -149,4 +153,19 @@ function vsite_layout_setExceptionScroller(){
 		  $(this).stop().animate({right:'-101%'},{queue:false,duration:300});
 	  });
 	  
+}
+
+function vsite_layout_setWidgetAutoWidth(){
+    var nHeight = $('div#scholarlayout-container dd:first').height();
+	
+    var regions = $("#scholarlayout-container > .scholarlayout-widgets-list");
+	$.each(regions, function(i, region){
+	  var rgn = $("#"+region.id);
+	  if(rgn.height() < nHeight *2){
+	    var items = $("#"+region.id+" > .scholarlayout-item");
+	    var nWidth = (rgn.width()) / items.length;
+	    items.width(nWidth - 51);
+	  }//If this is a skinny container
+	});
+	
 }
