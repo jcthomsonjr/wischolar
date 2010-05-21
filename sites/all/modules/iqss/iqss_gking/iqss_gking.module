@@ -109,19 +109,33 @@ function _iqss_gking_areas_of_research_wgt(){
 function iqss_gking_context_active_contexts_alter(&$contexts){
   if(!iqss_gking_on_gking_site()) return;
 
+  $vsite = vsite_get_vsite();
   $router_item = menu_get_item();
-  if($router_item['path'] != 'taxonomy/term/%') return;
+  if($router_item['path'] == 'taxonomy/term/%'){
 
-  //Add this block category pages on Garys site
-  $a_block_info = iqss_gking_block();
-  $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
-    'module' => 'iqss_gking',
-    'delta' => 'areas_of_research',
-    'weight' => -20,
-    'region' => 'right',
-    'status' => 0,
-    'label' => $a_block_info['areas_of_research']['info'],
-    'type' => 'context_ui',
-  );
+  	//The next few lines just make sure that we are in gary's research interest tax.
+  	$n_vid = false;
+  	foreach ($vsite->get_vocabs($type) as $vid => $o_vocab){
+	    if($o_vocab->name == "Research Interests"){
+	    	$n_vid = $vid;
+	    	break;
+	    }
+    }
+    
+    $a_term = taxonomy_get_term(current($router_item['page_arguments']));
+    if($a_term->vid == $n_vid){
+		  //Add this block category pages on Garys site 
+		  $a_block_info = iqss_gking_block();
+		  $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
+		    'module' => 'iqss_gking',
+		    'delta' => 'areas_of_research',
+		    'weight' => -20,
+		    'region' => 'right',
+		    'status' => 0,
+		    'label' => $a_block_info['areas_of_research']['info'],
+		    'type' => 'context_ui',
+		  );
+    }
+  }
 
 }

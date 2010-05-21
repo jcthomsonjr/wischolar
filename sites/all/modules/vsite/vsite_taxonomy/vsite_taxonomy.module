@@ -567,11 +567,16 @@ function vsite_taxonomy_content_by_category($tid, $s_feature = false){
 function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
-      $blocks[0]['info'] = t('Categories - A widget used to quickly filter categorized content');
+      $blocks[0]['info'] = t('Categories - Filter categorized content');
+      $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
       return $blocks;
     case 'view':
       switch ($delta) {
+        case 'filter_by_type':
+        	$block = vsite_taxonomy_filter_by_type_block();
+        	break;
         case 0:
+        default:
           $block = vsite_taxonomy_block_view();
           break;
       }
@@ -826,14 +831,55 @@ function vsite_taxonomy_context_active_contexts_alter(&$contexts){
   if($router_item['path'] != 'taxonomy/term/%') return;
 
   //Add this block category pages on (Lets you filter the category by publictaion type)
-  $contexts['vsite-section-public']->block['views_publication_types-block_2'] = array(
-      'module' => 'views',
-      'delta' => 'publication_types-block_2',
+  $contexts['vsite-section-public']->block['vsite_taxonomy-filter_by_type'] = array(
+      'module' => 'vsite_taxonomy',
+      'delta' => 'filter_by_type',
       'weight' => -21,
       'region' => 'right',
       'status' => '0',
-      'label' => 'Publication Type',
+      'label' => 'Filter Taxonomy by Publication Type',
       'type' => 'context_ui',
   );
 
+}
+
+/**
+ * Block to filter a taxonomy by type
+ */
+function vsite_taxonomy_filter_by_type_block(){
+	
+	$router_item = menu_get_item();
+  if($router_item['path'] != 'taxonomy/term/%') return array();
+
+	$view = views_get_view('publication_types');
+  $view->init();
+  $view->set_display('block_2');
+  $view->set_arguments(array( current($router_item['page_arguments']) ));
+  
+  $view->execute();
+  
+  $output = $view->render();
+  if(!$output) return array();
+  
+  $a_term = taxonomy_get_term(current($router_item['page_arguments']));
+  
+  return array('subject' => $a_term->name." by Publication Type",'content' => $output);;
+}
+
+/**
+ * hook db_rewrite_sql
+ *
+ */
+function vsite_taxonomy_db_rewrite_sql($sql, $primary_table, $primary_field,  $args) {
+
+//  $vsite = vsite_get_vsite();
+//  $gid = $group_node -> nid;
+//  $base_url = 'publications'; //og_settings_variable_get($gid, 'og_biblio_base', 'biblio');
+//  if ($vsite  && arg(0) == $base_url && strstr($sql,"biblio") !== false){
+//    if ($primary_table == 'n' && strstr($sql, 'biblio')){
+//      $query['join'] = 'INNER JOIN {og_ancestry} oga ON n.nid = oga.nid';
+//      $query['where'] =  'oga.group_nid = '. $vsite -> sid;
+//      return $query;
+//    }
+//  }
 }

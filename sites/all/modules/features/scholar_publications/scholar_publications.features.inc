@@ -19,6 +19,15 @@ function scholar_publications_context_default_contexts() {
 }
 
 /**
+ * Implementation of hook_imagecache_default_presets().
+ */
+function scholar_publications_imagecache_default_presets() {
+  module_load_include('inc', 'scholar_publications', 'scholar_publications.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_scholar_publications_imagecache_default_presets', $args);
+}
+
+/**
  * Implementation of hook_menu_default_items().
  */
 function scholar_publications_menu_default_items() {
