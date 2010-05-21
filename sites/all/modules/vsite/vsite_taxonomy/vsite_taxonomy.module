@@ -816,3 +816,24 @@ function vsite_taxonomy_taxonomy_import($gid, $definition){
     }
   }
 }
+
+/**
+ * Alter the active context
+ * @param array $contexts
+ */
+function vsite_taxonomy_context_active_contexts_alter(&$contexts){
+  $router_item = menu_get_item();
+  if($router_item['path'] != 'taxonomy/term/%') return;
+
+  //Add this block category pages on (Lets you filter the category by publictaion type)
+  $contexts['vsite-section-public']->block['views_publication_types-block_2'] = array(
+      'module' => 'views',
+      'delta' => 'publication_types-block_2',
+      'weight' => -21,
+      'region' => 'right',
+      'status' => '0',
+      'label' => 'Publication Type',
+      'type' => 'context_ui',
+  );
+
+}

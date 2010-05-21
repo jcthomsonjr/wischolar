@@ -25,15 +25,15 @@ function iqss_gking_theme() {
 function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
   if ($op == 'list') {
     $blocks['areas_of_research']['info'] = t('Areas of Research');
-    $blocks['taxonomy_content_types']['info'] = t('Content Types');
+    //$blocks['taxonomy_content_types']['info'] = t('Content Types');
     return $blocks;
   }
   elseif ($op == 'view') {
     switch ($delta) {
       case 'areas_of_research':
         return _iqss_gking_areas_of_research_wgt();
-      case 'taxonomy_content_types':
-      	return _iqss_gking_taxonomy_content_types_wgt();
+//      case 'taxonomy_content_types':
+//      	return _iqss_gking_taxonomy_content_types_wgt();
     }
   }
 }
@@ -56,25 +56,6 @@ function iqss_gking_context_default_contexts_alter(&$contexts){
 	  'label' => $a_block_info['areas_of_research']['info'],
 	  'type' => 'context_ui',
 	);
-
-}
-
-function iqss_gking_context_active_contexts_alter(&$contexts){
-  if(!iqss_gking_on_gking_site()) return;
-
-  $router_item = menu_get_item();
-  if($router_item['path'] != 'taxonomy/term/%') return;
-
-  //Add this block category pages on Garys site
-  $contexts['vsite-section-public']->block['iqss_gking_taxonomy_content_types'] = array(
-    'module' => 'iqss_gking',
-    'delta' => 'taxonomy_content_types',
-    'weight' => -20,
-    'region' => 'right',
-    'status' => 0,
-    'label' => 'Content Types',
-    'type' => 'context_ui',
-  );
 
 }
 
@@ -125,11 +106,22 @@ function _iqss_gking_areas_of_research_wgt(){
 	return array('subject' => "Areas of Research",'content' => $output);
 }
 
-function _iqss_gking_taxonomy_content_types_wgt(){
+function iqss_gking_context_active_contexts_alter(&$contexts){
+  if(!iqss_gking_on_gking_site()) return;
 
-	$output = "Bingo Bingo";
+  $router_item = menu_get_item();
+  if($router_item['path'] != 'taxonomy/term/%') return;
 
+  //Add this block category pages on Garys site 
+  $a_block_info = iqss_gking_block();
+  $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
+    'module' => 'iqss_gking',
+    'delta' => 'areas_of_research',
+    'weight' => -20,
+    'region' => 'right',
+    'status' => 0,
+    'label' => $a_block_info['areas_of_research']['info'],
+    'type' => 'context_ui',
+  );
 
-
-	return array('subject' => "Subject Types",'content' => $output);
 }
