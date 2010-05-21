@@ -54,6 +54,7 @@ function _scholar_projects_core_modules() {
     'data',
     'data_node',
     'data_ui',
+    'dialog',
     'feeds',
     'feeds_default',
     'filefield_paths',

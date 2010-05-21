@@ -55,6 +55,7 @@ function _scholar_core_modules() {
     'data',
     'data_node',
     'data_ui',
+    'dialog',
     'feeds',
     'feeds_defaults',
     //'feedapi',
