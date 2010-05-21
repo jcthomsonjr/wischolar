@@ -344,3 +344,17 @@ function scholar_biocv_context_default_contexts_alter(&$contexts){
   
   
 }
+
+/**
+ * CV/Bio Title Callback
+ */
+function scholar_biocv_menu_title(){
+  $s_title = "";
+  $vsite = vsite_get_vsite();
+  
+  $s_title .= "Bio";//(content_profile_load('bio', $vsite->group->uid))?'Bio':"";
+  $s_title .= (content_profile_load('cv', $vsite->group->uid))? ((strlen($s_title)?' / ':"")."CV"):"";
+  
+  return $s_title;
+}
+
