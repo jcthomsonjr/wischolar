@@ -410,37 +410,43 @@ body.header-right-main #header-wrapper {
 
 /* Publications Tabs */
 
+#pub_type_tabs h3 {
+  float: left;
+  }
+
 .ui-tabs .ui-tabs-nav {
-  border-bottom: 1px solid #cecece;
-  margin: 0 -16px 1em -16px;
-  padding: 0 16px 9px 16px;
+  border: 1px solid #cecece;
+  border-top: none;
+  border-right: none;
+  margin: 0 -16px 1em 16px;
+  padding: 0;
+  width: 130px;
+  float:right;
+  -moz-border-radius: 0 0 0 4px;
+  -webkit-border-bottom-right-radius: 0 0;
+  -webkit-border-top-left-radius: 0 0;
+  -webkit-border-top-right-radius: 0 0;
   }
 
 .ui-tabs-nav li {
-  display: inline-block;
-  margin: 0 10px 0 0;
-  padding-right: 10px;
-  border-right: 2px solid #96a5a6;
+  display: block;
+  margin: 0;
   }
 
+
 .ui-tabs-nav li a {
-  padding:0;
   font-weight: bold;
+  padding: 2px 9px;
   }
 
 .ui-tabs-nav li.ui-state-default a, .ui-tabs-nav li.ui-state-default a:visited {
   color:#96a5a6;
   font-weight: bold;
   font-size: 14px;
-  padding: 0;
   }
 
 .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs-nav li.ui-tabs-selected a:visited {
   color: #000 !important;
-  }
-
-.ui-tabs-panel {
-  clear: both;
   }
 
 /* Search form*/
