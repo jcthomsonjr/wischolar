@@ -2,7 +2,7 @@
 
 include_once('gkimport.drush.inc');
 
-define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev1'); //file system path to drupal root (NO TRAILING SLASH)
+define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev3'); //file system path to drupal root (NO TRAILING SLASH)
 define(GKIMPORT_DOWNLOAD, FALSE);  // TRUE tells module to download files with wget, otherwise assumes files stored locally
 
 /**
@@ -20,7 +20,6 @@ function gkimport_import($drush_run = 0){
   gkimport_create_site();
   gkimport_parse_files();
   gkimport_software_pubs_set();
-  //gkimport_parse_abstracts(); //no longer needed with formatted bibtex file
   gkimport_upload_pdfs();
   gkimport_update_aliases();
   gkimport_create_profiles();
@@ -422,22 +421,29 @@ function gkimport_upload_pdfs(){
   if (!empty($nids)) {
     foreach ($nids as $nid){
       $node = node_load($nid);
-      foreach(variable_get('gkimport_all_pub_data', array()) as $data ){
+      foreach(variable_get('gkimport_all_pub_data', array()) as $data ){ 
         if (trim($node -> title) == trim($data[3])){ //$data[3] is the node title
           $file = gkimport_get_pdf($node, $data[2]); //$data[2] is url to pdf
-          continue;
         }
       }
     }
   }
+  //loop through again see if any pdfs did not get saved to the database
+    foreach(variable_get('gkimport_all_pub_data', array()) as $data ){ 
+      $res = db_result(db_query("SELECT  filename FROM {files} WHERE filename = '%s' " , basename(trim($data[2]))));
+      if (!$res && strlen(basename(trim($data[2])))) $mismatch_pdfs[] =  basename(trim($data[2]));      
+    }
+  
+  gkimport_print("PDF - title mismatches");
+  drush_print_r(array_unique($mismatch_pdfs));
 }
 
-function gkimport_get_pdf($node, $url){
+function gkimport_get_pdf($node, $url = ''){
+  if(!strlen($url)) return;
   $path = drupal_get_path('module', 'gkimport');
   $fullpath_tmp =  GKIMPORT_FS_PATH . '/' . $path . '/tmp';
   $files_dir = GKIMPORT_FS_PATH . '/' . variable_get('file_directory_path', conf_path() .'/files') . '/gking/files';
   $source = $files_dir  . '/' . basename($url);
-  
 
   // download the file
   if(GKIMPORT_DOWNLOAD){
