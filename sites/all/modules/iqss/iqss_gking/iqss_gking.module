@@ -76,9 +76,9 @@ function iqss_gking_on_gking_site(){
 function theme_iqss_gking_term_description($term){
 
   $term_path = "taxonomy/term/$term->tid";
-  $term_link = l(' Learn More', $term_path);
+  //$term_link = l(' Learn More', $term_path);
 
-  $item = '<span class="term_title">' . $term->name . '</span> '. $term->description . $term_link;
+  $item = '<span class="term_title">' . l($term->name,$term_path) . '</span> '. $term->description; //$term_link;
 
   return $item;
 }
@@ -112,7 +112,7 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
   $router_item = menu_get_item();
   if($router_item['path'] != 'taxonomy/term/%') return;
 
-  //Add this block category pages on Garys site 
+  //Add this block category pages on Garys site
   $a_block_info = iqss_gking_block();
   $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
     'module' => 'iqss_gking',
