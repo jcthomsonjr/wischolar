@@ -546,7 +546,12 @@ function _scholar_publications_pub_by_type_wgt(){
 	$tabs = "<h3 class=\"title\">Recent Publications</h3><ul>";
 	while ($type = db_fetch_object($types)) {
 	  if($type->num < 1) continue;
-		$tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type->name}s</a></li>";//FIX THE PLURAL
+		$tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type->name}";
+		$except = array('Software','Conference Proceedings', 'Thesis', 'Unpublished','Miscellaneous','Audiovisual','Artwork');
+		if(!in_array($type->name,$except)) {
+		  $tabs .= "s";
+		}
+		$tabs .= "</a></li>";//FIX THE PLURAL
 		$result = db_query_range(" SELECT n.nid nid
 	                                     FROM {node} n
 	                                     INNER JOIN {og_ancestry} oa ON oa.nid = n.nid AND oa.group_nid = %d
