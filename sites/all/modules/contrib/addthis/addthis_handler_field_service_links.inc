@@ -1,7 +1,8 @@
 <?php
-// $Id: addthis_handler_field_service_links.inc,v 1.1.2.1 2009/09/26 07:09:35 wesku Exp $
+// $Id: addthis_handler_field_service_links.inc,v 1.1.2.2 2010/03/03 17:40:52 wesku Exp $
 
 /**
+ * @file
  * A handler to provide an AddThis field for a particular node.
  *
  * @ingroup views_field_handlers

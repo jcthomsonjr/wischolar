@@ -1,5 +1,5 @@
 <?php
-// $Id: addthis.module,v 1.13.2.20 2009/10/22 17:57:50 wesku Exp $
+// $Id: addthis.module,v 1.13.2.21 2010/03/03 17:40:52 wesku Exp $
 
 /**
  * @file
@@ -60,7 +60,7 @@ function addthis_block($op = 'list', $delta = 0) {
     $blocks[0]['info'] = t('AddThis button');
     return $blocks;
   }
-  else if ($op == 'view' && user_access('view addthis')) {
+  elseif ($op == 'view' && user_access('view addthis')) {
     $block['subject'] = t('AddThis');
     $block['content'] = _addthis_create_button();
     return $block;
@@ -129,12 +129,12 @@ function _addthis_create_button($node=NULL, $teaser = FALSE) {
 	    addthis_options = \'%s\';
 	    addthis_disable_flash = \'%s\';
 	',
-        addslashes(variable_get('addthis_username', 'my-username')),
-        addslashes(variable_get('addthis_logo', 'http://www.addthis.com/images/yourlogo.png')),
-        addslashes(variable_get('addthis_logo_background', 'EFEFFF')),
-        addslashes(variable_get('addthis_logo_color', '666699')),
-        addslashes($brand),
-        addslashes(variable_get('addthis_options', 'favorites, email, digg, delicious, myspace, facebook, google, live, more')),
+        addslashes(check_plain(variable_get('addthis_username', 'my-username'))),
+        addslashes(check_plain(variable_get('addthis_logo', 'http://www.addthis.com/images/yourlogo.png'))),
+        addslashes(check_plain(variable_get('addthis_logo_background', 'EFEFFF'))),
+        addslashes(check_plain(variable_get('addthis_logo_color', '666699'))),
+        addslashes(check_plain($brand)),
+        addslashes(check_plain(variable_get('addthis_options', 'favorites, email, digg, delicious, myspace, facebook, google, live, more'))),
         variable_get('addthis_options', FALSE) ? 'true' : 'false'
       ), 'inline');
   }
@@ -146,6 +146,8 @@ function _addthis_create_button($node=NULL, $teaser = FALSE) {
  * Theme the AddThis button.
  */
 function theme_addthis_button($node, $teaser) {
+  global $_addthis_counter;
+
   // Fix IE's bug.
   if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE) {
     drupal_add_link(array(
@@ -156,32 +158,36 @@ function theme_addthis_button($node, $teaser) {
   }
 
   if (variable_get('addthis_dropdown_disabled', '0')) {
-    return ( sprintf('
+    $button = sprintf('
       <a class="addthis-button" href="http://www.addthis.com/bookmark.php"
         onclick="addthis_url   = location.href; addthis_title = document.title; return addthis_click(this);">
-      <img src="%s" width="%d" height="%d" %s /></a>
-      ',
-      $_SERVER['HTTPS'] == 'on' ? addslashes(variable_get('addthis_image_secure', 'https://secure.addthis.com/button1-share.gif')) : addslashes(variable_get('addthis_image', 'http://s9.addthis.com/button1-share.gif')),
-      addslashes(variable_get('addthis_image_width', '125')),
-      addslashes(variable_get('addthis_image_height', '16')),
-      addslashes(variable_get('addthis_image_attributes', 'alt=""'))
-    ));
+      <img src="%s" width="%d" height="%d" %s /></a>',
+      $_SERVER['HTTPS'] == 'on' ? addslashes(check_plain(variable_get('addthis_image_secure', 'https://secure.addthis.com/button1-share.gif'))) : addslashes(check_plain(variable_get('addthis_image', 'http://s9.addthis.com/button1-share.gif'))),
+      variable_get('addthis_image_width', '125'),
+      variable_get('addthis_image_height', '16'),
+      addslashes(filter_xss(variable_get('addthis_image_attributes', 'alt=""')))
+    );
   }
   else {
-    return ( sprintf('
+    $button = sprintf('
       <a class="addthis-button" href="http://www.addthis.com/bookmark.php"
         onmouseover="return addthis_open(this, \'\', \'%s\', \'%s\')"
         onmouseout="addthis_close()"
-        onclick="return addthis_sendto()"><img src="%s" width="%d" height="%d" %s /></a>
-      <script type="text/javascript" src="%s/js/' . variable_get('addthis_widget_version', '152') . '/addthis_widget.js"></script>
-      ',
+        onclick="return addthis_sendto()"><img src="%s" width="%d" height="%d" %s /></a>',
       $teaser ? url('node/'. $node->nid, array('absolute' => 1) ) : '[URL]',
       $teaser ? addslashes($node->title) : '[TITLE]',
-      $_SERVER['HTTPS'] == 'on' ? addslashes(variable_get('addthis_image_secure', 'https://secure.addthis.com/button1-share.gif')) : addslashes(variable_get('addthis_image', 'http://s9.addthis.com/button1-share.gif')),
-      addslashes(variable_get('addthis_image_width', '125')),
-      addslashes(variable_get('addthis_image_height', '16')),
-      variable_get('addthis_image_attributes', 'alt=""'),
-      $_SERVER['HTTPS'] == 'on' ? 'https://secure.addthis.com' : 'http://s7.addthis.com'
-    ));
+      $_SERVER['HTTPS'] == 'on' ? addslashes(check_plain(variable_get('addthis_image_secure', 'https://secure.addthis.com/button1-share.gif'))) : addslashes(check_plain(variable_get('addthis_image', 'http://s9.addthis.com/button1-share.gif'))),
+      variable_get('addthis_image_width', '125'),
+      variable_get('addthis_image_height', '16'),
+      check_plain(variable_get('addthis_image_attributes', 'alt=""'))
+    );
+    if ($_addthis_counter == 1) {
+      $button .= sprintf('<script type="text/javascript" src="%s/js/%d/addthis_widget.js">',
+        $_SERVER['HTTPS'] == 'on' ? 'https://secure.addthis.com' : 'http://s7.addthis.com',
+        variable_get('addthis_widget_version', '152')
+      );
+    }
+    $button .= '</script>';    
   }
+  return $button;
 }

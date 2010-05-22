@@ -1,5 +1,5 @@
 <?php
-// $Id: addthis.admin.inc,v 1.1.2.8 2009/05/18 16:21:36 wesku Exp $
+// $Id: addthis.admin.inc,v 1.1.2.9 2010/03/03 17:40:52 wesku Exp $
 
 /**
  * @file
@@ -117,7 +117,7 @@ function addthis_admin_settings() {
     '#default_value' => variable_get('addthis_options', 'favorites, email, digg, delicious, myspace, facebook, google, live, more'),
     '#description'   => t('A comma-separated ordered list of options to include in the drop-down. Example: favorites, email, digg, delicious, more<br/>Currently supported options:<br/>
 	aim, aolfav, ask, backflip, ballhype, blinklist, blogmarks, bluedot, buzz, delicious, digg, diigo, email, facebook, favorites, fark, feedmelinks, friendfeed, furl, google, kaboodle, kirtsy, linkedin, live, magnolia, misterwong, mixx, multiply, myweb, myspace, netvous, newsvine, pownce, propeller, reddit, segnalo, sharedstuff, slashdot, spurl, stumbleupon, stylehive, tailrank, technorati, thisnext, twitter, yardbarker, yahoobkm, more<br />
-        The most up-to-date list can be found <a href="!url">here</a>.', array('!url' => url('http://addthis.com/customization.php'))),
+        The most up-to-date list can be found <a href="!url">here</a>.', array('!url' => url('http://addthis.com/services/list'))),
   );
   $form['addthis_widget_settings']['addthis_offset_top'] = array(
     '#type'          => 'textfield',
