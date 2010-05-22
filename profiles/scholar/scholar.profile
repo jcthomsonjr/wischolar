@@ -4,17 +4,17 @@
 /**
  * Implementation of hook_profile_details().
  */
-function scholar_profile_details() {
+function openscholar_profile_details() {
   return array(
-    'name' => 'Scholar',
-    'description' => 'Scholar Web Sites by IQSS at Harvard University'
+    'name' => 'OpenScholar',
+    'description' => 'OpenScholar project by IQSS at Harvard University'
   );
 }
 
 /**
  * Implementation of hook_profile_modules().
  */
-function scholar_profile_modules() {
+function openscholar_profile_modules() {
   return array(
     'block', 
     'blog',
@@ -38,7 +38,7 @@ function scholar_profile_modules() {
 /**
  * Returns an array list of core contributed modules.
  */
-function _scholar_core_modules() {
+function _openscholar_core_modules() {
  $contrib_modules = array(
   // sites/all
     'activity',
@@ -135,7 +135,7 @@ function _scholar_core_modules() {
 /**
  * Returns an array list of dsi modules.
  */
-function _scholar_scholar_modules() {
+function _openscholar_scholar_modules() {
   return array(
     'vsite',
     'scholar',
@@ -194,9 +194,9 @@ function _scholar_scholar_modules() {
 /**
  * Implementation of hook_profile_task_list().
  */
-function scholar_profile_task_list() {
+function openscholar_profile_task_list() {
   $tasks = array(
-    'scholar-configure' => st('Scholar  configuration'),
+    'openscholar-configure' => st('openscholar  configuration'),
   );
   return $tasks;
 }
@@ -204,14 +204,14 @@ function scholar_profile_task_list() {
 /**
  * Implementation of hook_profile_tasks().
  */
-function scholar_profile_tasks(&$task, $url) {
-  include_once(dirname(__FILE__) . '/scholar.testingcontent.inc');
+function openscholar_profile_tasks(&$task, $url) {
+  //include_once(dirname(__FILE__) . '/openscholar.testingcontent.inc');
 
   $output = '';
 
   if ($task == 'profile') {
-    $modules = _scholar_core_modules();
-    $modules = array_merge($modules, _scholar_scholar_modules());
+    $modules = _openscholar_core_modules();
+    $modules = array_merge($modules, _openscholar_scholar_modules());
 
     $files = module_rebuild_cache();
     $operations = array();
@@ -220,7 +220,7 @@ function scholar_profile_tasks(&$task, $url) {
     }
     $batch = array(
     'operations' => $operations,
-    'finished' => '_scholar_profile_batch_finished',
+    'finished' => '_openscholar_profile_batch_finished',
     'title' => st('Installing @drupal', array('@drupal' => drupal_install_profile_name())),
     'error_message' => st('The installation has encountered an error.'),
     );
@@ -233,17 +233,17 @@ function scholar_profile_tasks(&$task, $url) {
 
   // Run additional configuration tasks
   // @todo Review all the cache/rebuild options at the end, some of them may not be needed
-  if ($task == 'scholar-configure') {
-    include_once 'profiles/scholar_profiles_common.inc';
-    install_include(_scholar_core_modules());
+  if ($task == 'openscholar-configure') {
+    include_once 'profiles/openscholar_profiles_common.inc';
+    install_include(_openscholar_core_modules());
     // create roles
-    _scholar_profiles_create_roles();
+    _openscholar_profiles_create_roles();
 
     // configure wisywig/tinymce
-    _scholar_profiles_wysiwyg_config();
+    _openscholar_profiles_wysiwyg_config();
 
     // configure the contact module
-    _scholar_profiles_contact_config();
+    _openscholar_profiles_contact_config();
     /*
     // Set a default footer message.
     variable_set('site_footer', '&copy; 2009 '. l('IQSS', 'http://www.iq.harvard.edu', array('absolute' => TRUE)));
@@ -260,7 +260,7 @@ function scholar_profile_tasks(&$task, $url) {
     //features_rebuild();
 
     // enable the themes
-    _scholar_enable_themes();
+    _openscholar_enable_themes();
 
     variable_set('scholar_content_type', 'vsite');
     // set default to america/new yourk
@@ -269,7 +269,7 @@ function scholar_profile_tasks(&$task, $url) {
     // _scholar_testingcontent();
 
     //_scholar_filefield_paths_config();
-    _scholar_profiles_configure_biblio();
+    _openscholar_profiles_configure_biblio();
 
     // Get out of this batch and let the installer continue
     $task = 'profile-finished';
@@ -282,14 +282,14 @@ function scholar_profile_tasks(&$task, $url) {
  *
  * Advance installer task to language import.
  */
-function _scholar_profile_batch_finished($success, $results) {
-  variable_set('install_task', 'scholar-configure');
+function _openscholar_profile_batch_finished($success, $results) {
+  variable_set('install_task', 'openscholar-configure');
 }
 
 /**
  * enable a couple of themes
  */
-function _scholar_enable_themes(){
+function _openscholar_enable_themes(){
   
   // the default theme is the project theme
   install_default_theme('scholar_project');
