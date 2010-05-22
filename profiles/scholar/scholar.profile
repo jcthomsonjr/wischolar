@@ -7,7 +7,7 @@
 function scholar_profile_details() {
   return array(
     'name' => 'Scholar',
-    'description' => 'Scholar Web Sites by IQSS'
+    'description' => 'Scholar Web Sites by IQSS at Harvard University'
   );
 }
 
@@ -58,10 +58,6 @@ function _scholar_core_modules() {
     'dialog',
     'feeds',
     'feeds_defaults',
-    //'feedapi',
-    //'feedapi_node',
-    //'feedapi_inherit',
-    //'parser_common_syndication',
     'filefield_paths',
     'file_aliases',
     'features',
@@ -86,7 +82,6 @@ function _scholar_core_modules() {
     'purl',
     'spaces',
     'spaces_og',
-    //'spaces_user',
     'stringoverrides',
     'token',
     'trigger',
@@ -127,7 +122,6 @@ function _scholar_core_modules() {
 
   // development
     'admin_menu',
-
     'devel',
     'devel_generate',
     'install_profile_api',
@@ -179,9 +173,7 @@ function _scholar_scholar_modules() {
     'scholarregister',
     'iqss_project',
 
-    
-   // features TODO does this gets installed in the  next step (enable features?)
-   // keep here for testing purposes only
+    // features
     'scholar_dvn',
     'scholar_biocv',
     'scholar_links',
@@ -246,16 +238,6 @@ function scholar_profile_tasks(&$task, $url) {
     install_include(_scholar_core_modules());
     // create roles
     _scholar_profiles_create_roles();
-    // rebuild access (required by og)
-    //_scholar_access_rebuild();
-    // create default content types
-    //_scholar_profile_content_types();
-
-    // configure modules  (variables table mainly)
-    //_scholar_variable_set();
-
-    // for testing purposes, create nodes groups etc
-
 
     // configure wisywig/tinymce
     _scholar_profiles_wysiwyg_config();
@@ -289,9 +271,6 @@ function scholar_profile_tasks(&$task, $url) {
     //_scholar_filefield_paths_config();
     _scholar_profiles_configure_biblio();
 
-    //import the D5 scholar data
-    // simport_import();
-
     // Get out of this batch and let the installer continue
     $task = 'profile-finished';
   }
@@ -309,18 +288,30 @@ function _scholar_profile_batch_finished($success, $results) {
 
 /**
  * enable a couple of themes
- * TODO Get all the themes automatically and enable 
- * them based on some predefined pattern (i.e. scholar_theme_*)
- *
  */
 function _scholar_enable_themes(){
   
   // the default theme is the project theme
   install_default_theme('scholar_project');
   
-  //get list of themes to be enabled - TODO: should 'kshepsle', 'rbates' be enabled for non IQSS installs?
-  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_project', 'kshepsle', 'rbates'); 
-  $themes = array_merge($themes, __scholar_get_scholar_theme_names());
+  $themes = array(
+    'zen', 
+    'cp_theme', 
+    'scholar_base', 
+    'scholar_project',
+    'scholar_theme_01', 
+    'scholar_theme_02', 
+    'scholar_theme_03', 
+    'scholar_theme_04', 
+    'scholar_theme_05', 
+    'scholar_theme_06', 
+    'scholar_theme_07', 
+    'scholar_theme_08', 
+    'scholar_theme_09', 
+    'scholar_theme_10', 
+    'scholar_theme_11', 
+    'scholar_theme_12' 
+  );
   
   //enable the themes
   install_enable_theme($themes);
@@ -329,17 +320,3 @@ function _scholar_enable_themes(){
   db_query("UPDATE {blocks} SET status = 0, region = ''"); 
 }
 
-/**
- * return theme names starting with 'scholar_theme_'
- *
- * @return unknown
- */
-function __scholar_get_scholar_theme_names(){
-	$return = array();
-	$sql = "SELECT * FROM {system} WHERE type = '%s' AND name LIKE '%s%%'";
-	$result = db_query($sql, 'theme', 'scholar_theme_');
-	while($data = db_fetch_object($result)){
-		$return[] = $data -> name;
-	}
-	return $return;
-}
