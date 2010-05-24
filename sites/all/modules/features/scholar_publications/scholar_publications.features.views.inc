@@ -78,6 +78,18 @@ function _scholar_publications_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('sorts', array(
+    'name' => array(
+      'order' => 'ASC',
+      'id' => 'name',
+      'table' => 'biblio_types',
+      'field' => 'name',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('arguments', array(
     'lastname' => array(
       'default_action' => 'summary asc',
@@ -97,7 +109,7 @@ function _scholar_publications_views_default_views() {
       'validate_fail' => 'not found',
       'glossary' => 0,
       'limit' => '0',
-      'case' => 'none',
+      'case' => 'ucwords',
       'path_case' => 'lower',
       'transform_dash' => 1,
       'id' => 'lastname',
@@ -244,7 +256,6 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('use_pager', 'mini');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-
   $views[$view->name] = $view;
 
   // Exported view: publication_types
@@ -322,6 +333,18 @@ function _scholar_publications_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('sorts', array(
+    'biblio_year' => array(
+      'order' => 'DESC',
+      'id' => 'biblio_year',
+      'table' => 'biblio',
+      'field' => 'biblio_year',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('arguments', array(
     'name' => array(
       'default_action' => 'ignore',
@@ -329,7 +352,7 @@ function _scholar_publications_views_default_views() {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => 'All',
-      'title' => '%1',
+      'title' => 'Publication Type: %1',
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
@@ -337,7 +360,7 @@ function _scholar_publications_views_default_views() {
       'validate_fail' => 'not found',
       'glossary' => 0,
       'limit' => '0',
-      'case' => 'none',
+      'case' => 'ucwords',
       'path_case' => 'lower',
       'transform_dash' => 1,
       'id' => 'name',
@@ -400,6 +423,9 @@ function _scholar_publications_views_default_views() {
       'validate_argument_user_flag_id_type' => 'id',
       'validate_argument_is_member' => 0,
       'validate_argument_php' => '',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
   ));
   $handler->override_option('filters', array(
@@ -458,7 +484,7 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_options', array(
-    'grouping' => 'name',
+    'grouping' => '',
   ));
   $handler->override_option('row_options', array(
     'inline' => array(),
@@ -788,7 +814,6 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-
   $views[$view->name] = $view;
 
   // Exported view: publication_years
@@ -863,6 +888,18 @@ function _scholar_publications_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('sorts', array(
+    'name' => array(
+      'order' => 'ASC',
+      'id' => 'name',
+      'table' => 'biblio_types',
+      'field' => 'name',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('filters', array(
     'status' => array(
       'operator' => '=',
@@ -917,7 +954,7 @@ function _scholar_publications_views_default_views() {
   ));
   $handler->override_option('title', 'Publications By Year');
   $handler->override_option('style_options', array(
-    'grouping' => '',
+    'grouping' => 'name',
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->override_option('fields', array(
@@ -1039,6 +1076,9 @@ function _scholar_publications_views_default_views() {
       'validate_argument_php' => '',
     ),
   ));
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+  ));
   $handler->override_option('row_options', array(
     'inline' => array(
       'biblio_year' => 'biblio_year',
@@ -1149,7 +1189,6 @@ function _scholar_publications_views_default_views() {
     'description' => '',
     'weight' => 0,
   ));
-
   $views[$view->name] = $view;
 
   // Exported view: scholar_publications
