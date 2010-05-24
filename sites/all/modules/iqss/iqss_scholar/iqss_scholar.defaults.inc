@@ -16,7 +16,7 @@ function _iqss_scholar_config_variables(){
   'pinserver_hash_huid' => 0,
   
   //Remote Content Nodes
-  'iqss_remote_source_node_types' => array('bio'),
+  'iqss_remote_source_node_types' => array('cv'),
   );
 }
 
