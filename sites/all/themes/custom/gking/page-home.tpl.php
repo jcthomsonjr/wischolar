@@ -8,6 +8,7 @@
   <title><?php print $head_title; ?></title>
   <?php print $head; ?>
   <?php print $styles; ?>
+  <link href='http://fonts.googleapis.com/css?family=Molengo' rel='stylesheet' type='text/css'>
   <?php print $scripts; ?>
    <script type="text/javascript">
     $(document).ready(function(){
