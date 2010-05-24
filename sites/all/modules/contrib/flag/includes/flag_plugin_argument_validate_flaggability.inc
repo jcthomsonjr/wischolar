@@ -1,5 +1,5 @@
 <?php
-// $Id: flag_plugin_argument_validate_flaggability.inc,v 1.1.2.3.2.1 2009/09/14 11:46:40 quicksketch Exp $
+// $Id: flag_plugin_argument_validate_flaggability.inc,v 1.1.2.3.2.2 2010/05/07 23:54:35 quicksketch Exp $
 
 /**
  * @file
@@ -169,7 +169,7 @@ class flag_plugin_argument_validate_flaggability extends views_plugin_argument_v
       }
     }
 
-    $ids = views_break_phrase($argument);
+    $ids = views_break_phrase($argument, $this);
     if ($ids->value == array(-1)) {
       // Malformed argument syntax. Invalidate.
       return FALSE;

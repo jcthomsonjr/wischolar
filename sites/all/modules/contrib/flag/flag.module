@@ -1,5 +1,5 @@
 <?php
-// $Id: flag.module,v 1.11.2.72.2.31 2010/01/08 05:17:57 quicksketch Exp $
+// $Id: flag.module,v 1.11.2.72.2.39 2010/05/08 23:48:54 quicksketch Exp $
 
 /**
  * @file
@@ -384,6 +384,13 @@ function flag_form_alter(&$form, &$form_state, $form_id) {
         '#type' => 'fieldset',
         '#title' => t('Flags'),
         '#collapsible' => TRUE,
+        // Vertical tabs support:
+        '#group' => 'additional_settings',
+        '#attached' => array(
+          'js' => array(
+            'vertical-tabs' => drupal_get_path('module', 'flag') . '/theme/flag-admin.js',
+          ),
+        ),
       );
     }
 
@@ -449,10 +456,10 @@ function flag_user($op, &$edit, &$account, $category = NULL) {
   switch ($op) {
     case 'login':
       // Migrate anonymous flags to this user's account.
-      if (module_exists('session_api')) {
+      if (module_exists('session_api') && ($sid = flag_get_sid(0))) {
         // The @ symbol suppresses errors if the user flags a piece of content
         // they have already flagged as a logged-in user.
-        @db_query("UPDATE {flag_content} SET uid = %d, sid = 0 WHERE uid = 0 AND sid = %d", $account->uid, flag_get_sid(0));
+        @db_query("UPDATE {flag_content} SET uid = %d, sid = 0 WHERE uid = 0 AND sid = %d", $account->uid, $sid);
         // Delete any remaining flags this user had as an anonymous user.
         db_query("DELETE FROM {flag_content} WHERE uid = 0 AND sid = %d", flag_get_sid(0));
         // Clean up anonymous cookies.
@@ -572,12 +579,21 @@ function flag_activity_info() {
  * Used both for the regular callback as well as the JS version.
  */
 function flag_page($action = NULL, $flag_name = NULL, $content_id = NULL) {
+  global $user;
+
+  // Shorten up the variables that affect the behavior of this page.
   $js = isset($_REQUEST['js']);
   $token = $_REQUEST['token'];
+
+  // Specifically $_GET to avoid getting the $_COOKIE variable by the same key.
+  $has_js = isset($_GET['has_js']);
 
   // Check the flag token, then perform the flagging.
   if (!flag_check_token($token, $content_id)) {
     $error = t('Bad token. You seem to have followed an invalid link.');
+  }
+  elseif ($user->uid == 0 && !$has_js) {
+    $error = t('You must have JavaScript and cookies enabled in your browser to flag content.');
   }
   else {
     $result = flag($action, $flag_name, $content_id);
@@ -727,7 +743,12 @@ function flag_flag_access($flag, $content_id, $action, $account) {
   // Restrict access by authorship. It's important that TRUE is never returned
   // here, otherwise we'd grant permission even if other modules denied access.
   if ($flag->content_type == 'node') {
-    $node = node_load($content_id);
+    // For non-existent nodes (such as on the node add form), assume that the
+    // current user is creating the content.
+    if (empty($content_id) || !($node = node_load($content_id))) {
+      return $flag->access_author == 'others' ? FALSE : NULL;
+    }
+
     if ($flag->access_author == 'own' && $node->uid != $account->uid) {
       return FALSE;
     }
@@ -738,7 +759,12 @@ function flag_flag_access($flag, $content_id, $action, $account) {
 
   // Restrict access by comment authorship.
   if ($flag->content_type == 'comment') {
-    $comment = _comment_load($content_id);
+    // For non-existent comments (such as on the comment add form), assume that
+    // the current user is creating the content.
+    if (empty($content_id) || !($comment = $flag->fetch_content($content_id))) {
+      return $flag->access_author == 'comment_others' ? FALSE : NULL;
+    }
+
     $node = node_load($comment->nid);
     if ($flag->access_author == 'node_own' && $node->uid != $account->uid) {
       return FALSE;
@@ -802,6 +828,7 @@ function flag_flag_access_multiple($flag, $content_ids, $account) {
   // Always return an array (even if empty) of accesses.
   return $access;
 }
+
 /**
  * Trim a flag to a certain size.
  *
@@ -820,6 +847,27 @@ function flag_trim_flag($flag, $account, $cutoff_size) {
       flag('unflag', $flag->name, $row->content_id, $account);
     }
   }
+}
+
+/**
+ * Remove all flagged content from a flag.
+ *
+ * @param $flag
+ *   The flag object.
+ * @param $content_id
+ *   Optional. The content ID on which all flaggings will be removed. If left
+ *   empty, this will remove all of this flag's content.
+ */
+function flag_reset_flag($flag, $content_id = NULL) {
+  $result = db_query("SELECT * FROM {flag_content} WHERE fid = %d" . ($content_id ? " AND content_id = %d" : ''), $flag->fid, $content_id);
+  $rows = array();
+  while ($row = db_fetch_array($result)) {
+    $rows[] = $row;
+  }
+  module_invoke_all('flag_reset', $flag, $content_id, $rows);
+
+  db_query("DELETE FROM {flag_content} WHERE fid = %d" . ($content_id ? " AND content_id = %d" : ''), $flag->fid, $content_id);
+  return db_affected_rows();
 }
 
 /**
@@ -1552,7 +1600,7 @@ function flag_create_link($flag_name, $content_id) {
     // Flag does not exist.
     return;
   }
-  if (!$flag->access($content_id)) {
+  if (!$flag->access($content_id) && (!$flag->is_flagged($content_id) || !$flag->access($content_id, 'flag'))) {
     // User has no permission to use this flag.
     return;
   }

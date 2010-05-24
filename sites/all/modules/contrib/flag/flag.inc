@@ -1,5 +1,5 @@
 <?php
-// $Id: flag.inc,v 1.1.2.30.2.20 2010/01/08 05:14:24 quicksketch Exp $
+// $Id: flag.inc,v 1.1.2.30.2.24 2010/05/08 23:48:54 quicksketch Exp $
 
 /**
  * @file
@@ -558,9 +558,22 @@ class flag_flag {
     flag_get_counts(NULL, NULL, TRUE);
     flag_get_user_flags(NULL, NULL, NULL, NULL, TRUE);
 
-    // Perform the flagging or unflagging of this flag.
+    // Find out which user id to use.
     $uid = $this->global ? 0 : $account->uid;
-    $sid = $this->global ? 0 : flag_get_sid($uid);
+
+    // Find out which session id to use.
+    if ($this->global) {
+      $sid = 0;
+    }
+    else {
+      $sid = flag_get_sid($uid);
+      // Anonymous users must always have a session id.
+      if ($sid == 0 && $account->uid == 0) {
+        return FALSE;
+      }
+    }
+
+    // Perform the flagging or unflagging of this flag.
     $flagged = $this->_is_flagged($content_id, $uid, $sid);
     if ($action == 'unflag') {
       if ($this->uses_anonymous_cookies()) {
@@ -1028,6 +1041,13 @@ class flag_flag {
    */
   function theme($action, $content_id, $after_flagging = FALSE) {
     static $js_added = array();
+    global $user;
+
+    // If the flagging user is anonymous, set the global anonymous setting.
+    if ($user->uid == 0 && !isset($js_added['anonymous'])) {
+      $js_added['anonymous'] = TRUE;
+      drupal_add_js(array('flag' => array('anonymous' => 1)), 'setting');
+    }
 
     // If the flagging user is anonymous and the page cache is enabled, always
     // show the "flag" link, and then set the unflag link through JavaScript.
@@ -1322,6 +1342,9 @@ class flag_comment extends flag_flag  {
   }
 
   function get_content_id($comment) {
+    // Store the comment object in the static cache, to avoid getting it
+    // again unneedlessly.
+    $this->remember_content($comment->cid, $comment);
     return $comment->cid;
   }
 

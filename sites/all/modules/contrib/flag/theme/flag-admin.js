@@ -1,4 +1,4 @@
-// $Id: flag-admin.js,v 1.1.2.1 2009/09/28 02:05:06 quicksketch Exp $
+// $Id: flag-admin.js,v 1.1.2.2 2010/05/08 20:46:06 quicksketch Exp $
 
 /**
  * Behavior to disable the "unflag" option if "flag" is not available.
@@ -65,3 +65,24 @@ Drupal.behaviors.flagLinkOptions = function(context) {
     $('#link-options').css('display', 'none');
   }
 };
+
+/**
+ * Vertical tabs integration.
+ */
+Drupal.verticalTabs = Drupal.verticalTabs || {};
+
+Drupal.verticalTabs.flag = function() {
+  var flags = [];
+  $('fieldset.vertical-tabs-flag input.form-checkbox').each(function() {
+    if (this.checked) {
+      flags.push(this.name.replace(/flag\[([a-z0-9]+)\]/, '$1'));
+    }
+  });
+
+  if (flags.length) {
+    return flags.join(', ');
+  }
+  else {
+    return Drupal.t('No flags');
+  }
+}

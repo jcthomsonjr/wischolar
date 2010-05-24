@@ -1,5 +1,5 @@
 <?php
-// $Id: flag.admin.inc,v 1.1.4.2.2.9 2009/11/03 02:10:45 quicksketch Exp $
+// $Id: flag.admin.inc,v 1.1.4.2.2.11 2010/05/08 02:20:35 quicksketch Exp $
 
 /**
  * @file
@@ -175,7 +175,7 @@ function flag_add_form_validate($form, &$form_state) {
 }
 
 function flag_add_form_submit($form, &$form_state) {
-  drupal_goto('admin/build/flags/add/'. $form_state['values']['type'] .'/'. $form_state['values']['name']);
+  $form_state['redirect'] = 'admin/build/flags/add/' . $form_state['values']['type'] . '/' . $form_state['values']['name'];
 }
 
 /**
@@ -407,7 +407,7 @@ function flag_form(&$form_state, $name, $type = NULL) {
   $form['link_options']['flag_confirmation'] = array(
     '#type' => 'textfield',
     '#title' => t('Flag confirmation message'),
-    '#default_value' => $flag->flag_confirmation,
+    '#default_value' => isset($flag->flag_confirmation) ? $flag->flag_confirmation : '',
     '#description' => t('Message displayed if the user has clicked the "flag this" link and confirmation is required. Usually presented in the form of a question such as, "Are you sure you want to flag this content?"'),
     '#access' => empty($flag->locked['flag_confirmation']),
   );
@@ -415,7 +415,7 @@ function flag_form(&$form_state, $name, $type = NULL) {
   $form['link_options']['unflag_confirmation'] = array(
     '#type' => 'textfield',
     '#title' => t('Unflag confirmation message'),
-    '#default_value' => $flag->unflag_confirmation,
+    '#default_value' => isset($flag->unflag_confirmation) ? $flag->unflag_confirmation : '',
     '#description' => t('Message displayed if the user has clicked the "unflag this" link and confirmation is required. Usually presented in the form of a question such as, "Are you sure you want to unflag this content?"'),
     '#access' => empty($flag->locked['unflag_confirmation']),
   );
