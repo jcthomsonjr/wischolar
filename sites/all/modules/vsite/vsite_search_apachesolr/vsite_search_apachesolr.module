@@ -138,10 +138,12 @@ function vsite_search_apachesolr_block($op = 'list', $delta = 0, $edit = array()
            * @see http://drupal.org/node/457826
            */ 
           $blocks = apachesolr_search_browse(null, null, null, 'search/apachesolr_search');
-          foreach($blocks as $block) {
-            if(strlen($block->content) > 0) {
-              $content .= '<h3 class="title">'.t($block->subject).'</h3>';
-              $content .= $block->content;
+          if(count($blocks) > 0) {
+            foreach($blocks as $block) {
+              if(strlen($block->content) > 0) {
+                $content .= '<h3 class="title">'.t($block->subject).'</h3>';
+                $content .= $block->content;
+              }
             }
           }
           if(strlen($content) > 0) {
