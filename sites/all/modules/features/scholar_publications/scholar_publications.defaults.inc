@@ -76,15 +76,15 @@ function _scholar_publications_content_default_fields() {
       'weight' => '32',
       'parent' => '',
       'label' => array(
-        'format' => 'above',
+        'format' => 'hidden',
       ),
       'teaser' => array(
-        'format' => 'image_plain',
+        'format' => 'book_cover_linked',
         'exclude' => 1,
       ),
       'full' => array(
         'format' => 'book_cover_default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '5' => array(
         'format' => 'image_plain',
@@ -131,9 +131,9 @@ function _scholar_publications_content_default_fields() {
       'title_type' => 'textfield',
       'default_image' => NULL,
       'use_default_image' => 0,
-      'label' => 'Book Image',
+      'label' => 'Book Cover',
       'weight' => '32',
-      'description' => '',
+      'description' => 'Upload your book cover image.',
       'type' => 'imagefield_widget',
       'module' => 'imagefield',
     ),
@@ -141,7 +141,7 @@ function _scholar_publications_content_default_fields() {
 
   // Translatables
   array(
-    t('Book Image'),
+    t('Book Cover'),
     t('Extra Fields'),
   );
 
