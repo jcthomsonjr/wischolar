@@ -17,6 +17,7 @@ function _iqss_scholar_config_variables(){
   
   //Remote Content Nodes
   'iqss_remote_source_node_types' => array('cv'),
+  'iqss_remote_source_valid_ogs' => '1', //Enable on Garys Site
   );
 }
 
