@@ -153,8 +153,28 @@ function vsite_taxonomy_menu() {
     'access arguments' => array('access content'),
   );
   
+  $items['taxonomy/term/biblio/%/%'] = array(
+    'title' => 'Taxonomy term',
+    'page callback' => 'vsite_taxonomy_biblio_term_page',
+    'page arguments' => array(3,4),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'taxonomy.pages.inc',
+    'file path' => drupal_get_path('module', 'taxonomy'),
+  );
+  
   return $items;
 }
+
+/**
+ * Alter the menu items to use our code
+ * @param array $items
+ */
+function vsite_taxonomy_menu_alter(&$items) {
+  // Example - disable the page at node/add
+  $items['taxonomy/term/%']['page callback'] = 'vsite_taxonomy_term_page';
+}
+
 
 
 /**
@@ -828,7 +848,7 @@ function vsite_taxonomy_taxonomy_import($gid, $definition){
  */
 function vsite_taxonomy_context_active_contexts_alter(&$contexts){
   $router_item = menu_get_item();
-  if($router_item['path'] != 'taxonomy/term/%') return;
+  if(strstr($router_item['path'],'taxonomy/term') != 0) return;
 
   //Add this block category pages on (Lets you filter the category by publictaion type)
   $contexts['vsite-section-public']->block['vsite_taxonomy-filter_by_type'] = array(
@@ -849,13 +869,15 @@ function vsite_taxonomy_context_active_contexts_alter(&$contexts){
 function vsite_taxonomy_filter_by_type_block(){
 	
 	$router_item = menu_get_item();
-  if($router_item['path'] != 'taxonomy/term/%') return array();
+  if(strstr($router_item['path'],'taxonomy/term') != 0) return array();
 
 	$view = views_get_view('publication_types');
   $view->init();
   $view->set_display('block_2');
   $view->set_arguments(array( current($router_item['page_arguments']) ));
   
+  //Change to the tax. path
+  $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
   $view->execute();
   
   $output = $view->render();
@@ -867,19 +889,68 @@ function vsite_taxonomy_filter_by_type_block(){
 }
 
 /**
- * hook db_rewrite_sql
- *
+ * Menu callback; displays all nodes associated with a term.
  */
-function vsite_taxonomy_db_rewrite_sql($sql, $primary_table, $primary_field,  $args) {
+function vsite_taxonomy_term_page($str_tids = ''){
+  $terms = taxonomy_terms_parse_string($str_tids);
 
-//  $vsite = vsite_get_vsite();
-//  $gid = $group_node -> nid;
-//  $base_url = 'publications'; //og_settings_variable_get($gid, 'og_biblio_base', 'biblio');
-//  if ($vsite  && arg(0) == $base_url && strstr($sql,"biblio") !== false){
-//    if ($primary_table == 'n' && strstr($sql, 'biblio')){
-//      $query['join'] = 'INNER JOIN {og_ancestry} oga ON n.nid = oga.nid';
-//      $query['where'] =  'oga.group_nid = '. $vsite -> sid;
-//      return $query;
-//    }
-//  }
+  if ($terms['tids']) {
+    $result = db_query(db_rewrite_sql('SELECT t.tid, t.name FROM {term_data} t WHERE t.tid IN ('. db_placeholders($terms['tids']) .')', 't', 'tid'), $terms['tids']);
+    $tids = array(); // we rebuild the $tids-array so it only contains terms the user has access to.
+    $names = array();
+    while ($term = db_fetch_object($result)) {
+      $tids[] = $term->tid;
+      $names[] = $term->name;
+    }
+
+    if ($names) {
+      $title = implode(', ', $names);
+      drupal_set_title(check_plain($title));
+
+      $current->tid = $tids[0];
+          
+      $output = theme('taxonomy_term_page', $tids, taxonomy_select_nodes($tids, $terms['operator'], $depth, false));
+      return $output;
+    
+    }
+  }
 }
+
+/**
+ * Menu callback; displays all nodes associated with a term by publication type
+ */
+function vsite_taxonomy_biblio_term_page($str_tids, $s_biblio_type){
+  $terms = taxonomy_terms_parse_string($str_tids);
+
+  if ($terms['tids']) {
+    $result = db_query(db_rewrite_sql('SELECT t.tid, t.name FROM {term_data} t WHERE t.tid IN ('. db_placeholders($terms['tids']) .')', 't', 'tid'), $terms['tids']);
+    $tids = array(); // we rebuild the $tids-array so it only contains terms the user has access to.
+    $names = array();
+    while ($term = db_fetch_object($result)) {
+      $tids[] = $term->tid;
+      $names[] = $term->name;
+    }
+
+    if ($names) {
+      $title = implode(', ', $names);
+      drupal_set_title(check_plain($title));
+      
+      $descendant_tids = array();
+      foreach ($tids as $index => $tid) {
+	      $term = taxonomy_get_term($tid);
+	      $tree = taxonomy_get_tree($term->vid, $tid, -1, $depth);
+	      $descendant_tids[] = array_merge(array($tid), array_map('_taxonomy_get_tid_from_term', $tree));
+	    }
+	    
+	    $args = call_user_func_array('array_merge', $descendant_tids);
+	    $placeholders = db_placeholders($args, 'int');
+	    $args[] = str_replace("-"," ",$s_biblio_type);
+	
+	    $sql = 'SELECT DISTINCT(n.nid), n.sticky, n.title, n.created FROM {node} n INNER JOIN {term_node} tn ON n.vid = tn.vid INNER JOIN {biblio} b ON b.nid = n.nid INNER JOIN {biblio_types} bt ON b.biblio_type = bt.tid  WHERE tn.tid IN ('. $placeholders .') AND bt.name LIKE \'%s\' AND n.status = 1 ORDER BY n.sticky DESC, n.created DESC';
+	          
+	    return theme('taxonomy_term_page', $tids, db_query($sql, $args));
+	    
+    }
+  }
+}
+
