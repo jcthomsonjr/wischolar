@@ -848,7 +848,7 @@ function vsite_taxonomy_taxonomy_import($gid, $definition){
  */
 function vsite_taxonomy_context_active_contexts_alter(&$contexts){
   $router_item = menu_get_item();
-  if(strstr($router_item['path'],'taxonomy/term') != 0) return;
+  if(strpos($router_item['path'],'taxonomy/term') !== 0) return;
 
   //Add this block category pages on (Lets you filter the category by publictaion type)
   $contexts['vsite-section-public']->block['vsite_taxonomy-filter_by_type'] = array(
@@ -869,7 +869,7 @@ function vsite_taxonomy_context_active_contexts_alter(&$contexts){
 function vsite_taxonomy_filter_by_type_block(){
 	
 	$router_item = menu_get_item();
-  if(strstr($router_item['path'],'taxonomy/term') != 0) return array();
+  if(strpos($router_item['path'],'taxonomy/term') !== 0) return array();
 
 	$view = views_get_view('publication_types');
   $view->init();

@@ -111,7 +111,7 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
 
   $vsite = vsite_get_vsite();
   $router_item = menu_get_item();
-  if(strstr($router_item['path'],'taxonomy/term') == 0){
+  if(strpos($router_item['path'],'taxonomy/term') === 0){
 
   	//The next few lines just make sure that we are in gary's research interest tax.
   	$n_vid = false;
