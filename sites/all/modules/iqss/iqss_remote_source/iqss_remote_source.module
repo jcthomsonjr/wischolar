@@ -28,7 +28,9 @@ function iqss_remote_source_menu() {
  */
 function iqss_remote_source_nodeapi(&$node, $op){
 	$a_valid_node_types = variable_get('iqss_remote_source_node_types',array());
-	if(!in_array($node->type,$a_valid_node_types)) return;
+	$vsite = vsite_get_vsite();
+
+	if(!in_array($node->type,$a_valid_node_types) || !$vsite || !in_array($vsite->group->nid, explode(",",variable_get('iqss_remote_source_valid_ogs','')))) return;
 	
   switch ($op) {
   	case "load":
@@ -241,11 +243,11 @@ function _iqss_remote_source_inline_content($s_content_type){
 	if(!strlen($s_content_type)) return true;
 	
 	list($s_type,$s_sub_type) = explode("/",$s_content_type);
-	if($s_type == 'text') return true; //Always for text types
+	if(trim($s_type) == 'text') return true; //Always for text types
 	
 	$a_inline_content = array('text/html','text/plain');
   
-  return in_array(strtolower($s_content_type),$a_inline_content);
+  return in_array(strtolower(trim($s_content_type)),$a_inline_content);
 }
 
 function _iqss_remote_source_get_file_contents($s_url){
