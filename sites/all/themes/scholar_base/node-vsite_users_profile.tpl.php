@@ -29,13 +29,28 @@
       </div>
     <?php endif; ?>
     <div class="content">
-      <?php// print $content; ?>
+        <?php if ($submitted): ?>
+      <div class="submitted">
+        <?php print $submitted; ?>
+      </div>
+     <?php endif; ?>
+     <?php if ($page): ?>
+     <?php if ($terms): ?>
+       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
+     <?php endif; ?>
+     <?php endif; ?>
+    <div class="content">
       <?php if ($field_user_profile_photo_rendered) {
         print $field_user_profile_photo_rendered;
         } ?>
       <h3><?php print $vsite_users_first_name[0]['value'] . ' ' . $vsite_users_last_name[0]['value'];?></h3>
       <?php print $vsite_users_title_rendered;?>
     </div>
+    <?php if (!$page): ?>
+      <?php if ($terms): ?>
+      <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
+      <?php endif; ?>
+    <?php endif; ?>
     <?php print $links; ?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->
