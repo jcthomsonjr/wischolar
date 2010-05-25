@@ -262,11 +262,11 @@ function gkimport_parse_abstracts(){
  */
 function gkimport_parse_abstract_url($node){
   //make curly brackets uniform around urls
-     $notes = substr($node -> biblio_notes,  0, 1) !== '{' ? '{' . $node -> biblio_notes : $node -> biblio_notes;
-     $notes = substr($notes, -1,1 ) !== '}' ? $notes . '}' : $notes;
+     $url = substr($node -> biblio_url,  0, 1) !== '{' ? '{' . $node -> biblio_url : $node -> biblio_url;
+     $url  .= substr($url, -1,1 ) !== '}' ? $url  . '}' : $url;
       
      //check to see if http url exists in biblio notes field
-     preg_match('/({)(http:\/\/.*?)(})/', $notes, $matches);
+     preg_match('/({)(http:\/\/.*?)(})/', $url, $matches);
      return $matches;
  }
 
@@ -704,11 +704,11 @@ function gkimport_nodeapi(&$node, $op){
   $account = user_load(array('name' => $name));
   switch ($op) { 
     case 'presave':
+      //manually set auto title url alias
+      $node -> pathauto_perform_alias = 1;
+            
       //add the taxonomy term to the node
       if (!vsite_get_vsite()){ 
-        // install_include(array('taxonomy'));
-        // $site_vid = install_taxonomy_get_vid($name . '_vocabulary');
-        // $node -> taxonomy['tags'][  $site_vid ] = '';
         $vid = variable_get('gkimport_ri_vocab_id', '');
         $term = trim(gkimport_match_terms($node -> title));
         if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here
@@ -732,8 +732,8 @@ function gkimport_nodeapi(&$node, $op){
           if (count($matches) && strlen($matches[2])){
             //$node -> path = strstr($matches[2], 'files');
             $src = db_result(db_query("SELECT src FROM {url_alias} WHERE src = '%s'", "node/{$node -> nid}"));
-            $sql = ($src) ? db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", strstr($matches[2], 'files'))
-            : db_query("UPDATE {url_alias} SET dst = '%s' WHERE src = '%s'", strstr($matches[2], 'files'), $src);
+            $sql = ($src) ? db_query("UPDATE {url_alias} SET dst = '%s' WHERE src = '%s'", strstr($matches[2], 'files'), $src) :
+            db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", strstr($matches[2], 'files'));
           }
         }
         else{
