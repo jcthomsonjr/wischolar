@@ -26,8 +26,8 @@
       <li>
         <?php if (substr($twitkey,0,1) == "#"):?>
          <img src="<?php print $tweet->userphoto; ?>">
+         <span class="tweet-author"><?php print l($tweet->username, 'http://twitter.com/' . $tweet->username); ?></span>
         <?php endif;?>
-        <span class="tweet-author"><?php print l($tweet->username, 'http://twitter.com/' . $tweet->username); ?></span>
         <span class="tweet-text"><?php print twitter_pull_add_links($tweet->text); ?></span>
         <div class="tweet-time"><?php print l(format_interval(time() - $tweet->timestamp) . ' ' . t('ago'), 'http://twitter.com/' . $tweet->username . '/status/' . $tweet->id);?></div>
       </li>
