@@ -2,7 +2,7 @@
 
 include_once('gkimport.drush.inc');
 
-define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev3'); //file system path to drupal root (NO TRAILING SLASH)
+define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev4'); //file system path to drupal root (NO TRAILING SLASH)
 define(GKIMPORT_DOWNLOAD, FALSE);  // TRUE tells module to download files with wget, otherwise assumes files stored locally
 
 /**
@@ -162,7 +162,7 @@ function  gkimport_customize_site($vsite){
  */
 function gkimport_parse_files(){
   //NOTE: Please do not change the order of these files as it can cause problems
-  $files =array('pubs_taxonomy.csv', 'gkpubsformatted_complete.bib', 'talks.csv');  //files to parse
+  $files =array('pubs_taxonomy.csv', 'gkpubs.bib', 'talks.csv');  //files to parse
   $path = dirname(__FILE__) . '/files/';
 
   foreach($files as $file){
@@ -174,7 +174,7 @@ function gkimport_parse_files(){
         gkimport_pubs_taxonomy($filepath);
         break;
 
-      case 'gkpubsformatted_complete.bib':
+      case 'gkpubs.bib':
         gkimport_import_pubs($file);
         break;
         
