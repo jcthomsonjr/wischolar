@@ -117,8 +117,15 @@ function scholar_publications_spaces_settings() {
  * Alter the import publications form
  */
 function scholar_publications_form_alter(&$form, $form_state, $form_id){
-  if ($form_id == 'biblio_import_form') {
+  //only show the 'field_biblio_image' field for book or book chapter nodes
+  if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))) {
+    $form['field_biblio_image']['#access'] = TRUE; 
+  }
+  else{
+    $form['field_biblio_image']['#access'] = FALSE; 
+  }
 
+  if ($form_id == 'biblio_import_form') {
     // the original form is asking to set the userID for these entries
     // Just the group admin for now. TODO list of users for this og
 
