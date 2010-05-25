@@ -475,14 +475,19 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
       $form['post_fieldset'] = array('#value' => "</fieldset>", '#weight' => 1000);
       $form['field_vsite_logo']['#weight'] = 33;
 
+      //No vertical tabs fieldsets
+      vertical_tabs_save_config($form_id,array());
+      
       if(array_key_exists('taxonomy',$form)){
       	if($n_affil_tag = variable_get('vsite_taxonomy_affiliation',false)){
       		unset($form['taxonomy'][$n_affil_tag]);
       	}//Remove the affiliation form till we get some defaults in here
       	$form['taxonomy']['#collapsible'] = false;
       }
+      
       $form['#redirect'] = false;
       _spaces_og_make_hidden($form['purl']);
+      _spaces_og_make_hidden($form['book']);
       _spaces_og_make_hidden($form['attachments']);
       _spaces_og_make_hidden($form['menu']);
       _spaces_og_make_hidden($form['comment_settings']);
