@@ -19,6 +19,7 @@ function gkimport_import($drush_run = 0){
 
   gkimport_create_site();
   gkimport_parse_files();
+  gkimport_update_notes();
   gkimport_software_pubs_set();
   gkimport_upload_pdfs();
   gkimport_update_aliases();
@@ -414,6 +415,31 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
   }
 }
 
+function gkimport_update_notes(){
+  $filepath = GKIMPORT_FS_PATH . '/' . drupal_get_path('module', 'gkimport') . '/files/generate_pubnotes.txt';
+  $data = unserialize(file_get_contents($filepath));
+
+ //return dpm($data);
+
+ $match_results = array();
+ 
+  foreach($data as $pubs){
+    $matching_nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' and type = '%s' " , $pubs['title'], 'biblio'));
+    if ($matching_nid){
+      if(strlen($pubs['notes'])){
+       $match_results['matches'][] = array('nid' => $pubs['nid'], 'title' => $pubs['title'], 'notes' => $pubs['notes']);
+       //db_query("UPDATE {biblio} SET biblio_notes = '%s' WHERE nid = %d", $pubs['notes'], $matching_nid);
+      }
+    }
+    else{
+      if(strlen($pubs['notes'])){
+        $match_results['non_matches'][] = array('nid' => $pubs['nid'], 'title' => $pubs['title'], 'notes' => $pubs['notes']);
+      }
+    }
+  }
+  dpm($match_results);
+  
+}
 
 function gkimport_upload_pdfs(){
   $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
