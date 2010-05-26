@@ -418,7 +418,6 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
 function gkimport_update_notes(){
   $filepath = GKIMPORT_FS_PATH . '/' . drupal_get_path('module', 'gkimport') . '/files/generate_pubnotes.txt';
   $data = unserialize(file_get_contents($filepath));
-
  //return dpm($data);
 
  $match_results = array();
@@ -428,7 +427,7 @@ function gkimport_update_notes(){
     if ($matching_nid){
       if(strlen($pubs['notes'])){
        $match_results['matches'][] = array('nid' => $pubs['nid'], 'title' => $pubs['title'], 'notes' => $pubs['notes']);
-       //db_query("UPDATE {biblio} SET biblio_notes = '%s' WHERE nid = %d", $pubs['notes'], $matching_nid);
+       db_query("UPDATE {biblio} SET biblio_notes = '%s' WHERE nid = %d", $pubs['notes'], $matching_nid);
       }
     }
     else{
@@ -437,8 +436,7 @@ function gkimport_update_notes(){
       }
     }
   }
-  dpm($match_results);
-  
+ // dpm($match_results);  
 }
 
 function gkimport_upload_pdfs(){
