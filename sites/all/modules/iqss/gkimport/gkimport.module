@@ -874,9 +874,14 @@ function gkimport_software_pubs_set(){
       db_query("UPDATE {biblio} SET biblio_type = %d WHERE nid =  %d" , $biblio_type_id, $nid); 
       drush_print("Updated biblio type to Software for node: $nid {$node -> title}");
       drush_print("Found match for software term: $nid {$node -> title}");    
-    }    
+    }
+    //special case for Zelig node
+    $nid = db_result(db_query("SELECT nid from {node} WHERE title LIKE '%%%s%%' ", 'Zelig: Everyone'));
+    db_query("UPDATE {biblio} SET biblio_type = %d WHERE nid =  %d" , $biblio_type_id, $nid);
+    $notes_text = "A complete statistical package and framework for statistical inference that can estimate, help interpret, and present the results from, a large range of statistical methods. Zelig, which works within R, and has features from Clarify, Amelia, MatchIt, ReLogit, and many other programs. It adds powerful infrastructure, but retains an easy-to-use command structure. The Zelig manual doesn't assume you know R.";
+    db_query("UPDATE {biblio} SET biblio_notes = '%s' WHERE nid =  %d" ,  $notes_text, $nid);    
   }
-  
+    
    gkimport_software_term_pubs_set();
 }
 /**
@@ -909,10 +914,10 @@ function _gkimport_software_pubs(){
   'CEM: Coarsened Exact Matching Software',
   'Anchors: Software for Anchoring Vignettes Data',
   'Amelia II: A Program for Missing Data',
-  "Zelig: Everyone's Statistical Software",
+  'Zelig: Everyone\'s Statistical Software',
   'CLARIFY: Software for Interpreting and Presenting Statistical Results',
   'AMELIA: A Program for Missing Data',
-  'MAXLIK, a set of Gauss programs, annotated for pedagogical purposes, to implement the maximum likelihood models in Unifying Political Methodology: The Likelihood Theory of Statistical Inference',
+  'MAXLIK',
   'EI: Program for Ecological Inference',
   'JudgeIt: A Program for Evaluating Electoral Systems and Redistricting Plans',
   'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
