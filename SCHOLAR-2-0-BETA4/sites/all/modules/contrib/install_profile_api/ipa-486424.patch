@@ -1,0 +1,26 @@
+? ipa-486424.patch
+Index: core/user.inc
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/install_profile_api/core/Attic/user.inc,v
+retrieving revision 1.1.2.7.2.1
+diff -u -p -r1.1.2.7.2.1 user.inc
+--- core/user.inc	11 Mar 2009 16:29:39 -0000	1.1.2.7.2.1
++++ core/user.inc	13 Jun 2009 11:09:32 -0000
+@@ -26,7 +26,7 @@ function install_add_user($username, $pa
+     }
+   }
+ 
+-  user_save(
++  return user_save(
+     new stdClass(),
+     array(
+       'name' => $username, 
+@@ -35,7 +35,7 @@ function install_add_user($username, $pa
+       'roles' => $role_assignments,
+       'status' => $status
+     )
+-  );	
++  );
+ }
+ 
+ /**
