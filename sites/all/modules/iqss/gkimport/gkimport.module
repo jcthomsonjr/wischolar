@@ -107,8 +107,9 @@ function  gkimport_customize_site($vsite){
   
   db_query("UPDATE {content_type_vsite} SET field_vsite_address_value = '%s' WHERE nid = %d", $address, $sid);
   //$cid = 'content:' . $sid . ':' . $sid;
-  cache_clear_all("content:$sid:$sid", 'cache_content');
-  
+  cache_clear_all("content:$sid:$sid", 'cache_content');  
+  //save Gary's dvn alias
+  $vsite -> settings['scholar_dvn']['dvn_alias'] = 'king';
   spaces_save($vsite);
   gkimport_print("Customized site features and information"); 
   
