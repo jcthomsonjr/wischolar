@@ -622,6 +622,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
         'label' => 'Node attribute: Filter by author',
         'type' => 'context_ui',
       ),
+      /**
       'vsite_search_apachesolr_1' => array(
         'module' => 'vsite_search_apachesolr',
         'delta' => '1',
@@ -631,6 +632,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
         'label' => 'Faceted Browsing',
         'type' => 'context_ui',
       ),
+      **/
     ),
   );
 
@@ -675,6 +677,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
         'label' => 'Node attribute: Filter by author',
         'type' => 'context_ui',
       ),
+      /**
       'vsite_search_apachesolr_1' => array(
         'module' => 'vsite_search_apachesolr',
         'delta' => '1',
@@ -684,6 +687,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
         'label' => 'Faceted Browsing',
         'type' => 'context_ui',
       ),
+      **/
       'apachesolr_biblio_sm_biblio_contributors' => array(
         'module' => 'apachesolr_biblio',
         'delta' => 'sm_biblio_contributors',
@@ -889,6 +893,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
         'label' => 'Node attribute: Filter by author',
         'type' => 'context_ui',
       ),
+      /**
       'vsite_search_apachesolr_1' => array(
         'module' => 'vsite_search_apachesolr',
         'delta' => '1',
@@ -898,6 +903,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
         'label' => 'Faceted Browsing',
         'type' => 'context_ui',
       ),
+      **/
     ),
   );
   
@@ -941,6 +947,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
          'type' => 'context_ui',
          'bid' => 'apachesolr_search_uid',
       )),
+      /**
       'vsite_search_apachesolr_1' => (object)(array(
          'module' => 'vsite_search_apachesolr',
          'delta' => '1',
@@ -951,6 +958,7 @@ function _vsite_search_apachesolr_context_default_contexts() {
          'type' => 'context_ui',
          'bid' => 'vsite_search_apachesolr_1',
       )),
+      **/
     ),
     'type' => 2,
     'status' => 1,
