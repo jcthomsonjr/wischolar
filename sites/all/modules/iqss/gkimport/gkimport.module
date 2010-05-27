@@ -1113,10 +1113,10 @@ function gkimport_import_talks($file){
 
 function gkimport_cleanup(){
 	//clean up any empty url aliases
-	$res = db_query("SELECT * FROM {url_alias) WHERE dst = '%s' ", '');
-	while($data = db_fetch_array($res)){	
-	  gkimport_print("Found emtpy alias: {$data -> src}");
-	 // db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $data -> src);
+	$res = db_query("SELECT * FROM {url_alias} WHERE dst = '%s' ", '');
+	while($data = db_fetch_object($res)){	
+	  gkimport_print("Cleanup: removing emtpy alias: {$data -> src}");
+	  db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $data -> src);
 	}
 }
 
