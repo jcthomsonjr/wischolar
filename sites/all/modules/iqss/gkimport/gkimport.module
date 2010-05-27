@@ -853,7 +853,7 @@ function gkimport_import_classes(){
       $node -> teaser = node_teaser($data[1]);
       $node -> field_class_link[0] = array(
       'url' => $data[2],
-      'title' => 'Syllibus',
+      'title' => strlen($data[2]) ? 'Syllibus' : '',
       );
       $node -> name = $account -> name;
       $node -> uid = $account -> uid;
