@@ -892,6 +892,7 @@ function vsite_taxonomy_filter_by_type_block(){
  * Menu callback; displays all nodes associated with a term.
  */
 function vsite_taxonomy_term_page($str_tids = ''){
+	require_once (drupal_get_path('module', 'taxonomy').'/taxonomy.pages.inc');
   $terms = taxonomy_terms_parse_string($str_tids);
 
   if ($terms['tids']) {
