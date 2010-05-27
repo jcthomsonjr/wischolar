@@ -103,6 +103,34 @@ function _vsite_search_luceneapi_preprocess_category_facets(&$items, $module) {
 }
 
 /**
+ * Implementation of hook_context_active_contexts_alter().
+ * 
+ * @param mixed $contexts
+ *   Associative array of context objects
+ */
+function vsite_search_luceneapi_context_active_contexts_alter(&$contexts) {
+  // If one of the active contexts is the apachesolr_search context, remove some unneccessary blocks
+  if(in_array('vsite-search-luceneapi_search', array_keys($contexts))) {
+    if(!empty($contexts['vsite-section-public'])) {
+      foreach($contexts['vsite-section-public']->block as $index => $block) {
+        if(preg_match('/luceneapi_biblio_/', $block['delta'])) {
+          
+        }
+        switch($block['delta']) {
+          case 'scholar_publications-block_1':
+          case 'scholar_announcements-block_1':
+          case 'publication_types-block_1':
+          case 'publication_years-block_1':
+          case 'publication_contributors-block_1':
+            unset($contexts['vsite-section-public']->block[$index]);
+            break;
+        }
+      }      
+    }
+  }
+}
+
+/**
  * Implementation of hook_vsite_widgets()
  * 
  * @return
@@ -277,11 +305,46 @@ function vsite_search_luceneapi_luceneapi_facet_postrender_alter(&$items, $realm
         }
       }
     }
+    
+    /**
+     * Look at the type of query that has been performed, and set a flag regarding whether
+     * or not to show the biblio facets if the type:biblio filter is in effect
+     */
+    $show_biblio_facets = false;
+    if($module = luceneapi_search_executed()) {
+      $query = Zend_Search_Lucene_Search_QueryParser::parse(search_get_keys());
+      if($query) {
+        module_invoke_all('luceneapi_query_alter', $query, $module, 'node');
+        $terms = $query->getQueryTerms();
+        if(!empty($terms)) {
+          foreach($terms as $term) {
+            if($term instanceof Zend_Search_Lucene_Index_Term) {
+              if($term->field == 'type' && $term->text == 'biblio') {
+                $show_biblio_facets = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    if(!$show_biblio_facets) {
+      // Loop through the items and remove the Biblio facet blocks if needed
+      if(!empty($items)) {
+        foreach($items as $name => $item) {
+          if(preg_match('/^biblio_/', $name)) {
+            unset($items[$name]);
+          }
+        }
+      }
+    }
   }
-  
-  foreach($items as $name => $facet) {
-    $items[$name]['title'] = t($facet['title']);
-    $items[$name]['#description'] = t($facet['#description']);
+  if(!empty($items)) {
+    foreach($items as $name => $facet) {
+      $items[$name]['title'] = t($facet['title']);
+      $items[$name]['#description'] = t($facet['#description']);
+    }
   }
 }
 
@@ -601,14 +664,26 @@ function vsite_search_luceneapi_strongarm() {
     'type' => 'type',
     'original_keys' => 'original_keys',
   );
+ 
   // Enable all of the search lucene biblio facets
   $fields = luceneapi_biblio_get_fields();
   foreach($fields as $fid => $field) {
     $conf['luceneapi_facet:luceneapi_node:block'][$field['name']] = $field['name'];
+    $conf['luceneapi_facet:luceneapi_node:block:'.$field['name'].':'.'weight'] = 0;
     $conf['luceneapi_facet:luceneapi_node:fieldset'][$field['name']] = $field['name'];
   }
   $conf['luceneapi_facet:luceneapi_node:block']['biblio_contributors'] = 'biblio_contributors';
   $conf['luceneapi_facet:luceneapi_node:fieldset']['biblio_contributors'] = 'biblio_contributors';
+  
+  $conf['luceneapi_facet:luceneapi_node:block:original_keys:weight'] = -50;
+  $conf['luceneapi_facet:luceneapi_node:block:type:weight'] = -49;
+  $conf['luceneapi_facet:luceneapi_node:block:category:weight'] = -48;
+  $conf['luceneapi_facet:luceneapi_node:block:author:weight'] = -47;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_contributors:weight'] = -46;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_type_of_work:weight'] = -45;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_secondary_title:weight'] = -44;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_year:weight'] = -43;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_publisher:weight'] = -42;
   
   $conf['luceneapi_node:excluded_types'] = array(
     'project' => 'project',
