@@ -5,7 +5,9 @@
  * implementation of hook_init()
  */
 function iqss_gking_init(){
-  drupal_add_css(drupal_get_path('module', 'iqss_gking') .'/iqss_gking.css');
+  if(!iqss_gking_on_gking_site()) return;
+  jquery_ui_add(array('ui.tabs'));
+  drupal_add_css(drupal_get_path('module', 'vsite')."/theme/jquery_ui/jquery.ui/themes/openscholar/ui.tabs.css");
 }
 
 /**
@@ -124,7 +126,7 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
     
     $a_term = taxonomy_get_term(current($router_item['page_arguments']));
     if($a_term->vid == $n_vid){
-		  //Add this block category pages on Garys site 
+		  //Add this block category pages on Garys site
 		  $a_block_info = iqss_gking_block();
 		  $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
 		    'module' => 'iqss_gking',
