@@ -191,74 +191,6 @@ function gkimport_parse_files(){
 }
 
 /**
- * Imports abstract text into publication nodes
- */
-function gkimport_parse_abstracts(){
-  $drush_run = GKIMPORT_DRUSH_RUN;
-  $error_nodes = array();
-  $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
-  //check to see that variable contains data
-  if (empty($nids)) {
-    $message =  'An error has occurred: gkimport_publications variable is an empty array';
-    return  (GKIMPORT_DRUSH_RUN  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
-  }
-
-  $start = ($drush_run  === 1)  ?  drush_print(t("Starting to parse abstract files...")) : '';
-  $path = drupal_get_path('module', 'gkimport');
-  $fullpath_tmp =  GKIMPORT_FS_PATH . '/' . $path . '/tmp';  $line = (__LINE__); //mark this line for error reporting
-
-  //make sure path exists before proceeding
-  if (!is_dir($fullpath_tmp)){
-    $message =  'An error has occurred: full path specified (!directory) is not a directory on line !line';
-    return  ($drush_run  === 1) ?  drush_print(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line))) :
-    drupal_set_message(t("$message", array('!directory' => $fullpath_tmp, '!line' => $line)));
-  }
-
-  foreach($nids as $nid){
-    $node = node_load(array('nid' => $nid));
-    $matches = gkimport_parse_abstract_url($node);
-    
-    if (count($matches) && strlen($matches[2])){
-      $url = trim($matches[2]);
-      $filename = substr($url ,-1) == '/'  ? 'index.html' : basename($url);
-      $file = $fullpath_tmp . '/' . $filename;
-
-      // download the file
-      if(GKIMPORT_DOWNLOAD){
-        $cmd =  "cd $fullpath_tmp && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
-        shell_exec($cmd);
-      }
-      if (is_file($file)){
-        // clean up the text
-        $text = gkimport_clean_abstract_contents(file_get_contents($file));
-
-        //update the biblio table. TODO: node_save() may be too expensive here???
-        $sql = db_query("UPDATE {biblio} SET biblio_abst_e = '%s' WHERE nid = %d", $text, (int)$node->nid);
-      }
-    }
-    //list nodes without http accessable abstract files (field could be NULL or contain hdl:// referencing)
-    else{
-      $_SESSION['gkimport_na_pub_nodes'][] = $nid; //this is an array which captures all of the publication node id's without abstracts
-      if ( $drush_run  === 1)  {
-        //drush_print(t("Error parsing node {$node -> nid} abstract url."));
-      }else{
-        dpm(t("Error parsing node !nid abstract url. Either the url is missing or is using alternative referencing.", array('!nid' => $node -> nid)));
-      }
-    }
-  }
-  //cleanup any remaining files
-   if(GKIMPORT_DOWNLOAD){
-     $cmd =  "rm $fullpath_tmp" . '/*';
-     shell_exec($cmd);
-   }
-  variable_set('gkimport_na_pub_nodes', $_SESSION['gkimport_na_pub_nodes']);
-  if ( $drush_run  === 1) {
-    drush_print(t("!num publications have been imported without abstract text.", array('!num' => count($_SESSION['gkimport_na_pub_nodes']))));
-    drush_print(t("The node ID's for these publications have been saved in system variable: gkimport_na_pub_nodes"));
-  }
-}
-
-/**
  * Parse abstract URL
  * 
  * @return 
@@ -272,19 +204,6 @@ function gkimport_parse_abstract_url($node){
      //check to see if http url exists in biblio notes field
      preg_match('/({)(http:\/\/.*?)(})/', $url, $matches);
      return $matches;
- }
-
- /**
- * Remove uneeded html tags and javascript
- * from abstract text(s)
- */
-function  gkimport_clean_abstract_contents($contents){
-  $remove_js = array('displayBodyClasses()', 'displayHeader()', 'displayFooter()');  
-  $text = strip_tags($contents);  
-  foreach($remove_js as $js){
-    $text = str_ireplace($js, '', $text);    
-  }
-   return  trim($text);
  }
 
 /**
@@ -316,8 +235,7 @@ function gkimport_pubs_taxonomy($filepath){
      drush_print(t("Created vocabulary: !vocab_name", array('!vocab_name' => $vocab_name))) : '';     
     }
     $term_match_data = array();
-    $sub_term_match_data = array();
-    
+    $sub_term_match_data = array();    
     
     //parse csv data
     while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {      
