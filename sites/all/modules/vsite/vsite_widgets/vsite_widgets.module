@@ -18,7 +18,7 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
       case 0:
        return vsite_widgets_shield();
       case 1:
-       return vsite_widgets_search();
+       return vsite_widgets_search_widget();
       case 2:
       	return vsite_widgets_addthis();
       case 3:
@@ -27,7 +27,7 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
-function vsite_widgets_search(){
+function vsite_widgets_search_widget(){
   if (! module_exists('search') || ! user_access('search content')) {
     return;
   }
