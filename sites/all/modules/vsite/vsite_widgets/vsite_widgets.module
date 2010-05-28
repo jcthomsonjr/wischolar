@@ -31,46 +31,8 @@ function vsite_widgets_search_widget(){
   if (! module_exists('search') || ! user_access('search content')) {
     return;
   }
-
   $block['content'] = drupal_get_form('search_form');
-  //$block['subject'] = "Search";
   return $block;
-}
-
-/**
- * Search form.
- */
-function vsite_widgets_search_form($form_state) {
-  if (arg(0) == 'sitesearch' && isset($_GET['keys'])) {
-    $default = urldecode($_GET['keys']);
-  }
-  //$search =
-  $form = array();
-
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Search'),
-    '#submit' => array('vsite_widgets_search_form_submit'),
-    //'#attributes' => array('class' => 'some-other-class'),
-  );
-
-  $form['search'] = array(
-    '#type' => 'textfield',
-    '#size' => 'auto',
-    '#required' => true,
-    '#default_value' => !empty($default) ? $default : '',
-    //'#attributes' => array('class' => 'some-class'),
-  );
-
-  return $form;
-}
-
-/**
- * Search form submit handler.
- */
-function vsite_widgets_search_form_submit($form, &$form_state) {
-  $search = $form_state['values']['search'];
-  drupal_goto('sitesearch', array('keys' => $search));
 }
 
 /**
