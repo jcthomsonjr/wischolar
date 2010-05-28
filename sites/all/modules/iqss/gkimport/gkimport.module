@@ -20,6 +20,7 @@ function gkimport_import($drush_run = 0){
 
   gkimport_create_site();
   gkimport_parse_files();
+  gkimport_assign_second_terms();
   gkimport_update_notes();
   gkimport_software_pubs_set();
   gkimport_upload_pdfs();
@@ -219,7 +220,7 @@ function gkimport_pubs_taxonomy($filepath){
     //create vocabulary(s)
      $vocab_name =  'Research Interests';
     $properties = array(
-    'tags' => 1,
+    'multiple' => 1,
     'description' => 'Gary King Research Interests',
     'help' => 'Gary King Research Interests',
     );
@@ -239,7 +240,10 @@ function gkimport_pubs_taxonomy($filepath){
     
     //parse csv data
     while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {      
-      if(strlen($data[1])) $sub_term_match_data[$data[3]] = $data[1];
+      if(strlen($data[1])) $sub_term_match_data[$data[3]] = array(
+      'primary' => $data[0],
+      'secondary' => $data[1],
+      );
       
       //if title exists already in the array, and another term is to be added
       if (key_exists($data[3], $term_match_data)){
@@ -258,7 +262,7 @@ function gkimport_pubs_taxonomy($filepath){
     $terms = array_unique($all_terms);
     //set title to term mapping data in system variable to be used later
     variable_set('gkimport_taxonomy_data', $term_match_data);
-    variable_set('gkimport_taxonomy_subterm_data', $sub_term_match_data);
+    variable_set('gkimport_taxonomy_secondary_data', $sub_term_match_data);
      
     //save all publication data from the csv to a system variable to be used later
     variable_set('gkimport_all_pub_data', $all_data);
@@ -271,17 +275,28 @@ function gkimport_pubs_taxonomy($filepath){
         gkimport_print("Added term: $term");
       }
     }
-    //add second level terms
-    gkimport_add_sub_terms();
+    //add sub level terms
+    foreach(array(2,3) as $level){
+    gkimport_add_sub_terms($level);
+    }    
   }
 }
 
 /**
  * add second level terms to vocab
  */
-function gkimport_add_sub_terms(){
+function gkimport_add_sub_terms($level = 2){
   install_include(array('taxonomy'));
-  $sub_term_desc =  _gkimport_pub_sub_term_descriptions();
+  switch($level){
+    case 2:
+    $sub_term_desc =  _gkimport_pub_second_term_descriptions();
+    break;
+ 
+    case 3:
+      $sub_term_desc =  _gkimport_pub_third_term_descriptions();
+      break;
+  }   
+ 
   //get Research Interests vocab ID
   $ri_vid = variable_get('gkimport_ri_vocab_id', '');
   foreach( $sub_term_desc as $parent => $values){
@@ -295,9 +310,46 @@ function gkimport_add_sub_terms(){
       $properties = array('parent' => array($parent_tid));
       //adding the subterm here with description
       install_taxonomy_add_term($ri_vid, $term, $description, $properties);
-      gkimport_print("Added term: $term");
+      gkimport_print("Added level $level term: $term");
     }
   }
+}
+
+function gkimport_add_third_terms(){
+  install_include(array('taxonomy'));
+
+}
+
+/**
+ * assign second level terms to publication nodes
+ */
+function gkimport_assign_second_terms(){
+  install_include(array('taxonomy'));
+  $ri_vid = variable_get('gkimport_ri_vocab_id', '');
+  $subterm_data = variable_get('gkimport_taxonomy_secondary_data', array());
+  foreach($subterm_data  as $title => $values){
+    if (strlen($values['primary']) && strlen($values['secondary'])){
+      $parent_tid = install_taxonomy_get_tid(trim($values['primary']), $ri_vid);
+      //get tid for term
+      $term = db_fetch_object(db_query("SELECT th.tid, td.name, th.parent FROM {term_data} td
+ INNER JOIN {term_hierarchy} th USING(tid) HAVING th.parent = %d AND td.name = '%s' ", $parent_tid, trim($values['secondary'])));
+
+      $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ", trim($title)));
+    
+      if($nid && $term -> tid){
+        db_query("DELETE FROM {term_node} WHERE nid = %d AND tid = %d", $nid, $term -> tid);
+        db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $term -> tid);
+        $term_arr[] = array($nid => $term -> tid);
+        gkimport_print("Added level 2 term to node: {$term->name} to node $nid");
+
+      }
+      else{
+        gkimport_print("Could not add level 3 term to node $nid");
+      }
+    }
+  }
+  //dpm($term_arr);
+  gkimport_print("Matched on " . count($term_arr) . " terms");
 }
 
 /**
@@ -407,15 +459,15 @@ function gkimport_upload_pdfs(){
   //loop through again see if any pdfs did not get saved to the database
     foreach(variable_get('gkimport_all_pub_data', array()) as $data ){ 
       $res = db_result(db_query("SELECT  filename FROM {files} WHERE filename = '%s' " , basename(trim($data[2]))));
-      if (!$res && strlen(basename(trim($data[2])))) $mismatch_pdfs[] =  basename(trim($data[2]));      
+      if (!$res && strlen(basename(trim($data[2])))) $mismatch_pdfs[] =  array('title' => $data[3] , 'pdf' =>basename(trim($data[2])));      
     }
   
   gkimport_print("PDF - title mismatches");
-  drush_print_r(array_unique($mismatch_pdfs));
+  drush_print_r($mismatch_pdfs);
 }
 
 function gkimport_get_pdf($node, $url = ''){
-  if(!strlen($url)) return;
+  if(!strlen($url)) return gkimport_print("no url for node {$node->nid}");
   $path = drupal_get_path('module', 'gkimport');
   $account = user_load(array('name' => 'gking'));
   $fullpath_tmp =  GKIMPORT_FS_PATH . '/' . $path . '/tmp';
@@ -648,7 +700,7 @@ function _gkimport_create_rg_vocab($vsite){
     //create vocabulary(s)
   $vocab_name =  'Research Group';
   $properties = array(
-  'tags' => 1,
+  'multiple' => 1,
   'description' => 'Gary King Research Group',
   'help' => 'Gary King Research Group',
   );
@@ -835,16 +887,16 @@ function gkimport_software_pubs_set(){
     db_query("UPDATE {biblio} SET biblio_notes = '%s' WHERE nid =  %d" ,  $notes_text, $nid);    
   }
     
-   gkimport_software_term_pubs_set();
+   //gkimport_software_term_pubs_set();
 }
 /**
+ * NOT USING THIS ANYMORE
  * Assign the term "Software" to selected article and software publications
  */
 function gkimport_software_term_pubs_set(){
-  install_include(array('taxonomy'));
+ install_include(array('taxonomy'));
   $vid = install_taxonomy_get_vid('tags');
-  $tid = install_taxonomy_add_term($vid, 'Software');
-  
+  $tid = install_taxonomy_add_term($vid, 'Software');  
   foreach(_gkimport_software_term_pubs() as $title){
     $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ",$title));
     if ($nid){
@@ -1068,6 +1120,11 @@ function gkimport_cleanup(){
 	  gkimport_print("Cleanup: removing emtpy alias: {$data -> src}");
 	  db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $data -> src);
 	}
+	//fix zelig node
+	$current = "Zelig: Everyones Statistical Software";
+	$fixed = "Zelig: Everyone's Statistical Software";	
+	db_query("UPDATE {node} SET title = '%s' WHERE title = '%s'  ", $fixed, $current);
+	
 }
 
 /**

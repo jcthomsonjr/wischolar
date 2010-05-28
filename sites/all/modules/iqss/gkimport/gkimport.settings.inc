@@ -26,10 +26,10 @@ function _gkimport_pub_term_descriptions(){
 }
 
 /**
- * Returns term descriptions for "Research Interests" vocabulary
+ * Returns second level term descriptions for "Research Interests" vocabulary
  * @return array
  */
-function _gkimport_pub_sub_term_descriptions(){
+function _gkimport_pub_second_term_descriptions(){
   return array(
   'Causal Inference' => array(
   'Methods for Observational Data' => '',
@@ -45,6 +45,8 @@ function _gkimport_pub_sub_term_descriptions(){
 
   'Data Sharing and Informatics'  => array(
   'Related Papers on New Forms of Data' => '',
+  'Dataverse Network Project' => 'a major ongoing project to write web applications, standards, protocols, and software for automating the process of citing, archiving, preserving, distributing, cataloging, translating, disseminating, naming, verifying, and replicating data and associated analyses',
+  'The Virtual Data Center' => 'the predecessor to the Dataverse Network',
   ),
 
   'Ecological Inference'  => array(
@@ -55,8 +57,8 @@ function _gkimport_pub_sub_term_descriptions(){
   ),
 
   'Event Counts and Duration Models'  => array(
-  'Event Counts' => '',
-  'Duration of Parliamentary Governments' => '',
+  'Event Counts' => 'A series of methods that introduced existing, and developed new, statistical models for event counts for political science research.',
+  'Duration of Parliamentary Governments' => 'A statistical model, and related work, that united two waring scholarly literatures.',
   'Software' => '',
   'Related Data' => '',
   ),
@@ -85,7 +87,7 @@ function _gkimport_pub_sub_term_descriptions(){
 
   'Mortality Studies'  => array(
   'Forecasting Mortality' => '',
-  'Estimating Overall and Cause-Specific Mortality Rates' => '',
+  'Estimating Overall and Cause-Specific Mortality Rates' => 'Inexpensive methods of estimating the overall and cause-specific mortality rates from surveys when vital registration (death certificates) or other monitoring is unavailable or inadequate.',
   'Uses of Mortality Rates' => '',
   ),
 
@@ -107,7 +109,7 @@ function _gkimport_pub_sub_term_descriptions(){
   ),
 
   'Survey Research'  => array(
-  'Anchoring Vignettes' => '',
+  'Anchoring Vignettes' => 'Methods for when different respondents (perhaps from different cultures, countries, or ethnic groups), or respondents and investigators, understand survey questions in different ways. Also includes an approach to developing theoretical definitions of complicated concepts apparently definable only by example (i.e., "you know it when you see it").',
   'How Surveys Work' => '',
   'Related Research' => '',
   ),
@@ -117,6 +119,26 @@ function _gkimport_pub_sub_term_descriptions(){
   ),
   );
 }
+
+/**
+ * Returns third level term descriptions for "Research Interests" vocabulary
+ * @return array
+ */
+function _gkimport_pub_third_term_descriptions(){
+  return array(
+  'Methods for Observational Data ' => array(
+  'Evaluating Methods' => 'whether counterfactual questions (predictions, what-if questions, and causal effects) can be reasonably answered from given data, or whether inferences will instead be highly model-dependent; also, a new decomposition of bias in causal inference. These articles overlap (and each as been the subject of a journal symposium)',
+  'Matching Methods ' => '',
+  ),
+
+  'U.S. Legislatures' => array(
+  'partisan symmetry' => 'The concept of partisan symmetry as a standard for assessing partisan gerrymandering',
+  'methods for measuring partisan bias and electoral responsiveness' => 'The methods for measuring partisan bias and electoral responsiveness, and related quantities, that first relaxed the assumptions of exact uniform partisan swing and the exact correspondence between statewide electoral results and legislative electoral results, among other improvements',
+  'paradoxical benefits of redistricting' => 'Demonstrates the paradoxical benefits of redistricting to American democracy, even partisan gerrymandering, (as compared to no redistricting) in reducing partian bias and increasing electoral responsiveness. (Of course, if the symmetry standard were imposed, redistricting by any means would produce less bias than any other arrangement.)',
+  ),
+  );
+}
+
 
 function _gkimport_undo_sub_terms(){
   $res = db_query("SELECT tid FROM {term_hierarchy} WHERE parent != %d", 0);
