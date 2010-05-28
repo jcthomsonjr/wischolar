@@ -1124,6 +1124,7 @@ function gkimport_cleanup(){
 	$current = "Zelig: Everyones Statistical Software";
 	$fixed = "Zelig: Everyone's Statistical Software";	
 	db_query("UPDATE {node} SET title = '%s' WHERE title = '%s'  ", $fixed, $current);
+	db_query("UPDATE {node_revisions} SET title = '%s' WHERE title = '%s'  ", $fixed, $current);
 	
 }
 
