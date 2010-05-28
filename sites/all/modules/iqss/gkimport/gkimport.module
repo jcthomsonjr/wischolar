@@ -316,9 +316,13 @@ function gkimport_pubs_taxonomy($filepath){
      drush_print(t("Created vocabulary: !vocab_name", array('!vocab_name' => $vocab_name))) : '';     
     }
     $term_match_data = array();
+    $sub_term_match_data = array();
+    
     
     //parse csv data
     while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {      
+      if(strlen($data[1])) $sub_term_match_data[$data[3]] = $data[1];
+      
       //if title exists already in the array, and another term is to be added
       if (key_exists($data[3], $term_match_data)){
                 $val = $term_match_data[$data[3]];
@@ -336,8 +340,9 @@ function gkimport_pubs_taxonomy($filepath){
     $terms = array_unique($all_terms);
     //set title to term mapping data in system variable to be used later
     variable_set('gkimport_taxonomy_data', $term_match_data);
+    variable_set('gkimport_taxonomy_subterm_data', $sub_term_match_data);
      
-    //save all publicaiton data from the csv to a system variable to be used later
+    //save all publication data from the csv to a system variable to be used later
     variable_set('gkimport_all_pub_data', $all_data);
 
  //add all terms to vocab
@@ -345,8 +350,34 @@ function gkimport_pubs_taxonomy($filepath){
  foreach($terms as $term){
       if (trim(strlen($term))){
         install_taxonomy_add_term($vid, trim($term), $term_desc[$term]);
-        if  (GKIMPORT_DRUSH_RUN === 1)  drush_print(t("Added term: !term", array('!term'=> $term)));
+        gkimport_print("Added term: $term");
       }
+    }
+    //add second level terms
+    gkimport_add_sub_terms();
+  }
+}
+
+/**
+ * add second level terms to vocab
+ */
+function gkimport_add_sub_terms(){
+  install_include(array('taxonomy'));
+  $sub_term_desc =  _gkimport_pub_sub_term_descriptions();
+  //get Research Interests vocab ID
+  $ri_vid = variable_get('gkimport_ri_vocab_id', '');
+  foreach( $sub_term_desc as $parent => $values){
+    $parent_tid = install_taxonomy_get_tid(trim($parent),  $ri_vid);
+    if(!$parent_tid) {
+      gkimport_print("No tid found for: $parent"); 
+      continue;
+    }
+    foreach($values as $term => $description){
+      //define and pass the parent term id
+      $properties = array('parent' => array($parent_tid));
+      //adding the subterm here with description
+      install_taxonomy_add_term($ri_vid, $term, $description, $properties);
+      gkimport_print("Added term: $term");
     }
   }
 }

@@ -32,19 +32,96 @@ function _gkimport_pub_term_descriptions(){
 function _gkimport_pub_sub_term_descriptions(){
   return array(
   'Causal Inference' => array(
-  'Methods for Observational Data' => 'Evaluating whether counterfactual questions (predictions, what-if questions, and causal effects) can be reasonably answered from given data, or whether inferences will instead be highly model-dependent; also, a new decomposition of bias in causal inference. These articles overlap (and each as been the subject of a journal symposium)',
+  'Methods for Observational Data' => '',
   'Experimental Design' => '',
   'Software' => '',
-  'Data' => '',  
+  'Applications' => '',
   ),
 
   'Content Analysis' => array(
   'Software' => '',
-  'Data' => '',  
+  'Data' => '',
   ),
-  
-  
 
+  'Data Sharing and Informatics'  => array(
+  'Related Papers on New Forms of Data' => '',
+  ),
+
+  'Ecological Inference'  => array(
+  'Methods' => '',
+  'Software' => '',
+  'Data' => '',
+  'Discussions and Extensions'  => '',
+  ),
+
+  'Event Counts and Duration Models'  => array(
+  'Event Counts' => '',
+  'Duration of Parliamentary Governments' => '',
+  'Software' => '',
+  'Related Data' => '',
+  ),
+
+  'Incumbency Advantage'  => array(
+  'How to Estimate the Electoral Advantage of Incumbency' => '',
+  'Causes and Consequences' => '',
+  'Data' => '',
+  ),
+
+  'International Conflict'  => array(
+  ),
+
+  'Legislative Redistricting'  => array(
+  'U.S. Legislatures' => '',
+  'Other Districting Systems' => '',
+  'Software' => '',
+  'Data' => '',
+  ),
+
+  'Missing Data'  => array(
+  'Methods' => '',
+  'Software' => '',
+  'How Surveys Work' => '',
+  ),
+
+  'Mortality Studies'  => array(
+  'Forecasting Mortality' => '',
+  'Estimating Overall and Cause-Specific Mortality Rates' => '',
+  'Uses of Mortality Rates' => '',
+  ),
+
+  'Presidency Research and Voting Behavior'  => array(
+  'Voting Behavior' => '',
+  'Presidency Research' => '',
+  ),
+
+  'Qualitative Research'  => array(
+  'Scientific Inference in Qualitative Research' => '',
+  'In Legal Research' => '',
+  ),
+
+  'Rare Events'  => array(
+  'Case Control and Rare Events Bias Corrections' => '',
+  'Automatic Coding of Rare Events' => '',
+  'Software' => '',
+  'Data' => '',
+  ),
+
+  'Survey Research'  => array(
+  'Anchoring Vignettes' => '',
+  'How Surveys Work' => '',
+  'Related Research' => '',
+  ),
+
+  'Unifying Statistical Analysis'  => array(
+  'Related Materials' => '',
+  ),
   );
+}
 
+function _gkimport_undo_sub_terms(){
+  $res = db_query("SELECT tid FROM {term_hierarchy} WHERE parent != %d", 0);
+  while($data = db_fetch_object($res)){
+    //delete the term
+    taxonomy_del_term($data -> tid);
+  }
 }
