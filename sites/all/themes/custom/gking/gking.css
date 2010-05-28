@@ -100,9 +100,7 @@ a:hover {
 
 /* BASIC LAYOUT */
 
-table {
-  width: 100%;
-  }
+
 
 #wrapper {
   background: url(images/navbar.png) 50% 0 no-repeat transparent;
@@ -538,6 +536,25 @@ body.header-right-main #header-wrapper {
   float:right;
   }
 
+/*RESEARCH AREAS */
+
+#block-iqss_gking-areas_of_research li {
+  list-style: none;
+  margin-bottom: 1.5em;
+  margin-left:0;
+  }
+
+#block-iqss_gking-areas_of_research li .term_title {
+  font-weight: bold;
+  }
+
+
+#block-iqss_gking-areas_of_research li a {
+  background: url(images/arrow-aqua.png) no-repeat 100% 50%;
+  padding-right: 12px;
+  margin-right: 11px;
+  }
+
 
 
 /* BIBLIO */
@@ -549,4 +566,23 @@ body.header-right-main #header-wrapper {
 
 .biblio-title a, .biblio-title a:visited {
   color: #000;
+  }
+
+
+/* ATTACHMENTS*/
+
+.node-type-biblio div.itu-attachment-list {
+  display:inline-block;
+  vertical-align:middle;
+  }
+
+.node-type-biblio table.itu-attachment-list {
+  width: auto;
+  border: none;
+  border-spacing: 0;
+  }
+
+
+.node-type-biblio table.itu-attachment-list td {
+  padding-right: .4em;
   }
