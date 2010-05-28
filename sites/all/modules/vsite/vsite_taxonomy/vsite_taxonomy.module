@@ -538,8 +538,8 @@ function vsite_taxonomy_term_title($tid){
 
 /**
  * Display a taxonomy result set filtered by feature
- * 
- * @param int $tid 
+ *
+ * @param int $tid
  * @param string $s_feature (either a feature menu entry "publication" or a content_type "biblio")
  */
 function vsite_taxonomy_content_by_category($tid, $s_feature = false){
@@ -549,7 +549,7 @@ function vsite_taxonomy_content_by_category($tid, $s_feature = false){
   $view->set_display('default');
   $view->set_arguments(array( $tid ));
   
-  if($s_feature){  
+  if($s_feature){
 		if(!context_set_by_condition('path',$s_feature, true)){
 	  	context_set_by_condition('node', $s_feature, true);
 	  }//Assume that it is a menu path, if not try content type
@@ -588,13 +588,9 @@ function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
       $blocks[0]['info'] = t('Categories - Filter categorized content');
-      $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
       return $blocks;
     case 'view':
       switch ($delta) {
-        case 'filter_by_type':
-        	$block = vsite_taxonomy_filter_by_type_block();
-        	break;
         case 0:
         default:
           $block = vsite_taxonomy_block_view();
@@ -843,55 +839,9 @@ function vsite_taxonomy_taxonomy_import($gid, $definition){
 }
 
 /**
- * Alter the active context
- * @param array $contexts
- */
-function vsite_taxonomy_context_active_contexts_alter(&$contexts){
-  $router_item = menu_get_item();
-  if(strpos($router_item['path'],'taxonomy/term') !== 0) return;
-
-  //Add this block category pages on (Lets you filter the category by publictaion type)
-  $contexts['vsite-section-public']->block['vsite_taxonomy-filter_by_type'] = array(
-      'module' => 'vsite_taxonomy',
-      'delta' => 'filter_by_type',
-      'weight' => -21,
-      'region' => 'right',
-      'status' => '0',
-      'label' => 'Filter Taxonomy by Publication Type',
-      'type' => 'context_ui',
-  );
-
-}
-
-/**
- * Block to filter a taxonomy by type
- */
-function vsite_taxonomy_filter_by_type_block(){
-	
-	$router_item = menu_get_item();
-  if(strpos($router_item['path'],'taxonomy/term') !== 0) return array();
-
-	$view = views_get_view('publication_types');
-  $view->init();
-  $view->set_display('block_2');
-  $view->set_arguments(array( current($router_item['page_arguments']) ));
-  
-  //Change to the tax. path
-  $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
-  $view->execute();
-  
-  $output = $view->render();
-  if(!$output) return array();
-  
-  $a_term = taxonomy_get_term(current($router_item['page_arguments']));
-  
-  return array('subject' => $a_term->name." by Publication Type",'content' => $output);;
-}
-
-/**
  * Menu callback; displays all nodes associated with a term.
  */
-function vsite_taxonomy_term_page($str_tids = ''){
+function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
 	require_once (drupal_get_path('module', 'taxonomy').'/taxonomy.pages.inc');
   $terms = taxonomy_terms_parse_string($str_tids);
 
@@ -939,7 +889,7 @@ function vsite_taxonomy_biblio_term_page($str_tids, $s_biblio_type){
       $descendant_tids = array();
       foreach ($tids as $index => $tid) {
 	      $term = taxonomy_get_term($tid);
-	      $tree = taxonomy_get_tree($term->vid, $tid, -1, $depth);
+	      $tree = taxonomy_get_tree($term->vid, $tid, -1, 0);
 	      $descendant_tids[] = array_merge(array($tid), array_map('_taxonomy_get_tid_from_term', $tree));
 	    }
 	    

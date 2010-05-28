@@ -27,17 +27,42 @@ function iqss_gking_theme() {
 function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
   if ($op == 'list') {
     $blocks['areas_of_research']['info'] = t('Areas of Research');
-    //$blocks['taxonomy_content_types']['info'] = t('Content Types');
+    $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
     return $blocks;
   }
   elseif ($op == 'view') {
     switch ($delta) {
       case 'areas_of_research':
         return _iqss_gking_areas_of_research_wgt();
-//      case 'taxonomy_content_types':
-//      	return _iqss_gking_taxonomy_content_types_wgt();
+      case 'filter_by_type':
+         return iqss_gking_filter_by_type_block();
     }
   }
+}
+
+/**
+ * Block to filter a taxonomy by type
+ */
+function iqss_gking_filter_by_type_block(){
+  
+  $router_item = menu_get_item();
+  if(strpos($router_item['path'],'taxonomy/term') !== 0) return array();
+
+  $view = views_get_view('publication_types');
+  $view->init();
+  $view->set_display('block_2');
+  $view->set_arguments(array( current($router_item['page_arguments']) ));
+  
+  //Change to the tax. path
+  $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
+  $view->execute();
+  
+  $output = $view->render();
+  if(!$output) return array();
+  
+  $a_term = taxonomy_get_term(current($router_item['page_arguments']));
+  
+  return array('subject' => $a_term->name." by Publication Type",'content' => $output);;
 }
 
 /**
@@ -97,7 +122,7 @@ function _iqss_gking_areas_of_research_wgt(){
   foreach ($vsite->get_vocabs($type) as $n_vid => $o_vocab){
   	if($o_vocab->name != "Research Interests") continue;
 
-  	$tree = taxonomy_get_tree($n_vid);
+  	$tree = taxonomy_get_tree($n_vid,0,-1,1);
     $items = vsite_taxonomy_build_list_items($index = 0, $tree, 'iqss_gking_term_description');
 
     $output .= theme('item_list', $items);
@@ -138,6 +163,18 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
 		    'type' => 'context_ui',
 		  );
     }
+  }elseif (strpos($router_item['path'],'taxonomy/term') === 0){
+
+	  //Add this block category pages on (Lets you filter the category by publictaion type)
+	  $contexts['vsite-section-public']->block['filter_by_type-filter_by_type'] = array(
+	      'module' => 'iqss_gking',
+	      'delta' => 'filter_by_type',
+	      'weight' => -21,
+	      'region' => 'right',
+	      'status' => '0',
+	      'label' => 'Filter Taxonomy by Publication Type',
+	      'type' => 'context_ui',
+	  );
   }
 
 }
