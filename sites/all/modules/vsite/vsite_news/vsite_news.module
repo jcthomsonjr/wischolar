@@ -38,7 +38,7 @@ function vsite_news_menu(){
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
     'weight' => 3,
-  ); 
+  );
 
   $items['cp/news/activity'] = array(
     'title' => 'Activity',
@@ -46,7 +46,7 @@ function vsite_news_menu(){
     'access callback' => 'cp_access_cp',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 0,
-  ); 
+  );
   
   /*
   $items['cp/news/feeds'] = array(
@@ -80,7 +80,7 @@ function vsite_news_menu(){
     'page callback' => 'drupal_get_form',
     'page arguments' => array('cp_settings_form', 'activity'),
     'file' => 'cp.settings.inc',
-    'file path' => drupal_get_path('module', 'cp'). '/includes', 
+    'file path' => drupal_get_path('module', 'cp'). '/includes',
     'access callback' => 'cp_access_cp',
     'type' => MENU_LOCAL_TASK,
     'weight' => 5,
@@ -110,6 +110,9 @@ function vsite_news_sites(){
  * show the vsite_news_view
  */
 function vsite_news_activity(){
+	$vsite = vsite_get_vsite();
+	require_once(drupal_get_path('module','activity').'/views/activity.views.inc');
+	activity_views_access_user(user_load($vsite->group->uid));//Set the default user to group owner
 	return views_page('vsite_activity','default');
 }
 
@@ -130,7 +133,7 @@ function vsite_news_action_info(){
 }
 
 /**
- * The action called to add a vsite modification to the activity table, Change the message here to 
+ * The action called to add a vsite modification to the activity table, Change the message here to
  * @param $object
  * @param $context
  * @return unknown_type
@@ -146,7 +149,7 @@ function vsite_news_activity_action($object, $context){
 	//Setup the advanced Patterns
 	$context['node-pattern'] = 'You [action] a new [type-name] [in-vsite]';
 	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite]';
-	$context['activity_types'] = vsite_content_types(); 
+	$context['activity_types'] = vsite_content_types();
 	$s_action = 'modified';
 	switch($context['op']){
 		case 'submit':
@@ -180,7 +183,7 @@ function vsite_news_activity_action($object, $context){
 * Implementation of hook_activity_grants().
 */
 function vsite_news_activity_grants($activity, $object, $type) {
-  $vsite = vsite_get_vsite();  
+  $vsite = vsite_get_vsite();
   if(!$vsite) return array();
     
 	return array(

@@ -153,16 +153,6 @@ function vsite_taxonomy_menu() {
     'access arguments' => array('access content'),
   );
   
-  $items['taxonomy/term/biblio/%/%'] = array(
-    'title' => 'Taxonomy term',
-    'page callback' => 'vsite_taxonomy_biblio_term_page',
-    'page arguments' => array(3,4),
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-    'file' => 'taxonomy.pages.inc',
-    'file path' => drupal_get_path('module', 'taxonomy'),
-  );
-  
   return $items;
 }
 
@@ -867,41 +857,5 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
   }
 }
 
-/**
- * Menu callback; displays all nodes associated with a term by publication type
- */
-function vsite_taxonomy_biblio_term_page($str_tids, $s_biblio_type){
-  $terms = taxonomy_terms_parse_string($str_tids);
 
-  if ($terms['tids']) {
-    $result = db_query(db_rewrite_sql('SELECT t.tid, t.name FROM {term_data} t WHERE t.tid IN ('. db_placeholders($terms['tids']) .')', 't', 'tid'), $terms['tids']);
-    $tids = array(); // we rebuild the $tids-array so it only contains terms the user has access to.
-    $names = array();
-    while ($term = db_fetch_object($result)) {
-      $tids[] = $term->tid;
-      $names[] = $term->name;
-    }
-
-    if ($names) {
-      $title = implode(', ', $names);
-      drupal_set_title(check_plain($title));
-      
-      $descendant_tids = array();
-      foreach ($tids as $index => $tid) {
-	      $term = taxonomy_get_term($tid);
-	      $tree = taxonomy_get_tree($term->vid, $tid, -1, 0);
-	      $descendant_tids[] = array_merge(array($tid), array_map('_taxonomy_get_tid_from_term', $tree));
-	    }
-	    
-	    $args = call_user_func_array('array_merge', $descendant_tids);
-	    $placeholders = db_placeholders($args, 'int');
-	    $args[] = str_replace("-"," ",$s_biblio_type);
-	
-	    $sql = 'SELECT DISTINCT(n.nid), n.sticky, n.title, n.created FROM {node} n INNER JOIN {term_node} tn ON n.vid = tn.vid INNER JOIN {biblio} b ON b.nid = n.nid INNER JOIN {biblio_types} bt ON b.biblio_type = bt.tid  WHERE tn.tid IN ('. $placeholders .') AND bt.name LIKE \'%s\' AND n.status = 1 ORDER BY n.sticky DESC, n.created DESC';
-	          
-	    return theme('taxonomy_term_page', $tids, db_query($sql, $args));
-	    
-    }
-  }
-}
 

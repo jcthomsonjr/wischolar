@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Provides theme selection for each site
  */
@@ -19,7 +19,7 @@ class vsite_menus_menus implements vsite_setting {
     
     $form = array();
     $form['#title'] = 'Menus';
-    if(!$space) return $form; 
+    if(!$space) return $form;
     
     // Description
     $form['menu_items'] = array(
@@ -51,7 +51,7 @@ class vsite_menus_menus implements vsite_setting {
     
     foreach ($choices as $s_menu => $s_menu_name){
     	vsite::$override_allow_feature_access = true;
-	    $a_tree = menu_tree_all_data(variable_get("scholar_{$s_menu}_menu",false));    
+	    $a_tree = menu_tree_all_data(variable_get("scholar_{$s_menu}_menu",false));
 	    vsite::$override_allow_feature_access = false;
 	    
 	    foreach ($a_tree as $element) {
@@ -63,7 +63,7 @@ class vsite_menus_menus implements vsite_setting {
 	        if(!array_key_exists($scholar->group->nid,$a_groups)) continue; //is this node in the current group
 	      }
 	        
-	      if(is_array($space->settings['menus']['menu_items']) && 
+	      if(is_array($space->settings['menus']['menu_items']) &&
 	         array_key_exists($element['link']['mlid'],$space->settings['menus']['menu_items'])){
 	        $s_current = $space->settings['menus']['menu_items'][$element['link']['mlid']]['menu'];
 	        $n_count = $space->settings['menus']['menu_items'][$element['link']['mlid']]['weight'];
@@ -73,7 +73,8 @@ class vsite_menus_menus implements vsite_setting {
 	      }
 	      
 	      if(array_key_exists($element['link']['href'],$a_feature_links)){
-	      	$form['menu_items'][$element['link']['mlid']]['customizer'] = $menu_customizer->vsite_menu_form($space, $a_feature_links[$element['link']['href']]);
+	      	 $cust_form = $menu_customizer->vsite_menu_form($space, $a_feature_links[$element['link']['href']]);
+	      	 if(count($cust_form)) $form['menu_items'][$element['link']['mlid']]['customizer'] = $cust_form;
 	      }//If this is a feature link allow customization
 	      
 	      $form['menu_items'][$element['link']['mlid']]['#weight'] = $n_count;
@@ -88,7 +89,7 @@ class vsite_menus_menus implements vsite_setting {
 	      _menu_check_access($element['link'],explode('/', $element['link']['link_path']));
 	      if(in_array($element['link']['link_path'],$a_disabled_links) || !$element['link']['access']){
 	      	$form['menu_items'][$element['link']['mlid']]['menu']['#disabled'] = true;//Disable private features
-	      } 
+	      }
 	      
 	      $form['menu_items'][$element['link']['mlid']]['weight'] = array(
 	        '#type' => 'hidden',
@@ -110,7 +111,7 @@ class vsite_menus_menus implements vsite_setting {
 
   function submit($space, $value) {
     
-    return self::create_menus($value); 
+    return self::create_menus($value);
   }
   
   function submit_modify_space(&$space, $value){
@@ -175,7 +176,7 @@ class vsite_menus_menus implements vsite_setting {
   
   /**
    * Returns an array with any menus that are not used in the layout
-   * 
+   *
    * @return unknown_type
    */
   public static function get_disabled_menus(){
@@ -190,7 +191,7 @@ class vsite_menus_menus implements vsite_setting {
         $disabled_choices = $a_still_disabled;
       }
       
-      if(!count($disabled_choices)) break;  
+      if(!count($disabled_choices)) break;
     }//Enable menus that are in layouts
     
     return $disabled_choices;
