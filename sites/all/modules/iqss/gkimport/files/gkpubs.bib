@@ -26,19 +26,19 @@
 	author = {James Honaker and Gary King}
 }
 @article {HonKinBLa09,
-	title = {Amelia II: A Program for Missing Data},
+	title = {AMELIA II: A Program for Missing Data},
 	year = {2009},
 	author = {James Honaker and Gary King and Matthew Blackwell}
 }
 @article {IacKinPor09,
 	title = {Causal Inference Without Balance Checking: Coarsened Exact Matching},
 	year = {2009},
-	abstract = {We address a major discrepancy in matching methods for causal inference in observational data. Since these data are typically plentiful, the goal of matching is to reduce bias and only secondarily to keep variance low. However, most matching methods seem designed for the opposite goal, guaranteeing sample size ex ante but limiting bias by controlling for covariates through reductions in the imbalance between treated and control groups only ex post and only sometimes. (The resulting practical difficulty may explain why so many published applications do not check whether imbalance was reduced and so may not even be decreasing bias.) We introduce {\textquoteleft}{\textquoteleft}Coarsened Exact Matching{\textquoteright}{\textquoteright} (CEM) which, unlike most existing approaches, bounds through ex ante user choice the degree of maximal imbalance, model dependence, and causal effect estimation error; eliminates the need for a separate procedure to restrict data to common support; meets the congruence principle; is approximately invariant to measurement error; works well with multicategory treatment variables and with modern methods of imputation for missing data; is computationally efficient even with massive data sets; and is easy to understand and use. CEM can improve causal inferences in a wide range of applications, and may be preferred for simplicity of use even when it is possible to design superior methods for particular problems. We also make available open source software for R and Stata which implements all our suggestions.},
+	abstract = {We address a major discrepancy in matching methods for causal inference in observational data. Since these data are typically plentiful, the goal of matching is to reduce bias and only secondarily to keep variance low. However, most matching methods seem designed for the opposite goal, guaranteeing sample size ex ante but limiting bias by controlling for covariates through reductions in the imbalance between treated and control groups only ex post and only sometimes. (The resulting practical difficulty may explain why so many published applications do not check whether imbalance was reduced and so may not even be decreasing bias.) We introduce {\textquoteleft}{\textquoteleft}Coarsened Exact Matching{\textquoteright}{\textquoteright} (CEM) which, unlike most existing approaches, bounds through ex ante user choice the degree of maximal imbalance, model dependence, and causal effect estimation error and eliminates the need for a separate procedure to restrict data to common support and meets the congruence principle and is approximately invariant to measurement error and works well with multicategory treatment variables and with modern methods of imputation for missing data and is computationally efficient even with massive data sets and and is easy to understand and use. CEM can improve causal inferences in a wide range of applications, and may be preferred for simplicity of use even when it is possible to design superior methods for particular problems. We also make available open source software for R and Stata which implements all our suggestions.},
 	url = {http://gking.harvard.edu/files/abs/cem-plus-abs.shtml},
 	author = {Stefano M. Iacus and Gary King and Giuseppe Porro}
 }
 @article {IacKinPor09b,
-	title = {CEM: Coarsened Exact Matching Software},
+	title = {CEM: Software for Coarsened Exact Matching},
 	journal = {Journal of statistical Software},
 	volume = {30},
 	year = {2009},
@@ -52,7 +52,7 @@
 	number = {1},
 	year = {2009},
 	pages = {29{\textendash}53},
-	abstract = {A basic feature of many field experiments is that investigators are only able to randomize clusters of individuals --- such as households, communities, firms, medical practices, schools, or classrooms --- even when the individual is the unit of interest. To recoup the resulting efficiency loss, some studies pair similar clusters and randomize treatment within pairs. However, many other studies avoid pairing, in part because of claims in the literature, echoed by clinical trials standards organizations, that this matched-pair, cluster-randomization design has serious problems. We argue that all such claims are unfounded. We also prove that the estimator recommended for this design in the literature is unbiased only in situations when matching is unnecessary; and its standard error is also invalid. To overcome this problem without modeling assumptions, we develop a simple design-based estimator with much improved statistical properties. We also propose a model-based approach that includes some of the benefits of our design-based estimator as well as the estimator in the literature. Our methods also address individual-level noncompliance, which is common in applications but not allowed for in most existing methods. We show that from the perspective of bias, efficiency, power, robustness, or research costs, and in large or small samples, pairing should be used in cluster-randomized experiments whenever feasible; failing to do so is equivalent to discarding a considerable fraction of one{\textquoteright}s data. We develop these techniques in the context of a randomized evaluation we are conducting of the Mexican Universal Health Insurance Program.},
+	abstract = {A basic feature of many field experiments is that investigators are only able to randomize clusters of individuals --- such as households, communities, firms, medical practices, schools, or classrooms --- even when the individual is the unit of interest. To recoup the resulting efficiency loss, some studies pair similar clusters and randomize treatment within pairs. However, many other studies avoid pairing, in part because of claims in the literature, echoed by clinical trials standards organizations, that this matched-pair, cluster-randomization design has serious problems. We argue that all such claims are unfounded. We also prove that the estimator recommended for this design in the literature is unbiased only in situations when matching is unnecessary and and its standard error is also invalid. To overcome this problem without modeling assumptions, we develop a simple design-based estimator with much improved statistical properties. We also propose a model-based approach that includes some of the benefits of our design-based estimator as well as the estimator in the literature. Our methods also address individual-level noncompliance, which is common in applications but not allowed for in most existing methods. We show that from the perspective of bias, efficiency, power, robustness, or research costs, and in large or small samples, pairing should be used in cluster-randomized experiments whenever feasible and failing to do so is equivalent to discarding a considerable fraction of one{\textquoteright}s data. We develop these techniques in the context of a randomized evaluation we are conducting of the Mexican Universal Health Insurance Program.},
 	url = {http://gking.harvard.edu/files/abs/cluster-abs.shtml},
 	author = {Kosuke Imai and Gary King and Clayton Nall}
 }
@@ -90,7 +90,7 @@
 	number = {1},
 	year = {2009},
 	pages = {64{\textendash}72},
-	abstract = {A basic feature of many field experiments is that investigators are only able to randomize clusters of individuals --- such as households, communities, firms, medical practices, schools, or classrooms --- even when the individual is the unit of interest. To recoup the resulting efficiency loss, some studies pair similar clusters and randomize treatment within pairs. However, many other studies avoid pairing, in part because of claims in the literature, echoed by clinical trials standards organizations, that this matched-pair, cluster-randomization design has serious problems. We argue that all such claims are unfounded. We also prove that the estimator recommended for this design in the literature is unbiased only in situations when matching is unnecessary; and its standard error is also invalid. To overcome this problem without modeling assumptions, we develop a simple design-based estimator with much improved statistical properties. We also propose a model-based approach that includes some of the benefits of our design-based estimator as well as the estimator in the literature. Our methods also address individual-level noncompliance, which is common in applications but not allowed for in most existing methods. We show that from the perspective of bias, efficiency, power, robustness, or research costs, and in large or small samples, pairing should be used in cluster-randomized experiments whenever feasible; failing to do so is equivalent to discarding a considerable fraction of one{\textquoteright}s data. We develop these techniques in the context of a randomized evaluation we are conducting of the Mexican Universal Health Insurance Program.},
+	abstract = {A basic feature of many field experiments is that investigators are only able to randomize clusters of individuals --- such as households, communities, firms, medical practices, schools, or classrooms --- even when the individual is the unit of interest. To recoup the resulting efficiency loss, some studies pair similar clusters and randomize treatment within pairs. However, many other studies avoid pairing, in part because of claims in the literature, echoed by clinical trials standards organizations, that this matched-pair, cluster-randomization design has serious problems. We argue that all such claims are unfounded. We also prove that the estimator recommended for this design in the literature is unbiased only in situations when matching is unnecessary and and its standard error is also invalid. To overcome this problem without modeling assumptions, we develop a simple design-based estimator with much improved statistical properties. We also propose a model-based approach that includes some of the benefits of our design-based estimator as well as the estimator in the literature. Our methods also address individual-level noncompliance, which is common in applications but not allowed for in most existing methods. We show that from the perspective of bias, efficiency, power, robustness, or research costs, and in large or small samples, pairing should be used in cluster-randomized experiments whenever feasible and failing to do so is equivalent to discarding a considerable fraction of one{\textquoteright}s data. We develop these techniques in the context of a randomized evaluation we are conducting of the Mexican Universal Health Insurance Program.},
 	author = {Kosuke Imai and Gary King and Clayton Nall}
 }
 @article {IacKinPor09a,
@@ -114,7 +114,7 @@ We randomly assigned treatment within 74 matched pairs of health clusters -- ie,
 
 Findings
 
-Intention-to-treat estimates indicated a 23\% reduction from baseline in catastrophic expenditures (1{\textperiodcentered}9\% points; 95\% CI 0{\textperiodcentered}14-3{\textperiodcentered}66). The effect in poor households was 3{\textperiodcentered}0\% points (0{\textperiodcentered}46-5{\textperiodcentered}54) and in experimental compliers was 6{\textperiodcentered}5\% points (1{\textperiodcentered}65-11{\textperiodcentered}28), 30\% and 59\% reductions, respectively. The intention-to-treat effect on health spending in poor households was 426 pesos (39-812), and the complier average causal effect was 915 pesos (147-1684). Contrary to expectations and previous observational research, we found no effects on medication spending, health outcomes, or utilisation.
+Intention-to-treat estimates indicated a 23\% reduction from baseline in catastrophic expenditures (1{\textperiodcentered}9\% points and 95\% CI 0{\textperiodcentered}14-3{\textperiodcentered}66). The effect in poor households was 3{\textperiodcentered}0\% points (0{\textperiodcentered}46-5{\textperiodcentered}54) and in experimental compliers was 6{\textperiodcentered}5\% points (1{\textperiodcentered}65-11{\textperiodcentered}28), 30\% and 59\% reductions, respectively. The intention-to-treat effect on health spending in poor households was 426 pesos (39-812), and the complier average causal effect was 915 pesos (147-1684). Contrary to expectations and previous observational research, we found no effects on medication spending, health outcomes, or utilisation.
 
 Interpretation
 
@@ -256,7 +256,7 @@ Programme resources reached the poor. However, the programme did not show some o
 	number = {3},
 	year = {2007},
 	pages = {479-506},
-	abstract = {We develop an approach to conducting large scale randomized public policy experiments intended to be more robust to the political interventions that have ruined some or all parts of many similar previous efforts. Our proposed design is insulated from selection bias in some circumstances even if we lose observations; our inferences can still be unbiased even if politics disrupts any two of the three steps in our analytical procedures; and other empirical checks are available to validate the overall design. We illustrate with a design and empirical validation of an evaluation of the Mexican Seguro Popular de Salud (Universal Health Insurance) program we are conducting. Seguro Popular, which is intended to grow to provide medical care, drugs, preventative services, and financial health protection to the 50 million Mexicans without health insurance, is one of the largest health reforms of any country in the last two decades. The evaluation is also large scale, constituting one of the largest policy experiments to date and what may be the largest randomized health policy experiment ever.},
+	abstract = {We develop an approach to conducting large scale randomized public policy experiments intended to be more robust to the political interventions that have ruined some or all parts of many similar previous efforts. Our proposed design is insulated from selection bias in some circumstances even if we lose observations and our inferences can still be unbiased even if politics disrupts any two of the three steps in our analytical procedures and and other empirical checks are available to validate the overall design. We illustrate with a design and empirical validation of an evaluation of the Mexican Seguro Popular de Salud (Universal Health Insurance) program we are conducting. Seguro Popular, which is intended to grow to provide medical care, drugs, preventative services, and financial health protection to the 50 million Mexicans without health insurance, is one of the largest health reforms of any country in the last two decades. The evaluation is also large scale, constituting one of the largest policy experiments to date and what may be the largest randomized health policy experiment ever.},
 	url = {http://gking.harvard.edu/files/abs/spd-abs.shtml},
 	author = {Gary King and Emmanuela Gakidou and Nirmala Ravishankar and Ryan T. Moore and Jason Lakin and Manett Vargas and Martha Mar{\'\i}a T{\'e}llez-Rojo and Juan Eugenio Hern{\'a}ndez {\'A}vila and Mauricio Hern{\'a}ndez {\'A}vila and H{\'e}ctor Hern{\'a}ndez Llamas}
 }
@@ -321,7 +321,7 @@ Programme resources reached the poor. However, the programme did not show some o
 	author = {Gary King}
 }
 @article {GakKin06,
-	title = {Death by Survey: Estimating Adult Mortality without Selection Bias from Sibling Survival Data from Sibling Survival Data},
+	title = {Death by Survey: Estimating Adult Mortality without Selection Bias from Sibling Survival Data},
 	journal = {Demography},
 	volume = {43},
 	number = {3},
@@ -366,7 +366,7 @@ Programme resources reached the poor. However, the programme did not show some o
 	editor = {Samuel Kernell and Steven S. Smith}
 }
 @article {ImaKinLau06,
-	title = {Zelig: Everyones Statistical Software},
+	title = {Zelig: Everyone's Statistical Software},
 	year = {2006},
 	url = {http://gking.harvard.edu/zelig},
 	author = {Kosuke Imai and Gary King and Olivia Lau}
@@ -405,13 +405,13 @@ Programme resources reached the poor. However, the programme did not show some o
 	author = {Kosuke Imai and Gary King}
 }
 @article {BecKinZen04,
-	title = {Theory and Evidence in International Conflict: Response to de Marchi, Gelpi, and Grynaviski},
+	title = {Theory and Evidence in International Conflict: A Response to de Marchi, Gelpi, and Grynaviski},
 	volume = {98},
 	number = {2},
 	year = {2004},
 	month = {May},
 	pages = {379-389},
-	abstract = {We thank Scott de Marchi, Christopher Gelpi, and Jeffrey Grynaviski (2003; hereinafter dGG) for their careful attention to our work (Beck, King, and Zeng, 2000; hereinafter BKZ) and for raising some important methodological issues that we agree deserve readers{\textquoteright} attention. We are pleased that dGG{\textquoteright}s analyses are consistent with the theoretical conjecture about international conflict put forward in BKZ --- "The causes of conflict, theorized to be important but often found to be small or ephemeral, are indeed tiny for the vast majority of dyads, but they are large stable and replicable whenever the ex ante probability of conflict is large" (BKZ, p.21) --- and that dGG agree with our main methodological point that out-of-sample forecasting performance should always be one of the standards used to judge studies of international conflict, and indeed most other areas of political science. However, dGG frequently err when they draw methodological conclusions. Their central claim involves the superiority of logit over neural network models for international conflict data, as judged by forecasting performance and other properties such as ease of use and interpretation ("neural networks hold few unambiguous advantages... and carry significant costs" relative to logit; dGG, p.14). We show here that this claim, which would be regarded as stunning in any of the diverse fields in which both methods are more commonly used, is false. We also show that dGG{\textquoteright}s methodological errors and the restrictive model they favor cause them to miss and mischaracterize crucial patterns in the causes of international conflict. We begin in the next section by summarizing the growing support for our conjecture about international conflict. The second section discusses the theoretical reasons why neural networks dominate logistic regression, correcting a number of methodological errors. The third section then demonstrates empirically, in the same data as used in BKZ and dGG, that neural networks substantially outperform dGG{\textquoteright}s logit model. We show that neural networks improve on the forecasts from logit as much as logit improves on a model with no theoretical variables. We also show how dGG{\textquoteright}s logit analysis assumed, rather than estimated, the answer to the central question about the literature{\textquoteright}s most important finding, the effect of democracy on war. Since this and other substantive assumptions underlying their logit model are wrong, their substantive conclusion about the democratic peace is also wrong. The neural network models we used in BKZ not only avoid these difficulties, but they, or one of the other methods available that do not make highly restrictive assumptions about the exact functional form, are just what is called for to study the observable implications of our conjecture.},
+	abstract = {We thank Scott de Marchi, Christopher Gelpi, and Jeffrey Grynaviski (2003 and hereinafter dGG) for their careful attention to our work (Beck, King, and Zeng, 2000 and hereinafter BKZ) and for raising some important methodological issues that we agree deserve readers{\textquoteright} attention. We are pleased that dGG{\textquoteright}s analyses are consistent with the theoretical conjecture about international conflict put forward in BKZ --- "The causes of conflict, theorized to be important but often found to be small or ephemeral, are indeed tiny for the vast majority of dyads, but they are large stable and replicable whenever the ex ante probability of conflict is large" (BKZ, p.21) --- and that dGG agree with our main methodological point that out-of-sample forecasting performance should always be one of the standards used to judge studies of international conflict, and indeed most other areas of political science. However, dGG frequently err when they draw methodological conclusions. Their central claim involves the superiority of logit over neural network models for international conflict data, as judged by forecasting performance and other properties such as ease of use and interpretation ("neural networks hold few unambiguous advantages... and carry significant costs" relative to logit and dGG, p.14). We show here that this claim, which would be regarded as stunning in any of the diverse fields in which both methods are more commonly used, is false. We also show that dGG{\textquoteright}s methodological errors and the restrictive model they favor cause them to miss and mischaracterize crucial patterns in the causes of international conflict. We begin in the next section by summarizing the growing support for our conjecture about international conflict. The second section discusses the theoretical reasons why neural networks dominate logistic regression, correcting a number of methodological errors. The third section then demonstrates empirically, in the same data as used in BKZ and dGG, that neural networks substantially outperform dGG{\textquoteright}s logit model. We show that neural networks improve on the forecasts from logit as much as logit improves on a model with no theoretical variables. We also show how dGG{\textquoteright}s logit analysis assumed, rather than estimated, the answer to the central question about the literature{\textquoteright}s most important finding, the effect of democracy on war. Since this and other substantive assumptions underlying their logit model are wrong, their substantive conclusion about the democratic peace is also wrong. The neural network models we used in BKZ not only avoid these difficulties, but they, or one of the other methods available that do not make highly restrictive assumptions about the exact functional form, are just what is called for to study the observable implications of our conjecture.},
 	url = {http://gking.harvard.edu/files/abs/toe-resp-abs.shtml},
 	author = {Nathaniel Beck and Gary King and Langche Zeng}
 }
@@ -423,7 +423,7 @@ Programme resources reached the poor. However, the programme did not show some o
 	year = {2004},
 	month = {February},
 	pages = {191{\textendash}207},
-	abstract = {We address two long-standing survey research problems: measuring complicated concepts, such as political freedom or efficacy, that researchers define best with reference to examples; and what to do when respondents interpret identical questions in different ways. Scholars have long addressed these problems with approaches to reduce incomparability, such as writing more concrete questions -- with uneven success. Our alternative is to measure directly response category incomparability and to correct for it. We measure incomparability via respondents{\textquoteright} assessments, on the same scale as the self-assessments to be corrected, of hypothetical individuals described in short vignettes. Since actual levels of the vignettes are invariant over respondents, variability in vignette answers reveals incomparability. Our corrections require either simple recodes or a statistical model designed to save survey administration costs. With analysis, simulations, and cross-national surveys, we show how response incomparability can drastically mislead survey researchers and how our approach can fix them.},
+	abstract = {We address two long-standing survey research problems: measuring complicated concepts, such as political freedom or efficacy, that researchers define best with reference to examples and and what to do when respondents interpret identical questions in different ways. Scholars have long addressed these problems with approaches to reduce incomparability, such as writing more concrete questions -- with uneven success. Our alternative is to measure directly response category incomparability and to correct for it. We measure incomparability via respondents{\textquoteright} assessments, on the same scale as the self-assessments to be corrected, of hypothetical individuals described in short vignettes. Since actual levels of the vignettes are invariant over respondents, variability in vignette answers reveals incomparability. Our corrections require either simple recodes or a statistical model designed to save survey administration costs. With analysis, simulations, and cross-national surveys, we show how response incomparability can drastically mislead survey researchers and how our approach can fix them.},
 	url = {http://gking.harvard.edu/files/abs/vign-abs.shtml},
 	author = {Gary King and Christopher J.L. Murray and Joshua A. Salomon and Ajay Tandon}
 }
@@ -493,8 +493,12 @@ Programme resources reached the poor. However, the programme did not show some o
 	year = {2004},
 	author = {Gary King}
 }
+@article {King04,
+	title = {EzI: A(n Easy) Program for Ecological Inference},
+	author = {Gary King and Kenneth Benoit}
+}
 @article {King04b,
-	title = {Finding New Information for Ecological Inference Models: A Comment on Jon Wakefield, "Ecological Inference in 2 X 2 Tables"},
+	title = {Finding New Information for Ecological Inference Models: A Comment on Jon Wakefield, 'Ecological Inference in 2 X 2 Tables'},
 	journal = {Journal of the Royal Statistical Society},
 	volume = {167},
 	number = {Series A},
@@ -520,7 +524,7 @@ Programme resources reached the poor. However, the programme did not show some o
 	year = {2003},
 	month = {Winter},
 	pages = {86{\textendash}94},
-	abstract = {Since Herron and Shotts (2003a; hereinafter HS), Adolph and King (2003;hereinafter AK), and Herron and Shotts (2003b; hereinafter HS2), the four of us have iterated many more times, learned a great deal, and arrived at a consensus on this issue. This paper describes our joint recommendations for how to run second-stage ecological regressions, and provides detailed analyses to back up our claims.},
+	abstract = {Since Herron and Shotts (2003a and hereinafter HS), Adolph and King (2003 andhereinafter AK), and Herron and Shotts (2003b and hereinafter HS2), the four of us have iterated many more times, learned a great deal, and arrived at a consensus on this issue. This paper describes our joint recommendations for how to run second-stage ecological regressions, and provides detailed analyses to back up our claims.},
 	url = {http://gking.harvard.edu/files/abs/akhs-abs.shtml},
 	author = {Christopher Adolph and Gary King, with Michael C. Herron and Kenneth W. Shotts}
 }
@@ -708,7 +712,7 @@ We review the limited knowledge on the health consequences of conflict, suggest 
 	number = {3},
 	year = {2002},
 	month = {August},
-	abstract = {Background: Studies have revealed large variations in average health status across social, economic, and other groups. No study exists on the distribution of the risk of ill-health across individuals, either within groups or across all people in a society, and as such a crucial piece of total health inequality has been overlooked. Some of the reason for this neglect has been that the risk of death, which forms the basis for most measures, is impossible to observe directly and difficult to estimate. Methods: We develop a measure of total health inequality -- encompassing all inequalities among people in a society, including variation between and within groups -- by adapting a beta-binomial regression model. We apply it to children under age two in 50 low- and middle-income countries. Our method has been adopted by the World Health Organization and is being implemented in surveys around the world; preliminary estimates have appeared in the World Health Report (2000). Results: Countries with similar average child mortality differ considerably in total health inequality. Liberia and Mozambique have the largest inequalities in child survival, while Colombia, the Philippines and Kazakhstan have the lowest levels among the countries measured. Conclusions: Total health inequality estimates should be routinely reported alongside average levels of health in populations and groups, as they reveal important policy-related information not otherwise knowable. This approach enables meaningful comparisons of inequality across countries and future analyses of the determinants of inequality.},
+	abstract = {Background: Studies have revealed large variations in average health status across social, economic, and other groups. No study exists on the distribution of the risk of ill-health across individuals, either within groups or across all people in a society, and as such a crucial piece of total health inequality has been overlooked. Some of the reason for this neglect has been that the risk of death, which forms the basis for most measures, is impossible to observe directly and difficult to estimate. Methods: We develop a measure of total health inequality -- encompassing all inequalities among people in a society, including variation between and within groups -- by adapting a beta-binomial regression model. We apply it to children under age two in 50 low- and middle-income countries. Our method has been adopted by the World Health Organization and is being implemented in surveys around the world and preliminary estimates have appeared in the World Health Report (2000). Results: Countries with similar average child mortality differ considerably in total health inequality. Liberia and Mozambique have the largest inequalities in child survival, while Colombia, the Philippines and Kazakhstan have the lowest levels among the countries measured. Conclusions: Total health inequality estimates should be routinely reported alongside average levels of health in populations and groups, as they reveal important policy-related information not otherwise knowable. This approach enables meaningful comparisons of inequality across countries and future analyses of the determinants of inequality.},
 	url = {http://gking.harvard.edu/files/abs/ebb-abs.shtml},
 	author = {Emmanuela Gakidou and Gary King}
 }
@@ -735,7 +739,7 @@ We review the limited knowledge on the health consequences of conflict, suggest 
 	author = {James E. Alt and Gary King and Curtis Signorino}
 }
 @article {AltAndDig01a,
-	title = {A Digital Library for the Dissemination and Replication of Quantitative Social Science Research: The Virtual Data Center},
+	title = {A Digital Library for the Dissemination and Replication of Quantitative Social Science Research},
 	journal = {Social Science Computer Review},
 	volume = {19},
 	number = {4},
@@ -790,7 +794,7 @@ We review the limited knowledge on the health consequences of conflict, suggest 
 	year = {2001},
 	month = {Fall},
 	pages = {497{\textendash}507},
-	abstract = {The intellectual stakes at issue in this symposium are very high: Green, Kim, and Yoon (2000; hereinafter GKY) apply their proposed methodological prescriptions and conclude that they key findings in the field is wrong; democracy "has no effect on militarized disputes." GKY are mainly interested in convincing scholars about their methodological points and see themselves as having no stake in the resulting substantive conclusions. However, their methodological points are also high stakes claims: if correct, the vast majority of statistical analyses of military conflict ever conducted would be invalidated. GKY say they "make no attempt to break new ground statistically," but, as we will see, this both understates their methodological contribution to the field and misses some unique features of their application and data in international relations. On the ltter, GKY{\textquoteright}s critics are united: Oneal and Russett (2000) conclude that GKY{\textquoteright}s method "produces distorted results," and show even in GKY{\textquoteright}s framework how democracy{\textquoteright}s effect can be reinstated. Beck and Katz (2000) are even more unambiguous: "GKY{\textquoteright}s conclusion, in table 3, that variables such as democracy have no pacific impact, is simply nonsense...GKY{\textquoteright}s (methodological) proposal...is NEVER a good idea." My given task is to sort out and clarify these conflicting claims and counterclaims. The procedure I followed was to engage in extensive discussions with the participants that included joint reanalyses provoked by our discussions and passing computer program code (mostly with Monte Carlo simulations) back and forth to ensure we were all talking about the same methods and agreed with the factual results. I learned a great deal from this process and believe that the positions of the participants are now a lot closer than it may seem from their written statements. Indeed, I believe that all the participants now agree with what I have written here, even though they would each have different emphases (and although my believing there is agreement is not the same as there actually being agreement!).},
+	abstract = {The intellectual stakes at issue in this symposium are very high: Green, Kim, and Yoon (2000 and hereinafter GKY) apply their proposed methodological prescriptions and conclude that they key findings in the field is wrong and democracy "has no effect on militarized disputes." GKY are mainly interested in convincing scholars about their methodological points and see themselves as having no stake in the resulting substantive conclusions. However, their methodological points are also high stakes claims: if correct, the vast majority of statistical analyses of military conflict ever conducted would be invalidated. GKY say they "make no attempt to break new ground statistically," but, as we will see, this both understates their methodological contribution to the field and misses some unique features of their application and data in international relations. On the ltter, GKY{\textquoteright}s critics are united: Oneal and Russett (2000) conclude that GKY{\textquoteright}s method "produces distorted results," and show even in GKY{\textquoteright}s framework how democracy{\textquoteright}s effect can be reinstated. Beck and Katz (2000) are even more unambiguous: "GKY{\textquoteright}s conclusion, in table 3, that variables such as democracy have no pacific impact, is simply nonsense...GKY{\textquoteright}s (methodological) proposal...is NEVER a good idea." My given task is to sort out and clarify these conflicting claims and counterclaims. The procedure I followed was to engage in extensive discussions with the participants that included joint reanalyses provoked by our discussions and passing computer program code (mostly with Monte Carlo simulations) back and forth to ensure we were all talking about the same methods and agreed with the factual results. I learned a great deal from this process and believe that the positions of the participants are now a lot closer than it may seem from their written statements. Indeed, I believe that all the participants now agree with what I have written here, even though they would each have different emphases (and although my believing there is agreement is not the same as there actually being agreement!).},
 	url = {http://gking.harvard.edu/files/abs/pool-abs.shtml},
 	author = {Gary King}
 }
@@ -827,7 +831,7 @@ We review the limited knowledge on the health consequences of conflict, suggest 
 	author = {Gary King}
 }
 @article {BecKinZen00,
-	title = {Improving Quantitative Studies of International Conflict},
+	title = {Improving Quantitative Studies of International Conflict: A Conjecture},
 	journal = {American Political Science Review},
 	volume = {94},
 	number = {1},
@@ -1010,7 +1014,7 @@ King and Laver (1993) reanalyzed B\&H{\textquoteright}s data and demonstrated in
 	publisher = {Dartmouth Publishing Company},
 	organization = {Dartmouth Publishing Company},
 	address = {Aldershot, England},
-	abstract = {This article describes the results of an analysis we did of state legislative elections in the United States, where each state is required to redraw the boundaries of its state legislative districts every ten years. In the United States, redistrictings are sometimes controlled by the Democrats, sometimes by the Republicans, and sometimes by bipartisan committees, but never by neutral boundary commissions. Our goal was to study the consequences of redistricting; at the conclusion of this article, we discuss how our findings might be relevant to British elections.},
+	abstract = {This article describes the results of an analysis we did of state legislative elections in the United States, where each state is required to redraw the boundaries of its state legislative districts every ten years. In the United States, redistrictings are sometimes controlled by the Democrats, sometimes by the Republicans, and sometimes by bipartisan committees, but never by neutral boundary commissions. Our goal was to study the consequences of redistricting and at the conclusion of this article, we discuss how our findings might be relevant to British elections.},
 	url = {http://gking.harvard.edu/files/abs/advant-abs.shtml},
 	author = {Andrew Gelman and Gary King},
 	editor = {Iain McLean and David Butler, eds}
@@ -1061,7 +1065,7 @@ King and Laver (1993) reanalyzed B\&H{\textquoteright}s data and demonstrated in
 	year = {1995},
 	month = {September},
 	pages = {443{\textendash}499},
-	abstract = {Political science is a community enterprise; the community of empirical political scientists need access to the body of data necessary to replicate existing studies to understand, evaluate, and especially build on this work. Unfortunately, the norms we have in place now do not encourage, or in some cases even permit, this aim. Following are suggestions that would facilitate replication and are easy to implement -- by teachers, students, dissertation writers, graduate programs, authors, reviewers, funding agencies, and journal and book editors.},
+	abstract = {Political science is a community enterprise and the community of empirical political scientists need access to the body of data necessary to replicate existing studies to understand, evaluate, and especially build on this work. Unfortunately, the norms we have in place now do not encourage, or in some cases even permit, this aim. Following are suggestions that would facilitate replication and are easy to implement -- by teachers, students, dissertation writers, graduate programs, authors, reviewers, funding agencies, and journal and book editors.},
 	url = {http://gking.harvard.edu/files/abs/replication-abs.shtml},
 	author = {Gary King}
 }
@@ -1164,7 +1168,7 @@ However, the reviews make clear that although our book may be the latest word on
 	year = {1993},
 	month = {September},
 	pages = {397{\textendash}401},
-	abstract = {Herbert Zimiles has written a provocative article on quantitative research. Because his specific critiques of research on infant day care are nominal examples of his much broader arguments, we focus only on his general methodological perspectives in this brief comment. We write as methodologists, a qualitative researcher with a quantitative background (Walsh) and a quantitative researcher completing a book on qualitative research (King; see King, Keohane \& Verba, in preparation).},
+	abstract = {Herbert Zimiles has written a provocative article on quantitative research. Because his specific critiques of research on infant day care are nominal examples of his much broader arguments, we focus only on his general methodological perspectives in this brief comment. We write as methodologists, a qualitative researcher with a quantitative background (Walsh) and a quantitative researcher completing a book on qualitative research (King and see King, Keohane \& Verba, in preparation).},
 	url = {http://gking.harvard.edu/files/abs/good-abs.shtml},
 	author = {Gary King and Daniel J. Walsh}
 }
@@ -1227,7 +1231,7 @@ We show that responses to pollsters during the campaign are not generally inform
 	author = {Andrew Gelman and Gary King}
 }
 @article {King91,
-	title = {{\textquoteright}Truth{\textquoteright} is Stranger than Prediction, More Questionable Than Causal Inference},
+	title = {Truth is Stranger than Prediction, More Questionable Than Causal Inference},
 	journal = {American Journal of Political Science},
 	volume = {35},
 	number = {4},
@@ -1236,7 +1240,7 @@ We show that responses to pollsters during the campaign are not generally inform
 	pages = {1047{\textendash}1053},
 	abstract = {Robert Luskin{\textquoteright}s article in this issue provides a useful service by appropriately qualifying several points I made in my 1986 American Journal of Political Science article. Whereas I focused on how to avoid common mistakes in quantitative political sciences, Luskin clarifies ways to extract some useful information from usually problematic statistics: correlation coefficients, standardized coefficients, and especially R2. Since these three statistics are very closely related (and indeed deterministic functions of one another in some cases), I focus in this discussion primarily on R2, the most widely used and abused. Luskin also widens the discussion to various kinds of specification tests, a general issue I also address. In fact, as Beck (1991) reports, a large number of formal specification tests are just functions of R2, with differences among them primarily due to how much each statistic penalizes one for including extra parameters and fewer observations.
 
-Quantitative political scientists often worry about model selection and specification, asking questions about parameter identification, autocorrelated or heteroscedastic disturbances, parameter constancy, variable choice, measurement error, endogeneity, functional forms, stochastic assumptions, and selection bias, among numerous others. These model specification questions are all important, but we may have forgotten why we pose them. Political scientists commonly give three reasons: (1) finding the "true" model, or the "full" explanation; (2) prediction; and (3) estimating specific causal effects. I argue here that (1) is used the most but useful the least; (2) is very useful but not usually in political science where forecasting is not often a central concern; and (3) correctly represents the goals of political scientists and should form the basis of most of our quantitative empirical work.},
+Quantitative political scientists often worry about model selection and specification, asking questions about parameter identification, autocorrelated or heteroscedastic disturbances, parameter constancy, variable choice, measurement error, endogeneity, functional forms, stochastic assumptions, and selection bias, among numerous others. These model specification questions are all important, but we may have forgotten why we pose them. Political scientists commonly give three reasons: (1) finding the "true" model, or the "full" explanation and (2) prediction and and (3) estimating specific causal effects. I argue here that (1) is used the most but useful the least and (2) is very useful but not usually in political science where forecasting is not often a central concern and and (3) correctly represents the goals of political scientists and should form the basis of most of our quantitative empirical work.},
 	url = {http://gking.harvard.edu/files/abs/truth-abs.shtml},
 	author = {Gary King}
 }
@@ -1281,7 +1285,7 @@ Specifically, an extra $10,000 added to the budget of the average state legislat
 	volume = {2},
 	year = {1991},
 	pages = {1{\textendash}30},
-	abstract = {"Politimetrics" (Gurr 1972), "polimetrics" (Alker 1975), "politometrics" (Hilton 1976), "political arithmetic" (Petty [1672] 1971), "quantitative Political Science (QPS)," "governmetrics," "posopolitics" (Papayanopoulos 1973), "political science statistics (Rai and Blydenburgh 1973), "political statistics" (Rice 1926). These are some of the names that scholars have used to describe the field we now call "political methodology." The history of political methodology has been quite fragmented until recently, as reflected by this patchwork of names. The field has begun to coalesce during the past decade; we are developing persistent organizations, a growing body of scholarly literature, and an emerging consensus about important problems that need to be solved. I make one main point in this article: If political methodology is to play an important role in the future of political science, scholars will need to find ways of representing more interesting political contexts in quantitative analyses. This does not mean that scholars should just build more and more complicated statistical models. Instead, we need to represent more of the essence of political phenomena in our models. The advantage of formal and quantitative approaches is that they are abstract representations of the political world and are, thus, much clearer. We need methods that enable us to abstract the right parts of the phenomenon we are studying and exclude everything superfluous. Despite the fragmented history of quantitative political analysis, a version of this goal has been voiced frequently by both quantitative researchers and their critics (Sec. 2). However, while recognizing this shortcoming, earlier scholars were not in the position to rectify it, lacking the mathematical and statistical tools and, early on, the data. Since political methodologists have made great progress in these and other areas in recent years, I argue that we are now capable of realizing this goal. In section 3, I suggest specific approaches to this problem. Finally, in section 4, I provide two modern examples, ecological inference and models of spatial autocorrelation, to illustrate these points.},
+	abstract = {"Politimetrics" (Gurr 1972), "polimetrics" (Alker 1975), "politometrics" (Hilton 1976), "political arithmetic" (Petty [1672] 1971), "quantitative Political Science (QPS)," "governmetrics," "posopolitics" (Papayanopoulos 1973), "political science statistics (Rai and Blydenburgh 1973), "political statistics" (Rice 1926). These are some of the names that scholars have used to describe the field we now call "political methodology." The history of political methodology has been quite fragmented until recently, as reflected by this patchwork of names. The field has begun to coalesce during the past decade and we are developing persistent organizations, a growing body of scholarly literature, and an emerging consensus about important problems that need to be solved. I make one main point in this article: If political methodology is to play an important role in the future of political science, scholars will need to find ways of representing more interesting political contexts in quantitative analyses. This does not mean that scholars should just build more and more complicated statistical models. Instead, we need to represent more of the essence of political phenomena in our models. The advantage of formal and quantitative approaches is that they are abstract representations of the political world and are, thus, much clearer. We need methods that enable us to abstract the right parts of the phenomenon we are studying and exclude everything superfluous. Despite the fragmented history of quantitative political analysis, a version of this goal has been voiced frequently by both quantitative researchers and their critics (Sec. 2). However, while recognizing this shortcoming, earlier scholars were not in the position to rectify it, lacking the mathematical and statistical tools and, early on, the data. Since political methodologists have made great progress in these and other areas in recent years, I argue that we are now capable of realizing this goal. In section 3, I suggest specific approaches to this problem. Finally, in section 4, I provide two modern examples, ecological inference and models of spatial autocorrelation, to illustrate these points.},
 	url = {http://gking.harvard.edu/files/abs/polmeth-abs.shtml},
 	author = {Gary King}
 }
@@ -1327,7 +1331,7 @@ Specifically, an extra $10,000 added to the budget of the average state legislat
 	year = {1990},
 	month = {May},
 	pages = {609{\textendash}621},
-	abstract = {In this paper, we formalize existing normative criteria used to judge presidential selection contests by modeling the translation of citizen votes in primaries and caucuses into delegates to the national party conventions. We use a statistical model that enables us to separate the form of electoral responsiveness in presidential selection systems, as well as the degree of bias toward each of the candidates. We find that (1) the Republican nomination system is more responsive to changes in citizen votes than the Democratic system; (2) non-PR primaries are always more responsive than PR primaries; (3) surprisingly, caucuses are more proportional than even primaries held under PR rules; (4) significant bias in favor of a candidate was a good prediction of the winner of the nomination contest. We also (5) evaluate the claims of Ronald Reagan in 1976 and Jesse Jackson in 1988 that the selection systems were substantially biased against their candidates. We find no evidence to support Reagan{\textquoteright}s claim, but substantial evidence that Jackson was correct.},
+	abstract = {In this paper, we formalize existing normative criteria used to judge presidential selection contests by modeling the translation of citizen votes in primaries and caucuses into delegates to the national party conventions. We use a statistical model that enables us to separate the form of electoral responsiveness in presidential selection systems, as well as the degree of bias toward each of the candidates. We find that (1) the Republican nomination system is more responsive to changes in citizen votes than the Democratic system and (2) non-PR primaries are always more responsive than PR primaries and (3) surprisingly, caucuses are more proportional than even primaries held under PR rules and (4) significant bias in favor of a candidate was a good prediction of the winner of the nomination contest. We also (5) evaluate the claims of Ronald Reagan in 1976 and Jesse Jackson in 1988 that the selection systems were substantially biased against their candidates. We find no evidence to support Reagan{\textquoteright}s claim, but substantial evidence that Jackson was correct.},
 	url = {http://gking.harvard.edu/files/abs/pri-abs.shtml},
 	author = {Stephen Ansolabehere and Gary King}
 }
@@ -1344,7 +1348,7 @@ Specifically, an extra $10,000 added to the budget of the average state legislat
 	author = {Andrew Gelman and Gary King}
 }
 @article {KinAltBur90,
-	title = {A Unified Model of Cabinet Dissolution in Parliamentary Democracies},
+  	title = {A Unified Model of Cabinet Dissolution in Parliamentary Democracies},
 	journal = {American Journal of Political Science},
 	volume = {34},
 	number = {3},
@@ -1534,3 +1538,137 @@ Specifically, an extra $10,000 added to the budget of the average state legislat
 % Additions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article {BlaIacKinPor09,
+	title = {CEM: Coarsened Exact Matching in Stata},
+	journal = {The Stata Journal},
+	volume = {9},
+	number = {4},
+	year = {2009},
+	pages = {524{\textendash}546},
+	abstract = {In this article, we introduce a Stata implementation of coarsened exact matching, a new method for improving the estimation of causal effects by reducing imbalance in covariates between treated and control groups. Coarsened exact matching is faster, is easier to use and understand, requires fewer assumptions, is more easily automated, and possesses more attractive statistical properties for many applications than do existing matching methods. In coarsened exact matching, users temporarily coarsen their data, exact match on these coarsened data, and then run their analysis on the uncoarsened, matched data. Coarsened exact matching bounds the degree of model dependence and causal effect estimation error by ex ante user choice, is monotonic imbalance bounding (so that reducing the maximum imbalance on one variable has no effect on others), does not require a separate procedure to restrict data to common support, meets the congruence principle, is approximately invariant to measurement error, balances all nonlinearities and interactions in sample (i.e., not merely in expectation), and works with multiply imputed datasets. Other matching methods inherit many of the coarsened exact matching method’s properties when applied to further match data preprocessed by coarsened exact matching. The cem command implements the coarsened exact matching algorithm in Stata.},
+	url = {http://gking.harvard.edu/files/abs/cemStata-abs.shtml},
+	author = {Matthew Blackwell and Stefano Iacus and Gary King and Giuseppe Porro}
+}
+@article {IacKinPor09,
+	title = {CEM: Coarsened Exact Matching},
+	year = {2009},
+	url = {http://gking.harvard.edu/cem},
+	author = {Stefano Iacus and Gary King and Giuseppe Porro}
+}
+@article {MyrAbrAdaAltArmBolCarCraDonKinLylPieRocRocYou09,
+	title = {From Preserving the Past to Preserving the Future: The Data-PASS Project and the Challenges of Preserving Digital Social Science Data},
+	journal = {Library Trends},
+	volume = {57},
+	number = {3},
+	year = {2009},
+	pages = {315{\textendash}337},
+	abstract = {Social science data are an unusual part of the past, present, and future of digital preservation. They are both an unqualified success, due to long-lived and sustainable archival organizations, and in need of further development because not all digital content is being preserved. This article is about the Data Preservation Alliance for Social Sciences (Data-PASS), a project supported by the National Digital Information Infrastructure and Preservation Program (NDIIPP), which is a partnership of five major U.S. social science data archives. Broadly speaking, Data-PASS has the goal of ensuring that at-risk social science data are identified, acquired, and preserved, and that we have a future-oriented organization that could collaborate on those preservation tasks for the future. Throughout the life of the Data-PASS project we have worked to identify digital materials that have never been systematically archived, and to appraise and acquire them. As the project has progressed, however, it has increasingly turned its attention from identifying and acquiring legacy and at-risk social science data to identifying on going and future research projects that will produce data. This article is about the project's history, with an emphasis on the issues that underlay the transition from looking backward to looking forward.},
+	url = {http://gking.harvard.edu/files/abs/GutAbrAda09-abs.shtml},
+	author = {Gutmann, Myron P. and Mark Abrahamson and Margaret O. Adams and Micah Altman and	Caroline Arms and Kenneth Bollen and Michael Carlson and Jonathan Crabtree and Darrell Donakowski and Gary King and Jaret Lyle and Marc Maynard and Amy Pienta and Richard Rockwell and Lois Rocms-Ferrara and Copeland H. Young}
+}
+@article {AltAndDigKinKisKolKroVer01
+	title = {An Introduction to the Virtual Data Center Project and Software},
+	journal = {Proceedings of The First ACM+IEEE Joint Conference on Digital Libraries},
+	publisher = {ACM Press},
+	year = {2001},
+	pages = {203{\textendash}204},
+	author = {Micah Altman and Leonid Andreev and Mark Diggory and Gary King, Daniel L. Kiskis and Elizabeth Kolster and M. Krot and Sidney Verba}
+	}
+@inbook {KinSchNie09,
+	title = {The Changing Evidence Base of Social Science Research},
+	booktitle = {The Future of Political Science: 100 Perspectives},
+	year = {2009},
+	editor = {Gary King and Kay Schlozman and Norman Nie}
+}
+@article {ImaKin04,
+	title = {Did Illegally Counted Overseas Absentee Ballots Decide the 2000 U.S. Presidential Election?},
+	journal = {Perspectives on Politics},
+	volume = {2},
+	number = {3},
+	abstract = {Although not widely known until much later, Al Gore received 202 more votes than George W. Bush on election day in Florida. George W. Bush is president because he overcame his election day deficit with overseas absentee ballots that arrived and were counted after election day. In the final official tally, Bush received 537 more votes than Gore. These numbers are taken from the official results released by the Florida Secretary of State's office and so do not reflect overvotes, undervotes, unsuccessful litigation, butterfly ballot problems, recounts that might have been allowed but were not, or any other hypothetical divergence between voter preferences and counted votes. After the election, the New York Times conducted a six month long investigation and found that 680 of the overseas absentee ballots were illegally counted, and no partisan, pundit, or academic has publicly disagreed with their assessment. In this paper, we describe the statistical procedures we developed and implemented for the Times to ascertain whether disqualifying these 680 ballots would have changed the outcome of the election. The methods involve adding formal Bayesian model averaging procedures to King's (1997) ecological inference model. Formal Bayesian model averaging has not been used in political science but is especially useful when substantive conclusions depend heavily on apparently minor but indefensible model choices, when model generalization is not feasible, and when potential critics are more partisan than academic. We show how we derived the results for the Times so that other scholars can use these methods to make ecological inferences for other purposes. We also present a variety of new empirical results that delineate the precise conditions under which Al Gore would have been elected president, and offer new evidence of the striking effectiveness of the Republican effort to convince local election officials to count invalid ballots in Bush counties and not count them in Gore counties.},
+	month = {September},
+	year = {2004},
+	pages = {537{\textendash}549},
+	url = {http://gking.harvard.edu/files/abs/ballots-abs.shtml},
+	author = {Kosuke Imai and Gary King}
+}
+@article{KinSig96,
+      title =	 {The Generalization in the Generalized Event Count Model, With Comments on Achen, Amato, and Londregan},
+      journal =	 {Political Analysis},
+      volume =	{ 6},
+      year =	 {1996},
+      pages =	 {225{\textendash}252},
+      abstract = {We use an analogy with the normal distribution and linear regression to demonstrate the need for the Generalize Event Count (GEC) model. We then show how the GEC provides a unified framework within which to understand a diversity of distributions used to model event counts, and how to express the model in one simple equation. Finally, we address the points made by Christopher Achen, Timothy Amato, and John Londregan. Amato's and Londregan's arguments are consistent with ours and provide additional interesting information and explanations. Unfortunately, the foundation on which Achen built his paper turns out to be incorrect, rendering all his novel claims about the GEC false (or in some cases irrelevant).},
+      url = {http://gking.harvard.edu/files/abs/generaliz-abs.shtml},
+      author = {Gary King and Curtis S. Signorino},
+}
+@article {King02,
+	title = {COUNT: A Program for Estimating Event Count and Duration Regressions},
+	year = {2002},
+	author = {Gary King}
+}
+@article {GelKinTho94,
+	title = {JudgeIt II: A Program for Evaluating Electoral Systems and Redistricting Plans},
+	author = {Andrew Gelman and Gary King and Andrew Thomas}
+}
+@article{SteKinShi,
+    title =	 {Deaths From Heart Failure: Using Coarsened Exact Matching to Correct Cause of Death Statistics},
+    journal =	 {Population Health Metrics},
+    abstract = {Background: Incomplete information on death certificates makes recorded cause of death data less useful for public health monitoring and planning. Certifying physicians sometimes list only the mode of death (and in particular, list heart failure) without indicating the underlying disease(s) that gave rise to the death. This can prevent valid epidemiologic comparisons across countries and over time. Methods and Results: We propose that coarsened exact matching be used to infer the underlying causes of death where only the mode of death is known; we focus on the case of heart failure in U.S., Mexican and Brazilian death records. Redistribution algorithms derived using this method assign the largest proportion of heart failure deaths to ischemic heart disease in all three countries (53%, 26% and 22%), with larger proportions assigned to hypertensive heart disease and diabetes in Mexico and Brazil (16% and 23% vs. 7% for hypertensive heart disease and 13% and 9% vs. 6% for diabetes). Reassigning these heart failure deaths increases US ischemic heart disease mortality rates by 6%.Conclusions: The frequency with which physicians list heart failure in the causal chain for various underlying causes of death allows for inference about how physicians use heart failure on the death certificate in different settings. This easy-to-use method has the potential to reduce bias and increase comparability in cause-of-death data, thereby improving the public health utility of death records. Key Words: vital statistics, heart failure, population health, mortality, epidemiology},
+    url = {http://gking.harvard.edu/files/abs/heartfcem-abs.shtml},
+    author ={Gretchen Stevens and Gary King and Kenji Shibuya}
+}
+@article{SteKinShi96,
+    title =	 {How Not to Lie Without Statistics},
+    year = {2008},
+    abstract = {We highlight, and suggest ways to avoid, a large number of common misunderstandings in the literature about best practices in qualitative research. We discuss these issues in four areas: theory and data, qualitative and quantitative strategies, causation and explanation, and selection bias. Some of the misunderstandings involve incendiary debates within our discipline that are readily resolved either directly or with results known in research areas that happen to be unknown to political scientists. Many of these misunderstandings can also be found in quantitative research, often with different names, and some of which can be fixed with reference to ideas better understood in the qualitative methods literature. Our goal is to improve the ability of quantitatively and qualitatively oriented scholars to enjoy the advantages of insights from both areas. Thus, throughout, we attempt to construct specific practical guidelines that can be used to improve actual qualitative research designs, not only the qualitative methods literatures that talk about them.},
+    url = {http://gking.harvard.edu/files/abs/heartfcem-abs.shtml}
+    author ={Gary King and Eleanor Neff Powell}
+}
+
+@article{SonKin09
+    title = {Statistical Security for Social Security},
+    year = {2009},
+    abstract = {The financial viability of Social Security, the single largest U.S. Government program, depends on accurate forecasts of the solvency of its intergenerational trust fund. We begin by detailing, for the first time, the information necessary to replicate the Social Security Administration's (SSA's) forecasting procedures. We then show how to reduce one of the largest component of uncertainty in these procedures, due to age- and sex-specific mortality forecasts. SSA mortality forecasts are currently based on a complicated combination of linear extrapolation and qualitative judgments. Unfortunately, linear extrapolation excludes known risk factors and violates long-standing demographic patterns, such as the smoothness of age profiles; and modern statistical methods typically outperform even the best qualitative judgments in these contexts. We show how to use such modern methods here, enabling researchers to forecast using far more information, such as the known risk factors of smoking and obesity and known demographic patterns. Including this extra information makes a substantial difference: For example, by only improving mortality forecasting methods, we predict three fewer years of net surplus, $730 billion less in Social Security trust funds by 2030, and program costs that are 0.66% greater of projected taxable payroll compared to the best SSA projections. More important than specific numerical estimates are the advantages of transparency, replicability, reduction of uncertainty, and what may be the resulting lower vulnerability to the politicization of program forecasts. In addition, by offering with this paper easy-to-use software and detailed replication information, we hope to marshal the efforts of the research community to include ever more informative inputs and to continue to reduce the uncertainties in Social Security forecasts.},
+    url = {http://gking.harvard.edu/files/abs/ssc-abs.shtml},
+    author ={Samir Soneji and Gary King}
+}
+@article{MurKin08,
+    title = {The Effects of International Monetary Fund Loans on Health Outcomes},
+    journal =	 {PLoS Medicine},
+    volume = {5},
+    number = {7},
+    month = {June},
+    year = {2008},
+    abstract = {A "Perspective article" that discusses an article by David Stuckler and colleagues showing that, in Eastern European and former Soviet countries, participation in International Monetary Fund economic programs have been associated with higher mortality rates from tuberculosis.},
+    url = {http://gking.harvard.edu/files/abs/imftb-abs.shtml}
+    author ={Megan  Murray and Gary King},
+}
+@inbook {GakKin03,
+    title = {Determinants of Inequality in Child Survival: Results from 39 Countries},
+    booktitle = {Health Systems Performance Assessment: Debates, Methods and Empiricism},
+    year = {2003},
+    pages = {497-502},
+    publisher = {World Health Organization},
+    organization = {World Health Organization},
+    chapter = {36},
+    address = {Geneva},
+    author = {Emmanuela Gakidou and Gary King},
+    editor = {Chrisopher Murray and David B. Evans}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@article{King03b,
+  author =  {Gary King},
+  title =	 {10 Million International Dyadic Events},
+  year =	 {2003},
+  note =  {hdl:1902.1/FYXLAWZRIAUNF:3:um06qkr/1tAwpS4roUqAiw== Murray Research Archive [Distributor]}
+}
+@article{King03b,
+  author =  {Gary King},
+  title =	 {Elections to the United States House of Representatives, 1898-1992},
+  note =  {ICPSR data set number 6311}
+}

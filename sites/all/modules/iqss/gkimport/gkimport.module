@@ -886,75 +886,30 @@ function gkimport_software_pubs_set(){
     $notes_text = "A complete statistical package and framework for statistical inference that can estimate, help interpret, and present the results from, a large range of statistical methods. Zelig, which works within R, and has features from Clarify, Amelia, MatchIt, ReLogit, and many other programs. It adds powerful infrastructure, but retains an easy-to-use command structure. The Zelig manual doesn't assume you know R.";
     db_query("UPDATE {biblio} SET biblio_notes = '%s' WHERE nid =  %d" ,  $notes_text, $nid);    
   }
-    
-   //gkimport_software_term_pubs_set();
-}
-/**
- * NOT USING THIS ANYMORE
- * Assign the term "Software" to selected article and software publications
- */
-function gkimport_software_term_pubs_set(){
- install_include(array('taxonomy'));
-  $vid = install_taxonomy_get_vid('tags');
-  $tid = install_taxonomy_add_term($vid, 'Software');  
-  foreach(_gkimport_software_term_pubs() as $title){
-    $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ",$title));
-    if ($nid){
-      db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $nid, $tid);
-      db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid);
-    }
-    else{
-      $missing_titles[] = $title;
-    }
-  }
-  variable_set("gkimport_software_term_pubs_not_found", $missing_titles); //list of software pubs that do not exist
 }
 
 /**
- * An array of titles for publications that should have a term "software" added
+ * An array of titles for publications that should be software biblio types
  */
 function _gkimport_software_pubs(){  
   //from the bibtex file
   return array(
-  'CEM: Coarsened Exact Matching Software',
+  'CEM: Coarsened Exact Matching',
   'Anchors: Software for Anchoring Vignettes Data',
   'Amelia II: A Program for Missing Data',
+  'AMELIA: A Program for Missing Data',
   'Zelig: Everyone\'s Statistical Software',
   'CLARIFY: Software for Interpreting and Presenting Statistical Results',
   'AMELIA: A Program for Missing Data',
   'MAXLIK',
   'EI: Program for Ecological Inference',
+  'EzI: A(n Easy) Program for Ecological Inference',
+  'COUNT: A Program for Estimating Event Count and Duration Regressions',
   'JudgeIt: A Program for Evaluating Electoral Systems and Redistricting Plans',
+  'JudgeIt II: A Program for Evaluating Electoral Systems and Redistricting Plans',
   'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
   );
  }
-
-function _gkimport_software_term_pubs(){  
-  //from the web page
-  return array(
-  'CEM: Coarsened Exact Matching Software',
-  'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
-  'Zelig: Everyone\'s Statistical Software',
-  'JudgeIt: A Program for Evaluating Electoral Systems and Redistricting Plans',
-  'ReadMe: Software for Automated Content Analysis',
-  'AMELIA: A Program for Missing Data',
-  'Amelia II: A Program for Missing Data',
-  'VA: Software for Analyzing Verbal Autopsy Data',
-  'YourCast: Time Series Cross-Sectional Forecasting with Your Assumptions',
-  'WhatIf: Software for Evaluating Counterfactuals',
-  'The Dangers of Extreme Counterfactuals',
-  'When Can History Be Our Guide? The Pitfalls of Counterfactual Inference',
-  'Enhancing the Validity and Cross-cultural Comparability of Measurement in Survey Research',
-  'ReLogit: Rare Events Logistic Regression',
-  'CLARIFY: Software for Interpreting and Presenting Statistical Results',
-  'EI: Program for Ecological Inference',
-  'EzI: A(n Easy) Program for Ecological Inference',
-  'COUNT: A Program for Estimating Event Count and Duration Regressions',
-  'MAXLIK, a set of Gauss programs, annotated for pedagogical purposes, to implement the maximum likelihood models in Unifying Political Methodology: The Likelihood Theory of Statistical Inference',
-  'Dataverse Network Project',
-  'The Harvard Geospatial Library Project',
-  );
-}
 
 /**
  * Assign the custom theme
@@ -1121,10 +1076,10 @@ function gkimport_cleanup(){
 	  db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $data -> src);
 	}
 	//fix zelig node
-	$current = "Zelig: Everyones Statistical Software";
+/*	$current = "Zelig: Everyones Statistical Software";
 	$fixed = "Zelig: Everyone's Statistical Software";	
 	db_query("UPDATE {node} SET title = '%s' WHERE title = '%s'  ", $fixed, $current);
-	db_query("UPDATE {node_revisions} SET title = '%s' WHERE title = '%s'  ", $fixed, $current);
+	db_query("UPDATE {node_revisions} SET title = '%s' WHERE title = '%s'  ", $fixed, $current);*/
 	
 }
 
