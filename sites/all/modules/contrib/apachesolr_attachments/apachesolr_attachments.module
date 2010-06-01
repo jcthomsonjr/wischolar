@@ -1,5 +1,5 @@
 <?php
-// $Id: apachesolr_attachments.module,v 1.1.4.2 2010/02/03 18:44:02 pwolanin Exp $
+// $Id: apachesolr_attachments.module,v 1.19 2010/02/03 18:44:34 pwolanin Exp $
 
 /**
  * @file
@@ -103,6 +103,25 @@ function apachesolr_attachments_apachesolr_types_exclude($namespace) {
 }
 
 /**
+ * Implementation of hook_apachesolr_document_handlers.
+ *
+ * @param string $type
+ *   Entity type. 'node', 'comment', and so forth. Used to evaluate whether this module
+ *   should be interested in creating documents.
+ * @param string $namespace
+ *   Usually the name of the module that is initiating indexing. In this case
+ *   we want to register a handler if the namespace is 'apachesolr_search'.
+ * @return array $handlers
+ *   An array of strings that are function names. Each function returns a $document from
+ *   an entity (of type $type).
+ */
+function apachesolr_attachments_apachesolr_document_handlers($type, $namespace) {
+  if ($type == 'node' && $namespace == 'apachesolr_attachments') {
+    return array('apachesolr_attachments_add_documents');
+  }
+}
+
+/**
  * Hook is called by search.module to add things to the search index.
  * In our case we will search content types and add any CCK type that
  * is a file type that we know how to parse and any uploaded file
@@ -120,7 +139,7 @@ function apachesolr_attachments_update_index() {
   module_load_include('inc', 'apachesolr_attachments', 'apachesolr_attachments.admin');
   do {
     $rows = apachesolr_get_nodes_to_index('apachesolr_attachments', $cron_try);
-    $success = apachesolr_index_nodes($rows, 'apachesolr_attachments', 'apachesolr_attachments_add_documents');
+    $success = apachesolr_index_nodes($rows, 'apachesolr_attachments');
     $num_tried += $cron_try;
   } while ($success && ($num_tried < $cron_limit) && (time() - $start < $cron_time_limit));
 }

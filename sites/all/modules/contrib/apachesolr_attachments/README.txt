@@ -43,3 +43,9 @@ in a location like tika-app/target/tika-app-0.4.jar
 Copy tika-app-0.4.jar from there or point the module path to it.
 
 See also build instructions at: http://drupal.org/node/540974#comment-1944082
+
+If you are using Solr to extract your content you need to copy (or symlink) 
+the contents of contrib/extraction/lib to a directory named lib under your 
+solr home, or alter solrconfig.xml to add the orgiginal directory as a
+lib directory.
+

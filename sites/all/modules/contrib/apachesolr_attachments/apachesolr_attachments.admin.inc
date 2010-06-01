@@ -1,5 +1,5 @@
 <?php
-// $Id: apachesolr_attachments.admin.inc,v 1.4.2.4 2010/02/03 18:51:35 pwolanin Exp $
+// $Id: apachesolr_attachments.admin.inc,v 1.6 2010/02/03 18:34:22 pwolanin Exp $
 
 /**
  * @file
@@ -222,77 +222,72 @@ function apachesolr_attachements_delete_index() {
  *
  * Adds a document for each indexable file attachment for the given node ID.
  */
-function apachesolr_attachments_add_documents(&$documents, $nid, $namespace = 'apachesolr_attachments') {
-  $node = node_load($nid, NULL, TRUE);
-  if (!empty($node->nid)) {
+function apachesolr_attachments_add_documents($node, $namespace) {
+  $document = FALSE;
+  $hash = apachesolr_site_hash();
+  // Since there is no notification for an attachment being unassociated with a
+  // node (but that action will trigger it to be indexed again), we check for
+  // fids that were added before but no longer present on this node.
 
-    $hash = apachesolr_site_hash();
+  $fids = array();
+  $result = db_query("SELECT fid FROM {apachesolr_attachments_files} WHERE nid = %d", $node->nid);
+  while ($row = db_fetch_array($result)) {
+    $fids[$row['fid']] = $row['fid'];
+  }
 
-    // Since there is no notification for an attachment being unassociated with a
-    // node (but that action will trigger it to be indexed again), we check for
-    // fids that were added before but no longer present on this node.
+  $files = apachesolr_attachments_get_indexable_files($node);
 
-    $fids = array();
-    $result = db_query("SELECT fid FROM {apachesolr_attachments_files} WHERE nid = %d", $node->nid);
-    while ($row = db_fetch_array($result)) {
-      $fids[$row['fid']] = $row['fid'];
-    }
+  // Find deleted files.
+  $missing_fids = array_diff_key($fids, $files);
+  if ($missing_fids) {
+    db_query("UPDATE {apachesolr_attachments_files} SET removed = 1 WHERE fid IN (". db_placeholders($missing_fids) .")", $missing_fids);
+  }
+  $new_files = array_diff_key($files, $fids);
+  // Add new files.
+  foreach ($new_files as $file) {
+    db_query("INSERT INTO {apachesolr_attachments_files} (fid, nid, removed, sha1) VALUES (%d, %d, 0, '')", $file->fid, $node->nid);
+  }
+  foreach ($files as $file) {
+    $text = apachesolr_attachments_get_attachment_text($file);
 
-    $files = apachesolr_attachments_get_indexable_files($node);
+    if ($text) {
+      $document = new Apache_Solr_Document();
+      // A single file might be attached to multiple nodes.
+      $document->id = apachesolr_document_id($file->fid .'-'. $node->nid, 'file');
+      $document->url = file_create_url($file->filepath);
+      $document->path = $file->filepath;
+      $document->hash = $hash;
+      $document->entity = 'file';
+      $document->site = url(NULL, array('absolute' => TRUE));
+      $document->nid = $node->nid;
+      $document->title = $file->filename;
+      $document->created = apachesolr_date_iso($file->timestamp);
+      $document->changed = $document->created;
+      $document->status = $node->status;
+      $document->sticky = $node->sticky;
+      $document->promote = $node->promote;
+      $document->uid = $node->uid;
+      $document->name = $node->name;
+      $document->body = apachesolr_clean_text($file->description) .' '. $text;
 
-    // Find deleted files.
-    $missing_fids = array_diff_key($fids, $files);
-    if ($missing_fids) {
-      db_query("UPDATE {apachesolr_attachments_files} SET removed = 1 WHERE fid IN (". db_placeholders($missing_fids) .")", $missing_fids);
-    }
-    $new_files = array_diff_key($files, $fids);
-    // Add new files.
-    foreach ($new_files as $file) {
-      db_query("INSERT INTO {apachesolr_attachments_files} (fid, nid, removed, sha1) VALUES (%d, %d, 0, '')", $file->fid, $node->nid);
-    }
-    foreach ($files as $file) {
-      $text = apachesolr_attachments_get_attachment_text($file);
+      $document->ss_filemime = $file->filemime;
+      $document->ss_file_node_title = apachesolr_clean_text($node->title);
+      $document->ss_file_node_url = url('node/' . $node->nid, array('absolute' => TRUE));
 
-      if ($text) {
-        $document = new Apache_Solr_Document();
-        // A single file might be attached to multiple nodes.
-        $document->id = apachesolr_document_id($file->fid .'-'. $node->nid, 'file');
-        $document->url = file_create_url($file->filepath);
-        $document->path = $file->filepath;
-        $document->hash = $hash;
-        $document->entity = 'file';
-        $document->site = url(NULL, array('absolute' => TRUE));
-        $document->nid = $node->nid;
-        $document->title = $file->filename;
-        $document->created = apachesolr_date_iso($file->timestamp);
-        $document->changed = $document->created;
-        $document->status = $node->status;
-        $document->sticky = $node->sticky;
-        $document->promote = $node->promote;
-        $document->uid = $node->uid;
-        $document->name = $node->name;
-        $document->body = apachesolr_clean_text($file->description) .' '. $text;
+      apachesolr_add_taxonomy_to_document($document, $node);
 
-        $document->ss_filemime = $file->filemime;
-        $document->ss_file_node_title = apachesolr_clean_text($node->title);
-        $document->ss_file_node_url = url('node/' . $node->nid, array('absolute' => TRUE));
-
-        apachesolr_add_taxonomy_to_document($document, $node);
-
-        // Let modules add to the document.
-        foreach (module_implements('apachesolr_update_index') as $module) {
-          $function = $module .'_apachesolr_update_index';
-          $function($document, $node, $namespace);
-        }
-        drupal_alter('apachesolr_attachment_index', $document, $node, $file, $namespace);
-
-        $documents[] = $document;
+      if (module_exists('apachesolr_nodeaccess')) {
+        apachesolr_nodeaccess_apachesolr_update_index($document, $node, $namespace);
       }
-      else {
-        watchdog('Apache Solr Attachments', t('Could not extract any indexable text from %filepath'), array('%filepath' => $file->filepath), WATCHDOG_WARNING);
-      }
+      drupal_alter('apachesolr_attachment_index', $document, $node, $file);
+
+      $documents[] = $document;
+    }
+    else {
+      watchdog('Apache Solr Attachments', t('Could not extract any indexable text from %filepath'), array('%filepath' => $file->filepath), WATCHDOG_WARNING);
     }
   }
+  return $documents;
 }
 
 /**
