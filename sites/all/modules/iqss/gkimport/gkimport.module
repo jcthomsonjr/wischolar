@@ -2,6 +2,7 @@
 
 include_once('gkimport.drush.inc');
 include_once('gkimport.settings.inc');
+include_once('gkimport.utils.inc');
 
 define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev4'); //file system path to drupal root (NO TRAILING SLASH)
 define(GKIMPORT_DOWNLOAD, FALSE);  // TRUE tells module to download files with wget, otherwise assumes files stored locally
@@ -133,7 +134,6 @@ function  gkimport_customize_site($vsite){
   'reader' => array('weight' => 12, 'primary' => FALSE,  'custom_title' => FALSE, 'title' =>'Feeds'),
   ); 
 
-  
   $a_menu_items = array();
  //set custom weight for menu items
     install_include(array('menu'));
@@ -440,7 +440,7 @@ function gkimport_update_notes(){
       }
     }
   }
- // dpm($match_results);  
+  //dpm($match_results);  
 }
 
 function gkimport_upload_pdfs(){
@@ -1075,6 +1075,10 @@ function gkimport_cleanup(){
 	  gkimport_print("Cleanup: removing emtpy alias: {$data -> src}");
 	  db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $data -> src);
 	}
+	
+	//fix selected publication titles with special punctuation
+	gkimport_update_publication_titles();
+	
 	//fix zelig node
 /*	$current = "Zelig: Everyones Statistical Software";
 	$fixed = "Zelig: Everyone's Statistical Software";	
