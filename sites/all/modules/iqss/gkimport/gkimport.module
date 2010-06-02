@@ -216,9 +216,9 @@ function gkimport_pubs_taxonomy($filepath){
     $all_terms = array();
     $account = user_load(array('name' => 'gking'));
     $space = vsite_get_vsite_by_owner($account -> uid);
-    
+
     //create vocabulary(s)
-     $vocab_name =  'Research Interests';
+    $vocab_name =  'Research Interests';
     $properties = array(
     'multiple' => 1,
     'description' => 'Gary King Research Interests',
@@ -227,73 +227,94 @@ function gkimport_pubs_taxonomy($filepath){
     $content_types = array(
     'biblio' => 'biblio',
     );
-      
+
     $vid = install_taxonomy_add_vocabulary($vocab_name, $content_types, $properties);
     if ($vid){
-    og_vocab_write_record($space[0] -> group -> nid, $vid);
-    variable_set('gkimport_ri_vocab_id', $vid); //keep track of vid because other vocabs may have same name
-     $message =  (GKIMPORT_DRUSH_RUN  === 1) ? 
-     drush_print(t("Created vocabulary: !vocab_name", array('!vocab_name' => $vocab_name))) : '';     
+      og_vocab_write_record($space[0] -> group -> nid, $vid);
+      variable_set('gkimport_ri_vocab_id', $vid); //keep track of vid because other vocabs may have same name
+      $message =  (GKIMPORT_DRUSH_RUN  === 1) ?
+      drush_print(t("Created vocabulary: !vocab_name", array('!vocab_name' => $vocab_name))) : '';
     }
     $term_match_data = array();
-    $sub_term_match_data = array();    
-    
+    $sub_term_match_data = array();
+
     //parse csv data
-    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {      
+    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
       if(strlen($data[1])) $sub_term_match_data[$data[3]] = array(
       'primary' => $data[0],
       'secondary' => $data[1],
       );
-      
+
       //if title exists already in the array, and another term is to be added
       if (key_exists($data[3], $term_match_data)){
-                $val = $term_match_data[$data[3]];
-                 $term_match_data[$data[3]] = $val . ', ' . trim($data[0]);
-                 continue;
+        $val = $term_match_data[$data[3]];
+        $term_match_data[$data[3]] = $val . ', ' . trim($data[0]);
+        continue;
       }
       else{
-      $term_match_data[$data[3]] = $data[0];  //set title to term mapping data in an array
+        $term_match_data[$data[3]] = $data[0];  //set title to term mapping data in an array
       }
       $all_data[] = $data;
-      $all_terms[] = trim($data[0]);      
+      $all_terms[] = trim($data[0]);
     }
-    
+
     //refine list of terms - remove duplicates
     $terms = array_unique($all_terms);
     //set title to term mapping data in system variable to be used later
     variable_set('gkimport_taxonomy_data', $term_match_data);
     variable_set('gkimport_taxonomy_secondary_data', $sub_term_match_data);
-     
+
     //save all publication data from the csv to a system variable to be used later
     variable_set('gkimport_all_pub_data', $all_data);
 
- //add all terms to vocab
- $term_desc = _gkimport_pub_term_descriptions();
- foreach($terms as $term){
-      if (trim(strlen($term))){
-        install_taxonomy_add_term($vid, trim($term), $term_desc[$term]);
-        gkimport_print("Added term: $term");
+    //now add terms
+    $ri_vid = variable_get('gkimport_ri_vocab_id', '');
+
+    //add top level terms
+    $top_level_terms = array(
+    1 => array('term' => 'Methods', 'description' => ''),
+    2 => array('term' => 'Applications', 'description' => ''),
+    );
+    foreach($top_level_terms as $top){
+      install_taxonomy_add_term($ri_vid, $top['term'], $top['description']);
+      gkimport_print("Added top level term: {$top['term']}");
+    }
+
+    //add second level terms
+
+    $function_name = array('_gkimport_applications_pub_terms', '_gkimport_methods_pub_terms');
+    foreach($function_name as $fn){
+
+      $terms = call_user_func($fn);
+      foreach($terms as $name => $description){
+        $parent_term = ($fn == '_gkimport_methods_pub_terms') ? 'Methods' : 'Applications';
+        $parent_tid = install_taxonomy_get_tid(trim($parent_term),  $ri_vid);
+        $properties = array('parent' => array($parent_tid));
+        //adding the subterm here with description
+        install_taxonomy_add_term($ri_vid, $name, $description, $properties);
+        gkimport_print("Added level 2 term: " . $name);
       }
     }
-    //add sub level terms
-    foreach(array(2,3) as $level){
+  }
+  //add sub level terms
+  foreach(array(3, 4) as $level){
     gkimport_add_sub_terms($level);
-    }    
   }
 }
+
 
 /**
  * add second level terms to vocab
  */
-function gkimport_add_sub_terms($level = 2){
+function gkimport_add_sub_terms($level = 3){
   install_include(array('taxonomy'));
   switch($level){
-    case 2:
-    $sub_term_desc =  _gkimport_pub_second_term_descriptions();
+    case 3:
+    $sub_term_desc = _gkimport_pub_third_term_descriptions();
     break;
  
-    case 3:
-      $sub_term_desc =  _gkimport_pub_third_term_descriptions();
+    case 4:
+      $sub_term_desc =  _gkimport_pub_fourth_term_descriptions();
       break;
   }   
  
@@ -1079,6 +1100,10 @@ function gkimport_cleanup(){
 	//fix selected publication titles with special punctuation
 	gkimport_update_publication_titles();
 	
+	//Update term names
+	//Informatics and Data Sharing (was "Data Sharing and Informatics")
+      //Text Analysis (was "Content Analysis")
+
 	//fix zelig node
 /*	$current = "Zelig: Everyones Statistical Software";
 	$fixed = "Zelig: Everyone's Statistical Software";	
