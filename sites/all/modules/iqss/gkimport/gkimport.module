@@ -21,12 +21,10 @@ function gkimport_import($drush_run = 0){
 
   gkimport_create_site();
   gkimport_parse_files();
-
   gkimport_update_notes();
   gkimport_software_pubs_set();
   gkimport_upload_pdfs();
   gkimport_update_aliases();
-
   gkimport_import_bio();
   gkimport_import_contact_page();
   gkimport_import_links();
@@ -35,19 +33,18 @@ function gkimport_import($drush_run = 0){
   gkimport_save_site_layout($drush_run);
   gkimport_save_sample_pages();
 
-
-    $message = 'Import part 1 completed';
+  $message = 'Import part 1 completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
 
 function gkimport_import_2($drush_run = 0){
   drush_print("Begining import, part 2...");
-    gkimport_assign_terms();
-    
-      //gkimport_create_profiles();
-      gkimport_cleanup();  
-      
-   $message = 'Import part 2 completed';
+
+  gkimport_assign_terms();
+  gkimport_create_profiles();
+  gkimport_cleanup();
+
+  $message = 'Import part 2 completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
 
@@ -380,7 +377,7 @@ function gkimport_assign_terms(){
     }
   }
   //dpm($term_arr);
-  gkimport_print("Matched on " . count($term_arr) . " terms");
+  drush_print("Matched on " . count($term_arr) . " terms");
 }
 
 /**
@@ -1114,11 +1111,6 @@ function gkimport_cleanup(){
 	//Informatics and Data Sharing (was "Data Sharing and Informatics")
       //Text Analysis (was "Content Analysis")
 
-	//fix zelig node
-/*	$current = "Zelig: Everyones Statistical Software";
-	$fixed = "Zelig: Everyone's Statistical Software";	
-	db_query("UPDATE {node} SET title = '%s' WHERE title = '%s'  ", $fixed, $current);
-	db_query("UPDATE {node_revisions} SET title = '%s' WHERE title = '%s'  ", $fixed, $current);*/
 	
 }
 
