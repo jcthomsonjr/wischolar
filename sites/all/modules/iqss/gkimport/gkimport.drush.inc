@@ -28,6 +28,12 @@ function gkimport_drush_command() {
   'callback arguments' => array(1),
   'description' => "Begins import process for current Gary's site information to his Scholars' Projects site.",
   );
+  
+  $items['gkimport2'] = array(
+  'callback' => 'gkimport_import_2',
+  'callback arguments' => array(1),
+  'description' => "Begins second import process for current Gary's site information to his Scholars' Projects site.",
+  );
 
   $items['gkimport-export-layout'] = array(
   'callback' => 'gkimport_export_site_layout',

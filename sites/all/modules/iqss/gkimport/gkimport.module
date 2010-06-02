@@ -21,12 +21,12 @@ function gkimport_import($drush_run = 0){
 
   gkimport_create_site();
   gkimport_parse_files();
-  gkimport_assign_second_terms();
+
   gkimport_update_notes();
   gkimport_software_pubs_set();
   gkimport_upload_pdfs();
   gkimport_update_aliases();
-  gkimport_create_profiles();
+
   gkimport_import_bio();
   gkimport_import_contact_page();
   gkimport_import_links();
@@ -34,9 +34,20 @@ function gkimport_import($drush_run = 0){
   gkimport_assign_theme(); 
   gkimport_save_site_layout($drush_run);
   gkimport_save_sample_pages();
-  gkimport_cleanup();
 
-  $message = 'Import completed';
+
+    $message = 'Import part 1 completed';
+  $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
+}
+
+function gkimport_import_2($drush_run = 0){
+  drush_print("Begining import, part 2...");
+    gkimport_assign_terms();
+    
+      //gkimport_create_profiles();
+      gkimport_cleanup();  
+      
+   $message = 'Import part 2 completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
 
@@ -342,30 +353,29 @@ function gkimport_add_third_terms(){
 }
 
 /**
- * assign second level terms to publication nodes
+ * assign terms to publication nodes
  */
-function gkimport_assign_second_terms(){
+function gkimport_assign_terms(){
   install_include(array('taxonomy'));
   $ri_vid = variable_get('gkimport_ri_vocab_id', '');
   $subterm_data = variable_get('gkimport_taxonomy_secondary_data', array());
   foreach($subterm_data  as $title => $values){
     if (strlen($values['primary']) && strlen($values['secondary'])){
       $parent_tid = install_taxonomy_get_tid(trim($values['primary']), $ri_vid);
-      //get tid for term
-      $term = db_fetch_object(db_query("SELECT th.tid, td.name, th.parent FROM {term_data} td
- INNER JOIN {term_hierarchy} th USING(tid) HAVING th.parent = %d AND td.name = '%s' ", $parent_tid, trim($values['secondary'])));
-
+      
+      $tid = gkimport_taxonomy_get_tid($values['secondary'], $ri_vid, $parent_tid);
+      
       $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ", trim($title)));
     
-      if($nid && $term -> tid){
-        db_query("DELETE FROM {term_node} WHERE nid = %d AND tid = %d", $nid, $term -> tid);
-        db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $term -> tid);
-        $term_arr[] = array($nid => $term -> tid);
-        gkimport_print("Added level 2 term to node: {$term->name} to node $nid");
+      if($nid && $tid){
+        db_query("DELETE FROM {term_node} WHERE nid = %d AND tid = %d", $nid, $tid);
+        db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid);
+        $term_arr[] = array($nid => $tid);
+        drush_print("Added term to node: {$values['secondary']} to node $nid");
 
       }
       else{
-        gkimport_print("Could not add level 3 term to node $nid");
+        drush_print("Could not add term {$values['secondary']} to node $title - $nid");
       }
     }
   }
@@ -1093,7 +1103,7 @@ function gkimport_cleanup(){
 	//clean up any empty url aliases
 	$res = db_query("SELECT * FROM {url_alias} WHERE dst = '%s' ", '');
 	while($data = db_fetch_object($res)){	
-	  gkimport_print("Cleanup: removing emtpy alias: {$data -> src}");
+	  drush_print("Cleanup: removing emtpy alias: {$data -> src}");
 	  db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $data -> src);
 	}
 	

@@ -26,7 +26,7 @@ function _gkimport_applications_pub_terms(){
   'International Conflict' => 'Evidence that the causes of conflict, theorized to be important but often found to be small or ephemeral, are indeed tiny for the vast majority of dyads, but they are large, stable, and replicable wherever the ex ante probability of conflict is large. Also methods for coding, analyzing, and forecasting international conflict and state failure.',
   'Legislative Redistricting' => 'Defining partisan symmetry as a standard for fairness; measuring partisan bias and electoral responsiveness; discussion of U.S. Supreme Court rulings on this work. Evidence that U.S. redistricting reduces bias and increases responsiveness, and that the electoral college is fair; applications to legislatures, primaries, and multiparty systems; JudgeIt Software.',
   'Mortality Studies' => 'Methods for estimating cause-specific and overall mortality rates in areas without vital registration; forecasting mortality rates (hierarchically, for time series data cross-classified by age, sex, country, and cause); measuring inequality in risk of death.',
-  'Presidency Research, and Voting Behavior' => 'Resolution of the paradox of why polls are so variable over time during presidential campaigns even though the vote outcome is easily predictable before it starts. Also, a resolution of a key controversy over absentee ballots during the 2000 presidential election; and the methodology of small-n research on executives.',
+  'Presidency Research and Voting Behavior' => 'Resolution of the paradox of why polls are so variable over time during presidential campaigns even though the vote outcome is easily predictable before it starts. Also, a resolution of a key controversy over absentee ballots during the 2000 presidential election; and the methodology of small-n research on executives.',
   'Mexican Health Care Evaluation' => '',
   );
 
@@ -52,7 +52,7 @@ function _gkimport_pub_third_term_descriptions(){
 
   'Data Sharing and Informatics'  => array(
   'Related Papers on New Forms of Data' => '',
-  'Dataverse Network Project' => 'a major ongoing project to write web applications, standards, protocols, and software for automating the process of citing, archiving, preserving, distributing, cataloging, translating, disseminating, naming, verifying, and replicating data and associated analyses',
+  'The Dataverse Network Project' => 'a major ongoing project to write web applications, standards, protocols, and software for automating the process of citing, archiving, preserving, distributing, cataloging, translating, disseminating, naming, verifying, and replicating data and associated analyses',
   'The Virtual Data Center' => 'the predecessor to the Dataverse Network',
   ),
 
@@ -122,6 +122,7 @@ function _gkimport_pub_third_term_descriptions(){
   ),
 
   'Unifying Statistical Analysis'  => array(
+  'Unifying Approaches to Statistical Analysis' => '',
   'Related Materials' => '',
   ),
   );
