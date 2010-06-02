@@ -230,7 +230,7 @@ function apachesolr_attachments_add_documents($node, $namespace) {
   // fids that were added before but no longer present on this node.
 
   $fids = array();
-  $result = db_query("SELECT fid FROM {apachesolr_attachments_files} WHERE nid = %d", $node->nid);
+  $result = db_query("SELECT fid FROM {apachesolr_attachments_files} WHERE nid = %d AND failed = 0", $node->nid);
   while ($row = db_fetch_array($result)) {
     $fids[$row['fid']] = $row['fid'];
   }
@@ -407,9 +407,17 @@ function apachesolr_attachments_get_attachment_text($file) {
   }
   else {
     // Extract using Solr.
-    // We allow Solr to throw exceptions - they will be caught
-    // by apachesolr.module.
-    list($text, $metadata) = apachesolr_attachments_extract_using_solr($filepath);
+    try {
+      list($text, $metadata) = apachesolr_attachments_extract_using_solr($filepath);
+    }
+    catch(Exception $e) {
+      $result = db_query("SELECT nid, attempts FROM {apachesolr_attachment_files} WHERE fid = %d", $file->fid);
+      while($row = db_fetch_array($result)) {
+        // An exception occurred, so flag the file as failed and log the attempt
+        db_query("UPDATE {apachesolr_attachments_files} SET failed = %d, attempts = %d, last_attempt = %d WHERE fid = %d AND nid = %d", true, $row['attempts'] + 1, time(), $file->fid, $row['nid']);  
+      }
+      return;      
+    }
   }
   // Strip bad control characters.
   $text = iconv("UTF-8", "UTF-8//IGNORE", $text);
