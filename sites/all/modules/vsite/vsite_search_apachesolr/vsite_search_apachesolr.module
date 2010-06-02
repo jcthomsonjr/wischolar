@@ -370,5 +370,7 @@ function vsite_search_apachesolr_strongarm() {
   $conf['apachesolr_search_taxonomy_links'] = 1;
   $conf['apachesolr_search_taxonomy_previous'] = 0;
   $conf['apachesolr_set_nodeapi_messages'] = 1;
+  $conf['apachesolr_attachment_extract_using'] = 'solr';
+  $conf['apachesolr_attachment_excluded_extensions'] = 'aif art avi bmp gif ico jpg mov mp3 mp4 mpg oga ogv png psd ra ram rgb tif gz';
   return $conf;
 }
