@@ -411,7 +411,7 @@ function apachesolr_attachments_get_attachment_text($file) {
       list($text, $metadata) = apachesolr_attachments_extract_using_solr($filepath);
     }
     catch(Exception $e) {
-      $result = db_query("SELECT nid, attempts FROM {apachesolr_attachment_files} WHERE fid = %d", $file->fid);
+      $result = db_query("SELECT nid, attempts FROM {apachesolr_attachments_files} WHERE fid = %d", $file->fid);
       while($row = db_fetch_array($result)) {
         // An exception occurred, so flag the file as failed and log the attempt
         db_query("UPDATE {apachesolr_attachments_files} SET failed = %d, attempts = %d, last_attempt = %d WHERE fid = %d AND nid = %d", true, $row['attempts'] + 1, time(), $file->fid, $row['nid']);  
