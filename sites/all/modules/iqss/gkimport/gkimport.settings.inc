@@ -147,3 +147,104 @@ function _gkimport_undo_sub_terms(){
     taxonomy_del_term($data -> tid);
   }
 }
+
+function _gkimport_generate_pubnotes_additional(){
+  return array(
+  0 => array(
+  'nid' => 0,
+  'title' => 'CEM: Coarsened Exact Matching in Stata',
+  'notes' => '',
+  ),
+  1 => array(
+  'nid' => 0,
+  'title' => 'CEM: Coarsened Exact Matching',
+  'notes' => 'This program is designed to improve the estimation of causal effects via an extremely powerful method of matching that is widely applicable and exceptionally easy to understand and use (if you understand how to draw a histogram, you will understand this method).'
+  ),
+  2 => array(
+  'nid' => 0,
+  'title' => 'From Preserving the Past to Preserving the Future: The Data-PASS Project and the Challenges of Preserving Digital Social Science Data',
+  'notes' => ''
+  ),
+
+  3 => array(
+  'nid' => 0,
+  'title' => 'An Introduction to the Virtual Data Center Project and Software',
+  'notes' => ''
+  ),
+  4 => array(
+  'nid' => 0,
+  'title' => 'The Changing Evidence Base of Social Science Research',
+  'notes' => ''
+  ),
+  5 => array(
+  'nid' => 0,
+  'title' => 'Did Illegally Counted Overseas Absentee Ballots Decide the 2000 U.S. Presidential Election?',
+  'notes' => 'Details of an application conducted for the New York Times, including extensions of ecological inference to Bayesian model averaging.'
+  ),
+  6 => array(
+  'nid' => 0,
+  'title' => 'The Generalization in the Generalized Event Count Model, With Comments on Achen, Amato, and Londregan',
+  'notes' => 'a response to three authors in a symposium on "Gary King\'s Generalized Event Count Model"'
+  ),
+  7 => array(
+  'nid' => 0,
+  'title' => 'COUNT: A Program for Estimating Event Count and Duration Regressions',
+  'notes' => 'Versions 1988-2002, published as a stand-alone program and as part of the Gauss Package by Aptech Systems, Kent, Washington.'
+  ),
+  8 => array(
+  'nid' => 0,
+  'title' => 'JudgeIt II: A Program for Evaluating Electoral Systems and Redistricting Plans',
+  'notes' => 'Version:1.3.4 - JudgeIt allows a user to construct a model of a two-party election system over multiple election cycles, derive quantities of interest about the system through statistical estimation and simulation, and produce output summary statistics and graphical plots of those quantities. Some of the quantities of interest are based on partisan symmetry as a standard of fairness in legislative redistricting, such as partisan bias as the deviation from fairness and electoral responsiveness which indexes how party control of legislative seats responds to changes in a party\'s success at the polls even in a fair system. (A uniform consensus has existed in the academic literature since at least King and Browning (1987) on partisan symmetry as a standard for fairness, and even the U.S. Supreme Court now appears to agree; see Grofman and King (2007).) JudgeIt will also estimate and graph seats-votes curves, make specific vote and seat predictions for individual districts, and calculate numerous other relevant statistics.'
+  ),
+  9 => array(
+  'nid' => 0,
+  'title' => 'Deaths From Heart Failure: Using Coarsened Exact Matching to Correct Cause of Death Statistics',
+  'notes' => ''
+  ),
+  10 => array(
+  'nid' => 0,
+  'title' => 'How Not to Lie Without Statistics',
+  'notes' => ''
+  ),
+  11 => array(
+  'nid' => 0,
+  'title' => 'Statistical Security for Social Security',
+  'notes' => 'Forecasting the solvancy of the Social Security Trust Fund'
+  ),
+  12=> array(
+  'nid' => 0,
+  'title' => 'The Effects of International Monetary Fund Loans on Health Outcomes',
+  'notes' => 'A perspective article on the effect of the IMF on increasing turberculosis mortality rates'
+  ),
+  13 => array(
+  'nid' => 0,
+  'title' => 'Determinants of Inequality in Child Survival: Results from 39 Countries',
+  'notes' => ''
+  ),
+  14 => array(
+  'nid' => 0,
+  'title' => '10 Million International Dyadic Events',
+  'notes' => 'coding conflict and cooperation in international relations, 1990-2004, as evaluated by King and Lowe (2003)'
+  ),
+  15 => array(
+  'nid' => 0,
+  'title' => 'Elections to the United States House of Representatives, 1898-1992',
+  'notes' => 'ICPSR data set number 6311'
+  ),
+  );
+  
+}
+
+function gkimport_update_publication_titles(){
+  $titles=  array(
+  1 => array(
+  'old' => 'Truth is Stranger than Prediction, More Questionable Than Causal Inference',
+  'new' => '\'Truth\' is Stranger than Prediction, More Questionable Than Causal Inference',
+  )
+  );
+
+  foreach($titles as $title){
+    db_query("UPDATE {node} SET title = '%s' WHERE title = '%s'  ", $title['new'], $title['old']);
+    db_query("UPDATE {node_revisions} SET title = '%s' WHERE title = '%s'  ", $title['new'], $title['old']);
+  }
+}
