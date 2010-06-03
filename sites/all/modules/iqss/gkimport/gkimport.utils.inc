@@ -121,3 +121,31 @@ function gkimport_generate_notes_file(){
   file_put_contents($filepath, $str);
 }
  
+function gkimport_test_term_assignments(){
+  $res = db_query("SELECT nid, biblio_type FROM biblio");
+while($data = db_fetch_object($res)){
+
+$match = db_result(db_query("SELECT * FROM term_node WHERE nid = %d", $data -> nid));
+
+if($match){
+$matches[] = $data -> nid;
+}
+
+else{
+$node = node_load($data -> nid);
+$nonmatches[] = $data -> nid . ' ' . $data ->biblio_type . ' ' . $node -> title;
+
+$arr = array(100,101);
+
+if (!in_array($data -> biblio_type, $arr)){
+  
+  $relnonmatches[] = $data -> nid . ' ' . $data ->biblio_type . ' ' . $node -> title;
+  }
+}
+
+}
+dpm($matches);
+dpm($nonmatches);
+dpm($relnonmatches);
+  
+}
