@@ -559,8 +559,8 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
         	}
 
           if($vsite->settings['front']['frontpage'] == 'flag'){
-            $form['options']['vsite_promote_to_front'] = array('#type' => 'checkbox', 
-                '#title' => "Promote to front page", 
+            $form['options']['vsite_promote_to_front'] = array('#type' => 'checkbox',
+                '#title' => "Promote to front page",
                 "#default_value" => false,
                 "#description" => t("If checked this post will be shown in your front page"));
             if($nid){
@@ -637,6 +637,14 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
           }
         }
       }//END fix pathauto / purl conflicts
+      
+      //Have this node avalible to the public and we will hide private using the vsite->menu_access function
+		  $map = spaces_features_map('node');
+		  $feature_name = $map[$node->type];
+		  if ($vsite && $vsite->feature_access($feature_name)) {
+		    $node->og_public = OG_VISIBLE_BOTH;
+		  }//Does this person have the ability to create public nodes on this vsite?
+      break;
   	break;
     case 'update':
     case 'insert':
@@ -658,7 +666,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       	//////////
       	//INTEGRATE FILE ALIAS and UPLOAD and ITWEAK unfortunatly there is no more elegant way to do this
       	//////////
-	      if (module_exists('itweak_upload') && module_exists('file_aliases') && isset($node->itweak_upload)){ 
+	      if (module_exists('itweak_upload') && module_exists('file_aliases') && isset($node->itweak_upload)){
 	      	$tmp_node = clone $node;
 	      	$tmp_node->files = $tmp_node->itweak_upload;
 		      if(($ffp = filefield_paths_get_fields($tmp_node, $op)) != FALSE) {
@@ -794,9 +802,9 @@ function node_vsite_admin_link($type, $object) {
 
 /**
  * Implemetation of hook_system_info_alter
- * 
+ *
  * Used to set the default vsite_layout regions on scholar themes
- * 
+ *
  * @param $info
  * @param $file
  */

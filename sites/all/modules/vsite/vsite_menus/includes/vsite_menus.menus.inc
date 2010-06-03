@@ -111,7 +111,18 @@ class vsite_menus_menus implements vsite_setting {
 
   function submit($space, $value) {
     
-    return self::create_menus($value);
+    $value = self::create_menus($value);
+    
+    $a_disabled_menus = self::get_disabled_menus();
+    if(count($value['primary']) && in_array('primary',$a_disabled_menus)){
+    	$a_primary = menu_load(variable_get('scholar_primary_menu',false));
+      drupal_set_message("The [". t($a_primary['title'])."] menu has [".count($value['primary'])."] entries but is not in the site layout.  You can move it into the page layout on the ".l('layout appearance','cp/appearance/layout')." page.",'warning');
+    }elseif (count($value['secondary']) && in_array('secondary',$a_disabled_menus)){
+    	$a_secondary = menu_load(variable_get('scholar_secondary_menu',false));
+    	drupal_set_message("The [". t($a_secondary['title'])."] menu has [".count($value['secondary'])."] entries but is not in the site layout.  You can move it into the page layout on the ".l('layout appearance','cp/appearance/layout')." page.",'warning');
+    }
+    
+    return $value;
   }
   
   function submit_modify_space(&$space, $value){
