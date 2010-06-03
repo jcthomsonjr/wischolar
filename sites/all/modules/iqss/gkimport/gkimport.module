@@ -762,14 +762,7 @@ function gkimport_nodeapi(&$node, $op){
   switch ($op) { 
     case 'presave':
       //manually set auto title url alias
-      $node -> pathauto_perform_alias = 1;
-            
-      //add the taxonomy term to the node
-      if (!vsite_get_vsite()){ 
-        $vid = variable_get('gkimport_ri_vocab_id', '');
-        $term = trim(gkimport_match_terms($node -> title));
-        if (strlen($term))  $node -> taxonomy['tags'][$vid] = $term;  //add the term here
-      }
+      $node -> pathauto_perform_alias = 1;   
       break;
     case 'insert':
       if (!vsite_get_vsite()){
