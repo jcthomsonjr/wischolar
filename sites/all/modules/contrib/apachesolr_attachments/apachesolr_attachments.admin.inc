@@ -203,7 +203,7 @@ function apachesolr_attachements_delete_index() {
     $solr = apachesolr_get_solr();
     $solr->deleteByQuery("entity:file AND hash:". apachesolr_site_hash());
     $solr->commit();
-    apachesolr_index_updated(time());
+    apachesolr_index_set_last_updated(time());
     apachesolr_clear_last_index('apachesolr_attachments');
     return TRUE;
   }
@@ -230,9 +230,13 @@ function apachesolr_attachments_add_documents($node, $namespace) {
   // fids that were added before but no longer present on this node.
 
   $fids = array();
-  $result = db_query("SELECT fid FROM {apachesolr_attachments_files} WHERE nid = %d AND failed = 0", $node->nid);
+  $failed = array();
+  $result = db_query("SELECT fid, failed FROM {apachesolr_attachments_files} WHERE nid = %d", $node->nid);
   while ($row = db_fetch_array($result)) {
     $fids[$row['fid']] = $row['fid'];
+    if($row['failed']) {
+      $failed[$row['fid']] = $row['fid'];
+    }
   }
 
   $files = apachesolr_attachments_get_indexable_files($node);
@@ -243,6 +247,8 @@ function apachesolr_attachments_add_documents($node, $namespace) {
     db_query("UPDATE {apachesolr_attachments_files} SET removed = 1 WHERE fid IN (". db_placeholders($missing_fids) .")", $missing_fids);
   }
   $new_files = array_diff_key($files, $fids);
+  // Filter out the files that have failed
+  $new_files = array_diff_key($new_files, $failed);
   // Add new files.
   foreach ($new_files as $file) {
     db_query("INSERT INTO {apachesolr_attachments_files} (fid, nid, removed, sha1) VALUES (%d, %d, 0, '')", $file->fid, $node->nid);
@@ -319,6 +325,101 @@ function apachesolr_attachments_get_indexable_files($node) {
     }
   }
   return $file_list;
+}
+
+/**
+ * Helper function to define the table headers for the failures form
+ * 
+ * @return Associative array of headers used in the theme layer and for table sorting
+ */
+function apachesolr_attachments_failures_form_headers() {
+  // Individual table headers.
+  $headers = array(
+    array('data' => t('Re-Index'), 'class' => 'checkbox'),
+    array('data' => t('File'), 'field' => 'filepath', 'sort' => 'asc'),
+    array('data' => t('Type'), 'field' => 'filemime', 'sort' => 'asc'),
+    array('data' => t('Attempts'), 'field' => 'attempts', 'sort' => 'desc'),
+    array('data' => t('Last Attempt'), 'field' => 'last_attempt', 'sort' => 'asc'),
+  );
+  return $headers;
+}
+
+/**
+ * Menu callback function to build the form listing all files that failed indexing
+ * 
+ * @return FAPI array representing 
+ */
+function apachesolr_attachments_failures_form() {
+  $form = array();
+  $options = array();
+  $limit = 10;
+  $files = apachesolr_attachments_get_failed_files($limit);
+  if(!empty($files)) {
+    foreach($files as $fid => $file) {
+      $options[$fid] = '';
+      $form['files'][$fid]['path'] = array(
+        '#value' => $file->filepath,
+      );
+      $form['files'][$fid]['type'] = array(
+        '#value' => $file->filemime,
+      );
+      $form['files'][$fid]['attempts'] = array(
+        '#value' => $file->attempts,
+      );
+      $form['files'][$fid]['last_attempt'] = array(
+        '#value' => date('Y-m-d h:m:s', $file->last_attempt),
+      );
+    }
+    $form['re-index'] = array(
+      '#type' => 'checkboxes',
+      '#options' => $options,
+    );
+    $form['submit'] = array(
+      '#type' => 'submit', 
+      '#value' => t('Re-index Files'),
+      '#description' => t('Send the the selected files to Apache Solr to be re-indexed.'),
+    );
+    $form['#redirect'] = 'admin/reports/apachesolr/attachments';
+  }
+  return $form;
+}
+
+function apachesolr_attachments_failures_form_validate($form, $form_state) {
+  $fids = array_unique(array_values($form_state['values']['re-index']));
+  if(count($fids) <=1 && ($fids[0] < 1)) {
+    form_set_error('re-index', 'You must select at least one file to re-index.');
+  }  
+}
+
+function apachesolr_attachments_failures_form_submit($form, $form_state) {
+  foreach($form_state['values']['re-index'] as $fid => $selected) {
+    if($selected) {
+      // Get each node id that this file is associated with
+      $result = db_query("SELECT nid FROM {apachesolr_attachments_files} WHERE fid = %d", $fid);
+      while($row = db_fetch_array($result)) {
+        // Flag each node as being needed to be updated in the index
+        apachesolr_mark_node($row['nid']);
+      }
+    }
+  }
+  drupal_set_message('The selected files will be re-indexed during the next cron run.');
+}
+
+/**
+ * Helper function to retrieve all of the files that failed indexing
+ * 
+ * @return Associative array of file objects
+ */
+function apachesolr_attachments_get_failed_files($limit=10) {
+  $files = array();
+  $sql = "SELECT f.*, af.attempts, af.last_attempt FROM {files} f LEFT JOIN {apachesolr_attachments_files} af ON af.fid = f.fid WHERE af.failed > 0";
+  $headers = apachesolr_attachments_failures_form_headers();
+  $sql .= tablesort_sql($headers);
+  $result = pager_query($sql, $limit);
+  while($file = db_fetch_object($result)) {
+    $files[$file->fid] = $file;
+  }
+  return $files;
 }
 
 function apachesolr_attachments_default_excluded() {
@@ -423,7 +524,7 @@ function apachesolr_attachments_get_attachment_text($file) {
   $text = iconv("UTF-8", "UTF-8//IGNORE", $text);
   $text = trim(apachesolr_clean_text($text));
   // Save the extracted, cleaned text to the DB.
-  db_query("UPDATE {apachesolr_attachments_files} SET sha1 = '%s', body = '%s' WHERE fid = %d", $sha1, $text, $file->fid);
+  db_query("UPDATE {apachesolr_attachments_files} SET sha1 = '%s', body = '%s', attempts = 1, last_attempt = %d WHERE fid = %d", $sha1, $text, time(), $file->fid);
 
   return $text;
 }

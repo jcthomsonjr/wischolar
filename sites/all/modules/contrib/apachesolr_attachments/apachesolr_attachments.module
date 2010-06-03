@@ -14,7 +14,7 @@ define (EXTRACTING_SERVLET, 'extract/tika');
 function apachesolr_attachments_menu() {
   $items = array();
   $items['admin/settings/apachesolr/attachments'] = array(
-    'title' => 'File attachments',
+    'title' => t('File attachments'),
     'description' => 'Administer Apache Solr Attachments.',
     'page callback' => 'apachesolr_attachments_admin_page',
     'access arguments' => array('administer search'),
@@ -22,7 +22,7 @@ function apachesolr_attachments_menu() {
     'type' => MENU_LOCAL_TASK,
   );
   $items['admin/settings/apachesolr/attachments/confirm/reindex'] = array(
-    'title' => 'Reindex all files',
+    'title' => t('Reindex all files'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('apachesolr_attachments_confirm', 5),
     'access arguments' => array('administer search'),
@@ -30,7 +30,7 @@ function apachesolr_attachments_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['admin/settings/apachesolr/attachments/confirm/delete'] = array(
-    'title' => 'Delete and reindex all files',
+    'title' => t('Delete and reindex all files'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('apachesolr_attachments_confirm', 5),
     'access arguments' => array('administer search'),
@@ -38,12 +38,20 @@ function apachesolr_attachments_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['admin/settings/apachesolr/attachments/confirm/clear-cache'] = array(
-    'title' => 'Delete the local cache of file text',
+    'title' => t('Delete the local cache of file text'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('apachesolr_attachments_confirm', 5),
     'access arguments' => array('administer search'),
     'file' => 'apachesolr_attachments.admin.inc',
     'type' => MENU_CALLBACK,
+  );
+  $items['admin/reports/apachesolr/attachments'] = array(
+    'title' => t('Apache Solr Attachments'),
+    'description' => t('List of files that failed to be indexed'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('apachesolr_attachments_failures_form'),
+    'access arguments' => array('administer search'),
+    'file' => 'apachesolr_attachments.admin.inc',
   );
   return $items;
 }
@@ -238,3 +246,36 @@ function apachesolr_attachments_remove_attachments_from_index($nid) {
   }
 }
 
+/**
+ * Implementation of hook_theme()
+ */
+function apachesolr_attachments_theme() {
+  return array(
+    'apachesolr_attachments_failures_form' => array(
+      'arguments' => array('form' => NULL),
+    ),
+  );
+}
+
+function theme_apachesolr_attachments_failures_form($form) {
+  $rows = array();
+  foreach (element_children($form['files']) as $key) {
+    $row = array();
+    if (isset($form['files'][$key]['path'])) {
+      $status = drupal_render($form['re-index'][$key]);
+      $row[] = array('data' => $status, 'class' => 'checkbox');
+      $row[] = ''.drupal_render($form['files'][$key]['path']).'';
+      $row[] = array('data' => drupal_render($form['files'][$key]['type']));
+      $row[] = array('data' => drupal_render($form['files'][$key]['attempts']));
+      $row[] = array('data' => drupal_render($form['files'][$key]['last_attempt']));
+      $rows[] = $row;
+    }
+  }
+  $headers = apachesolr_attachments_failures_form_headers();
+  $output = '<div>'.t('This form lists all of the files attached to nodes that failed to be indexed by Apache Solr.  When the form is submitted, each selected file will have '.
+    'it\'s parent node marked in the database as needing to be re-indexed, which in turn, will cause the attached files to be re-indexed during the next cron run.').'</div>';
+  $output .= theme('table', $headers, $rows);
+  $output .= theme('pager', NULL, $limit, 0);
+  $output .= drupal_render($form);
+  return $output;
+}
