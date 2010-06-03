@@ -248,7 +248,8 @@ function gkimport_pubs_taxonomy($filepath){
 
     //parse csv data
     while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
-      if(strlen($data[1])) $sub_term_match_data[$data[3]] = array(
+      if(strlen($data[1])) $sub_term_match_data[] = array(
+      'title' => trim($data[3]),
       'primary' => $data[0],
       'secondary' => $data[1],
       );
@@ -270,7 +271,7 @@ function gkimport_pubs_taxonomy($filepath){
     $terms = array_unique($all_terms);
     //set title to term mapping data in system variable to be used later
     variable_set('gkimport_taxonomy_data', $term_match_data);
-    variable_set('gkimport_taxonomy_secondary_data', $sub_term_match_data);
+    variable_set('gkimport_taxonomy_subterm_data', $sub_term_match_data);
 
     //save all publication data from the csv to a system variable to be used later
     variable_set('gkimport_all_pub_data', $all_data);
@@ -355,14 +356,14 @@ function gkimport_add_third_terms(){
 function gkimport_assign_terms(){
   install_include(array('taxonomy'));
   $ri_vid = variable_get('gkimport_ri_vocab_id', '');
-  $subterm_data = variable_get('gkimport_taxonomy_secondary_data', array());
-  foreach($subterm_data  as $title => $values){
+  $subterm_data = variable_get('gkimport_taxonomy_subterm_data', array());
+  foreach($subterm_data  as $values){
     if (strlen($values['primary']) && strlen($values['secondary'])){
       $parent_tid = install_taxonomy_get_tid(trim($values['primary']), $ri_vid);
       
       $tid = gkimport_taxonomy_get_tid($values['secondary'], $ri_vid, $parent_tid);
       
-      $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ", trim($title)));
+      $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ", trim($values['title'])));
     
       if($nid && $tid){
         db_query("DELETE FROM {term_node} WHERE nid = %d AND tid = %d", $nid, $tid);
@@ -372,7 +373,7 @@ function gkimport_assign_terms(){
 
       }
       else{
-        drush_print("Could not add term {$values['secondary']} to node $title - $nid");
+        drush_print("Could not add term {$values['secondary']} to node {$values['title']} - $nid");
       }
     }
   }
@@ -1100,10 +1101,7 @@ function gkimport_cleanup(){
 	gkimport_update_publication_titles();
 	
 	//Update term names
-	//Informatics and Data Sharing (was "Data Sharing and Informatics")
-      //Text Analysis (was "Content Analysis")
-
-	
+	gkimport_update_term_names();	
 }
 
 /**

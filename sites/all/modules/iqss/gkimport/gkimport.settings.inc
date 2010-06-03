@@ -257,6 +257,22 @@ function gkimport_update_publication_titles(){
   }
 }
 
+function gkimport_update_term_names(){
+  $names =  array(
+  1 => array(
+  'old' => 'Data Sharing and Informatics',
+  'new' => 'Informatics and Data Sharing',
+    ),
+  2 => array(
+  'old' => 'Content Analysis',
+  'new' => 'Text Analysis',
+    ),
+  );  
+    foreach($names as $name){
+    db_query("UPDATE {term_data} SET name = '%s' WHERE name = '%s'  ", $name['new'], $name['old']);
+  } 
+}
+
 /**
  * An array of titles for publications that should be software biblio types
  */
