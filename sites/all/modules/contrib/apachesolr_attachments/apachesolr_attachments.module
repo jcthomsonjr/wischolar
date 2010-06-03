@@ -273,7 +273,7 @@ function theme_apachesolr_attachments_failures_form($form) {
   }
   $headers = apachesolr_attachments_failures_form_headers();
   $output = '<div>'.t('This form lists all of the files attached to nodes that failed to be indexed by Apache Solr.  When the form is submitted, each selected file will have '.
-    'it\'s parent node marked in the database as needing to be re-indexed, which in turn, will cause the attached files to be re-indexed during the next cron run.').'</div>';
+    'its parent node marked in the database as needing to be re-indexed, which in turn, will cause the attached files to be re-indexed during the next cron run.').'</div>';
   $output .= theme('table', $headers, $rows);
   $output .= theme('pager', NULL, $limit, 0);
   $output .= drupal_render($form);
