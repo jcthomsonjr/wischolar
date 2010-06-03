@@ -175,6 +175,6 @@ function apachesolr_attachments_update_6002() {
     'not null' => TRUE,
   );
   db_add_field($ret, 'apachesolr_attachments_files', 'last_attempt', $schema);
-  
+  db_add_index($ret, 'apachesolr_attachments_files', 'failed', array('failed'));
   return $ret;
 }
