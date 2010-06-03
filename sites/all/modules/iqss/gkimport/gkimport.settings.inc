@@ -256,3 +256,38 @@ function gkimport_update_publication_titles(){
     db_query("UPDATE {node_revisions} SET title = '%s' WHERE title = '%s'  ", $title['new'], $title['old']);
   }
 }
+
+/**
+ * An array of titles for publications that should be software biblio types
+ */
+function _gkimport_software_pubs(){  
+  //from the bibtex file
+  return array(
+  'CEM: Coarsened Exact Matching',
+  'Anchors: Software for Anchoring Vignettes Data',
+  'Amelia II: A Program for Missing Data',
+  'AMELIA: A Program for Missing Data',
+  'Zelig: Everyone\'s Statistical Software',
+  'CLARIFY: Software for Interpreting and Presenting Statistical Results',
+  'AMELIA: A Program for Missing Data',
+  'MAXLIK',
+  'EI: Program for Ecological Inference',
+  'EzI: A(n Easy) Program for Ecological Inference',
+  'COUNT: A Program for Estimating Event Count and Duration Regressions',
+  'JudgeIt: A Program for Evaluating Electoral Systems and Redistricting Plans',
+  'JudgeIt II: A Program for Evaluating Electoral Systems and Redistricting Plans',
+  'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
+  );
+ }
+ 
+ /**
+ * An array of titles for publications that should be software biblio types
+ */
+function _gkimport_data_pubs(){  
+  //from the bibtex file
+  return array(
+  '10 Million International Dyadic Events',
+  'The Record of American Democracy, 1984-1990',
+  'Elections to the United States House of Representatives, 1898-1992',  
+  );
+ }

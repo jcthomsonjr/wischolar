@@ -899,38 +899,37 @@ function gkimport_software_pubs_set(){
       $node = node_load($nid);
       db_query("UPDATE {biblio} SET biblio_type = %d WHERE nid =  %d" , $biblio_type_id, $nid); 
       drush_print("Updated biblio type to Software for node: $nid {$node -> title}");
-      drush_print("Found match for software term: $nid {$node -> title}");    
     }
-    //special case for Zelig node
-    $nid = db_result(db_query("SELECT nid from {node} WHERE title LIKE '%%%s%%' ", 'Zelig: Everyone'));
-    db_query("UPDATE {biblio} SET biblio_type = %d WHERE nid =  %d" , $biblio_type_id, $nid);
-    $notes_text = "A complete statistical package and framework for statistical inference that can estimate, help interpret, and present the results from, a large range of statistical methods. Zelig, which works within R, and has features from Clarify, Amelia, MatchIt, ReLogit, and many other programs. It adds powerful infrastructure, but retains an easy-to-use command structure. The Zelig manual doesn't assume you know R.";
-    db_query("UPDATE {biblio} SET biblio_notes = '%s' WHERE nid =  %d" ,  $notes_text, $nid);    
   }
 }
 
 /**
- * An array of titles for publications that should be software biblio types
+ * Change the biblio type of selected nodes to Data
  */
-function _gkimport_software_pubs(){  
-  //from the bibtex file
-  return array(
-  'CEM: Coarsened Exact Matching',
-  'Anchors: Software for Anchoring Vignettes Data',
-  'Amelia II: A Program for Missing Data',
-  'AMELIA: A Program for Missing Data',
-  'Zelig: Everyone\'s Statistical Software',
-  'CLARIFY: Software for Interpreting and Presenting Statistical Results',
-  'AMELIA: A Program for Missing Data',
-  'MAXLIK',
-  'EI: Program for Ecological Inference',
-  'EzI: A(n Easy) Program for Ecological Inference',
-  'COUNT: A Program for Estimating Event Count and Duration Regressions',
-  'JudgeIt: A Program for Evaluating Electoral Systems and Redistricting Plans',
-  'JudgeIt II: A Program for Evaluating Electoral Systems and Redistricting Plans',
-  'MatchIt: Nonparametric Preprocessing for Parametric Causal Inference',
-  );
- }
+function gkimport_data_pubs_set(){
+  $biblio_type_id = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s' " , 'Data'));
+  if(!$biblio_type_id){
+    $filepath = drupal_get_path('module', 'biblio') . '/biblio.admin.inc';
+    include_once($filepath);
+    //create custom biblio type called Data
+    $form_state['values']['name'] = 'Data';
+    $form_state['values']['description'] = '';
+    drupal_execute('biblio_admin_types_add_form', $form_state);
+    $biblio_type_id = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s' " , 'Data'));
+    if($biblio_type_id) {
+      drush_print("Created biblio type: Data");
+    }
+  }
+  foreach(_gkimport_data_pubs() as $title){
+    $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ",$title));
+    if ($nid){
+      $node = node_load($nid);
+      db_query("UPDATE {biblio} SET biblio_type = %d WHERE nid =  %d" , $biblio_type_id, $nid);
+      drush_print("Updated biblio type to Data for node: $nid {$node -> title}");
+    }
+  }
+}
+
 
 /**
  * Assign the custom theme
