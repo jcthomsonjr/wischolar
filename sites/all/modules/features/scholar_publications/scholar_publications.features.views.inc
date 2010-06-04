@@ -256,6 +256,7 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('use_pager', 'mini');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
+
   $views[$view->name] = $view;
 
   // Exported view: publication_types
@@ -811,9 +812,11 @@ function _scholar_publications_views_default_views() {
     ),
   ));
   $handler->override_option('title', 'Tag by Type');
+  $handler->override_option('empty', '');
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
+
   $views[$view->name] = $view;
 
   // Exported view: publication_years
@@ -1189,6 +1192,7 @@ function _scholar_publications_views_default_views() {
     'description' => '',
     'weight' => 0,
   ));
+
   $views[$view->name] = $view;
 
   // Exported view: scholar_publications
