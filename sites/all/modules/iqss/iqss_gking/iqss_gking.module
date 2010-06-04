@@ -84,7 +84,7 @@ function iqss_gking_filter_by_type_block(){
   
   $a_term = taxonomy_get_term(current($router_item['page_arguments']));
   
-  return array('subject' => $a_term->name." by Publication Type",'content' => $output);;
+  return strlen($output)?array('subject' => $a_term->name." by Publication Type",'content' => $output):array();
 }
 
 /**
@@ -158,7 +158,7 @@ function _iqss_gking_taxonomy_methods_wgt(){
     foreach ($tree as $n_index => $o_vocab){
       if($o_vocab->name != "Methods" || $o_vocab->depth != 0) continue;
       $n_index++;
-      $items = vsite_taxonomy_build_list_items($n_index , $tree, 'iqss_gking_term_description');
+      $items = vsite_taxonomy_build_list_items($n_index, $tree, 'iqss_gking_term_description');
       $output .= theme('item_list', $items);
       break;
     }
