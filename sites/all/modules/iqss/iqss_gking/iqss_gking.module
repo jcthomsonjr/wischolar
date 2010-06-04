@@ -83,8 +83,8 @@ function iqss_gking_filter_by_type_block(){
   if(!$output) return array();
   
   $a_term = taxonomy_get_term(current($router_item['page_arguments']));
-  
-  return strlen($output)?array('subject' => $a_term->name." by Publication Type",'content' => $output):array();
+
+  return count($view->result)?array('subject' => $a_term->name." by Publication Type",'content' => $output):array();
 }
 
 /**
