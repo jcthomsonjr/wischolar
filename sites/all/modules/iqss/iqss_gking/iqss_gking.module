@@ -45,14 +45,17 @@ function iqss_gking_theme() {
  */
 function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
   if ($op == 'list') {
-    $blocks['areas_of_research']['info'] = t('Areas of Research');
+    $blocks['taxonomy_applications']['info'] = t('Areas of Research - Applications');
+    $blocks['taxonomy_methods']['info'] = t('Areas of Research - Methods');
     $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
     return $blocks;
   }
   elseif ($op == 'view') {
     switch ($delta) {
-      case 'areas_of_research':
-        return _iqss_gking_areas_of_research_wgt();
+      case 'taxonomy_applications':
+        return _iqss_gking_taxonomy_applications_wgt();
+      case 'taxonomy_methods':
+        return _iqss_gking_taxonomy_methods_wgt();
       case 'filter_by_type':
          return iqss_gking_filter_by_type_block();
     }
@@ -93,15 +96,24 @@ function iqss_gking_context_default_contexts_alter(&$contexts){
 
 	//Add this block to the front context on Garys site
 	$a_block_info = iqss_gking_block();
-	$contexts['scholar-feature-front']->block['iqss_gking_areas_of_research'] = array(
+	$contexts['scholar-feature-front']->block['iqss_gking_taxonomy_applications'] = array(
 	  'module' => 'iqss_gking',
-		'delta' => 'areas_of_research',
+		'delta' => 'taxonomy_applications',
 		'weight' => 0,
 		'region' => 'left',
 		'status' => 0,
-	  'label' => $a_block_info['areas_of_research']['info'],
+	  'label' => $a_block_info['taxonomy_applications']['info'],
 	  'type' => 'context_ui',
 	);
+	$contexts['scholar-feature-front']->block['iqss_gking_taxonomy_methods'] = array(
+    'module' => 'iqss_gking',
+    'delta' => 'taxonomy_methods',
+    'weight' => 1,
+    'region' => 'left',
+    'status' => 0,
+    'label' => $a_block_info['taxonomy_methods']['info'],
+    'type' => 'context_ui',
+  );
 
 }
 
@@ -130,9 +142,36 @@ function theme_iqss_gking_term_description($term){
 }
 
 /**
- * Return the block contents for the area of research block
+ * Return the block contents for the area of research-applications block
  */
-function _iqss_gking_areas_of_research_wgt(){
+function _iqss_gking_taxonomy_methods_wgt(){
+
+  $vsite = vsite_get_vsite();
+  if(!iqss_gking_on_gking_site()) return array();
+
+  $output = "";
+  foreach ($vsite->get_vocabs($type) as $n_vid => $o_vocab){
+    if($o_vocab->name != "Research Interests") continue;
+
+    $tree = taxonomy_get_tree($n_vid,0,-1,2);
+    
+    foreach ($tree as $n_index => $o_vocab){
+      if($o_vocab->name != "Methods" || $o_vocab->depth != 0) continue;
+      $n_index++;
+      $items = vsite_taxonomy_build_list_items($n_index , $tree, 'iqss_gking_term_description');
+      $output .= theme('item_list', $items);
+      break;
+    }
+    break;
+  }
+
+  return array('subject' => "Research Methods",'content' => $output);
+}
+
+/**
+ * Return the block contents for the area of research-applications block
+ */
+function _iqss_gking_taxonomy_applications_wgt(){
 
 	$vsite = vsite_get_vsite();
 	if(!iqss_gking_on_gking_site()) return array();
@@ -141,15 +180,19 @@ function _iqss_gking_areas_of_research_wgt(){
   foreach ($vsite->get_vocabs($type) as $n_vid => $o_vocab){
   	if($o_vocab->name != "Research Interests") continue;
 
-  	$tree = taxonomy_get_tree($n_vid,0,-1,1);
-    $items = vsite_taxonomy_build_list_items($index = 0, $tree, 'iqss_gking_term_description');
-
-    $output .= theme('item_list', $items);
-
+  	$tree = taxonomy_get_tree($n_vid,0,-1,2);
+  	
+  	foreach ($tree as $n_index => $o_vocab){
+  		if($o_vocab->name != "Applications" || $o_vocab->depth != 0) continue;
+  		$n_index++;
+  		$items = vsite_taxonomy_build_list_items($n_index , $tree, 'iqss_gking_term_description');
+      $output .= theme('item_list', $items);
+      break;
+  	}
   	break;
   }
 
-	return array('subject' => "Areas of Research",'content' => $output);
+	return array('subject' => "Research Applications",'content' => $output);
 }
 
 function iqss_gking_context_active_contexts_alter(&$contexts){
@@ -172,13 +215,22 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
     if($a_term->vid == $n_vid){
 		  //Add this block category pages on Garys site
 		  $a_block_info = iqss_gking_block();
-		  $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
+		  $contexts['vsite-section-public']->block['iqss_gking_taxonomy_applications'] = array(
 		    'module' => 'iqss_gking',
-		    'delta' => 'areas_of_research',
+		    'delta' => 'taxonomy_applications',
 		    'weight' => -20,
 		    'region' => 'right',
 		    'status' => 0,
-		    'label' => $a_block_info['areas_of_research']['info'],
+		    'label' => $a_block_info['taxonomy_applications']['info'],
+		    'type' => 'context_ui',
+		  );
+		  $contexts['vsite-section-public']->block['iqss_gking_taxonomy_methods'] = array(
+		    'module' => 'iqss_gking',
+		    'delta' => 'taxonomy_methods',
+		    'weight' => -20,
+		    'region' => 'right',
+		    'status' => 0,
+		    'label' => $a_block_info['taxonomy_methods']['info'],
 		    'type' => 'context_ui',
 		  );
     }
