@@ -397,6 +397,23 @@ function vsite_search_luceneapi_luceneapi_document_alter($doc, $item, $module, $
 }
 
 /**
+ * Implementation of hook_luceneapi_result_alter()
+ * 
+ * @param mixed $result
+ *   Associative array representing a single search result
+ * @param string $module
+ *   The name of the module performing the search
+ * @param string $type
+ *   The type of search being performed
+ */
+function vsite_search_luceneapi_luceneapi_result_alter($result, $module, $type) {
+  if($type == 'node') {
+    $node = node_load($result['node']->nid);
+    $result['snippet'] = node_view($node, TRUE, FALSE, TRUE);
+  }
+}
+
+/**
  * Allows modules to append subqueries to the search query.  This hook is most
  * useful for adding filters, such as facets, to the search query.
  *
