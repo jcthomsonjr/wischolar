@@ -337,6 +337,20 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
 }
 
 /**
+ * Implementation of hook_apachesolr_process_results()
+ * 
+ * @param mixed $arg
+ *   Associative array containing the results of the search
+ */
+function vsite_search_apachesolr_apachesolr_process_results(&$arg) { 
+  foreach($arg as $index => $result) {
+    $nid = $result['node']->getField('nid');
+    $node = node_load($nid['value']);
+    $arg[$index]['snippet'] = node_view($node, TRUE, FALSE, TRUE);
+  }
+}
+
+/**
  * Implementation of hook_strongarm().
  */
 function vsite_search_apachesolr_strongarm() {
