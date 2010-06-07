@@ -337,7 +337,7 @@ function scholar_publications_vsite_widgets(){
     'module' => 'views',
     'delta' => 'publication_types-block_1',
     'weight' => 10,
-    'region' => 'right',
+    'region' => false,
     'status' => '0',
     'label' => 'Publications By Type',
     'type' => 'context_ui',
@@ -348,7 +348,7 @@ function scholar_publications_vsite_widgets(){
     'module' => 'views',
     'delta' => 'publication_years-block_1',
     'weight' => 11,
-    'region' => 'right',
+    'region' => false,
     'status' => '0',
     'label' => 'Publications By Year',
     'type' => 'context_ui',
@@ -359,7 +359,7 @@ function scholar_publications_vsite_widgets(){
     'module' => 'views',
     'delta' => 'publication_contributors-block_1',
     'weight' => 11,
-    'region' => 'right',
+    'region' => false,
     'status' => '0',
     'label' => 'Publications By Co-Author',
     'type' => 'context_ui',
@@ -380,7 +380,6 @@ function scholar_publications_views_post_render($view, &$s_display_handler_outpu
 		$s_display_handler_output = ''; //Do no display when there are no publications
 	}
 }
-
 
 /**
  * hook theme_registry_alter
