@@ -84,6 +84,7 @@ function vsite_search_apachesolr_form_alter(&$form, $form_state, $form_id) {
  *   Associative array of context objects
  */
 function vsite_search_apachesolr_context_active_contexts_alter(&$contexts) {
+  //die('Contexts:<br><pre>'.print_r($contexts,true).'</pre>');
   // If one of the active contexts is the apachesolr_search context, remove some unneccessary blocks
   if(in_array('vsite-search-apachesolr_search', array_keys($contexts))) {
     // Look at the type of query that has been performed, and set a flag regarding whether or not to show the biblio facets if the type:biblio filter is in effect
@@ -110,13 +111,13 @@ function vsite_search_apachesolr_context_active_contexts_alter(&$contexts) {
             break;
         }
       }
-      
-      // Loop through the apachesolr_search blocks and remove the Biblio facet blocks if needed
-      foreach($contexts['vsite-search-apachesolr_search']->block as $bid => $block) {
-        if(preg_match('/^apachesolr_biblio_/', $bid)) {
-          if(!$show_biblio_facets) {
-            unset($contexts['vsite-search-apachesolr_search']->block[$bid]);
-          }
+    }
+    
+    // Loop through the apachesolr_search blocks and remove the Biblio facet blocks if needed
+    foreach($contexts['vsite-search-apachesolr_search']->block as $bid => $block) {
+      if(preg_match('/^apachesolr_biblio_/', $bid)) {
+        if(!$show_biblio_facets) {
+          unset($contexts['vsite-search-apachesolr_search']->block[$bid]);
         }
       }
     }
