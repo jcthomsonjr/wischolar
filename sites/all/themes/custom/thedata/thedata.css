@@ -10,20 +10,18 @@ h2, h3, h4 {
 	font-style:normal;
 	}
 
-
 body.header-main #header-main {
-  padding-bottom: 0 !important;
-  }
+	padding-top: 4px;
+	padding-bottom: 0;
+	}
 
 #content-wrapper {
 	background: url(images/container.png) repeat-y 0 0 transparent;
 	}
 
-
 #footer {
 	background:url(images/footer.png) no-repeat 0 0 #fff;
 	}
-
 
 #header {
 	background: url(images/header.png) no-repeat 0 0;
@@ -44,14 +42,13 @@ body.header-main #header-main {
 	padding-right:0;
 	}
 
-
 #header-main h1 {
 	width: 208px;
 	height: 113px;
 	background: url(images/logo.png) no-repeat 0 0;
 	text-indent: -999em;
 	float: left;
-	margin-left:17px;
+	margin: 0 17px;
 	}
 
 #header-main h1 a {
@@ -60,15 +57,20 @@ body.header-main #header-main {
 	display: block;
 	}
 
-#navbar li a {
+#navbar li {
+	padding-left: 1px;
 	border-right: 1px solid #BBBBBB;
+	line-height: 29px;
+	}
+
+#navbar li a {
+	line-height: 29px;
 	}
 
 #navbar li a:hover, #navbar li a.active, #navbar li.active-trail a {
 	background: #C55B28;
 	color: #fff;
 	}
-
 
 #sidebar-right h3.title, #sidebar-left h3.title {
 	color:#C55B28;
@@ -78,11 +80,19 @@ body.header-main #header-main {
 	color: #0C54B3;
 	}
 
+#sidebar-right ul.menu li, #sidebar-left ul.booktoc li {
+	padding: 2px 0;
+	line-height: 1.5em;
+	}
+
+#sidebar-right ul.menu li a, #sidebar-left ul.booktoc li a {
+	display: block;
+	border-bottom: 1px dotted #ccc;
+	}
 
 .block-scholar_book h3.title {
 	display: none;
 	}
-
 
 .hmpgblurbs td {
 	vertical-align: top;
@@ -135,11 +145,9 @@ body.header-main #header-main {
 	padding:0;
 	}
 
-
 td.welcome {
 	vertical-align: middle;
 	}
-
 
 .view-Downloads .view-content {
 	padding-left:12px;
@@ -177,6 +185,7 @@ td.welcome {
 	background:url(images/download_bkgnd.gif) no-repeat;
 	text-align:center;
 	}
+
 #download_button a {
 	color:#fff;
 	text-decoration:none;
@@ -190,4 +199,9 @@ td.welcome {
 	margin: 0;
 	padding: 0;
 	text-align:center;
+	}
+
+.footnotes {
+	border-top: 1px dotted #ccc;
+	font-size: .75em;
 	}

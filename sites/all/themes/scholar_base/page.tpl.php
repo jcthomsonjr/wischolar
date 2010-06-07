@@ -58,48 +58,47 @@
       <?php endif; ?>
 
       <div id="content-wrapper">
-
-        <div id="content-main" class="column">
-          <?php if (!empty($content_top) || $context_links): ?>
-            <div id="content-top">
-              <?php print $content_top; ?>
-            </div><!-- /content-top -->
-          <?php endif; ?>
-
-          <div id="content">
-          <?php print $context_links;?>
-          <?php if (!empty($title)): ?>
-            <h2 class="title<?php if ($tabs) : print ' with-tabs'; endif;?>"><?php print $title; ?></h2>
-           <?php endif; ?>
-           <?php if (!empty($tabs)): ?>
-            <div class="tabs"><?php print $tabs; ?></div>
+        <div id="content-wrapper-inner">
+          <div id="content-main" class="column">
+            <?php if (!empty($content_top) || $context_links): ?>
+              <div id="content-top">
+                <?php print $content_top; ?>
+              </div><!-- /content-top -->
             <?php endif; ?>
-            <?php print $help; ?>
-            <?php print $messages; ?>
-            <?php print $content; ?>
-          </div> <!-- /content -->
 
-          <?php if (!empty($content_bottom)): ?>
-            <div id="content-bottom">
-              <?php print $content_bottom; ?>
-            </div><!--/content-bottom-->
+            <div id="content">
+            <?php print $context_links;?>
+            <?php if (!empty($title)): ?>
+              <h2 class="title<?php if ($tabs) : print ' with-tabs'; endif;?>"><?php print $title; ?></h2>
+             <?php endif; ?>
+             <?php if (!empty($tabs)): ?>
+              <div class="tabs"><?php print $tabs; ?></div>
+              <?php endif; ?>
+              <?php print $help; ?>
+              <?php print $messages; ?>
+              <?php print $content; ?>
+            </div> <!-- /content -->
+
+            <?php if (!empty($content_bottom)): ?>
+              <div id="content-bottom">
+                <?php print $content_bottom; ?>
+              </div><!--/content-bottom-->
+            <?php endif; ?>
+            </div><!-- /content main -->
+
+              <?php if (!empty($left)): ?>
+          <div id="sidebar-left" class="column">
+            <?php print $left; ?>
+          </div> <!-- /sidebar-left -->
           <?php endif; ?>
-          </div><!-- /content main -->
 
-
-            <?php if (!empty($left)): ?>
-        <div id="sidebar-left" class="column">
-          <?php print $left; ?>
-        </div> <!-- /sidebar-left -->
-        <?php endif; ?>
-
-        <?php if (!empty($right)): ?>
-        <div id="sidebar-right" class="column">
-          <?php print $right; ?>
-        </div> <!-- /sidebar-right -->
-        <?php endif; ?>
+          <?php if (!empty($right)): ?>
+          <div id="sidebar-right" class="column">
+            <?php print $right; ?>
+          </div> <!-- /sidebar-right -->
+          <?php endif; ?>
+        </div> <!-- / content wrapper inner -->
       </div> <!-- / content wrapper -->
-      <div id="content-wrapper-bottom"></div>
       <div id="footer">
         <div id="footer-inner">
           <?php if ($footer_message): ?>
@@ -110,7 +109,7 @@
           <?php endif; ?>
           <?php
             global $user, $base_url;
-            $home_link =  l('Powered by OpenScholar',$base_url, array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
+            $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
             $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE, 'alias' => FALSE)) : "";
           ?>
           <p class="copy">Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University. <?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
