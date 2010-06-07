@@ -23,6 +23,7 @@ function gkimport_import($drush_run = 0){
   gkimport_parse_files();
   gkimport_update_notes();
   gkimport_software_pubs_set();
+  gkimport_data_pubs_set();
   gkimport_upload_pdfs();
   gkimport_update_aliases();
   gkimport_import_bio();
