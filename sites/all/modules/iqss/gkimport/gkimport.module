@@ -449,8 +449,10 @@ function gkimport_import_pubs($filename, $owner = 'gking' ){
 }
 
 function gkimport_update_notes(){
-  $filepath = GKIMPORT_FS_PATH . '/' . drupal_get_path('module', 'gkimport') . '/files/generate_pubnotes.txt';
-  $data = unserialize(file_get_contents($filepath));
+  //$file = GKIMPORT_FS_PATH . '/' . drupal_get_path('module', 'gkimport') . '/files/generate_pubnotes.txt';
+  $file = dirname(__FILE__)  . '/files/generate_pubnotes.txt';
+  
+  $data = unserialize(file_get_contents($file));
  //return dpm($data);
 
  $match_results = array();
@@ -796,7 +798,9 @@ function gkimport_nodeapi(&$node, $op){
 }
 
 function gkimport_import_bio(){
-  $path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/bio.txt';
+  //$path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/bio.txt';  
+  $path = dirname(__FILE__)  . '/files/bio.txt';
+   
   if(!is_file($path)){
     return drush_print("No file found for bio text");
   }
@@ -814,7 +818,9 @@ function gkimport_import_bio(){
 }
 
 function gkimport_import_links(){
-  $path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/links.csv';
+  //$path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/links.csv';
+  $path = dirname(__FILE__)  . '/files/links.csv';
+  
   if(!is_file($path)){
     return drush_print("No file found for links");
   }
@@ -857,7 +863,9 @@ if($sid){
 }
 
 function gkimport_import_classes(){  
-    $path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/classes.csv';
+  //$path = GKIMPORT_FS_PATH . '/'.  drupal_get_path('module', gkimport) . '/files/classes.csv';    
+  $path = dirname(__FILE__)  . '/files/classes.csv';    
+    
   if(!is_file($path)){
     return drush_print("No file found for classes");
   }
