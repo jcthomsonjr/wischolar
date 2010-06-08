@@ -617,6 +617,7 @@ function vsite_taxonomy_block_view(){
       $items = vsite_taxonomy_build_list_items($n_index, $terms,'vsite_taxonomy_term',$s_filter, $b_description = false);
 
       if (count($items)) {
+      	$terms_html .= strlen($terms_html)?'</div></div><div class="block block-views"><div class="content">':"";
         $terms_html .= "<h3 class=\"title\">".ucfirst($taxonomy->name)."</h3>".theme('item_list', $items, NULL, 'ul');
       }
       
