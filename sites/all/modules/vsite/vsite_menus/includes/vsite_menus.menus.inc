@@ -5,6 +5,7 @@
 class vsite_menus_menus implements vsite_setting {
   
   var $id;
+  var $weight = -2;
   function __construct($id = NULL) {
     if ($id) {
       $this->id = $id;

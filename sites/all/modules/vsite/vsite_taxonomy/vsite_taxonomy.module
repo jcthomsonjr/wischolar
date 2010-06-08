@@ -76,12 +76,12 @@ function vsite_taxonomy_menu() {
   $items = array ();
   // main entry; lists vsite vocabs. It's a local task
   // menu so it shows in the cp/content
-  $items ['cp/content/taxonomy'] = array (
+  $items ['cp/settings/taxonomy'] = array (
     'title' => 'Taxonomy',
     'page callback' => 'vsite_taxonomy_vocabs',
     'access callback' => 'cp_access_cp',
     'type' => MENU_LOCAL_TASK,
-    'weight' => 100,
+    'weight' => -1,
   );
 
   // Create a new vocabulary to be associated with the vsite
