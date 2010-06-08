@@ -213,16 +213,19 @@ function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_
   $current_depth = $tree[$index]->depth;
   while ( $index < count($tree) && $tree[$index]->depth >= $current_depth ) {
     $term = $tree[$index];
+    $count = taxonomy_term_count_nodes($term->tid,0,false);
     $item = theme($s_term_theme, $term, $s_term_filter, $b_description);
     if ($tree[$index + 1]->depth > $current_depth) {
       $index ++;
-      $items[] = array(
+      $item = array(
         'data' => $item,
         'children' => vsite_taxonomy_build_list_items($index, $tree, $s_term_theme, $s_term_filter, $b_description)
       );
+      
+      if($count || count($item['children'])) $items[] = $item;
     }
     else {
-      $items[] = $item;
+    	if($count) $items[] = $item;
       $index ++;
     }
   }
@@ -626,25 +629,6 @@ function vsite_taxonomy_block_view(){
   }
 
   return $block;
-}
-
-
-/**
- * markup for one taxonomy term
- */
-function vsite_taxonomy_term_item($term, $href, $node_type = FALSE, $count = FALSE){
-
-  //$href = 'categories/statistics/class';
-  $term_link = l($term->name, $href, array(
-    'title' => t($term->description)
-  ));
-
-  $nr_nodes = $node_type ? taxonomy_term_count_nodes($term->tid, $node_type, false) : taxonomy_term_count_nodes($term->tid);
-  if ($count && $nr_nodes) {
-    $term_link = $term_link . '<span class = "count" > (' . $nr_nodes . ')</span>';
-  }
-
-  return $term_link;
 }
 
 
