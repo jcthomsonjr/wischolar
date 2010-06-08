@@ -443,24 +443,26 @@ function vsite_search_luceneapi_luceneapi_query_alter($query, $module, $type = N
    */
   if(! og_is_group_member($vsite->group->nid, true)) {
     $content_types = array();
-    foreach($vsite->features as $name => $status) {
-      // 0 = disabled, 1 = private, 2 = public
-      if($status < 2) {
-        $feature = features_get_features($name);
-        // Attempt to derive the content types that are part of this feature
-        if(!empty($feature->info['features']['node'])) {
-          foreach($feature->info['features']['node'] as $content_type) {
-            $content_types[] = $content_type;
+    if(!empty($vsite->features)) {
+      foreach($vsite->features as $name => $status) {
+        // 0 = disabled, 1 = private, 2 = public
+        if($status < 2) {
+          $feature = features_get_features($name);
+          // Attempt to derive the content types that are part of this feature
+          if(!empty($feature->info['features']['node'])) {
+            foreach($feature->info['features']['node'] as $content_type) {
+              $content_types[] = $content_type;
+            }
           }
-        }
-        elseif (!empty($feature->info['features']['views'])) {
-          foreach($feature->info['features']['views'] as $name) {
-            $view = views_get_view($name);
-            if($view) {
-              foreach($view->display as $display_name => $display_type) {
-                if(!empty($display_type->display_options['filters']['type'])) {
-                  if($display_type->display_options['filters']['type']['operator'] == 'in') {
-                    $content_types += array_values($display_type->display_options['filters']['type']['value']);
+          elseif (!empty($feature->info['features']['views'])) {
+            foreach($feature->info['features']['views'] as $name) {
+              $view = views_get_view($name);
+              if($view) {
+                foreach($view->display as $display_name => $display_type) {
+                  if(!empty($display_type->display_options['filters']['type'])) {
+                    if($display_type->display_options['filters']['type']['operator'] == 'in') {
+                      $content_types += array_values($display_type->display_options['filters']['type']['value']);
+                    }
                   }
                 }
               }
