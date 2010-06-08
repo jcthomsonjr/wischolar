@@ -1,0 +1,38 @@
+Index: taxonomy.module
+===================================================================
+--- taxonomy.module	(revision 3489)
++++ taxonomy.module	(working copy)
+@@ -889,11 +889,14 @@
+  *   The $node->type. If given, taxonomy_term_count_nodes only counts
+  *   nodes of $type that are classified with the term $tid.
+  *
++ *   @param $cnt_childeren
++ *   Boolean - Should the children be included in the node count
++ *
+  * @return int
+  *   An integer representing a number of nodes.
+  *   Results are statically cached.
+  */
+-function taxonomy_term_count_nodes($tid, $type = 0) {
++function taxonomy_term_count_nodes($tid, $type = 0, $cnt_childeren = true) {
+   static $count;
+ 
+   if (!isset($count[$type])) {
+@@ -909,10 +912,14 @@
+       $count[$type][$term->tid] = $term->c;
+     }
+   }
++  
+   $children_count = 0;
+-  foreach (_taxonomy_term_children($tid) as $c) {
+-    $children_count += taxonomy_term_count_nodes($c, $type);
+-  }
++  if($cnt_childeren){
++	  foreach (_taxonomy_term_children($tid) as $c) {
++	    $children_count += taxonomy_term_count_nodes($c, $type);
++	  }
++  }//Should the childeren be counted?
++  
+   return $children_count + (isset($count[$type][$tid]) ? $count[$type][$tid] : 0);
+ }
+ 

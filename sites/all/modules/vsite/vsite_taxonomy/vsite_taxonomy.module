@@ -54,7 +54,7 @@ function vsite_taxonomy_enable() {
 function vsite_taxonomy_theme() {
   return array(
     'vsite_taxonomy_term' => array(
-      'arguments' => array('term' => NULL),
+      'arguments' => array('term' => NULL, 'term_filter' => null, 'b_description' => true),
     ),
   );
 }
@@ -208,17 +208,17 @@ function vsite_taxonomy_vocabs(){
  * recursive function to build the tree of terms
  * @see vsite_taxonomy_vocabs
  */
-function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_taxonomy_term'){
+function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_taxonomy_term', $s_term_filter = false, $b_description = true){
   $items = array();
   $current_depth = $tree[$index]->depth;
   while ( $index < count($tree) && $tree[$index]->depth >= $current_depth ) {
     $term = $tree[$index];
-    $item = theme($s_term_theme, $term);
+    $item = theme($s_term_theme, $term, $s_term_filter, $b_description);
     if ($tree[$index + 1]->depth > $current_depth) {
       $index ++;
       $items[] = array(
         'data' => $item,
-        'children' => vsite_taxonomy_build_list_items($index, $tree)
+        'children' => vsite_taxonomy_build_list_items($index, $tree, $s_term_theme, $s_term_filter, $b_description)
       );
     }
     else {
@@ -612,19 +612,9 @@ function vsite_taxonomy_block_view(){
     foreach ($vcs as $n_vid => $taxonomy){
       
       $terms = taxonomy_get_tree($taxonomy->vid);
-      $items = array();
-      foreach ( $terms as $term ) {
-        $nr_nodes = taxonomy_term_count_nodes($term->tid, $s_type); // only terms for this content type
-        if ($nr_nodes) {
-          $href = 'categories/'. $s_filter . '/'. $term -> tid;
-          $item = vsite_taxonomy_term_item($term, $href, $s_type, TRUE);
       
-          $items[] = array(
-            'data' => $item,
-            'id' => 'vsite_taxonomy_item_' . $term->tid
-          );
-        }
-      }
+      $n_index = 0;
+      $items = vsite_taxonomy_build_list_items($n_index, $terms,'vsite_taxonomy_term',$s_filter, $b_description = false);
 
       if (count($items)) {
         $terms_html .= "<h3 class=\"title\">".ucfirst($taxonomy->name)."</h3>".theme('item_list', $items, NULL, 'ul');
@@ -648,12 +638,12 @@ function vsite_taxonomy_term_item($term, $href, $node_type = FALSE, $count = FAL
     'title' => t($term->description)
   ));
 
-  $nr_nodes = $node_type ? taxonomy_term_count_nodes($term->tid, $node_type) : taxonomy_term_count_nodes($term->tid);
-  if ($count) {
-    $item = $term_link . '<span class = "count" > (' . $nr_nodes . ')</span>';
+  $nr_nodes = $node_type ? taxonomy_term_count_nodes($term->tid, $node_type, false) : taxonomy_term_count_nodes($term->tid);
+  if ($count && $nr_nodes) {
+    $term_link = $term_link . '<span class = "count" > (' . $nr_nodes . ')</span>';
   }
 
-  return $item;
+  return $term_link;
 }
 
 
@@ -713,21 +703,23 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
  * theme a term
  * @param unknown_type $term
  */
-function theme_vsite_taxonomy_term($term){
-  $count = taxonomy_term_count_nodes($term->tid);
-  $term_path = "taxonomy/term/$term->tid";
+function theme_vsite_taxonomy_term($term, $s_term_filter = false, $b_description = true){
+  $count = taxonomy_term_count_nodes($term->tid,0,false);
+  $term_path = (!$s_term_filter)?"taxonomy/term/$term->tid":'categories/'. $s_term_filter . '/'. $term -> tid;
   $term_link = l($term->name, $term_path, array(
     'title' => t($term->description)
   ));
 
-  $item = '<div class="term-head">' . $term_link . '<span class = "count" > (' . $count . ')</span>';
+  $item = '<div class="term-head">' . $term_link;
+  
+  $item .= ($count > 0)?'<span class = "count" > (' . $count . ')</span>':"";
 
   // add term's admin links
   $item .= theme('links', vsite_get_admin_links('term', $term), $attributes = array(
     'class' => 'admin'
   ));
 
-  if ($term -> description) {
+  if ($b_description && $term -> description) {
     $item .= '<div class="description">' . substr($term -> description,0,58) . ((strlen($term->description) >53)?"&hellip;":"") . '</div>';
     }
 
