@@ -26,13 +26,12 @@ include_once('vsite_taxonomy.features.inc');
  */
 function vsite_taxonomy_dialog_options(){
   return array(
-    'width' => '600',
+    'width' => '650',
     'position' => array(
       'center',
-      'top'
+      'middle'
     ),
-    'show' => 'slide, {direction: "down"},1000',
-    'resizable' => FALSE,
+    'resizable' => true,
     'closeText' => 'Close',
   );
 }
@@ -77,9 +76,9 @@ function vsite_taxonomy_menu() {
   // main entry; lists vsite vocabs. It's a local task
   // menu so it shows in the cp/content
   $items ['cp/settings/taxonomy'] = array (
-    'title' => 'Taxonomy',
-    'page callback' => 'vsite_taxonomy_vocabs',
-    'access callback' => 'cp_access_cp',
+  	'title' => 'Taxonomy',
+  	'page callback' => 'vsite_taxonomy_vocabs',
+  	'access arguments' => array ('access content' ),
     'type' => MENU_LOCAL_TASK,
     'weight' => -1,
   );
@@ -144,7 +143,7 @@ function vsite_taxonomy_menu() {
     'file'             => 'taxonomy.admin.inc',
     'file path'        => drupal_get_path('module', 'taxonomy'),
   );
-  
+
   $items['categories/%/%'] = array(
     'title callback' => 'vsite_taxonomy_term_title',
     'title arguments' => array(2),
@@ -152,7 +151,17 @@ function vsite_taxonomy_menu() {
     'page arguments' => array(2, 1),
     'access arguments' => array('access content'),
   );
-  
+
+  $items['taxonomy/term/biblio/%/%'] = array(
+    'title' => 'Taxonomy term',
+    'page callback' => 'vsite_taxonomy_biblio_term_page',
+    'page arguments' => array(3,4),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'taxonomy.pages.inc',
+    'file path' => drupal_get_path('module', 'taxonomy'),
+  );
+
   return $items;
 }
 
@@ -523,9 +532,9 @@ function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state
  * @param $tid
  */
 function vsite_taxonomy_term_title($tid){
-	
+
 	$term = taxonomy_get_term($tid);
-	
+
 	return $term->name;
 }
 
@@ -541,12 +550,12 @@ function vsite_taxonomy_content_by_category($tid, $s_feature = false){
   $view->init();
   $view->set_display('default');
   $view->set_arguments(array( $tid ));
-  
+
   if($s_feature){
 		if(!context_set_by_condition('path',$s_feature, true)){
 	  	context_set_by_condition('node', $s_feature, true);
 	  }//Assume that it is a menu path, if not try content type
-	
+
 	  //Filter by content types
 	  $a_context_types = context_active_values("node");
 	  if(count($a_context_types)){
@@ -555,13 +564,13 @@ function vsite_taxonomy_content_by_category($tid, $s_feature = false){
 	    $view->set_item('default','filter','type',$filter);
 	  }
   }//If we should restrict by feature
-  
-  
+
+
   // pager
   $view->pager['use_pager'] = 1;
 
   $view->execute();
-  
+
   $output = "";
   $term = taxonomy_get_term($tid);
   if(strlen($term->description)){
@@ -570,7 +579,7 @@ function vsite_taxonomy_content_by_category($tid, $s_feature = false){
     $output .= '</div>';
   }
   $output .= $view->render();
-  
+
   return $output;
 }
 
@@ -581,9 +590,13 @@ function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
       $blocks[0]['info'] = t('Categories - Filter categorized content');
+      $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
       return $blocks;
     case 'view':
       switch ($delta) {
+        case 'filter_by_type':
+        	$block = vsite_taxonomy_filter_by_type_block();
+        	break;
         case 0:
         default:
           $block = vsite_taxonomy_block_view();
@@ -605,17 +618,17 @@ function vsite_taxonomy_block_view(){
   $active_nodes = context_active_values("node");
   $a_path = context_active_values("path");
   $s_filter = (count($a_path))? current($a_path): current($active_nodes);
-  
+
   if ($vsite && count($active_nodes)) {
-  	
+
   	// get the vocabulary for these types
   	$vcs = array();
   	foreach ($active_nodes as $s_type) $vcs += $vsite->get_vocabs($s_type);
-  	
+
     foreach ($vcs as $n_vid => $taxonomy){
-      
+
       $terms = taxonomy_get_tree($taxonomy->vid);
-      
+
       $n_index = 0;
       $items = vsite_taxonomy_build_list_items($n_index, $terms,'vsite_taxonomy_term',$s_filter, $b_description = false, $b_show_empty = false);
 
@@ -623,7 +636,7 @@ function vsite_taxonomy_block_view(){
       	$terms_html .= strlen($terms_html)?'</div></div><div class="block block-views"><div class="content">':"";
         $terms_html .= "<h3 class=\"title\">".ucfirst($taxonomy->name)."</h3>".theme('item_list', $items, NULL, 'ul');
       }
-      
+
     }
     $block['content'] = $terms_html;
   }
@@ -806,9 +819,55 @@ function vsite_taxonomy_taxonomy_import($gid, $definition){
 }
 
 /**
+ * Alter the active context
+ * @param array $contexts
+ */
+function vsite_taxonomy_context_active_contexts_alter(&$contexts){
+  $router_item = menu_get_item();
+  if(strpos($router_item['path'],'taxonomy/term') !== 0) return;
+
+  //Add this block category pages on (Lets you filter the category by publictaion type)
+  $contexts['vsite-section-public']->block['vsite_taxonomy-filter_by_type'] = array(
+      'module' => 'vsite_taxonomy',
+      'delta' => 'filter_by_type',
+      'weight' => -21,
+      'region' => 'right',
+      'status' => '0',
+      'label' => 'Filter Taxonomy by Publication Type',
+      'type' => 'context_ui',
+  );
+
+}
+
+/**
+ * Block to filter a taxonomy by type
+ */
+function vsite_taxonomy_filter_by_type_block(){
+
+	$router_item = menu_get_item();
+  if(strpos($router_item['path'],'taxonomy/term') !== 0) return array();
+
+	$view = views_get_view('publication_types');
+  $view->init();
+  $view->set_display('block_2');
+  $view->set_arguments(array( current($router_item['page_arguments']) ));
+
+  //Change to the tax. path
+  $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
+  $view->execute();
+
+  $output = $view->render();
+  if(!$output) return array();
+
+  $a_term = taxonomy_get_term(current($router_item['page_arguments']));
+
+  return array('subject' => $a_term->name." by Publication Type",'content' => $output);;
+}
+
+/**
  * Menu callback; displays all nodes associated with a term.
  */
-function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
+function vsite_taxonomy_term_page($str_tids = ''){
 	require_once (drupal_get_path('module', 'taxonomy').'/taxonomy.pages.inc');
   $terms = taxonomy_terms_parse_string($str_tids);
 
@@ -826,13 +885,49 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
       drupal_set_title(check_plain($title));
 
       $current->tid = $tids[0];
-          
+
       $output = theme('taxonomy_term_page', $tids, taxonomy_select_nodes($tids, $terms['operator'], $depth, false));
       return $output;
-    
+
     }
   }
 }
 
+/**
+ * Menu callback; displays all nodes associated with a term by publication type
+ */
+function vsite_taxonomy_biblio_term_page($str_tids, $s_biblio_type){
+  $terms = taxonomy_terms_parse_string($str_tids);
 
+  if ($terms['tids']) {
+    $result = db_query(db_rewrite_sql('SELECT t.tid, t.name FROM {term_data} t WHERE t.tid IN ('. db_placeholders($terms['tids']) .')', 't', 'tid'), $terms['tids']);
+    $tids = array(); // we rebuild the $tids-array so it only contains terms the user has access to.
+    $names = array();
+    while ($term = db_fetch_object($result)) {
+      $tids[] = $term->tid;
+      $names[] = $term->name;
+    }
+
+    if ($names) {
+      $title = implode(', ', $names);
+      drupal_set_title(check_plain($title));
+
+      $descendant_tids = array();
+      foreach ($tids as $index => $tid) {
+	      $term = taxonomy_get_term($tid);
+	      $tree = taxonomy_get_tree($term->vid, $tid, -1, $depth);
+	      $descendant_tids[] = array_merge(array($tid), array_map('_taxonomy_get_tid_from_term', $tree));
+	    }
+
+	    $args = call_user_func_array('array_merge', $descendant_tids);
+	    $placeholders = db_placeholders($args, 'int');
+	    $args[] = str_replace("-"," ",$s_biblio_type);
+
+	    $sql = 'SELECT DISTINCT(n.nid), n.sticky, n.title, n.created FROM {node} n INNER JOIN {term_node} tn ON n.vid = tn.vid INNER JOIN {biblio} b ON b.nid = n.nid INNER JOIN {biblio_types} bt ON b.biblio_type = bt.tid  WHERE tn.tid IN ('. $placeholders .') AND bt.name LIKE \'%s\' AND n.status = 1 ORDER BY n.sticky DESC, n.created DESC';
+
+	    return theme('taxonomy_term_page', $tids, db_query($sql, $args));
+
+    }
+  }
+}
 

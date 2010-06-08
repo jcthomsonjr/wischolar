@@ -13,7 +13,6 @@
   }
 
 
-
 #vsite-taxonomy-wrapper h3 {
   font-size: 1.2em;
   margin-bottom: .5em;
@@ -23,29 +22,37 @@
   padding-bottom: 2em;
   }
 
-.item-list .vsite-taxonomy-terms li {
+.item-list .vsite-taxonomy-terms li,
+.block-vsite_taxonomy ul li {
   list-style: none;
-  margin-bottom: .5em;
+  margin-bottom: 0;
   margin-left: 0;
+  padding-left: .3em;
+  }
+
+.block-vsite_taxonomy ul li {
+  padding-left: 0;
   }
 
 .term-head {
-  padding: 2px;
+  padding: .2em;
   }
 
-.item-list .vsite-taxonomy-terms li ul .term-head {
-  padding-left: 1.5em;
+.item-list .vsite-taxonomy-terms ul .term-head,
+.block-vsite_taxonomy li ul .term-head {
+  padding-left: 1em;
   }
 
-.item-list .vsite-taxonomy-terms li ul ul .term-head {
-  padding-left: 3em;
+.item-list .vsite-taxonomy-terms li ul ul .term-head,
+.block-vsite_taxonomy li ul ul .term-head {
+  padding-left: 2em;
   }
 
 .vsite-taxonomy-terms li a {
   color: #000;
   }
 
-#vsite-taxonomy-wrapper ul.admin {
+#vsite-taxonomy-wrapper ul.admin, .term-head ul.admin {
   float: right;
   padding-right: 40px;
   padding: 0;
@@ -53,7 +60,7 @@
   background: transparent;
   }
 
-#vsite-taxonomy-wrapper ul.admin li {
+#vsite-taxonomy-wrapper ul.admin li, .term-head ul.admin li {
   float:left;
   margin-bottom: 0;
   padding-left: 3px;
