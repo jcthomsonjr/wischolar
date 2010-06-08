@@ -4,118 +4,19 @@ RCS file: /cvs/drupal-contrib/contributions/modules/apachesolr_biblio/apachesolr
 retrieving revision 1.1.2.2
 diff -u -p -r1.1.2.2 apachesolr_biblio.module
 --- apachesolr_biblio.module	23 Nov 2009 15:58:21 -0000	1.1.2.2
-+++ apachesolr_biblio.module	8 Jun 2010 14:47:50 -0000
-@@ -12,6 +12,24 @@ function apachesolr_biblio_menu() {
-     'type' => MENU_LOCAL_TASK,
-     'weight' => 10
-   );
-+  $items['admin/settings/biblio/solr/import'] = array(
-+    'title' => 'Import Fields',
-+    'page callback' => 'drupal_get_form',
-+    'page arguments' => array('apachesolr_biblio_default_fields_import_form'),
-+    'access arguments' => array('administer biblio'),
-+    'type' => MENU_LOCAL_TASK,
-+    'file' => 'apachesolr_biblio.export.inc',
-+    'weight' => 2,
-+  );
-+  $items['admin/settings/biblio/solr/export'] = array(
-+    'title' => 'Export Fields',
-+    'page callback' => 'drupal_get_form',
-+    'page arguments' => array('apachesolr_biblio_default_fields_export_form'),
-+    'access arguments' => array('administer biblio'),
-+    'type' => MENU_LOCAL_TASK,
-+    'file' => 'apachesolr_biblio.export.inc',
-+    'weight' => 3,
-+  );
-   return $items;
- }
- 
-@@ -43,21 +61,56 @@ function apachesolr_biblio_get_raw_field
- // These are the fields as apachesolr_biblio knows abouit them.
- function apachesolr_biblio_get_fields() {
-   // get current settings
--  $result = db_query("SELECT * FROM {apachesolr_biblio_fields");
-+  $result = db_query("SELECT * FROM {apachesolr_biblio_fields}");
-   $fields = array();
-   while ($row = db_fetch_array($result)) {
-     $fields[$row['fid']] = $row;
-   }
-+  // If there aren't any fields defined, load any default fields
-+  if(empty($fields)) {
-+    foreach(module_implements('default_biblio_fields') as $module) {
-+      $default_fields = module_invoke($module, 'default_biblio_fields');
-+      if(!empty($default_fields)) {
-+        foreach($default_fields as $field) {
-+          $fields[$field['fid']] = $field;
-+        }
-+      }
-+    }
-+  }
-   $fields['contributors'] = variable_get('apachesolr_biblio_index_authors', 1);
-   return $fields;
- }
- 
-+/**
-+ * Load a single field either by name or by field ID.
-+ *
-+ * @param string $name
-+ *   The name of the field.
-+ * @param int $fid
-+ *   The field id.
-+ */
-+function apachesolr_biblio_get_field($name = NULL, $fid = NULL) {
-+  $fields = apachesolr_biblio_get_fields();
-+  if (isset($name)) {
-+    foreach($fields as $fid => $field) {
-+      if($field['name'] == $name) {
-+        return $field;
-+      }
-+    }
-+  }
-+  elseif (isset($fid)) {
-+    return $fields[$fid];
-+  }
-+  return FALSE;
-+}
-+
-+
- function apachesolr_biblio_apachesolr_update_index(&$document, $node) {
-   // Only do stuff with biblio nodes.
-   if ($node->type != 'biblio') {
-     return;
-   }
--  $tz = date_default_timezone();
-+  $tz = date_default_timezone_name();
-   date_default_timezone_set('UTC');
-   $fields = apachesolr_biblio_get_fields();
-   foreach ($fields as $fid => $biblio) {
-@@ -263,6 +316,12 @@ function apachesolr_biblio_block($op = '
++++ apachesolr_biblio.module	8 Jun 2010 14:55:16 -0000
+@@ -263,6 +316,14 @@ function apachesolr_biblio_block($op = '
          }
  
          $facets = apachesolr_biblio_apachesolr_facets();
 +        $biblio_year = $response->response->facet_counts->facet_fields->ss_biblio_year;
-+        foreach($biblio_year as $property => $value) {
-+          $biblio_year = _biblio_text_year($property);
-+          unset($response->response->facet_counts->facet_fields->ss_biblio_year->$property);
-+          $response->response->facet_counts->facet_fields->ss_biblio_year->$biblio_year = $value;
++        if($biblio_year) {
++          foreach($biblio_year as $property => $value) {
++            $biblio_year = _biblio_text_year($property);
++            unset($response->response->facet_counts->facet_fields->ss_biblio_year->$property);
++            $response->response->facet_counts->facet_fields->ss_biblio_year->$biblio_year = $value;
++          }
 +        }
          return apachesolr_facet_block($response, $query, $module, $delta, $delta, t('Filter by !field', array('!field' => $facets[$delta]['name'])));
        }
        break;
-@@ -275,3 +334,16 @@ function apachesolr_biblio_block($op = '
-       break;
-   }
- }
-+
-+/**
-+ * Implementation of hook_features_api().
-+ */
-+function apachesolr_biblio_features_api() {
-+  return array(
-+    'apachesolr_biblio' => array(
-+      'default_hook' => 'default_biblio_fields',
-+      'features_source' => TRUE,
-+      'file' => drupal_get_path('module', 'apachesolr_biblio') . '/apachesolr_biblio.features.inc',
-+    ),
-+  );
-+}
