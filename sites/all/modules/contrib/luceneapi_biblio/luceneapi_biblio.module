@@ -196,7 +196,7 @@ function luceneapi_biblio_luceneapi_facet_postrender_alter(&$items, $realm, $mod
             $result = db_query("SELECT biblio_year as year FROM {biblio}");
             $options[] = '';
             while($row = db_fetch_object($result)) {
-              $options[$row->year] = $row->year;
+              $options[$row->year] = _biblio_text_year($row->year);
             }
             asort($options);
             $items['biblio_year']['#options'] = $options;  
