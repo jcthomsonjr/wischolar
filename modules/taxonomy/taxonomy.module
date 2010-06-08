@@ -889,14 +889,11 @@ function taxonomy_get_synonym_root($synonym) {
  *   The $node->type. If given, taxonomy_term_count_nodes only counts
  *   nodes of $type that are classified with the term $tid.
  *
- *   @param $cnt_childeren
- *   Boolean - Should the children be included in the node count
- *
  * @return int
  *   An integer representing a number of nodes.
  *   Results are statically cached.
  */
-function taxonomy_term_count_nodes($tid, $type = 0, $cnt_childeren = true) {
+function taxonomy_term_count_nodes($tid, $type = 0) {
   static $count;
 
   if (!isset($count[$type])) {
@@ -914,11 +911,9 @@ function taxonomy_term_count_nodes($tid, $type = 0, $cnt_childeren = true) {
   }
   
   $children_count = 0;
-  if($cnt_childeren){
-	  foreach (_taxonomy_term_children($tid) as $c) {
-	    $children_count += taxonomy_term_count_nodes($c, $type);
-	  }
-  }//Should the childeren be counted?
+	foreach (_taxonomy_term_children($tid) as $c) {
+	  $children_count += taxonomy_term_count_nodes($c, $type);
+	}
   
   return $children_count + (isset($count[$type][$tid]) ? $count[$type][$tid] : 0);
 }
