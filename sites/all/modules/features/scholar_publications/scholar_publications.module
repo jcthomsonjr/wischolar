@@ -379,6 +379,16 @@ function scholar_publications_views_post_render($view, &$s_display_handler_outpu
 	if($view->name == 'scholar_publications' && $view->current_display == 'block_1' && !count($view->result)){
 		$s_display_handler_output = ''; //Do no display when there are no publications
 	}
+	
+	// Format the output of the publication year to match the biblio configuration for this field
+	if($view->name == 'publication_years' && $view->current_display == 'block_1') {
+	  if(!empty($view->result)) {
+	    foreach($view->result as $index => $result) {
+	      $view->result[$index]->biblio_biblio_year = _biblio_text_year($result['biblio_biblio_year']);
+	      $view->result[$index]->link = _biblio_text_year($result['link']);
+	    }
+	  }
+	}
 }
 
 /**
