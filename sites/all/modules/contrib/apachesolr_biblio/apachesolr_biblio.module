@@ -316,6 +316,12 @@ function apachesolr_biblio_block($op = 'list', $delta = 0, $edit = array()) {
         }
 
         $facets = apachesolr_biblio_apachesolr_facets();
+        $biblio_year = $response->response->facet_counts->facet_fields->ss_biblio_year;
+        foreach($biblio_year as $property => $value) {
+          $biblio_year = _biblio_text_year($property);
+          unset($response->response->facet_counts->facet_fields->ss_biblio_year->$property);
+          $response->response->facet_counts->facet_fields->ss_biblio_year->$biblio_year = $value;
+        }
         return apachesolr_facet_block($response, $query, $module, $delta, $delta, t('Filter by !field', array('!field' => $facets[$delta]['name'])));
       }
       break;
