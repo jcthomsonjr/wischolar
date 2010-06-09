@@ -381,19 +381,32 @@ function scholar_publications_views_post_render($view, &$s_display_handler_outpu
 	}
 }
 
+function scholar_publications_preprocess_views_view(&$vars) {
+  if($vars['view']->name == 'publication_years') {
+    // Override the page title
+    if($vars['view']->current_display == 'page_1') {
+      $vars['view']->build_info['title'] = preg_replace_callback('#\d{4}#', create_function('$matches', 'return _biblio_text_year($matches[0]);'), $vars['view']->build_info['title']);
+      drupal_set_title($vars['view']->build_info['title']);
+    }
+  }
+}
+
 /**
- * Implementation of hook_views_pre_render()
+ * Implementation of hook_preprocess_block()
  * 
- * @param object $view
+ * @param $vars
  */
-function scholar_publications_views_pre_render(&$view) {
-  // Format the output of the publication year to match the biblio configuration for this field
-  if($view->name == 'publication_years' && $view->current_display == 'block_1') {   
-    if(!empty($view->result)) {
-      foreach($view->result as $index => $result) {
-        $view->result[$index]->biblio_biblio_year = _biblio_text_year($view->result[$index]->biblio_biblio_year);
-        $view->result[$index]->link = _biblio_text_year($view->result[$index]->link);
-      }
+function scholar_publications_preprocess_block(&$vars) {
+  if (isset($vars['block']->module) && ($vars['block']->module == 'views')) {
+    list($name, $display_id) = explode('-', $vars['block']->delta);
+    if($name == 'publication_years') {
+      // Ugly workaround for inability to change the link text via normal views preprocess functions without affecting the link path
+      $vars['block']->content = preg_replace_callback('#(<a.*?(publications\/year\/(9999|9998)).*?>).*?(</a>)#', 
+        create_function(
+          '$matches', 
+          'return $matches[1]._biblio_text_year($matches[3]).\'</a>\';'
+        ), 
+      $vars['block']->content);
     }
   }
 }
