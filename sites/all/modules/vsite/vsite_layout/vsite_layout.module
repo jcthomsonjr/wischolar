@@ -426,6 +426,9 @@ function _vsite_layout_generate_default_settings_ary($s_page_type = 'all', $b_in
 
   $a_widgets = vsite_layout_filtered_widgets($s_page_type);
   foreach ($a_widgets as $s_setting_id => $widget){
+    if(is_object($widget)) {
+      $widget = (array)$widget;
+    }
   	if(!$b_include_regionless && $widget['region'] == false) continue;
   	$a_default[$s_setting_id] = $widget['region'];
   }
