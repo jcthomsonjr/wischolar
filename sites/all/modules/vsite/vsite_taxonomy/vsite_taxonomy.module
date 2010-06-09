@@ -404,7 +404,7 @@ function vsite_taxonomy_edit_term($tid, $ajax = FALSE){
 
     $form_state = array(
       'ajax' => TRUE,
-      'title' => t('Add term'),
+      'title' => t('Edit term'),
       'args' => array(
         'vocabulary' => taxonomy_vocabulary_load($term->vid),
         'edit' => ( array ) $term
@@ -680,6 +680,12 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
       $form['taxonomy']['tags'][$vid]['#description'] = 'A comma-separated list of categories/tags describing this content.
       Example: political science, data, causal inference . You can also control your categories in the ' . l('taxonomy section', 'cp/content/taxonomy') . ' of control pannel';
     }
+  }
+  
+  switch($form_id){
+  	case 'taxonomy_form_vocabulary':
+  		if($form['settings']['context']) $form['settings']['context']['#access'] = user_access('administer taxonomy'); //Hide from regular users
+  	break;
   }
 
 }
