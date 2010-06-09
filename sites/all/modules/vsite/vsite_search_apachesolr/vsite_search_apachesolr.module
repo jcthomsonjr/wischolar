@@ -348,7 +348,7 @@ function vsite_search_apachesolr_apachesolr_process_results(&$arg) {
     $nid = $result['node']->getField('nid');
     $node = node_load($nid['value']);
     $arg[$index]['snippet'] = node_view($node, TRUE, FALSE, TRUE);
-    // Remove the title for non-biblio node types, as the snippet will display it
+    // Remove the title, as the snippet will display it
     unset($arg[$index]['title']);
   }
 }

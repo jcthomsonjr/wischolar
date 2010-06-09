@@ -410,6 +410,8 @@ function vsite_search_luceneapi_luceneapi_result_alter($result, $module, $type) 
   if($type == 'node') {
     $node = node_load($result['node']->nid);
     $result['snippet'] = node_view($node, TRUE, FALSE, TRUE);
+    // Remove the title, as the snippet will display it
+    unset($result['title']);
   }
 }
 
