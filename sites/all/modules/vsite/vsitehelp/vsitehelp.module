@@ -1,32 +1,51 @@
 <?php
 function vsitehelp_help($path) {
   switch ($path) {
-    case 'cp/content':
-      return theme('advanced_help_topic', 'vsitehelp', 'Managing-Your-Content');
-    case 'cp/content/files':
-      return theme('advanced_help_topic', 'vsitehelp', 'Managing-Files-and-Images');
-    case 'cp/content/taxonomy':
-      return theme('advanced_help_topic', 'vsitehelp', 'Categorizing-Your-Content---Taxonomy');
+    //features
     case 'cp/features':
       return theme('advanced_help_topic', 'vsitehelp', 'Features');
-    case 'cp/news':
-      return theme('advanced_help_topic', 'vsitehelp', 'Getting-Project-News');
-    case 'cp/settings':
-      return theme('advanced_help_topic', 'vsitehelp', 'Site-Information');
-    case 'cp/settings/front':
-      return theme('advanced_help_topic', 'vsitehelp', 'Front-Page');
-    case 'cp/settings/generic':
-      return theme('advanced_help_topic', 'vsitehelp', 'Other-Settings');
-    case 'cp/settings/layout':
+
+    //appearance
+    case 'cp/appearance/layout':
       return theme('advanced_help_topic', 'vsitehelp', 'Site-Layout');
+
+    case 'cp/appearance/theme':
+      return theme('advanced_help_topic', 'vsitehelp', 'Theme-Selection');
+
+    //settings
+    case 'cp/settings':
+      return theme('advanced_help_topic', 'vsitehelp', 'Menus');
+
     case 'cp/settings/menus':
       return theme('advanced_help_topic', 'vsitehelp', 'Menus');
-    case 'cp/settings/theme':
-      return theme('advanced_help_topic', 'vsitehelp', 'Theme-Selection');
-    case 'cp/support':
-      return theme('advanced_help_topic', 'vsitehelp', 'Getting-Support');
+
+    case 'cp/settings/site_info/343':
+      return theme('advanced_help_topic', 'vsitehelp', 'Site-Information');
+
+    case 'cp/settings/generic':
+    return theme('advanced_help_topic', 'vsitehelp', 'Other-Settings');
+
+    //content
+    case 'cp/content':
+      return theme('advanced_help_topic', 'vsitehelp', 'Managing-Your-Content');
+
+    case 'cp/content/files':
+      return theme('advanced_help_topic', 'vsitehelp', 'Managing-Files-and-Images');
+
+    case 'cp/content/taxonomy':
+      return theme('advanced_help_topic', 'vsitehelp', 'Categorizing-Your-Content---Taxonomy');
+
+    //users
     case 'cp/users':
       return theme('advanced_help_topic', 'vsitehelp', 'Managing-Your-Users');
+
+    //news
+    case 'cp/news':
+      return theme('advanced_help_topic', 'vsitehelp', 'Getting-Project-News');
+
+    //support
+    case 'cp/support':
+      return theme('advanced_help_topic', 'vsitehelp', 'Getting-Support');
   }
 }
 
