@@ -481,8 +481,6 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('empty', 'None found');
-  $handler->override_option('empty_format', '1');
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_options', array(
     'grouping' => '',
@@ -812,11 +810,10 @@ function _scholar_publications_views_default_views() {
     ),
   ));
   $handler->override_option('title', 'Tag by Type');
-  $handler->override_option('empty', '');
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-
+    
   $views[$view->name] = $view;
 
   // Exported view: publication_years
