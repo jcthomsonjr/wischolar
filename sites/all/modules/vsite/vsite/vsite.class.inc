@@ -117,7 +117,28 @@ class vsite extends space_og implements space {
     }//Is this feature a part of the site?
     return false;
   }
-  
+
+  /**
+   * Implementation of space->delete().
+   */
+  function delete(){
+    $gid = $this -> sid;
+    
+    /*
+     * Delete all the nodes that belong to this og.
+     * Normally node could belong to more than 1 og. 
+     * So we would delete the child not only if it belong
+     * to this group only. Ignore that since we force nodes
+     * to be part of 1 site
+     */
+    foreach ( og_group_child_nids($gid) as $child_nid ) {
+      $node = node_delete($child_nid);
+    }
+    
+    // delete the group node itself
+    node_delete($gid);
+  }  
+
   /**
    * Return the absolute URL to this vsite
    */
