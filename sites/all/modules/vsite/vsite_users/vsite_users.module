@@ -49,7 +49,7 @@ function vsite_users_menu(){
     'access callback' => 'vsite_user_edit_access',
     'file path' => drupal_get_path('module', 'user'),
     'file' => 'user.pages.inc',
-    'weight' => 2, 
+    'weight' => 2,
   );
   
   $items['cp/users/myaccount'] = array(
@@ -67,7 +67,7 @@ function vsite_users_menu(){
     'file' => 'vsite_users.pages.inc',
       'type' => MENU_LOCAL_TASK,
     'weight' => 1, // should be the first one
-  );  
+  );
   
   $items['cp/users/myaccount/edit'] = array(
     'title' => 'My Account',
@@ -93,21 +93,8 @@ function vsite_users_menu(){
   // make them all part of 'cp' menu
   foreach($items as $path => $item) {
     $items[$path]['menu_name'] = 'cp';
-    $items[$path]['access callback'] = 'cp_access_cp'; 
+    $items[$path]['access callback'] = 'cp_access_cp';
   }
-  
-//  $items['cp/users/edit/%user_uid_optional'] = array(
-//    'title' => 'Edit User',
-//    'title callback' => 'user_page_title',
-//    'title arguments' => array(3),
-//    'page callback' => 'vsite_users_edit_user',
-//    'page arguments' => array(3),
-//    'access callback' => 'cp_access_cp',
-//    //'access callback' => 'user_view_access',
-//    //'access arguments' => array(3),
-//    'file' => 'vsite_users.pages.inc',
-//    'type' => MENU_CALLBACK,
-//  );
   
   $items['cp/users/add'] = array(
     'title' => 'Add User',
@@ -144,7 +131,7 @@ function vsite_users_menu_alter(&$a_menu){
 
 /**
  * Show the sites that a user belongs to in segmented list
- * 
+ *
  * @param $account user
  * @return
  */
@@ -201,12 +188,12 @@ function vsite_users_mail_alter(&$message) {
      	//  $password = user_password();
      	//  $edit = array('pass' => $password);
      	  $o_profile = content_profile_load('vsite_users_profile',$n_new_user);
-     	 // user_save($o_user,$edit);     	  
+     	 // user_save($o_user,$edit);
      	  
      	   //checking for custom welcome message string submitted in form
      $personal_msg_text = (!empty($_POST['welcome_message_body'])) ?
          "\n================================================\n" .
-         $_POST['welcome_message_body'] .  
+         $_POST['welcome_message_body'] .
          "\n================================================\n\n" : '' ;
       
      	$a_msg_variables = array(
@@ -234,7 +221,7 @@ function vsite_users_mail_alter(&$message) {
 
 /**
  * Show the sites that a user belongs to
- * 
+ *
  * @param $account user
  * @return
  */
@@ -279,7 +266,7 @@ function vsite_users_strongarm(){
   return $conf;
 }
 /**
- * Define default role for 
+ * Define default role for
  *
  * @param unknown_type $name
  * @return unknown
@@ -327,7 +314,7 @@ function vsite_user_content_profile_edit_page($s_type){
 }
 
 /**
- * Change the form theme to ours without the extra node settings displayed 
+ * Change the form theme to ours without the extra node settings displayed
  */
 function vsite_users_theme() {
 
@@ -349,7 +336,7 @@ function vsite_users_theme() {
 /**
  * For the content profile form:
  * - Hide the preview and delete buttons
- * - Save as the site owner 
+ * - Save as the site owner
  */
 function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_state){
 	//Only apply these alterations on the admin page where we want this form custom for the site owner
@@ -400,7 +387,7 @@ function vsite_users_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 }
 
 /**
- * Edit the ucreate form to hide the site dialogue and set defaults 
+ * Edit the ucreate form to hide the site dialogue and set defaults
  */
 function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	
@@ -412,7 +399,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	$form['og_register']['#type'] = 'value';
 	  	
 	  	//using a default role for new users created with ucreate (set in hook_strongarm)
-	  	$form['roles']['#type'] = 'value';	  	
+	  	$form['roles']['#type'] = 'value';
 	  	$form['roles']['#value'] = variable_get('ucreate_default_roles', array());
 	  	
 	  	$form['name']['#weight'] = 1;
@@ -471,7 +458,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
         '#type' => 'textfield',
         '#title' => "Find an Existing User",
         '#maxlength' => 80,
-        '#autocomplete_path' => 'cp/users/user_lookup', 
+        '#autocomplete_path' => 'cp/users/user_lookup',
         '#element_validate' => array('vsite_node_autocomplete_validate'),
         '#weight' => -5,
 	  	  '#process' => array('ctools_dependent_process'),
@@ -487,14 +474,14 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
       );
       
       if(array_key_exists('input',$form_state) && array_key_exists('create_type',$form_state['input']) && $form_state['input']['create_type'] == 'existing'){
-      	$form['vsite_users_first_name']['#required'] = 
+      	$form['vsite_users_first_name']['#required'] =
       	$form['vsite_users_last_name']['#required'] =
       	$form['mail']['#required'] =
       	$form['mail_confirm']['#required'] =
       	$form['name']['#required'] = false;
       }
 	  	
-  	break;  	
+  	break;
   	
     case 'user_profile_form':
     	//Redirect the save password form to the profile page
@@ -511,6 +498,11 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
     	if(array_key_exists('contact',$form)) vsite_users_hide_form_value($form['contact']);
 	    if(array_key_exists('biblio_fieldset',$form))  vsite_users_hide_form_value($form['biblio_fieldset']);
 	    if(array_key_exists('timezone',$form))  vsite_users_hide_form_value($form['timezone']);
+    break;
+    case 'vsite_users_profile_node_form':
+    	//Remove unused fields
+    	if(array_key_exists('path',$form)) vsite_users_hide_form_value($form['path']);
+    	if(array_key_exists('attachments',$form)) vsite_users_hide_form_value($form['attachments']);
     break;
   }
 }
@@ -603,7 +595,7 @@ function vsite_users_redirect_reset_submit($form, &$form_state) {
 
 /**
  * hook_scholar_conformation
- * 
+ *
  * Returns an array of urls to overide and create cp_confirm_popups for
  * @return array
  */

@@ -520,7 +520,9 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
       }
 
       if (isset($form['type']) && isset($form['#node'])
-      && ($form_id == $form['type']['#value'] .'_node_form')) {
+      && ($form_id == $form['type']['#value'] .'_node_form')
+      && !is_content_profile($form['type']['#value'])) {
+      	//Node Form (Not Content Profile Nodes)
 
         if(module_exists('override_node_options') && array_key_exists('revision_information',$form) && array_key_exists('options',$form)){
         	$form['options']['#access'] = true;
