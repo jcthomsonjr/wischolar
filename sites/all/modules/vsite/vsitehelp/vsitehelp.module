@@ -1,5 +1,5 @@
 <?php
-function vsitehelp_help($path) {
+function vsitehelp_help($path){
   switch ($path) {
     //features
     case 'cp/features':
@@ -19,7 +19,7 @@ function vsitehelp_help($path) {
     case 'cp/settings/menus':
       return theme('advanced_help_topic', 'vsitehelp', 'Menus');
 
-    case 'cp/settings/site_info':
+    case 'cp/settings/site_info/%':
       return theme('advanced_help_topic', 'vsitehelp', 'Site-Information');
 
     case 'cp/settings/generic':
