@@ -280,6 +280,19 @@ function apachesolr_attachments_add_documents($node, $namespace) {
       $document->ss_file_node_title = apachesolr_clean_text($node->title);
       $document->ss_file_node_url = url('node/' . $node->nid, array('absolute' => TRUE));
 
+      if (module_exists('apachesolr_og')) {
+        // Index group posts
+        if (!empty($node->og_groups)) {
+          foreach ($node->og_groups as $gid) {
+            $document->setMultiValue(apachesolr_og_gid_key(), $gid);
+          }
+        }
+        elseif (isset($node->og_description) && variable_get('apachesolr_og_groupnode', 0)) {
+          // Index the group node itself as in the group.
+          $document->setMultiValue(apachesolr_og_gid_key(), $node->nid);
+        }
+      }
+  
       apachesolr_add_taxonomy_to_document($document, $node);
 
       if (module_exists('apachesolr_nodeaccess')) {
