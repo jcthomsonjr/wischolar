@@ -112,6 +112,11 @@ function vsite_search_apachesolr_context_active_contexts_alter(&$contexts) {
         }
       }
     }
+    // Global search, no vsite context
+    else {
+      // Remove the Filter by Author facet block
+      unset($contexts['vsite-search-apachesolr_search']->block['apachesolr_search_uid']);
+    }
     
     // Loop through the apachesolr_search blocks and remove the Biblio facet blocks if needed
     foreach($contexts['vsite-search-apachesolr_search']->block as $bid => $block) {
@@ -350,6 +355,40 @@ function vsite_search_apachesolr_apachesolr_process_results(&$arg) {
     $arg[$index]['snippet'] = node_view($node, TRUE, FALSE, TRUE);
     // Remove the title, as the snippet will display it
     unset($arg[$index]['title']);
+  }
+}
+
+/**
+ * Implementation of hook_preprocess_block()
+ * 
+ * @param $vars
+ */
+function vsite_search_apachesolr_preprocess_block(&$vars) {
+  if (isset($vars['block']->module)) {
+    list($name, $display_id) = explode('-', $vars['block']->delta);
+    switch($name) {
+      case 'im_og_gid':
+        $vars['block']->subject = t('Scholar Sites');
+        break;
+      case 'ss_biblio_year':
+        $vars['block']->subject = t('Year of Publication');
+        break;
+      case 'ss_biblio_authors':
+        $vars['block']->subject = t('Authors');
+        break;
+      case 'sm_biblio_contributors':
+        $vars['block']->subject = t('Authors');
+        break;
+      case 'ss_biblio_publisher':
+        $vars['block']->subject = t('Publisher');
+        break;
+      case 'ss_biblio_secondary_title':
+        $vars['block']->subject = t('Journal title');
+        break;
+      case 'type':
+        $vars['block']->subject = t('Publication type');
+        break;
+    }
   }
 }
 

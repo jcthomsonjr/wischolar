@@ -50,10 +50,13 @@ function vsitehelp_help($path){
 }
 
 function vsitehelp_step_form(&$element, $form_id, $callback) {
-    foreach (element_children($element) as $child) {
-      vsitehelp_step_form($element[$child], $form_id . ':' . $child, $callback);
-    }
-    $callback($element, $form_id);
+  if(is_object($element)) {
+    $element = (array)$element;
+  }
+  foreach (element_children($element) as $child) {
+    vsitehelp_step_form($element[$child], $form_id . ':' . $child, $callback);
+  }
+  $callback($element, $form_id);
 }
 
 function vsitehelp_form_alter(&$form, $form_state, $form_id) {

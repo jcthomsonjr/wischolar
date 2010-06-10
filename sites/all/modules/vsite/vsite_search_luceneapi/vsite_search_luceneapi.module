@@ -40,7 +40,6 @@ function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array())
             'content' => luceneapi_facet_realm_render('block', 'luceneapi_node', 'node', TRUE)
           );
         default:
-          drupal_set_message('Delta: '.$delta);
           if (user_access('use advanced search')) {
             module_load_include('inc', 'luceneapi_facet', 'luceneapi_facet.block');
             luceneapi_facet_css_js_add();
@@ -339,6 +338,16 @@ function vsite_search_luceneapi_luceneapi_facet_postrender_alter(&$items, $realm
         }
       }
     }
+    
+    // If the context is global, remove the author facet
+    $contexts = context_active_contexts();
+    if(!array_key_exists('vsite-section-public', $contexts)) {
+      unset($items['author']);    
+    }
+    else {
+      // There is a group context, so remove the OG facet
+      unset($items['im_og_gid']);
+    }
   }
   if(!empty($items)) {
     foreach($items as $name => $facet) {
@@ -379,7 +388,7 @@ function vsite_search_luceneapi_luceneapi_document_alter($doc, $item, $module, $
       // Index group posts
       if (!empty($item->og_groups)) {
         // The version of the ZF Components Search Lucene API is using does not support this feature. Unfortunately we have to delimit multiple values withing a single field.
-        $group_nids = join(':', array_keys($item->og_groups));
+        //$group_nids = join(':', array_keys($item->og_groups));
         
         /**
          * Adds the field to the Lucene document.  Valid field types are "keyword",
@@ -387,7 +396,7 @@ function vsite_search_luceneapi_luceneapi_document_alter($doc, $item, $module, $
          * documentation at http://drupal.org/node/655724 for more information on
          * the index types.
          */
-        luceneapi_field_add($doc, 'keyword', 'im_og_gid', $group_nids);   
+        //luceneapi_field_add($doc, 'keyword', 'im_og_gid', $group_nids);   
       }
     }
     catch (Exception $e) {
@@ -679,6 +688,7 @@ function vsite_search_luceneapi_strongarm() {
     'type' => 'type',
     'category' => 'category',
     'original_keys' => 'original_keys',
+    'im_og_gid' => 'im_og_gid',
   );
   $conf['luceneapi_facet:luceneapi_node:fieldset'] = array(
     'author' => 'author',
