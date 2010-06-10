@@ -37,6 +37,12 @@ function vsitehelp_help($path){
 
     //users
     case 'cp/users':
+      return theme('advanced_help_topic', 'vsitehelp', 'My-Account');
+      
+    case 'cp/users/myaccount/personal':
+      return theme('advanced_help_topic', 'vsitehelp', 'My-Account');      
+      
+    case 'cp/users/members':
       return theme('advanced_help_topic', 'vsitehelp', 'Managing-Your-Users');
 
     //news
