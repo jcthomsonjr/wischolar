@@ -26,9 +26,9 @@ function vsite_menus_init(){
 function vsite_menus_spaces_settings(){
   return array(
     'menus' => array(
-      'class' => 'vsite_menus_menus', 
-      'file' => drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc' 
-    ) 
+      'class' => 'vsite_menus_menus',
+      'file' => drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc'
+    )
   );
 }
 
@@ -65,12 +65,12 @@ function vsite_menus_menu_node_insert($item, $node) {
     
     $site->settings['menus']['menu_items'][$item->mlid] = array('menu' => $s_menu_key, 'weight' => $item->weight);
     
-    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']);
     
     spaces_save($site);
   }elseif ($site && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
     unset($site->settings['menus']['menu_items'][$item->mlid]);
-    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']);
     spaces_save($site);
   }//Add or remove t from the spaces menu
 }
@@ -93,7 +93,7 @@ function vsite_menus_menu_node_delete($item, $node) {
   
   if ($site && array_key_exists($node->type,$a_scholar_types) && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
     unset($site->settings['menus']['menu_items'][$item->mlid]);
-    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']); 
+    $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']);
     spaces_save($site);
   }
 }
@@ -132,9 +132,9 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
     
   }else{
   
-	  $n_found = 0;   
+	  $n_found = 0;
 	  if($b_check_expanded){
-	    $a_full_page_expanded = array_merge( menu_tree_page_data(variable_get('scholar_primary_menu',false)), 
+	    $a_full_page_expanded = array_merge( menu_tree_page_data(variable_get('scholar_primary_menu',false)),
 	                                         menu_tree_page_data(variable_get('scholar_secondary_menu',false)));
 	    //We must unfortunatly loop through the page data once to get the
 	    //correct expanded trees, the menu module does not provide an easy
@@ -153,7 +153,7 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
 	      if(!is_int($n_mlid) || !($o_link = menu_link_load($n_mlid))){
 	      	unset($a_settings_menu[$n_key]);
 	      	continue;
-	      } 
+	      }
 	      $a_settings_menu[$n_key] = array('link' => $o_link, 'below' => false);
 	    }
 	  }
@@ -243,7 +243,7 @@ function vsite_menus_theme($cache, $type, $theme, $path) {
 
 /**
  * Change the options for the node save form so that only the active vsite menus are displayed
- * 
+ *
  * @param $form array
  * @param $form_state array
  * @param $form_id string
@@ -372,9 +372,9 @@ function vsite_menus_block($op = 'list', $delta = 0, $edit = array()) {
   $blocks = array();
   if ($op == 'list') {
     $blocks[] = array('info' => t('Scholar primary menu'),
-                      'cache' => BLOCK_CACHE_PER_PAGE); 
+                      'cache' => BLOCK_CACHE_PER_PAGE);
     $blocks[] = array('info' => t('Scholar secondary menu'),
-                      'cache' => BLOCK_CACHE_PER_PAGE);  
+                      'cache' => BLOCK_CACHE_PER_PAGE);
     return $blocks;
   }
   elseif ($op == 'view') {
@@ -420,16 +420,44 @@ function vsite_menus_vsite_widgets(){
 }
 
 /**
+ * Deletes a custom menu link created in the context of a vsite
+ *
+ *  @param $n_mlid (number) existing link id
+ *  @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
+ *
+ * @return (number) the mlid of the created menu item or false on failure
+ */
+function vsite_menu_delete_vsite_menu_link($n_mlid, $sid = NULL){
+  $vsite = vsite_get_vsite();
+  if(!$sid) {
+    $sid = $vsite->group->nid;
+  }elseif ($vsite->group->nid != $sid){
+    $vsite = spaces_load('og', $sid, TRUE);
+  }
+  
+  menu_link_delete($n_mlid);
+  
+  if(array_key_exists('menus',$vsite->settings)){
+  	if(($n_p_index = array_search($n_mlid,$vsite->settings['menus']['primary']))) unset($vsite->settings['menus']['primary'][$n_p_index]);
+  	if(($n_s_index = array_search($n_mlid,$vsite->settings['menus']['secondary']))) unset($vsite->settings['menus']['secondary'][$n_s_index]);
+  }
+  
+  if($n_s_index || $n_p_index) spaces_save($vsite);
+  
+  return $n_mlid;
+}
+
+/**
  * Creates a custom menu link created in the context of a vsite
- * 
+ *
  * @param $s_path (string) link path
  * @param $s_title (string) link title
  * @param $b_primary_menu (boolean) true for promary menu, false for secondary
  * @param $n_weight (number) menu weight
  * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
  * @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
- * 
- * @return (number) the mlid of the created menu item or false on failure 
+ *
+ * @return (number) the mlid of the created menu item or false on failure
  */
 function vsite_menu_create_vsite_menu_link($s_path, $s_title, $b_primary_menu = true, $n_weight = 0, $n_plid = 0, $sid = NULL){
 	//Create the menu item
@@ -439,7 +467,7 @@ function vsite_menu_create_vsite_menu_link($s_path, $s_title, $b_primary_menu = 
 
 /**
  * Updates an custom menu link created in the context of a vsite
- * 
+ *
  * @param $n_mlid (number) existing link id
  * @param $s_path (string) link path
  * @param $s_title (string) link title
@@ -447,20 +475,23 @@ function vsite_menu_create_vsite_menu_link($s_path, $s_title, $b_primary_menu = 
  * @param $n_weight (number) menu weight
  * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
  * @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
- * 
- * @return (number) the mlid of the affected menu or false on failure 
+ *
+ * @return (number) the mlid of the affected menu or false on failure
  */
 function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primary_menu = true, $n_weight = 0, $n_plid = 0, $sid = NULL){
-  if(!$sid) {
-    $vsite = $vsite_get_vsite();
+  $vsite = vsite_get_vsite();
+	if(!$sid) {
     $sid = $vsite->group->nid;
+  }elseif ($vsite->group->nid != $sid){
+    $vsite = spaces_load('og', $sid, TRUE);
   }
+  
   if(!$sid || !strlen($s_path) || !strlen($s_title)) return false;
 
   $s_menu = $b_primary_menu? variable_get('scholar_primary_menu',false):variable_get('scholar_secondary_menu',false);
 	
    $a_settings = array(
-   'delete' => 0, 
+   'delete' => 0,
    'module' => 'menu',
    'has_children' => 0,
    'customized' => 0,
@@ -476,10 +507,30 @@ function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primar
    'weight' => $n_weight,  //(Link Weight)
    'plid' => $n_plid,  //(Parent Link ID again or 0 for root)
    'menu_name' => $s_menu,
-   'link_path' => $s_path,  
+   'link_path' => $s_path,
   );
   
   if(intval($n_mlid)) $a_settings['mlid'] = $n_mlid;
     
-  return menu_link_save($a_settings);  
+  $n_mlid = menu_link_save($a_settings);
+  
+  //Change Vsite Settings
+  $b_settings_changed = false;
+  $a_settings_menu = array_key_exists('menus',$vsite->settings)?$vsite->settings['menus'][($b_primary_menu?'primary':'secondary')]:false;
+  if($a_settings_menu && !in_array($n_mlid,$a_settings_menu)){
+  	$a_settings_menu[] = intval($n_mlid);
+  	$b_settings_changed = true;
+  	$vsite->settings['menus'][($b_primary_menu?'primary':'secondary')] = $a_settings_menu;
+  }//If thier are custom user settings add this menu to them
+  
+  $a_inactive_menu = array_key_exists('menus',$vsite->settings)?$vsite->settings['menus'][($b_primary_menu?'secondary':'primary')]:false;
+  if($a_inactive_menu && in_array($n_mlid,$a_inactive_menu)){
+  	unset($a_inactive_menu[array_search($n_mlid,$a_inactive_menu)]);
+    $b_settings_changed = true;
+  	$vsite->settings['menus'][($b_primary_menu?'secondary':'primary')] = $a_inactive_menu;
+  }//Remove the custom link from the menus that it was in
+  
+  if($b_settings_changed) spaces_save($vsite);
+  
+  return $n_mlid;
 }

@@ -158,9 +158,10 @@ class vsite_menus_menus implements vsite_setting {
         // Is this a menu_node item?
         if (!empty($nid)) {
           menu_node_delete($nid, $mlid);
-          menu_link_delete($mlid);
-          unset($value['menu_items'][$mlid]);
         }
+        menu_link_delete($mlid);
+        unset($value['menu_items'][$mlid]);
+        
       }elseif (array_key_exists('delete',$menu_info)){
         unset($value['menu_items'][$mlid]['delete']);//no use saving this
       }
