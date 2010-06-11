@@ -1,3 +1,22 @@
 <?php
 
 include_once('scholar_presentations.features.inc');
+
+
+/**
+ * hook vsite_sidgets
+ */
+function scholar_presentations_vsite_widgets(){
+  $items = array();
+  $items['views_scholar_presentations-block_1'] = array(
+        'module' => 'views',
+        'delta' => 'scholar_presentations-block_1',
+        'weight' => 10,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Recent Presentations',
+        'type' => 'context_ui',
+      );
+      
+      return $items;
+}

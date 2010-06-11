@@ -58,7 +58,7 @@ function _scholar_presentations_content_default_fields() {
       'default_value_custom' => '',
       'default_value_custom2' => '',
       'label' => 'Date',
-      'weight' => '-4',
+      'weight' => '-3',
       'description' => '',
       'type' => 'date_popup',
       'module' => 'date',
@@ -170,4 +170,77 @@ function _scholar_presentations_context_default_contexts() {
     ),
   );
   return $items;
+}
+
+/**
+ * Helper to implementation of hook_menu_default_items().
+ */
+function _scholar_presentations_menu_default_items() {
+  $items = array();
+
+  $items[] = array(
+    'title' => 'Presentations',
+    'path' => 'presentations',
+    'weight' => '0',
+    'description' => 'List of presentations on my site',
+  );
+  // Translatables
+  array(
+    t('List of presentations on my site'),
+    t('Presentations'),
+  );
+
+
+  return $items;
+}
+
+/**
+ * Helper to implementation of hook_user_default_permissions().
+ */
+function _scholar_presentations_user_default_permissions() {
+  $permissions = array();
+
+  // Exported permission: create presentation content
+  $permissions[] = array(
+    'name' => 'create presentation content',
+    'roles' => array(),
+  );
+
+  // Exported permission: delete own presentation content
+  $permissions[] = array(
+    'name' => 'delete own presentation content',
+    'roles' => array(),
+  );
+
+  // Exported permission: edit own presentation content
+  $permissions[] = array(
+    'name' => 'edit own presentation content',
+    'roles' => array(),
+  );
+
+  // Exported permission: override presentation promote to front page option
+  $permissions[] = array(
+    'name' => 'override presentation promote to front page option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override presentation published option
+  $permissions[] = array(
+    'name' => 'override presentation published option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override presentation revision option
+  $permissions[] = array(
+    'name' => 'override presentation revision option',
+    'roles' => array(),
+  );
+
+  // Exported permission: override presentation sticky option
+  $permissions[] = array(
+    'name' => 'override presentation sticky option',
+    'roles' => array(),
+  );
+
+  return $permissions;
 }
