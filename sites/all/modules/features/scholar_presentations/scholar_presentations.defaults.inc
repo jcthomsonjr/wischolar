@@ -14,7 +14,7 @@ function _scholar_presentations_content_default_fields() {
       'weight' => '-3',
       'parent' => '',
       'label' => array(
-        'format' => 'inline',
+        'format' => 'hidden',
       ),
       'teaser' => array(
         'format' => 'long',
@@ -70,19 +70,20 @@ function _scholar_presentations_content_default_fields() {
     'field_name' => 'field_presentation_presenter',
     'type_name' => 'presentation',
     'display_settings' => array(
+      'weight' => '-3',
+      'parent' => '',
       'label' => array(
         'format' => 'above',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
       ),
       'teaser' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -150,24 +151,14 @@ function _scholar_presentations_context_default_contexts() {
     'namespace' => 'scholar',
     'attribute' => 'feature',
     'value' => 'presentations',
-    'description' => 'Scholar presentations section',
+    'description' => 'Presentations feature context',
     'node' => array(
       '0' => 'presentation',
     ),
     'views' => array(
       '0' => 'scholar_presentations',
     ),
-    'block' => array(
-      'addthis_0' => array(
-        'module' => 'addthis',
-        'delta' => '0',
-        'weight' => 38,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'AddThis button',
-        'type' => 'context_ui',
-      ),
-    ),
+    'menu' => 'presentations',
   );
   return $items;
 }
