@@ -49,6 +49,16 @@ function gkimport_import_2($drush_run = 0){
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
 
+function gkimport_import_3($drush_run = 0){
+  drush_print("Begining import, part 3...");
+
+   gkimport_import_presentations();
+
+  $message = 'Import part 3 completed';
+  $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
+}
+
+
 /**
  * Function to create gking user account and web site
  * @return 
@@ -895,6 +905,40 @@ function gkimport_import_classes(){
       drush_print("Added class: {$node -> title}");
     }
   }	
+}
+
+function gkimport_import_presentations(){
+  $path = dirname(__FILE__)  . '/files/talks.csv';
+
+  if(!is_file($path)){
+    return drush_print("No file found for presentations");
+  }
+  $account = user_load(array('name' => 'gking'));
+
+  if (( $handle = fopen($path, "r")) !== FALSE) {
+    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
+      //if title exists already in the array, and another term is to be added
+
+      $node = new stdClass();
+      $node -> type = 'presentation';
+      $node -> title = $data[0];
+      $node -> body = strlen($data[1]) ?  'Location: ' . $data[1] : '';
+      $node -> teaser =  strlen($data[1]) ?  'Location: ' . $data[1] : '';
+      if (strlen($data[3])){
+        $start = explode('/' , $data[3]);
+        $end = strlen($data[4]) ? explode('/' , $data[4]) : array();
+        $date = gkimport_convert_date_times($start, $end);
+        $node -> field_date[0]['value'] = $date['value'];
+        $node -> field_date[0]['value2'] = $date['value2'];
+      }
+     
+      $node -> name = $account -> name;
+      $node -> uid = $account -> uid;
+      node_save($node);
+      gkimport_node_to_og($node -> nid, $account, $sid);
+      drush_print("Added presentation: {$node -> title}");
+    }
+  }
 }
 
 /**

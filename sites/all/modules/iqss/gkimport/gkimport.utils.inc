@@ -121,6 +121,17 @@ function gkimport_generate_notes_file(){
   file_put_contents($filepath, $str);
 }
  
+
+/**
+ * Return formatted times for node submission
+ */
+function gkimport_convert_date_times($start, $end = array()){ 
+  $start_val = date('c', mktime(0, 0, 0, $start[0], $start[1], $start[2]));  //month, day, year
+  $end_val =  count($end) ? date('c', mktime(0, 0, 0, $end[0], $end[1], $end[2])) : NULL;
+  return array('value' => $start_val , 'value2' => $end_val); 
+}
+
+
 function gkimport_test_term_assignments(){
   $res = db_query("SELECT nid, biblio_type FROM biblio");
 while($data = db_fetch_object($res)){

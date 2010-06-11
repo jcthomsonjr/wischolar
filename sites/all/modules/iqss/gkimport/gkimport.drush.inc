@@ -5,8 +5,16 @@
  */
 function gkimport_drush_help($section) {
   switch ($section) {
-    case 'drush:gkimport':
-      return dt("Begins import process for current Gary's site information to his Scholars' Projects site.");
+    case 'drush:gkimport1':
+      return dt("Begins import process  part 1 for current Gary's site information to his Scholars' Projects site.");
+      break;
+
+    case 'drush:gkimport2':
+      return dt("Begins import process part 2 for current Gary's site information to his Scholars' Projects site.");
+      break;
+
+    case 'drush:gkimport3':
+      return dt("Begins import process part 3 for current Gary's site information to his Scholars' Projects site.");
       break;
 
     case 'drush:gkimport-export-layout':
@@ -23,16 +31,22 @@ function gkimport_drush_help($section) {
  * Implementation of hook_drush_command().
  */
 function gkimport_drush_command() {
-  $items['gkimport'] = array(
+  $items['gkimport1'] = array(
   'callback' => 'gkimport_import',
   'callback arguments' => array(1),
-  'description' => "Begins import process for current Gary's site information to his Scholars' Projects site.",
+  'description' => "Begins import process part 1  for current Gary's site information to his Scholars' Projects site.",
   );
   
   $items['gkimport2'] = array(
   'callback' => 'gkimport_import_2',
   'callback arguments' => array(1),
-  'description' => "Begins second import process for current Gary's site information to his Scholars' Projects site.",
+  'description' => "Begins second import process part 2 for current Gary's site information to his Scholars' Projects site.",
+  );
+  
+    $items['gkimport3'] = array(
+  'callback' => 'gkimport_import_3',
+  'callback arguments' => array(1),
+  'description' => "Begins import process part 3 for current Gary's site information to his Scholars' Projects site.",
   );
 
   $items['gkimport-export-layout'] = array(
