@@ -359,7 +359,6 @@ function vsite_search_luceneapi_luceneapi_facet_postrender_alter(&$items, $realm
           $items[$name]['title'] = t('Authors'); 
           break;
         default:
-          drupal_set_message('Title = '.$facet['title']);
           $items[$name]['title'] = t($facet['title']);
           $items[$name]['#description'] = t($facet['#description']);
           break;
