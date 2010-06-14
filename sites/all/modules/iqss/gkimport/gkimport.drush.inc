@@ -34,13 +34,13 @@ function gkimport_drush_command() {
   $items['gkimport1'] = array(
   'callback' => 'gkimport_import',
   'callback arguments' => array(1),
-  'description' => "Begins import process part 1  for current Gary's site information to his Scholars' Projects site.",
+  'description' => "Begins import process part 1 for current Gary's site information to his Scholars' Projects site.",
   );
   
   $items['gkimport2'] = array(
   'callback' => 'gkimport_import_2',
   'callback arguments' => array(1),
-  'description' => "Begins second import process part 2 for current Gary's site information to his Scholars' Projects site.",
+  'description' => "Begins import process part 2 for current Gary's site information to his Scholars' Projects site.",
   );
   
     $items['gkimport3'] = array(

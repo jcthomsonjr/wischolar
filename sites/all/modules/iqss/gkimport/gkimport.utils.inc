@@ -131,6 +131,38 @@ function gkimport_convert_date_times($start, $end = array()){
   return array('value' => $start_val , 'value2' => $end_val); 
 }
 
+/**
+ * Submit function for adding 'Data' type in biblio
+ */
+function gkimport_biblio_admin_types_add_form_submit($form, & $form_state){
+  $values = $form_state['values'];
+  $values['tid'] = variable_get('biblio_max_user_tid', '999') + 1; dpm($values);
+  drupal_write_record('biblio_types', $values);
+  variable_set('biblio_max_user_tid', $values['tid']);
+  for ($f = 1; $f <= 51; $f++) {
+    $ft_vals = array(
+      'tid'       => $values['tid'],
+      'fid'       => $f,
+      'ftdid'     => $f,
+      'cust_tdid' => $f,
+      'weight'    => $f,
+      'visible'    => 1,
+    );
+    drupal_write_record('biblio_field_type', $ft_vals);
+  }
+  // Fill contributor types. Use the first 4 defaults.
+  for ($type = 1; $type <= 4; $type++) {
+    $ct_vals = array (
+      'auth_category' => $type,
+      'biblio_type' => $values['tid'],
+      'auth_type' => $type,
+      );
+    drupal_write_record('biblio_contributor_type', $ct_vals);
+  }
+
+  // Refresh publication type string for translation.
+  biblio_locale_refresh_types($values['tid']);
+}
 
 function gkimport_test_term_assignments(){
   $res = db_query("SELECT nid, biblio_type FROM biblio");

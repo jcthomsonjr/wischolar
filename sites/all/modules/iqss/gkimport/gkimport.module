@@ -918,15 +918,20 @@ function gkimport_import_presentations(){
   if (( $handle = fopen($path, "r")) !== FALSE) {
     while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
       //if title exists already in the array, and another term is to be added
+      
+      if($data[0] == 'title') continue;
+      
+      //return drush_print_r($data);
+      
 
       $node = new stdClass();
       $node -> type = 'presentation';
       $node -> title = $data[0];
       $node -> body = strlen($data[1]) ?  'Location: ' . $data[1] : '';
       $node -> teaser =  strlen($data[1]) ?  'Location: ' . $data[1] : '';
-      if (strlen($data[3])){
-        $start = explode('/' , $data[3]);
-        $end = strlen($data[4]) ? explode('/' , $data[4]) : array();
+      if (strlen($data[2])){
+        $start = explode('/' , $data[2]);
+        $end = strlen($data[3]) ? explode('/' , $data[3]) : array();
         $date = gkimport_convert_date_times($start, $end);
         $node -> field_date[0]['value'] = $date['value'];
         $node -> field_date[0]['value2'] = $date['value2'];
@@ -934,9 +939,12 @@ function gkimport_import_presentations(){
      
       $node -> name = $account -> name;
       $node -> uid = $account -> uid;
+      
+     // return drush_print_r($node);
       node_save($node);
       gkimport_node_to_og($node -> nid, $account, $sid);
       drush_print("Added presentation: {$node -> title}");
+      return; //just iterate once for now - TESTING PURPOSES ONLY
     }
   }
 }
@@ -953,6 +961,19 @@ function gkimport_software_pubs_set(){
       $node = node_load($nid);
       db_query("UPDATE {biblio} SET biblio_type = %d WHERE nid =  %d" , $biblio_type_id, $nid); 
       drush_print("Updated biblio type to Software for node: $nid {$node -> title}");
+    }
+  }
+}
+
+
+/**
+ * Implementation of hook_form_alter()
+ * Remove the redirect from 'biblio_admin_types_add_form' form by changing the submit function
+ */
+function gkimport_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'biblio_admin_types_add_form') {
+    if (GKIMPORT_DRUSH_RUN == 1){
+      $form['#submit'] = array('gkimport_biblio_admin_types_add_form_submit');
     }
   }
 }
