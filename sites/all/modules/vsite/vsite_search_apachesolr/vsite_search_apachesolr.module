@@ -116,6 +116,8 @@ function vsite_search_apachesolr_context_active_contexts_alter(&$contexts) {
     else {
       // Remove the Filter by Author facet block
       unset($contexts['vsite-search-apachesolr_search']->block['apachesolr_search_uid']);
+      // Remove the Filter by Contributor facet block
+      unset($contexts['vsite-search-apachesolr_search']->block['apachesolr_biblio_contributors']);
     }
     
     // Loop through the apachesolr_search blocks and remove the Biblio facet blocks if needed
