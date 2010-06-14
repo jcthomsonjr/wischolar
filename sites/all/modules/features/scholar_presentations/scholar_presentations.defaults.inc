@@ -6,28 +6,48 @@
 function _scholar_presentations_content_default_fields() {
   $fields = array();
 
-  // Exported field: field_date
+  // Exported field: field_date_presentation
   $fields[] = array(
-    'field_name' => 'field_date',
+    'field_name' => 'field_date_presentation',
     'type_name' => 'presentation',
     'display_settings' => array(
-      'weight' => '-3',
+      'weight' => '10',
       'parent' => '',
       'label' => array(
         'format' => 'hidden',
       ),
       'teaser' => array(
-        'format' => 'long',
+        'format' => 'default',
         'exclude' => 0,
       ),
       'full' => array(
-        'format' => 'long',
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
         'exclude' => 0,
       ),
     ),
     'widget_active' => '1',
     'type' => 'date',
-    'required' => '1',
+    'required' => '0',
     'multiple' => '0',
     'module' => 'date',
     'active' => '1',
@@ -43,11 +63,11 @@ function _scholar_presentations_content_default_fields() {
     'todate' => 'optional',
     'repeat' => 0,
     'repeat_collapsed' => '',
-    'default_format' => 'long',
+    'default_format' => 'medium',
     'widget' => array(
-      'default_value' => 'now',
+      'default_value' => 'blank',
       'default_value_code' => '',
-      'default_value2' => 'same',
+      'default_value2' => 'blank',
       'default_value_code2' => '',
       'input_format' => 'm/d/Y - g:ia',
       'input_format_custom' => '',
@@ -55,22 +75,82 @@ function _scholar_presentations_content_default_fields() {
       'text_parts' => array(),
       'year_range' => '-3:+3',
       'label_position' => 'above',
-      'default_value_custom' => '',
-      'default_value_custom2' => '',
-      'label' => 'Date',
-      'weight' => '-3',
+      'label' => 'Presentation Date',
+      'weight' => '10',
       'description' => '',
       'type' => 'date_popup',
       'module' => 'date',
     ),
   );
 
-  // Exported field: field_presentation_presenter
+  // Exported field: field_presentation_file
   $fields[] = array(
-    'field_name' => 'field_presentation_presenter',
+    'field_name' => 'field_presentation_file',
     'type_name' => 'presentation',
     'display_settings' => array(
-      'weight' => '-3',
+      'weight' => '16',
+      'parent' => '',
+      'label' => array(
+        'format' => 'above',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'filefield',
+    'required' => '0',
+    'multiple' => '1',
+    'module' => 'filefield',
+    'active' => '1',
+    'list_field' => '0',
+    'list_default' => 1,
+    'description_field' => '1',
+    'widget' => array(
+      'file_extensions' => 'pdf doc docx odt xls ppt key txt',
+      'file_path' => '',
+      'progress_indicator' => 'bar',
+      'max_filesize_per_file' => '',
+      'max_filesize_per_node' => '',
+      'label' => 'Presentation Files',
+      'weight' => '16',
+      'description' => 'Upload the file(s) for this presentation.',
+      'type' => 'filefield_widget',
+      'module' => 'filefield',
+    ),
+  );
+
+  // Exported field: field_presentation_location
+  $fields[] = array(
+    'field_name' => 'field_presentation_location',
+    'type_name' => 'presentation',
+    'display_settings' => array(
+      'weight' => '11',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -106,8 +186,8 @@ function _scholar_presentations_content_default_fields() {
     ),
     'widget_active' => '1',
     'type' => 'text',
-    'required' => '1',
-    'multiple' => '1',
+    'required' => '0',
+    'multiple' => '0',
     'module' => 'text',
     'active' => '1',
     'text_processing' => '0',
@@ -120,12 +200,12 @@ function _scholar_presentations_content_default_fields() {
       'default_value' => array(
         '0' => array(
           'value' => '',
-          '_error_element' => 'default_value_widget][field_presentation_presenter][0][value',
+          '_error_element' => 'default_value_widget][field_presentation_location][0][value',
         ),
       ),
       'default_value_php' => NULL,
-      'label' => 'Presenter(s)',
-      'weight' => '-3',
+      'label' => 'Location',
+      'weight' => '11',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -134,8 +214,9 @@ function _scholar_presentations_content_default_fields() {
 
   // Translatables
   array(
-    t('Date'),
-    t('Presenter(s)'),
+    t('Location'),
+    t('Presentation Date'),
+    t('Presentation Files'),
   );
 
   return $fields;
