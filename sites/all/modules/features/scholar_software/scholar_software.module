@@ -407,3 +407,12 @@ function scholar_software_vsite_widgets(){
       );
   return $items;
 }
+
+/**
+ * An implementation of hook_views_pre_view().
+ */
+function scholar_software_views_pre_view(&$view, &$display_id, &$args) {
+  if ($view->name == 'scholar_software_updates' && $display_id == 'feed_1') {
+    $args[1] = '6.x';
+  }
+}

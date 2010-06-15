@@ -84,6 +84,10 @@ class scholar_software_plugin_style_updatexml extends views_plugin_style {
   function preprocess(&$vars) {
     $fields = $vars['view']->field;
 
+    $vars['options']['project']['title'] = 'title';
+    $vars['options']['project']['short_name'] = 'field_scholar_software_name_value';
+    $vars['options']['project']['link'] = 'nid';
+    
     // Build project XML values
     $project = array();
     foreach ($vars['options']['project'] as $element => $field) {
@@ -101,6 +105,10 @@ class scholar_software_plugin_style_updatexml extends views_plugin_style {
       $project['link'] =  url($project['link'], array('absolute' => TRUE));
     }
 
+    if (!isset($project['api_version'])) {
+      $project['api_version'] =  variable_get('scholar_software_default_drupal_api_version','6.x');
+    }
+    
     // Build release XML values
     $releases = array();
     $project['recommended_major'] = '';
