@@ -36,8 +36,8 @@ function _vsite_search_apachesolr_user_default_permissions() {
  * @return unknown_type
  */
 function _vsite_search_apachesolr_context_default_contexts() {
-  $items = array ();
-  $items = array(
+  $items = array();
+  $items[] = array(
     'namespace' => 'vsite',
     'attribute' => 'search',
     'value' => 'apachesolr_search',
