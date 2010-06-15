@@ -35,13 +35,16 @@ function _scholar_presentations_views_default_views() {
       ),
       'relationship' => 'none',
     ),
-    'field_date_value' => array(
+    'field_presentation_date_value' => array(
       'order' => 'DESC',
       'delta' => -1,
-      'id' => 'field_date_value',
-      'table' => 'node_data_field_date',
-      'field' => 'field_date_value',
+      'id' => 'field_presentation_date_value',
+      'table' => 'node_data_field_presentation_date',
+      'field' => 'field_presentation_date_value',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
   ));
   $handler->override_option('filters', array(
@@ -159,6 +162,7 @@ function _scholar_presentations_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('title', 'Recent Presentations');
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_more', 1);
   $handler->override_option('use_more_always', 0);
