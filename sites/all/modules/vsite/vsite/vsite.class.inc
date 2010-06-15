@@ -120,6 +120,12 @@ class vsite extends space_og implements space {
 
   /**
    * Implementation of space->delete().
+   * The logic here applies to this particular vsite.
+   * (i.e. one would do something different for an openscholar_projet site)
+   * @see og_nodeapi()
+   * @see spaces_og_nodeapi
+   * @see spaces_delete
+   * @see og_vocab_nodeapi
    */
   function delete(){
     $gid = $this -> sid;
@@ -135,8 +141,10 @@ class vsite extends space_og implements space {
       $node = node_delete($child_nid);
     }
     
-    // delete the group node itself
-    node_delete($gid);
+    // users
+    user_delete($edit = array(), $uid = $this -> group -> uid);
+    
+
   }  
 
   /**
