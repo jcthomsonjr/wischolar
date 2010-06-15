@@ -416,7 +416,7 @@ function _vsite_search_luceneapi_context_default_contexts() {
 /**
  * Helper to implementation of hook_strongarm().
  */
-function _vsite_search_apachesolr_strongarm() {
+function _vsite_search_luceneapi_strongarm() {
   $export = array();
 
   $strongarm = new stdClass;
