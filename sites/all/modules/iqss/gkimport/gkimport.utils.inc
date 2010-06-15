@@ -173,6 +173,7 @@ function gkimport_biblio_admin_types_add_form_submit($form, & $form_state){
  * @param  $save TRUE to save the node, FALSE to just return the node object
  * @param  $sid - site id (optional)
  * @param  $num - used for importing multiple files
+ * @param  $account - user account object for which the file should belong to
  */
 function gkimport_add_filefield_file($source, $field_name, &$node, $save = TRUE, $sid = NULL, $num = NULL, $account = NULL){
   include_once( drupal_get_path('module', 'filefield') . '/field_file.inc' );
@@ -226,29 +227,23 @@ function gkimport_add_filefield_file($source, $field_name, &$node, $save = TRUE,
 
 function gkimport_test_term_assignments(){
   $res = db_query("SELECT nid, biblio_type FROM biblio");
-while($data = db_fetch_object($res)){
+  while($data = db_fetch_object($res)){
+    $match = db_result(db_query("SELECT * FROM term_node WHERE nid = %d", $data -> nid));
+    if($match){
+      $matches[] = $data -> nid;
+    }
+    else{
+      $node = node_load($data -> nid);
+      $nonmatches[] = $data -> nid . ' ' . $data ->biblio_type . ' ' . $node -> title;
 
-$match = db_result(db_query("SELECT * FROM term_node WHERE nid = %d", $data -> nid));
-
-if($match){
-$matches[] = $data -> nid;
-}
-
-else{
-$node = node_load($data -> nid);
-$nonmatches[] = $data -> nid . ' ' . $data ->biblio_type . ' ' . $node -> title;
-
-$arr = array(100,101);
-
-if (!in_array($data -> biblio_type, $arr)){
-  
-  $relnonmatches[] = $data -> nid . ' ' . $data ->biblio_type . ' ' . $node -> title;
-  }
-}
+      $arr = array(100,101);
+      if (!in_array($data -> biblio_type, $arr)){
+        $relnonmatches[] = $data -> nid . ' ' . $data ->biblio_type . ' ' . $node -> title;
+      }
+    }
 
 }
 dpm($matches);
 dpm($nonmatches);
-dpm($relnonmatches);
-  
+dpm($relnonmatches);  
 }
