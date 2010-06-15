@@ -906,41 +906,62 @@ function gkimport_import_classes(){
     }
   }	
 }
-
+/**
+ * Enter description here...
+ * 
+ * @param $source  the path to the source image
+ * @param $field_name the name of the cck field 
+ * @param $node the node object to upload the image to (passed by reference)
+ * @param  $save TRUE to save the node, FALSE to just return the node object
+ */
 function gkimport_import_presentations(){
   $path = dirname(__FILE__)  . '/files/talks.csv';
 
   if(!is_file($path)){
     return drush_print("No file found for presentations");
   }
+   //absolute path to files directory
+  $files_dir = GKIMPORT_FS_PATH . '/' . variable_get('file_directory_path', conf_path() .'/files') . '/gking/files';
+  $gking_files_dir = '/nfs/www/edu-harvard-gking/htdocs/talks';
+  $field_name = 'field_presentation_file';
   $account = user_load(array('name' => 'gking'));
 
   if (( $handle = fopen($path, "r")) !== FALSE) {
     while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
       //if title exists already in the array, and another term is to be added
-      
+     
       if($data[0] == 'title') continue;
       
-      //return drush_print_r($data);
-      
-
       $node = new stdClass();
       $node -> type = 'presentation';
       $node -> title = $data[0];
-      $node -> body = strlen($data[1]) ?  'Location: ' . $data[1] : '';
-      $node -> teaser =  strlen($data[1]) ?  'Location: ' . $data[1] : '';
+      $node -> field_presentation_location[0]['value'] = $data[1];
+      $node -> field_presentation_location[0]['_error_element'] = 'field_presentation_location';
+      
       if (strlen($data[2])){
         $start = explode('/' , $data[2]);
         $end = strlen($data[3]) ? explode('/' , $data[3]) : array();
         $date = gkimport_convert_date_times($start, $end);
-        $node -> field_date[0]['value'] = $date['value'];
-        $node -> field_date[0]['value2'] = $date['value2'];
+        $node -> field_presentation_date[0]['value'] = $date['value'];
+        $node -> field_presentation_date[0]['value2'] = $date['value2'];
       }
-     
-      $node -> name = $account -> name;
-      $node -> uid = $account -> uid;
       
-     // return drush_print_r($node);
+      // import files and add to $node object
+      // slides
+      if (strlen($data[4])){
+        $source = $gking_files_dir   . '/' . basename($data[4]);      
+        gkimport_add_filefield_file($source, $field_name, $node, FALSE, gkimport_get_sid(), 0, $account);
+        $node -> field_presentation_file[0]['data']['description'] = 'Slides';
+      }
+      // printable slides
+      if (strlen($data[5])){
+        $source = $gking_files_dir  . '/' . basename($data[5]);
+        gkimport_add_filefield_file($source, $field_name, $node, FALSE, gkimport_get_sid(), 1, $account);
+        $node -> field_presentation_file[1]['data']['description'] = 'Printable slides';
+      }
+      $node -> name = $account -> name;
+      $node -> uid = $account -> uid;     
+      
       node_save($node);
       gkimport_node_to_og($node -> nid, $account, $sid);
       drush_print("Added presentation: {$node -> title}");
@@ -1135,22 +1156,23 @@ function gkimport_import_talks($file){
       $talks[]= array(
       'Title' => $data[0],
       'Location' => $data[1],
-      'Date' => $data[2],
-      'Slides' => $data[3],
-      'Printable slides' => $data[4],
-      'Related research' => $data[5],
-      'Paper1' => $data[6],
-      'Paper2' => $data[7],
-      'Website' => $data[8],
-      'Book' => $data[8],
-      'DVN paper' => $data[9],
-      'Data Citation paper' => $data[10],
-      'Zelig paper' => $data[11],
-      'Text Extraction paper' => $data[12],
-      'Verbal Autopsy paper' => $data[13],
-      'Design paper' => $data[14],
-      'Matched Pair Methods paper' => $data[15],
-      'Paper abstract' => $data[16],
+      'Start date' => $data[2],
+      'End date' => $data[3],
+      'Slides' => $data[4],
+      'Printable slides' => $data[5],
+      'Related research' => $data[6],
+      'Paper1' => $data[7],
+      'Paper2' => $data[8],
+      'Website' => $data[9],
+      'Book' => $data[10],
+      'DVN paper' => $data[11],
+      'Data Citation paper' => $data[12],
+      'Zelig paper' => $data[13],
+      'Text Extraction paper' => $data[14],
+      'Verbal Autopsy paper' => $data[15],
+      'Design paper' => $data[16],
+      'Matched Pair Methods paper' => $data[17],
+      'Paper abstract' => $data[18],
       );
     }
   }

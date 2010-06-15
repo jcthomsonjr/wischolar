@@ -164,6 +164,66 @@ function gkimport_biblio_admin_types_add_form_submit($form, & $form_state){
   biblio_locale_refresh_types($values['tid']);
 }
 
+/**
+ * Function to add filefield file to node
+ *
+ * @param $source  the path to the source image
+ * @param $field_name the name of the cck field 
+ * @param $node the node object to upload the image to (passed by reference)
+ * @param  $save TRUE to save the node, FALSE to just return the node object
+ * @param  $sid - site id (optional)
+ * @param  $num - used for importing multiple files
+ */
+function gkimport_add_filefield_file($source, $field_name, &$node, $save = TRUE, $sid = NULL, $num = NULL, $account = NULL){
+  include_once( drupal_get_path('module', 'filefield') . '/field_file.inc' );
+  
+  if(!$num) $num = 0;
+  // get the cck filefield
+  $field = content_fields($field_name, $node -> type);
+
+  // validators (can add our own validators if we want)
+  $validators = filefield_widget_upload_validators($field);
+
+  // where to store the file
+  $files_path = filefield_widget_file_path($field);
+
+  if(og_is_group_type($node->type) || $sid){
+    $site_id = og_is_group_type($node->type) ? $node->nid : $sid;
+    $vsite = spaces_load('og', $site_id);
+    $files_path .= $vsite->purl;
+    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
+    $files_path .= '/files';
+    file_check_directory($files_path,FILE_CREATE_DIRECTORY);
+  }//If this is the group node lets put it in the group directory
+
+  // create the file object
+  if(!@filesize($source)){
+    error_log("could not get file size for [$source] ");
+    return false;
+  }//if the file does not exsit dont try and save
+
+  //unset size limit for Gary's pdf's (FOR IMPORT ONLY)
+  unset($validators['filefield_validate_size']);  
+  $file = field_file_save_file($source, $validators, $files_path, $account);
+
+  // attach it to the filefield field
+  $node->field_presentation_file[$num] = array(
+  'fid' => $file['fid'],
+  'uid' => $node -> uid,
+  'list' => 1,
+  );
+
+  // if $save param is set to FALSE, then return the $node object without saving
+  if(!$save) return $node;
+
+  // otherwise, save the node and return the file destination
+  node_save($node);
+
+  return $file['destination'];
+}
+
+
+
 function gkimport_test_term_assignments(){
   $res = db_query("SELECT nid, biblio_type FROM biblio");
 while($data = db_fetch_object($res)){
