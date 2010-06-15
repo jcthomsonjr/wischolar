@@ -135,7 +135,7 @@ function _scholar_presentations_content_default_fields() {
       'file_extensions' => 'pdf doc docx odt xls ppt key txt',
       'file_path' => '',
       'progress_indicator' => 'bar',
-      'max_filesize_per_file' => '4M',
+      'max_filesize_per_file' => '',
       'max_filesize_per_node' => '',
       'label' => 'Presentation Files',
       'weight' => '16',
