@@ -18,6 +18,9 @@ function vsitehelp_help($path){
 
     case 'cp/settings/menus':
       return theme('advanced_help_topic', 'vsitehelp', 'Menus');
+      
+    case 'cp/settings/taxonomy':
+      return theme('advanced_help_topic', 'vsitehelp', 'Categorizing-Your-Content---Taxonomy');
 
     case 'cp/settings/site_info/%':
       return theme('advanced_help_topic', 'vsitehelp', 'Site-Information');
@@ -31,9 +34,6 @@ function vsitehelp_help($path){
 
     case 'cp/content/files':
       return theme('advanced_help_topic', 'vsitehelp', 'Managing-Files-and-Images');
-
-    case 'cp/content/taxonomy':
-      return theme('advanced_help_topic', 'vsitehelp', 'Categorizing-Your-Content---Taxonomy');
 
     //users
     case 'cp/users':
@@ -85,7 +85,8 @@ function vsitehelp_get_from_key($key) {
     'spaces_features_form:features:scholar_image_gallery' => array('module' => 'vsitehelp', 'file' => 'Image-Gallery-feature'),
     'spaces_features_form:features:scholar_links' => array('module' => 'vsitehelp', 'file' => 'Links-feature'),
     'spaces_features_form:features:scholar_profiles' => array('module' => 'vsitehelp', 'file' => 'Profiles-feature'),   
-    'spaces_features_form:features:scholar_publications' => array('module' => 'vsitehelp', 'file' => 'Publications-feature'),    
+    'spaces_features_form:features:scholar_publications' => array('module' => 'vsitehelp', 'file' => 'Publications-feature'),
+    'spaces_features_form:features:scholar_presentations' => array('module' => 'vsitehelp', 'file' => 'Presentations-feature'),   
     'spaces_features_form:features:scholar_reader' => array('module' => 'vsitehelp', 'file' => 'Reader-feature'),    
     'spaces_features_form:features:scholar_software' => array('module' => 'vsitehelp', 'file' => 'Software-feature'),
   );
