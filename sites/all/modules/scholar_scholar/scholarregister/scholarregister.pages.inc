@@ -54,9 +54,7 @@ function scholarregister_signup_form(){
       '#size' => 35, 
       '#title' => ($create_site_access) ? t('Site Owner\'s email address') :  t('Your email address'), 
       '#required' => TRUE, 
-      '#description' => t('A valid %harvard e-mail address is required. All e-mails from the Scholar Web Sites Project will be sent to this address.', array(
-          '%harvard' => 'Harvard' 
-      )), 
+      '#description' => t('A valid e-mail address is required. All e-mails from OpenScholar will be sent to this address.'), 
       '#prefix' => '<div id="mail-field">', 
       '#suffix' => '<div id="mail-suffix"></div></div>' 
   );
