@@ -458,6 +458,11 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
   	$form['advanced']['parent']['#default_value'] = $form_state['default_parent'];
   }//Set your default term parent
   
+  if($form['#vocabulary']['tags']){
+  	$form['advanced']['parent']['#type'] = 'value';
+  	unset($form['advanced']['parent']['#theme']);
+  }
+  
   $existing = false;
   if($form['#term']['tid']){
   	$mlid = vsite_taxonomy_get_term_mlid($form['#term']['tid']);
@@ -585,13 +590,16 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
       )
     );
     
-    $links[] = array(
-      'title' => 'add child',
-      'href' => 'vsite/taxonomy/nojs/terms/'.$object->vid.'/add_term/'.$object->tid,
-      'attributes' => array(
-        'class' => 'ctools-use-dialog edit-link'
-      )
-    );
+    $vocab = taxonomy_vocabulary_load($object->vid);
+    if(!$vocab->tags){
+	    $links[] = array(
+	      'title' => 'add child',
+	      'href' => 'vsite/taxonomy/nojs/terms/'.$object->vid.'/add_term/'.$object->tid,
+	      'attributes' => array(
+	        'class' => 'ctools-use-dialog edit-link'
+	      )
+	    );
+    }
     
   }
 
@@ -796,9 +804,22 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
     }
   }
   
+  
+  
   switch($form_id){
   	case 'taxonomy_form_vocabulary':
   		if($form['settings']['context']) $form['settings']['context']['#access'] = user_access('administer taxonomy'); //Hide from regular users
+  		
+  		$a_vocab_options = array(
+        1 => t('Tags (Free tagged comma-separated list of categories/tags)'),
+        0 => t('Predefined/Managed Taxonomy'),
+      );
+        
+	  	//Change view to make creating new vocabs easier
+		  $form['settings']['tags']['#type'] = 'select';
+	    $form['settings']['tags']['#options'] = $a_vocab_options;
+	    $form['settings']['tags']['#description'] = '';
+	    $form['settings']['tags']['#title'] = 'Type';
   	break;
   }
 
