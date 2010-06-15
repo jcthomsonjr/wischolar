@@ -12,6 +12,7 @@
 </head>
 
 <body class="<?php print $body_classes; ?>">
+  <!--[if lte IE 6]><script src="<?php print $directory;?>/ie6-warning/ie6-warning.js"></script><script>window.onload=function(){e("js/ie6/")}</script><![endif]-->
     <?php if ($cp_toolbar) : ?>
     <div id="top">
   	   <?php print $cp_toolbar;?>
