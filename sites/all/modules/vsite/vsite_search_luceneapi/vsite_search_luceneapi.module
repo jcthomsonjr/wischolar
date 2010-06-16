@@ -55,6 +55,18 @@ function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array())
 }
 
 /**
+ * Implementation of hook_form_alter()
+ */
+function vsite_search_luceneapi_form_alter($form, $form_state, $form_id) {
+  switch($form_id) {
+    case 'search_form':
+      // Remove the facets fieldset from the search form
+      unset($form['facets']);
+      break;
+  }
+}
+
+/**
  * Implementation of hook_theme_registry_alter()
  * 
  * @param Mixed $theme_registry
@@ -697,7 +709,7 @@ function vsite_search_luceneapi_strongarm() {
   $conf['luceneapi_facet:luceneapi_node:block'] = array(
     'author' => 'author',
     'type' => 'type',
-    'category' => 'category',
+    //'category' => 'category',
     'original_keys' => 'original_keys',
     'im_og_gid' => 'im_og_gid',
   );
@@ -712,10 +724,10 @@ function vsite_search_luceneapi_strongarm() {
   foreach($fields as $fid => $field) {
     $conf['luceneapi_facet:luceneapi_node:block'][$field['name']] = $field['name'];
     $conf['luceneapi_facet:luceneapi_node:block:'.$field['name'].':'.'weight'] = 0;
-    $conf['luceneapi_facet:luceneapi_node:fieldset'][$field['name']] = $field['name'];
+    //$conf['luceneapi_facet:luceneapi_node:fieldset'][$field['name']] = $field['name'];
   }
   $conf['luceneapi_facet:luceneapi_node:block']['biblio_contributors'] = 'biblio_contributors';
-  $conf['luceneapi_facet:luceneapi_node:fieldset']['biblio_contributors'] = 'biblio_contributors';
+  //$conf['luceneapi_facet:luceneapi_node:fieldset']['biblio_contributors'] = 'biblio_contributors';
   
   $conf['luceneapi_facet:luceneapi_node:block:original_keys:weight'] = -50;
   $conf['luceneapi_facet:luceneapi_node:block:type:weight'] = -49;
