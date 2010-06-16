@@ -168,6 +168,12 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     	}
     }
     $form['submit_type'] = array('#type' => 'submit', '#disabled' => true, '#access' => false, '#value' => t('Select Publication Type'));
+    
+    if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
+    $form['#vertical_tabs']['biblio_abst_e_field'] = 0; //Disable vert. tabs
+    $form['#vertical_tabs']['body_field'] = 0; //Disable vert. tabs
+    $form['#vertical_tabs']['contributors1_wrapper'] = 0; //Disable vert. tabs
+    
   }
 }
 
@@ -393,7 +399,7 @@ function scholar_publications_preprocess_views_view(&$vars) {
 
 /**
  * Implementation of hook_preprocess_block()
- * 
+ *
  * @param $vars
  */
 function scholar_publications_preprocess_block(&$vars) {
@@ -401,11 +407,11 @@ function scholar_publications_preprocess_block(&$vars) {
     list($name, $display_id) = explode('-', $vars['block']->delta);
     if($name == 'publication_years') {
       // Ugly workaround for inability to change the link text via normal views preprocess functions without affecting the link path
-      $vars['block']->content = preg_replace_callback('#(<a.*?(publications\/year\/(9999|9998)).*?>).*?(</a>)#', 
+      $vars['block']->content = preg_replace_callback('#(<a.*?(publications\/year\/(9999|9998)).*?>).*?(</a>)#',
         create_function(
-          '$matches', 
+          '$matches',
           'return $matches[1]._biblio_text_year($matches[3]).\'</a>\';'
-        ), 
+        ),
       $vars['block']->content);
     }
   }
