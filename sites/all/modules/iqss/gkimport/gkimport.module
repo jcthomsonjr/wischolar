@@ -949,13 +949,19 @@ function gkimport_import_presentations(){
       // import files and add to $node object
       // slides
       if (strlen($data[4])){
-        $source = $gking_files_dir   . '/' . basename($data[4]);      
+        $source = $gking_files_dir   . '/' . basename($data[4]);
+        if(!is_file($source)){
+          drush_print("Presentation file not found: "  . basename($data[4]));
+        }
         gkimport_add_filefield_file($source, $field_name, $node, FALSE, gkimport_get_sid(), 0, $account);
         $node -> field_presentation_file[0]['data']['description'] = 'Slides';
       }
       // printable slides
       if (strlen($data[5])){
         $source = $gking_files_dir  . '/' . basename($data[5]);
+        if(!is_file($source)) {
+          drush_print("Presentation file not found: "  . basename($data[4]));
+        }
         gkimport_add_filefield_file($source, $field_name, $node, FALSE, gkimport_get_sid(), 1, $account);
         $node -> field_presentation_file[1]['data']['description'] = 'Printable slides';
       }
@@ -965,10 +971,20 @@ function gkimport_import_presentations(){
       node_save($node);
       gkimport_node_to_og($node -> nid, $account, $sid);
       drush_print("Added presentation: {$node -> title}");
-      return; //just iterate once for now - TESTING PURPOSES ONLY
+     // return; //just iterate once for now - TESTING PURPOSES ONLY
     }
   }
 }
+
+/**
+ * FOR TESTING ONLY - SHOULD BE REMOVED
+ */
+/*function gkimport_remove_presentations(){
+$res = db_query("SELECT nid FROM {node} WHERE type = '%s' ", 'presentation');
+while($data = db_fetch_object($res)){
+  node_delete($data -> nid);
+  }
+}*/
 
 /**
  * Change the biblio type of selected nodes  to 

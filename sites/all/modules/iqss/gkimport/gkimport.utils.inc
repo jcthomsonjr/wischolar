@@ -176,8 +176,7 @@ function gkimport_biblio_admin_types_add_form_submit($form, & $form_state){
  * @param  $account - user account object for which the file should belong to
  */
 function gkimport_add_filefield_file($source, $field_name, &$node, $save = TRUE, $sid = NULL, $num = NULL, $account = NULL){
-  include_once( drupal_get_path('module', 'filefield') . '/field_file.inc' );
-  
+    
   if(!$num) $num = 0;
   // get the cck filefield
   $field = content_fields($field_name, $node -> type);
