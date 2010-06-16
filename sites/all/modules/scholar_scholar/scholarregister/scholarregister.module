@@ -241,7 +241,7 @@ function scholarregister_notify_user($vsite, $user){
      //add vsite and user object
    $params['vsite'] = $vsite;
    $params['user'] = $user;
-   $params['subject'] = t("A Scholars' Web Site has been created for you", array(
+   $params['subject'] = t("An OpenScholar web site has been created for you", array(
     '!site_name' => variable_get('site_name', 'OpenScholar')
   ));
 
