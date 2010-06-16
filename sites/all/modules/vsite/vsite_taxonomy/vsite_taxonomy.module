@@ -209,18 +209,18 @@ function vsite_taxonomy_vocabs(){
  * recursive function to build the tree of terms
  * @see vsite_taxonomy_vocabs
  */
-function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_taxonomy_term', $s_term_filter = false, $b_description = true, $b_show_empty = true){
+function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_taxonomy_term', $s_term_filter = false, $b_description = true, $b_show_empty = true, $b_show_admin_links = true){
   $items = array();
   $current_depth = $tree[$index]->depth;
   while ( $index < count($tree) && $tree[$index]->depth >= $current_depth ) {
     $term = $tree[$index];
     $count = vsite_taxonomy_term_count_nodes($term->tid,0,false);
-    $item = theme($s_term_theme, $term, $s_term_filter, $b_description);
+    $item = theme($s_term_theme, $term, $s_term_filter, $b_description, $b_show_admin_links);
     if ($tree[$index + 1]->depth > $current_depth) {
       $index ++;
       $item = array(
         'data' => $item,
-        'children' => vsite_taxonomy_build_list_items($index, $tree, $s_term_theme, $s_term_filter, $b_description, $b_show_empty)
+        'children' => vsite_taxonomy_build_list_items($index, $tree, $s_term_theme, $s_term_filter, $b_description, $b_show_empty, $b_show_admin_links)
       );
       
       if($b_show_empty || $count || count($item['children'])) $items[] = $item;
@@ -739,7 +739,7 @@ function vsite_taxonomy_block_view(){
       $terms = taxonomy_get_tree($taxonomy->vid);
       
       $n_index = 0;
-      $items = vsite_taxonomy_build_list_items($n_index, $terms,'vsite_taxonomy_term',$s_filter, $b_description = false, $b_show_empty = false);
+      $items = vsite_taxonomy_build_list_items($n_index, $terms,'vsite_taxonomy_term',$s_filter, $b_description = false, $b_show_empty = false, $b_show_admin_links = false);
 
       if (count($items)) {
       	$terms_html .= strlen($terms_html)?'</div></div><div class="block block-views"><div class="content">':"";
@@ -802,6 +802,9 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
       $form['taxonomy']['tags'][$vid]['#description'] = 'A comma-separated list of categories/tags describing this content.
       Example: political science, data, causal inference . You can also control your categories in the ' . l('taxonomy section', 'cp/content/taxonomy') . ' of control pannel';
     }
+    
+    if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
+    $form['#vertical_tabs']['taxonomy'] = 0; //Disable vert. tabs
   }
   
   
@@ -829,7 +832,7 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
  * theme a term
  * @param unknown_type $term
  */
-function theme_vsite_taxonomy_term($term, $s_term_filter = false, $b_description = true){
+function theme_vsite_taxonomy_term($term, $s_term_filter = false, $b_description = true, $b_admin_links = true){
   $count = vsite_taxonomy_term_count_nodes($term->tid,0,false);
   $term_path = (!$s_term_filter)?"taxonomy/term/$term->tid":'categories/'. $s_term_filter . '/'. $term -> tid;
   $term_link = l($term->name, $term_path, array(
@@ -840,10 +843,12 @@ function theme_vsite_taxonomy_term($term, $s_term_filter = false, $b_description
   
   $item .= ($count > 0)?'<span class = "count" > (' . $count . ')</span>':"";
 
-  // add term's admin links
-  $item .= theme('links', vsite_get_admin_links('term', $term), $attributes = array(
-    'class' => 'admin'
-  ));
+  if($b_admin_links){
+	  // add term's admin links
+	  $item .= theme('links', vsite_get_admin_links('term', $term), $attributes = array(
+	    'class' => 'admin'
+	  ));
+  }
 
   if ($b_description && $term -> description) {
     $item .= '<div class="description">' . substr($term -> description,0,58) . ((strlen($term->description) >53)?"&hellip;":"") . '</div>';
