@@ -6,7 +6,7 @@ Institution: The Institute for Quantitative Social Science
 SUMMARY
 --------------
 gkimport is a module/script which attempts to import Gary King's current html based designed to be run 
-once web site (http://gking.harvard.edu/) to a Scholars' Web Sites Project site. The script will create the 
+once web site (http://gking.harvard.edu/) to an OpenScholar site. The script will create the 
 user account, roles, site, taxonomy, nodes, etc. programatically parsing data from collected bibTex, csv 
 and remote html files.
 
