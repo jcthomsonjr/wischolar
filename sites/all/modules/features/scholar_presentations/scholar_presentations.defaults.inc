@@ -240,6 +240,35 @@ function _scholar_presentations_context_default_contexts() {
       '0' => 'scholar_presentations',
     ),
     'menu' => 'presentations',
+    'block' => array(
+      'views_scholar_presentations-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_presentations-block_1',
+        'weight' => 38,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Recent Presentations',
+        'type' => 'context_ui',
+      ),
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => 39,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Categories - Filter categorized content',
+        'type' => 'context_ui',
+      ),
+      'vsite_widgets_2' => array(
+        'module' => 'vsite_widgets',
+        'delta' => '2',
+        'weight' => 40,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'ShareThis Button - Allows you to share posts using popular online services',
+        'type' => 'context_ui',
+      ),
+    ),
   );
   return $items;
 }
