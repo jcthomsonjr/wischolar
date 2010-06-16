@@ -3,7 +3,7 @@
 
 /**
  * @file page-front.tpl.php
- * Theme implementation for displaying Scholars' Web Sites Project front page
+ * Theme implementation for displaying OpenScholar front page
  *
  * Custom variables:
  *  $front_button_link : Returns the link (and text) for the front button, link points to 'site/register', 'user' or $vsite ->purl

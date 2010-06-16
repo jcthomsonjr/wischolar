@@ -34,9 +34,9 @@
  */
 ?>
 <div id="search">
-	<label for="search_theme_form">Search The Scholars' Web Sites Project</label>
+	<label for="search_theme_form">Search OpenScholar</label>
 	<div class="form"> 
-		<input type="text" name="search_theme_form" id="search_input" size="25" value="" title="Search The Scholars' Web Sites Project" class="form-text populate" />
+		<input type="text" name="search_theme_form" id="search_input" size="25" value="" title="Search OpenScholar" class="form-text populate" />
 		<button type="submit" class="submit" name="op" value="Search"></button>
 		<input type="hidden" name="form_id" id="edit-search-theme-form" value="search_theme_form" />
 		<input type="hidden" name="form_token" id="a-unique-id" value="<?php print drupal_get_token('search_theme_form'); ?>" />
