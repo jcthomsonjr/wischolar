@@ -17,17 +17,17 @@ a:hover {
 #header h1 a, #header h1 a:visited, #header h2, #header p, #header p a, #header p a:visited {
   color: #fff;
   font-weight: normal;
+  letter-spacing: -1px;
   }
 
 
 #header h1 {
   font-size: 23px;
-  letter-spacing: -1px;
   margin: 0 0 5px 0;
   }
 
 #header h2 {
-  font-size: 21px;
+  font-size: 19px;
   margin: 0 0 2px 0;
   }
 
@@ -70,7 +70,7 @@ a:hover {
 
 #header, #footer {
   padding-bottom:90px;
-  background: url(images/header-footer.png) no-repeat 100% 100% transparent;
+  background: url(images/header-footer.png) no-repeat 540px 100% transparent;
   }
 
 #footer {
@@ -78,7 +78,7 @@ a:hover {
   }
 
 .one-sidebar #header, .one-sidebar #footer {
-  background-position: -205px 100%;
+  background-position: 748px 100%;
   }
 
 .no-sidebars #header, .no-sidebars #footer {
@@ -96,7 +96,7 @@ a:hover {
   }
 
 .one-sidebar #content-wrapper {
-  background-position: -1005px 0;
+  background-position: -953px 0;
   }
 
 .no-sidebars #content-wrapper {
@@ -107,8 +107,8 @@ a:hover {
   padding: 0 33px;
   }
 
-.one-sidebars #content-main {
-  width:685px;
+.one-sidebar #content-main {
+  width:681px;
   }
 
 .two-sidebars #content-main {
@@ -129,39 +129,51 @@ a:hover {
   padding: 0 20px;
   }
 
-#header-main {
+#header-left, #header-right {
+  width:68px;
+  padding-left: 0;
   padding-right: 0;
   }
 
+#header-left {
+  right: 88px;
+  padding:0;
+  }
+
 #header-right {
-  width: 414px;
-  padding-left: 0;
+  margin-right: -88px;
   }
 
 #header-wrapper {
   padding-left: 68px;
-  padding-right: 68px;
+  padding-right: 88px;
   }
 
 .navbar-on #header-wrapper {
   float: left;
-  width: 466px;
+  width: 376px;
   }
 
-#header-left, #header-right {
-  width:68px;
+#navbar {
+  width: 413px;
+  float: right;
+  clear: none;
   }
 
-#header-left {
-  padding: 0;
-  right: 88px;
+#navbar ul {
+  text-align: right;
   }
 
 #navbar li {
+  display: inline;
+  margin-right: 16px;
   display:inline;
-  margin-left: 10px;
   font-size: .9em;
   line-height: 1.5em;
+  }
+
+#navbar li.last {
+  margin-right: 0;
   }
 
 #navbar li a, #navbar li a:visited {
@@ -173,22 +185,11 @@ a:hover {
   color: #EDEF1D;
   }
 
-#navbar {
-  width: 400px;
-  float: right;
-  clear: none;
-  }
+
 
 /* HTML ITEMS */
 
-.block-vsite_menus li {
-  display: inline;
-  margin-right: 16px;
-  }
 
-.block-vsite_menus li.last {
-  margin-right: 0;
-  }
 
 #footer {
   padding-top: 30px;
