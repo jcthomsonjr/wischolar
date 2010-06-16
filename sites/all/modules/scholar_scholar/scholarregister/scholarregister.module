@@ -242,7 +242,7 @@ function scholarregister_notify_user($vsite, $user){
    $params['vsite'] = $vsite;
    $params['user'] = $user;
    $params['subject'] = t("A Scholars' Web Site has been created for you", array(
-    '!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')
+    '!site_name' => variable_get('site_name', 'OpenScholar')
   ));
 
   $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
@@ -250,7 +250,7 @@ function scholarregister_notify_user($vsite, $user){
   
   $msg_variables = array(
     '!username' => $user->name,
-    '!site' => variable_get('site_name', "Scholars' Web Sites Project"),
+    '!site' => variable_get('site_name', 'OpenScholar'),
     '!scholar_site_url' => $scholar_site_url,
     '!login_url' => user_pass_reset_url($user),
     '!site_login_uri' => url($vsite -> purl . '/home', array('absolute' => TRUE)), 
