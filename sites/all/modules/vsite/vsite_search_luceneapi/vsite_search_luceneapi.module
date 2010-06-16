@@ -354,6 +354,7 @@ function vsite_search_luceneapi_luceneapi_facet_postrender_alter(&$items, $realm
     // If the context is global, remove the author facet
     $contexts = context_active_contexts();
     if(!array_key_exists('vsite-section-public', $contexts)) {
+      unset($items['category']);
       unset($items['author']);    
     }
     else {
@@ -709,7 +710,7 @@ function vsite_search_luceneapi_strongarm() {
   $conf['luceneapi_facet:luceneapi_node:block'] = array(
     'author' => 'author',
     'type' => 'type',
-    //'category' => 'category',
+    'category' => 'category',
     'original_keys' => 'original_keys',
     'im_og_gid' => 'im_og_gid',
   );
@@ -722,9 +723,18 @@ function vsite_search_luceneapi_strongarm() {
   // Enable all of the search lucene biblio facets
   $fields = luceneapi_biblio_get_fields();
   foreach($fields as $fid => $field) {
-    $conf['luceneapi_facet:luceneapi_node:block'][$field['name']] = $field['name'];
-    $conf['luceneapi_facet:luceneapi_node:block:'.$field['name'].':'.'weight'] = 0;
-    //$conf['luceneapi_facet:luceneapi_node:fieldset'][$field['name']] = $field['name'];
+    switch($field['name']){
+      case 'biblio_tertiary_title':
+      case 'biblio_section':
+      case 'biblio_date':  
+        break;
+      default:
+        $conf['luceneapi_facet:luceneapi_node:block'][$field['name']] = $field['name'];
+        $conf['luceneapi_facet:luceneapi_node:block:'.$field['name'].':'.'weight'] = 0;
+        $conf['luceneapi_facet:luceneapi_node:fieldset'][$field['name']] = $field['name'];
+        break;
+    }
+    
   }
   $conf['luceneapi_facet:luceneapi_node:block']['biblio_contributors'] = 'biblio_contributors';
   //$conf['luceneapi_facet:luceneapi_node:fieldset']['biblio_contributors'] = 'biblio_contributors';
