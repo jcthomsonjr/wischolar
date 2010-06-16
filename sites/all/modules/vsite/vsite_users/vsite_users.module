@@ -178,7 +178,7 @@ function vsite_users_mail_alter(&$message) {
 	switch ($message['id']) {
     //Edit the UCreate Email Message
 		case 'ucreate_ucreate-create':
-      	$message['subject'] = t('An account has been created for you at the !site_name', array('!site_name' => variable_get('site_name', 'Scholar\'s Web Sites Project')));
+      	$message['subject'] = t('An account has been created for you at the !site_name', array('!site_name' => variable_get('site_name', 'OpenScholar')));
     
       	$vsite = vsite_get_vsite();
 
@@ -199,7 +199,7 @@ function vsite_users_mail_alter(&$message) {
      	$a_msg_variables = array(
       	  '!personal_message' => $personal_msg_text,
 			    '!username' => $o_user->name,
-			    '!site' => variable_get('site_name', 'Scholar\'s Web Sites Project'),
+			    '!site' => variable_get('site_name', 'OpenScholar'),
 			    '!login_url' => str_replace($vsite->purl . '/', '', user_pass_reset_url($o_user)), //remove purl from url
 			    '!uri' => $base_url,
 			    '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
