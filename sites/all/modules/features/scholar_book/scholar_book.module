@@ -24,7 +24,7 @@ include_once('scholar_book.features.inc');
  */
 function scholar_book_menu(){	
   $items['node/%node/booklet'] = array(
-    'title' => 'Booklet',
+    'title' => 'Booklet Outline',
     'page callback' => 'scholar_book_outline_edit',
     'page arguments' => array(1),
     'access callback' => 'scholar_book_outline_access',
