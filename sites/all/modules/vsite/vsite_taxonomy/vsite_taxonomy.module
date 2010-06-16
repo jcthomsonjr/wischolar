@@ -843,7 +843,7 @@ function theme_vsite_taxonomy_term($term, $s_term_filter = false, $b_description
   
   $item .= ($count > 0)?'<span class = "count" > (' . $count . ')</span>':"";
 
-  if($b_admin_links){
+  if($b_admin_links && cp_access_cp()){
 	  // add term's admin links
 	  $item .= theme('links', vsite_get_admin_links('term', $term), $attributes = array(
 	    'class' => 'admin'
