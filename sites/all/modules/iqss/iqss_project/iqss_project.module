@@ -52,7 +52,7 @@ function iqss_project_theme(){
   );
 
   //bottom block
-    $items['project_site_examples'] = array(
+ $items['project_site_examples'] = array(
     'arguments' => array('tree' => array()),
     'template' => 'project-site-examples',
     'path' => $path,
@@ -68,7 +68,7 @@ function iqss_project_menu(){
   // nodeautocomplete callback for scholar
   $items['iqss_scholar_home'] = array(
     'type' => MENU_CALLBACK,
-    'title' => 'Scholars\' Web Sites Project',
+    'title' => 'OpenScholar',
     'page callback' => 'iqss_project_homepage',
     'access arguments' => array(
       'access content'
