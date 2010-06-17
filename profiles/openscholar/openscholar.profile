@@ -16,18 +16,18 @@ function openscholar_profile_details() {
  */
 function openscholar_profile_modules() {
   return array(
-    'block', 
+    'block',
     'blog',
     'book',
-    'comment', 
+    'comment',
     'contact',
-    'filter', 
-    'help', 
+    'filter',
+    'help',
     'menu',
-    'node', 
+    'node',
     'system',
     'search',
-    'user', 
+    'user',
     'path',
     'php',
     'taxonomy',
@@ -71,7 +71,7 @@ function _openscholar_core_modules() {
     'mollom',
     'og',
     'og_access',
-    'og_views', 
+    'og_views',
     'og_vocab',
     'og_actions',
     'override_node_options',
@@ -89,21 +89,21 @@ function _openscholar_core_modules() {
     'twitter_pull',
     'ucreate',
     'ucreate_og',
-    'views', 
+    'views',
     'views_bulk_operations',
-    'views_ui', 
-    'views_export', 
+    'views_ui',
+    'views_export',
     'views_attach',
     'vertical_tabs',
     'wysiwyg',
   
 
   //cck
-    'content', 
+    'content',
     'content_copy',
     'diff',
-    'date_timezone', 
-    'date_api', 
+    'date_timezone',
+    'date_api',
     'date',
     'date_popup',
     'filefield',
@@ -126,7 +126,7 @@ function _openscholar_core_modules() {
     'devel_generate',
     'install_profile_api',
     'schema',
-    'strongarm',    
+    'strongarm',
   );
   
   return $contrib_modules;
@@ -205,7 +205,6 @@ function openscholar_profile_task_list() {
  * Implementation of hook_profile_tasks().
  */
 function openscholar_profile_tasks(&$task, $url) {
-  //include_once(dirname(__FILE__) . '/openscholar.testingcontent.inc');
 
   $output = '';
 
@@ -266,8 +265,6 @@ function openscholar_profile_tasks(&$task, $url) {
     // set default to america/new yourk
     variable_set(date_default_timezone_name, "America/New_York");
 
-    // _scholar_testingcontent();
-
     //_scholar_filefield_paths_config();
     _openscholar_profiles_configure_biblio();
 
@@ -295,28 +292,28 @@ function _openscholar_enable_themes(){
   install_default_theme('scholar_project');
   
   $themes = array(
-    'zen', 
-    'cp_theme', 
-    'scholar_base', 
+    'zen',
+    'cp_theme',
+    'scholar_base',
     'scholar_project',
-    'scholar_theme_01', 
-    'scholar_theme_02', 
-    'scholar_theme_03', 
-    'scholar_theme_04', 
-    'scholar_theme_05', 
-    'scholar_theme_06', 
-    'scholar_theme_07', 
-    'scholar_theme_08', 
-    'scholar_theme_09', 
-    'scholar_theme_10', 
-    'scholar_theme_11', 
-    'scholar_theme_12' 
+    'scholar_theme_01',
+    'scholar_theme_02',
+    'scholar_theme_03',
+    'scholar_theme_04',
+    'scholar_theme_05',
+    'scholar_theme_06',
+    'scholar_theme_07',
+    'scholar_theme_08',
+    'scholar_theme_09',
+    'scholar_theme_10',
+    'scholar_theme_11',
+    'scholar_theme_12'
   );
   
   //enable the themes
   install_enable_theme($themes);
 	
   // disable all DB blocks
-  db_query("UPDATE {blocks} SET status = 0, region = ''"); 
+  db_query("UPDATE {blocks} SET status = 0, region = ''");
 }
 
