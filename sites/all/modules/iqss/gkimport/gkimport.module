@@ -94,7 +94,21 @@ function gkimport_create_site(){
     $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
     if ($vsite){
       define(GKIMPORT_SID, $vsite -> sid );
+            
       $mesage = GKIMPORT_DRUSH_RUN === 1 ? drush_print(t('Created web site: !domain', array('!domain' => $settings['domain']))) : '';     
+      
+      //create files directory
+      $file_paths = array(
+      variable_get('file_directory_path', conf_path() .'/files') . '/gking',
+      variable_get('file_directory_path', conf_path() .'/files') . '/gking/files',
+      );
+      
+      foreach($file_paths as $fp){      
+      $check = file_check_directory($fp, 1);
+      $msg = $check ? "The directory $fp has been created" : "ERROR: The directory $fp could not be created";
+      drush_print($msg);
+      }  
+      //now customize the vsite
       gkimport_customize_site($vsite);
     }
   }
@@ -121,6 +135,7 @@ function  gkimport_customize_site($vsite){
   $vsite -> features['scholar_events'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_image_gallery'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_links'] = SPACES_OG_PUBLIC;
+  $vsite -> features['scholar_presentations'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_profiles'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_publications'] = SPACES_OG_PUBLIC;
   $vsite -> features['scholar_reader'] = SPACES_OG_PUBLIC;
@@ -512,14 +527,24 @@ function gkimport_get_pdf($node, $url = ''){
   if(!strlen($url)) return gkimport_print("no url for node {$node->nid}");
   $path = drupal_get_path('module', 'gkimport');
   $account = user_load(array('name' => 'gking'));
-  $fullpath_tmp =  GKIMPORT_FS_PATH . '/' . $path . '/tmp';
   $files_dir = GKIMPORT_FS_PATH . '/' . variable_get('file_directory_path', conf_path() .'/files') . '/gking/files';
-  $source = $files_dir  . '/' . basename($url);
+
+  //define the source path
+  $source = '/nfs/www/edu-harvard-gking/htdocs/files/' . basename($url);
+
+  if (!is_file($source)){
+    drush_print("File not found: " .  basename($url));
+  }
 
   // download the file
   if(GKIMPORT_DOWNLOAD){
     $cmd =  "cd  $files_dir && wget -t 2 -nv -nc $url";  //no clobber specified so files with same name overwrite
     shell_exec($cmd);
+  }
+  else{
+    // or copy the file from the file system
+    $fc = file_copy($source, $files_dir, FILE_EXISTS_REPLACE);
+    if($fc !== 1) drush_print("File could not be copied: " . basename($url));
   }
 
   if (is_file($source)){
@@ -531,7 +556,7 @@ function gkimport_get_pdf($node, $url = ''){
     $file ->list = 1;
     $file -> weight = 0;
     $file -> filename = basename($source);
-     $file -> filepath = variable_get('file_directory_path', conf_path() .'/files') . '/gking/files/' . basename($source);
+    $file -> filepath = variable_get('file_directory_path', conf_path() .'/files') . '/gking/files/' . basename($source);
     $file -> filemime = file_get_mimetype($source);
     $file -> filesize = filesize($source);
     $file -> status =1;
@@ -546,7 +571,7 @@ function gkimport_get_pdf($node, $url = ''){
     db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/$fid", 'files/' . basename($source));
 
     drush_print("Added custom path for file: " . basename($source));
-    
+
     //return file object
     return $file;
   }
