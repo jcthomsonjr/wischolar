@@ -63,12 +63,13 @@ fieldset,select {
 
 /* Search box */
 
-
-#search-form {
+#search-form,
+#search-form-1 {
   padding-bottom: 5px;
   }
 
-#content #search-form {
+#content #search-form,
+#content #search-form-1 {
   margin-top: 2em;
   }
 
@@ -90,20 +91,22 @@ fieldset,select {
   padding-right:22px;
   }
 
-#search-form #edit-keys-wrapper {
+#search-form #edit-keys-wrapper,
+#search-form #edit-keys-1-wrapper {
   width: 100%;
   }
 
-#search-form #edit-keys-wrapper, #search-form input#edit-submit {
+#search-form #edit-keys-wrapper,
+#search-form edit-keys-1-wrapper,
+#search-form input#edit-submit-1,
+#search-form input#edit-submit-1 {
   float:left;
   position: relative;
   }
 
-#search-form #edit-keys-wrapper {
-  width: 100%;
-  }
 
-#search-form #edit-keys {
+#search-form #edit-keys,
+#search-form #edit-keys-1 {
   height: 14px;
   padding: 3px 4px 0 0;
   border: none;
@@ -116,7 +119,9 @@ fieldset,select {
   width: 43px;
   }
 
-#search-form input#edit-submit, #search-form input.form-submit {
+#search-form input#edit-submit,
+#search-form input#edit-submit-1,
+#search-form input.form-submit {
   background: transparent;
   font-size: 10px;
   width: 18px;
