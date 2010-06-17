@@ -173,33 +173,36 @@ projects[apachesolr_biblio][patch][] = "http://drupal.org/files/issues/apachesol
 
 projects[biblio][subdir] = "contrib"
 projects[biblio][version] = "1.13"
-projects[biblio][patch][] = ""
+projects[biblio][patch][] = "http://drupal.org/files/issues/biblio.access_patch.patch"
+projects[biblio][patch][] = "http://drupal.org/files/issues/endnote8_export.escape_urls.patch"
 
 projects[feeds][subdir] = "contrib"
 projects[feeds][version] = "1.0-alpha13"
-projects[feeds][patch][] = ""
+projects[feeds][patch][] = "http://drupal.org/files/issues/FeedsDataProcessor.ExpireFix_0.patch"
 
 projects[file_aliases][subdir] = "contrib"
 projects[file_aliases][version] = "1.1"
-
+projects[file_aliases][patch][] = "http://drupal.org/files/issues/file_alias_nodeFormDescription.patch"
 
 projects[itweak_upload][subdir] = "contrib"
 projects[itweak_upload][version] = "2"
+projects[itweak_upload][patch][] = "http://drupal.org/files/issues/itweak_upload_imagecache_default_presets.patch"
+projects[itweak_upload][patch][] = "http://drupal.org/files/issues/itweak_upload_dataPersistance.patch"
 
 projects[jquery_update][subdir] = "contrib"
 projects[jquery_update][version] = "2.0-alpha1"
+projects[jquery_update][patch][] = "http://drupal.org/files/issues/draggable-329797-3.patch"
 
 projects[purl][subdir] = "contrib"
 projects[purl][version] = "1.0-beta4"
+projects[purl][patch][] = "http://drupal.org/files/issues/dynamic_modifier_validate_0.patch"
 
 projects[spaces][subdir] = "contrib"
 projects[spaces][version] = "2.0-beta6"
-
-; http://drupal.org/node/694094
-;projects[views][patch][] = "http://drupal.org/files/issues/694094_views_default_reset_2010-05-25.patch"
-; original issue: http://drupal.org/node/357529
-;projects[views][patch][] = "http://cloud.github.com/downloads/developmentseed/atrium_features/views2_simple_translatables.patch"
-
+projects[spaces][patch][] = "http://drupal.org/files/issues/hook_spaces_types_alter.patch"
+projects[spaces][patch][] = "http://drupal.org/files/issues/spaces.alter_customizers.patch"
+projects[spaces][patch][] = "http://drupal.org/files/issues/spaces.saving_blk_customizer_as_default.patch"
+projects[spaces][patch][] = "http://drupal.org/files/issues/spaces.static_call_fix_1.patch"
 
 
 ; Custom modules

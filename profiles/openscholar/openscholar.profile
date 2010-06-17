@@ -40,7 +40,7 @@ function openscholar_profile_modules() {
  */
 function _openscholar_core_modules() {
  $contrib_modules = array(
-  // sites/all
+  // sites/all/contrib
     'activity',
     'addthis',
     'advanced_help',
