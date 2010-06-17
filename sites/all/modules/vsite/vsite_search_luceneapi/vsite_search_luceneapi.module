@@ -379,6 +379,12 @@ function vsite_search_luceneapi_luceneapi_facet_postrender_alter(&$items, $realm
       
     }
   }
+  
+  // If we're currently within the context of a vsite, don't show the OG facet block
+  $vsite = vsite_get_vsite();
+  if($vsite) {
+    unset($items['im_og_gid']);
+  }
 }
 
 /**

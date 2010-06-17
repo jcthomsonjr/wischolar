@@ -129,6 +129,12 @@ function vsite_search_apachesolr_context_active_contexts_alter(&$contexts) {
       }
     }
   }
+  
+  // If the context is within a specific vsite, remove the og facet block 
+  $vsite = vsite_get_vsite();
+  if($vsite) {
+    unset($contexts['vsite-search-apachesolr_search']->block['im_og_gid']);
+  }
 }
 
 /**
