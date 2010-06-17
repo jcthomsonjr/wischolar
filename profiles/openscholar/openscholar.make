@@ -175,6 +175,7 @@ projects[biblio][subdir] = "contrib"
 projects[biblio][version] = "1.13"
 projects[biblio][patch][] = "http://drupal.org/files/issues/biblio.access_patch.patch"
 projects[biblio][patch][] = "http://drupal.org/files/issues/endnote8_export.escape_urls.patch"
+projects[biblio][patch][] = "http://drupal.org/files/issues/biblio_filefield_paths.patch"
 
 projects[feeds][subdir] = "contrib"
 projects[feeds][version] = "1.0-alpha13"
@@ -206,7 +207,17 @@ projects[spaces][patch][] = "http://drupal.org/files/issues/spaces.static_call_f
 
 
 ; Custom modules
+projects[openscholar_iqss][location] = "http://openscholar.harvard.edu/scholar_software"
+projects[openscholar_iqss][version] = "2.0-beta5"
 
+projects[openscholar_features][location] = "http://openscholar.harvard.edu/scholar_software"
+projects[openscholar_features][version] = "2.0-beta5"
+
+projects[openscholar_vsite][location] = "http://openscholar.harvard.edu/scholar_software"
+projects[openscholar_vsite][version] = "2.0-beta5"
+
+projects[openscholar_scholar][location] = "http://openscholar.harvard.edu/scholar_software"
+projects[openscholar_scholar][version] = "2.0-beta5"
 
 ; Open Atrium modules
 projects[litecal][subdir] = "contrib"
@@ -214,28 +225,15 @@ projects[litecal][location] = "http://code.developmentseed.org/fserver"
 projects[litecal][version] = "1.0-alpha2"
 
 
-; Features
-; projects[atrium_features][location] = "http://code.developmentseed.org/fserver"
-; projects[atrium_features][version] = "1.0-alpha4"
-projects[atrium_features][type] = "module"
-projects[atrium_features][download][type] = "git"
-projects[atrium_features][download][url] = "git://github.com/developmentseed/atrium_features.git"
-
-
-
 ; Themes
-projects[tao][location] = "http://code.developmentseed.org/fserver"
-projects[tao][version] = "1.9"
+projects[zen][version] = "1.0"
 
-projects[rubik][location] = "http://code.developmentseed.org/fserver"
-projects[rubik][version] = "1.0-beta6"
-
-projects[ginkgo][location] = "http://code.developmentseed.org/fserver"
-projects[ginkgo][version] = "1.0-alpha4"
+projects[openscholar_themes][location] = "http://openscholar.harvard.edu/scholar_software"
+projects[openscholar_themes][version] = "2.0-beta5"
 
 ; Libraries
 libraries[jquery_ui][download][type] = "get"
-libraries[jquery_ui][download][url] = "http://jquery-ui.googlecode.com/files/jquery.ui-1.6.zip"
+libraries[jquery_ui][download][url] = "http://jquery-ui.googlecode.com/files/jquery-ui-1.7.2.zip"
 libraries[jquery_ui][directory_name] = "jquery.ui"
 libraries[jquery_ui][destination] = "modules/contrib/jquery_ui"
 
