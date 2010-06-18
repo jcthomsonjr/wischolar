@@ -167,7 +167,7 @@ projects[apachesolr_attachments][patch][] = "http://drupal.org/files/issues/8170
 projects[apachesolr_attachments][patch][] = "http://drupal.org/files/issues/apachesolr_attachments.admin_.inc-823854.patch"
 
 projects[apachesolr_biblio][subdir] = "contrib"
-projects[apachesolr_biblio][version] = "1.0"
+projects[apachesolr_biblio][version] = "1"
 projects[apachesolr_biblio][patch][] = "http://drupal.org/files/issues/785370_features_integration.patch"
 projects[apachesolr_biblio][patch][] = "http://drupal.org/files/issues/apachesolr_biblio-821660_1.patch"
 
