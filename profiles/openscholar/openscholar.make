@@ -3,7 +3,7 @@ core = "6.x"
 ; Contrib projects (non-Patched) 
 
 projects[activity][subdir] = "contrib"
-projects[activity][version] = "2.0-dev"
+projects[activity][version] = "2"
 
 projects[addthis][subdir] = "contrib"
 projects[addthis][version] = "2.9"
@@ -59,8 +59,8 @@ projects[filefield_paths][version] = "1.4"
 projects[flag][subdir] = "contrib"
 projects[flag][version] = "2.0-beta3"
 
-projects[image_api][subdir] = "contrib"
-projects[image_api][version] = "1.8"
+projects[imageapi][subdir] = "contrib"
+projects[imageapi][version] = "1.8"
 
 projects[imagecache][subdir] = "contrib"
 projects[imagecache][version] = "2.0-beta10"
@@ -167,7 +167,7 @@ projects[apachesolr_attachments][patch][] = "http://drupal.org/files/issues/8170
 projects[apachesolr_attachments][patch][] = "http://drupal.org/files/issues/apachesolr_attachments.admin_.inc-823854.patch"
 
 projects[apachesolr_biblio][subdir] = "contrib"
-projects[apachesolr_biblio][version] = "1.0-dev"
+projects[apachesolr_biblio][version] = "1.0"
 projects[apachesolr_biblio][patch][] = "http://drupal.org/files/issues/785370_features_integration.patch"
 projects[apachesolr_biblio][patch][] = "http://drupal.org/files/issues/apachesolr_biblio-821660_1.patch"
 

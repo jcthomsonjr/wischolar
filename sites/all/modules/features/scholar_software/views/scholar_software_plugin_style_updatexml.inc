@@ -83,10 +83,11 @@ class scholar_software_plugin_style_updatexml extends views_plugin_style {
    */
   function preprocess(&$vars) {
     $fields = $vars['view']->field;
-
+    
     $vars['options']['project']['title'] = 'title';
     $vars['options']['project']['short_name'] = 'field_scholar_software_name_value';
     $vars['options']['project']['link'] = 'nid';
+    $project_nid = false;
     
     // Build project XML values
     $project = array();
@@ -95,6 +96,7 @@ class scholar_software_plugin_style_updatexml extends views_plugin_style {
       foreach ($vars['rows'] as $row) {
         if (isset($row->{$alias})) {
           $project[$element] = $fields[$field]->theme($row);
+          if($field == 'nid') $project_nid = $row->{$alias};
           continue;
         }
       }
@@ -108,6 +110,16 @@ class scholar_software_plugin_style_updatexml extends views_plugin_style {
     if (!isset($project['api_version'])) {
       $project['api_version'] =  variable_get('scholar_software_default_drupal_api_version','6.x');
     }
+    
+    $project_node = node_load($project_nid);
+    if(count($project_node->taxonomy)){
+    	foreach ($project_node->taxonomy as $term){
+    		if(in_array($term->name,array('Projects','Modules'))){
+    			$project['type'] = $term->name;
+    			break;
+    		}
+    	}
+    }//Setup the type
     
     // Build release XML values
     $releases = array();
