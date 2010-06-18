@@ -114,7 +114,7 @@ class scholar_software_plugin_style_updatexml extends views_plugin_style {
     $project_node = node_load($project_nid);
     if(count($project_node->taxonomy)){
     	foreach ($project_node->taxonomy as $term){
-    		if(in_array($term->name,array('Projects','Modules'))){
+    		if(in_array($term->name,array('Themes','Modules'))){
     			$project['type'] = $term->name;
     			break;
     		}
