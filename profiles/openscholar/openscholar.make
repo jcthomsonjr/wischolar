@@ -1,4 +1,8 @@
-core = "6.x"
+; Core Version
+core = "6.x" 
+
+; Drupal Core
+projects[drupal][version] = "6.16"
 
 ; Contrib projects (non-Patched) 
 
