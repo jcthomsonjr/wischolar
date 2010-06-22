@@ -78,7 +78,6 @@ function _openscholar_core_modules() {
     'menu_node',
     'pathauto',
     'permissions_api',
-    'profile',
     'purl',
     'spaces',
     'spaces_og',
