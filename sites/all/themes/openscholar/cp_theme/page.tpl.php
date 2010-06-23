@@ -57,7 +57,7 @@
         <h3>OpenScholar <span>IQSS, Harvard University</span></h3>
         <ul>
           <li>&copy; 2008-<?php echo date(Y);?> President &amp; Fellows Harvard University</li>
-          <li><?php print l('Documentation', 'http://scholar.harvard.edu/help/vsitehelp/Scholar-Web-Sites-Project-Documentation');?></li>
+          <li><?php print l('Documentation', 'http://scholar-dev3.iq.harvard.edu/help/vsitehelp/OpenScholar-Documentation');?></li>
           <li><?php print l('Feedback', 'cp/support/contact');?></li>
           <!-- <li><?php //print l('Terms', 'terms');?></li>-->
           <li class="last">Version 2.0-beta5</li>
