@@ -178,7 +178,7 @@ function vsite_users_mail_alter(&$message) {
 	switch ($message['id']) {
     //Edit the UCreate Email Message
 		case 'ucreate_ucreate-create':
-      	$message['subject'] = t('An account has been created for you at the !site_name', array('!site_name' => variable_get('site_name', 'OpenScholar')));
+      	$message['subject'] = t('An account has been created for you at !site_name', array('!site_name' => variable_get('site_name', 'OpenScholar')));
     
       	$vsite = vsite_get_vsite();
 
@@ -213,7 +213,7 @@ function vsite_users_mail_alter(&$message) {
 
 			  //This is unused: Alternatively using the following username and temporary password:\n\nUsername: !username\nTemporary password: !password\n\nAfter logging in, you will be redirected to !edit_uri so you can change your password.\n\n
 
-      	$message['body'] = t("!personal_messageDear !firstname,\n\nA site owner at the !site has created an account for you. You may now log in by either clicking through on the following link or pasting it into your browser:\n\n !login_url\n\n(Note: This is a one-time login; it can be used only once.)\n\nSincerely,\nThe !site Team", $a_msg_variables);
+      	$message['body'] = t("!personal_messageDear !firstname,\n\nA site owner at the !site website has created an account for you. You may now log in by either clicking through on the following link or pasting it into your browser:\n\n !login_url\n\n(Note: This is a one-time login; it can be used only once.)\n\nSincerely,\nThe !site Team", $a_msg_variables);
 
      break;
   }
