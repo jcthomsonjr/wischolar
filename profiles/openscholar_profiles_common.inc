@@ -91,3 +91,12 @@ function _openscholar_profiles_create_roles(){
   install_add_role('scholar admin');
   install_add_role('scholar user');
 }
+
+
+/**
+ * Set the project name variable
+ */
+function  _openscholar_profiles_project_name(){
+  // set the project name
+   variable_set(project_name, "OpenScholar");
+}

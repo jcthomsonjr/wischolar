@@ -269,6 +269,8 @@ function openscholar_projects_profile_tasks(&$task, $url) {
     variable_set('scholar_content_type', 'scholar_project');
     // set default to america/new yourk
     variable_set(date_default_timezone_name, "America/New_York");
+   // set the project name variable
+    _openscholar_profiles_project_name();
 
     // _scholar_testingcontent();
 

@@ -263,7 +263,9 @@ function openscholar_profile_tasks(&$task, $url) {
     variable_set('scholar_content_type', 'vsite');
     // set default to america/new yourk
     variable_set(date_default_timezone_name, "America/New_York");
-
+   // set the project name variable
+    _openscholar_profiles_project_name();
+    
     //_scholar_filefield_paths_config();
     _openscholar_profiles_configure_biblio();
 
