@@ -98,5 +98,5 @@ function _openscholar_profiles_create_roles(){
  */
 function  _openscholar_profiles_project_name(){
   // set the project name
-   variable_set(project_name, "OpenScholar");
+   variable_set('scholar_project_name', "OpenScholar");
 }
