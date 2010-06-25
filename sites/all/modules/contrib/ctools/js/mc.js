@@ -16,10 +16,6 @@
    */
   Drupal.CTools.Modal.modalContent = function(content, css, animation, speed) {
     // If our animation isn't set, make it just show/pop
-	  
-    var animation = 'slideDown';
-    var speed = 'slow';
-    
     if (!animation) {
       animation = 'show';
     }
@@ -91,7 +87,7 @@
 
     // Create our content div, get the dimensions, and hide it
     var modalContent = $('#modalContent').css('top','-1000px');
-    var mdcTop = 0; //wt + ( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
+    var mdcTop = wt + ( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
     var mdcLeft = ( winWidth / 2 ) - ( modalContent.outerWidth() / 2);
     $('#modalBackdrop').css(css).css('top', 0).css('height', docHeight + 'px').css('width', docWidth + 'px').show();
     modalContent.css({top: mdcTop + 'px', left: mdcLeft + 'px'}).hide()[animation](speed);
@@ -132,7 +128,7 @@
 
       // Get where we should move content to
       var modalContent = $('#modalContent');
-      var mdcTop = 0; //( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
+      var mdcTop = ( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
       var mdcLeft = ( winWidth / 2 ) - ( modalContent.outerWidth() / 2);
 
       // Apply the changes
@@ -160,9 +156,6 @@
     // Set a speed if we dont have one
     if ( !speed ) var speed = 'fast';
 
-	var animation = 'slide';
-	var speed = 'slow';
-    
     // Unbind the events we bound
     $(window).unbind('resize', modalContentResize);
     $('body').unbind('focus', modalEventHandler);
