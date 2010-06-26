@@ -1,5 +1,5 @@
 <?php
-// $Id: DataTable.inc,v 1.1.2.8 2009/10/29 14:59:35 alexb Exp $
+// $Id: DataTable.inc,v 1.1.2.9 2010/03/24 00:36:32 alexb Exp $
 /**
  * @file
  * Contains class definition for DataTable.
@@ -439,7 +439,9 @@ class DataTable {
    */
   public function drop() {
     if ($this->export_type == EXPORT_IN_DATABASE) {
-      db_drop_table($ret, $this->name);
+      if (db_table_exists($this->name)) {
+        db_drop_table($ret, $this->name);
+      }
       $this->update(array('table_schema' => array()));
       drupal_get_schema($this->name, TRUE);
 

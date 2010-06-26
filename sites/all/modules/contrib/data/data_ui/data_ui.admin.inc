@@ -1,5 +1,5 @@
 <?php
-// $Id: data_ui.admin.inc,v 1.25.2.14 2009/10/29 14:59:35 alexb Exp $
+// $Id: data_ui.admin.inc,v 1.25.2.15 2010/03/24 01:03:48 alexb Exp $
 /**
  * @file
  * Admin UI functions.
@@ -329,7 +329,7 @@ function data_ui_create_form(&$form_state) {
  * Validate handler for create table form.
  */
 function data_ui_create_form_validate($form, &$form_state) {
-  if (data_get_table(data_name($form_state['values']['name']))) {
+  if (data_get_table(trim($form_state['storage']['name']))) {
     form_set_error('name', t('Name is already taken.'));
   }
   if (isset($form_state['values']['field_num'])) {
@@ -387,7 +387,7 @@ function data_ui_create_form_submit($form, &$form_state) {
     $schema['primary key'] = $primary;
 
     // Create table.
-    if ($table = data_create_table(data_name(trim($form_state['storage']['name'])), $schema, trim($form_state['storage']['title']))) {
+    if ($table = data_create_table(trim($form_state['storage']['name']), $schema, trim($form_state['storage']['title']))) {
       $meta = $table->update(array('meta' => $meta));
       drupal_set_message(t('Created table !table', array('!table' => $table->get('name'))));
     }

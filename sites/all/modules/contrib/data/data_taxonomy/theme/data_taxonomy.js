@@ -1,4 +1,4 @@
-// $Id: data_taxonomy.js,v 1.1.2.4 2010/01/22 23:27:51 yhahn Exp $
+// $Id: data_taxonomy.js,v 1.1.2.6 2010/03/29 19:15:27 diggersf Exp $
 Drupal.behaviors.data_taxonomy = function(context) {
   $('div.data-taxonomy-tagging-form:not(.data-taxonomy-processed)')
     .addClass('data-taxonomy-processed')
@@ -16,11 +16,14 @@ Drupal.behaviors.data_taxonomy = function(context) {
           if (selected.size() > 0) {
             $(this).val(selected.get(0).autocompleteValue);
           }
-          $(tagging_form).removeClass('data-taxonomy-editing');
-          $('ul.data-taxonomy-tags', tagging_form).addClass('data-taxonomy-edited');
-          $('input.form-submit', tagging_form).mousedown();
+          $(this).blur();
           return false;
         }
+      });
+      $('input.form-text', this).blur(function() {
+        $(tagging_form).removeClass('data-taxonomy-editing');
+        $('ul.data-taxonomy-tags', tagging_form).addClass('data-taxonomy-edited');
+        $('input.form-submit', tagging_form).mousedown();
       });
       $('input.form-submit', this).mousedown(function() {
         $(tagging_form).removeClass('data-taxonomy-editing');

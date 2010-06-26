@@ -1,5 +1,5 @@
 <?php
-// $Id: data.views.inc,v 1.7.2.4 2009/09/23 23:05:30 alexb Exp $
+// $Id: data.views.inc,v 1.7.2.5 2010/03/03 17:11:28 alexb Exp $
 /**
  * @file
  * Views hooks and utility functions.
@@ -93,6 +93,22 @@ function data_views_data() {
 }
 
 /**
+ * Implementation of hook_views_handlers().
+ */
+function data_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'data') . '/views',
+    ),
+    'handlers' => array(
+      'views_handler_field_data_markup' => array(
+        'parent' => 'views_handler_field',
+      ),
+    ),
+  );
+}
+
+/**
  * Return all available field handlers.
  *
  * @param $type
@@ -114,6 +130,7 @@ function data_get_views_handler_options($type = NULL, $reset = FALSE) {
       'views_handler_field_numeric' => 'views_handler_field_numeric',
       'views_handler_field_date' => 'views_handler_field_date',
       'views_handler_field_url' => 'views_handler_field_url',
+      'views_handler_field_data_markup' => 'views_handler_field_data_markup',
     );
     $handlers['filter'] = array(
       'views_handler_filter_date' => 'views_handler_filter_date',
