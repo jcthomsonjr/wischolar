@@ -1,8 +1,9 @@
-/* $Id: imagefield_crop.js,v 1.1.2.3.2.10 2009/11/11 08:12:53 yhager Exp $ */
+/* $Id: imagefield_crop.js,v 1.1.2.3.2.12 2010/06/11 14:56:03 yhager Exp $ */
 
 Drupal.behaviors.imagefield_crop = function (context) { 
   // wait till 'fadeIn' effect ends (defined in filefield_widget.inc)
-  setTimeout(attachJcrop, 1000, context);
+  var attachJcropContext = function() { attachJcrop(context); }
+  setTimeout(attachJcropContext, 1000);
 
   function attachJcrop(context) {
     if ($('.cropbox', context).length == 0) {
@@ -45,6 +46,7 @@ Drupal.behaviors.imagefield_crop = function (context) {
         aspectRatio: Drupal.settings.imagefield_crop[id].box.ratio,
         boxWidth: Drupal.settings.imagefield_crop[id].box.box_width,
         boxHeight: Drupal.settings.imagefield_crop[id].box.box_height,
+        minSize: [Drupal.settings.imagefield_crop[id].minimum.width, Drupal.settings.imagefield_crop[id].minimum.height],
         setSelect: [
           parseInt($(".edit-image-crop-x", widget).val()),
           parseInt($(".edit-image-crop-y", widget).val()),
