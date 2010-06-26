@@ -1,5 +1,5 @@
 <?php
-// $Id: ucreate_og.module,v 1.2.4.6 2009/02/11 13:20:25 alexb Exp $
+// $Id: ucreate_og.module,v 1.2.4.7 2009/11/04 13:29:35 alexb Exp $
 /*
  * @file
  * Sign up users to og groups when creating them with U create.
@@ -70,26 +70,6 @@ function _ucreate_og_set_last_edit($account_edit = NULL) {
  */
 function _ucreate_og_get_last_edit() {
   return _ucreate_og_set_last_edit();
-}
-
-/**
- * This function returns role ids to assign to a given user based on given groups.
- *
- * @todo Move this to og_promote.
- * @todo Doesn't seem to be used.
- */
-function _ucreate_og_roles_based_on_groups($groups) {
-  $rids = array();
-  foreach ($groups as $group_id) {
-    $type = db_result(db_query('SELECT type FROM {node} WHERE nid = %d', $group_id));
-    if ($type == 'group_organization') {
-      $rids[4] = 4; // MEMBER ROLE
-    }
-    else if ($type == 'group_campaign') {
-      $rids[7] = 7; // GUEST ROLE
-    }
-  }
-  return $rids;
 }
 
 /**

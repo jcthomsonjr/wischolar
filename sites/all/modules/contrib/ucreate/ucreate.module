@@ -1,5 +1,5 @@
 <?php
-// $Id: ucreate.module,v 1.3.4.4 2009/01/13 00:34:47 yhahn Exp $
+// $Id: ucreate.module,v 1.3.4.8 2010/02/17 11:25:40 yhahn Exp $
 /**
  * @file
  * U create - allows non site admins create and block users.
@@ -66,24 +66,6 @@ function ucreate_perm() {
   return array('create users', 'block users', 'assign user roles');
 }
 
-
-/**
- * Implementation of hook_user().
- */
-function ucreate_user($op, &$edit, &$account, $category = NULL) {
-  if ($op == 'login') {
-    // On first login, welcome user and ask to reset password.
-    // @todo: make user form multi step.
-    if ($account->login == 0 && $account->uid) {
-      // Unset destination requests - otherwise drupal_goto does not yield results.
-      unset($_REQUEST['destination']);
-      unset($_REQUEST['edit']['destination']);
-      drupal_set_message(t('Welcome to !site, !name - please change your password', array('!site' => variable_get('site_name', 'Drupal'), '!name' => $account->name)), 'welcome');
-      drupal_goto('user/'. $account->uid .'/edit', 'destination='. variable_get('site_frontpage', 'node'));
-    }
-  }
-}
-
 /**
  * Access menu callback for block/activate user tabs
  */
@@ -135,11 +117,13 @@ function ucreate_user_form() {
     '#type' => 'textfield',
     '#title' => t('User name'),
     '#required' => TRUE,
+    '#element_validate' => array('ucreate_validate_name'),
     );
   $form['mail'] = array(
     '#type' => 'textfield',
     '#title' => t('E-mail'),
     '#required' => TRUE,
+    '#element_validate' => array('ucreate_validate_mail'),
     );
   $form['mail_confirm'] = array(
     '#type' => 'textfield',
@@ -147,15 +131,22 @@ function ucreate_user_form() {
     '#required' => TRUE,
     );
   if (user_access('assign user roles') || user_access('administer users')) {
-    $options = user_roles();
-    unset($options[1]);
-    unset($options[2]);
     $form['roles'] = array(
-      '#title' => t('User roles'),
       '#type' => 'checkboxes',
-      '#options' => $options,
-      '#default_value' => variable_get('ucreate_default_roles', array()),
-      );
+      '#title' => t('User roles'),
+    );
+    $default_roles = variable_get('ucreate_default_roles', array());
+    foreach (user_roles() as $rid => $role) {
+      // Exclude 'anonymous user'
+      if ($rid !== 1) {
+        $form['roles'][$rid] = array(
+          '#title' => $role,
+          '#type' => 'checkbox',
+          '#default_value' => in_array($rid, $default_roles, TRUE) || $rid === 2,
+          '#disabled' => $rid === 2 ? TRUE : FALSE,
+        );
+      }
+    }
   }
   else {
     $form['roles'] = array(
@@ -179,22 +170,35 @@ function ucreate_user_form() {
     '#value' => t('Add'),
     '#weight' => 20,
     );
+  $form['#redirect'] = $_GET['q'];
   return $form;
 }
 
 /**
- * Validation handler for ucreate_user_form().
+ * Element validator for usernames.
  */
-function ucreate_user_form_validate($form, &$form_state) {
-  if ($account = user_load(array('name' => $form_state['values']['name']))) {
+function ucreate_validate_name($element, &$form_state) {
+  if ($account = user_load(array('name' => $element['#value']))) {
     $name = user_access('access user profiles') ? l($account->name, 'user/'. $account->uid) : $account->name;
     form_set_error('name', t('User !name already exists.', array('!name' => $name)));
   }
-  if ($form_state['values']['mail'] != $form_state['values']['mail_confirm']) {
-    form_set_error('email_confirm', t('E-mail addresses don\'t match'));
+  else if ($error = user_validate_name($element['#value'])) {
+    form_set_error('name', $error);
   }
-  else if (user_load(array('mail' => $form_state['values']['mail']))) {
+}
+
+/**
+ * Element validator for mail.
+ */
+function ucreate_validate_mail($element, &$form_state) {
+  if ($form_state['values']['mail_confirm'] !== $element['#value']) {
+    form_set_error('mail_confirm', t('E-mail addresses don\'t match'));
+  }
+  else if (user_load(array('mail' => $element['#value']))) {
     form_set_error('mail', t('User with this e-mail address already exists.'));
+  }
+  else if ($error = user_validate_mail($element['#value'])) {
+    form_set_error('mail', $error);
   }
 }
 
@@ -215,7 +219,6 @@ function ucreate_user_form_submit($form, &$form_state) {
   }
 
   ucreate_user_create($form_state['values']);
-  drupal_goto($_GET['q']);
 }
 
 /**
