@@ -1,5 +1,5 @@
 <?php
-// $Id: theme.inc,v 1.1.2.13 2009/12/17 00:22:32 yhahn Exp $
+// $Id: theme.inc,v 1.1.2.16 2010/02/07 03:34:53 yhahn Exp $
 
 /**
  * Display feature component info
@@ -14,9 +14,13 @@ function template_preprocess_features_admin_components(&$vars) {
 
   // Dependencies
   $rows = array();
+  $modules = features_get_info();
   foreach ($form['#dependencies'] as $dependency => $status) {
     $rows[] = array(
-      array('data' => $dependency, 'class' => 'component'),
+      array(
+        'data' => isset($modules[$dependency]->info['name']) ? $modules[$dependency]->info['name'] : $dependency,
+        'class' => 'component'
+      ),
       theme('features_module_status', $status),
     );
   }
@@ -24,6 +28,7 @@ function template_preprocess_features_admin_components(&$vars) {
 
   // Components
   $rows = array();
+  $components = features_get_components();
   if (!empty($form['#info']['features'])) {
     foreach ($form['#info']['features'] as $component => $items) {
       if (!empty($items)) {
@@ -35,7 +40,7 @@ function template_preprocess_features_admin_components(&$vars) {
           );
         }
         $header[] = array(
-          'data' => $component,
+          'data' => isset($components[$component]['name']) ? $components[$component]['name'] : $component,
           'header' => TRUE
         );
         $header[] = array(
@@ -87,6 +92,7 @@ function template_preprocess_features_form(&$vars) {
       $first = FALSE;
     }
   }
+  ksort($package_links);
   $vars['package_links'] = $package_links;
 }
 

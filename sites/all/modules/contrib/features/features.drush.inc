@@ -1,5 +1,5 @@
 <?php
-// $Id: features.drush.inc,v 1.1.2.17 2009/12/21 17:12:24 yhahn Exp $
+// $Id: features.drush.inc,v 1.1.2.24 2010/05/27 22:40:34 yhahn Exp $
 
 /**
  * @file
@@ -20,27 +20,57 @@ function features_drush_command() {
   $items['features'] = array(
     'callback' => 'features_command_list',
     'description' => "List all the available features for your site.",
+    'drupal dependencies' => array('features'),
   );
-  $items['features export'] = array(
+  $items['features-export'] = array(
     'callback' => 'features_command_export',
     'description' => "Export a feature from your site into a module.",
     'arguments' => array(
       'feature' => 'Feature name to export.',
     ),
+    'drupal dependencies' => array('features'),
   );
-  $items['features update'] = array(
+  $items['features-update'] = array(
     'callback' => 'features_command_update',
     'description' => "Update a feature module on your site.",
     'arguments' => array(
       'feature' => 'A space delimited list of features.',
     ),
+    'drupal dependencies' => array('features'),
+    'aliases' => array('fu'),
   );
-  $items['features revert'] = array(
+  $items['features-update-all'] = array(
+    'callback' => 'features_command_update_all',
+    'description' => "Update all feature modules on your site.",
+    'arguments' => array(
+      'feature_exclude' => 'A space-delimited list of features to exclude from being updated.',
+    ),
+    'drupal dependencies' => array('features'),
+    'aliases' => array('fu-all', 'fua'),
+  );
+  $items['features-revert'] = array(
     'callback' => 'features_command_revert',
     'description' => "Revert a feature module on your site.",
     'arguments' => array(
       'feature' => 'A space delimited list of features.',
     ),
+    'options' => array(
+      '--force' => "Force revert even if Features assumes components' state are default.",
+    ),
+    'drupal dependencies' => array('features'),
+    'aliases' => array('fr'),
+  );
+  $items['features-revert-all'] = array(
+    'callback' => 'features_command_revert_all',
+    'description' => "Revert all enabled feature module on your site.",
+    'arguments' => array(
+      'feature_exclude' => 'A space-delimited list of features to exclude from being reverted.',
+    ),
+    'options' => array(
+      '--force' => "Force revert even if Features assumes components' state are default.",
+    ),
+    'drupal dependencies' => array('features'),
+    'aliases' => array('fr-all', 'fra'),
   );
 
   return $items;
@@ -53,8 +83,16 @@ function features_drush_help($section) {
   switch ($section) {
     case 'drush:features':
       return dt("List all the available features for your site.");
-    case 'drush:features export':
+    case 'drush:features-export':
       return dt("Export a feature from your site into a module.");
+    case 'drush:features-update':
+      return dt("Update a feature module on your site.");
+    case 'drush:features-update-all':
+      return dt("Update all feature modules on your site.");
+    case 'drush:features-revert':
+      return dt("Revert a feature module on your site.");
+    case 'drush:features-revert-all':
+      return dt("Revert all enabled feature module on your site.");
   }
 }
 
@@ -126,21 +164,21 @@ function features_command_export() {
 }
 
 /**
- * Create a feature module based on a list of contexts.
+ * Update an existing feature module.
  */
 function features_command_update() {
   if ($args = func_get_args()) {
     foreach ($args as $module) {
       if (($feature = feature_load($module, TRUE)) && module_exists($module)) {
         $stub = $feature->info['features'];
-  
+
         // Construct the correct destination path
         $destination = dirname($feature->filename);
         $split = explode('/', $destination);
         if ($feature->name == array_pop($split)) {
           $destination = implode('/', $split);
         }
-  
+
         _features_command_export($stub, $feature->name, $destination);
       }
       else if ($feature) {
@@ -158,6 +196,29 @@ function features_command_update() {
       $rows[] = array($name);
     }
     drush_print_table($rows, TRUE);
+  }
+}
+
+/**
+ * Update all enabled features. Optionally pass in a list of features to
+ * exclude from being updated.
+ */
+function features_command_update_all() {
+  $features_to_update = array();
+  $features_to_exclude = func_get_args();
+  foreach (features_get_features() as $module) {
+    if ($module->status && !in_array($module->name, $features_to_exclude)) {
+      $features_to_update[] = $module->name;
+    }
+  }
+  drush_print(dt('The following modules will be updated: !modules', array('!modules' => implode(', ', $features_to_update))));
+  if (drush_confirm(dt('Do you really want to continue?'))) {
+    foreach ($features_to_update as $module_name) {
+      drush_backend_invoke('features-update '. $module_name);
+    }
+  }
+  else {
+    drush_die('Aborting.');
   }
 }
 
@@ -183,7 +244,8 @@ function _features_command_export($stub, $module_name = NULL, $destination = 'si
   }
   $files = features_export_render($export, $module_name, TRUE);
 
-  if ($root = drush_locate_root()) {
+  $root = drush_get_option(array('r', 'root'), drush_locate_root());
+  if ($root) {
     $directory = "$destination/{$module_name}";
     if (is_dir($directory)) {
       drush_print(dt('Module appears to already exist in !dir', array('!dir' => $directory)));
@@ -212,6 +274,8 @@ function _features_command_export($stub, $module_name = NULL, $destination = 'si
  */
 function features_command_revert() {
   if ($args = func_get_args()) {
+    // Determine if revert should be forced.
+    $force = drush_get_option('force');
     foreach ($args as $module) {
       if (($feature = feature_load($module, TRUE)) && module_exists($module)) {
         // Find all overridden items
@@ -220,7 +284,7 @@ function features_command_revert() {
         $components = array();
         $states = features_get_component_states(array($feature->name), FALSE);
         foreach ($states[$feature->name] as $component => $state) {
-          if (in_array($state, array(FEATURES_OVERRIDDEN, FEATURES_NEEDS_REVIEW)) && features_hook($component, 'features_revert')) {
+          if ($force || (in_array($state, array(FEATURES_OVERRIDDEN, FEATURES_NEEDS_REVIEW)) && features_hook($component, 'features_revert'))) {
             $components[] = $component;
           }
         }
@@ -251,6 +315,29 @@ function features_command_revert() {
   else {
     features_command_list();
     return;
+  }
+}
+
+/**
+ * Revert all enabled features to their definitions in code. Optionally pass in
+ * a list of features to exclude from being reverted.
+ */
+function features_command_revert_all() {
+  $features_to_revert = array();
+  $features_to_exclude = func_get_args();
+  foreach (features_get_features() as $module) {
+    if ($module->status && !in_array($module->name, $features_to_exclude)) {
+      $features_to_revert[] = $module->name;
+    }
+  }
+  drush_print(dt('The following modules will be reverted: !modules', array('!modules' => implode(', ', $features_to_revert))));
+  if (drush_confirm(dt('Do you really want to continue?'))) {
+    foreach ($features_to_revert as $module_name) {
+      drush_backend_invoke('features-revert '. $module_name);
+    }
+  }
+  else {
+    drush_die('Aborting.');
   }
 }
 
