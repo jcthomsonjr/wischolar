@@ -1,5 +1,5 @@
 <?php
-// $Id: views_attach_plugin_display_node_content.inc,v 1.1.2.7.2.5 2009/06/25 23:14:07 eaton Exp $
+// $Id: views_attach_plugin_display_node_content.inc,v 1.1.2.7.2.7 2009/10/02 21:12:01 crell Exp $
 
 /**
  * The plugin that handles node-attached views.
@@ -179,13 +179,23 @@ class views_attach_plugin_display_node_content extends views_plugin_display {
           $this->set_option('default_argument', $form_state['values']['default_argument']);
         }
         else {
-          $this->set_option('default_argument', NULL);          
+          $this->set_option('default_argument', NULL);
         }
         break;
       case 'show_title':
         $this->set_option('show_title', $form_state['values']['show_title']);
         break;
     }
+  }
+
+  /**
+   * Node content views use exposed widgets only if AJAX is set.
+   */
+  function uses_exposed() {
+    if ($this->use_ajax()) {
+      return parent::uses_exposed();
+    }
+    return FALSE;
   }
 
   /**
@@ -211,7 +221,7 @@ class views_attach_plugin_display_node_content extends views_plugin_display {
         foreach ($token_values as $key => $value) {
           $new_args[$key] = $value;
         }
-    
+
         $this->view->args = $new_args;
       }
     }
@@ -226,14 +236,13 @@ class views_attach_plugin_display_node_content extends views_plugin_display {
   function execute() {
     // Prior to this being called, the $view should already be set to this
     // display, and arguments should be set on the view.
+    if (!isset($this->view->override_path)) {
+      $this->view->override_path = $_GET['q'];
+    }
+
     $data = $this->view->render();
     if (!empty($this->view->result) || $this->get_option('empty') || !empty($this->view->style_plugin->definition['even empty'])) {
       return $data;
     }
   }
-
-  /**
-   * Block views do not use exposed widgets.
-   */
-  function uses_exposed() { return FALSE; }
 }

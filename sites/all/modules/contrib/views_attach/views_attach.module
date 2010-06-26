@@ -1,5 +1,5 @@
 <?php
-// $Id: views_attach.module,v 1.1.2.9.2.7 2009/06/25 23:19:20 eaton Exp $
+// $Id: views_attach.module,v 1.1.2.9.2.8 2009/06/26 20:58:13 eaton Exp $
 
 /**
  *  Implementation of hook_views_api().
@@ -28,13 +28,23 @@ function views_attach_content_extra_fields($type_name) {
   // Now add a weight field for each view/display.
   foreach ($items as $item) {
     if (!$item['title']) {
-      $item['title'] = theme('placeholder', t('None'));
+      $item['title'] = t('None');
     }
     $extras[$item['name'] .'_'. $item['display']] = array(
       'label' => $item['title'],
       'description' => t('Attached view: !view - !display', array('!view' => $item['name'], '!display' => $item['display'])),
       'weight' => 10,
     );
+
+    if (user_access('administer views')) {
+      $link = l(t('Configure'), 'admin/build/views/edit/' . $item['name'],
+        array(
+          'query' => drupal_get_destination(),
+          'fragment' => 'views-tab-' . $item['display'],
+        )
+      );
+      $extras[$item['name'] .'_'. $item['display']]['configure'] = $link;
+    }
   }
 
   return $extras;

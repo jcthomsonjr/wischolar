@@ -1,5 +1,5 @@
 <?php
-// $Id: views_attach.views.inc,v 1.1.2.1.2.2 2009/06/03 23:10:34 crell Exp $
+// $Id: views_attach.views.inc,v 1.1.2.1.2.5 2009/10/02 21:12:01 crell Exp $
 
 /**
  * Implementation of hook_views_plugins().
@@ -16,7 +16,7 @@ function views_attach_views_plugins() {
         'uses hook user' => TRUE,
         'use ajax' => TRUE,
         'use pager' => TRUE,
-        'use more' => FALSE,
+        'use more' => TRUE,
         'accept attachments' => TRUE,
         'admin' => t('Profile'),
         'help topic' => 'display-profile',
@@ -31,7 +31,7 @@ function views_attach_views_plugins() {
         'uses hook nodeapi' => TRUE,
         'use ajax' => TRUE,
         'use pager' => TRUE,
-        'use more' => FALSE,
+        'use more' => TRUE,
         'accept attachments' => TRUE,
         'admin' => t('Node content'),
         'help topic' => 'display-node-content',
@@ -39,4 +39,3 @@ function views_attach_views_plugins() {
     ),
   );
 }
-

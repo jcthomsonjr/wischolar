@@ -1,5 +1,5 @@
 <?php
-// $Id: views_attach_plugin_display_profile.inc,v 1.1.2.1.2.6 2009/06/25 23:14:07 eaton Exp $
+// $Id: views_attach_plugin_display_profile.inc,v 1.1.2.1.2.9 2009/10/08 22:03:22 crell Exp $
 
 /**
  * The plugin that handles a user profile.
@@ -50,7 +50,7 @@ class views_attach_plugin_display_profile extends views_plugin_display {
       'title' => t('Weight'),
       'value' => $weight,
     );
-    
+
     $argument_mode = $this->get_option('argument_mode');
     $options['arguments'] = array(
       'category' => 'profile',
@@ -88,7 +88,7 @@ class views_attach_plugin_display_profile extends views_plugin_display {
         $default = $this->get_option('argument_mode');
         $options = array(
           'none' => t("No special handling"),
-          'uid' =>  t("Use the ID of the user the view is attached to."),
+          'uid' =>  t("Use the ID of the user the view is attached to"),
         );
 
         $form['argument_mode'] = array(
@@ -150,10 +150,20 @@ class views_attach_plugin_display_profile extends views_plugin_display {
           $this->set_option('default_argument', $form_state['values']['default_argument']);
         }
         else {
-          $this->set_option('default_argument', NULL);          
+          $this->set_option('default_argument', NULL);
         }
         break;
     }
+  }
+
+  /**
+   * Profile views use exposed widgets only if AJAX is set.
+   */
+  function uses_exposed() {
+    if ($this->use_ajax()) {
+      return parent::uses_exposed();
+    }
+    return FALSE;
   }
 
   /**
@@ -173,7 +183,7 @@ class views_attach_plugin_display_profile extends views_plugin_display {
         foreach ($token_values as $key => $value) {
           $new_args[$key] = $value;
         }
-    
+
         $this->view->args = $new_args;
       }
     }
@@ -193,9 +203,4 @@ class views_attach_plugin_display_profile extends views_plugin_display {
       return $data;
     }
   }
-
-  /**
-   * Block views do not use exposed widgets.
-   */
-  function uses_exposed() { return FALSE; }
 }
