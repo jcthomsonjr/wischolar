@@ -1,0 +1,57 @@
+Index: sites/all/modules/contrib/spaces/spaces_og/spaces_og.module
+===================================================================
+--- sites/all/modules/contrib/spaces/spaces_og/spaces_og.module	(revision 1950)
++++ sites/all/modules/contrib/spaces/spaces_og/spaces_og.module	(working copy)
+@@ -11,6 +11,9 @@
+   class space_og implements space {
+     var $group = NULL;
+     var $title = NULL;
++    
++    //Stores the purl provider informaion
++    var $purl_provider = 'spaces_og';
+ 
+     /**
+      * Constructor
+@@ -251,13 +254,13 @@
+             // Use the menu path of the selected feature as homepage
+             if ($home = $this->settings['home']) {
+               if (menu_get_item($home)) {
+-                purl_goto($home, array('purl' => array('provider' => 'spaces_og', 'id' => $this->sid)));
++                purl_goto($home, array('purl' => array('provider' => $this->purl_provider, 'id' => $this->sid)));
+               }
+             }
+             // The previous checks fail, there is no valid homepage set
+             if ($this->admin_access() && user_access('configure spaces features')) {
+               drupal_set_message(t("Please setup your group by choosing a homepage setting."));
+-              purl_goto("node/{$this->sid}/spaces/features", array('purl' => array('provider' => 'spaces_og', 'id' => $this->sid)));
++              purl_goto("node/{$this->sid}/spaces/features", array('purl' => array('provider' => $this->purl_provider, 'id' => $this->sid)));
+             }
+           }
+           else {
+@@ -266,7 +269,7 @@
+           menu_set_active_item('spaces-access-denied');
+           break;
+         case 'features':
+-          purl_goto("node/{$this->sid}/spaces/features", array('purl' => array('provider' => 'spaces_og', 'id' => $this->sid)));
++          purl_goto("node/{$this->sid}/spaces/features", array('purl' => array('provider' => $this->purl_provider, 'id' => $this->sid)));
+           break;
+       }
+     }
+@@ -369,7 +372,7 @@
+               $space = spaces_get_space();
+               // If editing, make sure we're in the correct space
+               if (isset($node->nid) && (!$is_active || ($is_active && $this->sid != $node->nid))) {
+-                purl_goto($_GET['q'], array('purl' => array('provider' => 'spaces_og', 'id' => $node->nid)));
++                purl_goto($_GET['q'], array('purl' => array('provider' => $this->purl_provider, 'id' => $node->nid)));
+               }
+               // Don't make new groups from other groups spaces
+               else if (!isset($node->nid) && ($is_active)) {
+@@ -396,7 +399,7 @@
+               }
+               // Otherwise route
+               reset($node->og_groups);
+-              purl_goto($_GET['q'], array('purl' => array('provider' => 'spaces_og', 'id' => current($node->og_groups))));
++              purl_goto($_GET['q'], array('purl' => array('provider' => $this->purl_provider, 'id' => current($node->og_groups))));
+             }
+             // We're on the node add form from outside an active space.
+             if (!isset($node->nid) && !$is_active) {
