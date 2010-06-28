@@ -13,7 +13,7 @@ function pinserver_check_status(){
     //return true; // for testing purposes
   }  
   if (isset($_SESSION['pinserver']['reg_time']) && isset($_SESSION['pinserver']['huid'])){
-    return $reg_time =  ((time() - (int)$_SESSION['pinserver']['reg_time']) < 120) ? true : false;
+    return $reg_time =  true;
   }
   return false;
 }
