@@ -5,7 +5,7 @@
  * @return array
  */
 function _iqss_scholar_config_variables(){
-  return array(
+  $conf =  array(
   "addthis_username" => "iqssscholar", //Username for AddThis
 
   //PINSERVER Config Variables
@@ -19,6 +19,12 @@ function _iqss_scholar_config_variables(){
   'iqss_remote_source_node_types' => array('cv'),
   'iqss_remote_source_valid_ogs' => '1', //Enable on Garys Site
   );
+  
+  // mollom settings (default) these will be replaced by domain specific if applicable
+  $conf['mollom_private_key'] = '32a73b2d09c7576f1a5d4ca73ca9dead';
+  $conf['mollom_public_key'] = 'fa9e0e813449535e5fcf06d6dda0d0f3';
+      
+  return $conf;
 }
 
 function _iqss_scholar_config_by_domain(){
