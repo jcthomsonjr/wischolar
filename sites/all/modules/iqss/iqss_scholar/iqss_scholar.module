@@ -2,7 +2,7 @@
 
 /**
  * implement hook strongarm
- * 
+ *
  * This should be used for IQSS only settings
  * @return array
  */
@@ -18,6 +18,15 @@ function iqss_scholar_strongarm(){
 	return $conf;
 }
 
+/**
+ * Alter Mollom Settings
+ */
+function iqss_scholar_mollom_form_info_alter(&$form_info, $form_id){
+	$a_mollom_forms = array('contact_mail_page','contact_mail_user','user_register','user_pass');
+
+  $form_info['mode'] = (in_array($form_id,$a_mollom_forms))? MOLLOM_MODE_CAPTCHA:MOLLOM_MODE_DISABLED;
+}
+
 define(IQSS_DEV,0);
 define(IQSS_LOCAL_DEV,1);
 define(IQSS_STAGING,2);
@@ -30,21 +39,21 @@ function isqq_scholar_current_location(){
 		case 'projects.iq.harvard.edu':
       return IQSS_PROJECT_PRODUCTION;
 		case 'scholar-test.iq.harvard.edu':
-		  return IQSS_STAGING;	
+		  return IQSS_STAGING;
 		case 'scholar-dev1.iq.harvard.edu':
 		case 'scholar-dev2.iq.harvard.edu':
 		case 'scholar-dev3.iq.harvard.edu':
-      return IQSS_DEV;  
+      return IQSS_DEV;
     case 'localhost':
-      return IQSS_LOCAL_DEV;  
+      return IQSS_LOCAL_DEV;
 	}
 	
   switch($_SERVER['SERVER_ADDR']){
     case '127.0.0.1':
     case '::1':
-      return IQSS_LOCAL_DEV;  
+      return IQSS_LOCAL_DEV;
   	case '140.247.115.239':
     default:
-      return IQSS_PRODUCTION;  
+      return IQSS_PRODUCTION;
   }
 }
