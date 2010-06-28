@@ -1,5 +1,5 @@
 <?php
-// $Id: itweak_upload.admin.inc,v 1.1.2.4 2009/08/08 03:33:51 iva2k Exp $
+// $Id: itweak_upload.admin.inc,v 1.1.2.7 2010/02/08 09:33:54 iva2k Exp $
 
 /**
  * @file
@@ -39,6 +39,13 @@ function _itweak_upload_setting_link_options($default_text = NULL) {
   }
   if (module_exists('thickbox')) {
     $ret['thickbox'] = t('Thickbox');
+  }
+  if (module_exists('fancy_box')) {
+    $ret['fancybox'] = t('Fancybox');
+  }
+  if (module_exists('shadowbox')) {
+    $ret['shadowbox'] = t('Shadowbox');
+    $ret['shadowboxgrouped'] = t('Shadowbox Grouped');
   }
   return $ret;
 }
@@ -113,6 +120,12 @@ function _itweak_upload_admin_settings(&$form) {
     '#default_value' => variable_get('itweak_upload_thumbnail_link_default', _itweak_upload_setting_link_default()),
     '#options' => $link_options,
     '#description' => t('This mode will be used by default for opening image thumbnails. This setting can be overridden on each content type configuration page.'),
+  );
+  $form['itweak_upload']['itweak_upload_thumbnail_title_default'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show file name on the opened thumbnail link'),
+    '#default_value' => variable_get('itweak_upload_thumbnail_title_default', 1),
+    '#description' => t('Check to show by default the file name on the image opened from thumbnails (only if selected link open mode supports it).')
   );
 }
 

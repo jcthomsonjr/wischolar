@@ -1,5 +1,5 @@
 <?php
-// $Id: itweak_upload.module,v 1.1.2.13 2009/08/08 03:33:51 iva2k Exp $
+// $Id: itweak_upload.module,v 1.1.2.19 2010/02/08 09:33:54 iva2k Exp $
 
 /**
  * @file
@@ -29,6 +29,13 @@
  */
 function itweak_upload_init() {
   drupal_add_css(drupal_get_path('module', 'itweak_upload') . '/itweak_upload.css');
+  if (module_exists('jcarousel')) {
+    $selector = '.attachment-thumbs';
+	$options = array('scroll' => 1);
+	$skin = 0 ? 'ie7' : 'tango';
+	$skin_path = '';
+    jcarousel_add($selector, $options, $skin, $skin_path);
+  }
 }
 
 /**
@@ -58,10 +65,16 @@ function UNUSED_itweak_upload_menu() {
 }
 
 function _itweak_upload_isimage($file) {
-  return (strpos($file->filemime, 'image/') === 0);
+  if (strpos($file->filemime, 'image/') !== 0)
+    return FALSE;
+  $image = image_get_info(file_create_path($file->filepath));
+  return(is_array($image) && $image['extension'] != '');
 }
 
-function itweak_upload_imagecache_default_presets(){
+/**
+ * Implementation of hook_imagecache_default_presets().
+ */
+function itweak_upload_imagecache_default_presets() {
   $presets = array();
   
   $presets['AttachmentThumbnail'] = array(
@@ -89,15 +102,17 @@ function itweak_upload_imagecache_default_presets(){
  *  File object, same type as nodeapi 'view' "if ($node->nid) foreach ($node->files as $fid => $file) ..."
  * @param $derivative
  *  Name of thumbnail preset, or one of '_none' (no preview), '_original'.
- * @param $caption
- *  If TRUE, shows thumbnail caption.
+ * @param $show_title
+ *  If TRUE, insert thumbnail link title (used in open thumbnail method).
+ * @param $show_caption
+ *  UNUSED If TRUE, shows thumbnail caption.
  *  Unused hack: If 2 or 3 - appends text after link (for list-formatted view).
  * @param $options
  *  Optional. Array of options for the thumbnail link. Can add special handler.
  * @return
  *  FormsAPI item element with file preview (if available)
  */
-function itweak_upload_itweak_upload_preview($file, $derivative, $caption = FALSE, $options = NULL) {
+function itweak_upload_itweak_upload_preview($file, $derivative, $show_title = FALSE, $show_caption = FALSE, $options = NULL) {
   // Only check for images
   if (_itweak_upload_isimage($file)) {
     $text = empty($file->description) ? $file->filename : $file->description;
@@ -111,11 +126,13 @@ function itweak_upload_itweak_upload_preview($file, $derivative, $caption = FALS
 	else {
       $thumbnail = theme('imagecache', $derivative, file_create_path($file->filepath), $text, $text);
     }
-// Hack:    if ($caption > 1) { $thumbnail = $thumbnail . $text; $caption -= 2; }
-    $caption_text = $caption ? $text : NULL;
+    $text = check_plain($text);
+// Hack:    if ($show_caption > 1) { $thumbnail = $thumbnail . $text; $show_caption -= 2; }
+    $title_text = $show_title ? $text : NULL;
+	$caption_text = $show_caption ? $text : NULL;
     return array(
       '#type' => 'item',
-      '#value' => theme('itweak_upload_thumbnail', $thumbnail, $href, $caption_text, $options),
+      '#value' => theme('itweak_upload_thumbnail', $thumbnail, $href, $title_text, $caption_text, $options),
     );
 
   }
@@ -131,10 +148,12 @@ function itweak_upload_itweak_upload_preview($file, $derivative, $caption = FALS
  *  File's parent comment cid (comment id), if file is uploaded to a comment.
  * @param $derivative
  *  Name of thumbnail preset.
+ * @param $show_title
+ *  If TRUE, insert thumbnail link title (used in open thumbnail method).
  * @param $options
  *  Optional. Array of options for the thumbnail link. Can add special handler.
  */
-function _itweak_upload_files_thumbnails(&$files, $vid, $cid, $derivative, $options = NULL) {
+function _itweak_upload_files_thumbnails(&$files, $vid, $cid, $derivative, $show_title, $options = NULL) {
   // Build list of attached files and filter out images.
   foreach (element_children($files) as $fid) {
     $file = new stdClass();
@@ -148,8 +167,8 @@ function _itweak_upload_files_thumbnails(&$files, $vid, $cid, $derivative, $opti
     $file->description = $files[$fid]['description']['#default_value'];
     $file->list = $files[$fid]['list']['#default_value'];
 
-    $caption = FALSE;   // No caption (this only gets called from upload forms, where form itself shows file name)
-    $preview = module_invoke_all('itweak_upload_preview', $file, $derivative, $caption, $options);
+    // No caption (this only gets called from upload forms, where form itself shows file name)
+    $preview = module_invoke_all('itweak_upload_preview', $file, $derivative, $show_title, FALSE, $options);
     if ($preview) {
       $files[$fid]['preview'] = $preview;
     }
@@ -193,13 +212,13 @@ function _itweak_upload_get_setting($setting_base, $setting_name, $node_type, $d
   $ret = $default;
   if ($setting_base) {
     $ret1 = variable_get('itweak_upload_' . $setting_base . '_default', $ret);
-    if ($ret1 != '_default') $ret = $ret1;
+    if ($ret1 !== '_default') $ret = $ret1;
     $ret1 = variable_get('itweak_upload_' . $setting_base . '_default_' . $node_type, $ret);
-    if ($ret1 != '_default') $ret = $ret1;
-    $setting_name = $setting_base . '_' . $setting_name;
+    if ($ret1 !== '_default') $ret = $ret1;
+    $setting_name = $setting_base . ($setting_name ? '_' . $setting_name : '');
   }
   $ret1 = variable_get('itweak_upload_' . $setting_name . '_' . $node_type, $ret);
-  if ($ret1 != '_default') $ret = $ret1;
+  if ($ret1 !== '_default') $ret = $ret1;
   return $ret;
 }
 
@@ -210,12 +229,18 @@ function _itweak_upload_setting_link_default() {
   if (module_exists('thickbox')) {
     return 'thickbox';
   }
+  if (module_exists('fancy_box')) {
+    return 'fancybox';
+  }
+  if (module_exists('shadowbox')) {
+    return 'shadowboxshadowbox';
+  }
   return 'none';
 }
 
 /*
  * Retrieve link options - carries handler setting for link display mode.
- * @param $setting
+ * @param $setting_name
  *  Setting name (inner part of whole name). Used to construct whole setting name.
  * @param $node_type
  *  Node type name. Used to construct whole setting name.
@@ -263,6 +288,27 @@ function _itweak_upload_get_link_options($setting_name, $node_type, $group) {
         break;
     }
   }
+  if (module_exists('fancy_box')) {
+    switch ($link_option) {
+      case 'fancybox':
+        $handler = ($group ? 'node_' . $group : 'node');
+        $options['attributes'] = array('class' => 'fancy_box', 'rel' => $handler);
+        break;
+    }
+  }
+  if (module_exists('shadowbox')) {
+    switch ($link_option) {
+      case 'shadowbox':
+//        $handler = ($group ? 'node_' . $group : 'node');
+        $handler = 'shadowbox';
+        $options['attributes'] = array('class' => 'shadowbox', 'rel' => $handler);
+        break;
+      case 'shadowboxgrouped':
+        $handler = 'shadowbox' . ($group ? '[' . $group . ']' : '');
+        $options['attributes'] = array('class' => 'shadowbox', 'rel' => $handler);
+        break;
+    }
+  }
   return $options;
 }
 
@@ -300,8 +346,9 @@ function itweak_upload_form_alter(&$form, $form_state, $form_id) {
       $group = $form['#node']->nid ? $form['#node']->nid : 'new';
       $vid = $form['#node']->vid;
       $derivative = _itweak_upload_get_derivative('upload', $node_type);
+      $show_title = _itweak_upload_get_setting('thumbnail_title', '', $node_type, 1);
       $options = _itweak_upload_get_link_options('upload', $node_type, $group);
-      _itweak_upload_files_thumbnails($form['attachments']['wrapper']['files'], $vid, NULL, $derivative, $options);
+      _itweak_upload_files_thumbnails($form['attachments']['wrapper']['files'], $vid, NULL, $derivative, $show_title, $options);
     }
   }
 
@@ -318,8 +365,9 @@ function itweak_upload_form_alter(&$form, $form_state, $form_id) {
         $group = $cached_form['#node']->nid ? $cached_form['#node']->nid : 'new';
         $vid = $cached_form['#node']->vid;
         $derivative = _itweak_upload_get_derivative('upload', $node_type);
+        $show_title = _itweak_upload_get_setting('thumbnail_title', '', $node_type, 1);
         $options = _itweak_upload_get_link_options('upload', $node_type, $group);
-        _itweak_upload_files_thumbnails($form['files'], $vid, NULL, $derivative, $options);
+        _itweak_upload_files_thumbnails($form['files'], $vid, NULL, $derivative, $show_title, $options);
       }
       break;
 
@@ -335,8 +383,9 @@ function itweak_upload_form_alter(&$form, $form_state, $form_id) {
         $cid = $form['cid']['#value'] ? $form['cid']['#value'] : 'new';
         $group = 'c' . $cid;
         $derivative = _itweak_upload_get_derivative('upload', $node_type);
+        $show_title = _itweak_upload_get_setting('thumbnail_title', '', $node_type, 1);
         $options = _itweak_upload_get_link_options('upload', $node_type, $group);
-        _itweak_upload_files_thumbnails($form['attachments']['wrapper']['files'], $vid, $cid, $derivative, $options);
+        _itweak_upload_files_thumbnails($form['attachments']['wrapper']['files'], $vid, $cid, $derivative, $show_title, $options);
       }
       break;
 
@@ -355,8 +404,9 @@ function itweak_upload_form_alter(&$form, $form_state, $form_id) {
         $cid = $cached_form['cid']['#value'] ? $cached_form['cid']['#value'] : 'new';
         $group = 'c' . $cid;
         $derivative = _itweak_upload_get_derivative('upload', $node_type);
+        $show_title = _itweak_upload_get_setting('thumbnail_title', '', $node_type, 1);
         $options = _itweak_upload_get_link_options('upload', $node_type, $group);
-        _itweak_upload_files_thumbnails($form['files'], $vid, $cid, $derivative, $options);
+        _itweak_upload_files_thumbnails($form['files'], $vid, $cid, $derivative, $show_title, $options);
       }
       break;
 
@@ -403,7 +453,7 @@ function itweak_upload_theme() {
       'function' => 'itweak_upload_comment_upload_attachments',
     ),
     'itweak_upload_thumbnail' => array(
-      'arguments' => array('thumbnail' => NULL, 'href' => NULL, 'caption' => NULL, 'options' => NULL),
+      'arguments' => array('thumbnail' => NULL, 'href' => NULL, 'title_text' => NULL, 'caption_text' => NULL, 'options' => NULL),
     ),
     'itweak_upload_images' => array(
       'arguments' => array('list' => NULL),
@@ -526,7 +576,7 @@ function itweak_upload_upload_attachments($files, $options = NULL) {
         );
       }
       $row[] = array(
-        'data' => l($text, $href, ($options && (isset($file->preview) || _itweak_upload_isimage($file))) ? $options : array()),
+        'data' => l($text, $href, ($options && $file->access && (isset($file->preview) || _itweak_upload_isimage($file))) ? $options : array()),
         'class' => 'file',
       );
       $row[] = array(
@@ -591,12 +641,16 @@ function itweak_upload_comment_upload_attachments($files, $display_images = FALS
  *  Selects one of the display modes of the attachments.
  * @param $derivative
  *  Name of thumbnail preset.
+ * @param $show_title
+ *  If TRUE, insert thumbnail link title (used in open thumbnail method).
+ * @param $show_caption
+ *  If TRUE, shows thumbnail caption.
  * @param $options
  *  Optional. Array of options for the thumbnail link. Can add special handler.
  * @return
  *  Count of files left in the $files.
  */
-function _itweak_upload_preprocess_files(&$files, &$thumbnails, $files_display, $derivative, $caption, $options) {
+function _itweak_upload_preprocess_files(&$files, &$thumbnails, $files_display, $derivative, $show_title, $show_caption, $options) {
   // Build list of attached files and filter out images.
   $thumbnails = array();
   $cnt_other = 0;
@@ -604,8 +658,18 @@ function _itweak_upload_preprocess_files(&$files, &$thumbnails, $files_display, 
     $file = (object)$file;
     if ($file->list && empty($file->remove)) {
 
-      if ($files_display > 1) {
-        $preview = module_invoke_all('itweak_upload_preview', $file, $derivative, $caption, $options);
+      // Check if user can download the file - no preview if can't.
+	  $headers = module_invoke_all('file_download', $file->filepath);
+      $access = !in_array(-1, $headers);
+      if (is_object($files[$fid])) {
+        $files[$fid]->access = $access;
+      }
+      else {
+        $files[$fid]['access'] = $access;
+      }
+
+      if ($access && $files_display > 1) {
+        $preview = module_invoke_all('itweak_upload_preview', $file, $derivative, $show_title, $show_caption, $options);
       }
       if ($files_display == 1 || !$preview || $preview['#type'] != 'item') {
         $cnt_other += 1;
@@ -615,7 +679,7 @@ function _itweak_upload_preprocess_files(&$files, &$thumbnails, $files_display, 
           $files[$fid]->preview = $preview;
         }
         else {
-        $files[$fid]['preview'] = $preview;
+          $files[$fid]['preview'] = $preview;
         }
         if ($files_display == 2) {
           // Show image with regular files, just use thumbnail
@@ -645,13 +709,14 @@ function itweak_upload_nodeapi(&$node, $op, $teaser, $page) {
 
         $derivative = _itweak_upload_get_derivative($teaser ? 'teaser' : 'node', $node->type);
         $options = _itweak_upload_get_link_options($teaser ? 'teaser' : 'node', $node->type, $node->nid);
-$caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumbnail_caption', 0);
-
+$show_caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumbnail_caption', 0);
+        $show_title = _itweak_upload_get_setting('thumbnail_title', '', $node->type, 1);
         $teaser_images_max = variable_get('itweak_upload_teaser_images_' . $node->type, 0);
         if ($teaser_images_max === '') $teaser_images_max = -1;
-        $cnt_other = _itweak_upload_preprocess_files($node->files, $thumbnails, $files_display, $derivative, $caption, $options);
+        $cnt_other = _itweak_upload_preprocess_files($node->files, $thumbnails, $files_display, $derivative, $show_title, $show_caption, $options);
+        
         $node->itweak_upload = $thumbnails;
-
+        
         // Add regular attachment list
         if ($cnt_other) {
           if ($files_display != 4) {
@@ -667,13 +732,13 @@ $caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumbnail_
         if (count($thumbnails)) {
           if ($teaser) {
             $node->content['itweak_upload'] = array(
-              '#value' => theme('itweak_upload_images_teaser', $thumbnails, $teaser_images_max, $caption, $options),
+              '#value' => theme('itweak_upload_images_teaser', $thumbnails, $teaser_images_max, $show_caption, $options),
               '#weight' => 49,
             );
           }
           else {
             $node->content['itweak_upload'] = array(
-              '#value' => theme('itweak_upload_images_body', $thumbnails, -1, $caption, $options),
+              '#value' => theme('itweak_upload_images_body', $thumbnails, -1, $show_caption, $options),
               '#weight' => 49,
             );
           }
@@ -706,6 +771,8 @@ function theme_itweak_upload_images($list) {
  *  Link to thumbnail.
  * @param $href
  *  URL to link thumbnail to.
+ * @param $title_text
+ *  Optional. Text for thumbnail open link title.
  * @param $caption_text
  *  Optional. Text for thumbnail caption.
  * @param $options
@@ -714,7 +781,7 @@ function theme_itweak_upload_images($list) {
  * @return
  *  The themed thumbnail
  */
-function theme_itweak_upload_thumbnail($thumbnail, $href, $caption_text = NULL, $options = NULL) {
+function theme_itweak_upload_thumbnail($thumbnail, $href, $title_text = NULL, $caption_text = NULL, $options = NULL) {
 //  $inner = '<div class="itu-attachment-thumb-wrap">' . $thumbnail . '</div>';
 //  if ($caption_text) {
 //    $inner = '<div class="itu-attachment-thumb-caption">' . $caption_text . '</div>'
@@ -725,6 +792,9 @@ function theme_itweak_upload_thumbnail($thumbnail, $href, $caption_text = NULL, 
 
   if (!$options) $options = array();
   $options += array('html' => TRUE);
+  if ($title_text) {
+    $options['attributes']['title'] = $title_text;
+  }
   $html = l($thumbnail, $href, $options);
 // FIXME: Due to CSS2/cross-browser capability to make shrink-wrap div, the below part does not work.
 // Any CSS guru can solve that? BTW, tooltips are shown by title in img.
@@ -743,7 +813,7 @@ function theme_itweak_upload_thumbnail($thumbnail, $href, $caption_text = NULL, 
  *  Array of file descriptors, incl. links to thumbnails.
  * @param $limit
  *  Maximum number of thumbnails to display.
- * @param $caption
+ * @param $show_caption
  *  UNUSED. If TRUE, shows thumbnail caption.
  * @param $options
  *  Optional. Array of options for the thumbnail link. Can add special handler.
@@ -751,7 +821,7 @@ function theme_itweak_upload_thumbnail($thumbnail, $href, $caption_text = NULL, 
  * @return
  *  The themed list
  */
-function theme_itweak_upload_images_body($files, $limit = -1, $caption = FALSE, $options = NULL) {
+function theme_itweak_upload_images_body($files, $limit = -1, $show_caption = FALSE, $options = NULL) {
   $items = array();
   
   foreach ($files as $file) {
@@ -778,7 +848,7 @@ function theme_itweak_upload_images_body($files, $limit = -1, $caption = FALSE, 
  *  Array of file descriptors, incl. links to thumbnails.
  * @param $limit
  *  Maximum number of thumbnails to display.
- * @param $caption
+ * @param $show_caption
  *  If TRUE, shows thumbnail caption.
  * @param $options
  *  Optional. Array of options for the thumbnail link. Can add special handler.
@@ -786,8 +856,8 @@ function theme_itweak_upload_images_body($files, $limit = -1, $caption = FALSE, 
  * @return
  *  The themed list
  */
-function theme_itweak_upload_images_teaser($files, $limit, $caption = FALSE, $options = NULL) {
-  return theme_itweak_upload_images_body($files, $limit, $caption, $options);
+function theme_itweak_upload_images_teaser($files, $limit, $show_caption = FALSE, $options = NULL) {
+  return theme_itweak_upload_images_body($files, $limit, $show_caption, $options);
 }
 
 /**
@@ -797,7 +867,7 @@ function theme_itweak_upload_images_teaser($files, $limit, $caption = FALSE, $op
  *  Array of file descriptors, incl. links to thumbnails.
  * @param $limit
  *  Maximum number of thumbnails to display.
- * @param $caption
+ * @param $show_caption
  *  If TRUE, shows thumbnail caption.
  * @param $options
  *  Optional. Array of options for the thumbnail link. Can add special handler.
@@ -805,8 +875,8 @@ function theme_itweak_upload_images_teaser($files, $limit, $caption = FALSE, $op
  * @return
  *  The themed list
  */
-function theme_itweak_upload_images_comment($files, $limit, $caption = FALSE, $options = NULL) {
-  return theme_itweak_upload_images_body($files, $limit, $caption, $options);
+function theme_itweak_upload_images_comment($files, $limit, $show_caption = FALSE, $options = NULL) {
+  return theme_itweak_upload_images_body($files, $limit, $show_caption, $options);
 }
 
 
@@ -845,9 +915,10 @@ function itweak_upload_comment(&$comment, $op) {
     $group = 'c' . $comment->cid; // Add 'c' to comment id to avoid potential conflict with node id.
     $derivative = _itweak_upload_get_derivative('comment', $node_type);
     $options = _itweak_upload_get_link_options('comment', $node_type, $group);
-$caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumbnail_caption', 0);
+$show_caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumbnail_caption', 0);
+    $show_title = _itweak_upload_get_setting('thumbnail_title', '', $node_type, 1);
 
-    $cnt_other = _itweak_upload_preprocess_files($comment->files, $thumbnails, $files_display, $derivative, $caption, $options);
+    $cnt_other = _itweak_upload_preprocess_files($comment->files, $thumbnails, $files_display, $derivative, $show_title, $show_caption, $options);
 
     // Add regular attachment list
     if ($cnt_other) {
@@ -860,7 +931,7 @@ $caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumbnail_
     }
 
     if (count($thumbnails)) {
-      $comment->comment .= theme('itweak_upload_images_comment', $thumbnails, -1, $caption, $options);
+      $comment->comment .= theme('itweak_upload_images_comment', $thumbnails, -1, $show_caption, $options);
     }
   }
 }

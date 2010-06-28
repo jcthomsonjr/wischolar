@@ -1,4 +1,4 @@
-/* $Id: itweak_upload.js,v 1.2 2009/07/04 06:02:22 iva2k Exp $ */
+/* $Id: itweak_upload.js,v 1.2.2.1 2010/02/11 04:50:10 iva2k Exp $ */
 
 Drupal.behaviors.attachment = function (context) {
   $('#attach-wrapper input[type=submit]').hide();
@@ -9,7 +9,7 @@ Drupal.behaviors.attachment = function (context) {
     var row = $(this);
     // Description link
     var rename_input = row.children('td.file').children('div').children('input.rename');
-    var name = $('<span>'+ rename_input.val() +'</span>');
+    var name = $('<span>'+ Drupal.checkPlain(rename_input.val()) +'</span>');
     var rename_link = $('<a class="rename">'+ Drupal.t('Rename') +'</a>');
     rename_input.after(rename_link).after(name).hide();
     rename_link.toggle(

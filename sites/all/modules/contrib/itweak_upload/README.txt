@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.1.2.3 2009/07/23 06:08:34 iva2k Exp $
+$Id: README.txt,v 1.1.2.5 2010/02/05 07:11:17 iva2k Exp $
 
 iTweak Upload Module
 --------------------
@@ -12,17 +12,18 @@ With iTweak Upload module you can tweak file upload forms and improve attachment
 * (Option) Display thumbnails for image attachments
 * (Option) Display image attachments in a gallery
 * (Option) Hide non-image files when there are image attachments in a gallery
-* (Option) Show images in a popup (lightbox2, thickbox), grouped or slideshow (lightbox2)
+* (Option) Show images in a popup (lightbox2, thickbox, fancybox, shadowbox), grouped or slideshow (lightbox2)
 * Independent of theme - works with any theme that does not already customize file uploads.
+* jCarousel (if installed) is used for the image attachments gallery
 
-Default options are configurable for the whole site. Initial installation comes with a preset for imagecache and it autodetects Lightbox or Thickbox mode, so you can get the whole shebang in a couple of clicks.
+Default options are configurable for the whole site. Initial installation comes with a preset for imagecache and it autodetects Lightbox, Thickbox, Fancybox or Shadowbox mode, so you can get the whole shebang in a couple of clicks.
 
 Further, it is possible to customize each content type with individual options.
 
 Installation 
 ------------
 * For image thumbnails first need to install and enable ImageCache and ImageAPI modules
-* For image popups first need to install Lightbox2 (recommended) or Thickbox module
+* For image popups first need to install Lightbox2 (recommended), Thickbox, Fancybox or Shadowbox module
 * Copy the module's directory to your modules directory and activate the module
 * For upgrading from 6.x-1.x to 6.x-2.x need to run update.php
 
@@ -32,9 +33,10 @@ Usage
 * There are new site-wide settings on the file uploads form (/admin/settings/uploads)
   under "Attachments display" section
 * Image and attachment display options are configured in each content type:
-  Go to /admin/content/node-type/% under "Attachments display" section
+  Go to /admin/content/node-type and select specific content type, then edit the "Attachments display" section
 * ImageCache preset is required for thumbnails:
-* - AttachmentThumbnail preset (size & crop 60x60) is automatically created by the module
+* - AttachmentThumbnail preset (default size & crop 60x60) is automatically created by the module
+* - AttachmentThumbnail can be modified, or any other preset used
 * - AttachmentThumbnail view permissions are automatically added to anonymous and authenticated roles
 * iTweak Upload completely takes over the attachments display settings on comments. It removes setting "Attachments on comments" > "Image attachments on comments" in content type forms by comment_upload.module
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: itweak_upload.install,v 1.1.2.4 2009/08/08 03:33:51 iva2k Exp $
+// $Id: itweak_upload.install,v 1.1.2.6 2010/02/05 07:11:17 iva2k Exp $
 
 /**
  * @file
@@ -19,6 +19,80 @@ function _itweak_upload_add_permission($rid, $permission) {
 //    db_query("UPDATE {permission} SET perm = '%s' WHERE rid = %d", $current_perm, $rid);
     return update_sql("UPDATE {permission} SET perm = '$current_perm' WHERE rid = $rid");
   }
+}
+
+/*
+ * Install ImageCache presets
+ */
+function _itweak_upload_install_imagecache_presets() {
+  $ret = array();
+  if (!module_exists('imagecache')) {
+    $msg = t('Tried installing ImageCache preset for iTweak Upload module, but ImageCache module is not present. ImageCache presets for iTweak Upload module were not installed.');
+//    drupal_set_message($msg);
+    $ret[] = array('success' => FALSE, 'query' => $msg);
+  }
+  else {
+    $imagecache_presets = array(
+      array(
+        'presetname' => 'AttachmentThumbnail',
+      ),
+    );
+
+    $perms = array();
+    foreach ($imagecache_presets as $preset) {
+      $perms[] = 'view imagecache ' . $preset['presetname'];
+    }
+
+    // Add default permissions to new presets
+    if (count($perms)) {
+      // Which roles ids should be allowed to view the preset by default:
+      $allow_roles = array(1, 2);
+
+      // Get role names
+      $result = db_query('SELECT r.rid, r.name FROM {role} r WHERE r.rid IN (%s)', implode(', ', $allow_roles));
+      $roles = array();
+      while ($role = db_fetch_object($result)) {
+        $roles[$role->rid] = $role->name;
+      }
+      $perms = implode(', ', $perms);
+      foreach ($roles as $rid => $role) {
+        $res = _itweak_upload_add_permission($rid, $perms);
+	if ($res['success']) {
+	  $res['query'] = t('Added permissions "%perms" to role %role.', array('%perms' => $perms, '%role' => $role) );
+	}
+	$ret[] = $res;
+      }
+    }
+  }
+  return $ret;
+}
+
+/**
+ * Implementation of hook_install()
+ */
+function itweak_upload_install() {
+  $ret = _itweak_upload_install_imagecache_presets();
+  if (!$ret[0]['success']) drupal_set_message($ret[0]['query']);
+
+//??  cache_clear_all('theme_registry', 'cache', TRUE);
+}
+
+/**
+ * Implementation of hook_update_N()
+ */
+function itweak_upload_update_6000() {
+  $ret = array();
+  $ret += _itweak_upload_install_imagecache_presets();
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N()
+ */
+function itweak_upload_update_6001() {
+  $ret = array();
+  $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'itweak_upload'");
+  return $ret;
 }
 
 /**
