@@ -231,6 +231,7 @@ projects[litecal][version] = "1.0-alpha2"
 
 ; Themes
 projects[zen][version] = "1.0"
+projects[zen][subdir] = "contrib"
 
 projects[openscholar_themes][location] = "http://openscholar.harvard.edu/scholar_software"
 projects[openscholar_themes][version] = "2.0-beta5"
