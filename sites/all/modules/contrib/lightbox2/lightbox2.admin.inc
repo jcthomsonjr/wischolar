@@ -1,5 +1,5 @@
 <?php
-// $Id: lightbox2.admin.inc,v 1.1.2.24 2009/01/07 17:46:47 snpower Exp $
+// $Id: lightbox2.admin.inc,v 1.1.2.32 2010/06/07 18:20:31 snpower Exp $
 
 /**
  * @file
@@ -86,6 +86,14 @@ function lightbox2_general_settings_form() {
     '#return_value' => '_blank',
   );
 
+  // Show caption
+  $form['layout_fieldset']['lightbox2_show_caption'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show image caption'),
+    '#description' => t('Unset this to always hide the image caption (usually the title).'),
+    '#default_value' => variable_get('lightbox2_show_caption', TRUE),
+  );
+
   // Add text box for link text to node.
   $form['layout_fieldset']['lightbox2_node_link_text'] = array(
     '#type' => 'textfield',
@@ -98,7 +106,7 @@ function lightbox2_general_settings_form() {
   $form['layout_fieldset']['lightbox2_download_link_text'] = array(
     '#type' => 'textfield',
     '#title' => t('Text for image original link'),
-    '#description' => t('This is the text that will appear as the link to the original file underneath the image in the lightbox.  Leave this blank for the link not to appear.'),
+    '#description' => t('This is the text that will appear as the link to the original file underneath the image in the lightbox.  Leave this blank for the link not to appear.  It will only appear for images uploaded via the "image" or "imagefield" modules.  Users will need the "download original image" permission, but also the "view original images" permission if using the "image" module.'),
     '#default_value' => variable_get('lightbox2_download_link_text', 'Download Original'),
   );
 
@@ -252,6 +260,7 @@ function lightbox2_general_settings_form() {
       1 => t('Group by field name'),
       2 => t('Group by node id'),
       3 => t('Group by field name and node id'),
+      4 => t('Group all nodes and fields'),
     );
 
     // Add checkbox for emfield emimage grouping.
@@ -280,6 +289,13 @@ function lightbox2_general_settings_form() {
         '#description' => t('By default, the caption for imagefields is the image title text configured.  If no title is configured, then the alt text will be used.  This option allows you to override that and always display the node title as the image caption.'),
         '#default_value' => variable_get('lightbox2_imagefield_use_node_title', FALSE),
       );
+      $form['cck_options']['lightbox2_view_image_text'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Text to view image'),
+        '#description' => t('This is the text that can appear when linking to the image using CCK imagefields.'),
+        '#default_value' => variable_get('lightbox2_view_image_text', 'View image'),
+      );
+
     }
   }
 
@@ -501,7 +517,7 @@ function lightbox2_general_settings_form() {
  * numeric.
  */
 function lightbox2_general_settings_form_validate($form, &$form_state) {
-  if ($form_state['values']['op'] == 'Save configuration') {
+  if ($form_state['values']['op'] == t('Save configuration')) {
     $border_size = $form_state['values']['lightbox2_border_size'];
     $box_hex_colour = $form_state['values']['lightbox2_box_color'];
     $font_hex_colour = $form_state['values']['lightbox2_font_color'];
@@ -521,7 +537,6 @@ function lightbox2_general_settings_form_validate($form, &$form_state) {
       }
     }
 
-
     if (!_lightbox2_validate_hex_color($overlay_hex_colour)) {
       form_set_error('lightbox2_overlay_color', t('You must enter a properly formed hex value.'));
     }
@@ -532,7 +547,7 @@ function lightbox2_general_settings_form_validate($form, &$form_state) {
       }
 
       if (!_lightbox2_validate_hex_color($box_hex_colour)) {
-        form_set_error('lightbox2_border_color', t('You must enter a properly formed hex value.'));
+        form_set_error('lightbox2_box_color', t('You must enter a properly formed hex value.'));
       }
 
       if (!_lightbox2_validate_hex_color($font_hex_colour)) {
@@ -622,7 +637,7 @@ function lightbox2_slideshow_settings_form() {
   );
 
   // Add checkbox for "pausing on prev click".
-  $form['lightbox2_slideshow_pause_on_prev_click'] = array(
+  $form['lightbox2_slideshow_pause_on_previous_click'] = array(
     '#type' => 'checkbox',
     '#title' => t('Pause slideshow on "Previous Image" click'),
     '#description' => t('When enabled the slideshow is automatically paused, and the previous image shown, when the "Previous" button is clicked.'),
@@ -770,7 +785,7 @@ function lightbox2_auto_image_handling_settings_form() {
     $sizes = _image_get_sizes();
     foreach ($sizes as $size_key => $size) {
       if ($size_key == 'original' or $size_key == '_original')  {
-        $size_key = '';
+        $size_key = 'original';
       }
       $size_options[$size_key] = $size['label'];
     }
@@ -778,7 +793,7 @@ function lightbox2_auto_image_handling_settings_form() {
       '#type' => 'select',
       '#title' => t('Lightbox image display size'),
       '#options' => $size_options,
-      '#default_value' => variable_get('lightbox2_display_image_size', ''),
+      '#default_value' => variable_get('lightbox2_display_image_size', 'original'),
       '#description' => t('Select which image size will be loaded in the lightbox.  This only applies to images uploaded with the Image module.'),
     );
 
