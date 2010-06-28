@@ -1,4 +1,4 @@
-/* $Id: lightbox.js,v 1.5.2.6.2.120 2009/09/13 23:27:32 snpower Exp $ */
+/* $Id: lightbox.js,v 1.5.2.6.2.114 2009/01/05 14:21:52 snpower Exp $ */
 
 /**
  * jQuery Lightbox
@@ -18,7 +18,6 @@
  */
 
 var Lightbox = {
-  auto_modal : false,
   overlayOpacity : 0.8, // Controls transparency of shadow overlay.
   overlayColor : '000', // Controls colour of shadow overlay.
   disableCloseClick : true,
@@ -200,15 +199,11 @@ var Lightbox = {
   // Loops through anchor tags looking for 'lightbox', 'lightshow' and
   // 'lightframe', etc, references and applies onclick events to appropriate
   // links. You can rerun after dynamically adding images w/ajax.
-  initList : function(context) {
-
-    if (context == undefined || context == null) {
-      context = document;
-    }
+  initList : function() {
 
     // Attach lightbox to any links with rel 'lightbox', 'lightshow' or
     // 'lightframe', etc.
-    $("a[rel^='lightbox']:not(.lightbox-processed), area[rel^='lightbox']:not(.lightbox-processed)", context).addClass('lightbox-processed').click(function(e) {
+    $("a[@rel^='lightbox']:not(.lightbox-processed), area[@rel^='lightbox']:not(.lightbox-processed)").addClass('lightbox-processed').click(function(e) {
       if (Lightbox.disableCloseClick) {
         $('#lightbox').unbind('click');
         $('#lightbox').click(function() { Lightbox.end('forceClose'); } );
@@ -217,7 +212,7 @@ var Lightbox = {
       if (e.preventDefault) { e.preventDefault(); }
       return false;
     });
-    $("a[rel^='lightshow']:not(.lightbox-processed), area[rel^='lightshow']:not(.lightbox-processed)", context).addClass('lightbox-processed').click(function(e) {
+    $("a[@rel^='lightshow']:not(.lightbox-processed), area[@rel^='lightshow']:not(.lightbox-processed)").addClass('lightbox-processed').click(function(e) {
       if (Lightbox.disableCloseClick) {
         $('#lightbox').unbind('click');
         $('#lightbox').click(function() { Lightbox.end('forceClose'); } );
@@ -226,7 +221,7 @@ var Lightbox = {
       if (e.preventDefault) { e.preventDefault(); }
       return false;
     });
-    $("a[rel^='lightframe']:not(.lightbox-processed), area[rel^='lightframe']:not(.lightbox-processed)", context).addClass('lightbox-processed').click(function(e) {
+    $("a[@rel^='lightframe']:not(.lightbox-processed), area[@rel^='lightframe']:not(.lightbox-processed)").addClass('lightbox-processed').click(function(e) {
       if (Lightbox.disableCloseClick) {
         $('#lightbox').unbind('click');
         $('#lightbox').click(function() { Lightbox.end('forceClose'); } );
@@ -236,7 +231,7 @@ var Lightbox = {
       return false;
     });
     if (Lightbox.enableVideo) {
-      $("a[rel^='lightvideo']:not(.lightbox-processed), area[rel^='lightvideo']:not(.lightbox-processed)", context).addClass('lightbox-processed').click(function(e) {
+      $("a[@rel^='lightvideo']:not(.lightbox-processed), area[@rel^='lightvideo']:not(.lightbox-processed)").addClass('lightbox-processed').click(function(e) {
         if (Lightbox.disableCloseClick) {
           $('#lightbox').unbind('click');
           $('#lightbox').click(function() { Lightbox.end('forceClose'); } );
@@ -246,14 +241,7 @@ var Lightbox = {
         return false;
       });
     }
-    $("a[rel^='lightmodal']:not(.lightbox-processed), area[rel^='lightmodal']:not(.lightbox-processed)", context).addClass('lightbox-processed').click(function(e) {
-      $('#lightbox').unbind('click');
-      Lightbox.start(this, false, false, false, true);
-      if (e.preventDefault) { e.preventDefault(); }
-      return false;
-    });
-    $("#lightboxAutoModal:not(.lightbox-processed)", context).addClass('lightbox-processed').click(function(e) {
-      Lightbox.auto_modal = true;
+    $("a[@rel^='lightmodal']:not(.lightbox-processed), area[@rel^='lightmodal']:not(.lightbox-processed)").addClass('lightbox-processed').click(function(e) {
       $('#lightbox').unbind('click');
       Lightbox.start(this, false, false, false, true);
       if (e.preventDefault) { e.preventDefault(); }
@@ -344,25 +332,15 @@ var Lightbox = {
         // Loop through anchors and add them to imageArray.
         for (i = 0; i < anchors.length; i++) {
           anchor = anchors[i];
-          if (anchor.href && typeof(anchor.href) == "string" && $(anchor).attr('rel')) {
+          if (anchor.href && $(anchor).attr('rel')) {
             var rel_data = Lightbox.parseRel(anchor);
             var anchor_title = (rel_data["title"] ? rel_data["title"] : anchor.title);
-            img_alt = anchor.title;
-            if (!img_alt) {
-              var anchor_img = $(anchor).find("img");
-              if (anchor_img && $(anchor_img).attr("alt")) {
-                img_alt = $(anchor_img).attr("alt");
-              }
-              else {
-                img_alt = title;
-              }
-            }
             if (rel_data["rel"] == rel) {
               if (rel_data["group"] == rel_group) {
                 if (Lightbox.isLightframe || Lightbox.isModal) {
                   rel_style = rel_data["style"];
                 }
-                Lightbox.imageArray.push([anchor.href, anchor_title, img_alt, rel_style]);
+                Lightbox.imageArray.push([anchor.href, anchor_title, alt, rel_style]);
               }
             }
           }
@@ -643,7 +621,7 @@ var Lightbox = {
     // Handle display of image content.
     else {
       $('#imageContainer').show();
-      if ($.browser.safari) {
+      if($.browser.safari) {
         $('#lightboxImage').css({'zIndex': '10500'}).show();
       }
       else {
@@ -913,10 +891,7 @@ var Lightbox = {
       $('#frameContainer').empty().hide();
     }
     else if (Lightbox.isVideo || Lightbox.isModal) {
-      if (!Lightbox.auto_modal) {
-        $('#modalContainer').hide().html("");
-      }
-      Lightbox.auto_modal = false;
+      $('#modalContainer').hide().html("");
     }
   },
 
@@ -949,20 +924,20 @@ var Lightbox = {
   // Returns array with page width, height and window width, height.
   // Core code from - quirksmode.com.
   // Edit for Firefox by pHaez.
-
   getPageSize : function() {
 
     var xScroll, yScroll;
 
-    if (window.innerHeight && window.scrollMaxY) {
-      xScroll = window.innerWidth + window.scrollMaxX;
-      yScroll = window.innerHeight + window.scrollMaxY;
-    }
-    else if (document.body.scrollHeight > document.body.offsetHeight) { // All but Explorer Mac.
+    if (document.body.scrollHeight > document.body.offsetHeight) { // all but Explorer Mac
       xScroll = document.body.scrollWidth;
       yScroll = document.body.scrollHeight;
     }
-    else { // Explorer Mac...would also work in Explorer 6 Strict, Mozilla and Safari.
+    else if (window.innerHeight && window.scrollMaxY) {
+      xScroll = window.innerWidth + window.scrollMaxX;
+      yScroll = window.innerHeight + window.scrollMaxY;
+    }
+    // Explorer Mac...would also work in Explorer 6 Strict, Mozilla and Safari.
+    else {
       xScroll = document.body.offsetWidth;
       yScroll = document.body.offsetHeight;
     }
@@ -978,7 +953,8 @@ var Lightbox = {
       }
       windowHeight = self.innerHeight;
     }
-    else if (document.documentElement && document.documentElement.clientHeight) { // Explorer 6 Strict Mode.
+    // Explorer 6 Strict Mode.
+    else if (document.documentElement && document.documentElement.clientHeight) {
       windowWidth = document.documentElement.clientWidth;
       windowHeight = document.documentElement.clientHeight;
     }
@@ -986,21 +962,26 @@ var Lightbox = {
       windowWidth = document.body.clientWidth;
       windowHeight = document.body.clientHeight;
     }
-    // For small pages with total height less than height of the viewport.
+
+
+    // For small pages with total height less then height of the viewport.
     if (yScroll < windowHeight) {
       pageHeight = windowHeight;
     }
     else {
       pageHeight = yScroll;
     }
-    // For small pages with total width less than width of the viewport.
+
+
+    // For small pages with total width less then width of the viewport.
     if (xScroll < windowWidth) {
-      pageWidth = xScroll;
-    }
-    else {
       pageWidth = windowWidth;
     }
-    arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight);
+    else {
+      pageWidth = xScroll;
+    }
+
+    arrayPageSize = [pageWidth, pageHeight, windowWidth, windowHeight];
     return arrayPageSize;
   },
 
@@ -1105,10 +1086,10 @@ var Lightbox = {
   triggerLightbox: function (rel_type, rel_group) {
     if (rel_type.length) {
       if (rel_group && rel_group.length) {
-        $("a[rel^='" + rel_type +"\[" + rel_group + "\]'], area[rel^='" + rel_type +"\[" + rel_group + "\]']").eq(0).trigger("click");
+        $("a[@rel^='" + rel_type +"\[" + rel_group + "\]'], area[@rel^='" + rel_type +"\[" + rel_group + "\]']").eq(0).trigger("click");
       }
       else {
-        $("a[rel^='" + rel_type +"'], area[rel^='" + rel_type +"']").eq(0).trigger("click");
+        $("a[@rel^='" + rel_type +"'], area[@rel^='" + rel_type +"']").eq(0).trigger("click");
       }
     }
   },
@@ -1135,11 +1116,11 @@ var Lightbox = {
 Drupal.behaviors.initLightbox = function (context) {
   $('body:not(.lightbox-processed)', context).addClass('lightbox-processed').each(function() {
     Lightbox.initialize();
+    $('#lightboxAutoModal').triggerHandler('click');
     return false; // Break the each loop.
   });
 
   // Attach lightbox to any links with lightbox rels.
-  Lightbox.initList(context);
-  $('#lightboxAutoModal', context).triggerHandler('click');
+  Lightbox.initList();
 };
 

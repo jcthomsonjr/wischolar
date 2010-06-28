@@ -1,5 +1,5 @@
 <?php
-// $Id: lightbox2.formatter.inc,v 1.1.2.19 2009/09/13 22:25:37 snpower Exp $
+// $Id: lightbox2.formatter.inc,v 1.1.2.16 2009/01/05 13:30:18 snpower Exp $
 
 /**
  * @file
@@ -183,8 +183,8 @@ function theme_imagefield_image_imagecache_lightbox2($view_preset, $field_name, 
       $node_links[] = l($node_link_text, 'node/'. $item['nid'], array('attributes' => $attributes));
     }
     $download_link_text = check_plain(variable_get('lightbox2_download_link_text', 'Download Original'));
-    if (!empty($download_link_text) && user_access('download original image')) {
-      $node_links[] = l($download_link_text, file_create_url($item['filepath']), array('attributes' => array('target' => '_blank', 'id' => 'download_link_text')));
+    if (!empty($download_link_text) && user_access('download original image') && user_access('view imagefield uploads')) {
+      $node_links[] = l($download_link_text, $item['filepath'], array('attributes' => array('target' => '_blank', 'id' => 'download_link_text')));
     }
   }
 
@@ -294,9 +294,6 @@ function theme_lightbox2_file_formatter_lightbox2_iframe($file, $field, $file_fo
     $file_data = unserialize($file->data);
   }
   $description = $file_data['description'];
-  if (empty($description)) {
-    $description = $file->filename;
-  }
   $attributes = array();
   $attributes['id'] = 'node_link_text';
   $target = variable_get('lightbox2_node_link_target', FALSE);

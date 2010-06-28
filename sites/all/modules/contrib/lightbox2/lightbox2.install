@@ -1,5 +1,5 @@
 <?php
-// $Id: lightbox2.install,v 1.1.4.4.2.45 2009/07/07 23:31:03 snpower Exp $
+// $Id: lightbox2.install,v 1.1.4.4.2.44 2009/01/05 03:19:51 snpower Exp $
 
 /**
  * @file
@@ -168,10 +168,3 @@ function lightbox2_update_3() {
   return array();
 }
 
-function lightbox2_update_6001() {
-  $size = variable_get('lightbox2_display_image_size', 'original');
-  if ($size == '') {
-    variable_set('lightbox2_display_image_size', 'original');
-  }
-  return array();
-}

@@ -1,5 +1,5 @@
 <?php
-// $Id: lightbox2.admin.inc,v 1.1.2.27 2009/07/07 23:31:03 snpower Exp $
+// $Id: lightbox2.admin.inc,v 1.1.2.24 2009/01/07 17:46:47 snpower Exp $
 
 /**
  * @file
@@ -98,7 +98,7 @@ function lightbox2_general_settings_form() {
   $form['layout_fieldset']['lightbox2_download_link_text'] = array(
     '#type' => 'textfield',
     '#title' => t('Text for image original link'),
-    '#description' => t('This is the text that will appear as the link to the original file underneath the image in the lightbox.  Leave this blank for the link not to appear.  It will only appear for images uploaded via the "image" or "imagefield" modules.  Users will need the "download original image" permission, but also the "view original images" permission if using the "image" module.'),
+    '#description' => t('This is the text that will appear as the link to the original file underneath the image in the lightbox.  Leave this blank for the link not to appear.'),
     '#default_value' => variable_get('lightbox2_download_link_text', 'Download Original'),
   );
 
@@ -770,7 +770,7 @@ function lightbox2_auto_image_handling_settings_form() {
     $sizes = _image_get_sizes();
     foreach ($sizes as $size_key => $size) {
       if ($size_key == 'original' or $size_key == '_original')  {
-        $size_key = 'original';
+        $size_key = '';
       }
       $size_options[$size_key] = $size['label'];
     }
@@ -778,7 +778,7 @@ function lightbox2_auto_image_handling_settings_form() {
       '#type' => 'select',
       '#title' => t('Lightbox image display size'),
       '#options' => $size_options,
-      '#default_value' => variable_get('lightbox2_display_image_size', 'original'),
+      '#default_value' => variable_get('lightbox2_display_image_size', ''),
       '#description' => t('Select which image size will be loaded in the lightbox.  This only applies to images uploaded with the Image module.'),
     );
 
