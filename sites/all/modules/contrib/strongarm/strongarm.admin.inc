@@ -1,5 +1,5 @@
 <?php
-// $Id: strongarm.admin.inc,v 1.1.2.1 2009/08/03 14:06:52 yhahn Exp $
+// $Id: strongarm.admin.inc,v 1.1.2.2 2009/11/18 19:02:13 jmiccolis Exp $
 
 /**
  * Main admin page menu callback.
@@ -80,11 +80,11 @@ function strongarm_admin_form() {
       );
       $form['current_value'][$name] = array(
         '#type' => 'markup',
-        '#value' => _strongarm_readable($overridden[$name]),
+        '#value' => check_plain(_strongarm_readable($overridden[$name])),
       );
       $form['default_value'][$name] = array(
         '#type' => 'markup',
-        '#value' => _strongarm_readable($var_conf[$name]),
+        '#value' => check_plain(_strongarm_readable($var_conf[$name])),
       );
       $form['culprit'][$name] = array(
         '#type' => 'markup',
