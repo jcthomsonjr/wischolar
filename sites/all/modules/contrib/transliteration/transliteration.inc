@@ -1,5 +1,5 @@
 <?php
-// $Id: transliteration.inc,v 1.5 2009/06/09 19:07:06 smk Exp $
+// $Id: transliteration.inc,v 1.2.2.2 2009/06/07 19:05:50 smk Exp $
 
 /**
  * Sanitize a file name.
@@ -202,29 +202,33 @@ function transliteration_process($string, $unknown = '?', $langcode = NULL) {
  * @see transliteration_get()
  */
 function _transliteration_replace($ord, $unknown = '?', $langcode = NULL) {
-  static $map = array();
-
   if (!isset($langcode)) {
     global $language;
     $langcode = $language->language;
   }
+  static $map = array(), $template = array();
 
   $bank = $ord >> 8;
 
-  if (!isset($map[$bank][$langcode])) {
+  // Check if we need to load a new bank
+  if (!isset($template[$bank])) {
     $file = drupal_get_path('module', 'transliteration') . '/data/' . sprintf('x%02x', $bank) . '.php';
     if (file_exists($file)) {
-      include $file;
-      if ($langcode != 'en' && isset($variant[$langcode])) {
-        // Merge in language specific mappings.
-        $map[$bank][$langcode] = $variant[$langcode] + $base;
-      }
-      else {
-        $map[$bank][$langcode] = $base;
-      }
+      $template[$bank] = include ($file);
     }
     else {
-      $map[$bank][$langcode] = array();
+      $template[$bank] = array('en' => array());
+    }
+  }
+
+  // Check if we need to create new mappings with language specific alterations
+  if (!isset($map[$bank][$langcode])) {
+    if ($langcode != 'en' && isset($template[$bank][$langcode])) {
+      // Merge language specific mappings with the default transliteration table
+      $map[$bank][$langcode] = $template[$bank][$langcode] + $template[$bank]['en'];
+    }
+    else {
+      $map[$bank][$langcode] = $template[$bank]['en'];
     }
   }
 
