@@ -8,6 +8,8 @@ function iqss_gking_init(){
   if(!iqss_gking_on_gking_site()) return;
   jquery_ui_add(array('ui.tabs'));
   drupal_add_css(drupal_get_path('module', 'vsite')."/theme/jquery_ui/jquery.ui/themes/openscholar/ui.tabs.css");
+  drupal_add_css(drupal_get_path('module', 'iqss_gking')."iqss_gking.css");
+  drupal_add_js(drupal_get_path('module', 'iqss_gking')."iqss_gking.js");
 }
 
 /**
@@ -25,7 +27,7 @@ function iqss_gking_menu(){
     'file' => 'taxonomy.pages.inc',
     'file path' => drupal_get_path('module', 'taxonomy'),
   );
-  
+
   return $items;
 }
 
@@ -45,8 +47,8 @@ function iqss_gking_theme() {
  */
 function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
   if ($op == 'list') {
-    $blocks['taxonomy_applications']['info'] = t('Areas of Research - Applications');
-    $blocks['taxonomy_methods']['info'] = t('Areas of Research - Methods');
+    $blocks['taxonomy_applications']['info'] = t('Applications');
+    $blocks['taxonomy_methods']['info'] = t('Methods');
     $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
     return $blocks;
   }
@@ -66,7 +68,7 @@ function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
  * Block to filter a taxonomy by type
  */
 function iqss_gking_filter_by_type_block(){
-  
+
   $router_item = menu_get_item();
   if(strpos($router_item['path'],'taxonomy/term') !== 0) return array();
 
@@ -74,14 +76,14 @@ function iqss_gking_filter_by_type_block(){
   $view->init();
   $view->set_display('block_2');
   $view->set_arguments(array( current($router_item['page_arguments']) ));
-  
+
   //Change to the tax. path
   $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
   $view->execute();
-  
+
   $output = $view->render();
   if(!$output) return array();
-  
+
   $a_term = taxonomy_get_term(current($router_item['page_arguments']));
 
   return count($view->result)?array('subject' => $a_term->name." by Publication Type",'content' => $output):array();
@@ -141,6 +143,17 @@ function theme_iqss_gking_term_description($term){
   return $item;
 }
 
+
+function theme_iqss_gking_dl($term){
+
+  $term_path = "taxonomy/term/$term->tid";
+  $term_link = l('More', $term_path, array('attributes'=>array('class'=>'more')));
+  $item = '<dt><span>' . $term->name . $term_link . '</span><dd>'. $term->description . '</dd>';
+  return $item;
+}
+
+
+
 /**
  * Return the block contents for the area of research-applications block
  */
@@ -154,12 +167,12 @@ function _iqss_gking_taxonomy_methods_wgt(){
     if($o_vocab->name != "Research Interests") continue;
 
     $tree = taxonomy_get_tree($n_vid,0,-1,2);
-    
+
     foreach ($tree as $n_index => $o_vocab){
       if($o_vocab->name != "Methods" || $o_vocab->depth != 0) continue;
       $n_index++;
       $items = vsite_taxonomy_build_list_items($n_index, $tree, 'iqss_gking_term_description');
-      $output .= theme('item_list', $items);
+      $output .= theme('iqss_gking_dl', $items);
       break;
     }
     break;
@@ -181,7 +194,7 @@ function _iqss_gking_taxonomy_applications_wgt(){
   	if($o_vocab->name != "Research Interests") continue;
 
   	$tree = taxonomy_get_tree($n_vid,0,-1,2);
-  	
+
   	foreach ($tree as $n_index => $o_vocab){
   		if($o_vocab->name != "Applications" || $o_vocab->depth != 0) continue;
   		$n_index++;
@@ -210,7 +223,7 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
 	    	break;
 	    }
     }
-    
+
     $a_term = taxonomy_get_term(current($router_item['page_arguments']));
     if($a_term->vid == $n_vid){
 		  //Add this block category pages on Garys site
@@ -267,22 +280,22 @@ function iqss_gking_biblio_term_page($str_tids, $s_biblio_type){
     if ($names) {
       $title = implode(', ', $names);
       drupal_set_title(check_plain($title));
-      
+
       $descendant_tids = array();
       foreach ($tids as $index => $tid) {
         $term = taxonomy_get_term($tid);
         $tree = taxonomy_get_tree($term->vid, $tid, -1, 0);
         $descendant_tids[] = array_merge(array($tid), array_map('_taxonomy_get_tid_from_term', $tree));
       }
-      
+
       $args = call_user_func_array('array_merge', $descendant_tids);
       $placeholders = db_placeholders($args, 'int');
       $args[] = str_replace("-"," ",$s_biblio_type);
-  
+
       $sql = 'SELECT DISTINCT(n.nid), n.sticky, n.title, n.created FROM {node} n INNER JOIN {term_node} tn ON n.vid = tn.vid INNER JOIN {biblio} b ON b.nid = n.nid INNER JOIN {biblio_types} bt ON b.biblio_type = bt.tid  WHERE tn.tid IN ('. $placeholders .') AND bt.name LIKE \'%s\' AND n.status = 1 ORDER BY n.sticky DESC, n.created DESC';
-            
+
       return theme('taxonomy_term_page', $tids, db_query($sql, $args));
-      
+
     }
   }
 }
