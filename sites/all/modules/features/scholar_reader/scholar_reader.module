@@ -174,7 +174,7 @@ function scholar_reader_block($op = 'list', $delta = false, $edit = array()) {
  */
 function _scholar_reader_twitter_wgt(){
 
-	if(!($vsite = vsite_get_vsite())) return array();
+	if(!($vsite = vsite_get_vsite()) || !$vsite->feature_access('scholar_software')) return array();
 
 	//Do they have thier feed set?
 	if(!strlen($vsite->settings['reader']['twitter_username'])) return array();
