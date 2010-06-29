@@ -2,14 +2,14 @@
 
 /**
  * scholar_book.module
- * 
- * Shows a "table of contents" widget when in a "book" context. 
+ *
+ * Shows a "table of contents" widget when in a "book" context.
  * Implements spaces settings to allow users to select the toc location
  * (in the content area or as widget).
- * 
+ *
  * @todo: book outline
- * 
- * 
+ *
+ *
  */
 
 define("SCHOLAR_BOOK_MAXLEN", 50);   // how long are the node title in toc
@@ -22,7 +22,7 @@ include_once('scholar_book.features.inc');
 /**
  * Implementation of hook_menu()
  */
-function scholar_book_menu(){	
+function scholar_book_menu(){
   $items['node/%node/booklet'] = array(
     'title' => 'Booklet Outline',
     'page callback' => 'scholar_book_outline_edit',
@@ -36,7 +36,7 @@ function scholar_book_menu(){
 }
 /**
  * Check access for book outline view
- * @return 
+ * @return
  *  TRUE if site admin or user 1, FALSE otherwise
  */
 function scholar_book_outline_access($node){
@@ -94,7 +94,7 @@ function scholar_book_strongarm() {
   */
 
   $conf['book_allowed_types'] = array('book');
-  
+
   $conf['node_options_book'] = array('status', 'revision');
 
   $conf['upload_book'] = TRUE;
@@ -151,7 +151,7 @@ function scholar_book_block($op = 'list', $delta = 0) {
  * @see _scholar_book_booktoc
  */
 function _scholar_book_block_booktoc() {
-  $vsite = vsite_get_vsite(); 
+  $vsite = vsite_get_vsite();
   if ($vsite && scholar_book_toc_location() == SCHOLAR_BOOK_TOC_WIDGET){
     return _scholar_book_booktoc();
   }
@@ -159,7 +159,7 @@ function _scholar_book_block_booktoc() {
 
 
 /**
- * toc main function. 
+ * toc main function.
  */
 function _scholar_book_booktoc() {
 
@@ -205,7 +205,7 @@ function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $tr
 
     //now write content only if necessary
     if (strlen($c) > 2) {
-      $content .= "<ul class=\"booktoc\">\n". $c ."</ul>\n";
+      $content .= "<ul class=\"hierarchic\">\n". $c ."</ul>\n";
     }
     $output .= '</li>';
 
@@ -222,9 +222,9 @@ function _scholar_book_recursive( $mlid, $nid, $tit, $step, $max_recursions, $tr
 function scholar_book_content_extra_fields($type_name){
   if (book_type_is_allowed($type_name)) {
     $extras['booktoc'] = array(
-      'label' => t('Book toc'), 
-      'description' => t('Book toc displayed when a node is viewed.'), 
-      'weight' => - 10 
+      'label' => t('Book toc'),
+      'description' => t('Book toc displayed when a node is viewed.'),
+      'weight' => - 10
     );
     return $extras;
   }
@@ -243,17 +243,17 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
           $output = '<div class="book-menu"><h3 class="title">' . $block_toc['subject'] . '</h3>' . $block_toc['content'] . '</div>';
           $weight = content_extra_field_weight($node->type, 'booktoc');
           $node->content['booktoc'] = array(
-            '#weight' => ! empty($weight) ? $weight : - 10, 
-            '#value' => $output 
+            '#weight' => ! empty($weight) ? $weight : - 10,
+            '#value' => $output
           );
         }
       }
-      
+
       // unset the book navigation links
       if (module_exists('book') && book_type_is_allowed($node->type)) {
         unset($node->content['book_navigation']);
       }
-      
+
       if (menu_get_object() === $node) {
         // set the context to the roob book node
         if (! empty($node->book['bid'])) {
@@ -269,7 +269,7 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
  * Implementation of hook_form_alter().
  */
 function scholar_book_form_alter(&$form, &$form_state, $form_id){
-  
+
   // alter book forms  - new booklet
   if ($form['#id'] == 'node-form' && book_type_is_allowed($form['#node']->type)) {
     $node = $form['#node'];
@@ -277,28 +277,29 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
     if ((! isset($_GET['parent']) || empty($_GET['parent'])) && ! empty($form['book']) && ! $form['nid']['#value']) {
       // Fieldset mods
       $remove = array(
-        '#type', 
-        '#title', 
-        '#attributes', 
-        'bid', 
-        'weight', 
-        'plid' 
+        '#type',
+        '#title',
+        '#attributes',
+        'bid',
+        'weight',
+        'plid'
       );
       foreach ( $remove as $element ) {
         unset($form['book'][$element]);
       }
+
       $form['book']['plid']['#type'] = 'hidden';
-      $form['book']['plid']['#value'] = - 1;
-      
+      $form['book']['plid']['#value'] = -1;
+
       $form['book']['bid']['#type'] = 'value';
       $form['book']['bid']['#value'] = 'new';
-      
+
       $form['book']['weight']['#type'] = 'value';
       $form['book']['weight']['#value'] = 0;
-      
+
       $form['title']['#title'] = t('Booklet Title');
     }
-    
+
     //adding or editing child booklet page
     if (! empty($_GET['parent']) && ! empty($form['book']) || $form['nid']['#value']) {
       // Fieldset mods
@@ -307,66 +308,69 @@ function scholar_book_form_alter(&$form, &$form_state, $form_id){
       $form['book']['#title'] = t('Booklet information');
       $form['book']['#collapsible'] = TRUE;
       $form['book']['#collapsed'] = FALSE; // since this is new node user should always see options expanded by default
-      
+
 
       if (! empty($form['book']['bid']['#options']))
         unset($form['book']['bid']['#options']['new']);
-        
+
       //make existing ['bid'] element into a "value" and create new "item" element to display info to the user
       $val = $form['book']['bid']['#default_value']; //get the top level book id
       $form['book']['bid']['#type'] = 'value';
       $form['book']['bid']['#value'] = $val;
-      
+
       //cleanup the other bid elements
       foreach ( $form['book']['bid'] as $key => $element ) {
         if (! in_array($key, array(
-          '#type', 
-          '#value', 
-          '#description', 
-          '#options' 
+          '#type',
+          '#value',
+          '#description',
+          '#options'
         ))) {
           unset($form['book']['bid'][$key]);
         }
       }
-      
+
       //add a new form element to display info top level book to user
       $form['book']['top_level']['#type'] = 'item';
       $form['book']['top_level']['#value'] = '<p>' . t('This page will be posted to booklet: !booklet </strong>', array(
-        '!booklet' => '<strong>' . $form['book']['bid']['#options'][$val] . '</strong>' 
+        '!booklet' => '<strong>' . $form['book']['bid']['#options'][$val] . '</strong>'
       )) . '</p>';
       $form['book']['top_level']['#weight'] = - 10;
       // $form['book']['top-level']['#title'] = t('Booklet');  // not needed
       // $form['book']['top-level']['#description'] =t('This page will be a part of the selected booklet.');  // not needed
-      
+
 
       //customize plid form element
       $form['book']['plid']['#title'] = t('Parent item');
       $form['book']['plid']['#description'] = t('Set the parent item of this page. Your selection will determine the place where this page will reside in this booklet\'s hierarchy. You can think of the booklet\'s hierarchy as the "table of contents" for your booklet. You could select the top-level booklet itself or another page within the booklet. The maximum depth for a booklet and all child pages is 9.');
-      
+
+      //capture previous weight value
+      $weight = $form['book']['weight']['#default_value'];
+
       //reset weight to a '#type' = 'value'
       unset($form['book']['weight']);
       $form['book']['weight']['#type'] = 'value';
-      $form['book']['weight']['#value'] = 1;
-      
+      $form['book']['weight']['#value'] = $weight;
+
       // Filter book options by current space
       _scholar_book_options_filter($form);
-    
+
     }
   }
 }
 
 /**
- * Function to filter the book options when add/edit a node 
+ * Function to filter the book options when add/edit a node
  * i.e. show only books which belong to the current space
  * @see scholar_book_form_alter()
  */
 function _scholar_book_options_filter(&$form){
-  
+
   if ($view = views_get_view('scholar_book_list')) {
     $view->set_display();
     $view->set_items_per_page(0);
     $view->execute();
-    
+
     // Collect books in this space into an array
     $books = array();
     $books[$node->nid] = 1;
@@ -375,7 +379,7 @@ function _scholar_book_options_filter(&$form){
         $books[$row->nid] = 1;
       }
     }
-    
+
     // Use collected array to filter options
     foreach ( $form['book']['bid']['#options'] as $k => $v ) {
       if (is_numeric($k) && ! isset($books[$k])) {
@@ -422,14 +426,14 @@ function scholar_book_context_links_alter(&$links) {
 function scholar_book_toc_location(){
   vsite_include('vsiteapi');
   $vsite = vsite_get_vsite();
-    if (isset($vsite->settings['scholar_book']['scholar_book_toc_location']) 
+    if (isset($vsite->settings['scholar_book']['scholar_book_toc_location'])
     && $vsite->settings['scholar_book']['scholar_book_toc_location'] == 1) {
       return SCHOLAR_BOOK_TOC_CONTENT;
     }
     else {
       return SCHOLAR_BOOK_TOC_WIDGET;
     }
-  
+
 }
 
 /**
@@ -455,13 +459,13 @@ function scholar_book_toc_location(){
 //  }
 //
 //  /**
-//   * if book feature is private/public, you can add only content 
+//   * if book feature is private/public, you can add only content
 //   * types that belong to private/public features
 //   */
 //  vsite_include('vsiteapi');
 //  $vsite = vsite_get_vsite();
 //  $privacy = $vsite -> features['scholar_book'];
-//  
+//
 //  $items = vsite_create_links($privacy);
 //
 //  // preserve the "parent" querystring
@@ -470,10 +474,10 @@ function scholar_book_toc_location(){
 //    $item['query'] = $query;
 //  }
 //  $result = theme('ctools_dropdown', t('Add child ...'), $items, FALSE, 'context-links') . $result;
-//  
+//
 //  $links['book_add_child'] = array(
-//    'title' => $result, 
-//    'html' => TRUE 
+//    'title' => $result,
+//    'html' => TRUE
 //  );
 //}
 
