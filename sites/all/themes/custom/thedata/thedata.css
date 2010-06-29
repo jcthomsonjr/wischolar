@@ -1,5 +1,6 @@
 body {
 	font:0.9em/1.5em Helvetica Neue,Helvetica,Arial,sans-serif;
+	background: #909d9c;
 	}
 
 a, a:visited {
@@ -16,15 +17,15 @@ body.header-main #header-main {
 	}
 
 #content-wrapper {
-	background: url(images/container.png) repeat-y 0 0 transparent;
+	background: transparent url(images/container.png) repeat-y 0 0;
 	}
 
 #footer {
-	background:url(images/footer.png) no-repeat 0 0 #fff;
+	background: transparent url(images/footer.png) no-repeat 0 0;
 	}
 
 #header {
-	background: url(images/header.png) no-repeat 0 0;
+	background: transparent url(images/header.png) no-repeat 0 0;
 	}
 
 #header-wrapper {
@@ -90,8 +91,16 @@ body.header-main #header-main {
 	border-bottom: 1px dotted #ccc;
 	}
 
+#sidebar-left ul.booktoc a.active {
+	font-weight: bold;
+	}
+
+#sidebar-left li.booktoc ul.booktoc li a {
+	padding-left: 1em;
+	}
+
 .block-scholar_book h3.title {
-	display: none;
+	margin-bottom: 1em;
 	}
 
 .hmpgblurbs td {
