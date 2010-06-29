@@ -239,9 +239,7 @@ function openscholar_profile_tasks(&$task, $url) {
 
     // configure wisywig/tinymce
     _openscholar_profiles_wysiwyg_config();
-
-    // configure the contact module
-    _openscholar_profiles_contact_config();
+    
     /*
     // Set a default footer message.
     variable_set('site_footer', '&copy; 2009 '. l('IQSS', 'http://www.iq.harvard.edu', array('absolute' => TRUE)));

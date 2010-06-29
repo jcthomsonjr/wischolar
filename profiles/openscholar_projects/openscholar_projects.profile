@@ -16,18 +16,18 @@ function openscholar_projects_profile_details() {
  */
 function openscholar_projects_profile_modules() {
   return array(
-    'block', 
+    'block',
     'blog',
     'book',
-    'comment', 
+    'comment',
     'contact',
-    'filter', 
-    'help', 
+    'filter',
+    'help',
     'menu',
-    'node', 
+    'node',
     'system',
     'search',
-    'user', 
+    'user',
     'path',
     'php',
     'taxonomy',
@@ -70,7 +70,7 @@ function _openscholar_projects_core_modules() {
     'mollom',
     'og',
     'og_access',
-    'og_views', 
+    'og_views',
     'og_vocab',
     'og_actions',
     'override_node_options',
@@ -88,21 +88,21 @@ function _openscholar_projects_core_modules() {
     'transliteration',
     'ucreate',
     'ucreate_og',
-    'views', 
+    'views',
     'views_bulk_operations',
-    'views_ui', 
-    'views_export', 
+    'views_ui',
+    'views_export',
     'views_attach',
     'vertical_tabs',
     'wysiwyg',
   
 
   //cck
-    'content', 
+    'content',
     'content_copy',
     'diff',
-    'date_timezone', 
-    'date_api', 
+    'date_timezone',
+    'date_api',
     'date',
     'date_popup',
     'filefield',
@@ -126,7 +126,7 @@ function _openscholar_projects_core_modules() {
     'devel_generate',
     'install_profile_api',
     'schema',
-    'strongarm',    
+    'strongarm',
   );
   
   return $contrib_modules;
@@ -246,8 +246,6 @@ function openscholar_projects_profile_tasks(&$task, $url) {
     // configure wisywig/tinymce
      _openscholar_profiles_wysiwyg_config();
 
-    // configure the contact module
-    _openscholar_profiles_contact_config();
     /*
     // Set a default footer message.
     variable_set('site_footer', '&copy; 2009 '. l('IQSS', 'http://www.iq.harvard.edu', array('absolute' => TRUE)));
@@ -299,7 +297,7 @@ function _openscholar_projects_profile_batch_finished($success, $results) {
 
 /**
  * enable a couple of themes
- * TODO Get all the themes automatically and enable 
+ * TODO Get all the themes automatically and enable
  * them based on some predefined pattern (i.e. scholar_theme_*)
  *
  */
@@ -309,14 +307,14 @@ function _openscholar_projects_enable_themes(){
   // install_default_theme('scholar_projects_front');
   
   //get list of themes to be enabled - TODO: should 'kshepsle', 'rbates' be enabled for non IQSS installs?
-  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_projects_front', 'kshepsle', 'rbates', 'qualitative_methods'); 
+  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_projects_front', 'kshepsle', 'rbates', 'qualitative_methods');
   $themes = array_merge($themes, __openscholar_projects_get_scholar_theme_names());
   
   //enable the themes
   install_enable_theme($themes);
 	
   // disable all DB blocks
-  db_query("UPDATE {blocks} SET status = 0, region = ''"); 
+  db_query("UPDATE {blocks} SET status = 0, region = ''");
 }
 
 /**
