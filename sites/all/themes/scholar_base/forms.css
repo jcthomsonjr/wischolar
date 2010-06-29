@@ -63,27 +63,25 @@ fieldset,select {
 
 /* Search box */
 
-#search-form,
-#search-form-1 {
+.search-form {
   padding-bottom: 5px;
   }
 
-#content #search-form,
-#content #search-form-1 {
+#content .search-form {
   margin-top: 2em;
   }
 
-#search-form div.form-item {
+.search-form div.form-item {
   border: none;
   padding: 0;
   margin: 0;
   }
 
-#search-form label {
+.search-form label{
   display:none;
   }
 
-#search-form .container-inline {
+.search-form .container-inline {
   background: url(images/searchglass.gif) no-repeat 100% 0;
   height: 18px;
   line-height:normal;
@@ -91,24 +89,21 @@ fieldset,select {
   padding-right:22px;
   }
 
-#search-form #edit-keys-wrapper,
-#search-form #edit-keys-1-wrapper {
+.search-form .container-inline .form-item {
   width: 100%;
   }
 
-#search-form #edit-keys-wrapper,
-#search-form edit-keys-1-wrapper,
-#search-form input#edit-submit-1,
-#search-form input#edit-submit-1 {
+.search-form .container-inline .form-item,
+.search-form .form-submit {
   float:left;
   position: relative;
+  padding: 0;
   }
 
 
-#search-form #edit-keys,
-#search-form #edit-keys-1 {
+.search-form .container-inline .form-item .form-text {
   height: 14px;
-  padding: 3px 4px 0 0;
+  padding: 3px 4px 0 0 !important;
   border: none;
   border-left: 1px solid #b7c2ce;
   background: transparent;
@@ -119,9 +114,7 @@ fieldset,select {
   width: 43px;
   }
 
-#search-form input#edit-submit,
-#search-form input#edit-submit-1,
-#search-form input.form-submit {
+.search-form input.form-submit {
   background: transparent;
   font-size: 10px;
   width: 18px;

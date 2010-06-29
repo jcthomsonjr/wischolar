@@ -79,57 +79,6 @@ p.copy {
   text-align: center;
   }
 
-ul {
-  padding-left:0;
-  }
-
-ul li {
-  list-style:none;
-  }
-
-ol {
-  margin-left:18px;
-  padding-left:0;
-  }
-
-#content .node ul {
-  padding-left: 2em;
-  }
-
-#content .node ul li {
-  list-style: disc outside;
-  padding:0 0 0 3px;
-  }
-
-#content .node .terms ul, #content .node ul.links {
-  padding-left: 0;
-  }
-
-.terms ul li, .terms ul li a {
-  padding: 0;
-  }
-
-.terms ul li:after {
-  content:',';
-  }
-
-.terms ul li:last-child:after {
-  content: '';
-  }
-
-#content .node ul li ul {
-  margin-top: 1.5em;
-  }
-
-#content .node ul li li {
-  list-style: circle outside;
-  padding:0 0 0 3px;
-  }
-
-#navbar li, #header-top li, .views-admin-links li, ul.inline li {
-  display:inline;
-  }
-
 a, a:visited {
   text-decoration: none;
   color: #005C9C;
@@ -188,6 +137,63 @@ p.copy a.poweredby  {
   margin: 0;
   }
 
+div.terms {
+  clear: left !important;
+  }
+
+/*LISTS*/
+
+ul {
+  padding-left:0;
+  }
+
+ul li {
+  list-style:none;
+  }
+
+ol {
+  margin-left:18px;
+  padding-left:0;
+  }
+
+#content .node ul {
+  padding-left: 2em;
+  }
+
+#content .node ul li {
+  list-style: disc outside;
+  padding:0 0 0 3px;
+  }
+
+#content .node .terms ul, #content .node ul.links {
+  padding-left: 0;
+  }
+
+.terms ul li, .terms ul li a {
+  padding: 0;
+  }
+
+.terms ul li:after {
+  content:',';
+  }
+
+.terms ul li:last-child:after {
+  content: '';
+  }
+
+#content .node ul li ul {
+  margin-top: 1.5em;
+  }
+
+#content .node ul li li {
+  list-style: circle outside;
+  padding:0 0 0 3px;
+  }
+
+#navbar li, #header-top li, .views-admin-links li, ul.inline li {
+  display:inline;
+  }
+
 .block ul {
   padding: 0;
   }
@@ -228,10 +234,47 @@ ul.links li a:hover {
   font-size:10px;
   }
 
-div.terms {
-  clear: left !important;
+ul.hierarchic {
+  padding: 0;
+  margin: 0;
   }
 
+
+ul.hierarchic li {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1em;
+  font-weight: bold;
+  }
+
+ul.hierarchic li li {
+  margin-bottom: 0;
+  font-weight: normal;
+  }
+
+
+ul.hierarchic li a {
+  display:block;
+  border-bottom: 1px dotted #ccc;
+  padding-top: .3em;
+  padding-bottom: .1em;
+  }
+
+ul.hierarchic ul a{
+  padding:0 0 0 .5em;
+  }
+
+ul.hierarchic ul ul a{
+  padding:0 0 0 1.5em;
+  }
+
+ul.hierarchic ul ul ul a{
+  padding:0 0 0 2em;
+  }
+
+ul.hierarchic ul ul ul ul a{
+  padding:0 0 0 2.5em;
+  }
 
 /* Used for inline images */
 
