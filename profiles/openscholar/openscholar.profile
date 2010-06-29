@@ -232,7 +232,7 @@ function openscholar_profile_tasks(&$task, $url) {
   // Run additional configuration tasks
   // @todo Review all the cache/rebuild options at the end, some of them may not be needed
   if ($task == 'openscholar-configure') {
-    include_once 'profiles/openscholar_profiles_common.inc';
+    include_once 'openscholar_profiles_common.inc';
     install_include(_openscholar_core_modules());
     // create roles
     _openscholar_profiles_create_roles();
