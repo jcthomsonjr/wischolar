@@ -1,0 +1,155 @@
+<?php
+
+/**
+* @file
+* This is a temporary utility module to move hidden biblio data fields to visible cck fields.
+* This is intended for the IQSS installation only and should be removed after running.
+*/
+
+/**
+ * Implementation of hook_menu()
+ */
+function iqss_scholar_utility_menu() {
+  $path = drupal_get_path('module', 'iqss_scholar_utility');
+  $items = array();  
+ 
+   $items['admin/settings/iqss_scholar_utility'] = array(
+    'title' => t('IQSS Scholar Utility'),
+    'description' => t('One time use script to '),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 0,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('iqss_scholar_utility_form'),
+    'access arguments' =>  array('administer site configuration'),
+   'file' => 'iqss_scholar_utility.admin.inc',
+    'file path' => $path,
+  );
+  return $items;
+}
+   
+/**
+ *  Check all biblio nodes and imports data in "Other Biblio Fields" into cck biblio extra fields
+ * 
+ */
+function iqss_scholar_utility_other_biblio_fields(){ 
+
+  $custom = array();
+
+  $fields = array(
+  'Publication Language' => 'biblio_lang',
+  'Other Author Affiliations' => 'biblio_other_author_affiliations',
+  'French Abstract' => 'biblio_abst_f',
+  'Notes' => 'biblio_notes',
+  'Research Notes' => 'biblio_research_notes',
+  'Custom 1' => 'biblio_custom1',
+  'Custom 2' => 'biblio_custom2',
+  'Custom 3' => 'biblio_custom3',
+  'Custom 4' => 'biblio_custom4',
+  'Custom 5' => 'biblio_custom5',
+  'Custom 6' => 'biblio_custom6',
+  'Custom 7' => 'biblio_custom7',
+  'Translated Title' => 'biblio_translated_title',
+  // 'biblio_citekey', //autofield populated so do not include
+  // 'biblio_coins', //autofield populated so do not include
+  'Remote Database Name' => 'biblio_remote_db_name',
+  'Remote Database Provider' => 'biblio_remote_db_provider',
+  'Author Address' => 'biblio_auth_address',
+  'Label' => 'biblio_label',
+  'Access Date' => 'biblio_access_date',
+  );
+  
+ // $nid = 37;  //for TESTING PURPOSES ONLY - to test 1 node
+  $cond = isset($nid)? "AND b.nid = $nid" : ''; //for TESTING PURPOSES ONLY - to test 1 node
+  
+   $res= db_query("SELECT DISTINCT b.*, n.vid as version_id FROM {biblio} b LEFT JOIN {node} n USING (nid) HAVING n.vid = b.vid $cond");
+
+   while ($data = db_fetch_object($res)) {
+     $custom = array();
+     foreach($fields as $label => $field){
+       if (!empty($data -> $field)){      
+         $custom[$data->nid][$field] =  array($label => $data -> $field);
+       }
+     }
+
+     if (!empty($custom)){
+       //send to function to update
+       _iqss_scholar_utility_update_fields($custom);
+     }
+   } 
+    //delete the content cache - wildcard is enabled
+    cache_clear_all('content:', 'cache_content',  TRUE);    
+}
+
+/**
+ * Loop through the biblio field information and call the appropriate functions to create cck fields
+ * and log the changes being made
+ */
+function _iqss_scholar_utility_update_fields($custom = array()){
+  //load the node
+  $node = count($custom) ? node_load(key($custom)) : NULL;
+
+  if (is_object($node)){
+    //starting key number for field_biblio_extra, so we don't overwrite anything
+    $delta = count($node->field_biblio_extra);
+    foreach($custom[$node -> nid] as $fieldname => $field_info){ 
+      
+      //update the database directly instead of node save
+      _iqss_scholar_utility_update_db($node -> vid , $node -> nid, key($field_info), $field_info[key($field_info)], $delta);
+      
+       //remove the value for the hidden biblio field
+      _iqss_scholar_utility_remove($node -> vid , $node -> nid, $fieldname);
+     
+       //log the changes that are being made
+      _iqss_scholar_utility_log($node -> nid, $fieldname, key($field_info), $field_info[key($field_info)]);
+       
+      $delta++;
+    }
+  }
+}
+
+/**
+ * Log the changes made to a text file
+ */
+function _iqss_scholar_utility_log($nid, $fieldname, $label, $value){
+  $file = dirname(__FILE__) . '/' .'iqss_scholar_utility.log.txt';
+  //seperate data values with --
+  $data = $nid . '--' . $fieldname  . '--'  . $label  . '--' . "$value\n";
+  //write data to file
+  file_put_contents($file, $data, FILE_APPEND);
+}
+
+/**
+ * Write the field information to the cck table
+ */
+function _iqss_scholar_utility_update_db($vid, $nid, $label, $value, $delta){
+  //$vid = db_result(db_query("SELECT MAX(vid) FROM {biblio} WHERE nid = %d", (int)$nid));  //This is no longer necessary
+  
+  $object = new stdClass();
+  $object->vid = $vid;
+  $object->nid = $nid;
+  $object->delta = $delta;
+  $object->field_biblio_extra_label = $label;
+  $object->field_biblio_extra_value = $value;
+   
+  drupal_write_record('content_field_biblio_extra', $object);
+}
+
+/**
+ * Enter description here...
+ *
+ */
+function _iqss_scholar_utility_remove($vid, $nid, $fieldname){
+  //remove value for hidden biblio field
+  db_query("UPDATE {biblio} SET %s = '' WHERE nid = %d and vid = %d", $fieldname, (int)$nid, (int)$vid);
+}
+
+/**
+ * Test function to added data to hidden field within a biblio node
+ */
+function _iqss_scholar_save_test_node(){
+
+  $node = node_load(37);
+  $node -> biblio_notes = 'test notes here';
+   node_save($node);  
+  
+}
