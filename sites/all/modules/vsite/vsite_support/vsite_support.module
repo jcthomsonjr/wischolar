@@ -4,13 +4,6 @@ include_once('vsite_support.features.inc');
 
 function vsite_support_init(){
   drupal_add_css(drupal_get_path('module', 'vsite_support') . '/theme/vsite_support.css');
-  $node = menu_get_object();
-  // Check if this is an existing node.
-  if (! empty($node->nid) && $node->type == 'support_question' || $node->type == 'feature_request') {
-    global $custom_theme;
-    $custom_theme = CPTHEME;
-    //menu_set_active_item("cp/support/questions");
-  }
 }
 
 /**
@@ -192,29 +185,6 @@ function vsite_support_site_contact_access(){
   return ($vsite->settings['generic']['contact_form'] !== 0 && ($vsite->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()));
 }
 
-function vsite_support_questions(){
-  return views_page($view_name = 'vsite_support', $display = 'page_1');
-}
-
-function vsite_support_questions_node($node){
-  return node_page_view($node);
-
-}
-
-/**
- * Implementation of hook_strongarm().
- */
-function vsite_support_strongarm() {
-  $conf = array();
-
-  $types = array('support_question', 'support_answer', 'feature_request' );
-  foreach($types as $type){
-    //disable comments
-    $conf['comment_'. $type] = COMMENT_NODE_DISABLED;
-  }
-  return $conf;
-}
-
 
 /**
  * Implementation of hook_mail().
@@ -236,22 +206,6 @@ function vsite_support_mail($key, &$message, $params) {
   }
 }
 
-/**
- * Implementation of hook_form alter().
- */
-function vsite_support_form_alter(&$form, $form_state, $form_id) {
-  switch ($form_id) {
-    case 'support_question_node_form':
-      //Customize the "support_question" node form
-      $form['#redirect'] = 'cp/support/questions';
-    break;
-    case 'feature_request_node_form':
-      //Customize the "feature_request" node form
-      $form['#redirect'] = 'cp/support/featurerequests';
-    break;
-
-  }
-}
 
 function vsite_support_user_doc(){
 
