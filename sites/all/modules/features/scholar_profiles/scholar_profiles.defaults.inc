@@ -6,6 +6,140 @@
 function _scholar_profiles_content_default_fields() {
   $fields = array();
 
+  // Exported field: field_person_address
+  $fields[] = array(
+    'field_name' => 'field_person_address',
+    'type_name' => 'person',
+    'display_settings' => array(
+      'weight' => '34',
+      'parent' => 'group_contact',
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => '3',
+      'size' => 60,
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_person_address][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Address',
+      'weight' => '34',
+      'description' => '',
+      'type' => 'text_textarea',
+      'module' => 'text',
+    ),
+  );
+
+  // Exported field: field_person_email
+  $fields[] = array(
+    'field_name' => 'field_person_email',
+    'type_name' => 'person',
+    'display_settings' => array(
+      'weight' => '36',
+      'parent' => 'group_contact',
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => 5,
+      'size' => '30',
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_person_email][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Email',
+      'weight' => '36',
+      'description' => '',
+      'type' => 'text_textfield',
+      'module' => 'text',
+    ),
+  );
+
   // Exported field: field_person_firstname
   $fields[] = array(
     'field_name' => 'field_person_firstname',
@@ -62,74 +196,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'First Name',
-      'weight' => '-4',
-      'description' => '',
-      'type' => 'text_textfield',
-      'module' => 'text',
-    ),
-  );
-
-  // Exported field: field_person_institution
-  $fields[] = array(
-    'field_name' => 'field_person_institution',
-    'type_name' => 'person',
-    'display_settings' => array(
-      'weight' => 0,
-      'parent' => '',
-      'label' => array(
-        'format' => 'inline',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'text',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'text',
-    'active' => '1',
-    'text_processing' => '0',
-    'max_length' => '',
-    'allowed_values' => '',
-    'allowed_values_php' => '',
-    'widget' => array(
-      'rows' => 5,
-      'size' => '60',
-      'default_value' => array(
-        '0' => array(
-          'value' => '',
-          '_error_element' => 'default_value_widget][field_person_institution][0][value',
-        ),
-      ),
-      'default_value_php' => NULL,
-      'label' => 'Affiliation',
-      'weight' => 0,
+      'weight' => '-3',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -141,7 +208,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_lastname',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-2',
+      'weight' => '-3',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -204,7 +271,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_middlename',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-3',
+      'weight' => '-2',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -255,7 +322,74 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Middle Name or Initial',
-      'weight' => '-3',
+      'weight' => '-1',
+      'description' => '',
+      'type' => 'text_textfield',
+      'module' => 'text',
+    ),
+  );
+
+  // Exported field: field_person_phone
+  $fields[] = array(
+    'field_name' => 'field_person_phone',
+    'type_name' => 'person',
+    'display_settings' => array(
+      'weight' => '35',
+      'parent' => 'group_contact',
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => 5,
+      'size' => '30',
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_person_phone][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Phone',
+      'weight' => '35',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -267,17 +401,17 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_photo',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '3',
+      'weight' => '-1',
       'parent' => '',
       'label' => array(
         'format' => 'hidden',
       ),
       'teaser' => array(
-        'format' => 'default',
+        'format' => 'vsite_design_landscape_logo_linked',
         'exclude' => 1,
       ),
       'full' => array(
-        'format' => 'default',
+        'format' => 'vsite_design_landscape_logo_default',
         'exclude' => 1,
       ),
       '4' => array(
@@ -326,77 +460,10 @@ function _scholar_profiles_content_default_fields() {
       'default_image' => NULL,
       'use_default_image' => 0,
       'label' => 'Photo',
-      'weight' => '3',
+      'weight' => '-4',
       'description' => '',
       'type' => 'imagefield_crop_widget',
       'module' => 'imagefield_crop',
-    ),
-  );
-
-  // Exported field: field_person_title
-  $fields[] = array(
-    'field_name' => 'field_person_title',
-    'type_name' => 'person',
-    'display_settings' => array(
-      'weight' => '-1',
-      'parent' => '',
-      'label' => array(
-        'format' => 'inline',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'text',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'text',
-    'active' => '1',
-    'text_processing' => '0',
-    'max_length' => '',
-    'allowed_values' => '',
-    'allowed_values_php' => '',
-    'widget' => array(
-      'rows' => 5,
-      'size' => '60',
-      'default_value' => array(
-        '0' => array(
-          'value' => '',
-          '_error_element' => 'default_value_widget][field_person_title][0][value',
-        ),
-      ),
-      'default_value_php' => NULL,
-      'label' => 'Title',
-      'weight' => '-1',
-      'description' => '',
-      'type' => 'text_textfield',
-      'module' => 'text',
     ),
   );
 
@@ -405,17 +472,17 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_website',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '6',
-      'parent' => '',
+      'weight' => '37',
+      'parent' => 'group_contact',
       'label' => array(
-        'format' => 'inline',
+        'format' => 'hidden',
       ),
       'teaser' => array(
-        'format' => 'url',
-        'exclude' => 0,
+        'format' => 'default',
+        'exclude' => 1,
       ),
       'full' => array(
-        'format' => 'url',
+        'format' => 'default',
         'exclude' => 0,
       ),
       '4' => array(
@@ -450,19 +517,18 @@ function _scholar_profiles_content_default_fields() {
       'url_cutoff' => '80',
     ),
     'url' => 0,
-    'title' => 'none',
-    'title_value' => '',
+    'title' => 'value',
+    'title_value' => '(Web site)',
     'enable_tokens' => 0,
     'widget' => array(
       'default_value' => array(
         '0' => array(
-          'title' => '',
           'url' => '',
         ),
       ),
       'default_value_php' => NULL,
       'label' => 'Web Site',
-      'weight' => '6',
+      'weight' => '37',
       'description' => '',
       'type' => 'link',
       'module' => 'link',
@@ -471,12 +537,13 @@ function _scholar_profiles_content_default_fields() {
 
   // Translatables
   array(
-    t('Affiliation'),
+    t('Address'),
+    t('Email'),
     t('First Name'),
     t('Last Name'),
     t('Middle Name or Initial'),
+    t('Phone'),
     t('Photo'),
-    t('Title'),
     t('Web Site'),
   );
 
@@ -570,6 +637,7 @@ function _scholar_profiles_user_default_permissions() {
     'name' => 'edit own person content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
