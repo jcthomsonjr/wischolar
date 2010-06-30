@@ -168,6 +168,8 @@ if(!class_exists('purl_vsite_path')){
   class purl_vsite_path extends purl_path implements purl_processor {
     
   	public static $a_disabled = array();
+  	//allowing domain suffix to have alphanumeric chars, hyphens, underscores, 4-100 chararcters long
+  	public $modifier_regex = '!^[a-z0-9_-]{4,100}+$!';
      
     public function method() {
       return PURL_VSITE_PATH;
