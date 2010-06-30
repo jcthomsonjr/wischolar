@@ -169,8 +169,10 @@ function scholarregister_domain_js() {
   scholarregister_ctools_message('#domain-suffix', "available", 'status'); // exits
 }
 
-
-
+/**
+ * Name validation
+ * @param $mail - username entered in the form
+ */
 function scholarregister_validate_name($name){
   if ($error = user_validate_name($name)){
     return $error;
@@ -181,8 +183,8 @@ function scholarregister_validate_name($name){
 }
 
 /**
- * email validation function
- * @param $mail
+ * Email validation
+ * @param $mail - email address entered in the form
  */
 function scholarregister_validate_mail($mail) {
   // Validate the e-mail address:
@@ -192,16 +194,12 @@ function scholarregister_validate_mail($mail) {
   elseif (_scholarregister_mail_exists($mail)){
     return "e-mail \"$mail\" already exists";
   }
-  
-  //THIS BLOCK SHOULD BE REMOVED AFTER NEXT RELEASE
-  /*if(!module_exists('pinserver')){
-    if (substr(trim($mail),-12) !== '.harvard.edu' && substr(trim($mail),-12) !== '@harvard.edu'
-    && substr(trim($mail),-8) !== '@hbs.edu' && substr(trim($mail),-8) !== '.hbs.edu'){
-      return  'Please enter an harvard email address ';
-    }
-  }*/
 }
 
+/**
+ * Domain validation
+ * @param $domain - domain entered in the form
+ */
 function scholarregister_validate_domain($domain){
   $modifier = array(
   'provider' => 'spaces_og',
