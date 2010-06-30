@@ -413,7 +413,22 @@ function vsite_preprocess_page(&$vars){
   // need to know if there is anything in the navbar for css theming
   $body_class_extra = $vars['navbar'] ? ' navbar-on' : ' navbar-off';
   $vars['body_classes'] .= $body_class_extra;
-
+  
+  // alter $head_title for SEO purposes
+  // set the basics here. Let specific installation (scholar / project)
+  // do the rest (see scholar_preprocess_page)
+  $vsite = vsite_get_vsite();
+  if ($vsite) {
+  	$vsite_title = $vsite->group->title;
+    if (vsite_is_front()) {
+      $head_title = array($vsite_title); 
+    }
+    else {
+      $head_title = array(strip_tags(drupal_get_title()), $vsite_title);
+    }
+    $head_title = implode(' | ', $head_title);
+    $vars['head_title'] = $head_title; 
+  }
 }
 
 /**
