@@ -72,7 +72,7 @@ function scholarregister_signup_form(){
       '#size' => 35, 
       '#weight' => 20, 
       '#default_value' => $form_values['name'], 
-      '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be between 3 and 100 characters long. Punctuation is not allowed except for hyphens and underscores.', array(
+      '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be a minimum of 3 characters long. Punctuation is not allowed except for hyphens and underscores.', array(
           '%site' => $base_url . '/jdoe' 
       )), 
       '#prefix' => '<div id="domain-field">', 

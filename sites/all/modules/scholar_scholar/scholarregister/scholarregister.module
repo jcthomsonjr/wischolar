@@ -206,12 +206,14 @@ function scholarregister_validate_domain($domain){
   'value' => $domain,
   'id' => null,
   );
-  // Validate the domain suffix
-  if (!purl_validate($modifier)){
-    return "The domain \"$domain\" is invalid";
-  }
-  elseif (_scholarregister_domain_exists($domain)){
+
+  // Check to see if domain suffix is taken
+   if (_scholarregister_domain_exists($domain)){
     return "The domain \"$domain\" is already taken";
+  }
+  // Validate the domain suffix
+   elseif (!purl_validate($modifier)){
+    return "The domain \"$domain\" is invalid";
   }
 }
 
