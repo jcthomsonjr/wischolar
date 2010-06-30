@@ -17,6 +17,16 @@ function _vsite_news_views_default_views() {
   $view->api_version = 2;
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->override_option('relationships', array(
+    'nid' => array(
+      'label' => 'Node',
+      'required' => 1,
+      'id' => 'nid',
+      'table' => 'activity',
+      'field' => 'nid',
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('fields', array(
     'created' => array(
       'label' => '',
@@ -123,10 +133,10 @@ function _vsite_news_views_default_views() {
       'field' => 'value_vsite_news',
       'relationship' => 'none',
     ),
-    'access_uid' => array(   
-      'id' => 'access_uid',   
-      'table' => 'activity',    
-      'field' => 'access_uid',    
+    'access_uid' => array(
+      'id' => 'access_uid',
+      'table' => 'activity',
+      'field' => 'access_uid',
     ),
   ));
   $handler->override_option('access', array(
@@ -190,6 +200,7 @@ function _vsite_news_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => '0',
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('page', 'Tab My Activity', 'page_3');
   $handler->override_option('filters', array(
@@ -214,6 +225,7 @@ function _vsite_news_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 1,
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('page', 'Tab All Activity', 'page_4');
   $handler->override_option('filters', array());
@@ -232,6 +244,7 @@ function _vsite_news_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 2,
+    'name' => 'navigation',
   ));
 
   $views[$view->name] = $view;
@@ -630,6 +643,7 @@ function _vsite_news_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => '0',
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('page', 'My friends', 'page_2');
   $handler->override_option('filters', array(
@@ -682,6 +696,7 @@ function _vsite_news_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => '0',
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('page', 'All', 'page_3');
   $handler->override_option('path', 'cp/news/colleagues/all');
@@ -697,6 +712,7 @@ function _vsite_news_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
 
   $views[$view->name] = $view;
