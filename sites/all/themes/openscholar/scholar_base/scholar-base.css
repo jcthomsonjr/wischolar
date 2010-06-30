@@ -71,22 +71,17 @@ p, div.messages, #content-main .views-row, ul, ol, .taxonomy-term-description {
   margin: 0 0 .1em 0;
   }
 
-p.copy {
-  color: #76797C;
-  font-size: 11px;
-  font-family: arial, sans-serif;
-  line-height: 19px;
-  text-align: center;
-  }
-
 a, a:visited {
   text-decoration: none;
   color: #005C9C;
   }
 
+
 p.copy {
+  color: #76797C;
+  font-size: 11px;
+  font-family: arial, sans-serif;
   line-height: 29px;
-  width: 470px;
   margin: 4px auto 0 auto;
   clear:both;
   }
@@ -129,8 +124,13 @@ p.copy a.poweredby  {
   background: url(images/poweredby.png) no-repeat 0 0 #fff;
   text-indent:-999em;
   display:block;
-  width:86px;
+  width:148px;
   height:29px;
+  }
+
+p.copy a.poweredby:hover {
+  text-decoration:none !important;
+  border: none !important;
   }
 
 .nomarg {
