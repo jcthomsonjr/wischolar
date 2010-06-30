@@ -1,6 +1,55 @@
-html, body, #footer, #content-wrapper {
+html, body, #footer, #content-wrapper, body.section-home #content-main #content {
   min-width:1017px;
   }
+
+
+@font-face {
+	font-family: 'DeliciousSmallCapsRegular';
+	src: url('fonts/delicious-smallcaps-webfont.eot');
+	src: local('☺'), url('fonts/delicious-smallcaps-webfont.woff') format('woff'), url('fonts/delicious-smallcaps-webfont.ttf') format('truetype'), url('fonts/delicious-smallcaps-webfont.svg#webfontfGTCqIWF') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DeliciousRoman';
+	src: url('fonts/delicious-roman-webfont.eot');
+	src: local('☺'), url('fonts/delicious-roman-webfont.woff') format('woff'), url('fonts/delicious-roman-webfont.ttf') format('truetype'), url('fonts/delicious-roman-webfont.svg#webfontHsOzJLoO') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DeliciousItalic';
+	src: url('fonts/delicious-italic-webfont.eot');
+	src: local('☺'), url('fonts/delicious-italic-webfont.woff') format('woff'), url('fonts/delicious-italic-webfont.ttf') format('truetype'), url('fonts/delicious-italic-webfont.svg#webfontILnrs6k4') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DeliciousHeavyRegular';
+	src: url('fonts/delicious-heavy-webfont.eot');
+	src: local('☺'), url('fonts/delicious-heavy-webfont.woff') format('woff'), url('fonts/delicious-heavy-webfont.ttf') format('truetype'), url('fonts/delicious-heavy-webfont.svg#webfontuDowCwft') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DeliciousBoldItalic';
+	src: url('fonts/delicious-bolditalic-webfont.eot');
+	src: local('☺'), url('fonts/delicious-bolditalic-webfont.woff') format('woff'), url('fonts/delicious-bolditalic-webfont.ttf') format('truetype'), url('fonts/delicious-bolditalic-webfont.svg#webfontMzyPhQ9d') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DeliciousBold';
+	src: url('fonts/delicious-bold-webfont.eot');
+	src: local('☺'), url('fonts/delicious-bold-webfont.woff') format('woff'), url('fonts/delicious-bold-webfont.ttf') format('truetype'), url('fonts/delicious-bold-webfont.svg#webfonty8B1yvzc') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
 
 body {
   font-family:"helvetica neue",helvetica, Arial,sans-serif;
@@ -24,7 +73,10 @@ a:hover,  {
   color: #6eafbe;
   }
 
-
+h2, h3 {
+  font-family: 'DeliciousRoman', arial, sans-serif;
+  font-size: 1.3em;
+  }
 
 h2 {
   margin-bottom: 1em;
@@ -39,13 +91,17 @@ p.copy {
 /* WRAPPER ELEMENTS */
 
 #wrapper, #content-wrapper, #footer {
-  max-width: 1231px;
+  max-width: 2000px;
   }
 
-#container {
+#container, .section-home #content-wrapper-inner {
   background:url("images/top-shadow.png") no-repeat scroll 100% 58px transparent;
   }
 
+.section-home #content-wrapper-inner {
+  background-position: 100% 0;
+  min-height: 59px;
+  }
 
 /* HEADER */
 
@@ -283,7 +339,7 @@ body.no-sidebars #content-main #content {
   top: 77px;
   left: 22px;
   color: #fff;
-  font-size: 23px;
+  font-size: 26px;
   font-weight: normal;
   }
 
@@ -322,4 +378,106 @@ p.copy a.poweredby {
   background: url(images/poweredby-on-dark.png) no-repeat 0 0 transparent;
   width:77px;
   height: 26px;
+  }
+
+/* FRONT PAGE*/
+
+body.section-home #content-main #content {
+  background: url(images/front-content.png) repeat-x 0 0;
+  padding: 0;
+  position: relative;
+  }
+
+body.section-home #content-main {
+  overflow:hidden;
+  }
+
+body.section-home #header {
+  height: 58px;
+  }
+
+body.section-home #content-wrapper {
+  top: 79px;
+  }
+
+#tutorial-link {
+  width: 143px;
+  height: 91px;
+  background: url(images/version-2.png) no-repeat 0 0 transparent;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  text-indent: -999em;
+  }
+
+#content-row-1 h2 {
+  float:left;
+  margin-bottom: 0;
+  color: #fff;
+  line-height: 1.4em;
+  width: 293px;
+  margin-top:23px;
+  margin-left:22px;
+  font: 29px/normal 'DeliciousRoman', sans-serif;
+  }
+
+#content-row-1 #video-link {
+  float:left;
+  width: 660px;
+  height: 373px;
+  background: url(images/video-link.png) no-repeat;
+  padding: 11px 0 0 22px;
+  margin-left: 6px;
+  }
+
+#content-row-2 {
+  height: 348px;
+  padding-bottom: 26px;
+  clear:both;
+  }
+
+#content-row-2 .featureblock {
+  float: left;
+  width:196px;
+  height: 295px;
+  margin: 0;
+  background-color: #fff;
+  padding: 26px 24px;
+  border: 1px solid #BCBCBC;
+  }
+
+#content-row-2 .featureblock h3, #content-row-2 .featureblock p {
+  font-size: 14px;
+  line-height: 1.3em;
+  margin-bottom: 1em;
+  }
+
+#feature-academic-content {
+  background:url(images/front-row2-create-anything.jpg);
+  }
+
+#content-row-2 #feature-biblio {
+  background:url(images/front-row2-biblio.jpg);
+  border-left: none;
+  }
+
+#content-row-2 #feature-look-feel {
+  background:url(images/front-row2-lookfeel.jpg);
+  border-left: none;
+  }
+
+#content-row-2 #feature-collaborate {
+  background:url(images/front-row2-collaborate.jpg);
+  border-left: none;
+  }
+
+
+#block-views-iqss_project_sites-block_2 {
+  background:url(images/featured-top.png) no-repeat 0 0;
+  }
+
+#block-views-iqss_project_sites-block_2 ul, #block-views-iqss_project_sites-block_2 .more-link {
+  background:url(images/featured-main.png);
+  width: 100%;
+  height: 253px;
   }
