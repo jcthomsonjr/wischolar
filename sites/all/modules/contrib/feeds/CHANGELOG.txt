@@ -1,5 +1,50 @@
-// $Id: CHANGELOG.txt,v 1.79 2010/03/30 20:26:54 diggersf Exp $
+// $Id: CHANGELOG.txt,v 1.107 2010/06/23 15:24:24 alexb Exp $
 
+Feeds 6.x 1.0 Beta 1, 2010-06-23
+--------------------------------
+
+Feeds 6.x 1.0 Alpha 16, 2010-06-19
+----------------------------------
+
+- #830438 andrewlevine: More secret files in FeedsImportBatch::getFilePath().
+- #759302 rjb, smartinm, et. al: Fix user warning: Duplicate entry.
+- #819876 alex_b: Fix field 'url' and 'guid' don't have default values.
+- #623444 mongolito404, pvhee, pdrake, servantleader, alex_b et. al.: Mapper for
+  link module.
+- #652180 ronald_istos, rjbrown99, et. al.: Assign author of imported nodes.
+- #783098 elliotttf: Introduce hook_feeds_user_processor_targets_alter(), mapper
+  for user profile fields.
+
+Feeds 6.x 1.0 Alpha 15, 2010-05-16
+----------------------------------
+
+- #791296 B-Prod: Fix Feeds data processor does update id 0.
+- #759904 lyricnz: Provide a Google Sitemap Parser.
+- #774858 rjbrown99: Fix Node Processor updates node "created" time when
+  updating.
+- #704236 jerdavis: Support mapping to CCK float field.
+- #783820 klonos: Fix warning: copy() [function.copy]: Filename cannot be empty
+  in FeedsParser.inc on line 168.
+- #778416 clemens.tolboom: Better message when plugin is missing.
+- #760140 lyricnz: FeedsBatch->total not updated when addItem($item) is called.
+- #755544 Monkey Master: Keep batch processing when mapping fails.
+- alex_b: Reset import schedule after deleting items from feed.
+- #653412 rbrandon: Do not create items older than expiry time.
+- #725392 nicholasThompson: FeedsBatch does not check feeds folder exists before
+  uploading.
+- #776972 lyricnz: Messages use plural when describing single item.
+- #701390 frega, morningtime, Mixologic, alex_b et. al.: Fix RSS 1.0 parsing
+  and add basic test framework for common_syndication_parser.
+- #781058 blakehall: Create teaser for imported nodes. NOTE: this may mean that
+  your existing installation has shorter node teasers as expected. If this is
+  the case, increase "Length of trimmed posts" on admin/content/node-settings.
+- #622932-30 mikl: fix remaining non-standard SQL.
+- #624464 bangpound: Support tabs as delimiters.
+
+Feeds 6.x 1.0 Alpha 14, 2010-04-11
+----------------------------------
+
+- #758664: Fix regression introduced with #740962.
 
 Feeds 6.x 1.0 Alpha 13, 2010-03-30
 ----------------------------------
@@ -7,8 +52,8 @@ Feeds 6.x 1.0 Alpha 13, 2010-03-30
 - #622932 pounard: Fix SQL capitalization.
 - #622932 pounard: Fix non-standard SQL (PostgreSQL compatibility)
 - #705872 Scott Reynolds: Added HTTPFetcher autodiscovery
-- #740962 alex_b: Fix FileFetcher Attached to Feed Node, Upload Field Not Saving File
-  Path.
+- #740962 alex_b: Fix FileFetcher Attached to Feed Node, Upload Field Not Saving
+  File Path.
 - #754938 Monkey Master: FeedsCSVParser.inc uses strtolower() while parsing
   UTF-8 files.
 - #736684 Souvent22, Mixologic: FeedsDateTime & Batch DateTime causes core

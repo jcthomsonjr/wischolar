@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.18 2010/03/30 20:06:36 diggersf Exp $
+// $Id: FeedsScheduler.inc,v 1.20 2010/06/19 19:40:43 alexb Exp $
 
 /**
  * @file
@@ -107,7 +107,7 @@ class FeedsScheduler implements FeedsSchedulerInterface {
         foreach ($importer->getScheduleCallbacks() as $callback) {
           $period = $importer->getSchedulePeriod($callback);
           if ($period != FEEDS_SCHEDULE_NEVER) {
-            $result = db_query_range('SELECT feed_nid, id, callback, last_executed_time FROM {feeds_schedule} WHERE id = "%s" AND callback = "%s" AND scheduled = 0 AND (last_executed_time < %d OR last_executed_time = 0) ORDER BY last_executed_time ASC', $importer->id, $callback, FEEDS_REQUEST_TIME - $period, 0, $num);
+            $result = db_query_range("SELECT feed_nid, id, callback, last_executed_time FROM {feeds_schedule} WHERE id = '%s' AND callback = '%s' AND scheduled = 0 AND (last_executed_time < %d OR last_executed_time = 0) ORDER BY last_executed_time ASC", $importer->id, $callback, FEEDS_REQUEST_TIME - $period, 0, $num);
             while ($job = db_fetch_array($result)) {
               $this->schedule($job);
               // @todo Add time limit.
@@ -137,8 +137,10 @@ class FeedsScheduler implements FeedsSchedulerInterface {
       'last_executed_time' => 0,
       'scheduled' => 0, // Means NOT scheduled at the moment.
     );
-    drupal_write_record('feeds_schedule', $save, array('id', 'callback', 'feed_nid'));
-    if (!db_affected_rows()) {
+    if (db_result(db_query_range("SELECT 1 FROM {feeds_schedule} WHERE id = '%s' AND callback = '%s' AND feed_nid = %d", $importer_id, $callback, $feed_nid, 0, 1))) {
+      drupal_write_record('feeds_schedule', $save, array('id', 'callback', 'feed_nid'));
+    }
+    else {
       drupal_write_record('feeds_schedule', $save);
     }
   }

@@ -1,15 +1,20 @@
 <?php
-// $Id: FeedsBatch.inc,v 1.7 2010/02/24 00:08:10 alexb Exp $
+// $Id: FeedsBatch.inc,v 1.12 2010/06/20 01:10:29 alexb Exp $
 
 /**
- * A FeedsBatch object holds the state of an import or clear batch. Used in
- * FeedsSource class.
+ * A FeedsBatch object holds the state of an import or clear batch.
+ *
+ * Used in FeedsSource class. Counter variables are public for easier access.
  */
 class FeedsBatch {
-  // Public counters for easier access.
+  // Maximum number of items in this batch. This is not necessarily the current
+  // number of items in this batch
   public $total;
+  // Number of items created.
   public $created;
+  // Number of items updated or replaced.
   public $updated;
+  // Number of items deleted.
   public $deleted;
   public function __construct() {
     $this->total = 0;
@@ -89,7 +94,11 @@ class FeedsImportBatch extends FeedsBatch {
    */
   public function getFilePath() {
     if (!isset($this->file_path)) {
-      $dest = file_destination(file_directory_path() .'/feeds/'. get_class($this) .'_'. md5($this->url) .'_'. time(), FILE_EXISTS_RENAME);
+      $dir = file_directory_path() .'/feeds/';
+      if (!file_check_directory($dir, TRUE)) {
+        throw new Exception(t('Feeds directory either cannot be created or is not writable.'));
+      }
+      $dest = file_destination($dir . get_class($this) .'_'. drupal_get_token($this->url) .'_'. time(), FILE_EXISTS_RENAME);
       $this->file_path = file_save_data($this->getRaw(), $dest);
       if($this->file_path === 0) {
         throw new Exception(t('Cannot write content to %dest', array('%dest' => $dest)));
@@ -161,7 +170,7 @@ class FeedsImportBatch extends FeedsBatch {
    */
   public function setItems($items) {
     $this->items = $items;
-    $this->total = count($items);
+    $this->total = count($this->items);
   }
 
   /**
@@ -169,5 +178,6 @@ class FeedsImportBatch extends FeedsBatch {
    */
   public function addItem($item) {
     $this->items[] = $item;
+    $this->total = count($this->items);
   }
 }

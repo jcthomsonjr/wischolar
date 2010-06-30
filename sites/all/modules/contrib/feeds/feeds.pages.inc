@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.14 2010/03/29 00:42:37 alexb Exp $
+// $Id: feeds.pages.inc,v 1.18 2010/05/04 21:24:58 alexb Exp $
 
 /**
  * @file
@@ -115,7 +115,7 @@ function feeds_import_tab_form_submit($form, &$form_state) {
  * Render a feeds delete form.
  *
  * Used on both node pages and configuration pages.
- * Therefore either $feed_id or $node may be missing.
+ * Therefore $node may be missing.
  */
 function feeds_delete_tab_form(&$form_state, $importer_id, $node = NULL) {
   if (empty($node)) {
@@ -133,10 +133,14 @@ function feeds_delete_tab_form(&$form_state, $importer_id, $node = NULL) {
 
 /**
  * Submit handler for feeds_delete_tab_form().
+ *
+ * Reset import schedule of given subscription to expedite refresh.
  */
 function feeds_delete_tab_form_submit($form, &$form_state) {
   $form_state['redirect'] = $form['#redirect'];
-  feeds_batch_set(t('Deleting'), 'clear', $form['#importer_id'], empty($form['#feed_nid']) ? 0 : $form['#feed_nid']);
+  $feed_nid = empty($form['#feed_nid']) ? 0 : $form['#feed_nid'];
+  feeds_batch_set(t('Deleting'), 'clear', $form['#importer_id'], $feed_nid);
+  feeds_scheduler()->add($form['#importer_id'], 'import', $feed_nid);
 }
 
 /**

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.9 2010/02/10 23:49:35 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.13 2010/05/16 21:51:58 alexb Exp $
 
 /**
  * @file
@@ -18,24 +18,25 @@ class FeedsDataProcessor extends FeedsProcessor {
 
     // Count number of created and updated nodes.
     $inserted  = $updated = 0;
+    $expiry_time = $this->expiryTime();
 
     while ($item = $batch->shiftItem()) {
-      if (!($id = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
+      $id = $this->existingItemId($item, $source);
+
+      if ($id === FALSE || $this->config['update_existing']) {
         // Map item to a data record, feed_nid and timestamp are mandatory.
         $data = array();
         $data['feed_nid'] = $source->feed_nid;
         $data['timestamp'] = FEEDS_REQUEST_TIME;
         $data = $this->map($item, $data);
 
-        //If this feed_item is expired then do not save it, 
-        //since it will just be deleted next time the expire runs
-        $n_expire = $this->expiryTime();
-        if ($n_expire != FEEDS_EXPIRE_NEVER &&
-            $data['timestamp'] != FEEDS_REQUEST_TIME &&
-            $data['timestamp'] < (FEEDS_REQUEST_TIME - $n_expire)) continue;
-        
+        // Only save if this item is not expired.
+        if ($expiry_time != FEEDS_EXPIRE_NEVER && $data['timestamp'] < (FEEDS_REQUEST_TIME - $expiry_time)) {
+          continue;
+        }
+
         // Save data.
-        if ($id) {
+        if ($id !== FALSE) {
           $data['id'] = $id;
           $this->handler()->update($data, 'id');
           $updated++;
@@ -49,10 +50,10 @@ class FeedsDataProcessor extends FeedsProcessor {
 
     // Set messages.
     if ($inserted) {
-      drupal_set_message(t('Created !number items.', array('!number' => $inserted)));
+      drupal_set_message(format_plural($inserted, 'Created @number item.', 'Created @number items.', array('@number' => $inserted)));
     }
     elseif ($updated) {
-      drupal_set_message(t('Updated !number items.', array('!number' => $updated)));
+      drupal_set_message(format_plural($updated, 'Updated @number item.', 'Updated @number items.', array('@number' => $updated)));
     }
     else {
       drupal_set_message(t('There are no new items.'));
@@ -71,7 +72,7 @@ class FeedsDataProcessor extends FeedsProcessor {
       'feed_nid' => $source->feed_nid,
     );
     $num = $this->handler()->delete($clause);
-    drupal_set_message(t('Deleted !number items.', array('!number' => $num)));
+    drupal_set_message(format_plural($num, 'Deleted @number item.', 'Deleted @number items.', array('@number' => $num)));
     return FEEDS_BATCH_COMPLETE;
   }
 
@@ -92,7 +93,7 @@ class FeedsDataProcessor extends FeedsProcessor {
       ),
     );
     $num = $this->handler()->delete($clause);
-    drupal_set_message(t('Expired !number records from !table.', array('!number' => $num, '!table' => $this->tableName())));
+    drupal_set_message(format_plural($num, 'Expired @number record from @table.', 'Expired @number records from @table.', array('@number' => $num, '@table' => $this->tableName())));
     return FEEDS_BATCH_COMPLETE;
   }
 
@@ -243,7 +244,7 @@ class FeedsDataProcessor extends FeedsProcessor {
         return $records[0]['id'];
       }
     }
-    return 0;
+    return FALSE;
   }
 
   /**
