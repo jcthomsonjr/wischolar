@@ -1,5 +1,5 @@
 <?php
-// $Id: activity.views.inc,v 1.1.2.15 2009/08/27 01:05:41 scottreynolds Exp $
+// $Id: activity.views.inc,v 1.1.2.23 2010/06/01 04:41:17 scottreynolds Exp $
 /**
  * @file: provides views data integration for activity module as the base table
  */
@@ -17,6 +17,13 @@ function activity_views_data() {
   );
   
   // Database columns
+  $data['activity']['aid'] = array(
+    'title' => t('Activity Unique ID'),
+    'help' => t('The unique id for each activity'),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
   $data['activity']['uid'] = array(
     'title' => t('Activity Actor'),
     'help' => t('The ID of the person who recorded the activity'),
@@ -31,26 +38,21 @@ function activity_views_data() {
       'handler' => 'views_handler_sort',
     ),
   );
-  $data['activity']['access_uid'] = array(
-    'title' => t('Allow Access to the Actor'),
-    'help' => t('Allow the actor to see their own activity'),
-    'group' => t('Activity Access'),
-    'filter' => array(
-      'handler' => 'activity_views_handler_filter_uid_access',
-      'field' => 'uid',
-    ),
-  );
-  $data['activity']['op'] = array(
+  // Views doesn't allow for a field of op. It is used elsewhere by Views
+  $data['activity']['operation'] = array(
     'title' => t('Operation'),
     'help' => t('The operation being performed (update, insert, etc.)'),
     'field' => array(
       'handler' => 'views_handler_field',
+      'field' => 'op',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_string',
+      'handler' => 'activity_handler_filter_operations',
+      'field' => 'op',
     ),
     'argument' => array(
       'handler' => 'views_handler_argument_string',
+      'field' => 'op',
     ),
   );
   $data['activity']['type'] = array(
@@ -81,7 +83,8 @@ function activity_views_data() {
   $data['activity_access']['table']['group'] = t('Activity Access');
   $data['activity_access']['table']['join'] = array(
     'activity' => array(
-      'type' => 'INNER',
+      // We cannot guarantee that there is activity_access records.
+      'type' => 'LEFT',
       'left_field' => 'aid',
       'field' => 'aid',
     ),
@@ -99,10 +102,15 @@ function activity_views_data() {
   foreach (activity_get_module_info() as $module => $info) {
     if (!empty($info->realms)) {
       $data['activity_access']["value_$module"] = array(
-        'title' => t("@module Access", array("@module" => drupal_ucfirst($module))),
+        'title' => t("@module module's access control", array("@module" => drupal_ucfirst($module))),
         'help' => t('Allow @module to filter activity messages', array('@module' => $module)),
         'filter' => array(
           'handler' => 'activity_views_handler_filter_access',
+          'module' => $module,
+          'field' => 'value',
+        ),
+        'argument' => array(
+          'handler' => 'activity_views_handler_argument_access',
           'module' => $module,
           'field' => 'value',
         ),
@@ -125,6 +133,10 @@ function activity_views_data() {
             'numeric' => TRUE,
             'field' => 'uid',
           ),
+          array(
+            'value' => '***ACTIVITY_LANGUAGE***',
+            'field' => 'language',
+          ),
         ),
       ),
     ),
@@ -144,6 +156,10 @@ function activity_views_data() {
             'value' => '***CURRENT_USER***', // grab the personal message
             'numeric' => TRUE,
             'field' => 'uid',
+          ),
+          array(
+            'value' => '***ACTIVITY_LANGUAGE***',
+            'field' => 'language',
           ),
         ),
         'table' => 'activity_targets',
@@ -190,48 +206,26 @@ function activity_views_data() {
     ),
   );
   
+  // Relationships to other base tables
+  $data['activity']['nid']['relationship'] = array(
+    'group' => t('Activity'),
+    'title' => t('Node'),
+    'help' => t('Join the node table to the Activity table'),
+    'handler' => 'views_handler_relationship',
+    'base' => 'node',
+    'base field' => 'nid',
+    'label' => t('Node'),
+  );
+  $data['activity']['uid']['relationship'] = array(
+    'group' => t('Activity'),
+    'title' => t('User'),
+    'help' => t('Join the users table to the Activity table'),
+    'handler' => 'views_handler_relationship',
+    'base' => 'users',
+    'base field' => 'uid',
+    'label' => t('User'),
+  );
   return $data;
-}
-
-/**
- * Implementation of hook_views_data_alter() to add items from the users table.
- */
-function activity_views_data_alter(&$data) {
-  $data['users']['table']['join']['activity'] = array(
-    'left_table' => 'activity',
-    'left_field' => 'uid',
-    'field' => 'uid',
-  );
-  $data['node']['table']['join']['activity'] = array(
-    'left_table' => 'activity',
-    'left_field' => 'nid',
-    'field' => 'nid',
-  );
-  // do CCK mappings here
-  if (module_exists('content')) {
-    foreach (content_fields() as $field) {
-      $module = $field['module'];
-      $result = module_invoke($module, 'field_settings', 'views data', $field);
-      if (empty($result)) {
-        // setup up result getting the defaults
-        $table_alias = content_views_tablename($field);
-        $db_info = content_database_info($field);
-        $table = $db_info['table'];
-      }
-      if (is_array($result)) {
-        $table_alias = key($result);
-        $table = $result[$table_alias]['table']['join']['node']['table'];
-      }
-      if (isset($table_alias)) {
-        $data[$table_alias]['table']['join']['activity'] = array(
-          'left_table' => 'activity',
-          'left_field' => 'nid',
-          'field' => 'nid',
-          'table' => $table,
-        );
-      }
-    }
-  }
 }
 
 /**
@@ -249,8 +243,14 @@ function activity_views_handlers() {
       'activity_views_handler_filter_access' => array(
         'parent' => 'views_handler_filter',
       ),
+      'activity_views_handler_argument_access' => array(
+        'parent' => 'views_handler_argument',
+      ),
       'activity_views_handler_filter_uid_access' => array(
         'parent' => 'views_handler_filter',
+      ),
+      'activity_handler_filter_operations' => array(
+        'parent' => 'views_handler_filter_in_operator',
       ),
       'activity_handler_field_activity_link' => array(
         'parent' => 'views_handler_field',
@@ -295,4 +295,17 @@ function activity_views_access_user($account = NULL) {
     $access_account = $account;
   }
   return (empty($access_account) ? $GLOBALS['user'] : $access_account);
+}
+
+/**
+ * Implemenation of hook_views_query_substitutions().
+ */
+function activity_views_query_substitutions($view) {
+  // @see http://drupal.org/node/328325
+  global $user, $language;
+  // Find the user's preferred language, if any.
+  $preferred_language = $user->uid ? user_preferred_language($user) : $language;
+  return array(
+    '***ACTIVITY_LANGUAGE***' => $preferred_language->language,
+  );
 }

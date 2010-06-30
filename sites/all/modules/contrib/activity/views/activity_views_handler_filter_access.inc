@@ -1,5 +1,5 @@
 <?php
-// $Id: activity_views_handler_filter_access.inc,v 1.1.2.7 2009/08/26 19:10:28 scottreynolds Exp $
+// $Id: activity_views_handler_filter_access.inc,v 1.1.2.8 2010/03/31 05:11:20 scottreynolds Exp $
 
 /**
  * @file
@@ -61,18 +61,32 @@ class activity_views_handler_filter_access extends views_handler_filter {
     activity_get_module_info($this->definition['module']);
     
     // go through each grant that this user has
-    foreach(module_invoke($this->definition['module'], 'activity_access_grants', activity_views_access_user()) as $realm => $values) {
-      if (!empty($this->options['realms'][$realm])) {
-        if (is_null($group)) {
-          // static cache the where group for the rest of the handlers
-          $group = activity_views_group($this->query->set_where_group('OR'));
-        }
-        
-        $replace = array_fill(0, sizeof($values), $placeholder);
-        $in = ' (' . implode(", ", $replace) . ')';
-        // use the group to allow this $module to provide access control on it
-        $this->query->add_where($group, "($this->table_alias.realm = '%s' AND $this->table_alias.$this->real_field IN $in)", array_merge(array($realm), $values));
+    $realms = module_invoke($this->definition['module'], 'activity_access_grants', activity_views_access_user());
+
+    // All the valid realms according to the options form.
+    $valid_realms = array_intersect(array_keys($this->options['realms']), array_keys($realms));
+
+    if (empty($valid_realms)) {
+      // The user hasn't done anything that $this->definition['module'] realms
+      // keep track of, use a dummy realm.
+      $realms = array(
+        'activity_none' => array(-1)
+      );
+      $valid_realms = array('activity_none');
+    }
+
+    foreach ($valid_realms as $realm) {
+      if (is_null($group)) {
+        // Static cache the where group for other access handlers to use.
+        $group = activity_views_group($this->query->set_where_group('OR'));
       }
+      $values = $realms[$realm];
+
+      $replace = array_fill(0, sizeof($values), $placeholder);
+      $in = ' (' . implode(", ", $replace) . ')';
+
+      // Use the group to keep all access handlers in the same OR query.
+      $this->query->add_where($group, "($this->table_alias.realm = '%s' AND $this->table_alias.$this->real_field IN $in)", array_merge(array($realm), $values));
     }
   }
 }

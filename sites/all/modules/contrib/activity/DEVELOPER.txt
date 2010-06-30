@@ -18,6 +18,9 @@ hook_activity_info()
                    @see activity_record(). This is needed because the $object
                    parameter is not available, so we need a key name in order to
                    reference the object from within the $context parameter.
+    eid_field    - the field of the object_type that identifies this activity.
+                   For instance, comment module uses this as 'cid' so that all
+                   activities dealing with that comment can be retrieved or deleted.
     objects      - corresponds to the objects that are passed as properties of
                    the $context array within a module's hook_trigger_name(). @see
                    the example in flag_friend.module - compare it's
@@ -54,7 +57,7 @@ hook_activity_info()
       return $info;
     }
 ------------------------------------------
-hook_activity_grants($activity, $object, $type)
+hook_activity_grants($activity)
   Provides a means to record what should have access to any particular message.
 
   Parameters:
@@ -71,7 +74,7 @@ hook_activity_grants($activity, $object, $type)
     /**
      * Implementation of hook_activity_grants().
      */
-    function flag_friend_activity_grants($activity, $object, $type) {
+    function flag_friend_activity_grants($activity) {
       return array(
         'flag_friend' => array($activity->uid), // the module_id that will be used
       );
@@ -170,15 +173,14 @@ hook_activity_message_recorded($record, $context)
       }
     }
 ------------------------------------------
-hook_activity_access_records_alter(&$grants, $context)
+hook_activity_access_records_alter(&$grants)
   Provides a mean to alter the grants that are recorded to the activity_access
   table.
 
   Parameters:
     $grants  - these are the grants that come back from other modules whom have
                implemented hook_activity_grants().
-    $context - the context from the trigger, containing hook, op, object,
-               author-pattern, and everyone-pattern
+    $record  - This is the activity record in the database
 
   Example:
     /**
@@ -186,7 +188,7 @@ hook_activity_access_records_alter(&$grants, $context)
      * This example removes any access records except og. Prevents friend
      * modules from providing access.
      */
-    function example_activity_access_records_alter(&$grants, $context) {
+    function example_activity_access_records_alter(&$grants, $record) {
       foreach ($grants as $realm => $value) {
          if ($realm != 'og') {
              unset($grants[$module]);
@@ -213,4 +215,32 @@ Example:
  */
 function node_activity_type_check($token_objects, $types) {
   return (in_array($token_objects['node']->type, $types));
+}
+---------------------------------------------
+hook_activity_objects_alter(&token_$objects, $activity_type)
+  This hook is called for each activity record. It gives modules the
+	oppurtunity to change the objects based on activity_type which
+	corresponds to the type column in the activity table.
+
+  Parameters
+    $token_objects - This arrya of objects will be used during
+    token_replace.
+
+   $activity_type  - The type of activity being recorded. i.e. 'node',
+   'comment', 'user'
+
+Example:
+/**
+ * Implementation of hook_activity_objects_alter().
+ */
+function comment_activity_objects_alter(&$token_objects, $activity_type) {
+  if ($type == 'comment') {
+    $objects['node'] = node_load($objects['comment']->nid);
+    $objects['user'] = $GLOBALS['user'];
+
+    // If the comment and the node are the same, provide an object for it.
+    if (isset($objects['comment']) && $objects['node']->uid == $objects['comment']->uid) {
+      $objects['node_comment_author'] = $objects['comment'];
+    }
+  }
 }

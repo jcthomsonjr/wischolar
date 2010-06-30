@@ -149,7 +149,7 @@ function vsite_news_activity_action($object, $context){
 	//Setup the advanced Patterns
 	$context['node-pattern'] = 'You [action] a new [type-name] [in-vsite]';
 	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite]';
-	$context['activity_types'] = vsite_content_types();
+	$context['activity_types'] = array_keys(vsite_content_types());
 	$s_action = 'modified';
 	switch($context['op']){
 		case 'submit':
@@ -182,7 +182,7 @@ function vsite_news_activity_action($object, $context){
 /**
 * Implementation of hook_activity_grants().
 */
-function vsite_news_activity_grants($activity, $object, $type) {
+function vsite_news_activity_grants($activity) {
   $vsite = vsite_get_vsite();
   if(!$vsite) return array();
     

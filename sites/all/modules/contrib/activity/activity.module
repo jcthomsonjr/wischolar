@@ -1,5 +1,5 @@
 <?php
-// $Id: activity.module,v 1.1.2.2.2.30.2.31.2.49 2009/08/26 00:38:37 sirkitree Exp $
+// $Id: activity.module,v 1.1.2.2.2.30.2.31.2.91 2010/05/25 04:51:11 scottreynolds Exp $
 /**
  * @file
  * Primarily Drupal hooks and global API functions to manipulate activity.
@@ -10,8 +10,13 @@
 /**
  * Get a list of modules that support the current activity API.
  */
-function activity_get_module_info($module_spec = NULL) {
+function activity_get_module_info($module_spec = NULL, $reset = FALSE) {
   static $cache = NULL;
+
+  if ($reset) {
+    $cache = NULL;
+  }
+
   if (!isset($cache)) {
     $cache = array();
     foreach (module_implements('activity_info') as $module) {
@@ -21,9 +26,6 @@ function activity_get_module_info($module_spec = NULL) {
         // Set the defaults. Not all modules implement the full api
         if (!isset($info->path)) {
           $info->path = drupal_get_path('module', $module);
-        }
-        elseif (file_exists('./'. $info->path .'/'. $module .'.activity.inc')) {
-          require_once './'. $info->path .'/'. $module .'.activity.inc';
         }
         if (!isset($info->hooks)) {
           $info->hooks = array();
@@ -36,6 +38,14 @@ function activity_get_module_info($module_spec = NULL) {
         }
         if (!isset($info->types)) {
           $info->types = array();
+        }
+        if (!isset($info->eid_field)) {
+          $info->eid_field = '';
+        }
+
+        // Load up the activity.inc file if it exists.
+        if (file_exists('./' . $info->path . '/' . $module . '.activity.inc')) {
+          require_once './' . $info->path . '/' . $module . '.activity.inc';
         }
         $cache[$module] = $info;
       }
@@ -61,13 +71,21 @@ function _activity_activity_info() {
   return $info;
 }
 
+function activity_activity_info() {
+  $info = _activity_activity_info();
+  $info->name = 'activity';
+  $info->realms = array('activity_actor' => 'Activity Actor');
+  return $info;
+}
+
 function comment_activity_info() {
   $info = _activity_activity_info();
   $info->name = 'comment';
   $info->object_type = 'comment';
-  $info->objects = array('author' => 'comment'); // array key is the label
+  $info->objects = array('comment author' => 'comment', 'node author' => 'node', 'comment author is the node author' => 'node_comment_author'); // array key is the label
   $info->hooks = array('comment' => array('insert', 'update'));
   $info->realms = array('comment' => 'Comment'); // do we need a t()?
+  $info->eid_field = 'cid';
   foreach (node_get_types() as $type) {
     $info->type_options[$type->type] = t($type->name);
   }
@@ -80,6 +98,7 @@ function node_activity_info() {
   $info->object_type = 'node';
   $info->objects = array('author' => 'node'); // the array key is the label
   $info->hooks = array('nodeapi' => array('delete', 'insert', 'update', 'view'));
+  $info->realms = array('node_author' => 'Node Author');
   foreach (node_get_types() as $type) {
     $info->type_options[$type->type] = t($type->name);
   }
@@ -104,10 +123,10 @@ function activity_help($path, $arg) {
     case 'admin/help#activity':
       $output = '<p>'. t('For more information, see the online handbook entry for <a href="@activity">Activity module</a>.', array('@activity' => 'http://drupal.org/handbook/modules/activity/')) .'</p>';
       return $output;
-    case 'admin/settings/activity':
+    case 'admin/build/activity':
       $output = '<p>'. t('Please read the developer documentation in the DEVELOPER.txt or in the <a href="@activity">handbook entry</a>.', array('@activity' => 'http://drupal.org/handbook/activity/developer')) .'</p>';
       return $output;
-    case 'admin/settings/actions/configure':
+    case 'admin/build/actions/configure':
       return '<p>'. t('<strong>Please see <a href="@activity">this thread</a> for more details on how to setup an activity.</strong>', array('@activity' => 'http://groups.drupal.org/node/19249#comment-67046')) .'</p>';
     case 'user/%/activity/settings':
       return '<p>'. t('Activity provides an opt-out system of permission. By default all of your activity on the system which is setup to be recorded by the site administrator is recorded and displayed to everyone. Here you can choose which of these that you would <strong>not</strong> like to be recorded.') .'<p>';
@@ -118,7 +137,7 @@ function activity_help($path, $arg) {
  * Implementation of hook_perm().
  */
 function activity_perm() {
-  return array('manage own activity settings', 'administer activity');
+  return array('delete own activity', 'manage own activity settings', 'administer activity');
 }
 
 /**
@@ -126,15 +145,12 @@ function activity_perm() {
  */
 function activity_menu() {
   $items = array();
-  $items['activity/%'] = array(
-    'title' => 'View',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
   $items['activity/%/delete'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('activity_delete_confirm', 1),
-    'access arguments' => array('administer activity'),
+    'access callback' => 'activity_delete_access',
+    'access arguments' => array(1),
     'file' => 'activity.admin.inc',
     'type' => MENU_CALLBACK,
   );
@@ -143,11 +159,19 @@ function activity_menu() {
     'description' => 'Modify your feed settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('activity_user_settings', 1),
-    'access arguments' => array('manage own activity settings'),
+    'access arguments' => array(1),
+    'access callback' => 'activity_account_settings_access',
     'file' => 'activity.admin.inc',
     'type' => MENU_LOCAL_TASK,
   );
-  $items['admin/settings/activity'] = array(
+  $items['admin/activity/weight'] = array(
+    'title' => 'Fix Trigger weight',
+    'page callback' => 'activity_fix_trigger_weight',
+    'file' => 'activity.install',
+    'access arguments' => array('administer activity'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/build/activity'] = array(
     'title' => 'Activity publisher templates',
     'description' => 'Modify how your activity messages will look',
     'page callback' => 'drupal_get_form',
@@ -155,11 +179,11 @@ function activity_menu() {
     'access arguments' => array('administer activity'),
     'file' => 'activity.admin.inc',
   );
-  $items['admin/settings/activity/list'] = array(
+  $items['admin/build/activity/list'] = array(
     'title' => 'List',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['admin/settings/activity/create'] = array(
+  $items['admin/build/activity/create'] = array(
     'title' => 'Create',
     'description' => 'Modify how your activity messages will look',
     'page callback' => 'drupal_get_form',
@@ -169,17 +193,20 @@ function activity_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 2,
   );
-  $items['admin/settings/activity/settings'] = array(
-    'title' => 'Settings',
+  $items['admin/settings/activity'] = array(
+    'title' => 'Activity',
     'description' => 'Modify the settings for how activity behaves',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('activity_settings_form'),
     'access arguments' => array('administer activity'),
     'file' => 'activity.admin.inc',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 3,
+    'type' => MENU_NORMAL_ITEM,
   );
-  $items['admin/settings/activity/configure/%actions'] = array(
+  $items['admin/settings/activity/settings'] = array(
+    'title' => 'Settings',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['admin/build/activity/configure/%actions'] = array(
     'title' => 'Edit',
     'description' => 'Modify how your activity messages will look',
     'page callback' => 'drupal_get_form',
@@ -188,7 +215,7 @@ function activity_menu() {
     'file' => 'activity.admin.inc',
     'type' => MENU_CALLBACK,
   );
-  $items['admin/settings/activity/delete/%actions'] = array(
+  $items['admin/build/activity/delete/%actions'] = array(
     'title' => 'Delete',
     'description' => 'Remove an activity action and associated trigger assignment',
     'page callback' => 'drupal_get_form',
@@ -201,16 +228,71 @@ function activity_menu() {
 }
 
 /**
+ * Menu Access callback for delete Activity.
+ *
+ * @param int $aid
+ *  The activity id for the activity
+ *
+ * @return boolean
+ *  Whether or not the currently logged in user can delete
+ *  the specified Activity.
+ */
+function activity_delete_access($aid) {
+  if (user_access('administer activity')) {
+    return TRUE;
+  }
+  if (user_access('delete own activity')) {
+    $uid = db_result(db_query("SELECT uid FROM {activity} WHERE aid = %d", $aid));
+    return $uid == $GLOBALS['user']->uid;
+  }
+  return FALSE;
+}
+
+/**
+ * Menu Access callback for changing a users settings.
+ *
+ * @param $account
+ *   The User account for the settings.
+ * @return boolean
+ */
+function activity_account_settings_access($account) {
+  if (user_access('manage own activity settings') && $account->uid == $GLOBALS['user']->uid) {
+    return TRUE;
+  }
+
+  if (user_access('administer activity')) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Implementation of hook_comment().
+ */
+function activity_comment(&$comment, $op) {
+  if ($op == 'delete') {
+    $db_result = db_query("SELECT aid FROM {activity} WHERE type = 'comment' AND eid = %d", $comment->cid);
+    $aids = array();
+    while ($aid_obj = db_fetch_object($db_result)) {
+      $aids[] = $aid_obj->aid;
+    }
+    activity_delete($aids);
+  }
+}
+
+/**
  * Implementation of hook_nodeapi().
  */
 function activity_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   if ($op == 'delete') {
     // Remove all activity records for this node.
-    db_query("DELETE m, at, aa, a FROM {activity} a
-              LEFT JOIN {activity_access} aa ON aa.aid = a.aid
-              INNER JOIN {activity_targets} at ON at.aid = a.aid
-              INNER JOIN {activity_messages} m ON m.amid = at.amid
-              WHERE a.nid = %d", $node->nid);
+    $db_result = db_query("SELECT aid FROM {activity} WHERE nid = %d", $node->nid);
+    $aids = array();
+    while ($aid_obj = db_fetch_object($db_result)) {
+      $aids[] = $aid_obj->aid;
+    }
+    activity_delete($aids);
   }
 }
 
@@ -220,81 +302,13 @@ function activity_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 function activity_user($op, &$edit, &$account, $category = NULL) {
   if ($op == 'delete') {
     // Remove all activity records for this user.
-    db_query("DELETE m, at, aa, a FROM {activity} a
-              LEFT JOIN {activity_access} aa ON aa.aid = a.aid
-              INNER JOIN {activity_targets} at ON at.aid = a.aid
-              INNER JOIN {activity_messages} m ON m.amid = at.amid
-              WHERE a.uid = %d", $account->uid);
+    $db_result = db_query("SELECT aid FROM {activity} WHERE uid = %d", $account->uid);
+    $aids = array();
+    while ($aid_obj = db_fetch_object($db_result)) {
+      $aids[] = $aid_obj->aid;
+    }
+    activity_delete($aids);
   }
-}
-
-/**
- * Implementation of hook_action_info().
- *
- * Other modules can provide the necessary hooks that they want to provide to
- * us. For instance, node.activity.inc will return array(
- *   'nodeapi' => array('presave', 'delete', 'insert', 'update', 'view')
- * );
- *
- * @see activity_record_form()
- * @see activity_record_submit()
- * @see activity_record()
- */
-function activity_action_info() {
-  $hooks = array();
-  foreach (activity_get_module_info() as $module => $info) {
-    $hooks = array_merge($hooks, $info->hooks);
-  }
-  return array(
-    'activity_record' => array(
-      'description' => t('Record an activity'),
-      'type' => 'activity',
-      'configurable' => TRUE,
-      'hooks' => $hooks,
-    ),
-  );
-}
-
-/**
- * Present a configuration form for our action.
- *
- * @param array $context
- *   Passed in from actions.
- * @return array $form
- */
-function activity_record_form($context) {
-  // @todo: activities are no longer compatible with core action configuration
-  //    as they need more parameters than it allows. This should simply display
-  //    a notice to anyone who tries to use it that it is incompatible and
-  //    direct them to the Activity publisher templates
-  // Set default values for form.
-  $context['author-pattern'] = (!isset($context['author-pattern'])) ? '' : $context['author-pattern'];
-  $context['everyone-pattern'] = (!isset($context['everyone-pattern'])) ? '' : $context['everyone-pattern'];
-  $form['author-pattern'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Author message'),
-    '#default_value' => $context['author-pattern'],
-    '#maxlength' => '254',
-    '#description' => t('Using the available tokens, enter a message as how it should <strong>appear to the Author</strong> of this particular activity.'),
-  );
-  $form['everyone-pattern'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Public message'),
-    '#default_value' => $context['everyone-pattern'],
-    '#maxlength' => '254',
-    '#description' => t('Using the available tokens, enter a message as how it should <strong>appear to anyone who is <em>not</em> the author</strong> of this particular activity.'),
-  );
-  $form['token_help'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Available tokens'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  $form['token_help']['tokens'] = array(
-    '#type' => 'markup',
-    '#theme' => 'activity_token_help',
-  );
-  return $form;
 }
 
 /**
@@ -363,24 +377,6 @@ function activity_token_values($type, $object = NULL, $options = array()) {
 }
 
 /**
- * Process activity_record form submissions.
- *
- * @param array $form
- * @param array $form_state
- * @return array $params
- */
-function activity_record_submit($form, $form_state) {
-  $form_values = $form_state['values'];
-  // Process the HTML form to store configuration. The keyed array that
-  // we return will be serialized to the database.
-  $params = array(
-    'author-pattern' => $form_values['author-pattern'],
-    'everyone-pattern' => $form_values['everyone-pattern'],
-  );
-  return $params;
-}
-
-/**
  * determines if the current trigger should be ignored
  *
  * @param stdClass $object
@@ -403,25 +399,22 @@ function activity_record_submit($form, $form_state) {
  */
 function activity_record_check($object, $context, $token_objects, $activity_object) {
   global $user;
-  // Compare the user settings with the $context[hook] and [op] and if the user
-  // has opted out do not record, just return
-  $hook_op = $context['hook'] .'_'. $context['op'];
-  if (isset($user->activity_ignore[$hook_op]) && $user->activity_ignore[$hook_op] == 0) {
+
+  // First check to see if the user opts out.
+  $aid = db_result(db_query("SELECT aid FROM {trigger_assignments} WHERE hook = '%s' AND op = '%s'", $context['hook'], $context['op']));
+  if (isset($user->activity_ignore[$aid]) && $user->activity_ignore[$aid] == 0) {
     // user has opted out of this particular action
     return FALSE;
   }
-  // Checkboxes says 'story' => 0 when story wasn't checked so we need to process here
+
+  // Checkboxes says 'story' => 0 when story wasn't checked so array_filter().
   $types = array();
   if (isset($context['activity_types'])) {
-    foreach ($context['activity_types'] as $type => $value) {
-      if (!empty($value)) {
-        $types[] = $type;
-      }
-    }
+    $types = array_filter($context['activity_types']);
   }
   
   if (!empty($types)) {
-    return module_invoke($activity_object->name, 'activity_type_check', $token_objects, $types);
+    return module_invoke(activity_module_name($context['hook']), 'activity_type_check', $token_objects, $types);
   }
   
   return TRUE;
@@ -433,8 +426,7 @@ function activity_record_check($object, $context, $token_objects, $activity_obje
  *
  * @param $object
  * @param $context
- *	 Holds ['hook'], ['op'], ['object'](node), ['author-pattern'],
- *   ['everyone-pattern']
+ *  holds the messages
  */
 function activity_record($object, $context) {
   global $user;
@@ -454,61 +446,65 @@ function activity_record($object, $context) {
   }
   
   $type = $activity_object->object_type;
-
-  // Sometimes we need access to multiple objects. In the case of a comment, for
-  // example, we need the comment, node, and user objects in order to be able to
-  // do enough tokenizing. Idea appropriated from http://drupal.org/node/306324
-  switch ($type) {
-    case 'comment':
-      // for comment, we want to add node AND user
-      $types['node'] = node_load($context[$type]->nid);
-    case 'node':
-      // Pass in the current user. The node's author is available through the
-      // [author-*] tokens.
-      $types['user'] = $user;
-      break;
-  }
   
   // bring in all the types so that we can replace_multiple
   foreach ($activity_object->objects as $object_key) {
     if (!empty($context[$object_key])) {
-      $types[$object_key] = $context[$object_key];
+      $objects[$object_key] = drupal_clone($context[$object_key]);
     }
   }
   
   // types is the array for the token replace
   // it uses key 'user' not 'account'
-  if ($types['account']) {
-    $types['user'] = $types['account'];
+  if (isset($objects['account'])) {
+    $objects['user'] = $objects['account'];
   }
-  if (!isset($types[$type]) && isset($context[$type])) {
-    $types[$type] = $context[$type];
+  if (!isset($objects[$type]) && isset($context[$type])) {
+    $objects[$type] = drupal_clone($context[$type]);
   }
+
+  // @TODO: when doing a bulk update this will break.
+  if (!empty($user->uid) && $user->uid != $objects[$type]->uid) {
+    $objects[$type]->uid = $user->uid;
+  }
+  
+  drupal_alter('activity_objects', $objects, $type);
 
   // check make sure we should record this activity
   // activity trigger modules can implement the hook_activity_type_check
   // to tell activity which triggers it should ignore
-  if (!activity_record_check($object, $context, $types, $activity_object)) {
+  if (!activity_record_check($object, $context, $objects, $activity_object)) {
     return;
   }
   // grab the targeted params
-  foreach ($activity_object->objects as $object_name) {
-    $patterns[$object_name] = $context["$object_name-pattern"];
-  }
-  
-  // $messages is keyed by uid
-  $messages = array();
-
-  // foreach pattern in the context, token_replace_multiple() with types
-  foreach ($patterns as $target_key => $message) {
-    if (!empty($types[$target_key])) {
-      $messages[intval($types[$target_key]->uid)] = token_replace_multiple($message, $types, '[', ']', array(), TRUE);
+  foreach (activity_enabled_languages() as $id => $language) {
+    foreach ($activity_object->objects as $object_name) {
+      $patterns[$id][$object_name] = $context["$object_name-pattern-{$id}"];
     }
   }
-  
-  // and now do the everyone else pattern
-  $messages[0] = token_replace_multiple($context['everyone-pattern'], $types, '[', ']', array(), TRUE);
+  // $messages is keyed by language -> uid
+  $messages = array();
 
+  // Flush the token cache as the old tokens are no longer relevant
+  // given the new event.
+  token_get_values('global',NULL, TRUE);
+
+  // foreach pattern in the context, token_replace_multiple() with types
+  foreach ($patterns as $language_id => $language_patterns) {
+    foreach ($language_patterns as $target_key => $message) {
+      if (!empty($objects[$target_key])) {
+        $message = token_replace_multiple($message, $objects, '[', ']', array(), TRUE);
+        if (!empty($message)) {
+          $messages[$language_id][intval($objects[$target_key]->uid)] = $message;
+        }
+      }
+    }
+    // and now do the everyone else pattern
+    $everyone_message = token_replace_multiple($context['everyone-pattern-' . $language_id], $objects, '[', ']', array(), TRUE);
+    if (!empty($everyone_message)) {
+      $messages[$language_id][0] = $everyone_message;
+    }
+  }
   // create a record
   $nid = NULL;
   if (isset($context['node']->nid)) {
@@ -522,58 +518,52 @@ function activity_record($object, $context) {
   if (isset($context['comment']->nid)) {
     $nid = $context['comment']->nid;
   }
-  
+
   $record = new stdClass();
-  $record->uid = (!empty($context[$type]->uid)) ? $context[$type]->uid : $user->uid;
+  $record->uid = (!empty($objects[$type]->uid)) ? $objects[$type]->uid : $user->uid;
   $record->op = $context['op'];
   $record->type = $activity_object->name;
   $record->nid = $nid;
   $record->created = time(); // for PHP4 compat. for D7 use REQUEST_TIME
+  
+  // handle the entity id
+  if (!empty($info->eid_field) && isset($context[$type]->{$info->eid_field})) {
+    $record->eid = $context[$type]->{$info->eid_field};
+  }
+  else {
+    $record->eid = NULL;
+  }
 
   // allow other modules to manipulate the record before insertion
   drupal_alter('activity_record', $record, $context);
   drupal_write_record('activity', $record);
   
-  // allow other modules to change the messages based on the activity type
-  drupal_alter('activity_messages', $messages, $type);
+  // allow other modules to change the messages based on the activity type and
+  // objects.
+  drupal_alter('activity_messages', $messages, $activity_object->name, $objects);
   
   // write the messages here
-  foreach ($messages as $uid => $message) {
-    // write the message away first so we have the amid
-    $message_record = new stdClass();
-    $message_record->message = $message;
-    drupal_write_record('activity_messages', $message_record);
-    
-    // now save the target with the amid from above ^^
-    $target_record = new stdClass();
-    $target_record->aid = $record->aid;
-    $target_record->uid = $uid;
-    $target_record->amid = $message_record->amid;
-    drupal_write_record('activity_targets', $target_record);
+  foreach ($messages as $language_id => $language_messages) {
+    foreach ($language_messages as $uid => $message) {
+      // write the message away first so we have the amid
+      $message_record = new stdClass();
+      $message_record->message = $message;
+      drupal_write_record('activity_messages', $message_record);
+      
+      // now save the target with the amid from above ^^
+      $target_record = new stdClass();
+      $target_record->aid = $record->aid;
+      $target_record->uid = $uid;
+      $target_record->language = $language_id;
+      $target_record->amid = $message_record->amid;
+      drupal_write_record('activity_targets', $target_record);
+    }
   }
   
   // after this is recorded, another module might want the aid
   module_invoke_all('activity_message_recorded', $record, $context);
-  
-  // collect all the grants and filter out the grants that are ignored
-  // @see activity_settings_form()
-  // while activity_get_grants does a rough job of this by only calling modules
-  // that provide the allowed realms, it doesn't filter the extra out
-  // so we do that here
-  $grants = activity_get_grants($record, $context[$type], $type);
-  $keep_keys = array_diff(array_keys($grants), variable_get('activity_access_realms', array('comment')));
-  
-  // remove the bad realms
-  if (!empty($keep_keys)) {
-    foreach ($grants as $realm => $data) {
-      if (in_array($realm, $keep_keys)) {
-        unset($grants[$realm]);
-      }
-    }
-  }
 
-  // allow other modules to override what is recorded
-  drupal_alter('activity_access_records', $grants, $context);
+  $grants = activity_get_grants($record);
   
   foreach ($grants as $realm => $values) {
     foreach ($values as $value) {
@@ -593,38 +583,33 @@ function activity_record($object, $context) {
  * @param stdClass $record
  * the database record for the activity table
  *
- * @param mixed $object
- * The object for which this activity fired for
- *
- * @param string $type
- * the activity type
- *
  * @return array
  * The grant records for this activity
  * 
  */
-function activity_get_grants($record, $object, $type) {
-  // load up any files that need to be loaded
+function activity_get_grants($record) {
+  // Load up any files that need to be loaded.
   $api_info = activity_get_module_info();
-  $allowed_realms = variable_get('activity_access_realms', array('comment'));
+  $allowed_realms = activity_access_realms();
   $modules = array();
+  $grants = array();
   foreach ($api_info as $module => $info) {
-   
-    // only include the file if it provides an allowed realm
+    // Count the module only if it provides a useful realm.
     if (count(array_intersect(array_keys($info->realms), $allowed_realms))) {
-      $modules[] = $module;
+      $module_grants = module_invoke($module, 'activity_grants', $record);
+      if (is_array($module_grants)) {
+        // Only write the grants that are explictly allowed.
+        foreach($module_grants as $realm => $values) {
+          if (in_array($realm, $allowed_realms)) {
+            $grants[$realm] = $values;
+          }
+        }
+      }
     }
   }
 
-  $grants = array();
-  // get the grants for this activity
-  // call only the modules that provide the allowed realms
-  // This doesn't not guantree what we want though. Additional filtering
-  // still needs to happen and does
-  // @see activity_record
-  foreach ($modules as $module) {
-    $grants = array_merge_recursive($grants, module_invoke($module, 'activity_grants', $record, $object, $type));
-  }
+  // allow other modules to override what is recorded
+  drupal_alter('activity_access_records', $grants, $record);
 
   return $grants;
 }
@@ -632,16 +617,22 @@ function activity_get_grants($record, $object, $type) {
 /**
  * Delete an activity message.
  *
- * @param int $aid
- *   The activity message id for the activity message table.
+ * @param array $aids
+ *   The activity id or an array of activity ids for the activity message table.
  */
-function activity_delete($aid) {
+function activity_delete($aids) {
+  if (is_numeric($aids)) {
+    $aids = array($aids);
+  }
+  if (!is_array($aids) || empty($aids)) {
+    return; // early exit
+  }
   // This is MySQL specific multitable delete
   db_query("DELETE m, at, aa, a FROM {activity} a
            LEFT JOIN {activity_access} aa ON aa.aid = a.aid
            INNER JOIN {activity_targets} at ON at.aid = a.aid
            INNER JOIN {activity_messages} m ON m.amid = at.amid
-           WHERE a.aid = %d", $aid
+           WHERE a.aid IN (" . db_placeholders($aids) . ")", $aids
   );
 }
 
@@ -674,9 +665,10 @@ function activity_views_api() {
  * Implementation of hook_cron().
  */
 function activity_cron() {
-  // default is 2 weeks 1209600
+  // default is 2 weeks 0
   $expire = variable_get('activity_expire', 0);
-  if ($expire) {
+  $min = variable_get('activity_min_count', 0);
+  if (!empty($expire) && empty($min)) {
     db_query("DELETE m, at, aa, a FROM {activity} a
              LEFT JOIN {activity_access} aa ON aa.aid = a.aid
              INNER JOIN {activity_targets} at ON at.aid = a.aid
@@ -684,23 +676,104 @@ function activity_cron() {
              WHERE a.created < %d", $_SERVER['REQUEST_TIME'] - $expire
     );
   }
-  $expire = variable_get('activity_count_expire', 0);
-  if ($expire) {
-    // set the variables
-    db_query("SET @current_uid := -1");
-    db_query("SET @uid_position := 1");
+  elseif (!empty($expire)) {
+    // SELECT members with the min number of activies and they have an min(created) older then the expire
+    $uid_sql = "SELECT uid, min(created) as min, count(aid) as count FROM {activity} GROUP BY uid HAVING min < %d AND count > %d";
+    $uid_result = db_query($uid_sql, $_SERVER['REQUEST_TIME'] - $expire, $min);
+    $uids = array();
+    while ($uid_obj = db_fetch_object($uid_result)) {
+      $uids[] = $uid_obj->uid;
+    }
     
-    // Order bys need to be in same direction so that MySQL uses the indices
-    db_query_temporary("SELECT aid, IF (@current_uid = uid, @uid_position := @uid_position+1, @uid_position := 1) as spot, IF (@current_uid <> uid, @current_uid := uid, @current_uid) as activity_uid from activity ORDER BY uid ASC, created ASC", "activity_stats");
-
-    db_query("DELETE m, at, aa, a FROM {activity} a
+    if (!empty($uids)) {
+      // DELETE where uid IN () ^^ AND a.created < expire
+      $args = array_merge($uids, array($_SERVER['REQUEST_TIME'] - $expire));
+      db_query("DELETE m, at, aa, a FROM {activity} a
              LEFT JOIN {activity_access} aa ON aa.aid = a.aid
              INNER JOIN {activity_targets} at ON at.aid = a.aid
              INNER JOIN {activity_messages} m ON m.amid = at.amid
-             INNER JOIN {activity_stats} stat ON stat.aid = a.aid AND stat.spot > %d",
-      $expire
-    );
+             WHERE a.uid IN(" . db_placeholders($uids) . ")
+             AND a.created < %d", $args
+      );
+    }
   }
+}
+
+/**
+ * Form callback from trigger module.
+ */
+function activity_record_form($params) {
+  // This is called when an admin tries to configure an Activity Trigger, and
+  // this should only be done in the admin/activity/build context.
+  drupal_goto('admin/build/activity/configure/' . arg(4));
+}
+
+/**
+ * helper function to get the enabled languages
+ *
+ * @return array
+ * array with the keys as the short id of the language (i.e. en)
+ */
+function activity_enabled_languages() {
+  $languages = language_list('enabled');
+  return $languages[1];
+}
+
+/**
+ * Implementation of hook_form-$form-id_alter().
+ */
+function activity_form_system_modules_alter(&$form, $form_state) {
+  // Add our submit handler to count the number of Activity modules.
+  $form['#submit'][] = 'activity_count_modules';
+  $form['#activity_count'] = count(activity_get_module_info());
+}
+
+/**
+ * FAPI submit callback to count the number of enabled Activity access modules.
+ */
+function activity_count_modules($form, &$form_state) {
+  if (count(activity_get_module_info(NULL, TRUE)) < $form['#activity_count']) {
+    drupal_set_message(t('Activity Access realms may need to rebuilt. !click', array('!click' => l(t('Click here to do this now'), 'admin/settings/activity', array('fragment' => 'activity-access-fieldset')))), 'error');
+  }
+}
+
+/**
+ * Return all the allowed realms for Activity Access.
+ *
+ * @return array
+ *  Returns an array of allowed realms.
+ */
+function activity_access_realms() {
+  $enabled_realms = variable_get('activity_access_realms', FALSE);
+  // If no realms have been explictly set, return all access realms.
+  if ($enabled_realms === FALSE) {
+    $enabled_realms = array();
+    foreach (activity_get_module_info() as $module => $info) {
+      $enabled_realms = array_merge($enabled_realms, array_keys($info->realms));
+    }
+  }
+
+  return $enabled_realms;
+}
+
+/**
+ * Find the module that provides the selected hook.
+ *
+ * @param string $hook
+ *  The hook
+ *
+ * @return string / FALSE
+ *  The module that provides that hook.
+ */
+function activity_module_name($hook) {
+  // Do not static cache, activity_get_module_info() does that.
+  $all_modules = activity_get_module_info();
+  foreach ($all_modules as $module => $info) {
+    if (isset($info->hooks[$hook])) {
+      return $module;
+    }
+  }
+  return FALSE;
 }
 
 /**
@@ -729,8 +802,8 @@ function theme_activity_settings_actions_list($results) {
     $rows[] = array(
       drupal_ucfirst(str_replace('_', ' ', $result['hook'])),
       $result['description'],
-      l('configure', 'admin/settings/activity/configure/'. $result['aid']) .' | '.
-      l('delete', 'admin/settings/activity/delete/'. $result['aid']),
+      l('configure', 'admin/build/activity/configure/'. $result['aid']) .' | '.
+      l('delete', 'admin/build/activity/delete/'. $result['aid']),
     );
   }
   $output = theme('table', $header, $rows);
@@ -794,6 +867,20 @@ function theme_activity_token_help($types = array('all'), $prefix = '[', $suffix
  * This allows us to theme the username separately for activity feeds then the
  * rest of the site.
  */
-function theme_activity_username($account) {
-  return theme('username', $account);
+function theme_activity_username($object) {
+  if ($object->uid && $object->name) {
+    // Shorten the name when it is too long or it will break many tables.
+    if (drupal_strlen($object->name) > 20) {
+      $name = drupal_substr($object->name, 0, 15) .'...';
+    }
+    else {
+      $name = $object->name;
+    }
+     $output = l($name, 'user/'. $object->uid, array('attributes' => array('title' => t('View user profile.'))));
+  }
+  else {
+    $output = check_plain(variable_get('anonymous', t('Anonymous')));
+  }
+
+  return $output;
 }

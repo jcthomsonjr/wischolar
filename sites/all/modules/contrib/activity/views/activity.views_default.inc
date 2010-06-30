@@ -1,5 +1,5 @@
 <?php
-// $Id: activity.views_default.inc,v 1.1.2.6 2009/08/25 21:26:17 sirkitree Exp $
+// $Id: activity.views_default.inc,v 1.1.2.14 2010/03/15 18:55:50 scottreynolds Exp $
 
 /**
  * Implementation of hook_views_default_views().
@@ -16,8 +16,26 @@ function activity_views_default_views() {
   $view->base_table = 'activity';
   $view->is_cacheable = FALSE;
   $view->api_version = 2;
-  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+  $view->disabled = TRUE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->override_option('relationships', array(
+    'nid' => array(
+      'label' => 'Node',
+      'required' => 0,
+      'id' => 'nid',
+      'table' => 'activity',
+      'field' => 'nid',
+      'relationship' => 'none',
+    ),
+    'uid' => array(
+      'label' => 'User',
+      'required' => 1,
+      'id' => 'uid',
+      'table' => 'activity',
+      'field' => 'uid',
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('fields', array(
     'message' => array(
       'label' => '',
@@ -44,16 +62,18 @@ function activity_views_default_views() {
     ),
   ));
   $handler->override_option('sorts', array(
-    'created' => array(
+    'aid' => array(
       'order' => 'DESC',
-      'granularity' => 'second',
-      'id' => 'created',
+      'id' => 'aid',
       'table' => 'activity',
-      'field' => 'created',
+      'field' => 'aid',
       'relationship' => 'none',
     ),
   ));
   $handler->override_option('access', array(
+    'type' => 'none',
+  ));
+  $handler->override_option('cache', array(
     'type' => 'none',
   ));
   $handler->override_option('use_ajax', TRUE);
@@ -87,6 +107,16 @@ function activity_views_default_views() {
   $view->api_version = 2;
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->override_option('relationships', array(
+    'uid' => array(
+      'label' => 'User',
+      'required' => 1,
+      'id' => 'uid',
+      'table' => 'activity',
+      'field' => 'uid',
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('fields', array(
     'name' => array(
       'label' => 'Name',
@@ -99,6 +129,7 @@ function activity_views_default_views() {
         'alt' => '',
         'prefix' => '',
         'suffix' => '',
+        'target' => '',
         'help' => '',
         'trim' => 0,
         'max_length' => '',
@@ -107,6 +138,9 @@ function activity_views_default_views() {
         'strip_tags' => 0,
         'html' => 0,
       ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
       'link_to_user' => 1,
       'overwrite_anonymous' => 0,
       'anonymous_text' => '',
@@ -114,7 +148,7 @@ function activity_views_default_views() {
       'id' => 'name',
       'table' => 'users',
       'field' => 'name',
-      'relationship' => 'none',
+      'relationship' => 'uid',
     ),
     'message' => array(
       'label' => 'Message',
@@ -141,31 +175,6 @@ function activity_views_default_views() {
       'field' => 'message',
       'relationship' => 'none',
     ),
-    'op' => array(
-      'label' => 'Operation',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'strip_tags' => 0,
-        'html' => 0,
-      ),
-      'exclude' => 0,
-      'id' => 'op',
-      'table' => 'activity',
-      'field' => 'op',
-      'relationship' => 'none',
-    ),
     'type' => array(
       'label' => 'Type',
       'alter' => array(
@@ -189,6 +198,36 @@ function activity_views_default_views() {
       'id' => 'type',
       'table' => 'activity',
       'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'operation' => array(
+      'group_type' => 'group',
+      'label' => 'Operation',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 0,
+      'id' => 'operation',
+      'table' => 'activity',
+      'field' => 'operation',
       'relationship' => 'none',
     ),
     'created' => array(
@@ -282,25 +321,6 @@ function activity_views_default_views() {
       'field' => 'uid',
       'relationship' => 'none',
     ),
-    'op' => array(
-      'operator' => '=',
-      'value' => '',
-      'group' => '0',
-      'exposed' => TRUE,
-      'expose' => array(
-        'use_operator' => 0,
-        'operator' => 'op_op',
-        'identifier' => 'op',
-        'label' => 'Activity: Operation',
-        'optional' => 1,
-        'remember' => 0,
-      ),
-      'case' => 1,
-      'id' => 'op',
-      'table' => 'activity',
-      'field' => 'op',
-      'relationship' => 'none',
-    ),
     'type' => array(
       'operator' => '=',
       'value' => '',
@@ -318,6 +338,27 @@ function activity_views_default_views() {
       'id' => 'type',
       'table' => 'activity',
       'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'operation' => array(
+      'group_type' => 'group',
+      'operator' => 'in',
+      'value' => array(),
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'operation_op',
+        'identifier' => 'operation',
+        'label' => 'Activity: Operation',
+        'optional' => 1,
+        'single' => 1,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'id' => 'operation',
+      'table' => 'activity',
+      'field' => 'operation',
       'relationship' => 'none',
     ),
     'nid' => array(
@@ -344,16 +385,17 @@ function activity_views_default_views() {
     ),
   ));
   $handler->override_option('access', array(
-    'type' => 'none',
+    'type' => 'perm',
+    'perm' => 'administer activity',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
   $handler->override_option('header', 'You can filter these results by providing criteria in the boxes below.
-  <ul><li><b>Activity: User</b> - filter by the user who created the activity.</li>
-  <li><b>Activity: Operation</b> - filter by the Operation field.</li>
-  <li><b>Activity: Type</b> - filter by the Type field.</li>
-  <li><b>Activity on Node: Nid</b> - filter by a particular node id.</li></ul>');
+              <ul><li><b>Activity: User</b> - filter by the user who created the activity.</li>
+              <li><b>Activity: Operation</b> - filter by the Operation field.</li>
+              <li><b>Activity: Type</b> - filter by the Type field.</li>
+              <li><b>Activity on Node: Nid</b> - filter by a particular node id.</li></ul>');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 1);
   $handler->override_option('use_ajax', TRUE);
@@ -396,6 +438,10 @@ function activity_views_default_views() {
       ),
     ),
     'default' => 'created',
+  ));
+  $handler->override_option('exposed_form', array(
+    'type' => 'basic',
+    'options' => array(),
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('path', 'admin/settings/activity/maintenance');
