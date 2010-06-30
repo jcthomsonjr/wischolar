@@ -192,7 +192,7 @@ function scholarregister_validate_mail($mail) {
     return $error;
   }
   elseif (_scholarregister_mail_exists($mail)){
-    return "e-mail \"$mail\" already exists";
+    return "The e-mail address \"$mail\" already exists";
   }
 }
 
@@ -206,12 +206,12 @@ function scholarregister_validate_domain($domain){
   'value' => $domain,
   'id' => null,
   );
-
-  if ($error = user_validate_name($domain)){  // the same validation as the username
-    return $error;
+  // Validate the domain suffix
+  if (!purl_validate($modifier)){
+    return "The domain \"$domain\" is invalid";
   }
-  elseif (!purl_validate($modifier) || _scholarregister_domain_exists($domain)){
-    return "domain \"$domain\" is taken or invalid";
+  elseif (_scholarregister_domain_exists($domain)){
+    return "The domain \"$domain\" is already taken";
   }
 }
 
