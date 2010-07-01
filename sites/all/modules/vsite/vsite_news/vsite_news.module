@@ -147,8 +147,8 @@ function vsite_news_activity_action($object, $context){
 	if(!in_array($object->type,array_keys(vsite_content_types(2)))) return false; //Is this type public?
 	
 	//Setup the advanced Patterns
-	$context['node-pattern'] = 'You [action] a new [type-name] [in-vsite]';
-	$context['everyone-pattern'] = '[author-name] [action] a new [type-name] [in-vsite]';
+	$context['node-pattern-en'] = 'You [action] a new [type-name] [in-vsite]';
+	$context['everyone-pattern-en'] = '[author-name] [action] a new [type-name] [in-vsite]';
 	$context['activity_types'] = array_keys(vsite_content_types());
 	$s_action = 'modified';
 	switch($context['op']){
@@ -163,8 +163,8 @@ function vsite_news_activity_action($object, $context){
     	$s_action = $context['op']."d";
     break;
 	}
-	$context['node-pattern'] = str_replace('[action]',$s_action,$context['node-pattern']);
-  $context['everyone-pattern'] = str_replace('[action]',$s_action,$context['everyone-pattern']);
+	$context['node-pattern-en'] = str_replace('[action]',$s_action,$context['node-pattern-en']);
+  $context['everyone-pattern-en'] = str_replace('[action]',$s_action,$context['everyone-pattern-en']);
 	
 	if($vsite && $vsite->group->uid){
 		$user = user_load($vsite->group->uid);
@@ -172,8 +172,8 @@ function vsite_news_activity_action($object, $context){
     if($profile && (is_array($profile->vsite_users_first_name[0]) && is_array($profile->vsite_users_last_name[0]))){
     	$s_users_vsite = "in {$profile->vsite_users_first_name[0]['value']} {$profile->vsite_users_last_name[0]['value']}'s site";
     }
-    $context['node-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['node-pattern']);
-    $context['everyone-pattern'] = str_replace('[in-vsite]',$s_users_vsite,$context['everyone-pattern']);
+    $context['node-pattern-en'] = str_replace('[in-vsite]',$s_users_vsite,$context['node-pattern-en']);
+    $context['everyone-pattern-en'] = str_replace('[in-vsite]',$s_users_vsite,$context['everyone-pattern-en']);
 	}
 	
   return activity_record($object,$context);
