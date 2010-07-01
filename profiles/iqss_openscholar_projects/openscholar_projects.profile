@@ -67,6 +67,7 @@ function _openscholar_projects_core_modules() {
     'jquery_ui',
     'jquery_update',
     'lightbox2',
+    'lucene_api',
     'mollom',
     'og',
     'og_access',

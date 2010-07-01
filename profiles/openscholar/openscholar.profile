@@ -68,7 +68,7 @@ function _openscholar_core_modules() {
     'jquery_ui',
     'jquery_update',
     'lightbox2',
-    'mollom',
+    'lucene_api',
     'og',
     'og_access',
     'og_views',
@@ -82,6 +82,7 @@ function _openscholar_core_modules() {
     'spaces',
     'spaces_og',
     'stringoverrides',
+    'strongarm',
     'token',
     'trigger',
     'transliteration',
@@ -96,7 +97,6 @@ function _openscholar_core_modules() {
     'vertical_tabs',
     'wysiwyg',
   
-
   //cck
     'content',
     'content_copy',
@@ -118,14 +118,14 @@ function _openscholar_core_modules() {
     'nodereference_url',
     'optionwidgets',
 
-
-  // development
-    'admin_menu',
-    'devel',
-    'devel_generate',
     'install_profile_api',
     'schema',
-    'strongarm',
+ 
+    // Optional Development Resources
+    //'admin_menu',
+    //'devel',
+    //'devel_generate',
+    
   );
   
   return $contrib_modules;
@@ -153,24 +153,15 @@ function _openscholar_scholar_modules() {
     'vsite_widgets',
     'vsite_generic_settings',
     
-  // scholar specific
     'biblio',
     'auto_nodetitle',
-
-  //IQSS Specific
-    'iqss_scholar',
-  
+//////   'scholarboot',
     'cp',
-    //'cp_node_forms',
-    'scholarboot',
     'bkn',
     'cite_distribute',
-   // 'cs_meta',
     'repec_meta',
     'googlescholar_meta',
     'dyntextfield',
-    'scholarregister',
-    'iqss_project',
 
     // features
     'scholar_dvn',
@@ -238,11 +229,6 @@ function openscholar_profile_tasks(&$task, $url) {
 
     // configure wisywig/tinymce
     _openscholar_profiles_wysiwyg_config();
-    
-    /*
-    // Set a default footer message.
-    variable_set('site_footer', '&copy; 2009 '. l('IQSS', 'http://www.iq.harvard.edu', array('absolute' => TRUE)));
-    */
 
     // Rebuild key tables/caches
     menu_rebuild();
