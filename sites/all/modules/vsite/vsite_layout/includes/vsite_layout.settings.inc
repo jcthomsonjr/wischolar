@@ -167,13 +167,13 @@ class vsite_layout_settings_layout implements space_setting {
    * This function looks at the changes you are making to the 'default' layout and caries those changes to any feature layouts
    * If the widget was in the feature already, and it was in the same region as default then replicate the change
    * Also keep the order the same in the child as the parent, disreguarding blocks that differ
-   * 
+   *
    * @param $a_new_settings (array) The new settings for this feature region
    * @param $a_prev_settings (array) The presave settings for the DEFAULT region
    * @param $setting (array) The modified 'default' layout
    * @param $a_new_all_wgts (array) The widgets that were added on 'default' and are getting added to the feature
    */
-  private static function moveRelevantSubpageWidgets(&$a_new_settings,$a_prev_settings,$setting,$a_new_all_wgts){
+  public static function moveRelevantSubpageWidgets(&$a_new_settings,$a_prev_settings,$setting,$a_new_all_wgts){
     //Widgets that have changed positions
     foreach ($setting as $s_widget_name => $s_region){
       if(array_key_exists($s_widget_name,$a_new_settings) &&  //The Widget is in the subpage
