@@ -175,6 +175,17 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   }
       
   foreach ($a_settings_menu as $key => $link) {
+  	if($link['link']['access_callback']){
+  	  $arguments = unserialize($link['link']['access_arguments']);
+      if ($link['link']['access_callback'] == 'user_access') $valid = (count($arguments) == 1) ? user_access($arguments[0]) : user_access($arguments[0], $arguments[1]);
+	    else $valid = call_user_func_array($link['link']['access_callback'], $arguments);
+  		
+	    if(!$valid){
+	    	unset($a_settings_menu[$key]);
+        continue;
+	    }
+  	}//Remove menus that dont pass auth
+  	
   	if(in_array($link['link']['link_path'],$a_disabled_links)){
   		unset($a_settings_menu[$key]);
   		continue;
@@ -214,10 +225,6 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   if ($b_make_feature_active && module_exists('context')) {
     $a_new_links = array();
     foreach ($a_settings_menu as $key => $link) {
-      //check if scholar_page feature is disabled, then do no show menu link for page
-      if (!$space-> feature_access('scholar_pages') && vsite_menus_pages_menu_link($link['link']['link_path'])){
-        unset($a_settings_menu[$key]);
-      }
       $a_new = current(context_menu_set_active(array($link['link'])));
       if(is_array($a_new['attributes']) && $a_new['attributes']['class'] == 'active'){
         $a_settings_menu[$key]['link']['in_active_trail'] = true;
@@ -228,19 +235,6 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   if(!$b_html) return $a_settings_menu;
   
   return menu_tree_output($a_settings_menu);
-}
-
-function vsite_menus_pages_menu_link($path =''){
-	dpm("Look at me");
-  if (strlen($path)){
-    $exp_path = explode('/', $path);
-    if($exp_path[0] == 'node'){
-      $type = db_result(db_query("SELECT type FROM {node} WHERE nid = %d", $exp_path[1]));
-       if (strlen($type))
-      return $type == 'page' ? true : false;
-    }
-  }
-  return false;
 }
 
 /**
