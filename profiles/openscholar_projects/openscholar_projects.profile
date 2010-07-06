@@ -268,8 +268,6 @@ function openscholar_projects_profile_tasks(&$task, $url) {
     variable_set('scholar_content_type', 'scholar_project');
     // set default to america/new yourk
     variable_set(date_default_timezone_name, "America/New_York");
-   // set the project name variable
-    _openscholar_profiles_project_name();
 
     // _scholar_testingcontent();
 
@@ -417,13 +415,4 @@ $settings = serialize($settings);
 function _openscholar_profiles_create_roles(){
   install_add_role('scholar admin');
   install_add_role('scholar user');
-}
-
-
-/**
- * Set the project name variable
- */
-function  _openscholar_profiles_project_name(){
-  // set the project name
-   variable_set('scholar_project_name', "OpenScholar");
 }
