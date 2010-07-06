@@ -419,14 +419,27 @@ function vsite_preprocess_page(&$vars){
   if ($vsite) {
   	$vsite_title = $vsite->group->title;
     if (vsite_is_front()) {
-      $head_title = array($vsite_title); 
+      $head_title = array($vsite_title);
     }
     else {
       $head_title = array(strip_tags(drupal_get_title()), $vsite_title);
     }
     $head_title = implode(' | ', $head_title);
-    $vars['head_title'] = $head_title; 
+    $vars['head_title'] = $head_title;
   }
+  
+  //REPLACE THE Default Jquery UI CSS (if Needed)
+  if(array_key_exists(JQUERY_UI_PATH .'/themes/base/ui.all.css',$vars['css'])){
+  	//Override
+  	drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/jquery_ui/jquery.ui/themes/openscholar/ui.all.css');
+  	$vars['css'] = drupal_add_css();
+  	
+  	//Remove invalid
+  	unset($vars['css'][JQUERY_UI_PATH .'/themes/base/ui.all.css']);
+  	
+    $vars['styles'] = drupal_get_css($vars['css']);
+  }
+  dpm(drupal_add_css());
 }
 
 /**

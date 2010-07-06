@@ -1,5 +1,5 @@
 <?php
-// $Id: purl.admin.inc,v 1.1.2.4 2009/06/26 14:19:21 jmiccolis Exp $
+// $Id: purl.admin.inc,v 1.1.2.10 2009/12/18 16:11:32 yhahn Exp $
 /**
  * @file
  *
@@ -35,7 +35,7 @@ function purl_admin() {
       $providers[$merged[$i]['provider']]['name'],
       $merged[$i]['value'],
       $merged[$i]['id'],
-      $methods[variable_get('purl_method_'. $merged[$i]['provider'], PURL_PATH)],
+      $methods[variable_get('purl_method_'. $merged[$i]['provider'], 'path')],
     );
   }
 
@@ -58,9 +58,7 @@ function purl_admin() {
  * Settings form for choosing the operating mode of purl
  */
 function purl_settings_form() {
-  global $base_url;
   $form = array();
-
   $options = _purl_options();
 
   foreach (purl_providers() as $id => $provider) {
@@ -85,32 +83,34 @@ function purl_settings_form() {
       '#title' => t('Method'),
       '#type' => 'select',
       '#options' => $provider_options,
-      '#default_value' => variable_get('purl_method_'. $id, PURL_PATH),
+      '#default_value' => variable_get('purl_method_'. $id, 'path'),
     );
-    $form[$id]['purl_method_'. $id .'_key'] = array(
-      '#title' => t('Key'),
-      '#type' => 'textfield',
-      '#size' => 12,
-      '#default_value' => variable_get('purl_method_'. $id .'_key', ''),
-    );
-  }
 
-  if (!empty($options[PURL_DOMAIN]) || !empty($options[PURL_SUBDOMAIN])) {
-    $form['purl_location'] = array(
-      '#type' => 'fieldset',
-    );
-    $form['purl_location']['purl_base_domain'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Default domain'),
-      '#description' => t('Enter the default domain if you are using domain modifiers.'),
-      '#required' => FALSE,
-      '#default_value' => variable_get('purl_base_domain', $base_url),
-    );
+    // Allow processors to alter the form.
+    foreach ($provider_options as $k => $v) {
+      purl_get_processor($k)->admin_form($form, $id);
+    }
   }
 
   $form = system_settings_form($form);
   $form['#theme'] = 'purl_settings_form';
   return $form;
+}
+
+/**
+ * Validate a key element and move its value to the correct key if validated.
+ */
+function purl_admin_form_key_validate(&$element, &$form_state) {
+  // Check for string identifier sanity
+  if (!empty($element['#value'])) {
+    if (!preg_match('!^[A-Za-z0-9_-]+$!', $element['#value'])) {
+      form_set_error($element['#name'], t('The key may only consist of letters, numbers, dashes and underscores.'));
+    }
+    else {
+      $form_state['values']["purl_method_{$element['#provider_id']}_key"] = $element['#value'];
+    }
+  }
+  unset($form_state['values'][$element['#name']]);
 }
 
 /**
@@ -128,12 +128,16 @@ function theme_purl_settings_form($form) {
       unset($form[$id]['#description']);
       $row[] = "<strong>$name</strong><div class='description'>$description</div>";
 
-      $cell = '';
+      $cell = $extra = '';
       foreach (element_children($form[$id]) as $item) {
         unset($form[$id][$item]['#title']);
+        if ($item == 'extra') {
+          $extra = drupal_render($form[$id][$item]);
+        }
         $cell .= drupal_render($form[$id][$item]);
       }
       $row[] = $cell;
+      $row[] = $extra;
     }
     $rows[] = $row;
   }
@@ -152,7 +156,7 @@ function purl_types_form() {
     '#type' => 'checkboxes',
     '#title' => t('Types'),
     '#options' => _purl_options(false),
-    '#default_value' => variable_get('purl_types', array(PURL_PATH)),
+    '#default_value' => variable_get('purl_types', array()),
     '#description' => t('Enabled URL modification types.'),
   );
   return system_settings_form($form);
@@ -249,7 +253,7 @@ function _purl_menu_edit_submit_recurse($tree, $behavior) {
 /**
  * Validate handler for menu_edit_item
  *
- * Doesn't actually validate, but rather moves data to where 
+ * Doesn't actually validate, but rather moves data to where
  * menu_edit_item_submit() expects it.
  */
 function purl_item_edit_validate($form, &$form_state) {
