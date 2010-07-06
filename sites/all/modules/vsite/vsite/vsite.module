@@ -5,9 +5,11 @@ include_once('vsite.features.inc');
 //The Vsite Object instanceof spaces
 include_once('vsite.class.inc');
 
+
 function vsite_menu_alter(&$items){
   $items['node']['page callback'] = 'vsite_vsiteboot';
 }
+
 
 function vsite_menu(){
   $items = array();
@@ -32,12 +34,6 @@ function vsite_vsiteboot(){
 
   if (! $scholar_installed) {
   	module_load_include('inc', 'vsite', 'includes/vsiteboot');
-    // from development seed code
-    system_theme_data(); // Rebuild theme cache.
-    _block_rehash(); // Rebuild block cache.
-    views_invalidate_cache(); // Rebuild the views.
-    menu_rebuild(); // Rebuild the menu.
-    features_rebuild(); // Features rebuild scripts.
 
     //_scholar_testingcontent();
     _vsite_filefield_paths_config();
@@ -52,6 +48,8 @@ function vsite_vsiteboot(){
 
     variable_set('scholar_installed', 1);
   }
+  
+  drupal_goto('site/register');
 
   //
   //render the page as defined by the current profile
