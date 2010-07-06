@@ -87,9 +87,10 @@ function iqss_pinserver_register_vsite_users_profile_node_submit($form, &$form_s
  * A validation function for registration form submit
  */
 function iqss_pinserver_register_validate($form, &$form_state){
-  if(iqss_pinserver_register_check_row($form_state['values']['huid'])){
+  //check if multiple sites is limited and if site already exists
+  if(variable_get('scholar_create_multiple_sites', 0) == 0 && iqss_pinserver_register_check_row($form_state['values']['huid'])){
     $commands[] = _scholarregister_vsite_error();
-   ctools_ajax_render($commands);
+    ctools_ajax_render($commands);
   }
 }
 
