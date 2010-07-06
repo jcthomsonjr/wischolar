@@ -3,12 +3,12 @@
 /**
  * Helper to implementation of hook_views_default_views().
  */
-function _iqss_project_views_default_views() {
+function _scholar_front_views_default_views() {
   $views = array();
 
   // Exported view: iqss_project_sites
   $view = new view;
-  $view->name = 'iqss_project_sites';
+  $view->name = 'openscholar_sites';
   $view->description = 'list of web sites';
   $view->tag = 'scholar';
   $view->view_php = '';
@@ -54,7 +54,7 @@ function _iqss_project_views_default_views() {
       ),
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'iqss_project_front_logo_linked',
+      'format' => 'openscholar_front_logo_linked',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -263,7 +263,7 @@ function _iqss_project_views_default_views() {
       ),
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'iqss_project_front_logo_linked',
+      'format' => 'openscholar_front_logo_linked',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',

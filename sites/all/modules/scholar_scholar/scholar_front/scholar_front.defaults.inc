@@ -3,7 +3,7 @@
 /**
  * Helper to implementation of hook_context_default_contexts().
  */
-function _iqss_project_context_default_contexts() {
+function _scholar_front_context_default_contexts() {
   $items = array();
 
   $items[] = array(
@@ -50,7 +50,7 @@ function _iqss_project_context_default_contexts() {
 /**
  * Helper to implementation of hook_flag_default_flags().
  */
-function _iqss_project_flag_default_flags() {
+function _scholar_front_flag_default_flags() {
 $flags = array();
 // Exported flag: "Featured web sites".
 $flags[] = array (
@@ -84,7 +84,7 @@ $flags[] = array (
   'show_on_form' => 0,
   'access_author' => '',
   'i18n' => 0,
-  'module' => 'iqss_project',
+  'module' => 'scholar_front',
   'api_version' => 2,
 );
 return $flags;
@@ -93,10 +93,10 @@ return $flags;
 /**
  * Helper to implementation of hook_imagecache_default_presets().
  */
-function _iqss_project_imagecache_default_presets() {
+function _scholar_front_imagecache_default_presets() {
   $items = array(
-    'iqss_project_front_logo' => array(
-      'presetname' => 'iqss_project_front_logo',
+    'openscholar_front_logo' => array(
+      'presetname' => 'openscholar_front_logo',
       'actions' => array(
         '0' => array(
           'weight' => '0',

@@ -1,10 +1,10 @@
 <?php
 
-include_once('iqss_project.features.inc');
+include_once('scholar_front.features.inc');
 
-function iqss_project_theme(){
+function scholar_front_theme(){
 
-  $path = drupal_get_path('module', 'iqss_project') . '/theme';
+  $path = drupal_get_path('module', 'scholar_front') . '/theme';
 
   //top bocks
 
@@ -62,14 +62,14 @@ function iqss_project_theme(){
 }
 
 
-function iqss_project_menu(){
+function scholar_front_menu(){
   $items = array();
 
   // nodeautocomplete callback for scholar
   $items['iqss_scholar_home'] = array(
     'type' => MENU_CALLBACK,
     'title' => 'OpenScholar',
-    'page callback' => 'iqss_project_homepage',
+    'page callback' => 'scholar_front_homepage',
     'access arguments' => array(
       'access content'
     ),
@@ -78,7 +78,7 @@ function iqss_project_menu(){
   return $items;
 }
 
-function iqss_project_homepage(){
+function scholar_front_homepage(){
   $s_content = '<div id="content-row-1">'.theme('project_big_text').'</div>';
   $s_content .= '<div id="content-row-2">'.theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate'). '</div>' ;
   return $s_content;
@@ -87,7 +87,7 @@ function iqss_project_homepage(){
 /**
  * Implementation of hook_preprocess_page()
  */
-function iqss_project_preprocess_page(&$vars){
+function scholar_front_preprocess_page(&$vars){
   $vars['front_top_links'] = theme('project_top_links');
 }
 
