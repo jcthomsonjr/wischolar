@@ -261,9 +261,7 @@ function openscholar_dev_profile_tasks(&$task, $url) {
     variable_set('scholar_content_type', 'vsite');
     // set default to america/new yourk
     variable_set(date_default_timezone_name, "America/New_York");
-   // set the project name variable
-    _openscholar_dev_profiles_project_name();
-    
+
     //_scholar_filefield_paths_config();
     _openscholar_dev_profiles_configure_biblio();
 
@@ -400,13 +398,4 @@ $settings = serialize($settings);
 function _openscholar_dev_profiles_create_roles(){
   install_add_role('scholar admin');
   install_add_role('scholar user');
-}
-
-
-/**
- * Set the project name variable
- */
-function  _openscholar_dev_profiles_project_name(){
-  // set the project name
-   variable_set('scholar_project_name', "OpenScholar");
 }
