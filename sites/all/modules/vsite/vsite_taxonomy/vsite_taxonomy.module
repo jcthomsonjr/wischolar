@@ -796,8 +796,8 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
       if(is_array($form['taxonomy']['tags']) && count($form['taxonomy']['tags'])){
       	$form['taxonomy']['tags'] = array_intersect_key($form['taxonomy']['tags'],$v);
       }
-    }   
- 
+    }
+   
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['taxonomy'] = 0; //Disable vert. tabs
   }
