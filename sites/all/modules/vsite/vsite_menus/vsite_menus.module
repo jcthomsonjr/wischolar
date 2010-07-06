@@ -230,14 +230,15 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   return menu_tree_output($a_settings_menu);
 }
 
-function vsite_menus_pages_menu_link($path =''){  
+function vsite_menus_pages_menu_link($path =''){
+	dpm("Look at me");
   if (strlen($path)){
     $exp_path = explode('/', $path);
     if($exp_path[0] == 'node'){
       $type = db_result(db_query("SELECT type FROM {node} WHERE nid = %d", $exp_path[1]));
        if (strlen($type))
       return $type == 'page' ? true : false;
-    }    
+    }
   }
   return false;
 }

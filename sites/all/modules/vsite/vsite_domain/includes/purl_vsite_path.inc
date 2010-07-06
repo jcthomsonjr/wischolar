@@ -1,5 +1,5 @@
 <?php
-require_once ( drupal_get_path('module', 'purl') .'/includes/purl_path.inc');
+//require_once ( drupal_get_path('module', 'purl') .'/includes/purl_path.inc');
 /**
  * Create the processor that will override the purl_path enables path + domain
  */

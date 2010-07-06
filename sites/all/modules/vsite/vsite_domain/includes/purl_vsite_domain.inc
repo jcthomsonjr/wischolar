@@ -65,7 +65,7 @@ if(!class_exists('purl_vsite_domain')){
      * If a purl_path/domain has been set we should rewrite the current url
      * so that aliased paths will be picked up
      */
-    public function adjust(&$q, $item) {
+    public function adjust(&$value, $item, &$q) {
       if(!($vsite = vsite_get_vsite()) || !strlen($vsite->purl)) return;
       
       if ($_GET['q'] == trim($_REQUEST['q'], '/')) {
@@ -76,7 +76,7 @@ if(!class_exists('purl_vsite_domain')){
         if (current($args) !== (string) $vsite->purl) array_unshift($args,$vsite->purl);
         
         $qstring = implode('/', $args); //String with purl added
-        $qstring_alias = _purl_get_normal_path($qstring); //Alias of that url
+        $qstring_alias = purl_get_normal_path($qstring); //Alias of that url
         if($qstring != $qstring_alias){
           $_REQUEST['q'] = $_GET['q'] = $qstring_alias;
         }else{

@@ -77,7 +77,7 @@ function vsite_domain_purl_processor() {
       'class' => 'purl_vsite_domain',
       'file' => 'purl_vsite_domain.inc',
       'path' => drupal_get_path('module', 'vsite_domain') .'/includes',
-      'parent' => 'purl_domain',
+      'parent' => 'domain',
     ),
   );
   $info['vsite_path'] = array(
@@ -86,7 +86,7 @@ function vsite_domain_purl_processor() {
       'class' => 'purl_vsite_path',
       'file' => 'purl_vsite_path.inc',
       'path' => drupal_get_path('module', 'vsite_domain') .'/includes',
-      'parent' => 'processor',
+      'parent' => 'path',
     ),
   );
   
