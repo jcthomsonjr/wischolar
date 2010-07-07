@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * Implementation of hook_menu_alter
+ * We need to do some stuff immediately after 
+ * the installation if finished; Alter the 'node' callback
+ */
+function iqss_openscholar_front_scholar_menu_alter(&$items){
+  $items['welcome']['page callback'] = 'iqss_openscholar_front_scholar_homepage';
+}
+
+function iqss_openscholar_front_scholar_homepage(){
+  $s_content = '<div id="content-row-1">'.theme('project_big_text').'</div>';
+  $s_content .= '<div id="content-row-2">'.theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate'). '</div>' ;
+  return $s_content;
+}
+
+function iqss_openscholar_front_scholar_theme(){
+
+  $path = drupal_get_path('module', 'iqss_openscholar_front_scholar') . '/theme';
+
+  $items['project_slideshow'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-slideshow',
+    'path' => $path,
+  );
+
+  $items['project_big_text'] = array(
+    'arguments' => array(),
+    'template' => 'project-big-text',
+    'path' => $path,
+  );
+
+  //middle blocks
+  $items['project_create'] = array(
+  'arguments' => array('tree' => array()),
+  'template' => 'project-create',
+  'path' => $path,
+  );
+
+  $items['project_maintain'] = array(
+  'arguments' => array('tree' => array()),
+  'template' => 'project-maintain',
+  'path' => $path,
+  );
+
+  $items['project_control'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-control',
+    'path' => $path,
+  );
+
+  $items['project_collaborate'] = array(
+    'arguments' => array('tree' => array()),
+    'template' => 'project-collaborate',
+    'path' => $path,
+  );
+
+  return $items;
+}
+
+function iqss_openscholar_front_scholar_context_default_contexts_alter(&$contexts){
+  if (isset($contexts['openscholar-section-sitewide_front'])){
+    //unset($contexts['openscholar-section-sitewide_front'] -> block['openscholar_front_video_info'] );
+    //dpm($contexts['openscholar-section-sitewide_front']);
+  }
+}
