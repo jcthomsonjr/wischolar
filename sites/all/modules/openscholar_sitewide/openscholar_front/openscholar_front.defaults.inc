@@ -53,6 +53,32 @@ function _openscholar_front_context_default_contexts() {
       ),
     ),
   );
+  $items[] = array(
+    'namespace' => 'openscholar',
+    'attribute' => 'section',
+    'value' => 'sitewide',
+    'description' => 'openscholar sitewide, no vsite context',
+    'block' => array(
+      'openscholar_front_site_info' => array(
+        'module' => 'openscholar_front',
+        'delta' => 'site_info',
+        'weight' => 36,
+        'region' => 'header_main',
+        'status' => '0',
+        'label' => 'OpenScholar: Site info',
+        'type' => 'context_ui',
+      ),
+      'openscholar_front_top_links' => array(
+        'module' => 'openscholar_front',
+        'delta' => 'top_links',
+        'weight' => 36,
+        'region' => 'header_right',
+        'status' => '0',
+        'label' => 'OpenScholar: Top links',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
   return $items;
 }
 

@@ -2,6 +2,15 @@
 
 include_once('openscholar_front.features.inc');
 
+function openscholar_front_init(){
+  $vsite = vsite_get_vsite();
+  if (!$vsite && !drupal_is_front_page()){
+    context_set('openscholar', 'section', 'sitewide');
+  }
+
+}
+
+
 /**
  * Implementation of hook_menu_alter
  * We need to do some stuff immediately after 
