@@ -232,7 +232,7 @@ function openscholar_projects_profile_tasks(&$task, $url) {
   	
     install_include(_openscholar_projects_core_modules());
     // create roles
-    _openscholar_profiles_create_roles();
+    _openscholar_projects_create_roles();
     // rebuild access (required by og)
     //_scholar_access_rebuild();
     // create default content types
@@ -245,7 +245,7 @@ function openscholar_projects_profile_tasks(&$task, $url) {
 
 
     // configure wisywig/tinymce
-     _openscholar_profiles_wysiwyg_config();
+     _openscholar_projects_wysiwyg_config();
 
     /*
     // Set a default footer message.
@@ -352,7 +352,7 @@ COMMON;
    db_query("UPDATE `biblio_field_type` SET required = 0 WHERE fid = 15"); //No pub date req.
 }
 
-function   _openscholar_profiles_wysiwyg_config(){
+function   _openscholar_projects_wysiwyg_config(){
   $settings = array (
     'default' => 1,
     'user_choose' => 0,
@@ -412,7 +412,7 @@ $settings = serialize($settings);
 /**
  *  Creates roles and permissions
  */
-function _openscholar_profiles_create_roles(){
+function _openscholar_projects_create_roles(){
   install_add_role('scholar admin');
   install_add_role('scholar user');
 }
