@@ -1,4 +1,4 @@
-; $Id: openscholar.make,v 1.1.2.18 2010/07/06 20:19:25 rbrandon Exp $
+; $Id: openscholar.make,v 1.1.2.23 2010/07/07 17:18:25 rbrandon Exp $
 
 ;Core Version
 core = "6.x"
@@ -225,17 +225,17 @@ projects[spaces][patch][] = "http://drupal.org/files/issues/spaces.saving_blk_cu
 projects[spaces][patch][] = "http://drupal.org/files/issues/spaces.static_call_fix_1.patch"
 
 ; Custom modules
-;projects[openscholar_iqss][location] = "http://openscholar.harvard.edu/scholar_software"
-;projects[openscholar_iqss][version] = "2.0-beta5"
-
 projects[openscholar_features][location] = "http://openscholar.harvard.edu/scholar_software"
-projects[openscholar_features][version] = "2.0-beta5"
+projects[openscholar_features][version] = "2.0-dev"
 
 projects[openscholar_vsite][location] = "http://openscholar.harvard.edu/scholar_software"
-projects[openscholar_vsite][version] = "2.0-beta5"
+projects[openscholar_vsite][version] = "2.0-dev"
 
 projects[openscholar_scholar][location] = "http://openscholar.harvard.edu/scholar_software"
-projects[openscholar_scholar][version] = "2.0-beta5"
+projects[openscholar_scholar][version] = "2.0-dev"
+
+projects[openscholar_sitewide][location] = "http://openscholar.harvard.edu/scholar_software"
+projects[openscholar_sitewide][version] = "2.0-dev"
 
 ; Open Atrium modules
 projects[litecal][subdir] = "contrib"
@@ -252,11 +252,10 @@ projects[openscholar_themes][version] = "2.0-beta5"
 
 ; Libraries
 projects[libraries][subdir] = "libraries"
-projects[jquery_ui][subdir] = "contrib"
 
-; TinyMCE
+; TinyMCE 3.2.7
 libraries[tinymce][download][type] = "get"
-libraries[tinymce][download][url] = "http://downloads.sourceforge.net/project/tinymce/TinyMCE/3.2.5/tinymce_3_2_5.zip"
+libraries[tinymce][download][url] = "http://downloads.sourceforge.net/project/tinymce/TinyMCE/3.2.7/tinymce_3_2_7.zip"
 libraries[tinymce][directory_name] = "tinymce"
 
 ; jQuery UI
