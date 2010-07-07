@@ -93,12 +93,7 @@ function openscholar_front_block($op = 'list', $delta = 0) {
         'site_mission' => array('info' => t('OpenScholar: Mission Statement')),
         //'search' => array('info' => t('OpenScholar: Search form')),
       );
-      if (module_exists('admin')) {
-        $info = $info + array(
-          'book' => array('info' => t('Atrium: Book')),
-          'book_all' => array('info' => t('Atrium: Book (all)')),
-        );
-      }
+      
       return $info;
     case 'view':
       $function = "_openscholar_front_block_{$delta}";
