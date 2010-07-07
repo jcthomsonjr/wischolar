@@ -1,118 +1,169 @@
+
+.tabs {
+  background-color: transparent;
+  float: none;
+  margin: 0 0 10px 0;
+  padding: 0;
+}
+
+/* Primary */
+.tabs ul.primary {
+  clear: both;
+  float: left;
+  margin: 0;
+  padding: 0 10px;
+}
+
+.tabs ul.primary {
+  margin: 0 0 20px 0;
+  padding: 0;
+  width: 100%;
+}
+
+.tabs ul.primary li {
+  border-style: none;
+  display: inline;
+  float: left;
+  list-style: none;
+  margin: 0 1px 0 0;
+  padding: 0;
+}
+
+.tabs ul.primary li a:link,
+.tabs ul.primary li a:visited {
+  background-color: transparent;
+  border: none;
+  float: left;
+  font-weight: bold;
+  margin: 0;
+  padding: 0 0 6px 0;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tabs ul.primary li a:link,
+.tabs ul.primary li a:visited {
+  border: none;
+  font-weight: normal;
+  padding: 5px 10px;
+}
+
+.tabs ul.primary li.active a,
+.tabs ul.primary li a.active:link,
+.tabs ul.primary li a.active:visited,
+.tabs ul.primary li.active a:hover,
+.tabs ul.primary li.active a:focus  {
+  border: none;
+  padding: 5px 10px;
+}
+
+.tabs ul.primary li a:hover,
+.tabs ul.primary li a:focus  {
+  border-bottom: none;
+  text-decoration: underline;
+}
+
+/* Secondary */
+.tabs ul.secondary {
+  clear: both;
+  float: left;
+  margin: -10px 0 20px 0;
+  padding: 0 10px;
+  text-transform: lowercase;
+  width: 100%;
+}
+
+.tabs ul.secondary li {
+  border-style: none;
+  display: inline;
+  float: left;
+  list-style: none;
+  margin: 0 1px 0 0;
+  padding: 0;
+}
+
+.tabs ul.secondary li a:link,
+.tabs ul.secondary li a:visited {
+  background-color: transparent;
+  border: none;
+  float: left;
+  font-weight:  normal;
+  margin: 0 20px 0px 0;
+  padding: 0 0 6px 0;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tabs ul.secondary li a:hover,
+.tabs ul.secondary li a:focus {
+  padding: 0 0 2px 0;
+}
+
+.tabs ul.secondary li a.active:link,
+.tabs ul.secondary li a.active:visited {
+  padding: 0 0 2px 0;
+}
+
+
+/*****************************/
+
 div.tabs {
-    margin: 0 0 5px 0;
-    height: 19px;
+  margin: 0 0 5px 0;
+  height: 19px;
   }
 
-  ul.primary {
-    margin: 0;
-    padding: 0 0 0 10px;
-    border-width: 0;
-    list-style: none;
-    white-space: nowrap;
-    line-height: normal;
-    background: url(images/tab-bar.png) repeat-x left bottom;
-  }
+.tabs ul.primary {
+  border-bottom: 1px solid #000;
+}
 
-  ul.primary li {
-    float: left;
-    margin: 0;
-    padding: 0;
-  }
+.tabs ul.primary {
+  border-bottom: 1px solid #c3c3c3;
+}
 
-  ul.primary li a {
-    display: block;
-    height: 24px;
-    margin: 0;
-    padding: 0 0 0 5px; /* width of tab-left.png */
-    border-width: 0;
-    font-weight: bold;
-    text-decoration: none;
-    color: #777;
-    background-color: transparent;
-    background: url(images/tab-left.png) no-repeat left -38px;
-  }
+.tabs ul.primary li a:link,
+.tabs ul.primary li a:visited {
+  background-color: transparent;
+  color: #000;
+}
 
-  ul.primary li a .tab {
-    display: block;
-    height: 20px; /* 24px (parent) - 4px (padding) */
-    margin: 0;
-    padding: 4px 13px 0 6px;
-    border-width: 0;
-    line-height: 20px;
-    background: url(images/tab-right.png) no-repeat right -38px;
-  }
+.tabs ul.primary li a:link,
+.tabs ul.primary li a:visited {
+  background: #e3e3e3;
+  color: #666;
+}
 
-  ul.primary li a:hover {
-    border-width: 0;
-    background-color: transparent;
-    background: url(images/tab-left.png) no-repeat left -76px;
-  }
+.tabs ul.primary li.active a,
+.tabs ul.primary li a.active:link,
+.tabs ul.primary li a.active:visited,
+.tabs ul.primary li.active a:hover,
+.tabs ul.primary li.active a:focus  {
+  background: #cecece;
+  color: #000;
+}
 
-  ul.primary li a:hover .tab {
-    background: url(images/tab-right.png) no-repeat right -76px;
-  }
+.tabs ul.primary li a:hover,
+.tabs ul.primary li a:focus  {
+  color: #000;
+}
 
-  ul.primary li.active a,
-  ul.primary li.active a:hover,
-  ul.primary li.active-trail a,
-  ul.primary li.active-trail a:hover {
-    border-width: 0;
-    color: #000;
-    background-color: transparent;
-    background: url(images/tab-left.png) no-repeat left 0;
-  }
+/* Secondary */
+.tabs ul.secondary {
+  border-bottom: 1px solid #c3c3c3;
+}
 
-  ul.primary li.active a .tab,
-  ul.primary li.active a:hover .tab,
-  ul.primary li.active-trail a .tab,
-  ul.primary li.active-trail a:hover .tab {
-    background: url(images/tab-right.png) no-repeat right 0;
-  }
+.tabs ul.secondary li a:link,
+.tabs ul.secondary li a:visited {
+  color: #999;
+}
 
-  ul.secondary {
-    margin: 0;
-    padding: 0 0 0 5px;
-    border-bottom: 1px solid #c0c0c0;
-    list-style: none;
-    white-space: nowrap;
-    background: url(images/tab-secondary-bg.png) repeat-x left bottom;
-  }
+.tabs ul.secondary li a:hover,
+.tabs ul.secondary li a:focus {
+  border-bottom: 1px solid #ddd;
+  color: #777;
+}
 
-  ul.secondary li {
-    float: left;
-    margin: 0 5px 0 0;
-    padding: 5px 0;
-    border-right: none;
-  }
-
-  ul.secondary a {
-    display: block;
-    height: 24px;
-    margin: 0;
-    padding: 0;
-    border: 1px solid #c0c0c0;
-    text-decoration: none;
-    color: #777;
-    background: url(images/tab-secondary.png) repeat-x left -56px;
-  }
-
-  ul.secondary a .tab {
-    display: block;
-    height: 18px; /* 24px (parent) - 6px (padding) */
-    margin: 0;
-    padding: 3px 8px;
-    line-height: 18px;
-  }
-
-  ul.secondary a:hover {
-    background: url(images/tab-secondary.png) repeat-x left bottom;
-  }
-
-  ul.secondary a.active,
-  ul.secondary a.active:hover,
-  ul.secondary li.active-trail a,
-  ul.secondary li.active-trail a:hover {
-    border: 1px solid #c0c0c0;
-    color: #000;
-    background: url(images/tab-secondary.png) repeat-x left top;
-  }
+.tabs ul.secondary li a.active:link,
+.tabs ul.secondary li a.active:visited {
+  border-bottom: 2px solid #ddd;
+  color: #000;
+}

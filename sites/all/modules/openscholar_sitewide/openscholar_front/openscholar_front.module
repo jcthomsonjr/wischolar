@@ -13,7 +13,7 @@ function openscholar_front_init(){
 
 /**
  * Implementation of hook_menu_alter
- * We need to do some stuff immediately after 
+ * We need to do some stuff immediately after
  * the installation if finished; Alter the 'node' callback
  */
 function openscholar_front_menu_alter(&$items){
@@ -40,7 +40,7 @@ function openscholar_front_osboot(){
     variable_set('scholar_installed', 1);
     variable_set('site_frontpage', 'welcome');
   }
-  
+
   drupal_goto('welcome');
 
   //
@@ -71,7 +71,7 @@ function openscholar_front_menu(){
       'access content'
     ),
     );
-  
+
   return $items;
 }
 
@@ -90,6 +90,7 @@ function openscholar_front_block($op = 'list', $delta = 0) {
         'top_links' => array('info' => t('OpenScholar: Top links')),
         'site_info' => array('info' => t('OpenScholar: Site info')),
         'video_info' => array('info' => t('OpenScholar: Video info')),
+        'site_mission' => array('info' => t('OpenScholar: Mission Statement')),
         //'search' => array('info' => t('OpenScholar: Search form')),
       );
       if (module_exists('admin')) {
@@ -131,6 +132,15 @@ function _openscholar_front_block_video_info(){
   return $block;
 }
 
+function _openscholar_front_block_site_mission() {
+    $block = array();
+    if (variable_get('site_mission', false)) {
+      $block['subject'] = t('');
+      $block['content'] =  variable_get('site_mission', false);
+    }
+    return $block;
+  }
+
 /**
  * Implementation of template_preprocess_hook()
  */
@@ -158,4 +168,5 @@ function openscholar_front_getyoursitebutton() {
   }
   //link for front page button
   return  ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
+
 }

@@ -1,0 +1,9 @@
+; $Id: scholars_harvard.info,v 1.12 2008/09/21 22:43:32 swortis Exp $
+name        = Scholars @ Harvard
+description = Theme for front page of Harvard OpenScholar installation
+screenshot = screenshot.png
+core       = 6.x
+base theme = openscholar_default
+stylesheets[all][]   = scholars-harvard.css
+; Set the conditional stylesheets that are processed by IE.
+conditional-stylesheets[if IE][all][] = scholars-harvard-ie.css

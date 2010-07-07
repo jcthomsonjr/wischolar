@@ -102,9 +102,6 @@
       </div> <!-- / content wrapper -->
       <div id="footer">
         <div id="footer-inner">
-          <?php if ($footer_message): ?>
-            <div id="footer-message"><?php print $footer_message; ?></div>
-          <?php endif; ?>
           <?php if ($footer) : ?>
             <?php print $footer; ?>
           <?php endif; ?>
@@ -113,7 +110,9 @@
             $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
             $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE, 'alias' => FALSE)) : "";
           ?>
-          <p class="copy"><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
+          <p class="copy"><?php if ($footer_message): ?>
+          <?php print $footer_message; ?>
+          <?php endif; ?><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
         </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->

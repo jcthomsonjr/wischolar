@@ -9,7 +9,7 @@ function _openscholar_front_context_default_contexts() {
   $items[] = array(
     'namespace' => 'openscholar',
     'attribute' => 'section',
-    'value' => 'front',
+    'value' => 'sitewide_front',
     'description' => 'openscholar front context',
     'path' => array(
       '<front>' => '<front>',
@@ -49,6 +49,15 @@ function _openscholar_front_context_default_contexts() {
         'region' => 'content_bottom',
         'status' => '0',
         'label' => 'Latest Web Sites',
+        'type' => 'context_ui',
+      ),
+      'openscholar_front_site_mission' => array(
+        'module' => 'openscholar_front',
+        'delta' => 'site_mission',
+        'weight' => 37,
+        'region' => 'content_top',
+        'status' => '0',
+        'label' => 'OpenScholar: Mission Statement',
         'type' => 'context_ui',
       ),
     ),
@@ -93,7 +102,7 @@ $flags[] = array (
   'name' => 'featured_web_sites',
   'title' => 'Featured web sites',
   'global' => '1',
-  'types' => 
+  'types' =>
   array (
     0 => 'vsite',
   ),
@@ -105,12 +114,12 @@ $flags[] = array (
   'unflag_message' => 'unfeature',
   'unflag_denied_text' => '',
   'link_type' => 'toggle',
-  'roles' => 
+  'roles' =>
   array (
-    'flag' => 
+    'flag' =>
     array (
     ),
-    'unflag' => 
+    'unflag' =>
     array (
     ),
   ),
@@ -120,7 +129,7 @@ $flags[] = array (
   'access_author' => '',
   'i18n' => 0,
   'module' => 'openscholar_front',
-  'locked' => 
+  'locked' =>
   array (
     'name' => 'name',
   ),
