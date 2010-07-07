@@ -80,7 +80,7 @@ function openscholar_front_block($op = 'list', $delta = 0) {
       $info = array(
         'top_links' => array('info' => t('OpenScholar: Top links')),
         'site_info' => array('info' => t('OpenScholar: Site info')),
-        'search' => array('info' => t('OpenScholar: Search form')),
+        //'search' => array('info' => t('OpenScholar: Search form')),
       );
       if (module_exists('admin')) {
         $info = $info + array(
@@ -102,12 +102,14 @@ function _openscholar_front_block_top_links(){
   $block = array();
   $block['subject'] = t('');
   $block['content'] = openscholar_front_getyoursitebutton();
+  return $block;
 }
 
 function _openscholar_front_block_site_info(){
   $block = array();
   $block['subject'] = t('');
   $block['content'] = '<h2>' . variable_get('site_name', 'OpenScholar') . '</h2>';
+  return $block;
 }
 
 /**
