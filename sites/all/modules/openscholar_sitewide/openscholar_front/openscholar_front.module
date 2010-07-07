@@ -2,7 +2,11 @@
 
 include_once('openscholar_front.features.inc');
 
-
+/**
+ * Implementation of hook_menu_alter
+ * We need to do some stuff immediately after 
+ * the installation if finished; Alter the 'node' callback
+ */
 function openscholar_front_menu_alter(&$items){
   $items['node']['page callback'] = 'openscholar_front_osboot';
 }
@@ -12,7 +16,7 @@ function openscholar_front_osboot(){
   $scholar_installed = variable_get('scholar_installed', 0);
 
   if (! $scholar_installed) {
-  	module_load_include('inc', 'vsite', 'includes/vsiteboot');
+  	module_load_include('inc', 'openscholar_front', 'openscholar_front_osboot.inc');
 
     //_scholar_testingcontent();
     _vsite_filefield_paths_config();
