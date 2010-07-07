@@ -6,11 +6,6 @@ include_once('vsite.features.inc');
 include_once('vsite.class.inc');
 
 
-function vsite_menu_alter(&$items){
-  $items['node']['page callback'] = 'vsite_vsiteboot';
-}
-
-
 function vsite_menu(){
   $items = array();
 
@@ -29,44 +24,7 @@ function vsite_menu(){
   return $items;
 }
 
-function vsite_vsiteboot(){
-  $scholar_installed = variable_get('scholar_installed', 0);
 
-  if (! $scholar_installed) {
-  	module_load_include('inc', 'vsite', 'includes/vsiteboot');
-
-    //_scholar_testingcontent();
-    _vsite_filefield_paths_config();
-    _vsite_global_taxonomy();
-    _vsite_flags_boot();
-
-    // set some default variables
-    _vsite_variables_default();
-
-    //Create Vsite Taxonomies
-    _vsite_object_create_taxonomys();
-
-    variable_set('scholar_installed', 1);
-  }
-  
-  drupal_goto('site/register');
-
-  //
-  //render the page as defined by the current profile
-  //
-
-  $s_path = variable_get('scholar_home_menu_entry',false);
-  if ($s_path && $s_result = menu_execute_active_handler($s_path)) {
-
-  	if(!in_array($s_result,array(MENU_ACCESS_DENIED,MENU_NOT_FOUND))){
-  	  drupal_set_title(variable_get('scholar_home_page_title', 'OpenScholar'));
-  	  return $s_result;
-  	}
-  }
-
-  drupal_set_title('OpenScholar');
-  return node_page_default();
-}
 
 /**
  * Implementation of hook_views_api().

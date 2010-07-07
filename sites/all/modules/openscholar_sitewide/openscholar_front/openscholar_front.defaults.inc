@@ -66,12 +66,12 @@ $flags[] = array (
   'show_on_form' => 0,
   'access_author' => '',
   'i18n' => 0,
-  'api_version' => 2,
   'module' => 'openscholar_front',
   'locked' => 
   array (
-    0 => 'name',
+    'name' => 'name',
   ),
+  'api_version' => 2,
 );
 return $flags;
 }
