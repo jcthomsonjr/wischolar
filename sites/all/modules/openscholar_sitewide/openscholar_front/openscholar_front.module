@@ -4,7 +4,9 @@ include_once('openscholar_front.features.inc');
 
 function openscholar_front_init(){
   $vsite = vsite_get_vsite();
-  if (!$vsite && !drupal_is_front_page() && arg(0) != 'admin'){
+  if (!$vsite && !drupal_is_front_page() 
+      && arg(0) != 'admin' && arg(0) != 'user'
+      && (arg(0) != 'site' && arg(1) != 'register')){
     context_set('openscholar', 'section', 'sitewide');
   }
 
