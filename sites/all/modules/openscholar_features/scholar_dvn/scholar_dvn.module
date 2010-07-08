@@ -22,7 +22,7 @@ function scholar_dvn_menu(){
 }
 
 function scholar_dvn_data(){
-
+  //drupal_set_title(''); 
   $vsite = vsite_get_vsite();
   if (array_key_exists('scholar_dvn', $vsite->settings)) {
     // Show DVN in iframe
