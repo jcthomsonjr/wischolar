@@ -273,14 +273,13 @@ function _openscholar_profile_batch_finished($success, $results) {
  */
 function _openscholar_enable_themes(){
   
-  // the default theme is the project theme
-  install_default_theme('scholar_project');
+  // the default theme 
+  install_default_theme('openscholar_default');
   
   $themes = array(
     'zen',
     'cp_theme',
     'scholar_base',
-    'scholar_project',
     'scholar_theme_01',
     'scholar_theme_02',
     'scholar_theme_03',
