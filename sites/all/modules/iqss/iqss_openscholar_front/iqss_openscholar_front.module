@@ -5,63 +5,93 @@
  * We need to do some stuff immediately after 
  * the installation if finished; Alter the 'node' callback
  */
-function iqss_openscholar_front_scholar_menu_alter(&$items){
-  $items['welcome']['page callback'] = 'iqss_openscholar_front_scholar_homepage';
+function iqss_openscholar_front_menu_alter(&$items){
+  $items['welcome']['page callback'] = 'iqss_openscholar_front_homepage';
 }
 
-function iqss_openscholar_front_scholar_homepage(){
-  $s_content = '<div id="content-row-1">'.theme('project_big_text').'</div>';
-  $s_content .= '<div id="content-row-2">'.theme('project_create') . theme('project_maintain') . theme('project_control') . theme('project_collaborate'). '</div>' ;
+function iqss_openscholar_front_homepage(){
+  
+  $s_content = '<div id="content-row-2">'.theme('iqss_openscholar_front_content') . '</div>' ;
   return $s_content;
 }
 
-function iqss_openscholar_front_scholar_theme(){
+function iqss_openscholar_front_theme(){
 
-  $path = drupal_get_path('module', 'iqss_openscholar_front_scholar') . '/theme';
+  $install_mode = variable_get('openscholar_installation_mode', 'scholar');
+  
+  $path = drupal_get_path('module', 'iqss_openscholar_front_scholar') . '/' . $install_mode;
 
-  $items['project_slideshow'] = array(
+  $items["iqss_openscholar_front_content"] = array(
     'arguments' => array('tree' => array()),
-    'template' => 'project-slideshow',
-    'path' => $path,
+    'template' => "iqss-openscholar-front-${install_mode}-content",
   );
 
-  $items['project_big_text'] = array(
-    'arguments' => array(),
-    'template' => 'project-big-text',
-    'path' => $path,
-  );
-
-  //middle blocks
-  $items['project_create'] = array(
-  'arguments' => array('tree' => array()),
-  'template' => 'project-create',
-  'path' => $path,
-  );
-
-  $items['project_maintain'] = array(
-  'arguments' => array('tree' => array()),
-  'template' => 'project-maintain',
-  'path' => $path,
-  );
-
-  $items['project_control'] = array(
-    'arguments' => array('tree' => array()),
-    'template' => 'project-control',
-    'path' => $path,
-  );
-
-  $items['project_collaborate'] = array(
-    'arguments' => array('tree' => array()),
-    'template' => 'project-collaborate',
-    'path' => $path,
-  );
 
   return $items;
 }
 
-function iqss_openscholar_front_scholar_context_default_contexts_alter(&$contexts){
+function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
   if (isset($contexts['openscholar-section-sitewide_front'])){
-    //unset($contexts['openscholar-section-sitewide_front'] -> block['openscholar_front_video_info'] );
-    //dpm($contexts['openscholar-section-sitewide_front']);
+    unset($contexts['openscholar-section-sitewide_front'] -> block['openscholar_front_top_links'] );
+    
+  	       $contexts['openscholar-section-sitewide_front'] -> block['iqss_openscholar_front_top_links'] = array(
+                    'module' => 'iqss_openscholar_front',
+                    'delta' => 'top_links',
+                    'weight' => 36,
+                    'region' => 'header_right',
+                    'status' => 0,
+                    'label' => 'OpenScholar: Top links',
+                    'type' => 'context_ui',
+                );
+   // print_r($contexts['openscholar-section-sitewide_front']);
   }
 }
+
+/**
+ * Implementation of hook_block().
+ */
+function iqss_openscholar_front_block($op = 'list', $delta = 0) {
+  switch ($op) {
+    case 'list':
+      $info = array(
+        'top_links' => array('info' => t('OpenScholar: Top links')),
+      );
+      
+      return $info;
+    case 'view':
+      $function = "_iqss_openscholar_front_block_{$delta}";
+      if (function_exists($function)) {
+        return call_user_func($function);
+      }
+      break;
+  }
+}
+
+function _iqss_openscholar_front_block_top_links(){
+  $block = array();
+  $block['subject'] = t('');
+  $block['content'] = theme_iqss_openscholar_front_block_top_links();
+  return $block;
+}
+
+function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real theme function
+  $result = '<ul id="top-front">';
+  $result .= '<li>' . l('About', 'help/vsitehelp/OpenScholar-Documentation') . ' </li>';
+  $result .= '<li>' . ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user') . '</li>';
+  
+  $txt = 'Need a Site for a Project?';
+  $url = 'http://projects.iq.harvard.edu';
+  $mode = variable_get('openscholar_installation_mode', 'scholar');
+  
+  if ($mode == 'project'){
+    $txt = 'Need a Personal Academic Site?';
+    $url = 'http://scholar.harvard.edu';
+  }
+
+  $result .= '<li>' . l($txt, $url). '</li>';
+  $result .= '<li>' . openscholar_front_getyoursitebutton() . '</li>';
+  $result .= '</ul>';
+  
+  return $result;
+}
+
