@@ -6,31 +6,26 @@ body {
 
 #wrapper {
   background: url(images/wrapper-bg.png) repeat-x #9ac0c9;
-  }
-
-#header-wrapper, #header-left {
-  padding: 0;
-  margin:0;
-  right: 0;
+  padding-top:0;
   }
 
 /* HEADER ELEMENTS */
 
-#header {
+.front #header {
     background: url(images/projects-header.png) no-repeat 0 0 transparent;
-    height: 92px;
+    height: 104px;
     }
-
 
 #header h1 {
   width: 233px;
   height: 76px;
   margin-left: 0px;
-  background: url(images/projects-at-harvard-logo.png) 0 0 no-repeat;
+  background: url(images/projects-at-harvard-logo-on-white.png) 0 0 no-repeat;
   }
 
-body.section-user #header h1 {
-  background-image: url(images/projects-at-harvard-logo-on-white.png);
+.front #header h1 {
+  background-image: url(images/projects-at-harvard-logo.png);
+  margin-top: 14px;
   }
 
 #header h1 a, #header h1 a:visited {
@@ -38,8 +33,8 @@ body.section-user #header h1 {
   height: 76px;
   }
 
-body.page-site-register h2.title {
-  margin-top: 49px;
+ul#top-front li {
+  margin-top: 33px;
   }
 
 ul#top-front li a, ul#top-front li a:visited {
@@ -50,47 +45,13 @@ ul#top-front li a:hover {
   text-decoration: underline;
   }
 
-#get-form #coming-soon {
-  width: 128px;
-  height: 63px;
-  text-indent:-999em;
-  position: absolute;
-  left:21px;
-  background: url(images/coming-soon.png);
+
+.front #block-openscholar_front-top_links a {
+  margin-top: 33px;
   }
 
-/* Content Area */
-
-
-body.page-site-register #content-wrapper,
-body.page-site-register #content-main,
-body.section-user #content-wrapper,
-body.section-user #content-main
-{
-  border: none;
-  background: transparent;
-  }
-
-.front #content-wrapper {
-  background: transparent;
-  }
-
-body.no-sidebars #content-main #content {
-  padding: 30px;
-  }
-
-.front #content-wrapper,
-body.page-site-register #content-main #content,
-body.section-user #content-main #content {
-  padding:0 !important;
-  }
-
-#content-row-1, #content-row-2 {
+.front #content-top {
   background-image: url(images/contain.png);
-  }
-
-#tutorial-link {
-  top: 1px;
   }
 
 #content-row-2 .featureblock {
@@ -257,11 +218,11 @@ body.section-user #content-main #content {
   border: none;
   }
 
-p.copy {
+.front p.copy {
   color: #fff;
   }
 
-p.copy a, p.copy a:visited {
+.front p.copy a, .front p.copy a:visited {
   text-decoration: underline;
-  color: #fff !important;
+  color: #fff;
   }
