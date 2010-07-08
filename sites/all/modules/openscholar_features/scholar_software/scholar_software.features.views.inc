@@ -157,6 +157,7 @@ function _scholar_software_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
 
   $views[$view->name] = $view;
@@ -638,6 +639,7 @@ function _scholar_software_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('block', 'Recent Releases', 'block_2');
   $handler->override_option('title', 'Recent Releases');
@@ -1475,7 +1477,7 @@ function _scholar_software_views_default_views() {
     ),
   ));
   $handler->override_option('row_plugin', '');
-  $handler->override_option('path', 'scholar_software/%/%');
+  $handler->override_option('path', 'scholar_software/fserver/%/%');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',
@@ -1488,6 +1490,7 @@ function _scholar_software_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
   $handler->override_option('displays', array());
   $handler->override_option('sitename_title', FALSE);
