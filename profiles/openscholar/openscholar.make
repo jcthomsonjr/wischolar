@@ -1,4 +1,4 @@
-; $Id: openscholar.make,v 1.1.2.23 2010/07/07 17:18:25 rbrandon Exp $
+; $Id: openscholar.make,v 1.1.2.25 2010/07/08 17:31:48 ferdi Exp $
 
 ;Core Version
 core = "6.x"
@@ -49,9 +49,6 @@ projects[filefield][version] = "3.5"
 
 projects[filefield_paths][subdir] = "contrib"
 projects[filefield_paths][version] = "1.4"
-
-projects[flag][subdir] = "contrib"
-projects[flag][version] = "2.0-beta3"
 
 projects[imageapi][subdir] = "contrib"
 projects[imageapi][version] = "1.8"
@@ -143,6 +140,11 @@ projects[luceneapi_biblio][type] = "module"
 projects[luceneapi_biblio][download][type] = "svn"
 projects[luceneapi_biblio][download][url] = "https://scholar.svn.sourceforge.net/svnroot/scholar/branches/SCHOLAR-2-0-BETA5/sites/all/modules/contrib/luceneapi_biblio/"
 
+projects[luceneapi_og][type] = module
+projects[luceneapi_og][download][type] = cvs
+projects[luceneapi_og][download][module] = contributions/modules/luceneapi_og
+projects[luceneapi_og][download][revision] = "HEAD:2010-06-10"
+
 ; To be released
 projects[dialog][subdir] = "contrib"
 projects[dialog][type] = "module"
@@ -204,6 +206,10 @@ projects[feeds][patch][] = "http://drupal.org/files/issues/FeedsDataProcessor.Ex
 projects[file_aliases][subdir] = "contrib"
 projects[file_aliases][version] = "1.1"
 projects[file_aliases][patch][] = "http://drupal.org/files/issues/file_alias_nodeFormDescription.patch"
+
+projects[flag][subdir] = "contrib"
+projects[flag][version] = "2.0-beta3"
+projects[flag][patch][] = "http://drupal.org/files/issues/flag-846826.patch"
 
 projects[itweak_upload][subdir] = "contrib"
 projects[itweak_upload][version] = "2.3"

@@ -1,5 +1,5 @@
 <?php
-// $Id: openscholar.profile,v 1.1.2.5 2010/07/07 13:43:56 rbrandon Exp $
+// $Id: openscholar.profile,v 1.1.2.9 2010/07/08 17:23:24 ferdi Exp $
 
 /**
  * Implementation of hook_profile_details().
@@ -68,7 +68,6 @@ function _openscholar_core_modules() {
     'jquery_ui',
     'jquery_update',
     'lightbox2',
-    'lucene_api',
     'og',
     'og_access',
     'og_views',
