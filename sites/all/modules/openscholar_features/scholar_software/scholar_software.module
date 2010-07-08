@@ -1,6 +1,18 @@
 <?php
 include_once('scholar_software.features.inc');
 
+/**
+ * Implementation of hook_strongarm()
+ */
+function scholar_software_strongarm(){
+  $conf = array();
+ 
+  // Pathauto (optional) settings
+//  $conf["pathauto_node_scholar_software_project_pattern"] = "[space-og-path]/scholar_software/project/[title-raw]";
+//  $conf["pathauto_node_scholar_software_release_pattern"] = "[space-og-path]/scholar_software/project/[field_scholar_software_project-title-raw]/[field_versionmajor-raw]-[field_versionpatch-raw]-[field_versionextra-raw]";
+  
+  return $conf;
+}
 
 /**
  * Implementation of hook_views_api().
