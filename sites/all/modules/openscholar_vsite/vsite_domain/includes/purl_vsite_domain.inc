@@ -80,11 +80,6 @@ if(!class_exists('purl_vsite_domain')){
         if($qstring_alias && $qstring != $qstring_alias){
         	$q = $qstring;
         }
-//          $_REQUEST['q'] = $_GET['q'] = $qstring_alias;
-//        }else{
-//          //Sudo alias to prevent path rewrites
-//          $_REQUEST['q'] = $qstring_alias;
-//        }
       }//It has not been aliased yet
       
     }
