@@ -73,6 +73,10 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
       'label' => 'OpenScholar: Top links',
       'type' => 'context_ui'
     );
+    
+    if (variable_get('openscholar_installation_mode', 'scholar') == 'project' ){
+      unset($contexts['openscholar-section-sitewide_front']->block['views_openscholar_sites-block_2']);
+    }
   }
 }
 
