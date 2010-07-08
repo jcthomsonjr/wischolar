@@ -37,11 +37,15 @@ body.not-front #content-main {
 #header h1 {
   width: 223px;
   height: 76px;
-  background: url(images/scholars-at-harvard-logo.png) no-repeat;
+  background: url(images/scholars-at-harvard-logo-on-white.png) no-repeat;
+  text-indent: -999em;
+  float:left;
+  margin-top: 19px;
   }
 
-.section-user #header h1, .section-users #header h1 {
-  background-image: url(images/scholars-at-harvard-logo-on-white.png);
+.front #header h1 {
+  background-image: url(images/scholars-at-harvard-logo.png);
+  margin-top: 0;
   }
 
 #header h1 a, #header h1 a:visited {
@@ -58,6 +62,8 @@ body.not-front #content-main {
 #header h1 a, #header h1 a:visited {
     color:#282828;
     }
+
+/* FRONT PAGE */
 
 ul#top-front {
   float:right;
@@ -79,31 +85,9 @@ ul#top-front li a:hover {
   text-decoration: underline;
   }
 
-ul#top-front li#get-form {
-  background:url(images/get-your-site-button.png) no-repeat;
-  width: 169px;
-  height: 42px;
-  text-align: center;
-  line-height: 38px;
-  position: relative;
+#block-openscholar_front-top_links a {
+  margin-top: 22px;
   }
-
-ul#top-front li#get-form a, ul#top-front li#get-form a:visited {
-  display: block;
-  width: 169px;
-  height: 42px;
-  color: #FFF;
-  text-decoration: none;
-  font-weight: bold;
-  text-shadow: #333 0px 1px 1px;
-  text-shadow: rgba(51,51,51, .4) 0px 1px 1px;
-  }
-
-ul#top-front li#get-form a:hover {
-  color: #f0ff00;
-  }
-
-/* Content Area */
 
 .front #content-top, .front #content {
   width: 981px;
@@ -114,13 +98,14 @@ ul#top-front li#get-form a:hover {
   background: url(images/contain.png) no-repeat;
   height: 416px;
   position: relative;
+  border: none;
+  margin-bottom: 0;
   }
 
 .front #content-top .content {
   height: 321px;
   margin: 0 auto;
   padding-top: 25px;
-  width: 919px;
   }
 
 #tutorial-link {
@@ -134,22 +119,18 @@ ul#top-front li#get-form a:hover {
   text-indent: -999em;
   }
 
-#content-top #video-link {
-  float:left;
-  width: 638px;
+#block-openscholar_front-video_info {
+  margin-left:30px;
   }
 
-.front #content-top h2 {
-  float:right;
-  font-size: 23px;
-  margin-bottom: 0;
-  color: #4a4949;
-  line-height: 1.4em;
+.front #content-top #block-openscholar_front-site_mission {
+  margin-right: 30px;
+  font-weight: bold;
   width: 250px;
-  margin-top:59px;
+
   }
 
-.front #content-top h2 span {
+.front #block-openscholar_front-site_mission span {
   color: #ababab;
   display:block;
   }
@@ -195,6 +176,26 @@ ul#top-front li#get-form a:hover {
   border-left: none;
   }
 
+.front #content-bottom {
+  border:none;
+  padding: 0;
+  width: 100%;
+  background: url(images/featured-top.png) no-repeat 0 0 transparent;
+  }
+
+.front #block-views-openscholar_sites-block_2 ul {
+  background: url(images/featured-main.png) no-repeat 0 100% transparent;
+  min-height: 10px;
+  }
+
+.front #block-views-openscholar_sites-block_2 .more-link {
+  float:right;
+  margin-top: -52px;
+  }
+
+.front #footer {
+  padding-top: 0;
+  }
 
 /* Tables */
 

@@ -5,16 +5,16 @@
  */
 function iqss_openscholar_front_strongarm(){
   $conf = array();
-  
+
   // Site mission; to be displayed in the front page
-  $scholar_mission = ' Harvard Scholars: Create a dynamic feature-full personal 
+  $scholar_mission = ' Harvard Scholars: Create a dynamic feature-full personal
                        web site in seconds. For free! <span>(No, there’s no catch.)</span>';
-  
-  $project_mission = ' Academic Projects: Create a dynamic feature-full web site 
+
+  $project_mission = ' Academic Projects: Create a dynamic feature-full web site
                        in seconds. For free! <span>(No, there’s no catch.)</span>';
-  
+
   $install_mode = variable_get('openscholar_installation_mode', 'scholar');
-  
+
 
   $conf['site_mission'] = $install_mode == 'scholar' ? $scholar_mission : $project_mission;
 
@@ -24,7 +24,7 @@ function iqss_openscholar_front_strongarm(){
 
 /**
  * Implementation of hook_menu_alter
- * We need to do some stuff immediately after 
+ * We need to do some stuff immediately after
  * the installation if finished; Alter the 'node' callback
  */
 function iqss_openscholar_front_menu_alter(&$items){
@@ -46,7 +46,7 @@ function iqss_openscholar_front_theme(){
 
   // load a different template file depending on the installation mode
   $install_mode = variable_get('openscholar_installation_mode', 'scholar');
-  
+
   $path = drupal_get_path('module', 'iqss_openscholar_front_scholar') . '/' . $install_mode;
 
   $items["iqss_openscholar_front_content"] = array(
@@ -63,15 +63,15 @@ function iqss_openscholar_front_theme(){
 function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
   // add some extra links (block) in the 'sitewide_front'
   if (isset($contexts['openscholar-section-sitewide_front'])) {
-    
+
     $contexts['openscholar-section-sitewide_front']->block['iqss_openscholar_front_top_links'] = array(
-      'module' => 'iqss_openscholar_front', 
-      'delta' => 'top_links', 
-      'weight' => 36, 
-      'region' => 'header_right', 
-      'status' => 0, 
-      'label' => 'OpenScholar: Top links', 
-      'type' => 'context_ui' 
+      'module' => 'iqss_openscholar_front',
+      'delta' => 'top_links',
+      'weight' => 37,
+      'region' => 'header_main',
+      'status' => 0,
+      'label' => 'OpenScholar: Top links',
+      'type' => 'context_ui'
     );
   }
 }
@@ -85,7 +85,7 @@ function iqss_openscholar_front_block($op = 'list', $delta = 0) {
       $info = array(
         'top_links' => array('info' => t('OpenScholar: Top links')),
       );
-      
+
       return $info;
     case 'view':
       $function = "_iqss_openscholar_front_block_{$delta}";
@@ -115,17 +115,17 @@ function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real
     'title' => 'About',
     'href' => 'help/vsitehelp/OpenScholar-Documentation',
   );
-  
+
   global $user;
   $items[] = array(
     'title' => $user -> uid ? 'Log out' : 'Log in',
     'href' =>  $user -> uid ? 'logout' : 'user',
   );
-  
+
   $txt = 'Need a Site for a Project?';
   $url = 'http://projects.iq.harvard.edu';
   $mode = variable_get('openscholar_installation_mode', 'scholar');
-  
+
   if ($mode == 'project'){
     $txt = 'Need a Personal Academic Site?';
     $url = 'http://scholar.harvard.edu';
@@ -135,7 +135,7 @@ function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real
     'title' => $txt,
     'href' =>  $url,
   );
-  
+
   $attributes = array('id' => 'top-front');
   return theme('links', $items, $attributes);
 }
