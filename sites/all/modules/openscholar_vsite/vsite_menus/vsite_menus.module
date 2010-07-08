@@ -91,7 +91,7 @@ function vsite_menus_menu_node_delete($item, $node) {
   $site = vsite_get_vsite();
   $a_scholar_types = vsite_content_types();
   
-  if ($site && array_key_exists($node->type,$a_scholar_types) && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
+  if ($site && is_array($a_scholar_types) && array_key_exists($node->type,$a_scholar_types) && array_key_exists($item->mlid,$site->settings['menus']['menu_items'])){
     unset($site->settings['menus']['menu_items'][$item->mlid]);
     $site->settings['menus'] = vsite_menus_menus::create_menus($site->settings['menus']);
     spaces_save($site);

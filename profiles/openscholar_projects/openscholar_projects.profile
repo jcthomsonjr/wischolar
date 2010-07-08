@@ -68,7 +68,6 @@ function _openscholar_projects_core_modules() {
     'jquery_update',
     'lightbox2',
     'lucene_api',
-    'mollom',
     'og',
     'og_access',
     'og_views',
@@ -119,12 +118,6 @@ function _openscholar_projects_core_modules() {
     'nodereference_url',
     'optionwidgets',
 
-
-  // development
-    'admin_menu',
-
-    'devel',
-    'devel_generate',
     'install_profile_api',
     'schema',
     'strongarm',
@@ -160,10 +153,6 @@ function _openscholar_projects_scholar_modules() {
   
   // scholar specific
     'biblio',
-
-  //IQSS Specific
-    'iqss_scholar',
-  
     'cp',
     'scholarboot',
     'bkn',
@@ -233,24 +222,10 @@ function openscholar_projects_profile_tasks(&$task, $url) {
     install_include(_openscholar_projects_core_modules());
     // create roles
     _openscholar_projects_create_roles();
-    // rebuild access (required by og)
-    //_scholar_access_rebuild();
-    // create default content types
-    //_scholar_profile_content_types();
-
-    // configure modules  (variables table mainly)
-    //_scholar_variable_set();
-
-    // for testing purposes, create nodes groups etc
-
 
     // configure wisywig/tinymce
      _openscholar_projects_wysiwyg_config();
 
-    /*
-    // Set a default footer message.
-    variable_set('site_footer', '&copy; 2009 '. l('IQSS', 'http://www.iq.harvard.edu', array('absolute' => TRUE)));
-    */
 
     // Rebuild key tables/caches
     menu_rebuild();
@@ -305,8 +280,8 @@ function _openscholar_projects_enable_themes(){
   // the default theme is the project theme
   // install_default_theme('scholar_projects_front');
   
-  //get list of themes to be enabled - TODO: should 'kshepsle', 'rbates' be enabled for non IQSS installs?
-  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_projects_front', 'kshepsle', 'rbates', 'qualitative_methods');
+  //get list of themes to be enabled
+  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_projects_front');
   $themes = array_merge($themes, __openscholar_projects_get_scholar_theme_names());
   
   //enable the themes
