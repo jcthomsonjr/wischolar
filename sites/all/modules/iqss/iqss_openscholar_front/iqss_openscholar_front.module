@@ -30,20 +30,24 @@ function iqss_openscholar_front_theme(){
   return $items;
 }
 
+/**
+ * implementation of hook_context_default_contexts_alter
+ * @param $contexts
+ */
 function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
-  if (isset($contexts['openscholar-section-sitewide_front'])){
-    unset($contexts['openscholar-section-sitewide_front'] -> block['openscholar_front_top_links'] );
+  if (isset($contexts['openscholar-section-sitewide_front'])) {
+  	
+    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_top_links']);
     
-  	       $contexts['openscholar-section-sitewide_front'] -> block['iqss_openscholar_front_top_links'] = array(
-                    'module' => 'iqss_openscholar_front',
-                    'delta' => 'top_links',
-                    'weight' => 36,
-                    'region' => 'header_right',
-                    'status' => 0,
-                    'label' => 'OpenScholar: Top links',
-                    'type' => 'context_ui',
-                );
-   // print_r($contexts['openscholar-section-sitewide_front']);
+    $contexts['openscholar-section-sitewide_front']->block['iqss_openscholar_front_top_links'] = array(
+        'module' => 'iqss_openscholar_front', 
+        'delta' => 'top_links', 
+        'weight' => 36, 
+        'region' => 'header_right', 
+        'status' => 0, 
+        'label' => 'OpenScholar: Top links', 
+        'type' => 'context_ui' 
+    );
   }
 }
 
