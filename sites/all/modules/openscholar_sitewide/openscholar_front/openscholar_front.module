@@ -24,7 +24,7 @@ function openscholar_front_osboot(){
   $scholar_installed = variable_get('scholar_installed', 0);
 
   if (! $scholar_installed) {
-  	module_load_include('inc', 'openscholar_front', 'openscholar_front_osboot.inc');
+  	module_load_include('inc', 'openscholar_front', 'openscholar_front_osboot');
 
     //_scholar_testingcontent();
     _vsite_filefield_paths_config();
@@ -43,26 +43,10 @@ function openscholar_front_osboot(){
 
   drupal_goto('welcome');
 
-  //
-  //render the page as defined by the current profile
-  //
-
-  $s_path = variable_get('scholar_home_menu_entry',false);
-  if ($s_path && $s_result = menu_execute_active_handler($s_path)) {
-
-  	if(!in_array($s_result,array(MENU_ACCESS_DENIED,MENU_NOT_FOUND))){
-  	  drupal_set_title(variable_get('scholar_home_page_title', 'OpenScholar'));
-  	  return $s_result;
-  	}
-  }
-
-  drupal_set_title('OpenScholar');
-  return node_page_default();
 }
 
 function openscholar_front_menu(){
   $items = array();
-  // nodeautocomplete callback for scholar
   $items['welcome'] = array(
     'type' => MENU_CALLBACK,
     'title' => '',
