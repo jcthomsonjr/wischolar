@@ -22,6 +22,7 @@ if(!class_exists('purl_vsite_path')){
      * Make sure the domain is valid
      */
     public function parse($valid_values, $q) {
+    	$valid_values = array_diff_key($valid_values,self::$a_disabled);
       $a_parsed = parent::parse($valid_values, $q);
       
       foreach ($a_parsed as $s_site => $a_settings) {

@@ -76,13 +76,15 @@ if(!class_exists('purl_vsite_domain')){
         if (current($args) !== (string) $vsite->purl) array_unshift($args,$vsite->purl);
         
         $qstring = implode('/', $args); //String with purl added
-        $qstring_alias = purl_get_normal_path($qstring); //Alias of that url
-        if($qstring != $qstring_alias){
-          $_REQUEST['q'] = $_GET['q'] = $qstring_alias;
-        }else{
-          //Sudo alias to prevent path rewrites
-          $_REQUEST['q'] = $qstring_alias;
+        $qstring_alias = drupal_lookup_path('source', $qstring); //Alias of that url
+        if($qstring_alias && $qstring != $qstring_alias){
+        	$q = $qstring;
         }
+//          $_REQUEST['q'] = $_GET['q'] = $qstring_alias;
+//        }else{
+//          //Sudo alias to prevent path rewrites
+//          $_REQUEST['q'] = $qstring_alias;
+//        }
       }//It has not been aliased yet
       
     }
