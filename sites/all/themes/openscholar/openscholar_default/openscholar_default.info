@@ -6,7 +6,7 @@ core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = openscholar_default.css
 ; Set the conditional stylesheets that are processed by IE.
-conditional-stylesheets[if IE][all][] = openscholar_default-ie.css
+conditional-stylesheets[if lte IE 7][all][] = openscholar_default-ie.css
 
 regions[header_top]    	= header top
 regions[header_left]    = header left

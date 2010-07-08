@@ -6,7 +6,7 @@ core       = 6.x
 base theme = scholars_harvard
 stylesheets[all][]   = projects-harvard.css
 ; Set the conditional stylesheets that are processed by IE.
-conditional-stylesheets[if IE][all][] = projects-harvard-ie.css
+conditional-stylesheets[if lte IE 7][all][] = projects-harvard-ie.css
 
 regions[header_top]    	= header top
 regions[header_left]    = header left
