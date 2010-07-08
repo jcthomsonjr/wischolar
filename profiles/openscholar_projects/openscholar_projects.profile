@@ -40,6 +40,7 @@ function openscholar_projects_profile_modules() {
  */
 function _openscholar_projects_core_modules() {
  $contrib_modules = array(
+  // sites/all/contrib
     'activity',
     'addthis',
     'advanced_help',
@@ -56,7 +57,7 @@ function _openscholar_projects_core_modules() {
     'data_ui',
     'dialog',
     'feeds',
-    'feeds_default',
+    'feeds_defaults',
     'filefield_paths',
     'file_aliases',
     'features',
@@ -67,7 +68,6 @@ function _openscholar_projects_core_modules() {
     'jquery_ui',
     'jquery_update',
     'lightbox2',
-    'lucene_api',
     'og',
     'og_access',
     'og_views',
@@ -77,15 +77,15 @@ function _openscholar_projects_core_modules() {
     'menu_node',
     'pathauto',
     'permissions_api',
-    'profile',
     'purl',
     'spaces',
     'spaces_og',
-    //'spaces_user',
     'stringoverrides',
+    'strongarm',
     'token',
     'trigger',
     'transliteration',
+    'twitter_pull',
     'ucreate',
     'ucreate_og',
     'views',
@@ -96,7 +96,6 @@ function _openscholar_projects_core_modules() {
     'vertical_tabs',
     'wysiwyg',
   
-
   //cck
     'content',
     'content_copy',
@@ -120,7 +119,12 @@ function _openscholar_projects_core_modules() {
 
     'install_profile_api',
     'schema',
-    'strongarm',
+ 
+    // Optional Development Resources
+    //'admin_menu',
+    //'devel',
+    //'devel_generate',
+    
   );
   
   return $contrib_modules;
@@ -132,8 +136,11 @@ function _openscholar_projects_core_modules() {
 function _openscholar_projects_scholar_modules() {
   return array(
     'vsite',
+     // project specific
+    'scholar_project',
     'vsite_content',
     'vsite_domain',
+    'scholar_events',
     'vsite_ga',
     'vsite_layout',
     'vsite_menus',
@@ -145,34 +152,36 @@ function _openscholar_projects_scholar_modules() {
     'vsite_support',
     'vsite_widgets',
     'vsite_generic_settings',
-
-  //Projects Specific
-    'scholar_project',
-    'scholar_projects_front',
-    'auto_nodetitle',
-  
-  // scholar specific
+    
     'biblio',
+    'auto_nodetitle',
     'cp',
-    'scholarboot',
     'bkn',
+    'cite_distribute',
+    'repec_meta',
+    'googlescholar_meta',
+    'dyntextfield',
+  
+    //Install-Wide Pages
     'scholarregister',
+    'openscholar_front',
 
-   //features
-    'scholar_dvn',
+    // features
+    'scholar_biocv',
     'scholar_links',
     'scholar_blog',
     'scholar_book',
     'scholar_announcements',
     'scholar_classes',
-    'scholar_events',
     'scholar_image_gallery',
     'scholar_publications',
-    'scholar_profiles',
     'scholar_software',
     'scholar_pages',
     'scholar_reader',
     'scholar_front',
+    'scholar_profiles',
+  
+
   );
 }
 
@@ -277,34 +286,35 @@ function _openscholar_projects_profile_batch_finished($success, $results) {
  */
 function _openscholar_projects_enable_themes(){
   
-  // the default theme is the project theme
-  // install_default_theme('scholar_projects_front');
+  // the default theme 
+  install_default_theme('openscholar_default');
   
-  //get list of themes to be enabled
-  $themes = array('zen', 'cp_theme', 'scholar_base', 'scholar_projects_front');
-  $themes = array_merge($themes, __openscholar_projects_get_scholar_theme_names());
+  $themes = array(
+    'zen',
+    'cp_theme',
+    'scholar_base',
+    'openscholar_default',
+    'scholar_theme_01',
+    'scholar_theme_02',
+    'scholar_theme_03',
+    'scholar_theme_04',
+    'scholar_theme_05',
+    'scholar_theme_06',
+    'scholar_theme_07',
+    'scholar_theme_08',
+    'scholar_theme_09',
+    'scholar_theme_10',
+    'scholar_theme_11',
+    'scholar_theme_12'
+  );
   
   //enable the themes
   install_enable_theme($themes);
-	
+  
   // disable all DB blocks
   db_query("UPDATE {blocks} SET status = 0, region = ''");
 }
 
-/**
- * return theme names starting with 'scholar_theme_'
- *
- * @return unknown
- */
-function __openscholar_projects_get_scholar_theme_names(){
-	$return = array();
-	$sql = "SELECT * FROM {system} WHERE type = '%s' AND name LIKE '%s%%'";
-	$result = db_query($sql, 'theme', 'scholar_theme_');
-	while($data = db_fetch_object($result)){
-		$return[] = $data -> name;
-	}
-	return $return;
-}
 
 ////////////////
 // PRIVATE CONFIG FUNCTIONS
