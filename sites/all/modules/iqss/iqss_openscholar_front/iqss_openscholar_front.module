@@ -1,6 +1,28 @@
 <?php
 
 /**
+ * hook strongarm
+ */
+function iqss_openscholar_front_strongarm(){
+  $conf = array();
+  
+  // Site mission; to be displayed in the front page
+  $scholar_mission = ' Harvard Scholars: Create a dynamic feature-full personal 
+                       web site in seconds. For free! <span>(No, there’s no catch.)</span>';
+  
+  $project_mission = ' Academic Projects: Create a dynamic feature-full web site 
+                       in seconds. For free! <span>(No, there’s no catch.)</span>';
+  
+  $install_mode = variable_get('openscholar_installation_mode', 'scholar');
+  
+
+  $conf['site_mission'] = $install_mode == 'scholar' ? $scholar_mission : $project_mission;
+
+  return $conf;
+}
+
+
+/**
  * Implementation of hook_menu_alter
  * We need to do some stuff immediately after 
  * the installation if finished; Alter the 'node' callback
@@ -9,14 +31,20 @@ function iqss_openscholar_front_menu_alter(&$items){
   $items['welcome']['page callback'] = 'iqss_openscholar_front_homepage';
 }
 
+/**
+ * Callback for 'welcome' menu entry
+ */
 function iqss_openscholar_front_homepage(){
-  
   $s_content = '<div id="content-row-2">'.theme('iqss_openscholar_front_content') . '</div>' ;
   return $s_content;
 }
 
+/**
+ * Implementation of hook_theme
+ */
 function iqss_openscholar_front_theme(){
 
+  // load a different template file depending on the installation mode
   $install_mode = variable_get('openscholar_installation_mode', 'scholar');
   
   $path = drupal_get_path('module', 'iqss_openscholar_front_scholar') . '/' . $install_mode;
@@ -26,27 +54,24 @@ function iqss_openscholar_front_theme(){
     'template' => "iqss-openscholar-front-${install_mode}-content",
   );
 
-
   return $items;
 }
 
 /**
  * implementation of hook_context_default_contexts_alter
- * @param $contexts
  */
 function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
+  // add some extra links (block) in the 'sitewide_front'
   if (isset($contexts['openscholar-section-sitewide_front'])) {
-  	
-    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_top_links']);
     
     $contexts['openscholar-section-sitewide_front']->block['iqss_openscholar_front_top_links'] = array(
-        'module' => 'iqss_openscholar_front', 
-        'delta' => 'top_links', 
-        'weight' => 36, 
-        'region' => 'header_right', 
-        'status' => 0, 
-        'label' => 'OpenScholar: Top links', 
-        'type' => 'context_ui' 
+      'module' => 'iqss_openscholar_front', 
+      'delta' => 'top_links', 
+      'weight' => 36, 
+      'region' => 'header_right', 
+      'status' => 0, 
+      'label' => 'OpenScholar: Top links', 
+      'type' => 'context_ui' 
     );
   }
 }
@@ -71,6 +96,9 @@ function iqss_openscholar_front_block($op = 'list', $delta = 0) {
   }
 }
 
+/**
+ * callback function for top_links block
+ */
 function _iqss_openscholar_front_block_top_links(){
   $block = array();
   $block['subject'] = t('');
@@ -78,10 +106,21 @@ function _iqss_openscholar_front_block_top_links(){
   return $block;
 }
 
+/**
+ * Generate content of the top_links block
+ */
 function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real theme function
-  $result = '<ul id="top-front">';
-  $result .= '<li>' . l('About', 'help/vsitehelp/OpenScholar-Documentation') . ' </li>';
-  $result .= '<li>' . ($user->uid > 0) ? l('Log out', 'logout') :   l('Log in', 'user') . '</li>';
+  $items = array();
+  $items[] = array(
+    'title' => 'About',
+    'href' => 'help/vsitehelp/OpenScholar-Documentation',
+  );
+  
+  global $user;
+  $items[] = array(
+    'title' => $user -> uid ? 'Log out' : 'Log in',
+    'href' =>  $user -> uid ? 'logout' : 'user',
+  );
   
   $txt = 'Need a Site for a Project?';
   $url = 'http://projects.iq.harvard.edu';
@@ -92,10 +131,12 @@ function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real
     $url = 'http://scholar.harvard.edu';
   }
 
-  $result .= '<li>' . l($txt, $url). '</li>';
-  $result .= '<li>' . openscholar_front_getyoursitebutton() . '</li>';
-  $result .= '</ul>';
+  $items[] = array(
+    'title' => $txt,
+    'href' =>  $url,
+  );
   
-  return $result;
+  $attributes = array('id' => 'top-front');
+  return theme('links', $items, $attributes);
 }
 
