@@ -1,4 +1,4 @@
-; $Id: openscholar.make,v 1.1.2.25 2010/07/08 17:31:48 ferdi Exp $
+; $Id: openscholar.make,v 1.1.2.26 2010/07/08 17:55:32 ferdi Exp $
 
 ;Core Version
 core = "6.x"
@@ -257,6 +257,11 @@ projects[openscholar_themes][location] = "http://openscholar.harvard.edu/scholar
 projects[openscholar_themes][version] = "2.0-beta5"
 
 ; Libraries
+libraries[luceneapi][destination] = "modules/contrib/luceneapi"
+libraries[luceneapi][type] = "get"
+libraries[luceneapi][url] = "http://downloads.sourceforge.net/project/luceneapi/luceneapi/6.x-2.0/luceneapi-lib-6.x-2.0.tar.gz"
+libraries[luceneapi][directory_name] = "lib"
+
 projects[libraries][subdir] = "libraries"
 
 ; TinyMCE 3.2.7
