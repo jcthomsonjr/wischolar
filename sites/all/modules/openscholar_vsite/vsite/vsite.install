@@ -6,13 +6,13 @@
 function vsite_enable() {
   // Weight scholar to be after spaces_og
   $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'spaces_og'"));
-  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite'", ($weight + 1)); 
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite'", ($weight + 1));
   // all vsite* modules have weight higher than vsite // TODO
   
   $query =  "SELECT * FROM {system} WHERE type = 'module' AND name LIKE 'vsite_%'";
   $result = db_query($query);
   while ($data = db_fetch_object($result)){
-    db_query("UPDATE {system} SET weight = %d WHERE name = '%s'", ($weight + 2), $data -> name); 
+    db_query("UPDATE {system} SET weight = %d WHERE name = '%s'", ($weight + 2), $data -> name);
   }
 }
 
@@ -34,4 +34,32 @@ function _install_vsite_menus() {
 
 function vsite_update_6001(&$sandbox){
 	return _install_vsite_menus();
+}
+
+function vsite_update_6002(&$sandbox){
+	
+	$res = array();
+	module_rebuild_cache();
+	
+  // Enable openscholar_front module if need
+  if(!module_exists('openscholar_front')){
+    
+    include_once('includes/install.inc');
+    
+    drupal_install_modules(array('openscholar_front'));
+    $ret[] = array(
+      'success' => true,
+      'query' => 'Installed dialog module and enabled it',
+    );
+    
+  }
+  
+  // Enable the openscholar_default theme
+  install_include( array('system'));
+  install_default_theme('openscholar_default');
+  
+  //Set the home page to welcome
+  variable_set('site_frontpage', 'welcome');
+  
+  return $res;
 }
