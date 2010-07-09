@@ -1,0 +1,125 @@
+<?php
+
+include_once('scholar_events.features.inc');
+
+
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function scholar_events_strongarm() {
+  $conf = array();
+  
+  // looks like Monday should be the first day of the week for calendar
+  // to work correctly (display)
+  $conf['date_first_day'] = '1';
+
+  foreach (array('event') as $type) {
+
+
+    // Comments
+    $conf['comment_'. $type] = COMMENT_NODE_DISABLED;
+
+    // Disable Diff button
+    $conf['show_preview_changes_'. $type] = FALSE;
+    $conf['show_diff_inline_'. $type] = FALSE;
+
+    // Pathauto (optional) settings
+    $conf["pathauto_node_{$type}_pattern"] = "[space-og-path]/{$type}/[title-raw]";
+  }
+
+
+  // Uploads only on events
+  $conf['upload_event'] = TRUE;
+
+
+  return $conf;
+}
+
+
+/**
+ * Implementation of hook_block().
+ */
+function scholar_events_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      return array('mini' => array('info' => t('Mini Calendar - A small calendar used to display your sites upcoming events')));
+    default:
+      $function = "_scholar_events_block_{$delta}";
+      if (function_exists($function)) {
+        return $function($op, $edit);
+      }
+  }
+}
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function scholar_events_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
+  switch ($op) {
+    case 'view':
+      // Confirm we are actually on a page of relevance
+      if (menu_get_object() === $node && !empty($node->field_date)) {
+        $from = date_convert($node->field_date[0]['value'], DATE_ISO, DATE_OBJECT);
+        context_set('node', 'field_date', $from);
+      }
+      break;
+  }
+}
+
+/**
+ * Block: contextual mini calendar block
+ */
+function _scholar_events_block_mini($op, $edit) {
+  if ($op == 'view') {
+    $block = array();
+    // if in a node view, get date from the cck field
+    // otherwise now();
+    $date = context_get('node', 'field_date');
+    $date = $date ? $date : date_now();
+    if ($date) {
+      $year = date_format($date, 'Y');
+      $month = date_format($date, 'm');
+      $args = "$year-$month";
+      $block['content'] = views_embed_view('scholar_events', 'block_1', $args);
+    } 
+    return $block;
+  }
+}
+
+
+/**
+ * hook vsite_widgets
+ */
+function scholar_events_vsite_widgets(){
+  $items = array();
+  
+  /**
+   * this needs some work 
+   * because the block view expect a date argument
+   * see _scholar_events_block_mini() above
+   **/
+  $items['scholar_events_mini'] = array(
+      'module' => 'scholar_events',
+      'delta' => 'mini',
+      'weight' => 20,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Mini calendar',
+      'type' => 'context_ui',
+      );
+      
+
+      
+  $items['views_scholar_events_upcoming-block_1'] = array(
+      'module' => 'views',
+      'delta' => 'scholar_events_upcoming-block_1',
+      'weight' => 21,
+      'region' => false,
+      'status' => '0',
+      'label' => 'Upcoming events',
+      'type' => 'context_ui',
+      );
+  return $items;
+}
+

@@ -1,0 +1,281 @@
+<?php
+
+include_once('scholar_project.features.inc');
+
+/**
+ * hook strongarm
+ */
+function scholar_project_strongarm(){
+  $conf = array();
+  
+  // User settings
+  $conf['user_register'] = 0; // No registration is allowed; this is a closed group
+  
+  // this helps to show user the appropriate name for features
+  // i.e. project_news
+  $conf['openscholar_installation_mode'] = 'project';
+  
+  // the content type which powers this kind of web site.
+  $conf['scholar_content_type'] = 'project';
+  $conf['og_content_type_usage_project'] = 'group';
+  
+  // setting determines if a non admin user can create multiple sites
+  $conf['scholar_create_multiple_sites'] = 1;
+
+  // the default project site theme
+  $conf['scholar_default_theme'] = 'scholar_theme_10';
+  
+  // list of themes, one will be randomly selected as default for new sites created
+  $conf['scholar_selected_themes'] = array('scholar_theme_10', 'scholar_theme_11');
+  
+  $conf['spaces_default_presets'] = array(
+    'og' => 'project'
+  );
+
+  $conf['spaces_disabled_presets'] = array(
+    'og' => array(
+      'private' => 1,
+      'controlled' => 1,
+      'public' => 1
+    )
+  );
+  
+  
+  $conf['scholar_home_page_title'] = "IQSS Projects Access";
+  
+  $conf['scholar_default_preset'] = "project";
+  
+  // default theme
+  //$conf['theme_default'] = 'scholar_projects_front';
+  
+  // site front page
+  //$conf['site_frontpage'] = 'scholar_projects_home';
+  
+  // project node settings
+  $conf['upload_project'] = FALSE;
+  
+  $conf["show_preview_changes_project"] = FALSE;
+  $conf["show_diff_inline_project"] = FALSE;
+  
+  // Comments
+  $conf['comment_project'] = COMMENT_NODE_DISABLED;
+  return $conf;
+}
+
+
+function scholar_project_preprocess_page($vars){
+  $vars['body_classes'] .= ' scholar-projects-distro';
+}
+
+
+/**
+ * hook spaces_presets
+ */
+function scholar_project_spaces_presets(){
+  $items = array();
+  vsite_include('vsiteapi');
+  $options = vsite_content_types();
+
+  $items['project'] = array(
+    'name' => 'Project Web Site preset',
+    'description' => 'Project site preset',
+    'type' => 'og',
+    'preset' => array(
+      'features' => array(
+        'scholar_front' => '2',
+        'scholar_pages' => '2',
+        'scholar_announcements' => '2',
+        'scholar_events' => '2',
+        'scholar_profiles' => '2',
+        'scholar_publications' => '0',
+        'scholar_classes' => '0',
+        'scholar_image_gallery' => '0',
+        'scholar_reader' => '0',
+        'scholar_blog' => '0',
+        'scholar_dvn' => '0',
+        'scholar_links' => '0',
+        'scholar_software' => '0',
+      ),
+      'settings' => array(
+        'theme' => array(
+          'maintheme' => 'scholar_theme_01',
+          'flavor' => '0'
+        ),
+ 
+        'front' => array(
+          'frontpage' => 'feature',
+          'node_options' => $options
+        ),
+        
+        'activity' => array(
+          'ignore_insert' => '1',
+          'ignore_update' => '1'
+        ),
+        
+        'generic' => array(
+          'admin_menu' => 0,
+          'contact_form' => 1,
+          'contact_form_anonymous' => 1,
+          'shield' => drupal_get_path('module', 'vsite_generic_settings') . "/theme/shields/harvard_shield.png"
+        ),
+        
+        'site' => array(
+          'headline' => "",
+          'sub_heading' => ""
+        ),
+        
+      ),
+      
+      'locked' => array(
+        'features' => array(
+          'scholar_front' => 1
+        )
+      ),
+      'weights' => array(
+        'scholar_front' => '-13',
+        'scholar_pages' => '-12',
+        'scholar_announcements' => '-11',
+        'scholar_events' => '-10',
+        'scholar_profiles' => '-9',
+        'scholar_publications' => '-8',
+        'scholar_classes' => '-7',
+        'scholar_image_gallery' => '-6',
+        'scholar_reader' => '-5',
+        'scholar_blog' => '-4',
+        'scholar_dvn' => '-3',
+        'scholar_links' => '-2',
+        'scholar_software' => '-1',
+      ),
+      'og' => array(
+        'og_selective' => '3',
+        'og_register' => 0,
+        'og_directory' => 1,
+        'og_private' => 0
+      )
+    )
+  );
+  
+  return $items;
+}
+
+/**
+ * Implementation of hook_nodeapi()
+  */
+function scholar_project_nodeapi(&$node, $op){
+  global $conf;
+  switch ($op){
+    case 'presave';
+    if ((!$node -> nid) && ($node -> type == $conf['scholar_content_type'])){
+      $node->og_theme = $conf['scholar_default_theme']; //set default theme
+    }
+    break;
+    case 'insert':
+      // default flavor value should be empty string for consistency (see vsite_design_settings.theme.inc - $a_options)
+      $space = spaces_load('og', $node -> nid);
+      $space->settings['theme']['flavor'] = '';
+      spaces_save($space);
+      break;
+  }
+}
+
+/**
+ * Define the project blocks with hook block
+ */
+function scholar_project_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0]['info'] = t('Project site logo');
+    $blocks[1]['info'] = t('Project site info');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        return _scholar_project_logo_wdgt();
+      case 1:
+       return _scholar_project_basicinfo_wdgt();
+    }
+  }
+}
+
+/**
+ * Define the avalible vsite widgets
+ * @return array
+ */
+function scholar_project_vsite_widgets(){
+  
+  return array(
+    'scholar_project_0' => array(
+      'module' => 'scholar_project',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'header_left',
+      'status' => '0',
+      'label' => 'Project Site Logo',
+      'type' => 'context_ui',
+    ),
+    'scholar_project_1' => array(
+      'module' => 'scholar_project',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'header_main',
+      'status' => '0',
+      'label' => 'Project site info',
+      'type' => 'context_ui',
+    ),
+  );
+
+}
+
+/**
+ * Scholar Basic Info Widget Content
+ * @return array
+ */
+function _scholar_project_basicinfo_wdgt(){
+  $scholar = vsite_get_vsite();
+
+  $block = array();
+  $block['subject'] = t('');
+  $block['content'] = l('Project Site (' . $scholar->purl . ')', $scholar->get_absolute_url());
+
+  if(!strlen($scholar->group->title)) return $block;
+            
+  $output =  "<h1>" . l($scholar->group->title, $scholar->get_absolute_url()) . "</h1>".
+  ((strlen($scholar->group->og_description)) ? "<h2>" . $scholar->group->og_description . "</h2>" : "" );
+
+  $block['content'] = $output;
+  return $block;
+}
+
+/**
+ * Scholar Logo Widget Content
+ * @return array
+ */
+function _scholar_project_logo_wdgt(){
+
+  $block['subject'] = t(''); // intentionally blank
+  $block['content'] = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_logo',vsite_get_vsite(),'field_project_logo' ,false).'</a></div>';
+
+  return $block;
+}
+
+/**
+ * Implementation of hook_form_alter()
+ **/
+function scholar_project_form_alter(&$form, $form_state, $form_id) {
+  $scholar_content_type = variable_get('scholar_content_type', 'vsite');
+  switch ($form_id) {
+    case $scholar_content_type.'_node_form':
+      //Customize the "Site Information" form
+      if(arg(0) != 'cp') break;
+      if(array_key_exists('title',$form)) $form['title']['#title'] = "Headline";
+      if(array_key_exists('og_description',$form)){
+      	$form['og_description']['#title'] = "Sub Headline";
+      	$form['og_description']['#required'] = false;
+      }
+      unset($form['body_field']['format']);
+      _spaces_og_make_hidden($form['body_field']);
+    break;
+    default:
+   
+  }
+}
