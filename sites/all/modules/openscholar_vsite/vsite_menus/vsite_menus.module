@@ -175,16 +175,6 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   }
       
   foreach ($a_settings_menu as $key => $link) {
-  	if($link['link']['access_callback']){
-  	  $arguments = unserialize($link['link']['access_arguments']);
-      if ($link['link']['access_callback'] == 'user_access') $valid = (count($arguments) == 1) ? user_access($arguments[0]) : user_access($arguments[0], $arguments[1]);
-	    else $valid = call_user_func_array($link['link']['access_callback'], $arguments);
-  		
-	    if(!$valid){
-	    	unset($a_settings_menu[$key]);
-        continue;
-	    }
-  	}//Remove menus that dont pass auth
   	
   	if(in_array($link['link']['link_path'],$a_disabled_links)){
   		unset($a_settings_menu[$key]);
