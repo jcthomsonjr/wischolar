@@ -215,16 +215,15 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = true, $b_check
   foreach ($a_settings_menu as $key => $link) {
     if($link['link']['access_callback']){
       $arguments = unserialize($link['link']['access_arguments']);
-      if( $link['link']['access_callback'] == 'spaces_menu_access'){
-        $n = menu_get_object($type = 'node', $position = 1, $path = $link['link']['link_path']);
-        $arguments[1] = $n;
+      if( $link['link']['access_callback'] == 'spaces_menu_access') $arguments[1] = menu_get_object($type = 'node', $position = 1, $path = $link['link']['link_path']);
+      
+      if ($link['link']['access_callback'] == 'user_access'){
+      	$valid = (count($arguments) == 1) ? user_access($arguments[0]) : user_access($arguments[0], $arguments[1]);
+      }else{
+      	$valid = call_user_func_array($link['link']['access_callback'], $arguments);
       }
-      if ($link['link']['access_callback'] == 'user_access') $valid = (count($arguments) == 1) ? user_access($arguments[0]) : user_access($arguments[0], $arguments[1]);
-      else $valid = call_user_func_array($link['link']['access_callback'], $arguments);
-      if(!$valid){
-        unset($a_settings_menu[$key]);
-        continue;
-      }
+      
+      if(!$valid) unset($a_settings_menu[$key]);
     }
   }
   
