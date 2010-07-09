@@ -1,0 +1,442 @@
+<?php
+// $Id: luceneapi_dym.module,v 1.31 2010/02/20 01:18:04 cpliakas Exp $
+
+/**
+ * @defgroup luceneapi_dym Search Lucene DidYouMean
+ * Provides "Did You Mean" search suggestions to Search Lucene Content.
+ */
+
+/**
+ * @file
+ * Provides "Did You Mean" search suggestions to Search Lucene Content.  The
+ * luceneapi_dym index is a dictonary of the terms in luceneapi_node parsed
+ * into bi-grams, tri-grams, and n-grams.
+ *
+ * @ingroup luceneapi_dym
+ */
+
+/**
+ * Implementation of hook_luceneapi_index().
+ */
+function luceneapi_dym_luceneapi_index($op) {
+  switch ($op) {
+    case 'path':
+      return luceneapi_variable_get('luceneapi_dym', 'index_path');
+    case 'type':
+      return 'text';
+  }
+}
+
+/**
+ * This is necessary to prevent WSOD when upgrading from beta 2 to a later
+ * version. Since the hook_menu_alter() implementation has been removed, cached
+ * menu items will call a function that no longer exists after the upgrade. See
+ * http://drupal.org/node/637446 for more details.  This function clears the
+ * menu cache so the user doesn't have to worry about doing it manually.
+ *
+ * @param $type
+ *   A string containing the module handling the search.
+ * @return
+ *   A string containing the themed search page.
+ * @see luceneapi_search_view()
+ * @deprecated
+ */
+function luceneapi_dym_search_view($type = '') {
+  variable_set('menu_rebuild_needed', TRUE);
+  return luceneapi_search_view($type);
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function luceneapi_dym_form_alter(&$form, &$form_state, $form_id) {
+  // adds the recommendations
+  if ('search_form' == $form_id && 'luceneapi_node' == $form['module']['#value']) {
+    if (variable_get('luceneapi_dym:enable', 1) && ($suggestions = luceneapi_dym_suggestions_get(search_get_keys()))) {
+      drupal_add_css(drupal_get_path('module', 'luceneapi_dym') .'/luceneapi_dym.css');
+      $form['luceneapi_dym'] = array(
+        '#type' => 'markup',
+        '#value' => theme('box', t('Did you mean'), $suggestions),
+      );
+    }
+  }
+
+  // hides some common settings that don't apply to this index
+  if ('luceneapi_dym_admin_settings_general_form' == $form_id) {
+
+    // error handling field set
+    $form['dym'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Did you mean'),
+      '#collapsible' => TRUE,
+      '#weight' => -40,
+    );
+
+    // adds fields as checkboxes
+    $form['dym']['luceneapi_dym:enable'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable <em>Did You Mean</em> box'),
+      '#default_value' => variable_get('luceneapi_dym:enable', 1),
+      '#description' => t(
+        'Display suggestions below the search form and above search results. For more control over the display of suggestions, disable this setting and enable the <em>Search Lucene DidYouMean</em> <a href="@block-page">block</a>.',
+        array('@block-page' => url('admin/build/block/list'),
+      )),
+    );
+
+  }
+  if ('luceneapi_dym_admin_settings_performance_form' == $form_id) {
+    unset($form['search']['luceneapi_dym:resultset_limit']);
+    unset($form['search']['luceneapi_dym:minimum_prefix']);
+    unset($form['search']['luceneapi_dym:cache_threshold']);
+    unset($form['search']['luceneapi_dym:number_cached']);
+
+    // documents are small, so we can index more documents per cron run
+    $form['index']['luceneapi_dym:update_limit']['#options'] += drupal_map_assoc(array(
+      1000, 2000, 5000, 10000,
+    ));
+  }
+  if ('luceneapi_dym_admin_settings_statistics_form' == $form_id) {
+    unset($form['reindex']['reindex']);
+    unset($form['reindex']['reindex-desc']);
+  }
+}
+
+/**
+ * Parses a term into n-grams.
+ *
+ * @param $word
+ *   A string containing the term to arse into n-grams.
+ * @param $n
+ *   An integer containing the gram.
+ * @return
+ *   An array keyed by field name to n-gram value.
+ */
+function luceneapi_ngram_parse($word, $n) {
+  $word = (string)$word;
+  $n = (int)$n;
+
+  // initializes return array
+  $return = array(
+    'start'. $n => '',
+    'gram'. $n => '',
+    'end'. $n => '',
+  );
+
+  // gets length of string, makes sure it is long enough to be parsed
+  $strlen = drupal_strlen($word);
+  if ($strlen > $n && $n > 0) {
+
+    // extracts first, last substrings of $gram length
+    $last = $strlen - $n;
+    $return['start'. $n] = drupal_substr($word, 0, $n);
+    $return['end'. $n] = drupal_substr($word, $last, $n);
+
+    // calculates n-gram
+    $return['gram'. $n] = array();
+    for ($i = 1; $i < $last; $i++) {
+      $return['gram'. $n][] = drupal_substr($word, $i, $n);
+    }
+    $return['gram'. $n] = join(' ', $return['gram'. $n]);
+  }
+
+  return $return;
+}
+
+/**
+ * Gets terms in a search query.  Note that fuzzy queries and wildcard queries
+ * are not included.  AS an example, the query "test query* perser~" would
+ * only return array('test').
+ *
+ * @param $keys
+ *   A string containing the search keys.
+ * @return
+ *   An array of terms in the search query.
+ */
+function luceneapi_dym_composite_query_parser($keys) {
+  $terms = array();
+  if ($keys != '' && ($query = luceneapi_query_parse($keys))) {
+    try {
+      _luceneapi_dym_terms_extract($query, $terms);
+    }
+    catch (Zend_Search_Exception $e) {
+      luceneapi_throw_error($e, WATCHDOG_ERROR, 'luceneapi_dym');
+    }
+  }
+  return array_unique($terms);
+}
+
+/**
+ * Recursive function that populates the $terms array with the terms found in a
+ * Zend_Search_Lucene_Search_Query object.
+ *
+ * @param $query
+ *   An object containing a Zend_Search_Lucene_Search_Query object.
+ * @param &$terms
+ *   An array of terms.
+ * @return
+ *   NULL
+ */
+function _luceneapi_dym_terms_extract(Zend_Search_Lucene_Search_Query $query, &$terms) {
+  switch (TRUE) {
+    case ($query instanceof Zend_Search_Lucene_Search_Query_Boolean):
+      foreach ($query->getSubqueries() as $subquery) {
+        _luceneapi_dym_terms_extract($subquery, $terms);
+      }
+      break;
+    case ($query instanceof Zend_Search_Lucene_Search_Query_Term):
+      $terms[] = $query->getTerm()->text;
+      break;
+    case ($query instanceof Zend_Search_Lucene_Search_Query_MultiTerm):
+    case ($query instanceof Zend_Search_Lucene_Search_Query_Phrase):
+      foreach ($query->getTerms() as $term) {
+        $terms[] = $term->text;
+      }
+      break;
+    case ($query instanceof Zend_Search_Lucene_Search_Query_Range):
+      $terms[] = $query->getLowerTerm()->text;
+      $terms[] = $query->getUpperTerm()->text;
+      break;
+  }
+}
+
+/**
+ * Parses a word into trig-rams and n-grams, returns a document object that can
+ * be added to the luceneapi_dym index.
+ *
+ * @param $word
+ *   A string containing the word to parse.
+ * @return
+ *   A populated Zend_Search_Lucene_Document object, FALSE on errors.
+ */
+function luceneapi_dym_document_get($word) {
+  $fields = array('word' => (string)$word);
+
+  // parses into bi-grams, tri-grams and n-grams
+  $fields += luceneapi_ngram_parse($word, 2);
+  $fields += luceneapi_ngram_parse($word, 3);
+  $fields += luceneapi_ngram_parse($word, 4);
+
+  try {
+    // instantiates, populates, and returns document object
+    $document = luceneapi_document_get();
+    foreach ($fields as $name => $value) {
+      $type = ('word' !== $name) ? 'unstored' : 'keyword';
+      luceneapi_field_add($document, $type, $name, $value, TRUE);
+    }
+    return $document;
+  }
+  catch (LuceneAPI_Exception $e) {
+    luceneapi_throw_error($e, WATCHDOG_ERROR, 'luceneapi_dym');
+  }
+  return FALSE;
+}
+
+/**
+ * Implementation of hook_update_index().
+ */
+function luceneapi_dym_update_index() {
+  module_load_include('inc', 'luceneapi_dym', 'luceneapi_dym.index');
+  _luceneapi_dym_update_index();
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function luceneapi_dym_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      $blocks['suggestion'] = array(
+        'info' => t('Search Lucene DidYouMean'),
+        'cache' => BLOCK_NO_CACHE,
+      );
+      return $blocks;
+    case 'view':
+      if ('luceneapi_node' == luceneapi_search_executed()) {
+        return array(
+          'subject' => t('Did you mean'),
+          'content' => luceneapi_dym_suggestions_get(search_get_keys()),
+        );
+      }
+      break;
+  }
+}
+
+/**
+ * Gets suggestions.
+ *
+ * @param $keys
+ *   A string of search keys to get spelling suggestions for.
+ * @param $format
+ *   A string containing the link bath with sprintf-like substitutions.
+ *   Defaults to "search/luceneapi_node/%s".
+ * @return
+ *   A string containing the suggestions.
+ */
+function luceneapi_dym_suggestions_get($keys, $format = 'search/luceneapi_node/%s') {
+  $match_found = FALSE;
+  $dym = '';
+
+  try {
+    // opens luceneapi_node, luceneapi_dym indexes
+    if (!$index = luceneapi_index_open('luceneapi_node', $errstr)) {
+      throw new LuceneAPI_Exception($errstr);
+    }
+    if (!$dictionary = luceneapi_index_open('luceneapi_dym', $errstr)) {
+      throw new LuceneAPI_Exception($errstr);
+    }
+
+    // extracts search keys, gets terms in search query.
+    $words = luceneapi_dym_composite_query_parser($keys);
+
+    // tokenizes the search string
+    $analyzer = Zend_Search_Lucene_Analysis_Analyzer::getDefault();
+    $token_list = $analyzer->tokenize($keys, LUCENEAPI_ENCODING);
+
+    // iterates over words in query
+    $total_tokens = count($token_list);
+    $last_offset = 0;
+
+    foreach ($token_list as $key => $token) {
+      $word = $token->getTermText();
+      $match = '';
+
+      // gets start, end position of this token
+      $offsets = array(
+        'start' => $token->getStartOffset(),
+        'end' => $token->getEndOffset(),
+      );
+
+      // if the word is a Lucene term, gets relevency and finds match
+      if (in_array($word, $words)) {
+        $tf_idf = luceneapi_dym_tf_idf_calculate($index, $word);
+        if (FALSE !== $tf_idf && $tf_idf < 1) {
+          if ($query = luceneapi_dym_ngram_query_get($word)) {
+
+            // executes the query, gets the suggested
+            $hits = luceneapi_find($dictionary, $query, array(), $positive_keys, TRUE);
+            $suggested = (count($hits)) ? $dictionary->getDocument($hits[0]->id)->getFieldValue('word') : FALSE;
+
+            if (FALSE !== $suggested && $word != $suggested) {
+              $match_found = TRUE;
+
+              // formats suggestion string
+              $suggestion = sprintf(
+                '%s%s%s',
+                drupal_substr($keys, 0, $offsets['start']),
+                $suggested,
+                drupal_substr($keys, $offsets['end'])
+              );
+
+              // formats link path
+              $path = sprintf($format, $suggestion);
+
+              // returns the 'match' that will replace the 'miss'
+              $options = array('attributes' => array('class' => 'luceneapi-dym-suggestion'));
+              $match = luceneapi_l($suggested, luceneapi_keys_encode($path), $options);
+            }
+          }
+        }
+      }
+
+      // gets chunk of text from the end of the last match to the begining of this one
+      $length = $offsets['start'] - $last_offset;
+      $dym .= drupal_substr($keys, $last_offset, $length);
+
+      // builds the string
+      if ($match) {
+        $dym .= $match;
+      }
+      else {
+        $length = $offsets['end'] - $offsets['start'];
+        $dym .= drupal_substr($keys, $offsets['start'], $length);
+      }
+
+      // captures last offset for next term
+      $last_offset = $offsets['end'];
+
+      // finalizes string if there are no more matches
+      if ($key + 1 >= $total_tokens) {
+        $dym .= drupal_substr($keys, $last_offset);
+      }
+    }
+
+    // if at least one match was found return the "Did You Mean" suggestion
+    return ($match_found) ? $dym : '';
+  }
+  catch (Exception $e) {
+    luceneapi_throw_error($e, WATCHDOG_ERROR, 'luceneapi_dym');
+  }
+  return '';
+}
+
+/**
+ * Calculates the tf * idf ratio.
+ *
+ * @param $index
+ *   A Zend_Search_Lucene_Interface object.
+ * @param $word
+ *   A string containing the word the score will be calculated for.
+ * @return
+ *   A float containing the ratio, FALSE on errors.
+ */
+function luceneapi_dym_tf_idf_calculate(Zend_Search_Lucene_Interface $index, $word) {
+  try {
+
+    // gets similarity object, instantiates term object
+    $similarity = $index->getSimilarity();
+    $term = luceneapi_term_get($word, NULL, TRUE);
+
+    // gets term frequency
+    $freq = 0;
+    $fields = array_keys(module_invoke_all('luceneapi_dym_fields'));;
+    foreach ($fields as $field) {
+      $freq += luceneapi_termfreq_get($index, $word, $field, TRUE);
+    }
+
+    // returns the tf-idf for the passed word
+    return $similarity->tf($freq) * $similarity->idf($term, $index);
+  }
+  catch (Exception $e) {
+    luceneapi_throw_error($e, WATCHDOG_ERROR, 'luceneapi_dym');
+  }
+  return FALSE;
+}
+
+/**
+ * Builds a Lucene query to search the dictionary index based on the tri-grams
+ * and n-grams of the passed word.
+ *
+ * @param $word
+ *   A string containing the word to build the query against.
+ * @return
+ *   A Zend_Search_Lucene_Search_Query object, FALSE if there are no queries.
+ */
+function luceneapi_dym_ngram_query_get($word) {
+  if (!$query = luceneapi_query_get('boolean')) {
+    return FALSE;
+  }
+
+  // parses into bi-grams, tri-grams and n-grams
+  $fields  = array();
+  $fields += luceneapi_ngram_parse($word, 2);
+  $fields += luceneapi_ngram_parse($word, 3);
+  $fields += luceneapi_ngram_parse($word, 4);
+
+  // iterates over n-grams, adds subqueries
+  foreach ($fields as $field => $ngram) {
+    if (!empty($ngram)) {
+      $ngrams = explode(' ', $ngram);
+      foreach ($ngrams as $text) {
+        $term = luceneapi_query_get('term', $text, $field);
+        if (0 === strpos($field, 'start')) {
+          $term->setBoost(2);
+        }
+        luceneapi_subquery_add($query, $term, 'neither');
+      }
+    }
+  }
+
+  // returns the ngram query
+  return $query;
+}
