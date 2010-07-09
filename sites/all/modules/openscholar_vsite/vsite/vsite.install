@@ -58,5 +58,8 @@ function vsite_update_6002(&$sandbox){
   install_include( array('system'));
   install_default_theme('openscholar_default');
   
+  //Set the home page to welcome
+  variable_set('site_frontpage', 'welcome');
+  
   return $res;
 }
