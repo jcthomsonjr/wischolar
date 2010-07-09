@@ -1,0 +1,15 @@
+; $Id: scholar_theme_07.info,v 1.12 2008/09/21 22:43:32 swortis Exp $
+name        = Scholars Web Sites - Theme 07
+description = Colorful themes featuring an textile-related patterns
+flavor_name = "West African Textile"
+plugins[vsite_design][flavor] = flavors
+
+screenshot = screenshot.png
+core       = 6.x
+base theme = scholar_base
+stylesheets[all][]   = scholar-theme-07.css
+conditional-stylesheets[if lte IE 7][all][]   = scholar-theme-07-ie.css
+
+scholar[widgets][vsite_widgets_0] = false
+scholar[theme_type]   = "scholar"
+scholar[theme_access] = "public"
