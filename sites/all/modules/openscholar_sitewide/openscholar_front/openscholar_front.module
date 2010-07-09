@@ -105,7 +105,12 @@ function _openscholar_front_block_top_links(){
 function _openscholar_front_block_site_info(){
   $block = array();
   $block['subject'] = t('');
-  $block['content'] = '<h1>' . variable_get('site_name', 'OpenScholar') . '</h1>';
+  $front_page = url();
+  $site_title = variable_get('site_name', 'OpenScholar');
+  //print_r($front_page);
+  //$block['content'] = '<h1>' . l(variable_get('site_name', 'OpenScholar'),$front_page) . '</h1>';
+    $block['content'] = '<h1>' . '<a href="'. check_url($front_page) .'" title="'. $site_title .'">' .$site_title  .' </a></h1>';
+  
   return $block;
 }
 
