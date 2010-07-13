@@ -213,6 +213,21 @@ function scholar_software_form_alter(&$form, $form_state, $form_id) {
 		if(count(($a_options = scholar_software_cck_options('method'))) == 1){
 			$form['field_scholar_software_method'] = array('#type' => 'value', '#value' => key($a_options));
 		}//Hide the method select box if there is only one option
+		
+		$form['title']['#element_validate'] = array("scholar_software_project_title_validate");
+		$form['title']['#required'] = false;
+	}
+}
+
+/**
+ *
+ */
+function scholar_software_project_title_validate($element, &$form_state){
+	if(empty($element['#value'])){
+		//If the title is empty they must have selected a software_method that is going to retrieve the title for them
+		if (empty($form_state['values']['field_scholar_software_method']['value'])){
+			form_set_error('title','Projects title is required with this packaging method.');
+		}
 	}
 }
 
@@ -221,7 +236,7 @@ function scholar_software_form_alter(&$form, $form_state, $form_id) {
  */
 function scholar_software_project_node_form_validate($form, &$form_state) {
   // Ensure repository URL is set if using a non-manual method.
-  if (!empty($form_state['values']['field_scholar_software_method'][0]['value']) && empty($form_state['values']['field_scholar_software_repository'][0]['value'])) {
+  if (!empty($form_state['values']['field_scholar_software_method']['value']) && empty($form_state['values']['field_scholar_software_repository'][0]['value'])) {
     form_set_error($form_state['values']['field_scholar_software_repository'][0]['_error_element'], t('Please provide a valid repository URL for this project.'));
   }
 }
