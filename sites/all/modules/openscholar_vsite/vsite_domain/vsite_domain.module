@@ -173,3 +173,16 @@ function vsite_domain_vsite_generic_settings_domain_submit($space, &$value){
     }
     $value['vsite_domain'] = $value['vsite_domain']['value'];
 }
+
+/**
+ * Maintain a array of purl's that have been processed, only one vsite_provider should adjust each path
+ */
+function vsite_domain_processed_purls($s_purl = false){
+  static $processed;
+
+  if(!isset($processed)) $processed = array();
+  
+  if(strlen($s_purl)) $processed[$s_purl] = $s_purl;
+  
+  return $processed;
+}

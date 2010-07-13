@@ -1,11 +1,11 @@
 <?php
-//require_once ( drupal_get_path('module', 'purl') .'/includes/purl_domain.inc');
 /**
  * Create the processor that will override the purl_domain
  */
 
 if(!class_exists('purl_vsite_domain')){
-  /**
+  
+	/**
    *  Full domain handling for scholar, will also remove purl prefix's from alias's
    */
   class purl_vsite_domain extends purl_domain implements purl_processor {
@@ -66,10 +66,11 @@ if(!class_exists('purl_vsite_domain')){
      * so that aliased paths will be picked up
      */
     public function adjust(&$value, $item, &$q) {
-      if(!($vsite = vsite_get_vsite()) || !strlen($vsite->purl)) return;
+      if( (!($vsite = vsite_get_vsite()) && !($vsite = vsite_get_vsite($item->id))) || !strlen($vsite->purl)) return;
       
       if ($_GET['q'] == trim($_REQUEST['q'], '/')) {
-        purl_vsite_path::$a_disabled[$vsite->purl] = $vsite->purl;
+        vsite_domain_processed_purls($vsite->purl);
+        
         $args = explode('/', $_GET['q']);
   
         // Add the value to the front of the query string
@@ -77,11 +78,9 @@ if(!class_exists('purl_vsite_domain')){
         
         $qstring = implode('/', $args); //String with purl added
         $qstring_alias = drupal_lookup_path('source', $qstring); //Alias of that url
-        if($qstring_alias && $qstring != $qstring_alias){
-        	$q = $qstring;
-        }
+        
+        if($qstring_alias && $qstring != $qstring_alias) $q = $qstring; //Modify $q since purl/path/path has an alias
       }//It has not been aliased yet
-      
     }
   }
 }
