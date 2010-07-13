@@ -632,6 +632,7 @@ function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state
   $vocab_types = vsite_content_types();
   drupal_alter('vsite_content_types', $vocab_types);
   $form['content_types']['nodes']['#options'] = $vocab_types;
+  $form['content_types']['nodes']['#required'] = true; //Must select taxonomy
 
   // hide weight element
   unset($form['settings']['weight']);
