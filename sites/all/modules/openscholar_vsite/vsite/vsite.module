@@ -20,6 +20,15 @@ function vsite_menu(){
     ),
     'file path' => drupal_get_path('module', 'vsite') . '/includes'
   );
+  
+  $items['private_site'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => 'Private Site',
+    'page callback' => 'vsite_private_site_login',
+    'access arguments' => array(
+      'access content'
+    ),
+  );
 
   return $items;
 }
@@ -808,4 +817,36 @@ function vsite_system_info_alter(&$info, $file){
     $info['regions']['closure_region'] = "closure";
 
   }
+}
+
+/**
+ * Render the private site login page
+ */
+function vsite_private_site_login(){
+	if(!user_is_logged_in()){
+	  $s_html = drupal_get_form('user_login');
+	}
+	
+  return "This site is private, you must be logged in and be a site member to view.". $s_html;
+}
+
+/**
+ * Implement Hook vsite_generic_settings
+ * @return array
+ */
+function vsite_vsite_generic_settings($space, $value = array()){
+  $a_settings = array();
+  
+  //Disable the shield
+  $a_settings['private_vsite'] = array(
+    'form' => array(
+      '#prefix' => "<br />",
+      '#type' => 'checkbox',
+      '#title' => t('Make your site Private'),
+      '#default_value' => is_array($value) && array_key_exists('private_vsite',$value) ? $value['private_vsite']:0,
+      '#description' => "If private your vsite will only be avalible when you are logged in, regular users will see a message and be giving the choice to login.",
+    )
+  );
+  
+  return $a_settings;
 }

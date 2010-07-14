@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * extend class space_og. We would want to override
@@ -32,6 +32,21 @@ class vsite extends space_og implements space {
     	$this->set_purl_provider();
     }
   }
+  
+  /**
+    * Implementation of space->router().
+    */
+  public function router($op, $object = NULL, $is_active = TRUE) {
+  	global $user;
+    switch ($op) {
+    	default:
+      if ($is_active && $this->settings['generic']['private_vsite'] && !og_is_group_member($this->sid)) {
+        $this->redirect('private');
+      }
+      break;
+    }
+    parent::router($op, $object, $is_active);
+  }
 
   public function redirect($op = 'home'){
     switch ($op) {
@@ -61,13 +76,16 @@ class vsite extends space_og implements space {
       case 'features' :
         purl_goto("cp/settings/features", array('purl' => array( 'provider' => $this->purl_provider, 'id' => $this->sid)));
         break;
+      case 'private':
+      	purl_goto("private_site", array('purl' => array( 'provider' => $this->purl_provider, 'id' => $this->sid)));
+      	break;
     }
   }
 
   /**
    * Implementation of space->menu_access().
-   * 
-   * This is overridden from the default so that we can restrict menu access for 
+   *
+   * This is overridden from the default so that we can restrict menu access for
    * nodes that have been marked "disabled" by site owners.  Non Nodes use the parent function
    */
   public function menu_access($op, $object = NULL, $is_active = TRUE) {
@@ -103,7 +121,7 @@ class vsite extends space_og implements space {
   	if(self::$override_allow_feature_access){
       //allow access to all feature menu items on this page for display purposes
       //Used in CP so that all features menu entries will be displayed for sorting
-      return true; 
+      return true;
     }
     
     if (isset($this->features[$feature])) {
@@ -112,7 +130,7 @@ class vsite extends space_og implements space {
       }else if (og_is_group_member($this->sid)) {
         return TRUE;
       }else if ($this->features[$feature] == SPACES_OG_PUBLIC) {
-        return TRUE; 
+        return TRUE;
       }
     }//Is this feature a part of the site?
     return false;
@@ -132,7 +150,7 @@ class vsite extends space_og implements space {
     
     /*
      * Delete all the nodes that belong to this og.
-     * Normally node could belong to more than 1 og. 
+     * Normally node could belong to more than 1 og.
      * So we would delete the child not only if it belong
      * to this group only. Ignore that since we force nodes
      * to be part of 1 site
@@ -145,7 +163,7 @@ class vsite extends space_og implements space {
     user_delete($edit = array(), $uid = $this -> group -> uid);
     
 
-  }  
+  }
 
   /**
    * Return the absolute URL to this vsite
@@ -158,7 +176,7 @@ class vsite extends space_og implements space {
 	
 	/**
 	 * Returns the vocabularies associated with a vsite.
-	 * If a content type is provided, return vocabs associated 
+	 * If a content type is provided, return vocabs associated
 	 * with that content type only.
 	 * @param $node_type
 	 * @return array
@@ -192,12 +210,12 @@ class vsite extends space_og implements space {
 	/**
 	 * If this space is loaded outside a active context (ie) externally from the home page
 	 * then determine which purl_provider would be best
-	 * 
+	 *
 	 * domain if they have that set otherwise path
 	 */
 	private function set_purl_provider(){
 		//This line checks to see if a domain modifier has been set for this site
-		if(purl_load(array('provider' => 'vsite_domain', 'id'=> $this->sid))){  
+		if(purl_load(array('provider' => 'vsite_domain', 'id'=> $this->sid))){
 		  $this->purl_provider = 'vsite_domain';
 		}//If this site is configured for domains use that as default, otherwise leave the default as "spaces_og"
 	}
