@@ -36,7 +36,7 @@ function iqss_gking_menu(){
  */
 function iqss_gking_theme() {
   return array(
-    'iqss_gking_term_description' => array(
+    'iqss_gking_dl' => array(
       'arguments' => array('term' => NULL),
     ),
   );
@@ -47,17 +47,14 @@ function iqss_gking_theme() {
  */
 function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
   if ($op == 'list') {
-    $blocks['taxonomy_applications']['info'] = t('Applications');
-    $blocks['taxonomy_methods']['info'] = t('Methods');
+    $blocks['areas_of_research']['info'] = t('AOR: Applications &amp; Methods');
     $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
     return $blocks;
   }
   elseif ($op == 'view') {
     switch ($delta) {
-      case 'taxonomy_applications':
-        return _iqss_gking_taxonomy_applications_wgt();
-      case 'taxonomy_methods':
-        return _iqss_gking_taxonomy_methods_wgt();
+      case 'areas_of_research':
+        return _iqss_gking_areas_of_research_wgt();
       case 'filter_by_type':
          return iqss_gking_filter_by_type_block();
     }
@@ -98,24 +95,15 @@ function iqss_gking_context_default_contexts_alter(&$contexts){
 
 	//Add this block to the front context on Garys site
 	$a_block_info = iqss_gking_block();
-	$contexts['scholar-feature-front']->block['iqss_gking_taxonomy_applications'] = array(
+	$contexts['scholar-feature-front']->block['areas_of_research'] = array(
 	  'module' => 'iqss_gking',
-		'delta' => 'taxonomy_applications',
+		'delta' => 'areas_of_research',
 		'weight' => 0,
-		'region' => 'left',
+		'region' => 'header_main',
 		'status' => 0,
-	  'label' => $a_block_info['taxonomy_applications']['info'],
+	  'label' => $a_block_info['areas_of_research']['info'],
 	  'type' => 'context_ui',
 	);
-	$contexts['scholar-feature-front']->block['iqss_gking_taxonomy_methods'] = array(
-    'module' => 'iqss_gking',
-    'delta' => 'taxonomy_methods',
-    'weight' => 1,
-    'region' => 'left',
-    'status' => 0,
-    'label' => $a_block_info['taxonomy_methods']['info'],
-    'type' => 'context_ui',
-  );
 
 }
 
@@ -133,17 +121,6 @@ function iqss_gking_on_gking_site(){
  * theme a term with description
  * @param object $term
  */
-function theme_iqss_gking_term_description($term){
-
-  $term_path = "taxonomy/term/$term->tid";
-  //$term_link = l(' Learn More', $term_path);
-
-  $item = '<span class="term_title">' . l($term->name,$term_path) . '</span> '. $term->description; //$term_link;
-
-  return $item;
-}
-
-
 function theme_iqss_gking_dl($term){
 
   $term_path = "taxonomy/term/$term->tid";
@@ -152,39 +129,10 @@ function theme_iqss_gking_dl($term){
   return $item;
 }
 
-
-
 /**
  * Return the block contents for the area of research-applications block
  */
-function _iqss_gking_taxonomy_methods_wgt(){
-
-  $vsite = vsite_get_vsite();
-  if(!iqss_gking_on_gking_site()) return array();
-
-  $output = "";
-  foreach ($vsite->get_vocabs($type) as $n_vid => $o_vocab){
-    if($o_vocab->name != "Research Interests") continue;
-
-    $tree = taxonomy_get_tree($n_vid,0,-1,2);
-
-    foreach ($tree as $n_index => $o_vocab){
-      if($o_vocab->name != "Methods" || $o_vocab->depth != 0) continue;
-      $n_index++;
-      $items = vsite_taxonomy_build_list_items($n_index, $tree, 'iqss_gking_term_description');
-      $output .= theme('iqss_gking_dl', $items);
-      break;
-    }
-    break;
-  }
-
-  return array('subject' => "Research Methods",'content' => $output);
-}
-
-/**
- * Return the block contents for the area of research-applications block
- */
-function _iqss_gking_taxonomy_applications_wgt(){
+function _iqss_gking_areas_of_research_wgt(){
 
 	$vsite = vsite_get_vsite();
 	if(!iqss_gking_on_gking_site()) return array();
@@ -196,16 +144,19 @@ function _iqss_gking_taxonomy_applications_wgt(){
   	$tree = taxonomy_get_tree($n_vid,0,-1,2);
 
   	foreach ($tree as $n_index => $o_vocab){
-  		if($o_vocab->name != "Applications" || $o_vocab->depth != 0) continue;
+  		if(!in_array($o_vocab->name,array("Applications","Methods")) || $o_vocab->depth != 0) continue;
   		$n_index++;
-  		$items = vsite_taxonomy_build_list_items($n_index , $tree, 'iqss_gking_term_description');
-      $output .= theme('item_list', $items);
-      break;
+  		$items = vsite_taxonomy_build_list_items($n_index , $tree, 'iqss_gking_dl');
+      $output = "\n\n".'<div id="'.strtolower($o_vocab->name).'" class="col">'.
+                   '<h4>'.$o_vocab->name.'</h4>'.
+                   "<dl>".implode("\n",$items)."</dl>".
+                 "</div><!--/ $o_vocab->name -->".
+                 $output;
   	}
   	break;
   }
 
-	return array('subject' => "Research Applications",'content' => $output);
+	return array('subject' => "Areas of Research",'content' => $output);
 }
 
 function iqss_gking_context_active_contexts_alter(&$contexts){
