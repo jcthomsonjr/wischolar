@@ -573,37 +573,30 @@ function _scholar_publications_add_owner_checkbox(&$form_element){
  */
 function _scholar_publications_pub_by_type_wgt(){
 	jquery_ui_add(array('ui.tabs'));
+	$vsite = vsite_get_vsite();
+	
+	$view = views_get_view('publication_types');
+  $view->execute('block_1');
+  usort($view->result,"_scholar_publications_sort_type_by_numpubs");
+  $types = array_slice($view->result,0,4);
 
 	$vsite = vsite_get_vsite();
 
-	$types = db_query_range(" SELECT COUNT(*) as num, bib.biblio_type as b_type, bibtyp.name as name
-                                     FROM {node} n
-                                     INNER JOIN {og_ancestry} oa ON oa.nid = n.nid AND oa.group_nid = %d
-                                     INNER JOIN {biblio} bib ON bib.nid = n.nid
-                                     INNER JOIN {biblio_types} bibtyp ON bibtyp.tid = bib.biblio_type
-                                     WHERE n.type = '%s'
-                                     GROUP BY bib.biblio_type ORDER BY num DESC ", array($vsite->group->nid,'biblio' ), 0, 4);
-	$output = "";
-	$i = 0;
-	$tabs = "<h3 class=\"title\">Recent Publications</h3><ul>";
-	while ($type = db_fetch_object($types)) {
-	  if($type->num < 1) continue;
-		$tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type->name}";
-		$except = array('Software','Conference Proceedings', 'Thesis', 'Unpublished','Miscellaneous','Audiovisual','Artwork');
-		if(!in_array($type->name,$except)) {
-		  $tabs .= "s";
-		}
-		$tabs .= "</a></li>";//FIX THE PLURAL
-		$result = db_query_range(" SELECT n.nid nid
-	                                     FROM {node} n
-	                                     INNER JOIN {og_ancestry} oa ON oa.nid = n.nid AND oa.group_nid = %d
-	                                     INNER JOIN {biblio} bib ON bib.nid = n.nid AND bib.biblio_type = %d
-	                                     WHERE n.status = 1 AND n.type = '%s'
-	                                     ORDER BY n.created DESC ", array($vsite->group->nid,$type->b_type,'biblio' ), 0, 10);
+	$output = ""; $i = 0; $tabs = "<h3 class=\"title\">Recent Publications</h3><ul>";
+	foreach ($types as $type) {
+	  if($type->num_records < 1) continue;
+		
+	  $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type->biblio_types_name}";
+		if(!in_array($type->biblio_types_name,array('Software','Data','Conference Proceedings', 'Thesis', 'Unpublished','Miscellaneous','Audiovisual','Artwork'))) $tabs .= "s"; //FIX THE PLURAL
+		$tabs .= "</a></li>";
+		
+		$view = views_get_view('publication_types');
+		$view->set_arguments(array(str_replace(" ","-",$type->biblio_types_name)));
+		$view->execute('page_1');
 
 	  $output .= "<div id='pub_type_tabs-{$i}'>";
-	  while ($data = db_fetch_object($result)) {
-	  	$node = node_load($data->nid);
+	  foreach ($view->result as $row) {
+	  	$node = node_load($row->nid);
 	  	$output .= "\n<div class=\"biblio-entry\">". theme('biblio_entry', $node, variable_get('biblio_base', 'biblio') , biblio_get_style()) ."</div>";
 	  }
 	  $output .= "</div>";
@@ -670,4 +663,13 @@ function _scholar_publications_co_author_wgt(){
   $output .= "</ul>";
 
   return $b_show?array('subject' => "Co-Authors",'content' => $output):array();
+}
+
+/**
+ * Sort the returned publication types by the number of publications in each
+ */
+function _scholar_publications_sort_type_by_numpubs($a,$b){
+	if ($a->num_records == $b->num_records) return 0;
+	
+  return ($a->num_records > $b->num_records) ? -1 : 1;
 }
