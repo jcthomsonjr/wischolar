@@ -123,7 +123,7 @@ function theme_iqss_gking_dl($term){
 
   $term_path = "taxonomy/term/$term->tid";
   $term_link = l('More', $term_path, array('attributes'=>array('class'=>'more')));
-  $item = '<dt><span>' . $term->name . $term_link . '</span><dd>'. $term->description . '</dd>';
+  $item = '<dt><span>' . $term->name . ' ' . $term_link . '</span><dd>'. $term->description . '</dd>';
   return $item;
 }
 
@@ -134,7 +134,7 @@ function _iqss_gking_areas_of_research_wgt(){
 
 	drupal_add_css(drupal_get_path('module', 'iqss_gking')."/iqss_gking.css");
   drupal_add_js(drupal_get_path('module', 'iqss_gking')."/iqss_gking.js");
-  
+
 	$vsite = vsite_get_vsite();
 	if(!iqss_gking_on_gking_site()) return array();
 
