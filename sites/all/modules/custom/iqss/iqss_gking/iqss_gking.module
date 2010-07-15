@@ -30,6 +30,14 @@ function iqss_gking_menu(){
 }
 
 /**
+ * Alter the menu items to use garys code
+ * @param array $items
+ */
+function iqss_gking_menu_alter(&$items) {
+  $items['taxonomy/term/%']['page callback'] = 'iqss_gking_term_page';
+}
+
+/**
  * Implementation of hook_theme
  */
 function iqss_gking_theme() {
@@ -250,4 +258,25 @@ function iqss_gking_biblio_term_page($str_tids, $s_biblio_type){
 
     }
   }
+}
+
+/**
+ * Menu callback; displays all nodes associated with a term (grouped by subterms on garys RI taxonomy).
+ */
+function iqss_gking_term_page($str_tids = '', $depth = 'all'){
+  require_once (drupal_get_path('module', 'taxonomy').'/taxonomy.pages.inc');
+  $terms = taxonomy_terms_parse_string($str_tids);
+  $term = taxonomy_get_term(current($terms['tids']));
+  $vocab = taxonomy_vocabulary_load($term->vid);
+  
+  if(count($terms['tids']) != 1 || $vocab->name != "Research Interests") return vsite_taxonomy_term_page($str_tids, $depth);
+
+  $tree = taxonomy_get_tree($vocab->vid, $term->tid, -1, 1);
+  $output = '<div class="taxonomy-term-description">'.filter_xss_admin($term->description).'</div>';
+  drupal_set_title(check_plain($term->name));
+  
+  foreach ($tree as $subterm) {
+    if ($subterm->name) $output .= '<div class="taxonomy-term-child">'."<h3>{$subterm->name}</h3>".theme('taxonomy_term_page', array($subterm->tid), taxonomy_select_nodes(array($subterm->tid), $terms['operator'], $depth, false))."</div>";
+  }
+  return $output;
 }

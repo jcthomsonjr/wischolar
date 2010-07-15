@@ -161,7 +161,6 @@ function vsite_taxonomy_menu() {
  * @param array $items
  */
 function vsite_taxonomy_menu_alter(&$items) {
-  // Example - disable the page at node/add
   $items['taxonomy/term/%']['page callback'] = 'vsite_taxonomy_term_page';
 }
 
