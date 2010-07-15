@@ -14,7 +14,7 @@ $(document).ready(function(){
   }, function() {
     
     window.clearTimeout(timer_block_iqss_gking_areas_of_research);
-    timer_block_iqss_gking_areas_of_research = window.setTimeout(iqss_gking_areas_of_research_load_next, 5000);
+    timer_block_iqss_gking_areas_of_research = window.setTimeout(iqss_gking_areas_of_research_load_next, 9000);
   });
   iqss_gking_areas_of_research_load_next();
 });
