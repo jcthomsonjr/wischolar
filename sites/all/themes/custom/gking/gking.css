@@ -60,7 +60,7 @@ h4 {
   margin-bottom: 27px;
   }
 
-h2.title, .block h3.title, #pub_type_tabs h3.title {
+h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3 {
   line-height: 1em;
   margin-top: 0;
   margin-bottom: .5em;
@@ -76,7 +76,9 @@ h2.title, .block h3.title, #pub_type_tabs h3.title {
   letter-spacing: 0;
   }
 
-
+.taxonomy-term-child h3 {
+  color: #000;
+  }
 
 #content .node h3.title {
   border: none;
@@ -360,14 +362,11 @@ body.header-right-main #header-wrapper {
   overflow: auto;
   }
 
-
 /* Publications Tabs */
-
 
 .page-home #content-main #content {
   background:url(images/pubs-bg.png) repeat-x 0 0 #fff;
   }
-
 
 #pub_type_tabs h3.title {
   float: left;
@@ -611,4 +610,14 @@ body.header-right-main #header-wrapper {
 
 .node-type-biblio .itu-attachment-list td {
   padding-right: .4em;
+  }
+
+/* TAXONOMY */
+
+body.section-category .node-teaser {
+  margin-left: 2em;
+  }
+
+body.section-category .taxonomy-term-description {
+  margin-bottom: 2.5em;
   }
