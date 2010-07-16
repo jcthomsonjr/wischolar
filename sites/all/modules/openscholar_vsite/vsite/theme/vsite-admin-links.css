@@ -1,5 +1,6 @@
 .vsite-admin {
   clear:both;
+  position:relative;
   }
 
 .slider {
@@ -7,10 +8,9 @@
   }
 
 .slider, .toggle span {
-  background:#eef3fb;
-  border: 1px solid #dde2eb;
-  color: #444;
-  padding: 10px;
+  background: #fff;
+  border: 1px solid #444;
+  color: #000;
   font: 12px/120% arial, sans-serif;
   }
 
@@ -22,57 +22,43 @@
   -moz-border-radius: 15px;
   -webkit-border-radius: 15px;
   margin: 0;
-  padding: 1px 6px;
+  padding: 1px 20px 1px 6px;
   cursor: pointer;
+  background: url(images/show-menu.png) 90% 5px no-repeat #eef3fb;
+  border-color: #dde2eb;
+  color: #444;
+  }
+
+.expanded span {
+  background-position: 90% -9px;
   }
 
 .slider {
-  margin-top: 6px;
+  position: absolute;
+  width: 150px;
+  left: 0;
+  top: 20px;
+  z-index: 2;
   }
 
-.vsite-admin ul.links li a, .vsite-admin .vsite-admin ul.links li a:visited {
+.slider ul.links li {
+  display:block;
+  }
+
+.vsite-admin ul.links li a, .vsite-admin .vsite-admin ul.links li a:visited, .vsite-admin ul.links li .flag-wrapper {
   color: #005C9C;
   background: transparent;
-  padding: 2px 4px;
+  padding: 4px 9px !important;
+  display:block;
   }
 
-
-/* WELCOME MESSAGE SPECIFIC */
-
-#message_welcome_message .vsite-admin {
-  margin-top: 1em;
-  text-align:right;
-  position: relative;
+.vsite-admin ul.links li .flag-wrapper a {
+  display:inline;
+  padding: 0 !important;
   }
 
-#message_welcome_message div#welcome_wrapper.slider {
-  display:none;
-  }
-
-#message_welcome_message .vsite-admin .slider {
-  position: absolute;
-  top: 18px;
-  right: -5px;
-  background: transparent;
-  border: none;
-  padding: 0;
-  }
-
-#message_welcome_message .vsite-admin .slider ul.links li a {
-  font-weight: bold;
-  }
-
-#message_welcome_message .vsite-admin .slider ul.links li.first {
-  padding-right: 5px;
-  border-right: 1px solid #222;
-  margin-right: 5px;
-  }
-
-
-
-.vsite-admin ul.links li a:hover {
-  background: transparent;
-  text-decoration: underline;
+.vsite-admin ul.links li a:hover, .vsite-admin ul.links li .flag-wrapper:hover {
+  background-color:#EEF3FB;
   }
 
 .vsite-admin li.cite_distribute {
@@ -111,4 +97,36 @@
 #edit-cite-distribute-submit {
   margin-left: 85px;
   margin-bottom: 0;
+  }
+
+
+/* WELCOME MESSAGE SPECIFIC */
+
+#message_welcome_message .vsite-admin {
+  margin-top: 1em;
+  text-align:right;
+  position: relative;
+  }
+
+#message_welcome_message div#welcome_wrapper.slider {
+  display:none;
+  }
+
+#message_welcome_message .vsite-admin .slider {
+  position: absolute;
+  top: 18px;
+  right: -5px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  }
+
+#message_welcome_message .vsite-admin .slider ul.links li a {
+  font-weight: bold;
+  }
+
+#message_welcome_message .vsite-admin .slider ul.links li.first {
+  padding-right: 5px;
+  border-right: 1px solid #222;
+  margin-right: 5px;
   }

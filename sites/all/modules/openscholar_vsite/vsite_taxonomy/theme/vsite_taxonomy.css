@@ -9,25 +9,25 @@
   padding-bottom: 1.5em;
   margin-bottom: 1.5em;
   border-bottom: 1px solid #ccc;
-  width: 400px;
+  width: 712px;
   }
 
 
 #vsite-taxonomy-wrapper h3 {
   font-size: 1.2em;
   margin-bottom: .5em;
+  float: left;
   }
 
 .vsite-taxonomy-terms {
   padding-bottom: 2em;
+  clear: both
   }
 
 .item-list .vsite-taxonomy-terms li,
 .block-vsite_taxonomy ul li {
   list-style: none;
-  margin-bottom: 0;
-  margin-left: 0;
-  padding-left: .3em;
+  margin: 0;
   }
 
 .block-vsite_taxonomy ul li {
@@ -35,7 +35,19 @@
   }
 
 .term-head {
-  padding: .2em;
+  padding: .3em;
+  padding-right: 0;
+  font-weight: bold;
+  }
+
+
+li li .term-head {
+  font-weight: normal;
+  }
+
+li li li .term-head {
+  font-size: .9em;
+  line-height: 1.3em;
   }
 
 .item-list .vsite-taxonomy-terms ul .term-head,
@@ -58,12 +70,21 @@
   padding: 0;
   margin: 0;
   background: transparent;
+  text-align: right;
+  }
+
+#vsite-taxonomy-wrapper ul.admin {
+  margin-right: .2em;
+  }
+
+#vsite-taxonomy-wrapper li li ul.admin {
+  margin-right: 0;
   }
 
 #vsite-taxonomy-wrapper ul.admin li, .term-head ul.admin li {
-  float:left;
+  float:none;
+  display:inline;
   margin-bottom: 0;
-  padding-left: 3px;
   padding-right: 0;
   }
 
@@ -72,7 +93,7 @@
  }
 
 .term-head:hover {
-  background-color: #fff3b2;
+  background-color: #e5ebeb;
   }
 
 #vsite-taxonomy-wrapper .description {

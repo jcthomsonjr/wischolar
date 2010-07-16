@@ -27,7 +27,6 @@ body {
 	font-style: normal;
 }
 
-
 p, .biblio-entry, .views-row {
   margin: 0 0 1.5em 0;
   }
@@ -61,7 +60,7 @@ h4 {
   margin-bottom: 27px;
   }
 
-h2.title, .block h3.title {
+h2.title, .block h3.title, #pub_type_tabs h3.title {
   line-height: 1em;
   margin-top: 0;
   margin-bottom: .5em;
@@ -343,7 +342,7 @@ body.header-right-main #header-wrapper {
   margin-bottom: 8px;
   border: none;
   float: left;
-  width: 406px;
+  width: 408px;
   }
 
 #header #block-scholar_biocv-bio_blurb h3 {
@@ -356,7 +355,7 @@ body.header-right-main #header-wrapper {
 
 .page-home #header-wrapper .region-count-2 {
   float: right;
-  width: 229px;
+  width: 227px;
   height: 217px;
   overflow: auto;
   }
@@ -364,19 +363,26 @@ body.header-right-main #header-wrapper {
 
 /* Publications Tabs */
 
+
 .page-home #content-main #content {
-  background:url(images/front-center-bg.png) repeat-x 0 -22px #fff;
+  background:url(images/pubs-bg.png) repeat-x 0 0 #fff;
   }
+
 
 #pub_type_tabs h3.title {
   float: left;
-  margin-right: 0;
-  padding-bottom: 0;
-  padding-right: 0;
-  margin-right: 15px;
-  margin-bottom: 0;
-  line-height: 24px;
   border:none;
+  background: transparent;
+  color: #000;
+  margin-right: 13px;
+  margin-left: 0;
+  padding-left: 0;
+  padding-right: 0;
+  }
+
+#pub_type_tabs ul {
+  float: right;
+  margin-top: 15px;
   }
 
 .ui-tabs .ui-tabs-nav {
@@ -385,49 +391,50 @@ body.header-right-main #header-wrapper {
   -webkit-border-bottom-left-radius: 0 0;
   -webkit-border-top-left-radius: 0 0;
   -webkit-border-top-right-radius: 0 0;
-  margin:0 -16px 0.5em;
-  padding:17px 16px 18px 16px;
-  height: 35px;
-  border-bottom:1px solid #D7D7D7;
   }
 
 .ui-widget-header {
   background: transparent;
   }
 
-.ui-tabs-nav li {
+#pub_type_tabs li {
   float: left;
   margin: 0;
-  line-height:20px;
-  margin-right: 15px;
+  background: none;
   }
 
-
-.ui-tabs-nav li:last-child {
+#pub_type_tabs li:last-child {
   margin-right: 0;
   }
 
-.ui-tabs-nav li a,.ui-tabs-nav li.ui-state-default a, .ui-tabs-nav li.ui-state-default a:visited  {
-  font-weight: bold !important;
+#pub_type_tabs li a, #pub_type_tabs li a:visited, .ui-tabs-nav li a,.ui-tabs-nav li.ui-state-default a, .ui-tabs-nav li.ui-state-default a:visited  {
   padding: 0;
-  color:#ac9986 !important;
+  color: #000;
+  font-weight: bold;
   font-size: 14px;
+  line-height: 28px;
+  padding: 10px 13px 20px 13px;
   }
 
 .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs-nav li.ui-tabs-selected a:visited {
-  color: #db7002 !important;
+  color: #000;
+  background: #fff;
    }
-
 
 .ui-tabs .ui-tabs-panel {
   clear: both;
   }
 
-
-.ui-tabs-panel .biblio-entry span {
-
+/*Remove after Richard adds class to other ul */
+#pub_type_tabs ul.links, #pub_type_tabs ul.links li, #pub_type_tabs ul.links li a, #pub_type_tabs ul.links li a:visited {
+  float:none;
+  margin:0;
+  padding: 0;
+  line-height: normal;
+  font-weight: normal;
+  color:#005C9C;
+  font-size: 12px;
   }
-
 
 /* FOOTER */
 
@@ -574,13 +581,17 @@ body.header-right-main #header-wrapper {
 
 /* BIBLIO */
 
-.node-type-biblio h3.title {
+.node-type-biblio .node-type-biblio h3.title {
   margin-bottom: 0;
-  font-size: 14px;
+  font-size: 25px;
   }
 
 .biblio-title a, .biblio-title a:visited {
   color: #000;
+  }
+
+.biblio-annotation, .biblio-annotation p {
+  margin: 0;
   }
 
 
