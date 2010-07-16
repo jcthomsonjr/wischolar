@@ -148,7 +148,7 @@ function vsite_taxonomy_menu() {
   $items['categories/%/%'] = array(
     'title callback' => 'vsite_taxonomy_term_title',
     'title arguments' => array(2),
-    'page callback' => 'vsite_taxonomy_content_by_category',
+    'page callback' => 'vsite_taxonomy_term_by_context',
     'page arguments' => array(2, 1),
     'access arguments' => array('access content'),
   );
@@ -657,7 +657,7 @@ function vsite_taxonomy_term_title($tid){
  * @param int $tid
  * @param string $s_feature (either a feature menu entry "publication" or a content_type "biblio")
  */
-function vsite_taxonomy_content_by_category($tid, $s_feature = false){
+function vsite_taxonomy_term_by_context($tid, $s_feature = false){
 
 	$view = views_get_view('vsite_taxonomy_view');
   $view->init();

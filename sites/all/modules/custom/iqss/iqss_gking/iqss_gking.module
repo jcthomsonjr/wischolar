@@ -35,6 +35,7 @@ function iqss_gking_menu(){
  */
 function iqss_gking_menu_alter(&$items) {
   $items['taxonomy/term/%']['page callback'] = 'iqss_gking_term_page';
+  $items['categories/%/%']['page callback'] = 'iqss_gking_term_by_context';
 }
 
 /**
@@ -264,6 +265,8 @@ function iqss_gking_biblio_term_page($str_tids, $s_biblio_type){
  * Menu callback; displays all nodes associated with a term (grouped by subterms on garys RI taxonomy).
  */
 function iqss_gking_term_page($str_tids = '', $depth = 'all'){
+	if(!iqss_gking_on_gking_site()) return vsite_taxonomy_term_page($str_tids, $depth); //If this isn't Gary just display the standard
+	
   require_once (drupal_get_path('module', 'taxonomy').'/taxonomy.pages.inc');
   $terms = taxonomy_terms_parse_string($str_tids);
   $term = taxonomy_get_term(current($terms['tids']));
@@ -272,11 +275,37 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
   if(count($terms['tids']) != 1 || $vocab->name != "Research Interests") return vsite_taxonomy_term_page($str_tids, $depth);
 
   $tree = taxonomy_get_tree($vocab->vid, $term->tid, -1, 1);
-  $output = '<div class="taxonomy-term-description">'.filter_xss_admin($term->description).'</div>';
+  if(!count($tree)){
+  	$tree = taxonomy_get_tree($vocab->vid);
+  	foreach ($tree as $tterm) if($tterm->tid == $term->tid) return iqss_gking_term_page(current($tterm->parents));
+  }//If this term has no childeren then display the parent.
+  
+  $result = taxonomy_select_nodes(array($term->tid), $terms['operator'], $depth, false);
+  $output .= (db_affected_rows($result))?theme('taxonomy_term_page', array($term->tid), $result):'<div class="taxonomy-term-description">'.filter_xss_admin($term->description).'</div>';
   drupal_set_title(check_plain($term->name));
   
   foreach ($tree as $subterm) {
-    if ($subterm->name) $output .= '<div class="taxonomy-term-child">'."<h3>{$subterm->name}</h3>".theme('taxonomy_term_page', array($subterm->tid), taxonomy_select_nodes(array($subterm->tid), $terms['operator'], $depth, false))."</div>";
+  	$result = taxonomy_select_nodes(array($subterm->tid), $terms['operator'], $depth, false);
+    if ($subterm->name && db_affected_rows($result)) $output .= '<div class="taxonomy-term-child">'."<h3>{$subterm->name}</h3>".theme('taxonomy_term_page', array($subterm->tid), $result)."</div>";
   }
   return $output;
+}
+
+/**
+ * Override the function that displays a term by feature context
+ *
+ * If it is Garys reserch interest vocab display it with garys layout
+ *
+ * @param int $tid
+ * @param string $s_feature (either a feature menu entry "publication" or a content_type "biblio")
+ */
+function iqss_gking_term_by_context($tid, $s_feature = false){
+	if(!iqss_gking_on_gking_site()) return vsite_taxonomy_term_by_context($tid, $s_feature);
+	
+	$term = taxonomy_get_term($tid);
+  $vocab = taxonomy_vocabulary_load($term->vid);
+  
+  if($vocab->name != "Research Interests") return vsite_taxonomy_term_by_context($tid, $s_feature);
+  
+  return iqss_gking_term_page($tid);
 }
