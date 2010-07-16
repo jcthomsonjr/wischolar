@@ -279,6 +279,11 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
         }
       }
     break;
+    case 'view':
+      if($teaser && variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes){
+      	$node->content['teaser']['#value'] .= ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
+      }
+    break;
   }
 }
 
