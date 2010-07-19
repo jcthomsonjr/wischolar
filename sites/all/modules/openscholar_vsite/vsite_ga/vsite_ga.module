@@ -57,7 +57,8 @@ function vsite_ga_vsite_generic_settings($space, $value = array()){
  * Implementation of hook_footer() to insert Javascript at the end of the page.
 */
 function vsite_ga_footer(){
-  if(!count(_vsite_ga_ga_id_vars())) return;  //if no ga ids are saved, then return
+  $ga_vars = _vsite_ga_ga_id_vars();
+  if(!count($ga_vars)) return;  //if no ga ids are saved, then return
   global $user;
  
   //add role tracking
