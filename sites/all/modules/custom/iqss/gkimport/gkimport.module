@@ -713,11 +713,11 @@ function gkimport_create_profiles(){
     
     //get institution
 //  if($profile['group'] == 'Current Research Associates'){
-    $node -> body = $description;
-    $node -> teaser = node_teaser($description);    
+    $node -> body = html_entity_decode($description, ENT_COMPAT, 'UTF-8');
+    $node -> teaser = node_teaser(html_entity_decode($description, ENT_COMPAT, 'UTF-8'));    
  //}
  // else{
-    $node -> field_person_institution[0] = array('value' => html_entity_decode($description, ENT_COMPAT, 'UTF-8'));
+  //  $node -> field_person_institution[0] = array('value' => html_entity_decode($description, ENT_COMPAT, 'UTF-8'));
   //}
     node_save($node);
     db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);  
