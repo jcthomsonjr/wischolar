@@ -210,10 +210,11 @@ function vsite_taxonomy_vocabs(){
  */
 function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_taxonomy_term', $s_term_filter = false, $b_description = true, $b_show_empty = true, $b_show_admin_links = true){
   $items = array();
+  
   $current_depth = $tree[$index]->depth;
   while ( $index < count($tree) && $tree[$index]->depth >= $current_depth ) {
     $term = $tree[$index];
-    $count = vsite_taxonomy_term_count_nodes($term->tid,0,false);
+    $count = vsite_taxonomy_term_count_nodes($term->tid,$s_term_filter,false);
     $item = theme($s_term_theme, $term, $s_term_filter, $b_description, $b_show_admin_links);
     if ($tree[$index + 1]->depth > $current_depth) {
       $index ++;
@@ -994,14 +995,26 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
  */
 function vsite_taxonomy_term_count_nodes($tid, $type = 0, $cnt_childeren = true) {
   static $count;
+  
+	if(is_string($type)){
+	    $map = context_condition_map();
+	     if(!array_key_exists($type,content_types()) &&
+	        isset($map['path'][$type]) && count($map['path'][$type])){
+				      $all_contexts = context_enabled_contexts();
+				      $context = $all_contexts[current($map['path'][$type])];
+				      $type = 0;
+				      if(isset($context->node) && count($context->node)){
+				      	$type = implode("','",$context->node);
+				      }
+	    }
+  }
 
   if (!isset($count[$type])) {
     // $type == 0 always evaluates TRUE if $type is a string
     if (is_numeric($type)) {
       $result = db_query(db_rewrite_sql('SELECT t.tid, COUNT(n.nid) AS c FROM {term_node} t INNER JOIN {node} n ON t.vid = n.vid WHERE n.status = 1 GROUP BY t.tid'));
-    }
-    else {
-      $result = db_query(db_rewrite_sql("SELECT t.tid, COUNT(n.nid) AS c FROM {term_node} t INNER JOIN {node} n ON t.vid = n.vid WHERE n.status = 1 AND n.type = '%s' GROUP BY t.tid"), $type);
+    } else {
+      $result = db_query(db_rewrite_sql("SELECT t.tid, COUNT(n.nid) AS c FROM {term_node} t INNER JOIN {node} n ON t.vid = n.vid WHERE n.status = 1 AND n.type IN('%s') GROUP BY t.tid"), $type);
     }
     $count[$type] = array();
     while ($term = db_fetch_object($result)) {
