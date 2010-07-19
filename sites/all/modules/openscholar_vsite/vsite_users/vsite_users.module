@@ -432,10 +432,16 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
 	  	
 	  	if(is_array($form['#validate']) && array_search('ucreate_user_form_validate',$form['#validate']) !== false) unset($form['#validate'][array_search('ucreate_user_form_validate',$form['#validate'])]); //Hijack this submit validate
 	  	
+	  	//We will do our own mail validation
+	  	if(isset($form['mail']['#element_validate'])) unset($form['mail']['#element_validate']);
+	  	if(isset($form['name']['#element_validate'])) unset($form['name']['#element_validate']);
+	  	
 	  	//Add Validate handler
+	  	if(!is_array($form['#validate'])) $form['#validate'] = array();
 	  	array_unshift($form['#validate'], 'vsite_users_user_form_validate');
 	  	
 	  	//Add submit handler for registration info
+	  	if(!is_array($form['#submit'])) $form['#validate'] = array();
 	  	array_unshift($form['#submit'], 'vsite_users_user_form_submit');
 	  	ctools_include('dependent');
 	  	
@@ -524,11 +530,14 @@ function vsite_users_user_form_validate($form, &$form_state){
 	if(strlen($form_state['values']['lookup_user']) && !($account = user_load(array('name' => $form_state['values']['lookup_user'])))){
 		form_set_error('lookup_user', t('A user with the username "'.$form_state['values']['lookup_user'].'" can not be found.'));
 	}elseif ($account){
-	  $form_state['values']['name'] = "Richard";
+	  $form_state['values']['name'] = $account->name;
 	}elseif ($form_state['values']['mail'] != $form_state['values']['mail_confirm']) {
     form_set_error('email_confirm', t('E-mail addresses don\'t match'));
   }elseif($form_state['input']['create_type'] == 'existing' && !strlen($form_state['values']['lookup_user'])){
   	form_set_error('lookup_user', t('No user has been entered, search for a user or click "Add new user"'));
+  }elseif($form_state['input']['create_type'] != 'existing'){
+  	ucreate_validate_mail($form['mail'],$form_state);
+  	ucreate_validate_name($form['name'],$form_state);
   }
   
 }
