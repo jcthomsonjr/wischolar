@@ -16,8 +16,8 @@ function gkimport_import($drush_run = 0){
   drush_print("Download mode is set to $mode");
   drush_print("Begining import...");
   
-  $module_list = array('iqss_gking', 'iqss_rbuild', 'dialog', 'twitter_pull');
-  gkimport_enable_modules($module_list);
+/*  $module_list = array('iqss_gking', 'iqss_rbuild', 'dialog', 'twitter_pull');
+  gkimport_enable_modules($module_list);*/
 
   gkimport_create_site();
   gkimport_parse_files();
