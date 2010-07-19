@@ -136,7 +136,7 @@ function gkimport_convert_date_times($start, $end = array()){
  */
 function gkimport_biblio_admin_types_add_form_submit($form, & $form_state){
   $values = $form_state['values'];
-  $values['tid'] = variable_get('biblio_max_user_tid', '999') + 1; dpm($values);
+  $values['tid'] = variable_get('biblio_max_user_tid', '999') + 1;
   drupal_write_record('biblio_types', $values);
   variable_set('biblio_max_user_tid', $values['tid']);
   for ($f = 1; $f <= 51; $f++) {
@@ -240,9 +240,5 @@ function gkimport_test_term_assignments(){
         $relnonmatches[] = $data -> nid . ' ' . $data ->biblio_type . ' ' . $node -> title;
       }
     }
-
-}
-dpm($matches);
-dpm($nonmatches);
-dpm($relnonmatches);  
+  }
 }

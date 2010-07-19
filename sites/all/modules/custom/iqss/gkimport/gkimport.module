@@ -4,7 +4,7 @@ include_once('gkimport.drush.inc');
 include_once('gkimport.settings.inc');
 include_once('gkimport.utils.inc');
 
-define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev4'); //file system path to drupal root (NO TRAILING SLASH)
+define(GKIMPORT_FS_PATH,  '/nfs/www/edu-harvard-iq-scholar-dev3'); //file system path to drupal root (NO TRAILING SLASH)
 define(GKIMPORT_DOWNLOAD, FALSE);  // TRUE tells module to download files with wget, otherwise assumes files stored locally
 
 /**
@@ -587,9 +587,9 @@ function gkimport_update_aliases(){
         $path =  explode('http://gking.harvard.edu/', $node -> biblio_url);
         if (strlen($path[1])){
           $src = db_result(db_query("SELECT src FROM {url_alias} WHERE src = '%s'", "node/{$node -> nid}"));
-          db_query("DELETE FROM {url_alias} WHERE dst = '%s' ", $path[1]);
-          db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src[1]);
-          db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", $path[1]);
+          db_query("DELETE FROM {url_alias} WHERE dst = '%s' ", 'gking/' . $path[1]);
+          db_query("DELETE FROM {url_alias} WHERE src = '%s' ", 'gking/' . $src[1]);
+          db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", 'gking/' . $path[1]);
 
           drush_print("Added custom path {$path[1]} for node {$node -> nid}");
         }
@@ -712,13 +712,13 @@ function gkimport_create_profiles(){
     }
     
     //get institution
-  if($profile['group'] == 'Current Research Associates'){
+//  if($profile['group'] == 'Current Research Associates'){
     $node -> body = $description;
     $node -> teaser = node_teaser($description);    
- }
-  else{
+ //}
+ // else{
     $node -> field_person_institution[0] = array('value' => html_entity_decode($description, ENT_COMPAT, 'UTF-8'));
-  }
+  //}
     node_save($node);
     db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);  
   }
@@ -826,7 +826,7 @@ function gkimport_nodeapi(&$node, $op){
           }
         }
         else{
-          return dpm("Error occured: users has more than 1 web site"); // this is very unlikely
+          return drush_print("Error occured: user has more than 1 web site"); // this is very unlikely
         }
       }
       break;
