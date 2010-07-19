@@ -51,10 +51,20 @@ function scholar_reader_vsite_widgets(){
         'weight' => 20,
         'region' => false,
         'status' => '0',
-        'label' => 'Latest feeds',
+        'label' => 'List of Feeds',
         'type' => 'context_ui',
       );
 
+  $items['views_scholar_reader-block_2'] = array(
+        'module' => 'views',
+        'delta' => 'scholar_reader-block_2',
+        'weight' => 21,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Latest feed items',
+        'type' => 'context_ui',
+  );
+      
   $items['scholar_reader_my_twitter_feed'] = array(
         'module' => 'scholar_reader',
         'delta' => 'my_twitter_feed',
