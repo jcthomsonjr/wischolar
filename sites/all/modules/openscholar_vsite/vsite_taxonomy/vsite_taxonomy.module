@@ -829,11 +829,11 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
  * @param unknown_type $term
  */
 function theme_vsite_taxonomy_term($term, $s_term_filter = false, $b_description = true, $b_admin_links = true){
-  $count = vsite_taxonomy_term_count_nodes($term->tid,0,false);
+  $count = vsite_taxonomy_term_count_nodes($term->tid,$s_term_filter,false);
   $term_path = (!$s_term_filter)?"taxonomy/term/$term->tid":'categories/'. $s_term_filter . '/'. $term -> tid;
-  $term_link = l($term->name, $term_path, array(
-    'title' => t($term->description)
-  ));
+  $term_link = ($count > 0)?
+	  l($term->name, $term_path, array('title' => t($term->description))):
+	  $term->name;
 
   $item = '<div class="term-head">' . $term_link;
   
