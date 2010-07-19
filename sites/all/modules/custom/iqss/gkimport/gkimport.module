@@ -682,7 +682,7 @@ function gkimport_create_profiles(){
    db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid); 
    
    //TODO: need transfer body text to field_person_institution if $profile['group'] == 'Current Research Associates'
-   if($profile['group'] == 'Current Research Associates'){
+/*   if($profile['group'] == 'Current Research Associates'){
      $inst = db_result(db_query("SELECT body from {node_revisions} WHERE nid = %d", $nid));
      if(strlen($inst)){       
        db_query("UPDATE {content_type_person} SET field_person_institution_value = '%s' WHERE nid = %d ", $inst, $nid);
@@ -690,7 +690,7 @@ function gkimport_create_profiles(){
        $description = _gkimport_remove_line_breaks($profile['description']);  
        db_query("UPDATE {node_revisions} SET body = '%s',  teaser = '%s',  uid = %d WHERE nid = %d", $description, $description, (int)$account -> uid, (int)$nid);
        //drush_print("Updating description: for $nid - $description");
-    }
+    }*/
    continue;   
    }
    
