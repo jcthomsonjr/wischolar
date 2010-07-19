@@ -1,42 +1,90 @@
 <?php
-$file_path = $node -> field_person_photo[0]['filepath'];
-if($file_path){
-	$logo_teaser = theme('imagecache','square_80_80', $file_path);
-	$logo_teaser = l($logo_teaser, 'node/'. $node -> nid, array('absolute' => FALSE, 'html' => TRUE));
-	$logo_page = theme('imagecache','vsite_design_landscape_logo', $file_path);
-	$person_logo = $page ? $logo_page : $logo_teaser;
-}
+// $Id: node.tpl.php,v 1.4 2008/09/15 08:11:49 johnalbin Exp $
+
+/**
+ * @file node.tpl.php
+ */
 ?>
+
+
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>">
   <div class="node-inner">
-     <div class="profile-img">
-      <?= (($person_logo)?$person_logo:"") ?>
-      <?php print $picture; ?>
-    </div>
     <?php if (!$page): ?>
+      <?php if ($node->field_person_photo[0]['filepath']): ?>
+      <div class="flL">
+        <a href="<?php print $node_url; ?>"><?php print theme('imagecache', 'square_80_80', $node->field_person_photo[0]['filepath'], $title, $title); ?></a>
+       </div>
+      <?php endif;?>
       <h3 class="title">
         <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
       </h3>
-    <?php endif; ?>
-    <?php if ($page): ?>
-      <?php drupal_set_title(check_plain(''));?>
-      <h2 class="title">
-       <?php print $title; ?>
-      </h2>
-    <?php endif; ?>
-    <?php if ($unpublished): ?>
-      <div class="unpublished"><?php print t('Unpublished'); ?></div>
-    <?php endif; ?>
-    <?php if ($submitted or $terms): ?>
-      <div class="meta">
-        <?php if ($terms): ?>
-          <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
-        <?php endif; ?>
-      </div>
-    <?php endif; ?>
-    <div class="content">
-      <?php print $content; ?>
+      <?php if ($node->field_person_title[0]['value']): ?>
+      <h4><?php print $node->field_person_title[0]['value'];?></h4>
+      <?endif;?>
+      <?php if ($terms): ?>
+      <p class="terms terms-inline"><?php print $terms; ?></p>
+      <?php endif; ?>
+
+      <?php if ($node->field_person_address[0]['value'] || $node->field_person_phone[0]['value'] || $node->field_person_email[0]['value'] || $node->field_person_website[0]['url']):?>
+        <?php if ($node->field_person_address[0]['value']):?>
+          <p><?php print $node->field_person_address[0]['value'];?></p>
+        <?php endif;?>
+        <?php if ($node->field_person_phone[0]['value'] || $node->field_person_email[0]['value'] || $node->field_person_website[0]['url']) {
+        print '<ul class="inline">';
+        if ($node->field_person_phone[0]['value']) {
+          print '<li><em>p:</em> ' . $node->field_person_phone[0]['value'] . '</li>' ;
+          }
+        if ($node->field_person_email[0]['value']) {
+          print '<li>' . l('email', 'mailto:' . $node->field_person_email[0]['value']) . '</li>' ;
+          }
+        if ($node->field_person_website[0]['url']) {
+          print '<li>' . l('website',$node->field_person_website[0]['url']) . '</li>';
+          }
+        print '</ul>';
+        }
+       ?>
+      <?php endif; ?>
+   <?php endif; ?>
+
+
+
+ <?php if ($page): ?>
+   <?php if ($node->field_person_photo[0]['filepath']): ?>
+    <div class="flL">
+      <?php print theme('imagecache', 'vsite_design_portrait_logo', $node->field_person_photo[0]['filepath'], $title, $title); ?>
     </div>
-    <?php print $links; ?>
+  <?php endif;?>
+  <?php print drupal_set_title('');?>
+  <h2 class="title"><?php print $title; ?></h2>
+  <?php if ($node->field_person_title[0]['value']): ?>
+  <h3><?php print $node->field_person_title[0]['value'];?></h3>
+  <?endif;?>
+  <?php if ($terms): ?>
+   <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
+ <?php endif; ?>
+  <div class="content">
+    <?php if ($node->field_person_address[0]['value'] || $node->field_person_phone[0]['value'] || $node->field_person_email[0]['value'] || $node->field_person_website[0]['url']):?>
+        <?php if ($node->field_person_address[0]['value']):?>
+          <p><?php print $node->field_person_address[0]['value'];?></p>
+        <?php endif;?>
+        <?php if ($node->field_person_phone[0]['value'] || $node->field_person_email[0]['value'] || $node->field_person_website[0]['url']) {
+        print '<ul class="inline">';
+        if ($node->field_person_phone[0]['value']) {
+          print '<li><em>p:</em> ' . $node->field_person_phone[0]['value'] . '</li>' ;
+          }
+        if ($node->field_person_email[0]['value']) {
+          print '<li>' . l('email', 'mailto:' . $node->field_person_email[0]['value']) . '</li>' ;
+          }
+        if ($node->field_person_website[0]['url']) {
+          print '<li>' . l('website',$node->field_person_website[0]['url']) . '</li>';
+          }
+        print '</ul>';
+        }
+       ?>
+     <?php endif; ?>
+    <?php print $content; ?>
+  </div>
+<?php endif; ?>
+
   </div> <!-- /node-inner -->
 </div> <!-- /node -->

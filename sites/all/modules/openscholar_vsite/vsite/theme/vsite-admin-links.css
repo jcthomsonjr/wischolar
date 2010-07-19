@@ -22,15 +22,15 @@
   -moz-border-radius: 15px;
   -webkit-border-radius: 15px;
   margin: 0;
-  padding: 1px 20px 1px 6px;
+  padding: 1px 28px 1px 6px;
   cursor: pointer;
-  background: url(images/show-menu.png) 90% 5px no-repeat #eef3fb;
+  background: url(images/show-menu.png) 93% 5px no-repeat #eef3fb;
   border-color: #dde2eb;
   color: #444;
   }
 
 .expanded span {
-  background-position: 90% -9px;
+  background-position: 93% -9px;
   }
 
 .slider {
@@ -102,23 +102,33 @@
 
 /* WELCOME MESSAGE SPECIFIC */
 
+#message_welcome_message .slider {
+  position: static;
+  width: auto;
+  background: #EEF3FB;
+  border-color: #ccc;
+  padding: 1em;
+  }
+
 #message_welcome_message .vsite-admin {
   margin-top: 1em;
   text-align:right;
   position: relative;
   }
 
-#message_welcome_message div#welcome_wrapper.slider {
-  display:none;
-  }
-
 #message_welcome_message .vsite-admin .slider {
   position: absolute;
   top: 18px;
-  right: -5px;
-  background: transparent;
-  border: none;
+  right: -6px;
+  left: auto;
+  border-top: none;
   padding: 0;
+  width: 150px;
+  }
+
+#message_welcome_message .vsite-admin .slider ul.links li {
+  display:inline;
+  float: left;
   }
 
 #message_welcome_message .vsite-admin .slider ul.links li a {
@@ -127,6 +137,6 @@
 
 #message_welcome_message .vsite-admin .slider ul.links li.first {
   padding-right: 5px;
-  border-right: 1px solid #222;
+  border-right: 1px solid #ccc;
   margin-right: 5px;
   }
