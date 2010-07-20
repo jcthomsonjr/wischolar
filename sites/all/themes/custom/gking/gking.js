@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
   $('#navbar li a').hover(
       function () {
           $(this).stop().animate({backgroundColor:'#fa8b18'}, 300);
