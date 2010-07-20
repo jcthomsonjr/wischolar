@@ -932,16 +932,32 @@ function vsite_taxonomy_vsite_vocabulary_default(){
  *   Definintion of the taxonomy structure.
  */
 function vsite_taxonomy_taxonomy_import($gid, $definition){
-  install_include(array(
-    'taxonomy'
-  ));
+
   foreach ( $definition as $vocab_index => $vocab_definition ) {
-    $vid = install_taxonomy_add_vocabulary($vocab_definition['name'], $vocab_definition['content_types'], $vocab_definition['properties']);
+  	
+	 // Default properties so you don't have to pass anything.
+	  $defaults = array(
+	    'name' => $vocab_definition['name'],
+	    'tags' => 0,
+	    'multiple' => 0,
+	    'required' => 0,
+	    'hierarchy' => 0,
+	    'relations' => 0,
+	    'module' => 'taxonomy',
+	    'weight' => 0,
+	    'nodes' => $vocab_definition['content_types'],
+	    'help' => '',
+	  );
+	  $vocabulary = array_merge($defaults, $vocab_definition['properties']);
+	  taxonomy_save_vocabulary($vocabulary);
+	  $vid = db_result(db_query("SELECT MAX(vid) FROM {vocabulary} "));
+	  
     // make this a group taxonomy
     og_vocab_write_record($gid, $vid);
     if (count($vocab_definition['terms'])) {
       foreach ( $vocab_definition['terms'] as $term_index => $term_definition ) {
-        install_taxonomy_add_term($vid, $term_definition['name'], $term_definition['description'], $term_definition['properties']);
+			  $term = array_merge(array('name' => $term_definition['name'],'description' => $term_definition['description'],'parent' => array(),'relations' => array(),'weight' => 0,'vid' => $vid,), $term_definition['properties']);
+        taxonomy_save_term($term);
       }
     }
   }
