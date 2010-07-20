@@ -1,0 +1,16 @@
+; $Id: scholar_theme_03.info,v 1.12 2008/09/21 22:43:32 swortis Exp $
+name        = Scholars Web Sites - Theme 05
+description = Whimsical Theme with old paper backgrounds and old research materials, etc.
+
+screenshot = screenshot.png
+core       = 6.x
+base theme = scholar_base
+stylesheets[all][]   = scholar-theme-05.css
+conditional-stylesheets[if lte IE 7][all][]   = scholar-theme-05-ie.css
+
+scholar[widgets][vsite_menus_0] = left
+scholar[widgets][vsite_widgets_2] = header_right
+scholar[widgets][vsite_widgets_0] = false
+
+scholar[theme_type]   = "scholar"
+scholar[theme_access] = "public"
