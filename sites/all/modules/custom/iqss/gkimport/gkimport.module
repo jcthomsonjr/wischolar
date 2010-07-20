@@ -591,7 +591,7 @@ function gkimport_update_aliases(){
           db_query("DELETE FROM {url_alias} WHERE src = '%s' ", 'gking/' . $src[1]);
           db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", 'gking/' . $path[1]);
 
-          drush_print("Added custom path {$path[1]} for node {$node -> nid}");
+          drush_print("Added custom path gking/{$path[1]} for node {$node -> nid}");
         }
       }
     }
