@@ -1,0 +1,40 @@
+<?
+
+/**
+ * Implementaton of hook_enable().
+ */
+function iqss_gking_enable() {
+  // Weight iqss_gking to be after vsite_layout
+  $weight = db_result(db_query("SELECT MAX(weight) FROM {system} WHERE type = 'module' AND name IN('vsite_layout','vsite_taxonomy')"));
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'iqss_gking'", ($weight + 1));
+  
+}
+
+
+/**
+ * Update the weight
+ * @param $sandbox
+ */
+function iqss_gking_update_6001(&$sandbox){
+	
+	$return = array();
+	$weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'vsite_layout'"));
+  
+	$return[] = db_query("UPDATE {system} SET weight = %d WHERE name = 'iqss_gking'", ($weight + 1));
+	
+  return $return;
+}
+
+/**
+ * Update the weight
+ * @param $sandbox
+ */
+function iqss_gking_update_6002(&$sandbox){
+  
+  $return = array();
+  $weight = db_result(db_query("SELECT MAX(weight) FROM {system} WHERE type = 'module' AND name IN('vsite_layout','vsite_taxonomy') "));
+  
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'iqss_gking'", ($weight + 1));
+  
+  return $return;
+}
