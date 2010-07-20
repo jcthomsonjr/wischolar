@@ -1,0 +1,46 @@
+<?php
+
+include_once('scholar_presentations.features.inc');
+
+/**
+ * Implementation of hook_vsite_widgets()
+ */
+function scholar_presentations_vsite_widgets(){
+  $items = array();
+  $items['views_scholar_presentations-block_1'] = array(
+        'module' => 'views',
+        'delta' => 'scholar_presentations-block_1',
+        'weight' => 10,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Recent Presentations',
+        'type' => 'context_ui',
+      );
+      
+      return $items;
+}
+
+/**
+ * Implementation of hook_strongarm()
+ */
+function scholar_presentations_strongarm(){
+  $conf = array();
+
+  // Disable preview button
+  $conf["show_preview_changes_presentation"] = FALSE;
+  $conf["show_diff_inline_presentation"] = FALSE;  
+ 
+  $conf['node_options_presentation'] = array('status', 'revision');
+  $conf['upload_presentation'] = TRUE;
+ 
+  // Comments
+  $conf['comment_presentation'] = COMMENT_NODE_DISABLED;
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_presentation_pattern"] = "[space-og-path]/presentations/[title-raw]";
+  
+  // submitted info
+  $conf['node_submitted_info_presentation'] = TRUE;
+ 
+  return $conf;
+}
