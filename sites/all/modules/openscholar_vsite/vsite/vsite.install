@@ -39,8 +39,8 @@ function vsite_update_6001(&$sandbox){
 function vsite_update_6002(&$sandbox){
 	
 	$res = array();
-	module_rebuild_cache();
-	
+  module_rebuild_cache();
+  
   // Enable openscholar_front module if need
   if(!module_exists('openscholar_front')){
     
@@ -54,12 +54,12 @@ function vsite_update_6002(&$sandbox){
     
   }
   
-  // Enable the openscholar_default theme
-  install_include( array('system'));
-  install_default_theme('openscholar_default');
+  db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'openscholar_default');
+  variable_set('theme_default', 'openscholar_default');
   
   //Set the home page to welcome
   variable_set('site_frontpage', 'welcome');
   
   return $res;
+	
 }
