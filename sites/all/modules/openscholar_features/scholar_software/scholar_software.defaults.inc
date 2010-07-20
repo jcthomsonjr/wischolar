@@ -189,7 +189,7 @@ function _scholar_software_content_default_fields() {
     'list_default' => 1,
     'description_field' => '0',
     'widget' => array(
-      'file_extensions' => 'tgz tar gz',
+      'file_extensions' => 'tgz tar gz zip',
       'file_path' => 'scholar_software',
       'progress_indicator' => 'bar',
       'max_filesize_per_file' => '',

@@ -406,13 +406,13 @@ function vsite_preprocess_page(&$vars){
   }
   
   //REPLACE THE Default Jquery UI CSS (if Needed)
-  if(array_key_exists(JQUERY_UI_PATH .'/themes/base/ui.all.css',$vars['css'])){
+  if(array_key_exists(JQUERY_UI_PATH .'/themes/base/ui.all.css',$vars['css']['all']['module'])){
   	//Override
   	drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/jquery_ui/jquery.ui/themes/openscholar/ui.all.css');
   	$vars['css'] = drupal_add_css();
   	
   	//Remove invalid
-  	unset($vars['css'][JQUERY_UI_PATH .'/themes/base/ui.all.css']);
+  	unset($vars['css']['all']['module'][JQUERY_UI_PATH .'/themes/base/ui.all.css']);
   	
     $vars['styles'] = drupal_get_css($vars['css']);
   }
