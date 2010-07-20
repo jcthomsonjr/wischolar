@@ -6,22 +6,22 @@
 function _scholar_presentations_content_default_fields() {
   $fields = array();
 
-  // Exported field: field_presentation_date
+  // Exported field: field_date_presentation
   $fields[] = array(
-    'field_name' => 'field_presentation_date',
+    'field_name' => 'field_date_presentation',
     'type_name' => 'presentation',
     'display_settings' => array(
-      'weight' => '10',
+      'weight' => '-2',
       'parent' => '',
       'label' => array(
-        'format' => 'hidden',
+        'format' => 'inline',
       ),
       'teaser' => array(
-        'format' => 'default',
+        'format' => 'short',
         'exclude' => 0,
       ),
       'full' => array(
-        'format' => 'default',
+        'format' => 'short',
         'exclude' => 0,
       ),
       '5' => array(
@@ -55,28 +55,26 @@ function _scholar_presentations_content_default_fields() {
       'year' => 'year',
       'month' => 'month',
       'day' => 'day',
-      'hour' => 'hour',
-      'minute' => 'minute',
     ),
     'timezone_db' => '',
     'tz_handling' => 'none',
-    'todate' => 'optional',
+    'todate' => '',
     'repeat' => 0,
     'repeat_collapsed' => '',
-    'default_format' => 'long',
+    'default_format' => 'short',
     'widget' => array(
       'default_value' => 'blank',
       'default_value_code' => '',
       'default_value2' => 'blank',
       'default_value_code2' => '',
-      'input_format' => 'm/d/Y - g:ia',
+      'input_format' => 'j F Y',
       'input_format_custom' => '',
       'increment' => '1',
       'text_parts' => array(),
-      'year_range' => '-3:+3',
+      'year_range' => '-10:+1',
       'label_position' => 'above',
       'label' => 'Presentation Date',
-      'weight' => '10',
+      'weight' => '-2',
       'description' => '',
       'type' => 'date_popup',
       'module' => 'date',
@@ -88,10 +86,10 @@ function _scholar_presentations_content_default_fields() {
     'field_name' => 'field_presentation_file',
     'type_name' => 'presentation',
     'display_settings' => array(
-      'weight' => '16',
+      'weight' => '1',
       'parent' => '',
       'label' => array(
-        'format' => 'above',
+        'format' => 'inline',
       ),
       'teaser' => array(
         'format' => 'default',
@@ -138,7 +136,7 @@ function _scholar_presentations_content_default_fields() {
       'max_filesize_per_file' => '',
       'max_filesize_per_node' => '',
       'label' => 'Presentation Files',
-      'weight' => '16',
+      'weight' => '1',
       'description' => 'Upload the file(s) for this presentation.',
       'type' => 'filefield_widget',
       'module' => 'filefield',
@@ -150,7 +148,7 @@ function _scholar_presentations_content_default_fields() {
     'field_name' => 'field_presentation_location',
     'type_name' => 'presentation',
     'display_settings' => array(
-      'weight' => '11',
+      'weight' => '-1',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -205,7 +203,7 @@ function _scholar_presentations_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Location',
-      'weight' => '11',
+      'weight' => '-1',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
