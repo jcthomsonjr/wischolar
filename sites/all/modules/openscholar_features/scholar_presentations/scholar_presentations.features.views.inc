@@ -165,6 +165,7 @@ function _scholar_presentations_views_default_views() {
   ));
   $handler->override_option('title', 'Recent Presentations');
   $handler->override_option('items_per_page', 5);
+  $handler->override_option('use_pager', '0');
   $handler->override_option('use_more', 1);
   $handler->override_option('use_more_always', 0);
   $handler->override_option('row_plugin', 'fields');
