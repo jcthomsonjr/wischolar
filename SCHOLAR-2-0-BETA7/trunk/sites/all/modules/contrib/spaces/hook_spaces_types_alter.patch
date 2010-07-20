@@ -1,0 +1,26 @@
+? .svn
+? hook_spaces_types_alter.patch
+? images/.svn
+? includes/.svn
+? spaces_blog/.svn
+? spaces_design/.svn
+? spaces_og/.svn
+? spaces_site/.svn
+? spaces_taxonomy/.svn
+? spaces_user/.svn
+? tests/.svn
+Index: spaces.module
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/spaces/spaces.module,v
+retrieving revision 1.25.4.33.2.20
+diff -u -p -r1.25.4.33.2.20 spaces.module
+--- spaces.module	10 Jul 2009 13:55:15 -0000	1.25.4.33.2.20
++++ spaces.module	10 Jul 2009 14:29:39 -0000
+@@ -757,6 +757,7 @@ function spaces_types($reset = false) {
+   static $spaces_types;
+   if (!isset($spaces_types) || $reset) {
+     $spaces_types = module_invoke_all('spaces_types');
++    drupal_alter('spaces_types', $spaces_types);
+   }
+   return $spaces_types;
+ }
