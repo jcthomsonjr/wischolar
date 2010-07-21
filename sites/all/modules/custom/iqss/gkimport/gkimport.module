@@ -392,8 +392,9 @@ function gkimport_assign_terms(){
       $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ", trim($values['title'])));
     
       if($nid && $tid){
+      $node = node_load($nid);
         db_query("DELETE FROM {term_node} WHERE nid = %d AND tid = %d", $nid, $tid);
-        db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid);
+        db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $node->vid, $tid);
         $term_arr[] = array($nid => $tid);
         drush_print("Added term to node: {$values['secondary']} to node $nid");
 
@@ -577,6 +578,14 @@ function gkimport_get_pdf($node, $url = ''){
   }
 }
 
+function gkimport_update_alias_node($nid){
+  $node = node_load($nid);
+  if ($node){
+    db_query("DELETE FROM {url_alias} WHERE src = '%s' ", "node/{$node -> nid}");
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", 'gking/' . $node -> path);
+  }
+}
+
 function gkimport_update_aliases(){
   $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
   //check to see that variable contains data
@@ -588,10 +597,9 @@ function gkimport_update_aliases(){
         if (strlen($path[1])){
           $src = db_result(db_query("SELECT src FROM {url_alias} WHERE src = '%s'", "node/{$node -> nid}"));
           db_query("DELETE FROM {url_alias} WHERE dst = '%s' ", 'gking/' . $path[1]);
-          db_query("DELETE FROM {url_alias} WHERE src = '%s' ", 'gking/' . $src[1]);
+          db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src);
           db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", 'gking/' . $path[1]);
-
-          drush_print("Added custom path gking/{$path[1]} for node {$node -> nid}");
+          drush_print("Added custom path gking/{$path[1]} for node {$node -> nid} for source $src");
         }
       }
     }
@@ -651,7 +659,7 @@ function gkimport_create_profiles(){
   install_include(array('taxonomy'));
   $account = user_load(array('name' => 'gking'));
   $vsites = vsite_get_vsite_by_owner($account -> uid);
-  $sid = $vsites[0] -> group -> nid;
+  $sid = gkimport_get_sid();
 
   //create new vocab for Research Group
   $vid =  _gkimport_create_rg_vocab($vsites[0]);
@@ -671,6 +679,7 @@ function gkimport_create_profiles(){
    check_name FROM {content_type_person} WHERE field_person_firstname_value = '%s' AND field_person_lastname_value = '%s'",
    $name['firstname'] , $name['lastname']));
     
+   drush_print("check: " . $check);
    //THIS SECTION RUNS WHEN DUPLICATE NAME IS FOUND
    if(strlen( $check )) {    
    $check_name = explode(' ', $check);
@@ -678,11 +687,12 @@ function gkimport_create_profiles(){
 
    //add taxonomy term only
    $nid = trim($check_name[0]);  
+   $check_node = node_load($nid);
    db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $nid, $tid);
-   db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $nid, $tid); 
+   db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $check_node -> vid, $tid); 
    
    //TODO: need transfer body text to field_person_institution if $profile['group'] == 'Current Research Associates'
-/*   if($profile['group'] == 'Current Research Associates'){
+  /*if($profile['group'] == 'Current Research Associates'){
      $inst = db_result(db_query("SELECT body from {node_revisions} WHERE nid = %d", $nid));
      if(strlen($inst)){       
        db_query("UPDATE {content_type_person} SET field_person_institution_value = '%s' WHERE nid = %d ", $inst, $nid);
@@ -691,7 +701,7 @@ function gkimport_create_profiles(){
        db_query("UPDATE {node_revisions} SET body = '%s',  teaser = '%s',  uid = %d WHERE nid = %d", $description, $description, (int)$account -> uid, (int)$nid);
        //drush_print("Updating description: for $nid - $description");
     }*/
-   continue;   
+   continue;
    }
    
     drush_print("Adding Person: " .  $name['firstname'] . ' ' .  $name['lastname'] . ' - ' .  $profile['group']);
@@ -720,7 +730,8 @@ function gkimport_create_profiles(){
   //  $node -> field_person_institution[0] = array('value' => html_entity_decode($description, ENT_COMPAT, 'UTF-8'));
   //}
     node_save($node);
-    db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> nid, $tid);  
+    gkimport_update_alias_node($node -> nid);
+    db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node -> vid, $tid);  
   }
   //special exception
   drush_print("Adding person: Christopher Adolph to Collaborators");  
@@ -850,6 +861,7 @@ function gkimport_import_bio(){
   $node -> uid = $account -> uid;
   node_save($node);
   gkimport_node_to_og($node -> nid, $account);
+  gkimport_update_alias_node($node -> nid);
   if ($node -> nid) drush_print("Added Bio: {$node -> title}");
 }
 
@@ -878,6 +890,7 @@ function gkimport_import_links(){
       $node -> uid = $account -> uid;
       node_save($node);
       gkimport_node_to_og($node -> nid, $account, $sid);
+      gkimport_update_alias_node($node -> nid);
       drush_print("Added link: {$node -> title}");
     }
   }
@@ -925,8 +938,10 @@ function gkimport_import_classes(){
       );
       $node -> name = $account -> name;
       $node -> uid = $account -> uid;
+      //$node -> path = "test/$nid";
       node_save($node);
       gkimport_node_to_og($node -> nid, $account, $sid);
+      gkimport_update_alias_node($node ->nid);
       drush_print("Added class: {$node -> title}");
     }
   }	
@@ -995,6 +1010,7 @@ function gkimport_import_presentations(){
       
       node_save($node);
       gkimport_node_to_og($node -> nid, $account, $sid);
+      gkimport_update_alias_node($node -> nid);
       drush_print("Added presentation: {$node -> title}");
      // return; //just iterate once for now - TESTING PURPOSES ONLY
     }
@@ -1104,6 +1120,7 @@ function gkimport_import_contact_page(){
   */
   node_save($node);
   gkimport_node_to_og($node -> nid, $account, $sid);
+  gkimport_update_alias_node($node -> nid);
   drush_print("Added Contact Page");
 }
 
@@ -1175,6 +1192,7 @@ function gkimport_save_sample_pages(){
   $node -> uid = $account -> uid;
   node_save($node);
   gkimport_node_to_og($node -> nid, $account, $sid);
+  gkimport_update_alias_node($node -> nid);
   drush_print("Added sample announcement");
 
   //cache_clear_all();
