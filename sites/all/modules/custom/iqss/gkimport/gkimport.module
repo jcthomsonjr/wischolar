@@ -312,7 +312,8 @@ function gkimport_pubs_taxonomy($filepath){
     2 => array('term' => 'Applications', 'description' => ''),
     );
     foreach($top_level_terms as $top){
-      install_taxonomy_add_term($ri_vid, $top['term'], $top['description']);
+      $tid = install_taxonomy_add_term($ri_vid, $top['term'], $top['description']);
+      gkimport_update_alias_term($tid);
       gkimport_print("Added top level term: {$top['term']}");
     }
 
@@ -327,7 +328,8 @@ function gkimport_pubs_taxonomy($filepath){
         $parent_tid = install_taxonomy_get_tid(trim($parent_term),  $ri_vid);
         $properties = array('parent' => array($parent_tid));
         //adding the subterm here with description
-        install_taxonomy_add_term($ri_vid, $name, $description, $properties);
+        $tid = install_taxonomy_add_term($ri_vid, $name, $description, $properties);
+        gkimport_update_alias_term($tid);
         gkimport_print("Added level 2 term: " . $name);
       }
     }
@@ -340,7 +342,7 @@ function gkimport_pubs_taxonomy($filepath){
 
 
 /**
- * add second level terms to vocab
+ * add terms to vocab
  */
 function gkimport_add_sub_terms($level = 3){
   install_include(array('taxonomy'));
@@ -366,15 +368,25 @@ function gkimport_add_sub_terms($level = 3){
       //define and pass the parent term id
       $properties = array('parent' => array($parent_tid));
       //adding the subterm here with description
-      install_taxonomy_add_term($ri_vid, $term, $description, $properties);
+      $tid = install_taxonomy_add_term($ri_vid, $term, $description, $properties);
+      gkimport_update_alias_term($tid);
       gkimport_print("Added level $level term: $term");
     }
   }
 }
 
+function gkimport_update_alias_term($tid = NULL){
+  if ($tid){
+    $current_dst = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", "taxonomy/term/$tid" ));
+    $path =  (preg_match('/^gking\//s', $current_dst, $matches)) ? $current_dst : "gking/$current_dst";   
+    db_query("DELETE FROM {url_alias} WHERE src = '%s' ", "taxonomy/term/$tid");
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "taxonomy/term/$tid",  $path); 
+    drush_print("Updated url_alias for term: $tid");   
+  }
+}
+
 function gkimport_add_third_terms(){
   install_include(array('taxonomy'));
-
 }
 
 /**
@@ -581,10 +593,11 @@ function gkimport_get_pdf($node, $url = ''){
 }
 
 function gkimport_update_alias_node($nid){
-  $node = node_load($nid);
+  $node = node_load($nid); 
   if ($node){
+   $path =  (preg_match('/^gking\//s',$node->path, $matches)) ? $node -> path : "gking/{$node -> path}";   
     db_query("DELETE FROM {url_alias} WHERE src = '%s' ", "node/{$node -> nid}");
-    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", 'gking/' . $node -> path);
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}",  $path);
   }
 }
 
@@ -594,15 +607,24 @@ function gkimport_update_aliases(){
   if (!empty($nids)) {
     foreach ($nids as $nid){
       $node = node_load($nid);
+      $src = "node/{$node -> nid}";
       if (strlen($node -> biblio_url)){
         $path =  explode('http://gking.harvard.edu/', $node -> biblio_url);
         if (strlen($path[1])){
-          $src = db_result(db_query("SELECT src FROM {url_alias} WHERE src = '%s'", "node/{$node -> nid}"));
+            // publication with an custom link to abstract
           db_query("DELETE FROM {url_alias} WHERE dst = '%s' ", 'gking/' . $path[1]);
           db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src);
-          db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "node/{$node -> nid}", 'gking/' . $path[1]);
-          drush_print("Added custom path gking/{$path[1]} for node {$node -> nid} for source $src");
+          $fix_path = (preg_match('/^gking\//s', $path[1], $matches)) ? $path[1] : "gking/$path[1]";   
+          db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", $src, $fix_path);
+          drush_print("Added custom path $fix_path  for source $src");
         }
+      }
+      else{        
+        // publication without an custom link to abstract
+        $current_dst = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", $src));
+        $fix_path =  (preg_match('/^gking\//s', $current_dst, $matches)) ? $current_dst : "gking/$current_dst";
+        db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src);
+        db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", $src, $fix_path);
       }
     }
   }
@@ -681,7 +703,6 @@ function gkimport_create_profiles(){
    check_name FROM {content_type_person} WHERE field_person_firstname_value = '%s' AND field_person_lastname_value = '%s'",
    $name['firstname'] , $name['lastname']));
     
-   drush_print("check: " . $check);
    //THIS SECTION RUNS WHEN DUPLICATE NAME IS FOUND
    if(strlen( $check )) {    
    $check_name = explode(' ', $check);
@@ -737,11 +758,11 @@ function gkimport_create_profiles(){
   }
   //special exception
   drush_print("Adding person: Christopher Adolph to Collaborators");  
-  $special_nid = db_result(db_query("SELECT nid FROM {content_type_person} WHERE field_person_firstname_value = '%s' 
+  /*$special_nid = db_result(db_query("SELECT nid FROM {content_type_person} WHERE field_person_firstname_value = '%s' 
   AND field_person_lastname_value = '%s'", 'Christopher' , 'Adolph'));
   $special_tid =  install_taxonomy_get_tid( 'Collaborators', $vid);
    db_query('DELETE FROM {term_node} WHERE nid = %d AND tid = %d', $special_nid, $special_tid);
-   db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $special_nid, $special_nid, $special_tid);    
+   db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $special_nid, $special_nid, $special_tid);    */
 }
 
 function _gkimport_remove_line_breaks($text){
@@ -800,7 +821,8 @@ function _gkimport_create_rg_terms($vid){
   install_include(array('taxonomy'));
   $terms = array('Current Research Associates', 'Alumni: Students', 'Alumni: Post-Docs', 'Collaborators');
   foreach($terms as $term){
-  install_taxonomy_add_term($vid, $term); 
+  $tid = install_taxonomy_add_term($vid, $term);
+  gkimport_update_alias_term($tid);
   }
 }
 
