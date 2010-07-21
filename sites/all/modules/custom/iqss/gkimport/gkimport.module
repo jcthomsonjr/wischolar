@@ -94,6 +94,7 @@ function gkimport_create_site(){
     $vsite = vsite_vsite_create($settings['name'], $settings['domain'], $settings['preset']);
     if ($vsite){
       define(GKIMPORT_SID, $vsite -> sid );
+      variable_set('gkimport_site_id', $vsite -> sid );
             
       $mesage = GKIMPORT_DRUSH_RUN === 1 ? drush_print(t('Created web site: !domain', array('!domain' => $settings['domain']))) : '';     
       
@@ -382,16 +383,17 @@ function gkimport_add_third_terms(){
 function gkimport_assign_terms(){
   install_include(array('taxonomy'));
   $ri_vid = variable_get('gkimport_ri_vocab_id', '');
+  $sid = gkimport_get_sid();
   $subterm_data = variable_get('gkimport_taxonomy_subterm_data', array());
   foreach($subterm_data  as $values){
     if (strlen($values['primary']) && strlen($values['secondary'])){
-      $parent_tid = install_taxonomy_get_tid(trim($values['primary']), $ri_vid);
-      
-      $tid = gkimport_taxonomy_get_tid($values['secondary'], $ri_vid, $parent_tid);
-      
-      $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ", trim($values['title'])));
-    
-      if($nid && $tid){
+      $parent_tid = install_taxonomy_get_tid(trim($values['primary']), $ri_vid);      
+      $tid = gkimport_taxonomy_get_tid($values['secondary'], $ri_vid, $parent_tid);      
+    //  $nid = db_result(db_query("SELECT nid FROM {node} WHERE title = '%s' ", trim($values['title'])));
+      $node_arr = db_fetch_array(db_query("SELECT n.nid, n.title, oga.group_nid FROM {node} n INNER JOIN {og_ancestry} oga USING(nid) HAVING n.title = '%s' 
+      AND oga.group_nid = %d", trim($values['title']), $sid)); 
+         
+      if($node_arr['nid'] && $tid){
       $node = node_load($nid);
         db_query("DELETE FROM {term_node} WHERE nid = %d AND tid = %d", $nid, $tid);
         db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $node->vid, $tid);
@@ -1138,8 +1140,9 @@ CONTENT;
  * Returns site id for gary's site
  */
 function gkimport_get_sid(){
- if (is_int(GKIMPORT_SID) && GKIMPORT_SID > 0) return GKIMPORT_SID;
- 
+if (variable_get('gkimport_site_id', 0) > 0) return variable_get('gkimport_site_id', 0);
+
+ if (is_int(GKIMPORT_SID) && GKIMPORT_SID > 0) return GKIMPORT_SID; 
   $account = user_load(array('name' => 'gking'));
   $vsites = vsite_get_vsite_by_owner($account -> uid);
   return $vsites[0] -> group -> nid; 
