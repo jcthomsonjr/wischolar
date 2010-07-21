@@ -394,15 +394,15 @@ function gkimport_assign_terms(){
       AND oga.group_nid = %d", trim($values['title']), $sid)); 
          
       if($node_arr['nid'] && $tid){
-      $node = node_load($nid);
-        db_query("DELETE FROM {term_node} WHERE nid = %d AND tid = %d", $nid, $tid);
-        db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $nid, $node->vid, $tid);
-        $term_arr[] = array($nid => $tid);
-        drush_print("Added term to node: {$values['secondary']} to node $nid");
+      $node = node_load($node_arr['nid']);
+        db_query("DELETE FROM {term_node} WHERE nid = %d AND tid = %d", $node -> nid, $tid);
+        db_query("INSERT INTO {term_node} (nid, vid, tid) VALUES (%d, %d, %d)", $node -> nid, $node->vid, $tid);
+        $term_arr[] = array($node -> nid => $tid);
+        drush_print("Added term to node: {$values['secondary']} to node {$node -> nid}");
 
       }
       else{
-        drush_print("Could not add term {$values['secondary']} to node {$values['title']} - $nid");
+        drush_print("Could not add term {$values['secondary']} to node {$values['title']} - {$node -> nid}");
       }
     }
   }
