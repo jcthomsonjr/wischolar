@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.10 2010/03/30 20:16:42 diggersf Exp $
+// $Id: feeds.test.inc,v 1.12 2010/07/18 16:56:54 alexb Exp $
 
 /**
  * @file
@@ -27,7 +27,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    * Absolute path to Drupal root.
    */
   public function absolute() {
-    return dirname($GLOBALS['_SERVER']['SCRIPT_FILENAME']);
+    return realpath(getcwd());
   }
 
   /**
@@ -98,6 +98,8 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     // Assert message and presence of default plugins.
     $this->assertText('Your configuration has been created with default settings.');
     $this->assertPlugins($id, 'FeedsHTTPFetcher', 'FeedsSyndicationParser', 'FeedsNodeProcessor');
+    // Per default attach to page content type.
+    $this->setSettings($id, NULL, array('content_type' => 'page'));
   }
 
   /**
