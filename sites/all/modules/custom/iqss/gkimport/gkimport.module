@@ -606,9 +606,9 @@ function gkimport_get_pdf($node, $url = ''){
     drupal_write_record('files', $file);
     $fid = db_last_insert_id('files', 'fid');
     //write data to upload table
-    drupal_write_record('upload', $file);
+    drupal_write_record('upload', $file);    
     db_query("DELETE FROM  {url_alias} WHERE dst = '%s' ", 'files/' . basename($source));
-    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/$fid", 'files/' . basename($source));
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/$fid", 'gking/files/' . basename($source));
 
     drush_print("Added custom path for file: " . basename($source));
 
