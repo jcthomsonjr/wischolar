@@ -192,6 +192,9 @@ function  gkimport_customize_site($vsite){
    $vsite -> settings['reader']['twitter_username'] = 'kinggary';
        
   spaces_save($vsite);
+  //update url aliases for default terms
+  gkimport_update_alias_default_terms();
+  
   cache_clear_all();
   gkimport_print("Customized primary menu names and weights");
 }
@@ -372,6 +375,28 @@ function gkimport_add_sub_terms($level = 3){
       gkimport_update_alias_term($tid);
       gkimport_print("Added level $level term: $term");
     }
+  }
+}
+
+/**
+ * Updates aliases for default terms (tags)
+ */
+function gkimport_update_alias_default_terms(){
+  $sid = gkimport_get_sid();
+  $vocabs = og_vocab_get_vocabularies($sid);
+  foreach ($vocabs as $obj){
+    if ($obj -> name == 'tags'){
+      $tree = taxonomy_get_tree($obj -> vid);
+      break;
+    }
+  }
+  foreach($tree as $term_obj){
+    $tid = $term_obj -> tid;
+    $current_dst = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", "taxonomy/term/$tid" ));
+    $path =  (preg_match('/^gking\//s', $current_dst, $matches)) ? $current_dst : "gking/$current_dst";
+    db_query("DELETE FROM {url_alias} WHERE src = '%s' ", "taxonomy/term/$tid");
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "taxonomy/term/$tid",  $path);
+    drush_print("Updated url_alias for default tags term: $tid");
   }
 }
 
@@ -601,6 +626,9 @@ function gkimport_update_alias_node($nid){
   }
 }
 
+/**
+ * Update aliases for publications
+ */
 function gkimport_update_aliases(){
   $nids = variable_get('gkimport_pub_nodes', array()); //array of node id's of publications created from biblio import
   //check to see that variable contains data
@@ -1045,16 +1073,6 @@ function gkimport_import_presentations(){
     }
   }
 }
-
-/**
- * FOR TESTING ONLY - SHOULD BE REMOVED
- */
-/*function gkimport_remove_presentations(){
-$res = db_query("SELECT nid FROM {node} WHERE type = '%s' ", 'presentation');
-while($data = db_fetch_object($res)){
-  node_delete($data -> nid);
-  }
-}*/
 
 /**
  * Change the biblio type of selected nodes  to 
