@@ -49,7 +49,7 @@ function gkimport_import_2($drush_run = 0){
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
 
-function gkimport_import_3($drush_run = 0){ return gkimport_node_access_check();
+function gkimport_import_3($drush_run = 0){
   drush_print("Begining import, part 3...");
 
    gkimport_import_presentations();
