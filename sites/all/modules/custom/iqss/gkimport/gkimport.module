@@ -49,10 +49,12 @@ function gkimport_import_2($drush_run = 0){
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
 }
 
-function gkimport_import_3($drush_run = 0){
+function gkimport_import_3($drush_run = 0){ return gkimport_node_access_check();
   drush_print("Begining import, part 3...");
 
    gkimport_import_presentations();
+   //node access check
+   gkimport_node_access_check();
 
   $message = 'Import part 3 completed';
   $complete = ($drush_run  === 1) ?  drush_print(t("$message")) : drupal_set_message(t("$message"));
@@ -1101,6 +1103,25 @@ FROM {og_ancestry} oga INNER JOIN {node_access} na USING ( nid ) HAVING na.realm
       $nid, $sid, 'og_admin', 1, 1, 1);
       db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",
       $nid, $sid, 'og_subscriber', 1, 0, 0);
+    }
+  }
+}
+/**
+ * Make sure node access is correct
+  */
+function gkimport_node_access_check(){
+  $sid = gkimport_get_sid();
+  $nids = db_query("SELECT nid FROM {node_access} WHERE nid > %d", $sid);
+  while ($data = db_fetch_object($nids)){
+    $node = node_load( $data -> nid);
+    if($node -> og_groups[$sid] == $sid){
+    drush_print("Node access check...");    
+    db_query("DELETE FROM {node_access} WHERE nid = %d", $node -> nid);
+    db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",  $node->nid, 0, 'og_public', 1, 0, 0);
+    db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",
+    $node->nid, $sid, 'og_admin', 1, 1, 1);
+    db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",
+    $node->nid, $sid, 'og_subscriber', 1, 0, 0);
     }
   }
 }
