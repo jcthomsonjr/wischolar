@@ -859,7 +859,7 @@ function _gkimport_create_rg_terms($vid){
 /**
  * Implementation of hook_nodeapi()
  */
-function gkimport_nodeapi(&$node, $op){ 
+function gkimport_nodeapi(&$node, $op){
   if ($node -> type != 'biblio') return;
   $name = 'gking';
   $account = user_load(array('name' => $name));
@@ -1037,8 +1037,8 @@ function gkimport_import_presentations(){
         $start = explode('/' , $data[2]);
         $end = strlen($data[3]) ? explode('/' , $data[3]) : array();
         $date = gkimport_convert_date_times($start, $end);
-        $node -> field_presentation_date[0]['value'] = $date['value'];
-        $node -> field_presentation_date[0]['value2'] = $date['value2'];
+        $node -> field_date_presentation[0]['value'] = $date['value'];
+       // $node -> field_date_presentation[0]['value2'] = $date['value2'];
       }
       
       // import files and add to $node object
