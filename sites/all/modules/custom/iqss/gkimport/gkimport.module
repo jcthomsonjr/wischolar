@@ -106,7 +106,7 @@ function gkimport_create_site(){
       
       foreach($file_paths as $fp){      
       $check = file_check_directory($fp, 1);
-      $msg = $check ? "The directory $fp has been created" : "ERROR: The directory $fp could not be created";
+      $msg = $check ? "The directory $fp exists" : "ERROR: The directory $fp could not be created";
       drush_print($msg);
       }  
       //now customize the vsite
@@ -1069,7 +1069,7 @@ function gkimport_import_presentations(){
       $src = "node/{$node ->nid}";
       $current_dst = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", $src));
       $fix_path =  (preg_match('/^gking\//s', $current_dst, $matches)) ? $current_dst : "gking/$current_dst";
-      drush_print("Fix Path: $fix_path");
+      drush_print("Path: $fix_path");
       db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src);
       db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", $src, $fix_path);
       drush_print("Added presentation: {$node -> title}");
