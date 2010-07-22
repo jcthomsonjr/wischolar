@@ -1110,12 +1110,12 @@ FROM {og_ancestry} oga INNER JOIN {node_access} na USING ( nid ) HAVING na.realm
  * Make sure node access is correct
   */
 function gkimport_node_access_check(){
+  drush_print("Node access check...");
   $sid = gkimport_get_sid();
   $nids = db_query("SELECT nid FROM {node_access} WHERE nid > %d", $sid);
   while ($data = db_fetch_object($nids)){
     $node = node_load( $data -> nid);
-    if($node -> og_groups[$sid] == $sid){
-    drush_print("Node access check...");    
+    if($node -> og_groups[$sid] == $sid){     
     db_query("DELETE FROM {node_access} WHERE nid = %d", $node -> nid);
     db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",  $node->nid, 0, 'og_public', 1, 0, 0);
     db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",
