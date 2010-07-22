@@ -758,7 +758,7 @@ function vsite_taxonomy_block_view(){
  */
 function vsite_taxonomy_strongarm(){
   $conf = array();
-  $conf['pathauto_taxonomy_pattern'] = "[space-og-path-raw]/category/[vocab-raw]/[catpath-raw]";
+  $conf['pathauto_taxonomy_pattern'] = "[vsite-prefix-path-raw]/category/[vocab-raw]/[catpath-raw]";
 
   //Global Taxonomies
   $result = db_query("SELECT vid FROM {vocabulary} LEFT JOIN {og_vocab} ov USING(vid) WHERE ov.nid IS NULL");
