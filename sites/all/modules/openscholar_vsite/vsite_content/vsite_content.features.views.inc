@@ -437,6 +437,7 @@ function _vsite_content_views_default_views() {
     'title' => 'Content',
     'description' => '',
     'weight' => '0',
+    'name' => 'navigation',
   ));
 
   $views[$view->name] = $view;
@@ -655,6 +656,8 @@ function _vsite_content_views_default_views() {
   ));
   $handler->override_option('empty', 'no files uploaded');
   $handler->override_option('empty_format', '1');
+  $handler->override_option('items_per_page', 15);
+  $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'table');
 
   $views[$view->name] = $view;
