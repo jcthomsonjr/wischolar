@@ -11,8 +11,8 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_address',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '34',
-      'parent' => 'group_contact',
+      'weight' => '1',
+      'parent' => '',
       'label' => array(
         'format' => 'hidden',
       ),
@@ -22,7 +22,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'full' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '5' => array(
         'format' => 'default',
@@ -78,8 +78,8 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_email',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '36',
-      'parent' => 'group_contact',
+      'weight' => '3',
+      'parent' => '',
       'label' => array(
         'format' => 'hidden',
       ),
@@ -89,7 +89,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'full' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '5' => array(
         'format' => 'default',
@@ -156,7 +156,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'full' => array(
         'format' => 'hidden',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '4' => array(
         'format' => 'default',
@@ -208,7 +208,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_lastname',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-3',
+      'weight' => '-2',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -219,7 +219,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'full' => array(
         'format' => 'hidden',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '4' => array(
         'format' => 'default',
@@ -259,7 +259,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Last Name',
-      'weight' => '-2',
+      'weight' => '-3',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -271,7 +271,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_middlename',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-2',
+      'weight' => '-1',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -282,7 +282,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'full' => array(
         'format' => 'hidden',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '4' => array(
         'format' => 'default',
@@ -322,7 +322,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Middle Name or Initial',
-      'weight' => '-1',
+      'weight' => '-2',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -334,8 +334,8 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_phone',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '35',
-      'parent' => 'group_contact',
+      'weight' => '2',
+      'parent' => '',
       'label' => array(
         'format' => 'hidden',
       ),
@@ -345,7 +345,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'full' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '5' => array(
         'format' => 'default',
@@ -401,7 +401,7 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_photo',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '-1',
+      'weight' => '6',
       'parent' => '',
       'label' => array(
         'format' => 'hidden',
@@ -473,19 +473,20 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_title',
     'type_name' => 'person',
     'display_settings' => array(
+      'weight' => 0,
+      'parent' => '',
       'label' => array(
         'format' => 'above',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
       ),
       'teaser' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '5' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -539,8 +540,8 @@ function _scholar_profiles_content_default_fields() {
     'field_name' => 'field_person_website',
     'type_name' => 'person',
     'display_settings' => array(
-      'weight' => '37',
-      'parent' => 'group_contact',
+      'weight' => '4',
+      'parent' => '',
       'label' => array(
         'format' => 'hidden',
       ),
@@ -550,7 +551,7 @@ function _scholar_profiles_content_default_fields() {
       ),
       'full' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '4' => array(
         'format' => 'default',
