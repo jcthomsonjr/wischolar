@@ -1007,6 +1007,7 @@ function gkimport_import_classes(){
  * @param  $save TRUE to save the node, FALSE to just return the node object
  */
 function gkimport_import_presentations(){
+  $sid = gkimport_get_sid();
   $path = dirname(__FILE__)  . '/files/talks.csv';
 
   if(!is_file($path)){
@@ -1058,10 +1059,13 @@ function gkimport_import_presentations(){
         $node -> field_presentation_file[1]['data']['description'] = 'Printable slides';
       }
       $node -> name = $account -> name;
-      $node -> uid = $account -> uid;     
+      $node -> uid = $account -> uid;    
       
-      node_save($node);
+      node_save($node);     
+      
       gkimport_node_to_og($node -> nid, $account, $sid);
+      
+      //fix url aliases
       $src = "node/{$node ->nid}";
       $current_dst = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", $src));
       $fix_path =  (preg_match('/^gking\//s', $current_dst, $matches)) ? $current_dst : "gking/$current_dst";
@@ -1070,6 +1074,33 @@ function gkimport_import_presentations(){
       db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", $src, $fix_path);
       drush_print("Added presentation: {$node -> title}");
      // return; //just iterate once for now - TESTING PURPOSES ONLY
+    }
+    gkimport_presentations_node_access_fix();
+  }
+}
+/**
+ * Fix node access for presentations
+ */
+function gkimport_presentations_node_access_fix(){
+  drush_print("Updating node_access for presentations");
+
+  $sid = gkimport_get_sid();
+  $arr = array();
+  $sql = db_query("SELECT oga.nid, oga.group_nid, na.gid, na.realm, na.grant_view, na.grant_update, na.grant_delete
+FROM {og_ancestry} oga INNER JOIN {node_access} na USING ( nid ) HAVING na.realm = '%s' AND oga.group_nid = %d", 'all', $sid);
+  while($data = db_fetch_object($sql)){
+    $arr[] = $data-> nid;
+  }
+
+  foreach($arr as $nid){
+    $type = db_result(db_query("SELECT type FROM {node} where nid = %d" , $nid));
+    if ($type == 'presentation'){
+      db_query("DELETE FROM {node_access} WHERE nid = %d", $nid);
+      db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",  $nid, 0, 'og_public', 1, 0, 0);
+      db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",
+      $nid, $sid, 'og_admin', 1, 1, 1);
+      db_query("INSERT INTO {node_access} (nid, gid, realm, grant_view, grant_update, grant_delete) VALUES (%d, %d, '%s', %d, %d, %d)",
+      $nid, $sid, 'og_subscriber', 1, 0, 0);
     }
   }
 }
