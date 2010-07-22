@@ -192,9 +192,7 @@ function  gkimport_customize_site($vsite){
    $vsite -> settings['reader']['twitter_username'] = 'kinggary';
        
   spaces_save($vsite);
-  //update url aliases for default terms
-  gkimport_update_alias_default_terms();
-  
+   
   cache_clear_all();
   gkimport_print("Customized primary menu names and weights");
 }
@@ -1307,6 +1305,9 @@ function gkimport_cleanup(){
 	
 	//Update term names
 	gkimport_update_term_names();	
+	
+	//update url aliases for default terms
+      gkimport_update_alias_default_terms();
 }
 
 /**
