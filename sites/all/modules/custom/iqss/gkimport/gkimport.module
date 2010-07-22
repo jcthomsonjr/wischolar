@@ -394,9 +394,11 @@ function gkimport_update_alias_default_terms(){
     $tid = $term_obj -> tid;
     $current_dst = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", "taxonomy/term/$tid" ));
     $path =  (preg_match('/^gking\//s', $current_dst, $matches)) ? $current_dst : "gking/$current_dst";
+    //remove the "-7" or other number from end of the path
+    $exp_path = explode('-', $path);
     db_query("DELETE FROM {url_alias} WHERE src = '%s' ", "taxonomy/term/$tid");
-    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "taxonomy/term/$tid",  $path);
-    drush_print("Updated url_alias for default tags term: $tid");
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "taxonomy/term/$tid",  $exp_path[0]);
+    //drush_print("Updated url_alias for default tags term: $tid");
   }
 }
 
@@ -583,8 +585,8 @@ function gkimport_get_pdf($node, $url = ''){
   }
   else{
     // or copy the file from the file system
-    $fc = file_copy($source, $files_dir, FILE_EXISTS_REPLACE);
-    if($fc !== 1) drush_print("File could not be copied: " . basename($url));
+  //  $fc = file_copy($source, $files_dir, FILE_EXISTS_REPLACE);
+  //  if($fc !== 1) drush_print("File could not be copied: " . basename($url));
   }
 
   if (is_file($source)){
