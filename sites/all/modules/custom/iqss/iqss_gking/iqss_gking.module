@@ -280,15 +280,36 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
   	foreach ($tree as $tterm) if($tterm->tid == $term->tid) return iqss_gking_term_page(current($tterm->parents));
   }//If this term has no childeren then display the parent.
   
-  $result = taxonomy_select_nodes(array($term->tid), $terms['operator'], $depth, false);
-  $output .= (db_affected_rows($result))?theme('taxonomy_term_page', array($term->tid), $result):'<div class="taxonomy-term-description">'.filter_xss_admin($term->description).'</div>';
   drupal_set_title(check_plain($term->name));
+  $output .=  _iqss_gking_term_page_tree($term,$vocab->vid,$terms['operator'],$tree);
+  
+//  $result = taxonomy_select_nodes(array($term->tid), $terms['operator'], $depth, false);
+//  $output .= (db_affected_rows($result))?theme('taxonomy_term_page', array($term->tid), $result):'<div class="taxonomy-term-description">'.filter_xss_admin($term->description).'</div>';
+//  drupal_set_title(check_plain($term->name));
+//
+//  foreach ($tree as $subterm) {
+//  	$result = taxonomy_select_nodes(array($subterm->tid), $terms['operator'], $depth, false);
+//    if ($subterm->name && db_affected_rows($result)) $output .= '<div class="taxonomy-term-child">'."<h3>{$subterm->name}</h3>".theme('taxonomy_term_page', array($subterm->tid), $result)."</div>";
+//  }
+  return $output;
+}
+
+/**
+ * Print the child terms
+ */
+function  _iqss_gking_term_page_tree($term,$vid,$operator,$tree = false){
+	if(!$tree) $tree = taxonomy_get_tree($vid, $term->tid, -1, 1);
+	
+	$result = taxonomy_select_nodes(array($term->tid), $operator, 0, false);
+  $output = (db_affected_rows($result))?theme('taxonomy_term_page', array($term->tid), $result):'<div class="taxonomy-term-description">'.filter_xss_admin($term->description).'</div>';
+  
   
   foreach ($tree as $subterm) {
-  	$result = taxonomy_select_nodes(array($subterm->tid), $terms['operator'], $depth, false);
-    if ($subterm->name && db_affected_rows($result)) $output .= '<div class="taxonomy-term-child">'."<h3>{$subterm->name}</h3>".theme('taxonomy_term_page', array($subterm->tid), $result)."</div>";
+    $result = taxonomy_select_nodes(array($subterm->tid), $operator, 0, false);
+    if ($subterm->name && db_affected_rows($result)) $output .= '<div class="taxonomy-term-child">'."<h3>{$subterm->name}</h3>"._iqss_gking_term_page_tree($subterm,$vid,$operator)."</div>";
   }
   return $output;
+  
 }
 
 /**
