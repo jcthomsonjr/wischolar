@@ -35,7 +35,7 @@ p, .biblio-entry, .views-row {
   margin: 0;
   }
 
-h1, h2, h3, h4, #navbar li, #footer {
+h1, h2, #navbar li, #footer {
   font-family: 'ExpresswayRgRegular', sans-serif;
   }
 
@@ -45,10 +45,9 @@ h2 {
   }
 
 h3, h4 {
-  font-weight:normal;
-  font-size:1.2em;
+  font-weight:bold;
+  font-size:1em;
   margin: 0;
-  letter-spacing: .5px;
   }
 
 h3 {
@@ -76,10 +75,25 @@ h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3 {
   letter-spacing: 0;
   }
 
+.node-type-person h2.title {
+  padding: 0;
+  border: none;
+  margin-left: 0;
+  right-right: 0;
+  }
+
 .taxonomy-term-child h3 {
-  color: #777;
+  color: #CC6733;
   font-size: 24px;
   background: #fff;
+  }
+
+.taxonomy-term-child .taxonomy-term-child h3 {
+  border: none;
+  padding: 0;
+  margin-left:0;
+  margin-right: 0;
+
   }
 
 #content .node h3.title {
@@ -627,9 +641,13 @@ body.section-category .node-teaser {
   }
 
 body.section-category .taxonomy-term-description {
-  margin-bottom: 2.5em;
+  margin-bottom: 1.5em;
   }
 
 body.section-category div.terms {
   display:none;
+  }
+
+.taxonomy-term-child .taxonomy-term-child {
+  padding-left: 2em;
   }
