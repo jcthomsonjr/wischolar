@@ -1,0 +1,15 @@
+<?php 
+
+function vsite_layout_update_6001(&$sandbox){
+	
+	$a_return = array();
+  $query =  "SELECT ss.value, ss.sid, og.og_theme FROM {spaces_settings} ss INNER JOIN {og} og ON og.nid=ss.sid WHERE ss.type = 'og' AND ss.id = 'layout'  ";
+  $result = db_query($query);
+  while ($data = db_fetch_object($result)){
+  	
+  	$a_setting = unserialize($data->value);
+  	$s_setting = serialize( array($data->og_theme => $a_setting) );
+  	
+    $a_return[] = db_query("UPDATE {spaces_settings} SET value = '%s' WHERE sid = %d AND type = 'og' AND id = 'layout' ", $s_setting, $data->sid); 
+  }
+}
