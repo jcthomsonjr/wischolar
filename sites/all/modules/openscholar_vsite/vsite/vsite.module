@@ -158,6 +158,12 @@ function vsite_strongarm(){
   //Use lightbox for the popups
   $conf['addthis_widget_version'] = 200;
   
+  
+  //Date Formats
+  $conf['date_format_long'] = "l, F n, Y, g:ia";
+  $conf['date_format_medium'] = "F j, Y";
+  $conf['date_format_short'] = "n/j/Y";
+  
   return $conf;
 }
 
@@ -849,4 +855,49 @@ function vsite_vsite_generic_settings($space, $value = array()){
   );
   
   return $a_settings;
+}
+
+/**
+ * Implementation of hook_token_values().
+ **/
+function vsite_token_values($type, $object = NULL, $options = array()) {
+	$vsite = vsite_get_vsite();
+  if ($vsite || ($type == 'node' && (property_exists($object, 'og_groups') || property_exists($object, 'spaces_og')))){
+
+  	if(!$vsite){
+	  	$node = $object;
+	    if (property_exists($node, 'spaces_og')) {
+	      $gid = $node->spaces_og['gid'];
+	    }elseif (property_exists($object, 'og_groups')) {
+	      $gid = current($node->og_groups);
+	    }
+	    
+	    $vsite = vsite_get_vsite($gid);
+  	}
+  	
+  	if($vsite){
+	    $tokens['vsite-prefix-path'] = check_plain($vsite->purl);
+	    $tokens['vsite-prefix-path-raw'] = $vsite->purl;
+	  	
+	    return $tokens;
+  	}
+  }
+  
+  return array(
+    'vsite-prefix-path' => '',
+    'vsite-prefix-path-raw' => '',
+  );
+}
+
+/**
+ * Implementation of hook_token_list().
+ **/
+function vsite_token_list($type = 'all') {
+  
+	//Works for any type (must be in vsite context)
+	if($type == 'all') $type = 'node';
+  $tokens[$type]['vsite-prefix-path'] = t("The filtered value of the vsite prefix path");
+  $tokens[$type]['vsite-prefix-path-raw'] = t("The raw value of the vsite prefix path");
+  
+  return $tokens;
 }

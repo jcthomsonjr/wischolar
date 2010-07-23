@@ -758,7 +758,12 @@ function vsite_taxonomy_block_view(){
  */
 function vsite_taxonomy_strongarm(){
   $conf = array();
-  //$conf['pathauto_taxonomy_pattern'] = "[space-og-path]/category/[catpath-raw]";
+  $conf['pathauto_taxonomy_pattern'] = "[vsite-prefix-path-raw]/category/[vocab-raw]/[catpath-raw]";
+
+  //Global Taxonomies
+  $result = db_query("SELECT vid FROM {vocabulary} LEFT JOIN {og_vocab} ov USING(vid) WHERE ov.nid IS NULL");
+  while($vid = db_result($result)) $conf['pathauto_taxonomy_'.$vid.'_pattern'] = "category/[vocab-raw]/[catpath-raw]";
+  
   $conf['vertical_tabs_forms']['taxonomy_form_vocabulary'] = TRUE;
 
   return $conf;

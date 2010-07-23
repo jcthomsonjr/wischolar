@@ -260,10 +260,7 @@ function _parser_common_syndication_RDF10_parse($feed_XML) {
     }
 
     // Declaratively define mappings that determine how to construct the result object.
-
-    //PATCH COMMENTS -- This module used this object as an array so cast it as such
-    //               -- The below call always returns an object so this always fails
-    $item = (array)_parser_common_syndication_RDF10_item($rdf_data, (object)array(
+    $item = _parser_common_syndication_RDF10_item($rdf_data, array(
       'title'       => array('rss:title', 'dc:title'),
       'description' => array('rss:description', 'dc:description', 'content:encoded'),
       'url'         => array('rss:link', 'rdf:about'),
@@ -293,7 +290,7 @@ function _parser_common_syndication_RDF10_parse($feed_XML) {
       $item['rdf'][$rdf_property] = $rdf_value;
     }
 
-    $parsed_source['items'][] = (array)$item;
+    $parsed_source['items'][] = $item;
   }
 
   return $parsed_source;

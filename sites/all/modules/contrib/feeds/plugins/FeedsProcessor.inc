@@ -1,5 +1,11 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.11 2010/06/19 15:57:13 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.14 2010/07/18 18:33:43 alexb Exp $
+
+
+// Update mode for existing items.
+define('FEEDS_SKIP_EXISTING', 0);
+define('FEEDS_REPLACE_EXISTING', 1);
+define('FEEDS_UPDATE_EXISTING', 2);
 
 /**
  * Abstract class, defines interface for processors.
@@ -93,6 +99,25 @@ abstract class FeedsProcessor extends FeedsPlugin {
     $parser = feeds_importer($this->id)->parser;
     if (empty($target_item)) {
       $target_item = array();
+    }
+
+    // Many mappers add to existing fields rather than replacing them. Hence we
+    // need to clear target elements of each item before mapping in case we are
+    // mapping on a prepopulated item such as an existing node.
+    if (is_array($target_item)) {
+      $target_item = (object)$target_item;
+      $convert_to_array = TRUE;
+    }
+    foreach ($this->config['mappings'] as $mapping) {
+      if (isset($targets[$mapping['target']]['real_target'])) {
+        unset($target_item->{$targets[$mapping['target']]['real_target']});
+      }
+      elseif (isset($target_item->{$mapping['target']})) {
+        unset($target_item->{$mapping['target']});
+      }
+    }
+    if ($convert_to_array) {
+      $target_item = (array)$target_item;
     }
 
     /*
