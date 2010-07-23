@@ -18,9 +18,9 @@
     <?php endif; ?>
 
      <?php if ($page): ?>
-     <?php if ($terms): ?>
-       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
-     <?php endif; ?>
+      <?php if ($terms): ?>
+        <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
+      <?php endif; ?>
      <?php endif; ?>
     <div class="content">
       <?php print $content; ?>
