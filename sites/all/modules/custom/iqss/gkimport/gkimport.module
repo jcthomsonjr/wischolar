@@ -1037,8 +1037,8 @@ function gkimport_import_presentations(){
         $start = explode('/' , $data[2]);
         $end = strlen($data[3]) ? explode('/' , $data[3]) : array();
         $date = gkimport_convert_date_times($start, $end);
-        $node -> field_date_presentation[0]['value'] = $date['value'];
-       // $node -> field_date_presentation[0]['value2'] = $date['value2'];
+        $node -> field_presentation_date[0]['value'] = $date['value'];
+        $node -> field_presentation_date[0]['value2'] = $date['value'];
       }
       
       // import files and add to $node object
@@ -1066,20 +1066,30 @@ function gkimport_import_presentations(){
       node_save($node);     
       
       gkimport_node_to_og($node -> nid, $account, $sid);
-      
-      //fix url aliases
-      $src = "node/{$node ->nid}";
-      $current_dst = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", $src));
-      $fix_path =  (preg_match('/^gking\//s', $current_dst, $matches)) ? $current_dst : "gking/$current_dst";
-      drush_print("Path: $fix_path");
-      db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src);
-      db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", $src, $fix_path);
       drush_print("Added presentation: {$node -> title}");
-     // return; //just iterate once for now - TESTING PURPOSES ONLY
     }
+    gkimport_presentations_update_alias();
     gkimport_presentations_node_access_fix();
   }
 }
+/**
+ * Update url aliases for presentations
+ */
+function gkimport_presentations_update_alias(){
+  drush_print("Updating url aliases for presentations");
+  $sid = gkimport_get_sid();
+  $sql = db_query("SELECT n.nid, n.type, oga.group_nid FROM {node} n INNER JOIN {og_ancestry} oga USING(nid)
+  HAVING n.type = '%s' AND  oga.group_nid = %d", 'presentation' , $sid );
+  while($data = db_fetch_object($sql)){
+    $src = "node/{$data ->nid}";
+    $current_dst = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s' ", $src));
+    $fix_path =  (preg_match('/^gking\//s', $current_dst, $matches)) ? $current_dst : "gking/$current_dst";
+    drush_print("Path: $fix_path");
+    db_query("DELETE FROM {url_alias} WHERE src = '%s' ", $src);
+    db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", $src, $fix_path);
+  }
+}
+
 /**
  * Fix node access for presentations
  */
