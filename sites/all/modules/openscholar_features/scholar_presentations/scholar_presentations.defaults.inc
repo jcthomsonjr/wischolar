@@ -6,25 +6,24 @@
 function _scholar_presentations_content_default_fields() {
   $fields = array();
 
-  // Exported field: field_date_presentation
+  // Exported field: field_presentation_date
   $fields[] = array(
-    'field_name' => 'field_date_presentation',
+    'field_name' => 'field_presentation_date',
     'type_name' => 'presentation',
     'display_settings' => array(
-      'weight' => '-2',
-      'parent' => '',
       'label' => array(
-        'format' => 'inline',
-      ),
-      'teaser' => array(
-        'format' => 'short',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'short',
+        'format' => 'above',
         'exclude' => 0,
       ),
       '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -67,14 +66,14 @@ function _scholar_presentations_content_default_fields() {
       'default_value_code' => '',
       'default_value2' => 'blank',
       'default_value_code2' => '',
-      'input_format' => 'j F Y',
+      'input_format' => 'j M Y',
       'input_format_custom' => '',
       'increment' => '1',
       'text_parts' => array(),
       'year_range' => '-10:+1',
       'label_position' => 'above',
       'label' => 'Presentation Date',
-      'weight' => '-2',
+      'weight' => '-3',
       'description' => '',
       'type' => 'date_popup',
       'module' => 'date',
@@ -136,7 +135,7 @@ function _scholar_presentations_content_default_fields() {
       'max_filesize_per_file' => '',
       'max_filesize_per_node' => '',
       'label' => 'Presentation Files',
-      'weight' => '1',
+      'weight' => 0,
       'description' => 'Upload the file(s) for this presentation.',
       'type' => 'filefield_widget',
       'module' => 'filefield',
@@ -203,7 +202,7 @@ function _scholar_presentations_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Location',
-      'weight' => '-1',
+      'weight' => '-2',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
