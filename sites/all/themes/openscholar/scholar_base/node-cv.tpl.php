@@ -16,11 +16,7 @@
     <?php if ($unpublished): ?>
       <div class="unpublished"><?php print t('Unpublished'); ?></div>
     <?php endif; ?>
-    <?php if ($submitted): ?>
-      <div class="submitted">
-        <?php print $submitted; ?>
-      </div>
-     <?php endif; ?>
+
      <?php if ($page): ?>
      <?php if ($terms): ?>
        <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
@@ -28,6 +24,11 @@
      <?php endif; ?>
     <div class="content">
       <?php print $content; ?>
+      <?php
+        $changed = $node->changed;
+        $showchanged = format_date($changed,'short');
+        ?>
+      <p class="submitted">(Last updated: <?php print $showchanged;?>)</p>
     </div>
     <?php if (!$page): ?>
       <?php if ($terms): ?>
