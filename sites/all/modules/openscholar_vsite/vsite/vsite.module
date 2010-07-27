@@ -219,13 +219,6 @@ function vsite_link_alter(&$links, $node){
 function vsite_theme($cache, $type, $theme, $path) {
   $path = drupal_get_path('module', 'vsite');
 
-  $items['vsite_admin_links'] = array(
-    'arguments' => array('links' => array()),
-    'template' => 'vsite-admin-links',
-    'path' => $path . '/theme',
-    'file' => 'theme.inc',
-  );
-
   $items['vsite_logo'] = array(
     'arguments' => array('scholar' => NULL, 's_logo_field' => NULL, 'preset' => NULL, 'alt' => NULL, 'title' => NULL, 'attributes' => NULL),
     'path' => $path."/includes/",
