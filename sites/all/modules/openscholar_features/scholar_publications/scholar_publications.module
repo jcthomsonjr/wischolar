@@ -678,3 +678,21 @@ function _scholar_publications_sort_type_by_numpubs($a,$b){
 	
   return ($a->num_records > $b->num_records) ? -1 : 1;
 }
+
+/**
+ * hook link_alter
+ * modify the export links to use ctools
+ */
+function scholar_publications_link_alter(&$links, $node){
+	$a_biblio = array();
+	foreach ($links as $key => $value){
+		if(substr($key,0,7) == "biblio_"){
+			$a_biblio[$key] = $links[$key];
+			unset($links[$key]);
+		}
+	}
+  if(!count($a_biblio)) return;
+
+  $links['biblio_exports'] = array('title' => theme('ctools_dropdown', t('Export'), $a_biblio), 'html' => true);
+}
+
