@@ -43,6 +43,9 @@ function openscholar_front_osboot(){
 
     //Create Vsite Taxonomies
     _vsite_object_create_taxonomys();
+    
+    //Create default sitewide contact form
+    _vsite_default_contact_form();
 
     variable_set('scholar_installed', 1);
     variable_set('site_frontpage', 'welcome');

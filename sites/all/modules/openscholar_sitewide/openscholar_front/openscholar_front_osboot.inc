@@ -212,3 +212,17 @@ function _vsite_object_create_taxonomys(){
   $vid = db_last_insert_id('vocabulary', 'vid');
   variable_set('vsite_taxonomy_interests', $vid);
 }
+
+/**
+ * Create a default sitewide contact form using  
+ * 'site_mail' variable as email recipient
+ */
+function _vsite_default_contact_form(){
+  $sitewide_contact_form = new stdClass();
+  $sitewide_contact_form -> category = 'website feedback';
+  $sitewide_contact_form -> recipients = variable_get('site_mail', '');
+  $sitewide_contact_form -> selected = 1;
+  if (strlen($sitewide_contact_form -> recipients)) {
+    drupal_write_record('contact', $sitewide_contact_form);
+  }
+}
