@@ -1,0 +1,181 @@
+<?php
+
+/**
+ * Implementation of hook menu
+ */
+function vsite_ga_menu(){
+  $items = array();
+  
+  $items['admin/settings/scholar_ga'] = array(
+    'type' => MENU_NORMAL_ITEM,
+    'title' => 'Scholar Google Analytics',
+    'description' => 'Settings for Global Google Analytics.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_ga_settings_form'),
+    'file' => 'vsite_ga.admin.inc',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'weight' => 10,
+  );
+
+  $items['admin/settings/scholar_ga/settings'] = array(
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'title' => 'Settings for Google Analytics',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_ga_settings_form'),
+    'file' => 'vsite_ga.admin.inc',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'weight' => 0,
+  );
+  
+  return $items;
+}
+
+/**
+ * Implementation hook vsite_generic_settings()
+ * @return array
+ */
+function vsite_ga_vsite_generic_settings($space, $value = array()){ 
+  $a_settings = array();
+ 
+  $a_settings['google_analytics_id'] = array(
+  'form' => array(
+  '#type' => 'textfield',
+  '#title' => t('Enter your Google Analytics ID'),
+  '#size' => 20,
+  '#maxlength' => 255,
+  '#weight' => 100,
+  '#default_value' => is_array($value) && array_key_exists('google_analytics_id',$value) ? $value['google_analytics_id']: '',
+  '#description' => "Entering your ID this will send page and visitor data to your Google Analytics account.",
+    )
+  );
+  return $a_settings;
+}
+
+/**
+ * Implementation of hook_footer() to insert Javascript at the end of the page.
+*/
+function vsite_ga_footer(){
+  $ga_vars = _vsite_ga_ga_id_vars();
+  if(!count($ga_vars)) return;  //if no ga ids are saved, then return
+  global $user;
+ 
+  //add role tracking
+  $fields = array();
+  foreach($user->roles as $key => $role) {
+    $user_roles['role'] = 'role:' . $role;
+  }
+  if(is_array($user_roles)){
+    $fields += $user_roles;
+  }
+
+  //add context/feature tracking
+  $feature = arg(0) !== 'home' ? arg(0) : false;
+  if($feature){
+    $feature_info['feature'] = 'feature:' . $feature;
+    if(is_array($feature_info)){
+      $fields += $feature_info;
+    }
+  }
+
+  // Only show segmentation variable if there are specified fields.
+  $segmentation = '';
+  if (count($fields) > 0) {
+    $segmentation = 'pageTrackerGlobal._setVar('. drupal_to_js(implode(':', $fields)) .');';
+  }
+
+  // Track access denied (403) and file not found (404) pages.
+  if (function_exists('drupal_get_headers')) {
+    $headers = drupal_get_headers();
+    if (strstr($headers, 'HTTP/1.1 403 Forbidden')) {
+      // See http://www.google.com/support/analytics/bin/answer.py?answer=86927
+      $url_custom = '"/403.html?page=" + document.location.pathname + document.location.search + "&from=" + document.referrer';
+    }
+    elseif (strstr($headers, 'HTTP/1.1 404 Not Found')) {
+      $url_custom = '"/404.html?page=" + document.location.pathname + document.location.search + "&from=" + document.referrer';
+    }
+  }
+
+  // Build tracker code for footer.
+  $script = 'try{';
+
+  //global pageTracker object
+  if($ga_vars['global_id']){
+    $script .= 'var pageTrackerGlobal = _gat._getTracker('. drupal_to_js($ga_vars['global_id']) .');'; //other ga account
+    //pass segmentation data to pageTrackerGlobal account
+    if (!empty($segmentation)) {
+      $script .= $segmentation;
+    }
+    $script .= 'pageTrackerGlobal._trackPageview();';
+  }
+  //vsite pageTracker object
+  if($ga_vars['vsite_id']){
+    $script .= 'var pageTracker = _gat._getTracker('. drupal_to_js($ga_vars['vsite_id']) .');';
+    $script .= 'pageTracker._trackPageview('. $url_custom .');';
+  }
+  $script .= '} catch(err) {}';
+  drupal_add_js($script, 'inline', 'footer');
+}
+
+function vsite_ga_init() {
+  if(!count(_vsite_ga_ga_id_vars())) return;  //if no ga ids are saved, then return
+  global $user;
+
+  //These ga file location values may change in the future, but not soon enough that they should be in a system settings form
+  $js_file = 'ga.js';
+  $location= 'http://www.google-analytics.com/'. $js_file;
+
+  //only download ga.js file if caching setting is set to 1
+  if (variable_get('vsite_ga_cache', 0) == 1 && (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PUBLIC)) {
+    if( $source = _vsite_ga_cache($location) ){
+      //if module set to cache mode and file is present, include it within the footer, otherwise log an error
+      $implement = is_file($source) ? drupal_add_js('/' . $source, 'module', 'footer') : error_log(t("ERROR: vsite_ga is set to cache mode but the js file is missing from the local directory"));
+    }
+  }
+  //otherwise get the ga.js file from google
+  else {
+    $script = 'var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");';
+    $script .= 'document.write(unescape("%3Cscript src=\'" + gaJsHost + "google-analytics.com/'. $js_file .'\' type=\'text/javascript\'%3E%3C/script%3E"));';
+    drupal_add_js($script, 'inline',  'footer');
+  }
+}
+
+/**
+ * Function to download the ga.js file from google
+ */
+function _vsite_ga_cache($location) {
+  $directory = file_directory_path() .'/googleanalytics';
+  $file_destination = $directory .'/'. basename($location);
+  if (!file_exists($file_destination)) {
+    $result = drupal_http_request($location);
+    if ($result->code == 200) {
+      // Check that the files directory is writable
+      if (file_check_directory($directory, FILE_CREATE_DIRECTORY)) {
+        $save = file_save_data($result->data, $file_destination, FILE_EXISTS_REPLACE);
+      }
+    }
+  }
+  return $file_destination;
+}
+
+/**
+ * Check for global and site-specific Google Analytics ID variables
+ */
+function _vsite_ga_ga_id_vars(){
+  $ga_vars = array();
+
+  //global id
+  if (trim(strlen(variable_get('vsite_ga_global_id' , '')))) {
+    $ga_vars['global_id'] =    variable_get('vsite_ga_global_id' , '');
+  }
+  
+  //site-specific id
+  $vsite = vsite_get_vsite();
+  if(is_object($vsite) && isset($vsite->settings['generic']['google_analytics_id'])){
+    if (trim(strlen($vsite->settings['generic']['google_analytics_id']))){
+      $ga_vars['vsite_id'] = $vsite->settings['generic']['google_analytics_id'];
+    }
+  }
+  return $ga_vars;
+}
