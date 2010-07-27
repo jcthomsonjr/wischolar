@@ -26,7 +26,7 @@ class scholar_software_handler_sort_release_tag extends views_handler_sort {
       $this->query->add_orderby($table_alias, $column, $this->options['order']);
     }
     
-    $this->query->add_field(NULL, "IF ({$table}.field_versionextra_value IS NULL, 0.5, CAST({$table}.field_versionextra_value as UNSIGNED))", "{$table}_numeric_extra");
+    $this->query->add_field(NULL, "IF ({$table}.field_versionextra_value IS NULL, 0.5, IF(CAST({$table}.field_versionextra_value as UNSIGNED) != 0,CAST({$table}.field_versionextra_value as UNSIGNED),{$table}.field_versionextra_value))", "{$table}_numeric_extra");
     $this->query->add_orderby(NULL, NULL, $this->options['order'], "{$table}_numeric_extra");
   }
 }

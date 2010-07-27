@@ -253,7 +253,7 @@ function _scholar_software_content_default_fields() {
       'bio' => 0,
       'cv' => 0,
     ),
-    'advanced_view' => 'scholar_software_projects',
+    'advanced_view' => 'scholar_software_releaseprojects',
     'advanced_view_args' => '',
     'widget' => array(
       'autocomplete_match' => 'contains',
