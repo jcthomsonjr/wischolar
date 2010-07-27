@@ -41,7 +41,7 @@ class vsite_menus_menus implements vsite_setting {
 
     $disabled_choices = self::get_disabled_menus();
     
-    foreach ($disabled_choices as $disabled) $choices[$disabled] .= "<br/>(disabled)";
+    foreach ($disabled_choices as $disabled) $choices[$disabled] .= " (disabled)";
     
     $a_disabled_features = array_intersect_key(spaces_features_map('node'),vsite_content_types(FEATURE_DISABLED));
     $a_disabled_links = array_keys(array_intersect(spaces_features_map('menu'),$a_disabled_features));
