@@ -37,23 +37,60 @@ html.js div.ctools-dropdown a.ctools-dropdown-text-link {
 }
 
 html.js div.ctools-dropdown div.ctools-dropdown-container, #ui-datepicker-div {
-  width: 175px;
+  min-width: 165px;
   background: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid #b2b2b2;
+  border-bottom-color: #898989;
   margin: 0 1px 0 0;
-  padding: 0 3px 3px 0;
+  padding: 5px 0;
   color: #494949;
-  -moz-border-radius-bottomleft:8px;
-  -moz-border-radius-bottomright:8px;
-  -webkit-border-bottom-left-radius:8px;
-  -webkit-border-bottom-right-radius:8px;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius: 5px;
   -moz-box-shadow:  #888 0 4px 25px;
   -webkit-box-shadow:  #888 0 4px 25px;
   box-shadow: 0 4px 25px #888;
-
+  opacity: .93;
   }
+
+
+.item-list ul.context-links {
+  margin: 0;
+  }
+
+.item-list ul.context-links li, #ctools-dropdown-1 {
+  list-style:none;
+  margin:0 0 0 .7em;
+  list-style: none;
+  padding: 0;
+  }
+
+.ctools-dropdown, .ctools-dropdown .ctools-dropdown-link-wrapper, .ctools-dropdown .ctools-dropdown-container-wrapper {
+  display:inline;
+  }
+
+.context-links a {
+  font-style: normal !important;
+  font-size: 12px !important;
+  background: url(images/plus.png) no-repeat 0 50% transparent !important;
+  padding: 0 0 0 13px !important;
+  }
+
+.context-links .ctools-dropdown-container-wrapper a {
+  background: #fff !important;
+  padding: 3px 0 3px 13px !important;
+  color: #000 !important;
+  }
+
+.context-links .ctools-dropdown-container-wrapper a:hover {
+  background-color: #356df6 !important;
+  color: #fff !important;
+  }
+
+.empty-content .item-list ul.context-links li {
+  float: left;
+  }
+
 
 table.ui-datepicker-calendar {
   width: 100%;
