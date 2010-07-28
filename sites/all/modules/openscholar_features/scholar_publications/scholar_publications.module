@@ -693,6 +693,6 @@ function scholar_publications_link_alter(&$links, $node){
 	}
   if(!count($a_biblio)) return;
 
-  $links['biblio_exports'] = array('title' => theme('ctools_dropdown', t('Export'), $a_biblio), 'html' => true);
+  $links = array_merge(array('biblio_exports' => array('title' => theme('ctools_dropdown', t('Export'), $a_biblio), 'html' => true)),$links);
 }
 
