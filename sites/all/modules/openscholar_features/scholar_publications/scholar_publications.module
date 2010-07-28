@@ -283,6 +283,16 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       if($teaser && variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes){
       	$node->content['teaser']['#value'] .= ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
       }
+      if($teaser && biblio_access('export', $node)){
+	      $links = array();
+        $show_link = variable_get('biblio_export_links', array('tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
+		    $show_link['google'] = variable_get('biblio_google_link', 1);
+		    if ($show_link['tagged']) $links['biblio_tagged']         = _build_biblio_tagged_link($base, $node->nid);
+        if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
+		    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
+		    if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
+		    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, 'biblio-export');
+      }
     break;
   }
 }
@@ -469,6 +479,17 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   if (biblio_access('download', $node) && !count($node->field_biblio_image)) $s_output .= theme('biblio_download_links',$node);
 
   if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
+  
+  if(biblio_access('export', $node)){
+    $links = array();
+    $show_link = variable_get('biblio_export_links', array('tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
+    $show_link['google'] = variable_get('biblio_google_link', 1);
+    if ($show_link['tagged']) $links['biblio_tagged']         = _build_biblio_tagged_link($base, $node->nid);
+    if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
+    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
+    if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
+    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, 'biblio-export');
+  }
 
   if (!$node->status) $s_output .= '</div>';
 
@@ -643,27 +664,6 @@ function _scholar_publications_co_author_wgt(){
   	///////////////////////
     $output .= "\n<li>".($s_site_url?l($data->name,$s_site_url,array('attributes' => array("target" => "_blank"))):$data->name)."</li>";
 
-      ///////////////////////
-      //Complex Format
-      ///////////////////////
-//  	$s_pub_by_site = '';
-//  	if($data->total_publications>$data->num_site_publications){
-//  	   $sub_result =  db_query_range("SELECT COUNT(*) as num_pub, oa.group_nid as sid FROM {biblio_contributor} bc INNER JOIN {og_ancestry} oa ON oa.nid = bc.nid WHERE bc.cid = %d AND oa.group_nid != %d GROUP BY oa.group_nid ORDER  BY num_pub DESC", array($data->cid,$vsite->group->nid), 0, 7);
-//  	   while ($pub_count = db_fetch_object($sub_result)) {
-//  	     $space =  spaces_load('og', $pub_count->sid);
-//  	     if(is_object($space)){
-//  	       $s_site_name = ($owner_site && $owner_site->group->nid == $pub_count->sid)?'their site':"site ({$space->group->title})";
-//  	       $s_pub_by_site .= "<li>".l("{$pub_count->num_pub} pub.",$space->get_absolute_url("publications/author/".$data->cid),array('attributes' => array("target" => "_blank")))." on {$s_site_name}</li>";
-//  	     }
-//  	   }
-//  	}
-//  	$output .= "\n<li>"
-//  	           // ."<a hreft='#' class='more' onClick=\"$(this).siblings('ul.more_co_author_info').slideToggle('slow',function(){ $(this).siblings('a.more').html((this.style.display == 'none')?'[+]':'[-]')}); return false;\">[+]</a> "
-//  	            .($s_site_url?l($data->name,$s_site_url,array('attributes' => array("target" => "_blank"))):$data->name)
-//  	            ."<ul class='more_co_author_info' style=\"display:none;\">"
-//  	              ."<li>".l("{$data->num_site_publications} pub.","publications/author/".$data->cid)." on this site</li>"
-//  	              .$s_pub_by_site
-//  	            ."</ul></li>";
   }
   $output .= "</ul>";
 
@@ -684,15 +684,9 @@ function _scholar_publications_sort_type_by_numpubs($a,$b){
  * modify the export links to use ctools
  */
 function scholar_publications_link_alter(&$links, $node){
-	$a_biblio = array();
+	//Remove biblio export links
 	foreach ($links as $key => $value){
-		if(substr($key,0,7) == "biblio_"){
-			$a_biblio[$key] = $links[$key];
-			unset($links[$key]);
-		}
+		if(substr($key,0,7) == "biblio_") unset($links[$key]);
 	}
-  if(!count($a_biblio)) return;
-
-  $links = array_merge(array('biblio_exports' => array('title' => theme('ctools_dropdown', t('Export'), $a_biblio), 'html' => true)),$links);
 }
 
