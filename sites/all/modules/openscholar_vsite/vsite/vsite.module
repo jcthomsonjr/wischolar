@@ -74,7 +74,8 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
 
         if (count($vsites) > 1){
           //asssumes user is owner of multiple vsites
-          drupal_goto('user');
+          $_REQUEST['destination'] = 'user';
+          return;
         }
       }
 
@@ -87,7 +88,8 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
         else{
           $route = 'user';
         }
-        return drupal_goto($route);
+        $_REQUEST['destination'] = $route;
+        return;
       }
       break;
   }
