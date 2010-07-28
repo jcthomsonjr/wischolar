@@ -195,7 +195,7 @@ function vsite_link($type, $object, $teaser = FALSE){
   $vsite = vsite_get_vsite();
   if ($vsite && $vsite->admin_access()) {
     $links['vsite-admin'] = array(
-      'title' => theme('ctools_dropdown', "Admin", vsite_get_admin_links('node', $object),'vsite-admin'),
+      'title' => theme('ctools_dropdown', "Admin", vsite_get_admin_links('node', $object),false,'vsite-admin'),
       'html' => TRUE
     );
   }

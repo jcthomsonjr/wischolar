@@ -56,6 +56,7 @@ function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
   if ($op == 'list') {
     $blocks['areas_of_research']['info'] = t('AOR: Applications &amp; Methods');
     $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
+    $blocks['gking_pub_by_type']['info'] = t('Gkings "Recent Works" to replace default Publications by type');
     return $blocks;
   }
   elseif ($op == 'view') {
@@ -64,6 +65,8 @@ function iqss_gking_block($op = 'list', $delta = false, $edit = array()) {
         return _iqss_gking_areas_of_research_wgt();
       case 'filter_by_type':
          return iqss_gking_filter_by_type_block();
+      case 'gking_pub_by_type':
+         return iqss_gking_pub_by_type_block();
     }
   }
 }
@@ -183,30 +186,6 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
 	    	$n_vid = $vid;
 	    	break;
 	    }
-    }
-
-    $a_term = taxonomy_get_term(current($router_item['page_arguments']));
-    if($a_term->vid == $n_vid){
-		  //Add this block category pages on Garys site
-		  $a_block_info = iqss_gking_block();
-		  $contexts['vsite-section-public']->block['iqss_gking_taxonomy_applications'] = array(
-		    'module' => 'iqss_gking',
-		    'delta' => 'taxonomy_applications',
-		    'weight' => -20,
-		    'region' => 'right',
-		    'status' => 0,
-		    'label' => $a_block_info['taxonomy_applications']['info'],
-		    'type' => 'context_ui',
-		  );
-		  $contexts['vsite-section-public']->block['iqss_gking_taxonomy_methods'] = array(
-		    'module' => 'iqss_gking',
-		    'delta' => 'taxonomy_methods',
-		    'weight' => -20,
-		    'region' => 'right',
-		    'status' => 0,
-		    'label' => $a_block_info['taxonomy_methods']['info'],
-		    'type' => 'context_ui',
-		  );
     }
 
 	  //Add this block category pages on (Lets you filter the category by publictaion type)
@@ -329,4 +308,49 @@ function iqss_gking_term_by_context($tid, $s_feature = false){
   if($vocab->name != "Research Interests") return vsite_taxonomy_term_by_context($tid, $s_feature);
   
   return iqss_gking_term_page($tid);
+}
+
+
+/**
+ * Overrides the default "_scholar_publications_pub_by_type_wgt" to allow for custom categories for Gary
+ */
+function iqss_gking_pub_by_type_block(){
+	jquery_ui_add(array('ui.tabs'));
+  $vsite = vsite_get_vsite();
+  
+  $view = views_get_view('publication_types');
+  $view->execute('block_1');
+  
+  dpm($view->result);
+  usort($view->result,"_scholar_publications_sort_type_by_numpubs");
+  $types = array_slice($view->result,0,4);
+
+  $vsite = vsite_get_vsite();
+
+  $output = ""; $i = 0; $tabs = "<h3 class=\"title\">Recent Publications</h3><ul>";
+  foreach ($types as $type) {
+    if($type->num_records < 1) continue;
+    
+    $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type->biblio_types_name}";
+    if(!in_array($type->biblio_types_name,array('Software','Data','Conference Proceedings', 'Thesis', 'Unpublished','Miscellaneous','Audiovisual','Artwork'))) $tabs .= "s"; //FIX THE PLURAL
+    $tabs .= "</a></li>";
+    
+    $view = views_get_view('publication_types');
+    $view->set_arguments(array(str_replace(" ","-",$type->biblio_types_name)));
+    $view->execute('page_1');
+
+    $output .= "<div id='pub_type_tabs-{$i}'>";
+    foreach ($view->result as $row) {
+      $node = node_load($row->nid);
+      $output .= "\n<div class=\"biblio-entry\">". theme('biblio_entry', $node, variable_get('biblio_base', 'biblio') , biblio_get_style()) ."</div>";
+    }
+    $output .= "</div>";
+    $i++;
+  }
+  $tabs .= "</ul>";
+  if(!$output) return array();
+
+  $output = "<div id='pub_type_tabs'>".$tabs.$output."</div>";
+
+  return array('subject' => "Recent Writings",'content' => $output);
 }

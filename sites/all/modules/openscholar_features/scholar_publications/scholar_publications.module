@@ -291,7 +291,7 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
         if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
 		    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
 		    if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
-		    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, 'biblio-export');
+		    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, false, 'biblio-export');
       }
     break;
   }
@@ -488,7 +488,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
     if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
     if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
     if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
-    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, 'biblio-export');
+    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, false,'biblio-export');
   }
 
   if (!$node->status) $s_output .= '</div>';
