@@ -85,7 +85,7 @@
             <?php print $messages; ?>
             <?php //print $content; ?>
             <?php
-              $tabbedpubs = _scholar_publications_pub_by_type_wgt();
+              $tabbedpubs = iqss_gking_pub_by_type_block();
               print $tabbedpubs['content'];
               ?>
           </div> <!-- /content -->

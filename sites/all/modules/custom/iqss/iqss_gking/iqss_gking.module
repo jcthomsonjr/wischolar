@@ -317,26 +317,20 @@ function iqss_gking_term_by_context($tid, $s_feature = false){
 function iqss_gking_pub_by_type_block(){
 	jquery_ui_add(array('ui.tabs'));
   $vsite = vsite_get_vsite();
-  
-  $view = views_get_view('publication_types');
-  $view->execute('block_1');
-  
-  dpm($view->result);
-  usort($view->result,"_scholar_publications_sort_type_by_numpubs");
-  $types = array_slice($view->result,0,4);
+
+  $types[] = array('key' => 'working-paper', 'name' => 'Papers');
+  $types[] = array('key' => 'journal-article', 'name' => 'Articles');
+  $types[] = array('key' => 'book', 'name' => 'Books');
+  $types[] = array('key' => 'software', 'name' => 'Software');
 
   $vsite = vsite_get_vsite();
 
-  $output = ""; $i = 0; $tabs = "<h3 class=\"title\">Recent Publications</h3><ul>";
+  $output = ""; $i = 0; $tabs = "<h3 class=\"title\">Recent Work</h3><ul>";
   foreach ($types as $type) {
-    if($type->num_records < 1) continue;
-    
-    $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type->biblio_types_name}";
-    if(!in_array($type->biblio_types_name,array('Software','Data','Conference Proceedings', 'Thesis', 'Unpublished','Miscellaneous','Audiovisual','Artwork'))) $tabs .= "s"; //FIX THE PLURAL
-    $tabs .= "</a></li>";
+    $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type['name']}</a></li>";
     
     $view = views_get_view('publication_types');
-    $view->set_arguments(array(str_replace(" ","-",$type->biblio_types_name)));
+    $view->set_arguments(array($type['key']));
     $view->execute('page_1');
 
     $output .= "<div id='pub_type_tabs-{$i}'>";
@@ -347,6 +341,21 @@ function iqss_gking_pub_by_type_block(){
     $output .= "</div>";
     $i++;
   }
+  
+    //Presentations
+    $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">Presentations</a></li>";
+    
+    $view = views_get_view('scholar_presentations');
+    $view->execute('page_1');
+
+    $output .= "<div id='pub_type_tabs-{$i}'>";
+    foreach ($view->result as $row) {
+      $node = node_load($row->nid);
+      $output .= node_view($node,true);
+    }
+    $output .= "</div>";
+  
+  
   $tabs .= "</ul>";
   if(!$output) return array();
 
