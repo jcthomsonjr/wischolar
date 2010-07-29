@@ -11,7 +11,7 @@ $flags[] = array (
   'name' => 'featuredposts',
   'title' => 'Featured Posts',
   'global' => '1',
-  'flag_short' => 'Featured Post',
+  'flag_short' => 'Feature this Post',
   'flag_long' => 'Make this a Featured Post',
   'flag_message' => '',
   'unflag_short' => 'Remove Featured Post',
@@ -19,13 +19,13 @@ $flags[] = array (
   'unflag_message' => '',
   'unflag_denied_text' => '',
   'link_type' => 'toggle',
-  'roles' => 
+  'roles' =>
   array (
-    'flag' => 
+    'flag' =>
     array (
       0 => 2,
     ),
-    'unflag' => 
+    'unflag' =>
     array (
       0 => 2,
     ),
@@ -37,7 +37,7 @@ $flags[] = array (
   'i18n' => 0,
   'module' => 'vsite_widgets',
   'api_version' => 2,
-  'locked' => 
+  'locked' =>
   array (
     0 => 'name',
   ),
