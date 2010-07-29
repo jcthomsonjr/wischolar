@@ -57,7 +57,7 @@ function iqss_gking_update_6003(&$sandbox){
   while($data = db_fetch_object($sql)){
     $filename = db_result(db_query("SELECT filename FROM {files} WHERE fid = %d", $data -> fid));
     if ($filename){
-      db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/{$data -> nid}", "gking/files/$filename" );
+      db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/{$data -> nid}", "gking/talks/$filename" );
     }
   }
   return $return;
