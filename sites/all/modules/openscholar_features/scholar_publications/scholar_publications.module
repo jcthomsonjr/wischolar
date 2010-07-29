@@ -441,6 +441,11 @@ function scholar_publications_theme_registry_alter(&$theme_registry){
    */
   $theme_registry['biblio_entry']['function'] = 'scholar_publications_biblio_entry';
   $theme_registry['biblio_author_link']['function'] = 'scholar_publications_biblio_author_link';
+  
+  //Override the default node style function
+  $theme_registry['biblio_tabular']['function'] = 'theme_scholar_publications_biblio_tabular';
+  $theme_registry['biblio_tabular']['file'] = 'scholar_publications_biblio_tabular.tpl';
+  $theme_registry['biblio_tabular']['path'] = drupal_get_path('module', 'scholar_publications')."/theme";
 }
 
 /**
