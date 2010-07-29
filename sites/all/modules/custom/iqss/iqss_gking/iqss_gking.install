@@ -38,3 +38,27 @@ function iqss_gking_update_6002(&$sandbox){
   
   return $return;
 }
+
+/**
+ * Add correct filefield path aliases for presentation slides
+ * @param $sandbox
+ */
+function iqss_gking_update_6003(&$sandbox){
+  $return = array();
+  $gking_sid = 3633; //gary's site id
+
+  $sql = db_query("
+  SELECT n.nid as nid, n.type, oga.group_nid, oga.nid as oga_nid, cfp.nid as cfp_nid, cfp.field_presentation_file_fid as fid
+  FROM {node} n
+  RIGHT JOIN {og_ancestry} oga on oga.nid  = n.nid
+  RIGHT JOIN {content_field_presentation_file} cfp on cfp.nid = n.nid
+  WHERE (oga.group_nid = %d AND type = '%s')" , $gking_sid, 'presentation'); 
+
+  while($data = db_fetch_object($sql)){
+    $filename = db_result(db_query("SELECT filename FROM {files} WHERE fid = %d", $data -> fid));
+    if ($filename){
+      db_query("INSERT INTO {url_alias} (src, dst) VALUES ('%s', '%s')", "filefield_paths/alias/{$data -> nid}", "gking/files/$filename" );
+    }
+  }
+  return $return;
+}
