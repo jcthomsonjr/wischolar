@@ -758,7 +758,7 @@ function vsite_taxonomy_block_view(){
  */
 function vsite_taxonomy_strongarm(){
   $conf = array();
-  $conf['pathauto_taxonomy_pattern'] = "[vsite-prefix-path-raw]/category/[vocab-raw]/[catpath-raw]";
+  $conf['pathauto_taxonomy_pattern'] = "[taxonomy-vsite-prefix-path-raw]/category/[vocab-raw]/[catpath-raw]";
 
   //Global Taxonomies
   $result = db_query("SELECT vid FROM {vocabulary} LEFT JOIN {og_vocab} ov USING(vid) WHERE ov.nid IS NULL");
@@ -1075,4 +1075,36 @@ function vsite_taxonomy_preprocess_node(&$vars){
   if ($vars['teaser']){
     unset($vars['terms']); //Do not show "in xxx,yyy" in the teaser view
   }
+}
+
+/**
+ * Implementation of hook_token_values().
+ **/
+function vsite_taxonomy_token_values($type, $object = NULL, $options = array()) {
+  $vsite = vsite_get_vsite();
+  if ($vsite){
+    $tokens['taxonomy-vsite-prefix-path'] = check_plain($vsite->purl);
+    $tokens['taxonomy-vsite-prefix-path-raw'] = $vsite->purl;
+      
+    return $tokens;
+  }
+  
+  return array(
+    'taxonomy-vsite-prefix-path' => '',
+    'taxonomy-vsite-prefix-path-raw' => '',
+  );
+}
+
+/**
+ * Implementation of hook_token_list().
+ **/
+function vsite_token_list($type = 'all') {
+  
+  //Works for taxonomy type (must be in vsite context)
+  if($type == 'taxonomy' || $type == 'all'){
+	  $tokens['taxonomy']['taxonomy-vsite-prefix-path'] = t("The filtered value of the vsite prefix path for taxonomies");
+	  $tokens['taxonomy']['taxonomy-vsite-prefix-path-raw'] = t("The raw value of the vsite prefix path for taxonomies");
+  }
+  
+  return $tokens;
 }
