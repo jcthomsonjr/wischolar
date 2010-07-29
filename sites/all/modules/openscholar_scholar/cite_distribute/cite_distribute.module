@@ -257,6 +257,18 @@ function cite_distribute_form($form_id, $nid){
   }
 
   $form['cite_distribute_widgets']['cite_distribute_submit'] = array(
+  '#type' => 'cancel',
+  '#value' => t('Cancel'),
+  '#ahah' => array(
+  'event' => 'click',
+  'path' => '',
+  'wrapper' => 'distribute-message',
+  'method' => 'replace',
+  'effect' => 'fade',
+  )
+  );
+
+  $form['cite_distribute_widgets']['cite_distribute_submit'] = array(
   '#type' => 'submit',
   '#value' => t('Submit'),
   '#ahah' => array(

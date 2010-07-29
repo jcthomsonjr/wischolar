@@ -4,9 +4,9 @@
  * theme_cite_distribute_formlink()
  * themable title link
  */
-function theme_cite_distribute_get_formlink($object){ 
-  $output = '<a href="#cite-distribute-link-title" class="toggle" id="cite-distribute-link-title">Distribute</a>'; // l
-  $output .= '<div class = "distribute-form-wrapper slider">' . drupal_get_form('cite_distribute_form', $object->nid). '</div>';
+function theme_cite_distribute_get_formlink($object){
+  $output = '<span class="disto-toggle">Distribute</span>';
+  $output .= '<ul class = "distribute-form-wrapper slider"><li>' . drupal_get_form('cite_distribute_form', $object->nid). '</li></ul>';
   return $output;
 }
 
@@ -27,11 +27,11 @@ function theme_cite_distribute_form_msg($modules = NULL){
     foreach ($modules as $module){
       //getting information about the module
       $info = module_invoke($module, 'cite_distribute_register');
-      $output .= '<dd>' . $info[0]['repository'] . '</dd>';      
+      $output .= '<dd>' . $info[0]['repository'] . '</dd>';
     }
     $output .= '</dl>';
   }
-  
+
   else{
     $output = 'No repositories selected';
   }

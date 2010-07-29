@@ -3,7 +3,7 @@ html, body, #container {
   }
 
 body {
-  font: 90%/1.4em verdana, helvetica, arial, sans-serif;
+  font: 85%/1.5em verdana, helvetica, arial, sans-serif;
   color: #000;
   background: fixed url(images/body-bg.png) repeat-x 0 100% #fbfbfb;
   background: #fff;
@@ -27,7 +27,7 @@ body {
 	font-style: normal;
 }
 
-p, .biblio-entry, .views-row {
+p {
   margin: 0 0 1.5em 0;
   }
 
@@ -93,7 +93,8 @@ h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3 {
   padding: 0;
   margin-left:0;
   margin-right: 0;
-
+  margin-bottom: 0;
+  margin-top: .5em;
   }
 
 #content .node h3.title {
@@ -197,6 +198,19 @@ a:hover {
   background: #eee;
   }
 
+.node, .biblio-entry, .views-row {
+  padding-bottom:0;
+  margin-bottom: .75em;
+  }
+
+
+body.section-category .node {
+ background: url(images/orange-dot.png) 0 .3em no-repeat transparent;
+ }
+
+.node:active {
+  background: red;
+  }
 
 /* HEADER */
 
@@ -230,7 +244,7 @@ a:hover {
   }
 
 #navbar ul li {
-  font-size: 15px;
+  font-size: 14px;
   letter-spacing: 2px;
   }
 
@@ -251,7 +265,7 @@ a:hover {
   }
 
 #block-scholar-1 h1 {
-  width: 186px;
+  width: 173px;
   text-align: center;
   font-weight: normal;
   letter-spacing: 5px;
@@ -262,7 +276,7 @@ a:hover {
   color:#fff;
   background:#636363;
   display:block;
-  width: 186px;
+  width: 173px;
   height: 29px;
   }
 
@@ -398,6 +412,12 @@ body.header-right-main #header-wrapper {
   margin-left: 0;
   padding-left: 0;
   padding-right: 0;
+  }
+
+
+#pub_type_tabs .node h3.title {
+  font: bold .9em/normal verdana, helvetica, sans-serif;
+  float: none;
   }
 
 #pub_type_tabs ul {
@@ -636,8 +656,9 @@ body.header-right-main #header-wrapper {
 /* TAXONOMY */
 
 body.section-category .node-teaser {
-  margin-left: 2em;
+  padding-left: 1.2em;
   margin-bottom: 0;
+  margin-left: 1em;
   }
 
 body.section-category .taxonomy-term-description {
@@ -645,5 +666,5 @@ body.section-category .taxonomy-term-description {
   }
 
 .taxonomy-term-child .taxonomy-term-child {
-  padding-left: 2em;
+  padding-left: 4em;
   }

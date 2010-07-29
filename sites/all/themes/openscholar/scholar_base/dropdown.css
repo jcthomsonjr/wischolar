@@ -4,7 +4,9 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   display: none;
   text-align: left;
   position: absolute;
-}
+  left: 0;
+  top: 19px
+  }
 
 html.js div.ctools-dropdown div.ctools-dropdown-container ul li a {
   display: block;
@@ -14,14 +16,13 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   list-style-type: none;
 }
 
-html.js div.ctools-dropdown div.ctools-dropdown-container ul li {
+.ctools-dropdown div.ctools-dropdown-container ul li,
+#content .ctools-dropdown-container-wrapper ul.links li {
+  padding: 0;
   display: block;
-  /* prevent excess right margin in IE */
-  margin-right: 0;
-  margin-left: 0;
-  padding-right: 0;
-  padding-left: 0;
-  background-image: none; /* prevent list backgrounds from mucking things up */  text-transform:capitalize;
+  margin: 0;
+  background-image: none;
+  text-transform:capitalize;
 }
 
 .ctools-dropdown-no-js .ctools-dropdown-link,
@@ -29,12 +30,6 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul li {
   display: none;
 }
 
-/* Everything from here down is purely visual style and can be overridden. */
-
-html.js div.ctools-dropdown a.ctools-dropdown-text-link {
-  background: url(../images/collapsible-expanded.png) 3px 5px no-repeat;
-  padding-left: 12px;
-}
 
 html.js div.ctools-dropdown div.ctools-dropdown-container, #ui-datepicker-div {
   min-width: 165px;
@@ -69,6 +64,10 @@ html.js div.ctools-dropdown div.ctools-dropdown-container, #ui-datepicker-div {
   display:inline;
   }
 
+.ctools-dropdown {
+  position: relative;
+  }
+
 .context-links a {
   font-style: normal !important;
   font-size: 12px !important;
@@ -76,15 +75,18 @@ html.js div.ctools-dropdown div.ctools-dropdown-container, #ui-datepicker-div {
   padding: 0 0 0 13px !important;
   }
 
-.context-links .ctools-dropdown-container-wrapper a {
+.context-links .ctools-dropdown-container-wrapper a, .ctools-dropdown-container-wrapper ul.links li a, li.cite_distribute {
   background: #fff !important;
   padding: 3px 0 3px 13px !important;
   color: #000 !important;
   }
 
-.context-links .ctools-dropdown-container-wrapper a:hover {
+.context-links .ctools-dropdown-container-wrapper a:hover, .ctools-dropdown-container-wrapper ul.links li a:hover, li.cite_distribute:hover {
   background-color: #356df6 !important;
   color: #fff !important;
+  text-transform: none;
+  font-weight: bold;
+  text-decoration: none;
   }
 
 .empty-content .item-list ul.context-links li {
@@ -125,20 +127,6 @@ table.ui-datepicker-calendar {
   padding: 4px 4px 4px 8px;
   background:#e2f468;
   }
-
-html.js div.ctools-dropdown div.ctools-dropdown-container ul li li a {
-  padding-left: 25px;
-  width: 150px;
-  color: #027AC6;
-
-}
-
-html.js div.ctools-dropdown div.ctools-dropdown-container ul li a {
-  text-decoration: none;
-  padding-left: 5px;
-  width: 170px;
-  color: #027AC6;
-}
 
 html.js div.ctools-dropdown div.ctools-dropdown-container ul li span {
   display: block;
