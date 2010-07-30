@@ -28,31 +28,31 @@ function pvsite_design_perm() {
  */
 function vsite_design_theme(){
   $path = drupal_get_path('module', 'vsite_design') .'/theme';
-  
+
   $items = array();
   $items['vsite_design_theme_picker'] = array(
     'arguments' => array('info' => array(), 'sub_theme' => ''),
     'template' => 'vsite_design-theme-picker',
     'path' => $path,
   );
-  
+
   $items['vsite_design_theme_subnav'] = array(
     'arguments' => array('count' => array()),
     'template' => 'vsite_design-theme-subnav',
     'path' => $path,
   );
-  
+
   $items['vsite_design_theme_form'] = array(
     'arguments' => array('form' => NULL),
   );
-  
+
   $items['vsite_design_theme_shieldpicker'] = array(
     'arguments' => array('file' => array()),
     'template' => 'vsite_design-theme-shieldpicker',
     'path' => $path."/shield",
     //'file' => 'theme.inc',
   );
-  
+
   return $items;
 }
 
@@ -66,7 +66,7 @@ function vsite_design_spaces_settings() {
       'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.theme.inc',
     ),
   );
-  
+
   return $a_settings;
 }
 
@@ -151,44 +151,44 @@ function vsite_design_imagecache_default_presets() {
 
 /**
  * Make sure that the css files are preprocessed correctly
- * 
+ *
  * @param $vars
  * @return unknown_type
  */
 function vsite_design_preprocess_page(&$vars){
   //Return if:
-  if (! ($vsite = vsite_get_vsite()) || //In a Vsite? 
+  if (! ($vsite = vsite_get_vsite()) || //In a Vsite?
       context_get('vsite', 'section') == 'cp' || //We are in CP?
       ! $vsite->group->og_theme || //Grop has a custom theme
       ! ($themes = list_themes()) || ! array_key_exists($vsite->group->og_theme, $themes) || //The theme is valid
       empty($themes[$vsite->group->og_theme]->stylesheets))
         return; //The theme has styles associated
-  
+
 
   // Add stylesheets used by this theme, without preprocessing
   foreach ( $themes[$vsite->group->og_theme]->stylesheets as $media => $stylesheets ) {
     foreach ( $stylesheets as $name => $stylesheet )
       drupal_add_css($stylesheet, 'theme', $media, false);
   }
-      
+
   // load the css for the theme flavor
   if (isset($vsite->settings['theme']) && is_array($vsite->settings['theme'])) {
     $theme_flavors = vsite_design_get_flavors();
   	if ($vsite->settings['theme']['flavor'] && array_key_exists($vsite->settings['theme']['flavor'],$theme_flavors)) {
       $s_flavor = $vsite->settings['theme']['flavor'];
-      
+
   		if(!array_key_exists('css',$theme_flavors[$s_flavor])) $theme_flavors[$s_flavor]['css'] = array(); //Default
-  		
+
       foreach ($theme_flavors[$s_flavor]['css'] as $s_css){
       	drupal_add_css($theme_flavors[$s_flavor]['path'].'/'.$s_css, 'theme', 'all', false);
       }
-      
+
       if(array_key_exists('conditional-css',$theme_flavors[$s_flavor])){
       	global $conf;
         $conf['conditional_styles_'.$theme_flavors[$s_flavor]['module']] = $conf['conditional_styles_'.$theme_flavors[$s_flavor]['module']].
                                                                            _vsite_design_get_conditional_styles($theme_flavors[$s_flavor]['conditional-css'],$theme_flavors[$s_flavor]['path']);
       }//Add the flavors conditional style
-      
+
     }
   }
 
@@ -203,7 +203,7 @@ function vsite_design_preprocess_page(&$vars){
  */
 function vsite_design_vsite_generic_settings($space, $value = array()){
   $a_settings = array();
-  
+
   //Disable the shield
   $a_settings['disable_shield'] = array(
     'form' => array(
@@ -215,14 +215,14 @@ function vsite_design_vsite_generic_settings($space, $value = array()){
       '#description' => "Select the shield that you wish to appear in the 'shield widget' on your site.  Click disable to display none.",
     )
   );
-  
+
   //The shield List
   $s_shield_dir = drupal_get_path('module','vsite_design')."/theme/shield/shields";
   $a_shields = file_scan_directory($s_shield_dir, '.*', array('.', '..'));
-    
+
   $shield_options = array();
-  foreach ($a_shields as $shield)  $shield_options[$shield->filename] = theme('vsite_design_theme_shieldpicker', $shield); 
-  
+  foreach ($a_shields as $shield)  $shield_options[$shield->filename] = theme('vsite_design_theme_shieldpicker', $shield);
+
   $a_settings['shield'] = array(
     'form' => array(
       '#prefix' => "<div class='shield_wrapper'>",
@@ -239,7 +239,7 @@ function vsite_design_vsite_generic_settings($space, $value = array()){
     ),
   );
   //END Shield List
-  
+
   return $a_settings;
 }
 
@@ -249,36 +249,36 @@ function vsite_design_vsite_generic_settings($space, $value = array()){
  * @return string html
  */
 function theme_vsite_design_theme_form($form) {
-	
+
 	$output = drupal_render($form['maintheme']);
-	
+
 	//UL List
 	$output .= '<ul class = "theme-picker">';
 	foreach ($form['maintheme']['#enabled_themes'] as $o_theme){
 		$s_sub_theme = '';
 		$a_info = array_merge((array)$o_theme->info, array('theme_name'=>$o_theme->name));
-		
+
 		if(array_key_exists($o_theme->name.'_flavor',$form)){
 			$s_sub_theme =  drupal_render($form[$o_theme->name.'_flavor']);
-			
+
 			if($s_flavor = $form[$o_theme->name.'_flavor']['#default_value']){
 				$theme_flavors = vsite_design_get_flavors();
-				
+
 				if(array_key_exists($s_flavor,$theme_flavors) && array_key_exists('screenshot',$theme_flavors[$s_flavor]) && $theme_flavors[$s_flavor]['module'] == $o_theme->name){
 				  $a_info['screenshot'] = $theme_flavors[$s_flavor]['path']."/".$theme_flavors[$s_flavor]['screenshot'];
 			  }//Should we use the flavor screenshot?
-			  
+
 			}//Is a sub-flavor set?
 		}//Are there flavors to select from?
-		
-		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['maintheme']['#default_value'])?'checked':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' . 
-		             theme('vsite_design_theme_picker', $a_info ,$s_sub_theme) . 
+
+		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['maintheme']['#default_value'])?'checked':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' .
+		             theme('vsite_design_theme_picker', $a_info ,$s_sub_theme) .
 		           '</li>';
 	}
 	$output .= '</ul>';
-	
+
 	$output .= drupal_render($form); //Anything we havn't rendered
-	
+
   return $output;
 }
 
@@ -289,21 +289,21 @@ function theme_vsite_design_theme_form($form) {
  */
 function vsite_design_swap_screenshot($s_theme_name){
 	$s_flavor = $_POST ['ctools_changed']; //The Flavor
-	
+
 	ctools_include ( 'ajax' );
   ctools_add_js ( 'ajax-responder' );
-  
+
   $s_screenshot_file = drupal_get_path('theme',$s_theme_name)."/screenshot.png"; //Default
-  
+
   if(strlen($s_flavor)){
   	$theme_flavors = vsite_design_get_flavors();
   	if(array_key_exists($s_flavor,$theme_flavors) && array_key_exists(screenshot,$theme_flavors[$s_flavor])){
   	  $s_screenshot_file = $theme_flavors[$s_flavor]['path'] ."/". $theme_flavors[$s_flavor]['screenshot'];
   	}
   }
-  
+
   $s_screenshot_html = theme('image', $s_screenshot_file, t('Screenshot for the theme'), '', array('class' => 'screenshot', 'id' => 'screenshot_'.$s_theme_name), FALSE);
-  
+
   $commands = array ();
   $commands [] = ctools_ajax_command_replace ( "img#screenshot_{$s_theme_name}", $s_screenshot_html);
   ctools_ajax_render ( $commands );
@@ -318,36 +318,36 @@ function vsite_design_swap_screenshot($s_theme_name){
  *
  * @return
  *   An array with information about the requested flavors for a theme
- *   
+ *
  * @author rbrandon
  */
 function vsite_design_get_flavors($theme_name = false) {
-  
+
   static $a_plugins;
-  
+
   if(!isset($a_plugins)){
   	ctools_include('plugins');
     $a_plugins = ctools_get_plugins('vsite_design', 'flavor');
   }
-  
+
   if(!$theme_name){
   	return $a_plugins;
   }
-  
+
   //Get just the plugins for a specific theme
   static $a_theme_plugins;
   if(!isset($a_theme_plugins)){
   	foreach ($a_plugins as $s_key => $a_info) $a_theme_plugins[$a_info['module']][$s_key] = $a_info;
   }
-  
+
   return array_key_exists($theme_name,$a_theme_plugins)? $a_theme_plugins[$theme_name] : array();
-  
+
 }
 
 /**
  * @author rbrandon
- * 
- * Inform CTools that the flavor plugin can be loaded from themes and that 
+ *
+ * Inform CTools that the flavor plugin can be loaded from themes and that
  * plugin implementors should use inf files instead of inc files (to keep PHP code from getting executed)
  */
 function vsite_design_ctools_plugin_flavor() {
@@ -361,7 +361,7 @@ function vsite_design_ctools_plugin_flavor() {
 /**
  * Return the css for conditional style sheets
  * This adds to the functionality provided by the zen theme
- * 
+ *
  * @param $a_conditional_css array of style sheets
  * @param $s_base_path path where the css resides
  * @return string
@@ -369,7 +369,7 @@ function vsite_design_ctools_plugin_flavor() {
 function _vsite_design_get_conditional_styles($a_conditional_css,$s_base_path){
 	$conditional_styles = "";
 	$query_string = '?'. substr(variable_get('css_js_query_string', '0'), 0, 1);
-	
+
   foreach ($a_conditional_css as $condition => $css) {
     // Each condition requires its own set of links.
     $output = '';

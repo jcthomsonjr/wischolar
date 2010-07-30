@@ -5,15 +5,15 @@ Drupal.behaviors.scholar = function (context){
 
        return false;
   });
-  
+
   $('li.vsite-admin div.ctools-dropdown-container').hover(function(){
 	var parent = $(this).parents('div.node');
 	if(!parent.length) parent = $(this).parents('div.biblio-entry');
-	parent.addClass('active');
+	parent.addClass('admin-active');
   },function(){
 	var parent = $(this).parents('div.node');
 	if(!parent.length) parent = $(this).parents('div.biblio-entry');
-	parent.removeClass('active');
+	parent.removeClass('admin-active');
   });
 
   $('.disto-toggle', context).click(function(){
