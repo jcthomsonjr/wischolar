@@ -6,14 +6,14 @@ Drupal.behaviors.scholar = function (context){
        return false;
   });
 
-  $('li.vsite-admin div.ctools-dropdown-container').hover(function(){
+  $('div.node li.vsite-admin div.ctools-dropdown-container, div.biblio-entry li.vsite-admin div.ctools-dropdown-container').hover(function(){
 	var parent = $(this).parents('div.node');
 	if(!parent.length) parent = $(this).parents('div.biblio-entry');
-	parent.addClass('admin-active');
+	parent.prepend('<div class="active-marker"></div>');
   },function(){
 	var parent = $(this).parents('div.node');
 	if(!parent.length) parent = $(this).parents('div.biblio-entry');
-	parent.removeClass('admin-active');
+	parent.find('div.active-marker').remove();
   });
 
   $('.disto-toggle', context).click(function(){

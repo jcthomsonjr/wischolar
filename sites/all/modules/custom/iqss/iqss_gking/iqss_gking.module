@@ -336,7 +336,7 @@ function iqss_gking_pub_by_type_block(){
     $output .= "<div id='pub_type_tabs-{$i}'>";
     foreach ($view->result as $row) {
       $node = node_load($row->nid);
-      $output .= "\n<div class=\"biblio-entry\">". theme('biblio_entry', $node, variable_get('biblio_base', 'biblio') , biblio_get_style()) ."</div>";
+      $output .= "\n". theme('biblio_entry', $node, variable_get('biblio_base', 'biblio') , biblio_get_style());
     }
     $output .= "</div>";
     $i++;
