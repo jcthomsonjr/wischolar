@@ -88,7 +88,7 @@ class vsite_design_settings_theme implements space_setting {
       '#enabled_themes' => $enabled,
       '#type' => 'radios',
       '#options' => $options,
-      '#default_value' => $value['maintheme'] ? $value['maintheme'] : 'scholar_greybar',
+      '#default_value' => $value['maintheme'] ? $value['maintheme'] : 'scholar_airstream',
       '#tree' => TRUE
     );
 
