@@ -60,7 +60,10 @@ html.js div.ctools-dropdown div.ctools-dropdown-container, #ui-datepicker-div {
   padding: 0;
   }
 
-.ctools-dropdown, .ctools-dropdown .ctools-dropdown-link-wrapper, .ctools-dropdown .ctools-dropdown-container-wrapper {
+.ctools-dropdown,
+.ctools-dropdown .ctools-dropdown-link-wrapper,
+.ctools-dropdown .ctools-dropdown-container-wrapper,
+html.js div.ctools-dropdown div.ctools-dropdown-container ul li{
   display:inline;
   }
 
@@ -75,19 +78,24 @@ html.js div.ctools-dropdown div.ctools-dropdown-container, #ui-datepicker-div {
   padding: 0 0 0 13px !important;
   }
 
-.context-links .ctools-dropdown-container-wrapper a, .ctools-dropdown-container-wrapper ul.links li a, li.cite_distribute {
+.context-links .ctools-dropdown-container-wrapper a, .ctools-dropdown-container-wrapper ul.links li a, li.cite_distribute, .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
   background: #fff !important;
   padding: 3px 0 3px 13px !important;
   color: #000 !important;
   }
 
-.context-links .ctools-dropdown-container-wrapper a:hover, .ctools-dropdown-container-wrapper ul.links li a:hover, li.cite_distribute:hover {
+.context-links .ctools-dropdown-container-wrapper a:hover, .ctools-dropdown-container-wrapper ul.links li a:hover, li.cite_distribute:hover, .context-links .ctools-dropdown-container-wrapper .flag-wrapper:hover {
   background-color: #356df6 !important;
   color: #fff !important;
   text-transform: none;
   font-weight: bold;
   text-decoration: none;
   }
+
+.context-links .ctools-dropdown-container-wrapper .flag-wrapper a {
+  display:inline;
+  }
+
 
 .empty-content .item-list ul.context-links li {
   float: left;
@@ -127,16 +135,3 @@ table.ui-datepicker-calendar {
   padding: 4px 4px 4px 8px;
   background:#e2f468;
   }
-
-html.js div.ctools-dropdown div.ctools-dropdown-container ul li span {
-  display: block;
-}
-
-html.js div.ctools-dropdown div.ctools-dropdown-container ul li span.text {
-  font-style: italic;
-  padding-left: 5px;
-}
-
-html.js .ctools-dropdown-hover {
-  background-color: #ECECEC;
-}
