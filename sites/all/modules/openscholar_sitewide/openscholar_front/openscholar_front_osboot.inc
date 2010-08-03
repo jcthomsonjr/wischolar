@@ -64,11 +64,10 @@ function _scholar_testingcontent(){
 	}
 }
 
-function _vsite_filefield_paths_config(){
+function _vsite_filefield_paths_config($type = NULL){
   $return = array();
-  
-  //set the "upload" paths
   $types = og_get_types('group_post');
+  
   $file_name = array(
     'value' => '[filefield-onlyname-original].[filefield-extension-original]', 
     'tolower' => 0, 
@@ -89,22 +88,32 @@ function _vsite_filefield_paths_config(){
     'pathauto' => 0, 
     'transliterate' => 0,
     'display' => 1,
-  );
-  
-  
-  foreach ( $types as $type ) {
+  );  
+ 
+ /*   
+ foreach ( $types as $type ) {
     $file_alias['display'] = ($type == 'image')?0:1; //turn on display for all but image
     db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path), serialize($file_alias));
   }
-  
-  //set the "filefield" paths
+
   reset($types);
+ */ 
   
-  //find the fields
+ //set the "filefield" paths
   foreach ( content_fields() as $field ) {
     if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)) {
-      //add settings to database if applicable
-      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'], serialize($file_name), serialize($file_path));
+      //if specific type has been specified as parameter, then do no update other types filefield paths
+      if(($type) && $type !==$field['type_name']) continue;      
+   
+     $field_exists = db_result(db_query("SELECT field FROM {filefield_paths} WHERE field = '%s' ", $field['field_name']));
+      if($field_exists){
+      db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE field = '%s' " , 
+      serialize($file_name), serialize($file_path), serialize($file_alias) ,$field['field_name']);
+      }
+      else{
+      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'], 
+      serialize($file_name), serialize($file_path), serialize($file_alias));
+      }
     }
   }
   
