@@ -105,12 +105,12 @@
       <?php if ($footer) : ?>
         <?php print $footer; ?>
       <?php endif; ?>
-      <?php
+     <?php
             global $user, $base_url;
             $home_link =  l('Powered by OpenScholar',$base_url, array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
             $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE, 'alias' => FALSE)) : "";
           ?>
-          <p class="copy">Copyright &copy; <?php echo date('Y');?> President &amp; Fellows of Harvard University. <?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
+          <p class="copy"><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
       </div> <!-- /#footer -->
     </div> <!-- /container -->
   </div> <!-- /wrapper -->
