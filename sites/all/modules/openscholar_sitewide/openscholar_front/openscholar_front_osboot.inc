@@ -90,16 +90,35 @@ function _vsite_filefield_paths_config($type = NULL){
     'display' => 1,
   );  
  
- /*   
- foreach ( $types as $type ) {
-    $file_alias['display'] = ($type == 'image')?0:1; //turn on display for all but image
-    db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path), serialize($file_alias));
+  //set the paths for upload fields
+  if ($type){
+    $field_exists = db_result(db_query("SELECT field FROM {filefield_paths} WHERE type = '%s' AND field = '%s' ",  $type, 'upload'));
+    if($field_exists){
+      db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE type = '%s' AND field = '%s' ",
+      serialize($file_name), serialize($file_path), serialize($file_alias) , $type,  'upload');
+    }
+    else{
+      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $type, 'upload',
+      serialize($file_name), serialize($file_path), serialize($file_alias));
+    }
   }
 
-  reset($types);
- */ 
-  
- //set the "filefield" paths
+  else{
+    foreach ( $types as $content_type ) {
+      $field_exists = db_result(db_query("SELECT field FROM {filefield_paths} WHERE type = '%s' AND field = '%s' ",  $content_type, 'upload'));
+      if($field_exists){
+        db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE type = '%s' AND field = '%s' " ,
+        serialize($file_name), serialize($file_path), serialize($file_alias) , $content_type, 'upload');
+      }
+      else{
+        db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $content_type, 'upload',
+        serialize($file_name), serialize($file_path), serialize($file_alias));
+      }
+    }
+    reset($types);
+  }
+    
+ //set the paths for filefield fields
   foreach ( content_fields() as $field ) {
     if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)) {
       //if specific type has been specified as parameter, then do no update other types filefield paths
