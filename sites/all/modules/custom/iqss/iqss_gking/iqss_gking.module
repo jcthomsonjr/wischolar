@@ -21,10 +21,7 @@ function iqss_gking_menu(){
   $items['taxonomy/term/biblio/%/%'] = array(
       'title' => 'Taxonomy term',
       'page callback' => 'iqss_gking_biblio_term_page',
-      'page arguments' => array(
-          3,
-          4
-      ),
+      'page arguments' => array(3,4),
       'access arguments' => array(
           'access content'
       ),
@@ -36,15 +33,9 @@ function iqss_gking_menu(){
   $items['gking_update_filefield/%'] = array(
       'title' => 'Update Filefield',
       'page callback' => 'iqss_gking_update_filefield',
-      'page arguments' => array(
-          1
-      ),
-      'access callback' => array(
-          'iqss_gking_access_filefield'
-      ),
-      'access arguments' => array(
-          1
-      ),
+      'page arguments' => array(1),
+      'access callback' => 'iqss_gking_access_filefield',
+      'access arguments' => array(1),
       'type' => MENU_CALLBACK
   );
   
@@ -446,8 +437,8 @@ function iqss_gking_pub_by_type_block(){
  * Update a node that has a file by the same name attached
  */
 function iqss_gking_update_filefield($s_file){
-  $s_src_path = file_directory_path() . variable_get('gking_script_tmpdir', "gking/tmpdir/") . $s_file;
-  $s_dst_path = file_directory_path() . "gking/files/" . $s_file;
+  $s_src_path = file_directory_path() . variable_get('gking_script_tmpdir', "/gking/tmpdir/") . $s_file;
+  $s_dst_path = file_directory_path() . "/gking/files/" . $s_file;
   
   $fid = db_result(db_query("SELECT fid FROM {files} WHERE filepath = '%s' ", $s_dst_path));
   
@@ -471,7 +462,7 @@ function iqss_gking_update_filefield($s_file){
  */
 function iqss_gking_access_filefield($s_file){
   
-  $s_path = file_directory_path() . variable_get('gking_script_tmpdir', "gking/tmpdir") . $s_file;
+  $s_path = file_directory_path() . variable_get('gking_script_tmpdir', "/gking/tmpdir/") . $s_file;
   return file_exists($s_path);
 
 }
