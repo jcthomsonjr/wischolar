@@ -1,6 +1,11 @@
   //Javascript to manipulate the Areas of Interest block on Garys Home Page
 $(document).ready(function(){
 
+  $('#block-iqss_gking-areas_of_research .col').hover(function() {
+    $(this).siblings('.col').fadeTo('slow',.3);
+    }, function() {
+   $(this).siblings('.col').fadeTo(180,1);
+    });
 
   $('#block-iqss_gking-areas_of_research .col dt span').hover(function() {
     //Rem 1 for Sticky
@@ -14,9 +19,8 @@ $(document).ready(function(){
     $(this).parent('dt').addClass('active');
     $(this).children('.more').fadeIn("fast");
     $(this).parent('dt').next('dd').fadeIn(820);
-    $(this).parents('.col').siblings('.col').css({'opacity':.3});
+
   }, function() {
-   $(this).parents('.col').siblings('.col').css({'opacity':1});
     //Rem if for stickey
 	//if($('#block-iqss_gking-areas_of_research .col dt span').index($(this)) != 0){
 	  // Use This if you want hover
