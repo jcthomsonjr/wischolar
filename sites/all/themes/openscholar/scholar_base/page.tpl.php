@@ -107,12 +107,14 @@
           <?php endif; ?>
           <?php
             global $user, $base_url;
+            vsite_include('vsiteapi');
             $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
             $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE, 'alias' => FALSE)) : "";
+            $version_info = vsite_get_version_information();
           ?>
           <p class="copy"><?php if ($footer_message): ?>
           <?php print $footer_message; ?>
-          <?php endif; ?><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
+          <?php endif; ?><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($version_info) ?>" />
         </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->

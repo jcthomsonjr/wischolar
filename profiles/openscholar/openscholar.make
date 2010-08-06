@@ -1,10 +1,13 @@
-; $Id: openscholar.make,v 1.1.2.26 2010/07/08 17:55:32 ferdi Exp $
+; $Id: openscholar.make,v 1.1.2.29 2010/07/22 18:56:41 rbrandon Exp $
 
 ;Core Version
 core = "6.x"
    
 ;Drupal Core
 projects[drupal][version] = "6.17" 
+
+; Install Profile
+projects[openscholar][version] = "6.1" 
 
 ; Contrib projects 
 
@@ -43,6 +46,9 @@ projects[diff][version] = "2.0"
 
 projects[features][subdir] = "contrib"
 projects[features][version] = "1.0-beta8"
+
+projects[feeds][subdir] = "contrib"
+projects[feeds][version] = "1.0-beta3"
 
 projects[filefield][subdir] = "contrib"
 projects[filefield][version] = "3.5"
@@ -198,10 +204,6 @@ projects[biblio][version] = "1.13"
 projects[biblio][patch][] = "http://drupal.org/files/issues/biblio.access_patch.patch"
 projects[biblio][patch][] = "http://drupal.org/files/issues/endnote8_export.escape_urls.patch"
 projects[biblio][patch][] = "http://drupal.org/files/issues/biblio_filefield_paths.patch"
-
-projects[feeds][subdir] = "contrib"
-projects[feeds][version] = "1.0-alpha13"
-projects[feeds][patch][] = "http://drupal.org/files/issues/FeedsDataProcessor.ExpireFix_0.patch"
 
 projects[file_aliases][subdir] = "contrib"
 projects[file_aliases][version] = "1.1"
