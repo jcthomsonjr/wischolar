@@ -42,6 +42,9 @@ function openscholar_log_usage_schema() {
         'length' => 100,
         'not null' => TRUE,
       ),
+      'last_visit' => array(
+        'type' => 'datetime',
+      ),
     ),
     'primary key' => array('host','vsite','age') ,
   );
