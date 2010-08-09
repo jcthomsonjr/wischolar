@@ -119,7 +119,7 @@ function scholar_publications_spaces_settings() {
 function scholar_publications_form_alter(&$form, $form_state, $form_id){
   //only show the 'field_biblio_image' field for book or book chapter nodes
   if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))) {
-    $form['field_biblio_image']['#access'] = TRUE;
+    $form['field_biblio_image']['#access'] = TRUE;    
   }
   elseif($form_id == 'content_field_overview_form'){
     $form['field_biblio_image']['#access'] = TRUE;
@@ -172,10 +172,25 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     }
     $form['submit_type'] = array('#type' => 'submit', '#disabled' => true, '#access' => false, '#value' => t('Select Publication Type'));
     
+    
+    //format Contributors fieldset
+    /* 
+    $form['contributors2_wrapper'] ['biblio_secondary_authors_more']['#value'] = 'More Contributors';
+   if($form['biblio_type']['#default_value']){
+      foreach($form['contributors2_wrapper'] ['biblio_contributors'][2] as $key => $val){
+        if (is_numeric($key)){
+          $form['contributors2_wrapper'] ['biblio_contributors'][2][$key]['auth_type']['#default_value'] = 14; //set default to 'Editor'
+        }
+      }
+    }
+    $form['contributors2_wrapper'] ['#collapsed'] = TRUE;    
+    */
+    
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['biblio_abst_e_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['body_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors1_wrapper'] = 0; //Disable vert. tabs
+    $form['#vertical_tabs']['contributors2_wrapper'] = 0; //Disable vert. tabs
     
   }
 }
