@@ -302,11 +302,12 @@ function scholar_software_scholar_software_handlers() {
  * Implementation of hook_cron().
  */
 function scholar_software_cron() {
-  $n_interval = variable_get('scholar_software_cron_update_interval',90000); //Default: Every 25 hours
+  $n_interval = variable_get('scholar_software_cron_update_interval',20 * 60); //Default: Every 20 minutes (or cron lengh)
   $n_time = time();
-	$result = db_query(
-      "SELECT nid
-       FROM {content_type_scholar_software_project} content_type_scholar_software_project ");
+	$a_handlers = array_keys(scholar_software_get_handlers());
+	if(!count($a_handlers)) return; //No custom handlers to process
+	
+  $result = db_query("SELECT nid FROM {content_type_scholar_software_project} content_type_scholar_software_project WHERE field_scholar_software_method_value IN (".db_placeholders($a_handlers,'varchar').") ",$a_handlers);
 
   while ($a_result = db_fetch_array($result)) {
     $o_project = node_load($a_result['nid']);
@@ -334,6 +335,7 @@ function scholar_software_proccess_cron($node) {
   }
 
   //Save node
+  $node->pathauto_perform_alias = false;
   node_save($node);
 }
 
