@@ -753,8 +753,8 @@ function _purl_options($active = TRUE) {
   }
 
   if ($active) {
-    $enabled = variable_get('purl_types', array('path'));
-    $options = array_intersect_key($options, array_flip($enabled));
+    $enabled = variable_get('purl_types', array('path' => 'path'));
+    $options = array_intersect_key($options, array_filter($enabled));
   }
   return $options;
 }

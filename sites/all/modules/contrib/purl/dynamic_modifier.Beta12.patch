@@ -31,7 +31,4 @@ diff -r1.1.2.43 purl.module
 > 	    else if (isset($modifier['id']) && ($id == $modifier['id'])) {
 > 	      return true;
 > 	    }
-750c757
-<     $options = array_intersect_key($options, array_filter($enabled));
----
->     $options = array_intersect_key($options, array_flip($enabled));
+
