@@ -52,7 +52,7 @@ class rbuild implements scholar_software_handler{
   	$s_key = (strlen($this->s_app_key) && substr($a_package['title'],0,strlen($this->s_app_key)) != $this->s_app_key)?"$this->s_app_key :":"";
   	$node->title = $s_key.$a_package['title'];
   	
-  	$s_contributors  = strlen($a_package['author'])?"Contributors: ".strip_tags($a_package['author'])."<br /><br />":"";
+  	$s_contributors  = strlen($a_package['author'])?"Contributors: ".strip_tags(trim($a_package['author'],' ,'))."<br /><br />":"";
   	$node->body = $s_contributors.$a_package['description'];
   }
   
