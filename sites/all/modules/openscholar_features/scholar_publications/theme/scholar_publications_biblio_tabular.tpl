@@ -92,8 +92,10 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
   $output = '<div id="biblio-node">';
   $output .= filter_xss($node->biblio_coins, array('span'));
   $output .= $author_text;
-  foreach ($rows as $row){
-  	$output .= "<h3>".$row[0]['data'].":</h3>".$row[1]['data'];
+  if (count($rows)){
+    foreach ($rows as $row){
+      $output .= "<h3>".$row[0]['data'].":</h3>".$row[1]['data'];
+    }
   }
   $output .= '</div>';
   return $output;
