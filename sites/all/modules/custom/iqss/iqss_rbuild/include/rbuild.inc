@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once(drupal_get_path('module', 'scholar_software') . "/package_handlers/scholar_software_handler.inc");
 
 class rbuild implements scholar_software_handler{
@@ -102,20 +102,22 @@ class rbuild implements scholar_software_handler{
     
     //Add any new releases
     list($major,$patch,$extra) = _iqss_rbuild_parseVersion($a_package['version']);
-    $result = db_result(db_query("SELECT nid FROM {content_type_scholar_software_release} 
+    $result = db_result(db_query("SELECT nid FROM {content_type_scholar_software_release}
                                   WHERE field_scholar_software_project_nid = %d AND field_versionmajor_value = %d AND field_versionpatch_value = %d AND field_versionextra_value = '%s' ",
                                   array($node->nid,$major,$patch,$extra)));
-                                  
+
+    $a_results = array();
     if(!$result){
     	//Add new Release
-    	$a_results = array();
-    	iqss_rbuild_add_release_node($node, $a_package['version'], $this->s_app_key."_".$a_package['version'].".tar.gz", $a_package, $this->s_url, &$a_results);
+    	iqss_rbuild_add_release_node($node, $a_package['version'], $this->s_app_key."_".$a_package['version'].".tar.gz", $a_package, $this->s_url, $a_results);
     }
+    
+    return $a_results;
   }
   
   /**
    * Simple util function to create the url path
-   * 
+   *
    * @param string $s_url
    * @param string $s_app_key
    * @return string
@@ -124,7 +126,7 @@ class rbuild implements scholar_software_handler{
   	$s_path = rtrim($s_url,"/ ")."/PACKAGES";
   	
   	//Add App Key if given
-    $s_path .= strlen($s_app_key)? ".$s_app_key":"";	
+    $s_path .= strlen($s_app_key)? ".$s_app_key":"";
     
     return $s_path;
   }
@@ -180,8 +182,8 @@ class rbuild implements scholar_software_handler{
 	  	$a_matches = array();
 	  	preg_match_all('/(a href\=")('.$this->s_app_key.'([\._-\d]*)\.tar\.gz)(")/i',$index_file,$a_matches);
 	    foreach ($a_matches[2] as $n_index => $filename){
-	    	$a_releases[trim($a_matches[3][$n_index],"_")] = $filename; 
-	    }  
+	    	$a_releases[trim($a_matches[3][$n_index],"_")] = $filename;
+	    }
 	  }
     
 	  if(!count($a_releases)){
