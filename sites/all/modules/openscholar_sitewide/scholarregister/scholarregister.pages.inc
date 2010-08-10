@@ -189,7 +189,8 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     // site created successfully add the form values for additional submit fuctions
     $form_state['vsite'] = $vsite;
     // 3. send e-mail to the user (unless specified not to by user with special access)
-    $send_mail =  (!$form_state ['values'] ['send_mail'] || $form_state ['values'] ['send_mail'] == 1) ? scholarregister_notify_user($vsite, $user) : FALSE;
+    $send_mail = ($form_state ['values'] ['send_mail'] == 0) ? FALSE :  scholarregister_notify_user($vsite, $user);
+  }
 
   // 4. let user know this was all sucessful
     //ctools_add_js ( 'ajax-responder' );
