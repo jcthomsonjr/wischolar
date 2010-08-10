@@ -123,6 +123,7 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 			        if (!isset($node->nid) || $data->nid != $node->nid) {
 			          $release = node_load($data->nid);
 			          $release->field_scholar_software_recommend[0]['value'] = 0;
+			          $release->pathauto_perform_alias = false;
 			          node_save($release);
 			        }
 			      }
