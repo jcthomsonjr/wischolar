@@ -121,8 +121,8 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
   if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))) {
     $form['field_biblio_image']['#access'] = TRUE;    
   }
-  elseif($form_id == 'content_field_overview_form'){
-    $form['field_biblio_image']['#access'] = TRUE;
+  elseif($form_id == 'content_field_overview_form' || 'content_display_overview_form'){
+    $form['field_biblio_image']['#access'] = TRUE; // make sure to show the field on the content field/display edit forms
   }
   else{
     $form['field_biblio_image']['#access'] = FALSE;
