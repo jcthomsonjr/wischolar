@@ -279,18 +279,19 @@ function _openscholar_enable_themes(){
     'zen',
     'cp_theme',
     'scholar_base',
-    'scholar_theme_01',
-    'scholar_theme_02',
-    'scholar_theme_03',
-    'scholar_theme_04',
-    'scholar_theme_05',
-    'scholar_theme_06',
-    'scholar_theme_07',
-    'scholar_theme_08',
-    'scholar_theme_09',
-    'scholar_theme_10',
-    'scholar_theme_11',
-    'scholar_theme_12'
+    'openscholar_default',
+    'scholar_airstream',
+    'scholar_bigpic',
+    'scholar_burroughs',
+    'scholar_cayley',
+    'scholar_collector',
+    'scholar_density',
+    'scholar_eloquent',
+    'scholar_nortony',
+    'scholar_quinn',
+    'scholar_redhead',
+    'scholar_stripy',
+    'scholar_weft'
   );
   
   //enable the themes
