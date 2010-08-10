@@ -117,12 +117,14 @@ function scholar_publications_spaces_settings() {
  * Alter the import publications form
  */
 function scholar_publications_form_alter(&$form, $form_state, $form_id){
+
+  $show_form_ids = array('content_field_overview_form', 'content_display_overview_form');
   //only show the 'field_biblio_image' field for book or book chapter nodes
-  if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))) {
-    $form['field_biblio_image']['#access'] = TRUE;    
+  if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))){
+    $form['field_biblio_image']['#access'] = TRUE; //only show the 'field_biblio_image' field for book or book chapter nodes
   }
-  elseif($form_id == 'content_field_overview_form' || 'content_display_overview_form'){
-    $form['field_biblio_image']['#access'] = TRUE; // make sure to show the field on the content field/display edit forms
+  elseif(in_array($form_id, $show_form_ids)){
+    $form['field_biblio_image']['#access'] = TRUE;  // show the book cover image field on the content field/display edit forms
   }
   else{
     $form['field_biblio_image']['#access'] = FALSE;
@@ -520,10 +522,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   drupal_alter('link', $links, $node);
 
   $s_output .= theme('links', $links);
-
   $s_output .= "\n</div>";
-
-
 
   return $s_output;
 }
