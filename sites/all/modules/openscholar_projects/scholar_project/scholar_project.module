@@ -23,10 +23,10 @@ function scholar_project_strongarm(){
   $conf['scholar_create_multiple_sites'] = 1;
 
   // the default project site theme
-  $conf['scholar_default_theme'] = 'scholar_theme_10';
+  $conf['openscholar_default_theme'] = 'scholar_cayley';
   
   // list of themes, one will be randomly selected as default for new sites created
-  $conf['scholar_selected_themes'] = array('scholar_theme_10', 'scholar_theme_11');
+  $conf['openscholar_selected_themes'] = array( 'scholar_bunchy', 'scholar_cayley', 'scholar_nortony');
   
   $conf['spaces_default_presets'] = array(
     'og' => 'project'
@@ -156,26 +156,6 @@ function scholar_project_spaces_presets(){
   );
   
   return $items;
-}
-
-/**
- * Implementation of hook_nodeapi()
-  */
-function scholar_project_nodeapi(&$node, $op){
-  global $conf;
-  switch ($op){
-    case 'presave';
-    if ((!$node -> nid) && ($node -> type == $conf['scholar_content_type'])){
-      $node->og_theme = $conf['scholar_default_theme']; //set default theme
-    }
-    break;
-    case 'insert':
-      // default flavor value should be empty string for consistency (see vsite_design_settings.theme.inc - $a_options)
-      $space = spaces_load('og', $node -> nid);
-      $space->settings['theme']['flavor'] = '';
-      spaces_save($space);
-      break;
-  }
 }
 
 /**
