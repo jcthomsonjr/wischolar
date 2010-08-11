@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Generates some sites and assign users to each 
- * site. 
- * Later during task 'generate-content' nodes are assigned 
+ * Generates some sites and assign users to each
+ * site.
+ * Later during task 'generate-content' nodes are assigned
  * to these sites
  */
 function _scholar_testingcontent(){
@@ -31,13 +31,13 @@ function _scholar_testingcontent(){
 		install_add_user($uname_admin, "sharepass", "scholar0$i@scholar.iq.harvard.edu", $roles = array("scholar admin"), $status = 1);
 		
 		$properties = array (
-			'name' => $uname_admin, 
+			'name' => $uname_admin,
 			'type' => variable_get('scholar_content_type', 'vsite'),
 		  	'promote' => '1',
-			'purl' => array ('value' => "site0$i", 'provider' => 'spaces_og', 'id' => NULL ), 
+			'purl' => array ('value' => "site0$i", 'provider' => 'spaces_og', 'id' => NULL ),
 			'preset' => variable_get('scholar_default_preset', 'scholar'),
-			'og_description' => "site0$i", 
-			'theme' => $scholar_theme, 
+			'og_description' => "site0$i",
+			'theme' => $scholar_theme,
 			'og_description' => "site0$i", // TODO $terms array should include descriptions
 		);
 		$node = install_create_node ( $title = "site0$i", $body = NULL, $properties = $properties );
@@ -57,7 +57,7 @@ function _scholar_testingcontent(){
 			if ($j < 4){
 				og_save_subscription($node -> nid, $uid, array('is_active' => 1, 'is_admin' => 1));
 			} else {
-				og_save_subscription($node -> nid, $uid, array('is_active' => 1));	
+				og_save_subscription($node -> nid, $uid, array('is_active' => 1));
 			}
 
 		}
@@ -69,26 +69,26 @@ function _vsite_filefield_paths_config($type = NULL){
   $types = og_get_types('group_post');
   
   $file_name = array(
-    'value' => '[filefield-onlyname-original].[filefield-extension-original]', 
-    'tolower' => 0, 
-    'pathauto' => 0, 
-    'transliterate' => 0 
+    'value' => '[filefield-onlyname-original].[filefield-extension-original]',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0
   );
   
   $file_path = array(
-    'value' => '[space-og-path-raw]/files', 
-    'tolower' => 0, 
-    'pathauto' => 0, 
-    'transliterate' => 0 
+    'value' => '[space-og-path-raw]/files',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0
   );
   
   $file_alias = array(
-    'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]', 
-    'tolower' => 0, 
-    'pathauto' => 0, 
+    'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]',
+    'tolower' => 0,
+    'pathauto' => 0,
     'transliterate' => 0,
     'display' => 1,
-  );  
+  );
  
   //set the paths for upload fields
   if ($type){
@@ -122,23 +122,23 @@ function _vsite_filefield_paths_config($type = NULL){
   foreach ( content_fields() as $field ) {
     if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)) {
       //if specific type has been specified as parameter, then do no update other types filefield paths
-      if(($type) && $type !==$field['type_name']) continue;      
+      if(($type) && $type !==$field['type_name']) continue;
    
      $field_exists = db_result(db_query("SELECT field FROM {filefield_paths} WHERE field = '%s' ", $field['field_name']));
       if($field_exists){
-      db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE field = '%s' " , 
+      db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE field = '%s' " ,
       serialize($file_name), serialize($file_path), serialize($file_alias) ,$field['field_name']);
       }
       else{
-      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'], 
+      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'],
       serialize($file_name), serialize($file_path), serialize($file_alias));
       }
     }
   }
   
   $return[] = array(
-    'success' => TRUE, 
-    'query' => "the upload and filefield file paths were inserted in the filefield_paths table" 
+    'success' => TRUE,
+    'query' => "the upload and filefield file paths were inserted in the filefield_paths table"
   );
   
   return $return;
@@ -152,14 +152,14 @@ function _vsite_global_taxonomy(){
     $vocab_nodes[$type] = 1;
   }
   $vocab = array(
-    'name' => 'Scholar Taxonomy', 
-    'multiple' => 0, 
-    'required' => 0, 
-    'hierarchy' => 0, 
-    'relations' => 0, 
-    'module' => 'vsite', 
-    'weight' => 0, 
-    'nodes' => $vocab_nodes,  
+    'name' => 'Scholar Taxonomy',
+    'multiple' => 0,
+    'required' => 0,
+    'hierarchy' => 0,
+    'relations' => 0,
+    'module' => 'vsite',
+    'weight' => 0,
+    'nodes' => $vocab_nodes,
     'tags' => TRUE,
     'help' => t('Scholar global taxonomy'),
   );
@@ -174,6 +174,7 @@ function _vsite_flags_boot(){
   //disable the f. bookmarks flag
   module_load_include('inc', 'flag', '/includes/flag.admin');
   $flag = flag_get_flag('bookmarks');
+  if(!$flag) return;
   $flag->delete();
   $flag->disable();
   _flag_clear_cache();
@@ -189,7 +190,7 @@ function _vsite_variables_default(){
 }
 
 /**
- * Create the taxonomy's that will be used by the vsite object 
+ * Create the taxonomy's that will be used by the vsite object
  * @return success
  */
 function _vsite_object_create_taxonomys(){
@@ -198,14 +199,14 @@ function _vsite_object_create_taxonomys(){
     
 	// Create the vsite tax for affiliation
   $vocab = array(
-    'name' => 'Sites Affiliation / Department', 
-    'multiple' => 1, 
-    'required' => 0, 
-    'hierarchy' => 0, 
-    'relations' => 0, 
-    'module' => 'taxonomy', 
-    'weight' => 0, 
-    'nodes' => array('vsite' => 1),  
+    'name' => 'Sites Affiliation / Department',
+    'multiple' => 1,
+    'required' => 0,
+    'hierarchy' => 0,
+    'relations' => 0,
+    'module' => 'taxonomy',
+    'weight' => 0,
+    'nodes' => array('vsite' => 1),
     'tags' => false,
     'help' => t('Vsite Affiliation taxonomy'),
     'description' => t("A comma-separated list of affiliation that your site may have, for ex.(IQSS or 'Harvard Business School')"),
@@ -215,7 +216,7 @@ function _vsite_object_create_taxonomys(){
   $vid = db_last_insert_id('vocabulary', 'vid');
   variable_set('vsite_taxonomy_affiliation', $vid);
   
-  $a_terms = array ( array('name' => 'IQSS', 'description' => "The Institute for Quantitive Social Science at Harvard University", 'properties' => array('synonyms' => "Institute for Quantitive Social Science\nThe Institute for Quantitive Social Science\nThe Institute for Quantitive Social Science at Harvard University")), 
+  $a_terms = array ( array('name' => 'IQSS', 'description' => "The Institute for Quantitive Social Science at Harvard University", 'properties' => array('synonyms' => "Institute for Quantitive Social Science\nThe Institute for Quantitive Social Science\nThe Institute for Quantitive Social Science at Harvard University")),
                      array('name' => 'HBS', 'description' => "Harvard Business School", 'properties' => array('synonyms'=> "Harvard Business School\nBusiness School at Harvard University")) );
                      
   foreach($a_terms as $a_term) install_taxonomy_add_term($vid, $a_term['name'], $a_term['description'], $a_term['properties']);
@@ -225,13 +226,13 @@ function _vsite_object_create_taxonomys(){
   $vocab = array(
     'name' => 'Related Interests',
     'description' => t("A comma-separated list of topics that may relate to the content of your site. ex.(statistics, casual inference)"),
-    'multiple' => 0, 
-    'required' => 0, 
-    'hierarchy' => 0, 
-    'relations' => 0, 
-    'module' => 'taxonomy', 
-    'weight' => 0, 
-    'nodes' => array('vsite' => 1),  
+    'multiple' => 0,
+    'required' => 0,
+    'hierarchy' => 0,
+    'relations' => 0,
+    'module' => 'taxonomy',
+    'weight' => 0,
+    'nodes' => array('vsite' => 1),
     'tags' => TRUE,
     'help' => t('A comma-separated list of topics that may relate to the content of your site. ex.(statistics, casual inference)'),
   );
@@ -242,7 +243,7 @@ function _vsite_object_create_taxonomys(){
 }
 
 /**
- * Create a default sitewide contact form using  
+ * Create a default sitewide contact form using
  * 'site_mail' variable as email recipient
  */
 function _vsite_default_contact_form(){
