@@ -87,9 +87,11 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
         array('data' => t('Full Text'),  'valign' => 'top'),
         array('data' =>  check_markup($node->body, $node->format, FALSE))
     );
-
   }
   $output = '<div id="biblio-node">';
+   if (count($node->field_biblio_image[0])) {
+    $output .= '<div class="flL">' . theme('imagecache','book_cover', $node->field_biblio_image[0]['filepath']) . '</div>';
+   }
   $output .= filter_xss($node->biblio_coins, array('span'));
   $output .= $author_text;
   if (count($rows)){
