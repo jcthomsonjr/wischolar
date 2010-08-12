@@ -483,8 +483,8 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   if (!$node->status) $s_output .= '<div id="node-'.$node->nid.'" class="node node-unpublished">';
 
   if (count($node->field_biblio_image[0])) {
-    $s_output .= '<div class="flL">' . theme('imagecache','book_cover_thumb', $node->field_biblio_image[0]['filepath']) . '</div>';
-    }
+    $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover', $node->field_biblio_image[0]['filepath']), $node -> path, array('html' => TRUE)) . '</div>';
+  }
 
   // first add the styled entry...
   $s_output .= theme('biblio_style', $node, $base, $style, $inline);
