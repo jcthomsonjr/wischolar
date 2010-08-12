@@ -26,7 +26,7 @@ function iqss_remote_source_menu() {
 /**
  * Implementation of hook_nodeapi().
  */
-function iqss_remote_source_nodeapi(&$node, $op){
+function iqss_remote_source_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
 	$a_valid_node_types = variable_get('iqss_remote_source_node_types',array());
 	$vsite = vsite_get_vsite();
 
@@ -37,8 +37,8 @@ function iqss_remote_source_nodeapi(&$node, $op){
   		$node->iqss_remote_source_path = iqss_remote_source_get_source_url($node->nid);
   	break;
     case 'view':
-    	if(iqss_remote_source_get_source_url($node->nid)){
-        $node->content['body']['#value'] = iqss_remote_source_retrieve($node);
+    	if(!$teaser && $page && iqss_remote_source_get_source_url($node->nid)){
+        $node->content['body']['#value'] .= iqss_remote_source_retrieve($node);
     	}
     break;
     case 'insert':
@@ -120,15 +120,19 @@ function iqss_remote_source_get_source_url($node_id){
 
 /**
  * Retrieve the replacement contents for a node
- * 
+ *
  * @param $node The node
  * @param $s_path The Subpath
  * @return string
  */
 function iqss_remote_source_retrieve($node){
 
-	list($s_current_path) = explode("?",$_SERVER['REQUEST_URI']); 
-  if(substr($s_current_path,-1) != "/") drupal_goto($_GET['q']."/");
+	list($s_current_path) = explode("?",$_SERVER['REQUEST_URI']);
+  if(substr($s_current_path,-1) != "/"){
+    $s_goto_path = $_GET['q'];
+	  if ($alias = drupal_lookup_path('alias', $s_goto_path, $path_language)) $s_goto_path = $alias;
+	  drupal_goto($s_goto_path."/");
+  }
   
   $s_path = $_GET['source_extra'];
   $a_data = strlen($s_path)? _iqss_remote_source_get_data($node,$s_path):_iqss_remote_source_get_data($node);
@@ -148,7 +152,7 @@ function iqss_remote_source_retrieve($node){
 
 /**
  * Get the html for a specified URL
- * 
+ *
  * @param $o_project
  * @param $s_url_extra
  * @return unknown_type
@@ -171,7 +175,7 @@ function _iqss_remote_source_get_data($node,$s_url_extra = ''){
     if(!$a_cache){
       $a_cache = array();
       list($a_cache['content'], $a_cache['last_modified'], $a_cache['show_inline'], $a_cache['content_type'], $n_expire) = _iqss_remote_source_retrieve_remote_data($node,$s_url_extra,$o_cache_obj);
-      cache_set($s_key,$a_cache,'cache_iqss_remote_source', $n_expire); //Third param can be expire time
+      if($a_cache['content']) cache_set($s_key,$a_cache,'cache_iqss_remote_source', $n_expire); //Third param can be expire time
     }//Validate cache and get new if required
     $a_html_data[$s_key] = $a_cache;
   }
@@ -187,6 +191,12 @@ function _iqss_remote_source_get_data($node,$s_url_extra = ''){
  */
 function _iqss_remote_source_retrieve_remote_data($node, $s_url_extra,$o_cached_data){
   if(!$node->iqss_remote_source_path) return false; //Valid URL?
+  
+  $s_path = parse_url($node->iqss_remote_source_path,PHP_URL_PATH);
+  if(substr($node->iqss_remote_source_path,-1) != '/' && strrchr($s_path, '/') && strstr(strrchr($s_path, '/'),'.')){
+    if(!strlen($s_url_extra)) $s_url_extra = strrchr($node->iqss_remote_source_path, '/');
+    $node->iqss_remote_source_path = substr($node->iqss_remote_source_path,0,strrpos($node->iqss_remote_source_path, '/'));
+  }//Does the path point to a file or directory
   
   $s_url_extra = ltrim($s_url_extra,"/");
   $s_docs_root = rtrim($node->iqss_remote_source_path,"/");
@@ -214,7 +224,7 @@ function _iqss_remote_source_retrieve_remote_data($node, $s_url_extra,$o_cached_
 
 /**
  * Modify the content returned from the remote server
- * 
+ *
  * @param $s_contents string
  * @param $s_docs_root string
  * @return string
@@ -229,7 +239,7 @@ function _iqss_remote_source_modify_data($s_contents, $s_docs_root){
   
   $s_contents = preg_replace('#(<img[^>]*src=")(.*"[^>]*>)#Ui', '${1}'.$s_docs_root.'/${2}', $s_contents); //Correct img tags
   
-  $s_contents = preg_replace('#(<a[^>]*href=")(.*"[^>]*>)#Ui', '${1}?source_extra=${2}', $s_contents); //Correct href tags
+  $s_contents = preg_replace('#(<a[^>]*href=")([^(http)].*"[^>]*>)#Ui', '${1}?source_extra=${2}', $s_contents); //Correct href tags
   
   return $s_contents;
 }

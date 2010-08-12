@@ -1,4 +1,4 @@
-<?php 
+<?php
 define(IQSS_RBUILD_DOC_CACHE_LEN, 31536000); //One Year
 
 function iqss_rbuild_strongarm(){
@@ -44,7 +44,7 @@ function iqss_rbuild_scholar_software_handlers() {
 
 function _iqss_rbuild_add_project_node_form_js(){
 	drupal_add_js(drupal_get_path('module', 'iqss_rbuild') . '/iqss_rbuild.js');
-  drupal_add_js(array("iqss_rbuild" => 
+  drupal_add_js(array("iqss_rbuild" =>
     array(
       'repo_url' => variable_get('iqss_rbuild_default_url',""),
       'title_default' => "Title will be sync'ed with the rbuild package",
@@ -147,14 +147,14 @@ function iqss_rbuild_batch_finished($success, $results, $operations){
 
 /**
  * Parse the version components from a version string
- * @param $s_version 
+ * @param $s_version
  * @return array
  */
 function _iqss_rbuild_parseVersion($s_version){
   $extra = "";
   list($major,$patch) = explode(".",$s_version,2);
   
-  if(strstr($patch,"-")) list($patch,$extra) = explode("-",$patch,2); 
+  if(strstr($patch,"-")) list($patch,$extra) = explode("-",$patch,2);
     
   return array(intval($major),intval($patch),strval($extra));
 }
@@ -231,8 +231,39 @@ function iqss_rbuild_docs($project){
 }
 
 /**
+ * Implementation of hook_nodeapi().
+ */
+function iqss_rbuild_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch($node->type){
+    case 'scholar_software_project':
+      $src = 'node/'.$node->nid.'/rbuild_documentation';
+      switch($op){
+        case 'insert':
+        case 'update':
+          if($node->field_scholar_software_method[0]['value'] == 'rbuild'){
+            //Get existing path if avalible
+            $pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE src='%s'", $src));
+            
+            path_set_alias($src,trim($node->path,"/")."/docs",$pid);
+          }
+        break;
+        case 'delete':
+          if($node->field_scholar_software_method[0]['value'] == 'rbuild'){
+            path_set_alias($src);
+          }
+        break;
+      }
+    break;
+    case 'scholar_software_release':
+      
+    break;
+    
+  }
+}
+
+/**
  * Get a doc for a specified URL
- * 
+ *
  * @param $o_project
  * @param $s_url_extra
  * @return unknown_type
@@ -288,7 +319,7 @@ function _iqss_rbuild_retrieve_doc($o_project, $s_version, $s_url_extra){
 
 /**
  * Modify the content returned from the remote server
- * 
+ *
  * @param $s_contents string
  * @param $s_docs_root string
  * @return string

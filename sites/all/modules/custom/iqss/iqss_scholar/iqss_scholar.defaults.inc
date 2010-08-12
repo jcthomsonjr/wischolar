@@ -16,8 +16,8 @@ function _iqss_scholar_config_variables(){
   'pinserver_hash_huid' => 0,
   
   //Remote Content Nodes
-  'iqss_remote_source_node_types' => array('cv'),
-  'iqss_remote_source_valid_ogs' => '1', //Enable on Garys Site
+  'iqss_remote_source_node_types' => array('cv','scholar_software_project'),
+  'iqss_remote_source_valid_ogs' => '3633', //Enable on Garys Site
   );
   
   // mollom settings (default) these will be replaced by domain specific if applicable
