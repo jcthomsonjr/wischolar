@@ -189,9 +189,7 @@ function _scholar_reader_twitter_wgt(){
 	//Do they have thier feed set?
 	if(!strlen($vsite->settings['reader']['twitter_username'])) return array();
 
-	$tag = (!in_array(substr($vsite->settings['reader']['twitter_username'],0,1),array('#','@')))? '@'.$vsite->settings['reader']['twitter_username']:$vsite->settings['reader']['twitter_username'];
-
-	$output = twitter_pull_render ($tag);
+	$output = twitter_pull_render ($vsite->settings['reader']['twitter_username']);
 
 	return array('subject' => "Twitter Updates",'content' => $output);
 }
