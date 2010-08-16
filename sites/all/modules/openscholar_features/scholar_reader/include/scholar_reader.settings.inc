@@ -27,7 +27,7 @@ class scholar_reader_settings_reader implements space_setting {
       '#title' => t('Twitter Feed'),
       '#type' => 'textfield',
       '#default_value' => isset($value['twitter_username']) ? $value['twitter_username'] : '',
-      '#description' => "To pull your Twitter posts into your site add your username to the above field (examples: 'harvard_scholar', or '@harvard_scholar'). To pull in both your Twitter posts <em>and</em> every Twitter post that <strong>refers</strong> to you, use a hashtag instead (example: '#harvard_scholar'). Once this setting is saved, you can place the Twitter widget anywhere on your site by clicking the layout."
+      '#description' => "To pull your Twitter posts into your site add your username to the above field (examples: '@username' says show all the tweets I have posted, 'from:username' says pull all the tweets and retweets I have sent, '#harvard_scholar' says pull anything tagged harvard_scholar). Once this setting is saved, you can place the Twitter widget anywhere on your site by clicking the layout."
     );
 
     return $form;
