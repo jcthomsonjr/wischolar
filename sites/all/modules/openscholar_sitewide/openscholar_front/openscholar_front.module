@@ -8,9 +8,17 @@ function openscholar_front_init(){
       && arg(0) != 'admin'){
     context_set('openscholar', 'section', 'sitewide');
   }
-
 }
 
+/**
+ * Implementation of hook_strongarm()
+ */
+function openscholar_front_strongarm(){
+    // Comments
+  $conf['comment_sitewide_page'] = COMMENT_NODE_DISABLED;
+    
+  return $conf;  
+}
 
 /**
  * Implementation of hook_menu_alter
