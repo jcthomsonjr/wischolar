@@ -135,10 +135,10 @@ function _vsite_filefield_paths_config($type = NULL){
       }
     }
   }
-  
+
   $return[] = array(
     'success' => TRUE,
-    'query' => "the upload and filefield file paths were inserted in the filefield_paths table"
+    'query' => t('The upload and filefield file paths were updated for %t', array('%t'  => ($type) ? 'all vsite content types' : "$type content type")),
   );
   
   return $return;
