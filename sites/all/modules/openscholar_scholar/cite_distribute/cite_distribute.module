@@ -8,13 +8,11 @@
 *  to varoius online research repositories.
 */
 
-//include(drupal_get_path('module', 'cite_distribute') .'/includes' . '/cite_distribute.pages.inc');
-
 /**
  * Implementation of hook_theme()
  */
 function cite_distribute_theme(){
-  $path_inc = drupal_get_path('module', 'cite_distribute') .'/includes';
+  $path_inc = drupal_get_path('module', 'cite_distribute');
 
   return array(
      'cite_distribute_get_formlink' => array(
