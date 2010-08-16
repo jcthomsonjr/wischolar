@@ -65,8 +65,8 @@ function cite_distribute_strongarm(){
 /**
  * Implementation of hook_link()
  */
-/*
-function cite_distribute_vsite_admin_link($type, $object, $teaser = FALSE){
+
+/*function cite_distribute_vsite_admin_link($type, $object, $teaser = FALSE){
 
   //show this only for biblio nodes
   if ($object-> type == 'biblio'){
@@ -75,46 +75,20 @@ function cite_distribute_vsite_admin_link($type, $object, $teaser = FALSE){
    'html'       => TRUE,
    //'attributes' => array('title' => t("Distribute this citation to selected repositories")),
     );
-
-    //Duplicate Code
-//    $links['cite_distribute_popup'] = array(
-//   'title'      => theme_popup($object),
-//   'html'       => TRUE,
-//   //'attributes' => array('title' => t("Distribute this citation to selected repositories")),
-//    );
-
     return $links;
   }
-}
-*/
-
-/**
- * Implementation of hook_link()
- */
-
-function cite_distribute_link($type, $object, $teaser = FALSE){
-
-  //show this only for biblio nodes
-  if ($object-> type == 'biblio'){
-    $links['cite_distribute'] = array(
-   'title'      => theme('cite_distribute_get_formlink', $object),
-   'html'       => TRUE,
-   //'attributes' => array('title' => t("Distribute this citation to selected repositories")),
-    );
-
-    return $links;
-  }
-}
-
-
-/*
-function theme_popup($node){
-
-  ctools_include('ajax');
-  ctools_include('modal');
-  ctools_modal_add_js();
-  return ctools_modal_text_button('distributepopup', 'cite_distribute/distribute/js/'. $node -> nid, 'whatever');
 }*/
+
+function cite_distribute_vsite_admin_link_alter( $links, $type, $object){
+  //show this only for biblio nodes
+  if ($object-> type == 'biblio'){
+    $links['cite_distribute'] = array(
+    'title'      => theme('cite_distribute_get_formlink', $object),
+    'html'       => TRUE,
+    );
+    return $links;
+  }
+}
 
 function cite_distribute_distribute_js($nid){
   ctools_include('ajax');
