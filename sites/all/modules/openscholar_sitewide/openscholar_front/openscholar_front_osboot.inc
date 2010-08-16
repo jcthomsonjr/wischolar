@@ -138,7 +138,7 @@ function _vsite_filefield_paths_config($type = NULL){
 
   $return[] = array(
     'success' => TRUE,
-    'query' => t('The upload and filefield file paths were updated for %t', array('%t'  => ($type) ? 'all vsite content types' : "$type content type")),
+    'query' => t('The upload and filefield file paths were updated for %t', array('%t'  => ($type) ? "$type content type" : 'all vsite content types' )),
   );
   
   return $return;
