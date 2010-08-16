@@ -90,13 +90,33 @@ function cite_distribute_vsite_admin_link($type, $object, $teaser = FALSE){
 }
 */
 
+/**
+ * Implementation of hook_link()
+ */
+
+function cite_distribute_link($type, $object, $teaser = FALSE){
+
+  //show this only for biblio nodes
+  if ($object-> type == 'biblio'){
+    $links['cite_distribute'] = array(
+   'title'      => theme('cite_distribute_get_formlink', $object),
+   'html'       => TRUE,
+   //'attributes' => array('title' => t("Distribute this citation to selected repositories")),
+    );
+
+    return $links;
+  }
+}
+
+
+/*
 function theme_popup($node){
 
   ctools_include('ajax');
   ctools_include('modal');
   ctools_modal_add_js();
   return ctools_modal_text_button('distributepopup', 'cite_distribute/distribute/js/'. $node -> nid, 'whatever');
-}
+}*/
 
 function cite_distribute_distribute_js($nid){
   ctools_include('ajax');
@@ -379,7 +399,6 @@ function cite_distribute_menu() {
   'page callback' => 'drupal_get_form',
   'page arguments' => array('cite_distribute_admin'),
   'file' => 'cite_distribute.admin.inc',
-  'file path' =>  drupal_get_path('module', 'cite_distribute') .'/includes',
   'access arguments' => array('administer cite distribute')
   );
 
@@ -389,7 +408,6 @@ function cite_distribute_menu() {
   'page callback' => 'drupal_get_form',
   'page arguments' => array('cite_distribute_admin'),
   'file' => 'cite_distribute.admin.inc',
-  'file path' =>  drupal_get_path('module', 'cite_distribute') .'/includes',
   'weight' => -10,
   'access arguments' => array('administer cite distribute')
   );
