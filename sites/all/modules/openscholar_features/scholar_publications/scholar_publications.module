@@ -176,7 +176,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     
     
     //format Contributors fieldset
-    /* 
+    /*
     $form['contributors2_wrapper'] ['biblio_secondary_authors_more']['#value'] = 'More Contributors';
    if($form['biblio_type']['#default_value']){
       foreach($form['contributors2_wrapper'] ['biblio_contributors'][2] as $key => $val){
@@ -185,7 +185,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
         }
       }
     }
-    $form['contributors2_wrapper'] ['#collapsed'] = TRUE;    
+    $form['contributors2_wrapper'] ['#collapsed'] = TRUE;
     */
     
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
@@ -513,7 +513,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
     if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
     if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
     if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
-    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, false,'biblio-export');
+    $s_output .= " ".theme('ctools_dropdown', t('Export'), $links, false,'biblio-export');
   }
 
   if (!$node->status) $s_output .= '</div>';
