@@ -29,40 +29,6 @@ function cite_distribute_theme(){
 }
 
 /**
- * Implementation of hook_strongarm()
- * Store and lock down system settings for submodules
- * (scholar profile only)
- */
-function cite_distribute_strongarm(){
-  $conf = array();
-  //if the Scholar Profile has been installed
-  if (variable_get('install_profile', '') == 'scholar'){
-    $submodules = cite_distribute_installed_mods();
-    foreach ($submodules as $module){
-
-      switch($module['name']){
-        case 'repec_meta':
-          $conf['repec_meta_inst_name'] = 'The Institute for Quantitative Social Science';
-          $conf['repec_meta_archive_code'] = 'qss';
-          $conf['repec_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec';
-          $conf['repec_meta_archive_url'] = 'http://repec.iq.harvard.edu';
-
-          break;
-        case 'cs_meta':
-          $conf['cs_meta_inst_name'] = 'The Institute for Quantitative Social Science';
-          $conf['cs_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec/cs';
-          break;
-
-        case 'googlescholar_meta':
-          //no system settings needed for googlescholar_meta
-          break;
-      }
-    }
-  }
-  return $conf;
-}
-
-/**
  * Implementation of hook_link()
  */
 
