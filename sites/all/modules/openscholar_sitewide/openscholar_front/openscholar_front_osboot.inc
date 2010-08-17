@@ -118,20 +118,27 @@ function _vsite_filefield_paths_config($type = NULL){
     reset($types);
   }
     
- //set the paths for filefield fields
+  //set the paths for filefield fields
   foreach ( content_fields() as $field ) {
+    //special case - do not update 'path' field_user_profile_photo
+    if( $field['field_name'] == 'field_user_profile_photo' ); {
+      db_query("UPDATE {filefield_paths} SET filename = '%s', filealias = '%s' WHERE field = '%s' " ,
+      serialize($file_name), serialize($file_alias) ,$field['field_name']);
+      continue;
+    }
+
     if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)) {
       //if specific type has been specified as parameter, then do no update other types filefield paths
       if(($type) && $type !==$field['type_name']) continue;
-   
-     $field_exists = db_result(db_query("SELECT field FROM {filefield_paths} WHERE field = '%s' ", $field['field_name']));
+
+      $field_exists = db_result(db_query("SELECT field FROM {filefield_paths} WHERE field = '%s' ", $field['field_name']));
       if($field_exists){
-      db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE field = '%s' " ,
-      serialize($file_name), serialize($file_path), serialize($file_alias) ,$field['field_name']);
+        db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE field = '%s' " ,
+        serialize($file_name), serialize($file_path), serialize($file_alias) ,$field['field_name']);
       }
       else{
-      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'],
-      serialize($file_name), serialize($file_path), serialize($file_alias));
+        db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'],
+        serialize($file_name), serialize($file_path), serialize($file_alias));
       }
     }
   }
