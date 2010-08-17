@@ -8,14 +8,36 @@
  */
 function iqss_scholar_strongarm(){
   require_once drupal_get_path('module','iqss_scholar').'/iqss_scholar.defaults.inc';
-  
-	$conf = array();
-  
-	$conf = array_merge($conf,_iqss_scholar_config_variables());
-	
-	$conf = array_merge($conf,_iqss_scholar_config_by_domain());
-  
-	return $conf;
+
+  $conf = array();
+  $conf = array_merge($conf,_iqss_scholar_config_variables());
+  $conf = array_merge($conf,_iqss_scholar_config_by_domain());
+
+  //if the Scholar Profile has been installed
+  if (module_exists('cite_distribute')){
+    $submodules = cite_distribute_installed_mods();
+    foreach ($submodules as $module){
+
+      switch($module['name']){
+        case 'repec_meta':
+          $conf['repec_meta_inst_name'] = 'The Institute for Quantitative Social Science';
+          $conf['repec_meta_archive_code'] = 'qss';
+          $conf['repec_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec';
+          $conf['repec_meta_archive_url'] = 'http://repec.iq.harvard.edu';
+
+          break;
+        case 'cs_meta':
+          $conf['cs_meta_inst_name'] = 'The Institute for Quantitative Social Science';
+          $conf['cs_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec/cs';
+          break;
+
+        case 'googlescholar_meta':
+          //no system settings needed for googlescholar_meta
+          break;
+      }
+    }
+  }
+  return $conf;
 }
 
 /**
