@@ -58,7 +58,7 @@
         <ul>
           <li><?php print l('Documentation', 'http://scholar-dev3.iq.harvard.edu/help/vsitehelp/OpenScholar-Documentation');?></li>
           <li><?php print l('Feedback', 'cp/support/contact');?></li>
-          <li class="last">Version <?php print OPENSCHOLAR_VERSION;?></li>
+          <li class="last">Version <?php print $openscholar_version_info['openscholar_version'];?></li>
         </ul>
         <?php if ($footer_message){ ?>
           	<div id="footer-message"><?php print $footer_message; ?></div>
