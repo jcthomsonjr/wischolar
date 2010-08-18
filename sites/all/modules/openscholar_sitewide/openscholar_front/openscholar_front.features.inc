@@ -28,6 +28,15 @@ function openscholar_front_imagecache_default_presets() {
 }
 
 /**
+ * Implementation of hook_node_info().
+ */
+function openscholar_front_node_info() {
+  module_load_include('inc', 'openscholar_front', 'openscholar_front.features.node');
+  $args = func_get_args();
+  return call_user_func_array('_openscholar_front_node_info', $args);
+}
+
+/**
  * Implementation of hook_views_default_views().
  */
 function openscholar_front_views_default_views() {
