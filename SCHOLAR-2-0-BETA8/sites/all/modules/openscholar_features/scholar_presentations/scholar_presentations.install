@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Implementation of hook_install()
+ */
+function scholar_presentations_install(){
+
+  
+}
+
+/**
+ * Implementation of hook_enable()
+ */
+function scholar_presentations_enable(){
+  module_load_include('inc', 'openscholar_front', 'openscholar_front_osboot');
+   _vsite_filefield_paths_config('presentation');
+}
+
+/**
+ * Update filefiled path tokens
+ * @param $sandbox
+ */
+function scholar_presentations_update_6001(&$sandbox){
+  module_load_include('inc', 'openscholar_front', 'openscholar_front_osboot');
+  return _vsite_filefield_paths_config('presentation');   
+}
