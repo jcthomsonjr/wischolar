@@ -40,7 +40,7 @@ function scholar_publications_update_6002(&$sandbox){
   //update visible fields for biblio types 'Working Paper' and 'Data'
   $hide_fields = array(
   1000 => array( 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 23, 28, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53),  //Working Paper
-  1001 => array( 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 23, 28, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 46), // Data
+  1001 => array( 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 23, 28, 30, 31, 32, 33, 34, 35, 36, 37, 40, 41, 42, 43, 46, 48), // Data
   );
   foreach ($hide_fields as $type_id => $field_ids){
     foreach($field_ids as $field_id){
