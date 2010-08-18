@@ -1,10 +1,15 @@
 <?php
 
+/**
+ * The current openscholar version.
+ */
+define('OPENSCHOLAR_VERSION', '6.x-2.0-BETA8');
+
 include_once('openscholar_front.features.inc');
 
 function openscholar_front_init(){
   $vsite = vsite_get_vsite();
-  if (!$vsite && !drupal_is_front_page() 
+  if (!$vsite && !drupal_is_front_page()
       && arg(0) != 'admin'){
     context_set('openscholar', 'section', 'sitewide');
   }
@@ -17,7 +22,7 @@ function openscholar_front_strongarm(){
     // Comments
   $conf['comment_sitewide_page'] = COMMENT_NODE_DISABLED;
     
-  return $conf;  
+  return $conf;
 }
 
 /**
@@ -39,7 +44,7 @@ function openscholar_front_osboot(){
     _block_rehash(); // Rebuild block cache.
     views_invalidate_cache(); // Rebuild the views.
     menu_rebuild(); // Rebuild the menu.
-    features_rebuild(); // Features rebuild scripts.  	
+    features_rebuild(); // Features rebuild scripts.
 
     //_scholar_testingcontent();
     _vsite_filefield_paths_config();
