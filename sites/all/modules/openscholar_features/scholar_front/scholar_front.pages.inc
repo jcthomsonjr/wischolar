@@ -54,7 +54,7 @@ function scholar_front_home(){
     	$s_members = l("Manage who may use your site",'cp/users/members');
     	$s_theme = l("Change the look of your site",'cp/appearance');
     	$s_layout = l("Move elements in your page layout",'cp/appearance/layout');
-    	$s_docs = l("View documentation","help/vsitehelp/Scholar-Web-Sites-Project-Documentation");
+    	$s_docs = l("View documentation","help/vsitehelp/OpenScholar-Documentation");
 
     	//Created in the last 26 hours?
     	$s_welcome_message = (time() - $vsite->group->created < 93600)?"Welcome to your new website!":"";
