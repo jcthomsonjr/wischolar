@@ -75,6 +75,6 @@ function openscholar_log_usage_log(){
   $views = db_result(db_query('SELECT views FROM {openscholar_usage_log} WHERE host = "%s" AND vsite = "%s" AND age = FROM_UNIXTIME(%d) ',array($_REQUEST['host'],$_REQUEST['vsite'],$_REQUEST['age'])));
   $views++;
   
-  db_query("REPLACE INTO {openscholar_usage_log} (host,host_name,vsite,age,views,version,last_visit) VALUES ('%s','%s','%s',FROM_UNIXTIME(%d),%d,'%s',NOW())",array($_REQUEST['host'],$_SERVER['HTTP_HOST'],$_REQUEST['vsite'],$_REQUEST['age'],$views,$_REQUEST['version']));
+  db_query("REPLACE INTO {openscholar_usage_log} (host,host_name,vsite,age,views,version,last_visit) VALUES ('%s','%s','%s',FROM_UNIXTIME(%d),%d,'%s',NOW())",array($_REQUEST['host'],$_SERVER['REMOTE_HOST'],$_REQUEST['vsite'],$_REQUEST['age'],$views,$_REQUEST['version']));
   
 }
