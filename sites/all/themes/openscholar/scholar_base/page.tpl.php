@@ -112,7 +112,7 @@
           ?>
           <p class="copy"><?php if ($footer_message): ?>
           <?php print $footer_message; ?>
-          <?php endif; ?><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" />
+          <?php endif; ?><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
         </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->

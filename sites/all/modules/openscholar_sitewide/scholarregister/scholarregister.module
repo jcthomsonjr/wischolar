@@ -42,9 +42,9 @@ function scholarregister_menu(){
  *@return boolean
  */
 function scholarregister_form_access(){
-  global $user;  
+  global $user;
   if (user_access('access content')){
-    return true; 
+    return true;
   }
   else {
     return false;
@@ -108,7 +108,7 @@ function scholarregister_vsite_exists_access($vsites = array()){
 
 /**
  * Private function - Provides redirect path and message for certain regstration form access conditions
- * @param  $vsites array created from vsite_get_vsite_by_owner() 
+ * @param  $vsites array created from vsite_get_vsite_by_owner()
  */
 function _scholarregister_get_redirect($vsites = array()){
   switch (count($vsites)){
@@ -119,7 +119,7 @@ function _scholarregister_get_redirect($vsites = array()){
       break;
 
     case 1:
-      global $base_url;  
+      global $base_url;
       drupal_set_message(t('You already have a registered web site.' . l(' Go there now.', $vsites[0] ->get_absolute_url())));
       return $base_url;
       break;
@@ -253,7 +253,7 @@ function scholarregister_notify_user($vsite, $user){
     '!site' => variable_get('site_name', 'OpenScholar'),
     '!scholar_site_url' => $scholar_site_url,
     '!login_url' => user_pass_reset_url($user),
-    '!site_login_uri' => url($vsite -> purl . '/home', array('absolute' => TRUE)), 
+    '!site_login_uri' => url($vsite -> purl . '/home', array('absolute' => TRUE)),
     '!uri' => $base_url,
     '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
     '!mailto' => $user->mail,
@@ -274,9 +274,8 @@ function scholarregister_notify_user($vsite, $user){
   //detemine if user is creating first site or additional site, send appropriate message
   $body = (count(vsite_get_vsite_by_owner($user -> uid)) > 1) ?
   
-   t("Hi !username,\n\nYour new web site at !site has been activated. Your web site url is !scholar_site_url\n\nYou will be able to log into your site at !site_login_uri with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables)  
-   :
-  t("Hi !username,\n\nYour new web site at !site has been activated.\n\nYour web site url is !scholar_site_url\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in at !site_login_uri as username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables);
+   t("Hi !username,\n\nYour new web site at !site has been activated. Your web site url is !scholar_site_url\n\nYou will be able to log into your site at !site_login_uri with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables)
+   :t(variable_get('openscholar_register_email_message', _scholarregister_get_default_mail_message()), $msg_variables);
 
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
@@ -334,14 +333,35 @@ function scholarregister_message($form, $domain){
     
   $message  = '<div id="success-message">';
   $message .= '<p>Success! ' . ucfirst($word_replace) . ' new site has been created.</p>';
-  $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';  
+  $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';
   if (in_array('anonymous user', $user -> roles)){
     $message .= '<p>Check your email account for further details on how to login in to start adding features and content.</p>';
   }
   $message .= '</div>';
   
   //give other modules a chance to alter message
-  module_invoke_all('scholarregister_message',  $message, $form, $domain);   
+  module_invoke_all('scholarregister_message',  $message, $form, $domain);
   return $message;
 }
 
+///**
+// * Implement Hook openscholar_admin_settings
+// * @return array
+// */
+//function scholarregister_openscholar_admin_settings(){
+//  $a_settings = array();
+//
+//  $a_settings['openscholar_register_email_message'] = array(
+//    '#type' => 'textarea',
+//	  '#title' => t('Email Registration Message'),
+//	  '#default_value' => variable_get('openscholar_register_email_message', _scholarregister_get_default_mail_message()),
+//	  '#required' => TRUE,
+//    '#description' => t(""),
+//  );
+//
+//  return $a_settings;
+//}
+
+function _scholarregister_get_default_mail_message(){
+  return "Hi !username,\n\nYour new web site at !site has been activated.\n\nYour web site url is !scholar_site_url\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in at !site_login_uri as username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team";
+}

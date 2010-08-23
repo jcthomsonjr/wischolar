@@ -65,98 +65,58 @@ function _scholar_testingcontent(){
 }
 
 /**
- *  Updates the filefield path information and/or tokens 
- *  for both uploads and cck filefield fields
- *
- * @param $type
- *    a valid content type 
- * @param $fields 
- *    an optional array of cck file fields that should be updated. 
- *    If left blank, then all cck file fields for the specified type will be update
- * @param $config 
- *    an optional array to pass a custom configuration of path information
+ * Updates the filefield settings for group content types
  */
-function _vsite_filefield_paths_config($type, $fields = array(), $config = array()){
-  global $conf;
-  $ret = array();
-
-  if (!in_array($type, array_keys(content_types()))){
-    $ret[] = array(
-    'success' => FALSE,
-    'query' => t('A valid content type must be passed as the first argument'),
-    );
-    return $ret;
-  }
-
- // $types = og_get_types('group_post');  
-  if (empty($config)){
-    
-    $config = array(
-      'file_name' => array(
-      'value' => '[filefield-onlyname-original].[filefield-extension-original]',
-      'tolower' => 0,
-      'pathauto' => 0,
-      'transliterate' => 0
-      ),
+function _vsite_filefield_paths_config(){
+  $return = array();
   
-      'file_path' => array(
-      'value' => '[space-og-path-raw]/files',
-      'tolower' => 0,
-      'pathauto' => 0,
-      'transliterate' => 0
-      ),
-  
-      'file_alias' => array(
-      'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]',
-      'tolower' => 0,
-      'pathauto' => 0,
-      'transliterate' => 0,
-      'display' => 1,
-      ),
-    );
-  }
- 
-  //only if attachments are enabled for the specified type
-  if($conf['upload_' . $type]){
-  //set the path and alias settings for the upload field
-    $row_exists = db_result(db_query("SELECT field FROM {filefield_paths} WHERE type = '%s' AND field = '%s' ",  $type, 'upload'));
-    if($row_exists){
-      db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE type = '%s' AND field = '%s' ",
-      serialize($config['file_name']), serialize($config['file_path']), serialize($config['file_alias']) , $type,  'upload');
-    }
-    else{
-      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $type, 'upload',
-      serialize($config['file_name']), serialize($config['file_path']), serialize($config['file_alias']));
-    }
-  }
-    
-  //set the path info for cck filefield fields for the specified type
-  $type_info = content_types($type);
-  foreach($type_info['fields'] as $field_name => $field_info){
-  
-    //if fields are specified in this function's arguments, then limit
-    // the updates to fields only specified in the argument array
-    if(count($fields) && !(in_array($field_name, $fields))) continue;
-  
-    if (($field_info['module'] == 'filefield')) {
-      $field_exists = db_result(db_query("SELECT field FROM {filefield_paths} WHERE  type = '%s' AND field = '%s' ", $type, $field_info['field_name']));
-      if($field_exists){
-        db_query("UPDATE {filefield_paths} SET filename = '%s',  filepath = '%s', filealias = '%s' WHERE  type = '%s' AND field = '%s' ",
-        serialize($config['file_name']), serialize($config['file_path']), serialize($config['file_alias']) , $type, $field_info['field_name']);
-      }
-      else{
-        db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $type, $field_info['field_name'],
-        serialize($config['file_name']), serialize($config['file_path']), serialize($config['file_alias']) );
-      }
-    }
-  }
-
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => t('The upload and filefield file paths were updated for type: %t', array('%t'  => ($type))),
+  //set the "upload" paths
+  $types = og_get_types('group_post');
+  $file_name = array(
+    'value' => '[filefield-onlyname-original].[filefield-extension-original]',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0
   );
   
-  return $ret;
+  $file_path = array(
+    'value' => '[space-og-path-raw]/files',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0
+  );
+  
+  $file_alias = array(
+    'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]',
+    'tolower' => 0,
+    'pathauto' => 0,
+    'transliterate' => 0,
+    'display' => 1,
+  );
+  
+  
+  foreach ( $types as $type ) {
+    $file_alias['display'] = ($type == 'image')?0:1; //turn on display for all but image
+    db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath, filealias) VALUES ('%s', '%s', '%s', '%s', '%s')", $type, "upload", serialize($file_name), serialize($file_path), serialize($file_alias));
+  }
+  
+  //set the "filefield" paths
+  reset($types);
+  
+  //find the fields
+  foreach ( content_fields() as $field ) {
+    if (($field['module'] == 'filefield') && in_array($field['type_name'], $types)) {
+      //add settings to database if applicable
+      db_query("INSERT INTO {filefield_paths} (type, field, filename, filepath) VALUES ('%s', '%s', '%s', '%s')", $field['type_name'], $field['field_name'], serialize($file_name), serialize($file_path));
+    }
+  }
+  
+  $return[] = array(
+    'success' => TRUE,
+    'query' => "the upload and filefield file paths were inserted in the filefield_paths table"
+  );
+  
+  return $return;
 }
 
 function _vsite_global_taxonomy(){

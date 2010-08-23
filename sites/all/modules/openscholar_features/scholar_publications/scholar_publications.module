@@ -501,7 +501,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   if ($openurl_base) $s_output .= theme('biblio_openurl', biblio_openurl($node));
 
   // add links to attached files (if any) unless we have an image, then it would be crowded
-  if (biblio_access('download', $node) && !count($node->field_biblio_image)) $s_output .= theme('biblio_download_links',$node);
+  if (biblio_access('download', $node) && !count($node->field_biblio_image[0])) $s_output .= theme('biblio_download_links',$node);
 
   if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
   
