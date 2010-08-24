@@ -56,7 +56,7 @@
      <div id="footer">
         <h3>OpenScholar <span>IQSS, Harvard University</span></h3>
         <ul>
-          <li><?php print l('Documentation', 'http://scholar.harvard.edu/help/vsitehelp/OpenScholar-Documentation');?></li>
+          <li><?php print l('Documentation', 'help/vsitehelp/OpenScholar-Documentation');?></li>
           <li><?php print l('Feedback', 'cp/support/contact');?></li>
           <li class="last">Version <?php print $openscholar_version_info['openscholar_version'];?></li>
         </ul>
