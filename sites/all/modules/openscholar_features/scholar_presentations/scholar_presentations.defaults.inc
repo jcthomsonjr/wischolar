@@ -301,43 +301,64 @@ function _scholar_presentations_user_default_permissions() {
   // Exported permission: create presentation content
   $permissions[] = array(
     'name' => 'create presentation content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: delete own presentation content
   $permissions[] = array(
     'name' => 'delete own presentation content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: edit own presentation content
   $permissions[] = array(
     'name' => 'edit own presentation content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: override presentation promote to front page option
   $permissions[] = array(
     'name' => 'override presentation promote to front page option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: override presentation published option
   $permissions[] = array(
     'name' => 'override presentation published option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: override presentation revision option
   $permissions[] = array(
     'name' => 'override presentation revision option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   // Exported permission: override presentation sticky option
   $permissions[] = array(
     'name' => 'override presentation sticky option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'scholar admin',
+      '1' => 'scholar user',
+    ),
   );
 
   return $permissions;

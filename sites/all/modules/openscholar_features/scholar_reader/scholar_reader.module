@@ -26,6 +26,10 @@ function scholar_reader_strongarm(){
 
   //Max number of feeds to proccess at once (per cron)
   $conf['feeds_schedule_num'] = 30;
+  
+  // vertical tabs
+  $conf['vertical_tabs_forms']['feed_node_form'] = array('feeds' => FALSE);
+  
   return $conf;
 }
 
