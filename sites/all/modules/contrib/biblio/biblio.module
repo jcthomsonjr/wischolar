@@ -1,5 +1,5 @@
 <?php
-// $Id: biblio.module,v 1.123.2.179 2010/05/14 01:58:08 rjerome Exp $
+// $Id: biblio.module,v 1.123.2.181 2010/06/09 01:48:48 rjerome Exp $
 /**
  *   biblio.module for Drupal
  *
@@ -469,10 +469,18 @@ function biblio_link($type, $node = NULL, $teaser = FALSE) {
 /**
  * Implementation of hook_user().
  */
-function biblio_user($type, & $edit, & $user, $category = NULL) {
+function biblio_user($type, & $edit, & $account, $category = NULL) {
+  global $user;
+
   if ($type == 'form' && $category == 'account' ) {
-    if (variable_get('biblio_show_user_profile_form', '1')) {
-      include_once drupal_get_path('module', 'biblio') .'/biblio.admin.inc';
+    $form = array();
+    include_once drupal_get_path('module', 'biblio') .'/biblio.admin.inc';
+    $show_form = variable_get('biblio_show_user_profile_form', '1')     ||
+                 variable_get('biblio_show_crossref_profile_form', '1') ||
+                 variable_get('biblio_show_openurl_profile_form', '1');
+
+    $admin_show_form = ($user->uid == 1 || (user_access('administer users') && user_access('administer biblio'))) ? TRUE : FALSE;
+    if ($admin_show_form || $show_form) {
       $form['biblio_fieldset'] = array(
         '#type' => 'fieldset',
         '#title' => t('Biblio settings'),
@@ -480,14 +488,18 @@ function biblio_user($type, & $edit, & $user, $category = NULL) {
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       );
-      _biblio_get_user_profile_form($form['biblio_fieldset'], $user);
-      _biblio_get_user_openurl_form($form['biblio_fieldset'], $user);
-
-      if (user_access('create biblio')) {
-        _biblio_get_user_doi_form($form['biblio_fieldset'], $user);
+      if($admin_show_form || variable_get('biblio_show_user_profile_form', '1')) {
+        _biblio_get_user_profile_form($form['biblio_fieldset'], $account);
       }
-      return $form;
+      if ($admin_show_form || variable_get('biblio_show_openurl_profile_form', '1')) {
+        _biblio_get_user_openurl_form($form['biblio_fieldset'], $account);
+      }
+      if ($admin_show_form || variable_get('biblio_show_crossref_profile_form', '1')) {
+        _biblio_get_user_doi_form($form['biblio_fieldset'], $account);
+      }
+
     }
+    return $form;
   }
   if ($type == 'validate' && $category == 'account') { // TODO: this is not reached at all
     if (($edit['biblio_my_pubs_menu'] || $edit['biblio_show_profile']) && $edit['biblio_contributor_id'] == 0) {
@@ -500,8 +512,8 @@ function biblio_user($type, & $edit, & $user, $category = NULL) {
   }
   if ($type == 'update' && $category == 'account') {
     if (isset($edit['biblio_contributor_id'])) {
-      db_query("UPDATE {biblio_contributor_data} SET drupal_uid = 0 WHERE drupal_uid = %d", $user->uid);
-      db_query('UPDATE {biblio_contributor_data} set drupal_uid = %d WHERE cid = %d ', $user->uid, $edit['biblio_contributor_id']);
+      db_query("UPDATE {biblio_contributor_data} SET drupal_uid = 0 WHERE drupal_uid = %d", $account->uid);
+      db_query('UPDATE {biblio_contributor_data} set drupal_uid = %d WHERE cid = %d ', $account->uid, $edit['biblio_contributor_id']);
     }
   }
   if ($type == 'categories') {
@@ -1140,8 +1152,17 @@ function biblio_form($node, $form_state) {
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       );
-      $have_pid  = (isset($user->biblio_crossref_pid) && !empty($user->biblio_crossref_pid)) ? FALSE : TRUE;
-      if ($have_pid) {
+      $pid = '';
+      if (isset($user->biblio_crossref_pid)  &&
+          !empty($user->biblio_crossref_pid) &&
+          variable_get('biblio_show_crossref_profile_form', '1'))
+      {
+        $pid = $user->biblio_crossref_pid;
+      }
+      else {
+        $pid = variable_get('biblio_crossref_pid', '');
+      }
+      if (empty($pid)) {
         $form['biblio_doi_lookup']['doi_register'] = array(
           '#prefix' => '<p><b>',
           '#suffix' => '</b></p>',
@@ -1990,7 +2011,7 @@ function _biblio_filter_replace_callback($matches, $op = '') {
   $str = '';
   if ($op == 'output footer') {
     if ($n > 0) {
-      $str = '<p><hr /></p><h3>'. t('References') .'</h3>';
+      $str = '<hr /><h3>'. t('References') .'</h3>';
       $str .= '<div class="references"><ol>';
       for ($m = 1; $m <= $n; $m++) {
         $str .= '<li id="reference'. $m .'"><a name="ref'.$m.'">'. _biblio_citekey_print($store_matches[$m -1]) ." </a></li>\n\n";
@@ -2018,13 +2039,13 @@ function _biblio_filter_replace_callback($matches, $op = '') {
   //remove newlines. Browsers don't support them anyway and they'll confuse line break converter in filter.module
   $title = str_replace("\n", " ", $title);
   $title = str_replace("\r", "", $title);
-  //return '<sup class="see_reference" title="'. $title .'"><a href="#reference'. $n .'">'. $n .'</a></sup>';
-  //$text = '<span><a href="#reference'. $n .'">['. $n .']</a> </span>';
-  //$text = '<span>['. $n .']</span>';
-  //$text .= '<span class="hovertip">'._biblio_citekey_print($title) .'</span>';
-  $text = '<span hovertip="reference'. $ref .'"><a href="#ref'.$ref.'">['. $ref .']</a></span>';
   if (module_exists('hovertip')) {
-    $text .= '<span id="reference'. $ref .'" class="hovertip"><h1>Reference</h1>'. _biblio_citekey_print($title) .'</span>';
+    $text = '<span hovertip="reference'. $ref .'"><a href="#ref'.$ref.'">['. $ref .']</a></span>';
+    $text .= '<span id="reference'. $ref .'" class="hovertip">'. _biblio_citekey_print($title) .'</span>';
+  }
+  else {
+    $text = '<a href="#ref'.$ref.'" title="Reference '. $ref .'">['. $ref .']</a>';
+
   }
   return $text;
 }

@@ -305,8 +305,9 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       }
       if($teaser && biblio_access('export', $node)){
 	      $links = array();
-        $show_link = variable_get('biblio_export_links', array('tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
+        $show_link = variable_get('biblio_export_links', array('rtf' => TRUE, 'tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
 		    $show_link['google'] = variable_get('biblio_google_link', 1);
+		    if ($show_link['rtf'])    $links['biblio_rtf']            = _build_biblio_rtf_link($base, $node->nid);
 		    if ($show_link['tagged']) $links['biblio_tagged']         = _build_biblio_tagged_link($base, $node->nid);
         if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
 		    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
@@ -507,8 +508,9 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   
   if(biblio_access('export', $node)){
     $links = array();
-    $show_link = variable_get('biblio_export_links', array('tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
+    $show_link = variable_get('biblio_export_links', array('rtf' => TRUE,'tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
     $show_link['google'] = variable_get('biblio_google_link', 1);
+    if ($show_link['rtf'])     $links['biblio_rtf']            = _build_biblio_rtf_link($base, $node->nid);
     if ($show_link['tagged']) $links['biblio_tagged']         = _build_biblio_tagged_link($base, $node->nid);
     if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
     if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);

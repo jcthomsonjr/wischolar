@@ -1,5 +1,5 @@
 <?php
-// $Id: biblio.admin.inc,v 1.9.2.91 2010/05/12 01:55:40 rjerome Exp $
+// $Id: biblio.admin.inc,v 1.9.2.95 2010/06/28 20:43:17 rjerome Exp $
 /**
  *   biblio.admin.inc
  *
@@ -33,7 +33,7 @@ function biblio_admin_ahah($form, $element, $value) {
 * Implementation of hook_settings().
 */
 function biblio_admin_settings() {
-  $version = '$Name: DRUPAL-6--1-12 $ $Date: 2010/05/12 01:55:40 $';
+  $version = '$Name:  $ $Date: 2010/06/28 20:43:17 $';
   $version = str_replace('$', '', $version);
   $form['biblio_rev'] = array(
     '#value' => $version,
@@ -186,6 +186,28 @@ function biblio_admin_settings() {
     );
   }
 
+  $form['biblio_crossref'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' =>  TRUE,
+    '#title' => t('CrossRef Login Information')
+  );
+  $link_attrs = array('attributes' => array('target' => '_blank'),
+                      'absolue' => TRUE);
+  $form['biblio_crossref']['biblio_show_crossref_profile_form'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow users to override these settings on their "My account" page') ,
+    '#return_value' => 1,
+    '#description' =>  t('If this is selected, a form similar to this section will be available to the user when they edit their own account information.  This will allow them to override the global preferences set here.') ,
+    '#default_value' => variable_get('biblio_show_crossref_profile_form', '1')
+  );
+  $form['biblio_crossref']['biblio_crossref_pid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('CrossRef OpenURL Account ID'),
+    '#default_value' => variable_get('biblio_crossref_pid',''),
+    '#description' => t('Enter your complimentary CrossRef OpenURL account ID which you can obtain here ') .l('OpenURL Account Request Form', 'http://www.crossref.org/requestaccount/', $link_attrs) . t(', OR enter your full CrossRef (colon separated) account:password combination.')
+  );
+
   $form['footnotes'] = array(
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
@@ -306,8 +328,9 @@ function biblio_admin_settings() {
   $form['links']['export']['biblio_export_links'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Show export links'),
-    '#default_value' => variable_get('biblio_export_links', array('tagged', 'xml', 'bibtex')),
+    '#default_value' => variable_get('biblio_export_links', array('rtf', 'tagged', 'xml', 'bibtex')),
     '#options' => array(
+      'rtf'     => t('Rich Text Format'),
       'tagged'  => t('EndNote Tagged'),
       'xml'     => t('EndNote XML'),
       'bibtex'  => t('BibTex'),
@@ -364,6 +387,14 @@ function biblio_admin_settings() {
     '#title' => t('OpenURL'),
     '#description' => t('You can set an <a href="http://en.wikipedia.org/wiki/OpenURL">openurl</a> link here')
   );
+  $form['openurl']['biblio_show_openurl_profile_form'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow users to override these settings on their "My account" page') ,
+    '#return_value' => 1,
+    '#description' =>  t('If this is selected, a form similar to this section will be available to the user when they edit their own account information.  This will allow them to override the global preferences set here.') ,
+    '#default_value' => variable_get('biblio_show_openurl_profile_form', '1')
+  );
+
   $form['openurl']['biblio_baseopenurl'] = array(
     '#type' => 'textfield',
     '#title' => t('OpenURL Base URL'),
@@ -593,7 +624,7 @@ function biblio_admin_types_edit_form() {
   }
   $msg .= t('Finally, for each author field you can choose a set of author roles. Assigning different roles to authors within the same field, e.g. primary and secondary authors within the authors field, allows to theme them differently.');
   $msg .= '</div>';
-  $form['#redirect'] = 'admin/settings/biblio/type';
+  $form['#redirect'] = 'admin/settings/biblio/fields/type';
   $form['help'] = array(
     '#type' => 'fieldset',
     '#title' => t('Help'),
@@ -726,7 +757,7 @@ function biblio_admin_types_edit_form() {
       //'#disabled' => $disabled
     );
     $form['configured_flds'][$key]['ftdid'] = array(
-      '#type' => 'value',
+      '#type' => '#value',
       '#value' => $fld['ftdid']
     );
     if ($fld['type'] == 'contrib_widget') {
