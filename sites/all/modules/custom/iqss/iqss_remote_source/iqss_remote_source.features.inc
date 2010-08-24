@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * Implementation of hook_user_default_permissions().

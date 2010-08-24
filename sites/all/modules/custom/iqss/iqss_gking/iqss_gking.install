@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * Implementaton of hook_enable().
@@ -52,7 +52,7 @@ function iqss_gking_update_6003(&$sandbox){
   FROM {node} n
   RIGHT JOIN {og_ancestry} oga on oga.nid  = n.nid
   RIGHT JOIN {content_field_presentation_file} cfp on cfp.nid = n.nid
-  WHERE (oga.group_nid = %d AND type = '%s')" , $gking_sid, 'presentation'); 
+  WHERE (oga.group_nid = %d AND type = '%s')" , $gking_sid, 'presentation');
 
   while($data = db_fetch_object($sql)){
     $filename = db_result(db_query("SELECT filename FROM {files} WHERE fid = %d", $data -> fid));
