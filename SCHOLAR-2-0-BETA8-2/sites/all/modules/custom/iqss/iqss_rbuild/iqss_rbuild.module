@@ -1,0 +1,389 @@
+<?php
+define(IQSS_RBUILD_DOC_CACHE_LEN, 31536000); //One Year
+
+function iqss_rbuild_strongarm(){
+  $conf = array();
+  
+  //Default URL for rbuild
+  $conf['iqss_rbuild_default_url'] = "http://r.iq.harvard.edu/src/contrib/";
+  
+  return $conf;
+}
+
+/**
+ * Implements hook_menu
+ */
+function iqss_rbuild_menu(){
+  $items = array();
+  
+  $items['node/%node/rbuild_documentation'] = array(
+    'title' => 'Documentation',
+    'page callback' => 'iqss_rbuild_docs',
+    'page arguments' => array(1),
+    'access callback' => 'iqss_rbuild_docs_exist',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 5,
+  );
+  
+  return $items;
+}
+    
+/**
+ * Implementation of hook_scholar_software_handlers()
+ */
+function iqss_rbuild_scholar_software_handlers() {
+  return array(
+    'rbuild' => array(
+      'name' => "rbuild repository",
+      'path' => drupal_get_path('module', 'iqss_rbuild') . '/include/rbuild.inc',
+      'class' => 'rbuild',
+    ),
+  );
+}
+
+function _iqss_rbuild_add_project_node_form_js(){
+	drupal_add_js(drupal_get_path('module', 'iqss_rbuild') . '/iqss_rbuild.js');
+  drupal_add_js(array("iqss_rbuild" =>
+    array(
+      'repo_url' => variable_get('iqss_rbuild_default_url',""),
+      'title_default' => "Title will be sync'ed with the rbuild package",
+    )
+  ),'setting');
+}
+
+/**
+ * Form Alter for the project node
+ */
+function iqss_rbuild_form_scholar_software_project_node_form_alter(&$form, &$form_state) {
+  _iqss_rbuild_add_project_node_form_js();
+  
+  if(!is_array($form['#submit'])) $form['#submit'] = array();
+	array_unshift($form['#submit'], 'iqss_rbuild_scholar_software_project_node_submit');
+	array_unshift($form['#validate'], 'iqss_rbuild_scholar_software_project_node_validate');
+}
+
+function iqss_rbuild_scholar_software_project_node_submit($form, &$form_state) {
+	if($form_state['values']['field_scholar_software_method'][0]['value'] == 'rbuild'){
+		$form_state['values']['field_scholar_software_repo'][0]['value'] = variable_get('iqss_rbuild_default_url',"");
+	}
+}
+
+function iqss_rbuild_scholar_software_project_node_validate($form, &$form_state) {
+	_iqss_rbuild_add_project_node_form_js();
+	
+  if($form_state['values']['field_scholar_software_method'][0]['value'] == 'rbuild'){
+    $form_state['values']['field_scholar_software_repo'][0]['value'] = variable_get('iqss_rbuild_default_url',"");
+  }
+  
+  $a_handlers = scholar_software_get_handlers();
+  if($form_state['values']['field_scholar_software_method'][0]['value'] == 'rbuild' && array_key_exists($form_state['values']['field_scholar_software_method'][0]['value'],$a_handlers)){
+    $a_handler_info = $a_handlers[$form_state['values']['field_scholar_software_method'][0]['value']];
+    if($a_handler_info['path']) require_once($a_handler_info['path']);
+    $o_handler = new $a_handler_info['class']($form_state['values']['field_scholar_software_repo'][0]['value'], $form_state['values']['field_scholar_software_name'][0]['value']);
+    $o_handler->validate();
+  }
+}
+
+
+
+/**
+ * Import a release node from rbuild server
+ * @param $project_node
+ * @param $s_version
+ * @param $s_file_name
+ * @param $a_package
+ */
+function iqss_rbuild_add_release_node($project_node, $s_version, $s_file_name, $a_package, $s_url, &$context){
+  $n_start_time = time();
+  
+	//Create Release
+  $release_node = new stdClass();
+  $release_node->type = 'scholar_software_release';
+  $release_node->uid = $project_node->uid;
+  $release_node->pathauto_perform_alias = 1;
+  $release_node->og_groups = $project_node->og_groups;
+  $release_node->spaces_og = $project_node->spaces_og;
+  $release_node->status = 1;
+  $release_node->active = 1;
+  $release_node->field_scholar_software_project[0]['nid'] = $project_node->nid;
+  list($major,$patch,$extra) = _iqss_rbuild_parseVersion($s_version);
+  $release_node->field_versionmajor[0]['value'] = $major;
+  $release_node->field_versionpatch[0]['value'] = $patch;
+  $release_node->field_versionextra[0]['value'] = $extra;
+  $release_node->field_scholar_software_recommend[0]['value'] = ($s_version == $a_package['version'])?1:0;
+  $release_node->field_scholar_software_security[0]['value'] = 0;
+      
+  $file = _iqss_rbuild_importFile($s_url."/".$s_file_name, $s_file_name, $project_node->uid);
+  $release_node->field_scholar_software_file[0] = array(
+    'fid' => $file->fid,
+    'title' => basename($file->filename),
+    'filename' => $file->filename,
+    'filepath' => $file->filepath,
+    'filesize' => $file->filesize,
+    'mimetype' => $file->filemime,
+    'description' => basename($file->filename),
+    'list' => 1,
+  );
+  
+  if(!$file->process_file) $release_node->field_scholar_software_file[0]['status'] = 1; //Tell file_fields to leave this alone
+  
+  if($file->timestamp < $n_start_time) $release_node->created = $file->timestamp;
+  
+  //Save the new release to db
+  node_save($release_node);
+  
+  $context['results'][] = $release_node->nid .' : '. $release_node->title;
+  $context['message'] = $release_node->title;
+}
+
+function iqss_rbuild_batch_finished($success, $results, $operations){
+	if($success){
+		drupal_set_message(format_plural(count($results), 'One release processed.', '@count releases processed.'));
+	}else{
+		drupal_set_message(t("Unable to import all release information"));
+	}
+}
+
+/**
+ * Parse the version components from a version string
+ * @param $s_version
+ * @return array
+ */
+function _iqss_rbuild_parseVersion($s_version){
+  $extra = "";
+  list($major,$patch) = explode(".",$s_version,2);
+  
+  if(strstr($patch,"-")) list($patch,$extra) = explode("-",$patch,2);
+    
+  return array(intval($major),intval($patch),strval($extra));
+}
+
+/**
+ * Import a release file from an external server
+ * @param $s_external_path
+ * @param $uid
+ * @return (object) file
+ */
+function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid, $b_get_file_contents = false){
+  $mime = 'application/octet-stream'; //GZip Files
+
+  $s_filepath = $s_external_path;
+  if($b_get_file_contents){
+	  $s_contents = _iqss_rbuild_get_file_contents($s_external_path);
+	  $s_filepath = file_save_data($s_contents,$s_file_name);
+  }
+  
+  $n_time = false;
+  $n_filesize =  @filesize($s_filepath);
+  if(!$n_filesize){
+    foreach (_iqss_rbuild_get_file_headers($s_external_path) as $s_header){
+    	list($s_key,$s_val) = explode(":",$s_header,2);
+    	if(strtolower(trim($s_key)) == "content-length"){
+    		$n_filesize = intval($s_val);
+    	}
+      if(strtolower(trim($s_key)) == "last-modified"){
+        $n_time = strtotime($s_val);
+      }
+    }
+  }
+  
+  $file = new stdClass();
+  $file->filename = basename($s_filepath);
+  $file->filepath = $s_filepath;
+  $file->filemime = $mime;
+  $file->filesize = $n_filesize;
+  
+  $file->uid = $uid;
+  $file->status = FILE_STATUS_PERMANENT;
+  $file->timestamp = $n_time?$n_time:time();
+  drupal_write_record('files', $file);
+  $file->fid = db_result(db_query("SELECT fid FROM {files} WHERE filepath = '%s'", $file->filepath));
+  
+  $file->process_file = $b_get_file_contents;
+  
+  return $file;
+}
+
+
+/////////////////
+// DOCUMENTATION
+/////////////////
+function iqss_rbuild_docs_exist($project){
+	
+	if($project->type != 'scholar_software_project' ||
+	   $project->field_scholar_software_method[0]['value'] != 'rbuild' ||
+	   !_iqss_rbuild_get_doc($project) ) return false;
+	
+	return true;
+}
+
+function iqss_rbuild_docs($project){
+	$a_path_parts = arg();
+	while((array_shift($a_path_parts)) != 'rbuild_documentation');
+	
+	$s_path = implode("/",$a_path_parts);
+	if(!$s_path && substr($_SERVER['REQUEST_URI'],-1) != "/") drupal_goto($_GET['q']."/");
+	
+	$s_file = strlen($s_path)? _iqss_rbuild_get_doc($project,$s_path):_iqss_rbuild_get_doc($project);
+	
+	return $s_file;
+}
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function iqss_rbuild_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch($node->type){
+    case 'scholar_software_project':
+      $src = 'node/'.$node->nid.'/rbuild_documentation';
+      switch($op){
+        case 'insert':
+        case 'update':
+          if($node->field_scholar_software_method[0]['value'] == 'rbuild'){
+            //Get existing path if avalible
+            $pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE src='%s'", $src));
+            
+            path_set_alias($src,trim($node->path,"/")."/docs",$pid);
+          }
+        break;
+        case 'delete':
+          if($node->field_scholar_software_method[0]['value'] == 'rbuild'){
+            path_set_alias($src);
+          }
+        break;
+      }
+    break;
+    case 'scholar_software_release':
+      
+    break;
+    
+  }
+}
+
+/**
+ * Get a doc for a specified URL
+ *
+ * @param $o_project
+ * @param $s_url_extra
+ * @return unknown_type
+ */
+function _iqss_rbuild_get_doc($o_project,$s_url_extra = 'index.html'){
+	
+  $s_featured_version = _iqss_rbuild_get_featured_release($o_project);
+  if(!$s_featured_version) return false;
+  
+  $s_key = $o_project->nid.$s_url_extra;
+  
+	static $a_doc_data;
+	if(!isset($a_doc_data)) $a_doc_data = array();
+	
+	if(!array_key_exists($s_key,$a_doc_data)){
+		//Get data from cache
+		$o_cache_obj = cache_get($s_key,'cache_iqss_rbuild');
+		$a_cache = $o_cache_obj->data;
+		
+		if(!$a_cache || $a_cache['version'] != $s_featured_version){
+			$a_cache = array('version' => $s_featured_version);
+			$a_cache['content'] = _iqss_rbuild_retrieve_doc($o_project,$s_featured_version,$s_url_extra);
+			cache_set($s_key,$a_cache,'cache_iqss_rbuild', time() + IQSS_RBUILD_DOC_CACHE_LEN); //Third param can be expire time
+		}//Validate cache and get new if required
+		$a_doc_data[$s_key] = $a_cache;
+	}
+	
+	return $a_doc_data[$s_key]['content'];
+}
+
+
+/**
+ * Go and get the doc from the server
+ * @param $o_project
+ * @param $s_url_extra
+ * @return string / false on error
+ */
+function _iqss_rbuild_retrieve_doc($o_project, $s_version, $s_url_extra){
+	$a_proj_pp = parse_url($o_project->field_scholar_software_repo[0]['value']);
+  if(!$a_proj_pp || !strlen($o_project->field_scholar_software_name[0]['value'])) return false; //Valid URL/Shortname?
+  
+  
+
+  if(!strlen($s_version)) return false; //Valid Version?
+  
+  $s_docs_root = "{$a_proj_pp['scheme']}://{$a_proj_pp['host']}/docs/".strtolower($o_project->field_scholar_software_name[0]['value'])."/{$s_version}/";
+  $s_contents = _iqss_rbuild_get_file_contents("{$s_docs_root}{$s_url_extra}");
+  if(!strlen($s_contents)) return false;
+  
+  return _iqss_rbuild_modify_doc($s_contents, $s_docs_root);
+}
+
+
+/**
+ * Modify the content returned from the remote server
+ *
+ * @param $s_contents string
+ * @param $s_docs_root string
+ * @return string
+ */
+function _iqss_rbuild_modify_doc($s_contents, $s_docs_root){
+	//Modify
+	$a_matches = array();
+	preg_match("/<body[^>]*>(.*)<\/body>/si",$s_contents,$a_matches);
+	if(count($a_matches)) $s_contents = $a_matches[1]; //Just the contents of the body tag
+	
+	$s_contents = preg_replace('#<script[^>]*>(.*)</script[^>]*>#Ui', '', $s_contents); //Remove script tags
+	
+	$s_contents = preg_replace('#(<img[^>]*src=")(.*"[^>]*>)#Ui', '${1}'.$s_docs_root.'${2}', $s_contents); //Correct img tags
+	
+	return $s_contents;
+}
+
+function _iqss_rbuild_get_featured_release($o_project){
+  //Load Featured Version
+  $s_version = false;
+  $view = views_get_view('scholar_software_releases');
+  $view->set_arguments(array($o_project->nid));
+  $view->execute('block_1');
+  if(count($view->result)){
+    $data = current($view->result);
+    $release = node_load($data->nid);
+    $s_version = scholar_software_generate_version($release,true);
+  }
+  
+  return $s_version;
+}
+
+function _iqss_rbuild_get_file_contents($s_url){
+	
+	//Initialize the Curl session
+  $ch = curl_init();
+
+  //Set curl to return the data instead of printing it to the browser.
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  
+  //Set the URL
+  curl_setopt($ch, CURLOPT_URL, $s_url);
+  
+  //Execute the fetch
+  $data = curl_exec($ch);
+  
+  //Close the connection
+  curl_close($ch);
+	
+  return $data;
+}
+
+function _iqss_rbuild_get_file_headers($s_url){
+	$ch = curl_init();
+
+	curl_setopt($ch, CURLOPT_URL,            $s_url);
+	curl_setopt($ch, CURLOPT_HEADER,         true);
+	curl_setopt($ch, CURLOPT_NOBODY,         true);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_TIMEOUT,        10);
+	
+	$r = curl_exec($ch);
+	$a_header = explode("\n",$r);
+	curl_close($ch);
+	
+	return $a_header;
+}
