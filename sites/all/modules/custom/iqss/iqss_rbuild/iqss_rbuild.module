@@ -366,6 +366,9 @@ function _iqss_rbuild_get_file_contents($s_url){
   //Execute the fetch
   $data = curl_exec($ch);
   
+  $http_code = curl_getinfo($ch,CURLINFO_HTTP_CODE);
+  if($http_code == 404) return false;
+  
   //Close the connection
   curl_close($ch);
 	
