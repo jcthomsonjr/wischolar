@@ -6,6 +6,77 @@
 function _scholar_software_content_default_fields() {
   $fields = array();
 
+  // Exported field: field_scholar_software_logo
+  $fields[] = array(
+    'field_name' => 'field_scholar_software_logo',
+    'type_name' => 'scholar_software_project',
+    'display_settings' => array(
+      'weight' => '-9',
+      'parent' => '',
+      'label' => array(
+        'format' => 'inline',
+      ),
+      'teaser' => array(
+        'format' => 'hidden',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'filefield',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'filefield',
+    'active' => '1',
+    'list_field' => '',
+    'list_default' => '',
+    'description_field' => '',
+    'widget' => array(
+      'file_extensions' => NULL,
+      'file_path' => NULL,
+      'progress_indicator' => NULL,
+      'max_filesize_per_file' => NULL,
+      'max_filesize_per_node' => NULL,
+      'max_resolution' => NULL,
+      'min_resolution' => NULL,
+      'alt' => NULL,
+      'custom_alt' => NULL,
+      'title' => NULL,
+      'custom_title' => NULL,
+      'title_type' => NULL,
+      'default_image' => NULL,
+      'use_default_image' => NULL,
+      'label' => 'Logo',
+      'weight' => '-9',
+      'description' => '',
+      'type' => 'imagefield_widget',
+      'module' => 'imagefield',
+    ),
+  );
+
   // Exported field: field_scholar_software_method
   $fields[] = array(
     'field_name' => 'field_scholar_software_method',
@@ -59,7 +130,7 @@ function _scholar_software_content_default_fields() {
     'field_name' => 'field_scholar_software_name',
     'type_name' => 'scholar_software_project',
     'display_settings' => array(
-      'weight' => '-4',
+      'weight' => '-10',
       'parent' => '',
       'label' => array(
         'format' => 'hidden',
@@ -98,7 +169,7 @@ function _scholar_software_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Software key',
-      'weight' => '-4',
+      'weight' => '-10',
       'description' => 'The machine-readable name for your project. This name must contain only lowercase letters, numbers, and underscores. <strong>Example:</strong> cooking_recipes.',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -110,13 +181,13 @@ function _scholar_software_content_default_fields() {
     'field_name' => 'field_scholar_software_repo',
     'type_name' => 'scholar_software_project',
     'display_settings' => array(
-      'weight' => '-1',
+      'weight' => '-8',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
       ),
       'teaser' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       'full' => array(
@@ -149,7 +220,7 @@ function _scholar_software_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Repository URL',
-      'weight' => '-1',
+      'weight' => '-8',
       'description' => 'Example: http://r.harvard.edu/src/PACKAGE.CookingRecipes',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -522,6 +593,7 @@ function _scholar_software_content_default_fields() {
   // Translatables
   array(
     t('Extra version'),
+    t('Logo'),
     t('Major version'),
     t('Package'),
     t('Packaging method'),

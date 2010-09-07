@@ -286,6 +286,9 @@ function _iqss_rbuild_get_doc($o_project,$s_url_extra = 'index.html'){
 		if(!$a_cache || $a_cache['version'] != $s_featured_version){
 			$a_cache = array('version' => $s_featured_version);
 			$a_cache['content'] = _iqss_rbuild_retrieve_doc($o_project,$s_featured_version,$s_url_extra);
+			if(!$a_cache['content'] && $s_url_extra == 'index.html'){
+			   $a_cache['content'] = _iqss_rbuild_retrieve_doc($o_project,$s_featured_version,$s_url_extra);
+			}//If the index file is not present try one with the package name which is a default
 			cache_set($s_key,$a_cache,'cache_iqss_rbuild', time() + IQSS_RBUILD_DOC_CACHE_LEN); //Third param can be expire time
 		}//Validate cache and get new if required
 		$a_doc_data[$s_key] = $a_cache;
