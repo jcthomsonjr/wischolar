@@ -59,7 +59,7 @@ class rbuild implements scholar_software_handler{
 	  	$a_remote_body_headers = _iqss_rbuild_get_file_headers($s_remote_body);
 	  	if(!module_exists('iqss_remote_source') || strstr($a_remote_body_headers[0],'404 Not Found')){
 		  	$s_contributors  = strlen($a_package['author'])?"Contributors: ".strip_tags(trim($a_package['author'],' ,'))."<br /><br />":"";
-		  	$node->body = $s_contributors.$a_package['description'];
+		  	$node->body = "<!-- RBuild Docs -->".$s_contributors.$a_package['description'];
 	  	}else{
 	  	  $node->iqss_remote_source_path = $s_remote_body;
 	  	}

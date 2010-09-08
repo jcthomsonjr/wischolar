@@ -11,6 +11,9 @@ Drupal.behaviors.iqss_rbuild = function() {
           $('#edit-field-scholar-software-repo-0-value').val(Drupal.settings.iqss_rbuild.repo_url); 
           
           if(!$('#rbuild-autopopulate-wrapper').length) $('#edit-field-scholar-software-method-value-wrapper').after('<div class="form-item" id="rbuild-autopopulate-wrapper"><label for="rbuild-autopopulate">Automatically Populate Fields:</label><input class="form-checkbox" id="rbuild-autopopulate" type="checkbox" checked="checked" /><div class="description">Auto populate this projects title and body fields from the rbuild repository.</div></div>');
+          
+          
+          
           $('#rbuild-autopopulate').change(function() { 
         	  if ($('#rbuild-autopopulate').attr('checked')) {
         		$('#edit-title-wrapper').hide();
@@ -22,6 +25,11 @@ Drupal.behaviors.iqss_rbuild = function() {
           });
           $('#edit-title-wrapper').hide();
           $('#edit-body-wrapper').hide();
+          
+          if(!$('#edit-iqss-remote-source-path').val()){
+        	  $('#rbuild-autopopulate').attr('checked',false);
+        	  $('#rbuild-autopopulate').change();
+          }
           break;
         default:
         	$('#rbuild-autopopulate-wrapper').remove();

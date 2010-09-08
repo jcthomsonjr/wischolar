@@ -210,10 +210,18 @@ function _iqss_rbuild_importFile($s_external_path, $s_file_name, $uid, $b_get_fi
 // DOCUMENTATION
 /////////////////
 function iqss_rbuild_docs_exist($project){
-	
+  
+  $a_path_parts = arg();
+  if(in_array('rbuild_documentation',$a_path_parts)){
+	  while((array_shift($a_path_parts)) != 'rbuild_documentation');
+	  
+	  $s_path = implode("/",$a_path_parts);
+  }
+  if(!strlen($s_path)) $s_path = "index.html";
+  
 	if($project->type != 'scholar_software_project' ||
 	   $project->field_scholar_software_method[0]['value'] != 'rbuild' ||
-	   !_iqss_rbuild_get_doc($project) ) return false;
+	   !_iqss_rbuild_get_doc($project,$s_path) ) return false;
 	
 	return true;
 }
@@ -362,6 +370,12 @@ function _iqss_rbuild_get_file_contents($s_url){
 
   //Set curl to return the data instead of printing it to the browser.
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  
+  //2 seconds allowed to connect
+  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+  
+  //10 seconds allowed to finish up
+  curl_setopt($ch, CURLOPT_TIMEOUT, 10);
   
   //Set the URL
   curl_setopt($ch, CURLOPT_URL, $s_url);
