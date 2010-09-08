@@ -224,6 +224,7 @@ function _scholar_events_views_default_views() {
     'title' => 'Calendar',
     'description' => '',
     'weight' => '0',
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->override_option('style_options', array(
@@ -386,6 +387,7 @@ function _scholar_events_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->override_option('fields', array(
@@ -418,7 +420,6 @@ function _scholar_events_views_default_views() {
       ),
     ),
   ));
-  $handler->override_option('empty', 'No upcoming events found.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', '0');
