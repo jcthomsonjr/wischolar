@@ -300,6 +300,9 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       }
     break;
     case 'view':
+      if($teaser && strlen($node->biblio_abst_e)){
+        $node->content['teaser']['#value'] .= l(" Abstract", "node/$node->nid",array('attributes'=>array('class' => 'biblio-abstract-link toggle')));
+      }
       if($teaser && variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes){
       	$node->content['teaser']['#value'] .= ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
       }
@@ -313,6 +316,9 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
 		    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
 		    if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
 		    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, false, 'biblio-export');
+      }
+      if($teaser && strlen($node->biblio_abst_e)){
+        $node->content['teaser']['#value'] .= '<div class="biblio-abstract-display slider">'. $node->biblio_abst_e ."\n</div>";
       }
     break;
   }
@@ -491,8 +497,8 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   $s_output .= theme('biblio_style', $node, $base, $style, $inline);
 
   // now add the various links
-  if ($node->biblio_abst_e) $s_output .= '<span class="biblio-abstract-link">'. l(" Abstract", "node/$node->nid") ."\n</span>";
-
+  if (strlen($node->biblio_abst_e)) $s_output .= l(" Abstract", "node/$node->nid",array('attributes'=>array('class' => 'biblio-abstract-link toggle')));
+  
   $annotation_field = variable_get('biblio_annotations', 'none');
   if ($annotation_field != 'none' && $node-> $annotation_field) {
     $s_output .=  '<div class="biblio-annotation">' . check_markup($node->$annotation_field, $node->format, FALSE) . '</div>';
@@ -518,6 +524,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
     $s_output .= " ".theme('ctools_dropdown', t('Export'), $links, false,'biblio-export');
   }
 
+  if (strlen($node->biblio_abst_e)) $s_output .= '<div class="biblio-abstract-display slider">'. $node->biblio_abst_e ."\n</div>";
   if (!$node->status) $s_output .= '</div>';
 
   $links = module_invoke_all('link', 'node', $node, '');
