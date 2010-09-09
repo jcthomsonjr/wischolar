@@ -11,19 +11,20 @@ function _scholar_presentations_content_default_fields() {
     'field_name' => 'field_presentation_date',
     'type_name' => 'presentation',
     'display_settings' => array(
+      'weight' => '-3',
+      'parent' => '',
       'label' => array(
         'format' => 'above',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
       ),
       'teaser' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -85,7 +86,7 @@ function _scholar_presentations_content_default_fields() {
     'field_name' => 'field_presentation_file',
     'type_name' => 'presentation',
     'display_settings' => array(
-      'weight' => '1',
+      'weight' => 0,
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -147,7 +148,7 @@ function _scholar_presentations_content_default_fields() {
     'field_name' => 'field_presentation_location',
     'type_name' => 'presentation',
     'display_settings' => array(
-      'weight' => '-1',
+      'weight' => '-2',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
