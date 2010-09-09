@@ -302,6 +302,7 @@ function _scholar_book_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->override_option('title', 'Recent Documents');
