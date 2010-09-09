@@ -29,14 +29,18 @@ function _scholar_classes_views_default_views() {
         'alt' => '',
         'prefix' => '',
         'suffix' => '',
+        'target' => '',
         'help' => '',
         'trim' => 0,
         'max_length' => '',
         'word_boundary' => 1,
         'ellipsis' => 1,
-        'strip_tags' => 0,
         'html' => 0,
+        'strip_tags' => 0,
       ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
       'link_to_node' => 1,
       'exclude' => 0,
       'id' => 'title',
@@ -209,54 +213,6 @@ function _scholar_classes_views_default_views() {
   $handler->override_option('argument_mode', 'nid');
   $handler->override_option('default_argument', 'nid');
   $handler->override_option('show_title', 1);
-  $handler = $view->new_display('node_content', 'Class teaser page', 'node_content_2');
-  $handler->override_option('fields', array(
-    'title' => array(
-      'label' => 'Title',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'strip_tags' => 0,
-        'html' => 0,
-      ),
-      'link_to_node' => 1,
-      'exclude' => 0,
-      'id' => 'title',
-      'table' => 'node',
-      'field' => 'title',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
-    ),
-  ));
-  $handler->override_option('items_per_page', 5);
-  $handler->override_option('use_pager', '0');
-  $handler->override_option('style_plugin', 'grid');
-  $handler->override_option('style_options', array(
-    'grouping' => '',
-    'columns' => '4',
-    'alignment' => 'horizontal',
-  ));
-  $handler->override_option('types', array(
-    'class' => 'class',
-  ));
-  $handler->override_option('modes', array(
-    '0' => 'teaser',
-  ));
-  $handler->override_option('argument_mode', 'nid');
-  $handler->override_option('default_argument', 'nid');
   $handler = $view->new_display('page', 'Classes', 'page_1');
   $handler->override_option('arguments', array());
   $handler->override_option('filters', array(
