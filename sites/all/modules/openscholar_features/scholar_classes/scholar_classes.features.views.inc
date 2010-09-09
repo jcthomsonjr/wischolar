@@ -250,7 +250,7 @@ function _scholar_classes_views_default_views() {
     'alignment' => 'horizontal',
   ));
   $handler->override_option('types', array(
-    'gallery' => 'gallery',
+    'class' => 'class',
   ));
   $handler->override_option('modes', array(
     '0' => 'teaser',
@@ -324,6 +324,7 @@ function _scholar_classes_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
 
   $views[$view->name] = $view;
