@@ -59,7 +59,7 @@ h4 {
   margin-bottom: 27px;
   }
 
-h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3 {
+h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3, #block-vsite_menus-1 li {
   line-height: 1em;
   margin-top: 0;
   margin-bottom: .5em;
@@ -134,6 +134,35 @@ a:hover {
 .item-list .pager li.pager-current {
   color: #000;
   background: #DB7000;
+  }
+
+/* Secondary Menu */
+
+#block-vsite_menus-1,
+#block-vsite_menus-1 li {
+  padding: 0;
+  }
+
+#block-vsite_menus-1 li {
+  margin: 0;
+  font: bold 1.1em/normal verdana, arial, sans-serif;
+  }
+
+#block-vsite_menus-1 li.last {
+  border: none;
+  }
+
+#block-vsite_menus-1 li a, #block-vsite_menus-1 li a:visited {
+  color: #444;
+  display:block;
+  padding: 10px 16px 16px;
+
+  }
+
+#block-vsite_menus-1 li a:hover {
+  background: #F58714;
+  text-decoration: none;
+  color: #fff;
   }
 
 /* BASIC LAYOUT */
@@ -365,11 +394,11 @@ body.header-right-main #header-wrapper {
 #header #block-scholar_biocv-bio_blurb {
   background: url(images/front-photo.jpg) 0 0 no-repeat transparent;
   position:relative;
-  padding-top:41px;
+  padding-top:21px;
   padding-left: 271px;
   padding-right: 36px;
   padding-bottom: 0;
-  height: 198px;
+  height: 229px;
   margin-top: -4px;
   margin-left: 0;
   margin-bottom: 8px;
@@ -389,8 +418,17 @@ body.header-right-main #header-wrapper {
 .page-home #header-wrapper .region-count-2 {
   float: right;
   width: 227px;
-  height: 217px;
+  height: 229px;
   overflow: auto;
+  }
+
+.view-scholar-software-releases {
+  font-size: .9em;
+  line-height: 1.2em;
+  }
+
+.view-scholar-software-releases .views-field-field-scholar-software-project-nid a {
+  font-weight: bold;
   }
 
 /* Publications Tabs */
@@ -414,6 +452,10 @@ body.header-right-main #header-wrapper {
 #pub_type_tabs .node h3.title {
   font: bold .9em/normal verdana, helvetica, sans-serif;
   float: none;
+  }
+
+#pub_type_tabs .node h3.title span.date, #pub_type_tabs .node h3.title span.files a  {
+  font-weight: normal;
   }
 
 #pub_type_tabs ul {

@@ -3,6 +3,13 @@
 include_once('scholar_presentations.features.inc');
 
 /**
+ * Implementation of hook_init().
+ */
+function scholar_presentations_init() {
+  drupal_add_css(drupal_get_path('module', 'scholar_presentations') .'/theme/scholar_presentations.css');
+}
+
+/**
  * Implementation of hook_vsite_widgets()
  */
 function scholar_presentations_vsite_widgets(){
@@ -16,7 +23,7 @@ function scholar_presentations_vsite_widgets(){
         'label' => 'Recent Presentations',
         'type' => 'context_ui',
       );
-      
+
       return $items;
 }
 
@@ -28,19 +35,19 @@ function scholar_presentations_strongarm(){
 
   // Disable preview button
   $conf["show_preview_changes_presentation"] = FALSE;
-  $conf["show_diff_inline_presentation"] = FALSE;  
- 
+  $conf["show_diff_inline_presentation"] = FALSE;
+
   $conf['node_options_presentation'] = array('status', 'revision');
   $conf['upload_presentation'] = FALSE;
- 
+
   // Comments
   $conf['comment_presentation'] = COMMENT_NODE_DISABLED;
- 
+
   // Pathauto (optional) settings
   $conf["pathauto_node_presentation_pattern"] = "[space-og-path]/presentations/[title-raw]";
-  
+
   // submitted info
   $conf['node_submitted_info_presentation'] = TRUE;
- 
+
   return $conf;
 }
