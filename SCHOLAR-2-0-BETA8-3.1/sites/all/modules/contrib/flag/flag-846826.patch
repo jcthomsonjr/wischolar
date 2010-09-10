@@ -1,0 +1,19 @@
+Index: includes/flag.features.inc
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/flag/includes/flag.features.inc,v
+retrieving revision 1.1.2.3
+diff -u -p -r1.1.2.3 flag.features.inc
+--- includes/flag.features.inc	8 Jan 2010 04:59:06 -0000	1.1.2.3
++++ includes/flag.features.inc	8 Jul 2010 12:06:23 -0000
+@@ -44,9 +44,9 @@ function flag_features_export_options() 
+ /**
+  * Implementation of hook_features_export_render().
+  */
+-function flag_features_export_render($module = 'foo', $data, $features_export) {
++function flag_features_export_render($module = 'foo', $data) {
+   module_load_include('inc', 'flag', '/includes/flag.export');
+-  $code = flag_export_flags($data, $features_export['project']);
++  $code = flag_export_flags($data, $module);
+   return array('flag_default_flags' => $code);
+ }
+ 
