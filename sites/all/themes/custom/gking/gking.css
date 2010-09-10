@@ -3,10 +3,9 @@ html, body, #container {
   }
 
 body {
-  font: 85%/1.5em verdana, helvetica, arial, sans-serif;
+  font: .8em/1.5em helvetica, arial, sans-serif;
   color: #000;
-  background: fixed url(images/body-bg.png) repeat-x 0 100% #fbfbfb;
-  background: #fff;
+  background: url(images/bg.png) repeat-y 50% 0 #fff;
   }
 
 /* TYPOGRAPHY */
@@ -73,6 +72,13 @@ h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3, #bl
   font-family: 'LeagueGothicRegular', sans-serif;
   font-size:27px;
   letter-spacing: 0;
+
+  font-family: arial, helvetica, sans-serif;
+  font-size:1.846em;
+  font-weight:bold;
+  letter-spacing:-0.05em;
+  line-height:24px;
+  text-indent:-1px;
   }
 
 .node-type-person h2.title {
@@ -127,7 +133,7 @@ a:hover {
  letter-spacing: -1px;
  color: #fff;
  padding: 0 10px;
- background: url(images/arrow-white.png) 100% 5px no-repeat transparent;
+ background: url(images/arrow-white.png) 100% 50% no-repeat transparent;
   }
 
 .item-list .pager li {
@@ -172,6 +178,10 @@ a:hover {
   background: #F58714;
   text-decoration: none;
   color: #fff;
+  }
+
+#block-vsite_menus-1 li a.active {
+  background: #EFD2B3;
   }
 
 /* BASIC LAYOUT */
@@ -232,8 +242,6 @@ a:hover {
   margin: 0 auto;
   padding: 1px 8px;
   position: relative;
-  overflow:auto;
-  background: #eee;
   }
 
 .node, .biblio-entry, .views-row {
