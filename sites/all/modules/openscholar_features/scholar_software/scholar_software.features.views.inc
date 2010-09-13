@@ -992,6 +992,72 @@ function _scholar_software_views_default_views() {
     ),
   ));
   $handler->override_option('arguments', array());
+  $handler->override_option('filters', array(
+    'status' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'none',
+    ),
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'scholar_software_release' => 'scholar_software_release',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'current' => array(
+      'operator' => 'all',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
+      'relationship' => 'none',
+    ),
+    'field_scholar_software_recommend_value_many_to_one' => array(
+      'operator' => 'or',
+      'value' => array(
+        '1' => '1',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'field_scholar_software_recommend_value_many_to_one',
+      'table' => 'node_data_field_scholar_software_recommend',
+      'field' => 'field_scholar_software_recommend_value_many_to_one',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+      'reduce_duplicates' => 0,
+    ),
+  ));
   $handler->override_option('access', array(
     'type' => 'role',
     'role' => array(
@@ -999,7 +1065,12 @@ function _scholar_software_views_default_views() {
       '2' => 2,
     ),
   ));
-  $handler->override_option('title', 'Recent Releases');
+  $handler->override_option('title', 'Software Releases');
+  $handler->override_option('footer', '<div class="more-link">
+  <?php print l("More","scholar_software"); ?>
+</div>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 0);
   $handler->override_option('items_per_page', 3);
   $handler->override_option('use_pager', '0');
   $handler->override_option('distinct', 1);
