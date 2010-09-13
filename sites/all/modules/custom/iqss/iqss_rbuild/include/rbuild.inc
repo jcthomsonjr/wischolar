@@ -113,7 +113,7 @@ class rbuild implements scholar_software_handler{
     //Add any new releases
     list($major,$patch,$extra) = _iqss_rbuild_parseVersion($a_package['version']);
     $result = db_result(db_query("SELECT nid FROM {content_type_scholar_software_release}
-                                  WHERE field_scholar_software_project_nid = %d AND field_versionmajor_value = %d AND field_versionpatch_value = %d AND field_versionextra_value = '%s' ",
+                                  WHERE field_scholar_software_project_nid = %d AND field_versionmajor_value = %d AND field_versionpatch_value = %d AND field_versionextra_value <=> NULLIF('%s','') ",
                                   array($node->nid,$major,$patch,$extra)));
 
     $a_results = array();

@@ -522,7 +522,7 @@ function _scholar_software_content_default_fields() {
     'prefix' => '',
     'suffix' => '',
     'min' => 0,
-    'max' => 50,
+    'max' => 500,
     'allowed_values' => '',
     'allowed_values_php' => 'return scholar_software_cck_options(\'major\');',
     'widget' => array(
@@ -572,7 +572,7 @@ function _scholar_software_content_default_fields() {
     'prefix' => '',
     'suffix' => '',
     'min' => 0,
-    'max' => 50,
+    'max' => 500,
     'allowed_values' => '',
     'allowed_values_php' => 'return scholar_software_cck_options(\'patch\');',
     'widget' => array(

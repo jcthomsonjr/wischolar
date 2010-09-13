@@ -2,6 +2,14 @@
 
 include_once('scholar_classes.features.inc');
 
+function scholar_classes_init(){
+  global $conf;
+  
+  //Do not show files in teaser (overrides vsite strongarm) this will be handled by strongarm when we update it
+  $conf['itweak_upload_teaser_display_class'] = 0;
+  
+}
+
 /**
  * hook link_alter (admin at the end of links)
  */
@@ -12,15 +20,15 @@ function scholar_classes_link_alter(&$links, $node){
     
     $links['class_material_field_class'] = array(
       'title' => theme('context_links', array(
-        $old 
-      )), 
-      'html' => TRUE 
+        $old
+      )),
+      'html' => TRUE
     );
   }
   
-  /* 
+  /*
    * If a class_material node, we want all the children
-   * to be of class_material type too. But the default 
+   * to be of class_material type too. But the default
    * child type is set to 'book'. Alter here
    */
   if (empty($links['book_add_child'])) {
@@ -74,7 +82,7 @@ function scholar_classes_nodeapi(&$node, $op, $a3, $a4){
  */
 function scholar_classes_strongarm() {
 
-  // class 
+  // class
    
   $conf['node_options_class'] = array('status', 'revision');
   $conf['upload_class'] = TRUE;
@@ -91,7 +99,7 @@ function scholar_classes_strongarm() {
   $conf["pathauto_node_class_pattern"] = "[space-og-path]/classes/[title-raw]";
  
   
-  // class meterial 
+  // class meterial
   $conf['node_options_class_material'] = array('status', 'revision');
   $conf['upload_class_material'] = TRUE;
  
@@ -104,7 +112,7 @@ function scholar_classes_strongarm() {
  
 
   // Pathauto (optional) settings
-  $conf["pathauto_node_class_material_pattern"] = "[space-og-path]/classes/[field_class-path]/materials/[title-raw]"; 
+  $conf["pathauto_node_class_material_pattern"] = "[space-og-path]/classes/[field_class-path]/materials/[title-raw]";
   
   return $conf;
 }

@@ -170,8 +170,7 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 function scholar_software_cck_options($type = 'major') {
   switch ($type) {
     case 'major':
-      $major = range(0, 50);
-      unset($major[0]);
+      $major = range(0, 500);
       return $major;
 
     case 'method':
