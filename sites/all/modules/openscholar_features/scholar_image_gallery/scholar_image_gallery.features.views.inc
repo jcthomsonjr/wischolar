@@ -78,13 +78,17 @@ function _scholar_image_gallery_views_default_views() {
     ),
   ));
   $handler->override_option('sorts', array(
-    'created' => array(
+    'sticky' => array(
       'order' => 'DESC',
-      'granularity' => 'second',
-      'id' => 'created',
+      'id' => 'sticky',
       'table' => 'node',
-      'field' => 'created',
+      'field' => 'sticky',
       'relationship' => 'none',
+    ),
+    'title' => array(
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
     ),
   ));
   $handler->override_option('arguments', array(
@@ -492,6 +496,7 @@ function _scholar_image_gallery_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
 
   $views[$view->name] = $view;
