@@ -157,8 +157,7 @@ function iqss_gking_on_gking_site(){
  */
 function theme_iqss_gking_dl($term){
   $desc_string = $term->description;
-  $length = 400;
-  $desc_trimmed = strlen($desc_string) > $length ? trim(substr($desc_string, 0, $length)) . '&#8230;' : $desc_string;
+  $desc_trimmed =  node_teaser($desc_string,NULL,400);
   $term_path = "taxonomy/term/$term->tid";
   $term_link = l('More', $term_path, array(
       'attributes' => array(
