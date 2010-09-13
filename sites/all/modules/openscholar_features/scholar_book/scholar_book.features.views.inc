@@ -194,18 +194,17 @@ function _scholar_book_views_default_views() {
   ));
   $handler->override_option('sorts', array(
     'sticky' => array(
-      'order' => 'ASC',
+      'order' => 'DESC',
       'id' => 'sticky',
       'table' => 'node',
       'field' => 'sticky',
       'relationship' => 'none',
     ),
-    'changed' => array(
-      'order' => 'DESC',
-      'granularity' => 'second',
-      'id' => 'changed',
+    'title' => array(
+      'order' => 'ASC',
+      'id' => 'title',
       'table' => 'node',
-      'field' => 'changed',
+      'field' => 'title',
       'relationship' => 'none',
     ),
   ));
