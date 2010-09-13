@@ -21,7 +21,7 @@ function _scholar_presentations_content_default_fields() {
         'exclude' => 0,
       ),
       'full' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       '5' => array(
