@@ -1,0 +1,415 @@
+<?php
+
+//////////////////////////////////////////
+// UPDATE FUNCTIONS  
+// Scholar - Beta 2
+// Functions should return (bool) success
+//////////////////////////////////////////
+
+/**
+ * Revert the "projects" view to use the new version 
+ */
+function iqss_release_revert_iqss_project_view(){
+	
+	$view = views_get_view('iqss_project_sites');
+	$view->delete();
+  views_object_cache_clear('view', 'iqss_project_sites');
+	
+  return "iqss_project_sites view reverted to code version";
+}
+
+/**
+ * Apply the new file_alias filter to existing files
+ */
+function iqss_release_apply_file_alias_filters(){
+  
+	$a_fields = array( array('name' => "field_cv_attach", 'module' => 'filefield', 'content_type' => 'cv'),
+	                   array('name' => "field_gallery_image", 'module' => 'filefield', 'content_type' => 'image'));
+	
+	$n_aliases = 0;
+	foreach($a_fields as $field){
+		$a_objects = array();
+	  if (function_exists($function = $field['module'] . '_filefield_paths_batch_update')) {
+	    $function($field['name'], $field['content_type'], $a_objects);
+	  }
+	  
+	  if (function_exists($function = $field['module'] . '_filefield_paths_update')) {
+	  	foreach ($a_objects as $oid) $function($oid, $field['name']);
+	  	$n_aliases += count($a_objects);
+	  }
+	}
+  
+  return "[$n_aliases] File Aliases rebuilt";
+}
+
+/**
+ * copy existing site logos to node
+ */
+function iqss_release_move_site_logos() {
+  
+  $scholar_content_type = variable_get('scholar_content_type', 'vsite');
+  $sites = array();
+  $sql = db_query("SELECT nid FROM {node} WHERE type = '%s' ", $scholar_content_type );
+
+  $sites = array();
+  while($res = db_fetch_array($sql)){
+    $sites[] = $res['nid'];
+  }
+
+  $spaces = array();
+  if (count($sites)){
+      foreach($sites as $site){
+        $space =  spaces_load('og', $site);
+        if ($space){
+          $spaces[] = $space;
+        }
+      }
+  }//Get the sites
+	
+  $n_imgs = 0;
+  if(count($spaces)){
+  	foreach ($spaces as $vsite){
+		  if($vsite && !count($vsite->group->field_vsite_logo)){
+		    if($vsite->settings['logo'] && $vsite->settings['logo']['current_logo']){
+		      vsite_include('vsiteapi');
+		      $s_vsite_dest = vsite_add_imagefield_image($vsite->settings['logo']['current_logo'],'field_vsite_logo',$vsite->group);
+		      $n_imgs++;
+		    }
+		  }//Copy thier image to the site logo if they have not defined one
+  	}
+  }
+  
+  
+  return "Attach existing site images to the vsite node - ".$n_imgs." images needed moving for ".count($spaces)." sites";
+}
+
+/**
+ * Enable the Pinserver modules
+ */
+function iqss_release_release_pinserver() {
+  
+  $n_count = _iqss_release_enable_modules(array('pinserver','iqss_pinserver_register'));
+  
+  
+  return "Scholar Pinserver / Pin Register - ".($n_count?"Module(s) Enabled":"Nothing to do");
+}
+
+/**
+ * Enable the scholar_events module
+ */
+function iqss_release_relase_scholar_events() {
+  
+  if(!module_exists('scholar_events')){
+  	$n_count = _iqss_release_enable_modules(array('calendar','litecal','scholar_events'));
+  }
+  
+  return "Scholar Events - Module Enabled";
+}
+
+/**
+ * Enable the iqss_scholar module
+ */
+function iqss_release_relase_iqss_scholar() {
+  
+  if(!module_exists('iqss_scholar')){
+    $n_count = _iqss_release_enable_modules(array('iqss_scholar'));
+  }
+  
+  return "Scholar Settings - Module Enabled";
+}
+
+/**
+ * Update to the new feed engine
+ */
+function iqss_release_install_scholar_reader() {
+	
+  //ENABLE Scholar Reader on the sites that had feed enabled
+  $sql = db_query("SELECT nid FROM {node} WHERE type = '%s' ", variable_get('scholar_content_type', 'vsite') );
+
+  $sites = array();
+  while($res = db_fetch_array($sql)) $sites[] = $res['nid'];
+
+  $a_migrate_settings = array();
+  foreach($sites as $site){
+    $space =  spaces_load('og', $site);
+    if($space && array_key_exists('scholar_feeds',$space->features)){
+      $a_migrate_settings[$space->group->nid] = $space->features['scholar_feeds'];
+    }
+  }//Get the sites
+  
+  if(!module_exists('scholar_reader')){
+    module_disable(array("scholar_feeds"));
+    drupal_uninstall_module("scholar_feeds");
+    
+    $n_count = _iqss_release_enable_modules(array('data','feeds','feeds_defaults','scholar_reader'));
+  }
+  
+  
+  foreach($a_migrate_settings as $nid => $setting){
+    $space =  spaces_load('og', $nid);
+    $space->features['scholar_reader'] = $setting;
+    spaces_save($space);
+  }//Get the sites
+  
+  return "Scholar Reader - Module Enabled\nScholar Reader Settings migrated on [".count($a_migrate_settings)."] sites";
+}
+
+/**
+ *  Change the preset from vsite to scholar
+ */
+function iqss_release_change_preset_to_scholar() {
+  // change preset type to "scholar" for existing sites
+  return db_query("UPDATE {spaces} SET preset = 'scholar'  WHERE preset = 'vsite'");
+}
+
+
+/**
+ * Enable jquery update so that the most current
+ * version of jquery is run
+ */
+function iqss_release_update_jquery(){
+	$n_count = _iqss_release_enable_modules(array('jquery_update'));
+	
+	return true;
+}
+
+/**
+ * Enable the scholar_front module
+ */
+function iqss_release_enable_module_scholar_front() {
+  
+	module_rebuild_cache();
+	
+	$n_count = _iqss_release_enable_modules(array('scholar_front'));
+  
+  //disable the old module
+  module_disable(array("vsite_front"));
+  drupal_uninstall_module("vsite_front");
+  
+  return "Scholar Front - Module Enabled";
+}
+
+/**
+ * flags web sites to be pushed in the front (featured sites)
+ */
+function iqss_release_add_featured_vsites_flags(){
+  $owners = array (
+    28, // Chris Winship
+    9,  // Beth Simmons
+    14, // Jeffry Friedden
+    671, // James Robinson
+    21,  //Steve Levitsky
+    6,  // Maria Polinsky
+    8, // robert Bates
+    1, // Ken Shepsle
+  );
+  
+  $flag = flag_get_flag('featured_web_sites') or die('no "featured_web_sites" flag defined');
+  foreach ($owners as $nid){
+    $flag->flag('flag', $nid);
+  }
+  
+  return true;
+}
+
+/**
+ * Add the taxonomies that are associated with a vsite object
+ */
+function iqss_release_add_vsite_taxonimies(){
+	module_load_include('inc', 'vsite', 'includes/vsiteboot');
+  
+  _vsite_object_create_taxonomys();
+  
+  return true;
+}
+
+/**
+ * Set the default domain, we will assume you are installing on the default domain, otherwise you will need to change this
+ */
+function iqss_release_set_default_domain(){
+	
+  //Set the default domain 
+  // ie.) scholar.iq.harvard.edu in prod
+  //      dev.whatever or localhost for dev
+  variable_set('purl_base_domain','http://'.str_replace('http://','',$_SERVER['HTTP_HOST']));
+  
+  return "Default domain updated and set to ".$_SERVER['HTTP_HOST'];
+}
+
+/**
+ * Update the filefield settings so that file alias' will 
+ * be used for files displayed on a node
+ */
+function iqss_release_update_filefield_settings(){
+	
+  //set the "upload" paths
+  $types = og_get_types('group_post');
+  
+  $file_alias = array(
+    'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]', 
+    'tolower' => 0, 
+    'pathauto' => 0, 
+    'transliterate' => 0,
+    'display' => 1,
+  );
+  
+  foreach ( $types as $type ) {
+    db_query("UPDATE {filefield_paths} SET filealias = '%s' WHERE type = '%s' ", serialize($file_alias), $type);
+  }
+  
+  return "the upload file alias settings were updated in the filefield_paths table" ;
+}
+
+/**
+ * Enable the 'auto_nodetitle' module as we will be using it in scholars in the future
+ */
+function iqss_release_enable_auto_nodetitle(){
+	
+	$n_count = _iqss_release_enable_modules(array('auto_nodetitle'));
+	
+	return "Auto Node Title - Module Enabled";
+}
+
+/**
+ * Enable the themes that are new to this release
+ */
+function iqss_release_enable_new_themes(){
+  
+	$a_new_themes = array('scholar_theme_08','scholar_theme_09','scholar_theme_10','scholar_theme_11');
+	
+	foreach ($a_new_themes as $s_theme){
+		system_initialize_theme_blocks($s_theme);
+    db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", $s_theme);
+	}
+		
+//  list_themes(TRUE);
+//  menu_rebuild();
+//  drupal_rebuild_theme_registry();
+  
+  return "Enabled ".count($a_new_themes)." new themes";
+}
+
+
+//////////////////////////////////////////
+// UPDATE Handler
+//////////////////////////////////////////
+
+//Callback for the menu
+function iqss_release_handle_updates($s_preset){
+	$a_info = _iqss_release_process_updates($s_preset);
+	
+	$s_message = "";
+	foreach($a_info['messages'] as $a_status) $s_message .= $a_status['message']."\n";
+	dpm($s_message);
+	
+  //Clear the cache
+  module_load_include('inc', 'system', 'system.admin');
+  $form = $form_state = array();
+  system_clear_cache_submit($form, $form_state);
+  
+  return $a_info['status'];
+}
+
+//Run all of the updates
+function _iqss_release_process_updates($s_preset){
+  $n_start = time();
+  
+  $a_updates = _iqss_release_get_updates();
+  $a_preset_updates = array_key_exists($s_preset,$a_updates)?$a_updates[$s_preset]:array();
+  
+  $a_status = array();
+  
+  foreach ($a_preset_updates as $s_func) {
+    $b_return = $s_func();
+    $a_status[] = array('message' => "$s_func   Status:  ".(is_bool($b_return)?(($b_return)?"Passed":"Failed"):$b_return),
+                        'status' => (is_bool($b_return)?$b_return:true));
+  }
+  
+  return array( 'status' => count($a_preset_updates)?"Updates for preset [$s_preset] have completed.  [".(time()-$n_start)."] seconds ":"No updates found to run for preset [$s_preset].",
+                'messages' => $a_status);
+}
+
+function iqss_release_menu(){
+	$items = array();
+
+  $items["iqss_release/%"] = array(
+    'page callback' => 'iqss_release_handle_updates',
+    'page arguments' => array(1),
+    'access arguments' => array('execute iqss release'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+
+//////////////////////////////////////////
+// UPDATE List and Order
+//////////////////////////////////////////
+
+//The functions to be run (in order)
+function _iqss_release_get_updates(){
+	return array(
+	  'scholar' => array(
+	    'iqss_release_add_featured_vsites_flags',//Add Featured vsites flags
+		  'iqss_release_add_vsite_taxonimies', //Add Vsite Taxonomies
+		  'iqss_release_set_default_domain', //Set the default domain
+		  'iqss_release_change_preset_to_scholar', // change preset type to "scholar" for existing sites
+		  'iqss_release_enable_module_scholar_front', //Enable the scholar_front module
+		  'iqss_release_install_scholar_reader',  //Installs scholar reader and disables scholar feeds
+		  'iqss_release_relase_scholar_events', //Enable the scholar events module
+      'iqss_release_update_filefield_settings', //Update the filefield settings so that file alias' will be used for files displayed on a node
+	    'iqss_release_enable_auto_nodetitle', //Enable the 'auto_nodetitle' module as we will be using it in scholars in the future
+	    'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
+	    'iqss_release_update_jquery',  //Enable Jquery Update so the newest version of jquery is avalible
+	    'iqss_release_move_site_logos', //Attach the existing site logos to the vsite object
+	    'iqss_release_revert_iqss_project_view', //Revert this view to use our new version
+	    'iqss_release_enable_new_themes', //Enable the new themes for this release
+	    'iqss_release_relase_iqss_scholar',  //Enable the scholar settings module
+	    'iqss_release_apply_file_alias_filters', //Rebuild the file aliases
+	  ),
+	  'projects' => array(
+	    'iqss_release_relase_iqss_scholar',  //Enable the scholar settings module
+	    //'iqss_release_release_pinserver', //Enable the pinserver and pinserver register modules
+      'iqss_release_update_filefield_settings', //Update the filefield settings so that file alias' will be used for files displayed on a node
+    ),
+  );
+}
+
+//////////////////////////////////////////
+// UTIL FUNCTIONS
+//////////////////////////////////////////
+
+function _iqss_release_enable_modules($a_modules){
+	include_once './includes/install.inc';
+	
+	$a_new = array();
+	$a_enable = array();
+	
+	foreach($a_modules as $s_module){
+		if(module_exists($s_module)) continue;
+		
+	  if (drupal_get_installed_schema_version($s_module) == SCHEMA_UNINSTALLED) {
+      $a_new[] = $s_module;
+    }else{
+    	$a_enable[] = $s_module;
+    }
+	}
+	
+	//Enable Modules
+	if(count($a_enable)) module_enable($a_enable);
+	
+	//Install new modules
+  if(count($a_new)){
+  	// Install new modules.
+	  foreach ($a_new as $s_module) {
+	    if (!drupal_check_module($s_module)) {
+	      unset($a_new[$s_module]);
+	    }
+	  }
+	  
+	  if(count($a_new)) drupal_install_modules($a_new);
+  }
+	
+  return count($a_new) + count($a_enable);
+}
