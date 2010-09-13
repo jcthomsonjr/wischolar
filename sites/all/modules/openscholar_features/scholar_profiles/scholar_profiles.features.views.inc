@@ -19,19 +19,21 @@ function _scholar_profiles_views_default_views() {
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('sorts', array(
     'sticky' => array(
-      'order' => 'ASC',
+      'order' => 'DESC',
       'id' => 'sticky',
       'table' => 'node',
       'field' => 'sticky',
       'relationship' => 'none',
     ),
-    'changed' => array(
-      'order' => 'DESC',
-      'granularity' => 'second',
-      'id' => 'changed',
-      'table' => 'node',
-      'field' => 'changed',
-      'relationship' => 'none',
+    'field_person_lastname_value' => array(
+      'id' => 'field_person_lastname_value',
+      'table' => 'node_data_field_person_lastname',
+      'field' => 'field_person_lastname_value',
+    ),
+    'field_person_firstname_value' => array(
+      'id' => 'field_person_firstname_value',
+      'table' => 'node_data_field_person_firstname',
+      'field' => 'field_person_firstname_value',
     ),
   ));
   $handler->override_option('filters', array(
