@@ -424,6 +424,7 @@ function iqss_gking_pub_by_type_block(){
     $node = node_load($row->nid);
     $output .= node_view($node, true);
   }
+  $output .= '<div class="more-link">'.l("More Presentations","presentations").'</div> ';
   $output .= "</div>";
 
   $tabs .= "</ul>";

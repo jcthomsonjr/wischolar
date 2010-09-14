@@ -235,6 +235,14 @@ function iqss_rbuild_docs($project){
 	
 	$s_file = strlen($s_path)? _iqss_rbuild_get_doc($project,$s_path):_iqss_rbuild_get_doc($project);
 	
+	$a_path_info = pathinfo($s_path);
+	$ct_type = array('pdf'=>'application/pdf','exe'=>'application/octet-stream','jpg'=>'image/jpeg','jpeg'=>'image/jpeg','gif'=>'image/gif','bmp'=>'image/bmp','png'=>'image/png');
+	if($s_path && array_key_exists(strtolower($a_path_info['extension']),$ct_type)){
+	  header('Content-type: '.$ct_type[strtolower($a_path_info['extension'])]);
+    print $s_file;
+    exit(0);
+  }//Just print this file cached PDF or errant image
+  
 	return $s_file;
 }
 
@@ -406,4 +414,20 @@ function _iqss_rbuild_get_file_headers($s_url){
 	curl_close($ch);
 	
 	return $a_header;
+}
+
+/**
+ * Should this content be displayed inline?
+ */
+function _iqss_rbuild_inline_content($s_content_type){
+  list($s_content_type) = explode(';',$s_content_type);
+  
+  if(!strlen($s_content_type)) return true;
+  
+  list($s_type,$s_sub_type) = explode("/",$s_content_type);
+  if(trim($s_type) == 'text') return true; //Always for text types
+  
+  $a_inline_content = array('text/html','text/plain');
+  
+  return in_array(strtolower(trim($s_content_type)),$a_inline_content);
 }

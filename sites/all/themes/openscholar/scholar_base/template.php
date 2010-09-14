@@ -40,7 +40,6 @@ function phptemplate_node_submitted($node){
   ));
 }
 
-
 /**
  * Generates a themed set of links for node types associated with
  * the current active contexts.
