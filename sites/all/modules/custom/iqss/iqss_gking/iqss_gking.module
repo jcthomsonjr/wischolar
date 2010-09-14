@@ -371,10 +371,7 @@ function iqss_gking_pub_by_type_block(){
   ));
   $vsite = vsite_get_vsite();
 
-  $types[] = array(
-      'key' => 'working-paper',
-      'name' => 'Papers'
-  );
+  
   $types[] = array(
       'key' => 'journal-article',
       'name' => 'Articles'
@@ -386,6 +383,10 @@ function iqss_gking_pub_by_type_block(){
   $types[] = array(
       'key' => 'software',
       'name' => 'Software'
+  );
+  $types[] = array(
+      'key' => 'working-paper',
+      'name' => 'Papers'
   );
 
   $vsite = vsite_get_vsite();
@@ -407,6 +408,7 @@ function iqss_gking_pub_by_type_block(){
       $node = node_load($row->nid);
       $output .= "\n" . theme('biblio_entry', $node, variable_get('biblio_base', 'biblio'), biblio_get_style());
     }
+    $output .= '<div class="more-link">'.l("More ".$type['name'],"publications/types/".$type['key']).'</div> ';
     $output .= "</div>";
     $i ++;
   }
