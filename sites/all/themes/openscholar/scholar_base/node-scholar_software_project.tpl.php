@@ -22,6 +22,11 @@
       <?php endif; ?>
     <?php endif; ?>
     <div class="content">
+    <?php if ($page && $node->field_scholar_software_logo[0]['fid']): ?>
+      <div class="flL">
+        <?php print theme_image($node->field_scholar_software_logo[0]['filepath'],$node->title, $node->title);?>
+      </div>
+    <?php endif; ?>
       <?php print $content; ?>
     </div>
     <?php if (!$page): ?>
