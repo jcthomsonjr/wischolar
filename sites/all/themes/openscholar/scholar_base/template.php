@@ -42,14 +42,6 @@ function phptemplate_node_submitted($node){
 
 
 /**
-  * Removes read more links from nodes
-  */
-
-function scholar_base_link_alter(&$links, $node) {
-  unset($links['node_read_more']);
-}
-
-/**
  * Generates a themed set of links for node types associated with
  * the current active contexts.
  */
