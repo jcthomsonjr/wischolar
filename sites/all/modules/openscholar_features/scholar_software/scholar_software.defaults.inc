@@ -21,7 +21,7 @@ function _scholar_software_content_default_fields() {
         'exclude' => 0,
       ),
       'full' => array(
-        'format' => 'image_plain',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       '5' => array(
@@ -521,8 +521,8 @@ function _scholar_software_content_default_fields() {
     'active' => '1',
     'prefix' => '',
     'suffix' => '',
-    'min' => 0,
-    'max' => 500,
+    'min' => '0',
+    'max' => '500',
     'allowed_values' => '',
     'allowed_values_php' => 'return scholar_software_cck_options(\'major\');',
     'widget' => array(
