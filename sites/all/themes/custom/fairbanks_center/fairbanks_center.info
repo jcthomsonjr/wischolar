@@ -1,0 +1,13 @@
+name        = Fairbanks Center Theme
+description = Theme for the Fairbanks Center
+
+screenshot = screenshot.png
+core       = 6.x
+
+base theme = scholar_base
+
+stylesheets[all][]   = fairbanks-center.css
+conditional-stylesheets[if lte IE 7][all][] = fairbanks-center-ie.css
+
+scholar[theme_type]   = "project"
+scholar[theme_access] = "private"
