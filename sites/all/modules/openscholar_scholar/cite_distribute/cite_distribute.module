@@ -31,17 +31,53 @@ function cite_distribute_theme(){
 /**
  * Implementation of hook_link()
  */
-function cite_distribute_link($type, $object, $teaser = FALSE){
-  $vsite = vsite_get_vsite();
-  if ($vsite && $vsite->admin_access() && node_access('update', $object) && $object-> type == 'biblio') {
+
+/*function cite_distribute_vsite_admin_link($type, $object, $teaser = FALSE){
+
   //show this only for biblio nodes
-    $links['cite-distribute'] = array(
+  if ($object-> type == 'biblio'){
+    $links['cite_distribute'] = array(
+   'title'      => theme('cite_distribute_get_formlink', $object),
+   'html'       => TRUE,
+   //'attributes' => array('title' => t("Distribute this citation to selected repositories")),
+    );
+    return $links;
+  }
+}*/
+
+function cite_distribute_vsite_admin_link_alter( $links, $type, $object){
+  //show this only for biblio nodes
+  if ($object-> type == 'biblio'){
+    $links['cite_distribute'] = array(
     'title'      => theme('cite_distribute_get_formlink', $object),
     'html'       => TRUE,
     );
     return $links;
   }
- }
+}
+
+function cite_distribute_distribute_js($nid){
+  ctools_include('ajax');
+  ctools_include('modal');
+
+  $form_state = array(
+    're_render' => TRUE,
+    'ajax' => TRUE,
+  );
+
+  $form_state['nid'] = $nid;
+  $form_state['args'] = array($nid);
+  $form_state['cs_meta_module'] = 1;
+
+  $output = ctools_modal_form_wrapper('cite_distribute_form', $form_state);
+
+  if (empty($output)) {
+    $output = array();
+    $output[] = ctools_modal_command_dismiss();
+  }
+
+  ctools_ajax_render($output);
+}
 
 /**
  * Implementation of hook flag_default_flags
@@ -148,12 +184,11 @@ function cite_distribute_nodeapi(&$node, $op){
     }
   }
 
-/*
+
 function cite_distribute_init(){
   $path = drupal_get_path('module', 'cite_distribute') .'/js/';
   drupal_add_js($path . 'cite_distribute.js');
 }
-*/
 
 /**
  * Function to define widget form
@@ -182,12 +217,24 @@ function cite_distribute_form($form_id, $nid){
   }
 
   $form['cite_distribute_widgets']['cite_distribute_submit'] = array(
+  '#type' => 'cancel',
+  '#value' => t('Cancel'),
+  '#ahah' => array(
+  'event' => 'click',
+  'path' => '',
+  'wrapper' => 'distribute-message',
+  'method' => 'replace',
+  'effect' => 'fade',
+  )
+  );
+
+  $form['cite_distribute_widgets']['cite_distribute_submit'] = array(
   '#type' => 'submit',
   '#value' => t('Submit'),
   '#ahah' => array(
   'event' => 'click',
   'path' => 'cite_distribute/submit',
-  'wrapper' => 'distribute-message-' . $nid,
+  'wrapper' => 'distribute-message',
   'method' => 'replace',
   'effect' => 'fade',
   )
@@ -201,7 +248,7 @@ function cite_distribute_form($form_id, $nid){
    $form['cite_distribute_widgets']['distribute-message'] = array(
   '#type' => 'markup',
   '#value' => ' ', //empty placeholder
-   '#prefix' =>'<div id="distribute-message-' . $nid . '">',
+   '#prefix' =>'<div id="distribute-message">',
    '#suffix' => '</div>',
   );
 
@@ -224,16 +271,19 @@ function cite_distribute_form_submit(){
   foreach ($form_state['values'] as  $name => $value){
     if (strpos($name, '_module') && $value == 1){
       $module_name = trim(str_replace('_module', '', $name));
+
       //building this $modules array only so I can pass it to theme function  below to generate msg
        $modules[] = $module_name;
+
       //load flag each repository selected
       $flag = flag_get_flag($module_name);
+
       //set the flag for this node
       $flag->flag('flag', (int)$nid);
     }
   }
   $output = theme('cite_distribute_form_msg', $modules);
-  return drupal_json( $output );
+  return drupal_json( $output);
 }
 
 /**
@@ -370,13 +420,16 @@ function cite_distribute_widget_process($module, $nid){
   $module_info = module_invoke($module, 'cite_distribute_register');
   $repository_name = $module_info[0]['repository'];
 
+
   //check to see if nid already exists in repec meta
   $sql = db_result(db_query("SELECT nid FROM {cite_distribute} WHERE nid = %d AND type = '%s'", $node->nid, $module)) ?
 
   // node already exists in cite_distribute table, updating information
   db_query("UPDATE {cite_distribute} SET uid = %d, nid = %d, type= '%s', tid = %d , upd = %d , modified = now()
   WHERE nid = %d and type = '%s'", $user->uid, $node->nid, $module, $node->biblio_type, $update_val, $node->nid, $module)
+
   :
+
   // node already exists in Drupal but never been added to cite_distribute table
   db_query("INSERT INTO {cite_distribute} (uid, nid, type, tid, upd, created)
   VALUES (%d, %d, '%s', %d, %d, now())", $user->uid, $node->nid, $module, $node->biblio_type, $update_val);
@@ -384,9 +437,10 @@ function cite_distribute_widget_process($module, $nid){
 
   //if the module mode is per submission, send to the controller now
   if ($module_mode == 'per_submission'){
-    $control = cite_distribute_mode_controller($node, $module, $module_mode);
+  $control = cite_distribute_mode_controller($node, $module, $module_mode);
   }
 }
+
 
 /**
  * Call api function by calling
@@ -404,6 +458,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
   switch($module_mode){
 
     case 'api':
+
      //allows "make_template" hook in submodules to do something on first pass only
      $iteration = 1;
 
@@ -430,18 +485,25 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
        while($data = db_fetch_object($sql)){
             $node[] = node_load($data->nid);
        }
+
            $make_template = array();
 
             //send to the "make_template" passing it an array of nodes
             $make_template =  module_invoke($module, 'make_template', $node, $module_mode);
+
             //getting filename - checking for dynamic versus static filenames
             $filename = (($module_info[0]['file']) =='single')? $module_info[0]['filename'] : $make_template['filename'];
+
             //getting filepath - checking for dynamic versus static filepaths
-            $filepath = ($module_info[0]['dynamic_paths']) ? $make_template['filepath']  :
+            $filepath = ($module_info[0]['dynamic_paths'])?
+
+            $make_template['filepath']
+            :
             cite_distribute_fix_filepath(variable_get($module_info[0]['name'] . '_archive_path',''));
 
             //now place the template file
             $place_template = cite_distribute_place_template($module, $filepath, $filename, $make_template['template'], $module_info[0]['flag']);
+
       }
 
       //place_once key NOT set in hook_cite_dsitribute_register
@@ -521,6 +583,8 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
  * @param string $filepath - file path received with from "module info" array or "make template" array.
  * @return file path with a forward slash at the end
  */
+
+
 function cite_distribute_fix_filepath($filepath){
   //make sure a trailing slash is present in filepath, if not then add it to $filepath string
   if (substr($filepath, -1) !== '/'){
@@ -554,7 +618,9 @@ function cite_distribute_place_template($module, $filepath, $filename, $template
  *
  * @param $module_name is the name of the module, e.g. 'repec_meta'
  */
+
 function cite_distribute_api_complete($module_name){
+
   //if successful making template file - update {cite_distrubute}
   //table upd to zero to indicate that all nodes have been updated
   $sql = db_query("UPDATE {cite_distribute} SET upd = %d WHERE type = '%s'", 0, $module_name);
@@ -575,35 +641,24 @@ function cite_distribute_cron(){
 
     //run each api function
     for($i=0; $i < count($modules); $i++){
+
       $module_api = $modules[$i]['name'] . '_api';
       $module_api();
     }
   }
 }
 
+function cite_distribute_form_alter(&$form, $form_state, $form_id){
+// $form[ '#submit'] = array('cite_distribute_submit_test');
+    //dpm($form);
+}
+
 /**
- * Used to display cite distribute form in ctools modal pop-up
- *
- * @param unknown_type $nid
+ * For development purposes - should be removed
  */
-function cite_distribute_distribute_js($nid){
-  ctools_include('ajax');
-  ctools_include('modal');
+function _cite_distribute_clean(){
 
-  $form_state = array(
-    're_render' => TRUE,
-    'ajax' => TRUE,
-  );
-
-  $form_state['nid'] = $nid;
-  $form_state['args'] = array($nid);
-  $form_state['cs_meta_module'] = 1;
-
-  $output = ctools_modal_form_wrapper('cite_distribute_form', $form_state);
-
-  if (empty($output)) {
-    $output = array();
-    $output[] = ctools_modal_command_dismiss();
-  }
-  ctools_ajax_render($output);
+  $sql = db_query("TRUNCATE table {cite_distribute}");
+  $sql = db_query("TRUNCATE table {flag_content}");
+  drupal_set_message(t('Cleared cite_distribute and flag_content tables'));
 }
