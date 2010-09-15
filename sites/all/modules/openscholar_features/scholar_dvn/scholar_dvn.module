@@ -28,6 +28,7 @@ function scholar_dvn_data(){
     // Show DVN in iframe
     $dvn_alias = $vsite -> settings['scholar_dvn']['dvn_alias'];
     $path = "http://dvn.iq.harvard.edu/dvn/dv/" . $dvn_alias;
+    if(strlen($_REQUEST['dvn_subpage'])) $path .= "/".ltrim($_REQUEST['dvn_subpage'],"/");
     return "<div id=\"feature-dataverse\"><iframe name=\"res\" scrolling=\"auto\" src =\"" . $path . "\"></iframe></div>";
   }
   elseif ($vsite->admin_access()) {
