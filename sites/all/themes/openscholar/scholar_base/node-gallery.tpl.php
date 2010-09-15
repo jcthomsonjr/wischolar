@@ -12,8 +12,11 @@
       <h3 class="title">
         <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
       </h3>
+      <?php if ($submitted): ?>
     <?php endif; ?>
     <?php if ($unpublished): ?>
+      <p class="submitted"><?php print $submitted;?></p>
+    <?php endif; ?>
       <div class="unpublished"><?php print t('Unpublished'); ?></div>
     <?php endif; ?>
 
