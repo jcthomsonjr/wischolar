@@ -1,8 +1,8 @@
-  //Javascript to manipulate the Areas of Interest block on Garys Home Page
-$(document).ready(function(){
+     //Javascript to manipulate the Areas of Interest block on Garys Home Page
+  $(document).ready(function(){
 
   $('#block-iqss_gking-areas_of_research .col').hover(function() {
-    $(this).siblings('.col').fadeTo('slow',.3);
+    $(this).siblings('.col').fadeTo('slow',.8);
     }, function() {
    $(this).siblings('.col').fadeTo(180,1);
     });
@@ -11,14 +11,14 @@ $(document).ready(function(){
     //Rem 1 for Sticky
 	window.clearTimeout(timer_block_iqss_gking_areas_of_research);
   //$(this).parents('.col').siblings('.col').queue("fx",[]);
-	$('#block-iqss_gking-areas_of_research .bg').remove();
+	//$('#block-iqss_gking-areas_of_research .bg').remove();
 	$('#block-iqss_gking-areas_of_research dt.active').removeClass('active');
-	$('#block-iqss_gking-areas_of_research dd').fadeOut(180);
+	$('#block-iqss_gking-areas_of_research dd').fadeOut('fast');
 	$('#block-iqss_gking-areas_of_research .more').hide();
-    $(this).after('<div class="bg"></div>');
+    //$(this).after('<div class="bg"><\/div>');
     $(this).parent('dt').addClass('active');
-    $(this).children('.more').fadeIn("fast");
-    $(this).parent('dt').next('dd').fadeIn(820);
+    //$(this).children('.more').fadeIn("fast");
+    $(this).parent('dt').next('dd').fadeIn('fast');
 
   }, function() {
     //Rem if for stickey
@@ -36,22 +36,23 @@ $(document).ready(function(){
   iqss_gking_areas_of_research_load_next();
   //var timer_block_iqss_gking_areas_of_research = window.setInterval(iqss_gking_areas_of_research_load_next, 9000);
   var timer_block_iqss_gking_areas_of_research = null;
-});
+  });
 
- false;
-function iqss_gking_areas_of_research_load_next(){
-	if($('#block-iqss_gking-areas_of_research .col dt span:hover').length) return;
+    false;
 
-	var next_el = false;
-	var found_active = false;
-	$('#block-iqss_gking-areas_of_research .col dt span').each(function(index) {
-		if(!next_el) next_el = $(this);
-		if(found_active){
-			next_el = $(this);
-			found_active = false;
-		}
+    function iqss_gking_areas_of_research_load_next(){
+      if($('#block-iqss_gking-areas_of_research .col dt span:hover').length) return;
 
-		if($(this).parent('dt').hasClass('active')) found_active = true;
-	});
-	next_el.hover();
-}
+      var next_el = false;
+      var found_active = false;
+      $('#block-iqss_gking-areas_of_research .col dt span').each(function(index) {
+        if(!next_el) next_el = $(this);
+        if(found_active){
+          next_el = $(this);
+          found_active = false;
+        }
+
+        if($(this).parent('dt').hasClass('active')) found_active = true;
+      });
+      next_el.hover();
+    }

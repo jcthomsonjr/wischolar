@@ -5,7 +5,7 @@ html, body, #container {
 body {
   font: .8em/1.5em helvetica, arial, sans-serif;
   color: #000;
-  background: url(images/bg.png) repeat-y 50% 0 #fff;
+  background: url(images/bg.png) repeat-y 50% 0 #333;
   }
 
 /* TYPOGRAPHY */
@@ -92,16 +92,17 @@ h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3, #bl
   color: #CC6733;
   font-size: 1.4em;
   background: #fff;
-  padding-bottom: .4em;
+  padding-bottom: .1em;
+  padding-top: 0;
   }
 
 .taxonomy-term-child .taxonomy-term-child h3 {
-  border: none;
   padding: 0;
   margin-left:0;
   margin-right: 0;
   margin-bottom: 0;
   margin-top: .5em;
+  font-size: 1.2em;
   }
 
 .block h3.title {
@@ -253,10 +254,11 @@ a:hover {
   margin-bottom: .75em;
   }
 
-
+/*
 body.section-category .node {
  background: url(images/orange-dot.png) 0 .3em no-repeat transparent;
  }
+*/
 
 /* HEADER */
 
@@ -462,7 +464,7 @@ body.header-right-main #header-wrapper {
   float: left;
   border:none;
   background: transparent;
-  color: #000;
+  color: #fff;
   margin-right: 13px;
   margin-left: 0;
   padding-left: 0;
@@ -719,9 +721,7 @@ body.header-right-main #header-wrapper {
 /* TAXONOMY */
 
 body.section-category .node-teaser {
-  padding-left: 1.2em;
   margin-bottom: 0;
-  margin-left: 1em;
   }
 
 body.section-category .taxonomy-term-description {
@@ -729,5 +729,5 @@ body.section-category .taxonomy-term-description {
   }
 
 .taxonomy-term-child .taxonomy-term-child {
-  padding-left: 4em;
+  padding-left: 3em;
   }
