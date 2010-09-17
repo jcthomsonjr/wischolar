@@ -2,8 +2,6 @@
 
 include_once('scholar_events.features.inc');
 
-
-
 /**
  * Implementation of hook_strongarm().
  */
@@ -15,27 +13,21 @@ function scholar_events_strongarm() {
   $conf['date_first_day'] = '1';
 
   foreach (array('event') as $type) {
-
-
     // Comments
     $conf['comment_'. $type] = COMMENT_NODE_DISABLED;
-
     // Disable Diff button
     $conf['show_preview_changes_'. $type] = FALSE;
     $conf['show_diff_inline_'. $type] = FALSE;
-
     // Pathauto (optional) settings
     $conf["pathauto_node_{$type}_pattern"] = "[space-og-path]/{$type}/[title-raw]";
+    
   }
-
 
   // Uploads only on events
   $conf['upload_event'] = TRUE;
 
-
   return $conf;
 }
-
 
 /**
  * Implementation of hook_block().

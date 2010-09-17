@@ -58,7 +58,7 @@ function _scholar_events_content_default_fields() {
       'default_value_custom' => '',
       'default_value_custom2' => '',
       'label' => 'Date',
-      'weight' => '-3',
+      'weight' => '-4',
       'description' => '',
       'type' => 'date_popup',
       'module' => 'date',

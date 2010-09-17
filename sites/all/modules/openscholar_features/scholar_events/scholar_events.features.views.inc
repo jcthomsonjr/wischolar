@@ -370,6 +370,7 @@ function _scholar_events_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'Upcoming events');
+  $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 25);
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'table');
@@ -420,7 +421,6 @@ function _scholar_events_views_default_views() {
       ),
     ),
   ));
-  $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', '0');
   $handler->override_option('style_plugin', 'list');
