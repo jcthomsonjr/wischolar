@@ -5,7 +5,7 @@
  * themable title link
  */
 function theme_cite_distribute_get_formlink($object){
-  $output = '<a href="#" class ="disto-toggle">Distribute</a>';
+  $output = '<span class="disto-toggle">Distribute</span>';
   $output .= '<ul class = "distribute-form-wrapper slider"><li>' . drupal_get_form('cite_distribute_form', $object->nid). '</li></ul>';
   return $output;
 }
