@@ -193,7 +193,7 @@ function scholar_biocv_strongarm(){
   $conf["show_diff_inline_cv"] = TRUE;
 
   $conf['node_options_bio'] = array('status', 'revision');
-  $conf['node_options_cv'] = array('status', 'revision');
+  $conf['node_options_cv'] = array('status');
   $conf['upload_bio'] = TRUE;
   $conf['upload_cv'] = FALSE;
 
@@ -212,7 +212,15 @@ function scholar_biocv_strongarm(){
  */
 function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
   switch($form_id){
-    case 'cv_node_form':
+    case 'cv_node_form': 
+   
+    unset($form['revision_information']);
+    $form['revision'] = array(
+    '#access' => TRUE,
+    '#type' => 'hidden',
+    '#default_value' => 0,   
+    );
+          
     	drupal_add_js(drupal_get_path('module', 'scholar_biocv') . '/theme/scholar_biocv.biocvToggleUsePDF.js');
     	$a_biocv_settings['biocvToggleUsePDF'] = array(
         'monitor' => "use_pdf_as_cv",
