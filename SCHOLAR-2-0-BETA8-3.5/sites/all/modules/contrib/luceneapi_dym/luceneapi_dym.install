@@ -1,0 +1,121 @@
+<?php
+// $Id: luceneapi_dym.install,v 1.6 2009/12/07 02:07:15 cpliakas Exp $
+
+/**
+ * @file
+ * Installation functions for the Search Lucene DidYouMean module.
+ *
+ * @ingroup luceneapi_dym
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function luceneapi_dym_install() {
+   // makes sure this module is heavier than Search Lucene Content
+  $sql = "SELECT weight FROM {system} WHERE type = 'module' AND name = 'luceneapi_node'";
+  $weight = db_result(db_query($sql));
+
+  $sql = "UPDATE {system} SET weight = %d WHERE type = 'module' AND name = 'luceneapi_dym'";
+  db_query($sql, array($weight + 1));
+
+  // we don't need to double process the text, so the Drupal analyser isn't used.
+  variable_get('luceneapi_dym:analyzer', 'Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive');
+  // we only need to cached the top word matched
+  variable_set('luceneapi_dym:number_cached', 1);
+  // documents are small, so we can index more per cron run
+  variable_set('luceneapi_dym:update_limit', 1000);
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function luceneapi_dym_uninstall() {
+
+  // clears all cached luceneapi_dym search results
+  if (db_table_exists('cache_luceneapi')) {
+    cache_clear_all('luceneapi_dym', 'cache_luceneapi', TRUE);
+  }
+
+  // deletes index directory
+  $index_path = variable_get(
+    'luceneapi_dym:index_path',
+    file_directory_path() . DIRECTORY_SEPARATOR .'luceneapi_dym'
+  );
+  if (is_dir($index_path)) {
+    $nomask = array('RCS', 'SCCS', 'CVS', 'CVS.adm', 'RCSLOG', 'tags', 'TAGS', '.git', '.bzr');
+    $files = file_scan_directory($index_path, '.*', $nomask);
+    foreach ($files as $file) {
+      @unlink($file->filename);
+    }
+    @unlink(sprintf('%s/.htaccess', $index_path));
+    @rmdir($index_path);
+  }
+
+  // removes all variables that start with "luceneapi_dym:"
+  $result = db_query("SELECT name FROM {variable} WHERE name LIKE 'luceneapi_dym:%%'");
+  while ($row = db_fetch_object($result)) {
+    variable_del($row->name);
+  }
+}
+
+/**
+ * Implementation of hook_requirements().
+ */
+function luceneapi_dym_requirements($phase) {
+  // Ensure translations don't break at install time
+  $t = get_t();
+
+  // Search Lucene MoreLikeThis requires the 2.0 API
+  if ('runtime' == $phase) {
+    $requirements['luceneapi_dym'] = array(
+      'title' => 'Search Lucene DidYouMean',
+      'value' => $t('2.0 API or higher'),
+    );
+    if (defined('LUCENEAPI_VERSION') && version_compare(LUCENEAPI_VERSION, '2.0', '>=')) {
+      $requirements['luceneapi_dym']['severity'] = REQUIREMENT_OK;
+    }
+    else {
+      $requirements['luceneapi_dym']['severity'] = REQUIREMENT_ERROR;
+      $requirements['luceneapi_dym']['description'] = $t('Search Lucene API version 2.0 or greater is required.');
+    }
+  }
+
+  // if requirements fail for Search Lucene API, this module will still get
+  // installed breaking the site.  This code double checks the requirements to
+  // get around this bug.  Requirements are only returned on failure.
+  // @see http://drupal.org/node/592182
+  // @see http://drupal.org/node/592800
+  if ('install' == $phase) {
+
+    // bails if Drupal is in the process of being installed
+    if (!function_exists('db_query') || (function_exists('install_verify_drupal') && !install_verify_drupal())) {
+      return array();
+    }
+
+    // makes sure path to luceneapi exists, formats path to "lib" dir
+    if ($luceneapi_path = drupal_get_path('module', 'luceneapi')) {
+      $lib_dir = sprintf('%s/lib', $luceneapi_path);
+    }
+    else {
+      return array(
+        'luceneapi_dym' => array(
+          'title' => t('Search Lucene DidYouMean'),
+          'severity' => REQUIREMENT_ERROR,
+          'description' => t('Search Lucene DidYouMean depends on Search Lucene API.'),
+        ),
+      );
+    }
+
+    // re-tests Search Lucene API requirements
+    if (!is_dir("$lib_dir/Zend") || !is_dir("$lib_dir/LuceneAPI") || !extension_loaded('iconv')) {
+      return array(
+        'luceneapi_dym' => array(
+          'title' => t('Search Lucene DidYouMean'),
+          'severity' => REQUIREMENT_ERROR,
+          'description' => t('Search Lucene DidYouMean depends on Search Lucene API.'),
+        ),
+      );
+    }
+  }
+}
