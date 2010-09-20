@@ -157,10 +157,11 @@ function file_aliases_load_fid($fid) {
     file_download($result->filepath);
   }
   else {
-    header('Content-Type: ' . $result->filemime);
+    
+    drupal_set_header('Content-Type: ' . $result->filemime);
     // Fix for IE/PDF download issue
     // @see http://drupal.org/node/411910
-    header('Cache-Control: public');
+    drupal_set_header('Cache-Control: public');
     readfile($result->filepath);
   }
 }
@@ -200,7 +201,7 @@ function file_aliases_views_api() {
 /**
  * Implementation of hook_form_alter()
  **/
-function file_aliases_form_alter(&$form, $form_state, $form_id) {    
+function file_aliases_form_alter(&$form, $form_state, $form_id) {
   if (isset($form['type']) && isset($form['#node'])
   && ($form_id == $form['type']['#value'] .'_node_form')) {
     
@@ -227,6 +228,6 @@ function file_aliases_form_alter(&$form, $form_state, $form_id) {
           }
         }
       }
-    }   
+    }
   }
 }
