@@ -10,6 +10,9 @@ function iqss_gking_init(){
       'ui.tabs'
   ));
   drupal_add_css(drupal_get_path('module', 'vsite') . "/theme/jquery_ui/jquery.ui/themes/openscholar/ui.tabs.css");
+  
+  drupal_add_css(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.css");
+  drupal_add_js(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.js");
 }
 
 /**
@@ -119,28 +122,6 @@ function iqss_gking_filter_by_type_block(){
 }
 
 /**
- * Add blocks that can be used on garys site (these will show in cp/layout)
- * @param array $contexts (by ref)
- */
-function iqss_gking_context_default_contexts_alter(&$contexts){
-  if (! iqss_gking_on_gking_site())
-    return;
-
-  //Add this block to the front context on Garys site
-  $a_block_info = iqss_gking_block();
-  $contexts['scholar-feature-front']->block['areas_of_research'] = array(
-      'module' => 'iqss_gking',
-      'delta' => 'areas_of_research',
-      'weight' => 0,
-      'region' => 'header_main',
-      'status' => 0,
-      'label' => $a_block_info['areas_of_research']['info'],
-      'type' => 'context_ui'
-  );
-
-}
-
-/**
  * Function that determines if we are in gking's site
  */
 function iqss_gking_on_gking_site(){
@@ -173,9 +154,6 @@ function theme_iqss_gking_dl($term){
  * Return the block contents for the area of research-applications block
  */
 function _iqss_gking_areas_of_research_wgt(){
-
-  drupal_add_css(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.css");
-  drupal_add_js(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.js");
 
   $vsite = vsite_get_vsite();
   if (! iqss_gking_on_gking_site())
