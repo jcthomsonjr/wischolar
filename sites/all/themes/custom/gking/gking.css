@@ -111,6 +111,10 @@ a:hover {
   text-decoration: underline;
   }
 
+.toggle {
+  background-position: 100% 0;
+  }
+
 .more {
  font-weight: bold;
  text-decoration: none;
@@ -460,7 +464,7 @@ body.header-right-main #header-wrapper {
   font-weight: normal;
   }
 
-#pub_type_tabs ul {
+#pub_type_tabs ul.ui-tabs-nav {
   float: right;
   margin-top: 15px;
   }
@@ -477,17 +481,17 @@ body.header-right-main #header-wrapper {
   background: transparent;
   }
 
-#pub_type_tabs li {
+.ui-tabs-nav li {
   float: left;
   margin: 0;
   background: none;
   }
 
-#pub_type_tabs li:last-child {
+.ui-tabs-nav li:last-child {
   margin-right: 0;
   }
 
-#pub_type_tabs li a, #pub_type_tabs li a:visited, .ui-tabs-nav li a,.ui-tabs-nav li.ui-state-default a, .ui-tabs-nav li.ui-state-default a:visited  {
+.ui-tabs-nav li a, .ui-tabs-nav li a:visited, .ui-tabs-nav li a,.ui-tabs-nav li.ui-state-default a, .ui-tabs-nav li.ui-state-default a:visited  {
   padding: 0;
   color: #000;
   font-weight: bold;
@@ -503,21 +507,6 @@ body.header-right-main #header-wrapper {
 
 .ui-tabs .ui-tabs-panel {
   clear: both;
-  }
-
-/*Remove after Richard adds class to other ul */
-#pub_type_tabs ul.links, #pub_type_tabs ul.links li, #pub_type_tabs ul.links li a, #pub_type_tabs ul.links li a:visited {
-  float:none;
-  margin:0;
-  padding: 0;
-  line-height: normal;
-  font-weight: normal;
-  color:#005C9C;
-  font-size: 12px;
-  }
-
-#pub_type_tabs ul.links li a.ctools-dropdown-link {
-  padding-left:20px;
   }
 
 /* FOOTER */
@@ -692,15 +681,34 @@ body.header-right-main #header-wrapper {
   border-spacing: 0;
   }
 
-
 .node-type-biblio .itu-attachment-list td {
   padding-right: .4em;
+  }
+
+table#attachments td.mime,
+table#attachments td.size {
+  display:none;
+  }
+
+
+
+table#attachments td.file a {
+  text-indent: -999em;
+  background:url('/sites/all/modules/contrib/itweak_upload/images/mime-16.png') no-repeat scroll center -226px transparent;
+  height:22px;
+  margin:0;
+  min-height:22px;
+  min-width:16px;
+  padding:0 7px;
+  width:16px;
+  display:block;
   }
 
 /* TAXONOMY */
 
 body.section-category .node-teaser {
   margin-bottom: 0;
+  padding-left: 2em;
   }
 
 body.section-category .taxonomy-term-description {

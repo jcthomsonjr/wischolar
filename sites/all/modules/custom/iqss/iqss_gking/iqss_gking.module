@@ -394,7 +394,7 @@ function iqss_gking_pub_by_type_block(){
 
   $output = "";
   $i = 0;
-  $tabs = "<h3 class=\"title\">Recent Work</h3><ul>";
+  $tabs = "<h3 class=\"title\">Recent Work</h3><ul class=\"ui-tabs-nav\">";
   foreach ( $types as $type ) {
     $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type['name']}</a></li>";
 
