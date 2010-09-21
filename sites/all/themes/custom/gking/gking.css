@@ -3,7 +3,7 @@ html, body, #container {
   }
 
 body {
-  font: .75em/1.5em helvetica, arial, sans-serif;
+  font: 12px/17px helvetica, arial, sans-serif;
   color: #000;
   background: url(images/bg.png) repeat-y 50% 0 #333;
   }
@@ -414,6 +414,7 @@ body.header-right-main #header-wrapper {
   font-size:1.1em;
   }
 
+
 #header #block-scholar_biocv-bio_blurb h3 {
   display:none;
   }
@@ -692,8 +693,8 @@ table#attachments td.size {
   }
 
 
-
-table#attachments td.file a {
+table#attachments td.file a,
+.biblio_file_links a {
   text-indent: -999em;
   background:url('/sites/all/modules/contrib/itweak_upload/images/mime-16.png') no-repeat scroll center -226px transparent;
   height:22px;
@@ -703,6 +704,10 @@ table#attachments td.file a {
   padding:0 7px;
   width:16px;
   display:block;
+  }
+
+.biblio_file_links a {
+  display:inline-block;
   }
 
 /* TAXONOMY */
