@@ -323,6 +323,7 @@ function scholar_software_cron() {
  * Perform any cron actions that should take place on all software packages
  */
 function scholar_software_proccess_cron($node) {
+  $b_modified_project = false;
   //Global actions here
 
 	//Method Actions here
@@ -331,12 +332,12 @@ function scholar_software_proccess_cron($node) {
     $a_handler_info = $a_handlers[$node->field_scholar_software_method[0]['value']];
     if($a_handler_info['path']) require_once($a_handler_info['path']);
     $o_handler = new $a_handler_info['class']($node->field_scholar_software_repo[0]['value'], $node->field_scholar_software_name[0]['value']);
-    if(method_exists($o_handler,'proccessCron')) $o_handler->proccessCron($node);
+    if(method_exists($o_handler,'proccessCron')) $b_modified_project = $o_handler->proccessCron($node);
   }
 
   //Save node
   $node->pathauto_perform_alias = false;
-  node_save($node);
+  if($b_modified_project) node_save($node);
 }
 
 /**

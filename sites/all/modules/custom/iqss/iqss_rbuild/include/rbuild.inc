@@ -46,12 +46,14 @@ class rbuild implements scholar_software_handler{
    * @param $node
    */
   public function alterProject(&$node){
-  	if(!($a_package = $this->getPackage())) return;
+    $b_changed = false;
+  	if(!($a_package = $this->getPackage())) return $b_changed;
   	
   	//Update the title with what is in rbuild
   	if(!strlen($node->title)){
 	  	$s_key = (strlen($this->s_app_key) && strtolower(substr($a_package['title'],0,strlen($this->s_app_key))) != strtolower($this->s_app_key))?"$this->s_app_key: ":"";
 	  	$node->title = $s_key.$a_package['title'];
+	  	$b_changed = true;
   	}
   	
   	if(!strlen($node->body)){
@@ -60,10 +62,13 @@ class rbuild implements scholar_software_handler{
 	  	if(!module_exists('iqss_remote_source') || strstr($a_remote_body_headers[0],'404 Not Found')){
 		  	$s_contributors  = strlen($a_package['author'])?"Contributors: ".strip_tags(trim($a_package['author'],' ,'))."<br /><br />":"";
 		  	$node->body = "<!-- RBuild Docs -->".$s_contributors.$a_package['description'];
-	  	}else{
-	  	  $node->iqss_remote_source_path = $s_remote_body;
+        $b_changed = true;
+	  	}elseif ($node->iqss_remote_source_path != $s_remote_body){
+	      $node->iqss_remote_source_path = $s_remote_body;
+	  	  $b_changed = true;
 	  	}
   	}
+  	return $b_changed;
   }
   
   /**
@@ -104,11 +109,11 @@ class rbuild implements scholar_software_handler{
   /**
    * Proccess Cron Update
    */
-  public function proccessCron(&$node){
-    if(!($a_package = $this->getPackage())) return;
+  public function proccessCron(&$node,$b_return_releases = false){
+    if(!($a_package = $this->getPackage())) return false;
     
     //Refresh Title and Description
-    $this->alterProject($node);
+    $b_changed = $this->alterProject($node);
     
     //Add any new releases
     list($major,$patch,$extra) = _iqss_rbuild_parseVersion($a_package['version']);
@@ -120,9 +125,10 @@ class rbuild implements scholar_software_handler{
     if(!$result){
     	//Add new Release
     	iqss_rbuild_add_release_node($node, $a_package['version'], $this->s_app_key."_".$a_package['version'].".tar.gz", $a_package, $this->s_url, $a_results);
+    	$b_changed = true;
     }
     
-    return $a_results;
+    return $b_return_releases?$a_results:$b_changed;
   }
   
   /**
