@@ -1,11 +1,11 @@
      //Javascript to manipulate the Areas of Interest block on Garys Home Page
   $(document).ready(function(){
 
-  $('#block-iqss_gking-areas_of_research .col').hover(function() {
-    $(this).siblings('.col').fadeTo('slow',.8);
-    }, function() {
-   $(this).siblings('.col').fadeTo(180,1);
-    });
+  //$('#block-iqss_gking-areas_of_research .col').hover(function() {
+  //  $(this).siblings('.col').fadeTo('slow',.8);
+  //  }, function() {
+  // $(this).siblings('.col').fadeTo(180,1);
+  //  });
 
   $('#block-iqss_gking-areas_of_research .col dt span').hover(function() {
     //Rem 1 for Sticky

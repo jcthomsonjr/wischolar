@@ -83,6 +83,13 @@
             <?php print $help; ?>
             <?php print $messages; ?>
             <?php //print $content; ?>
+            <div id="block-iqss_gking-areas_of_research">
+            <h3 class="title">Areas of Research</h3>
+            <?php
+              $aor = _iqss_gking_areas_of_research_wgt();
+              print $aor['content'];
+              ?>
+            </div>
             <?php
               $tabbedpubs = iqss_gking_pub_by_type_block();
               print $tabbedpubs['content'];
