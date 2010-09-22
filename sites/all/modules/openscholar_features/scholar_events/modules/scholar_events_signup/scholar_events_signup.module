@@ -5,22 +5,24 @@ include_once('scholar_events_signup.features.inc');
 /**
  * implementation of hook_strongarm
  */
+
 function scholar_events_signup_strongarm() {
   $conf = array();
   $conf['signup_node_default_state_event'] = "allowed_off";
   $conf['signup_date_field_event'] = "field_date";
-  //$conf['signup_close_early'] = "1";
+  $conf['signup_close_early'] = "1";
   $conf['signup_date_format'] = "small";
   $conf['signup_form_location'] = "node";
   $conf['signup_fieldset_collapsed'] = "1";
   $conf['signup_display_signup_user_list'] = "embed-view-tab";
-  $conf['signup_display_signup_admin_list'] = "embed-view";
+  $conf['signup_display_signup_admin_list'] = "signup";
   $conf['signup_user_list_view'] = "signup_user_list:default";
   $conf['signup_admin_list_view'] = "signup_user_vbo_admin_list:default";
-  //signup out of vertical tabs
+
   $conf["vertical_tabs_forms"]["event_node_form"] = array('signup' => FALSE);
   return $conf;
 }
+
 
 
 /**
@@ -39,5 +41,26 @@ function scholar_events_signup_menu_access($node, $menu_type) {
       return TRUE;
     }
   }
+}
+
+/**
+ * Implementation of hook_form_alter
+ */
+function scholar_events_signup_form_alter(&$form, &$form_state, $form_id){
+  // remove token stuff from the following forms
+  switch ($form_id) {
+    case 'signup_node_settings_form' :
+      unset($form['signup_confirmation_token_fieldset']);
+      unset($form['signup_reminder_token_fieldset']);
+      break;
+    case 'signup_broadcast_form' :
+      unset($form['message_tokens_fieldset']);
+      break;
+    case 2 :
+      echo "i equals 2";
+      break;
+  }
+
+
 }
 
