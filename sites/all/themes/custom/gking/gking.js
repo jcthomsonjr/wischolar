@@ -22,15 +22,20 @@ $(document).ready(function() {
 
     $('#block-scholar_biocv-bio_blurb a').attr("href","#");
 
-    var container = $("#node-3793");
-    $("#block-scholar_biocv-bio_blurb a").click(function(event){
 
-      if (container.is(".open")) {
-        container.removeClass("open").animate({
+
+    var container = $("#node-3793");
+
+    container.prepend('<a class="more" href="#">CLOSE X</a>');
+
+    $("body.page-home a.more").click(function(event){
+
+      if (container.is(".bio-open")) {
+        container.removeClass("bio-open").animate({
         height:'0'},"1500");
 
        } else {
-      container.addClass("open").animate({
+      container.addClass("bio-open").animate({
       height:'70%'},"1500");
       }
 
