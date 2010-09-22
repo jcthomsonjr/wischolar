@@ -1,0 +1,453 @@
+<?php
+
+/**
+ * implementation of hook_init()
+ */
+function iqss_gking_init(){
+  if (! iqss_gking_on_gking_site())
+    return;
+  jquery_ui_add(array(
+      'ui.tabs'
+  ));
+  drupal_add_css(drupal_get_path('module', 'vsite') . "/theme/jquery_ui/jquery.ui/themes/openscholar/ui.tabs.css");
+
+  drupal_add_css(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.css");
+  drupal_add_js(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.js");
+}
+
+/**
+ * Menu callback for garys site
+ */
+function iqss_gking_menu(){
+  $items = array();
+
+  $items['taxonomy/term/biblio/%/%'] = array(
+      'title' => 'Taxonomy term',
+      'page callback' => 'iqss_gking_biblio_term_page',
+      'page arguments' => array(3,4),
+      'access arguments' => array(
+          'access content'
+      ),
+      'type' => MENU_CALLBACK,
+      'file' => 'taxonomy.pages.inc',
+      'file path' => drupal_get_path('module', 'taxonomy')
+  );
+
+  $items['gking_update_filefield/%'] = array(
+      'title' => 'Update Filefield',
+      'page callback' => 'iqss_gking_update_filefield',
+      'page arguments' => array(1),
+      'access callback' => 'iqss_gking_access_filefield',
+      'access arguments' => array(1),
+      'type' => MENU_CALLBACK
+  );
+
+  return $items;
+}
+
+/**
+ * Alter the menu items to use garys code
+ * @param array $items
+ */
+function iqss_gking_menu_alter(&$items){
+  $items['taxonomy/term/%']['page callback'] = 'iqss_gking_term_page';
+  //$items['categories/%/%']['page callback'] = 'iqss_gking_term_by_context';
+}
+
+/**
+ * Implementation of hook_theme
+ */
+function iqss_gking_theme(){
+  return array(
+      'iqss_gking_dl' => array(
+          'arguments' => array(
+              'term' => NULL
+          )
+      )
+  );
+}
+
+/**
+ * Define the gking blocks with hook block
+ */
+function iqss_gking_block($op = 'list', $delta = false, $edit = array()){
+  if ($op == 'list') {
+    $blocks['areas_of_research']['info'] = t('AOR: Applications &amp; Methods');
+    $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
+    $blocks['gking_pub_by_type']['info'] = t('Gkings "Recent Works" to replace default Publications by type');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 'areas_of_research' :
+        return _iqss_gking_areas_of_research_wgt();
+      case 'filter_by_type' :
+        return iqss_gking_filter_by_type_block();
+      case 'gking_pub_by_type' :
+        return iqss_gking_pub_by_type_block();
+    }
+  }
+}
+
+/**
+ * Block to filter a taxonomy by type
+ */
+function iqss_gking_filter_by_type_block(){
+
+  $router_item = menu_get_item();
+  if (strpos($router_item['path'], 'taxonomy/term') !== 0)
+    return array();
+
+  $view = views_get_view('publication_types');
+  $view->init();
+  $view->set_display('block_2');
+  $view->set_arguments(array(
+      current($router_item['page_arguments'])
+  ));
+
+  //Change to the tax. path
+  $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
+  $view->execute();
+
+  $output = $view->render();
+  if (! $output)
+    return array();
+
+  $a_term = taxonomy_get_term(current($router_item['page_arguments']));
+
+  return count($view->result) ? array(
+      'subject' => $a_term->name . " by Publication Type",
+      'content' => $output
+  ) : array();
+}
+
+/**
+ * Function that determines if we are in gking's site
+ */
+function iqss_gking_on_gking_site(){
+  $vsite = vsite_get_vsite();
+
+  return ($vsite && $vsite->purl == 'gking');
+}
+
+
+
+/**
+ * theme a term with description
+ * @param object $term
+ */
+function theme_iqss_gking_dl($term){
+  $desc_string = $term->description;
+  $desc_trimmed =  node_teaser($desc_string,NULL,400);
+  $term_path = "taxonomy/term/$term->tid";
+  $term_link = l($term->name, $term_path);
+  //$term_link = l('More', $term_path, array(
+  //    'attributes' => array(
+  //        'class' => 'more'
+  //    )
+  //));
+  $item = '<dt><span>' . $term_link . '</span><dd>' . $desc_trimmed . '</dd>';
+  return $item;
+}
+
+/**
+ * Return the block contents for the area of research-applications block
+ */
+function _iqss_gking_areas_of_research_wgt(){
+
+  $vsite = vsite_get_vsite();
+  if (! iqss_gking_on_gking_site())
+    return array();
+
+  $output = "";
+  foreach ( $vsite->get_vocabs($type) as $n_vid => $o_vocab ) {
+    if ($o_vocab->name != "Research Interests")
+      continue;
+
+    $tree = taxonomy_get_tree($n_vid, 0, - 1, 2);
+
+    foreach ( $tree as $n_index => $o_vocab ) {
+      if (! in_array($o_vocab->name, array(
+          "Applications",
+          "Methods"
+      )) || $o_vocab->depth != 0)
+        continue;
+      $n_index ++;
+      $items = vsite_taxonomy_build_list_items($n_index, $tree, 'iqss_gking_dl');
+      $output = "\n\n" . '<div id="' . strtolower($o_vocab->name) . '" class="col">' . '<h4>' . $o_vocab->name . '</h4>' . "<dl>" . implode("\n", $items) . "</dl>" . "</div><!--/ $o_vocab->name -->" . $output;
+    }
+    break;
+  }
+
+  return array(
+      'subject' => "Areas of Research:",
+      'content' => $output
+  );
+}
+
+function iqss_gking_context_active_contexts_alter(&$contexts){
+  if (! iqss_gking_on_gking_site())
+    return;
+
+  $vsite = vsite_get_vsite();
+  $router_item = menu_get_item();
+  if (strpos($router_item['path'], 'taxonomy/term') === 0) {
+
+    //The next few lines just make sure that we are in gary's research interest tax.
+    $n_vid = false;
+    foreach ( $vsite->get_vocabs($type) as $vid => $o_vocab ) {
+      if ($o_vocab->name == "Research Interests") {
+        $n_vid = $vid;
+        break;
+      }
+    }
+
+    //Add this block category pages on (Lets you filter the category by publictaion type)
+    $contexts['vsite-section-public']->block['filter_by_type-filter_by_type'] = array(
+        'module' => 'iqss_gking',
+        'delta' => 'filter_by_type',
+        'weight' => - 21,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Filter Taxonomy by Publication Type',
+        'type' => 'context_ui'
+    );
+  }
+
+}
+
+/**
+ * Menu callback; displays all nodes associated with a term by publication type
+ */
+function iqss_gking_biblio_term_page($str_tids, $s_biblio_type){
+  $terms = taxonomy_terms_parse_string($str_tids);
+
+  if ($terms['tids']) {
+    $result = db_query(db_rewrite_sql('SELECT t.tid, t.name FROM {term_data} t WHERE t.tid IN (' . db_placeholders($terms['tids']) . ')', 't', 'tid'), $terms['tids']);
+    $tids = array(); // we rebuild the $tids-array so it only contains terms the user has access to.
+    $names = array();
+    while ( $term = db_fetch_object($result) ) {
+      $tids[] = $term->tid;
+      $names[] = $term->name;
+    }
+
+    if ($names) {
+      $title = implode(', ', $names);
+      drupal_set_title(check_plain($title));
+
+      $descendant_tids = array();
+      foreach ( $tids as $index => $tid ) {
+        $term = taxonomy_get_term($tid);
+        $tree = taxonomy_get_tree($term->vid, $tid, - 1, 0);
+        $descendant_tids[] = array_merge(array(
+            $tid
+        ), array_map('_taxonomy_get_tid_from_term', $tree));
+      }
+
+      $args = call_user_func_array('array_merge', $descendant_tids);
+      $placeholders = db_placeholders($args, 'int');
+      $args[] = str_replace("-", " ", $s_biblio_type);
+
+      $sql = 'SELECT DISTINCT(n.nid), n.sticky, n.title, n.created FROM {node} n INNER JOIN {term_node} tn ON n.vid = tn.vid INNER JOIN {biblio} b ON b.nid = n.nid INNER JOIN {biblio_types} bt ON b.biblio_type = bt.tid  WHERE tn.tid IN (' . $placeholders . ') AND bt.name LIKE \'%s\' AND n.status = 1 ORDER BY n.sticky DESC, n.created DESC';
+
+      return theme('taxonomy_term_page', $tids, db_query($sql, $args));
+
+    }
+  }
+}
+
+/**
+ * Menu callback; displays all nodes associated with a term (grouped by subterms on garys RI taxonomy).
+ */
+function iqss_gking_term_page($str_tids = '', $depth = 'all'){
+  if (! iqss_gking_on_gking_site())
+    return vsite_taxonomy_term_page($str_tids, $depth); //If this isn't Gary just display the standard
+
+
+  require_once (drupal_get_path('module', 'taxonomy') . '/taxonomy.pages.inc');
+  $terms = taxonomy_terms_parse_string($str_tids);
+  $term = taxonomy_get_term(current($terms['tids']));
+  $vocab = taxonomy_vocabulary_load($term->vid);
+
+  if (count($terms['tids']) != 1 || $vocab->name != "Research Interests")
+    return vsite_taxonomy_term_page($str_tids, $depth);
+
+  $tree = taxonomy_get_tree($vocab->vid, $term->tid, - 1, 1);
+  if (! count($tree)) {
+    $tree = taxonomy_get_tree($vocab->vid);
+    foreach ( $tree as $tterm )
+      if ($tterm->tid == $term->tid)
+        return iqss_gking_term_page(current($tterm->parents));
+  } //If this term has no childeren then display the parent.
+
+
+  drupal_set_title(check_plain($term->name));
+  $output .= _iqss_gking_term_page_tree($term, $vocab->vid, $terms['operator'], $tree);
+
+  //  $result = taxonomy_select_nodes(array($term->tid), $terms['operator'], $depth, false);
+  //  $output .= (db_affected_rows($result))?theme('taxonomy_term_page', array($term->tid), $result):'<div class="taxonomy-term-description">'.filter_xss_admin($term->description).'</div>';
+  //  drupal_set_title(check_plain($term->name));
+  //
+  //  foreach ($tree as $subterm) {
+  //  	$result = taxonomy_select_nodes(array($subterm->tid), $terms['operator'], $depth, false);
+  //    if ($subterm->name && db_affected_rows($result)) $output .= '<div class="taxonomy-term-child">'."<h3>{$subterm->name}</h3>".theme('taxonomy_term_page', array($subterm->tid), $result)."</div>";
+  //  }
+  return $output;
+}
+
+/**
+ * Print the child terms
+ */
+function _iqss_gking_term_page_tree($term, $vid, $operator, $tree = false){
+  if (! $tree)
+    $tree = taxonomy_get_tree($vid, $term->tid, - 1, 1);
+
+  $result = taxonomy_select_nodes(array(
+      $term->tid
+  ), $operator, 0, false);
+  $output = (db_affected_rows($result)) ? theme('taxonomy_term_page', array(
+      $term->tid
+  ), $result) : '<div class="taxonomy-term-description">' . filter_xss_admin($term->description) . '</div>';
+
+  foreach ( $tree as $subterm ) {
+    $result = taxonomy_select_nodes(array(
+        $subterm->tid
+    ), $operator, 0, false);
+    if ($subterm->name && db_affected_rows($result))
+      $output .= '<div class="taxonomy-term-child">' . "<h3>{$subterm->name}</h3>" . _iqss_gking_term_page_tree($subterm, $vid, $operator) . "</div>";
+  }
+  return $output;
+
+}
+
+/**
+ * Override the function that displays a term by feature context
+ *
+ * If it is Garys reserch interest vocab display it with garys layout
+ *
+ * @param int $tid
+ * @param string $s_feature (either a feature menu entry "publication" or a content_type "biblio")
+ */
+function iqss_gking_term_by_context($tid, $s_feature = false){
+  if (! iqss_gking_on_gking_site())
+    return vsite_taxonomy_term_by_context($tid, $s_feature);
+
+  $term = taxonomy_get_term($tid);
+  $vocab = taxonomy_vocabulary_load($term->vid);
+
+  if ($vocab->name != "Research Interests")
+    return vsite_taxonomy_term_by_context($tid, $s_feature);
+
+  return iqss_gking_term_page($tid);
+}
+
+/**
+ * Overrides the default "_scholar_publications_pub_by_type_wgt" to allow for custom categories for Gary
+ */
+function iqss_gking_pub_by_type_block(){
+  jquery_ui_add(array(
+      'ui.tabs'
+  ));
+  $vsite = vsite_get_vsite();
+
+
+  $types[] = array(
+      'key' => 'journal-article',
+      'name' => 'Articles'
+  );
+  $types[] = array(
+      'key' => 'book',
+      'name' => 'Books'
+  );
+  $types[] = array(
+      'key' => 'software',
+      'name' => 'Software'
+  );
+  $types[] = array(
+      'key' => 'working-paper',
+      'name' => 'Papers'
+  );
+
+  $vsite = vsite_get_vsite();
+
+  $output = "";
+  $i = 0;
+  $tabs = "<h3 class=\"title\">Recent Work</h3><ul class=\"ui-tabs-nav\">";
+  foreach ( $types as $type ) {
+    $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type['name']}</a></li>";
+
+    $view = views_get_view('publication_types');
+    $view->set_arguments(array(
+        $type['key']
+    ));
+    $view->execute('page_1');
+
+    $output .= "<div id='pub_type_tabs-{$i}'>";
+    foreach ( $view->result as $row ) {
+      $node = node_load($row->nid);
+      $output .= "\n" . theme('biblio_entry', $node, variable_get('biblio_base', 'biblio'), biblio_get_style());
+    }
+    $output .= '<div class="more-link">'.l("More ".$type['name'],"publications/types/".$type['key']).'</div> ';
+    $output .= "</div>";
+    $i ++;
+  }
+
+  //Presentations
+  $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">Presentations</a></li>";
+
+  $view = views_get_view('scholar_presentations');
+  $view->execute('page_1');
+
+  $output .= "<div id='pub_type_tabs-{$i}'>";
+  foreach ( $view->result as $row ) {
+    $node = node_load($row->nid);
+    $output .= node_view($node, true);
+  }
+  $output .= '<div class="more-link">'.l("More Presentations","presentations").'</div> ';
+  $output .= "</div>";
+
+  $tabs .= "</ul>";
+  if (! $output)
+    return array();
+
+  $output = "<div id='pub_type_tabs'>" . $tabs . $output . "</div>";
+
+  return array(
+      'subject' => "Recent Writings",
+      'content' => $output
+  );
+}
+
+/**
+ * Update a node that has a file by the same name attached
+ */
+function iqss_gking_update_filefield($s_file){
+  $s_src_path = file_directory_path() . variable_get('gking_script_tmpdir', "/gking/tmpdir/") . $s_file;
+  $s_dst_path = file_directory_path() . "/gking/files/" . $s_file;
+
+  $fid = db_result(db_query("SELECT fid FROM {files} WHERE filepath = '%s' ", $s_dst_path));
+
+  if (! $fid) {
+    print "Error: Existing File not found:: {$s_dst_path}";
+    exit();
+  }
+
+  if (file_copy($s_src_path, $s_dst_path, FILE_EXISTS_REPLACE)) {
+    db_query("UPDATE {files} SET filesize = %d, timestamp = NOW() WHERE fid = %d ", filesize($s_src_path), $fid);
+    print "Success: {$s_file}";
+    exit();
+  }
+
+  print "Error: Could not copy file:: {$s_dst_path}";
+  exit();
+}
+
+/**
+ * Can a filefield be updated from this requestor
+ */
+function iqss_gking_access_filefield($s_file){
+
+  $s_path = file_directory_path() . variable_get('gking_script_tmpdir', "/gking/tmpdir/") . $s_file;
+  return file_exists($s_path);
+
+}
