@@ -20,4 +20,20 @@ $(document).ready(function() {
           $(this).stop().animate({backgroundColor:'#ffffff'}, 100);
       });
 
+    $('#block-scholar_biocv-bio_blurb a').attr("href","#");
+
+    var container = $("#node-3793");
+    $("#block-scholar_biocv-bio_blurb a").click(function(event){
+
+      if (container.is(".open")) {
+        container.removeClass("open").animate({
+        height:'0'},"1500");
+
+       } else {
+      container.addClass("open").animate({
+      height:'70%'},"1500");
+      }
+
+     });
+
   });
