@@ -10,7 +10,7 @@ function iqss_gking_init(){
       'ui.tabs'
   ));
   drupal_add_css(drupal_get_path('module', 'vsite') . "/theme/jquery_ui/jquery.ui/themes/openscholar/ui.tabs.css");
-  
+
   drupal_add_css(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.css");
   drupal_add_js(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.js");
 }
@@ -180,7 +180,7 @@ function _iqss_gking_areas_of_research_wgt(){
   }
 
   return array(
-      'subject' => "Areas of Research",
+      'subject' => "Areas of Research:",
       'content' => $output
   );
 }
