@@ -224,7 +224,12 @@ function repec_meta_make_template($node, $module_mode, $iteration = NULL){
 
   //using http creating files as the template type, underscore, node type
   $filepath = $archive_path . '/RePEc/' . $archive_code  . '/' . $template_type . '/';
-  $filename = $template_type . '_' .$node->nid . '.rdf';
+  
+  //if being utilized for multiple openscholar installations, prefix filename 
+  //with the scholar type to prevent file name conflicts
+  global $conf;
+  $prefix = $conf['scholar_content_type'] ? $conf['scholar_content_type'] . '_' : '';  
+  $filename = $prefix . $template_type . '_' .$node->nid . '.rdf';
 
   $make_template = array(
   'template' => $template,
