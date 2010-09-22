@@ -416,6 +416,19 @@ function scholar_publications_vsite_widgets(){
 }
 
 /**
+ * Reduce duplicates in count queries for views
+ *
+ * @param object $view
+ * @param string $query
+ */
+function scholar_publications_views_query_alter(&$view, &$query) {
+  //dpm($view);
+  if(in_array($view->name,array('publication_types','publication_years','publication_contributors')) && $view->current_display == 'block_1' && !isset($view->argument['name']->argument)){
+    $query->fields['num_records']['distinct'] = true;
+  }
+}
+
+/**
  * Adjust the "Recent Publications View" if there are no publications
  *
  * @param $view view
