@@ -1467,6 +1467,8 @@ function _scholar_publications_views_default_views() {
       'validate_argument_php' => '',
     ),
   ));
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', 'mini');
   $handler->override_option('style_options', array(
     'grouping' => '',
   ));
