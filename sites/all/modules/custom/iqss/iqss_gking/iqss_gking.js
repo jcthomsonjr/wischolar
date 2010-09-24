@@ -41,7 +41,8 @@
     false;
 
     function iqss_gking_areas_of_research_load_next(){
-      if($('#block-iqss_gking-areas_of_research .col dt span:hover').length) return;
+      if($('#block-iqss_gking-areas_of_research .col dt span:hover').length ||
+        !$('#block-iqss_gking-areas_of_research').length) return;
 
       var next_el = false;
       var found_active = false;

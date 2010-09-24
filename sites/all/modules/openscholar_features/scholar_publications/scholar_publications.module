@@ -173,8 +173,8 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     	}
     }
     $form['submit_type'] = array('#type' => 'submit', '#disabled' => true, '#access' => false, '#value' => t('Select Publication Type'));
-    
-    
+
+
     //format Contributors fieldset
     /*
     $form['contributors2_wrapper'] ['biblio_secondary_authors_more']['#value'] = 'More Contributors';
@@ -187,13 +187,13 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     }
     $form['contributors2_wrapper'] ['#collapsed'] = TRUE;
     */
-    
+
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['biblio_abst_e_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['body_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors1_wrapper'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors2_wrapper'] = 0; //Disable vert. tabs
-    
+
   }
 }
 
@@ -481,11 +481,12 @@ function scholar_publications_theme_registry_alter(&$theme_registry){
    */
   $theme_registry['biblio_entry']['function'] = 'scholar_publications_biblio_entry';
   $theme_registry['biblio_author_link']['function'] = 'scholar_publications_biblio_author_link';
-  
+
   //Override the default node style function
   $theme_registry['biblio_tabular']['function'] = 'theme_scholar_publications_biblio_tabular';
   $theme_registry['biblio_tabular']['file'] = 'scholar_publications_biblio_tabular.tpl';
   $theme_registry['biblio_tabular']['path'] = drupal_get_path('module', 'scholar_publications')."/theme";
+  $theme_registry['biblio_download_links']['function'] = 'scholar_publications_biblio_download_links';
 }
 
 /**
@@ -511,7 +512,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
 
   // now add the various links
   if (strlen($node->biblio_abst_e)) $s_output .= l(" Abstract", "node/$node->nid",array('attributes'=>array('class' => 'biblio-abstract-link toggle')));
-  
+
   $annotation_field = variable_get('biblio_annotations', 'none');
   if ($annotation_field != 'none' && $node-> $annotation_field) {
     $s_output .=  '<div class="biblio-annotation">' . check_markup($node->$annotation_field, $node->format, FALSE) . '</div>';
@@ -524,7 +525,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   if (biblio_access('download', $node) && !count($node->field_biblio_image[0])) $s_output .= theme('biblio_download_links',$node);
 
   if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
-  
+
   if(biblio_access('export', $node)){
     $links = array();
     $show_link = variable_get('biblio_export_links', array('rtf' => TRUE,'tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
@@ -644,7 +645,7 @@ function _scholar_publications_add_owner_checkbox(&$form_element){
 function _scholar_publications_pub_by_type_wgt(){
 	jquery_ui_add(array('ui.tabs'));
 	$vsite = vsite_get_vsite();
-	
+
 	$view = views_get_view('publication_types');
   $view->execute('block_1');
   usort($view->result,"_scholar_publications_sort_type_by_numpubs");
@@ -655,11 +656,11 @@ function _scholar_publications_pub_by_type_wgt(){
 	$output = ""; $i = 0; $tabs = "<h3 class=\"title\">Recent Publications</h3><ul>";
 	foreach ($types as $type) {
 	  if($type->num_records < 1) continue;
-		
+
 	  $tabs .= "<li><a href=\"#pub_type_tabs-{$i}\">{$type->biblio_types_name}";
 		if(!in_array($type->biblio_types_name,array('Software','Data','Conference Proceedings', 'Thesis', 'Unpublished','Miscellaneous','Audiovisual','Artwork'))) $tabs .= "s"; //FIX THE PLURAL
 		$tabs .= "</a></li>";
-		
+
 		$view = views_get_view('publication_types');
 		$view->set_arguments(array(str_replace(" ","-",$type->biblio_types_name)));
 		$view->execute('page_1');
@@ -719,7 +720,7 @@ function _scholar_publications_co_author_wgt(){
  */
 function _scholar_publications_sort_type_by_numpubs($a,$b){
 	if ($a->num_records == $b->num_records) return 0;
-	
+
   return ($a->num_records > $b->num_records) ? -1 : 1;
 }
 
@@ -734,3 +735,39 @@ function scholar_publications_link_alter(&$links, $node){
 	}
 }
 
+function scholar_publications_biblio_download_links($node = NULL) {
+  $files = '';
+  if (!empty ($node->files) && count($node->files) > 0 && user_access('view uploaded files')) {
+    $files .= '<span class="biblio_file_links">';
+    //$files .= '&nbsp;'. t('Download') .':&nbsp;';
+    $file_count = 0;
+    foreach ($node->files as $file) {
+      if ($file->list) {
+        $file_count++;
+        $alias = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'",'filefield_paths/alias/' . $file -> fid));
+        $href = ($alias) ?  $alias : file_create_url($file->filepath);
+        $text = $file->description ? $file->description : $file->filename;
+        //$files .= l($text, $href) .'&nbsp;('. format_size($file->filesize).')';
+        $files .= l($text, $href,array('attributes'=>array('class'=>'download-file download-file-' . $text)));
+      }
+    }
+    $files .= '</span>';
+  }
+  if (module_exists('filefield')) { // now lets get any CCK FileField files...
+    $fields = filefield_get_field_list('biblio');
+    foreach ($fields as $field_name => $field) {
+      if (filefield_view_access($field_name, $node)) {
+        $field_files = filefield_get_node_files($node, $field_name);
+        if ($field_files) {
+          foreach ($field_files as $file) {
+            if ($file['fid']) {
+              $files .= theme('filefield_file', $file);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return $files;
+}
