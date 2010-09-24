@@ -6,14 +6,14 @@ Drupal.verticalTabs.cite_distribute_selections = function() {
   if ($('#edit-googlescholar-meta-module').attr('checked')) {
     vals.push(Drupal.t('Google Scholar'));
   }
-  if (vals.join(', ') == '') {
-    return Drupal.t('None');
-  }
   if ($('#edit-repec-meta-module').attr('checked')) {
     vals.push(Drupal.t('RePEc'));
   }
   else {
     vals.push(Drupal.t(''));
+  }
+  if (vals.join(', ') == '') {
+    return Drupal.t('None');
   }
   return vals.join(' ');
 }
