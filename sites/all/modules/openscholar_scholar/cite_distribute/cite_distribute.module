@@ -5,7 +5,7 @@
 * @file
 *  This is a custom module to collect metadata from posted content,
 *  such as research papers and articles and distribute the citations
-*  to varoius online research repositories.
+*  to various online acedemic and research repositories.
 */
 
 /**
@@ -14,34 +14,14 @@
 function cite_distribute_theme(){
   $path_inc = drupal_get_path('module', 'cite_distribute');
 
-  return array(
-     'cite_distribute_get_formlink' => array(
-      'arguments' => array('object' => NULL),
-       'file' => 'cite_distribute.widget.inc',
-       'path' => $path_inc,
-    ),
-      'cite_distribute_form_msg' => array(
-      'arguments' => array('modules' => NULL),
-       'file' => 'cite_distribute.widget.inc',
-       'path' => $path_inc,
+    return array(
+    'cite_distribute_form_msg' => array(
+    'arguments' => array('modules' => NULL),
+    'file' => 'cite_distribute.theme.inc',
+    'path' => $path_inc,
     ),
   );
 }
-
-/**
- * Implementation of hook_link()
- */
-function cite_distribute_link($type, $object, $teaser = FALSE){
-  $vsite = vsite_get_vsite();
-  if ($vsite && $vsite->admin_access() && node_access('update', $object) && $object-> type == 'biblio') {
-  //show this only for biblio nodes
-    $links['cite-distribute'] = array(
-    'title'      => theme('cite_distribute_get_formlink', $object),
-    'html'       => TRUE,
-    );
-    return $links;
-  }
- }
 
 /**
  * Implementation of hook flag_default_flags
@@ -107,11 +87,8 @@ function cite_distribute_flag_default_flags($flags = array(), $i =0) {
 function cite_distribute_flag($event, $flag, $content_id, $account) {
   $submodules = cite_distribute_installed_mods();
   foreach ($submodules as $module){
-
     if ($flag->name == $module['name'] && $event == 'flag') {
      cite_distribute_widget_process($module['name'], $content_id);
-     //watchdog($module['name'], "Node $content_id has been flagged");
-      return false;
     }
   }
 }
@@ -131,113 +108,89 @@ function cite_distribute_remove_flag($module = NULL){
 }
 
 /**
- * Implementation hook_nodeapi()
- * TODO: not sure I will need this hook since the processing of
- * the template files are now being instantiated by flags
- * @param unknown_type $node
- * @param unknown_type $op
+ * Implementation of hook_form_alter()
+ *
  */
-function cite_distribute_nodeapi(&$node, $op){
-  if ($node->type == 'biblio'){
-    switch($op){
-      case 'view':
-        /*$flag = flag_get_flag('repec_meta');
-        $flag_bool =  $flag->is_flagged($node->nid) ? 'Yes' : 'No';
-        dpm($flag_bool);*/
+function cite_distribute_form_alter(&$form, $form_state, $form_id){
+  if($form_id == 'views_bulk_operations_form__1'){
+    if( arg(0) == 'cp' && arg(1) == 'content' && arg(2) == 'biblio'){
+      return; //do nothing
+    }
+    else{
+      //remove cite distribute bulk ops flags form the drop down list
+      $repos = array();
+      foreach(cite_distribute_installed_mods() as $mod){
+        $repos[] = $mod['repository'];
+      }
+      foreach ($form['select']['operation']['#options'] as $key => $operation){
+        if (in_array($operation, $repos))  unset ($form['select']['operation']['#options'][$key]);
       }
     }
   }
 
-/*
-function cite_distribute_init(){
-  $path = drupal_get_path('module', 'cite_distribute') .'/js/';
-  drupal_add_js($path . 'cite_distribute.js');
-}
-*/
-
-/**
- * Function to define widget form
- */
-function cite_distribute_form($form_id, $nid){
-
- $submodules = cite_distribute_installed_mods();
-  $form['cite_distribute_widgets'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Select repositories for distribution'),
-  '#collapsible' => FALSE,
-  '#collapsed' => FALSE,
- //  '#prefix' =>'<div id="distribute">',
- //   '#suffix' => '</div>',
-  );
-
-  foreach ($submodules as $module){
-    $form['cite_distribute_widgets'][$module['name'] . '_module'] = array(
-    '#type' => 'checkbox',
-    '#disabled' => cite_distribute_check_disabled($module['name'], $nid),
-    '#title' => t('@repos', array('@repos' => $module['repository'])),
-    '#default_value' => '',// TODO: need to query the cite_distribute table to get this value
-    '#prefix' =>'<div id="distribute-' . $module['name'] . ' " class="repository-item">',
-    '#suffix' => '</div>',
+  //if biblio node form, add cite distribute selections
+  if($form_id == 'biblio_node_form'){
+    
+    $form['cite_distribute_selections'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Distribute to Academic Repositories'),
+   // '#weight' => -30, // TODO: should move this fieldset to the top???
+    '#attached' => array(
+      'js' => array(drupal_get_path('module', 'cite_distribute') . '/cite_distribute.js'),
+      ),
     );
+
+    $form['cite_distribute_selections']['intro'] = array(
+    '#type' => 'item',
+    '#title' => t('Distribute this publication to the following academic repositories'),
+    );
+
+    foreach (cite_distribute_installed_mods() as $module){
+      $existing_value =  cite_distribute_check_disabled($module['name'], $form['nid']['#value']);
+      $form['cite_distribute_selections'][$module['name'] . '_module'] = array(
+      '#type' => 'checkbox',
+      '#disabled' => $existing_value,
+      '#title' => t('@repos', array('@repos' => $module['repository'])),
+      '#default_value' => $existing_value,
+      );
+    }
+    $form['cite_distribute_selections']['nid'] = array(
+    '#type' => 'hidden',
+    '#value' => $form['nid']['#value'],
+    );
+    
+    //add the cite distribute submit function
+    array_unshift($form['#submit'], 'cite_distribute_form_submit');
   }
-
-  $form['cite_distribute_widgets']['cite_distribute_submit'] = array(
-  '#type' => 'submit',
-  '#value' => t('Submit'),
-  '#ahah' => array(
-  'event' => 'click',
-  'path' => 'cite_distribute/submit',
-  'wrapper' => 'distribute-message-' . $nid,
-  'method' => 'replace',
-  'effect' => 'fade',
-  )
-  );
-
-  $form['cite_distribute_widgets']['nid'] = array(
-  '#type' => 'hidden',
-  '#value' => $nid,
-  );
-
-   $form['cite_distribute_widgets']['distribute-message'] = array(
-  '#type' => 'markup',
-  '#value' => ' ', //empty placeholder
-   '#prefix' =>'<div id="distribute-message-' . $nid . '">',
-   '#suffix' => '</div>',
-  );
-
-  return $form;
 }
 
 /**
- * Submit function called from form via ahah
- * Will flag set the flag for selected modules to
- * instantiate cite_distribute template process
+ * Submit function for cite_distribute form
  * @return unknown
  */
 function cite_distribute_form_submit(){
 
    $form_state = array('values' => $_POST);
-   //dpm($form_state);
-
    $nid =  $form_state['values']['nid'];
 
   foreach ($form_state['values'] as  $name => $value){
     if (strpos($name, '_module') && $value == 1){
       $module_name = trim(str_replace('_module', '', $name));
       //building this $modules array only so I can pass it to theme function  below to generate msg
-       $modules[] = $module_name;
+       $modules[] = $module_name; 
       //load flag each repository selected
       $flag = flag_get_flag($module_name);
       //set the flag for this node
-      $flag->flag('flag', (int)$nid);
+      $flag->flag('flag', $nid);
     }
   }
   $output = theme('cite_distribute_form_msg', $modules);
-  return drupal_json( $output );
+  drupal_set_message(t($output));  
+ // return drupal_json( $output );
 }
 
 /**
- * Function to check to see if form should be disabled.
+ * Function to check to see if form should be disabled
  */
 function cite_distribute_check_disabled($module_name, $nid = NULL){
   if (!$nid){
@@ -321,7 +274,6 @@ function cite_distribute_installed_mods(){
   return $submodules;
 }
 
-
 /**
  * Implementation cite_distribute_update_val()
  *
@@ -349,9 +301,8 @@ function cite_distribute_update_val($module_mode){
 /**
  * Implementation of cite_distribute_widget_process($module, $nid)
  *
- * This function is called when widget button is clicked
- * and is responsible for updating the cite_distribute table
- *
+ * This function is responsible for updating the cite_distribute table
+ * and calling the mode controller function
  * @param $module is the name of the current module
  * @param $nid node id
  */
@@ -409,7 +360,6 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
 
       //check for optional api_values key
       $sql = ($module_info[0]['rebuild_all']) ?
-
       //returns all values of specfied type regardless of upd value
       db_query("SELECT * FROM {cite_distribute} WHERE type = '%s'", $module)
       :
@@ -419,7 +369,6 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
       //before the loop we are checking if this is a single file/rebuild all type template
       //in which WE DELETE THE FILE HERE BEFORE THE REBUILD
       if(($module_info[0]['rebuild_all']) && $module_info[0]['file'] == 'single'){
-
       $filepath =  cite_distribute_fix_filepath(variable_get($module_info[0]['name'] . '_archive_path',''));
       $unlink_path =  $filepath . $module_info[0]['filename'];
       $unlink_file = unlink($unlink_path);
@@ -450,19 +399,13 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
             $node = node_load($data->nid);
 
             $make_template = array();
-
             //send to the "make_template" passing it an array of nodes
             $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration);
-
             //getting filename - checking for dynamic versus static filenames
             $filename = (($module_info[0]['file']) =='single')? $module_info[0]['filename'] : $make_template['filename'];
 
             //getting filepath - checking for dynamic versus static filepaths
-            $filepath = ($module_info[0]['dynamic_paths'])?
-
-            $make_template['filepath']
-            :
-            cite_distribute_fix_filepath(variable_get($module_info[0]['name'] . '_archive_path',''));
+            $filepath = ($module_info[0]['dynamic_paths']) ? $make_template['filepath'] : cite_distribute_fix_filepath(variable_get($module_info[0]['name'] . '_archive_path',''));
 
             //now place the template file
             $place_template = cite_distribute_place_template($module, $filepath, $filename, $make_template['template'], $module_info[0]['flag']);
@@ -481,7 +424,6 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
 
     case 'batch':
       cite_distribute_mode_controller($node = NULL, $module, $module_mode = 'api');
-
       break;
 
     case 'per_submission':
@@ -497,15 +439,9 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
       }
 
       if($module_info[0]['file'] == 'multiple'){
-
       $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration = 1);
-
       //getting filepath - checking for dynamic versus static filepaths
-      $filepath = ($module_info[0]['dynamic_paths'])?
-
-      $make_template['filepath']
-      :
-      cite_distribute_fix_filepath(variable_get($module_info[0]['name'] . '_archive_path',''));
+      $filepath = ($module_info[0]['dynamic_paths']) ? $make_template['filepath'] : cite_distribute_fix_filepath(variable_get($module_info[0]['name'] . '_archive_path',''));
 
       $place_template = cite_distribute_place_template($module, $filepath, $make_template['filename'],  $make_template['template'],
       $module_info[0]['flag']);
@@ -572,7 +508,6 @@ function cite_distribute_cron(){
 
   if($module_mode == 'batch'){
     $modules = cite_distribute_installed_mods();
-
     //run each api function
     for($i=0; $i < count($modules); $i++){
       $module_api = $modules[$i]['name'] . '_api';
@@ -582,10 +517,11 @@ function cite_distribute_cron(){
 }
 
 /**
- * Used to display cite distribute form in ctools modal pop-up
+ * Can be used to display cite distribute form in ctools modal (pop-up)
  *
  * @param unknown_type $nid
  */
+/*
 function cite_distribute_distribute_js($nid){
   ctools_include('ajax');
   ctools_include('modal');
@@ -607,3 +543,4 @@ function cite_distribute_distribute_js($nid){
   }
   ctools_ajax_render($output);
 }
+*/
