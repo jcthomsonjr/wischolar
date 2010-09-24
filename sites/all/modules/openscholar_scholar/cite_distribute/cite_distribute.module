@@ -382,7 +382,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
            $make_template = array();
 
             //send to the "make_template" passing it an array of nodes
-            $make_template =  module_invoke($module, 'make_template', $node, $module_mode);
+            $make_template =  module_invoke($module, 'cite_distribute_template', $node, $module_mode);
             //getting filename - checking for dynamic versus static filenames
             $filename = (($module_info[0]['file']) =='single')? $module_info[0]['filename'] : $make_template['filename'];
             //getting filepath - checking for dynamic versus static filepaths
@@ -400,7 +400,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
 
             $make_template = array();
             //send to the "make_template" passing it an array of nodes
-            $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration);
+            $make_template =  module_invoke($module, 'cite_distribute_template', $node, $module_mode, $iteration);
             //getting filename - checking for dynamic versus static filenames
             $filename = (($module_info[0]['file']) =='single')? $module_info[0]['filename'] : $make_template['filename'];
 
@@ -439,7 +439,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode){
       }
 
       if($module_info[0]['file'] == 'multiple'){
-      $make_template =  module_invoke($module, 'make_template', $node, $module_mode, $iteration = 1);
+      $make_template =  module_invoke($module, 'cite_distribute_template', $node, $module_mode, $iteration = 1);
       //getting filepath - checking for dynamic versus static filepaths
       $filepath = ($module_info[0]['dynamic_paths']) ? $make_template['filepath'] : cite_distribute_fix_filepath(variable_get($module_info[0]['name'] . '_archive_path',''));
 

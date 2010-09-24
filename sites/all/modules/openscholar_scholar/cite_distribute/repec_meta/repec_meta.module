@@ -201,11 +201,9 @@ function repec_meta_format_date($property){
 }
 
 /**
-* repec_meta_per_submission()
-* @param $nodepass current $node object
-* @return  Updates/Adds/Removes rdf template files fashion
+* Implementation of hook_cite_distribute_template()
 */
-function repec_meta_make_template($node, $module_mode, $iteration = NULL){
+function repec_meta_cite_distribute_template($node, $module_mode, $iteration = NULL){
 
   //gather two of the module's system variables need for this function
   $archive_code = variable_get('repec_meta_archive_code','');

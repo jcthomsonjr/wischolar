@@ -104,7 +104,7 @@ There are hooks used in the Cite Distribute API:
 
 
 hook_cite_distribute_register() - Always required
-hook_make_template() - Only required if you submodule needs to send output to a template file
+hook_cite_distribute_template() - Only required if you submodule needs to send output to a template file
 
 
 
@@ -158,15 +158,15 @@ function cs_meta_cite_distribute_register(){
 
 
 
-hook_make_template()
+hook_cite_distribute_template()
 ============================
 
-Your hook_make_template() is responsible for making the bibliography citation template and pasing it back to the 
-cite distribute module.(In some cases you hook_make_template() will also need to return the file name and file path)
+Your hook_cite_distribute_template() is responsible for making the bibliography citation template and pasing it back to the 
+cite distribute module.(In some cases your hook_cite_distribute_template() will also need to return the file name and file path)
 
 This function will be passed 3 parameters to use as you like when contructing the template:
 
-hook_make_template($node, $module_mode, $iteration = NULL)
+hook_cite_distribute_template($node, $module_mode, $iteration = NULL)
 
 $node is the biblio node object containing all the values from the drupal form.
 
@@ -175,7 +175,7 @@ $module_mode is the cite distribute module mode, ('api', 'batch', or 'per_submis
 $iteration will be set to 1 on the first pass allowing you to do something on the initial iteration, such as delete the existing file. 
 On subsequent iterations, it will increment by one.
 
-At very least your hook_make_template() function should return a formatted template as array('template' => $your_template);
+At very least your hook_cite_distribute_template() function should return a formatted template as array('template' => $your_template);
 
 In hook_cite_distribute_register():
 If you specified 'file' => 'multiple', then you also need to return 'filename' => $filename
