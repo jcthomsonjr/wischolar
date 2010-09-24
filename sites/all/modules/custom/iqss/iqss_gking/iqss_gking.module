@@ -104,7 +104,7 @@ function iqss_gking_filter_by_type_block(){
   $view->set_arguments(array(
       current($router_item['page_arguments'])
   ));
-
+dpm($view->display_handler->display);
   //Change to the tax. path
   $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
   $view->execute();
@@ -194,13 +194,14 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
   if (strpos($router_item['path'], 'taxonomy/term') === 0) {
 
     //The next few lines just make sure that we are in gary's research interest tax.
-    $n_vid = false;
-    foreach ( $vsite->get_vocabs($type) as $vid => $o_vocab ) {
-      if ($o_vocab->name == "Research Interests") {
-        $n_vid = $vid;
-        break;
-      }
-    }
+//    $n_vid = false;
+//    foreach ( $vsite->get_vocabs($type) as $vid => $o_vocab ) {
+//      if ($o_vocab->name == "Research Interests") {
+//        $n_vid = $vid;
+//        break;
+//      }
+//    }
+    
 
     //Add this block category pages on (Lets you filter the category by publictaion type)
     $contexts['vsite-section-public']->block['filter_by_type-filter_by_type'] = array(
@@ -451,4 +452,20 @@ function iqss_gking_access_filefield($s_file){
   $s_path = file_directory_path() . variable_get('gking_script_tmpdir', "/gking/tmpdir/") . $s_file;
   return file_exists($s_path);
 
+}
+
+/**
+ * hoook nodeapi
+ */
+function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
+  if (! iqss_gking_on_gking_site()) return;
+  
+  switch ($op) {
+    case 'view':
+      $router_item = menu_get_item();
+      if($node -> type == 'biblio' && $teaser && !variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes && strpos($router_item['path'], 'taxonomy/term') === 0){
+        $node->content['teaser']['#value'] = ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>".$node->content['teaser']['#value'];
+      }
+    break;
+  }
 }

@@ -423,7 +423,7 @@ function scholar_publications_vsite_widgets(){
  */
 function scholar_publications_views_query_alter(&$view, &$query) {
   //dpm($view);
-  if(in_array($view->name,array('publication_types','publication_years','publication_contributors')) && $view->current_display == 'block_1' && !isset($view->argument['name']->argument)){
+  if(in_array($view->name,array('publication_types','publication_years','publication_contributors')) && in_array($view->current_display,array('block_1','block_2')) && !isset($view->argument['name']->argument)){
     $query->fields['num_records']['distinct'] = true;
   }
 }
