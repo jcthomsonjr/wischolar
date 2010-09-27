@@ -201,7 +201,7 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
 //        break;
 //      }
 //    }
-    
+
 
     //Add this block category pages on (Lets you filter the category by publictaion type)
     $contexts['vsite-section-public']->block['filter_by_type-filter_by_type'] = array(
@@ -387,7 +387,7 @@ function iqss_gking_pub_by_type_block(){
       $node = node_load($row->nid);
       $output .= "\n" . theme('biblio_entry', $node, variable_get('biblio_base', 'biblio'), biblio_get_style());
     }
-    
+
     $s_url = is_array($type['key'])?"publications/types/all/".$s_tids:"publications/types/".$type['key'];
     $output .= '<div class="more-link">'.l("More ".$type['name'],$s_url).'</div> ';
     $output .= "</div>";
@@ -459,7 +459,7 @@ function iqss_gking_access_filefield($s_file){
  */
 function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   if (! iqss_gking_on_gking_site()) return;
-  
+
   switch ($op) {
     case 'view':
       $router_item = menu_get_item();

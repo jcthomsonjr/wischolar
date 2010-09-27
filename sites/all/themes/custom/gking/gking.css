@@ -3,7 +3,7 @@ html, body, #container {
   }
 
 body {
-  font: 12px/17px helvetica, arial, sans-serif;
+  font: 12px/1.4em helvetica, arial, sans-serif;
   color: #000;
   background: url(images/bg.png) repeat-y 50% 0 #333;
   }
@@ -112,7 +112,7 @@ a:hover {
   }
 
 .toggle {
-  background-position: 100% 0;
+  background-position: 100% 2px;
   }
 
 a.more {
@@ -658,6 +658,15 @@ body.header-right-main #header-wrapper {
   }
 
 
+#footer #google_translate_element {
+  margin-top: 15px;
+  }
+
+#footer #google_translate_element select.goog-te-combo {
+  position: relative;
+  top: -15px;
+  }
+
 /* BIBLIO */
 
 .node-type-biblio .node-type-biblio h3.title {
@@ -673,47 +682,19 @@ body.header-right-main #header-wrapper {
   margin: 0;
   }
 
-
-/* ATTACHMENTS*/
-
-.node-type-biblio .itu-attachments {
-  display:inline-block;
-  vertical-align:middle;
-  }
-
-.node-type-biblio .itu-attachment-list {
-  width: auto;
-  border: none !important;
-  border-spacing: 0;
-  }
-
-.node-type-biblio .itu-attachment-list td {
-  padding-right: .4em;
-  }
-
-table#attachments td.mime,
-table#attachments td.size {
-  display:none;
+.biblio-note {
+  margin: 0 0.6em 0 0;
   }
 
 
-table#attachments td.file a {
-  text-indent: -999em; background:url('/sites/all/modules/contrib/itweak_upload/images/mime-16.png') no-repeat scroll center -226px transparent;
-  height:22px;
-  margin:0;
-  min-height:22px;
-  min-width:16px;
-  padding:0 7px;
-  width:16px;
-  display:block;
-  }
 
 /* TAXONOMY */
 
 body.section-category .node-teaser {
-  margin-bottom: 0;
+  margin-bottom:.7em;
   padding-left: 2em;
   }
+
 
 body.section-category .taxonomy-term-description {
   margin-bottom: 1.5em;

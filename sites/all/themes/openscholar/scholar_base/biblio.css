@@ -112,6 +112,10 @@ dl.bibliomultiselect .form-item {
   text-align: left;
   }
 
+.biblio-note {
+  margin: 0 0 0 0.6em;
+  }
+
 a:active {
 
 }
@@ -171,7 +175,6 @@ a:active {
   text-decoration: none;
   font-style: normal;
   font-weight: normal;
-  font-size: 75%;
 }
 
 .biblio-export-links {
@@ -180,8 +183,6 @@ a:active {
   text-decoration: none;
   font-style: normal;
   font-weight: normal;
-  font-size: 75%;
-  line-height: 100%;
 }
 
 ul.biblio-export-buttons,ul.biblio-export-buttons li {
@@ -232,20 +233,28 @@ body.node-type-biblio .node-type-biblio .field-field-biblio-image {
 
 .node-type-biblio .itu-attachments {
   display:inline-block;
-  vertical-align:middle;
+  vertical-align:top;
   }
 
 .node-type-biblio .itu-attachment-list {
   width: auto;
   border: none !important;
   border-spacing: 0;
-  font-size: .85em;
   }
 
 
-.node-type-biblio .itu-attachment-list td {
-  padding-right: .4em;
+.node-teaser.node-type-biblio .itu-attachment-list td {
+  padding: 0 .4em;
   }
+
+.node-teaser table.itu-attachment-list .mime {
+  display:none;
+  }
+
+.node-teaser table.itu-attachment-list .size {
+  display:none;
+  }
+
 
 .node-type-biblio img, .biblio-entry img {
   border: 1px solid #777;
