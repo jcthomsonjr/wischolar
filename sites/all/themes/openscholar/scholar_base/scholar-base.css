@@ -187,14 +187,6 @@ ol {
   padding: 0;
   }
 
-.terms ul li:after {
-  content:',';
-  }
-
-.terms ul li:last-child:after {
-  content: '';
-  }
-
 #content .node ul li ul {
   margin-top: 1.5em;
   }
@@ -209,7 +201,7 @@ ol {
   }
 
 .block ul {
-  padding: 0;
+  padding-left: 0;
   }
 
 ul.menu li {
@@ -296,6 +288,26 @@ ul.hierarchic ul ul ul a{
 ul.hierarchic ul ul ul ul a{
   padding:0 0 0 2.5em;
   }
+
+ul.pager {
+  padding-top: 1em;
+  border-top: 1px solid #ccc;
+  }
+
+.item-list ul.pager li {
+  margin: 0;
+  }
+
+ul.pager li.pager-current {
+  background: #005C9C;
+  color: #fff;
+  }
+
+dd.meta {
+  color:#767676;
+  margin-bottom: 0;
+  }
+
 
 /* Used for inline images */
 

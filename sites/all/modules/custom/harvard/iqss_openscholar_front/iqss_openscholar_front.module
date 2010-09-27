@@ -73,7 +73,7 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
       'label' => 'OpenScholar: Top links',
       'type' => 'context_ui'
     );
-    
+
     if (variable_get('openscholar_installation_mode', 'scholar') == 'project' ){
       unset($contexts['openscholar-section-sitewide_front']->block['views_openscholar_sites-block_2']);
     }
@@ -116,13 +116,8 @@ function _iqss_openscholar_front_block_top_links(){
 function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real theme function
   $items = array();
   $items[] = array(
-    'title' => 'About',
-    'href' => 'content/about-project',
-  );
-  
-  $items[] = array(
-  'title' => 'Documentation',
-  'href' => 'help/vsitehelp/OpenScholar-Documentation',
+    'title' => 'About OpenScholar',
+    'href' => 'http://openscholar.harvard.edu',
   );
 
   global $user;

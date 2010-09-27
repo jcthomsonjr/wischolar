@@ -44,19 +44,26 @@
  *   <?php print '<pre>'. check_plain(print_r($info_split, 1)) .'</pre>'; ?>
  *
  * @see template_preprocess_search_result()
- * 
+ *
  * Aditional variables from solr / openscholar
- * - $web_site : the web site this post belong. Test if($web_site) because 
+ * - $web_site : the web site this post belong. Test if($web_site) because
  *               it has a value only when inside a vsite
  * - $node_type: machine name of the node type
  */
 ?>
-<?php print $web_site; // testing ...?>
 
-<dt class="title node-type-<?php print $node_type;?>>">
+<dt>
   <a href="<?php print $url; ?>"><?php print $title; ?></a>
 </dt>
-<dd>
+<dd class="meta">
+  <?php
+    if($web_site){
+      print $web_site . ', ';
+      }
+    print $info_split['type'] . ' - ' . $info_split['date'];
+    ?>
+</dd>
+<dd class="snippet">
   <?php if ($snippet) : ?>
     <p class="search-snippet"><?php print $snippet; ?></p>
   <?php endif; ?>
