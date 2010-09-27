@@ -226,8 +226,7 @@ function repec_meta_cite_distribute_template($node, $module_mode, $iteration = N
   //if being utilized for multiple openscholar installations, prefix filename 
   //with the scholar type to prevent file name conflicts
   global $conf;
-  $prefix = $conf['scholar_content_type'] ? $conf['scholar_content_type'] . '_' : '';  
-  $filename = $prefix . $template_type . '_' .$node->nid . '.rdf';
+  $filename = $template_type . '_' .$node->nid . '.rdf';
 
   $make_template = array(
   'template' => $template,
