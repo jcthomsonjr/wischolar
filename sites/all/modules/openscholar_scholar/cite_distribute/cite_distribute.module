@@ -150,7 +150,7 @@ function cite_distribute_form_alter(&$form, $form_state, $form_id){
 
     foreach (cite_distribute_installed_mods() as $module){
       $existing_value =  cite_distribute_check_disabled($module['name'], $form['nid']['#value']);
-      $form['cite_distribute_selections'][$module['name'] . '_module'] = array(
+      $form['cite_distribute_selections'][$module['name']] = array(
       '#type' => 'checkbox',
       '#disabled' => $existing_value,
       '#title' => t('@repos', array('@repos' => $module['repository'])),
@@ -173,7 +173,7 @@ function cite_distribute_form_alter(&$form, $form_state, $form_id){
  */
 function cite_distribute_form_submit(){
 
-  $form_state = array('values' => $_POST);  dpm($form_state );
+  $form_state = array('values' => $_POST);
   if(strlen($form_state['values']['nid'])){
     $nid = $form_state['values']['nid'];
   }
@@ -183,7 +183,7 @@ function cite_distribute_form_submit(){
   }
   $submodules = cite_distribute_installed_mods();
   foreach($submodules as $info){
-    if ($form_state['values'][$info['name'] . '_module'] &&  $form_state['values'][$info['name'] . '_module'] == 1){
+    if ($form_state['values'][$info['name']] &&  $form_state['values'][$info['name']] == 1){
       $modules[] = $info['name']; // this array is only used for the returned message
       //set the flag
       $flag = flag_get_flag($info['name']);
@@ -203,7 +203,7 @@ function cite_distribute_nodeapi(&$node, $op){
     case 'insert':
       $submodules = cite_distribute_installed_mods();
       foreach($submodules as $info){
-        if ($node -> {$info['name'] . '_module'} &&  $node-> {$info['name'] . '_module'} == 1){
+        if ($node -> {$info['name']} &&  $node-> {$info['name']} == 1){
           $modules[] = $info['name']; // this array is only used for the returned message
           //set the flag
           $flag = flag_get_flag($info['name']);
