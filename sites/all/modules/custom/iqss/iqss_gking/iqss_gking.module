@@ -104,7 +104,7 @@ function iqss_gking_filter_by_type_block(){
   $view->set_arguments(array(
       current($router_item['page_arguments'])
   ));
-dpm($view->display_handler->display);
+  
   //Change to the tax. path
   $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
   $view->execute();

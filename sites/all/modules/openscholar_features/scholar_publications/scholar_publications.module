@@ -300,26 +300,7 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       }
     break;
     case 'view':
-      if($teaser && strlen($node->biblio_abst_e)){
-        $node->content['teaser']['#value'] .= l(" Abstract", "node/$node->nid",array('attributes'=>array('class' => 'biblio-abstract-link toggle')));
-      }
-      if($teaser && variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes){
-      	$node->content['teaser']['#value'] .= ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
-      }
-      if($teaser && biblio_access('export', $node)){
-	      $links = array();
-        $show_link = variable_get('biblio_export_links', array('rtf' => TRUE, 'tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
-		    $show_link['google'] = variable_get('biblio_google_link', 1);
-		    if ($show_link['rtf'])    $links['biblio_rtf']            = _build_biblio_rtf_link($base, $node->nid);
-		    if ($show_link['tagged']) $links['biblio_tagged']         = _build_biblio_tagged_link($base, $node->nid);
-        if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
-		    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
-		    if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
-		    $node->content['teaser']['#value'] .= theme('ctools_dropdown', t('Export'), $links, false, 'biblio-export');
-      }
-      if($teaser && strlen($node->biblio_abst_e)){
-        $node->content['teaser']['#value'] .= '<div class="biblio-abstract-display slider">'. $node->biblio_abst_e ."\n</div>";
-      }
+      
     break;
   }
 }
@@ -428,20 +409,6 @@ function scholar_publications_views_query_alter(&$view, &$query) {
   }
 }
 
-/**
- * Adjust the "Recent Publications View" if there are no publications
- *
- * @param $view view
- * @param $s_display_handler_output string
- * @param $cache
- * @return none
- */
-function scholar_publications_views_post_render($view, &$s_display_handler_output, $cache){
-	if($view->name == 'scholar_publications' && $view->current_display == 'block_1' && !count($view->result)){
-		$s_display_handler_output = ''; //Do no display when there are no publications
-	}
-}
-
 function scholar_publications_preprocess_views_view(&$vars) {
   if($vars['view']->name == 'publication_years') {
     // Override the page title
@@ -473,13 +440,30 @@ function scholar_publications_preprocess_block(&$vars) {
 }
 
 /**
+ * Scholar Publications biblio_entry theme
+ */
+function scholar_publications_theme(){
+  return array(
+    'scholar_publications_biblio_entry' => array(
+        'file' => 'biblio_theme.inc',
+        'arguments' => array(
+          'node',
+          'base' => 'biblio',
+          'style_name' => 'classic',
+          'inline' => FALSE,
+          'wrapper' => TRUE),
+    ),
+  );
+}
+
+/**
  * hook theme_registry_alter
  */
 function scholar_publications_theme_registry_alter(&$theme_registry){
   /*
    * Change the biblio theme to use ours so it can make the views consistent
    */
-  $theme_registry['biblio_entry']['function'] = 'scholar_publications_biblio_entry';
+  $theme_registry['biblio_entry']['function'] = 'theme_scholar_publications_biblio_entry';
   $theme_registry['biblio_author_link']['function'] = 'scholar_publications_biblio_author_link';
 
   //Override the default node style function
@@ -498,12 +482,13 @@ function scholar_publications_theme_registry_alter(&$theme_registry){
  * @param $inline
  * @return unknown_type
  */
-function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'classic', $inline = false) {
-
-	$s_output  = "\n".'<div class="biblio-entry">'."\n" ;
+function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'classic', $inline = false, $wrapper = true) {
+  $s_output = "";
+  
+	if($wrapper) $s_output  .= "\n".'<div class="biblio-entry">'."\n" ;
   if (!$node->status) $s_output .= '<div id="node-'.$node->nid.'" class="node node-unpublished">';
 
-  if (count($node->field_biblio_image[0])) {
+  if (count($node->field_biblio_image[0]) && array_key_exists('filepath',$node->field_biblio_image[0])) {
     $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover', $node->field_biblio_image[0]['filepath']), $node -> path, array('html' => TRUE)) . '</div>';
   }
 
@@ -522,7 +507,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   if ($openurl_base) $s_output .= theme('biblio_openurl', biblio_openurl($node));
 
   // add links to attached files (if any) unless we have an image, then it would be crowded
-  if (biblio_access('download', $node) && !count($node->field_biblio_image[0])) $s_output .= theme('biblio_download_links',$node);
+  if (biblio_access('download', $node) && (!count($node->field_biblio_image[0]) || !array_key_exists('filepath',$node->field_biblio_image[0]))) $s_output .= theme('biblio_download_links',$node);
 
   if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
 
@@ -545,7 +530,7 @@ function scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'cl
   drupal_alter('link', $links, $node);
 
   $s_output .= theme('links', $links);
-  $s_output .= "\n</div>";
+  if($wrapper) $s_output .= "\n</div>";
 
   return $s_output;
 }
@@ -572,26 +557,6 @@ function scholar_publications_biblio_author_link($author, $aid, $base='biblio', 
   $html = l(trim($author), "publications", $options );
 
   return $html;
-}
-
-/**
- * Theme the biblio nodes the same in views as elsewhere
- * @param $vars array
- */
-function scholar_publications_preprocess_views_view_row_node(&$vars){
-
-  $nid = $vars['row']->{$vars['field_alias']};
-  if (!is_numeric($nid) || (array_key_exists('build_mode',$vars['options']) && $vars['options']['build_mode'] != 'teaser')) {
-    return;
-  }//Can't find the node or this is not in the teaser view
-
-  $node = node_load($nid);
-
-  if (empty($node) || $node->type != 'biblio') {
-    return;
-  }
-
-  $vars['node'] = scholar_publications_biblio_entry($node,'biblio',biblio_get_style());
 }
 
 /**
@@ -742,6 +707,7 @@ function scholar_publications_biblio_download_links($node = NULL) {
     //$files .= '&nbsp;'. t('Download') .':&nbsp;';
     $file_count = 0;
     foreach ($node->files as $file) {
+      if(!is_object($file)) $file = (object) $file;
       if ($file->list) {
         $file_count++;
         $alias = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'",'filefield_paths/alias/' . $file -> fid));
