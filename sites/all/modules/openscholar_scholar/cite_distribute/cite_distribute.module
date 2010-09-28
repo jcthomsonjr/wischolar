@@ -125,8 +125,10 @@ function cite_distribute_form_alter(&$form, $form_state, $form_id){
     }
     else{
       //remove cite distribute bulk ops flags form the drop down list
-      foreach ($form['select']['operation']['#options'] as $key => $operation){
-        if (in_array($operation, $repos))  unset ($form['select']['operation']['#options'][$key]);
+      if(!empty($form['select']['operation']['#options'])){
+        foreach ($form['select']['operation']['#options'] as $key => $operation){
+          if (in_array($operation, $repos))  unset ($form['select']['operation']['#options'][$key]);
+        }
       }
     }
   }
