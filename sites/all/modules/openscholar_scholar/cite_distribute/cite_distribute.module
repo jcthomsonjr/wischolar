@@ -203,18 +203,21 @@ function cite_distribute_form_submit(){
 function cite_distribute_nodeapi(&$node, $op){
   switch ($op){
     case 'insert':
-      $submodules = cite_distribute_installed_mods();
-      foreach($submodules as $info){
-        if ($node -> {$info['name']} &&  $node-> {$info['name']} == 1){
-          $modules[] = $info['name']; // this array is only used for the returned message
-          //set the flag
-          $flag = flag_get_flag($info['name']);
-          //set the flag for this node
-          $flag->flag('flag', $node ->nid);
+      if($node -> type == 'biblio'){
+        $submodules = cite_distribute_installed_mods();
+        foreach($submodules as $info){
+          if ($node -> {$info['name']} &&  $node-> {$info['name']} == 1){
+            $modules[] = $info['name']; // this array is only used for the returned message
+            //set the flag
+            $flag = flag_get_flag($info['name']);
+            //set the flag for this node
+            $flag->flag('flag', $node ->nid);
+          }
+        }
+        if($output = theme('cite_distribute_form_msg', $modules)){
+          drupal_set_message(t($output));
         }
       }
-      $output = theme('cite_distribute_form_msg', $modules);
-      drupal_set_message(t($output));
       break;
   }
 }

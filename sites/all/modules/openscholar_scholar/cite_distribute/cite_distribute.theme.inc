@@ -9,9 +9,9 @@
  */
 function theme_cite_distribute_form_msg($modules = NULL){
   //determine whether to add 's' to text if multiple citatations submitted
-    $s = count($modules) > 1 ? 's' : '';
+  $s = count($modules) > 1 ? 's' : '';
 
-    if($modules){
+  if($modules){
     $output_r = '';
     $output = 'Submitted citatation' .  $s . ' to: ';
     foreach ($modules as $module){
@@ -20,10 +20,7 @@ function theme_cite_distribute_form_msg($modules = NULL){
       $output_r .=  ' '. $info[0]['repository'] . ',';
     }
     $output .= substr($output_r, 0, -1);
+    return $output;
   }
-
-  else{
-    $output = 'No repositories selected';
-  }
-  return $output;
+  return false;
 }
