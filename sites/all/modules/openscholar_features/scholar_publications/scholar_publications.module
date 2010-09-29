@@ -300,7 +300,8 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       }
     break;
     case 'view':
-      
+      //Files weight gets changed to 4 so lets put this before files
+      $node->content['field_biblio_extra']['#weight'] = 3;
     break;
   }
 }
