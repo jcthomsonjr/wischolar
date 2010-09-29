@@ -83,7 +83,7 @@
             <?php print $help; ?>
             <?php print $messages; ?>
 
-            <div id="block-iqss_gking-areas_of_research">
+            <div id="block-iqss_gking-areas_of_research" class="block">
             <h3 class="title">Areas of Research</h3>
             <?php
               $aor = _iqss_gking_areas_of_research_wgt();

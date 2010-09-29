@@ -88,6 +88,11 @@ h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3, #bl
   font-size: 1.3em;
   }
 
+.block h3.title, #block-vsite_menus-1 li.first {
+  -moz-border-radius: 4px 4px 0 0;
+  -webkit-border-radius: 4px 4px 0 0;
+  }
+
 #content .node h3.title {
   border: none;
   padding: 0;
@@ -194,11 +199,10 @@ a.more {
   }
 
 #content, .column .block {
-  /*-moz-border-radius: 4px;
+  -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  */
   padding: 0 26px 26px 26px;
-  border:1px solid #d7d7d7;
+  border:1px solid #484848;
   background: #fff;
   }
 
@@ -262,16 +266,17 @@ body.section-category .node {
   }
 
 #header {
-  min-height: 55px;
+  min-height: 38px;
   }
 
 #header-wrapper {
-  margin-top: 45px;
+  margin-top: 38px;
   }
 
 #header #header-main, #header #header-right, #header #header-left {
   padding-bottom: 8px;
   margin-top:6px;
+  padding-top:0;
   }
 
 #block-scholar-1 h1, #navbar ul li {
