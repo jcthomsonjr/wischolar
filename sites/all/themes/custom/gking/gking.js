@@ -27,18 +27,13 @@ $(document).ready(function() {
     var container = $("#node-3793");
 
     container.prepend('<a class="more" href="#">CLOSE X</a>');
-
     $("body.page-home a.more").click(function(event){
-
+      container.find('a.more').toggle();
       if (container.is(".bio-open")) {
-        container.removeClass("bio-open").animate({
-        height:'0'},"1500");
-
-       } else {
-      container.addClass("bio-open").animate({
-      height:'70%'},"1500");
+        container.removeClass("bio-open").animate({height:'0'},"1500");
+      } else {
+        container.addClass("bio-open").animate({height:'70%'},"1500");
       }
-
-     });
+    });
 
   });
