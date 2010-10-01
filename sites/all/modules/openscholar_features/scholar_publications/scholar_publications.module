@@ -50,6 +50,8 @@ function scholar_publications_strongarm() {
 
   // Pathauto (optional) settings
   $conf["pathauto_node_biblio_pattern"] = "[space-og-path]/publications/[title-raw]";
+  
+  $conf["biblio_base"] = "publications";
 
   return $conf;
 }
