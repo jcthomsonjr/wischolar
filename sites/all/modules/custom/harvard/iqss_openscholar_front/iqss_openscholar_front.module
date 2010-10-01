@@ -13,10 +13,7 @@ function iqss_openscholar_front_init(){
   $project_mission = ' Academic Projects: Create a dynamic feature-full web site
                        in seconds. For free! <span>(No, there’s no catch.)</span>';
 
-  $install_mode = variable_get('openscholar_installation_mode', 'scholar');
-
-
-  $conf['site_mission'] = $install_mode == 'scholar' ? $scholar_mission : $project_mission;
+  $conf['site_mission'] = variable_get('openscholar_installation_mode', 'scholar') == 'scholar' ? $scholar_mission : $project_mission;
 }
 
 
