@@ -3,8 +3,8 @@
 /**
  * hook strongarm
  */
-function iqss_openscholar_front_strongarm(){
-  $conf = array();
+function iqss_openscholar_front_init(){
+  global $conf;
 
   // Site mission; to be displayed in the front page
   $scholar_mission = ' Harvard Scholars: Create a dynamic feature-full personal
@@ -17,8 +17,6 @@ function iqss_openscholar_front_strongarm(){
 
 
   $conf['site_mission'] = $install_mode == 'scholar' ? $scholar_mission : $project_mission;
-
-  return $conf;
 }
 
 
