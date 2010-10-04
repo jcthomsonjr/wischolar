@@ -354,10 +354,10 @@ function _scholar_blog_views_default_views() {
   // Exported view: scholar_blog_comments
   $view = new view;
   $view->name = 'scholar_blog_comments';
-  $view->description = 'Scholar > Blog comments';
-  $view->tag = 'scholarfeature';
+  $view->description = 'scholar  > Blog comments';
+  $view->tag = 'schoalarfeature';
   $view->view_php = '';
-  $view->base_table = 'node';
+  $view->base_table = 'comments';
   $view->is_cacheable = FALSE;
   $view->api_version = 2;
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -365,7 +365,7 @@ function _scholar_blog_views_default_views() {
   $handler->override_option('relationships', array(
     'nid' => array(
       'label' => 'Node',
-      'required' => 0,
+      'required' => 1,
       'id' => 'nid',
       'table' => 'comments',
       'field' => 'nid',
@@ -375,55 +375,82 @@ function _scholar_blog_views_default_views() {
   $handler->override_option('fields', array(
     'name' => array(
       'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
       'link_to_user' => 1,
       'exclude' => 0,
       'id' => 'name',
       'table' => 'comments',
       'field' => 'name',
-      'relationship' => 'nid',
+      'relationship' => 'none',
     ),
     'timestamp' => array(
-      'label' => '',
-      'date_format' => 'reldate',
-      'custom_date_format' => '',
-      'exclude' => 0,
-      'id' => 'timestamp',
-      'table' => 'comments',
-      'field' => 'timestamp',
-      'relationship' => 'nid',
-    ),
-    'comment' => array(
       'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
         'make_link' => 0,
         'path' => '',
+        'link_class' => '',
         'alt' => '',
         'prefix' => '',
         'suffix' => '',
         'help' => '',
-        'trim' => 1,
-        'max_length' => '100',
+        'trim' => 0,
+        'max_length' => '',
         'word_boundary' => 1,
         'ellipsis' => 1,
-        'html' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
       ),
+      'date_format' => 'reldate',
+      'custom_date_format' => '',
       'exclude' => 0,
-      'truncate' => 100,
-      'id' => 'comment',
+      'id' => 'timestamp',
       'table' => 'comments',
-      'field' => 'comment',
-      'relationship' => 'nid',
+      'field' => 'timestamp',
+      'relationship' => 'none',
     ),
     'title' => array(
       'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'strip_tags' => 0,
+        'html' => 0,
+      ),
       'link_to_node' => 1,
       'exclude' => 0,
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
-      'relationship' => 'none',
+      'relationship' => 'nid',
     ),
   ));
   $handler->override_option('sorts', array(
@@ -433,45 +460,27 @@ function _scholar_blog_views_default_views() {
       'id' => 'timestamp',
       'table' => 'comments',
       'field' => 'timestamp',
-      'relationship' => 'nid',
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('filters', array(
-    'comment_count' => array(
-      'operator' => '!=',
-      'value' => array(
-        'value' => '0',
-        'min' => '',
-        'max' => '',
-      ),
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'comment_count',
-      'table' => 'node_comment_statistics',
-      'field' => 'comment_count',
-      'relationship' => 'none',
-    ),
-    'status' => array(
+    'nid' => array(
       'operator' => '=',
-      'value' => 1,
+      'value' => '',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status',
-      'table' => 'node',
-      'field' => 'status',
-      'relationship' => 'none',
+      'id' => 'nid',
+      'table' => 'node_access',
+      'field' => 'nid',
+      'relationship' => 'nid',
     ),
     'current' => array(
-      'operator' => 'all',
-      'value' => 'all',
+      'operator' => 'active',
+      'value' => '',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
@@ -481,12 +490,44 @@ function _scholar_blog_views_default_views() {
       'id' => 'current',
       'table' => 'spaces',
       'field' => 'current',
+      'relationship' => 'nid',
+    ),
+    'timestamp' => array(
+      'operator' => '>=',
+      'value' => array(
+        'type' => 'offset',
+        'value' => '-30 days',
+        'min' => '',
+        'max' => '',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'timestamp',
+      'table' => 'comments',
+      'field' => 'timestamp',
+      'relationship' => 'none',
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '0',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'comments',
+      'field' => 'status',
       'relationship' => 'none',
     ),
   ));
   $handler->override_option('access', array(
-    'type' => 'spaces_feature',
-    'spaces_feature' => 'spaces_blog',
+    'type' => 'none',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',
@@ -500,7 +541,7 @@ function _scholar_blog_views_default_views() {
   ));
   $handler = $view->new_display('block', 'Recent comments', 'block_1');
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', -1);
+  $handler->override_option('block_caching', '-1');
 
   $views[$view->name] = $view;
 
