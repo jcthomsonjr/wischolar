@@ -426,7 +426,7 @@ function _scholar_blog_views_default_views() {
       'field' => 'timestamp',
       'relationship' => 'none',
     ),
-    'title' => array(
+    'subject' => array(
       'label' => '',
       'alter' => array(
         'alter_text' => 0,
@@ -437,20 +437,24 @@ function _scholar_blog_views_default_views() {
         'alt' => '',
         'prefix' => '',
         'suffix' => '',
+        'target' => '',
         'help' => '',
         'trim' => 0,
         'max_length' => '',
         'word_boundary' => 1,
         'ellipsis' => 1,
-        'strip_tags' => 0,
         'html' => 0,
+        'strip_tags' => 0,
       ),
-      'link_to_node' => 1,
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_comment' => 1,
       'exclude' => 0,
-      'id' => 'title',
-      'table' => 'node',
-      'field' => 'title',
-      'relationship' => 'nid',
+      'id' => 'subject',
+      'table' => 'comments',
+      'field' => 'subject',
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('sorts', array(
@@ -524,6 +528,20 @@ function _scholar_blog_views_default_views() {
       'table' => 'comments',
       'field' => 'status',
       'relationship' => 'none',
+    ),
+    'status_1' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_1',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'nid',
     ),
   ));
   $handler->override_option('access', array(
