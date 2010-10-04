@@ -79,21 +79,19 @@ function _scholar_blog_menu_default_items() {
 function _scholar_blog_user_default_permissions() {
   $permissions = array();
 
-  // Exported permission: create blog entries
+  // Exported permission: create blog content
   $permissions[] = array(
-    'name' => 'create blog entries',
+    'name' => 'create blog content',
     'roles' => array(
       '0' => 'scholar admin',
-      '1' => 'scholar user',
     ),
   );
 
-  // Exported permission: delete own blog entries
+  // Exported permission: delete own blog content
   $permissions[] = array(
-    'name' => 'delete own blog entries',
+    'name' => 'delete own blog content',
     'roles' => array(
       '0' => 'scholar admin',
-      '1' => 'scholar user',
     ),
   );
 

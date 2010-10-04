@@ -19,6 +19,15 @@ function scholar_blog_menu_default_items() {
 }
 
 /**
+ * Implementation of hook_node_info().
+ */
+function scholar_blog_node_info() {
+  module_load_include('inc', 'scholar_blog', 'scholar_blog.features.node');
+  $args = func_get_args();
+  return call_user_func_array('_scholar_blog_node_info', $args);
+}
+
+/**
  * Implementation of hook_user_default_permissions().
  */
 function scholar_blog_user_default_permissions() {
