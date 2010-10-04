@@ -170,7 +170,7 @@ function _scholar_blog_views_default_views() {
       'relationship' => 'none',
     ),
     'current' => array(
-      'operator' => 'all',
+      'operator' => 'active',
       'value' => 'all',
       'group' => '0',
       'exposed' => FALSE,
@@ -182,6 +182,9 @@ function _scholar_blog_views_default_views() {
       'table' => 'spaces',
       'field' => 'current',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
     'created' => array(
       'operator' => '>',
