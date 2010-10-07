@@ -12,9 +12,9 @@ function theme_litecal_timeitem($item, $granularity) {
   $attr['class'] = 'litecal-item';
   $attr['class'] .= $item->starts ? ' starts' : '';
   $attr['class'] .= $item->ends ? ' ends' : '';
-  if (module_exists('seed')) {
-    $attr['class'] .= ' crayon crayon-'. theme('seed_crayon', $item->id);
-    $popup = theme('seed_crayon_popup', $item->id, $item->data);
+  if (module_exists('crayon')) {
+    $attr['class'] .= ' crayon-anchor crayon-'. crayon_generate_index($item->id);
+    $popup = theme('crayon_popup', $item->data, $item->id);
   }
   else {
     $attr['class'] .= ' color';
@@ -72,6 +72,13 @@ function theme_litecal_timeslot($timespan, $start, $date, $format, $quickadd = a
 
   // Classes
   $attr['class'] = 'litecal-slot rows-'. count($timespan->built);
+
+  // Add class for today's slot.
+  static $today;
+  $today = !isset($today) ? date_format_date(date_now(), 'custom', 'Y-m-d') : $today;
+  if ($today == date_format_date($date, 'custom', 'Y-m-d')) {
+    $attr['class'] .= ' litecal-slot-today';
+  }
 
   // If this timeslot is outside of the timespan's real time range,
   // add a class so it can be displayed accordingly.

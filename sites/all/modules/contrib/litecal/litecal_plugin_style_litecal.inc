@@ -147,29 +147,38 @@ class litecal_plugin_style_litecal extends views_plugin_style {
 
     // Find date fields and generate litecal items from them
     if (!empty($view->date_info->date_handler_fields)) {
-      $date_field = $view->date_info->date_handler_fields;
-      $date_field = array_shift($date_field);
-      $date_field = $date_field['view_field']->real_field;
-
-      $alias_from = !empty($view->date_info->aliases[$date_field]) ? $view->date_info->aliases[$date_field] : NULL;
-      $alias_to = !empty($view->date_info->aliases["{$date_field}2"]) ? $view->date_info->aliases["{$date_field}2"] : $alias_from;
-
-      if (!empty($alias_from)) {
+      // Collect from and to aliases for all date fields on this view
+      $aliases = array();
+      foreach ($view->date_info->date_handler_fields as $date_field) {
+        $real_field = $date_field['view_field']->real_field;
+        if (!empty($date_field['view_field']->aliases[$real_field])) {
+          $aliases[$real_field]['from'] = $date_field['view_field']->aliases[$real_field];
+        }
+        if (!empty($date_field['view_field']->aliases["{$real_field}2"])) {
+          $aliases[$real_field]['to'] = $date_field['view_field']->aliases["{$real_field}2"];
+        }
+      }
+      if (!empty($aliases)) {
         if (!empty($options['colorby']) && !empty($view->field[$options['colorby']])) {
           $colorby_field = $view->field[$options['colorby']];
         }
         foreach ($view->result as $num => $row) {
-          $item = new StdClass();
-          $item->from = date_convert($row->{$alias_from}, DATE_ISO, DATE_OBJECT);
-          $item->to = date_convert($row->{$alias_to}, DATE_ISO, DATE_OBJECT);
-          $item->id = !empty($colorby_field) ? $colorby_field->render($row) : $row->{$view->base_field};
-          $item->data = $vars['rows'][$num];
+          foreach ($aliases as $alias) {
+            if (!empty($row->{$alias['from']})) {
+              $item = new StdClass();
+              $item->from = date_convert($row->{$alias['from']}, DATE_ISO, DATE_OBJECT);
+              $item->to = isset($alias['to'], $row->{$alias['to']}) ? date_convert($row->{$alias['to']}, DATE_ISO, DATE_OBJECT) : drupal_clone($item->from);
+              $item->id = !empty($colorby_field) ? $colorby_field->render($row) : $row->{$view->base_field};
+              $item->data = $vars['rows'][$num];
 
-          // Link to node
-          // @TODO: make this views token-customizable
-          $item->url = ($view->base_table == 'node') ? "node/{$row->nid}" : NULL;
+              // Link to node
+              // @TODO: make this views token-customizable
+              $item->url = ($view->base_table == 'node') ? "node/{$row->nid}" : NULL;
 
-          $items[] = $item;
+              $items[] = $item;
+              break;
+            }
+          }
         }
       }
     }
@@ -229,9 +238,12 @@ class litecal_month {
     $from_weekday = date_format_date($this->from, 'custom', 'w');
     $to_weekday = date_format_date($this->to, 'custom', 'w');
 
-    // Get the offset -- which must be %7
+    // Get the offset -- which must be %7. Note that the $to_offset must by < 7 as 
+    // we should never add a full week.
+    $_to_weekday_offset = variable_get('date_first_day', 0) - 1;
+    $_to_weekday_offset = ($_to_weekday_offset >= 0) ? $_to_weekday_offset : (7 + $_to_weekday_offset);
     $from_offset = (7 - (variable_get('date_first_day', 0) - $from_weekday)) % 7;
-    $to_offset = (7 - ($to_weekday - variable_get('date_first_day', 0))) % 7;
+    $to_offset = (7 - ($to_weekday - $_to_weekday_offset)) % 7;
 
     // Get display from/to dates of calendar
     date_modify($this->display_from, "-{$from_offset} days");
@@ -240,7 +252,7 @@ class litecal_month {
     // Generate timespans
     $current = drupal_clone($this->display_from);
 
-    while (litecal_date_difference($this->display_to, $current, 'days') > 0) {
+    while (litecal_date_difference($this->display_to, $current, 'hours') > 0) {
       $timespan = new litecal_timespan($current, 7, 'days');
 
       // If the real calendar start is not the same as the display start,
