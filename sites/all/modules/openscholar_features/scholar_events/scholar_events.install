@@ -46,3 +46,26 @@ function scholar_events_update_6001(&$sandbox){
   return $ret;
   
 }
+
+
+function scholar_events_update_6002(&$sandbox){
+  
+  $res = array();
+  module_rebuild_cache();
+  
+  // Enable openscholar_front module if need
+  if(!module_exists('calendar')){
+    
+    include_once('includes/install.inc');
+    
+    drupal_uninstall_module(array('calendar'));
+    $ret[] = array(
+      'success' => true,
+      'query' => 'Calendar module was uninstalled',
+    );
+    
+  }
+  
+  return $ret;
+  
+}
