@@ -17,6 +17,7 @@ function _scholar_blog_context_default_contexts() {
     'views' => array(
       '0' => 'scholar_blog',
     ),
+    'vsite_feature_default_view' => 'scholar_blog',
     'menu' => 'blog',
     'block' => array(
       'vsite_taxonomy_0' => array(

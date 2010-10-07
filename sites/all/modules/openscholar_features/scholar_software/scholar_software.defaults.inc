@@ -628,6 +628,7 @@ function _scholar_software_context_default_contexts() {
       '1' => 'scholar_software_releases',
       '2' => 'scholar_software_updates',
     ),
+    'vsite_feature_default_view' => 'scholar_software_projects',
     'menu' => 'software',
     'block' => array(
       'vsite_taxonomy_0' => array(

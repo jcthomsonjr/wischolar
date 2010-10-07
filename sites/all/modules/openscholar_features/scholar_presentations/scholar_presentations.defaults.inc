@@ -237,6 +237,7 @@ function _scholar_presentations_context_default_contexts() {
     'views' => array(
       '0' => 'scholar_presentations',
     ),
+    'vsite_feature_default_view' => 'scholar_presentations',
     'menu' => 'presentations',
     'block' => array(
       'views_scholar_presentations-block_1' => array(

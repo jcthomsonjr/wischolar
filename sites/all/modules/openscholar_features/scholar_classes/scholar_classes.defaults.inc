@@ -323,6 +323,7 @@ function _scholar_classes_context_default_contexts() {
     'views' => array(
       '0' => 'scholar_classes',
     ),
+    'vsite_feature_default_view' => 'scholar_classes',
     'menu' => 'classes',
     'block' => array(
       'vsite_widgets_2' => array(

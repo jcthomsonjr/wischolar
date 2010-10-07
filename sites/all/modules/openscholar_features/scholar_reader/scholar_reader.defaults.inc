@@ -14,6 +14,7 @@ function _scholar_reader_context_default_contexts() {
     'node' => array(
       '0' => 'feed',
     ),
+    'vsite_feature_default_view' => 'scholar_reader',
     'menu_trail' => array(
       'reader' => 'reader',
     ),
