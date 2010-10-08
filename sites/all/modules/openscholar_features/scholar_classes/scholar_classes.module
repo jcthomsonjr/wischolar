@@ -31,10 +31,10 @@ function scholar_classes_link_alter(&$links, $node){
    * to be of class_material type too. But the default
    * child type is set to 'book'. Alter here
    */
-  if (empty($links['book_add_child'])) {
-    return;
+  if (!empty($links['book_add_child']) && $node->type == 'class_material') {
+    $links['book_add_child']['href'] = 'node/add/class-material';
   }
-  $links['book_add_child']['href'] = 'node/add/class-material';
+  
 }
 
 
