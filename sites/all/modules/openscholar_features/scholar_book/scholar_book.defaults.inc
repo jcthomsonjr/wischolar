@@ -17,7 +17,6 @@ function _scholar_book_context_default_contexts() {
     'views' => array(
       '0' => 'scholar_books',
     ),
-    'vsite_feature_default_view' => 'scholar_books',
     'menu' => 'documents',
     'block' => array(
       'scholar_book_booktoc' => array(

@@ -162,7 +162,6 @@ function _scholar_image_gallery_context_default_contexts() {
       '0' => 'gallery',
       '1' => 'image',
     ),
-    'vsite_feature_default_view' => 'scholar_image_gallery',
     'views' => array(
       '0' => 'scholar_image_gallery',
     ),

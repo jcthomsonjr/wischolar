@@ -635,7 +635,6 @@ function _scholar_profiles_context_default_contexts() {
     'node' => array(
       '0' => 'person',
     ),
-    'vsite_feature_default_view' => 'scholar_profiles',
     'menu_trail' => array(
       'people' => 'people',
     ),

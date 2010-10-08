@@ -17,7 +17,6 @@ function _scholar_announcements_context_default_contexts() {
     'views' => array(
       '0' => 'scholar_announcements',
     ),
-    'vsite_feature_default_view' => 'scholar_announcements',
     'menu' => 'announcements',
     'block' => array(
       'views_scholar_announcements-block_1' => array(

@@ -87,7 +87,6 @@ function _scholar_events_context_default_contexts() {
     'node' => array(
       '0' => 'event',
     ),
-    'vsite_feature_default_view' => 'scholar_events',
     'views' => array(
       '0' => 'scholar_events',
       '1' => 'scholar_events_upcoming',
