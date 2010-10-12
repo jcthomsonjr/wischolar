@@ -55,6 +55,15 @@ function _scholar_blog_context_default_contexts() {
         'label' => 'scholar_blog_comments: Recent comments',
         'type' => 'context_ui',
       ),
+      'scholar_blog_rss' => array(
+        'module' => 'scholar_blog',
+        'delta' => 'rss',
+        'weight' => 20,
+        'region' => 'footer',
+        'status' => '0',
+        'label' => 'RSS Feed - Link to subscribe to your newest blog entries',
+        'type' => 'context_ui',
+      ),
     ),
   );
   return $items;

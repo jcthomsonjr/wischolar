@@ -5,8 +5,17 @@ include_once('scholar_blog.features.inc');
 /**
  * Implementation of hook_block
  */
-function scholar_blog_block(){
-   // a block with a subscribe link to the blog feed
+function scholar_blog_block($op = 'list', $delta = false, $edit = array()){
+  if ($op == 'list') {
+    $blocks['rss']['info'] = t('RSS Feed - Link to subscribe to your newest blog entries');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 'rss':
+        return _scholar_blog_rss_wgt();
+    }
+  }
 }
 
 /**
@@ -58,4 +67,13 @@ function scholar_blog_strongarm() {
  
   $conf['node_submitted_info_blog'] = TRUE;
   return $conf;
+}
+
+/**
+ * Link to subscribe to the rss feed
+ */
+function _scholar_blog_rss_wgt(){
+  
+  return array('content' => l("Blog RSS Feed","blog/feed",array('attributes' => array('class' => 'feed'))));
+  
 }
