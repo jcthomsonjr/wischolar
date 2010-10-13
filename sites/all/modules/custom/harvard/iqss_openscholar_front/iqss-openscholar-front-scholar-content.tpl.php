@@ -10,6 +10,7 @@ $activity = openscholar_front_block('view','site_activity');
 print $activity['content'];
 ?>
 
+
 <div id="about-abstract">
 <h2>Harvard Scholars: Create a dynamic feature-full personal web site in seconds. For free!
 (No, there’s no catch.)</h2>
