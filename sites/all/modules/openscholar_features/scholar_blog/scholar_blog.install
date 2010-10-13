@@ -1,0 +1,25 @@
+<?php
+
+
+function scholar_blog_update_6001(&$sandbox){
+  
+  $res = array();
+  module_rebuild_cache();
+  
+  // Uninstall blog module if need
+  if(!module_exists('blog')){
+    
+    module_disable(array('blog')); //Disables but does not uninstall
+    
+    $ret[] = array(
+      'success' => true,
+      'query' => 'Disabled blog module',
+    );
+    
+    
+  }
+  
+  
+  return $res;
+  
+}
