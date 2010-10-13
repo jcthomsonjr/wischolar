@@ -30,7 +30,7 @@ function iqss_openscholar_front_menu_alter(&$items){
  * Callback for 'welcome' menu entry
  */
 function iqss_openscholar_front_homepage(){
-  $s_content = '<div id="content-row-2">'.theme('iqss_openscholar_front_content') . '</div>' ;
+  $s_content = theme('iqss_openscholar_front_content');
   return $s_content;
 }
 
@@ -41,9 +41,7 @@ function iqss_openscholar_front_theme(){
 
   // load a different template file depending on the installation mode
   $install_mode = variable_get('openscholar_installation_mode', 'scholar');
-
-  $path = drupal_get_path('module', 'iqss_openscholar_front_scholar') . '/' . $install_mode;
-
+  
   $items["iqss_openscholar_front_content"] = array(
     'arguments' => array('tree' => array()),
     'template' => "iqss-openscholar-front-${install_mode}-content",
@@ -71,6 +69,12 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
 
     if (variable_get('openscholar_installation_mode', 'scholar') == 'project' ){
       unset($contexts['openscholar-section-sitewide_front']->block['views_openscholar_sites-block_2']);
+    }
+    
+    if (variable_get('openscholar_installation_mode', 'scholar') == 'scholar' ){
+	    //Remove the blocks that are moved to the content region
+	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_site_mission']);  //Site Mission Statement
+	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_video_info']);  //Video
     }
   }
 }
