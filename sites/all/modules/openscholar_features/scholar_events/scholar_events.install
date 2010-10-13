@@ -59,13 +59,13 @@ function scholar_events_update_6002(&$sandbox){
     include_once('includes/install.inc');
     
     drupal_uninstall_module(array('calendar'));
-    $ret[] = array(
+    $res[] = array(
       'success' => true,
       'query' => 'Calendar module was uninstalled',
     );
     
   }
   
-  return $ret;
+  return $res;
   
 }
