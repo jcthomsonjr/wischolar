@@ -90,9 +90,15 @@ function scholar_image_gallery_vsite_taxonomy_content_types_alter(&$types){
  * Hook nodeapi
  * Used to trickle deltes to an image galleries dependent image childern
  */
-function scholar_image_gallery_nodeapi(&$node, $op, $a3, $a4){
+function scholar_image_gallery_nodeapi(&$node, $op, $teaser, $a4){
 	if($node->type != 'gallery') return;
   switch($op){
+    case 'view':
+      if($teaser && arg(0) == 'images' && !arg(1)){
+        $node->content['body']['#value'] = t('Created on @datetime',array('@datetime' => format_date($node->created)))
+                                          .$node->content['body']['#value'];
+      }
+    break;
     case 'delete':
     	vsite_include('vsite');
     	$a_referers = vsite_get_referrers($node->nid,array(),array('image'));

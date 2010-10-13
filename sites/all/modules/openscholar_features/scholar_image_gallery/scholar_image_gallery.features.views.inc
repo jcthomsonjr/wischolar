@@ -429,6 +429,31 @@ function _scholar_image_gallery_views_default_views() {
   $handler->override_option('block_description', 'Recent images');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('page', 'Galleries', 'page_1');
+  $handler->override_option('sorts', array(
+    'sticky' => array(
+      'order' => 'DESC',
+      'id' => 'sticky',
+      'table' => 'node',
+      'field' => 'sticky',
+      'relationship' => 'none',
+    ),
+    'created' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+    ),
+  ));
   $handler->override_option('arguments', array());
   $handler->override_option('filters', array(
     'status_extra' => array(
