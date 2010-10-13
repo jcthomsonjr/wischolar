@@ -7,7 +7,7 @@ function scholar_blog_update_6001(&$sandbox){
   module_rebuild_cache();
   
   // Uninstall blog module if need
-  if(!module_exists('blog')){
+  if(module_exists('blog')){
     
     module_disable(array('blog')); //Disables but does not uninstall
     
