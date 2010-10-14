@@ -3,14 +3,14 @@
     <div class="row">
         <div id="publications">
           <?php
-          $publications = openscholar_front_block('view','recent_publications');
+          $publications = views_block('view','scholar_publications-block_1');
           print '<h2>' . $publications['subject'] . '</h2>';
           print $publications['content'];
           ?>
         </div>
         <div id="activity">
             <?php
-            $activity = openscholar_front_block('view','site_activity');
+            $activity = views_block('view','vsite_activity-block_1');
             print '<h2>' . $activity['subject'] . '</h2>';
             print $activity['content'];
             ?>
