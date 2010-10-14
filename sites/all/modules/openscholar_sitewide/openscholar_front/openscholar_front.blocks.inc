@@ -39,13 +39,3 @@ function _openscholar_front_block_site_mission() {
   }
   return $block;
 }
-
-function _openscholar_front_block_site_activity() {
-  //Display all activity for the install
-  return views_block('view','vsite_activity-block_1');
-}
-
-function _openscholar_front_block_recent_publications() {
-  //Display all publications for the install
-  return views_block('view','scholar_publications-block_1');
-}

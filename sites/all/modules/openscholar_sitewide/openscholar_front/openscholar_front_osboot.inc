@@ -1,5 +1,31 @@
 <?php
 
+function _openscholar_front_osboot(){
+  system_theme_data(); // Rebuild theme cache.
+  _block_rehash(); // Rebuild block cache.
+  views_invalidate_cache(); // Rebuild the views.
+  menu_rebuild(); // Rebuild the menu.
+  features_rebuild(); // Features rebuild scripts.
+
+  //_scholar_testingcontent();
+  _vsite_filefield_paths_config();
+  _vsite_global_taxonomy();
+  _vsite_flags_boot();
+
+  // set some default variables
+  _vsite_variables_default();
+
+  //Create Vsite Taxonomies
+  _vsite_object_create_taxonomys();
+    
+  //Create default sitewide contact form
+  _vsite_default_contact_form();
+
+  variable_set('scholar_installed', 1);
+  variable_set('site_frontpage', 'welcome');
+}
+
+
 /**
  * Generates some sites and assign users to each
  * site.

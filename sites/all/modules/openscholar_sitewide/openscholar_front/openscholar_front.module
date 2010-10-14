@@ -8,10 +8,14 @@ define('OPENSCHOLAR_VERSION', '2.0-BETA8-4');
 include_once('openscholar_front.features.inc');
 include_once('openscholar_front.blocks.inc');
 
+/**
+ * Implementation of hook init
+ */
 function openscholar_front_init(){
   $vsite = vsite_get_vsite();
   if (!$vsite && !drupal_is_front_page()
       && arg(0) != 'admin'){
+    //If we are not in admin set the context
     context_set('openscholar', 'section', 'sitewide');
   }
 }
@@ -35,40 +39,27 @@ function openscholar_front_menu_alter(&$items){
   $items['node']['page callback'] = 'openscholar_front_osboot';
 }
 
+/**
+ * Called imediatly after install to perform setup actions
+ */
 function openscholar_front_osboot(){
   $scholar_installed = variable_get('scholar_installed', 0);
 
   if (! $scholar_installed) {
   	module_load_include('inc', 'openscholar_front', 'openscholar_front_osboot');
+  	
+  	//Perform onetime boot functions
+  	_openscholar_front_osboot();
 
-    system_theme_data(); // Rebuild theme cache.
-    _block_rehash(); // Rebuild block cache.
-    views_invalidate_cache(); // Rebuild the views.
-    menu_rebuild(); // Rebuild the menu.
-    features_rebuild(); // Features rebuild scripts.
-
-    //_scholar_testingcontent();
-    _vsite_filefield_paths_config();
-    _vsite_global_taxonomy();
-    _vsite_flags_boot();
-
-    // set some default variables
-    _vsite_variables_default();
-
-    //Create Vsite Taxonomies
-    _vsite_object_create_taxonomys();
-    
-    //Create default sitewide contact form
-    _vsite_default_contact_form();
-
-    variable_set('scholar_installed', 1);
-    variable_set('site_frontpage', 'welcome');
   }
 
   drupal_goto('welcome');
 
 }
 
+/**
+ * Implementation of hook menu
+ */
 function openscholar_front_menu(){
   $items = array();
   $items['welcome'] = array(
@@ -83,6 +74,11 @@ function openscholar_front_menu(){
   return $items;
 }
 
+/**
+ * This is the default content body for the homepage, currently empty
+ *
+ * To add custom content your module can override the menu entry to call the function of your choosing
+ */
 function openscholar_front_welcome(){
   return '';
 }
@@ -105,6 +101,7 @@ function openscholar_front_block($op = 'list', $delta = 0) {
       
       return $info;
     case 'view':
+      //Functions defined in openscholar_front.blocks.inc
       $function = "_openscholar_front_block_{$delta}";
       if (function_exists($function)) {
         return call_user_func($function);
@@ -112,7 +109,10 @@ function openscholar_front_block($op = 'list', $delta = 0) {
       break;
   }
 }
-  
+
+/**
+ * Logic for displaying the button used to create a users site
+ */
 function openscholar_front_getyoursitebutton() {
   if (!module_exists('scholarregister')) return;
   global $user;
@@ -135,6 +135,7 @@ function openscholar_front_getyoursitebutton() {
       $allow = TRUE;
     }
   }
+  
   //link for front page button
   return  ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
 
