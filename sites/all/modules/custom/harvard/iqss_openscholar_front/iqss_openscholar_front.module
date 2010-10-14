@@ -7,11 +7,9 @@ function iqss_openscholar_front_init(){
   global $conf;
 
   // Site mission; to be displayed in the front page
-  $scholar_mission = ' Harvard Scholars: Create a dynamic feature-full personal
-                       web site in seconds. For free! <span>(No, there’s no catch.)</span>';
+  $scholar_mission = '<p><strong>Scholars at Harvard</strong> is a free web site building tool available to faculty, graduate students and visiting scholars at Harvard. It is one of two main Harvard installations of <strong>OpenScholar</strong> and a creation of Harvard’s <em>Institute for Quantitative Social Sciences.</em></p><p><strong>Scholars at Harvard</strong> (and the project-oriented <strong>Projects at Harvard</strong>) provide simple web site creation and management with a suite of features tailored to the particular needs of academics.</p>';
 
-  $project_mission = ' Academic Projects: Create a dynamic feature-full web site
-                       in seconds. For free! <span>(No, there’s no catch.)</span>';
+  $project_mission = '<p><strong>Projects at Harvard</strong> is a free web site building tool available to groups at Harvard wishing to create a site for their project. It is one of two main Harvard installations of <strong>OpenScholar</strong> and a creation of Harvard’s <em>Institute for Quantitative Social Sciences.</em></p><p><strong>Projects at Harvard</strong> (and the personal site-oriented <strong>Scholars at Harvard</strong>) provide simple web site creation and management with a suite of features tailored to the particular needs of academics.</p>';
 
   $conf['site_mission'] = variable_get('openscholar_installation_mode', 'scholar') == 'scholar' ? $scholar_mission : $project_mission;
 }
@@ -41,7 +39,7 @@ function iqss_openscholar_front_theme(){
 
   // load a different template file depending on the installation mode
   $install_mode = variable_get('openscholar_installation_mode', 'scholar');
-  
+
   $items["iqss_openscholar_front_content"] = array(
     'arguments' => array('tree' => array()),
     'template' => "iqss-openscholar-front-${install_mode}-content",
@@ -70,7 +68,7 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
     if (variable_get('openscholar_installation_mode', 'scholar') == 'project' ){
       unset($contexts['openscholar-section-sitewide_front']->block['views_openscholar_sites-block_2']);
     }
-    
+
     if (variable_get('openscholar_installation_mode', 'scholar') == 'scholar' ){
 	    //Remove the blocks that are moved to the content region
 	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_site_mission']);  //Site Mission Statement

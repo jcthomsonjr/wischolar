@@ -19,7 +19,8 @@
   	 </div>
   	 <?php endif;?>
   <div id="wrapper">
-    <div id="container">
+    <div id="wrapper-inner">
+      <div id="container">
 
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) : ?>
 
@@ -116,6 +117,7 @@
         </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->
+    </div><!-- /wrapper-inner -->
   </div> <!-- /wrapper -->
   <div id="extradiv"></div>
   <?php if ($closure_region): ?>
