@@ -71,6 +71,7 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
 
     if (variable_get('openscholar_installation_mode', 'scholar') == 'scholar' ){
 	    //Remove the blocks that are moved to the content region
+	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_top_links']);
 	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_site_mission']);  //Site Mission Statement
 	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_video_info']);  //Video
     }
