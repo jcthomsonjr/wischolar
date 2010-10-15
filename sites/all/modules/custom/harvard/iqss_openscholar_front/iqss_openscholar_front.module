@@ -74,6 +74,16 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
 	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_top_links']);
 	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_site_mission']);  //Site Mission Statement
 	    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_video_info']);  //Video
+	    
+	    $contexts['openscholar-section-sitewide_front']->block['iqss_openscholar_front_search'] = array(
+	      'module' => 'search',
+	      'delta' => 0,
+	      'weight' => 37,
+	      'region' => 'header_right',
+	      'status' => 0,
+	      'label' => 'Search',
+	      'type' => 'context_ui'
+	    );
     }
   }
 }
