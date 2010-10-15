@@ -19,6 +19,8 @@
           <h2>Harvard Scholars: Create a dynamic feature-full personal web site in seconds. For free!
           (No, there’s no catch.)</h2>
 
+          <div id="big-button"><?php print l('Create your web site!','site/register');?></div>
+
           <h3>Great features for academics</h3>
           <div class="illustration illust-widget"></div>
           <p>Manage your CV, bio, publications, blogs, announcements, links, image galleries, events, class materials. Automatically have your publications submitted to induces such as RePEc,

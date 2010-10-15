@@ -113,15 +113,16 @@ function _iqss_openscholar_front_block_top_links(){
  */
 function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real theme function
   $items = array();
-  $items[] = array(
-    'title' => 'About OpenScholar',
-    'href' => 'http://openscholar.harvard.edu',
-  );
 
   global $user;
   $items[] = array(
     'title' => $user -> uid ? 'Log out' : 'Log in',
     'href' =>  $user -> uid ? 'logout' : 'user',
+  );
+
+  $items[] = array(
+    'title' => 'Create your web site',
+    'href' => 'site/register',
   );
 
   $txt = 'Need a Site for a Project?';

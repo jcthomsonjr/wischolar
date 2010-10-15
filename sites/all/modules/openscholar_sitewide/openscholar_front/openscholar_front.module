@@ -26,7 +26,7 @@ function openscholar_front_init(){
 function openscholar_front_strongarm(){
     // Comments
   $conf['comment_sitewide_page'] = COMMENT_NODE_DISABLED;
-    
+
   return $conf;
 }
 
@@ -98,7 +98,7 @@ function openscholar_front_block($op = 'list', $delta = 0) {
         'site_activity' => array('info' => t('OpenScholar: Public Site Activity')),
         'recent_publications' => array('info' => t('OpenScholar: Recent Publications')),
       );
-      
+
       return $info;
     case 'view':
       //Functions defined in openscholar_front.blocks.inc
