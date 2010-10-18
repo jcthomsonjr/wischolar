@@ -8,9 +8,6 @@ body {
   margin-top: 0;
   }
 
-#container, #content-wrapper, #content-wrapper-inner, #content, #panel-wrapper, .panel {
-  background-color: transparent !important;
-  }
 
 #container {
   width: 1000px;
@@ -18,20 +15,29 @@ body {
   overflow:hidden;
   }
 
-.panel {
-  background: url(images/top-corners.png) 0 0 no-repeat transparent;
-  padding-top: 20px;
+#content-wrapper {
+  background: #fff;
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  border-radius: 25px;
   }
 
-#front-panel-2 {
-  background-position: -1000px 0;
+#content-wrapper .column {
+  padding-top: 30px;
   }
 
 #content-bottom {
-  background: url(images/bottom-corners.png) 0 100% no-repeat transparent;
   clear: both;
   padding-bottom: 19px;
   border-top: 1px solid #ccc;
+  }
+
+body.no-sidebars #content-main {
+  padding:30px;
+  }
+
+body.front #content-main {
+  padding:0;
   }
 
 /* HEADER ELEMENTS */
@@ -67,19 +73,30 @@ h2 {
   margin: 0 0 .5em 0;
   }
 
-#big-button a {
-  background:url(images/get-your-site-button.png) no-repeat;
+.big-button {
   text-align: center;
-  line-height: 32px;
+  font-size: .9em !important;
+  line-height: normal !important;
+  margin-top: .5em;
+  margin-bottom: 1em;
+  color: #777;
+  }
+
+.big-button a {
+  background:url(images/get-your-site-button.png) no-repeat transparent;
+  line-height: 48px !important;
+  font-size: 19px;
   display: block;
-  width: 177px;
-  height: 42px;
+  width: 226px;
+  height: 49px;
   color: #FFF;
   text-decoration: none;
   font-weight: bold;
+  margin: 0 auto;
+  /*
   text-shadow: #666 0px 1px 1px;
   text-shadow: rgba(51,51,51, .2) 0px 1px 1px;
-  margin-top:26px;
+  */
   }
 
 ul#top-front li#get-form a:hover {
@@ -150,11 +167,14 @@ ul#top-front li a:hover {
   width: 1000px;
   }
 
-.row {
+/*.
+row {
   background: #fff;
   }
+*/
 
-.row:after, #block-views-openscholar_sites-block_2:after {
+#content-wrapper:after,
+.row:after {
   content: '.';
   height: .1px;
   display:block;
@@ -166,7 +186,7 @@ ul#top-front li a:hover {
 #activity,
 #about-abstract {
   width: 235px;
-  padding:30px;
+  padding:50px 30px;
   float: left;
   }
 
@@ -179,8 +199,21 @@ ul#top-front li a:hover {
   font-size: 28px;
   }
 
+#publications .views-row {
+  margin-bottom: 0;
+  }
+
+#publications .views-row .node {
+  margin-bottom: .5em;
+  }
+
+#publications .toggle {
+  background-position: 3px;
+  }
+
 #activity {
   padding-left: 0;
+  padding-top:50px;
   }
 
 #activity h2 {
@@ -198,8 +231,11 @@ ul#top-front li a:hover {
 
 #about-abstract {
   width:257px;
-  padding: 8px 18px 0 18px;
+  padding: 28px 18px 0 18px;
   background: #e2e7eb;
+  -moz-border-radius: 0 25px 0 0;
+  -webkit-border-radius: 0 25px 0 0;
+  border-radius: 0 25px 0 0;
   }
 
 #about-abstract h2 {
@@ -252,7 +288,7 @@ p#learn-more-toggle a {
   }
 
 #activity-toggle {
-  margin: 0 0 .5em 49px;
+  margin: 1em 0 1.5em 49px;
   }
 
 #activity-toggle a, #activity-toggle a:visited {
@@ -263,6 +299,10 @@ p#learn-more-toggle a {
 
 #activity-toggle a:hover {
   text-decoration:underline;
+  }
+
+#activity .views-field-created {
+  color:#418f9e;
   }
 
 #video-link {
@@ -278,6 +318,10 @@ p#learn-more-toggle a {
   font-size:18px;
   line-height: 1.2em;
   margin-top: .6em;
+  }
+
+.row {
+  clear: both;
   }
 
 .row-video {
@@ -296,57 +340,31 @@ p#learn-more-toggle a {
   text-shadow: rgba(51,51,51, .2) 0px 1px 1px;
   }
 
-.featureblock {
-  float: left;
-  width:196px;
-  height: 295px;
-  margin: 0 2px;
-  background-color: #fff;
-  padding: 26px 24px;
-  border: 1px solid #BCBCBC;
-  }
-
-#feature-academic-content {
-  background:url(images/front-row2-create-anything.jpg);
-  }
-
-#content #feature-biblio {
-  background:url(images/front-row2-biblio.jpg);
-  border-left: none;
-  }
-
-#content #feature-look-feel {
-  background:url(images/front-row2-lookfeel.jpg);
-  border-left: none;
-  }
-
-#content #feature-collaborate {
-  background:url(images/front-row2-collaborate.jpg);
-  border-left: none;
-  }
-
 .row-openscholar {
-  padding: 23px 40px;
+  padding: 33px 23px;
   }
 
-.row-openscholar p {
-  float:left;
-  width: 286px;
+.row-openscholar p.docs,
+.row-openscholar p.os-link {
+  float: left;
+  width: 212px;
   font-size: 15px;
   line-height: 23px;
-  background: url(images/help-button.jpg) no-repeat 307px 50%;
-  padding-right: 169px;
-  min-height: 76px;
+  background: url(images/help-button.jpg) no-repeat 225px 50%;
   padding-top: 15px;
+  padding-right:121px;
+  margin-right: 20px;
+  border-right: 1px solid #ccc;
   }
 
 .row-openscholar p.os-link {
-  width:216px;
-  background: url(images/floating-glasses.png) no-repeat 336px 50%;
-  border-left: 2px solid #4c4d4e;
-  padding-left: 69px;
-  padding-right: 169px;
-  padding-top: 0;
+  background: url(images/floating-glasses.png) no-repeat 225px 50%;
+  margin-bottom: 0;
+  width: 230px;
+  }
+
+.row-openscholar .big-button {
+  float: left;
   }
 
 .front #footer {
@@ -390,12 +408,12 @@ p.copy a.poweredby {
   float:left;
   }
 
-#block-views-openscholar_sites-block_2 .views-exposed-form {
-  width: 287px;
+.block-search .content {
+  width: 200px;
   height: 32px;
   background: url(images/search.png) no-repeat 100% 0 transparent;
   float:right;
-  margin: 13px 33px 22px 0;
+  margin: 13px 0 0 0;
   }
 
 #block-views-openscholar_sites-block_2 .views-exposed-widget {
@@ -406,30 +424,33 @@ p.copy a.poweredby {
   float:none;
   }
 
-#block-views-openscholar_sites-block_2 .views-exposed-form .views-exposed-widget, #block-views-openscholar_sites-block_2 .views-exposed-form .views-exposed-widget .edit-title-wrapper,#block-views-openscholar_sites-block_2 .views-exposed-form .form-item, #block-views-openscholar_sites-block_2 .views-exposed-form .form-submit, #block-views-openscholar_sites-block_2 .views-exposed-form .clear-block {
+.edit-title-wrapper, .block-search .form-item, .block-search .form-submit, .block-search .clear-block {
   margin: 0;
   padding: 0;
   border: none;
   }
 
+.block-search label {
+  display:none;
+  }
 
-#block-views-openscholar_sites-block_2 .views-exposed-form .form-text {
+.block-search .form-text {
   float:right;
-  width:242px;
-  height: 22px;
+  width:164px;
+  height: 25px;
   margin:3px 9px 0 0;
   border: none;
   }
 
-#block-views-openscholar_sites-block_2 .views-exposed-form input.form-submit {
+.block-search input.form-submit {
   float:left;
   background: transparent;
   border: none;
-  width: 20px;
+  width: 12px;
   margin-top: 2px;
   margin-right: 0;
   margin-left:10px;
-  height: 23px;
+  height: 30px;
   text-indent: -9999em;
   padding: 0 !important;
   -moz-border-radius:0;
