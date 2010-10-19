@@ -59,7 +59,7 @@
       </div> <!-- /header -->
       <?php endif; ?>
 
-      <div id="content-wrapper">
+      <div id="content-wrapper" class="clear-block">
         <div id="content-wrapper-inner">
           <div id="content-main" class="column">
             <?php if (!empty($content_top) || $context_links): ?>

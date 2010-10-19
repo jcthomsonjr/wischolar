@@ -50,7 +50,7 @@ function scholar_publications_strongarm() {
 
   // Pathauto (optional) settings
   $conf["pathauto_node_biblio_pattern"] = "[space-og-path]/publications/[title-raw]";
-  
+
   $conf["biblio_base"] = "publications";
 
   return $conf;
@@ -492,7 +492,7 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (!$node->status) $s_output .= '<div id="node-'.$node->nid.'" class="node node-unpublished">';
 
   if (count($node->field_biblio_image[0]) && array_key_exists('filepath',$node->field_biblio_image[0])) {
-    $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover', $node->field_biblio_image[0]['filepath'],'','',NULL,FALSE), $node -> path, array('html' => TRUE)) . '</div>';
+    $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover_thumb', $node->field_biblio_image[0]['filepath'],'','',NULL,FALSE), $node -> path, array('html' => TRUE)) . '</div>';
   }
 
   // first add the styled entry...
