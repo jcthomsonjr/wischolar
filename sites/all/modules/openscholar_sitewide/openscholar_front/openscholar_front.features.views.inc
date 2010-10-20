@@ -179,6 +179,7 @@ function _openscholar_front_views_default_views() {
       'operator' => 'in',
       'value' => array(
         'vsite' => 'vsite',
+        'project' => 'project',
       ),
       'group' => '0',
       'exposed' => FALSE,
