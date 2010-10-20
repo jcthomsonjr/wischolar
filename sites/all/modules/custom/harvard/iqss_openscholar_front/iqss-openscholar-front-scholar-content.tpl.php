@@ -53,7 +53,6 @@
         $mission = openscholar_front_block('view','site_mission');
         print $mission['content'];
         ?>
-
       </div>
     </div><!--/row -->
     <div class="row row-features">
@@ -88,7 +87,7 @@
 
         <li id="categorize">
           <h3>Category Tagging</h3>
-          <p>Organize content and enable visitors to find pages quickly with category tagging. The tools for multi-level category tagging come standard with OpenScholar.</p>
+          <p>Organize content and enable visitors to find pages quickly with category tagging. The tools for multi-level category tagging come standard.</p>
         </li>
 
         <li id="pluggable-features">
