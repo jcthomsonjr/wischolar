@@ -16,9 +16,9 @@ body {
 
 #content-wrapper {
   background: #fff;
-  -moz-border-radius: 25px;
-  -webkit-border-radius: 25px;
-  border-radius: 25px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
   }
 
 #content-wrapper .column {
@@ -40,8 +40,6 @@ body.front #content-main {
   }
 
 /* HEADER ELEMENTS */
-
-
 
 #header {
     height: 110px;
@@ -69,10 +67,17 @@ body.front #content-main {
   height: 76px;
   }
 
-
 #header h1 a, #header h1 a:visited {
     color:#282828;
     }
+
+#header-right {
+  width: 218px;
+  }
+
+#header-wrapper {
+  padding-right: 258px;
+  }
 
 h2 {
   margin: 0 0 .5em 0;
@@ -126,6 +131,7 @@ body.front h2.title {
 
 ul#top-front {
   float:right;
+  margin-top: 12px;
   }
 
 ul#top-front li {
@@ -421,12 +427,16 @@ p.copy a.poweredby {
   float:left;
   }
 
+.block-search h3 {
+  display:none;
+  }
+
 .block-search .content {
-  width: 200px;
+  width: 218px;
   height: 32px;
   background: url(images/search.png) no-repeat 100% 0 transparent;
   float:right;
-  margin: 13px 0 0 0;
+  margin: 37px 0 0 0;
   }
 
 #block-views-openscholar_sites-block_2 .views-exposed-widget {
@@ -449,7 +459,7 @@ p.copy a.poweredby {
 
 .block-search .form-text {
   float:right;
-  width:164px;
+  width:184px;
   height: 25px;
   margin:3px 9px 0 0;
   border: none;
