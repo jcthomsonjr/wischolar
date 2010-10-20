@@ -30,32 +30,6 @@ function openscholar_front_strongarm(){
   return $conf;
 }
 
-/**
- * Implementation of hook_menu_alter
- * We need to do some stuff immediately after
- * the installation if finished; Alter the 'node' callback
- */
-function openscholar_front_menu_alter(&$items){
-  $items['node']['page callback'] = 'openscholar_front_osboot';
-}
-
-/**
- * Called imediatly after install to perform setup actions
- */
-function openscholar_front_osboot(){
-  $scholar_installed = variable_get('scholar_installed', 0);
-
-  if (! $scholar_installed) {
-  	module_load_include('inc', 'openscholar_front', 'openscholar_front_osboot');
-  	
-  	//Perform onetime boot functions
-  	_openscholar_front_osboot();
-
-  }
-
-  drupal_goto('welcome');
-
-}
 
 /**
  * Implementation of hook menu
