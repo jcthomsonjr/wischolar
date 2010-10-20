@@ -83,6 +83,11 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
 	  );
 
   }
+  
+  if (isset($contexts['openscholar-section-sitewide'])) {
+    //Remove the add site block from the iqss page, it is in the tpl
+    unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_top_links']);
+  }
 }
 
 /**
