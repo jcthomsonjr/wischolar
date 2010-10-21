@@ -64,6 +64,16 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
       'label' => 'OpenScholar: Top links',
       'type' => 'context_ui'
     );
+    
+    $contexts['openscholar-section-sitewide_front']->block['iqss_openscholar_front_top_links'] = array(
+      'module' => 'iqss_openscholar_front',
+      'delta' => 'copyright',
+      'weight' => 37,
+      'region' => 'footer',
+      'status' => 0,
+      'label' => 'OpenScholar: copyright',
+      'type' => 'context_ui'
+    );
 
 	  //Remove the blocks that are moved to the content region
 	  unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_top_links']);
@@ -98,6 +108,7 @@ function iqss_openscholar_front_block($op = 'list', $delta = 0) {
     case 'list':
       $info = array(
         'top_links' => array('info' => t('OpenScholar: Top links')),
+        'copyright' => array('info' => t('OpenScholar: Copyright')),
       );
 
       return $info;
@@ -109,6 +120,15 @@ function iqss_openscholar_front_block($op = 'list', $delta = 0) {
       }
       break;
   }
+}
+
+/**
+ * Display copyright info
+ */
+function _iqss_openscholar_front_block_copyright(){
+  
+  return array('subject' => '',
+               'content' > t("&copy; President & Fellows Harvard University. IQSS, 1737 Cambridge Street, Cambridge, MA, 02138 p: (617) 496-2450"));
 }
 
 /**
