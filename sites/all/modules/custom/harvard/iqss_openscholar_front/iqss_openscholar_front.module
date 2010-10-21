@@ -114,7 +114,7 @@ function iqss_openscholar_front_block($op = 'list', $delta = 0) {
 /**
  * hook preprocess page
  */
-function iqss_openscholar_preprocess_page(&$vars){
+function iqss_openscholar_front_preprocess_page(&$vars){
   
   //Add the footer copyright message for iqss sites
   if ('sitewide_front' == context_get('openscholar', 'section')) {
