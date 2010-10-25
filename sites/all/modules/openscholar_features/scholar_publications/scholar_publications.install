@@ -10,7 +10,7 @@ function scholar_publications_install(){
 
 function scholar_publications_enable() {
 	$weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'biblio' AND name = 'vsite'"));
-  _scholar_publications_set_system_weight($weight+15);	
+  _scholar_publications_set_system_weight($weight+15);
 }
 
 
@@ -65,4 +65,47 @@ COMMON;
   //now update the contributor data for the nodes according the field changes above
   db_query("UPDATE {biblio_contributor} SET auth_category = %d WHERE auth_type > %d", 2, 5);
   return $result;
+}
+
+/**
+ *  Update the biblio config
+ */
+function scholar_publications_update_6004(&$sandbox){
+  $res = array();
+  $res[0] = array(
+      'success' => false,
+      'query' => 'Unable to locate biblio_settings.inc',
+    );
+  
+  if(!file_exists(drupal_get_path('module', 'scholar_publications') .'/includes/biblio_settings.inc')) return;
+  
+  list($biblio_field_type, $biblio_field_type_data, $biblio_contributor_type, $biblio_contributor_type_data) = include(drupal_get_path('module', 'scholar_publications') .'/includes/biblio_settings.inc');
+  
+  db_query('DELETE FROM {biblio_field_type}');
+  foreach($biblio_field_type as $type){
+    drupal_write_record('biblio_field_type', $type);
+  }
+  
+  db_query('DELETE FROM {biblio_field_type_data}');
+  foreach($biblio_field_type_data as $type_data){
+    drupal_write_record('biblio_field_type_data', $type_data);
+  }
+
+  db_query('DELETE FROM {biblio_contributor_type}');
+  foreach($biblio_contributor_type as $contrib_type){
+    drupal_write_record('biblio_contributor_type', $contrib_type);
+  }
+
+  db_query('DELETE FROM {biblio_contributor_type_data}');
+  foreach($biblio_contributor_type_data as $contrib_type_data){
+    //Run the query manually to override the serials
+    db_query("INSERT INTO {biblio_contributor_type_data} (auth_type, title, hint) VALUES ( %d, '%s', '%s')",array($contrib_type_data['auth_type'],$contrib_type_data['title'],$contrib_type_data['hint']));
+  }
+  
+  $res[0] = array(
+      'success' => true,
+      'query' => 'Biblio settings have been updated',
+    );
+    
+  return $res;
 }
