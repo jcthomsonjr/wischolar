@@ -64,7 +64,7 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
       'label' => 'OpenScholar: Top links',
       'type' => 'context_ui'
     );
-    
+
 	  //Remove the blocks that are moved to the content region
 	  unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_top_links']);
 	  unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_site_mission']);
@@ -115,10 +115,10 @@ function iqss_openscholar_front_block($op = 'list', $delta = 0) {
  * hook preprocess page
  */
 function iqss_openscholar_front_preprocess_page(&$vars){
-  
+
   //Add the footer copyright message for iqss sites
   if ('sitewide_front' == context_get('openscholar', 'section')) {
-    $vars['footer_message'] = t("&copy; President & Fellows Harvard University. IQSS, 1737 Cambridge Street, Cambridge, MA, 02138 p: (617) 496-2450");
+    $vars['footer_message'] = t("&copy; President &amp; Fellows Harvard University. IQSS, 1737 Cambridge Street, Cambridge, MA, 02138 p: (617) 496-2450");
   }
 }
 
