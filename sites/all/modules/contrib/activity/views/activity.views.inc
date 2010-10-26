@@ -1,5 +1,5 @@
 <?php
-// $Id: activity.views.inc,v 1.1.2.23 2010/06/01 04:41:17 scottreynolds Exp $
+// $Id: activity.views.inc,v 1.1.2.24 2010/07/18 21:17:20 scottreynolds Exp $
 /**
  * @file: provides views data integration for activity module as the base table
  */
@@ -77,6 +77,22 @@ function activity_views_data() {
     ),
     'sort' => array(
       'handler' => 'views_handler_sort_date',
+    ),
+  );
+  $data['activity']['status'] = array(
+    'title' => t('Published'),
+    'help' => t('Whether or not the activity is published.'),
+    'field' => array(
+      'handler' => 'views_handler_field_boolean',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Published'),
+      'type' => 'yes-no',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
     ),
   );
   

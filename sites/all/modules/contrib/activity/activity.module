@@ -1,5 +1,5 @@
 <?php
-// $Id: activity.module,v 1.1.2.2.2.30.2.31.2.91 2010/05/25 04:51:11 scottreynolds Exp $
+// $Id: activity.module,v 1.1.2.2.2.30.2.31.2.97 2010/10/10 21:34:28 scottreynolds Exp $
 /**
  * @file
  * Primarily Drupal hooks and global API functions to manipulate activity.
@@ -89,6 +89,9 @@ function comment_activity_info() {
   foreach (node_get_types() as $type) {
     $info->type_options[$type->type] = t($type->name);
   }
+
+  $info->list_callback = 'comment_list_activity_actions';
+  $info->context_load_callback = 'comment_load_activity_context';
   return $info;
 }
 
@@ -102,6 +105,9 @@ function node_activity_info() {
   foreach (node_get_types() as $type) {
     $info->type_options[$type->type] = t($type->name);
   }
+
+  $info->list_callback = 'node_list_activity_actions';
+  $info->context_load_callback = 'node_load_activity_context';
   return $info;
 }
 
@@ -112,6 +118,9 @@ function user_activity_info() {
   $info->objects = array('account' => 'account'); // array key is the label
   $info->hooks = array('user' => array('insert', 'update', 'login', 'logout', 'view'));
   $info->type_options = user_roles();
+
+  $info->list_callback = 'user_list_activity_actions';
+  $info->context_load_callback = 'user_load_activity_context';
   return $info;
 }
 
@@ -124,7 +133,7 @@ function activity_help($path, $arg) {
       $output = '<p>'. t('For more information, see the online handbook entry for <a href="@activity">Activity module</a>.', array('@activity' => 'http://drupal.org/handbook/modules/activity/')) .'</p>';
       return $output;
     case 'admin/build/activity':
-      $output = '<p>'. t('Please read the developer documentation in the DEVELOPER.txt or in the <a href="@activity">handbook entry</a>.', array('@activity' => 'http://drupal.org/handbook/activity/developer')) .'</p>';
+      $output = '<p>'. t('For help on configuring activity, please read this <a href="@guide">guide</a>. If you are developing for Activity2, please read the developer documentation in DEVELOPER.txt or in the <a href="@activity">handbook entry</a>.', array('@guide' => 'http://http://groups.drupal.org/node/21817', '@activity' => 'http://drupal.org/node/626914')) .'</p>';
       return $output;
     case 'admin/build/actions/configure':
       return '<p>'. t('<strong>Please see <a href="@activity">this thread</a> for more details on how to setup an activity.</strong>', array('@activity' => 'http://groups.drupal.org/node/19249#comment-67046')) .'</p>';
@@ -224,8 +233,63 @@ function activity_menu() {
     'file' => 'activity.admin.inc',
     'type' => MENU_CALLBACK,
   );
+  $items['admin/build/activity/batch/%activity_batch/%'] = array(
+    'title' => 'Batch Update',
+    'page callback' => 'activity_batch_regenerate',
+    'page arguments' => array(4),
+    'access callback' => 'activity_batch_access',
+    'access arguments' => array(4, 5),
+    'file' => 'activity.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
+
+/**
+ * Menu loader function to load batch-able action_id.
+ *
+ * @param $aid
+ *  The action id for the template.
+ *
+ * @return array / FALSE
+ *  An array of events to batch if the action is batch-able or FALSE
+ */
+function activity_batch_load($aid) {
+  $trigger_assignment = db_fetch_object(db_query("SELECT hook, op FROM {trigger_assignments} WHERE aid = '%s'", $aid));
+
+  // Load the action to make sure aid is saved to the parameters, otherwise this
+  // activity template is up to date with the batch api. This is for backwards
+  // compatibility.
+  $action = actions_load($aid);
+  $parameters = unserialize($action->parameters);
+  if (!empty($trigger_assignment) && !empty($parameters['aid'])) {
+    $module = activity_module_name($trigger_assignment->hook);
+    $info = activity_get_module_info($module);
+    if (!empty($info->list_callback) && !empty($info->context_load_callback)) {
+      $callback = $info->list_callback;
+      $listing = $callback($trigger_assignment->hook, $trigger_assignment->op, variable_get('activity_expire', 0));
+      if (!empty($listing)) {
+        return array($aid => $listing);
+      }
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Menu Access callback to start a batch regeneration.
+ *
+ * @param array $batch
+ *  The single batch operation.
+ * @param string $token
+ *  The token generated for this action.aid.
+ *
+ * @return TRUE/FALSE
+ */
+function activity_batch_access($batch, $token) {
+  return user_access('administer activity') && drupal_valid_token($token, key($batch));
+}
+
 
 /**
  * Menu Access callback for delete Activity.
@@ -279,6 +343,29 @@ function activity_comment(&$comment, $op) {
     }
     activity_delete($aids);
   }
+
+  if ($op == 'publish') {
+    $rows = db_query("SELECT a.aid, a.status as activity_status, u.status as user_status, n.status as node_status FROM {activity} a INNER JOIN {users} u ON a.uid = u.uid INNER JOIN {node} n ON a.nid = n.nid WHERE a.uid <> 0 AND a.type = 'comment' AND a.eid = %d", $comment->cid);
+
+    $update_statuses = array();
+
+    while ($row = db_fetch_object($rows)) {
+      $new_status = ($row->user_status == 1 && $row->node_status == 1) ? 1 : 0;
+      if ($new_status != $row->activity_status) {
+        $update_statuses[$new_status][] = $row->aid;
+      }
+    }
+
+    foreach ($update_statuses as $status => $aids) {
+      $arguments = $aids;
+      array_unshift($arguments, $status);
+      db_query("UPDATE {activity} SET status = %d WHERE aid IN (" . db_placeholders($aids) . ")", $arguments);
+    }
+  }
+
+  if ($op == 'unpublish') {
+    db_query("UPDATE {activity} SET status = 0 WHERE type = 'comment' AND eid = %d", $comment->cid);
+  }
 }
 
 /**
@@ -294,6 +381,27 @@ function activity_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     }
     activity_delete($aids);
   }
+
+  if ($op == 'update') {
+    // Find all the Activities for this node and determine status bit for each.
+    $db_result = db_query("SELECT a.aid, u.status as user_status, a.status as activity_status FROM {activity} a INNER JOIN {users} u ON u.uid = a.uid WHERE a.uid <> 0 AND a.nid = %d", $node->nid);
+
+    $update_statuses = array();
+    while ($row = db_fetch_object($db_result)) {
+      $new_status = ($row->user_status == 1 && $node->status == 1) ? 1 : 0;
+      if ($new_status != $row->activity_status) {
+        $update_statuses[$new_status][] = $row->aid;
+      }
+    }
+    foreach ($update_statuses as $status => $aids) {
+      $arguments = $aids;
+      // Shift the status on top of $aids. This allows us to pass in one array
+      // to db_query.
+      array_unshift($arguments, $status);
+      db_query("UPDATE {activity} SET status = %d WHERE aid IN (" . db_placeholders($aids) . ")", $arguments);
+    }
+
+  }
 }
 
 /**
@@ -308,6 +416,39 @@ function activity_user($op, &$edit, &$account, $category = NULL) {
       $aids[] = $aid_obj->aid;
     }
     activity_delete($aids);
+  }
+  if ($op == 'after_update') {
+    if ($account->status == 0) {
+      db_query("UPDATE {activity} SET status = 0 WHERE uid = %d", $account->uid);
+    }
+    else {
+      $rows = db_query("SELECT a.aid, a.status as activity_status, a.eid, a.type, a.nid FROM {activity} a WHERE a.uid = %d", $account->uid);
+
+      $publish = array();
+
+      while ($row = db_fetch_object($rows)) {
+        if ($row->activity_status == 0) {
+          $new_status = 1;
+          if (!empty($row->nid)) {
+            $node_status = db_result(db_query("SELECT status FROM {node} WHERE nid = %d", $row->nid));
+            $new_status = $node_status;
+          }
+          if ($row->type == 'comment') {
+            $comment_status = db_result(db_query("SELECT status FROM {comments} WHERE cid = %d", $row->eid));
+            $new_status = ($new_status == 1 && $comment_status == COMMENT_PUBLISHED) ? 1 : 0;
+          }
+
+          if ($new_status == 1) {
+            $publish[] = $row->aid;
+          }
+
+        }
+      }
+
+      if (!empty($publish)) {
+        db_query("UPDATE {activity} SET status = 1 WHERE aid IN (" . db_placeholders($publish) . ")", $publish);
+      }
+    }
   }
 }
 
@@ -398,12 +539,19 @@ function activity_token_values($type, $object = NULL, $options = array()) {
  * activity_get_module_info()
  */
 function activity_record_check($object, $context, $token_objects, $activity_object) {
-  global $user;
+  $account = user_load($context['actor']);
 
   // First check to see if the user opts out.
   $aid = db_result(db_query("SELECT aid FROM {trigger_assignments} WHERE hook = '%s' AND op = '%s'", $context['hook'], $context['op']));
-  if (isset($user->activity_ignore[$aid]) && $user->activity_ignore[$aid] == 0) {
+  if (isset($account->activity_ignore[$aid]) && $account->activity_ignore[$aid] == 0) {
     // user has opted out of this particular action
+    return FALSE;
+  }
+
+  // Node View is 'special'. Handle it here.
+  // argument1 is $teaser and argument2 is $view. The only time node view should
+  // be recorded is when $teaser is FALSE and $view is TRUE.
+  if ($context['hook'] == 'nodeapi' && $context['op'] == 'view' && ($context['argument1'] || !$context['argument2'])) {
     return FALSE;
   }
 
@@ -428,8 +576,14 @@ function activity_record_check($object, $context, $token_objects, $activity_obje
  * @param $context
  *  holds the messages
  */
-function activity_record($object, $context) {
-  global $user;
+function activity_record($object, $context, $a1 = NULL, $a2 = NULL) {
+  $context += array(
+    'actor' => $GLOBALS['user']->uid,
+    'created' => time(),
+    'argument1' => $a1,
+    'argument2' => $a2,
+  );
+
   // find what the type is so we can do the tokenizing
   $activity_object = FALSE;
   foreach (activity_get_module_info() as $module => $info) {
@@ -453,7 +607,7 @@ function activity_record($object, $context) {
       $objects[$object_key] = drupal_clone($context[$object_key]);
     }
   }
-  
+
   // types is the array for the token replace
   // it uses key 'user' not 'account'
   if (isset($objects['account'])) {
@@ -463,9 +617,12 @@ function activity_record($object, $context) {
     $objects[$type] = drupal_clone($context[$type]);
   }
 
-  // @TODO: when doing a bulk update this will break.
-  if (!empty($user->uid) && $user->uid != $objects[$type]->uid) {
-    $objects[$type]->uid = $user->uid;
+  if (!empty($context['actor']) && $context['actor'] != $objects[$type]->uid) {
+    $objects[$type]->uid = $context['actor'];
+  }
+
+  if (empty($objects['user'])) {
+    $objects['user'] = user_load($context['actor']);
   }
   
   drupal_alter('activity_objects', $objects, $type);
@@ -507,24 +664,39 @@ function activity_record($object, $context) {
   }
   // create a record
   $nid = NULL;
+
+  // Anon user is blocked by default and cannot be unblocked. i.e their status
+  // can never and will never change, always being 0. Thus, anon
+  // gets a pass through.
+  if ($context['actor'] != 0) {
+    $published = db_result(db_query("SELECT status FROM {users} WHERE uid = %d", $context['actor'])) == 1;
+  }
+  else {
+    $published = TRUE;
+  }
+
   if (isset($context['node']->nid)) {
     $nid = $context['node']->nid;
     // if the trigger op = 'presave' and you're creating a new node, $nid = null
     // because the record hasn't yet been saved to the node table
+    $published = $published && $context['node']->status == 1;
   }
   
   // NOTICE: no elseif(). This is because if the comment is part of the context
   // we want that nid as its the lowest level player. Doubt that will ever be an issue
   if (isset($context['comment']->nid)) {
     $nid = $context['comment']->nid;
+    $published = $published && $context['comment']->status == COMMENT_PUBLISHED;
   }
 
   $record = new stdClass();
-  $record->uid = (!empty($objects[$type]->uid)) ? $objects[$type]->uid : $user->uid;
+  $record->uid = $context['actor'];
   $record->op = $context['op'];
   $record->type = $activity_object->name;
   $record->nid = $nid;
-  $record->created = time(); // for PHP4 compat. for D7 use REQUEST_TIME
+  $record->created = $context['created'];
+  $record->actions_id = $context['aid'];
+  $record->status = ($published) ? 1 : 0;
   
   // handle the entity id
   if (!empty($info->eid_field) && isset($context[$type]->{$info->eid_field})) {
@@ -799,11 +971,17 @@ function activity_theme($existing, $type, $theme, $path) {
 function theme_activity_settings_actions_list($results) {
   $header = array(t('Module'), t('Trigger'), t('Operations'));
   foreach ($results as $result) {
+    $links = array(
+      l('configure', 'admin/build/activity/configure/'. $result['aid']),
+      l('delete', 'admin/build/activity/delete/'. $result['aid'])
+    );
+    if (activity_batch_load($result['aid'])) {
+      $links[] = l('regenerate', 'admin/build/activity/batch/' . $result['aid'] . '/' . drupal_get_token($result['aid']));
+    }
     $rows[] = array(
       drupal_ucfirst(str_replace('_', ' ', $result['hook'])),
       $result['description'],
-      l('configure', 'admin/build/activity/configure/'. $result['aid']) .' | '.
-      l('delete', 'admin/build/activity/delete/'. $result['aid']),
+      implode(' | ', $links),
     );
   }
   $output = theme('table', $header, $rows);

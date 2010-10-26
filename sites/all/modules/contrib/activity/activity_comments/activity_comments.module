@@ -1,5 +1,5 @@
 <?php
-// $Id: activity_comments.module,v 1.1.2.1 2010/01/13 05:25:29 scottreynolds Exp $
+// $Id: activity_comments.module,v 1.1.2.3 2010/09/22 02:15:38 sirkitree Exp $
 
 /**
  * @file
@@ -131,15 +131,15 @@ function activity_comments_list($aid = 0) {
 function activity_comments_form($form_state, $aid, $limit, $direction) {
   $form['activity_form_items'] = array(
     '#access' => user_access('activity post comments'),
-    '#prefix' => '<div class="container-inline">',
+    '#prefix' => '<div class="container-inline activity-comment-add clear-block">',
     '#suffix' => '</div>',
   );
   $form['activity_form_items']['activity_comment'] = array(
-    '#type' => 'textfield',
-    '#maxlength' => 250,
-    '#size' => 25,
-    '#default_value' => t('Write a comment'),
+    '#type' => 'textarea',
+    '#rows' => 2,
+    '#resizable' => FALSE,
     '#attributes' => array('class' => 'activity-comment-text'),
+    '#default_value' => t('Write a Comment'),
   );
   $form['aid'] = array(
     '#type' => 'value',
@@ -288,7 +288,7 @@ function theme_activity_comments_comments($aid, $comments = array(), $limit = 10
  */
 function template_preprocess_activity_comments_comment(&$vars, $hook) {
   $vars['username'] = theme('username', $vars['comment']);
-  $vars['comment_value'] = check_plain($vars['comment']->comment);
+  $vars['comment_value'] = check_markup($vars['comment']->comment);
   $vars['date'] = format_date($vars['comment']->timestamp);
   if (activity_comments_delete_access($vars['comment']->cid)) {
     $vars['delete_link'] = l(t('Delete'), 'activity/comments/delete/' . $vars['comment']->cid, array('query' => drupal_get_destination()));

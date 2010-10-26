@@ -1,5 +1,5 @@
 <?php
-// $Id: activity.views_default.inc,v 1.1.2.14 2010/03/15 18:55:50 scottreynolds Exp $
+// $Id: activity.views_default.inc,v 1.1.2.15 2010/07/18 21:17:20 scottreynolds Exp $
 
 /**
  * Implementation of hook_views_default_views().
@@ -19,81 +19,98 @@ function activity_views_default_views() {
   $view->disabled = TRUE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('relationships', array(
-    'nid' => array(
-      'label' => 'Node',
-      'required' => 0,
-      'id' => 'nid',
-      'table' => 'activity',
-      'field' => 'nid',
-      'relationship' => 'none',
-    ),
-    'uid' => array(
-      'label' => 'User',
-      'required' => 1,
-      'id' => 'uid',
-      'table' => 'activity',
-      'field' => 'uid',
-      'relationship' => 'none',
-    ),
-  ));
-  $handler->override_option('fields', array(
-    'message' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
+      'nid' => array(
+        'label' => 'Node',
+        'required' => 0,
+        'id' => 'nid',
+        'table' => 'activity',
+        'field' => 'nid',
+        'relationship' => 'none',
       ),
-      'exclude' => 0,
-      'id' => 'message',
-      'table' => 'activity_messages',
-      'field' => 'message',
-      'relationship' => 'none',
-    ),
-  ));
+      'uid' => array(
+        'label' => 'User',
+        'required' => 1,
+        'id' => 'uid',
+        'table' => 'activity',
+        'field' => 'uid',
+        'relationship' => 'none',
+      ),
+    ));
+  $handler->override_option('fields', array(
+      'message' => array(
+        'label' => '',
+        'alter' => array(
+          'alter_text' => 0,
+          'text' => '',
+          'make_link' => 0,
+          'path' => '',
+          'alt' => '',
+          'prefix' => '',
+          'suffix' => '',
+          'help' => '',
+          'trim' => 0,
+          'max_length' => '',
+          'word_boundary' => 1,
+          'ellipsis' => 1,
+          'html' => 0,
+        ),
+        'exclude' => 0,
+        'id' => 'message',
+        'table' => 'activity_messages',
+        'field' => 'message',
+        'relationship' => 'none',
+      ),
+    ));
   $handler->override_option('sorts', array(
-    'aid' => array(
-      'order' => 'DESC',
-      'id' => 'aid',
-      'table' => 'activity',
-      'field' => 'aid',
-      'relationship' => 'none',
-    ),
-  ));
+      'aid' => array(
+        'order' => 'DESC',
+        'id' => 'aid',
+        'table' => 'activity',
+        'field' => 'aid',
+        'relationship' => 'none',
+      ),
+    ));
+  $handler->override_option('filters', array(
+      'status' => array(
+        'operator' => '=',
+        'value' => '1',
+        'group' => '0',
+        'exposed' => FALSE,
+        'expose' => array(
+          'operator' => FALSE,
+          'label' => '',
+        ),
+        'id' => 'status',
+        'table' => 'activity',
+        'field' => 'status',
+        'relationship' => 'none',
+      ),
+    ));
   $handler->override_option('access', array(
-    'type' => 'none',
-  ));
+      'type' => 'none',
+    ));
   $handler->override_option('cache', array(
-    'type' => 'none',
-  ));
+      'type' => 'none',
+    ));
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 25);
   $handler->override_option('use_pager', '1');
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('path', 'activity/all');
   $handler->override_option('menu', array(
-    'type' => 'none',
-    'title' => '',
-    'description' => '',
-    'weight' => 0,
-    'name' => 'navigation',
-  ));
+      'type' => 'none',
+      'title' => '',
+      'description' => '',
+      'weight' => 0,
+      'name' => 'navigation',
+    ));
   $handler->override_option('tab_options', array(
-    'type' => 'none',
-    'title' => '',
-    'description' => '',
-    'weight' => 0,
-  ));
+      'type' => 'none',
+      'title' => '',
+      'description' => '',
+      'weight' => 0,
+      'name' => 'navigation',
+    ));
   $views[$view->name] = $view;
   
   // Activity Maintenance
@@ -105,7 +122,7 @@ function activity_views_default_views() {
   $view->base_table = 'activity';
   $view->is_cacheable = FALSE;
   $view->api_version = 2;
-  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+  $view->disabled = TRUE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('relationships', array(
     'uid' => array(

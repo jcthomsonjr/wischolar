@@ -1,5 +1,5 @@
 <?php
-// $Id: node.activity.inc,v 1.1.2.20 2010/05/15 22:29:17 scottreynolds Exp $
+// $Id: node.activity.inc,v 1.1.2.22 2010/08/03 15:48:10 scottreynolds Exp $
 
 /**
  * @file
@@ -72,10 +72,70 @@ function node_activity_access_grants($account) {
 }
 
 /**
- * Implementation of hook_activity_objects_alter().
+ * List all the Activity Actions that match the hook and op.
+ *
+ * @param string $hook
+ *  The hook that is to be fired.
+ * @param string $op
+ *  The op to be used in the hook.
+ * @param int $max_age
+ *  The max age from now.
+ *
+ * @return array
+ *  An array of arrays with 'id', 'created' and 'actor' keys.
  */
-function node_activity_objects_alter(&$token_objects, $activity_type) {
-  if ($activity_type == 'node') {
-    $token_objects['user'] = $GLOBALS['user'];
+function node_list_activity_actions($hook, $op, $max_age) {
+  $actions = array();
+
+  if (!empty($max_age)) {
+    $min_time = time() - $max_age;
   }
+  else {
+    $min_time = 0;
+  }
+
+
+  if ($op == 'insert' ) {
+    $sql = "SELECT nid as id, created as created, uid as actor FROM {node} WHERE created > %d";
+  }
+  elseif ($op == 'view') {
+    $sql = "SELECT nid as id, timestamp as created, uid as actor FROM {history} WHERE timestamp > %d";
+  }
+
+  if (isset($sql)) {
+    $result = db_query($sql, $min_time);
+    while ($row = db_fetch_array($result)) {
+      $actions[] = $row;
+    }
+  }
+
+  return $actions;
+}
+
+/**
+ * Load up the context array to pass to activity_record.
+ *
+ * @param string $hook
+ *  The hook that is being fired.
+ * @param string $op
+ *  The op for that hook.
+ * @param string $id
+ *  The id for the action.
+ *
+ * @return array
+ *   The context array for activity_record.
+ * @see trigger_nodeapi
+ */
+function node_load_activity_context($hook, $op, $id) {
+  $node = node_load($id);
+  $context = array();
+  if (!empty($node)) {
+    $context = array(
+      'hook' => $hook,
+      'op' => $op,
+      'node' => $node,
+    );
+  }
+
+  return $context;
 }

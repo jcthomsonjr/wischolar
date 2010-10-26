@@ -1,5 +1,5 @@
 <?php
-// $Id: activity.install,v 1.1.2.1.2.6.2.4.2.15 2010/05/16 04:03:23 scottreynolds Exp $
+// $Id: activity.install,v 1.1.2.1.2.6.2.4.2.17 2010/07/18 21:17:20 scottreynolds Exp $
 
 function activity_install() {
   drupal_install_schema('activity');
@@ -55,12 +55,26 @@ function activity_schema() {
         'not null' => TRUE,
         'unsigned' => TRUE,
       ),
+      'actions_id' => array(
+        'description' => 'Foreign key to the actions table.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'status' => array(
+        'description' => 'Whether or not this Activity is published',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 1,
+      ),
     ),
     'primary key' => array('aid'),
     'indexes' => array(
       'nid' => array('nid'),
       'eid' => array('eid'),
-      'created' => array('created'),
+      'created' => array('created'), // Probably not at all useful.
+      'actions_id' => array('actions_id'),
     ),
   );
   
@@ -213,5 +227,42 @@ function activity_bad_trigger_weight() {
 function activity_update_6201() {
   $ret = array();
   db_change_field($ret, 'activity_messages', 'amid', 'amid', array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE));
+  return $ret;
+}
+
+/**
+ * Update {activity} table to have the actions_id field.
+ * @see: http://drupal.org/node/463854
+ */
+function activity_update_6202() {
+  $ret = array();
+
+  db_add_field($ret, 'activity', 'actions_id', array(
+        'description' => 'Foreign key to the actions table.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+    array('indexes' => array('actions_id' => array('actions_id'))));
+
+  return $ret;
+}
+
+/**
+ * Update {activity} table to have a status field
+ * @see: http://drupal.org/node/582230
+ */
+function activity_update_6203() {
+  $ret = array();
+
+  db_add_field ($ret, 'activity', 'status', array(
+      'description' => 'Whether or not this Activity is published',
+      'type' => 'int',
+      'size' => 'tiny',
+      'default' => 1,
+    )
+ );
+
   return $ret;
 }

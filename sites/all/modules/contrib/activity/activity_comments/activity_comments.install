@@ -80,7 +80,6 @@ function activity_comments_schema() {
  */ 
 function activity_comments_install() {
   drupal_install_schema('activity_comments');
-  drupal_install_schema('activity_comments_stats');
 }
 
 /**
@@ -88,5 +87,4 @@ function activity_comments_install() {
  */
 function activity_comments_uninstall() {
   drupal_uninstall_schema('activity_comments');
-  drupal_uninstall_schema('activity_comments_stats');
 }

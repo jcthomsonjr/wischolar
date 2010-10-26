@@ -1,4 +1,4 @@
-// $Id: activity_comments.js,v 1.1.2.1 2010/01/13 05:25:29 scottreynolds Exp $
+// $Id: activity_comments.js,v 1.1.2.3 2010/08/03 16:27:29 scottreynolds Exp $
 
 (function ($) {
   /**
@@ -15,28 +15,34 @@
   };
   
   /**
-   * Handles the default text in the comment text field.
+   * Handles default text and enter key on the comment textfield.
    */
-  Drupal.behaviors.activityDefaultText = function (context) {
-    $('input.activity-comment-text:not(.activity-default-text-processed)').each(function (i) {
-      // we you focus on the form area, hide the default text.
+  Drupal.behaviors.commentTextEvents = function (context) {
+    $('textarea.activity-comment-text:not(.activity-comment-processed)').each(function (i) {
+      // Focus on the form area, hide the default text.
       $(this).focus(function() {
-        if ($(this).val() == Drupal.settings.activity_comments.default_text) {
-          $(this).val('');
+	$this = $(this);
+        if ($this.val() == Drupal.settings.activity_comments.default_text) {
+          $this.val('');
         }
-      });
-      // we you leave focus of the form area and you haven't entered anything
-      // add back in the default text.
-      $(this).blur(function() {
-        if ($(this).val() == '') {
-          $(this).val(Drupal.settings.activity_comments.default_text);
+        $this.parents('.activity-comment-add').removeClass('activity-comment-onerow');
+      }).blur(function() {
+	$this = $(this);
+        if ($this.val() == '') {
+          $this.val(Drupal.settings.activity_comments.default_text);
         }
-      });
-    }).addClass('activity-default-text-processed');
+	$this.parents('.activity-comment-add').addClass('activity-comment-onerow');
+      }).keypress(function (e) {  
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+          $(this).parents('form').find('input[type=submit]').mousedown();
+          return false;
+        }
+      }).blur().addClass('activity-comment-processed');
+    });
   };
   
   /**
-   * Hanldes the destination for the delete link.
+   * Handles the destination for the delete link.
    */
   Drupal.behaviors.activityDestination = function(context){
     $('.activity-comments-delete a:not(.activity-destination-processed)').each(function() {

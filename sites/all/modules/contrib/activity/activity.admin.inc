@@ -1,5 +1,5 @@
 <?php
-// $Id: activity.admin.inc,v 1.1.2.42 2010/06/01 01:11:04 scottreynolds Exp $
+// $Id: activity.admin.inc,v 1.1.2.43 2010/07/18 19:03:39 scottreynolds Exp $
 
 /**
  * @file activity.admin.inc
@@ -132,8 +132,10 @@ function activity_form_submit($form, &$form_state) {
       $params['everyone-pattern-' . $id] = $values['messages']['everyone-pattern-' . $id];
     }
     $desc = $values['messages']['description'];
+    $update = TRUE;
     if (!$aid = $values['messages']['aid']) {
       $aid = NULL;
+      $update = FALSE;
     }
     
     // handle the types, thanks Checkboxes :-D
@@ -146,6 +148,13 @@ function activity_form_submit($form, &$form_state) {
     
     // Save the action
     include_once('includes/actions.inc');
+    // In order to save the aid into the actions.parameters column, when a new
+    // template is created, the aid must be generated. Can look into using
+    // {actions_aid} table for this as well. SELECT aid + 1 ORDER BY aid DESC ?
+    if (!$update) {
+      $aid = actions_save('activity_record', 'activity', $params, $desc);
+    }
+    $params['aid'] = $aid;
     $aid = actions_save('activity_record', 'activity', $params, $desc, $aid);
 
     // Save the trigger assignment
@@ -449,6 +458,11 @@ function activity_actions_delete_form(&$form_state, $action) {
     '#type' => 'hidden',
     '#value' => $action->aid,
   );
+  $form['delete_existing'] = array(
+    '#type' => 'checkbox',
+    '#default_value' => 0,
+    '#title' => t('Delete Existing Activities for this template'),
+  );
   return confirm_form($form,
     t('Are you sure you want to delete the action %action?', array('%action' => $action->description)),
     'admin/build/activity',
@@ -467,8 +481,20 @@ function activity_actions_delete_form_submit($form, &$form_state) {
   $action = actions_load($aid);
   actions_delete($aid);
   watchdog('user', 'Deleted action %aid (%action)', array('%aid' => $aid, '%action' => $action->description));
-  drupal_set_message(t('Action %action was deleted', array('%action' => $description)));
+  drupal_set_message(t('Action %action was deleted', array('%action' => $action->description)));
   $form_state['redirect'] = 'admin/build/activity';
+
+  if (!empty($form_state['values']['delete_existing'])) {
+    $batch = array(
+      'title' => t('Deleting Existing @title', array('@title' => $action->description)),
+      'operations' => array(
+        array('activity_batch_delete', array($aid)),
+      ),
+      'file' => drupal_get_path('module', 'activity') . '/activity.admin.inc',
+    );
+
+    batch_set($batch);
+  }
 }
 
 /**
@@ -651,4 +677,131 @@ function activity_access_rebuild_process(&$context) {
     // If finished, delete the sandbox.
     unset($context['sandbox']);
   } 
+}
+
+/**
+ * Set a batch process to regenerate activity for a specific hook and op pair.
+ *
+ * @param $aid
+ *  The actions.aid for this template.
+ *
+ * @return none
+ */
+function activity_batch_regenerate($batches) {
+  $batch_set = FALSE;
+  foreach ($batches as $aid => $batch) {
+    $trigger_assignment = db_fetch_object(db_query("SELECT hook, op FROM {trigger_assignments} WHERE aid = '%s'", $aid));
+    if (!empty($trigger_assignment)) {
+      $batch_set = TRUE;
+      $batch = array(
+        'title' => t('Regenerating @description Activity', array('@description' => db_result(db_query("SELECT description from {actions} WHERE aid = '%s'", $aid)))),
+        'operations' => array(
+          array('activity_batch_delete', array($aid)),
+          array('activity_batch_regenerate_step', array($aid, $batch, $trigger_assignment->hook, $trigger_assignment->op)),
+        ),
+        'file' => drupal_get_path('module', 'activity') . '/activity.admin.inc',
+      );
+
+      batch_set($batch);
+    }
+  }
+
+  if ($batch_set) {
+    batch_process('admin/build/activity');
+  }
+  else {
+    return '';
+  }
+}
+
+/**
+ * Batch deletion step.
+ *
+ * @param $aid
+ *  The actions.aid for this template.
+ * @param $batch_context
+ *  The context array for this batch operation.
+ */
+function activity_batch_delete($aid, &$batch_context) {
+  if (!isset($batch_context['sandbox']['last_activity_id'])) {
+    $batch_context['sandbox']['last_activity_id'] = 0;
+    $batch_context['sandbox']['progress'] = 0;
+    $batch_context['sandbox']['max'] = db_result(db_query("SELECT COUNT(aid) FROM {activity} WHERE actions_id = '%s'", $aid));
+  }
+  $limit = 200;
+  $activity_to_be_deleted = db_query_range("SELECT aid FROM {activity} WHERE aid > %d AND actions_id = '%s' ORDER BY aid ASC", $batch_context['sandbox']['last_activity_id'], $aid, 0, $limit);
+  $activity_ids = array();
+  while ($row = db_fetch_object($activity_to_be_deleted)) {
+    $activity_ids[] = $row->aid;
+    $batch_context['sandbox']['last_activity_id'] = $row->aid;
+    $batch_context['sandbox']['progress']++;
+  }
+
+  activity_delete($activity_ids);
+  // Check if not finished.
+  if ($batch_context['sandbox']['progress'] < $batch_context['sandbox']['max']) {
+    $batch_context['finished'] = $batch_context['sandbox']['progress'] / $batch_context['sandbox']['max'];
+  }
+  else {
+    // If finished, delete the sandbox.
+    unset($batch_context['sandbox']);
+  }
+  
+}
+
+/**
+ * Batch regeneration step.
+ *
+ * @param $aid
+ *  The actions.aid for this template.
+ * @param $hook
+ *  The name of the hook being recorded.
+ * @param $op
+ *  The op for the hook being recorded.
+ * @param $batch_context
+ *  An array representing the context for the batch operation.
+ */
+function activity_batch_regenerate_step($aid, $batch, $hook, $op, &$batch_context) {
+  $module = activity_module_name($hook);
+  $info  = activity_get_module_info($module);
+  $load_callback = $info->context_load_callback;
+  $limit = 50;
+
+  // Set up the sandbox for the regeneration.
+  if (!isset($batch_context['sandbox']['list'])) {
+    $batch_context['sandbox']['list'] = $batch;
+    $batch_context['sandbox']['max'] = count($batch_context['sandbox']['list']);
+    $batch_context['sandbox']['progress'] = 0;
+
+    $parameters = db_result(db_query("SELECT a.parameters FROM {actions} a WHERE aid = '%s'", $aid));
+    $batch_context['sandbox']['parameters'] = unserialize($parameters);
+  }
+
+  $count = 0;
+  foreach ($batch_context['sandbox']['list'] as $key => $event) {
+    $context = array();
+    if (++$count > $limit) {
+      break;
+    }
+    else {
+      $context = $load_callback($hook, $op, $event['id']);
+      if (!empty($context)) {
+        $context += array(
+          'created' => $event['created'],
+          'actor' => $event['actor'],
+        );
+        activity_record(NULL, $context + $batch_context['sandbox']['parameters']);
+      }
+      $batch_context['sandbox']['progress']++;
+    }
+    unset($batch_context['sandbox']['list'][$key]);
+  }
+  // Check if not finished.
+  if ($batch_context['sandbox']['progress'] < $batch_context['sandbox']['max']) {
+    $batch_context['finished'] = $batch_context['sandbox']['progress'] / $batch_context['sandbox']['max'];
+  }
+  else {
+    // If finished, delete the sandbox.
+    unset($batch_context['sandbox']);
+  }
 }

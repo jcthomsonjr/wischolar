@@ -1,5 +1,5 @@
 <?php
-// $Id: user.activity.inc,v 1.1.2.17 2010/05/15 22:29:17 scottreynolds Exp $
+// $Id: user.activity.inc,v 1.1.2.18 2010/07/18 19:03:39 scottreynolds Exp $
 
 /**
  * @file
@@ -41,4 +41,70 @@ function user_activity_token_values($type, $object = NULL, $options = array()) {
     );
   }
   return array();
+}
+
+/**
+ * List all the Activity Actions that match the hook and op.
+ *
+ * @param string $hook
+ *  The hook that is to be fired.
+ * @param string $op
+ *  The op to be used in the hook.
+ * @param int $max_age
+ *  The max age from right now to list activities.
+ *
+ * @return array
+ *  An array of arrays with 'id', 'created' and 'actor' keys.
+ */
+function user_list_activity_actions($hook, $op, $max_age) {
+  $actions = array();
+  
+  if (!empty($max_age)) {
+    $min_time = time() - $max_age;
+  }
+  else {
+    $min_time = 0;
+  }
+
+  if ($op == 'insert') {
+    $sql = "SELECT uid as id, created as created, uid as actor FROM {users} WHERE uid <> 0 AND created > %d";
+  }
+
+  if (isset($sql)) {
+    $result = db_query($sql, $min_time);
+    while ($row = db_fetch_array($result)) {
+      $actions[] = $row;
+    }
+  }
+
+  return $actions;
+}
+
+/**
+ * Load up the context array to pass to activity_record.
+ *
+ * @param string $hook
+ *  The hook that is being fired.
+ * @param string $op
+ *  The op for that hook.
+ * @param string $id
+ *  The id for the action.
+ *
+ * @return array
+ *   The context array for activity_record.
+ * @see trigger_user
+ */
+function user_load_activity_context($hook, $op, $id) {
+  $account = user_load($id);
+  $context = array();
+  if (!empty($account)) {
+    $context = array(
+      'hook' => $hook,
+      'op' => $op,
+      'form_values' => array(),
+      'account' => $account,
+    );
+  }
+
+  return $context;
 }
