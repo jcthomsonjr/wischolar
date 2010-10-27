@@ -84,7 +84,7 @@ h2 {
   margin: 0 0 .5em 0;
   }
 
-.big-button {
+p.big-button {
   text-align: center;
   font-size: .9em !important;
   line-height: normal !important;
@@ -93,7 +93,7 @@ h2 {
   color: #777;
   }
 
-.big-button a {
+p.big-button a {
   background:url(images/get-your-site-button.png) no-repeat transparent;
   line-height: 48px !important;
   font-size: 19px;
@@ -108,6 +108,17 @@ h2 {
   text-shadow: #666 0px 1px 1px;
   text-shadow: rgba(51,51,51, .2) 0px 1px 1px;
   */
+  }
+
+span.big-button a {
+  color: #fff;
+  background: #ff7f01;
+  padding: 5px 10px 3px 10px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  text-shadow: #666 0px 1px 1px;
+  text-shadow: rgba(51,51,51, .2) 0px 1px 1px;
   }
 
 ul#top-front li#get-form a:hover {
@@ -198,17 +209,23 @@ row {
 #activity,
 #about-abstract {
   width: 235px;
-  padding:28px 30px;
+  padding:28px 30px 0 30px;
   float: left;
   }
 
 #publications {
-  width: 282px;
+  width: 281px;
+  background: #eee;
+  border-right:1px solid #DBDBDB;
+  -moz-border-radius: 6px 0 0 0;
+  -webkit-border-radius: 6px 0 0 0;
+  border-radius: 6px 0 0 0;
+  padding-bottom: 30px;
   }
 
 #publications h2, #activity h2 {
   color: #959595;
-  font-size: 22px;
+  font-size: 19px;
   }
 
 #publications .views-row {
@@ -227,17 +244,9 @@ row {
   padding-left: 0;
   }
 
-#activity h2 {
-  font-size: 19px;
-  }
-
 #activity h2,
 .view-vsite-activity {
   padding-left: 30px;
-  }
-
-.view-vsite-activity  {
-  border-left: 1px solid #dbdbdb;
   }
 
 #about-abstract {
@@ -252,8 +261,10 @@ row {
 #about-abstract h2 {
   font-size: 22px;
   font-weight: 500;
-  line-height: 1.2em;
+  line-height: 1.3em;
   color:#a35353;
+  color: #555;
+  margin-bottom: 1em;
   }
 
 #about-abstract p {
@@ -287,6 +298,7 @@ row {
 
 p#learn-more-toggle {
   margin:1em 0 0 0;
+  clear: both;
   }
 
 p#learn-more-toggle a {

@@ -16,24 +16,27 @@
             ?>
         </div>
         <div id="about-abstract">
-          <h2>Harvard Scholars: Create a dynamic feature-full personal web site in seconds. <?php print openscholar_front_getyoursitebutton(); ?></h2>
+          <h2>Harvard Scholars: Create a dynamic feature-full personal web site in seconds. <span class="big-button"><?php print openscholar_front_getyoursitebutton(); ?></span></h2>
 
           <!--
           <p class="big-button"><?php print openscholar_front_getyoursitebutton(); ?>(Faculty, Grad Students, Visiting Scholars)</p>
           -->
-          <div class="illustration illust-widget"></div>
+
           <h3>Great features for academics</h3>
+          <div class="illustration illust-widget"></div>
           <p>Manage your CV, bio, publications, blogs, announcements, links, image galleries, events, class materials. Automatically have your publications submitted to induces such as RePEc,
           Computer Science Repository, and Google Scholar.</p>
 
-          <div class="illustration illust-wrench"></div>
+
           <h3>Super easy-to-use admin tools</h3>
+          <div class="illustration illust-wrench"></div>
           <p>Use a web browser on any networked computer in the world to create and edit content, move useful widgets in and out of your site; change menus, categorize your work.</p>
 
-          <div class="illustration illust-theme"></div>
+
           <h3>Beautiful themes</h3>
+          <div class="illustration illust-theme"></div>
           <p>Instantly change the look of your site with many elegant themes, or import your own custom theme.</p>
-          <p id="learn-more-toggle"><a href="learn-more">Learn More about <span><?php print variable_get('site_name', ''); ?></span></a></p>
+          <p id="learn-more-toggle"><a href="learn-more">Learn more about how you can take advantage of <span><?php print variable_get('site_name', ''); ?></span></a></p>
         </div><!--/about-abstract -->
       </div><!--/row -->
     </div><!--/panel -->
