@@ -133,10 +133,11 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
+	  var panel2_height = $('#front-panel-2').height();
 	  $('#front-panel-2').css('height',$('#front-panel-1').height());
     $('#learn-more-toggle a').attr("href","#").click(function(event){
     	$('#panel-wrapper').animate({left:'-1000'},"1500");
-      $('#front-panel-2').animate({height:'1036'},"1000");
+      $('#front-panel-2').animate({height: panel2_height+''},"1000");
     });
     $('#activity-toggle a').attr("href","#").click(function(event){
       $('#front-panel-2').css('height',$('#front-panel-1').height());
