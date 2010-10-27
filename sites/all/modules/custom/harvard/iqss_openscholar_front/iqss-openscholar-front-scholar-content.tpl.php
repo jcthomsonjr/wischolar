@@ -2,13 +2,11 @@
   <div id="front-panel-1" class="panel">
     <div class="row">
         <div id="publications">
-          <div style="width:800px">
           <?php
           $publications = views_block('view','scholar_publications-block_1');
           print '<h2>' . $publications['subject'] . '</h2>';
           print $publications['content'];
           ?>
-          </div>
         </div>
         <div id="activity">
             <?php
