@@ -2,11 +2,13 @@
   <div id="front-panel-1" class="panel">
     <div class="row">
         <div id="publications">
+          <div style="width:800px">
           <?php
           $publications = views_block('view','scholar_publications-block_1');
           print '<h2>' . $publications['subject'] . '</h2>';
           print $publications['content'];
           ?>
+          </div>
         </div>
         <div id="activity">
             <?php
@@ -16,25 +18,22 @@
             ?>
         </div>
         <div id="about-abstract">
-          <h2>Harvard Scholars: Create a dynamic feature-full personal web site in seconds. <span class="big-button"><?php print openscholar_front_getyoursitebutton(); ?></span></h2>
+          <h2>Create a dynamic feature-full personal web site in seconds. <span class="big-button"><?php print openscholar_front_getyoursitebutton(); ?></span></h2>
 
           <!--
           <p class="big-button"><?php print openscholar_front_getyoursitebutton(); ?>(Faculty, Grad Students, Visiting Scholars)</p>
           -->
-
-          <h3>Great features for academics</h3>
           <div class="illustration illust-widget"></div>
+          <h3>Great features for academics</h3>
           <p>Manage your CV, bio, publications, blogs, announcements, links, image galleries, events, class materials. Automatically have your publications submitted to induces such as RePEc,
           Computer Science Repository, and Google Scholar.</p>
 
-
-          <h3>Super easy-to-use admin tools</h3>
           <div class="illustration illust-wrench"></div>
+          <h3>Super easy-to-use admin tools</h3>
           <p>Use a web browser on any networked computer in the world to create and edit content, move useful widgets in and out of your site; change menus, categorize your work.</p>
 
-
-          <h3>Beautiful themes</h3>
           <div class="illustration illust-theme"></div>
+          <h3>Beautiful themes</h3>
           <p>Instantly change the look of your site with many elegant themes, or import your own custom theme.</p>
           <p id="learn-more-toggle"><a href="learn-more">Learn more about how you can take advantage of <span><?php print variable_get('site_name', ''); ?></span></a></p>
         </div><!--/about-abstract -->
@@ -136,15 +135,25 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-	  var panel2_height = $('#front-panel-2').height();
-	  $('#front-panel-2').css('height',$('#front-panel-1').height());
+	  //var panel2_height = $('#front-panel-2').height();
+	  //var panel2_height = 1028;
+	  $('#content').css({'height':'511px','overflow':'hidden'});
     $('#learn-more-toggle a').attr("href","#").click(function(event){
-    	$('#panel-wrapper').animate({left:'-1000'},"1500");
-      $('#front-panel-2').animate({height: panel2_height+''},"1000");
+    	$('#content').animate({
+    	  height:"1028px"
+    	  },300);
+    	$('#panel-wrapper').animate({
+    	  left:"-1000"
+    	  },500);
+
     });
     $('#activity-toggle a').attr("href","#").click(function(event){
-      $('#front-panel-2').css('height',$('#front-panel-1').height());
-      $('#panel-wrapper').animate({left:'0'},"1500");
+      $('#panel-wrapper').animate({
+        left:"0"
+        },300);
+      $('#content').animate({
+        height:"511px"
+        },500);
     });
 
    });
