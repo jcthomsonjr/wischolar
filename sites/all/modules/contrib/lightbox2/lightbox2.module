@@ -1,5 +1,5 @@
 <?php
-// $Id: lightbox2.module,v 1.16.2.16.2.160 2010/06/07 18:20:31 snpower Exp $
+// $Id: lightbox2.module,v 1.16.2.16.2.171 2010/09/24 08:33:00 snpower Exp $
 
 /**
  * @file
@@ -153,6 +153,13 @@ function lightbox2_perm() {
 function lightbox2_menu() {
   $items = array();
 
+  $items['system/lightbox2/filter-xss'] = array(
+    'title' => 'Filter XSS',
+    'page callback' => 'lightbox2_filter_xss',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
   $items['admin/settings/lightbox2'] = array(
     'title' => 'Lightbox2',
     'description' => 'Allows the user to configure the lightbox2 settings',
@@ -206,19 +213,20 @@ function lightbox2_menu() {
     'weight' => 3,
   );
   if (module_exists('emfield') && module_exists('emvideo')) {
-    $items['video-cck/lightbox2'] = array(
+    $items['video-cck/lightbox2/%node'] = array(
       'page callback' => 'lightbox2_emvideo',
-      'access callback' => 'user_access',
-      'access arguments' => array('access content'),
+      'page arguments' => array(2),
+      'access callback' => 'node_access',
+      'access arguments' => array('view', 2),
       'type' => MENU_CALLBACK,
     );
   }
   if (module_exists('acidfree') && module_exists('video')) {
-    $items['node/%nid/lightframevideo'] = array(
+    $items['node/%node/lightframevideo'] = array(
       'page callback' => 'lightbox2_acidfree_video',
       'page arguments' => array(1),
-      'access callback' => 'user_access',
-      'access arguments' => array('play video'),
+      'access callback' => 'lightbox2_acidfree_video_access',
+      'access arguments' => array(1),
       'type' => MENU_CALLBACK,
     );
   }
@@ -236,6 +244,16 @@ function lightbox2_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Acidfree video access control.
+ */
+function lightbox2_acidfree_video_access($node) {
+  if (user_access('play video') && node_access('view', $node)) {
+    return TRUE;
+  }
+  return FALSE;
 }
 
 /**
@@ -388,7 +406,7 @@ function lightbox2_filter($op, $delta = 0, $format = -1, $text = '') {
       if ($delta == 1) {
         $text = ' '. $text .' ';
         $text = preg_replace('/ShowItem/', 'DownloadItem', $text);
-        $text = preg_replace('/src="/', 'rel="lightbox" src="', $text);
+        $text = preg_replace('/<img\s+([^>]*?)src="/', '<img \1rel="lightbox" src="', $text);
         $text = drupal_substr($text, 1, -1);
       }
       elseif ($delta == 6) {
@@ -590,22 +608,27 @@ function lightbox2_add_files() {
   $font_color = variable_get('lightbox2_font_color', '000');
   $box_color = variable_get('lightbox2_box_color', 'fff');
 
+  $file_path = base_path() .'(\w\w/)'. file_directory_path();
+  if ( variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PRIVATE ) {
+    $file_path = base_path() .'(\w\w/)system/files';
+  }
+
   // Load the javascript settings.
   $js_settings = array(
     'rtl' => $language->direction,
-    'file_path' => base_path() .'(\w\w/)'. file_directory_path(),
+    'file_path' => $file_path,
     'default_image' => base_path() . $path .'/images/brokenimage.jpg',
     'border_size' => (int) variable_get('lightbox2_border_size', 10),
     'font_color' => !empty($font_color) ? $font_color : '000',
     'box_color' => !empty($box_color) ? $box_color : '000',
     'top_position' => variable_get('lightbox2_top_position', ''),
-    'overlay_opacity' => str_replace(',','.',(float)variable_get('lightbox2_overlay_opacity', 0.8)),
+    'overlay_opacity' => str_replace(',', '.', variable_get('lightbox2_overlay_opacity', 0.8)),
     'overlay_color' => variable_get('lightbox2_overlay_color', '000'),
     'disable_close_click' => variable_get('lightbox2_disable_close_click', TRUE),
     'resize_sequence' => (int)variable_get('lightbox2_resize_sequence', 0),
-    'resize_speed' => 1000 * (float)variable_get('lightbox2_resize_speed', 0.4),
-    'fade_in_speed' => 1000 * (float)variable_get('lightbox2_fadein_speed', 0.4),
-    'slide_down_speed' => 1000 * (float)variable_get('lightbox2_slidedown_speed', 0.6),
+    'resize_speed' => 1000 * str_replace(',', '.', variable_get('lightbox2_resize_speed', 0.4)),
+    'fade_in_speed' => 1000 * str_replace(',', '.', variable_get('lightbox2_fadein_speed', 0.4)),
+    'slide_down_speed' => 1000 * str_replace(',', '.', variable_get('lightbox2_slidedown_speed', 0.6)),
     'use_alt_layout' => variable_get('lightbox2_use_alt_layout', FALSE),
     'disable_resize' => variable_get('lightbox2_disable_resize', FALSE),
     'disable_zoom' => variable_get('lightbox2_disable_zoom', FALSE),
@@ -655,7 +678,7 @@ function lightbox2_add_files() {
     'enable_video' => $enable_video,
   );
   if ($enable_video) {
-    $js_settings['flvPlayer'] = check_plain(variable_get('lightbox2_flv_player_path', '/flvplayer.swf'));
+    $js_settings['flvPlayer'] = url(check_plain(trim(variable_get('lightbox2_flv_player_path', 'flvplayer.swf'), '/')));
     $js_settings['flvFlashvars'] = check_plain(variable_get('lightbox2_flv_player_flashvars', ''));
   }
 
@@ -1012,17 +1035,22 @@ function lightbox2_theme() {
  * @param id
  *   The video id.
  */
-function lightbox2_emvideo($nid, $width, $height, $field_name, $provider, $id) {
-  $field = array();
+function lightbox2_emvideo($node, $width, $height, $field_name, $provider, $id) {
+  $field = content_fields($field_name);
   $field['widget']['video_width'] = $width;
   $field['widget']['video_height'] = $height;
   $field['widget']['video_autoplay'] = 1;
-  $field['field_name'] = $field_name;
-  $node = node_load($nid);
+  if (!content_access('view', $field, NULL, $node)) {
+    drupal_access_denied();
+    return;
+  }
+
   $items = $node->$field_name;
-  foreach ($items as $item) {
-    if ($item['provider'] == $provider && $item['value'] == $id) {
-      break;
+  if (is_array($items)) {
+    foreach ($items as $item) {
+      if ($item['provider'] == $provider && $item['value'] == $id) {
+        break;
+      }
     }
   }
   print theme('emvideo_video_video', $field, $item, 'video_video', $node);
@@ -1073,15 +1101,14 @@ function lightbox2_preprocess_page(&$variables) {
 /**
  * Display the video object.
  *
- * Displays the video object for a specified nid.  It is used for * displaying
+ * Displays the video object for a specified nid.  It is used for displaying
  * videos in acidfree lists in a lightbox when the thumbnail is clicked on.  It
  * is only triggered for the url 'node/%nid/lightframevideo'.
  *
- * @param $nid
- *   Unique identifier of the node.
+ * @param $node
+ *   The $node object.
  */
-function lightbox2_acidfree_video($nid) {
-  $node = node_load($nid);
+function lightbox2_acidfree_video($node) {
   print theme('video_player', $node);
 }
 
@@ -1281,14 +1308,14 @@ function lightbox2_link_alter(&$links, $node) {
 
   // Only operate on image nodes and if automatic handling for image nodes is
   // enabled.  Also ensure $links is an array (bug in contemplate module).
-  if (($node->type != 'image' && $image_node_handler) || !is_array($links)) {
+  if (!$image_node_handler || ($node->type != 'image' && $image_node_handler) || !is_array($links)) {
     return;
   }
   $trigger_sizes = variable_get('lightbox2_trigger_image_size', array('thumbnail'));
 
-  // Change original ('') to '_original'.
-  if (isset($trigger_sizes[''])) {
-    unset($trigger_sizes['']);
+  // Change original ('original') to '_original'.
+  if (isset($trigger_sizes['original'])) {
+    unset($trigger_sizes['original']);
     $trigger_sizes['_original'] = '_original';
   }
 
@@ -1322,3 +1349,17 @@ function lightbox2_views_api() {
     'api' => '2.0',
   );
 }
+
+function lightbox2_filter_xss() {
+  $allowed_tags = trim(variable_get('lightbox2_filter_xss_allowed_tags', 'p, br, a, em, strong, cite, code, ul, ol, li, dl, dt, dd'));
+  $allowed_tags = (empty($allowed_tags) ? array() : preg_split('/[,\s]+/', $allowed_tags));
+  if (!empty($_POST['allowed_tags']) && $_POST['allowed_tags'] != 'undefined') {
+    $allowed_tags = explode(',', $_POST['allowed_tags']);
+    $output = filter_xss($_POST['string'], $allowed_tags);
+  }
+  else {
+    $output = filter_xss($_POST['string'], $allowed_tags);
+  }
+  drupal_json($output);
+}
+

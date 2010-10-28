@@ -1,5 +1,5 @@
 <?php
-// $Id: lightbox2.install,v 1.1.4.4.2.48 2010/06/07 18:20:31 snpower Exp $
+// $Id: lightbox2.install,v 1.1.4.4.2.49 2010/09/22 17:26:19 snpower Exp $
 
 /**
  * @file
@@ -190,6 +190,13 @@ function lightbox2_update_6002() {
     variable_set('lightbox2_slideshow_pause_on_previous_click', $value);
     variable_del('lightbox2_slideshow_pause_on_prev_click');
   }
+  return array();
+}
+
+/**
+ * Menu paths changed.
+ */
+function lightbox2_update_6003() {
   return array();
 }
 

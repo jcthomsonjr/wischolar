@@ -1,4 +1,4 @@
-/* $Id: lightbox_video.js,v 1.1.4.16 2010/06/07 18:13:13 snpower Exp $ */
+/* $Id: lightbox_video.js,v 1.1.4.20 2010/09/21 17:57:22 snpower Exp $ */
 
 /**
  * Lightbox video
@@ -25,11 +25,12 @@ var Lightvideo = {
     }
     else {
       Lightbox.videoId = href;
-      href = Drupal.settings.basePath + Lightbox.flvPlayer + '?file=' + href;
       variables = '';
-      if (Lightbox.flvFlashvars.length) {
-        variables = Lightbox.flvFlashvars;
-        href = href + '&' + Lightbox.flvFlashvars;
+      if (!href.match(/\.swf$/i)) {
+        href = Lightbox.flvPlayer + '?file=' + href;
+        if (Lightbox.flvFlashvars.length) {
+          variables = Lightbox.flvFlashvars;
+        }
       }
 
       Lightvideo.createEmbed(href, "flvplayer", "#ffffff", variables);

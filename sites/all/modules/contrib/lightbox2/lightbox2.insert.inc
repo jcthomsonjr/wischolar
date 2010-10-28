@@ -1,5 +1,5 @@
 <?php
-// $Id: lightbox2.insert.inc,v 1.1.2.3 2010/06/07 14:09:14 snpower Exp $
+// $Id: lightbox2.insert.inc,v 1.1.2.6 2010/09/22 10:47:15 snpower Exp $
 
 /**
  * @file
@@ -56,6 +56,12 @@ function template_preprocess_lightbox2_insert_image(&$vars) {
     $linkpath = $vars['item']['filepath'];
   }
   $vars['linkurl'] = insert_create_url($linkpath);
+
+  $vars['download_link'] = '';
+  $download_link_text = check_plain(variable_get('lightbox2_download_link_text', 'Download Original'));
+  if (!empty($download_link_text) && user_access('download original image')) {
+    $vars['download_link'] = '<br /><br />' . l($download_link_text, $vars['linkurl'], array('attributes' => array('target' => '_blank', 'id' => 'lightbox2-download-link-text')));
+  }
 
   $vars['class'] = !empty($vars['widget']['insert_class']) ? $vars['widget']['insert_class'] : '';
 }

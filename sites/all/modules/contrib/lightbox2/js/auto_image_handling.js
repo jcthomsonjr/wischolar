@@ -1,4 +1,4 @@
-/* $Id: auto_image_handling.js,v 1.1.4.27 2009/08/07 08:53:00 snpower Exp $ */
+/* $Id: auto_image_handling.js,v 1.1.4.33 2010/09/22 21:07:57 snpower Exp $ */
 
 // Image Node Auto-Format with Auto Image Grouping.
 // Original version by Steve McKenzie.
@@ -91,15 +91,16 @@ function lightbox2_init_triggers(classes, rel_type, custom_class) {
               rel = rel_type + "["+ id +"]";
             }
           }
+          download = href;
         }
 
         // Handle "image-img_assist_custom" images.
-        else if ($(child).attr("class").match("image-img_assist_custom")) {
+        else if ($(child).filter("img[class*=img_assist_custom]").size()) {
           // Image assist uses "+" signs for spaces which doesn't work for
           // normal links.
           if (settings.display_image_size != "original") {
             orig_href = orig_href.replace(/\+/, " ");
-            href = $(child).attr("src").replace(new RegExp("\\.img_assist_custom"), ((settings.display_image_size === "")?settings.display_image_size:"."+ settings.display_image_size));
+            href = $(child).attr("src").replace(new RegExp("\\.img_assist_custom-[0-9]+x[0-9]+"), ((settings.display_image_size === "")?settings.display_image_size:"."+ settings.display_image_size));
             if (rel_type != "lightbox_ungrouped" && rel_type != "lightframe_ungrouped") {
               rel = rel_type + "[node_images]";
             }
@@ -172,12 +173,12 @@ function lightbox2_init_triggers(classes, rel_type, custom_class) {
           if (!custom_class) {
             var title_link = "";
             if (link_text.length) {
-              title_link = "<br /><br /><a href=\"" + orig_href + "\" id=\"node_link_text\" "+ link_target +" >"+ link_text + "</a>";
+              title_link = "<br /><br /><a href=\"" + orig_href + "\" id=\"lightbox2-node-link-text\" "+ link_target +" >"+ link_text + "</a>";
             }
             if (download_link_text.length && download) {
-              title_link = title_link + " - <a href=\"" + download + "\" id=\"download_link_text\" target=\"_blank\">" + download_link_text + "</a>";
+              title_link = title_link + " - <a href=\"" + download + "\" id=\"lightbox2-download-link-text\" target=\"_blank\">" + download_link_text + "</a>";
             }
-            rel = rel + "[" + alt + title_link + "]";
+            rel = rel + "[" + img_title + title_link + "]";
             $(this).attr({
               rel: rel,
               href: href
@@ -191,7 +192,7 @@ function lightbox2_init_triggers(classes, rel_type, custom_class) {
                 rel = rel_type + "["+ id +"]";
               }
             }
-            rel = rel + "[" + alt + "]";
+            rel = rel + "[" + img_title + "]";
             $(this).attr({
               rel: rel,
               href: orig_href
@@ -223,7 +224,7 @@ function lightbox2_init_acidfree_video() {
       var title = $(this).attr("title");
       var title_link = "";
       if (link_text.length) {
-        title_link = "<br /><a href=\"" + orig_href + "\" id=\"node_link_text\" "+ link_target +" >"+ link_text + "</a>";
+        title_link = "<br /><a href=\"" + orig_href + "\" id=\"lightbox2-node-link-text\" "+ link_target +" >"+ link_text + "</a>";
       }
 
       $(this).attr({

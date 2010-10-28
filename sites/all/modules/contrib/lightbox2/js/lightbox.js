@@ -1,4 +1,4 @@
-/* $Id: lightbox.js,v 1.5.2.6.2.124 2010/06/07 18:20:31 snpower Exp $ */
+/* $Id: lightbox.js,v 1.5.2.6.2.136 2010/09/24 08:39:40 snpower Exp $ */
 
 /**
  * jQuery Lightbox
@@ -127,8 +127,9 @@ var Lightbox = {
     }
 
     // Make the lightbox divs.
+    var layout_class = (s.use_alt_layout ? 'lightbox2-alt-layout' : 'lightbox2-orig-layout');
     var output = '<div id="lightbox2-overlay" style="display: none;"></div>\
-      <div id="lightbox" style="display: none;">\
+      <div id="lightbox" style="display: none;" class="' + layout_class + '">\
         <div id="outerImageContainer"></div>\
         <div id="imageDataContainer" class="clearfix">\
           <div id="imageData"></div>\
@@ -140,24 +141,26 @@ var Lightbox = {
     var imageContainer = '<div id="imageContainer" style="display: none;"></div>';
     var details = '<div id="imageDetails"></div>';
     var bottomNav = '<div id="bottomNav"></div>';
-    var image = '<img id="lightboxImage" />';
+    var image = '<img id="lightboxImage" alt="" />';
     var hoverNav = '<div id="hoverNav"><a id="prevLink" href="#"></a><a id="nextLink" href="#"></a></div>';
     var frameNav = '<div id="frameHoverNav"><a id="framePrevLink" href="#"></a><a id="frameNextLink" href="#"></a></div>';
+    var hoverNav = '<div id="hoverNav"><a id="prevLink" title="' + Drupal.t('Previous') + '" href="#"></a><a id="nextLink" title="' + Drupal.t('Next') + '" href="#"></a></div>';
+    var frameNav = '<div id="frameHoverNav"><a id="framePrevLink" title="' + Drupal.t('Previous') + '" href="#"></a><a id="frameNextLink" title="' + Drupal.t('Next') + '" href="#"></a></div>';
     var caption = '<span id="caption"></span>';
     var numberDisplay = '<span id="numberDisplay"></span>';
-    var close = '<a id="bottomNavClose" href="#"></a>';
+    var close = '<a id="bottomNavClose" title="' + Drupal.t('Close') + '" href="#"></a>';
     var zoom = '<a id="bottomNavZoom" href="#"></a>';
     var zoomOut = '<a id="bottomNavZoomOut" href="#"></a>';
-    var pause = '<a id="lightshowPause" href="#" style="display: none;"></a>';
-    var play = '<a id="lightshowPlay" href="#" style="display: none;"></a>';
+    var pause = '<a id="lightshowPause" title="' + Drupal.t('Pause Slideshow') + '" href="#" style="display: none;"></a>';
+    var play = '<a id="lightshowPlay" title="' + Drupal.t('Play Slideshow') + '" href="#" style="display: none;"></a>';
 
     $("body").append(output);
     $('#outerImageContainer').append(modal + frame + imageContainer + loading);
     if (!s.use_alt_layout) {
       $('#imageContainer').append(image + hoverNav);
-      $('#imageData').append(frameNav + details + bottomNav);
+      $('#imageData').append(details + bottomNav);
       $('#imageDetails').append(caption + numberDisplay);
-      $('#bottomNav').append(close + zoom + zoomOut + pause + play);
+      $('#bottomNav').append(frameNav + close + zoom + zoomOut + pause + play);
     }
     else {
       $('#outerImageContainer').append(bottomNav);
@@ -313,6 +316,9 @@ var Lightbox = {
     var rel_style = null;
     var i = 0;
 
+    if (rel_parts["flashvars"]) {
+      Lightbox.flvFlashvars = Lightbox.flvFlashvars + '&' + rel_parts["flashvars"];
+    }
 
     // Set the title for image alternative text.
     var alt = imageLink.title;
@@ -363,7 +369,7 @@ var Lightbox = {
             }
             if (rel_data["rel"] == rel) {
               if (rel_data["group"] == rel_group) {
-                if (Lightbox.isLightframe || Lightbox.isModal) {
+                if (Lightbox.isLightframe || Lightbox.isModal || Lightbox.isVideo) {
                   rel_style = rel_data["style"];
                 }
                 Lightbox.imageArray.push([anchor.href, anchor_title, img_alt, rel_style]);
@@ -445,6 +451,7 @@ var Lightbox = {
 
       // Preload image content, but not iframe pages.
       if (!Lightbox.isLightframe && !Lightbox.isVideo && !Lightbox.isModal) {
+        $("#lightbox #imageDataContainer").removeClass('lightbox2-alt-layout-data');
         imgPreloader = new Image();
         imgPreloader.onerror = function() { Lightbox.imgNodeLoadingError(this); };
 
@@ -503,6 +510,7 @@ var Lightbox = {
 
       // Set up frame size, etc.
       else if (Lightbox.isLightframe) {
+        $("#lightbox #imageDataContainer").addClass('lightbox2-alt-layout-data');
         var src = Lightbox.imageArray[Lightbox.activeImage][0];
         $('#frameContainer').html('<iframe id="lightboxFrame" style="display: none;" src="'+src+'"></iframe>');
 
@@ -523,12 +531,13 @@ var Lightbox = {
         Lightbox.resizeContainer(parseInt(iframe.width, 10), parseInt(iframe.height, 10));
       }
       else if (Lightbox.isVideo || Lightbox.isModal) {
+        $("#lightbox #imageDataContainer").addClass('lightbox2-alt-layout-data');
         var container = document.getElementById('modalContainer');
         var modalStyles = Lightbox.imageArray[Lightbox.activeImage][3];
         container = Lightbox.setStyles(container, modalStyles);
         if (Lightbox.isVideo) {
-          Lightbox.modalHeight =  parseInt(container.height, 10);
-          Lightbox.modalWidth =  parseInt(container.width, 10);
+          Lightbox.modalHeight =  parseInt(container.height, 10) - 10;
+          Lightbox.modalWidth =  parseInt(container.width, 10) - 10;
           Lightvideo.startVideo(Lightbox.imageArray[Lightbox.activeImage][0]);
         }
         Lightbox.resizeContainer(parseInt(container.width, 10), parseInt(container.height, 10));
@@ -618,7 +627,7 @@ var Lightbox = {
       Lightbox.updateDetails();
       if (Lightbox.isLightframe) {
         $('#frameContainer').show();
-        if ($.browser.safari) {
+        if ($.browser.safari || Lightbox.fadeInSpeed === 0) {
           $('#lightboxFrame').css({'zIndex': '10500'}).show();
         }
         else {
@@ -633,6 +642,7 @@ var Lightbox = {
           var src = unescape(Lightbox.imageArray[Lightbox.activeImage][0]);
           if (Lightbox.imageArray[Lightbox.activeImage][4]) {
             $(src).appendTo("#modalContainer");
+            $('#modalContainer').css({'zIndex': '10500'}).show();
           }
           else {
             // Use a callback to show the new image, otherwise you get flicker.
@@ -648,7 +658,7 @@ var Lightbox = {
     // Handle display of image content.
     else {
       $('#imageContainer').show();
-      if ($.browser.safari) {
+      if ($.browser.safari || Lightbox.fadeInSpeed === 0) {
         $('#lightboxImage').css({'zIndex': '10500'}).show();
       }
       else {
@@ -711,14 +721,14 @@ var Lightbox = {
     var s = Drupal.settings.lightbox2;
 
     if (s.show_caption) {
-      var caption = Lightbox.imageArray[Lightbox.activeImage][1];
-      if (!caption) caption = '&nbsp;';
+      var caption = Lightbox.filterXSS(Lightbox.imageArray[Lightbox.activeImage][1]);
+      if (!caption) caption = '';
       $('#caption').html(caption).css({'zIndex': '10500'}).show();
     }
 
     // If image is part of set display 'Image x of x'.
     var numberDisplay = null;
-    if (Lightbox.total > 1) {
+    if (s.image_count && Lightbox.total > 1) {
       var currentImage = Lightbox.activeImage + 1;
       if (!Lightbox.isLightframe && !Lightbox.isModal && !Lightbox.isVideo) {
         numberDisplay = s.image_count.replace(/\!current/, currentImage).replace(/\!total/, Lightbox.total);
@@ -730,6 +740,9 @@ var Lightbox = {
         numberDisplay = s.page_count.replace(/\!current/, currentImage).replace(/\!total/, Lightbox.total);
       }
       $('#numberDisplay').html(numberDisplay).css({'zIndex': '10500'}).show();
+    }
+    else {
+      $('#numberDisplay').hide();
     }
 
     $("#imageDataContainer").hide().slideDown(Lightbox.slideDownSpeed, function() {
@@ -940,11 +953,11 @@ var Lightbox = {
 
     var xScroll, yScroll;
 
-    if (self.pageYOffset) {
+    if (self.pageYOffset || self.pageXOffset) {
       yScroll = self.pageYOffset;
       xScroll = self.pageXOffset;
     }
-    else if (document.documentElement && document.documentElement.scrollTop) {  // Explorer 6 Strict.
+    else if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)) {  // Explorer 6 Strict.
       yScroll = document.documentElement.scrollTop;
       xScroll = document.documentElement.scrollLeft;
     }
@@ -1034,7 +1047,7 @@ var Lightbox = {
       $("select.lightbox_hidden, embed.lightbox_hidden, object.lightbox_hidden").show();
     }
     else if (state == 'hide') {
-      $("select:visible, embed:visible, object:visible").addClass("lightbox_hidden");
+      $("select:visible, embed:visible, object:visible").not('#lightboxAutoModal select, #lightboxAutoModal embed, #lightboxAutoModal object').addClass("lightbox_hidden");
       $("select.lightbox_hidden, embed.lightbox_hidden, object.lightbox_hidden").hide();
     }
   },
@@ -1043,7 +1056,7 @@ var Lightbox = {
   // parseRel()
   parseRel: function (link) {
     var parts = [];
-    parts["rel"] = parts["title"] = parts["group"] = parts["style"] = null;
+    parts["rel"] = parts["title"] = parts["group"] = parts["style"] = parts["flashvars"] = null;
     if (!$(link).attr('rel')) return parts;
     parts["rel"] = $(link).attr('rel').match(/\w+/)[0];
 
@@ -1051,6 +1064,9 @@ var Lightbox = {
       var info = $(link).attr('rel').match(/\[(.*?)\]/)[1].split('|');
       parts["group"] = info[0];
       parts["style"] = info[1];
+      if (parts["style"] != undefined && parts["style"].match(/flashvars:\s?(.*?);/)) {
+        parts["flashvars"] = parts["style"].match(/flashvars:\s?(.*?);/)[1];
+      }
     }
     if ($(link).attr('rel').match(/\[.*\]\[(.*)\]/)) {
       parts["title"] = $(link).attr('rel').match(/\[.*\]\[(.*)\]/)[1];
@@ -1138,8 +1154,25 @@ var Lightbox = {
 
   checkKey: function(keys, key, code) {
     return (jQuery.inArray(key, keys) != -1 || jQuery.inArray(String(code), keys) != -1);
-  }
+  },
 
+  filterXSS: function(str, allowed_tags) {
+    var output = "";
+    $.ajax({
+      url: Drupal.settings.basePath + 'system/lightbox2/filter-xss',
+      data: {
+        'string' : str,
+        'allowed_tags' : allowed_tags
+      },
+      type: "POST",
+      async: false,
+      dataType:  "json",
+      success: function(data) {
+        output = data;
+      }
+    });
+    return output;
+  }
 
 };
 
