@@ -34,7 +34,20 @@ function scholar_blog_update_6002(&$sandbox){
   
   $res = array();
   
-  // Enable openscholar_front module if need
+  // Enable better_formats module if need
+  if(!module_exists('better_formats')){
+    
+    include_once('includes/install.inc');
+    
+    drupal_install_modules(array('better_formats'));
+    $res[] = array(
+      'success' => true,
+      'query' => 'Installed better_formats module and enabled it',
+    );
+    
+  }
+  
+  // Enable vsite_comments module if need
   if(!module_exists('vsite_comments')){
     
     include_once('includes/install.inc');
