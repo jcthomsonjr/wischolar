@@ -142,23 +142,23 @@
   $(document).ready(function() {
 	  //var panel2_height = $('#front-panel-2').height();
 	  //var panel2_height = 1028;
-	  $('#content').css({'height':'511px','overflow':'hidden'});
+	  $('#content').css({'height':'530px','overflow':'hidden'});
     $('#learn-more-toggle a').attr("href","#").click(function(event){
     	$('#content').animate({
     	  height:"1028px"
-    	  },300);
+    	  },200);
     	$('#panel-wrapper').animate({
     	  left:"-980"
-    	  },500);
+    	  },400);
 
     });
     $('#activity-toggle a').attr("href","#").click(function(event){
       $('#panel-wrapper').animate({
         left:"0"
-        },300);
+        },200);
       $('#content').animate({
-        height:"511px"
-        },500);
+        height:"530px"
+        },400);
     });
 
    });
