@@ -1264,9 +1264,9 @@ function node_search($op = 'search', $keys = NULL) {
         $total += $weight;
       }
       
-      // When all search factors are disabled (ie they have a weight of zero), 
-      // the default score is based only on keyword relevance and there is no need to 
-      // adjust the score of each item. 
+      // When all search factors are disabled (ie they have a weight of zero),
+      // the default score is based only on keyword relevance and there is no need to
+      // adjust the score of each item.
       if ($total == 0) {
         $select2 = 'i.relevance AS score';
         $total = 1;

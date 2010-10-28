@@ -29,3 +29,24 @@ function scholar_blog_update_6001(&$sandbox){
   return $res;
   
 }
+
+function scholar_blog_update_6002(&$sandbox){
+  
+  $res = array();
+  
+  // Enable openscholar_front module if need
+  if(!module_exists('vsite_comments')){
+    
+    include_once('includes/install.inc');
+    
+    drupal_install_modules(array('vsite_comments'));
+    $res[] = array(
+      'success' => true,
+      'query' => 'Installed vsite_comments module and enabled it',
+    );
+    
+  }
+  
+  return $res;
+  
+}
