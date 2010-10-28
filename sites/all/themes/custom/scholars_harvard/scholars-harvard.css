@@ -1,9 +1,10 @@
 body {
-  background:#293e4b;
+  background:#484848;
   font: 12px/17px arial, helvetica, sans-serif;
   padding-bottom:30px;
   }
-/*
+
+
 #extradiv {
   top: 620px;
   width: 100%;
@@ -11,7 +12,8 @@ body {
   background: red;
   position: absolute;
   }
-*/
+
+
 #wrapper {
   margin-top: 0;
   }
@@ -19,14 +21,25 @@ body {
 #container {
   width: 980px;
   margin: 0 auto;
-  overflow:hidden;
   }
 
 #content-wrapper {
+  width:980px;
   background: #fff;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
+  -moz-box-shadow: 0 .5em 2.5em rgba(0,0,0,0.6);
+  -webkit-box-shadow: 0 .5em 2.5em rgba(0,0,0,0.6);
+  box-shadow: 0 .5em 2.5em rgba(0,0,0,0.6);
+  }
+
+.front #content-wrapper {
+  overflow:hidden;
+  }
+
+body.header- #content-wrapper {
+  margin-top: 30px;
   }
 
 #content-wrapper .column {
@@ -37,6 +50,7 @@ body {
   clear: both;
   padding-bottom: 19px;
   border-top: 1px solid #ccc;
+  width: 980px;
   }
 
 body.no-sidebars #content-main {
@@ -119,7 +133,8 @@ p.big-button a {
   }
 
 span.big-button a {
-  color: #fff;
+  color: #ff7f01;
+  /*
   background: #ff7f01;
   padding: 1px 10px 2px 10px;
   -moz-border-radius: 4px;
@@ -190,13 +205,13 @@ ul#top-front li a:hover {
 
 
 #panel-wrapper {
-  width: 2000px;
+  width: 1960px;
   position: relative;
   }
 
 .panel {
   float: left;
-  width: 1000px;
+  width: 980px;
   }
 
 /*.
@@ -217,26 +232,28 @@ row {
 #publications,
 #activity,
 #about-abstract {
-  width: 214px;
+  width:334px;
   padding:19px 22px 30px 22px;
   float: left;
   height: 462px;
-  overflow:hidden;
   }
 
-#publications {
-  width: 300px;
-  background: #eee;
-  border-right:1px solid #DBDBDB;
+#activity {
+  width: 179px;
   -moz-border-radius: 6px 0 0 0;
   -webkit-border-radius: 6px 0 0 0;
   border-radius: 6px 0 0 0;
+  border-right:1px solid #efeded;
+  }
+
+#publications {
   padding-bottom: 30px;
+  background: #fff;
   }
 
 #publications h2, #activity h2 {
-  color: #959595;
-  font-size: 19px;
+  color: #b71313;
+  font-size: 18px;
   }
 
 #publications .views-row {
@@ -252,28 +269,49 @@ row {
   }
 
 #about-abstract {
-  width:347px;
-  padding: 12px 12px 0 18px;
-  background: #e2e7eb;
-  height: 499px;
+  width:375px;
+  padding: 12px 0 0 0;
   -moz-border-radius: 0 6px 0 0;
   -webkit-border-radius: 0 6px 0 0;
-  border-radius: 0 6px 0 0;
+  }
+
+#about-abstract ul.preview-points, #about-abstract ul.preview-points li {
+  margin: 0;
+  padding: 0;
+  }
+
+#about-abstract ul.preview-points li, p#learn-more-toggle {
+  padding: 12px;
+  background:#fbfae4;
+  clear:both;
+  }
+
+#about-abstract ul.preview-points li.second {
+  background: #e9f6d3;
+  }
+
+#about-abstract ul.preview-points li.third {
+  background: #ecf8fa;
+  min-height: 82px;
+  }
+
+#about-abstract h2, #about-abstract h3, #about-abstract p {
+  margin-right: 10px;
+  margin-bottom: 0;
   }
 
 #about-abstract h2 {
-  font-size: 17px;
+  font-size: 19px;
   font-weight: bold;
   line-height: 1.3em;
   color:#a35353;
   color: #555;
-  margin-bottom: 29px;
+  margin-bottom: 18px;
   }
-
 
 #about-abstract .illustration {
   float: right;
-  margin: 0 0 1em 1em;
+  margin: 0 0 0 1em;
   width:67px;
   height:67px;
   background: url(images/widget.png) no-repeat 0 0 transparent;
@@ -290,32 +328,31 @@ row {
   }
 
 #about-abstract .illust-theme {
-  width:109px;
-  height: 96px;
+  width:108px;
+  height: 77px;
   background-image: url(images/theme.png);
   }
 
 p#learn-more-toggle {
   margin:0;
   clear: both;
+  background: #f7f4d6;
+  padding-bottom: 24px;
   }
 
 p#learn-more-toggle a {
-  background: #132632;
-  margin: 0 -18px;
+  background: url(images/video-preview.png) no-repeat 100% 50%;
   display:block;
-  padding: 18px;
-  padding-bottom: 40px;
-  color: #fff;
-  font-weight: bold;
+  color: #000;
   }
 
 p#learn-more-toggle a span {
   background: url(images/learn-more-scholars.png) no-repeat 0 0;
-  width: 222px;
-  height: 20px;
+  width: 212px;
+  height: 25px;
   text-indent:-999em;
   display:block;
+  margin-left: -7px;
   }
 
 #activity-toggle {
@@ -325,7 +362,6 @@ p#learn-more-toggle a span {
 #activity-toggle a, #activity-toggle a:visited {
   background: url(images/black-arrow-left.png) no-repeat 0 50%;
   padding-left: 13px;
-  color: #000;
   }
 
 #activity-toggle a:hover {
@@ -383,8 +419,8 @@ p#learn-more-toggle a span {
   line-height: 23px;
   background: url(images/help-button.jpg) no-repeat 225px 50%;
   padding-top: 15px;
-  padding-right:121px;
-  margin-right: 20px;
+  padding-right:113px;
+  margin-right: 19px;
   border-right: 1px solid #ccc;
   }
 
@@ -420,7 +456,6 @@ p.copy a.poweredby {
 
 #block-views-openscholar_sites-block_2 ul {
   width: 100%;
-  height:200px
   }
 
 
@@ -525,7 +560,7 @@ p.copy a.poweredby {
 
 #block-views-openscholar_sites-block_2 .views-row {
   float: left;
-  width: 134px;
+  width: 127px;
   margin-left: 30px;
   clear: none;
   font-size: 13px;
@@ -554,9 +589,7 @@ p.copy a.poweredby {
   }
 
 #block-views-openscholar_sites-block_2 .views-admin-links {
-  position: absolute;
-  top: -30px;
-  right: 0;
+  float:right;
   }
 
 
