@@ -142,7 +142,7 @@
   $(document).ready(function() {
 	  //var panel2_height = $('#front-panel-2').height();
 	  //var panel2_height = 1028;
-	  $('#content').css({'height':'530px','overflow':'hidden'});
+	  $('#content').css({'height':'515px','overflow':'hidden'});
     $('#learn-more-toggle a').attr("href","#").click(function(event){
     	$('#content').animate({
     	  height:"1028px"
@@ -157,7 +157,7 @@
         left:"0"
         },200);
       $('#content').animate({
-        height:"530px"
+        height:"515px"
         },400);
     });
 
