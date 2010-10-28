@@ -1,5 +1,5 @@
 <?php
-// $Id: override_node_options.module,v 1.5.2.19 2010/01/03 23:09:03 davereid Exp $
+// $Id: override_node_options.module,v 1.5.2.21 2010/07/14 17:36:06 timmillwood Exp $
 
 /**
  * @file
@@ -20,6 +20,10 @@ function override_node_options_perm() {
     $perms[] = 'override ' . $node_type . ' revision option';
     $perms[] = 'override ' . $node_type . ' authored on option';
     $perms[] = 'override ' . $node_type . ' authored by option';
+    if (module_exists('comment')) {
+      $perms[] = 'override ' . $node_type . ' comment settings';
+    }
+    
   }
   return $perms;
 }
@@ -82,7 +86,12 @@ function override_node_options_form_alter(&$form, $form_state, $form_id) {
     $form['options']['promote']['#access'] = user_access('override ' . $node->type . ' promote to front page option');
     $form['options']['sticky']['#access'] = user_access('override ' . $node->type . ' sticky option');
     $form['options']['#access'] |= override_node_options_element_children_access($form['options']);
-
+    
+    // Add access to the 'Comment settings' fieldset.
+    if (module_exists('comment') && isset($form['comment_settings']) && !user_access('administer comments')) {
+      $form['comment_settings']['#access'] = user_access('override ' . $node->type . ' comment settings');
+    }
+    
     // Add extra validation and processing if the user does not have the
     // 'administer nodes' permission since it would be otherwise skipped by core.
     if ($form['author']['#access']) {
@@ -152,9 +161,18 @@ function override_node_options_submit_node($form, &$form_state) {
  */
 function override_node_options_element_children_access($element) {
   foreach (element_children($element) as $key) {
-    if (!isset($element[$key]['#access']) || !empty($element[$key]['#access'])) {
-      return TRUE;
+    // Skip un-accessible children.
+    if (isset($element[$key]['#access']) && !$element[$key]['#access']) {
+      continue;
     }
+
+    // Skip value and hidden elements, since they are not rendered.
+    if (isset($element[$key]['#type']) && in_array($element[$key]['#type'], array('value', 'hidden'))) {
+      continue;
+    }
+
+    return TRUE;
   }
+
   return FALSE;
 }
