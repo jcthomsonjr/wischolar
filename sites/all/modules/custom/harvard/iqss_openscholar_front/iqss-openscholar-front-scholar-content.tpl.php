@@ -1,13 +1,6 @@
 <div id="panel-wrapper">
   <div id="front-panel-1" class="panel">
     <div class="row">
-        <div id="publications">
-          <?php
-          $publications = views_block('view','scholar_publications-block_1');
-          print '<h2>' . $publications['subject'] . '</h2>';
-          print $publications['content'];
-          ?>
-        </div>
         <div id="activity">
             <?php
             $activity = views_block('view','vsite_activity-block_1');
@@ -15,25 +8,39 @@
             print $activity['content'];
             ?>
         </div>
+        <div id="publications">
+          <?php
+          $publications = views_block('view','scholar_publications-block_1');
+          print '<h2>' . $publications['subject'] . '</h2>';
+          print $publications['content'];
+          ?>
+        </div>
         <div id="about-abstract">
           <h2>Create a dynamic feature-full personal web site in seconds. <span class="big-button"><?php print openscholar_front_getyoursitebutton(); ?></span></h2>
 
           <!--
           <p class="big-button"><?php print openscholar_front_getyoursitebutton(); ?>(Faculty, Grad Students, Visiting Scholars)</p>
           -->
-          <div class="illustration illust-widget"></div>
-          <h3>Great features for academics</h3>
-          <p>Manage your CV, bio, publications, blogs, announcements, links, image galleries, events, class materials. Automatically have your publications submitted to induces such as RePEc,
-          Computer Science Repository, and Google Scholar.</p>
+          <ul class="preview-points">
+            <li class="first">
+              <h3>Great features for academics</h3>
+              <div class="illustration illust-widget"></div>
+              <p>Manage your CV, bio, publications, blogs, announcements, links, image galleries, events, class materials. Automatically have your publications submitted to induces such as RePEc,
+              Computer Science Repository, and Google Scholar.</p>
+            </li>
+            <li class="second">
 
-          <div class="illustration illust-wrench"></div>
-          <h3>Super easy-to-use admin tools</h3>
-          <p>Use a web browser on any networked computer in the world to create and edit content, move useful widgets in and out of your site; change menus, categorize your work.</p>
+              <h3>Super easy-to-use admin tools</h3><div class="illustration illust-wrench"></div>
+              <p>Use a web browser on any networked computer in the world to create and edit content, move useful widgets in and out of your site; change menus, categorize your work.</p>
+            </li>
+            <li class="third">
 
-          <div class="illustration illust-theme"></div>
-          <h3>Beautiful themes</h3>
-          <p>Instantly change the look of your site with many elegant themes, or import your own custom theme.</p>
-          <p id="learn-more-toggle"><a href="learn-more">Learn more about how you can take advantage of <span><?php print variable_get('site_name', ''); ?></span></a></p>
+              <h3>Beautiful themes</h3><div class="illustration illust-theme"></div>
+              <p>Instantly change the look of your site with many elegant themes, or import your own custom theme.</p>
+            </li>
+          </ul>
+          <p id="learn-more-toggle"><a href="learn-more">Learn more about how <br />you can take advantage of <span><?php print variable_get('site_name', ''); ?></span></a></p>
+
         </div><!--/about-abstract -->
       </div><!--/row -->
     </div><!--/panel -->
@@ -141,7 +148,7 @@
     	  height:"1028px"
     	  },300);
     	$('#panel-wrapper').animate({
-    	  left:"-1000"
+    	  left:"-980"
     	  },500);
 
     });
