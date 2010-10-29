@@ -212,7 +212,7 @@ function _scholar_publications_imagecache_default_presets() {
           'module' => 'imagecache',
           'action' => 'imagecache_scale',
           'data' => array(
-            'width' => '100',
+            'width' => '40',
             'height' => '100%',
             'upscale' => 0,
           ),

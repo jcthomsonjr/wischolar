@@ -102,7 +102,7 @@ $flags[] = array (
   'name' => 'featured_web_sites',
   'title' => 'Featured web sites',
   'global' => '1',
-  'types' => 
+  'types' =>
   array (
     0 => 'vsite',
   ),
@@ -114,12 +114,12 @@ $flags[] = array (
   'unflag_message' => 'unfeature',
   'unflag_denied_text' => '',
   'link_type' => 'toggle',
-  'roles' => 
+  'roles' =>
   array (
-    'flag' => 
+    'flag' =>
     array (
     ),
-    'unflag' => 
+    'unflag' =>
     array (
     ),
   ),
@@ -129,7 +129,7 @@ $flags[] = array (
   'access_author' => '',
   'i18n' => 0,
   'module' => 'openscholar_front',
-  'locked' => 
+  'locked' =>
   array (
     0 => 'name',
   ),
@@ -151,8 +151,8 @@ function _openscholar_front_imagecache_default_presets() {
           'module' => 'imagecache',
           'action' => 'imagecache_scale_and_crop',
           'data' => array(
-            'width' => '100',
-            'height' => '100',
+            'width' => '80',
+            'height' => '80',
           ),
         ),
       ),
