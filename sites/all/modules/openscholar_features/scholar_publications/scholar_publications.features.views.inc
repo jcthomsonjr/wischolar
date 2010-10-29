@@ -1622,6 +1622,11 @@ function _scholar_publications_views_default_views() {
       'field' => 'biblio_year',
       'relationship' => 'none',
     ),
+    'created' => array(
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+    ),
   ));
   $handler->override_option('filters', array(
     'status' => array(
@@ -1794,6 +1799,95 @@ function _scholar_publications_views_default_views() {
   $handler->override_option('row_plugin', 'fields');
   $handler->override_option('row_options', array());
   $handler->override_option('block_description', 'Recent publications');
+  $handler->override_option('block_caching', -1);
+  $handler = $view->new_display('block', 'Node Block', 'block_2');
+  $handler->override_option('sorts', array(
+    'created' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'sticky' => array(
+      'order' => 'DESC',
+      'id' => 'sticky',
+      'table' => 'node',
+      'field' => 'sticky',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+    'biblio_year' => array(
+      'order' => 'DESC',
+      'id' => 'biblio_year',
+      'table' => 'biblio',
+      'field' => 'biblio_year',
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'status' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'none',
+    ),
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'biblio' => 'biblio',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'current' => array(
+      'operator' => 'active',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+  ));
+  $handler->override_option('footer', '<?php
+if(module_exists(\'apachesolr_search\')){
+  print l("More",\'search/apachesolr_search/\',array(\'query\' => array(\'filters\' => \'type:biblio\')));
+}');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 0);
+  $handler->override_option('items_per_page', 5);
+  $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
 
   $views[$view->name] = $view;

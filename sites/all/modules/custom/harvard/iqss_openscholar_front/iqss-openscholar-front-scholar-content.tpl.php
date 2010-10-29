@@ -10,7 +10,7 @@
         </div>
         <div id="publications">
           <?php
-          $publications = views_block('view','scholar_publications-block_1');
+          $publications = views_block('view','scholar_publications-block_2');
           print '<h2>' . $publications['subject'] . '</h2>';
           print $publications['content'];
           ?>
