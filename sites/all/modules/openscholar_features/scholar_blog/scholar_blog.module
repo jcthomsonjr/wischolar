@@ -51,9 +51,10 @@ function scholar_blog_strongarm() {
   $conf['comment_blog'] = COMMENT_NODE_READ_WRITE;
   $conf['comment_default_mode_blog'] = COMMENT_MODE_THREADED_EXPANDED;
   $conf['comment_default_order_blog'] = COMMENT_ORDER_OLDEST_FIRST;
-  $conf['comment_default_per_page_blog'] = 20;
+  $conf['comment_default_per_page_blog'] = 10;
   $conf['comment_controls_blog'] = COMMENT_CONTROLS_HIDDEN;
-  $conf['comment_subject_field_blog'] = 0;
+  $conf['comment_anonymous_blog'] = COMMENT_ANONYMOUS_MAY_CONTACT;
+  $conf['comment_subject_field_blog'] = 1;
   $conf['comment_preview_blog'] = COMMENT_PREVIEW_OPTIONAL;
   $conf['comment_form_location_blog'] = COMMENT_FORM_BELOW;
   //$conf['comment_upload_blog'] = TRUE;
