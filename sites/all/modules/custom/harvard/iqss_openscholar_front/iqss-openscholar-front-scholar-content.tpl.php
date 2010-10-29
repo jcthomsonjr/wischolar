@@ -23,24 +23,28 @@
           -->
           <ul class="preview-points">
             <li class="first">
-              <h3>Great features for academics</h3>
               <div class="illustration illust-widget"></div>
+              <h3>Great features for academics</h3>
+
               <p>Manage your CV, bio, publications, blogs, announcements, links, image galleries, events, class materials. Automatically have your publications submitted to induces such as RePEc,
               Computer Science Repository, and Google Scholar.</p>
             </li>
             <li class="second">
-
-              <h3>Super easy-to-use admin tools</h3><div class="illustration illust-wrench"></div>
+              <div class="illustration illust-wrench"></div>
+              <h3>Super easy-to-use admin tools</h3>
               <p>Use a web browser on any networked computer in the world to create and edit content, move useful widgets in and out of your site; change menus, categorize your work.</p>
             </li>
             <li class="third">
-
-              <h3>Beautiful themes</h3><div class="illustration illust-theme"></div>
+              <div class="illustration illust-theme"></div>
+              <h3>Beautiful themes</h3>
               <p>Instantly change the look of your site with many elegant themes, or import your own custom theme.</p>
             </li>
-          </ul>
-          <p id="learn-more-toggle"><a href="learn-more">Learn more about how <br />you can take advantage of <span><?php print variable_get('site_name', ''); ?></span></a></p>
 
+          <li id="learn-more-toggle">
+            <a href="learn-more">
+              Learn more about how you can take advantage of <span><?php print variable_get('site_name', ''); ?></span>
+             </a></li>
+          </ul>
         </div><!--/about-abstract -->
       </div><!--/row -->
     </div><!--/panel -->
