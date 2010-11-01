@@ -44,7 +44,7 @@ function iqss_scholar_strongarm(){
  * Alter Mollom Settings
  */
 function iqss_scholar_mollom_form_info_alter(&$form_info, $form_id){
-	$a_mollom_forms = array('contact_mail_page','contact_mail_user','user_register','user_pass');
+	$a_mollom_forms = array('contact_mail_page','contact_mail_user','user_register','user_pass','comment_form');
 
   $form_info['mode'] = (in_array($form_id,$a_mollom_forms))? MOLLOM_MODE_CAPTCHA:MOLLOM_MODE_DISABLED;
 }
