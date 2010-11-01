@@ -2,8 +2,10 @@
 
 fieldset {
   clear: both;
-  padding: 0;
-  border: none;
+  background:#F3F3F3;
+  border: 1px solid #dddddd;
+  border-left: none;
+  border-right:none;
   }
 
 .vertical-tabs fieldset {
@@ -18,6 +20,12 @@ div.vertical-tabs {
 div.vertical-tabs ul.vertical-tabs-list {
   left: -195px;
   width: 195px;
+  }
+
+
+legend, legend a {
+  color: #666;
+  font-weight: bold;
   }
 
 
@@ -261,7 +269,13 @@ fieldset.group-account-basics {
 
 #edit-name-wrapper {
   clear: both;
+  }
 
+
+/* Node Creation */
+
+body.section-node-add form#node-form div.form-item {
+  max-width: 800px;
   }
 
 /* Biblio Settings View */
