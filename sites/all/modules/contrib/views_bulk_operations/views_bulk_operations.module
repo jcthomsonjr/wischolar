@@ -2,7 +2,7 @@
 // $Id: views_bulk_operations.module,v 1.29.2.9.2.154 2010/10/06 15:34:41 kratib Exp $
 
 /**
- * @file 
+ * @file
  * Allows operations to be performed on items selected in a view.
  */
 
@@ -51,7 +51,7 @@ function views_bulk_operations_elements() {
 
 /**
  * Process the views_node_selector element defined earlier.
- * 
+ *
  * @see views_bulk_operations_elements()
  */
 function views_node_selector_process($element, $edit) {
@@ -71,7 +71,7 @@ function views_node_selector_process($element, $edit) {
   $element['selection'] = expand_checkboxes($element['selection']);
   
   $element['select_all'] = array('#type' => 'hidden', '#default_value' => $element['#value']['select_all']);
-  return $element; 
+  return $element;
 }
 
 /**
@@ -205,10 +205,10 @@ function views_bulk_operations_form($form_state, $plugin) {
     $objects = $_SESSION['vbo_values'][$_GET['q']]['objects'];
     $page = isset($_GET['page']) ? $_GET['page'] : 0;
     if (isset($objects['pages'][$page])) {
-      $default_objects['selection'] = $objects['pages'][$page]; 
+      $default_objects['selection'] = $objects['pages'][$page];
     }
     else if (isset($objects['selection'])) {
-      $default_objects['selection'] = array_filter($objects['selection']); 
+      $default_objects['selection'] = array_filter($objects['selection']);
     }
     $default_objects['select_all'] = $objects['select_all'];
     $default_operation = $_SESSION['vbo_values'][$_GET['q']]['operation'];
@@ -239,7 +239,7 @@ function views_bulk_operations_form($form_state, $plugin) {
       $form['empty'] = array('#value' => $plugin->view->display_handler->render_empty());
       return $form;
     }
-  } 
+  }
   else {
     $plugin->strip_view();
     switch ($form_state['storage']['step']) {
@@ -270,7 +270,7 @@ function views_bulk_operations_form($form_state, $plugin) {
         '#type' => 'fieldset',
         '#title' => t('Bulk operations'),
         '#prefix' => '<div id="views-bulk-operations-select">',
-        '#suffix' => '</div>',             
+        '#suffix' => '</div>',
       );
       $form['objects'] = array(
         '#type' => 'views_node_selector',
@@ -287,13 +287,13 @@ function views_bulk_operations_form($form_state, $plugin) {
           '#options' => array(0 => t('- Choose an operation -')) + $plugin->get_selected_operations(),
           '#default_value' => $default_operation,
           '#prefix' => '<div id="views-bulk-operations-dropdown">',
-          '#suffix' => '</div>',             
+          '#suffix' => '</div>',
         );
         $form['select']['submit'] = array(
           '#type' => 'submit',
           '#value' => t('Execute'),
           '#prefix' => '<div id="views-bulk-operations-submit">',
-          '#suffix' => '</div>',             
+          '#suffix' => '</div>',
         );
       }
       else {
@@ -327,7 +327,7 @@ function views_bulk_operations_form($form_state, $plugin) {
         '#type' => 'submit',
         '#value' => $operation['label'],
         '#prefix' => '<div id="views-bulk-operations-submit">',
-        '#suffix' => '</div>',             
+        '#suffix' => '</div>',
       );
       break;
     
@@ -335,9 +335,9 @@ function views_bulk_operations_form($form_state, $plugin) {
       $operation = $plugin->get_operation_info($form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['operation']);
       $form['operation'] = array('#type' => 'value', '#value' => $operation);
       $form += _views_bulk_operations_action_form(
-        $operation, 
-        $plugin->view, 
-        array_filter($form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['selection']), 
+        $operation,
+        $plugin->view,
+        array_filter($form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['selection']),
         $plugin->get_operation_settings($operation)
       );
       $form['execute'] = array(
@@ -362,7 +362,7 @@ function views_bulk_operations_form($form_state, $plugin) {
         t('Are you sure you want to perform %action on selected rows?', array('%action' => $operation['label'])),
         array('path' => $_GET['q'], 'query' => $query),
         theme('views_bulk_operations_confirmation', $objects, $plugin->view)
-      ); 
+      );
       break;
   }
  
@@ -390,7 +390,7 @@ function views_bulk_operations_form_alter(&$form, $form_state, $form_id) {
 
 /**
  * Validate the selected operation.
- * 
+ *
  * @see views_bulk_operations_form()
  */
 function views_bulk_operations_form_validate($form, &$form_state) {
@@ -432,7 +432,7 @@ function views_bulk_operations_form_validate($form, &$form_state) {
 
 /**
  * Helper function to adjust the selected set of nodes based on different situations.
- */ 
+ */
 function _views_bulk_operations_adjust_selection(&$selection, $select_all, $exposed_input, $arguments, $plugin) {
   if ($select_all) {
     // Adjust selection to select all nodes across pages.
@@ -467,7 +467,7 @@ function _views_bulk_operations_adjust_selection(&$selection, $select_all, $expo
 
 /**
  * Submit handler for the selected operation.
- * 
+ *
  * @see views_bulk_operations_form()
  */
 function views_bulk_operations_form_submit($form, &$form_state) {
@@ -478,10 +478,10 @@ function views_bulk_operations_form_submit($form, &$form_state) {
       $form_state['storage']['step'] = $form_state['values']['step'];
       $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW] = $form_state['values'];
       _views_bulk_operations_adjust_selection(
-        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['selection'], 
-        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['select_all'], 
-        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['exposed_input'], 
-        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['arguments'], 
+        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['selection'],
+        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['select_all'],
+        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['exposed_input'],
+        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['arguments'],
         $plugin
       );
       $operation = $plugin->get_operation_info($form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['operation']);
@@ -495,10 +495,10 @@ function views_bulk_operations_form_submit($form, &$form_state) {
       $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW] = $form_state['values'];
       $form_state['storage'][VIEWS_BULK_OPS_STEP_CONFIG] = $form_state['values']; // we're not taking any chances
       _views_bulk_operations_adjust_selection(
-        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['selection'], 
-        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['select_all'], 
-        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['exposed_input'], 
-        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['arguments'], 
+        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['selection'],
+        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['select_all'],
+        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['exposed_input'],
+        $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['arguments'],
         $plugin
       );
       $operation = $plugin->get_operation_info($form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['operation']);
@@ -518,7 +518,7 @@ function views_bulk_operations_form_submit($form, &$form_state) {
       if ($plugin->options['skip_confirmation']) {
         break; // Go directly to execution
       }
-      return; 
+      return;
 
     case VIEWS_BULK_OPS_STEP_CONFIRM:
       break;
@@ -535,9 +535,9 @@ function views_bulk_operations_form_submit($form, &$form_state) {
     $operation_arguments = $form_state['storage']['operation_arguments'];
   }
   _views_bulk_operations_execute(
-    $plugin->view, 
-    $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['selection'], 
-    $operation, 
+    $plugin->view,
+    $form_state['storage'][VIEWS_BULK_OPS_STEP_VIEW]['objects']['selection'],
+    $operation,
     $operation_arguments,
     array('execution_type' => $plugin->options['execution_type'], 'display_result' => $plugin->options['display_result'], 'settings' => $plugin->get_operation_settings($operation))
   );
@@ -577,7 +577,7 @@ function _views_bulk_operations_execute($view, $objects, $operation, $operation_
   }
 
   if (version_compare(VERSION, '6.10', '<')) {
-    // Hack to force actions_do() to process any number of invocations. 
+    // Hack to force actions_do() to process any number of invocations.
     // Check http://drupal.org/node/290282 to understand more.
     // This was fixed as of D6.10: http://cvs.drupal.org/viewvc.py/drupal/drupal/includes/actions.inc?view=log&pathrev=DRUPAL-6-10
     variable_set('actions_max_stack', 10000000);
@@ -589,7 +589,7 @@ function _views_bulk_operations_execute($view, $objects, $operation, $operation_
       $operations[] = array('_views_bulk_operations_batch_process', array($oid, $row));
     }
 
-    // Save the options in the session because Batch API doesn't give a way to 
+    // Save the options in the session because Batch API doesn't give a way to
     // send a parameter to the finished callback.
     $_SESSION['vbo_options']['display_result'] = $options['display_result'];
     $_SESSION['vbo_options']['operation'] = $operation;
@@ -600,28 +600,28 @@ function _views_bulk_operations_execute($view, $objects, $operation, $operation_
       'operations' => $operations,
       'finished' => '_views_bulk_operations_batch_finished',
       'title' => t('Performing %action on selected rows...', array('%action' => $operation['label'])),
-    );  
+    );
     batch_set($batch);
   }
   else if ($operation['aggregate'] != VBO_AGGREGATE_FORCED && module_exists('job_queue') && $options['execution_type'] == VBO_EXECUTION_QUEUE) {
     global $user;
     foreach ($objects as $row) {
       $oid = $row->{$view->base_field};
-      job_queue_add('_views_bulk_operations_queue_process', 
+      job_queue_add('_views_bulk_operations_queue_process',
         t('Perform %action on @type %oid.', array(
           '%action' => $operation['label'],
           '@type' => t($object_info['type']),
           '%oid' => $oid
-        )), 
+        )),
         array($oid, $row, $operation, $params, $user->uid, $options['display_result'], $object_info)
       );
       $oids[] = $oid;
     }
     if ($options['display_result']) {
       drupal_set_message(t('Enqueued %action on @types %oid. Check the <a href="@queue">queued jobs page</a>.', array(
-        '%action' => $operation['label'], 
+        '%action' => $operation['label'],
         '@types' => format_plural(count($objects), $object_info['type'], $object_info['type'] . 's'),
-        '%oid' => implode(', ', $oids), 
+        '%oid' => implode(', ', $oids),
         '@queue' => url('admin/reports/job_queue')
       )));
     }
@@ -656,7 +656,7 @@ function _views_bulk_operations_queue_process($oid, $row, $operation, $params, $
   $account = user_load(array('uid' => $uid));
   if (!_views_bulk_operations_object_permission($operation, $object, $object_info, $account)) {
     watchdog('views bulk operations', 'Skipped %action on @type %title due to insufficient permissions.', array(
-      '%action' => $operation['label'], 
+      '%action' => $operation['label'],
       '@type' => t($object_info['type']),
       '%title' => $object->{$object_info['title']},
     ), WATCHDOG_ALERT);
@@ -667,7 +667,7 @@ function _views_bulk_operations_queue_process($oid, $row, $operation, $params, $
 
   if ($display_result) {
     watchdog('views bulk operations', 'Performed %action on @type %title.', array(
-      '%action' => $operation['label'], 
+      '%action' => $operation['label'],
       '@type' => t($object_info['type']),
       '%title' => $object->{$object_info['title']},
     ), WATCHDOG_INFO);
@@ -693,14 +693,14 @@ function _views_bulk_operations_batch_process($oid, $row, &$context) {
     $context['results']['log'][] = t('Skipped %action on @type id %oid.', array(
       '%action' => $operation['label'],
       '@type' => t($operation['type']),
-      '%oid' => $oid,  
+      '%oid' => $oid,
     ));
     continue;
   }
 
   if (!_views_bulk_operations_object_permission($operation, $object, $object_info)) {
     $context['results']['log'][] = t('Skipped %action on @type %title due to insufficient permissions.', array(
-      '%action' => $operation['label'], 
+      '%action' => $operation['label'],
       '@type' => t($object_info['type']),
       '%title' => $object->{$object_info['title']},
     ));
@@ -710,7 +710,7 @@ function _views_bulk_operations_batch_process($oid, $row, &$context) {
   _views_bulk_operations_action_do($operation, $oid, $object, $row, $params, $object_info);
 
   $context['results']['log'][] = t('Performed %action on @type %title.', array(
-    '%action' => $operation['label'], 
+    '%action' => $operation['label'],
     '@type' => t($object_info['type']),
     '%title' => $object->{$object_info['title']},
   ));
@@ -739,7 +739,7 @@ function _views_bulk_operations_batch_finished($success, $results, $operations, 
     // An error occurred.
     // $operations contains the operations that remained unprocessed.
     $error_operation = reset($operations);
-    $message = t('An error occurred while processing @operation with arguments: @arguments', 
+    $message = t('An error occurred while processing @operation with arguments: @arguments',
       array('@operation' => $error_operation[0], '@arguments' => print_r($error_operation[0], TRUE)));
   }
   if (version_compare(VERSION, '6.10', '<')) {
@@ -773,7 +773,7 @@ function _views_bulk_operations_direct_process($view, $operation, $objects, $par
         if (!_views_bulk_operations_object_permission($operation, $object, $object_info)) {
           unset($objects[$num]);
           $context['results']['log'][] = t('Skipped %action on @type %title due to insufficient permissions.', array(
-            '%action' => $operation['label'], 
+            '%action' => $operation['label'],
             '@type' => t($object_info['type']),
             '%title' => $object->{$object_info['title']},
           ));
@@ -787,7 +787,7 @@ function _views_bulk_operations_direct_process($view, $operation, $objects, $par
       _views_bulk_operations_action_aggregate_do($operation, $oids, $objects, $params, $object_info);
 
       $context['results']['log'][] = t('Performed aggregate %action on @types %oids.', array(
-        '%action' => $operation['label'], 
+        '%action' => $operation['label'],
         '@types' => format_plural(count($objects), $object_info['type'], $object_info['type'] . 's'),
         '%oids' => implode(',', $oids),
       ));
@@ -807,7 +807,7 @@ function _views_bulk_operations_direct_process($view, $operation, $objects, $par
     }
     if (!_views_bulk_operations_object_permission($operation, $object, $object_info)) {
       $context['results']['log'][] = t('Skipped %action on @type %title due to insufficient permissions.', array(
-        '%action' => $operation['label'], 
+        '%action' => $operation['label'],
         '@type' => t($object_info['type']),
         '%title' => $object->{$object_info['title']},
       ));
@@ -817,7 +817,7 @@ function _views_bulk_operations_direct_process($view, $operation, $objects, $par
     _views_bulk_operations_action_do($operation, $oid, $object, $row, $params, $object_info);
     
     $context['results']['log'][] = t('Performed %action on @type %title.', array(
-      '%action' => $operation['label'], 
+      '%action' => $operation['label'],
       '@type' => t($object_info['type']),
       '%title' => $object->{$object_info['title']},
     ));
@@ -899,9 +899,9 @@ function _views_bulk_operations_action_permission($operation, $account = NULL) {
     $perm = actions_permissions_get_perm($operation['label'], $operation['callback']);
     if (!user_access($perm, $account)) {
       global $user;
-      watchdog('actions permissions', 'An attempt by user %user to !perm was blocked due to insufficient permissions.', 
+      watchdog('actions permissions', 'An attempt by user %user to !perm was blocked due to insufficient permissions.',
         array('!perm' => $perm, '%user' => isset($account) ? $account->name : $user->name), WATCHDOG_ALERT);
-      drupal_access_denied(); 
+      drupal_access_denied();
     }
   }
 
@@ -909,9 +909,9 @@ function _views_bulk_operations_action_permission($operation, $account = NULL) {
   if (!empty($operation['permissions'])) foreach ($operation['permissions'] as $perm) {
     if (!user_access($perm, $account)) {
       global $user;
-      watchdog('actions permissions', 'An attempt by user %user to !perm was blocked due to insufficient permissions.', 
+      watchdog('actions permissions', 'An attempt by user %user to !perm was blocked due to insufficient permissions.',
         array('!perm' => $perm, '%user' => isset($account) ? $account->name : $user->name), WATCHDOG_ALERT);
-      drupal_access_denied(); 
+      drupal_access_denied();
     }
   }
 }
@@ -989,10 +989,10 @@ function theme_views_bulk_operations_confirmation($objects, $view) {
     }
   }
   $count = count($objects);
-  $output = theme('item_list', $items, 
+  $output = theme('item_list', $items,
     format_plural(
-      $count, 
-      'You selected the following <strong>1</strong> row:', 
+      $count,
+      'You selected the following <strong>1</strong> row:',
       'You selected the following <strong>@count</strong> rows:'
     )
   );
@@ -1001,7 +1001,7 @@ function theme_views_bulk_operations_confirmation($objects, $view) {
 
 /**
  * Implementation of hook_forms().
- * 
+ *
  * Force each instance of function to use the same callback.
  */
 function views_bulk_operations_forms() {
@@ -1024,7 +1024,7 @@ function views_bulk_operations_forms() {
  * Hook used by VBO to be able to handle different objects as does Views 2 and the Drupal core action system.
  *
  * The array returned for each object type contains:
- *  'type' (required) => the object type name, should be the same as 'type' field in hook_action_info(). 
+ *  'type' (required) => the object type name, should be the same as 'type' field in hook_action_info().
  *  'context' (optional) => the context name that should receive the object, defaults to the value of 'type' above.
  *  'base_table' (required) => the Views 2 table name corresponding to that object type, should be the same as the $view->base_table attribute.
  *  'oid' (currently unused) => an attribute on the object that returns the unique object identifier (should be the same as $view->base_field).
@@ -1034,9 +1034,9 @@ function views_bulk_operations_forms() {
  *
  * The following attributes allow VBO to show actions on view types different than the action's type:
  *  'hook' (optional) => the name of the hook supported by this object type, as defined in the 'hooks' attribute of hook_action_info().
- *  'normalize' (optional) => a function($type, $object) that takes an object type and the object instance, returning additional context information for cross-type 
+ *  'normalize' (optional) => a function($type, $object) that takes an object type and the object instance, returning additional context information for cross-type
  *
- *  e.g., an action declaring hooks => array('user') while of type 'system' will be shown on user views, and VBO will call the user's 'normalize' function to 
+ *  e.g., an action declaring hooks => array('user') while of type 'system' will be shown on user views, and VBO will call the user's 'normalize' function to
  *        prepare the action to fit the user context.
  */
 function views_bulk_operations_views_bulk_operations_object_info() {
@@ -1234,7 +1234,7 @@ function views_bulk_operations_menu() {
 
 /**
  * AJAX callback to store selection when using Views pager.
- */ 
+ */
 function views_bulk_operations_pager() {
   $url = $_REQUEST['url'];
   $select_all = $_REQUEST['select_all'];
@@ -1340,9 +1340,9 @@ function views_bulk_operations_action_form($context) {
   );
   if (isset($form['#operation']) && $form['#operation']['configurable']) {
     $form['operation_arguments']['wrapper']['operation_form'] = _views_bulk_operations_action_form(
-      $form['#operation'], 
-      $form['#plugin']->view, 
-      NULL, 
+      $form['#operation'],
+      $form['#plugin']->view,
+      NULL,
       $form['#plugin']->get_operation_settings($form['#operation']),
       $context
     );
@@ -1355,7 +1355,7 @@ function views_bulk_operations_action_form($context) {
       '#type' => 'textarea',
       '#title' => t('Operation arguments'),
       '#description' => t('Enter PHP script that will assemble the operation arguments (and will override the arguments above).
-                           These arguments should be of the form: <code>return array(\'argument1\' => \'value1\', ...);</code> 
+                           These arguments should be of the form: <code>return array(\'argument1\' => \'value1\', ...);</code>
                            and they should correspond to the values returned by the action\'s form submit function.
                            The variables <code>&$object</code> and <code>$context</code> are available to this script.
                           '),
@@ -1373,7 +1373,7 @@ function views_bulk_operations_action_form($context) {
     '#type' => 'textarea',
     '#title' => t('View exposed input'),
     '#description' => t('Enter PHP script that will assemble the view exposed input (if the view accepts exposed input).
-                         These inputs should be of the form: <code>return array(\'input1\' => \'value1\', ...);</code> 
+                         These inputs should be of the form: <code>return array(\'input1\' => \'value1\', ...);</code>
                          and they should correspond to the query values used on the view URL when exposed filters are applied.
                          The variables <code>&$object</code> and <code>$context</code> are available to this script.
                         '),
@@ -1383,7 +1383,7 @@ function views_bulk_operations_action_form($context) {
     '#type' => 'textarea',
     '#title' => t('View arguments'),
     '#description' => t('Enter PHP script that will assemble the view arguments (if the view accepts arguments).
-                         These arguments should be of the form: <code>return array(\'value1\', ...);</code> 
+                         These arguments should be of the form: <code>return array(\'value1\', ...);</code>
                          and they should correspond to the arguments defined in the view.
                          The variables <code>&$object</code> and <code>$context</code> are available to this script.
                         '),
@@ -1444,9 +1444,9 @@ function& views_bulk_operations_action_form_operation(&$form, $form_state) {
       '#suffix' => '</div>',
     );
     $form['operation_arguments']['wrapper']['operation_form'] = _views_bulk_operations_action_form(
-      $form['#operation'], 
-      $plugin->view, 
-      NULL, 
+      $form['#operation'],
+      $plugin->view,
+      NULL,
       $plugin->get_operation_settings($form['#operation'])
     );
     if (!empty($form['#operation']['form properties'])) foreach ($form['#operation']['form properties'] as $property) {
@@ -1458,7 +1458,7 @@ function& views_bulk_operations_action_form_operation(&$form, $form_state) {
       '#type' => 'textarea',
       '#title' => t('Operation arguments'),
       '#description' => t('Enter PHP script that will assemble the operation arguments (and will override the operation form above).
-                           These arguments should be of the form: <code>return array(\'argument1\' => \'value1\', ...);</code> 
+                           These arguments should be of the form: <code>return array(\'argument1\' => \'value1\', ...);</code>
                            and they should correspond to the values returned by the action\'s form submit function.
                            The variables <code>&$object</code> and <code>$context</code> are available to this script.
                           '),
@@ -1586,9 +1586,9 @@ function views_bulk_operations_execute($vid, $operation_callback, $operation_arg
     $execution_type = VBO_EXECUTION_DIRECT; // we don't yet support Batch API here
   }
   _views_bulk_operations_execute(
-    $view, 
-    $objects, 
-    $operation, 
+    $view,
+    $objects,
+    $operation,
     $operation_arguments,
     array('execution_type' => $execution_type, 'display_result' => $plugin->options['display_result'], 'settings' => $plugin->get_operation_settings($operation))
   );
