@@ -34,14 +34,6 @@ body {
   box-shadow: 0 5px 13px rgba(0,0,0,0.35);
   }
 
-.front #content-wrapper {
-  overflow:hidden;
-  }
-
-.front #content {
-  height: 515px;
-  }
-
 body.header- #content-wrapper {
   margin-top: 30px;
   }
@@ -250,13 +242,20 @@ ul#top-front li a:hover {
   }
 
 
+#panel-viewer {
+  overflow:hidden;
+  width: 990px;
+  margin-top: -10px;
+  }
+
 #panel-wrapper {
-  width: 1960px;
+  width: 1980px;
   }
 
 .panel {
   float: left;
-  width: 980px;
+  width: 990px;
+  margin-top:10px;
   }
 
 /*.
@@ -313,10 +312,18 @@ row {
   }
 
 #about-abstract {
-  width:375px;
-  padding: 12px 0 0 0;
+  width:373px;
+  padding: 0;
+  background:#f7f7f7;
   -moz-border-radius: 0 6px 0 0;
   -webkit-border-radius: 0 6px 0 0;
+  border-radius: 0 6px 0 0;
+  -moz-box-shadow: 0 4px 5px rgba(0,0,0,0.3);
+  -webkit-box-shadow: 0 4px 5px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 5px rgba(0,0,0,0.3);
+  position:relative;
+  top:-10px;
+  right:-10px;
   }
 
 #about-abstract ul.preview-points, #about-abstract ul.preview-points li {
@@ -324,19 +331,21 @@ row {
   padding: 0;
   }
 
-#about-abstract ul.preview-points li {
+#about-abstract ul.preview-points li, #about-abstract h2 {
   padding: 16px 12px;
-  background:#fbfae4;
   clear:both;
   }
 
-#about-abstract ul.preview-points li.second {
-  background: #e9f6d3;
+#about-abstract ul.preview-points li.first {
+  background: #e4f3f9;
   }
 
+#about-abstract ul.preview-points li.second {
+  background: #e7f4d0;
+  }
 
 #about-abstract ul.preview-points li.third {
-  background: #ecf8fa;
+  background: #d9ede9;
   }
 
 #about-abstract h2, #about-abstract h3, #about-abstract p {
@@ -349,10 +358,9 @@ row {
   font-size: 19px;
   font-weight: bold;
   line-height: 1.3em;
-  color:#a35353;
   color: #555;
-  margin-bottom: 14px;
-  margin-left:12px;
+  padding:12px 12px 14px 12px;
+  margin: 0;
   letter-spacing: -.5px;
   }
 
@@ -387,12 +395,11 @@ row {
 #about-abstract ul.preview-points #learn-more-toggle a {
   display:block;
   color: #000;
-  background-color: #f7f4d6;
   padding: 15px 12px 24px 24px;
   }
 
 #about-abstract ul.preview-points #learn-more-toggle a:hover {
-  background-color: #fef8ba;
+  background-color: #fbfaea;
   }
 
 #about-abstract ul.preview-points #learn-more-toggle a span {
@@ -440,6 +447,10 @@ row {
   clear: both;
   }
 
+#front-panel-2 .row {
+  width:980px;
+  }
+
 .row-video {
   padding-bottom: 1.5em;
   }
@@ -456,8 +467,10 @@ row {
   text-shadow: rgba(51,51,51, .2) 0px 1px 1px;
   }
 
-.row-openscholar {
-  padding: 33px 23px;
+#front-panel-2 .row-openscholar {
+  padding: 33px 0 24px 23px;
+  width: 957px;
+  background: #fff;
   }
 
 .row-openscholar p.docs,

@@ -1,4 +1,5 @@
-<div id="panel-wrapper">
+<div id="panel-viewer">
+  <div id="panel-wrapper">
   <div id="front-panel-1" class="panel">
     <div class="row">
         <div id="activity">
@@ -137,32 +138,32 @@
  </div><!--/panel -->
 
 </div><!--/panel wrapper -->
-
+</div>
 <?php
   jcarousel_add($selector = '#features-carousel', $options = array(),$skin = 'os_front',$skin_path = $directory . '/carousel.css');
  ?>
 
 <script type="text/javascript">
   $(document).ready(function() {
-	  //var panel2_height = $('#front-panel-2').height();
+	  var panel1_height = $('#front-panel-1').height();
 	  //var panel2_height = 1028;
-	  $('#content').css({'height':'515px','overflow':'hidden'});
+	  $('#content').css({'height': panel1_height});
     $('#learn-more-toggle a').attr("href","#").click(function(event){
-    	$('#content').animate({
+    	$('#content').css({
     	  height:"1028px"
-    	  },200);
+    	  });
     	$('#panel-wrapper').animate({
-    	  left:"-980"
-    	  },400);
+    	  marginLeft:"-990"
+    	  },300);
 
     });
     $('#activity-toggle a').attr("href","#").click(function(event){
       $('#panel-wrapper').animate({
-        left:"0"
-        },200);
-      $('#content').animate({
-        height:"515px"
-        },400);
+        marginLeft:"0"
+        },300);
+      $('#content').css({
+        height:panel1_height
+        });
     });
 
    });
