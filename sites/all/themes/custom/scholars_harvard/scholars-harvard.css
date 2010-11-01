@@ -276,8 +276,8 @@ row {
 #publications,
 #activity,
 #about-abstract {
-  width:337px;
-  padding:19px 22px 30px 22px;
+  width:346px;
+  padding:19px 0 30px 22px;
   float: left;
   }
 
@@ -286,6 +286,7 @@ row {
   -moz-border-radius: 6px 0 0 0;
   -webkit-border-radius: 6px 0 0 0;
   border-radius: 6px 0 0 0;
+  padding-right: 22px;
   border-right:1px solid #efeded;
   }
 
@@ -312,18 +313,12 @@ row {
   }
 
 #about-abstract {
-  width:373px;
+  width:398px;
   padding: 0;
-  background:#f7f7f7;
-  -moz-border-radius: 0 6px 0 0;
-  -webkit-border-radius: 0 6px 0 0;
-  border-radius: 0 6px 0 0;
-  -moz-box-shadow: 0 4px 5px rgba(0,0,0,0.3);
-  -webkit-box-shadow: 0 4px 5px rgba(0,0,0,0.3);
-  box-shadow: 0 4px 5px rgba(0,0,0,0.3);
+  background:url(images/abs-mid.png) repeat-y 0 0 transparent;
   position:relative;
   top:-10px;
-  right:-10px;
+  float:right
   }
 
 #about-abstract ul.preview-points, #about-abstract ul.preview-points li {
@@ -332,20 +327,23 @@ row {
   }
 
 #about-abstract ul.preview-points li, #about-abstract h2 {
-  padding: 16px 12px;
+  padding: 16px 12px 16px 21px;
   clear:both;
   }
 
 #about-abstract ul.preview-points li.first {
   background: #e4f3f9;
+  margin-left: 13px;
   }
 
 #about-abstract ul.preview-points li.second {
   background: #e7f4d0;
+  margin-left: 13px;
   }
 
 #about-abstract ul.preview-points li.third {
   background: #d9ede9;
+  margin-left: 13px;
   }
 
 #about-abstract h2, #about-abstract h3, #about-abstract p {
@@ -355,11 +353,12 @@ row {
   }
 
 #about-abstract h2 {
+  background:url(images/abs-top.png) no-repeat 0 0;
   font-size: 19px;
   font-weight: bold;
   line-height: 1.3em;
   color: #555;
-  padding:12px 12px 14px 12px;
+  padding:12px 12px 14px 33px;
   margin: 0;
   letter-spacing: -.5px;
   }
@@ -390,17 +389,16 @@ row {
 
 #about-abstract ul.preview-points #learn-more-toggle {
   padding: 0;
+  background: url(images/abs-bot.png) 0 100% no-repeat;
+  min-height: 108px;
   }
 
 #about-abstract ul.preview-points #learn-more-toggle a {
   display:block;
   color: #000;
-  padding: 15px 12px 24px 24px;
+  padding: 15px 12px 24px 31px;
   }
 
-#about-abstract ul.preview-points #learn-more-toggle a:hover {
-  background-color: #fbfaea;
-  }
 
 #about-abstract ul.preview-points #learn-more-toggle a span {
   background: url(images/learn-more-scholars.png) no-repeat 0 0;
@@ -408,7 +406,7 @@ row {
   height: 25px;
   text-indent:-999em;
   display:block;
-  margin-top:3px;
+  margin-top:0;
   }
 
 #activity-toggle {
