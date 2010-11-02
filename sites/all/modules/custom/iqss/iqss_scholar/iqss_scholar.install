@@ -10,9 +10,9 @@ function iqss_scholar_install() {
 
 function iqss_scholar_update_6001(&$sandbox){
   //Init mollom forms
-	_iqss_scholar_init_mollom_forms();
+	$res = _iqss_scholar_init_mollom_forms();
 	
-	return array();
+	return $res;
 }
 
 
@@ -27,6 +27,12 @@ function _iqss_scholar_init_mollom_forms(){
 	db_query("REPLACE INTO `mollom_form` VALUES('contact_mail_user', 1, 'a:0:{}', 'contact')");
 	db_query("REPLACE INTO `mollom_form` VALUES('user_register', 1, 'a:0:{}', 'user')");
 	db_query("REPLACE INTO `mollom_form` VALUES('user_pass', 1, 'a:0:{}', 'user')");
-	db_query("REPLACE INTO `mollom_form` VALUES('comment_form', 1, 'a:0:{}', 'user')");
+	db_query("REPLACE INTO `mollom_form` VALUES('comment_form', 1, 'a:0:{}', 'comment')");
 	
+	$res[] = array(
+      'success' => true,
+      'query' => 'Installed mollom forms',
+    );
+    
+    return $res;
 }
