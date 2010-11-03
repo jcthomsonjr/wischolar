@@ -212,6 +212,21 @@ function _scholar_publications_imagecache_default_presets() {
           'module' => 'imagecache',
           'action' => 'imagecache_scale',
           'data' => array(
+            'width' => '100',
+            'height' => '100%',
+            'upscale' => 0,
+          ),
+        ),
+      ),
+    ),
+    'book_cover_thumb' => array(
+      'presetname' => 'book_cover_thumb',
+      'actions' => array(
+        '0' => array(
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_scale',
+          'data' => array(
             'width' => '40',
             'height' => '100%',
             'upscale' => 0,
