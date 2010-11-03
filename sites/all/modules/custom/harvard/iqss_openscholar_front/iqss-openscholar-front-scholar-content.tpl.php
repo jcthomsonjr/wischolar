@@ -27,7 +27,7 @@
               <div class="illustration illust-widget"></div>
               <h3>Great features for academics</h3>
 
-              <p>Manage your CV, bio, publications, blogs, announcements, links, image galleries, events, class materials. Automatically have your publications submitted to induces such as RePEc,
+              <p>Manage your CV, bio, publications, blogs, announcements, links, image galleries, events, class materials. Automatically have your publications submitted to indices such as RePEc,
               Computer Science Repository, and Google Scholar.</p>
             </li>
             <li class="second">
