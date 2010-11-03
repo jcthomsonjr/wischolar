@@ -1,0 +1,80 @@
+<?php
+
+include_once('scholar_blog.features.inc');
+
+/**
+ * Implementation of hook_block
+ */
+function scholar_blog_block($op = 'list', $delta = false, $edit = array()){
+  if ($op == 'list') {
+    $blocks['rss']['info'] = t('RSS Feed - Link to subscribe to your newest blog entries');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 'rss':
+        return _scholar_blog_rss_wgt();
+    }
+  }
+}
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_blog_context_links_alter(&$links) {
+  if (!empty($links['blog'])) {
+    $links['blog']['query'] = drupal_get_destination();
+  }
+}
+
+/**
+ * hook link_alter (admin at the end of links)
+ */
+function scholar_blog_link_alter(&$links, $node){
+  
+  if (isset($links['blog_usernames_blog'])) {
+    unset($links['blog_usernames_blog']);
+  }
+}
+
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function scholar_blog_strongarm() {
+  $conf = array();
+ 
+  $conf['node_options_blog'] = array('status', 'revision');
+  $conf['upload_blog'] = TRUE;
+ 
+  // Comments
+  $conf['comment_blog'] = COMMENT_NODE_READ_WRITE;
+  $conf['comment_default_mode_blog'] = COMMENT_MODE_THREADED_EXPANDED;
+  $conf['comment_default_order_blog'] = COMMENT_ORDER_OLDEST_FIRST;
+  $conf['comment_default_per_page_blog'] = 10;
+  $conf['comment_controls_blog'] = COMMENT_CONTROLS_HIDDEN;
+  $conf['comment_anonymous_blog'] = COMMENT_ANONYMOUS_MAY_CONTACT;
+  $conf['comment_subject_field_blog'] = 1;
+  $conf['comment_preview_blog'] = COMMENT_PREVIEW_OPTIONAL;
+  $conf['comment_form_location_blog'] = COMMENT_FORM_BELOW;
+  //$conf['comment_upload_blog'] = TRUE;
+ 
+  // diff / preview
+  $conf["show_preview_changes_blog"] = TRUE;
+  $conf["show_diff_inline_blog"] = FALSE;
+  
+  // Pathauto settings
+  $conf["pathauto_node_blog_pattern"] = "[space-og-path]/blog/[yyyy]/[mm]/[title-raw]";
+ 
+  $conf['node_submitted_info_blog'] = TRUE;
+  return $conf;
+}
+
+/**
+ * Link to subscribe to the rss feed
+ */
+function _scholar_blog_rss_wgt(){
+  
+  return array('content' => l("Subscribe to this blog Feed","blog/feed",array('attributes' => array('class' => 'feed-link'))));
+  
+}

@@ -1,0 +1,65 @@
+<?php
+
+include_once('vsite_comments.features.inc');
+
+/**
+ * Implementation of hook_menu_alter
+ */
+function vsite_comments_menu_alter(&$items){
+  $items['comment/delete']['access callback'] = 'vsite_comments_admin_access';   
+  $items['comment/edit']['access callback'] = 'vsite_comments_admin_access';  
+}
+
+
+/**
+ * Access function for comment/delete menu entry
+ */
+function vsite_comments_admin_access(){
+  // if we are in a vsite, vsite admin can delete comments
+  $vsite = vsite_get_vsite();
+  if ($vsite && $vsite -> admin_access()){
+    return TRUE;
+  }
+  
+  return user_access('administer comments');
+}
+
+/**
+ * Implementation of hook_views_api
+ */
+function vsite_comments_views_api() {
+  return array(
+    'api' => 2,
+  );
+}
+
+/**
+ * Implementation of hook_views_handlers
+ */
+function vsite_comments_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'vsite_comments') .'/includes',
+    ),
+    'handlers' => array(
+      'vsite_comments_handler_field_comment_link_delete' => array(
+        'parent' => 'views_handler_field_comment_link',
+      ),
+      'vsite_comments_handler_field_comment_link_edit' => array(
+        'parent' => 'views_handler_field_comment_edit',
+      ),
+    ),
+  );
+}
+
+
+/**
+ * Implementation of hook_views_data_alter
+ * @see vsite_comments_views_handlers()
+ */
+function vsite_comments_views_data_alter(&$data) {
+  // we want our handler to be used
+  $data['comments']['delete_comment']['field']['handler'] = 'vsite_comments_handler_field_comment_link_delete';
+  $data['comments']['edit_comment']['field']['handler'] = 'vsite_comments_handler_field_comment_link_edit';
+  
+}
