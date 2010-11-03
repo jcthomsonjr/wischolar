@@ -1,0 +1,368 @@
+<?php
+include_once('scholar_biocv.features.inc');
+
+function scholar_biocv_menu(){
+  $items = array();
+  $items['biocv'] = array(
+    'title' => 'Bio',
+    'page callback' => 'scholar_biocv_bio',
+    'access callback' => 'spaces_feature_access',
+    'access arguments' => array('scholar_biocv'),
+    'menu_name' => 'features',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['biocv/bio'] = array(
+    'title' => 'Biography',
+    'page callback' => 'scholar_biocv_bio',
+    'access callback' => 'scholar_biocv_submenu_access',
+    'menu_name' => 'features',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['biocv/cv'] = array(
+    'title' => 'Curriculum Vitae',
+    'page callback' => 'scholar_biocv_cv',
+    'access callback' => 'scholar_biocv_submenu_access',
+    'menu_name' => 'features',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  return $items;
+}
+
+/**
+ * CV/Bio Tab Access
+ */
+function scholar_biocv_submenu_access(){
+
+  $vsite = vsite_get_vsite();
+  if (!$vsite) return false;
+
+  // load the bio node for the owner of this vsite
+  $cv_node = content_profile_load('cv', $vsite -> group -> uid, $lang = '');
+  $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);
+
+  if (!$cv_node || $b_use_attachment) return false; //If they havn't made a cv or they are using an attachment for thier cv
+
+	return spaces_feature_access('scholar_biocv'); //Standard access
+}
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function scholar_biocv_vsite_content_types_alter(&$content_types){
+  unset($content_types['cv']);
+  unset($content_types['bio']);
+}
+
+
+/**
+ * Display a Bio instance
+ *
+ * @return string
+ */
+function scholar_biocv_bio(){
+  $vsite = vsite_get_vsite();
+  drupal_set_title(t(''));
+  if(!$vsite) return;
+
+  // load the bio node for the owner of this vsite
+  $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
+  $cv_node = content_profile_load('cv', $vsite -> group -> uid, $lang = '');
+  $s_out = "";
+
+  //ADD CV Link if Req
+  $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);
+  if($cv_node && $b_use_attachment && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
+  	$s_filefield_alias = 'filefield_paths/alias/' . $cv_node->field_cv_attach[0]['fid'];
+  	$alias = drupal_get_path_alias($s_filefield_alias);
+
+  	if($alias && $s_filefield_alias != $alias){
+  	  $s_file_path = str_replace($cv_node->field_cv_attach[0]['filepath'], $alias, file_create_url($cv_node->field_cv_attach[0]['filepath']));
+  	}else{
+  	 	$s_file_path = file_create_url($cv_node->field_cv_attach[0]['filepath']);
+  	}
+
+    $s_out .= t("<h3>").l('Download CV', $s_file_path,array('attributes' => array('class' => "cv-direct-download"))).t("</h3>please use the above link to download a PDF copy of my CV</p>");
+  }
+
+
+  if($vsite->admin_access()){
+  	$a_links = array();
+    if ($bio_node){
+      $a_links[] = array('custom' => true, 'title' => 'Edit your Bio', 'href' => "node/{$bio_node->nid}/edit", 'query' => drupal_get_destination());
+    }else {
+      // an appropriate message and a link for the user to create their bio
+      $a_links[] = array('custom' => true, 'title' => 'Add your Bio', 'href' => "node/add/bio", 'query' => drupal_get_destination());
+    }
+
+    if(!scholar_biocv_submenu_access()){
+	    if ($cv_node){
+	      $a_links[] = array('custom' => true, 'title' => 'Edit your CV', 'href' => "node/{$cv_node->nid}/edit", 'query' => drupal_get_destination());
+	    }else {
+	      // an appropriate message and a link for the user to create their CV
+	      $a_links[] = array('custom' => true, 'title' => 'Add your CV', 'href' => "node/add/cv", 'query' => drupal_get_destination());
+	    }
+    }//Add the cv edit links if you need to
+
+    $s_out .= theme('context_links', $a_links);
+  }
+
+  if ($bio_node){
+  	drupal_set_title(t('%title', array('%title' => $bio_node->title)));
+    $s_out .= node_view($bio_node,false,true,true);
+  }
+
+  return $s_out;
+}
+
+/**
+ * Display a CV instance
+ *
+ * @return string
+ */
+function scholar_biocv_cv(){
+  $vsite = vsite_get_vsite();
+  if (!$vsite){
+    return '';
+  }
+
+  drupal_set_title(t(''));
+
+  // load the bio node for the owner of this vsite
+  $cv_node = content_profile_load('cv', $vsite -> group -> uid, $lang = '');
+  $s_out = "";
+
+  if($vsite->admin_access()){
+    $a_links = array();
+    if ($cv_node){
+      $a_links[] = array('custom' => true, 'title' => 'Edit your CV', 'href' => "node/{$cv_node->nid}/edit", 'query' => drupal_get_destination());
+    }else {
+      // an appropriate message and a link for the user to create their CV
+      $a_links[] = array('custom' => true, 'title' => 'Add your CV', 'href' => "node/add/cv", 'query' => drupal_get_destination());
+    }
+    $s_out .= theme('context_links', $a_links);
+  }
+
+  $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);
+  if ($cv_node && !$b_use_attachment){
+    drupal_set_title(t('%title', array('%title' => $cv_node->title)));
+    $s_out .= node_view($cv_node,false,true,true);
+  }elseif($cv_node && $b_use_attachment && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
+  	drupal_set_title(t('%title', array('%title' => $cv_node->title)));
+
+  	$s_out .= t("<h3>").l('Download CV', file_create_url($cv_node->field_cv_attach[0]['filepath']),array('attributes' => array('class' => "cv-direct-download"))).t("</h3>please use the above link to download a PDF copy of my CV</p>");
+  }
+
+  return $s_out;
+}
+
+function scholar_biocv_strongarm(){
+  $conf = array();
+  $conf['content_profile_use_bio'] = 1;
+  $conf['content_profile_bio'] = array(
+    'weight' => 0,
+    'user_display' => 0,
+    'edit_link' => 0,
+    'edit_tab' => '0',
+    'add_link' => 0,
+    'registration_use' => 0,
+    'admin_user_create_use' => 0,
+    'registration_hide' => array(
+      'other'
+    )
+  );
+
+  $conf['content_profile_use_cv'] = 1;
+  $conf['content_profile_cv'] = array(
+    'weight' => 0,
+    'user_display' => 0,
+    'edit_link' => 0,
+    'edit_tab' => '0',
+    'add_link' => 0,
+    'registration_use' => 0,
+    'admin_user_create_use' => 0,
+    'registration_hide' => array(
+      'other'
+    )
+  );
+
+  // Disable preview button
+  $conf["show_preview_changes_bio"] = TRUE;
+  $conf["show_diff_inline_bio"] = TRUE;
+  $conf["show_preview_changes_cv"] = TRUE;
+  $conf["show_diff_inline_cv"] = TRUE;
+
+  $conf['node_options_bio'] = array('status', 'revision');
+  $conf['node_options_cv'] = array('status');
+  $conf['upload_bio'] = TRUE;
+  $conf['upload_cv'] = FALSE;
+
+
+  // Comments
+  $conf['comment_bio'] = COMMENT_NODE_DISABLED;
+  $conf['comment_cv'] = COMMENT_NODE_DISABLED;
+
+  // Pathauto (optional) settings
+  // ?
+  return $conf;
+}
+
+/**
+ * Edit cv form to add checkbox for toggle
+ */
+function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
+  switch($form_id){
+    case 'cv_node_form': 
+   
+    unset($form['revision_information']);
+    $form['revision'] = array(
+    '#access' => TRUE,
+    '#type' => 'hidden',
+    '#default_value' => 0,   
+    );
+          
+    	drupal_add_js(drupal_get_path('module', 'scholar_biocv') . '/theme/scholar_biocv.biocvToggleUsePDF.js');
+    	$a_biocv_settings['biocvToggleUsePDF'] = array(
+        'monitor' => "use_pdf_as_cv",
+    	  'toggleOff' => array('title','body'),
+      );
+      drupal_add_js($a_biocv_settings, 'setting');
+      $form['title']['#required'] = false;
+
+      $vsite = vsite_get_vsite();
+    	$form['use_pdf_as_cv'] = array(
+			  '#type' => 'checkbox',
+    	  '#weight' => -10,
+			  '#title' => t('Use PDF upload as your CV'),
+    	  '#default_value' => (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']),
+       	'#description' => t('When this is checked the pdf you upload will be displayed on the cv section of your site.'),
+			);
+
+      $form['#submit'][] = 'scholar_biocv_cv_node_submit';
+    case 'bio_node_form':
+    	//CV and Bio
+		  $vsite = vsite_get_vsite();
+		  if($vsite){
+			  if(isset($form['uid'])){
+			    $form['uid']['#value'] = $vsite->group->uid;
+			  }
+
+			  // Set the author value - note that this works only for admins.
+			  if (($user = user_load($vsite->group->uid))) {
+			    $form['author']['name']['#default_value'] = $user->name;
+			    $form['name'] = array('#type' => 'value', '#value' => $user->name);
+			  }
+		  }//If we are on a viste then we should create the node for that user
+    break;
+  }
+}
+
+/**
+ * Save the setting that decides if they will be using thier PDF as thier CV
+ * @param $form
+ * @param $form_state
+ */
+function scholar_biocv_cv_node_submit($form, &$form_state) {
+	$vsite = vsite_get_vsite();
+
+	//Save to settings
+	if(!array_key_exists('scholar_biocv',$vsite->settings)) $vsite->settings['scholar_biocv'] = array();
+	$vsite->settings['scholar_biocv']['use_pdf_as_cv'] = !!$form_state['values']['use_pdf_as_cv'];
+	spaces_save($vsite);
+
+	if($vsite->settings['scholar_biocv']['use_pdf_as_cv'] && $_REQUEST['destination'] == 'biocv/cv'){
+		$_REQUEST['destination'] = 'biocv';
+	}//If they have just disabled the cv page then redirect to the main bio page
+}
+
+/**
+ * Implementation of hook_spaces_settings().
+ */
+function scholar_biocv_spaces_settings() {
+  return array(
+    'scholar_biocv' => array(
+      'class' => 'scholar_biocv_settings_feature',
+      'file' => drupal_get_path('module', 'scholar_biocv') .'/scholar_biocv.settings.feature.inc',
+    ),
+  );
+}
+
+/**
+ * Define the scholar biocv blocks with hook block
+ */
+function scholar_biocv_block($op = 'list', $delta = false, $edit = array()) {
+  if ($op == 'list') {
+    $blocks['bio_blurb']['info'] = t('Bio Blurb');
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 'bio_blurb':
+        return scholar_biocv_bio_blurb_content();
+    }
+  }
+}
+
+/**
+ * hook vsite_widgets
+ */
+function scholar_biocv_vsite_widgets(){
+  $items = array();
+
+  $items['scholar_biocv_bio_blurb'] = array(
+        'module' => 'scholar_biocv',
+        'delta' => 'bio_blurb',
+        'weight' => 20,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Bio Hook',
+        'type' => 'context_ui',
+      );
+
+  return $items;
+}
+
+/**
+ * Return the block contents for the bio blurb block
+ * @return unknown_type
+ */
+function scholar_biocv_bio_blurb_content(){
+	$vsite = vsite_get_vsite();
+  if(!$vsite) return array();
+
+  $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
+  if(!$bio_node) return array();
+
+  $output = strlen($bio_node->field_hook_text[0]['value'])?$bio_node->field_hook_text[0]['value'] : node_teaser($bio_node->body, null,400) ;
+	$output .= l("more", $bio_node->path,array(attributes=>array('class'=>'more')));
+
+	return array('subject' => "Bio",'content' => $output);
+}
+
+/**
+ * hook default_
+ */
+function scholar_biocv_context_default_contexts_alter(&$contexts){
+
+	$vsite = vsite_get_vsite();
+  if(!$vsite || !content_profile_load('bio', $vsite->group->uid)){
+  	unset($contexts['scholar-feature-biocv']->block['scholar_biocv_bio_blurb']);
+  	unset($contexts['vsite-section-public']->block['scholar_biocv_bio_blurb']);
+  }//Is there a bio created for this site? If not unset the applicable block
+
+
+}
+
+/**
+ * CV/Bio Title Callback
+ */
+function scholar_biocv_menu_title(){
+  $s_title = "";
+  $vsite = vsite_get_vsite();
+
+  $s_title .= "Bio";//(content_profile_load('bio', $vsite->group->uid))?'Bio':"";
+  $s_title .= (content_profile_load('cv', $vsite->group->uid))? ((strlen($s_title)?' / ':"")."CV"):"";
+
+  return $s_title;
+}
+

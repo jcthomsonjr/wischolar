@@ -1,0 +1,12 @@
+name        = OpenScholar: "PSR"
+description = Theme for Program on Survey Research
+
+screenshot = screenshot.png
+core       = 6.x
+base theme = scholar_aglet
+stylesheets[all][]   = psr.css
+conditional-stylesheets[if lte IE 7][all][]  = psr-ie.css
+
+scholar[widgets][vsite_widgets_0] = false
+scholar[theme_type]   = "scholar"
+scholar[theme_access] = "private"
