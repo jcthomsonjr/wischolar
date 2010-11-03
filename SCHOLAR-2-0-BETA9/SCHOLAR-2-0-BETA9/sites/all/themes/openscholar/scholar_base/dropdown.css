@@ -1,0 +1,121 @@
+/* $Id: dropdown.css,v 1.5 2009/07/21 01:21:43 merlinofchaos Exp $ */
+html.js div.ctools-dropdown div.ctools-dropdown-container {
+  z-index: 1001;
+  display: none;
+  text-align: left;
+  position: absolute;
+  left: 0;
+  top: 19px
+  }
+
+html.js div.ctools-dropdown div.ctools-dropdown-container ul li a {
+  display: block;
+}
+
+html.js div.ctools-dropdown div.ctools-dropdown-container ul {
+  list-style-type: none;
+}
+
+.ctools-dropdown div.ctools-dropdown-container ul li,
+#content .ctools-dropdown-container-wrapper ul.links li {
+  padding: 0;
+  display: block;
+  margin: 0;
+  background-image: none;
+  text-transform:capitalize;
+}
+
+.ctools-dropdown-no-js .ctools-dropdown-link,
+.ctools-dropdown-no-js span.text {
+  display: none;
+}
+
+
+html.js div.ctools-dropdown div.ctools-dropdown-container {
+  min-width: 165px;
+  background: #fff;
+  border: 1px solid #b2b2b2;
+  border-bottom-color: #898989;
+  margin: 0 1px 0 0;
+  padding: 5px 0;
+  color: #494949;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius: 5px;
+  -moz-box-shadow:  #888 0 4px 25px;
+  -webkit-box-shadow:  #888 0 4px 25px;
+  box-shadow: 0 4px 25px #888;
+  opacity: .93;
+  }
+
+
+.item-list ul.context-links {
+  margin: 0;
+  float:right;
+  }
+
+.item-list ul.context-links li, #ctools-dropdown-1 {
+  list-style:none;
+  margin:0 0 0 .7em;
+  list-style: none;
+  padding: 0;
+  }
+
+.item-list ul.context-links li,.ctools-dropdown,
+.ctools-dropdown .ctools-dropdown-link-wrapper,
+.ctools-dropdown .ctools-dropdown-container-wrapper,
+html.js div.ctools-dropdown div.ctools-dropdown-container ul li{
+  display:inline;
+  }
+
+.ctools-dropdown {
+  position: relative;
+  }
+
+.context-links a {
+  font-style: normal !important;
+  font-size: 12px !important;
+  background: url(images/plus.png) no-repeat 0 50% transparent !important;
+  padding: 0 0 0 13px !important;
+  }
+
+.context-links .ctools-dropdown-container-wrapper a, .ctools-dropdown-container-wrapper ul.links li a, li.cite_distribute, .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
+  background: #fff !important;
+  padding: 3px 0 3px 13px !important;
+  color: #000 !important;
+  }
+
+.context-links .ctools-dropdown-container-wrapper a:hover, .ctools-dropdown-container-wrapper ul.links li a:hover, li.cite_distribute:hover, .context-links .ctools-dropdown-container-wrapper .flag-wrapper:hover {
+  background-color: #356df6 !important;
+  color: #fff !important;
+  text-transform: none;
+  font-weight: bold;
+  text-decoration: none;
+  }
+
+.context-links .ctools-dropdown-container-wrapper .flag-wrapper a {
+  display:inline;
+  }
+
+
+ul.links .vsite-admin a.ctools-dropdown-link {
+  background: url(images/admin-wrench.png) 0 0 no-repeat transparent;
+  padding-left: 20px;
+  }
+
+.vsite-admin a.ctools-dropdown-link:active {
+  border: 1px solid blue;
+  }
+
+.empty-content .item-list ul.context-links li {
+  float: left;
+  }
+
+
+.page-node-add-event .date-clear-block {
+  display:inline-block;
+  margin-right: 20px;
+  width: 45%;
+  padding: 4px 4px 4px 8px;
+  background:#e2f468;
+  }
