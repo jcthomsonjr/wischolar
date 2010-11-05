@@ -105,6 +105,7 @@ $flags[] = array (
   'types' =>
   array (
     0 => 'vsite',
+    1 => 'project',
   ),
   'flag_short' => 'feature',
   'flag_long' => 'make it featured web site',
