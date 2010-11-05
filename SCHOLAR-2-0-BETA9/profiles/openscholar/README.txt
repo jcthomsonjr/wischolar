@@ -1,1 +1,0 @@
-For more information visit: http://openscholar.harvard.edu
