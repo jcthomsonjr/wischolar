@@ -1,0 +1,403 @@
+<?php
+
+include_once('vsite_content.features.inc');
+
+/**
+ * hook menu
+ */
+function vsite_content_menu() {
+  $items = array();
+
+  // views vsite_content defines 'cp/content'
+  
+  $items['cp/content/all'] = array(
+    'title' => 'All',
+    //'page callback' => if missing, use the parent (views)
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+  );
+  
+    //files
+  $items['cp/content/files'] = array(
+    'title' => 'Files',
+    'page callback' => 'vsite_content_files',
+    'type' => MENU_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+    'weight' => 99,
+  );
+ 
+  // a menu entry for each content type
+  $content_types = spaces_features_map('node');
+  $all_types = node_get_types('names');
+  
+  foreach ($content_types as $type => $feature_name) {
+    $items['cp/content/' . $type] = array(
+      'title' => $all_types[$type],
+      'access callback' => 'vsite_content_content_access',
+      'access arguments' => array($type, $feature_name),
+      'type' => MENU_LOCAL_TASK,
+    );
+    
+    if ($type == 'gallery') {
+      $items['cp/content/' . $type . '/' . $type] = array(
+        'title' => "Galleries",
+        'access callback' => 'vsite_content_content_access',
+        'access arguments' => array($type, $feature_name),
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+      );
+      $items['cp/content/' . $type . '/image'] = array(
+        'title' => "All images in Galleries",
+        'access callback' => 'vsite_content_content_access',
+        'access arguments' => array($type, $feature_name),
+        'type' => MENU_LOCAL_TASK,
+        'weight' => 50,
+      );
+    }
+    
+  }
+
+
+  
+  return $items;
+}
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function vsite_content_vsite_content_types_alter(&$content_types) {
+  $cts  = spaces_features_map('node');
+  $vsite = vsite_get_vsite();
+  foreach ( $cts as $type => $feature_name ) {
+    if (!($vsite->features[$feature_name])) {
+      unset($content_types[$type]);
+    }
+  }
+}
+
+/**
+ * access callback
+ */
+function vsite_content_content_access($type, $feature_name) {
+
+  return ( cp_access_cp() //CP Access
+           && array_key_exists($type, vsite_content_types(array(FEATURE_PRIVATE,FEATURE_PUBLIC))) //avalible content type?
+           && !is_content_profile($type) //not a content profile
+         );
+
+}
+
+
+/**
+ * hook views_pre_build
+ */
+function vsite_content_views_pre_build(&$view) {
+  if ($view->name == 'vsite_content') {
+    $vsite = vsite_get_vsite();
+    if (!$vsite) {
+      return;
+    }
+    // taxonomy filter
+    vsite_content_taxonomy_filter($view, $vsite);
+    
+    
+    $type = strlen(arg(3))?arg(3):arg(2);
+    if ($type && $type !== 'all') {
+      $view->set_arguments(array(
+          $type
+      ));
+
+      
+      //$view->display['default']->handler->options['header'] = $output;
+    }
+    else {
+
+        // add a "type" filter to this view
+    vsite_content_content_types_filter($view, $vsite);
+
+    }
+  }
+}
+
+/**
+ * adds a "type" filter to a given view
+ */
+function vsite_content_content_types_filter(&$view, $vsite) {
+  // map content types => feature name
+  $content_types = spaces_features_map('node');
+
+  drupal_alter('vsite_content_types', $content_types);
+  // content types to set in the filter
+  $ctypes = array();
+  foreach ( $content_types as $type => $feature_name ) {
+    $ctypes[$type] = $type;
+  }
+
+  $v = array(
+      'operator' => 'in',
+      'value' => $ctypes,
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array('operator' => FALSE, 'label' => ''),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    );
+  
+  $view->set_item('page_1', 'filter', 'type', $v);
+}
+
+/**
+ * add taxonomy filter to a view
+ */
+function vsite_content_taxonomy_filter(&$view, $vsite) {
+  $vocabs = $vsite->get_vocabs();
+
+  if (count($vocabs)) {
+    $vid = current(array_keys($vocabs));
+  }
+  
+  if ($vid) {
+    $v = array(
+      'operator' => 'or',
+      'value' => array(),
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'tid_op',
+        'identifier' => 'tid',
+        'label' => 'Category',
+        'optional' => 1,
+        'single' => 0,
+        'remember' => 0,
+        'reduce' => 0
+      ),
+      'type' => 'select',
+      'limit' => TRUE,
+      'vid' => $vid,
+      'id' => 'tid',
+      'table' => 'term_node',
+      'field' => 'tid',
+      'hierarchy' => 0,
+      'relationship' => 'none',
+      'reduce_duplicates' => 1
+    );
+    
+    $view->set_item('page_1', 'filter', 'tid', $v);
+  }
+
+}
+
+
+
+/**
+ * callback function for cp/content/files
+ */
+function vsite_content_files() {
+
+  $vsite = vsite_get_vsite();
+  $view_name = 'vsite_files';
+  $display = 'default';
+
+  return views_page($view_name, $display);
+}
+
+/**
+ * Hook form_alter
+ * Change the title of the vbo select element
+ */
+
+function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_state, $form_id = 'views_bulk_operations_form__1') {
+  //Add collapsible JS
+  drupal_add_js('misc/collapse.js');
+  drupal_add_js(array('vsite_content' => array('url' => ltrim(url($_GET['q']),'/'))), 'setting');
+  drupal_add_js(drupal_get_path('module', 'vsite_content') . '/vsite_content.js');
+  if ($form['#id'] == 'views-bulk-operations-form--1') {
+   $form['select']['#title'] = 'Update options';
+  }
+}
+
+
+/**
+ * hook form_alter
+ * Alter the views exposed form:
+ */
+function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_id = 'views_exposed_form') {
+  drupal_add_js(drupal_get_path('module', 'vsite_content') . '/vsite_content.js');
+    //Add collapsible JS
+  drupal_add_js('misc/collapse.js');
+  if ($form['#id'] == 'views-exposed-form-vsite-content-page-1') {
+    $type = arg(2);
+    //set action to current url
+    $form['#action'] = request_uri();
+    
+    $options = array(
+      'All' => check_plain('<Any>'),
+      1 => 'Yes',
+      0 => 'No'
+    );
+    
+    //get the site information
+    $site = vsite_get_vsite();
+    $vocabs = $site->get_vocabs($type);
+    
+    if (count($vocabs)) {
+      $vid = current(array_keys($vocabs));
+      $terms = taxonomy_get_tree($vid);
+      // remove those terms that do not have any node associated with
+      // TODO : if "all" only terms for some content types should be shown (hook vsite_content_content_types_alter()
+      $taxonomy_options = array();
+      foreach ($terms as $term) {
+        $n = ($type && $type !== 'all') ? taxonomy_term_count_nodes($term->tid, $type) : taxonomy_term_count_nodes($term->tid);
+        if ($n) {
+          $taxonomy_options[$term->tid] = $term->name;
+        }
+      }
+    }
+    
+    if (! $vid || ! count($taxonomy_options)) {
+      //remove Categores selection box
+      unset($form['#info']['filter-tid']);
+      unset($form['tid']);
+    }
+    else {
+      $taxonomy_options[$term->tid] = $term->name;
+      $form['tid']['#options'] = $taxonomy_options;
+      //5 terms max shown per select box
+      $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
+    }
+
+    //promoted to front page filter
+    $form['promote']['#type'] = 'radios';
+    $form['promote']['#options'] = $options;
+    
+    //published status filter
+    $form['status']['#type'] = 'radios';
+    $form['status']['#options'] = $options;
+    
+    //sticky on top of lists filter
+    $form['sticky']['#type'] = 'radios';
+    $form['sticky']['#options'] = $options;
+    
+    // ugly reset button
+    $vsite = vsite_get_vsite();
+    if (!$vsite) {
+      return;
+    }
+    $active_menu = menu_get_item();
+    $path = $vsite -> purl . '/' . $active_menu['path'];
+    
+    $form['reset'] = array(
+      '#type' => 'markup',
+      '#value' => '<input class="form-button" type="reset" value="Reset" onClick="javascript:window.location=\'/'. $path .'\';" />',
+    );
+  }
+}
+
+
+/**
+ * Edit the content view form to put it into fieldsets
+ */
+
+function vsite_content_form_alter(&$form, $form_state, $form_id) {
+  
+  switch ($form_id) {
+    case 'views_exposed_form':
+      if ($form['#id'] == "views-exposed-form-vsite-content-page-1") {
+        $vals = $form_state['input'];
+        //is the filter set? if so don't collapse it
+        $s_state = (!is_array($vals) || !(strlen($vals['title'] || $vals['promote'] != 'All' || $vals['sticky'] != 'All' || $vals['status'] != 'All' || count($vals['tid']))))?'collapsed':'';
+      $form['#prefix'] = _vsite_content_context_links() . '<fieldset class="vsite_content_filter_box collapsible ' . $s_state . '"><legend>Filter options</legend>';
+        $form['#suffix'] = '</fieldset>';
+      }
+    break;
+    case 'views_bulk_operations_form__1':
+      if (arg(0) == 'cp' && arg(1) == 'content') {
+        if (is_array($form['select']['#attributes'] )) $form['select']['#attributes'] += array('class' => 'vsite_content_bulk_update collapsible collapsed');
+        else $form['select']['#attributes'] = array('class' => 'vsite_content_bulk_update collapsible collapsed');
+      }
+    break;
+    default:
+      
+  }
+}
+
+function _vsite_content_context_links() {
+  $type = arg(2);
+
+  if ($type && $type !== 'all') {
+    $type_url_str = str_replace('_', '-', $type);
+    $all_types = node_get_types('names');
+    $links = array();
+    $links [] = array(
+      'href' => 'node/add/' . $type_url_str, 'title' => $all_types[$type], 'query' => array(
+      'destination' => 'cp/content/' . $type
+    )
+    );
+    $output = $type ? theme('context_links', $links) : '';
+  }
+  else {
+    // the "add new *" links
+    vsite_include('vsiteapi');
+    $items = vsite_create_links();
+    $output = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links');
+ 
+  }
+  return $output;
+}
+
+function vsite_content_cp_confirm_overide() {
+  return array(
+    "node/%/delete" =>  "node_delete_confirm",
+  );
+  
+}
+
+/**
+ * Implements hook_filefield_paths_process_file().
+ */
+function vsite_content_filefield_paths_process_file($new, $file, $settings, $node, $update) {
+  if ($new) {
+    $orig_alias = filefield_paths_process_string($settings['filealias']['value'], 'node', $node, $settings['filealias']);
+    $orig_alias = filefield_paths_process_string($orig_alias, 'field', array(0 => $file['field']), $settings['filealias']);
+
+    $path = 'filefield_paths/alias/' . $file['field']['fid'];
+    $alias = drupal_get_path_alias($path);
+
+    // Path has a different alias
+    if ($alias != $orig_alias) {
+      $old_file_path = drupal_lookup_path('source', $orig_alias);
+      if(strpos($old_file_path,'filefield_paths/alias/') === 0){
+        $n_old_fid = intval(substr($old_file_path,22));
+        $n_old_pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE dst = '%s' LIMIT 1", $orig_alias));
+        
+        if(!field_file_load($n_old_fid)){
+          //The file alias is orphaned and we should delete it
+          path_set_alias(NULL,$alias); //Delete unused alias
+          path_set_alias($path,$orig_alias,$n_old_pid); //Reassign old alias
+          
+        }else{
+	        //If the file exists and is part of the same node then rename the alias
+	        $field_info = content_types($node->type);
+	        if($file['module'] == 'upload'){
+	          //Upload Node
+	          $n_nid = db_result(@db_query("SELECT nid FROM {upload} WHERE fid = %d ",$n_old_fid));
+	        }elseif($file['field']['field']['field_name']){
+	          //CCK Node
+	          $n_nid = db_result(@db_query("SELECT nid FROM {".current($field_info['tables'])."} WHERE ".$file['field']['field']['field_name']."_fid = %d ",$n_old_fid));
+	        }
+	        
+	        if($n_nid == $node->nid){
+	          //Switch the two paths
+	          $n_new_pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE dst = '%s' LIMIT 1", $alias));
+	          path_set_alias($path,$orig_alias,$n_old_pid); //Reassign old alias
+	          path_set_alias($old_file_path,$alias,$n_new_pid); //Reassign new alias
+	        }
+        }
+      }
+    }
+  }
+}
