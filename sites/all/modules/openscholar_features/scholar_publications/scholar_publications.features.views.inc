@@ -1886,7 +1886,7 @@ if(module_exists(\'apachesolr_search\')){
 }');
   $handler->override_option('footer_format', '3');
   $handler->override_option('footer_empty', 0);
-  $handler->override_option('items_per_page', 5);
+  $handler->override_option('items_per_page', 7);
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
 
