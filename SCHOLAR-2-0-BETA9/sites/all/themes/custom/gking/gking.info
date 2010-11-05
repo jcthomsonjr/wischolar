@@ -1,0 +1,18 @@
+; $Id: gking.info,v 1.0 2010/04/05 22:43:32 swortis Exp $
+name        = Gary King Custom Theme
+description = Custom Theme for Gary King.
+
+screenshot = screenshot.png
+core       = 6.x
+base theme = scholar_base
+stylesheets[all][]   = gking.css
+
+conditional-stylesheets[if lte IE 7][all][]   = gking-ie-7.css
+conditional-stylesheets[if IE][all][]         = gking-ie.css
+
+scripts[] = gking.js
+
+scholar[theme_type]   = "scholar"
+scholar[theme_access] = "private"
+
+scholar[cp_layout_css] = cp-layout-map.css

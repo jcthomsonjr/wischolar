@@ -1,0 +1,447 @@
+<?php
+
+// $Id: vsite_search_apachesolr.module,v 1.1.2.5 2010/10/01 15:49:58 ferdi Exp $
+
+/**
+ * @file
+ */
+
+include_once('vsite_search_apachesolr.features.inc');
+
+/**
+ * Implementation of hook_taxononomy()
+ *
+ * This hook is called when either a vocabulary or a term is created or modified.  This implementation enables or disables facets corresponding to the
+ * vocabulary being added or modified.
+ *
+ * @param $op
+ * @param $type
+ * @param $array
+ *
+ * @see vsite_search_apachesolr_luceneapi_facet_enable()
+ */
+function vsite_search_apachesolr_taxonomy($op, $type, $array = NULL) {
+  switch ($type) {
+    case 'vocabulary':
+      switch ($op) {
+        case 'insert':
+          if(!apachesolr_server_status()) break;
+          // Enable the matching Solr facet for this vocabulary
+          $key = 'im_vid_' . $array['vid'];
+          $facets = apachesolr_get_enabled_facets();
+          $facets['apachesolr_search'][$key] = $key;
+          apachesolr_save_enabled_facets($facets);
+          // This cache being stale can prevent new facet filters from working.
+          apachesolr_clear_cache();
+          break;
+        case 'delete':
+          if(!apachesolr_server_status()) break;
+          // Enable the matching Solr facet for this vocabulary
+          $key = 'im_vid_' . $array['vid'];
+          $facets = apachesolr_get_enabled_facets();
+          // Remove the facet corresponding to this vocabulary from the list of enabled facets
+          unset($facets['apachesolr_search'][$key]);
+          apachesolr_save_enabled_facets($facets);
+          // This cache being stale can prevent new facet filters from working.
+          apachesolr_clear_cache();
+          break;
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter()
+ *
+ * Replaces the search form's submit handler with a custom submit handler to redirect to Apache Solr.
+ *
+ * @param object $form
+ *   The FAPI form object
+ * @param mixes $form_state
+ *   Associative array representing the submitted form
+ * @param string $form_id
+ *   The unique id of the form
+ */
+function vsite_search_apachesolr_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'search_form') {
+    if (variable_get('apachesolr_search_make_default', 0) && apachesolr_server_status()) {
+      if (!isset($form['#submit'])) {
+        $form['#submit'] = array('vsite_search_apachesolr_solr_search_form_submit');
+      }
+      else {
+        $key = array_search('search_form_submit', $form['#submit']);
+        if ($key !== FALSE) {
+          // Replace the search module's function.
+          $form['#submit'][$key] = 'vsite_search_apachesolr_solr_search_form_submit';
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implementation of hook_context_active_contexts_alter().
+ *
+ * @param mixed $contexts
+ *   Associative array of context objects
+ */
+function vsite_search_apachesolr_context_active_contexts_alter(&$contexts) {
+  //die('Contexts:<br><pre>'.print_r($contexts,TRUE).'</pre>');
+  // If one of the active contexts is the apachesolr_search context, remove some unneccessary blocks
+  if (in_array('vsite-search-apachesolr_search', array_keys($contexts))) {
+    // Look at the type of query that has been performed, and set a flag regarding whether or not to show the biblio facets if the type:biblio filter is in effect
+    $show_biblio_facets = FALSE;
+    $query = apachesolr_current_query();
+    if ($query) {
+      if ($query->has_filter('type', 'biblio')) {
+        $show_biblio_facets = TRUE;
+      }
+    }
+
+    if (!empty($contexts['vsite-section-public'])) {
+      foreach ($contexts['vsite-section-public']->block as $index => $block) {
+        if (preg_match('/apachesolr_biblio_/', $block['delta'])) {
+          
+        }
+        switch ($block['delta']) {
+          case 'scholar_publications-block_1':
+          case 'scholar_announcements-block_1':
+          case 'publication_types-block_1':
+          case 'publication_years-block_1':
+          case 'publication_contributors-block_1':
+            unset($contexts['vsite-section-public']->block[$index]);
+            break;
+        }
+      }
+    }
+    // Global search, no vsite context
+    else {
+      // Remove the Filter by Author facet block
+      unset($contexts['vsite-search-apachesolr_search']->block['apachesolr_search_uid']);
+      // Remove the Filter by Contributor facet block
+      unset($contexts['vsite-search-apachesolr_search']->block['apachesolr_biblio_sm_biblio_contributors']);
+    }
+    
+    // Loop through the apachesolr_search blocks and remove the Biblio facet blocks if needed
+    foreach ($contexts['vsite-search-apachesolr_search']->block as $bid => $block) {
+      if (preg_match('/^apachesolr_biblio_/', $bid)) {
+        if (!$show_biblio_facets) {
+          unset($contexts['vsite-search-apachesolr_search']->block[$bid]);
+        }
+      }
+    }
+  }
+  
+  // If the context is within a specific vsite, remove the og facet block
+  $vsite = vsite_get_vsite();
+  if ($vsite) {
+    unset($contexts['vsite-search-apachesolr_search']->block['im_og_gid']);
+  }
+}
+
+/**
+ * Submit handler for the core search form.  This function redirects searches to Apache Solr.
+ * @param object $form
+ *   The FAPI form object
+ * @param mixed $form_state
+ *   Associative array representing the submitted form
+ */
+function vsite_search_apachesolr_solr_search_form_submit($form, &$form_state) {
+  $keys = $form_state['values']['keys'];
+  // Handle Apache webserver clean URL quirks.
+  if (variable_get('clean_url', '0')) {
+    $keys = str_replace('+', '%2B', $keys);
+  }
+  // Redirect to Apache Solr, passing in the search keys
+  $form_state['redirect'] = 'search/apachesolr_search/'. trim($keys);
+}
+
+/**
+ * Implementation of hook_block()
+ *
+ * @param string $op
+ * @param int $delta
+ * @param mixed $edit
+ */
+function vsite_search_apachesolr_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      $blocks[0]['info'] = t('Categories');
+      $blocks[1]['info'] = t('Faceted Browsing');
+      return $blocks;
+    case 'view':
+      switch ($delta) {
+        case 0:
+          $query = apachesolr_current_query();
+          $vsite = vsite_get_vsite();
+          if ($vsite) {
+            $content = '';
+            foreach ($vsite->group->og_vocabularies as $vid => $vocab) {
+              $delta = 'im_vid_' . $vid;
+              $block = apachesolr_search_taxonomy_facet_block($response, $query, $delta);
+              if (!empty($block)) {
+                $content .= '<h3>' . t($block['subject']) . '</h3>';
+                $content .= $block['content'];
+              }
+            }
+          }
+          return array(
+            'subject' => t('Categories'),
+            'content' => $content
+          );
+          break;
+        case 1:
+          // No search has been performed; fetch the current context to prepare for faceted browsing
+          $content = '';
+          
+          /**
+           * Get the enabled filter facet blocks, performing an empty search based on the content type as a filter.
+           * @see http://drupal.org/node/457826
+           */
+          $blocks = apachesolr_search_browse(NULL, NULL, NULL, 'search/apachesolr_search');
+          if (count($blocks) > 0) {
+            foreach ($blocks as $block) {
+              if (strlen($block->content) > 0) {
+                $content .= '<h3 class="title">' . t($block->subject) . '</h3>';
+                $content .= $block->content;
+              }
+            }
+          }
+          if (strlen($content) > 0) {
+            return array(
+              'subject' => '',
+              'content' => $content,
+            );
+          }
+          break;
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_apachesolr_modify_query()
+ *
+ * @param object $query
+ *   Reference to the Solr_Base_Query object
+ * @param mixed $params
+ *   Controlling params for the query object
+ */
+function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $caller) {
+  /**
+   * Retrieve the current group context.  If the user is viewing content within a group context, use the group's nid as a filter for the facets
+   * to restrict results to within this group.  Searches performed outside of a vsite (top level) will not be filtered by group.
+   */
+  $vsite = vsite_get_vsite();
+  if (!empty($vsite)) {
+    // Add filter for group_id
+    $query->add_filter('im_og_gid', $vsite->group->nid);
+    
+    $content_types = array();
+    
+    /**
+     * Nodes that are related to a feature may need to be filtered out if the feature is configured to be private.
+     * Bypass this check if the current uid is the site owner, or is a site member.
+     */
+    if (! og_is_group_member($vsite->group->nid, TRUE)) {
+      foreach ($vsite->features as $name => $status) {
+        // 0 = disabled, 1 = private, 2 = public
+        if ($status < 2) {
+          $feature = features_get_features($name);
+          // Attempt to derive the content types that are part of this feature
+          if (!empty($feature->info['features']['node'])) {
+            foreach ($feature->info['features']['node'] as $content_type) {
+              $content_types[] = $content_type;
+            }
+          }
+          elseif (!empty($feature->info['features']['views'])) {
+            foreach ($feature->info['features']['views'] as $name) {
+              $view = views_get_view($name);
+              if ($view) {
+                foreach ($view->display as $display_name => $display_type) {
+                  if (!empty($display_type->display_options['filters']['type'])) {
+                    if ($display_type->display_options['filters']['type']['operator'] == 'in') {
+                      $content_types += array_values($display_type->display_options['filters']['type']['value']);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        $content_types = array_unique($content_types);
+      }
+      
+      $paths = array_unique(context_active_values('path'));
+      if (!empty($paths)) {
+        foreach ($paths as $path) {
+          //die('Path = '.$path);
+          if (preg_match('/^category\/tags\//', $path) || preg_match('/^category\//', $path)) {
+            $pieces = explode('/', $_GET['q']);
+            if (is_numeric($pieces[2])) {
+              $query->add_filter('tid', $pieces[2]);
+            }
+          }
+        }
+      }
+      
+      // Get the content types from the current context
+      $node_types = array_unique(context_active_values('node'));
+      if (!empty($node_types)) {
+        /**
+         * If there is more than one content type active in this context, additional filters need to be applied to the Solr query object
+         * as an "or" condition instead of an "an" condition.  To do this, we need to utilize a Solr subquery.
+         *
+         * If there's only one content type to filter by, simply add the new filter.
+         */
+        if (count($node_types) > 1) {
+          $subquery = apachesolr_drupal_query();
+          foreach ($node_types as $type) {
+            if (in_array($type, $content_types)) {
+              // Exclude the content types belonging to private features
+              $subquery->add_filter('type', $type);
+              $query->add_subquery($subquery, 'NOT');
+            }
+            else {
+              $subquery->add_filter('type', $type);
+              $query->add_subquery($subquery, 'OR');
+            }
+          }
+        }
+        else {
+          if (in_array($node_types[0], $content_types)) {
+            // Exclude the content types belonging to private features
+            $query->add_filter('type', $node_types[0], 'NOT');
+          }
+          else {
+            $query->add_filter('type', $node_types[0]);
+          }
+        }
+      }
+      else {
+        if (!empty($content_types)) {
+          foreach ($content_types as $type) {
+            $query->add_filter('type', $type, 'NOT');
+          }
+        }
+      }
+    }
+    else {
+      // Get the content types from the current context
+      $node_types = array_unique(context_active_values('node'));
+      if (!empty($node_types)) {
+        /**
+         * If there is more than one content type active in this context, additional filters need to be applied to the Solr query object
+         * as an "or" condition instead of an "an" condition.  To do this, we need to utilize a Solr subquery.
+         *
+         * If there's only one content type to filter by, simply add the new filter.
+         */
+        if (count($node_types) > 1) {
+          $subquery = apachesolr_drupal_query();
+          foreach ($node_types as $type) {
+            $subquery->add_filter('type', $type);
+            $query->add_subquery($subquery, 'OR');
+          }
+        }
+        else {
+          $query->add_filter('type', $node_types[0]);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implementation of hook_preprocess_search_result
+ * Add $web_site, $node_type variable to the search-result.tpl.php
+ */
+function vsite_search_apachesolr_preprocess_search_result(&$vars){
+  vsite_include('vsiteapi');
+  $vsite = vsite_get_vsite();
+  if (!$vsite) {
+    $gid = $vars['result']['fields']['im_og_gid']['value'];
+    $query = "SELECT title FROM {node} WHERE nid = %d";
+    $title = db_result(db_query($query, $gid));
+    $vars['web_site'] = l($title, "node/$gid");
+    
+    // machine name of the content type
+    $vars['node_type'] = $gid = $vars['result']['fields']['type']['value'];
+  }
+}
+
+/**
+ * Implementation of hook_preprocess_block()
+ *
+ * @param $vars
+ */
+function vsite_search_apachesolr_preprocess_block(&$vars) {
+  if (isset($vars['block']->module)) {
+    list($name, $display_id) = explode('-', $vars['block']->delta);
+    switch ($name) {
+      case 'im_og_gid':
+        $vars['block']->subject = t('Scholar Sites');
+        break;
+      case 'ss_biblio_year':
+        $vars['block']->subject = t('Year of Publication');
+        break;
+      case 'ss_biblio_authors':
+        $vars['block']->subject = t('Authors');
+        break;
+      case 'sm_biblio_contributors':
+        $vars['block']->subject = t('Authors');
+        break;
+      case 'ss_biblio_publisher':
+        $vars['block']->subject = t('Publisher');
+        break;
+      case 'ss_biblio_secondary_title':
+        $vars['block']->subject = t('Journal title');
+        break;
+      case 'ss_biblio_type_of_work':
+        $vars['block']->subject = t('Publication type');
+        break;
+    }
+  }
+}
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function vsite_search_apachesolr_strongarm() {
+  $conf = array();
+  $conf['apachesolr_biblio_index_authors'] = 1;
+  $conf['apachesolr_cron_limit'] = 200;
+  $conf['apachesolr_enabled_facets'] = array(
+    'apachesolr_search' => array(
+      'uid' => 'uid',
+      'type' => 'type',
+      'created' => 'created',
+    ),
+    'apachesolr_og' => array(
+      'im_og_gid' => 'im_og_gid',
+    ),
+    'apachesolr_biblio' => array(
+      'sm_biblio_contributors' => 'sm_biblio_contributors',
+      'ss_biblio_publisher' => 'ss_biblio_publisher',
+      'ss_biblio_secondary_title' => 'ss_biblio_secondary_title',
+      'ss_biblio_type_of_work' => 'ss_biblio_type_of_work',
+      'ss_biblio_year' => 'ss_biblio_year',
+    ),
+  );
+  $conf['apachesolr_facetstyle'] = 'links';
+  $conf['apachesolr_failure'] = 'show_error';
+  $conf['apachesolr_og_groupnode'] = 0;
+  $conf['apachesolr_read_only'] = 0;
+  $conf['apachesolr_rows'] = 10;
+  //$conf['apachesolr_search_browse'] = 'blocks';
+  $conf['apachesolr_search_browse'] = 'none';
+  $conf['apachesolr_search_default_previous'] = 0;
+  $conf['apachesolr_search_make_default'] = 1;
+  $conf['apachesolr_search_spellcheck'] = 1;
+  $conf['apachesolr_search_taxonomy_links'] = 1;
+  $conf['apachesolr_search_taxonomy_previous'] = 0;
+  $conf['apachesolr_set_nodeapi_messages'] = 1;
+  $conf['apachesolr_attachment_extract_using'] = 'solr';
+  $conf['apachesolr_attachment_excluded_extensions'] = 'aif art avi bmp gif ico jpg mov mp3 mp4 mpg oga ogv png psd ra ram rgb tif gz';
+  return $conf;
+}

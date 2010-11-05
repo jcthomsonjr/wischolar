@@ -1,0 +1,14 @@
+Index: spaces.spaces.inc
+===================================================================
+--- spaces.spaces.inc	(revision 2422)
++++ spaces.spaces.inc	(working copy)
+@@ -271,6 +271,9 @@
+             // Clear out values that haven't changed from defaults
+             if ($v === $value['defaults'][$identifier][$region][$bid][$k]) {
+               unset($block[$k]);
++              if($k == 'subject'){
++              	unset($customizer['subject'][$bid]);
++              }//unset the subject if it matches the default
+             }
+             // Store subjects "flatly"
+             else if ($k == 'subject') {

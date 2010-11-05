@@ -1,0 +1,80 @@
+<?php
+
+function openscholar_log_usage_strongarm(){
+  $conf = array();
+  
+  $conf['openscholar_log_usage_poweredby.png'] = drupal_get_path('module','openscholar_log_usage')."/theme/images/poweredby.png";
+  
+  return $conf;
+}
+
+/**
+ * Menu callback for openscholar_log_usage
+ */
+function openscholar_log_usage_menu(){
+  $items = array();
+  
+  $items['openscholar_lu/%'] = array(
+      'title' => 'OpenScholar',
+      'page callback' => 'openscholar_log_usage_serve',
+      'page arguments' => array(1),
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+  );
+  
+  return $items;
+}
+
+/**
+ * Log the version usage information and serve the image
+ * @param string $s_requested_image
+ */
+function openscholar_log_usage_serve($s_requested_image){
+  openscholar_log_usage_log();//Log version info
+  
+  $s_path = openscholar_log_usage_get_imagepath($s_requested_image);
+  if(!$s_path) exit;//No image found
+  
+  $a_info = pathinfo($s_path);
+  if($a_info['extension'] == 'jpg') $a_info['extension'] = 'jpeg';
+  
+  header('Content-type: image/'.$a_info['extension']);
+  header('Content-Length: '.filesize($s_path));
+  header('Cache-Control: no-cache, must-revalidate');
+  header('Expires: 0');
+  ob_clean();
+  flush();
+  readfile($s_path);
+  
+  exit;//No cache
+}
+
+/**
+ * Return the path for the image
+ *
+ * @param string $s_image
+ */
+function openscholar_log_usage_get_imagepath($s_image){
+
+  if(!($s_path = variable_get("openscholar_log_usage_$s_image",false))){
+    if(file_exists(drupal_get_path('module','openscholar_log_usage')."/theme/images/$s_image")){
+      $s_path = drupal_get_path('module','openscholar_log_usage')."/theme/images/$s_image";
+      variable_set("openscholar_log_usage_$s_image",$s_path);
+    }
+  }
+  
+  return $s_path;
+}
+
+/**
+ * Log the version usage information to the db
+ */
+function openscholar_log_usage_log(){
+  if(!strlen($_REQUEST['host']) || !strlen($_REQUEST['age'])) return;
+  
+  $views = db_result(db_query('SELECT views FROM {openscholar_usage_log} WHERE host = "%s" AND vsite = "%s" AND age = FROM_UNIXTIME(%d) ',array($_REQUEST['host'],$_REQUEST['vsite'],$_REQUEST['age'])));
+  $views++;
+  
+  db_query("REPLACE INTO {openscholar_usage_log} (host,host_name,vsite,age,views,version,last_visit) VALUES ('%s','%s','%s',FROM_UNIXTIME(%d),%d,'%s',NOW())",array($_REQUEST['host'],$_SERVER['REMOTE_HOST'],$_REQUEST['vsite'],$_REQUEST['age'],$views,$_REQUEST['version']));
+  
+}
