@@ -89,6 +89,7 @@ function _scholar_profiles_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('title', 'Directory');
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
   $handler->override_option('row_plugin', 'node');
@@ -99,7 +100,6 @@ function _scholar_profiles_views_default_views() {
     'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->override_option('title', 'Directory');
   $handler->override_option('path', 'people');
   $handler->override_option('menu', array(
     'type' => 'normal',
@@ -110,7 +110,7 @@ function _scholar_profiles_views_default_views() {
   ));
   $handler->override_option('tab_options', array(
     'type' => 'none',
-    'title' => '',
+    'title' => 'Directory',
     'description' => '',
     'weight' => 0,
     'name' => 'navigation',
