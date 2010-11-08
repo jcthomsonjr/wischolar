@@ -99,6 +99,7 @@ function _scholar_profiles_views_default_views() {
     'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->override_option('title', 'Directory');
   $handler->override_option('path', 'people');
   $handler->override_option('menu', array(
     'type' => 'normal',
