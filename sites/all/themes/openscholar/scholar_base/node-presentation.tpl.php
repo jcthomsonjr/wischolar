@@ -6,7 +6,7 @@
       <div class="presentation-meta">
         <?php if ($node->field_presentation_date[0]['value']) : ?>
         <div class="dates">
-        <?php print $node->field_presentation_date[0]['view'];?>
+         <?php print $node->field_presentation_date[0]['view'];?>
         </div>
         <?php endif; ?>
         <?php if ($terms): ?>

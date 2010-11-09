@@ -178,11 +178,16 @@ body.no-sidebars #content-wrapper {
 
 
 
+#sidebar-left .block,
+#sidebar-right .block,
 #sidebar-left h3.title,
-#sidebar-left .content,
-#sidebar-right h3.title,
-#sidebar-right .content {
+#sidebar-right h3.title {
   padding: 14px 25px 11px 14px;
+  }
+
+#sidebar-left .block,
+#sidebar-right .block {
+  padding-top: 0;
   }
 
 #sidebar-left h3.title,
@@ -190,15 +195,17 @@ body.no-sidebars #content-wrapper {
   padding-top: 21px;
   padding-bottom: 24px;
   background: #d1dcd8;
-  margin: 0;
+  margin: 0 -25px 0 -14px;
   }
 
-#sidebar-right h3.title,
-#sidebar-right .content {
+#sidebar-right .block
+#sidebar-right h3.title {
   padding-left: 32px;
   padding-right: 41px;
   }
 
+
+#sidebar-right .content
 #sidebar-right h3.title {
   background: #c8d1d3;
   }
@@ -285,20 +292,14 @@ body.no-sidebars #content-wrapper {
   float:right;
   }
 
-#block-vsite_menus-1 ul {
-  -moz-column-count:2;
-	-moz-column-gap: 1px;
-	-webkit-column-count: 2;
-	-webkit-column-gap:1px;
-	column-count: 2;
-	column-gap: 1px;
-	padding: 0;
-  }
-
 #block-vsite_menus-1 ul li {
   list-style: none;
   border-left: 1px solid #000;
   padding-left: 11px;
+  float: left;
+  display:inline;
+  width: 113px;
+  line-height: 1.3em;
   }
 
 #block-vsite_menus-1 li a ,#block-vsite_menus-1 li a:visited{

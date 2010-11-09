@@ -9,6 +9,9 @@
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
+  <!--[if lt IE 9]>
+  <script src="/<?php print $directory;?>/js/ie-multi-column.js"></script>
+  <![endif]-->
 </head>
 
 <body class="<?php print $body_classes; ?>">
