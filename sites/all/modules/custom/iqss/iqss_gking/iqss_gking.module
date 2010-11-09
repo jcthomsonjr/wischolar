@@ -364,7 +364,7 @@ function _iqss_gking_term_page_tree($term, $vid, $operator, $tree = false){
         $subterm->tid
     ), $operator, 0, false);
     if ($subterm->name && db_affected_rows($result))
-      $output .= '<div class="taxonomy-term-child">' . "<h3>{$subterm->name}</h3>" . _iqss_gking_term_page_tree($subterm, $vid, $operator) . "</div>";
+      $output .= '<div class="taxonomy-term-child">' . "<h3 class='taxonomy_heading'>{$subterm->name}</h3>" . _iqss_gking_term_page_tree($subterm, $vid, $operator) . "</div>";
   }
   return $output;
 
