@@ -311,7 +311,7 @@ function iqss_gking_people(){
   //We are in the People feature on this page
   context_set('scholar','feature','profiles');
   
-  if (! iqss_gking_on_gking_site()) return views_page('scholar_profiles', 'page_1'); //If this isn't Gary just display the standard
+  if (! iqss_gking_on_gking_site() || isset($_REQUEST['views_filter_tid'])) return views_page('scholar_profiles', 'page_1'); //If this isn't Gary just display the standard
 
   $vsite = vsite_get_vsite();
   $vocabs = $vsite->get_vocabs('person');
@@ -519,35 +519,9 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   }
 }
 
+//Change the title on the People view for Gary
 function iqss_gking_views_pre_build(&$view){
   if (! iqss_gking_on_gking_site() || $view->name != 'scholar_profiles') return;
   
-  $o_current_page_view = views_get_page_view();
-  //if($o_current_page_view->view->name != $view->name || $o_current_page_view->view->current_display != $view->current_display) return;
-
-  
-//  //Filter def to filter view by provided tid
-//  $a_tid_filter = array(
-//    'operator' => 'and',
-//    'value' => array(0 => $term->tid),
-//    'group' => 0,
-//    'exposed' => false,
-//    'limit' => TRUE,
-//    'vid' => $term->vid,
-//    'id' => 'tid',
-//    'table' => 'term_node',
-//    'field' => 'tid',
-//    'hierarchy' => 0,
-//    'relationship' => 'none',
-//    'reduce_duplicates' => 0,
-//  );
-//
-//  if(is_array($view->display_handler->options['filters'])){
-//    $view->display_handler->options['filters']['tid'] = $a_tid_filter;
-//  }else{
-//    $view->display_handler->default_display->options['filters']['tid'] = $a_tid_filter;
-//  }
-
-  $view->display_handler->default_display->options['title'] = "Research Group";
-  
+  $view->display_handler->default_display->options['title'] = str_replace("Directory","Research Group",$view->display_handler->default_display->options['title']);
 }
