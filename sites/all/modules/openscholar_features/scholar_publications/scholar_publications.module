@@ -177,18 +177,14 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     $form['submit_type'] = array('#type' => 'submit', '#disabled' => true, '#access' => false, '#value' => t('Select Publication Type'));
 
 
-    //format Contributors fieldset
-    /*
-    $form['contributors2_wrapper'] ['biblio_secondary_authors_more']['#value'] = 'More Contributors';
-   if($form['biblio_type']['#default_value']){
-      foreach($form['contributors2_wrapper'] ['biblio_contributors'][2] as $key => $val){
-        if (is_numeric($key)){
-          $form['contributors2_wrapper'] ['biblio_contributors'][2][$key]['auth_type']['#default_value'] = 14; //set default to 'Editor'
-        }
-      }
+    //authors should always be open
+    if(array_key_exists('author',$form)){
+      $form['author'] ['#collapsed'] = false;
     }
-    $form['contributors2_wrapper'] ['#collapsed'] = TRUE;
-    */
+    if(array_key_exists('contributors1_wrapper',$form)){
+      $form['contributors1_wrapper'] ['#collapsed'] = false;
+    }
+    
 
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['biblio_abst_e_field'] = 0; //Disable vert. tabs
