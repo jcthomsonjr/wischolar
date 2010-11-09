@@ -17,7 +17,7 @@ function _scholar_presentations_content_default_fields() {
         'format' => 'inline',
       ),
       'teaser' => array(
-        'format' => 'hidden',
+        'format' => 'default',
         'exclude' => 0,
       ),
       'full' => array(
