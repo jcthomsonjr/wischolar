@@ -42,6 +42,15 @@ function iqss_gking_menu(){
       'type' => MENU_CALLBACK
   );
 
+  $items['iqss_gking_research_group'] = array(
+      'title' => 'Research Group',
+      'page callback' => 'iqss_gking_people',
+      'access arguments' => array(
+          'access content'
+      ),
+      'type' => MENU_CALLBACK,
+  );
+  
   return $items;
 }
 
@@ -51,7 +60,6 @@ function iqss_gking_menu(){
  */
 function iqss_gking_menu_alter(&$items){
   $items['taxonomy/term/%']['page callback'] = 'iqss_gking_term_page';
-  //$items['categories/%/%']['page callback'] = 'iqss_gking_term_by_context';
 }
 
 /**
@@ -297,18 +305,59 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
 }
 
 /**
+ * Menu callback; displays all people nodes by term
+ */
+function iqss_gking_people(){
+  //We are in the People feature on this page
+  context_set('scholar','feature','profiles');
+  
+  if (! iqss_gking_on_gking_site()) return views_page('scholar_profiles', 'page_1'); //If this isn't Gary just display the standard
+
+  $vsite = vsite_get_vsite();
+  $vocabs = $vsite->get_vocabs('person');
+  $vocab = false;
+  
+  foreach ($vocabs as $v){
+    if($v->name == "Research Group"){
+      $vocab = $v;
+      break;
+    }
+  }
+  
+  if(!$vocab) return views_page('scholar_profiles', 'page_1');
+
+  $tree = taxonomy_get_tree($vocab->vid, 0, - 1, 1);
+  if (! count($tree)) {
+    $tree = taxonomy_get_tree($vocab->vid);
+    foreach ( $tree as $tterm )
+      if ($tterm->tid == $term->tid)
+        return iqss_gking_term_page(current($tterm->parents));
+  } //If this term has no childeren then display the parent.
+
+  
+  return _iqss_gking_term_page_tree(false, $vocab->vid, $terms['operator'], $tree);
+  
+}
+
+
+/**
  * Print the child terms
  */
 function _iqss_gking_term_page_tree($term, $vid, $operator, $tree = false){
-  if (! $tree)
-    $tree = taxonomy_get_tree($vid, $term->tid, - 1, 1);
+  require_once (drupal_get_path('module', 'taxonomy') . '/taxonomy.pages.inc'); //For theme functions
+  
+  if (! $tree) $tree = taxonomy_get_tree($vid, $term->tid, - 1, 1);
 
-  $result = taxonomy_select_nodes(array(
-      $term->tid
-  ), $operator, 0, false);
-  $output = (db_affected_rows($result)) ? theme('taxonomy_term_page', array(
-      $term->tid
-  ), $result) : '<div class="taxonomy-term-description">' . filter_xss_admin($term->description) . '</div>';
+  $output = "";
+  
+  if($term){
+	  $result = taxonomy_select_nodes(array(
+	      $term->tid
+	  ), $operator, 0, false);
+	  $output = (db_affected_rows($result)) ? theme('taxonomy_term_page', array(
+	      $term->tid
+	  ), $result) : '<div class="taxonomy-term-description">' . filter_xss_admin($term->description) . '</div>';
+  }
 
   foreach ( $tree as $subterm ) {
     $result = taxonomy_select_nodes(array(
@@ -468,4 +517,37 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       }
     break;
   }
+}
+
+function iqss_gking_views_pre_build(&$view){
+  if (! iqss_gking_on_gking_site() || $view->name != 'scholar_profiles') return;
+  
+  $o_current_page_view = views_get_page_view();
+  //if($o_current_page_view->view->name != $view->name || $o_current_page_view->view->current_display != $view->current_display) return;
+
+  
+//  //Filter def to filter view by provided tid
+//  $a_tid_filter = array(
+//    'operator' => 'and',
+//    'value' => array(0 => $term->tid),
+//    'group' => 0,
+//    'exposed' => false,
+//    'limit' => TRUE,
+//    'vid' => $term->vid,
+//    'id' => 'tid',
+//    'table' => 'term_node',
+//    'field' => 'tid',
+//    'hierarchy' => 0,
+//    'relationship' => 'none',
+//    'reduce_duplicates' => 0,
+//  );
+//
+//  if(is_array($view->display_handler->options['filters'])){
+//    $view->display_handler->options['filters']['tid'] = $a_tid_filter;
+//  }else{
+//    $view->display_handler->default_display->options['filters']['tid'] = $a_tid_filter;
+//  }
+
+  $view->display_handler->default_display->options['title'] = "Research Group";
+  
 }
