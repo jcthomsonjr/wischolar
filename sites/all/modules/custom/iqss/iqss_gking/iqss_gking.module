@@ -340,7 +340,7 @@ function iqss_gking_people(){
   $a_terms = array();
   foreach ( $tree as $subterm ) {
     if ($subterm->name && !$once){
-      $output .= '<div id="iqss_gking_term_'.$subterm->tid.'" class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$subterm->name}</h3>" . _iqss_gking_term_page_tree($subterm, $vocab->vid) . "</div>";
+      $output .= '<div id="iqss_gking_term_'.$subterm->tid.'" class="taxonomy-term-child">' . _iqss_gking_term_page_tree($subterm, $vocab->vid) . "</div>";
       $once = true;
     }
     
@@ -360,7 +360,7 @@ function iqss_gking_people_ajax($tid){
   
   $term = taxonomy_get_term($tid);
   drupal_set_header('Content-Type: text/javascript; charset=utf-8');
-  echo '<div id="iqss_gking_term_'.$term->tid.'" class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$term->name}</h3>" . _iqss_gking_term_page_tree($term, $term->vid) . "</div>";
+  echo '<div id="iqss_gking_term_'.$term->tid.'" class="taxonomy-term-child">'. _iqss_gking_term_page_tree($term, $term->vid) . "</div>";
   
 }
 
