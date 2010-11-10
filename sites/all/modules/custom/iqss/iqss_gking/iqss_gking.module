@@ -51,6 +51,13 @@ function iqss_gking_menu(){
       'type' => MENU_CALLBACK,
   );
   
+  $items['iqss_gking_research_group_ajax/%'] = array(
+    'page callback' => 'iqss_gking_people_ajax',
+    'type' => MENU_CALLBACK,
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+  );
+  
   return $items;
 }
 
@@ -324,26 +331,45 @@ function iqss_gking_people(){
     }
   }
   
-  if(!$vocab) return views_page('scholar_profiles', 'page_1');
-
-  $tree = taxonomy_get_tree($vocab->vid, 0, - 1, 1);
-  if (! count($tree)) {
-    $tree = taxonomy_get_tree($vocab->vid);
-    foreach ( $tree as $tterm )
-      if ($tterm->tid == $term->tid)
-        return iqss_gking_term_page(current($tterm->parents));
-  } //If this term has no childeren then display the parent.
-
+  if($vocab) $tree = taxonomy_get_tree($vocab->vid, 0, - 1, 1);
   
-  return _iqss_gking_term_page_tree(false, $vocab->vid, $terms['operator'], $tree);
+  if(!$vocab || !count($tree)) return views_page('scholar_profiles', 'page_1');
+  
+  $output = '';
+  $once = false;
+  $a_terms = array();
+  foreach ( $tree as $subterm ) {
+    if ($subterm->name && !$once){
+      $output .= '<div id="iqss_gking_term_'.$subterm->tid.'" class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$subterm->name}</h3>" . _iqss_gking_term_page_tree($subterm, $vocab->vid) . "</div>";
+      $once = true;
+    }
+    
+    if($subterm->name) array_push($a_terms,array('name' => $subterm->name, 'tid' => $subterm->tid));
+  }
+  
+  drupal_add_js(array('iqss_gking' => array('research_group_ajax_url' => url('iqss_gking_research_group_ajax'), 'research_group_terms' => $a_terms)), 'setting');
+
+  return $output;
   
 }
+
+/**
+ * Ajax callback for person term
+ */
+function iqss_gking_people_ajax($tid){
+  
+  $term = taxonomy_get_term($tid);
+  drupal_set_header('Content-Type: text/javascript; charset=utf-8');
+  echo '<div id="iqss_gking_term_'.$term->tid.'" class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$term->name}</h3>" . _iqss_gking_term_page_tree($term, $term->vid) . "</div>";
+  
+}
+
 
 
 /**
  * Print the child terms
  */
-function _iqss_gking_term_page_tree($term, $vid, $operator, $tree = false){
+function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false, $pager = false){
   require_once (drupal_get_path('module', 'taxonomy') . '/taxonomy.pages.inc'); //For theme functions
   
   if (! $tree) $tree = taxonomy_get_tree($vid, $term->tid, - 1, 1);
@@ -357,7 +383,8 @@ function _iqss_gking_term_page_tree($term, $vid, $operator, $tree = false){
   if($term){
 	  $result = taxonomy_select_nodes(array(
 	      $term->tid
-	  ), $operator, 0, false);
+	  ), $operator, 0, $pager);
+	  
 	  $output = (db_affected_rows($result)) ? theme('taxonomy_term_page', array(
 	      $term->tid
 	  ), $result) : '<div class="taxonomy-term-description">' . filter_xss_admin($term->description) . '</div>';
@@ -367,9 +394,9 @@ function _iqss_gking_term_page_tree($term, $vid, $operator, $tree = false){
     
     $result = taxonomy_select_nodes(array(
         $subterm->tid
-    ), $operator, 0, false);
+    ), $operator, 0, $pager);
     if ($subterm->name && db_affected_rows($result))
-      $output .= '<div class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$subterm->name}</h3>" . _iqss_gking_term_page_tree($subterm, $vid, $operator) . "</div>";
+      $output .= '<div class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$subterm->name}</h3>" . _iqss_gking_term_page_tree($subterm, $vid, $operator, false, $pager) . "</div>";
   }
   $conf['feed_default_items'] = $orig_feed_items; //Reset, who knows where this is used
   
