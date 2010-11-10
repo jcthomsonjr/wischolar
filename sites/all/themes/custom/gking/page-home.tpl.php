@@ -39,6 +39,10 @@
           <?php if (!empty($header_main)): ?>
             <div id="header-main" class="column">
               <?php print $header_main; ?>
+              <?php
+                $items = vsite_create_links();
+                print theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links');
+              ?>
             </div><!-- /header-main -->
           <?php endif; ?>
 
@@ -82,8 +86,6 @@
             <?php endif; ?>
             <?php print $help;
                   print $messages;
-                  $items = vsite_create_links();
-                  print theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links');
             ?>
             <div id="block-iqss_gking-areas_of_research" class="block">
             <h3 class="title">Areas of Research</h3>
