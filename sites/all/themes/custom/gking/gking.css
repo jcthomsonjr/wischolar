@@ -55,7 +55,7 @@ h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3.taxo
   padding: 13px 16px 16px 16px;
   background: #fcfcfc;
   border-bottom:1px solid #e5e5e5;
-  font: bold 1.846em/24px arial, helvetica, sans-serif;
+  font: bold 21px/24px arial, helvetica, sans-serif;
   letter-spacing:-0.05em;
   text-indent:-1px;
   }
@@ -448,14 +448,15 @@ body.header-right-main #header-wrapper {
   font-weight: bold;
   }
 
-/* Publications Tabs */
+/* Publications Tabs & Research Group Tabs */
 
 .page-home #content-main #pub_type_tabs {
   background:url(images/pubs-bg.png) repeat-x 0 0 #fff;
   padding: 0 26px;
   }
 
-#pub_type_tabs h3.title {
+#pub_type_tabs h3.title,
+body.page-iqss-gking-research-group h2.title {
   float: left;
   border:none;
   background: transparent;
@@ -466,6 +467,9 @@ body.header-right-main #header-wrapper {
   padding-right: 0;
   }
 
+body.page-iqss-gking-research-group h2.title {
+  color: #000;
+  }
 
 #pub_type_tabs .node h3.title {
   font: bold .9em/normal verdana, helvetica, sans-serif;
@@ -476,7 +480,8 @@ body.header-right-main #header-wrapper {
   font-weight: normal;
   }
 
-#pub_type_tabs ul.ui-tabs-nav {
+#pub_type_tabs ul.ui-tabs-nav,
+body.page-iqss-gking-research-group ul.ui-tabs-nav{
   float: right;
   margin-top: 15px;
   }
@@ -512,13 +517,34 @@ body.header-right-main #header-wrapper {
   padding: 10px 13px 20px 13px;
   }
 
-.ui-tabs-nav li.ui-tabs-selected a, .ui-tabs-nav li.ui-tabs-selected a:visited {
+.ui-tabs-nav li.ui-tabs-selected a,
+.ui-tabs-nav li.ui-tabs-selected a:visited {
   color: #000;
   background: #fff;
    }
 
+body.page-iqss-gking-research-group .ui-tabs-nav li.ui-tabs-selected a,
+body.page-iqss-gking-research-group .ui-tabs-nav li.ui-tabs-selected a:visited {
+  color: #CC6733;
+  }
+
 .ui-tabs .ui-tabs-panel {
   clear: both;
+  }
+
+body.page-iqss-gking-research-group #ui-tabs-16,
+body.page-iqss-gking-research-group #ui-tabs-25
+body.page-iqss-gking-research-group #ui-tabs-27 {
+  -moz-column-count: 3;
+  -moz-column-gap: 1em;
+  -webkit-column-count: 3;
+  -webkit-column-gap: 1em;
+  column-count: 3;
+  column-gap: 1em;
+  }
+
+body.page-iqss-gking-research-group h3 {
+  color: #000;
   }
 
 /* FOOTER */
