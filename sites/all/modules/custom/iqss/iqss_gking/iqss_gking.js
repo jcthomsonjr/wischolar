@@ -46,18 +46,14 @@ function iqss_gking_areas_of_research_load_next(){
 function iqss_gking_research_group_tabify(){
 	if(!$('body.page-iqss-gking-research-group').length) return;
 	
-	$("<ul id='research-group-tablist'></ul>").insertBefore("div#content-main div.taxonomy-term-child:first");
+	$("<ul id='research-group-tablist' class=\"ui-tabs-nav\"></ul>").insertBefore("div#content-main div.taxonomy-term-child:first");
 	$('div#content-main div.taxonomy-term-child').each(function(index) {
-	  $(this).addClass('tab_'+index);
+	  $(this).attr("id","research_group_tab_"+index);
 	  if(index > 0) $(this).hide();
 	  
-	  $('ul#research-group-tablist').append("<li class='research_group_tab'>"+$(this).find('h3.taxonomy-heading').html()+"</li>");
+	  $('ul#research-group-tablist').append("<li class='research_group_tab'><a href='#research_group_tab_"+index+"'>"+$(this).find('h3.taxonomy-heading').html()+"</a></li>");
 	});
 	
-	$('li.research_group_tab').each(function(index) {
-		$(this).click(function(){
-			$('body.page-iqss-gking-research-group div#content-main div.taxonomy-term-child').hide();
-			$('body.page-iqss-gking-research-group div#content-main div.taxonomy-term-child:eq('+index+')').show();
-		});
-	});
+	$("#content").tabs({ fx: { opacity: 'toggle' } });
+
 }
