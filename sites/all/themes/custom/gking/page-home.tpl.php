@@ -80,9 +80,11 @@
            <?php if (!empty($tabs)): ?>
             <div class="tabs"><?php print $tabs; ?></div>
             <?php endif; ?>
-            <?php print $help; ?>
-            <?php print $messages; ?>
-
+            <?php print $help;
+                  print $messages;
+                  $items = vsite_create_links();
+                  print theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links');
+            ?>
             <div id="block-iqss_gking-areas_of_research" class="block">
             <h3 class="title">Areas of Research</h3>
             <?php
