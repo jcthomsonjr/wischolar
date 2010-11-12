@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 
 
-    var container = $("#node-3793");
+    var container = $("body.section-home #node-3793");
 
     container.prepend('<a class="more" href="#">CLOSE X</a>');
     $("body.page-home a.more").click(function(event){
