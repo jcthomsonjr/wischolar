@@ -56,6 +56,6 @@ function iqss_gking_research_group_tabify(){
 	}
 
 	
-	$("#content").tabs({ fx: { opacity: 'toggle' }, load: function(event, ui) { Drupal.behaviors.CToolsDropdown(); } });
+	$("#content").tabs({ fx: { opacity: 'toggle' }, cache: true, load: function(event, ui) { Drupal.behaviors.CToolsDropdown(); } });
 
 }
