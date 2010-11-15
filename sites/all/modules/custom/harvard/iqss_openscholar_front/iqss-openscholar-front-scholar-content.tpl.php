@@ -145,7 +145,7 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-	  var panel1_height = $('#front-panel-1').height();
+	  var panel1_height = $('#front-panel-1').height() + 10;
 	  //var panel2_height = 1028;
 	  $('#content').css({'height': panel1_height});
     $('#learn-more-toggle a').attr("href","#").click(function(event){
