@@ -312,8 +312,8 @@ function iqss_gking_link_alter(&$links, $node){
   
   if(isset($links['vsite-admin'])){
     $active_menu = menu_get_item();
-    if($active_menu['path'] == 'iqss_gking_research_group'){
-      unset($links['vsite-admin']);
+    if($active_menu['path'] == 'iqss_gking_research_group' && $node->type == 'person'){
+      $links['vsite-admin']['title'] = str_replace(' ctools-dropdown ',' ',$links['vsite-admin']['title']);
     }
   }
 }
