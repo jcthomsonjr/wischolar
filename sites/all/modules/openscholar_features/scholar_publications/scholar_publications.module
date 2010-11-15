@@ -517,18 +517,6 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
 
   if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
 
-  if(biblio_access('export', $node)){
-    $links = array();
-    $show_link = variable_get('biblio_export_links', array('rtf' => TRUE,'tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
-    $show_link['google'] = variable_get('biblio_google_link', 1);
-    if ($show_link['rtf'])     $links['biblio_rtf']            = _build_biblio_rtf_link($base, $node->nid);
-    if ($show_link['tagged']) $links['biblio_tagged']         = _build_biblio_tagged_link($base, $node->nid);
-    if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
-    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
-    if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
-    $s_output .= " ".theme('ctools_dropdown', t('Export'), $links, false,'biblio-export');
-  }
-
   if (strlen($node->biblio_abst_e)) $s_output .= '<div class="biblio-abstract-display slider">'. $node->biblio_abst_e ."\n</div>";
   if (!$node->status) $s_output .= '</div>';
 
@@ -722,6 +710,33 @@ function scholar_publications_link_alter(&$links, $node){
 		if(substr($key,0,7) == "biblio_") unset($links[$key]);
 	}
 }
+
+/**
+ * Implementation of hook_link().
+ *
+ * This is implemented so that an export links are displayed
+ */
+function scholar_publications_link($type, $node = NULL, $teaser = FALSE) {
+  $links = $parent = array();
+  $base = variable_get('biblio_base', 'biblio');
+
+  if ($teaser === false && $type == 'node' && $node->type == 'biblio') {
+    if(biblio_access('export', $node)){
+	    $links = array();
+	    $show_link = variable_get('biblio_export_links', array('rtf' => TRUE,'tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
+	    $show_link['google'] = variable_get('biblio_google_link', 1);
+	    if ($show_link['rtf'])    $links['biblio_rtf']            = _build_biblio_rtf_link($base, $node->nid);
+	    if ($show_link['tagged']) $links['biblio_tagged']         = _build_biblio_tagged_link($base, $node->nid);
+	    if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
+	    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
+	    if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
+	    $parent['scholar_publications_export'] = array('title' => theme('ctools_dropdown', t('Export'), $links, false,'biblio-export'), 'html' =>true);
+	  }
+  }
+  return $parent;
+}
+
+
 
 function scholar_publications_biblio_download_links($node = NULL) {
   $files = '';
