@@ -300,6 +300,13 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
     case 'view':
       //Files weight gets changed to 4 so lets put this before files
       $node->content['field_biblio_extra']['#weight'] = 3;
+      
+      if($page){
+        $node->content['citation'] = array(
+          '#weight' => 2,
+          '#value' => _scholar_publications_get_plain_citation($node),
+        );
+      }
     break;
   }
 }
@@ -686,6 +693,23 @@ function _scholar_publications_sort_type_by_numpubs($a,$b){
 	if ($a->num_records == $b->num_records) return 0;
 
   return ($a->num_records > $b->num_records) ? -1 : 1;
+}
+
+/**
+ * Return the citation without html
+ * @param $node
+ */
+function _scholar_publications_get_plain_citation($node){
+  $style = biblio_get_style();
+  $base  = variable_get('biblio_base', 'biblio');
+  
+  $citation = theme('biblio_style', $node, $base, $style);
+  
+  $citation = strip_tags($citation, '<div><span>');
+  
+  $citation = "<h3>Citation:</h3><textarea class=\"biblio-citation\" readonly=\"readonly\" rows=\"3\">{$citation}</textarea>";
+  
+  return $citation;
 }
 
 /**
