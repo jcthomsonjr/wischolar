@@ -705,7 +705,7 @@ function _scholar_publications_get_plain_citation($node){
   
   $citation = theme('biblio_style', $node, $base, $style);
   
-  $citation = strip_tags($citation, '<div><span>');
+  $citation = strip_tags($citation);
   
   $citation = "<h3>Citation:</h3><textarea class=\"biblio-citation\" readonly=\"readonly\" rows=\"3\">{$citation}</textarea>";
   
