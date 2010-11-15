@@ -50,7 +50,7 @@ function iqss_gking_research_group_tabify(){
 	var terms = Drupal.settings.iqss_gking.research_group_terms;
 	for (var i=0;i<terms.length;i++)
 	{
-	  var url = (i > 0)? Drupal.settings.iqss_gking.research_group_ajax_url+"/"+terms[i].tid: "#iqss_gking_term_"+terms[i].tid;
+	  var url = "#iqss_gking_term_"+terms[i].tid;
 	  
 	  $('ul#research-group-tablist').append("<li class='research_group_tab'><a href='"+url+"'>"+terms[i].name+"</a></li>");
 	}

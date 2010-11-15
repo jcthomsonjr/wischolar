@@ -51,13 +51,6 @@ function iqss_gking_menu(){
       'type' => MENU_CALLBACK,
   );
   
-  $items['iqss_gking_research_group_ajax/%'] = array(
-    'page callback' => 'iqss_gking_people_ajax',
-    'type' => MENU_CALLBACK,
-    'page arguments' => array(1),
-    'access arguments' => array('access content'),
-  );
-  
   return $items;
 }
 
@@ -312,6 +305,20 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
 }
 
 /**
+ * hook link_alter
+ * Move the admin links (above) at the end of the node links
+ */
+function iqss_gking_link_alter(&$links, $node){
+  
+  if(isset($links['vsite-admin'])){
+    $active_menu = menu_get_item();
+    if($active_menu['path'] == 'iqss_gking_research_group'){
+      unset($links['vsite-admin']);
+    }
+  }
+}
+
+/**
  * Menu callback; displays all people nodes by term
  */
 function iqss_gking_people(){
@@ -336,34 +343,19 @@ function iqss_gking_people(){
   if(!$vocab || !count($tree)) return views_page('scholar_profiles', 'page_1');
   
   $output = '';
-  $once = false;
   $a_terms = array();
   foreach ( $tree as $subterm ) {
-    if ($subterm->name && !$once){
+    if ($subterm->name){
       $output .= '<div id="iqss_gking_term_'.$subterm->tid.'" class="taxonomy-term-child">' . _iqss_gking_term_page_tree($subterm, $vocab->vid) . "</div>";
-      $once = true;
+      array_push($a_terms,array('name' => $subterm->name, 'tid' => $subterm->tid));
     }
-    
-    if($subterm->name) array_push($a_terms,array('name' => $subterm->name, 'tid' => $subterm->tid));
   }
   
-  drupal_add_js(array('iqss_gking' => array('research_group_ajax_url' => url('iqss_gking_research_group_ajax'), 'research_group_terms' => $a_terms)), 'setting');
+  drupal_add_js(array('iqss_gking' => array('research_group_terms' => $a_terms)), 'setting');
 
   return $output;
   
 }
-
-/**
- * Ajax callback for person term
- */
-function iqss_gking_people_ajax($tid){
-  
-  $term = taxonomy_get_term($tid);
-  drupal_set_header('Content-Type: text/javascript; charset=utf-8');
-  echo '<div id="iqss_gking_term_'.$term->tid.'" class="taxonomy-term-child">'. _iqss_gking_term_page_tree($term, $term->vid) . "</div>";
-  
-}
-
 
 
 /**
