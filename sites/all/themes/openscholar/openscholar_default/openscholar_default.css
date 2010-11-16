@@ -15,7 +15,8 @@ body {
   margin: 0 auto;
   }
 
-.front #container {
+.front #container,
+.front #content-bottom {
   width: 962px;
   }
 
@@ -28,6 +29,10 @@ body {
  -moz-border-radius: 6px;
  -webkit-border-radius: 6px;
  }
+
+.front #content-bottom {
+  padding: 0;
+  }
 
 a, a:visited {
     color:#990000;
@@ -237,16 +242,31 @@ p.single {
 
 /* FRONT PAGE vSITE PROFILES */
 
-
-#block-views-openscholar_sites-block_2 ul {
-  padding-top: 50px;
+.front #content-bottom:after {
+  content: ',';
+  font-size: .1em;
+  visibility: hidden;
+  clear: both;
+  display: inline-block;
   }
 
+html[xmlns] #content-bottom:after {
+  display:block;
+  }
+
+#block-views-openscholar_sites-block_2 .view-openscholar-sites .views-admin-links {
+  float: right;
+  margin-right: 6px;
+  }
+
+#block-views-openscholar_sites-block_2 .view-openscholar-sites .views-admin-links ul {
+  padding: 0;
+  clear:none;
+  }
 
 #block-views-openscholar_sites-block_2, #footer {
   position:relative;
   }
-
 
 #block-views-openscholar_sites-block_2 h3 {
   background: url(images/featured.png) 0 0 no-repeat transparent;
@@ -256,12 +276,13 @@ p.single {
   margin: 0;
   margin-top: -1px;
   float:left;
-  }
+  -moz-border-radius: 6px 0 0 0;
+  -webkit-border-radius: 6px 0 0 0;
+  border-radius: 6px 0 0 0;
   }
 
 #block-views-openscholar_sites-block_2 {
   clear: both;
-  background:#fff;
   }
 
 #block-views-openscholar_sites-block_2 .views-row {
@@ -270,10 +291,25 @@ p.single {
   margin-right:25px;
   clear: none;
   font-size: 12px;
+  margin-top: 50px;
+  line-height: normal;
   }
 
 #block-views-openscholar_sites-block_2 .views-row-6 {
   margin-right: 0;
+  }
+
+#block-views-openscholar_sites-block_2 .more-link {
+  clear: both;
+  margin-right: 15px;
+  padding-bottom: 3px;
+  }
+
+a.imagecache-openscholar_front_logo {
+  width: 80px;
+  height: 80px;
+  border: 1px solid #535252;
+  display:block;
   }
 
 #block-views-openscholar_sites-block_2 img, .view-iqss-project-sites img {
