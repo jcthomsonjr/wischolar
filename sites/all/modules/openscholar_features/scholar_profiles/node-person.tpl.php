@@ -14,7 +14,7 @@
     <?php if (!$page): ?>
       <?php if ($node->field_person_photo[0]['filepath']): ?>
       <div class="flL">
-        <a href="<?php print $node_url; ?>"><?php print theme('imagecache', 'square_80_80', $node->field_person_photo[0]['filepath'], $title, $title); ?></a>
+        <a href="<?php print $node_url; ?>"><?php print theme('imagecache', 'square_50_50', $node->field_person_photo[0]['filepath'], $title, $title); ?></a>
        </div>
       <?php endif;?>
       <h3 class="title">
