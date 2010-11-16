@@ -309,6 +309,7 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
  * Move the admin links (above) at the end of the node links
  */
 function iqss_gking_link_alter(&$links, $node){
+  if(! iqss_gking_on_gking_site()) return;
   
   if(isset($links['vsite-admin'])){
     $active_menu = menu_get_item();
@@ -316,6 +317,29 @@ function iqss_gking_link_alter(&$links, $node){
       $links['vsite-admin']['title'] = str_replace(' ctools-dropdown ',' ',$links['vsite-admin']['title']);
     }
   }
+  
+  $n_ri_vid;
+  foreach ($links as $s_key => $a_link){
+    if(strpos($s_key,'taxonomy_term_') !== 0) continue;
+    
+    $term = taxonomy_get_term(intval(str_replace("taxonomy_term_","",$s_key)));
+    if(!$term) continue;
+    
+    if(!isset($n_ri_vid)){
+	    $vocab = taxonomy_vocabulary_load($term->vid);
+	    if ($vocab->name == "Research Interests"){
+	      $n_ri_vid = $term->vid;
+	    }
+    }
+    
+    if($term->vid == $n_ri_vid){
+      $o_parent = current(taxonomy_get_parents($term->tid));
+      if(!is_object($o_parent)) continue;
+      
+      $links[$s_key]['title'] = $o_parent->name." (".$links[$s_key]['title'].")";
+    }//Show the taxonomy term in RI taxonomy as "Parent (Child)"
+  }
+  
 }
 
 /**
