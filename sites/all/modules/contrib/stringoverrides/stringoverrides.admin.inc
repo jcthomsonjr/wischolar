@@ -208,13 +208,8 @@ function stringoverrides_js() {
   $string_form[$delta]['#attributes']['class'] = empty($string_form[$delta]['#attributes']['class']) ? 'ahah-new-content' : $string_form[$delta]['#attributes']['class'] .' ahah-new-content';
   $output = theme('status_messages') . drupal_render($string_form);
 
-<<<<<<< stringoverrides.admin.inc
-  //drupal_json(array('status' => TRUE, 'data' => $output));
-} // function stringoverrides_js
-=======
   drupal_json(array('status' => TRUE, 'data' => $output));
 }
->>>>>>> 1.1.2.14
 
 /**
  * Menu callback for the String Overrides module to display the import administration
