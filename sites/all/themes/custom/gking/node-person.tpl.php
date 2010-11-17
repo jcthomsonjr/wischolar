@@ -16,12 +16,15 @@
         }
       ?>
       <?php if ($person_link) { ?>
-      <h3 class="title">
-        <a href="<?php print $person_link; ?>" title="Contact <?php print $title ?>"><?php print $title; ?></a><?php } else { ?>
-        <h3 class="title"><?php print $title; ?>
-      <?php }
-        if ($node->field_person_title[0]['value']) { ?><span class="position">, <?php print $node->field_person_title[0]['value'];?></span>
-      <?php } ?></h3>
+        <h3 class="title">
+        <?php print '<a href="' . $person_link .'" title="Contact '. $title . '">' . $title . '</a>';
+        }
+        else {
+        print '<h3 class="title">'. $title;
+        }
+        if ($node->field_person_title[0]['value']) {
+        print '<span class="position">, ' . $node->field_person_title[0]['value'] . '</span>';
+        } ?></h3>
     <?php endif ?>
 
     <?php if ($unpublished): ?>
