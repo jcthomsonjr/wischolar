@@ -103,6 +103,19 @@ function scholar_publications_menu(){
 }
 
 /**
+ * Alter the menu items
+ * @param array $items
+ */
+function scholar_publications_menu_alter(&$items){
+  $s_bib_base = variable_get('biblio_base', 'biblio');
+  
+  if(array_key_exists("{$s_bib_base}/filter",$items)){
+    $items["{$s_bib_base}/filter"]['type'] = MENU_CALLBACK;
+  }//Remove the filter local task
+  
+}
+
+/**
  * Implementation of hook_spaces_settings().
  */
 function scholar_publications_spaces_settings() {
@@ -332,7 +345,6 @@ function scholar_publications_block($op = 'list', $delta = false, $edit = array(
 
 /**
  * hook vsite_sidgets
-
  */
 function scholar_publications_vsite_widgets(){
   $items = array();
@@ -355,17 +367,6 @@ function scholar_publications_vsite_widgets(){
         'label' => 'Co-Authors List',
         'type' => 'context_ui',
       );
-  /**
-  $items['scholar_publications_pub_by_type'] = array(
-        'module' => 'scholar_publications',
-        'delta' => 'pub_by_type',
-        'weight' => 20,
-        'region' => false,
-        'status' => '0',
-        'label' => 'Publications by type',
-        'type' => 'context_ui',
-      );
-  **/
 
   // Publication Types
   $items['views_publication_types-block_1'] = array(
@@ -416,13 +417,29 @@ function scholar_publications_views_query_alter(&$view, &$query) {
 }
 
 function scholar_publications_preprocess_views_view(&$vars) {
-  if($vars['view']->name == 'publication_years') {
-    // Override the page title
-    if($vars['view']->current_display == 'page_1') {
-      $vars['view']->build_info['title'] = preg_replace_callback('#\d{4}#', create_function('$matches', 'return _biblio_text_year($matches[0]);'), $vars['view']->build_info['title']);
-      drupal_set_title($vars['view']->build_info['title']);
-    }
+  
+  switch ($vars['view']->name){
+    case "publication_years":
+	    if($vars['view']->current_display == 'page_1') {
+	      // Override the page title
+	      $vars['view']->build_info['title'] = preg_replace_callback('#\d{4}#', create_function('$matches', 'return _biblio_text_year($matches[0]);'), $vars['view']->build_info['title']);
+	      drupal_set_title($vars['view']->build_info['title']);
+	    }elseif ($vars['view']->current_display == 'block_1' && context_get('scholar','feature') == 'publications') {
+        $vars['view']->build_info['title'] = "By Year"; //No need to be redundant on the pub feature
+      }
+    break;
+    case "publication_types":
+      if($vars['view']->current_display == 'block_1' && context_get('scholar','feature') == 'publications') {
+        $vars['view']->build_info['title'] = "By Type"; //No need to be redundant on the pub feature
+      }
+    break;
+    case "publication_contributors":
+      if($vars['view']->current_display == 'block_1' && context_get('scholar','feature') == 'publications') {
+        $vars['view']->build_info['title'] = "By Co-Author"; //No need to be redundant on the pub feature
+      }
+    break;
   }
+  
 }
 
 /**

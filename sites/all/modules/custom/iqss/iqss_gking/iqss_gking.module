@@ -80,7 +80,7 @@ function iqss_gking_theme(){
  */
 function iqss_gking_block($op = 'list', $delta = false, $edit = array()){
   if ($op == 'list') {
-    $blocks['areas_of_research']['info'] = t('AOR: Applications &amp; Methods');
+    $blocks['areas_of_research']['info'] = t('Areas of Research');
     $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
     $blocks['gking_pub_by_type']['info'] = t('Gkings "Recent Works" to replace default Publications by type');
     return $blocks;
@@ -574,4 +574,24 @@ function iqss_gking_views_pre_build(&$view){
   if (! iqss_gking_on_gking_site() || $view->name != 'scholar_profiles') return;
   
   $view->display_handler->default_display->options['title'] = str_replace("Directory","Research Group",$view->display_handler->default_display->options['title']);
+}
+
+/**
+ * hook vsite_widgets
+ */
+function iqss_gking_vsite_widgets(){
+  if (! iqss_gking_on_gking_site() ) return array();
+  
+  $items = array();
+
+  $items['iqss_gking_areas_of_research'] = array(
+        'module' => 'iqss_gking',
+        'delta' => 'areas_of_research',
+        'weight' => 5,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Areas of Research',
+      );
+
+  return $items;
 }
