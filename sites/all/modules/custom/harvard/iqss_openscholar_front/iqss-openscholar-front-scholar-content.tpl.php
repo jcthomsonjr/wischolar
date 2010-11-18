@@ -152,6 +152,7 @@
     	$('#content').css({
     	  height:"1028px"
     	  });
+    	$('#front-panel-2').css('margin-left','0px');
     	$('#panel-wrapper').animate({
     	  marginLeft:"-990"
     	  },300);
@@ -160,7 +161,12 @@
     $('#activity-toggle a').attr("href","#").click(function(event){
       $('#panel-wrapper').animate({
         marginLeft:"0"
-        },300);
+        },{
+        duration: 300,
+        complete: function() {
+        	$('#front-panel-2').css('margin-left','1000px');
+        }
+      });
       $('#content').css({
         height:panel1_height
         });
