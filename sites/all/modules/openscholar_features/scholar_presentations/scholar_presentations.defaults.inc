@@ -18,7 +18,7 @@ function _scholar_presentations_content_default_fields() {
       ),
       'teaser' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
         'format' => 'default',
@@ -89,7 +89,7 @@ function _scholar_presentations_content_default_fields() {
       'weight' => 0,
       'parent' => '',
       'label' => array(
-        'format' => 'inline',
+        'format' => 'hidden',
       ),
       'teaser' => array(
         'format' => 'default',
