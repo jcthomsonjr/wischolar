@@ -193,25 +193,25 @@ function _iqss_gking_areas_of_research_wgt(){
   );
 }
 
-//function iqss_gking_context_active_contexts_alter(&$contexts){
-//  if (! iqss_gking_on_gking_site())
-//    return;
-//
-//  $vsite = vsite_get_vsite();
-//  $router_item = menu_get_item();
-//  if (strpos($router_item['path'], 'taxonomy/term') === 0) {
-//
-//    //The next few lines just make sure that we are in gary's research interest tax.
-////    $n_vid = false;
-////    foreach ( $vsite->get_vocabs($type) as $vid => $o_vocab ) {
-////      if ($o_vocab->name == "Research Interests") {
-////        $n_vid = $vid;
-////        break;
-////      }
-////    }
-//
-//
-//    //Add this block category pages on (Lets you filter the category by publictaion type)
+function iqss_gking_context_active_contexts_alter(&$contexts){
+  if (! iqss_gking_on_gking_site())
+    return;
+
+  $vsite = vsite_get_vsite();
+  $router_item = menu_get_item();
+  if (strpos($router_item['path'], 'taxonomy/term') === 0) {
+
+    $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
+        'module' => 'iqss_gking',
+        'delta' => 'areas_of_research',
+        'weight' => 5,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Areas of Research',
+    );
+
+
+    //Add this block category pages on (Lets you filter the category by publictaion type)
 //    $contexts['vsite-section-public']->block['filter_by_type-filter_by_type'] = array(
 //        'module' => 'iqss_gking',
 //        'delta' => 'filter_by_type',
@@ -221,9 +221,9 @@ function _iqss_gking_areas_of_research_wgt(){
 //        'label' => 'Filter Taxonomy by Publication Type',
 //        'type' => 'context_ui'
 //    );
-//  }
-//
-//}
+  }
+
+}
 
 /**
  * Menu callback; displays all nodes associated with a term by publication type
