@@ -112,7 +112,8 @@ function scholar_image_gallery_nodeapi(&$node, $op, $teaser, $a4){
  * @param unknown_type $view
  */
 function scholar_image_gallery_views_pre_render(&$view){
-  if ($view->name == 'scholar_image_gallery') {
+  $vsite = vsite_get_vsite();
+  if ($view->name == 'scholar_image_gallery' && $vsite && $vsite->admin_access()) {
     if ($view->current_display == 'node_content_1' || $view->current_display == 'node_content_2') {
       
       // ask nodreference_url module for the correct link
