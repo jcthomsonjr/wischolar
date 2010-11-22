@@ -1,5 +1,5 @@
 <?php
-// $Id: purl.admin.inc,v 1.1.2.10 2009/12/18 16:11:32 yhahn Exp $
+// $Id: purl.admin.inc,v 1.1.2.11 2010/07/02 14:23:28 jmiccolis Exp $
 /**
  * @file
  *
@@ -114,6 +114,15 @@ function purl_admin_form_key_validate(&$element, &$form_state) {
 }
 
 /**
+ * Validate that an element has been set with a fully qualified domain name.
+ */
+function purl_validate_fqdn(&$element, &$form_state) {
+  if (!empty($element['#value']) && !valid_url($element['#value'], TRUE)) {
+      form_set_error($element['#name'], t('The domain must be a fully qualified domain name of the form `http://www.example.com`.'));
+  }
+}
+
+/**
  * Theme function for purl_settings_form()
  */
 function theme_purl_settings_form($form) {
@@ -141,7 +150,7 @@ function theme_purl_settings_form($form) {
     }
     $rows[] = $row;
   }
-  $output .= theme('table', array(t('Provider'), t('Modifier type')), $rows);
+  $output .= theme('table', array(t('Provider'), t('Modifier type'), t('Settings')), $rows);
   $output .= drupal_render($form);
   drupal_add_js(drupal_get_path("module", "purl") ."/purl.admin.js");
   return $output;

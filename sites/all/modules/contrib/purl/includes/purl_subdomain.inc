@@ -1,5 +1,5 @@
 <?php
-// $Id: purl_subdomain.inc,v 1.1.2.8 2010/04/23 22:54:43 yhahn Exp $
+// $Id: purl_subdomain.inc,v 1.1.2.10 2010/07/02 14:23:28 jmiccolis Exp $
 
 /**
  * Subdomain prefixing.
@@ -17,6 +17,7 @@ class purl_subdomain implements purl_processor {
       '#description' => t('Enter the default domain if you are using domain modifiers.'),
       '#required' => FALSE,
       '#default_value' => variable_get('purl_base_domain', $base_url),
+      '#element_validate' => array('purl_validate_fqdn'),
     );
   }
 
@@ -48,7 +49,8 @@ class purl_subdomain implements purl_processor {
     if ($base_url = $this->base_url()) {
       if (!_purl_skip($element, $options)) {
         $base = parse_url($base_url);
-        $options['base_url'] = "{$base['scheme']}://{$element->value}.{$base['host']}{$base['path']}";
+        $port = (!empty($base['port'])) ? ':'.$base['port'] : "";
+        $options['base_url'] = "{$base['scheme']}://{$element->value}.{$base['host']}{$port}{$base['path']}";
       }
       else {
         $options['base_url'] = $base_url;
