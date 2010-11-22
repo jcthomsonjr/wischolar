@@ -514,6 +514,10 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (count($node->field_biblio_image[0]) && array_key_exists('filepath',$node->field_biblio_image[0])) {
     $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover_thumb', $node->field_biblio_image[0]['filepath'],'','',NULL,FALSE), $node -> path, array('html' => TRUE)) . '</div>';
   }
+  
+  if (strlen($node->biblio_teaser_prefix)) {
+    $s_output .= $node->biblio_teaser_prefix;
+  }
 
   // first add the styled entry...
   $s_output .= theme('biblio_style', $node, $base, $style, $inline);

@@ -563,7 +563,8 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
     case 'view':
       $router_item = menu_get_item();
       if($node -> type == 'biblio' && $teaser && !variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes && strpos($router_item['path'], 'taxonomy/term') === 0){
-        $node->content['teaser']['#value'] = ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>".$node->content['teaser']['#value'];
+        $node->biblio_teaser_prefix = ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
+        $node->content['teaser']['#value'] = $node->biblio_teaser_prefix.$node->content['teaser']['#value'];
       }
     break;
   }
