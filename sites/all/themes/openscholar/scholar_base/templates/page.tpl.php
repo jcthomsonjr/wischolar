@@ -9,13 +9,10 @@
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
-  <!--[if lt IE 9]>
-  <script src="/<?php print $directory;?>/js/ie-multi-column.js"></script>
-  <![endif]-->
 </head>
 
 <body class="<?php print $classes; ?>">
-  <!--[if lte IE 6]><script src="/<?php print $directory;?>js/ie6-warning/ie6-warning.js"></script> <script>window.onload=function(){e("/<?php print $directory;?>js/ie6-warning/")}</script><![endif]-->
+  <!--[if lte IE 6]><script src="/<?php print $directory;?>/js/ie6-warning/ie6-warning.js"></script> <script>window.onload=function(){e("/<?php print $directory;?>/js/ie6-warning/")}</script><![endif]-->
     <?php if ($cp_toolbar) : ?>
     <div id="top">
   	   <?php print $cp_toolbar;?>
