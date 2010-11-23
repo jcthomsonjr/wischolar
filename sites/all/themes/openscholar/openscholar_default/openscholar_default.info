@@ -1,13 +1,17 @@
 ; $Id: openscholar_default.info,v 1.12 2008/09/21 22:43:32 swortis Exp $
 name        = OpenScholar Default
 description = Theme for default installation of OpenScholar
-screenshot = screenshot.png
-core       = 6.x
-base theme = scholar_base
-stylesheets[all][]   = openscholar_default.css
-; Set the conditional stylesheets that are processed by IE.
-conditional-stylesheets[if lte IE 7][all][] = openscholar_default-ie.css
+screenshot  = screenshot.png
+core        = 6.x
+base theme  = scholar_base
 
+;------ styles ------
+stylesheets[all][]   = css/openscholar_default.css
+
+;------ styles, additional ------
+conditional-stylesheets[if lte IE 7][all][] = css/openscholar_default-ie.css
+
+;------ regions ------
 regions[header_top]    	= header top
 regions[header_left]    = header left
 regions[header_main]    = header main
@@ -20,6 +24,7 @@ regions[content_bottom] = content bottom
 regions[footer]         = footer
 regions[closure_region] = closure
 
+;------ features ------
 features[] = logo
 features[] = name
 features[] = slogan

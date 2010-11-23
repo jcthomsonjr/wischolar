@@ -14,8 +14,8 @@
   <![endif]-->
 </head>
 
-<body class="<?php print $body_classes; ?>">
-  <!--[if lte IE 6]><script src="/<?php print $directory;?>/ie6-warning/ie6-warning.js"></script> <script>window.onload=function(){e("/<?php print $directory;?>/ie6-warning/")}</script><![endif]-->
+<body class="<?php print $classes; ?>">
+  <!--[if lte IE 6]><script src="/<?php print $directory;?>js/ie6-warning/ie6-warning.js"></script> <script>window.onload=function(){e("/<?php print $directory;?>js/ie6-warning/")}</script><![endif]-->
     <?php if ($cp_toolbar) : ?>
     <div id="top">
   	   <?php print $cp_toolbar;?>
@@ -62,7 +62,7 @@
       </div> <!-- /header -->
       <?php endif; ?>
 
-      <div id="content-wrapper" class="clear-block">
+      <div id="content-wrapper" class="clearfix">
         <div id="content-wrapper-inner">
           <div id="content-main" class="column">
             <?php if (!empty($content_top) || $context_links): ?>

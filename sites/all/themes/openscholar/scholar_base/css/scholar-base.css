@@ -132,7 +132,7 @@ p.copy #powered-link {
   }
 
 p.copy a.poweredby  {
-  background: url(images/poweredby.png) no-repeat 0 0 transparent;
+  background: url(../images/poweredby.png) no-repeat 0 0 transparent;
   text-indent:-999em;
   display:block;
   width:145px;
@@ -342,7 +342,7 @@ dd.meta {
 
 #top {
   height: 42px;
-  background:url(images/top-bottom-bg.png) repeat-x #000 0 -9px;
+  background:url(../images/top-bottom-bg.png) repeat-x #000 0 -9px;
   position:relative;
   }
 
@@ -368,14 +368,14 @@ body.admin-menu #top {
 
 
 body.cp-toolbar-mini #top ul.links {
-  background: url(images/toolbar-mini-tab.png) no-repeat 0 0;
+  background: url(../images/toolbar-mini-tab.png) no-repeat 0 0;
   height: 22px;
   z-index:100;
   }
 
 body.cp-toolbar-mini #top ul.links li {
   margin:0;
-  background: url(images/toolbar-mini-tab.png) no-repeat 0 0 transparent;
+  background: url(../images/toolbar-mini-tab.png) no-repeat 0 0 transparent;
   height: 22px;
   line-height: 19px;
   padding: 0 6px;
@@ -395,7 +395,7 @@ body.cp-toolbar-mini #top ul.links li a, body.cp-toolbar-mini #top ul.links li a
 
 body.cp-toolbar-mini #top ul.links li.first a {
   padding-left: 22px;
-  background: url(images/wrench-mini.png) no-repeat 0 0 transparent;
+  background: url(../images/wrench-mini.png) no-repeat 0 0 transparent;
   margin-left: 5px;
   }
 
@@ -574,7 +574,7 @@ ul.admin li a:hover {
   }
 
 a.delete {
-  background: url(images/delete.png) no-repeat;
+  background: url(../images/delete.png) no-repeat;
   height: 11px;
   width: 10px;
   display: block;
@@ -584,7 +584,7 @@ a.delete {
 .close-this {
   width: 15px;
   height: 15px;
-  background: url(images/close-icon.png) no-repeat transparent;
+  background: url(../images/close-icon.png) no-repeat transparent;
   text-indent: -999em;
   }
 
@@ -619,7 +619,7 @@ input.form-submit, button {
   }
 
 .advanced-help-link {
- background: url(images/help.png) no-repeat;
+ background: url(../images/help.png) no-repeat;
  width: 15px;
  height: 15px;
  margin-right: 4px;
@@ -674,7 +674,7 @@ div.error {
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
-  background:transparent url(images/throbber.gif) no-repeat scroll 0 50%;
+  background:transparent url(../images/throbber.gif) no-repeat scroll 0 50%;
   float:left;
   height:5px;
   height: 100%;
@@ -698,7 +698,11 @@ div.error {
   float: none;
   }
 
-.clear-block:after {
+/* CLEAR FIX */
+
+/* As some Drupal themers use clear-block, we add both */
+
+.clearfix:after, .clear-block:after {
   content: ".";
 	display: block;
 	clear: both;
@@ -707,14 +711,10 @@ div.error {
 	height: 0;
   }
 
-.clear-block {
+.clearfix,.clear-block {
 	display: inline-block;
   }
 
-html[xmlns] .clear-block {
+html[xmlns] .clearfix, html[xmlns] .clear-block {
 	display: block;
-  }
-
-* html .clear-block {
-	height: 1%;
   }

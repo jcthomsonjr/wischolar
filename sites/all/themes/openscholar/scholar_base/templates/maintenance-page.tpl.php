@@ -65,7 +65,7 @@
 
     </div> <!-- /header -->
 
-    <div id="container" class="clear-block">
+    <div id="container" class="clearfix">
 
       <?php if (!empty($left)): ?>
         <div id="sidebar-left" class="column sidebar">
@@ -73,7 +73,7 @@
         </div> <!-- /sidebar-left -->
       <?php endif; ?>
 
-      <div id="main" class="column"><div id="squeeze" class="clear-block">
+      <div id="main" class="column"><div id="squeeze" class="clearfix">
         <?php if (!empty($content_top)): ?>
           <div id="content-top"><?php print $content_top; ?></div>
         <?php endif; ?>

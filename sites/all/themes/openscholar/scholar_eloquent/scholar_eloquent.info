@@ -1,14 +1,17 @@
-; $Id: scholar_eloquent.info,v 1.12 2008/09/21 22:43:32 swortis Exp $
 name        = OpenScholar: "Eloquent"
 description = A dark elegant and simple theme with serif fonts.
-flavor_name = "Moss"
-plugins[vsite_design][flavor] = flavors
-
-scholar[theme_type]   = "scholar"
-scholar[theme_access] = "public"
-
 screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
-stylesheets[all][]   = scholar-eloquent.css
-conditional-stylesheets[if lte IE 7][all][]  = scholar-eloquent-ie.css
+
+;------ styles ------
+stylesheets[all][]   = css/scholar-eloquent.css
+
+;------ styles, additional ------
+conditional-stylesheets[if lte IE 7][all][]  = css/scholar-eloquent-ie.css
+
+;------ openscholar settings------
+plugins[vsite_design][flavor] = flavors
+flavor_name = "Moss"
+scholar[theme_type]   = "scholar"
+scholar[theme_access] = "public"
