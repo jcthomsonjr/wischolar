@@ -584,6 +584,8 @@ function _scholar_software_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 0);
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
   $handler->override_option('use_more', 0);
@@ -1066,13 +1068,9 @@ function _scholar_software_views_default_views() {
     ),
   ));
   $handler->override_option('title', 'Software Releases');
-  $handler->override_option('footer', '<div class="more-link">
-  <?php print l("More","scholar_software"); ?>
-</div>');
-  $handler->override_option('footer_format', '3');
-  $handler->override_option('footer_empty', 0);
+  $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 3);
-  $handler->override_option('use_pager', '0');
+  $handler->override_option('use_pager', 'mini');
   $handler->override_option('distinct', 1);
   $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array(
