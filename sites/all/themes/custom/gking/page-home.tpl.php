@@ -17,7 +17,7 @@
 
 </head>
 
-<body class="<?php print $body_classes; ?>">
+<body class="<?php print $classes; ?>">
     <?php if ($cp_toolbar) : ?>
     <div id="top">
   	   <?php print $cp_toolbar;?>
