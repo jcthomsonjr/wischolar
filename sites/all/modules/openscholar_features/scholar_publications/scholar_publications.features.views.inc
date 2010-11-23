@@ -881,6 +881,13 @@ function _scholar_publications_views_default_views() {
       'validate_argument_php' => '',
     ),
   ));
+  $handler->override_option('row_plugin', 'node');
+  $handler->override_option('row_options', array(
+    'relationship' => 'none',
+    'build_mode' => 'teaser',
+    'links' => 1,
+    'comments' => 0,
+  ));
   $handler->override_option('path', 'publications/types/%');
   $handler->override_option('menu', array(
     'type' => 'none',
