@@ -403,18 +403,23 @@ function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false
 	  
 	  $output = (db_affected_rows($result)) ? theme('taxonomy_term_page', array(
 	      $term->tid
-	  ), $result) : '<div class="taxonomy-term-description">' . filter_xss_admin($term->description) . '</div>';
+	  ), $result) : '';
   }
   
+  $s_subterm_output = "";
   foreach ( $tree as $subterm ) {
-    
-    $result = taxonomy_select_nodes(array(
-        $subterm->tid
-    ), $operator, 0, $pager);
-    if ($subterm->name && db_affected_rows($result))
-      $output .= '<div class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$subterm->name}</h3>" . _iqss_gking_term_page_tree($subterm, $vid, $operator, false, $pager) . "</div>";
+    $s_sub_content = _iqss_gking_term_page_tree($subterm, $vid, $operator, false, $pager);
+    if ($subterm->name && $s_sub_content){
+      $s_subterm_output .= '<div class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$subterm->name}</h3>" . $s_sub_content . "</div>";
+    }
   }
   $conf['feed_default_items'] = $orig_feed_items; //Reset, who knows where this is used
+  
+  if(strlen($s_subterm_output) && !strlen($output)){
+    $output = '<div class="taxonomy-term-description">' . filter_xss_admin($term->description) . '</div>' . $s_subterm_output;
+  }elseif (strlen($s_subterm_output)){
+    $output .= $s_subterm_output;
+  }
   
   return $output;
 
