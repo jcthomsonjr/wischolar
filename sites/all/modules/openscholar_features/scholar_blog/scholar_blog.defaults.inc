@@ -102,6 +102,7 @@ function _scholar_blog_user_default_permissions() {
     'name' => 'create blog content',
     'roles' => array(
       '0' => 'scholar admin',
+      '1' => 'scholar user',
     ),
   );
 
