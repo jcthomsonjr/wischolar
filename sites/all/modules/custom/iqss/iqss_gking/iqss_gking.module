@@ -4,8 +4,8 @@
  * implementation of hook_init()
  */
 function iqss_gking_init(){
-  if (! iqss_gking_on_gking_site())
-    return;
+  if (! iqss_gking_on_gking_site()) return;
+  
   jquery_ui_add(array(
       'ui.tabs'
   ));
@@ -13,6 +13,12 @@ function iqss_gking_init(){
 
   drupal_add_css(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.css");
   drupal_add_js(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.js");
+  
+  $router_item = menu_get_item();
+  if (strpos($router_item['path'], 'taxonomy/term') === 0 && !context_get('scholar','feature')) {
+    context_set('scholar','feature','publications');
+  }
+  
 }
 
 /**
@@ -197,18 +203,18 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
   if (! iqss_gking_on_gking_site())
     return;
 
-  $vsite = vsite_get_vsite();
-  $router_item = menu_get_item();
-  if (strpos($router_item['path'], 'taxonomy/term') === 0) {
+//  $vsite = vsite_get_vsite();
+//  $router_item = menu_get_item();
+//  if (strpos($router_item['path'], 'taxonomy/term') === 0) {
 
-    $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
-        'module' => 'iqss_gking',
-        'delta' => 'areas_of_research',
-        'weight' => 5,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Areas of Research',
-    );
+//    $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
+//        'module' => 'iqss_gking',
+//        'delta' => 'areas_of_research',
+//        'weight' => 5,
+//        'region' => 'right',
+//        'status' => '0',
+//        'label' => 'Areas of Research',
+//    );
 
 
     //Add this block category pages on (Lets you filter the category by publictaion type)
@@ -221,7 +227,7 @@ function iqss_gking_context_active_contexts_alter(&$contexts){
 //        'label' => 'Filter Taxonomy by Publication Type',
 //        'type' => 'context_ui'
 //    );
-  }
+//  }
 
 }
 
