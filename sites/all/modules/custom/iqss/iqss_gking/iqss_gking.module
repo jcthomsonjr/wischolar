@@ -289,11 +289,16 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
 
   $tree = taxonomy_get_tree($vocab->vid, $term->tid, - 1, 1);
   if (! count($tree)) {
-    $tree = taxonomy_get_tree($vocab->vid);
-    foreach ( $tree as $tterm )
-      if ($tterm->tid == $term->tid)
-        return iqss_gking_term_page(current($tterm->parents));
-  } //If this term has no childeren then display the parent.
+    $full_tree = taxonomy_get_tree($vocab->vid);
+    foreach ( $full_tree as $tterm ){
+      if ($tterm->tid == $term->tid){
+        if($tterm->depth > 1){
+          return iqss_gking_term_page(current($tterm->parents));
+        }
+        break;
+      }
+    }
+  } //If this term has no childeren and it is at least 2 deep in the vocabs tree then display the parent.
 
 
   drupal_set_title(check_plain($term->name));
