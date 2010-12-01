@@ -4,8 +4,20 @@ screenshot  = screenshot.png
 core        = 6.x
 engine      = phptemplate
 
+;------ defauly drupal styles we don't want ------
+stylesheets[all][]    = css/defaults.css
+stylesheets[all][]    = css/book.css
+stylesheets[all][]    = css/node.css
+stylesheets[all][]    = css/system.css
+stylesheets[all][]    = css/system-menus.css
+stylesheets[all][]    = css/user.css
+stylesheets[all][]    = css/content-module.css
+stylesheets[all][]    = css/filefield.css
+stylesheets[all][]    = css/og.css
+
 ;------ styles ------
 stylesheets[all][]    = css/scholar-base.css
+stylesheets[all][]    = css/typography.css
 stylesheets[all][]    = css/tabs.css
 stylesheets[all][]    = css/admin.css
 stylesheets[all][]    = css/taxonomy.css
