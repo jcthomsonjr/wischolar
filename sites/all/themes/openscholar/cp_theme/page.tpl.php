@@ -29,13 +29,15 @@
 			  <div class="frame">
           <div class="innerframe">
            <?php if ($context_links) print $context_links;?>
-           <?php //main tabs ($tabs) comes in the block on the left ?>
+            <?php if (!empty($title)): ?>
+              <h2 class="title"><?php print $title; ?></h2>
+             <?php endif; ?>
+            <?php //main tabs ($tabs) comes in the block on the left ?>
             <?php if (!empty($tabs2)){ ?>
             <div class="tabs"><?php print $tabs2; ?></div>
             <?php }; ?>
             <?php print $help; ?>
             <?php print $messages; ?>
-
             <?php print $content; ?>
             <?php if (!empty($feed_icons)){ ?>
             <div class="feed-icons"><?php print $feed_icons; ?></div>

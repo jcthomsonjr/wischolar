@@ -1,11 +1,12 @@
 /* Forms */
 
 fieldset {
-  clear: both;
-  background:#F3F3F3;
-  border: 1px solid #dddddd;
-  border-left: none;
-  border-right:none;
+  display:table;
+  }
+
+fieldset.collapsible legend,
+fieldset.collapsible .fieldset-wrapper {
+  display:table-cell;
   }
 
 .vertical-tabs fieldset {
@@ -13,7 +14,6 @@ fieldset {
   }
 
 div.vertical-tabs {
-  margin-right: 7px;
   margin-left: 191px;
   }
 
@@ -22,12 +22,24 @@ div.vertical-tabs ul.vertical-tabs-list {
   width: 195px;
   }
 
+div.vertical-tabs ul.vertical-tabs-list li {
+  background: #e7e5e5;
+  }
+
+div.vertical-tabs, div.vertical-tabs fieldset,
+div.vertical-tabs ul.vertical-tabs-list li.selected {
+  background:#eee;
+  font-size:.9em;
+  }
+
+div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane {
+  padding: 2em;
+  }
 
 legend, legend a {
   color: #666;
   font-weight: bold;
   }
-
 
 .section-cp fieldset legend, h3#modal-title {
 	font-weight: bold;
@@ -60,7 +72,7 @@ html.js #modal-content fieldset.collapsible .fieldset-wrapper {
 .section-cp .og-vocab-taxonomy {
   margin: 10px -3px;
   padding: 10px 3px 10px 10px;
-  border: 1px solid #dfe5e6;
+  border: 1px solid #d9d9d9;
   background: #f2f5f5;
   width: 93%;
   }
@@ -238,7 +250,6 @@ fieldset.group-account-basics {
 
 .draggable select {
   font-size: 10px;
-  height: 14px;
   padding-top: 1px;
   }
 
@@ -274,9 +285,8 @@ fieldset.group-account-basics {
 
 /* Node Creation */
 
-body.section-node-add form#node-form div.form-item,
-body.section-node-edit form#node-form div.form-item {
-  max-width: 800px;
+.node-form {
+  max-width: 972px;
   }
 
 /* Biblio Settings View */

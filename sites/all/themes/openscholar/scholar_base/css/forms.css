@@ -1,9 +1,32 @@
 /* FORMS CSS */
 
+input, select, textarea {
+  border: 1px solid #d9d9d9;
+  padding: 1px;
+  font-size: 100%;
+  }
+
+input.form-text,
+textarea.form-textarea {
+  width: 100%;
+  }
+
+#body-field-wrapper {
+  margin-right: 2px;
+  }
+
+fieldset {
+  background:#fff;
+  padding: 0 .5em;
+  }
+
+label {
+  display:block;
+  margin-bottom: .3em;
+  }
+
 div.form-item {
-  border:none;
-  margin:0 0 .5em 0;
-  padding:0;
+  margin:0 0 1.5em 0;
   }
 
 div.form-item, ul.links, div.admin-panel .body {
@@ -16,25 +39,19 @@ ul.links {
 
 div.fieldset, fieldset, .container-inline-date {
   background:#F3F3F3;
-  border: 1px solid #dddddd;
-  border-left: none;
-  border-right:none;
-  margin: 0 0 10px;
-  padding: 4px 9px;
+  clear: both;
+  border-bottom: 1px solid #dddddd;
+  margin: 0 0 1.5em 0;
   }
-
 
 legend, legend a, div.form-item label, fieldset h2.fieldset-title {
   color: #666;
   font-weight: bold;
   }
 
-
 fieldset h2.fieldset-title, div.form-item label {
   font-size:.9em;
   line-height: 1em;
-  margin:0;
-  padding:0;
   }
 
 div.description, div.form-item div.description {
@@ -61,10 +78,6 @@ div.teaser-checkbox div.form-item, div.form-item div.form-item, fieldset div.for
 
 select option {
   padding: 2px 5px;
-  }
-
-fieldset,select {
-  max-width: 90%;
   }
 
 .views-exposed-form .views-exposed-widget {

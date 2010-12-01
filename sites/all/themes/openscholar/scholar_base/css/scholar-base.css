@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding:0;
+  border: none;
   }
 
 body {
@@ -15,6 +16,10 @@ body {
 
 body.admin-menu {
   position: static !important;
+  }
+
+.inline {
+  display:inline;
   }
 
 .flL {
@@ -263,38 +268,6 @@ div.error {
   color:#FFFFFF;
   margin:0 0 10px;
   padding:9px;
-  }
-
-/* SYSTEM THINGS */
-
-/* Animated throbber */
-
-.ahah-progress .throbber, .flag-waiting .flag-throbber {
-  -moz-background-clip:border;
-  -moz-background-inline-policy:continuous;
-  -moz-background-origin:padding;
-  background:transparent url(../images/throbber.gif) no-repeat scroll 0 50%;
-  float:left;
-  height:5px;
-  height: 100%;
-  margin:0 4px 0 8px;
-  width:21px;
-  }
-
-
-.flag-waiting .flag-throbber {
-  float:none;
-  padding-right: 21px;
-  }
-
-.form-button-wrapper div.ahah-progress, .form-button-wrapper div.throbber {
-  display:block;
-  position:absolute;
-  right: -22px;
-  top: 5px;
-  height:5px;
-  width:21px;
-  float: none;
   }
 
 /* CLEAR FIX */
