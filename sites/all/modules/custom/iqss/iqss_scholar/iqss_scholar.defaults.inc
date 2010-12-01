@@ -16,7 +16,7 @@ function _iqss_scholar_config_variables(){
   'pinserver_hash_huid' => 0,
   
   //Remote Content Nodes
-  'iqss_remote_source_node_types' => array('cv','scholar_software_project'),
+  'iqss_remote_source_node_types' => array('cv','scholar_software_project','page'),
   'iqss_remote_source_valid_ogs' => '3633', //Enable on Garys Site
   );
   

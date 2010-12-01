@@ -239,7 +239,7 @@ function _iqss_remote_source_modify_data($s_contents, $s_docs_root){
   
   $s_contents = preg_replace('#(<img[^>]*src=")(.*"[^>]*>)#Ui', '${1}'.$s_docs_root.'/${2}', $s_contents); //Correct img tags
   
-  $s_contents = preg_replace('#(<a[^>]*href=")([^(http|mailto)].*"[^>]*>)#Ui', '${1}?source_extra=${2}', $s_contents); //Correct href tags
+  $s_contents = preg_replace('#(<a[^>]*href=")((?!(http|mailto)).*"[^>]*>)#Ui', '${1}?source_extra=${2}', $s_contents); //Correct href tags
   
   return $s_contents;
 }

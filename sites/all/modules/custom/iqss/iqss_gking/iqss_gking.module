@@ -570,6 +570,35 @@ function iqss_gking_access_filefield($s_file){
 }
 
 /**
+ * Implementation of hook_form_alter(). Adds menu item fields to the node form.
+ */
+function iqss_gking_form_alter(&$form, $form_state, $form_id) {
+  if (! iqss_gking_on_gking_site()) return;
+  
+  if(isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
+    
+    //If we are in a vsite then check to see if it is configured to have this functionality
+    $vsite = vsite_get_vsite();
+    if($vsite){
+    
+      $form['iqss_gking_theme_settings'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Theme Settings'),
+        '#group' => 'iqss_gking_theme_settings',
+      );
+      $form['iqss_gking_theme_settings']['iqss_gking_alternate_theme'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Remove Branding'),
+        '#size' => 65,
+        '#description' => "Provides a toggle for an alternate theme without branding.",
+        '#default_value' => _iqss_gking_alternate_theme($form['#node']->nid),
+      );
+    }
+    
+  }
+}
+
+/**
  * hoook nodeapi
  */
 function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
@@ -581,6 +610,12 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       if($node -> type == 'biblio' && $teaser && !variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes && strpos($router_item['path'], 'taxonomy/term') === 0){
         $node->biblio_teaser_prefix = ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
         $node->content['teaser']['#value'] = $node->biblio_teaser_prefix.$node->content['teaser']['#value'];
+      }
+    break;
+    case 'insert':
+    case 'update':
+      if($node->nid){
+        _iqss_gking_set_alternate_theme($node->nid,$node->iqss_gking_alternate_theme);
       }
     break;
   }
@@ -611,4 +646,44 @@ function iqss_gking_vsite_widgets(){
       );
 
   return $items;
+}
+
+/**
+ * hook preprocess page
+ */
+function iqss_gking_preprocess_page(&$vars){
+  if (! iqss_gking_on_gking_site() ) return ;
+
+  //Add the alternate theming
+  $active_menu = menu_get_item();
+  if($active_menu['page_callback'] == 'node_page_view' && $active_menu['page_arguments'][0]->nid && _iqss_gking_alternate_theme($active_menu['page_arguments'][0]->nid)){
+    $vars['body_classes'] .= " gking-alt";
+  }
+}
+
+/**
+ * Is this node configured to have the branding off?
+ */
+function _iqss_gking_alternate_theme($nid){
+  static $a_alt_theme_nodes;
+  if(!isset($a_alt_theme_nodes)) $a_alt_theme_nodes = variable_get('iqss_gking::alternate_theme_nodes',array());
+  
+  return in_array($nid,$a_alt_theme_nodes);
+}
+
+/**
+ * Set if the alternate branding sould be used
+ */
+function _iqss_gking_set_alternate_theme($nid, $b_value){
+  $a_alt_theme_nodes = variable_get('iqss_gking::alternate_theme_nodes',array());
+  
+  if($b_value && !in_array($nid,$a_alt_theme_nodes)){
+    $a_alt_theme_nodes[] = $nid;
+    variable_set('iqss_gking::alternate_theme_nodes',$a_alt_theme_nodes);
+    
+  }elseif (!$b_value && in_array($nid,$a_alt_theme_nodes)){
+    unset($a_alt_theme_nodes[array_search($nid,$a_alt_theme_nodes)]);
+    variable_set('iqss_gking::alternate_theme_nodes',$a_alt_theme_nodes);
+  }
+  
 }
