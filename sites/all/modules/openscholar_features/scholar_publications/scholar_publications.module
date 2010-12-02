@@ -768,7 +768,7 @@ function scholar_publications_link($type, $node = NULL, $teaser = FALSE) {
 function scholar_publications_biblio_download_links($node = NULL) {
   $files = '';
   if (!empty ($node->files) && count($node->files) > 0 && user_access('view uploaded files')) {
-    $files .= '<span class="biblio_file_links teaser-extra">';
+    $files .= '<span class="biblio_file_links">';
     //$files .= '&nbsp;'. t('Download') .':&nbsp;';
     $file_count = 0;
     foreach ($node->files as $file) {
@@ -779,7 +779,7 @@ function scholar_publications_biblio_download_links($node = NULL) {
         $href = ($alias) ?  $alias : file_create_url($file->filepath);
         $text = $file->description ? $file->description : $file->filename;
         //$files .= l($text, $href) .'&nbsp;('. format_size($file->filesize).')';
-        $files .= l($text, $href,array('attributes'=>array('class'=>'download-file download-file-' . $text)));
+        $files .= '<span class="teaser-extra">'.l($text, $href,array('attributes'=>array('class'=>'download-file download-file-' . $text))).'</span>';
       }
     }
     $files .= '</span>';
