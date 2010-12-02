@@ -534,8 +534,8 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if ($openurl_base) $s_output .= theme('biblio_openurl', biblio_openurl($node));
 
   // add links to attached files (if any) unless we have an image, then it would be crowded
-  if (biblio_access('download', $node) && (!count($node->field_biblio_image[0]) || !array_key_exists('filepath',$node->field_biblio_image[0]))) $s_output .= theme('biblio_download_links',$node);
-
+  if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
+  
   if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
 
   if (strlen($node->biblio_abst_e)) $s_output .= '<div class="biblio-abstract-display slider">'. $node->biblio_abst_e ."\n</div>";
@@ -785,6 +785,8 @@ function scholar_publications_biblio_download_links($node = NULL) {
   if (module_exists('filefield')) { // now lets get any CCK FileField files...
     $fields = filefield_get_field_list('biblio');
     foreach ($fields as $field_name => $field) {
+      if($field_name == 'field_biblio_image') continue; //Do not re-display this in the teaser
+      
       if (filefield_view_access($field_name, $node)) {
         $field_files = filefield_get_node_files($node, $field_name);
         if ($field_files) {
