@@ -1,7 +1,6 @@
 * {
   margin: 0;
   padding:0;
-  border: none;
   }
 
 body {
@@ -40,7 +39,11 @@ body.admin-menu {
   text-align: center;
   }
 
-/* Used for inline images */
+/* IMAGES */
+
+img {
+  border:none;
+  }
 
 .img-flL {
   float: left;
@@ -57,6 +60,14 @@ body.admin-menu {
   text-align: center;
   }
 
+#scholar-shield {
+  width: 75px;
+  }
+
+#scholar-shield img {
+  /* themers can change the size of the shields without uploading new images */
+  max-width: 100%;
+   }
 
 /* TOP OPENSCHOLAR ADMIN BAR */
 
@@ -188,17 +199,6 @@ body.header-left-right #header-right {
   clear:both;
   }
 
-
-/* IMAGES */
-
-#scholar-shield {
-  width: 75px;
-  }
-
-#scholar-shield img {
-  /* themers can change the size of the shields without uploading new images */
-  max-width: 100%;
-   }
 
 /* FOOTER */
 

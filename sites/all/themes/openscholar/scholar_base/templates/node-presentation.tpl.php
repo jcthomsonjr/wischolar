@@ -2,44 +2,40 @@
   <div class="node-inner">
 
     <?php if (!$page): ?>
-      <?php if ($node->field_presentation_date[0]['value'] || $terms) : ?>
-      <div class="presentation-meta">
-        <?php if ($node->field_presentation_date[0]['value']) : ?>
-        <div class="dates">
-         <?php print $node->field_presentation_date[0]['view'];?>
-        </div>
-        <?php endif; ?>
-        <?php if ($terms): ?>
-        <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
-        <?php endif; ?>
-       <?php endif; ?>
-       </div>
+      <span class="title"><a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a><?php if ($node->field_presentation_location[0]['value']) { print ', '; }?></span>
+      <?php if ($node->field_presentation_location[0]['value']):?>
+      <span class="location"><?php print $node->field_presentation_location[0]['value']; if ($node->field_presentation_date[0]['value']) { print ', '; } ?></span>
+      <?php endif; ?>
+      <?php if ($node->field_presentation_date[0]['value']) {
+        print $node->field_presentation_date[0]['view'];
+          if ($node->field_presentation_file[0]['fid']) {
+          print ': ';
+          }
+        }
+      ?>
+      <?php if ($node->field_presentation_file[0]['fid']) {
+        foreach ($node->field_presentation_file as $file) {
+          print $file['view'];
+          }
+        }
+      ?>
+     <?php endif; ?>
 
-      <div class="presentation-content">
-      <h3 class="title">
-        <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a></h3>
+
+    <?php if ($page): ?>
+      <?php if ($unpublished): ?>
+      <div class="unpublished"><?php print t('Unpublished'); ?></div>
       <?php endif; ?>
 
-    <?php if ($page): ?>
+      <?php if ($terms): ?>
+      <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
+      <?php endif; ?>
 
-    <?php if ($unpublished): ?>
-      <div class="unpublished"><?php print t('Unpublished'); ?></div>
-    <?php endif; ?>
-
-     <?php if ($terms): ?>
-       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
-     <?php endif; ?>
-    <div class="content">
-    <?php endif; ?>
-
-
-      <?php print $content; ?>
-    <?php if ($page): ?>
-    </div>
+      <div class="content">
+        <?php print $content; ?>
+      </div>
+      <?php print $links; ?>
     <?php endif;?>
-    <?php print $links; ?>
-    <?php if (!$page): ?>
-    </div>
-    <?php endif;?>
+
   </div> <!-- /node-inner -->
 </div> <!-- /node -->

@@ -139,16 +139,16 @@ ol {
   padding-left:0;
   }
 
-#content .node ul {
+#content .node .content ul {
   padding-left: 2em;
   }
 
-#content .node ul li {
+#content .node .content ul li {
   list-style: disc outside;
   padding:0 0 0 3px;
   }
 
-#content .node .terms ul, #content .node ul.links, #content .biblio-entry ul.links {
+#content .node .terms ul, #content .node .content ul.links, #content .biblio-entry ul.links {
   padding-left: 0;
   margin-top:0;
   }
@@ -242,6 +242,7 @@ ul.pager li.pager-current {
 div.views-admin-links {
   padding: 1px 6px;
   background: #333;
+  float:right;
   }
 
 div.views-admin-links li {
@@ -257,6 +258,12 @@ dd.meta {
   margin-bottom: 0;
   }
 
+
+/* OTHER */
+
+legend {
+  margin-bottom: .5em;
+  }
 
 /* TOP OPENSCHOLAR MENUS */
 
@@ -368,6 +375,10 @@ input.form-submit, button {
   text-align: center;
   white-space: nowrap;
   font-size: 10px;
+  }
+
+input.form-submit:active, button:active {
+  background:#fffcca;
   }
 
 .advanced-help-link {

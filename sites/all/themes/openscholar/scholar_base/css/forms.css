@@ -1,23 +1,22 @@
 /* FORMS CSS */
 
-input, select, textarea {
-  border: 1px solid #d9d9d9;
-  padding: 1px;
-  font-size: 100%;
-  }
 
 input.form-text,
 textarea.form-textarea {
   width: 100%;
+  max-width: 771px;
   }
 
 #body-field-wrapper {
   margin-right: 2px;
   }
 
-fieldset {
-  background:#fff;
-  padding: 0 .5em;
+
+div.fieldset, fieldset, .container-inline-date {
+  background:#F3F3F3;
+  clear: both;
+  border: 1px solid #d9d9d9;
+  margin: 0 0 1.5em 0;
   }
 
 label {
@@ -25,8 +24,18 @@ label {
   margin-bottom: .3em;
   }
 
+input.form-text {
+	padding: 2px 3px;
+	margin: -1px;
+	border-width: 2px;
+	-moz-border-top-colors: #f9f9f9 #707070;
+	-moz-border-left-colors: #f9f9f9 #ABABAB;
+	-moz-border-right-colors: #f9f9f9 #ABABAB;
+	-moz-border-bottom-colors: #f9f9f9 #CECECE;
+	}
+
 div.form-item {
-  margin:0 0 1.5em 0;
+  margin-bottom:1.5em;
   }
 
 div.form-item, ul.links, div.admin-panel .body {
@@ -37,12 +46,7 @@ div.form-item, ul.links, div.admin-panel .body {
   clear:both;
   }
 
-div.fieldset, fieldset, .container-inline-date {
-  background:#F3F3F3;
-  clear: both;
-  border-bottom: 1px solid #dddddd;
-  margin: 0 0 1.5em 0;
-  }
+
 
 legend, legend a, div.form-item label, fieldset h2.fieldset-title {
   color: #666;
@@ -65,9 +69,9 @@ div.description, div.form-item div.description {
   color: #666;
   }
 
-div.teaser-checkbox div.form-item, div.form-item div.form-item, fieldset div.form-item, .container-inline-date div.form-item {
+div.teaser-checkbox div.form-item,
+.container-inline-date div.form-item {
   border: none !important;
-  margin:0;
   padding:5px 0;
   }
 
@@ -97,7 +101,6 @@ select option {
 
 .search-form div.form-item {
   border: none;
-  padding: 0;
   margin: 0;
   }
 

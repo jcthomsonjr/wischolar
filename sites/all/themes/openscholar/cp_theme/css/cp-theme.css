@@ -32,7 +32,6 @@ body#tinymce ol li {
   list-style: decimal outside;
   }
 
-
 #container {
 	margin: 0;
 	width: 100%;
@@ -90,12 +89,18 @@ body#tinymce ol li {
   width: auto;
   }
 
-body.sidebar-right #cp-content, body.two-sidebars #cp-content {
+body.sidebar-right #cp-content,
+body.two-sidebars #cp-content {
   right: 231px;
   }
 
-body.no-sidebars #cp-content, body.sidebar-right #cp-content {
+body.no-sidebars #cp-content,
+body.sidebar-right #cp-content {
   left:30px;
+  }
+
+body.page-cp-features #cp-content {
+  left: 0;
   }
 
 #sidebar-right {
@@ -204,6 +209,11 @@ body.admin-menu #main-content {
   text-decoration: none;
   }
 
+
+#cp-sidemenu li a:active {
+  background: #fffcca;
+  }
+
 #cp-sidemenu li.active a,
 #cp-sidemenu li.active-trail a {
   /*background: url(../images/cp-sidemenu-active.png) 0 100% repeat-x #b8c0c0;*/
@@ -217,7 +227,8 @@ body.admin-menu #main-content {
 
 /* Main Content */
 
-.pad {
+.pad,
+#cp-settings-site {
   margin: 30px 0 0 30px;
   }
 

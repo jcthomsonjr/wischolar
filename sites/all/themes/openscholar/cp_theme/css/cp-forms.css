@@ -1,12 +1,23 @@
 /* Forms */
 
-fieldset {
-  display:table;
+.section-node-add #cp-content .innerframe,
+.section-node-edit #cp-content .innerframe {
+  max-width: 972px;
   }
 
-fieldset.collapsible legend,
-fieldset.collapsible .fieldset-wrapper {
-  display:table-cell;
+body.no-sidebars #cp-content #node-form {
+  max-width: 963px;
+  }
+
+body.one-sidebar #cp-content .node-form {
+  max-width: 771px;
+   }
+
+/* This is a mess but until the markup is improved.. */
+body.one-sidebar #cp-content form td:first-child,
+body.one-sidebar #cp-content form th:first-child,
+body.one-sidebar #cp-content .vsite_content_filter_box {
+  padding-left: 30px;
   }
 
 .vertical-tabs fieldset {
@@ -34,11 +45,6 @@ div.vertical-tabs ul.vertical-tabs-list li.selected {
 
 div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane {
   padding: 2em;
-  }
-
-legend, legend a {
-  color: #666;
-  font-weight: bold;
   }
 
 .section-cp fieldset legend, h3#modal-title {
@@ -86,6 +92,10 @@ html.js #modal-content fieldset.collapsible .fieldset-wrapper {
 	border: none;
   }
 
+.section-cp #cp-settings-form div.form-item {
+  margin: 0 0 .75em 0;
+  }
+
 .section-cp #dialog-main div.form-item {
   margin:0;
   }
@@ -111,14 +121,11 @@ select option {
   }
 
 
-/*Creation forms that use horizontal radio buttons */
-
 .page-node-add-class .form-radios .form-item {
+  /*Creation forms that use horizontal radio buttons */
   display:inline;
   margin-right: 10px;
   }
-
-/* End horizontal radios */
 
 
 
@@ -126,7 +133,11 @@ select option {
   border: none;
   }
 
-.section-cp label, .section-cp div.form-item label, .section-cp .description, div.spaces-block-customizer, th {
+.section-cp label,
+.section-cp div.form-item label,
+.section-cp .description,
+div.spaces-block-customizer,
+th {
 	font-weight: bold;
 	color:#333;
 	font-size: .9em;
@@ -134,7 +145,10 @@ select option {
 	}
 
 
-.section-cp label, .section-cp div.form-item label, .section-cp .description, div.spaces-block-customizer {
+.section-cp label,
+.section-cp div.form-item label,
+.section-cp .description,
+div.spaces-block-customizer {
 	display:block;
 	text-transform:none;
 	}
@@ -150,11 +164,11 @@ select option {
 	line-height: 127%;
 	}
 
-.section-cp .fieldset-wrapper div.description, .section-cp table div.description, .section-cp .form-item div.description {
-  margin-left: 0;
+.section-cp .fieldset-wrapper div.description,
+.section-cp table div.description,
+.section-cp .form-item div.description {
   padding: 0;
-  margin-top: 3px;
-  margin-bottom: 3px;
+  margin: 0;
   }
 
 table.features div.feature div.description {
@@ -166,8 +180,6 @@ table.features div.feature div.description {
 #modal-content table {
   width:auto;
   }
-
-
 
 h3#modal-title {
   float: none;
@@ -184,23 +196,13 @@ h3#modal-title {
   /*border-bottom: 1px solid #ccc;*/
   }
 
-.section-cp fieldset fieldset, #views-bulk-operations-select fieldset {
+.section-cp fieldset fieldset,
+#views-bulk-operations-select fieldset {
   border: none;
   }
 
 .section-cp label.option {
 	color: #666;
-	}
-
-.section-cp input.form-text {
-	padding: 4px 3px 2px 3px;
-	margin: -3px;
-	border-width: 2px;
-	width: 100%;
-	-moz-border-top-colors: #f9f9f9 #707070;
-	-moz-border-left-colors: #f9f9f9 #ABABAB;
-	-moz-border-right-colors: #f9f9f9 #ABABAB;
-	-moz-border-bottom-colors: #f9f9f9 #CECECE;
 	}
 
 .ctools-use-modal-processed .buttons	{
@@ -282,12 +284,6 @@ fieldset.group-account-basics {
   clear: both;
   }
 
-
-/* Node Creation */
-
-.node-form {
-  max-width: 972px;
-  }
 
 /* Biblio Settings View */
 
