@@ -541,9 +541,9 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (strlen($node->biblio_abst_e)) $s_output .= '<div class="biblio-abstract-display slider">'. $node->biblio_abst_e ."\n</div>";
   if (!$node->status) $s_output .= '</div>';
   
-  if($node->biblio_type == 113 && strlen($node->biblio_url)){
+  if( in_array($node->biblio_type, array(113,100,102,1001)) && strlen($node->biblio_url)){
     $s_output .= " ". l(variable_get('scholar_publications_external_link_name',"Website"),$node->biblio_url);
-  }//This is a software biblio entry, and it has a External URL
+  }//This is a software,data, article, book biblio entry, and it has a External URL
 
   $links = module_invoke_all('link', 'node', $node, '');
   drupal_alter('link', $links, $node);
