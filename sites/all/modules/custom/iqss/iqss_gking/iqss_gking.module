@@ -377,12 +377,40 @@ function iqss_gking_people(){
   
   if(!$vocab || !count($tree)) return views_page('scholar_profiles', 'page_1');
   
+  //Filter def to filter view by provided tid
+  $a_tid_filter = array(
+    'operator' => 'and',
+    'value' => array(),//array(0 => $term->tid),
+    'group' => 0,
+    'exposed' => false,
+    'limit' => TRUE,
+    'vid' => $vocab->vid, //Vocab_id
+    'id' => 'tid',
+    'table' => 'term_node',
+    'field' => 'tid',
+    'hierarchy' => 0,
+    'relationship' => 'none',
+    'reduce_duplicates' => 0,
+  );
+  
+  
+  
+  
   $output = '';
   $a_terms = array();
   foreach ( $tree as $subterm ) {
     if ($subterm->name){
-      $output .= '<div id="iqss_gking_term_'.$subterm->tid.'" class="taxonomy-term-child">' . _iqss_gking_term_page_tree($subterm, $vocab->vid) . "</div>";
+	    
+      $view = views_get_view('scholar_profiles');
+      $view->set_display('page_1');
+      $a_tid_filter['value'] = array(0 => $subterm->tid);
+		  $view->display_handler->default_display->options['filters']['tid'] = $a_tid_filter;
+		  $view->display_handler->definition['use pager'] = false;
+		  $view->display_handler->options['defaults']['items_per_page'] = false;
+      
+      $output .= '<div id="iqss_gking_term_'.$subterm->tid.'" class="taxonomy-term-child">' . $view->execute_display('page_1') . "</div>";
       array_push($a_terms,array('name' => $subterm->name, 'tid' => $subterm->tid));
+      $view->destroy();
     }
   }
   
