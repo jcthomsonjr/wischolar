@@ -144,7 +144,7 @@ function scholar_software_views_default_views() {
     'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->override_option('path', 'scholar_software');
+  $handler->override_option('path', 'software');
   $handler->override_option('menu', array(
     'type' => 'normal',
     'title' => 'Software',
@@ -165,7 +165,7 @@ function scholar_software_views_default_views() {
   // Exported view: scholar_software_releaseprojects
   $view = new view;
   $view->name = 'scholar_software_releaseprojects';
-  $view->description = 'A list of projects that are avalible to add releases to';
+  $view->description = 'A list of projects that are avalible to add a release to';
   $view->tag = 'scholar_software';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -1646,7 +1646,7 @@ function scholar_software_views_default_views() {
     ),
   ));
   $handler->override_option('row_plugin', '');
-  $handler->override_option('path', 'scholar_software/fserver/%/%');
+  $handler->override_option('path', 'software/fserver/%/%');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',

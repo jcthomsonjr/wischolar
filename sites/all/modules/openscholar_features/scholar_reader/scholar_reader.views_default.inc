@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Helper to implementation of hook_views_default_views().
+ * Implementation of hook_views_default_views().
  */
-function _scholar_reader_views_default_views() {
+function scholar_reader_views_default_views() {
   $views = array();
 
   // Exported view: scholar_reader
@@ -280,6 +280,7 @@ function _scholar_reader_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('node_content', 'teaser view', 'node_content_1');
   $handler->override_option('sorts', array(

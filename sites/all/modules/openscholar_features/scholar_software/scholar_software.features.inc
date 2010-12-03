@@ -82,7 +82,7 @@ function scholar_software_node_info() {
     'scholar_software_release' => array(
       'name' => t('Software Release'),
       'module' => 'features',
-      'description' => t('A single release package for a project.'),
+      'description' => t('A single release package for a given project.'),
       'has_title' => '1',
       'title_label' => t('Release'),
       'has_body' => '1',
