@@ -4,43 +4,69 @@
  * Implementation of hook_context_default_contexts().
  */
 function scholar_book_context_default_contexts() {
-  module_load_include('inc', 'scholar_book', 'scholar_book.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_book_context_default_contexts', $args);
-}
+  $items = array();
 
-/**
- * Implementation of hook_menu_default_items().
- */
-function scholar_book_menu_default_items() {
-  module_load_include('inc', 'scholar_book', 'scholar_book.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_book_menu_default_items', $args);
+  $items['scholar-feature-book'] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'book',
+    'description' => 'scholar > book',
+    'node' => array(
+      '0' => 'book',
+    ),
+    'views' => array(
+      '0' => 'scholar_books',
+    ),
+    'menu' => 'documents',
+    'block' => array(
+      'scholar_book_booktoc' => array(
+        'module' => 'scholar_book',
+        'delta' => 'booktoc',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar: Book',
+        'type' => 'context_ui',
+      ),
+      'vsite_widgets_4' => array(
+        'module' => 'vsite_widgets',
+        'delta' => '2',
+        'weight' => 21,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'ShareThis Button - Allows you to share posts using popular online services',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
 }
 
 /**
  * Implementation of hook_node_info().
  */
 function scholar_book_node_info() {
-  module_load_include('inc', 'scholar_book', 'scholar_book.features.node');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_book_node_info', $args);
+  $items = array(
+    'book' => array(
+      'name' => t('Book page'),
+      'module' => 'features',
+      'description' => t('A <em>book page</em> is a page of content, organized into a collection of related entries collectively known as a <em>book</em>. A <em>book page</em> automatically displays links to adjacent pages, providing a simple navigation system for organizing and reviewing structured content.'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+  );
+  return $items;
 }
 
 /**
- * Implementation of hook_user_default_permissions().
+ * Implementation of hook_views_api().
  */
-function scholar_book_user_default_permissions() {
-  module_load_include('inc', 'scholar_book', 'scholar_book.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_book_user_default_permissions', $args);
-}
-
-/**
- * Implementation of hook_views_default_views().
- */
-function scholar_book_views_default_views() {
-  module_load_include('inc', 'scholar_book', 'scholar_book.features.views');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_book_views_default_views', $args);
+function scholar_book_views_api() {
+  return array(
+    'api' => '2',
+  );
 }
