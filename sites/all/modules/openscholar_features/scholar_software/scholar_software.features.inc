@@ -100,6 +100,6 @@ function scholar_software_node_info() {
 function scholar_software_views_api() {
   return array(
     'api' => '2',
-    'path' => drupal_get_path('module', 'scholar_software') .'/views',
+   // 'path' => drupal_get_path('module', 'scholar_software') .'/views',
   );
 }
