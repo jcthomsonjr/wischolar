@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Implementation of hook_views_default_views().
+ * Helper to implementation of hook_views_default_views().
  */
-function scholar_software_views_default_views() {
+function _scholar_software_views_default_views() {
   $views = array();
 
   // Exported view: scholar_software_projects
