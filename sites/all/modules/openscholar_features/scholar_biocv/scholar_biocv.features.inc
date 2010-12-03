@@ -1,46 +1,61 @@
 <?php
 
 /**
- * Implementation of hook_content_default_fields().
- */
-function scholar_biocv_content_default_fields() {
-  module_load_include('inc', 'scholar_biocv', 'scholar_biocv.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_biocv_content_default_fields', $args);
-}
-
-/**
  * Implementation of hook_context_default_contexts().
  */
 function scholar_biocv_context_default_contexts() {
-  module_load_include('inc', 'scholar_biocv', 'scholar_biocv.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_biocv_context_default_contexts', $args);
-}
+  $items = array();
 
-/**
- * Implementation of hook_menu_default_items().
- */
-function scholar_biocv_menu_default_items() {
-  module_load_include('inc', 'scholar_biocv', 'scholar_biocv.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_biocv_menu_default_items', $args);
+  $items['scholar-feature-biocv'] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'biocv',
+    'description' => 'scholar > biocv',
+    'path' => array(
+      'biocv' => 'biocv',
+    ),
+    'block' => array(
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
 }
 
 /**
  * Implementation of hook_node_info().
  */
 function scholar_biocv_node_info() {
-  module_load_include('inc', 'scholar_biocv', 'scholar_biocv.features.node');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_biocv_node_info', $args);
-}
-
-/**
- * Implementation of hook_user_default_permissions().
- */
-function scholar_biocv_user_default_permissions() {
-  module_load_include('inc', 'scholar_biocv', 'scholar_biocv.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_biocv_user_default_permissions', $args);
+  $items = array(
+    'bio' => array(
+      'name' => t('bio'),
+      'module' => 'features',
+      'description' => '',
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Bio'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+    'cv' => array(
+      'name' => t('cv'),
+      'module' => 'features',
+      'description' => '',
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('cv'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+  );
+  return $items;
 }
