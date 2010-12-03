@@ -1,55 +1,104 @@
 <?php
 
 /**
- * Implementation of hook_content_default_fields().
- */
-function scholar_software_content_default_fields() {
-  module_load_include('inc', 'scholar_software', 'scholar_software.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_software_content_default_fields', $args);
-}
-
-/**
  * Implementation of hook_context_default_contexts().
  */
 function scholar_software_context_default_contexts() {
-  module_load_include('inc', 'scholar_software', 'scholar_software.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_software_context_default_contexts', $args);
-}
+  $items = array();
 
-/**
- * Implementation of hook_menu_default_items().
- */
-function scholar_software_menu_default_items() {
-  module_load_include('inc', 'scholar_software', 'scholar_software.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_software_menu_default_items', $args);
+  $items['scholar-feature-software'] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'software',
+    'description' => '',
+    'node' => array(
+      '0' => 'scholar_software_project',
+      '1' => 'scholar_software_release',
+    ),
+    'views' => array(
+      '0' => 'scholar_software_projects',
+      '1' => 'scholar_software_releases',
+      '2' => 'scholar_software_updates',
+    ),
+    'menu' => 'software',
+    'block' => array(
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => -20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar site categories',
+        'type' => 'context_ui',
+      ),
+      'vsite_widgets_4' => array(
+        'module' => 'vsite_widgets',
+        'delta' => '2',
+        'weight' => 50,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'AddThis button',
+        'type' => 'context_ui',
+      ),
+      'views_scholar_software_releases-block_3' => array(
+        'module' => 'views',
+        'delta' => 'scholar_software_releases-block_3',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Software Releases',
+        'type' => 'context_ui',
+      ),
+      'views_scholar_software_releases-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_software_releases-block_1',
+        'weight' => 20,
+        'region' => FALSE,
+        'status' => '0',
+        'label' => 'Recommended Software Releases',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
 }
 
 /**
  * Implementation of hook_node_info().
  */
 function scholar_software_node_info() {
-  module_load_include('inc', 'scholar_software', 'scholar_software.features.node');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_software_node_info', $args);
+  $items = array(
+    'scholar_software_project' => array(
+      'name' => t('Software Project'),
+      'module' => 'features',
+      'description' => t('A software project page. Provides a summary of project information and releases for download.'),
+      'has_title' => '1',
+      'title_label' => t('Project'),
+      'has_body' => '1',
+      'body_label' => t('Description'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+    'scholar_software_release' => array(
+      'name' => t('Software Release'),
+      'module' => 'features',
+      'description' => t('A single release package for a project.'),
+      'has_title' => '1',
+      'title_label' => t('Release'),
+      'has_body' => '1',
+      'body_label' => t('Notes'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+  );
+  return $items;
 }
 
 /**
- * Implementation of hook_user_default_permissions().
+ * Implementation of hook_views_api().
  */
-function scholar_software_user_default_permissions() {
-  module_load_include('inc', 'scholar_software', 'scholar_software.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_software_user_default_permissions', $args);
-}
-
-/**
- * Implementation of hook_views_default_views().
- */
-function scholar_software_views_default_views() {
-  module_load_include('inc', 'scholar_software', 'scholar_software.features.views');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_software_views_default_views', $args);
+function scholar_software_views_api() {
+  return array(
+    'api' => '2',
+  );
 }
