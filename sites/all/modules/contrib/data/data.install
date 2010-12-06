@@ -1,5 +1,5 @@
 <?php
-// $Id: data.install,v 1.9 2009/07/27 23:27:22 alexb Exp $
+// $Id: data.install,v 1.9.2.2 2010/09/08 01:48:11 alexb Exp $
 /**
  * @file
  * Install hooks for Data module.
@@ -32,7 +32,7 @@ function data_schema() {
       ),
       'name' => array(
         'type' => 'varchar',
-        'length' => '255',
+        'length' => '128',
         'not null' => TRUE,
         'default' => '',
         'description' => 'Table name.',
@@ -50,9 +50,7 @@ function data_schema() {
         'serialize' => TRUE,
       ),
     ),
-    'indexes' => array(
-        'name' => array('name'),
-      ),
+    'primary key' => array('name'),
   );
   return $schema;
 }
@@ -85,5 +83,29 @@ function data_update_6001() {
     }
   }
   db_drop_table($ret, 'data_join');
+  return $ret;
+}
+
+/**
+ * Add a primary key, required by CTools. Shorten name key to 128 char max.
+ */
+function data_update_6002() {
+  $ret = array();
+  db_drop_index($ret, 'data_tables', 'name');
+  $spec = array(
+    'type' => 'varchar',
+    'length' => '128',
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'Table name.',
+  );
+  db_change_field($ret, 'data_tables', 'name', 'name', $spec);
+  db_add_primary_key($ret, 'data_tables', array('name'));
+  // reset cTools static cache of this table; otherwise it throws an error about
+  // lacking a primary key, which just adds insult to injury as we're trying to fix that!
+  drupal_get_schema('data_tables', TRUE);
+  if (function_exists('ctools_static_reset')) {
+    ctools_static_reset('ctools_export_get_schema');
+  }
   return $ret;
 }

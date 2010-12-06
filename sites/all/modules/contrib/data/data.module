@@ -1,5 +1,5 @@
 <?php
-// $Id: data.module,v 1.34.2.20 2010/01/19 14:16:33 alexb Exp $
+// $Id: data.module,v 1.34.2.22 2010/09/09 20:23:10 alexb Exp $
 /**
  * @file
  * Hooks and API functions for data module.
@@ -391,6 +391,52 @@ function _data_load_table($name = NULL, $reset = FALSE) {
 }
 
 /**
+ * Helper function for adjusting a table's real schema.
+ * @todo: this should live in schema module and should use better defined $reason keys.
+ *
+ * @throws DataException on error.
+ */
+function data_alter_table($table, $field_reason) {
+  list($field, $reason) = explode(': ', $field_reason);
+  $schema = $table->get('table_schema');
+
+  switch ($reason) {
+    case 'not in database':
+      if (isset($schema['fields'][$field])) {
+        $table->addField($field, $schema['fields'][$field]);
+      }
+      break;
+
+    case 'missing in database':
+      list($type, $field) = explode(' ', $field);
+      // @todo: support multiple keys.
+      if ($type == 'indexes') {
+        $table->addIndex($field);
+      }
+      elseif ($type == 'unique keys') {
+        $table->addUniqueKey($field);
+      }
+      elseif ($type == 'primary key') {
+        $table->addPrimaryKey($schema['primary keys']);
+      }
+      break;
+
+    case 'primary key:<br />declared': // @todo: yikes!
+      $table->dropPrimaryKey();
+      $table->changePrimaryKey($schema['primary keys']);
+    case 'missing in schema':
+      if ($field == 'primary key') {
+        $table->dropPrimaryKey();
+      }
+      break;
+
+    case 'unexpected column in database':
+      $table->dropField($field);
+      break;
+  }
+}
+
+/**
  * Starts overriding a data table by copying it from the default definition into the DB.
  * This function does not have any effect if called on a table that does already exist in
  * data_tables.
@@ -413,3 +459,8 @@ function data_include($class) {
     $included[$class] = TRUE;
   }
 }
+
+/**
+ * Base class for any exceptions thrown in Data.
+ */
+class DataException extends Exception {}

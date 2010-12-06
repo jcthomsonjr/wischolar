@@ -1,5 +1,5 @@
 <?php
-// $Id: data_taxonomy_views_handler_field_form.inc,v 1.1.2.8 2010/01/25 17:45:16 alexb Exp $
+// $Id: data_taxonomy_views_handler_field_form.inc,v 1.1.2.10 2010/09/08 20:00:42 alexb Exp $
 
 /**
  * Provide a form to associate data records with taxonomy terms.
@@ -27,7 +27,7 @@ class data_taxonomy_views_handler_field_form extends views_handler_field {
     $meta = $table->get('meta');
     if (!empty($meta['data_taxonomy']['vocabularies'])) {
       foreach ($meta['data_taxonomy']['vocabularies'] as $vid) {
-        $options[$vid] = taxonomy_vocabulary_load($vid)->name;
+        $options[$vid] = data_taxonomy_get_vocabulary($vid)->name;
       }
     }
     if (!empty($options)) {
@@ -72,7 +72,8 @@ class data_taxonomy_views_handler_field_form extends views_handler_field {
     if (!empty($meta['data_taxonomy']['vocabularies'])) {
       foreach ($meta['data_taxonomy']['vocabularies'] as $vid) {
         if (!empty($this->options['vocabularies'][$vid])) {
-          $output .= drupal_get_form('data_taxonomy_tagging_form', $vid, $values->{$this->id}, $this->table, $this->options['path'], is_array($this->view->args) ? $this->view->args : array());
+          $vocabulary = data_taxonomy_get_vocabulary($vid);
+          $output .= drupal_get_form('data_taxonomy_tagging_form', $vocabulary->vid, $values->{$this->id}, $this->table, $this->options['path'], is_array($this->view->args) ? $this->view->args : array());
         }
       }
     }

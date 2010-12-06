@@ -1,5 +1,5 @@
 <?php
-// $Id: data_taxonomy.admin.inc,v 1.1.2.2 2010/01/21 00:24:26 alexb Exp $
+// $Id: data_taxonomy.admin.inc,v 1.1.2.4 2010/09/08 15:03:26 alexb Exp $
 /**
  * @file
  * Admin UI functionality.
@@ -13,7 +13,12 @@ function data_taxonomy_settings_form(&$form_state, $table) {
 
   $form = $vocabularies = array();
   foreach (taxonomy_get_vocabularies() as $v) {
-    $vocabularies[$v->vid] = $v->name;
+    if (strpos($v->module, 'features_') === 0) {
+      $vocabularies[filter_xss_admin($v->module)] = check_plain($v->name);
+    }
+    else {
+      $vocabularies[$v->vid] = check_plain($v->name);
+    }
   }
   $meta = $table->get('meta');
   $form['#table'] = $table;
@@ -21,7 +26,7 @@ function data_taxonomy_settings_form(&$form_state, $table) {
     '#type' => 'checkboxes',
     '#title' => t('Vocabularies'),
     '#options' => $vocabularies,
-    '#default_value' => $meta['data_taxonomy']['vocabularies'],
+    '#default_value' => isset($meta['data_taxonomy']['vocabularies']) ? $meta['data_taxonomy']['vocabularies'] : array(),
     '#description' => t('Select the vocabulary to whose terms this data table\'s entries can be related to.'),
   );
   $schema = $table->get('table_schema');

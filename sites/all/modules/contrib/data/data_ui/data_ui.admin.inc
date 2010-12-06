@@ -1,5 +1,5 @@
 <?php
-// $Id: data_ui.admin.inc,v 1.25.2.15 2010/03/24 01:03:48 alexb Exp $
+// $Id: data_ui.admin.inc,v 1.25.2.18 2010/09/09 20:23:10 alexb Exp $
 /**
  * @file
  * Admin UI functions.
@@ -193,10 +193,11 @@ function data_ui_adjust_form_submit_alter_table($form, &$form_state) {
   $resolved = $resolved = array();
   if (isset($form['#comparison']['reasons'])) {
     foreach ($form['#comparison']['reasons'] as $field_reason) {
-      if (_data_ui_alter_table($form['#table'], $field_reason)) {
+      try {
+        data_alter_table($form['#table'], $field_reason);
         $resolved[] = $field_reason;
       }
-      else {
+      catch (Exception $e) {
         $unresolved[] = $field_reason;
       }
     }
@@ -559,87 +560,77 @@ function data_ui_edit_form_submit($form, &$form_state) {
     return;
   }
 
-  if ($form_state['clicked_button']['#value'] == t('Save')) {
-    $fields = $schema['fields'];
-    $new_fields = $form_state['values']['fields'];
+  try {
+    if ($form_state['clicked_button']['#value'] == t('Save')) {
+      $fields = $schema['fields'];
+      $new_fields = $form_state['values']['fields'];
 
-    $new_index = array();
-    $new_primary_key = array();
+      $new_index = array();
+      $new_primary_key = array();
 
-    if (empty($form_state['values']['bulk_operation']) && isset($fields)) {
+      if (empty($form_state['values']['bulk_operation']) && isset($fields)) {
 
-      // Convert schema.
-      foreach ($fields as $field_name => $field) {
-        if ($new_spec = _data_ui_changed($new_fields[$field_name], $field)) {
-          $table->changeField($field_name, $new_spec);
-          drupal_set_message(t('Changed field !field_name', array('!field_name' => $field_name)));
-        }
-        if ($new_fields[$field_name]['index']) {
-          $new_index[] = $field_name;
-        }
-        if ($new_fields[$field_name]['primary']) {
-          $new_primary_key[] = $field_name;
-        }
-      }
-      if (!$table->changeIndex($new_index)) {
-        drupal_set_message(t('Error changing indexes'), 'error');
-      }
-      if (!$table->changePrimaryKey($new_primary_key)) {
-        drupal_set_message(t('Error changing primary key'), 'error');
-
-      }
-
-      // Update meta data.
-      $meta = $table->get('meta');
-      foreach ($new_fields as $field_name => $field) {
-        $meta['fields'][$field_name]['label'] = $field['label'];
-      }
-      $table->update(array('meta' => $meta));
-      drupal_set_message(t('Saved changes'));
-    }
-    else {
-      // Bulk updates.
-      switch ($form_state['values']['bulk_operation']) {
-        case 'delete':
-          foreach ($new_fields as $field_name => $field) {
-            if (!empty($field['selected'])) {
-              // One field must stay.
-              $schema = $table->get('table_schema');
-              if (count($schema['fields']) > 1) {
-                $table->dropField($field_name);
-                drupal_set_message(t('Deleted field !field_name', array('!field_name' => $field_name)));
-              }
-              else {
-                drupal_set_message('You cannot delete all fields from a table, drop the table instead.', 'error');
-              }
-            }
+        // Convert schema.
+        foreach ($fields as $field_name => $field) {
+          if ($new_spec = _data_ui_changed($new_fields[$field_name], $field)) {
+            $table->changeField($field_name, $new_spec);
+            drupal_set_message(t('Changed field !field_name', array('!field_name' => $field_name)));
           }
-          break;
-      }
-    }
-  }
-  elseif ($form_state['clicked_button']['#value'] == t('Add new')) {
-    $new = $form_state['values']['new'];
-    $spec = data_build_field_definition($new);
-    if ($table->addField($new['name'], $spec)) {
-      drupal_set_message(t('Added field !field', array('!field' => $new['name'])));
-    }
-    else {
-      drupal_set_message(t('Error creating field'), 'error');
-      return;
-    }
-    if (!empty($new['index'])) {
-      if ($table->addIndex($new['name'])) {
-        drupal_set_message(t('Added index for field !field', array('!field' => $new['name'])));
+          if ($new_fields[$field_name]['index']) {
+            $new_index[] = $field_name;
+          }
+          if ($new_fields[$field_name]['primary']) {
+            $new_primary_key[] = $field_name;
+          }
+        }
+        $table->changeIndex($new_index);
+        $table->changePrimaryKey($new_primary_key);
+
+        // Update meta data.
+        $meta = $table->get('meta');
+        foreach ($new_fields as $field_name => $field) {
+          $meta['fields'][$field_name]['label'] = $field['label'];
+        }
+        $table->update(array('meta' => $meta));
+        drupal_set_message(t('Saved changes'));
       }
       else {
-        drupal_set_message(t('Error adding index'), 'error');
-        return;
+        // Bulk updates.
+        switch ($form_state['values']['bulk_operation']) {
+          case 'delete':
+            foreach ($new_fields as $field_name => $field) {
+              if (!empty($field['selected'])) {
+                // One field must stay.
+                $schema = $table->get('table_schema');
+                if (count($schema['fields']) > 1) {
+                  $table->dropField($field_name);
+                  drupal_set_message(t('Deleted field !field_name', array('!field_name' => $field_name)));
+                }
+                else {
+                  drupal_set_message('You cannot delete all fields from a table, drop the table instead.', 'error');
+                }
+              }
+            }
+            break;
+        }
       }
     }
-    $meta = $table->get('meta');
-    $meta['fields'][$new['name']]['label'] = $new['label'];
-    $table->update(array('meta' => $meta));
+    elseif ($form_state['clicked_button']['#value'] == t('Add new')) {
+      $new = $form_state['values']['new'];
+      $spec = data_build_field_definition($new);
+      $table->addField($new['name'], $spec);
+      drupal_set_message(t('Added field !field', array('!field' => $new['name'])));
+      if (!empty($new['index'])) {
+        $table->addIndex($new['name']);
+        drupal_set_message(t('Added index for field !field', array('!field' => $new['name'])));
+      }
+      $meta = $table->get('meta');
+      $meta['fields'][$new['name']]['label'] = $new['label'];
+      $table->update(array('meta' => $meta));
+    }
+  }
+  catch (DataException $e) {
+    drupal_set_message($e->getMessage(), 'error');
   }
 }
 
@@ -962,7 +953,11 @@ function theme_data_ui_schema_compare_table($comparison) {
  *
  * Otherwise return FALSE.
  *
- * Currently checked: type, unsigned
+ * Currently checked: type, unsigned, default.
+ *
+ * @todo This is insane, we need to use clean specs instead of converting
+ * existing specs. This will require us also to not allow changes to indexes,
+ * PKs and field specs on the same form.
  */
 function _data_ui_changed($new, $field) {
   $changed = FALSE;
@@ -975,6 +970,9 @@ function _data_ui_changed($new, $field) {
     $changed = TRUE;
   }
   if ($changed) {
+    if ($field['type'] == 'text') {
+      unset($field['default']);
+    }
     return $field;
   }
   return FALSE;
@@ -1026,51 +1024,6 @@ function _data_ui_get_join($join, $field) {
         return $info;
       }
     }
-  }
-  return FALSE;
-}
-
-/**
- * Helper function for adjusting a table's real schema.
- * @todo: this should live in schema module and should use better defined $reason keys.
- */
-function _data_ui_alter_table($table, $field_reason) {
-  list($field, $reason) = explode(': ', $field_reason);
-  $schema = $table->get('table_schema');
-
-  switch ($reason) {
-    case 'not in database':
-      if (isset($schema['fields'][$field])) {
-        return $table->addField($field, $schema['fields'][$field]);
-      }
-      return FALSE;
-
-    case 'missing in database':
-      list($type, $field) = explode(' ', $field);
-      // @todo: support multiple keys.
-      if ($type == 'indexes') {
-        return $table->addIndex($field);
-      }
-      elseif ($type == 'unique keys') {
-        return $table->addUniqueKey($field);
-      }
-      elseif ($type == 'primary key') {
-        return $table->addPrimaryKey($schema['primary keys']);
-      }
-      return FALSE;
-
-    case 'primary key:<br />declared': // @todo: yikes!
-      $table->dropPrimaryKey();
-      return $table->changePrimaryKey($schema['primary keys']);
-    case 'missing in schema':
-      if ($field == 'primary key') {
-        return $table->dropPrimaryKey();
-      }
-      return FALSE;
-
-    case 'unexpected column in database':
-      return $table->dropField($field);
-
   }
   return FALSE;
 }

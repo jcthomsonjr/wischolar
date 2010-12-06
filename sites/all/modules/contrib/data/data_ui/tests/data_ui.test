@@ -1,5 +1,5 @@
 <?php
-// $Id: data_ui.test,v 1.10.2.5 2009/10/15 15:36:55 alexb Exp $
+// $Id: data_ui.test,v 1.10.2.6 2010/07/28 18:11:48 alexb Exp $
 /**
  * @file
  * Data UI tests.
@@ -170,8 +170,6 @@ class DataTestCaseUI extends DataTestCase {
     $fields = $this->randomFields($num_fields);
     $edit = $this->formatEditFields($fields);
     $this->drupalPost(NULL, $edit, 'Create');
-    // Data UI has prefixed the table name.
-    $table_name = data_name($table_name);
     $this->assertText('Created table '. $table_name);
 
     // Test schema in DB.

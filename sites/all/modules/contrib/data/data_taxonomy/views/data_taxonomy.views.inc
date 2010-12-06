@@ -1,5 +1,5 @@
 <?php
-// $Id: data_taxonomy.views.inc,v 1.1.2.4 2010/01/21 22:39:22 davidg Exp $
+// $Id: data_taxonomy.views.inc,v 1.1.2.6 2010/09/08 01:54:47 alexb Exp $
 /**
  * @file
  * Views hooks.
@@ -59,12 +59,20 @@ function data_taxonomy_views_data() {
         'left_field' => $meta['data_taxonomy']['id'],
         'field' => 'id',
       );
-      $data[$table->get('name')][$meta['data_taxonomy']['id']]['relationship'] = array(
+      // allow term data to join directly to affected data tables
+      $data['term_data']['table']['join'][$table->get('name')] = array(
+        'left_table' => 'data_taxonomy',
+        'left_field' => 'tid',
+        'field' => 'tid',
+      );
+      // don't want to overwrite any other relationships this might have...
+      $data[$table->get('name')]['data_taxonomy_'. $meta['data_taxonomy']['id']]['relationship'] = array(
         'title' => t('Term tid.'),
         'help' => t('Relate a data record to a term tid.'),
         'label' => t('Relate a data record to a term tid.'),
         'base' => 'data_taxonomy',
         'base field' => 'id',
+        'relationship field' => $meta['data_taxonomy']['id'],
       );
       $data[$table->get('name')]['data_taxonomy_form'] = array(
         'field' => array(
@@ -80,6 +88,9 @@ function data_taxonomy_views_data() {
 
 /**
  * Implementation of hook_views_data_alter().
+ *
+ * Expose node table fields/filters for terms as base table.
+ * @todo This really doesn't belong here.
  */
 function data_taxonomy_views_data_alter(&$data) {
   $data['node']['table']['join']['term_node'] = array(

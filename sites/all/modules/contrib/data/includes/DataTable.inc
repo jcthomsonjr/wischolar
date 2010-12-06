@@ -1,5 +1,5 @@
 <?php
-// $Id: DataTable.inc,v 1.1.2.9 2010/03/24 00:36:32 alexb Exp $
+// $Id: DataTable.inc,v 1.1.2.11 2010/07/28 20:21:19 alexb Exp $
 /**
  * @file
  * Contains class definition for DataTable.
@@ -225,6 +225,8 @@ class DataTable {
   /**
    * Add a field.
    *
+   * @throws DataException
+   *
    * @todo: Check wether field name is available, otherwise change.
    */
   public function addField($field, $spec) {
@@ -245,7 +247,7 @@ class DataTable {
       }
       return $field;
     }
-    return FALSE;
+    throw new DataException(t('Error adding field.'));
   }
 
   /**
@@ -262,14 +264,16 @@ class DataTable {
         $schema['indexes'][$field] = $index;
         $this->update(array('table_schema' => $schema));
         drupal_get_schema($this->name, TRUE);
-        return TRUE;
+        return;
       }
     }
-    return FALSE;
+    throw new DataException(t('Error adding index.'));
   }
 
   /**
    * Drop an index from a table.
+   *
+   * @throws DataException
    */
   public function dropIndex($field) {
     $ret = array();
@@ -279,13 +283,15 @@ class DataTable {
       unset($schema['indexes'][$field]);
       $this->update(array('table_schema' => $schema));
       drupal_get_schema($this->name, TRUE);
-      return TRUE;
+      return;
     }
-    return FALSE;
+    throw new DataException(t('Error dropping index.'));
   }
 
   /**
    * Add a unique key to a field.
+   *
+   * @throws DataException
    */
   public function addUniqueKey($field) {
     $schema = $this->table_schema;
@@ -297,14 +303,16 @@ class DataTable {
         $schema['unique keys'][$field] = array($field);
         $this->update(array('table_schema' => $schema));
         drupal_get_schema($this->name, TRUE);
-        return TRUE;
+        return;
       }
     }
-    return FALSE;
+    throw new DataException(t('Error adding unique key.'));
   }
 
   /**
    * Drop a unique key from a table.
+   *
+   * @throws DataException
    */
   public function dropUniqueKey($field) {
     $ret = array();
@@ -314,13 +322,15 @@ class DataTable {
       unset($schema['unique keys'][$field]);
       $this->update(array('table_schema' => $schema));
       drupal_get_schema($this->name, TRUE);
-      return TRUE;
+      return;
     }
-    return FALSE;
+    throw new DataException(t('Error dropping unique key.'));
   }
 
   /**
    * Change indexes of a table.
+   *
+   * @throws DataException
    */
   public function changeIndex($fields) {
     $schema = $this->table_schema;
@@ -333,36 +343,40 @@ class DataTable {
     $drop = array_diff($indexes, $fields);
 
     foreach ($add as $field) {
-      if (!$this->addIndex($field)) {
-        return FALSE;
-      }
+      $this->addIndex($field);
     }
     foreach ($drop as $field) {
-      if (!$this->dropIndex($field)) {
-        return FALSE;
-      }
+      $this->dropIndex($field);
     }
-    return TRUE;
   }
 
   /**
    * Add a primary key to table.
+   *
+   * @throws DataException
    */
   public function addPrimaryKey($fields) {
     $ret = array();
+    $schema = $this->table_schema;
+    foreach ($fields as $field) {
+      if ($schema['fields'][$field]['type'] == 'text') {
+        throw new DataException(t('A text field cannot be made a primary key.'));
+      }
+    }
     db_add_primary_key($ret, $this->name, $fields);
     if ($ret[0]['success']) {
-      $schema = $this->table_schema;
       $schema['primary key'] = $fields;
       $this->update(array('table_schema' => $schema));
       drupal_get_schema($this->name, TRUE);
-      return TRUE;
+      return;
     }
-    return FALSE;
+    throw new DataException(t('Error creating primary key.'));
   }
 
   /**
    * Drop all primary keys from a table.
+   *
+   * @throws DataException
    */
   public function dropPrimaryKey() {
     $ret = array();
@@ -372,47 +386,64 @@ class DataTable {
       $schema['primary key'] = array();
       $this->update(array('table_schema' => $schema));
       drupal_get_schema($this->name, TRUE);
-      return TRUE;
+      return;
     }
-    return FALSE;
+    throw new DataException(t('Error dropping primary key.'));
   }
 
   /**
    * Change the primary keys of a table.
+   *
+   * @throws DataException
    */
   public function changePrimaryKey($fields) {
     $schema = $this->table_schema;
     if (!empty($schema['primary key'])) {
-      if (!$this->dropPrimaryKey()) {
-        return FALSE;
-      }
+      $this->dropPrimaryKey();
     }
     if (!empty($fields)) {
-      return $this->addPrimaryKey($fields);
+      $this->addPrimaryKey($fields);
     }
-    return TRUE;
   }
 
   /**
    * Change a field.
+   *
+   * @throws DataException
    */
   public function changeField($field, $spec) {
     $ret = array();
+    // If new type is text, check for PK and index restrictions.
+    if ($spec['type'] == 'text') {
+      if (in_array($field, $this->table_schema['primary key'])) {
+        throw new DataException(t('Cannot make a primary key field a text field.'));
+      }
+      foreach ($this->table_schema['indexes'] as $index_name => $index) {
+        foreach ($index as $index_field) {
+          if (is_array($index_field)) {
+            $index_field = array_shift($index_field);
+          }
+          if ($field == $index_field) {
+            $this->dropIndex($index_field);
+          }
+        }
+      }
+    }
     db_change_field($ret, $this->name, $field, $field, $spec);
-
     if ($ret[0]['success']) {
       $schema = $this->table_schema;
       $schema['fields'][$field] = $spec;
       $this->update(array('table_schema' => $schema));
-
       drupal_get_schema($this->name, TRUE);
-      return TRUE;
+      return;
     }
-    return FALSE;
+    throw new DataException(t('Cannot change field.'));
   }
 
   /**
    * Delete a field.
+   *
+   * @throws DataException
    */
   public function dropField($field) {
     $ret = array();
@@ -424,11 +455,10 @@ class DataTable {
       $meta = $this->meta;
       unset($meta['fields'][$field]);
       $this->update(array('table_schema' => $schema), array('meta' => $meta));
-
       drupal_get_schema($this->name, TRUE);
-      return TRUE;
+      return;
     }
-    return FALSE;
+    throw new DataException(t('Cannot drop field.'));
   }
 
   /**

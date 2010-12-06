@@ -1,6 +1,5 @@
-$Id: README.txt,v 1.7.2.8 2009/10/08 16:51:21 alexb Exp $
+$Id: README.txt,v 1.7.2.11 2010/09/28 16:17:31 alexb Exp $
 
-Note: Data requires CTools 6.x-dev
 
 Data module
 ===========
@@ -19,7 +18,7 @@ Its companion Data UI provides
 * UI to add or alter columns to existing tables managed by Data module
 * Default views for tables managed by Data module
 
-Use Data Search module if you would like to search one or more columns of your 
+Use Data Search module if you would like to search one or more columns of your
 data tables:
 
 * Install Data Search
@@ -36,13 +35,30 @@ Use Data Node module if you would like to relate nodes to data records:
 * Click on "Relate to nodes" tab
 * Pick a content type
 * Pick which id in table will be related to a node id
-* Optionally: 
+* Optionally:
   * Use views field handler for adding/removing a data table record to
     a node.
-  * Configure Data Node block to show up in sidebar for selecting an 
+  * Configure Data Node block to show up in sidebar for selecting an
     active node to add a data table record to.
 
-RECOMMENDATIONS
+Working with HTML Fields
+
+If you are working with a feed that has one or more fields that contain markup
+you can specify that those individual fields to be output with the HTML as
+opposed to escaped when using views.
+
+1. Navigate to admin/build/data
+2. Select 'Edit' for the table that you are working with
+3. Click on the 'Configure views' tab
+4. Identify the field that contains HTML. For the 'Field handler' column, select
+   the 'views_handler_field_data_markup'
+
+
+Recommendations
 ===============
 
-Check out FeedAPI Data module for using Data as a storage engine for feed items.
+Check out Feeds for importing content into Data tables. A working example
+thereof can be found in Managing News.
+
+http://drupal.org/project/feeds
+http://managingnews.com
