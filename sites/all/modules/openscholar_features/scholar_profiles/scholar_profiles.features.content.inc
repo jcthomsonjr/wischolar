@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Helper to implementation of hook_content_default_fields().
+ * Implementation of hook_content_default_fields().
  */
-function _scholar_profiles_content_default_fields() {
+function scholar_profiles_content_default_fields() {
   $fields = array();
 
   // Exported field: field_person_address
-  $fields[] = array(
+  $fields['person-field_person_address'] = array(
     'field_name' => 'field_person_address',
     'type_name' => 'person',
     'display_settings' => array(
@@ -74,7 +74,7 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Exported field: field_person_email
-  $fields[] = array(
+  $fields['person-field_person_email'] = array(
     'field_name' => 'field_person_email',
     'type_name' => 'person',
     'display_settings' => array(
@@ -141,7 +141,7 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Exported field: field_person_firstname
-  $fields[] = array(
+  $fields['person-field_person_firstname'] = array(
     'field_name' => 'field_person_firstname',
     'type_name' => 'person',
     'display_settings' => array(
@@ -204,7 +204,7 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Exported field: field_person_lastname
-  $fields[] = array(
+  $fields['person-field_person_lastname'] = array(
     'field_name' => 'field_person_lastname',
     'type_name' => 'person',
     'display_settings' => array(
@@ -267,7 +267,7 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Exported field: field_person_middlename
-  $fields[] = array(
+  $fields['person-field_person_middlename'] = array(
     'field_name' => 'field_person_middlename',
     'type_name' => 'person',
     'display_settings' => array(
@@ -330,7 +330,7 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Exported field: field_person_phone
-  $fields[] = array(
+  $fields['person-field_person_phone'] = array(
     'field_name' => 'field_person_phone',
     'type_name' => 'person',
     'display_settings' => array(
@@ -397,7 +397,7 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Exported field: field_person_photo
-  $fields[] = array(
+  $fields['person-field_person_photo'] = array(
     'field_name' => 'field_person_photo',
     'type_name' => 'person',
     'display_settings' => array(
@@ -469,7 +469,7 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Exported field: field_person_title
-  $fields[] = array(
+  $fields['person-field_person_title'] = array(
     'field_name' => 'field_person_title',
     'type_name' => 'person',
     'display_settings' => array(
@@ -536,7 +536,7 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Exported field: field_person_website
-  $fields[] = array(
+  $fields['person-field_person_website'] = array(
     'field_name' => 'field_person_website',
     'type_name' => 'person',
     'display_settings' => array(
@@ -606,138 +606,16 @@ function _scholar_profiles_content_default_fields() {
   );
 
   // Translatables
-  array(
-    t('Address'),
-    t('Email'),
-    t('First Name'),
-    t('Last Name'),
-    t('Middle Name or Initial'),
-    t('Phone'),
-    t('Photo'),
-    t('Professional Title/Affiliation'),
-    t('Web Site'),
-  );
+  // Included for use with string extractors like potx.
+  t('Address');
+  t('Email');
+  t('First Name');
+  t('Last Name');
+  t('Middle Name or Initial');
+  t('Phone');
+  t('Photo');
+  t('Professional Title/Affiliation');
+  t('Web Site');
 
   return $fields;
-}
-
-/**
- * Helper to implementation of hook_context_default_contexts().
- */
-function _scholar_profiles_context_default_contexts() {
-  $items = array();
-
-  $items[] = array(
-    'namespace' => 'scholar',
-    'attribute' => 'feature',
-    'value' => 'profiles',
-    'description' => 'scholar > profiles',
-    'node' => array(
-      '0' => 'person',
-    ),
-    'menu_trail' => array(
-      'people' => 'people',
-    ),
-    'views' => array(
-      '0' => 'scholar_profiles',
-    ),
-    'menu' => 'people',
-    'block' => array(
-      'vsite_taxonomy_0' => array(
-        'module' => 'vsite_taxonomy',
-        'delta' => '0',
-        'weight' => 20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Categories',
-        'type' => 'context_ui',
-      ),
-    ),
-  );
-  return $items;
-}
-
-/**
- * Helper to implementation of hook_menu_default_items().
- */
-function _scholar_profiles_menu_default_items() {
-  $items = array();
-
-  $items[] = array(
-    'title' => 'People',
-    'path' => 'people',
-    'weight' => '0',
-    'description' => 'List of profiles',
-  );
-  // Translatables
-  array(
-    t('List of profiles'),
-    t('People'),
-  );
-
-
-  return $items;
-}
-
-/**
- * Helper to implementation of hook_user_default_permissions().
- */
-function _scholar_profiles_user_default_permissions() {
-  $permissions = array();
-
-  // Exported permission: create person content
-  $permissions[] = array(
-    'name' => 'create person content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: delete own person content
-  $permissions[] = array(
-    'name' => 'delete own person content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: edit own person content
-  $permissions[] = array(
-    'name' => 'edit own person content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override person promote to front page option
-  $permissions[] = array(
-    'name' => 'override person promote to front page option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override person published option
-  $permissions[] = array(
-    'name' => 'override person published option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override person sticky option
-  $permissions[] = array(
-    'name' => 'override person sticky option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  return $permissions;
 }

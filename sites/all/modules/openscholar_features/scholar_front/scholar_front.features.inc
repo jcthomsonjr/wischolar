@@ -4,25 +4,93 @@
  * Implementation of hook_context_default_contexts().
  */
 function scholar_front_context_default_contexts() {
-  module_load_include('inc', 'scholar_front', 'scholar_front.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_front_context_default_contexts', $args);
+  $items = array();
+
+  $items['scholar-feature-front'] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'front',
+    'description' => 'The front page context',
+    'path' => array(
+      'home' => 'home',
+    ),
+    'block' => array(
+      'views_scholar_events_upcoming-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_events_upcoming-block_1',
+        'weight' => 20,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Upcoming events',
+        'type' => 'context_ui',
+      ),
+      'views_scholar_announcements-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_announcements-block_1',
+        'weight' => 21,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Latest Announcements',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
 }
 
 /**
  * Implementation of hook_flag_default_flags().
  */
 function scholar_front_flag_default_flags() {
-  module_load_include('inc', 'scholar_front', 'scholar_front.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_front_flag_default_flags', $args);
+$flags = array();
+// Exported flag: "Save to Front Page".
+$flags[] = array (
+  'content_type' => 'node',
+  'name' => 'scholar_frontpage',
+  'title' => 'Save to Front Page',
+  'global' => true,
+  'types' => 
+  array (
+  ),
+  'flag_short' => 'Save to Front',
+  'flag_long' => 'Save post to front page',
+  'flag_message' => 'Saved to Front Page!',
+  'unflag_short' => 'Remove from Front',
+  'unflag_long' => 'Remove post from Front Page',
+  'unflag_message' => 'Removed from Front Page',
+  'unflag_denied_text' => '',
+  'link_type' => 'toggle',
+  'roles' => 
+  array (
+    'flag' => 
+    array (
+      0 => '2',
+    ),
+    'unflag' => 
+    array (
+      0 => '2',
+    ),
+  ),
+  'show_on_page' => false,
+  'show_on_teaser' => false,
+  'show_on_form' => false,
+  'access_author' => '',
+  'i18n' => 0,
+  'module' => 'scholar_front',
+  'locked' => 
+  array (
+    0 => 'name',
+  ),
+  'api_version' => 2,
+);
+return $flags;
 }
 
 /**
- * Implementation of hook_views_default_views().
+ * Implementation of hook_views_api().
  */
-function scholar_front_views_default_views() {
-  module_load_include('inc', 'scholar_front', 'scholar_front.features.views');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_front_views_default_views', $args);
+function scholar_front_views_api() {
+  return array(
+    'api' => '2',
+  );
 }

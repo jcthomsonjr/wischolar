@@ -4,16 +4,16 @@
  * Implementation of hook_context_default_contexts().
  */
 function scholar_dvn_context_default_contexts() {
-  module_load_include('inc', 'scholar_dvn', 'scholar_dvn.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_dvn_context_default_contexts', $args);
-}
+  $items = array();
 
-/**
- * Implementation of hook_menu_default_items().
- */
-function scholar_dvn_menu_default_items() {
-  module_load_include('inc', 'scholar_dvn', 'scholar_dvn.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_dvn_menu_default_items', $args);
+  $items['scholar-feature-dvn'] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'dvn',
+    'description' => 'Datverse Feature Context',
+    'menu_trail' => array(
+      'data' => 'data',
+    ),
+  );
+  return $items;
 }

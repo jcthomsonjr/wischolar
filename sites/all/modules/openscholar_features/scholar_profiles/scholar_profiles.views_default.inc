@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Helper to implementation of hook_views_default_views().
+ * Implementation of hook_views_default_views().
  */
-function _scholar_links_views_default_views() {
+function scholar_profiles_views_default_views() {
   $views = array();
 
-  // Exported view: scholar_links
+  // Exported view: scholar_profiles
   $view = new view;
-  $view->name = 'scholar_links';
-  $view->description = 'List of links in the site';
+  $view->name = 'scholar_profiles';
+  $view->description = 'List of vsite profiles';
   $view->tag = 'scholarfeature';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -23,24 +23,34 @@ function _scholar_links_views_default_views() {
       'id' => 'sticky',
       'table' => 'node',
       'field' => 'sticky',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
-    'created' => array(
-      'order' => 'DESC',
-      'granularity' => 'second',
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
-      'override' => array(
-        'button' => 'Override',
-      ),
-      'relationship' => 'none',
+    'field_person_lastname_value' => array(
+      'id' => 'field_person_lastname_value',
+      'table' => 'node_data_field_person_lastname',
+      'field' => 'field_person_lastname_value',
+    ),
+    'field_person_firstname_value' => array(
+      'id' => 'field_person_firstname_value',
+      'table' => 'node_data_field_person_firstname',
+      'field' => 'field_person_firstname_value',
     ),
   ));
   $handler->override_option('filters', array(
+    'current' => array(
+      'operator' => 'all',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
+      'relationship' => 'none',
+    ),
     'status' => array(
       'operator' => '=',
       'value' => '1',
@@ -58,7 +68,7 @@ function _scholar_links_views_default_views() {
     'type' => array(
       'operator' => 'in',
       'value' => array(
-        'link' => 'link',
+        'person' => 'person',
       ),
       'group' => '0',
       'exposed' => FALSE,
@@ -71,29 +81,15 @@ function _scholar_links_views_default_views() {
       'field' => 'type',
       'relationship' => 'none',
     ),
-    'current' => array(
-      'operator' => 'active',
-      'value' => '',
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'current',
-      'table' => 'spaces',
-      'field' => 'current',
-      'relationship' => 'none',
-    ),
   ));
   $handler->override_option('access', array(
     'type' => 'spaces_feature',
-    'spaces_feature' => 'scholar_links',
+    'spaces_feature' => 'scholar_profiles',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Links');
+  $handler->override_option('title', 'Directory');
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
   $handler->override_option('row_plugin', 'node');
@@ -104,19 +100,20 @@ function _scholar_links_views_default_views() {
     'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->override_option('path', 'links');
+  $handler->override_option('path', 'people');
   $handler->override_option('menu', array(
     'type' => 'normal',
-    'title' => 'Links',
-    'description' => 'List of links in my site',
+    'title' => 'People',
+    'description' => 'List of profiles',
     'weight' => '0',
     'name' => 'features',
   ));
   $handler->override_option('tab_options', array(
     'type' => 'none',
-    'title' => '',
+    'title' => 'Directory',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
 
   $views[$view->name] = $view;

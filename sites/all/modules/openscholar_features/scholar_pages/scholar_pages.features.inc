@@ -4,16 +4,18 @@
  * Implementation of hook_node_info().
  */
 function scholar_pages_node_info() {
-  module_load_include('inc', 'scholar_pages', 'scholar_pages.features.node');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_pages_node_info', $args);
-}
-
-/**
- * Implementation of hook_user_default_permissions().
- */
-function scholar_pages_user_default_permissions() {
-  module_load_include('inc', 'scholar_pages', 'scholar_pages.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_pages_user_default_permissions', $args);
+  $items = array(
+    'page' => array(
+      'name' => t('Page'),
+      'module' => 'features',
+      'description' => t('An html page'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+  );
+  return $items;
 }

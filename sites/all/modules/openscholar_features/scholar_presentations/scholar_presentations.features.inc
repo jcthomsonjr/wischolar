@@ -1,55 +1,81 @@
 <?php
 
 /**
- * Implementation of hook_content_default_fields().
- */
-function scholar_presentations_content_default_fields() {
-  module_load_include('inc', 'scholar_presentations', 'scholar_presentations.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_presentations_content_default_fields', $args);
-}
-
-/**
  * Implementation of hook_context_default_contexts().
  */
 function scholar_presentations_context_default_contexts() {
-  module_load_include('inc', 'scholar_presentations', 'scholar_presentations.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_presentations_context_default_contexts', $args);
-}
+  $items = array();
 
-/**
- * Implementation of hook_menu_default_items().
- */
-function scholar_presentations_menu_default_items() {
-  module_load_include('inc', 'scholar_presentations', 'scholar_presentations.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_presentations_menu_default_items', $args);
+  $items['scholar-feature-presentations'] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'presentations',
+    'description' => 'Presentations feature context',
+    'node' => array(
+      '0' => 'presentation',
+    ),
+    'views' => array(
+      '0' => 'scholar_presentations',
+    ),
+    'menu' => 'presentations',
+    'block' => array(
+      'views_scholar_presentations-block_1' => array(
+        'module' => 'views',
+        'delta' => 'scholar_presentations-block_1',
+        'weight' => 38,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Recent Presentations',
+        'type' => 'context_ui',
+      ),
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => 39,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Categories - Filter categorized content',
+        'type' => 'context_ui',
+      ),
+      'vsite_widgets_4' => array(
+        'module' => 'vsite_widgets',
+        'delta' => '2',
+        'weight' => 40,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'ShareThis Button - Allows you to share posts using popular online services',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
 }
 
 /**
  * Implementation of hook_node_info().
  */
 function scholar_presentations_node_info() {
-  module_load_include('inc', 'scholar_presentations', 'scholar_presentations.features.node');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_presentations_node_info', $args);
+  $items = array(
+    'presentation' => array(
+      'name' => t('Presentation'),
+      'module' => 'features',
+      'description' => t('A presentation event.'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+  );
+  return $items;
 }
 
 /**
- * Implementation of hook_user_default_permissions().
+ * Implementation of hook_views_api().
  */
-function scholar_presentations_user_default_permissions() {
-  module_load_include('inc', 'scholar_presentations', 'scholar_presentations.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_presentations_user_default_permissions', $args);
-}
-
-/**
- * Implementation of hook_views_default_views().
- */
-function scholar_presentations_views_default_views() {
-  module_load_include('inc', 'scholar_presentations', 'scholar_presentations.features.views');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_presentations_views_default_views', $args);
+function scholar_presentations_views_api() {
+  return array(
+    'api' => '2',
+  );
 }

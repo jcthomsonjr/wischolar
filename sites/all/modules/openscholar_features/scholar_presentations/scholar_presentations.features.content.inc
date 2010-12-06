@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Helper to implementation of hook_content_default_fields().
+ * Implementation of hook_content_default_fields().
  */
-function _scholar_presentations_content_default_fields() {
+function scholar_presentations_content_default_fields() {
   $fields = array();
 
   // Exported field: field_presentation_date
-  $fields[] = array(
+  $fields['presentation-field_presentation_date'] = array(
     'field_name' => 'field_presentation_date',
     'type_name' => 'presentation',
     'display_settings' => array(
@@ -82,7 +82,7 @@ function _scholar_presentations_content_default_fields() {
   );
 
   // Exported field: field_presentation_file
-  $fields[] = array(
+  $fields['presentation-field_presentation_file'] = array(
     'field_name' => 'field_presentation_file',
     'type_name' => 'presentation',
     'display_settings' => array(
@@ -144,7 +144,7 @@ function _scholar_presentations_content_default_fields() {
   );
 
   // Exported field: field_presentation_location
-  $fields[] = array(
+  $fields['presentation-field_presentation_location'] = array(
     'field_name' => 'field_presentation_location',
     'type_name' => 'presentation',
     'display_settings' => array(
@@ -211,156 +211,10 @@ function _scholar_presentations_content_default_fields() {
   );
 
   // Translatables
-  array(
-    t('Location'),
-    t('Presentation Date'),
-    t('Presentation Files'),
-  );
+  // Included for use with string extractors like potx.
+  t('Location');
+  t('Presentation Date');
+  t('Presentation Files');
 
   return $fields;
-}
-
-/**
- * Helper to implementation of hook_context_default_contexts().
- */
-function _scholar_presentations_context_default_contexts() {
-  $items = array();
-
-  $items[] = array(
-    'namespace' => 'scholar',
-    'attribute' => 'feature',
-    'value' => 'presentations',
-    'description' => 'Presentations feature context',
-    'node' => array(
-      '0' => 'presentation',
-    ),
-    'views' => array(
-      '0' => 'scholar_presentations',
-    ),
-    'menu' => 'presentations',
-    'block' => array(
-      'views_scholar_presentations-block_1' => array(
-        'module' => 'views',
-        'delta' => 'scholar_presentations-block_1',
-        'weight' => 38,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Recent Presentations',
-        'type' => 'context_ui',
-      ),
-      'vsite_taxonomy_0' => array(
-        'module' => 'vsite_taxonomy',
-        'delta' => '0',
-        'weight' => 39,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Categories - Filter categorized content',
-        'type' => 'context_ui',
-      ),
-      'vsite_widgets_4' => array(
-        'module' => 'vsite_widgets',
-        'delta' => '2',
-        'weight' => 40,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'ShareThis Button - Allows you to share posts using popular online services',
-        'type' => 'context_ui',
-      ),
-    ),
-  );
-  return $items;
-}
-
-/**
- * Helper to implementation of hook_menu_default_items().
- */
-function _scholar_presentations_menu_default_items() {
-  $items = array();
-
-  $items[] = array(
-    'title' => 'Presentations',
-    'path' => 'presentations',
-    'weight' => '0',
-    'description' => 'List of presentations on my site',
-  );
-  // Translatables
-  array(
-    t('List of presentations on my site'),
-    t('Presentations'),
-  );
-
-
-  return $items;
-}
-
-/**
- * Helper to implementation of hook_user_default_permissions().
- */
-function _scholar_presentations_user_default_permissions() {
-  $permissions = array();
-
-  // Exported permission: create presentation content
-  $permissions[] = array(
-    'name' => 'create presentation content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: delete own presentation content
-  $permissions[] = array(
-    'name' => 'delete own presentation content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: edit own presentation content
-  $permissions[] = array(
-    'name' => 'edit own presentation content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override presentation promote to front page option
-  $permissions[] = array(
-    'name' => 'override presentation promote to front page option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override presentation published option
-  $permissions[] = array(
-    'name' => 'override presentation published option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override presentation revision option
-  $permissions[] = array(
-    'name' => 'override presentation revision option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override presentation sticky option
-  $permissions[] = array(
-    'name' => 'override presentation sticky option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  return $permissions;
 }

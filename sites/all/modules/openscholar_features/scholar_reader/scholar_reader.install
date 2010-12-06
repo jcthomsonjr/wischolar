@@ -11,11 +11,12 @@ function scholar_reader_schema() {
   // Install data tables.
   include_once('scholar_reader.features.inc');
 //  $tables = scholar_reader_data_default();
-  $schema = array();
-  foreach ($tables as $name => $table) {
-    $schema[$name] = $table->table_schema;
-  }
-  return $schema;
+//  $schema = array();
+//  foreach ($tables as $name => $table) {
+//    $schema[$name] = $table->table_schema;
+//  }
+//  return $schema;
+return array();
 }
 
 /**

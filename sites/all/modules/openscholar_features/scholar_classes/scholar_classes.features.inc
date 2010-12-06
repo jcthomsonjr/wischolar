@@ -1,55 +1,93 @@
 <?php
 
 /**
- * Implementation of hook_content_default_fields().
- */
-function scholar_classes_content_default_fields() {
-  module_load_include('inc', 'scholar_classes', 'scholar_classes.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_classes_content_default_fields', $args);
-}
-
-/**
  * Implementation of hook_context_default_contexts().
  */
 function scholar_classes_context_default_contexts() {
-  module_load_include('inc', 'scholar_classes', 'scholar_classes.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_classes_context_default_contexts', $args);
-}
+  $items = array();
 
-/**
- * Implementation of hook_menu_default_items().
- */
-function scholar_classes_menu_default_items() {
-  module_load_include('inc', 'scholar_classes', 'scholar_classes.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_classes_menu_default_items', $args);
+  $items['scholar-feature-classes'] = array(
+    'namespace' => 'scholar',
+    'attribute' => 'feature',
+    'value' => 'classes',
+    'description' => '',
+    'node' => array(
+      '0' => 'class',
+      '1' => 'class_material',
+    ),
+    'views' => array(
+      '0' => 'scholar_classes',
+    ),
+    'menu' => 'classes',
+    'block' => array(
+      'vsite_widgets_4' => array(
+        'module' => 'vsite_widgets',
+        'delta' => '2',
+        'weight' => 37,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'ShareThis Button - Allows you to share posts using popular online services',
+        'type' => 'context_ui',
+      ),
+      'scholar_book_booktoc' => array(
+        'module' => 'scholar_book',
+        'delta' => 'booktoc',
+        'weight' => 38,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Scholar: Book',
+        'type' => 'context_ui',
+      ),
+      'vsite_taxonomy_0' => array(
+        'module' => 'vsite_taxonomy',
+        'delta' => '0',
+        'weight' => 39,
+        'region' => 'right',
+        'status' => '0',
+        'label' => 'Categories - Filter categorized content',
+        'type' => 'context_ui',
+      ),
+    ),
+  );
+  return $items;
 }
 
 /**
  * Implementation of hook_node_info().
  */
 function scholar_classes_node_info() {
-  module_load_include('inc', 'scholar_classes', 'scholar_classes.features.node');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_classes_node_info', $args);
+  $items = array(
+    'class' => array(
+      'name' => t('Class'),
+      'module' => 'features',
+      'description' => '',
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+    'class_material' => array(
+      'name' => t('Class Material'),
+      'module' => 'features',
+      'description' => t('A post related to a class'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+  );
+  return $items;
 }
 
 /**
- * Implementation of hook_user_default_permissions().
+ * Implementation of hook_views_api().
  */
-function scholar_classes_user_default_permissions() {
-  module_load_include('inc', 'scholar_classes', 'scholar_classes.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_classes_user_default_permissions', $args);
-}
-
-/**
- * Implementation of hook_views_default_views().
- */
-function scholar_classes_views_default_views() {
-  module_load_include('inc', 'scholar_classes', 'scholar_classes.features.views');
-  $args = func_get_args();
-  return call_user_func_array('_scholar_classes_views_default_views', $args);
+function scholar_classes_views_api() {
+  return array(
+    'api' => '2',
+  );
 }

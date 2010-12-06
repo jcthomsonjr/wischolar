@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Helper to implementation of hook_content_default_fields().
+ * Implementation of hook_content_default_fields().
  */
-function _scholar_classes_content_default_fields() {
+function scholar_classes_content_default_fields() {
   $fields = array();
 
   // Exported field: field_class_link
-  $fields[] = array(
+  $fields['class-field_class_link'] = array(
     'field_name' => 'field_class_link',
     'type_name' => 'class',
     'display_settings' => array(
@@ -81,7 +81,7 @@ function _scholar_classes_content_default_fields() {
   );
 
   // Exported field: field_class_semester
-  $fields[] = array(
+  $fields['class-field_class_semester'] = array(
     'field_name' => 'field_class_semester',
     'type_name' => 'class',
     'display_settings' => array(
@@ -143,7 +143,7 @@ Summer',
   );
 
   // Exported field: field_class_year
-  $fields[] = array(
+  $fields['class-field_class_year'] = array(
     'field_name' => 'field_class_year',
     'type_name' => 'class',
     'display_settings' => array(
@@ -212,7 +212,7 @@ Summer',
   );
 
   // Exported field: field_class
-  $fields[] = array(
+  $fields['class_material-field_class'] = array(
     'field_name' => 'field_class',
     'type_name' => 'class_material',
     'display_settings' => array(
@@ -295,221 +295,11 @@ Summer',
   );
 
   // Translatables
-  array(
-    t('Class'),
-    t('Link'),
-    t('Offered'),
-    t('Semester'),
-  );
+  // Included for use with string extractors like potx.
+  t('Class');
+  t('Link');
+  t('Offered');
+  t('Semester');
 
   return $fields;
-}
-
-/**
- * Helper to implementation of hook_context_default_contexts().
- */
-function _scholar_classes_context_default_contexts() {
-  $items = array();
-
-  $items[] = array(
-    'namespace' => 'scholar',
-    'attribute' => 'feature',
-    'value' => 'classes',
-    'description' => '',
-    'node' => array(
-      '0' => 'class',
-      '1' => 'class_material',
-    ),
-    'views' => array(
-      '0' => 'scholar_classes',
-    ),
-    'menu' => 'classes',
-    'block' => array(
-      'vsite_widgets_4' => array(
-        'module' => 'vsite_widgets',
-        'delta' => '2',
-        'weight' => 37,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'ShareThis Button - Allows you to share posts using popular online services',
-        'type' => 'context_ui',
-      ),
-      'scholar_book_booktoc' => array(
-        'module' => 'scholar_book',
-        'delta' => 'booktoc',
-        'weight' => 38,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Scholar: Book',
-        'type' => 'context_ui',
-      ),
-      'vsite_taxonomy_0' => array(
-        'module' => 'vsite_taxonomy',
-        'delta' => '0',
-        'weight' => 39,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Categories - Filter categorized content',
-        'type' => 'context_ui',
-      ),
-    ),
-  );
-  return $items;
-}
-
-/**
- * Helper to implementation of hook_menu_default_items().
- */
-function _scholar_classes_menu_default_items() {
-  $items = array();
-
-  $items[] = array(
-    'title' => 'Classes',
-    'path' => 'classes',
-    'weight' => '0',
-    'description' => 'My classes',
-  );
-  // Translatables
-  array(
-    t('Classes'),
-    t('My classes'),
-  );
-
-
-  return $items;
-}
-
-/**
- * Helper to implementation of hook_user_default_permissions().
- */
-function _scholar_classes_user_default_permissions() {
-  $permissions = array();
-
-  // Exported permission: create class content
-  $permissions[] = array(
-    'name' => 'create class content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: create class_material content
-  $permissions[] = array(
-    'name' => 'create class_material content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: delete own class content
-  $permissions[] = array(
-    'name' => 'delete own class content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: delete own class_material content
-  $permissions[] = array(
-    'name' => 'delete own class_material content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: edit own class content
-  $permissions[] = array(
-    'name' => 'edit own class content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: edit own class_material content
-  $permissions[] = array(
-    'name' => 'edit own class_material content',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override class promote to front page option
-  $permissions[] = array(
-    'name' => 'override class promote to front page option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override class published option
-  $permissions[] = array(
-    'name' => 'override class published option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override class revision option
-  $permissions[] = array(
-    'name' => 'override class revision option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override class sticky option
-  $permissions[] = array(
-    'name' => 'override class sticky option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override class_material promote to front page option
-  $permissions[] = array(
-    'name' => 'override class_material promote to front page option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override class_material published option
-  $permissions[] = array(
-    'name' => 'override class_material published option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override class_material revision option
-  $permissions[] = array(
-    'name' => 'override class_material revision option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: override class_material sticky option
-  $permissions[] = array(
-    'name' => 'override class_material sticky option',
-    'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
-    ),
-  );
-
-  return $permissions;
 }
