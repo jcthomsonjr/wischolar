@@ -82,15 +82,6 @@ function scholar_reader_vsite_widgets(){
   return $items;
 }
 
-/**
- * Implementation of hook_views_api().
- */
-function scholar_reader_views_api() {
-  return array(
-    'api' => 2,
-    'path' => drupal_get_path('module', 'scholar_reader') .'/views',
-  );
-}
 
 /**
  * Implementation of hook_data_views_handlers_alter().
@@ -99,11 +90,6 @@ function scholar_reader_data_views_handlers_alter(&$handlers) {
   dpm($handlers);
   $handlers['field']['scholar_reader_handler_field_description'] = 'scholar_reader_handler_field_description';
 }
-
-
-
-/// the code below was used for feedapi. remove ?
-
 
 
 /**
