@@ -458,7 +458,9 @@ function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false
   foreach ( $tree as $subterm ) {
     $s_sub_content = _iqss_gking_term_page_tree($subterm, $vid, $operator, false, $pager);
     if ($subterm->name && $s_sub_content){
-      $s_subterm_output .= '<div class="taxonomy-term-child">' . "<h3 class='taxonomy-heading'>{$subterm->name}</h3>" . $s_sub_content . "</div>";
+      $s_subterm_output .= '<div class="taxonomy-term-child">';
+       if(!_iqss_gking_hidden_term_heading($subterm->tid)) $s_subterm_output .= "<h3 class='taxonomy-heading'>{$subterm->name}</h3>";
+       $s_subterm_output .= $s_sub_content . "</div>";
     }
   }
   $conf['feed_default_items'] = $orig_feed_items; //Reset, who knows where this is used
@@ -637,6 +639,20 @@ function iqss_gking_form_alter(&$form, $form_state, $form_id) {
     }//Do not require Titles for Pages in this taxonomy (don't ask) ok it is because he uses this for blurbs on the taxonomy page
     
   }
+  
+  if($form_id == "taxonomy_form_term"){
+  	$form['advanced']['theme'] = array(
+  	  '#type' => 'fieldset',
+  	  '#title' => 'Theme',
+  	  '#collapsible' => false,
+  	  'theme_show_heading' => array(
+  	    '#type' => 'checkbox',
+  	    '#default_value' => !_iqss_gking_hidden_term_heading($form['tid']['#value']),
+        '#title' => t('Show this term heading on taxonomy page? if this is not checked only the description will show.'),
+  	  )
+  	);
+  	$form['#submit'][] = 'iqss_gking_form_taxonomy_form_term_submit';
+  }
 }
 
 /**
@@ -780,6 +796,39 @@ function _iqss_gking_set_alternate_theme($nid, $b_value){
   }elseif (!$b_value && in_array($nid,$a_alt_theme_nodes)){
     unset($a_alt_theme_nodes[array_search($nid,$a_alt_theme_nodes)]);
     variable_set('iqss_gking::alternate_theme_nodes',$a_alt_theme_nodes);
+  }
+  
+}
+
+function iqss_gking_form_taxonomy_form_term_submit($form, &$form_state){
+	if($form_state['values']['tid']){
+		_iqss_gking_set_hidden_term_heading($form_state['values']['tid'], !$form_state['values']['theme_show_heading']);
+	}
+}//Set the special term hidden heading
+
+/**
+ * Is this term configured to have heading hidden
+ */
+function _iqss_gking_hidden_term_heading($tid){
+  static $a_heading_off_terms;
+  if(!isset($a_heading_off_terms)) $a_heading_off_terms = variable_get('iqss_gking::heading_disabled_terms',array());
+  
+  return in_array($tid,$a_heading_off_terms);
+}
+
+/**
+ * Set if the term configured to have heading hidden
+ */
+function _iqss_gking_set_hidden_term_heading($tid, $b_value){
+  $a_heading_off_terms = variable_get('iqss_gking::heading_disabled_terms',array());
+  
+  if($b_value && !in_array($tid,$a_heading_off_terms)){
+    $a_heading_off_terms[] = $tid;
+    variable_set('iqss_gking::heading_disabled_terms',$a_heading_off_terms);
+    
+  }elseif (!$b_value && in_array($tid,$a_heading_off_terms)){
+    unset($a_heading_off_terms[array_search($tid,$a_heading_off_terms)]);
+    variable_set('iqss_gking::heading_disabled_terms',$a_heading_off_terms);
   }
   
 }
