@@ -518,6 +518,10 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (strlen($node->biblio_teaser_prefix)) {
     $s_output .= $node->biblio_teaser_prefix;
   }
+  
+  if (isset($node->content['teaser']['#prefix'])) {
+    $s_output .= $node->content['teaser']['#prefix'];
+  }//honor drupal prefix
 
   // first add the styled entry...
   $s_output .= theme('biblio_style', $node, $base, $style, $inline);
@@ -544,6 +548,9 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   
   if (strlen($node->biblio_abst_e)) $s_output .= '<div class="biblio-abstract-display slider">'. $node->biblio_abst_e ."\n</div>";
   
+  if (isset($node->content['teaser']['#suffix'])) {
+    $s_output .= $node->content['teaser']['#suffix'];
+  }//honor drupal suffix
   
   if (!$node->status) $s_output .= '</div>';
   

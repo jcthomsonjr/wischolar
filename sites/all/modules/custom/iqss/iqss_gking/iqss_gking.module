@@ -275,17 +275,26 @@ function iqss_gking_biblio_term_page($str_tids, $s_biblio_type){
  * Menu callback; displays all nodes associated with a term (grouped by subterms on garys RI taxonomy).
  */
 function iqss_gking_term_page($str_tids = '', $depth = 'all'){
-  if (! iqss_gking_on_gking_site())
+  if (! iqss_gking_on_gking_site()){
     return vsite_taxonomy_term_page($str_tids, $depth); //If this isn't Gary just display the standard
+  }
 
+  // Include the CTools tools that we need.
+  ctools_include('ajax');
+  ctools_include('modal');
 
+  // Add CTools' javascript to the page.
+  ctools_modal_add_js();
+    
+  
   require_once (drupal_get_path('module', 'taxonomy') . '/taxonomy.pages.inc');
   $terms = taxonomy_terms_parse_string($str_tids);
   $term = taxonomy_get_term(current($terms['tids']));
   $vocab = taxonomy_vocabulary_load($term->vid);
 
-  if (count($terms['tids']) != 1 || $vocab->name != "Research Interests")
+  if (count($terms['tids']) != 1 || $vocab->name != "Research Interests"){
     return vsite_taxonomy_term_page($str_tids, $depth);
+  }
 
   $tree = taxonomy_get_tree($vocab->vid, $term->tid, - 1, 1);
   if (! count($tree)) {
@@ -293,7 +302,7 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
     foreach ( $full_tree as $tterm ){
       if ($tterm->tid == $term->tid){
         if($tterm->depth > 1){
-          return iqss_gking_term_page(current($tterm->parents));
+        	drupal_goto('taxonomy/term/'. current($tterm->parents));
         }
         break;
       }
@@ -674,6 +683,32 @@ function iqss_gking_vsite_widgets(){
       );
 
   return $items;
+}
+
+/**
+ * Implementation of hook_scholar_admin_link() on behalf of the node module.
+ */
+function iqss_gking_vsite_admin_link($type, $object) {
+  $links = array();
+  if ($type == 'node') {
+
+    if (iqss_gking_on_gking_site() && node_access('update', $object) && module_exists('contextual_annotation')) {
+      //adding context annotation by tid
+      $annotaion_key = contextual_annotation_get_key('taxonomy',$object,'tid');
+      
+      if($annotaion_key){
+	      $links['node-contextual-annotation'] = array(
+	        'title' => t('Edit Contextual Note'),
+	        'href' => 'contextual_annotation/nojs/annotate/'.$object -> nid.'/taxonomy/'.$annotaion_key,
+	        'attributes' => array(
+	          'class' => 'ctools-use-modal edit-link'
+	        ),
+	        'query' => array('destination' => $_GET['q']),
+	      );
+      }
+    }
+  }
+  return $links;
 }
 
 /**
