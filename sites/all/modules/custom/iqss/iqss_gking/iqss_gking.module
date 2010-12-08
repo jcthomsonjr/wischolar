@@ -632,6 +632,10 @@ function iqss_gking_form_alter(&$form, $form_state, $form_id) {
       );
     }
     
+    if($form['#node']->type == 'page'){
+    	$form['title']['#required'] = false;
+    }//Do not require Titles for Pages in this taxonomy (don't ask) ok it is because he uses this for blurbs on the taxonomy page
+    
   }
 }
 
@@ -642,12 +646,41 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   if (! iqss_gking_on_gking_site()) return;
 
   switch ($op) {
+  	case "validate":
+  		$valid = false;
+  		if($node -> type == 'page' && is_array($node->taxonomy) && count($node->taxonomy)){
+  			foreach ($node->taxonomy as $vid => $a_terms){
+  				if(!count($a_terms)) continue;
+	  			$vocab = taxonomy_vocabulary_load($vid);
+		      if ($vocab && $vocab->name == "Research Interests"){
+		        $valid = true;
+		      }
+  			}
+  		}//Do not require Titles for Pages in this taxonomy (don't ask) ok it is because he uses this for blurbs on the taxonomy page
+  		if(!$valid){
+  			form_set_error('title',"Title is required for pages that are not in the Research Interests taxonomy");
+  		}
+  	break;
+  	case "presave":
+  		if($node -> type == 'page' && !strlen($node->title)){
+        $node->title = "BLANK_TITLE";
+      }//Do not require Titles for Pages in this taxonomy
+    break;
+  	case "prepare":
+      if($node -> type == 'page' && $node->title == "BLANK_TITLE"){
+        $node->title = "";
+      }//Do not require Titles for some Pages on garys site it is because he uses this for blurbs on the taxonomy page
+    break;
     case 'view':
       $router_item = menu_get_item();
       if($node -> type == 'biblio' && $teaser && !variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes && strpos($router_item['path'], 'taxonomy/term') === 0){
         $node->biblio_teaser_prefix = ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
         $node->content['teaser']['#value'] = $node->biblio_teaser_prefix.$node->content['teaser']['#value'];
       }
+      
+      if($node -> type == 'page' && $node->title == "BLANK_TITLE"){
+        $node->title = "";
+      }//Do not require Titles for some Pages on garys site it is because he uses this for blurbs on the taxonomy page
     break;
     case 'insert':
     case 'update':
