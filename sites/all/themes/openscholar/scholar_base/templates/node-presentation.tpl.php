@@ -2,6 +2,9 @@
   <div class="node-inner">
 
     <?php if (!$page): ?>
+      <div class="os-links">
+        <?php print $links; ?>
+      </div>
       <span class="title"><a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a><?php if ($node->field_presentation_location[0]['value']) { print ', '; }?></span>
       <?php if ($node->field_presentation_location[0]['value']):?>
       <span class="location"><?php print $node->field_presentation_location[0]['value']; if ($node->field_presentation_date[0]['value']) { print ', '; } ?></span>
@@ -36,6 +39,5 @@
       </div>
       <?php print $links; ?>
     <?php endif;?>
-
   </div> <!-- /node-inner -->
 </div> <!-- /node -->

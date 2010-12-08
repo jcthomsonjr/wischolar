@@ -88,7 +88,6 @@ body.cp-toolbar-mini #top {
   z-index: 10;
   }
 
-
 /* Remove when .mini class is added to #top, rather than body */
 
 body.admin-menu #top {
@@ -217,9 +216,12 @@ body.header-left-right #header-right {
 
 .node, .biblio-entry {
   padding-bottom: 1.5em;
-  margin-bottom: 1.5em;
   clear:both;
   position: relative;
+  }
+
+.views-row-first .node {
+  padding-top:0.688em;
   }
 
 .node-type-link {
@@ -228,6 +230,24 @@ body.header-left-right #header-right {
 
 .teaser-extra {
   margin-left: 1em;
+  }
+
+.os-links {
+  height: 1.5em;
+  width:5em;
+  float: right;
+  width: 68px;
+  text-align: right;
+  }
+
+.node.os-links-trail {
+  margin-top: -0.688em;
+  margin-right: -0.688em;
+  margin-left: -0.688em;
+  padding-top: 0.688em;
+  padding-left: 0.688em;
+  padding-right: 0.688em;
+  background-color: #f7fdf7;
   }
 
 /* VIEWS */

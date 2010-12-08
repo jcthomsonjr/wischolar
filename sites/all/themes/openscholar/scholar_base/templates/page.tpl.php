@@ -62,7 +62,7 @@
       <div id="content-wrapper" class="clearfix">
         <div id="content-wrapper-inner">
           <div id="content-main" class="column">
-            <?php if (!empty($content_top) || $context_links): ?>
+            <?php if (!empty($content_top)): ?>
               <div id="content-top">
                 <?php print $content_top; ?>
               </div><!-- /content-top -->

@@ -1,14 +1,10 @@
-<?php
-// $Id: node.tpl.php,v 1.4 2008/09/15 08:11:49 johnalbin Exp $
-
-/**
- * @file node.tpl.php
- */
-?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>">
   <div class="node-inner">
     <?php print $picture; ?>
     <?php if (!$page): ?>
+      <div class="os-links">
+        <?php print $links; ?>
+      </div>
       <h3 class="title">
         <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
       </h3>
@@ -22,6 +18,8 @@
     <div class="content">
       <?php print $content; ?>
     </div>
-    <?php print $links; ?>
+    <?php if ($page) {
+      print $links;
+      } ?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->
