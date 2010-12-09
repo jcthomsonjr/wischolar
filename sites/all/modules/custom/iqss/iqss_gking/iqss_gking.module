@@ -694,18 +694,20 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 
   switch ($op) {
   	case "validate":
-  		$valid = false;
-  		if($node -> type == 'page' && is_array($node->taxonomy) && count($node->taxonomy)){
-  			foreach ($node->taxonomy as $vid => $a_terms){
-  				if(!count($a_terms)) continue;
-	  			$vocab = taxonomy_vocabulary_load($vid);
-		      if ($vocab && $vocab->name == "Research Interests"){
-		        $valid = true;
-		      }
-  			}
-  		}//Do not require Titles for Pages in this taxonomy (don't ask) ok it is because he uses this for blurbs on the taxonomy page
-  		if(!$valid){
-  			form_set_error('title',"Title is required for pages that are not in the Research Interests taxonomy");
+  		if($node -> type == 'page'){
+	  		$valid = false;
+	  		if(is_array($node->taxonomy) && count($node->taxonomy)){
+	  			foreach ($node->taxonomy as $vid => $a_terms){
+	  				if(!count($a_terms)) continue;
+		  			$vocab = taxonomy_vocabulary_load($vid);
+			      if ($vocab && $vocab->name == "Research Interests"){
+			        $valid = true;
+			      }
+	  			}
+	  		}//Do not require Titles for Pages in this taxonomy (don't ask) ok it is because he uses this for blurbs on the taxonomy page
+	  		if(!$valid){
+	  			form_set_error('title',"Title is required for pages that are not in the Research Interests taxonomy");
+	  		}
   		}
   	break;
   	case "presave":
