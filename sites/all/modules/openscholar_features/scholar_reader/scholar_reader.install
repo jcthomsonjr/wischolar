@@ -37,7 +37,7 @@ function scholar_reader_update_6000(){
   $res = array();
   // Enable twitter pull module if need
   if(!module_exists('twitter_pull')){
-  	
+
     include_once('includes/install.inc');
 	  module_rebuild_cache();
 	  drupal_install_modules(array('twitter_pull'));
@@ -45,8 +45,8 @@ function scholar_reader_update_6000(){
 	    'success' => true,
 	    'query' => 'Installed scholar_pull module and enabled it',
 	  );
-  	
+
   }
-  
+
   return $res;
 }
