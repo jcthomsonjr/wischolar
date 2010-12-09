@@ -1,6 +1,17 @@
 <?php
 
 /**
+ * Implementation of hook_strongarm()
+ */
+function iqss_gking_strongarm(){
+  $conf = array();
+
+  $conf['nodeorder_show_links_on_node'] = 0; //Hide the nodeorder links on term nodes
+
+  return $conf;
+}
+
+/**
  * implementation of hook_init()
  */
 function iqss_gking_init(){
@@ -54,6 +65,14 @@ function iqss_gking_menu(){
       'access arguments' => array(
           'access content'
       ),
+      'type' => MENU_CALLBACK,
+  );
+  
+  $items['taxonomy/%ctools_js/nodeorder/%'] = array(
+      'title' => 'Order Taxonomy Nodes',
+      'page callback' => 'iqss_gking_nodeorder_form',
+      'page arguments' => array(1,3),
+      'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
   
@@ -445,10 +464,17 @@ function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false
   $output = "";
   
   if($term){
-	  $result = taxonomy_select_nodes(array(
-	      $term->tid
-	  ), $operator, 0, $pager);
-	  
+  	if(module_exists('nodeorder')){
+	  	if ($operator == 'or') {
+		    $order = 'n.sticky DESC, tn.weight_in_tid';
+		  }else {
+		    $order = 'n.sticky DESC, tn0.weight_in_tid';
+		  }
+  		$result = nodeorder_select_nodes(array($term->tid), $operator, 0, $pager, $order);
+  	}else{
+		  $result = taxonomy_select_nodes(array($term->tid), $operator, 0, $pager);
+  	}
+  	
 	  $output = (db_affected_rows($result)) ? theme('taxonomy_term_page', array(
 	      $term->tid
 	  ), $result) : '';
@@ -459,8 +485,9 @@ function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false
     $s_sub_content = _iqss_gking_term_page_tree($subterm, $vid, $operator, false, $pager);
     if ($subterm->name && $s_sub_content){
       $s_subterm_output .= '<div class="taxonomy-term-child">';
-       if(!_iqss_gking_hidden_term_heading($subterm->tid)) $s_subterm_output .= "<h3 class='taxonomy-heading'>{$subterm->name}</h3>";
-       $s_subterm_output .= $s_sub_content . "</div>";
+      if(module_exists('nodeorder') && cp_access_cp()) $s_subterm_output .= "<span class='term-admin-links'>".ctools_modal_text_button("Sort List","taxonomy/nojs/nodeorder/$subterm->tid","","term-admin-link")."</span>";
+      if(!_iqss_gking_hidden_term_heading($subterm->tid)) $s_subterm_output .= "<h3 class='taxonomy-heading'>{$subterm->name}</h3>";
+      $s_subterm_output .= $s_sub_content . "</div>";
     }
   }
   $conf['feed_default_items'] = $orig_feed_items; //Reset, who knows where this is used
@@ -653,6 +680,10 @@ function iqss_gking_form_alter(&$form, $form_state, $form_id) {
   	);
   	$form['#submit'][] = 'iqss_gking_form_taxonomy_form_term_submit';
   }
+  
+  if ($form_id == 'taxonomy_form_vocabulary' && is_array($form['settings']['orderable'])) {
+    $form['settings']['orderable']['#type'] = 'value';
+  }//Remove the unused nodeorder form items
 }
 
 /**
@@ -758,6 +789,33 @@ function iqss_gking_vsite_admin_link($type, $object) {
     }
   }
   return $links;
+}
+
+function iqss_gking_nodeorder_form($js = NULL, $tid = NULL) {
+  
+  // Fall back if $js is not set.
+  if (!$js) {
+    return drupal_get_form('nodeorder_admin_display_form', $tid);
+  }
+
+  ctools_include('ajax');
+  ctools_include('modal');
+  require_once(drupal_get_path('module','nodeorder')."/nodeorder.admin.inc");
+  
+  $form_state = array(
+    'title' => t('Order Term Nodes'),
+    'ajax' => TRUE,
+    'args' => array($tid),
+  );
+  
+  $output = ctools_modal_form_wrapper('nodeorder_admin_display_form', $form_state);
+  if (empty($output)) {
+    // empty $output signifies success, so we'll use it as our $commands
+    $output = array();
+    $output[] = dialog_command_display(t('Order settings changed!'), t('(Reloading page)'));
+    $output[] = ctools_ajax_command_reload();
+  }
+  ctools_ajax_render($output);
 }
 
 /**
