@@ -213,13 +213,13 @@ function contextual_annotation_edit(&$form_state, $edit = array()) {
     '#type' => 'textarea',
     '#title' => t('Annotation'),
     '#default_value' => $edit['annotation'],
-    '#maxlength' => 255,
+    '#maxlength' => 1024,
     '#required' => FALSE);
   
   $form['position'] = array(
 	  '#type' => 'select',
 	  '#title' => t('Position'),
-	  '#default_value' => $edit['position']?$edit['position']:'suffix',
+	  '#default_value' => $edit['position']?$edit['position']:'prefix',
 	  '#options' => array(
 	    'prefix' => t('Before the Teaser'),
 	    'suffix' => t('After the Teaser'),
