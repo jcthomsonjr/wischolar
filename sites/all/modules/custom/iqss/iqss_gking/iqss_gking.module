@@ -724,12 +724,6 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       }//Do not require Titles for some Pages on garys site it is because he uses this for blurbs on the taxonomy page
     break;
     case 'view':
-      $router_item = menu_get_item();
-      if($node -> type == 'biblio' && $teaser && !variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes && strpos($router_item['path'], 'taxonomy/term') === 0){
-        $node->biblio_teaser_prefix = ' <span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
-        $node->content['teaser']['#value'] = $node->biblio_teaser_prefix.$node->content['teaser']['#value'];
-      }
-      
       if($node -> type == 'page' && $node->title == "BLANK_TITLE"){
         $node->title = "";
       }//Do not require Titles for some Pages on garys site it is because he uses this for blurbs on the taxonomy page
