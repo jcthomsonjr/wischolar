@@ -69,3 +69,24 @@ function scholar_events_update_6002(&$sandbox){
   return $res;
   
 }
+
+function scholar_events_update_6003(&$sandbox){
+  
+  $res = array();
+  module_rebuild_cache();
+  
+  if(!module_exists('crayon')){
+    
+    include_once('includes/install.inc');
+    
+    drupal_install_modules(array('crayon'));
+    $res[] = array(
+      'success' => true,
+      'query' => 'Installed crayon module and enabled it',
+    );
+    
+  }
+  
+  return $res;
+  
+}
