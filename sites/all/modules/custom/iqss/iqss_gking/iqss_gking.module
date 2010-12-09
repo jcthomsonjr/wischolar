@@ -375,7 +375,8 @@ function iqss_gking_link_alter(&$links, $node){
       $o_parent = current(taxonomy_get_parents($term->tid));
       if(!is_object($o_parent)) continue;
       
-      $links[$s_key]['title'] = $o_parent->name." (".$links[$s_key]['title'].")";
+      $links[$s_key]['title'] = $o_parent->name;
+      $links[$s_key]['title'] .= (_iqss_gking_hidden_term_heading($term->tid))?"":" (".$links[$s_key]['title'].")";
     }//Show the taxonomy term in RI taxonomy as "Parent (Child)"
   }
   
@@ -484,7 +485,8 @@ function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false
   foreach ( $tree as $subterm ) {
     $s_sub_content = _iqss_gking_term_page_tree($subterm, $vid, $operator, false, $pager);
     if ($subterm->name && $s_sub_content){
-      $s_subterm_output .= '<div class="taxonomy-term-child">';
+    	$s_child_class_extra = _iqss_gking_override_child_term($subterm->tid)?" no-indent":"";
+      $s_subterm_output .= '<div class="taxonomy-term-child'.$s_child_class_extra.'">';
       if(module_exists('nodeorder') && cp_access_cp()) $s_subterm_output .= "<span class='term-admin-links'>".ctools_modal_text_button("Sort List","taxonomy/nojs/nodeorder/$subterm->tid","","term-admin-link")."</span>";
       if(!_iqss_gking_hidden_term_heading($subterm->tid) || cp_access_cp()){
       	$s_class = (_iqss_gking_hidden_term_heading($subterm->tid))?" diminished":"";
@@ -679,7 +681,12 @@ function iqss_gking_form_alter(&$form, $form_state, $form_id) {
   	    '#type' => 'checkbox',
   	    '#default_value' => !_iqss_gking_hidden_term_heading($form['tid']['#value']),
         '#title' => t('Show this term heading on taxonomy page? if this is not checked only the description will show.'),
-  	  )
+  	  ),
+  	  'theme_as_child_term' => array(
+        '#type' => 'checkbox',
+        '#default_value' => !_iqss_gking_override_child_term($form['tid']['#value']),
+        '#title' => t('Indent this term as a child term (checked) or leave its contents at the parent level(un-checked).'),
+      )
   	);
   	$form['#submit'][] = 'iqss_gking_form_taxonomy_form_term_submit';
   }
@@ -860,6 +867,7 @@ function _iqss_gking_set_alternate_theme($nid, $b_value){
 function iqss_gking_form_taxonomy_form_term_submit($form, &$form_state){
 	if($form_state['values']['tid']){
 		_iqss_gking_set_hidden_term_heading($form_state['values']['tid'], !$form_state['values']['theme_show_heading']);
+		_iqss_gking_set_override_child_term($form_state['values']['tid'], !$form_state['values']['theme_as_child_term']);
 	}
 }//Set the special term hidden heading
 
@@ -886,6 +894,33 @@ function _iqss_gking_set_hidden_term_heading($tid, $b_value){
   }elseif (!$b_value && in_array($tid,$a_heading_off_terms)){
     unset($a_heading_off_terms[array_search($tid,$a_heading_off_terms)]);
     variable_set('iqss_gking::heading_disabled_terms',$a_heading_off_terms);
+  }
+  
+}
+
+/**
+ * Is this term configured to have heading hidden
+ */
+function _iqss_gking_override_child_term($tid){
+  static $a_override_child_terms;
+  if(!isset($a_override_child_terms)) $a_override_child_terms = variable_get('iqss_gking::override_child_terms',array());
+  
+  return in_array($tid,$a_override_child_terms);
+}
+
+/**
+ * Set if the term configured to have heading hidden
+ */
+function _iqss_gking_set_override_child_term($tid, $b_value){
+  $a_override_child_terms = variable_get('iqss_gking::override_child_terms',array());
+  
+  if($b_value && !in_array($tid,$a_override_child_terms)){
+    $a_override_child_terms[] = $tid;
+    variable_set('iqss_gking::override_child_terms',$a_override_child_terms);
+    
+  }elseif (!$b_value && in_array($tid,$a_override_child_terms)){
+    unset($a_override_child_terms[array_search($tid,$a_override_child_terms)]);
+    variable_set('iqss_gking::override_child_terms',$a_override_child_terms);
   }
   
 }
