@@ -73,7 +73,8 @@ function contextual_annotation_annotate_form($js = NULL, $nid = NULL, $type = NU
   if (empty($output)) {
     // empty $output signifies success, so we'll use it as our $commands
     $output = array();
-    $output[]= ctools_modal_command_dismiss();
+    $output[] = dialog_command_display(t('Annotation Saved'), t('(Reloading page)'));
+    $output[] = ctools_ajax_command_reload();
   }
   ctools_ajax_render($output);
 }
@@ -197,12 +198,13 @@ function contextual_annotation_get_type($type) {
  */
 function contextual_annotation_edit(&$form_state, $edit = array()) {
   
+	$o_annotation = contextual_annotation_get_annotation($form_state['type'],$form_state['key'],$form_state['nid']);
 	$edit += array(
     'key' => $form_state['key'],
     'type' => $form_state['type'],
     'nid' => $form_state['nid'],
-    'annotation' => NULL,
-	  'position' => NULL,
+    'annotation' => ($o_annotation)?$o_annotation->annotation:NULL,
+	  'position' => ($o_annotation)?$o_annotation->position:NULL,
   );
 
   $annotation_type = contextual_annotation_get_type($edit['type']);
