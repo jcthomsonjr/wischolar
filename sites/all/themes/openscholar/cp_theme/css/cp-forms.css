@@ -5,13 +5,16 @@
   max-width: 972px;
   }
 
-body.no-sidebars #cp-content #node-form {
+body.one-sidebar #cp-content .node-form,
+.max-width-a {
+  max-width: 771px;
+   }
+
+body.no-sidebars #cp-content #node-form,
+.max-width-b {
   max-width: 963px;
   }
 
-body.one-sidebar #cp-content .node-form {
-  max-width: 771px;
-   }
 
 /* This is a mess but until the markup is improved.. */
 body.one-sidebar #cp-content form td:first-child,

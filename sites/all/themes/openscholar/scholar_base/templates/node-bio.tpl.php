@@ -29,8 +29,5 @@
       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
       <?php endif; ?>
     <?php endif; ?>
-    <?php if ($page) {
-      print $links;
-      } ?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->

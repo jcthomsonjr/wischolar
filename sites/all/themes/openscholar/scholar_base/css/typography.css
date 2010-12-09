@@ -97,10 +97,9 @@ a.context-button {
   color: #97c797 !important;
   }
 
-.marker,
-ul.admin li a,
-ul.admin li a:visited,
-.addcategory a,
+ul.admin li:hover a,
+ul.vsite-taxonomy-terms li:hover a,
+.addcategory:hover a,
 .node:hover a.ctools-dropdown-link,
 a.context-button:hover {
   color: #228822 !important;
@@ -135,8 +134,16 @@ p.copy a.poweredby:hover {
   margin: 0;
   }
 
-div.terms {
-  clear: left !important;
+.diminished {
+  color: #bbb !important;
+  }
+
+.diminished:before {
+  content: '[';
+  }
+
+.diminished:after {
+  content: ']';
   }
 
 /*LISTS*/
