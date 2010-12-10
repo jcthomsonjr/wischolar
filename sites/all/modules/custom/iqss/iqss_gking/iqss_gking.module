@@ -375,8 +375,7 @@ function iqss_gking_link_alter(&$links, $node){
       $o_parent = current(taxonomy_get_parents($term->tid));
       if(!is_object($o_parent)) continue;
       
-      $links[$s_key]['title'] = $o_parent->name;
-      $links[$s_key]['title'] .= (_iqss_gking_hidden_term_heading($term->tid))?"":" (".$links[$s_key]['title'].")";
+      $links[$s_key]['title'] = $o_parent->name. ((_iqss_gking_hidden_term_heading($term->tid))?"":" (".$links[$s_key]['title'].")");
     }//Show the taxonomy term in RI taxonomy as "Parent (Child)"
   }
   
