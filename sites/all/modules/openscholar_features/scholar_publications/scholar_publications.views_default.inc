@@ -1801,8 +1801,15 @@ function scholar_publications_views_default_views() {
       ),
     ),
   ));
+  $handler->override_option('footer', '<div class="more-link">
+  <?php print l("more","publications"); ?>
+</div>
+');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 0);
   $handler->override_option('items_per_page', 5);
-  $handler->override_option('use_more', 1);
+  $handler->override_option('use_more', 0);
+  $handler->override_option('use_more_always', 0);
   $handler->override_option('row_plugin', 'fields');
   $handler->override_option('row_options', array());
   $handler->override_option('block_description', 'Recent publications');
