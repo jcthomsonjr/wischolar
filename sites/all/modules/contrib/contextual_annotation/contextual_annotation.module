@@ -14,7 +14,8 @@ function contextual_annotation_nodeapi(&$node, $op, $teaser = NULL, $page = NULL
 		    if($key){
 		      $annotation = contextual_annotation_get_annotation($annotation_type->type(),$key,$node->nid);
 		      if($annotation){
-			      $node->content['teaser']["#{$annotation->position}"] = " <span class='context-annotation'>".t($annotation->annotation)."</span> ";
+		      	$key = (array_key_exists('teaser',$node->content))? 'teaser':'body';
+			      $node->content[$key]["#{$annotation->position}"] = " <span class='context-annotation'>".t($annotation->annotation)."</span> ";
 		      }
 		    }
 		  }
