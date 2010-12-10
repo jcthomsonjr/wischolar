@@ -24,7 +24,7 @@ class contextual_annotation_taxonomy implements annotation_interface {
   	
 	  	$func = "get_key_{$taxonomy_type}";
 	  	if(method_exists($this,$func)){
-	      $return = $this->$func($node,$args);
+	      $return = $this->$func($node);
 	      if($return) return $return;
 	  	}
   	}
@@ -34,7 +34,7 @@ class contextual_annotation_taxonomy implements annotation_interface {
   /**
    * @return string, key for a vocab
    */
-  private function get_key_vid($node, $args){
+  private function get_key_vid($node){
     
   	if(!is_array($node->taxonomy)) return false; //Is this node part of a taxonomy?
   	
@@ -55,7 +55,7 @@ class contextual_annotation_taxonomy implements annotation_interface {
   /**
    * @return string, key for a term
    */
-  private function get_key_tid($node, $args){
+  private function get_key_tid($node){
     
     if(!is_array($node->taxonomy)) return false; //Is this node part of a taxonomy?
     
@@ -65,13 +65,14 @@ class contextual_annotation_taxonomy implements annotation_interface {
     $o_term = taxonomy_get_term(current($router_item['page_arguments']));
     $a_children = $this->get_term_children($o_term->vid, $o_term->tid);
     
-    if(is_array($a_children) && count($a_children)){
-      foreach ($node->taxonomy as $node_term) {
-        if(in_array($node_term->tid, $a_children)){
-          return "tid-".$node_term->tid;
-        } //If this node is in the vocabulary return the key for this term
-      }
+    if(!is_array($a_children)) $a_children = array();
+    
+    foreach ($node->taxonomy as $node_term) {
+      if($node_term->tid == $o_term->tid || in_array($node_term->tid, $a_children)){
+        return "tid-".$node_term->tid;
+      } //If this node is in the vocabulary return the key for this term
     }
+    
   }
   
   private function get_term_children($vid,$tid){
