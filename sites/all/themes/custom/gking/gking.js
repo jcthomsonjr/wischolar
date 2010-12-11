@@ -25,8 +25,9 @@ $(document).ready(function() {
 
 
     var container = $("body.section-home #node-3793");
-
     container.prepend('<a class="more" href="#">CLOSE X</a>');
+    $('#node-3793 .content').prepend('<h3 class="cv-direct-download">Full CV: <a href="http://gking.harvard.edu/gking/vitae/vitae.pdf">PDF</a></h3><div class="clear"></div>');
+
     $("body.page-home a.more").click(function(event){
       container.find('a.more').toggle();
       if (container.is(".bio-open")) {
