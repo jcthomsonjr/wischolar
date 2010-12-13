@@ -100,7 +100,7 @@ a.context-button {
 ul.admin li:hover a,
 ul.vsite-taxonomy-terms li:hover a,
 .addcategory:hover a,
-.node:hover a.ctools-dropdown-link,
+a.ctools-dropdown-link:hover,
 a.context-button:hover {
   color: #228822 !important;
   }
@@ -277,6 +277,10 @@ div.views-admin-links {
 div.views-admin-links ul {
   display:none;
   position:absolute;
+  background: #333;
+  width:100px;
+  top:16px;
+  left: -10px;
   }
 
 div.views-admin-links:hover ul {
@@ -289,6 +293,7 @@ div.views-admin-links li {
 
 div.views-admin-links li a, div.views-admin-links li a:visited {
   color: #fff;
+  padding: 0 2px;
   }
 
 dd.meta {

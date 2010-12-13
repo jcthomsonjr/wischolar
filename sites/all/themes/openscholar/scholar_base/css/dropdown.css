@@ -2,9 +2,10 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   display: none;
   text-align: left;
   position: absolute;
-  left: -50%;
+  right: 0;
   top: 0;
   z-index:1001;
+  white-space: nowrap;
   }
 
 html.js div.ctools-dropdown div.ctools-dropdown-container ul li a,
@@ -133,14 +134,13 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   }
 
 .vsite-admin a.ctools-dropdown-link {
-  background: url(../images/admin-link.png) 0 0 no-repeat transparent;
+  background: url(../images/admin-link.png) 0 3px no-repeat transparent;
   padding-left: 20px;
   font-size: 11px;
   }
 
-.node:hover a.ctools-dropdown-link {
-  background-position: 0 -19px;
-
+a.ctools-dropdown-link:hover {
+  background-position: 0 -16px;
   }
 
 .empty-content .item-list ul.context-links li {
