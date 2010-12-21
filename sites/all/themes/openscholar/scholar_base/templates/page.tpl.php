@@ -11,7 +11,7 @@
   <?php print $scripts; ?>
 </head>
 
-<body class="<?php print $classes; ?>">
+<body class="<?php print $body_classes; ?>">
   <!--[if lte IE 6]><script src="/<?php print $directory;?>/js/ie6-warning/ie6-warning.js"></script> <script>window.onload=function(){e("/<?php print $directory;?>/js/ie6-warning/")}</script><![endif]-->
     <?php if ($cp_toolbar) : ?>
     <div id="top">
@@ -63,9 +63,9 @@
         <div id="content-wrapper-inner">
           <div id="content-main" class="column">
             <?php if (!empty($content_top)): ?>
-              <div id="content-top">
-                <?php print $content_top; ?>
-              </div><!-- /content-top -->
+            <div id="content-top">
+              <?php print $content_top; ?>
+            </div><!-- /content-top -->
             <?php endif; ?>
 
             <div id="content">
@@ -89,15 +89,15 @@
             </div><!-- /content main -->
 
               <?php if (!empty($left)): ?>
-          <div id="sidebar-left" class="column">
+          <div id="sidebar-first" class="sidebar column">
             <?php print $left; ?>
-          </div> <!-- /sidebar-left -->
+          </div> <!-- /sidebar-first -->
           <?php endif; ?>
 
           <?php if (!empty($right)): ?>
-          <div id="sidebar-right" class="column">
+          <div id="sidebar-second" class="sidebar column">
             <?php print $right; ?>
-          </div> <!-- /sidebar-right -->
+          </div> <!-- /sidebar-second -->
           <?php endif; ?>
         </div> <!-- / content wrapper inner -->
       </div> <!-- / content wrapper -->

@@ -52,11 +52,15 @@ p.copy {
   padding-top:0;
   }
 
-#content-wrapper, .sidebar-left #content-wrapper, .sidebar-right #content-wrapper, .no-sidebars #content-wrapper {
+#content-wrapper,
+.sidebar-first #content-wrapper,
+.sidebar-second #content-wrapper,
+.no-sidebars #content-wrapper {
   padding:0;
   }
 
-#sidebar-left, #header-left {
+#sidebar-first,
+#header-left {
   width: 152px;
   right: 232px;
   padding-left: 43px;
@@ -77,7 +81,9 @@ p.copy {
   }
 
 
-#header, #footer, #content-wrapper {
+#header,
+#footer,
+#content-wrapper {
   width: 1000px;
   padding-right: 48px;
   padding-left: 48px;
@@ -117,11 +123,11 @@ p.copy {
   padding-right: 85px;
   }
 
-.sidebar-right #content-main {
+.sidebar-second #content-main {
   width: 678px;
   }
 
-.sidebar-left #content-main {
+.sidebar-first #content-main {
   width: 704px;
   }
 
@@ -135,8 +141,8 @@ body.header-main-right #header-wrapper {
   }
 
 body.two-sidebars #content-wrapper,
-body.sidebar-right #content-wrapper,
-body.sidebar-left #content-wrapper,
+body.sidebar-second #content-wrapper,
+body.sidebar-first #content-wrapper,
 body.no-sidebars #content-wrapper {
   padding-left: 85px;
   }
@@ -144,7 +150,7 @@ body.no-sidebars #content-wrapper {
 
 /* SIDEBAR ELEMENTS */
 
-#sidebar-right {
+#sidebar-second {
   width:254px;
   padding:0;
   margin:0;
@@ -152,7 +158,7 @@ body.no-sidebars #content-wrapper {
   background: #d9e3e5;
   }
 
-#sidebar-left {
+#sidebar-first {
   width: 221px;
   padding: 0;
   right: 173px;
@@ -161,8 +167,10 @@ body.no-sidebars #content-wrapper {
   background:#e0ece8;
   }
 
-#sidebar-right a, #sidebar-right a:visited,
-#sidebar-left a, #sidebar-left a:visited {
+#sidebar-second a,
+#sidebar-second a:visited,
+#sidebar-first a,
+#sidebar-first a:visited {
   color: #000;
   text-decoration: underline;
   }
@@ -172,41 +180,39 @@ body.no-sidebars #content-wrapper {
 }
 
 #content-wrapper .column {
-  padding-bottom: 20010px;  /* X + padding-bottom */
-  margin-bottom: -20000px;  /* X */
+  padding-bottom: 20010px;
+  margin-bottom: -20000px;
 }
 
-
-
-#sidebar-left .block,
-#sidebar-right .block,
-#sidebar-left h3.title,
-#sidebar-right h3.title {
+#sidebar-first .block,
+#sidebar-second .block,
+#sidebar-first h3.title,
+#sidebar-second h3.title {
   padding: 14px 25px 11px 14px;
   }
 
-#sidebar-left .block,
-#sidebar-right .block {
+#sidebar-first .block,
+#sidebar-second .block {
   padding-top: 0;
   }
 
-#sidebar-left h3.title,
-#sidebar-right h3.title {
+#sidebar-first h3.title,
+#sidebar-second h3.title {
   padding-top: 21px;
   padding-bottom: 24px;
   background: #d1dcd8;
   margin: 0 -25px 0 -14px;
   }
 
-#sidebar-right .block
-#sidebar-right h3.title {
+#sidebar-second .block
+#sidebar-second h3.title {
   padding-left: 32px;
   padding-right: 41px;
   }
 
 
-#sidebar-right .content
-#sidebar-right h3.title {
+#sidebar-second .content
+#sidebar-second h3.title {
   background: #c8d1d3;
   }
 
@@ -222,11 +228,14 @@ body.no-sidebars #content-wrapper {
   padding-left: 0;
   }
 
-.header-main #header-wrapper, .header-main-right #header-wrapper {
+.header-main #header-wrapper,
+.header-main-right #header-wrapper {
   padding-right:254px;
   }
 
-#header h1, #header h2, #header p {
+#header h1,
+#header h2,
+#header p {
     font-size: 25px;
     line-height: normal;
     font-weight:normal;
@@ -245,7 +254,8 @@ body.no-sidebars #content-wrapper {
   line-height: normal;
   }
 
-#header h1 a, #header h1 a:visited {
+#header h1 a,
+#header h1 a:visited {
     color:#000;
     }
 
@@ -283,7 +293,8 @@ body.no-sidebars #content-wrapper {
   padding-left: 12px;
   }
 
-#block-scholar-1, #block-scholar_project-1 {
+#block-scholar-1,
+#block-scholar_project-1 {
   float:left;
   }
 
@@ -302,7 +313,8 @@ body.no-sidebars #content-wrapper {
   line-height: 1.3em;
   }
 
-#block-vsite_menus-1 li a ,#block-vsite_menus-1 li a:visited{
+#block-vsite_menus-1 li a ,
+#block-vsite_menus-1 li a:visited{
   color: #000;
   font-size: 12px;
   }
@@ -315,12 +327,13 @@ body.no-sidebars #content-wrapper {
   color: #000;
   }
 
-#navbar li a:hover, #navbar li a.active, #navbar li.active-trail a {
+#navbar li a:hover,
+#navbar li a.active,
+#navbar li.active-trail a {
   background: #e5ea5a;
   color: #000;
   text-decoration: none;
   }
-
 
 #logo img {
   height: 84px;
@@ -329,7 +342,6 @@ body.no-sidebars #content-wrapper {
 #scholar-shield img {
   height: 52px;
   }
-
 
 /*Footer */
 

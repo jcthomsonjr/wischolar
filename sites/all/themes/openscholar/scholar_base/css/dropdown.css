@@ -26,11 +26,14 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   text-transform:capitalize;
   }
 
+.context-links {
+  float: right;
+  }
+
 .ctools-dropdown-no-js .ctools-dropdown-link,
 .ctools-dropdown-no-js span.text {
   display: none;
   }
-
 
 .ctools-dropdown-no-js .ctools-dropdown div.ctools-dropdown-container ul li,
 #content .ctools-dropdown-no-js .ctools-dropdown-container-wrapper ul.links li {
@@ -58,13 +61,13 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   -moz-border-radius:5px;
   -webkit-border-radius:5px;
   border-radius: 5px;
-  -moz-box-shadow:  #888 0 4px 25px;
-  -webkit-box-shadow:  #888 0 4px 25px;
-  box-shadow: 0 4px 25px #888;
+  -moz-box-shadow:  #888 0 4px 10px;
+  -webkit-box-shadow:  #888 0 4px 10px;
+  box-shadow: 0 4px 10px #888;
   opacity: .93;
   }
 
-.item-list ul.context-links,
+.context-links,
 .section-cp div.ctools-dropdown {
   margin: 0;
   float:right;
@@ -72,13 +75,13 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   padding: 1px 10px 2px 22px !important;
   }
 
-.item-list ul.context-links:hover,
+.context-links:hover,
 .section-cp div.ctools-dropdown:hover {
   background-color: #daf3d5 !important;
   }
 
 
-.item-list ul.context-links li {
+.context-links li {
   list-style:none;
   margin:0;
   list-style: none;
@@ -90,6 +93,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 .context-links a {
   font-style: normal !important;
   font-size: 11px !important;
+  padding: 0 !important;
   }
 
 .context-links .ctools-dropdown-container-wrapper a,
@@ -135,7 +139,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 
 .vsite-admin a.ctools-dropdown-link {
   background: url(../images/admin-link.png) 0 3px no-repeat transparent;
-  padding-left: 20px;
+  padding: 0 0 0 20px !important;
   font-size: 11px;
   }
 

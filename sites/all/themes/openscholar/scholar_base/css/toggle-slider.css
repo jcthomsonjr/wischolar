@@ -33,50 +33,54 @@
   }
 
 
-
 /* WELCOME MESSAGE SPECIFIC */
 
 #message_welcome_message {
   margin-bottom: 1em;
+  clear:left;
+  padding-top: 9px;
   }
 
 
 #message_welcome_message .toggle {
-  -moz-border-radius: 1em;
-  -webkit-border-radius: 1em;
-  border-radius: 1em;
   margin: 0;
-  padding: 0.01em 2em 0.2em 0.7em;
+  padding: 4px 23px 4px 10px;
   cursor: pointer;
   border: 1px solid #c0c5cc;
   color: #444;
   background-color:#eef3fb;
+  background-position: 99% 10px;
   }
 
 #message_welcome_message .expanded {
-  background-position: 100% -1.05em;
+  background-position: 98% -9px;
+  border-bottom: none;
   }
 
 /* "Hide this message" */
+
 #message_welcome_message .vsite-admin {
   margin-top: 1em;
   text-align:right;
   position: relative;
   }
 
+#message_welcome_message .vsite-admin .toggle {
+  border: none;
+  }
+
 #message_welcome_message .slider {
   font-weight: bold;
   }
 
-
 #message_welcome_message .vsite-admin .slider {
   position: absolute;
   top: 18px;
-  right: -6px;
+  right: 15px;
   left: auto;
-  border-top: none;
+  border: none;
   padding: 0;
-  width: 150px;
+  width: 107px;
   }
 
 #message_welcome_message .vsite-admin .slider ul.links li {
@@ -90,7 +94,6 @@
 
 #message_welcome_message .vsite-admin .slider ul.links li.first {
   padding-right: 5px;
-  border-right: 1px solid #ccc;
   margin-right: 5px;
   }
 

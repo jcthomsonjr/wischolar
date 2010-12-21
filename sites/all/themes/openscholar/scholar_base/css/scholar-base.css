@@ -134,7 +134,7 @@ body.no-sidebars #content-main, body.header-main #header-main {
   padding-bottom: 0;
   }
 
-#header-left, #header-right, #sidebar-left, #sidebar-right {
+#header-left, #header-right, #sidebar-first, #sidebar-second {
   width: 200px;
   }
 
@@ -143,20 +143,20 @@ body.no-sidebars #content-main, body.header-main #header-main {
   padding-right: 240px; /*right width incl. padding plus center padding */
   }
 
-#header-left, #sidebar-left {
+#header-left, #sidebar-first {
   right: 240px; /* left width incl. padding plus center padding */
   margin-left: -100%;
   }
 
-#header-right, #sidebar-right {
+#header-right, #sidebar-second {
   margin-right: -100%;
   }
 
-body.sidebar-right #content-wrapper {
+body.sidebar-second #content-wrapper {
    padding-left: 0;
    }
 
-body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
+body.sidebar-first #content-wrapper, body.header-left-main #header-wrapper {
   padding-right: 40px; /* Only the padding of center div */
   }
 
@@ -193,7 +193,7 @@ body.header-left-right #header-right {
   float:right;
   }
 
-#sidebar-left .block, #sidebar-right .block {
+#sidebar-first .block, #sidebar-second .block {
   margin-bottom: 1.5em;
   clear:both;
   }
@@ -214,8 +214,11 @@ body.header-left-right #header-right {
 /* NODE */
 
 .node, .biblio-entry {
+  padding-top: .5em;
   padding-bottom: 0.938em;
   margin-bottom: 1.875em;
+  padding-left:0.188em;
+  padding-right:0.188em;
   clear:both;
   position: relative;
   }
@@ -239,8 +242,7 @@ div.terms {
   width: 51px;
   text-align: right;
   display:none;
-  margin-top: 5px;
-  margin-right: 25px;
+  margin-right: 10px;
   }
 
 .node:hover .os-links {
