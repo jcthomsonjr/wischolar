@@ -1,33 +1,8 @@
 <?php
-/**
- * Override or insert PHPTemplate variables into the templates.
- */
-function cp_theme_preprocess_page(&$vars) {
-  $tabs2 =  menu_secondary_local_tasks();
-  if ($tabs2){
-    $vars['tabs2'] = '<ul class="tabs secondary clear-block">' . menu_secondary_local_tasks() . '</ul>';
-  }
-}
-
-/**
- * Returns the rendered local tasks. The default implementation renders
- * them as tabs. Overridden to split the secondary tasks.
- *
- * @ingroup themeable
- */
-function cp_theme_menu_local_tasks() {
-  $output = '';
-  $primary = menu_primary_local_tasks();
-  if ($primary){
-    $output .= '<ul class="tabs primary clear-block">' . $primary . '</ul>';
-  }
-  return $output;
-}
-
 
 /**
  * Form theming for the block customizer settings form.
- * 
+ *
  * Overridden to remove tabledrag and the weights from this customizer
  */
 function cp_theme_spaces_block_customizer_settings_form($form) {
@@ -84,7 +59,7 @@ function cp_theme_spaces_block_customizer_settings_form($form) {
 
 /**
  * Form theme function for customization items.
- * 
+ *
  * Overridden: So that they remain in fieldsets
  */
 function cp_theme_spaces_customize_item($form) {

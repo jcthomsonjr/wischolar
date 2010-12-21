@@ -1,36 +1,6 @@
-name        = OpenScholar Admin
-description = Admin Theme for OpenScholar, IQSS
+name        = OpenScholar Top Admin Menu
+description = Adds admin top menu for OpenScholar
 screenshot = screenshot.png
-
 core       = 6.x
-base theme = scholar_base
-
-;------ styles ------
-stylesheets[all][]   = css/cp-theme.css
-stylesheets[all][]   = css/spaces.css
-stylesheets[all][]   = css/zen.css
-stylesheets[all][]   = css/cp-forms.css
-stylesheets[all][]   = css/tabs.css
-
-;------ styles, additional ------
-conditional-stylesheets[if lte IE 7][all][] = css/ie.css
-
-;------ regions ------
-regions[header]         = header
-regions[footer]         = footer
-regions[closure_region] = closure
-
-;;; TODO fix this. Context does not work well with different themes with
-;;; different regions. some fake regions here for now
-
-regions[left]           = left sidebar
-regions[right]          = right sidebar
-regions[footer]         = footer
-regions[closure_region] = closure
-
-;------ features ------
-features[] = logo
-features[] = name
-features[] = search
-features[] = favicon
-features[] = primary_links
+base theme = rubik
+engine     = phptemplate
