@@ -1,4 +1,4 @@
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>">
+<div id="node-<?php print $node->nid; ?>" class="<?php print $node_classes; ?>">
   <div class="node-inner">
     <?php if (!$page): ?>
     <div class="os-links">
