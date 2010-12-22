@@ -84,9 +84,76 @@ function scholar_base_preprocess_page(&$vars, $hook) {
 }
 
 /**
+ * Allows node and block preprocess functions to be inherited by subthemes
+ * Borrowed from Zen
+ */
+function scholar_base_theme(&$existing, $type, $theme, $path) {
+  // Allows 'stackable' preprocess functions, base theme + vsite themes
+  scholar_base_theme_get_default_settings($theme);
+
+  // Keep track of all the themes, scholar base and child themes.
+  static $all_themes = array();
+
+  // Add a "process" phase to come after the "preprocess" functions.
+  if (!in_array($theme,$all_themes)) {
+    $all_themes[] = $theme;
+
+    foreach (array_keys($existing) as $hook) {
+      // Normally, preprocess functions are added to the registry after
+      // HOOK_theme() returns, but if we add them first, they won't be re-added.
+      if (function_exists($theme . '_preprocess')) {
+        $existing[$hook]['preprocess functions'][] = $theme . '_preprocess';
+      }
+      if (function_exists($theme . '_preprocess_' . $hook)) {
+        $existing[$hook]['preprocess functions'][] = $theme . '_preprocess_' . $hook;
+      }
+
+      // Add the theme process functions.
+      if (function_exists($theme . '_process')) {
+        $existing[$hook]['preprocess functions'][] = $theme . '_process';
+      }
+      if (function_exists($theme . '_process_' . $hook)) {
+        $existing[$hook]['preprocess functions'][] = $theme . '_process_' . $hook;
+      }
+    }
+  }
+
+  // Else return nothing.
+  return array();
+}
+
+/**
+ * Return the theme settings' default values from the .info and save them into the database.
+ *
+ * @param $theme
+ *   The name of theme.
+ * Borrowed from Zen
+ */
+function scholar_base_theme_get_default_settings($theme) {
+  $themes = list_themes();
+
+  // Get the default values from the .info file.
+  $defaults = !empty($themes[$theme]->info['settings']) ? $themes[$theme]->info['settings'] : array();
+
+  if (!empty($defaults)) {
+    // Merge the defaults with the theme settings saved in the database.
+    $settings = array_merge($defaults, variable_get('theme_'. $theme .'_settings', array()));
+    // Save the settings back to the database.
+    variable_set('theme_'. $theme .'_settings', $settings);
+    // If the active theme has been loaded, force refresh of Drupal internals.
+    if (!empty($GLOBALS['theme_key'])) {
+      theme_get_setting('', TRUE);
+    }
+  }
+
+  // Return the default settings.
+  return $defaults;
+}
+
+/**
  * // Adds useful classes to nodes.
  */
-function openscholar_base_preprocess_node(&$vars, $hook) {
+function scholar_base_preprocess_node(&$vars, $hook) {
   $node_classes = array($vars['node_classes']);
   $node_classes[] = 'node';
   $node_classes[] = ' node-type-' . $vars['type'];
@@ -115,7 +182,7 @@ function openscholar_base_preprocess_node(&$vars, $hook) {
 /**
  * // Adds useful classes to blocks.
  */
-function openscholar_base_preprocess_block(&$vars, $hook) {
+function scholar_base_preprocess_block(&$vars, $hook) {
   $block_classes = array($vars['block_classes']);
   $block_classes[] = 'block';
   $block_classes[] = ' region-' . $vars['block_zebra'];
@@ -125,31 +192,6 @@ function openscholar_base_preprocess_block(&$vars, $hook) {
   $vars['block_classes'] = implode($block_classes);
 }
 
-/**
- * Generates links for node teasers for easy edit/delete
- */
-function scholar_base_node_links($links) {
-  $output = array();
-  foreach ($links as $link) {
-    $options = $link;
-    $options['attributes']['class'] = isset($link['attributes']['class']) ? $link['attributes']['class'] : 'os-links-button';
-    //if(!is_array($options['query'])) $options['query'] = array();
-    //$options['query']['destination'] = $_GET['q'];
-
-    if (!empty($link['custom'])) {
-      $output[]= l($link['title'], $link['href'], $options);
-    }
-    else {
-      $output[]= l(t('Add !type', array('!type' => $link['title'])), $link['href'], $options);
-    }
-  }
-
-  if($output){
-    $output = theme('item_list', $output,  $title = NULL, $type = 'ul', $attributes = array("class" => "os-links"));
-    //$output = '<div class = "context-links">' . $output . '</div>';
-  }
-  return $output;
-}
 
 /**
  * For header region classes
@@ -157,6 +199,7 @@ function scholar_base_node_links($links) {
 function __scholar_base_is_empty($s){
   return $s ? TRUE : FALSE;
 }
+
 
 /**
  * Generates a themed set of links for node types associated with
