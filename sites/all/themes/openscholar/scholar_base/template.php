@@ -11,7 +11,6 @@ function scholar_base_menu_local_tasks() {
   if (menu_secondary_local_tasks()) {
     $output .= '<ul class="tabs secondary clearfix">' . menu_secondary_local_tasks() . '</ul>';
   }
-
   return $output;
 }
 
@@ -119,7 +118,6 @@ function openscholar_base_preprocess_node(&$vars, $hook) {
 function openscholar_base_preprocess_block(&$vars, $hook) {
   $block_classes = array($vars['block_classes']);
   $block_classes[] = 'block';
-  //$block_classes[] = ' block-' . $block->module;
   $block_classes[] = ' region-' . $vars['block_zebra'];
   $block_classes[] = ' ' . $vars['zebra'];
   $block_classes[] = ' region-count-' . $vars['block_id'];
@@ -134,7 +132,7 @@ function scholar_base_node_links($links) {
   $output = array();
   foreach ($links as $link) {
     $options = $link;
-    $options['attributes']['class'] = isset($link['attributes']['class']) ? $link['attributes']['class'] : 'node-links-button';
+    $options['attributes']['class'] = isset($link['attributes']['class']) ? $link['attributes']['class'] : 'os-links-button';
     //if(!is_array($options['query'])) $options['query'] = array();
     //$options['query']['destination'] = $_GET['q'];
 
@@ -147,7 +145,7 @@ function scholar_base_node_links($links) {
   }
 
   if($output){
-    $output = theme('item_list', $output,  $title = NULL, $type = 'ul', $attributes = array("class" => "node-links"));
+    $output = theme('item_list', $output,  $title = NULL, $type = 'ul', $attributes = array("class" => "os-links"));
     //$output = '<div class = "context-links">' . $output . '</div>';
   }
   return $output;
