@@ -1,5 +1,15 @@
 <?php
 
+function iqss_scholar_init() {
+  
+  //Important since we use page-caching in production and have the vsite home pages as the logout desitnation
+  if(user_is_logged_in() && !headers_sent()){
+    //Change to no-store
+    header("Cache-Control: no-store, no-cache, must-revalidate");
+  }//Fixes issue where firefox caches logged-in page after logout
+  
+}
+
 /**
  * implement hook strongarm
  *
