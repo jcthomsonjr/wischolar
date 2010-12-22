@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Adds clearfix to tabs.
  */
@@ -27,15 +26,19 @@ function scholar_base_id_safe($string) {
   return $string;
 }
 
+/**
+ * // Adds classes to the body tag.
+ */
 function scholar_base_preprocess_page(&$vars, $hook) {
-
   $body_classes = array($vars['body_classes']);
+
+  //Replace left and right with first and second
   $original = array('left','right');
   $new = array('first','second');
   $body_classes = str_replace($original,$new,$body_classes);
-
   if (!$vars['is_front']) {
-    // Add unique classes for each page and site section
+    // Add unique classes for each page/site section
+    // (This snippet comes from Zen.)
     $path = drupal_get_path_alias($_GET['q']);
     list($section, ) = explode('/', $path, 2);
     $body_classes[] = scholar_base_id_safe('page-' . $path);
@@ -55,13 +58,11 @@ function scholar_base_preprocess_page(&$vars, $hook) {
       }
     }
   }
-
   if (module_exists('taxonomy') && $vars['node']->nid) {
     foreach (taxonomy_node_get_terms($vars['node']) as $term) {
       $body_classes[] = 'category-' . str_replace(' ', '-', scholar_base_id_safe($term->name));
     }
   }
-
   //Adds OpenScholar header region awareness to body classes
   $regions = array (
     'left' => $vars['header_left'],
@@ -83,11 +84,10 @@ function scholar_base_preprocess_page(&$vars, $hook) {
   $vars['body_classes'] = implode(' ', $body_classes);
 }
 
-
 /**
  * // Adds useful classes to nodes.
  */
-function openscholar_preprocess_node(&$vars, $hook) {
+function openscholar_base_preprocess_node(&$vars, $hook) {
   $node_classes = array($vars['node_classes']);
   $node_classes[] = 'node';
   $node_classes[] = ' node-type-' . $vars['type'];
@@ -110,24 +110,22 @@ function openscholar_preprocess_node(&$vars, $hook) {
   if (isset($vars['preview'])) {
     $node_classes[] = ' node-preview';
   }
-  $vars['node_classes'] = implode(' ', $node_classes);
+  $vars['node_classes'] = implode($node_classes);
 }
-
 
 /**
  * // Adds useful classes to blocks.
  */
-function openscholar_preprocess_block(&$vars, $hook) {
+function openscholar_base_preprocess_block(&$vars, $hook) {
   $block_classes = array($vars['block_classes']);
   $block_classes[] = 'block';
   //$block_classes[] = ' block-' . $block->module;
-  //$block_classes[] = ' region-' . $vars['block_zebra'];
-  //$block_classes[] = $vars['zebra'];
-  //$block_classes[] = ' region-count-' . $vars['block_id'];
-  //$block_classes[] = ' count-' . $vars['id'];
+  $block_classes[] = ' region-' . $vars['block_zebra'];
+  $block_classes[] = ' ' . $vars['zebra'];
+  $block_classes[] = ' region-count-' . $vars['block_id'];
+  $block_classes[] = ' count-' . $vars['id'];
   $vars['block_classes'] = implode($block_classes);
 }
-
 
 /**
  * Generates links for node teasers for easy edit/delete
@@ -155,11 +153,12 @@ function scholar_base_node_links($links) {
   return $output;
 }
 
-
+/**
+ * For header region classes
+ */
 function __scholar_base_is_empty($s){
   return $s ? TRUE : FALSE;
 }
-
 
 /**
  * Generates a themed set of links for node types associated with
