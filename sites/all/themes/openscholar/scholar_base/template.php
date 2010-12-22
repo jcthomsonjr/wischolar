@@ -87,31 +87,13 @@ function scholar_base_preprocess_page(&$vars, $hook) {
 /**
  * // Adds useful classes to nodes.
  */
-function holygrail_preprocess_node(&$vars, $hook) {
+function openscholar_preprocess_node(&$vars, $hook) {
   $node_classes = array($vars['node_classes']);
-
-  // Build_mode variable.
-  switch ($vars['node']->build_mode) {
-    case NODE_BUILD_NORMAL:
-      $vars['build_mode'] = $vars['teaser'] ? 'teaser' : 'full';
-      break;
-    case NODE_BUILD_PREVIEW:
-      $vars['build_mode'] = 'preview';
-      break;
-  }
-
-  // Hey, it's a node!
   $node_classes[] = 'node';
-
-  // and this be the type of yon node
   $node_classes[] = ' node-type-' . $vars['type'];
-
-  // Is it 'sticky'? (I hate that term..)
   if ($vars['sticky']) {
     $node_classes[] = ' sticky';
   }
-
-  // Is it published or not?
   if (!$vars['status']) {
     $node_classes[] = ' unpublished';
     $vars['unpublished'] = TRUE;
@@ -119,23 +101,31 @@ function holygrail_preprocess_node(&$vars, $hook) {
   else {
     $vars['unpublished'] = FALSE;
   }
-
-  // Is the person who created it looking at it?
   if ($vars['uid'] && $vars['uid'] == $GLOBALS['user']->uid) {
    $node_classes[] = ' my-content';
   }
-
-  // Ok, and is it a teaser
   if ($vars['teaser']) {
     $node_classes[] = ' node-teaser';
   }
-
-  // Oh, and are we looking it a preview of the node?
   if (isset($vars['preview'])) {
     $node_classes[] = ' node-preview';
   }
+  $vars['node_classes'] = implode(' ', $node_classes);
+}
 
-  $vars['node_classes'] = implode($node_classes);
+
+/**
+ * // Adds useful classes to blocks.
+ */
+function openscholar_preprocess_block(&$vars, $hook) {
+  $block_classes = array($vars['block_classes']);
+  $block_classes[] = 'block';
+  //$block_classes[] = ' block-' . $block->module;
+  //$block_classes[] = ' region-' . $vars['block_zebra'];
+  //$block_classes[] = $vars['zebra'];
+  //$block_classes[] = ' region-count-' . $vars['block_id'];
+  //$block_classes[] = ' count-' . $vars['id'];
+  $vars['block_classes'] = implode($block_classes);
 }
 
 

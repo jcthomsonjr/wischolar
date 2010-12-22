@@ -56,7 +56,7 @@
       </div> <!-- /header -->
       <?php endif; ?>
 
-      <div id="content-wrapper" class="clearfix">
+      <div id="content-wrapper">
         <div id="content-wrapper-inner">
           <div id="content-main" class="column">
             <?php if (!empty($content_top)): ?>
