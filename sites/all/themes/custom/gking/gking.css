@@ -3,8 +3,7 @@ html, body, #container {
   }
 
 body {
-  font-size: 12px;
-  line-height:1.4em;
+  font: 12px/1.4em 'helvetica neue', helvetica, arial, sans-serif;
   color: #000;
   background: url(images/bg.png) repeat-y 50% 0 #333;
   }
@@ -36,7 +35,7 @@ p {
   }
 
 h2 {
-  font-size: 29px;
+  font-size: 21px;
   letter-spacing:1px;
   }
 
@@ -47,7 +46,7 @@ h3, h4 {
   }
 
 h3 {
-  color: #95a2a2;
+  color: #6e7a7a;
   margin-top: 10px;
   }
 
@@ -186,11 +185,11 @@ a.more {
   padding-bottom: 5px;
   }
 
-#sidebar-right #block-iqss_gking-areas_of_research {
+#sidebar-second #block-iqss_gking-areas_of_research {
   background:#3b4e4e;
   }
 
-#sidebar-right #block-iqss_gking-areas_of_research h3.title {
+#sidebar-second #block-iqss_gking-areas_of_research h3.title {
   background: url(images/aor-h3.png) 0 100% repeat-x #504F4B;
   color: #fff;
   margin-left: -24px;
@@ -205,25 +204,25 @@ a.more {
   line-height: 38px;
   }
 
-#sidebar-right #block-iqss_gking-areas_of_research a, #sidebar-right #block-iqss_gking-areas_of_research a:visited {
+#sidebar-second #block-iqss_gking-areas_of_research a, #sidebar-second #block-iqss_gking-areas_of_research a:visited {
   color: #fff;
   }
 
-#sidebar-right #block-iqss_gking-areas_of_research a:hover {
+#sidebar-second #block-iqss_gking-areas_of_research a:hover {
   color:#e87702;
   text-decoration: none;
   }
 
-#sidebar-right #block-iqss_gking-areas_of_research h4 {
+#sidebar-second #block-iqss_gking-areas_of_research h4 {
   margin-bottom: 0;
   color:#68efde;
   }
 
-#sidebar-right #block-iqss_gking-areas_of_research dd {
+#sidebar-second #block-iqss_gking-areas_of_research dd {
   display:none;
   }
 
-#sidebar-right #block-iqss_gking-areas_of_research #methods {
+#sidebar-second #block-iqss_gking-areas_of_research #methods {
   margin-bottom: .5em;
   }
 
@@ -274,11 +273,11 @@ a.more {
   padding: 0;
   }
 
-.sidebar-right #content-main {
+.sidebar-second #content-main {
   padding-left: 0;
   }
 
-#content, .column .block {
+#content, #content-top, .column .block {
   /*
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -293,6 +292,10 @@ a.more {
   border: none;
   padding-right: 0;
   padding-left: 0;
+  }
+
+#content-top {
+  margin-bottom: 0.5em;
   }
 
 /*
@@ -376,9 +379,8 @@ body.section-category .node {
 
 #navbar ul li {
   font-size: 14px;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   }
-
 
 #navbar a, #navbar a:visited {
   display:block;
@@ -426,11 +428,6 @@ body.section-category .node {
   background-color:#db7002;
   }
 
-
-#navbar ul li.first a {
-  padding-left: 26px;
-  }
-
 #navbar ul li a.active, #navbar ul li a.active:hover {
   color: #000;
   background-color:#db7002;
@@ -450,21 +447,21 @@ body.section-category .node {
   margin-bottom: 8px;
   }
 
-#sidebar-right, #header-right, #sidebar-left, #header-left {
+#sidebar-second, #header-right, #sidebar-first, #header-left {
   width: 261px;
   }
 
 
-#sidebar-left {
+#sidebar-first {
   right: 269px;
   padding-right: 8px;
   }
 
-.page-home #sidebar-right {
+.page-home #sidebar-second {
   width: 200px;
   }
 
-#sidebar-right {
+#sidebar-second {
   padding-left: 8px;
   }
 
@@ -473,7 +470,7 @@ body.section-category .node {
   padding-left: 269px;
   }
 
-#content-main, #sidebar-left, #sidebar-right {
+#content-main, #sidebar-first, #sidebar-second {
   padding-bottom: 105px;
   }
 
@@ -636,6 +633,27 @@ body.page-iqss-gking-research-group h3 {
   color: #000;
   }
 
+.node-type-presentation.node-teaser {
+  margin-bottom: 1.5em;
+  }
+
+.node-type-presentation.node-teaser span.title,
+.node-type-presentation.node-teaser span.location {
+  font-weight:bold;
+  }
+
+.node-type-presentation.node-teaser div.filefield-file {
+  display:inline;
+  }
+
+.node-type-presentation.node-teaser div.filefield-file {
+  display:inline;
+  margin-right: .3em;
+  }
+.node-type-presentation.node-teaser div.filefield-file img {
+  vertical-align:middle;
+  }
+
 /* FOOTER */
 
 #footer {
@@ -661,7 +679,7 @@ body.page-iqss-gking-research-group h3 {
 
 #footer p.copy {
   margin-right: 0;
-  width: 400px;
+  max-width: 400px;
   float:right;
   }
 
@@ -811,18 +829,35 @@ body.page-iqss-gking-research-group h3 {
 
 /* TAXONOMY */
 
-body.section-category .node-teaser {
+body.section-category .node-teaser,
+body.page-gking-category-research-interests-applications-legislative-redistricting .node-teaser,
+body.page-gking-category-research-interests-methods-causal-inference .node-teaser,
+body.page-gking-category-research-interests-methods-event-counts-and-durations .node-teaser,
+body.page-gking-category-research-interests-methods-ecological-inference .node-teaser,
+body.page-gking-category-research-interests-methods-missing-data .node-teaser,
+body.page-gking-category-research-interests-methods-qualitative-research .node-teaser,
+body.page-gking-category-research-interests-methods-rare-events .node-teaser,
+body.page-gking-category-research-interests-methods-survey-research .node-teaser,
+body.page-gking-category-research-interests-methods-unifying-statistical-analysis .node-teaser,
+body.page-gking-category-research-interests-applications-automated-test-analysis .node-teaser,
+body.page-gking-category-research-interests-applications-incumbancy-advantage .node-teaser,
+body.page-gking-category-research-interests-applications-automated-text-analysis .node-teaser,
+body.page-gking-category-research-interests-applications-mexican-health-care-evaluation .node-teaser,
+body.page-gking-category-research-interests-applications-presidency-research-voting-behavior .node-teaser,
+body.page-gking-category-research-interests-applications-informatics-and-data-sharing .node-teaser,
+body.page-gking-category-research-interests-applications-international-conflict .node-teaser,
+body.page-gking-category-research-interests-applications-legistlative-redistricting .node-teaser,
+body.page-gking-category-research-interests-applications-mortality-studies .node-teaser {
   margin-bottom:.7em;
   padding-left: 2em;
   }
-
 
 body.section-category .taxonomy-term-description {
   margin-bottom: 1.5em;
   }
 
 .taxonomy-term-child .taxonomy-term-child {
-  padding-left: 3em;
+  padding-left: 2em;
   }
 
 body.section-category .no-indent .node-teaser {
@@ -896,4 +931,25 @@ body.gking-alt #block-scholar-1 h1 a {
 
 body.gking-alt #footer {
   left: 173px;
+  }
+
+
+/* REMOVE AFTER REMOTE-SOURCE MODULE IS FIXED */
+
+.node-type-scholar-software-project #content ul {
+  padding-left: 2em;
+  }
+
+.node-type-scholar-software-project #content ul li {
+  list-style: disc outside;
+  padding:0 0 0 3px;
+  }
+
+.node-type-scholar-software-project #content ul li ul {
+  margin-top: 1.5em;
+  }
+
+.node-type-scholar-software-project #content ul li li {
+  list-style: circle outside;
+  padding:0 0 0 3px;
   }

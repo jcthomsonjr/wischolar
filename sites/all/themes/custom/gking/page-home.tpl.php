@@ -1,6 +1,3 @@
-<?php
-// $Id: page.tpl.php,v 1.10.2.4 2009/02/13 17:30:22 swortis Exp $
-?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php print $language->language; ?>" lang="<?php print $language->language; ?>" dir="<?php print $language->dir; ?>">
 
@@ -17,14 +14,16 @@
 
 </head>
 
-<body class="<?php print $classes; ?>">
+<body class="<?php print $body_classes; ?>">
+  <!--[if lte IE 6]><script src="/<?php print $directory;?>/js/ie6-warning/ie6-warning.js"></script> <script>window.onload=function(){e("/<?php print $directory;?>/js/ie6-warning/")}</script><![endif]-->
     <?php if ($cp_toolbar) : ?>
     <div id="top">
   	   <?php print $cp_toolbar;?>
   	 </div>
   	 <?php endif;?>
   <div id="wrapper">
-    <div id="container">
+    <div id="wrapper-inner">
+      <div id="container">
 
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) : ?>
 
@@ -68,25 +67,25 @@
       <?php endif; ?>
 
       <div id="content-wrapper">
-
-        <div id="content-main" class="column">
-          <?php if (!empty($content_top) || $context_links): ?>
+        <div id="content-wrapper-inner">
+          <div id="content-main" class="column">
+            <?php if (!empty($content_top)): ?>
             <div id="content-top">
               <?php print $content_top; ?>
             </div><!-- /content-top -->
-          <?php endif; ?>
-
-          <div id="content">
-          <?php print $context_links;?>
-          <?php if (!empty($title)): ?>
-            <h2 class="title<?php if ($tabs) : print ' with-tabs'; endif;?>"><?php print $title; ?></h2>
-           <?php endif; ?>
-           <?php if (!empty($tabs)): ?>
-            <div class="tabs"><?php print $tabs; ?></div>
             <?php endif; ?>
-            <?php print $help;
-                  print $messages;
-            ?>
+
+            <div id="content">
+            <?php print $context_links;?>
+            <?php if (!empty($title)): ?>
+              <h2 class="title<?php if ($tabs) : print ' with-tabs'; endif;?>"><?php print $title; ?></h2>
+             <?php endif; ?>
+             <?php if (!empty($tabs)): ?>
+              <div class="tabs"><?php print $tabs; ?></div>
+              <?php endif; ?>
+            <?php print $help; ?>
+            <?php print $messages;?>
+
             <div id="block-iqss_gking-areas_of_research" class="block">
             <h3 class="title">Areas of Research</h3>
             <?php
@@ -99,46 +98,43 @@
               print $tabbedpubs['content'];
               ?>
               <?php print $content; ?>
-          </div> <!-- /content -->
+            </div> <!-- /content -->
 
-          <?php if (!empty($content_bottom)): ?>
-            <div id="content-bottom">
-              <?php print $content_bottom; ?>
-            </div><!--/content-bottom-->
+            <?php if (!empty($content_bottom)): ?>
+              <div id="content-bottom">
+                <?php print $content_bottom; ?>
+              </div><!--/content-bottom-->
+            <?php endif; ?>
+            </div><!-- /content main -->
+
+              <?php if (!empty($left)): ?>
+          <div id="sidebar-first" class="sidebar column">
+            <?php print $left; ?>
+          </div> <!-- /sidebar-first -->
           <?php endif; ?>
-          </div><!-- /content main -->
 
-
-            <?php if (!empty($left)): ?>
-        <div id="sidebar-left" class="column">
-          <?php print $left; ?>
-        </div> <!-- /sidebar-left -->
-        <?php endif; ?>
-
-        <?php if (!empty($right)): ?>
-        <div id="sidebar-right" class="column">
-          <?php print $right; ?>
-        </div> <!-- /sidebar-right -->
-        <?php endif; ?>
+          <?php if (!empty($right)): ?>
+          <div id="sidebar-second" class="sidebar column">
+            <?php print $right; ?>
+          </div> <!-- /sidebar-second -->
+          <?php endif; ?>
+        </div> <!-- / content wrapper inner -->
       </div> <!-- / content wrapper -->
-      <div id="content-wrapper-bottom"></div>
       <div id="footer">
         <div id="footer-inner">
-          <?php if ($footer_message): ?>
-            <div id="footer-message"><?php print $footer_message; ?></div>
-          <?php endif; ?>
           <?php if ($footer) : ?>
             <?php print $footer; ?>
           <?php endif; ?>
           <?php
             global $user, $base_url;
-            $home_link =  l('Powered by OpenScholar',$base_url, array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
-            $login_link = (!$user -> uid) ? l("Login", "user", array('attributes' => array('class' => 'footer-login'),'absolute' => TRUE, 'alias' => FALSE)) : "";
+            $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
+            $login_link = (!$user -> uid) ? l("Login", "user", array('purl' => array('disabled' => TRUE), 'attributes' => array('class' => 'footer-login'),'alias' => FALSE)) : "";
           ?>
-          <p class="copy"><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
+          <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> <span id="powered-link"><?php print $home_link; ?></span></p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
         </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->
+    </div><!-- /wrapper-inner -->
   </div> <!-- /wrapper -->
   <div id="extradiv"></div>
   <?php if ($closure_region): ?>

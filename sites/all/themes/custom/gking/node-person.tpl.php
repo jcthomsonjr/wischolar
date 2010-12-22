@@ -1,12 +1,4 @@
-<?php
-// $Id: node.tpl.php,v 1.4 2008/09/15 08:11:49 johnalbin Exp $
-
-/**
- * @file node.tpl.php
- */
-?>
-
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>">
+<div id="node-<?php print $node->nid; ?>" class="<?php print $node_classes; ?>">
   <div class="node-inner">
     <?php if (!$page):?>
       <?php if ($node->field_person_website[0]['url']['value']) {

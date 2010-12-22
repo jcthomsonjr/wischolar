@@ -16,7 +16,7 @@ function iqss_gking_strongarm(){
  */
 function iqss_gking_init(){
   if (! iqss_gking_on_gking_site()) return;
-  
+
   jquery_ui_add(array(
       'ui.tabs'
   ));
@@ -24,12 +24,12 @@ function iqss_gking_init(){
 
   drupal_add_css(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.css");
   drupal_add_js(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.js");
-  
+
   $router_item = menu_get_item();
   if (strpos($router_item['path'], 'taxonomy/term') === 0 && !context_get('scholar','feature')) {
     context_set('scholar','feature','publications');
   }
-  
+
 }
 
 /**
@@ -67,7 +67,7 @@ function iqss_gking_menu(){
       ),
       'type' => MENU_CALLBACK,
   );
-  
+
   $items['taxonomy/%ctools_js/nodeorder/%'] = array(
       'title' => 'Order Taxonomy Nodes',
       'page callback' => 'iqss_gking_nodeorder_form',
@@ -75,7 +75,7 @@ function iqss_gking_menu(){
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
-  
+
   return $items;
 }
 
@@ -108,6 +108,7 @@ function iqss_gking_block($op = 'list', $delta = false, $edit = array()){
     $blocks['areas_of_research']['info'] = t('Areas of Research');
     $blocks['filter_by_type']['info'] = t("Filter a Category by Content Type");
     $blocks['gking_pub_by_type']['info'] = t('Gkings "Recent Works" to replace default Publications by type');
+    $blocks['class_materials']['info'] = t('Student Materials');
     return $blocks;
   }
   elseif ($op == 'view') {
@@ -118,8 +119,24 @@ function iqss_gking_block($op = 'list', $delta = false, $edit = array()){
         return iqss_gking_filter_by_type_block();
       case 'gking_pub_by_type' :
         return iqss_gking_pub_by_type_block();
+      case 'student_materials' :
+        return iqss_gking_student_materials_block();
     }
   }
+}
+
+/**
+ * Callback for iqss_gking_student_materials_block block
+ */
+function iqss_gking_student_materials_block(){
+  //$materials = node_load(array("nid"=>6814));
+  $materials = node_load(array(
+    "nid" => 6814
+  ));
+  $block['subject'] = t('Student Materials');
+
+  $block['content'] = node_view($materials, $teaser = FALSE, $page = TRUE, $links = TRUE);
+  return $block;
 }
 
 /**
@@ -137,7 +154,7 @@ function iqss_gking_filter_by_type_block(){
   $view->set_arguments(array(
       current($router_item['page_arguments'])
   ));
-  
+
   //Change to the tax. path
   $view->display['page_1']->handler->options['path'] = "taxonomy/term/biblio/%/%";
   $view->execute();
@@ -304,8 +321,8 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
 
   // Add CTools' javascript to the page.
   ctools_modal_add_js();
-    
-  
+
+
   require_once (drupal_get_path('module', 'taxonomy') . '/taxonomy.pages.inc');
   $terms = taxonomy_terms_parse_string($str_tids);
   $term = taxonomy_get_term(current($terms['tids']));
@@ -341,36 +358,36 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
  */
 function iqss_gking_link_alter(&$links, $node){
   if(! iqss_gking_on_gking_site()) return;
-  
+
   if(isset($links['vsite-admin'])){
     $active_menu = menu_get_item();
     if($active_menu['path'] == 'iqss_gking_research_group' && $node->type == 'person'){
       $links['vsite-admin']['title'] = str_replace(' ctools-dropdown ',' ',$links['vsite-admin']['title']);
     }
   }
-  
+
   $n_ri_vid;
   foreach ($links as $s_key => $a_link){
     if(strpos($s_key,'taxonomy_term_') !== 0) continue;
-    
+
     $term = taxonomy_get_term(intval(str_replace("taxonomy_term_","",$s_key)));
     if(!$term) continue;
-    
+
     if(!isset($n_ri_vid)){
 	    $vocab = taxonomy_vocabulary_load($term->vid);
 	    if ($vocab->name == "Research Interests"){
 	      $n_ri_vid = $term->vid;
 	    }
     }
-    
+
     if($term->vid == $n_ri_vid){
       $o_parent = current(taxonomy_get_parents($term->tid));
       if(!is_object($o_parent)) continue;
-      
+
       $links[$s_key]['title'] = $o_parent->name;
     }//Show the taxonomy term in RI taxonomy as "Parent (Child)"
   }
-  
+
 }
 
 /**
@@ -379,24 +396,24 @@ function iqss_gking_link_alter(&$links, $node){
 function iqss_gking_people(){
   //We are in the People feature on this page
   context_set('scholar','feature','profiles');
-  
+
   if (! iqss_gking_on_gking_site() || isset($_REQUEST['views_filter_tid'])) return views_page('scholar_profiles', 'page_1'); //If this isn't Gary just display the standard
 
   $vsite = vsite_get_vsite();
   $vocabs = $vsite->get_vocabs('person');
   $vocab = false;
-  
+
   foreach ($vocabs as $v){
     if($v->name == "Research Group"){
       $vocab = $v;
       break;
     }
   }
-  
+
   if($vocab) $tree = taxonomy_get_tree($vocab->vid, 0, - 1, 1);
-  
+
   if(!$vocab || !count($tree)) return views_page('scholar_profiles', 'page_1');
-  
+
   //Filter def to filter view by provided tid
   $a_tid_filter = array(
     'operator' => 'and',
@@ -412,32 +429,32 @@ function iqss_gking_people(){
     'relationship' => 'none',
     'reduce_duplicates' => 0,
   );
-  
-  
-  
-  
+
+
+
+
   $output = '';
   $a_terms = array();
   foreach ( $tree as $subterm ) {
     if ($subterm->name){
-	    
+
       $view = views_get_view('scholar_profiles');
       $view->set_display('page_1');
       $a_tid_filter['value'] = array(0 => $subterm->tid);
 		  $view->display_handler->default_display->options['filters']['tid'] = $a_tid_filter;
 		  $view->display_handler->definition['use pager'] = false;
 		  $view->display_handler->options['defaults']['items_per_page'] = false;
-      
+
       $output .= '<div id="iqss_gking_term_'.$subterm->tid.'" class="taxonomy-term-child">' . $view->execute_display('page_1') . "</div>";
       array_push($a_terms,array('name' => $subterm->name, 'tid' => $subterm->tid));
       $view->destroy();
     }
   }
-  
+
   drupal_add_js(array('iqss_gking' => array('research_group_terms' => $a_terms)), 'setting');
 
   return $output;
-  
+
 }
 
 
@@ -446,15 +463,15 @@ function iqss_gking_people(){
  */
 function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false, $pager = false){
   require_once (drupal_get_path('module', 'taxonomy') . '/taxonomy.pages.inc'); //For theme functions
-  
+
   if (! $tree) $tree = taxonomy_get_tree($vid, $term->tid, - 1, 1);
 
   $orig_feed_items = variable_get('feed_default_items',10);
   global $conf;
   $conf['feed_default_items'] = 1000; //Taxonomy dumbly uses this to control maximum return instead of a passed var
-  
+
   $output = "";
-  
+
   if($term){
   	if(module_exists('nodeorder')){
 	  	if ($operator == 'or') {
@@ -466,12 +483,12 @@ function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false
   	}else{
 		  $result = taxonomy_select_nodes(array($term->tid), $operator, 0, $pager);
   	}
-  	
+
 	  $output = (db_affected_rows($result)) ? theme('taxonomy_term_page', array(
 	      $term->tid
 	  ), $result) : '';
   }
-  
+
   $s_subterm_output = "";
   foreach ( $tree as $subterm ) {
     $s_sub_content = _iqss_gking_term_page_tree($subterm, $vid, $operator, false, $pager);
@@ -487,13 +504,13 @@ function _iqss_gking_term_page_tree($term, $vid, $operator = 'or', $tree = false
     }
   }
   $conf['feed_default_items'] = $orig_feed_items; //Reset, who knows where this is used
-  
+
   if(strlen($s_subterm_output) && !strlen($output)){
     $output = '<div class="taxonomy-term-description">' . filter_xss_admin($term->description) . '</div>' . $s_subterm_output;
   }elseif (strlen($s_subterm_output)){
     $output .= $s_subterm_output;
   }
-  
+
   return $output;
 
 }
@@ -636,13 +653,13 @@ function iqss_gking_access_filefield($s_file){
  */
 function iqss_gking_form_alter(&$form, $form_state, $form_id) {
   if (! iqss_gking_on_gking_site()) return;
-  
+
   if(isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
-    
+
     //If we are in a vsite then check to see if it is configured to have this functionality
     $vsite = vsite_get_vsite();
     if($vsite){
-    
+
       $form['iqss_gking_theme_settings'] = array(
         '#type' => 'fieldset',
         '#title' => t('Theme Settings'),
@@ -656,13 +673,13 @@ function iqss_gking_form_alter(&$form, $form_state, $form_id) {
         '#default_value' => _iqss_gking_alternate_theme($form['#node']->nid),
       );
     }
-    
+
     if($form['#node']->type == 'page'){
     	$form['title']['#required'] = false;
     }//Do not require Titles for Pages in this taxonomy (don't ask) ok it is because he uses this for blurbs on the taxonomy page
-    
+
   }
-  
+
   if($form_id == "taxonomy_form_term"){
   	$form['advanced']['theme'] = array(
   	  '#type' => 'fieldset',
@@ -681,7 +698,7 @@ function iqss_gking_form_alter(&$form, $form_state, $form_id) {
   	);
   	$form['#submit'][] = 'iqss_gking_form_taxonomy_form_term_submit';
   }
-  
+
   if ($form_id == 'taxonomy_form_vocabulary' && is_array($form['settings']['orderable'])) {
     $form['settings']['orderable']['#type'] = 'value';
   }//Remove the unused nodeorder form items
@@ -738,7 +755,7 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 //Change the title on the People view for Gary
 function iqss_gking_views_pre_build(&$view){
   if (! iqss_gking_on_gking_site() || $view->name != 'scholar_profiles') return;
-  
+
   $view->display_handler->default_display->options['title'] = str_replace("Directory","Research Group",$view->display_handler->default_display->options['title']);
 }
 
@@ -747,7 +764,7 @@ function iqss_gking_views_pre_build(&$view){
  */
 function iqss_gking_vsite_widgets(){
   if (! iqss_gking_on_gking_site() ) return array();
-  
+
   $items = array();
 
   $items['iqss_gking_areas_of_research'] = array(
@@ -772,7 +789,7 @@ function iqss_gking_vsite_admin_link($type, $object) {
     if (iqss_gking_on_gking_site() && node_access('update', $object) && module_exists('contextual_annotation')) {
       //adding context annotation by tid
       $annotaion_key = contextual_annotation_get_key('taxonomy',$object,'tid');
-      
+
       if($annotaion_key){
 	      $links['node-contextual-annotation'] = array(
 	        'title' => t('Edit Contextual Note'),
@@ -789,7 +806,7 @@ function iqss_gking_vsite_admin_link($type, $object) {
 }
 
 function iqss_gking_nodeorder_form($js = NULL, $tid = NULL) {
-  
+
   // Fall back if $js is not set.
   if (!$js) {
     return drupal_get_form('nodeorder_admin_display_form', $tid);
@@ -798,13 +815,13 @@ function iqss_gking_nodeorder_form($js = NULL, $tid = NULL) {
   ctools_include('ajax');
   ctools_include('modal');
   require_once(drupal_get_path('module','nodeorder')."/nodeorder.admin.inc");
-  
+
   $form_state = array(
     'title' => t('Order Term Nodes'),
     'ajax' => TRUE,
     'args' => array($tid),
   );
-  
+
   $output = ctools_modal_form_wrapper('nodeorder_admin_display_form', $form_state);
   if (empty($output)) {
     // empty $output signifies success, so we'll use it as our $commands
@@ -819,11 +836,12 @@ function iqss_gking_nodeorder_form($js = NULL, $tid = NULL) {
  * hook preprocess page
  */
 function iqss_gking_preprocess_page(&$vars){
-  if (! iqss_gking_on_gking_site() ) return ;
+  if (! iqss_gking_on_gking_site())
+    return;
 
   //Add the alternate theming
-  $active_menu = menu_get_item();
-  if($active_menu['page_callback'] == 'node_page_view' && $active_menu['page_arguments'][0]->nid && _iqss_gking_alternate_theme($active_menu['page_arguments'][0]->nid)){
+  $object = menu_get_object();
+  if ($object->nid && _iqss_gking_alternate_theme($object->nid)) {
     $vars['body_classes'] .= " gking-alt";
   }
 }
@@ -834,7 +852,7 @@ function iqss_gking_preprocess_page(&$vars){
 function _iqss_gking_alternate_theme($nid){
   static $a_alt_theme_nodes;
   if(!isset($a_alt_theme_nodes)) $a_alt_theme_nodes = variable_get('iqss_gking::alternate_theme_nodes',array());
-  
+
   return in_array($nid,$a_alt_theme_nodes);
 }
 
@@ -843,16 +861,16 @@ function _iqss_gking_alternate_theme($nid){
  */
 function _iqss_gking_set_alternate_theme($nid, $b_value){
   $a_alt_theme_nodes = variable_get('iqss_gking::alternate_theme_nodes',array());
-  
+
   if($b_value && !in_array($nid,$a_alt_theme_nodes)){
     $a_alt_theme_nodes[] = $nid;
     variable_set('iqss_gking::alternate_theme_nodes',$a_alt_theme_nodes);
-    
+
   }elseif (!$b_value && in_array($nid,$a_alt_theme_nodes)){
     unset($a_alt_theme_nodes[array_search($nid,$a_alt_theme_nodes)]);
     variable_set('iqss_gking::alternate_theme_nodes',$a_alt_theme_nodes);
   }
-  
+
 }
 
 function iqss_gking_form_taxonomy_form_term_submit($form, &$form_state){
@@ -868,7 +886,7 @@ function iqss_gking_form_taxonomy_form_term_submit($form, &$form_state){
 function _iqss_gking_hidden_term_heading($tid){
   static $a_heading_off_terms;
   if(!isset($a_heading_off_terms)) $a_heading_off_terms = variable_get('iqss_gking::heading_disabled_terms',array());
-  
+
   return in_array($tid,$a_heading_off_terms);
 }
 
@@ -877,16 +895,16 @@ function _iqss_gking_hidden_term_heading($tid){
  */
 function _iqss_gking_set_hidden_term_heading($tid, $b_value){
   $a_heading_off_terms = variable_get('iqss_gking::heading_disabled_terms',array());
-  
+
   if($b_value && !in_array($tid,$a_heading_off_terms)){
     $a_heading_off_terms[] = $tid;
     variable_set('iqss_gking::heading_disabled_terms',$a_heading_off_terms);
-    
+
   }elseif (!$b_value && in_array($tid,$a_heading_off_terms)){
     unset($a_heading_off_terms[array_search($tid,$a_heading_off_terms)]);
     variable_set('iqss_gking::heading_disabled_terms',$a_heading_off_terms);
   }
-  
+
 }
 
 /**
@@ -895,7 +913,7 @@ function _iqss_gking_set_hidden_term_heading($tid, $b_value){
 function _iqss_gking_override_child_term($tid){
   static $a_override_child_terms;
   if(!isset($a_override_child_terms)) $a_override_child_terms = variable_get('iqss_gking::override_child_terms',array());
-  
+
   return in_array($tid,$a_override_child_terms);
 }
 
@@ -904,14 +922,14 @@ function _iqss_gking_override_child_term($tid){
  */
 function _iqss_gking_set_override_child_term($tid, $b_value){
   $a_override_child_terms = variable_get('iqss_gking::override_child_terms',array());
-  
+
   if($b_value && !in_array($tid,$a_override_child_terms)){
     $a_override_child_terms[] = $tid;
     variable_set('iqss_gking::override_child_terms',$a_override_child_terms);
-    
+
   }elseif (!$b_value && in_array($tid,$a_override_child_terms)){
     unset($a_override_child_terms[array_search($tid,$a_override_child_terms)]);
     variable_set('iqss_gking::override_child_terms',$a_override_child_terms);
   }
-  
+
 }
