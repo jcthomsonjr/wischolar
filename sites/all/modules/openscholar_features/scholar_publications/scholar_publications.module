@@ -196,15 +196,24 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     }
     if(array_key_exists('contributors1_wrapper',$form)){
       $form['contributors1_wrapper'] ['#collapsed'] = false;
+      $form['contributors1_wrapper'] ['#weight'] = -3.5;
     }
     
-
+    if(array_key_exists('contributors2_wrapper',$form)){
+      $form['contributors2_wrapper'] ['#weight'] = -3.5;
+    }
+    
+    if(array_key_exists('copy_to_biblio',$form['taxonomy'])){
+      $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
+    }
+    
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['biblio_abst_e_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['body_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors1_wrapper'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors2_wrapper'] = 0; //Disable vert. tabs
 
+    $form = _scholar_publications_add_field_descriptions($form);
   }
 }
 
@@ -732,6 +741,30 @@ function _scholar_publications_get_plain_citation($node){
   $citation = "<h3>Citation:</h3><textarea class=\"biblio-citation\" onclick=\"focus();select();\" readonly=\"readonly\" rows=\"3\">{$citation}</textarea>";
   
   return $citation;
+}
+
+/**
+ * Add descriptions to biblio fields that need them
+ */
+function _scholar_publications_add_field_descriptions($form, $a_desc = false){
+	
+	$a_default_descriptions = array(
+	  'biblio_pages' => "The page(s) that reference your publication is ex(36, or 23-25)",
+	  'biblio_notes' => 'Add additional note that is shown along with your teaser. To enable these notes on your site you should edit the "Publications" settings '.l('here','cp/features'),
+	);
+	
+	if(!$a_desc) $a_desc = $a_default_descriptions;
+	
+	foreach ($a_desc as $key => $description) {
+		if(!array_key_exists($key,$form)) continue;
+		if(is_array($description)){
+			$form[$key] = _scholar_publications_add_field_descriptions($form[$key],$description);
+		}else{
+			$form[$key]['#description'] = $description;
+		}
+	}
+	
+	return $form;
 }
 
 /**

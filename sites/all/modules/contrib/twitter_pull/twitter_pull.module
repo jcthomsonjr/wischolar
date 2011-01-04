@@ -9,7 +9,8 @@
 require_once (dirname(__FILE__) . '/twitter_pull.class.inc');
 
 define ('TWITTER_PULL_NUM_ITEMS', 5);
-define ('TWITTER_PULL_CACHE_LENGTH', 20); //-- cache for 20 minutes
+define ('TWITTER_PULL_CACHE_LENGTH', 0); //-- cache for x minutes
+define ('TWITTER_PULL_REFRESH_DELAY', 20); //-- Refresh every 20 mins
 define ('TWITTER_PULL_EMPTY_MESSAGE', "No Tweets");
 
 define ('TWITTER_PULL_CACHE_TABLE', 'cache_pulled_tweets');
@@ -26,17 +27,21 @@ function twitter_pull_empty_message() {
   return variable_get('twitter_pull_empty_message', TWITTER_PULL_EMPTY_MESSAGE);
 }
 
+function twitter_pull_refresh_delay() {
+  return variable_get('twitter_pull_refresh_delay', TWITTER_PULL_REFRESH_DELAY);
+}
+
 /**
 * Implementation of hook_flush_caches;
 */
 function twitter_pull_flush_caches() {
-  return array(TWITTER_PULL_CACHE_TABLE);
+  return cache_clear_all(NULL, TWITTER_PULL_CACHE_TABLE);;
 }
 
 
 /**
 * Retrieves appropriate tweets (by username, hashkey or search term) and passes over to the theming
-* function with $themekey key passing tweets array along. 
+* function with $themekey key passing tweets array along.
 
 * <p>The rest of this module needs to make sure that corresponding theming
 * functions exist, exist tweets array and perform desired theming.
@@ -62,27 +67,52 @@ function twitter_pull_render ($twitkey, $title = NULL, $num_items = NULL, $theme
   
   $tweets = array();
   
-  if (!empty($cache) && !empty($cache->data)) {
-    $tweets =  $cache->data;
-  }
-  else {
+  $refresh_delay = twitter_pull_refresh_delay();
+  $refresh = $refresh_delay && ($cache->created < (time() - ($refresh_delay * 60)));
+  if (empty($cache) || empty($cache->data) || $refresh) {
     
     try {
       
       $puller = new twitter_puller($twitkey, $themekey, $num_items);
       $puller->get_items();
-      $tweets = $puller->tweets;    
+      $tweets = $puller->tweets;
+      // Pad out tweets with items from the cache
+      if (($count = ($num_items - count($tweets))) && $cache->data) {
+        $i = 0;
+        $tweet_ids = array_map('twitter_pull_map_ids', $tweets);
+        while ($count > 0 && $i < count($cache->data)) {
+          if (!in_array($cache->data[$i]->id, $tweet_ids)) {
+            $tweets[] = $cache->data[$i];
+            $count--;
+          }
+          $i++;
+        }
+      }
+      
       
     } catch (Exception $e) {
-      watchdog('Twitter Pull', $e->getMessage(), array(), WATCHDOG_WARNING);
-      return twitter_pull_empty_message();
+    	if (!empty($cache) && !empty($cache->data)) {
+        $tweets =  $cache->data;
+      }else{
+    	  watchdog('Twitter Pull', $e->getMessage(), array(), WATCHDOG_WARNING);
+        return twitter_pull_empty_message();
+      }
     }
     
     if (!empty($tweets) && is_array($tweets)) {
       $cache_length = twitter_pull_cache_length() * 60; //-- in the settings we indicate length in minutes, here we need seconds.
       cache_set($cache_key, $tweets, TWITTER_PULL_CACHE_TABLE, time() + $cache_length);
+      
+      if ($cache_length = twitter_pull_cache_length()) {
+        $cache_length = ($cache_length * 60) + time();
+      }
+      
+      cache_set($cache_key, $tweets, TWITTER_PULL_CACHE_TABLE, $cache_length);
+      
     }
 
+  }else{
+    $tweets = $cache->data;
   }
 
   $ret = theme($themekey, $tweets, $twitkey, $title);
@@ -96,6 +126,10 @@ function twitter_pull_render ($twitkey, $title = NULL, $num_items = NULL, $theme
   
   return $ret;
   
+}
+
+function twitter_pull_map_ids($cached_data) {
+  return $cached_data->id;
 }
 
 /**
@@ -145,6 +179,6 @@ function twitter_pull_menu() {
 }
 
 function twitter_pull_test() {
-  return twitter_pull_render('@inadarei');  
+  return twitter_pull_render('@inadarei');
 }
 */
