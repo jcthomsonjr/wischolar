@@ -161,9 +161,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
       "#value" => 1
     );
     $form['filetype']['#type'] = 'radios';
-    //unset($form['filetype']['#options']['0']);
     unset( $form['filetype']['#options']['none']);
-    //array_shift( $form['filetype']['#options'] );
     $form['filetype']['#default_value'] = 'bib';
     // just unset the taxonomy settings for now.
     unset($form['import_taxonomy']);
