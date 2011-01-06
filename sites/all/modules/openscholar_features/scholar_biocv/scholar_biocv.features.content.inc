@@ -6,6 +6,72 @@
 function scholar_biocv_content_default_fields() {
   $fields = array();
 
+  // Exported field: field_hook_text
+  $fields['bio-field_hook_text'] = array(
+    'field_name' => 'field_hook_text',
+    'type_name' => 'bio',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => '4',
+      'size' => 60,
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_hook_text][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Hook Text',
+      'weight' => '-4',
+      'description' => 'This text is used with the "Bio Hook" widget.  Text that is entered here will display in the widget and serves as a hook to draw people to your bio.',
+      'type' => 'text_textarea',
+      'module' => 'text',
+    ),
+  );
+
   // Exported field: field_cv_attached
   $fields['cv-field_cv_attached'] = array(
     'field_name' => 'field_cv_attached',
@@ -69,6 +135,7 @@ function scholar_biocv_content_default_fields() {
 
   // Translatables
   // Included for use with string extractors like potx.
+  t('Hook Text');
   t('PDF Upload');
 
   return $fields;
