@@ -227,7 +227,6 @@ function scholar_events_views_default_views() {
     'name' => 'navigation',
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
-  
   $handler->override_option('style_options', array(
     'grouping' => '',
     'style' => 'compact',

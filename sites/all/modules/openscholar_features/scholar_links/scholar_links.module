@@ -2,26 +2,6 @@
 
 include_once('scholar_links.features.inc');
 
-/**
- *  hook_strongarm().
- */
-function scholar_links_strongarm() {
-
- 
-  $conf['node_options_link'] = array('status', 'revision');
-  $conf['upload_link'] = TRUE;
-  
-  $conf["show_preview_changes_link"] = FALSE;
-  $conf["show_diff_inline_link"] = FALSE;
- 
-  // Comments
-  $conf['comment_link'] = COMMENT_NODE_DISABLED;
- 
-  // Pathauto (optional) settings
-  $conf["pathauto_node_link_pattern"] = "[space-og-path]/links/[title-raw]";
- 
-  return $conf;
-}
 
 /**
  * Implementation of hook_context_links_alter().

@@ -1,23 +1,6 @@
 <?php
 include_once('scholar_software.features.inc');
 
-/**
- * Implementation of hook_strongarm()
- */
-function scholar_software_strongarm(){
-  $conf = array();
- 
-  // Pathauto (optional) settings
-  $conf["pathauto_node_scholar_software_project_pattern"] = "[space-og-path]/scholar_software/[title-raw]";
-  $conf["pathauto_node_scholar_software_release_pattern"] = "[space-og-path]/scholar_software/[field_scholar_software_project-title-raw]/[field_versionmajor-raw]-[field_versionpatch-raw]-[field_versionextra-raw]";
-  
-  // Comments
-  $conf['comment_scholar_software_project'] = COMMENT_NODE_DISABLED;
-  $conf['comment_scholar_software_release'] = COMMENT_NODE_DISABLED;
-  
-  return $conf;
-}
-
 
 /**
  * Implementation of hook_scholar_admin_link() on behalf of the node module.

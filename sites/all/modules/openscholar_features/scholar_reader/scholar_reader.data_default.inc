@@ -48,29 +48,29 @@ function scholar_reader_data_default() {
     ),
     'indexes' => array(
       'feed_nid' => array(
-        '0' => 'feed_nid',
+        0 => 'feed_nid',
       ),
       'id' => array(
-        '0' => 'id',
+        0 => 'id',
       ),
       'timestamp' => array(
-        '0' => 'timestamp',
+        0 => 'timestamp',
       ),
       'guid' => array(
-        '0' => array(
-          '0' => 'guid',
-          '1' => 255,
+        0 => array(
+          0 => 'guid',
+          1 => 255,
         ),
       ),
       'url' => array(
-        '0' => array(
-          '0' => 'url',
-          '1' => 255,
+        0 => array(
+          0 => 'url',
+          1 => 255,
         ),
       ),
     ),
     'primary key' => array(
-      '0' => 'id',
+      0 => 'id',
     ),
   );
   $data_table->meta = array(

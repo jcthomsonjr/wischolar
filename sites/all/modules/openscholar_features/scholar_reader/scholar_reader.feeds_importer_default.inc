@@ -28,27 +28,27 @@ function scholar_reader_feeds_importer_default() {
         'update_existing' => 0,
         'expire' => '2419200',
         'mappings' => array(
-          '0' => array(
+          0 => array(
             'source' => 'title',
             'target' => 'title',
             'unique' => 0,
           ),
-          '1' => array(
+          1 => array(
             'source' => 'description',
             'target' => 'description',
             'unique' => 0,
           ),
-          '2' => array(
+          2 => array(
             'source' => 'url',
             'target' => 'url',
             'unique' => 1,
           ),
-          '3' => array(
+          3 => array(
             'source' => 'guid',
             'target' => 'guid',
             'unique' => 1,
           ),
-          '4' => array(
+          4 => array(
             'source' => 'timestamp',
             'target' => 'timestamp',
             'unique' => FALSE,

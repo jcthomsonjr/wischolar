@@ -6,7 +6,7 @@
 function scholar_software_menu_default_menu_links() {
   $menu_links = array();
 
-  // Exported menu link: features:scholar_software
+  // Exported menu link: features:software
   $menu_links['features:software'] = array(
     'menu_name' => 'features',
     'link_path' => 'software',

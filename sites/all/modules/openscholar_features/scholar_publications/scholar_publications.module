@@ -34,30 +34,6 @@ function scholar_publications_init(){
 }
 
 /**
- *  hook_strongarm().
- */
-function scholar_publications_strongarm() {
-
-  $conf['biblio_sort_tabs'] = array('author'=>'author', 'title'=>'title', 'type'=>'type', 'year'=>'year'); //Change the default
-  $conf['node_options_biblio'] = array('status', 'revision');
-  $conf['upload_biblio'] = TRUE;
-
-  $conf["show_preview_changes_biblio"] = FALSE;
-  $conf["show_diff_inline_biblio"] = FALSE;
-
-  // Comments
-  $conf['comment_biblio'] = COMMENT_NODE_DISABLED;
-
-  // Pathauto (optional) settings
-  $conf["pathauto_node_biblio_pattern"] = "[space-og-path]/publications/[title-raw]";
-
-  $conf["biblio_base"] = "publications";
-
-  return $conf;
-}
-
-
-/**
  * Implementation of hook_context_links_alter().
  */
 function scholar_publications_context_links_alter(&$links) {

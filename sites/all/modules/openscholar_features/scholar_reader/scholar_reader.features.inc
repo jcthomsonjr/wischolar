@@ -74,6 +74,9 @@ function scholar_reader_ctools_plugin_api() {
   elseif ($module == "feeds" && $api == "feeds_importer_default") {
     return array("version" => 1);
   }
+  elseif ($module == "strongarm" && $api == "strongarm") {
+    return array("version" => 1);
+  }
 }
 
 /**

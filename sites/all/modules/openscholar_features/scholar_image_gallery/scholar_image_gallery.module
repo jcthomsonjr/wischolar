@@ -33,31 +33,6 @@ function scholar_image_gallery_context_links_alter(&$links){
 
 
 /**
- * hook strongarm
- * @return unknown_type
- */
-function scholar_image_gallery_strongarm(){
-  $conf = array();
-  $conf['upload_image'] = 0;
-  $conf['upload_gallery'] = 0;
-  
-  $conf["show_preview_changes_gallery"] = FALSE;
-  $conf["show_diff_inline_gallery"] = FALSE;
-  $conf["show_preview_changes_image"] = FALSE;
-  $conf["show_diff_inline_image"] = FALSE;
-  
-  // Comments
-  $conf['comment_image'] = COMMENT_NODE_DISABLED;
-  $conf['comment_gallery'] = COMMENT_NODE_DISABLED;
-
-  // Pathauto (optional) settings
-  $conf["pathauto_node_image_pattern"] = "[space-og-path]/galleries/[field_gallery-path]/[title-raw]";
-  $conf["pathauto_node_gallery_pattern"] = "[space-og-path]/galleries/[title-raw]";
-  
-  return $conf;
-}
-
-/**
  * hook vsite_sidgets
  * @return unknown_type
  */

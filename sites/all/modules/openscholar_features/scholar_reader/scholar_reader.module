@@ -6,32 +6,6 @@ function scholar_reader_init(){
   drupal_add_css(drupal_get_path('module', 'scholar_reader') .'/theme/scholar-reader.css');
 }
 
-/**
- * hook strongarm
- */
-function scholar_reader_strongarm(){
-  $conf = array();
-
-  $conf["show_preview_changes_feed"] = FALSE;
-  $conf["show_diff_inline_feed"] = FALSE;
-
-  $conf['node_options_feed'] = array('status');
-  $conf['upload_feed'] = FALSE;
-
-  // Comments
-  $conf['comment_feed'] = COMMENT_NODE_DISABLED;
-
-  // Pathauto (optional) settings
-  $conf["pathauto_node_feed_pattern"] = "[space-og-path]/feeds/[title-raw]";
-
-  //Max number of feeds to proccess at once (per cron)
-  $conf['feeds_schedule_num'] = 30;
-  
-  // vertical tabs
-  $conf['vertical_tabs_forms']['feed_node_form'] = array('feeds' => FALSE);
-  
-  return $conf;
-}
 
 
 /**

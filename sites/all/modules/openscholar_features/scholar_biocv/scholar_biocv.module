@@ -156,56 +156,6 @@ function scholar_biocv_cv(){
   return $s_out;
 }
 
-function scholar_biocv_strongarm(){
-  $conf = array();
-  $conf['content_profile_use_bio'] = 1;
-  $conf['content_profile_bio'] = array(
-    'weight' => 0,
-    'user_display' => 0,
-    'edit_link' => 0,
-    'edit_tab' => '0',
-    'add_link' => 0,
-    'registration_use' => 0,
-    'admin_user_create_use' => 0,
-    'registration_hide' => array(
-      'other'
-    )
-  );
-
-  $conf['content_profile_use_cv'] = 1;
-  $conf['content_profile_cv'] = array(
-    'weight' => 0,
-    'user_display' => 0,
-    'edit_link' => 0,
-    'edit_tab' => '0',
-    'add_link' => 0,
-    'registration_use' => 0,
-    'admin_user_create_use' => 0,
-    'registration_hide' => array(
-      'other'
-    )
-  );
-
-  // Disable preview button
-  $conf["show_preview_changes_bio"] = TRUE;
-  $conf["show_diff_inline_bio"] = TRUE;
-  $conf["show_preview_changes_cv"] = TRUE;
-  $conf["show_diff_inline_cv"] = TRUE;
-
-  $conf['node_options_bio'] = array('status', 'revision');
-  $conf['node_options_cv'] = array('status');
-  $conf['upload_bio'] = TRUE;
-  $conf['upload_cv'] = FALSE;
-
-
-  // Comments
-  $conf['comment_bio'] = COMMENT_NODE_DISABLED;
-  $conf['comment_cv'] = COMMENT_NODE_DISABLED;
-
-  // Pathauto (optional) settings
-  // ?
-  return $conf;
-}
 
 /**
  * Edit cv form to add checkbox for toggle

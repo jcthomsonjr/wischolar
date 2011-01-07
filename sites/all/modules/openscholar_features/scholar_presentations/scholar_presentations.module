@@ -26,28 +26,3 @@ function scholar_presentations_vsite_widgets(){
 
       return $items;
 }
-
-/**
- * Implementation of hook_strongarm()
- */
-function scholar_presentations_strongarm(){
-  $conf = array();
-
-  // Disable preview button
-  $conf["show_preview_changes_presentation"] = FALSE;
-  $conf["show_diff_inline_presentation"] = FALSE;
-
-  $conf['node_options_presentation'] = array('status', 'revision');
-  $conf['upload_presentation'] = FALSE;
-
-  // Comments
-  $conf['comment_presentation'] = COMMENT_NODE_DISABLED;
-
-  // Pathauto (optional) settings
-  $conf["pathauto_node_presentation_pattern"] = "[space-og-path]/presentations/[title-raw]";
-
-  // submitted info
-  $conf['node_submitted_info_presentation'] = TRUE;
-
-  return $conf;
-}

@@ -81,40 +81,6 @@ function scholar_book_link_alter(&$links, $node){
   $links['book_add_child']['attributes']['class'] = 'context-button';
 }
 
-
-/**
- * Implementation of hook_strongarm().
- */
-function scholar_book_strongarm() {
-  // only book pages can be used in books
-
-  /*
-  $book_types = $types = og_get_types('group_post');
-  $conf['book_allowed_types'] = array_keys($book_types);
-  */
-
-  $conf['book_allowed_types'] = array('book', 'class_material');
-
-  $conf['node_options_book'] = array('status', 'revision');
-
-  $conf['upload_book'] = TRUE;
-
-  // Comments
-  $conf['comment_book'] = COMMENT_NODE_DISABLED;
-
-  // Disable Diff button
-  $conf["show_preview_changes_book"] = FALSE;
-  $conf["show_diff_inline_book"] = TRUE;
-
-  // Pathauto
-  $conf["pathauto_node_book_pattern"] = "[space-og-path]/book/[title-raw]";
-
-  // vertical tabs
-  $conf['vertical_tabs_forms']['book_node_form'] = array('book' => FALSE);
-
-  return $conf;
-}
-
 /**
  * Implementation of hook_spaces_settings().
  */

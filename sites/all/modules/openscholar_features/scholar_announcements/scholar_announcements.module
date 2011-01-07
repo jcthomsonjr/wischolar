@@ -3,31 +3,6 @@
 include_once('scholar_announcements.features.inc');
 
 /**
- * Implementation of hook_strongarm()
- */
-function scholar_announcements_strongarm(){
-  $conf = array();
-
-  // Disable preview button
-  $conf["show_preview_changes_announcement"] = FALSE;
-  $conf["show_diff_inline_announcement"] = FALSE;  
- 
-  $conf['node_options_announcement'] = array('status', 'revision');
-  $conf['upload_announcement'] = TRUE;
- 
-  // Comments
-  $conf['comment_announcement'] = COMMENT_NODE_DISABLED;
- 
-  // Pathauto (optional) settings
-  $conf["pathauto_node_announcement_pattern"] = "[space-og-path]/announcements/[title-raw]";
-  
-  // submitted info
-  $conf['node_submitted_info_announcement'] = TRUE;
- 
-  return $conf;
-}
-
-/**
  * Implementation of hook_context_links_alter().
  */
 function scholar_announcements_context_links_alter(&$links) {

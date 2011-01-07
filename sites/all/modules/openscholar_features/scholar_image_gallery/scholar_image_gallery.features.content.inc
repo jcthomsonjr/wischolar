@@ -67,6 +67,7 @@ function scholar_image_gallery_content_default_fields() {
         'destination' => 'node',
       ),
       'fallback' => 'select',
+      'edit_fallback' => NULL,
       'label' => 'Gallery',
       'weight' => '-3',
       'description' => '',
