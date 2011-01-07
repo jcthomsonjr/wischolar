@@ -1,5 +1,11 @@
 <?php
 
+function phptemplate_preprocess_page(&$vars, $hook) {
+$body_classes = array($vars['body_classes']);
+$body_classes[] = 'openscholar-admin';
+$vars['body_classes'] = implode(' ', $body_classes);
+}
+
 /**
  * Form theming for the block customizer settings form.
  *

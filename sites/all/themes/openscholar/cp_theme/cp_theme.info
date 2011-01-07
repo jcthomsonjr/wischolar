@@ -1,6 +1,21 @@
-name        = OpenScholar Top Admin Menu
-description = Adds admin top menu for OpenScholar
-screenshot = screenshot.png
-core       = 6.x
-base theme = rubik
-engine     = phptemplate
+name        = OpenScholar Admin
+description = Reformats visuals in Rubik theme for OpenScholar
+screenshot  = screenshot.png
+core        = 6.x
+base theme  = rubik
+engine      = phptemplate
+
+;------ styles ------
+;stylesheets[screen][]   = style.css
+stylesheets[screen][]   = css/cp-theme.css
+stylesheets[screen][]   = css/typography.css
+stylesheets[screen][]   = css/spaces.css
+stylesheets[screen][]   = css/forms.css
+stylesheets[screen][]   = css/tabs.css
+stylesheets[screen][]   = css/admin-toolbar.css
+
+;------ styles, additional ------
+conditional-stylesheets[if lte IE 7][all][] = css/ie7.css
+
+;------ scripts ------
+scripts[]   = js/cp_theme.js

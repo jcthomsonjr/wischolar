@@ -7,14 +7,19 @@ body {
   background: #FFF;
   }
 
+body.admin-menu {
+  /* Firebug bug */
+  position:static !important;
+  }
+
 #tinymce {
   background: #fff !important;
   min-width: 0 !important;
   margin: 5px !important;
   }
 
-body.admin-menu {
-  position: static !important;
+.admin-menu div#admin-toolbar.vertical {
+  top:20px;
   }
 
 .inline {
