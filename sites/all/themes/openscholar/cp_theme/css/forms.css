@@ -8,6 +8,30 @@ fieldset {
   border-right:none;
   }
 
+.vertical-tabs fieldset {
+  clear:none;
+  }
+
+.fieldset.titled {
+  padding-top: 9px;
+  }
+
+
+.fieldset-title {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  padding: 4px 19px 5px;
+  margin: 0 -10px;
+  border-right:none;
+  border-left: none;
+  }
+
+
+.form-item {
+  border: none;
+  padding: 0 9px;
+  }
 
 .block .block-content,
 .container-inline .fieldset-content,
@@ -32,15 +56,6 @@ fieldset legend, h3#modal-title {
 	font-size: 1.2em;
 	}
 
-
-.og-vocab-taxonomy {
-  border: 1px solid #dfe5e6;
-  background: #f2f5f5;
-  }
-
-.og-vocab-taxonomy legend {
-  font-size: 1em;
-  }
 
 label,
 div.form-item label,
@@ -94,6 +109,10 @@ label.option {
 input.form-text {
 	border-width: 2px;
 	}
+
+input.form-autocomplete, input.form-text, textarea.form-textarea, select.form-select {
+  border-color: #cecece #e6e6e6 #f0f0f0 #e6e6e6;
+  }
 
 
 /* DRAGGABLE AREAS */

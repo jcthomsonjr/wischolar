@@ -1,4 +1,4 @@
-body {
+body, input, textarea, select  {
   font: .85em/1.5em 'helvetica neue', helvetica, arial, sans-serif;
   }
 
@@ -51,6 +51,12 @@ a, a:visited {
   text-decoration: none;
   color: #005C9C;
   font-weight: 700;
+  }
+
+div.vertical-tabs ul.vertical-tabs-list li a {
+  font-weight: 300;
+  font-size:.9em;
+  color:#3399CC;
   }
 
 p.copy {
@@ -419,17 +425,30 @@ a.delete {
 /* BUTTONS */
 
 input.form-submit, input.form-button, button {
-  background: #e8e8e8;
+  background: url(../images/button.png) repeat-x 0 0 #e8e8e8;
   color: #000;
   border: 1px solid #c4c4c4;
-  padding: 4px 12px !important;
-  -moz-border-radius:20px;
-  -webkit-border-radius:20px;
+  border-bottom-color: #707070;
+  padding: 0 9px !important;
+  -moz-border-radius:4px;
+  -webkit-border-radius:4px;
+  border-radius:4px;
+  -moz-text-shadow:#fff 0 1px 0;
+  -webkit-text-shadow:#fff 0 1px 0;
+  text-shadow:#fff 0 1px 0;
   margin: 5px 5px 15px 0;
   cursor: pointer;
   text-align: center;
   white-space: nowrap;
   font-size: 12px;
+  }
+
+input.form-submit:hover,
+input.form-submit:active,
+button:active {
+  -moz-text-shadow:none;
+  -webkit-text-shadow:none;
+  text-shadow:none;
   }
 
 input.form-submit:active, button:active {
