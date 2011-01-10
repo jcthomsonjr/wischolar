@@ -34,7 +34,8 @@
         <?php if ($tabs2): ?><div class='secondary-tabs clear-block'><?php print $tabs2 ?></div><?php endif; ?>
         <?php if ($help) print $help ?>
         <div class='page-content clear-block'>
-          <?php if ($show_messages && $messages): ?>
+          <?php //if ($show_messages && $messages): ?>
+          <?php if ($messages): ?>
             <div id='console' class='clear-block'><?php print $messages; ?></div>
           <?php endif; ?>
 
