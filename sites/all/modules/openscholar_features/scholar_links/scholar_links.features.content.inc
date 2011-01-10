@@ -61,7 +61,7 @@ function scholar_links_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'href',
-      'weight' => '1',
+      'weight' => '-1',
       'description' => '',
       'type' => 'link',
       'module' => 'link',
