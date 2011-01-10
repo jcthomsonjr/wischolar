@@ -18,16 +18,15 @@
     <?php endif;?>
     -->
     <div id="container">
+      <!--
       <div id='branding' class='clear-block'>
         <div class='breadcrumb clear-block'><?php print $breadcrumb ?></div>
         <?php if ($user_links) print theme('links', $user_links) ?>
       </div>
+      -->
       <div id='page-title' class='clear-block'>
         <?php if ($help_toggler) print $help_toggler ?>
-        <h1 class='page-title <?php print $page_icon_class ?>'>
-          <?php if (!empty($page_icon_class)): ?><span class='icon'></span><?php endif; ?>
-          <?php if ($title) print $title ?>
-        </h1>
+        <h1 class='page-title'><span class='icon'></span><?php if ($title) print $title ?></h1>
         <?php if ($tabs): ?><?php print $tabs ?><?php endif; ?>
       </div>
 
