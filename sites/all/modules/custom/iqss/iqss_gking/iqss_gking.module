@@ -795,7 +795,8 @@ function iqss_gking_vsite_admin_link($type, $object) {
 	        'title' => t('Edit Contextual Note'),
 	        'href' => 'contextual_annotation/nojs/annotate/'.$object -> nid.'/taxonomy/'.$annotaion_key,
 	        'attributes' => array(
-	          'class' => 'ctools-use-modal edit-link'
+	          'class' => 'ctools-use-modal edit-link',
+	          'onClick' => 'window.scrollTo(0,0); return false;',
 	        ),
 	        'query' => array('destination' => $_GET['q']),
 	      );

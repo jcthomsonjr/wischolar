@@ -1387,7 +1387,7 @@ function _biblio_contributor_widget($node, $fld, $auth_category, $biblio_type, $
     $contributors = $node['biblio_contributors'][$auth_category];
   }
 
-  $contributor_count = max(4, count($contributors));
+  $contributor_count = max(2, count($contributors));
 
   $ctypes = _biblio_get_auth_types($auth_category, $biblio_type);
   // if no author types are available skip this widget

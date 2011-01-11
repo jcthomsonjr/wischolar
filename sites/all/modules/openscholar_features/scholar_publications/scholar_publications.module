@@ -109,18 +109,6 @@ function scholar_publications_spaces_settings() {
  */
 function scholar_publications_form_alter(&$form, $form_state, $form_id){
 
-  $show_form_ids = array('content_field_overview_form', 'content_display_overview_form');
-  //only show the 'field_biblio_image' field for book or book chapter nodes
-  if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))){
-    $form['field_biblio_image']['#access'] = TRUE; //only show the 'field_biblio_image' field for book or book chapter nodes
-  }
-  elseif(in_array($form_id, $show_form_ids)){
-    $form['field_biblio_image']['#access'] = TRUE;  // show the book cover image field on the content field/display edit forms
-  }
-  else{
-    $form['field_biblio_image']['#access'] = FALSE;
-  }
-
   if ($form_id == 'biblio_import_form') {
     // the original form is asking to set the userID for these entries
     // Just the group admin for now. TODO list of users for this og
@@ -143,6 +131,20 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     unset($form['import_taxonomy']);
   }
   elseif (isset($form['#node']) && $form['#node']->type === 'biblio' && $form_id == $form['#node']->type .'_node_form') {
+  	drupal_add_js(drupal_get_path('module','scholar_publications').'/theme/Drupal.scholarPublications.js');
+  	
+	  $show_form_ids = array('content_field_overview_form', 'content_display_overview_form');
+	  //only show the 'field_biblio_image' field for book or book chapter nodes
+	  if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))){
+	    $form['field_biblio_image']['#access'] = TRUE; //only show the 'field_biblio_image' field for book or book chapter nodes
+	  }
+	  elseif(in_array($form_id, $show_form_ids)){
+	    $form['field_biblio_image']['#access'] = TRUE;  // show the book cover image field on the content field/display edit forms
+	  }
+	  else{
+	    $form['field_biblio_image']['#access'] = FALSE;
+	  }
+  	
   	if($form_state['storage']['biblio_type'] || $form['#node']->biblio_type){
   		_scholar_publications_modify_contributor($form);
   	}else{
@@ -179,7 +181,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
       $form['contributors2_wrapper'] ['#weight'] = -3.5;
     }
     
-    if(array_key_exists('copy_to_biblio',$form['taxonomy'])){
+    if(is_array($form['taxonomy']) && array_key_exists('copy_to_biblio',$form['taxonomy'])){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
     }
     
@@ -189,7 +191,6 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     $form['#vertical_tabs']['contributors1_wrapper'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors2_wrapper'] = 0; //Disable vert. tabs
 
-    $form = _scholar_publications_add_field_descriptions($form);
   }
 }
 
@@ -719,29 +720,6 @@ function _scholar_publications_get_plain_citation($node){
   return $citation;
 }
 
-/**
- * Add descriptions to biblio fields that need them
- */
-function _scholar_publications_add_field_descriptions($form, $a_desc = false){
-	
-	$a_default_descriptions = array(
-	  'biblio_pages' => "The page(s) that reference your publication is ex(36, or 23-25)",
-	  'biblio_notes' => 'Add additional note that is shown along with your teaser. To enable these notes on your site you should edit the "Publications" settings '.l('here','cp/features'),
-	);
-	
-	if(!$a_desc) $a_desc = $a_default_descriptions;
-	
-	foreach ($a_desc as $key => $description) {
-		if(!array_key_exists($key,$form)) continue;
-		if(is_array($description)){
-			$form[$key] = _scholar_publications_add_field_descriptions($form[$key],$description);
-		}else{
-			$form[$key]['#description'] = $description;
-		}
-	}
-	
-	return $form;
-}
 
 /**
  * hook link_alter

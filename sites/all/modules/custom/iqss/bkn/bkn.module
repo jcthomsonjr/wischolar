@@ -58,7 +58,7 @@ function bkn_nodeapi(& $node, $op, $a3, $a4) {
       case 'update':
         if(!empty($node->biblio_contributors)){
           $md5 = _loadMD5();
-          foreach ($node->biblio_contributors as $cat => $authors) { 
+          foreach ($node->biblio_contributors as $cat => $authors) {
             foreach ($authors as $key => $author) {
               if (empty ($author['cid']) && !empty ($md5))
                 $author['cid'] = array_search($author['md5'], $md5);
@@ -72,9 +72,9 @@ function bkn_nodeapi(& $node, $op, $a3, $a4) {
               
               //Update the contributor_data so that it matches bkn
               if($cid){
-                db_query("UPDATE {biblio_contributor_data} 
-                          SET bkn_identifier = '%s', bkn_fullname = '%s', bkn_url = '%s' 
-                          WHERE cid = %d ", 
+                db_query("UPDATE {biblio_contributor_data}
+                          SET bkn_identifier = '%s', bkn_fullname = '%s', bkn_url = '%s'
+                          WHERE cid = %d ",
                           $author['bkn_id'] , $author['bkn_name'] , $author['bkn_url'] ,$cid);
                 return true; // successfully saved all contributors
               }
@@ -98,70 +98,79 @@ function bkn_form_validate($form, $form_state) {
 * Implementation of hook_form_alter().
 */
 function bkn_form_alter(&$form, $form_state, $form_id) {
-  if($form_id != "biblio_node_form") return;
+  if($form_id == "biblio_node_form"){
   
-  // add the Drupal.ajaxUpdateContributor.js file
-  drupal_add_js(drupal_get_path('module', 'bkn').'/ajaxUpdateContributor.js', 'module', 'header', true);
-  
-  $form['#validate'][] = 'bkn_form_validate'; 
-  
-  $i = 1;
-  while (array_key_exists('contributors'.$i.'_wrapper',$form)){
-    $key = 'contributors'.$i.'_wrapper';
-    
-    foreach ($form[$key]['biblio_contributors'] as $fields_key => $a_fields) {
-      
-         //Disable the Draggable theme it will mess us up
-      if(array_key_exists('#theme',$a_fields)){
-    	  $form[$key]['biblio_contributors'][$fields_key]['#theme'] = 'bkn_contributors';
-    	}
-      
-    	$use_autocomplete = variable_get('bkn_allow_autocomplete',1);
-    	$n_lookup_mode = variable_get('bkn_mode',2);
-    	foreach ($a_fields as $s_key => $a_field){
-    		if(substr($s_key,0,1) == "#") continue;
-    		
-    		
-    		//No autocomplete
-    		if(!$use_autocomplete && 
-    		    array_key_exists('name',$a_field) && 
-    		    array_key_exists('#autocomplete_path',$a_field['name'])){
-    		      
-    		  unset($form[$key]['biblio_contributors'][$fields_key][$s_key]['name']['#autocomplete_path']);
-    		}
-    		
-    		$a_parents = $a_field['name']['#parents'];
-    		array_pop($a_parents); //Get rid of the name
-    		
-    	  if(array_key_exists('rank',$a_field)){
-    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['rank']['#type'] = 'hidden';
-    		}
-    		
-    	  if($n_lookup_mode == 1 && !array_key_exists('check_bkn',$a_field)){
-    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['check_bkn'] = array('#type' => 'checkbox', '#title' => 'Use bkn Database', '#parents' => array_merge($a_parents,array('check_bkn')), '#attributes' => array('class' => 'bknContributorCheck') );
-    		}
-    		
-    		if(!array_key_exists('bkn_id',$a_field)){
-    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['bkn_id'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_id')), '#default_value' => '');
-    		}
-    		
-    	  if(!array_key_exists('bkn_name',$a_field)){
-    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['bkn_name'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_name')), '#default_value' => '');
-    		}
-    		
-    	    if(!array_key_exists('bkn_url',$a_field)){
-    		  $form[$key]['biblio_contributors'][$fields_key][$s_key]['bkn_url'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_url')), '#default_value' => '');
-    		}
-    	}
-    }
-    
-    $i++;
+	  // add the Drupal.ajaxUpdateContributor.js file
+	  drupal_add_js(drupal_get_path('module', 'bkn').'/ajaxUpdateContributor.js', 'module', 'header', true);
+	  
+	  $form['#validate'][] = 'bkn_form_validate';
+	  
+	  $i = 1;
+	  while (array_key_exists('contributors'.$i.'_wrapper',$form)){
+	    $key = 'contributors'.$i.'_wrapper';
+	    
+	    foreach ($form[$key]['biblio_contributors'] as $fields_key => $a_fields) {
+	      
+	    	//Disable the Draggable theme it will mess us up
+	      if(array_key_exists('#theme',$a_fields)){
+	    	  $form[$key]['biblio_contributors'][$fields_key]['#theme'] = 'bkn_contributors';
+	    	}
+	      
+	    	foreach ($a_fields as $s_key => $a_field){
+	    		if(substr($s_key,0,1) == "#") continue;
+	    		
+	    		_bkn_alter_contributor($form[$key]['biblio_contributors'][$fields_key][$s_key]);
+	    	}
+	    }
+	    
+	    $i++;
+	  }
+	  
+	  /* register the behavior -----> Drupal.behaviors.bknGetContrbutors < --------- */
+	  $settings['bknGetContrbutors'] = array();
+	  drupal_add_js($settings, 'setting');
+  }elseif ($form_id == 'biblio_contributors_js'){
+    //Modify the contributors
+    _bkn_alter_contributor($form);
   }
   
-  /* register the behavior -----> Drupal.behaviors.bknGetContrbutors < --------- */
-  $settings['bknGetContrbutors'] = array();
-  drupal_add_js($settings, 'setting');
+}
+
+function _bkn_alter_contributor(&$element){
+	$use_autocomplete = variable_get('bkn_allow_autocomplete',1);
+  $n_lookup_mode = variable_get('bkn_mode',2);
   
+  //No autocomplete
+  if(!$use_autocomplete &&
+    array_key_exists('name',$element) &&
+    array_key_exists('#autocomplete_path',$element['name'])){
+                
+    unset($element['name']['#autocomplete_path']);
+  }
+          
+  $a_parents = $element['name']['#parents'];
+  array_pop($a_parents); //Get rid of the name
+          
+  if(array_key_exists('rank',$element)){
+    $element['rank']['#type'] = 'hidden';
+  }
+          
+  if($n_lookup_mode == 1 && !array_key_exists('check_bkn',$element)){
+    $element['check_bkn'] = array('#type' => 'checkbox', '#title' => 'Use bkn Database', '#parents' => array_merge($a_parents,array('check_bkn')), '#attributes' => array('class' => 'bknContributorCheck') );
+  }
+          
+  if(!array_key_exists('bkn_id',$element)){
+    $element['bkn_id'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_id')), '#default_value' => '');
+  }
+          
+  if(!array_key_exists('bkn_name',$element)){
+    $element['bkn_name'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_name')), '#default_value' => '');
+  }
+          
+  if(!array_key_exists('bkn_url',$element)){
+    $element['bkn_url'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_url')), '#default_value' => '');
+  }
+	
 }
 
 function bkn_theme($existing, $type, $theme, $path) {
@@ -190,7 +199,7 @@ function bkn_menu_alter(&$items) {
  *
  * @param string $field
  * @param string $string
- * @deprecated 
+ * @deprecated
  */
 function bkn_menu_autocomplete($field, $string = '') {
   $matches = array();
@@ -218,6 +227,6 @@ function bkn_menu_autocomplete($field, $string = '') {
  * @return array
  */
 function bkn_call_service($s_search){
-  return array(); 
+  return array();
 
 }
