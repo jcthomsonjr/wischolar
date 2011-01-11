@@ -24,13 +24,9 @@ div.ctools-modal-content {
   padding-bottom: 0;
   }
 
-div.ctools-modal-content .modal-title {
-  font-size: 110%;
-  font-weight: bold;
-  overflow: hidden;
-  white-space: nowrap;
-  color: #adb6bf;
-}
+div.ctools-modal-content {
+  height: 100%;
+  }
 
 div.ctools-modal-content .modal-header {
   background-color: #fff;
@@ -51,15 +47,13 @@ div.ctools-modal-content .modal-content {
 div.ctools-modal-content .modal-form {
 }
 
-#modalContent a.close {
-  position:absolute;
-  display:block;
-  width: 70px;
-  height:59px;
-  background: url(../images/close-ctools.png) no-repeat 0 0 transparent;
-  bottom: 35px;
-  right: 23px;
-  text-indent: -999em;
+
+.modal-header a.close {
+  display:none;
+  }
+
+#modalContent .spaces-customize-form .buttons input.form-submit {
+  margin-right: 140px;
   }
 
 div.ctools-modal-content a.close:hover {

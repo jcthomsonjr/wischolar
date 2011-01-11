@@ -50,12 +50,18 @@ legend, legend a {
   }
 
 
-fieldset legend, h3#modal-title {
+fieldset legend,
+h3#modal-title {
 	font-weight: bold;
-	color:#425e69;
-	font-size: 1.2em;
-	}
+	font-size: 1.1em;
+	overflow: hidden;
+  white-space: nowrap;
+  color: #adb6bf;
+}
 
+h3#modal-title {
+  margin-bottom: 0;
+  }
 
 label,
 div.form-item label,
@@ -84,10 +90,6 @@ div.description {
 	font-weight: normal;
 	line-height: 127%;
 	}
-
-h3#modal-title {
-  margin-bottom: 1.5em;
-  }
 
 div.fieldset, fieldset, .container-inline-date {
   background: transparent;
@@ -142,9 +144,14 @@ select.form-select:focus {
   -moz-border-top-colors: #aaccee;
   }
 
-
 div.form-radios .form-item {
   float: left;
+  }
+
+div.spaces-block-customizer {
+  border: none;
+  margin:0;
+  padding: 0;
   }
 
 /* DRAGGABLE AREAS */
