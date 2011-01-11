@@ -110,8 +110,36 @@ input.form-text {
 	border-width: 2px;
 	}
 
-input.form-autocomplete, input.form-text, textarea.form-textarea, select.form-select {
-  border-color: #cecece #e6e6e6 #f0f0f0 #e6e6e6;
+input.form-autocomplete,
+input.form-text,
+textarea.form-textarea,
+select.form-select {
+  background: url(../images/form_bg.png) repeat-x 0 0 white;
+  border-color: #707070 #ABABAB #CECECE;
+  border-style: solid;
+  -moz-border-bottom-colors: #F9F9F9 #CECECE;
+  -moz-border-left-colors: #F9F9F9 #ABABAB;
+  -moz-border-right-colors: #F9F9F9 #ABABAB;
+  -moz-border-top-colors: #F9F9F9 #707070;
+  border-width: 2px;
+  margin-top: -2px;
+  padding: 4px 3px 2px;
+  }
+
+
+input.form-autocomplete:hover,
+input.form-text:hover,
+textarea.form-textarea:hover,
+select.form-select:hover,
+input.form-autocomplete:focus,
+input.form-text:focus,
+textarea.form-textarea:focus,
+select.form-select:focus {
+  border-color:#aaccee;
+  -moz-border-bottom-colors: #aaccee;
+  -moz-border-left-colors: #aaccee;
+  -moz-border-right-colors: #aaccee;
+  -moz-border-top-colors: #aaccee;
   }
 
 
