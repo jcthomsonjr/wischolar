@@ -62,7 +62,7 @@ function scholar_publications_content_default_fields() {
       'default_value_php' => NULL,
       'label' => 'Extra Fields',
       'weight' => '5',
-      'description' => '',
+      'description' => 'You may use these fields to add extra information about your publication that may not be common to publications if this type. Ex("Publication Global ID", "http://hdl.handle.net/1902.1")',
       'type' => 'dyntextfield_widget',
       'module' => 'dyntextfield',
     ),
