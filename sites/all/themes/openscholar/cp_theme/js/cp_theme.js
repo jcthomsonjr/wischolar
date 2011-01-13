@@ -3,6 +3,8 @@ $(document).ready(function(){
 });
 
 
+// Fix all this mess
+
 Drupal.CTools.Modal.show = function(choice) {
     var opts = {};
 

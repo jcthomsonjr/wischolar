@@ -56,10 +56,14 @@ p, div.messages, #content-main .views-row, .node .content ul, .node .content ol,
   margin: 0 0 .1em 0;
   }
 
-a, a:visited {
+a:link, a:visited {
   text-decoration: none;
-  color: #005C9C;
+  color: #1c4fad;
   font-weight: 700;
+  }
+
+a:hover {
+  text-decoration: underline;
   }
 
 div.vertical-tabs ul.vertical-tabs-list li a {
@@ -104,7 +108,7 @@ p.copy a.footer-login {
   }
 
 p.copy a.footer-login:hover {
-  background: #fff !important;
+  background: #fff;
   }
 
 
@@ -114,16 +118,18 @@ ul.admin li a:visited,
 .addcategory a,
 a.ctools-dropdown-link,
 a.context-button {
-  color: #97c797 !important;
+  color: #4272DB;
+  font-weight: normal;
+
   }
 
 ul.admin li:hover a,
-ul.vsite-taxonomy-terms li:hover a,
 .addcategory:hover a,
 a.ctools-dropdown-link:hover,
 a.context-button:hover {
-  color: #228822 !important;
+  color: #4272DB !important;
   background-color: transparent !important;
+  text-decoration: underline;
   }
 
 a#help-toggler {
@@ -437,7 +443,7 @@ input.form-submit,
 input.form-button, button,
 #modalContent a.close {
   background: url(../images/button.png) repeat-x 0 0 #e8e8e8;
-  color: #000;
+  color: #000 !important;
   border: 1px solid #c4c4c4;
   border-bottom-color: #707070;
   padding: 0 9px !important;
@@ -460,9 +466,11 @@ button:active {
   -moz-text-shadow:none;
   -webkit-text-shadow:none;
   text-shadow:none;
+  text-decoration: none;
   }
 
-input.form-submit:active, button:active {
+input.form-submit:active,
+button:active {
   background:#fffcca;
   }
 
