@@ -12,7 +12,7 @@ function scholar_biocv_content_default_fields() {
     'type_name' => 'bio',
     'display_settings' => array(
       'label' => array(
-        'format' => 'above',
+        '0' => 'hidden',
         'exclude' => 0,
       ),
       '5' => array(
@@ -21,11 +21,11 @@ function scholar_biocv_content_default_fields() {
       ),
       'teaser' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '4' => array(
         'format' => 'default',
