@@ -11,10 +11,10 @@ p.copy a.footer-login,
 .img-flL,
 .img-flR,
 body.cp-toolbar-mini #top ul.links li,
-body.header-left-right #header-right,
-{
+body.header-left-right #header-right {
   display: inline;
   }
+
 
 body.two-sidebars #sidebar-left {
 	left: 220px; /* Total width, including padding of right col */
@@ -31,6 +31,16 @@ body.header-left-main-right #header-left {
 body.header-left-main #header-left {
 	left: 200px;
 	}
+
+#sidebar-left,
+#header-left {
+  margin-left: expression(
+   document.all.center.offsetWidth * -1 +
+   parseFloat(document.all.center.currentStyle.paddingLeft) +
+   parseFloat(document.all.left.currentStyle.paddingLeft) +
+   parseFloat(document.all.left.currentStyle.paddingRight)
+   ); /* Fix for IE7 */
+  }
 
 ul.menu li.leaf {
   list-style-image: none;

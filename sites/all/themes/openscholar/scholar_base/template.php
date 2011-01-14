@@ -25,10 +25,14 @@ function scholar_base_id_safe($string) {
   return $string;
 }
 
+
 /**
  * // Adds classes to the body tag.
  */
 function scholar_base_preprocess_page(&$vars, $hook) {
+
+  $vars['styles'] .= $vars['conditional_styles'] = variable_get('conditional_styles_' . $GLOBALS['theme'], '');
+
   $body_classes = array($vars['body_classes']);
 
   //Replace left and right with first and second
