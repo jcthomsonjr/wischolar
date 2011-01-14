@@ -138,7 +138,7 @@ class PARSEENTRIES
    */
   function PARSEENTRIES()
   {
-    require_once(drupal_get_path('module', 'biblio') . '/bibtexParse/transtab_latex_unicode.inc.php');
+    require(drupal_get_path('module', 'biblio') . '/bibtexParse/transtab_latex_unicode.inc.php');
     $this->preamble = $this->strings = $this->undefinedStrings = $this->entries = array();
     $this->count = 0;
     $this->fieldExtract = TRUE;
@@ -452,15 +452,17 @@ class PARSEENTRIES
       {
         // throw all characters before the '@'
         $line=strstr($line,'@');
-        if(!strchr($line, "{") && !strchr($line, "("))
+        if(!strchr($line, "{") && !strchr($line, "(")) {
         $possibleEntryStart = $line;
-        elseif(preg_match("/@.*([{(])/U", preg_quote($line), $matches))
-        {
+        }
+        elseif(preg_match("/@.*([{(])/U", preg_quote($line), $matches)) {
           $inside = TRUE;
-          if ($matches[1] == '{')
+          if ($matches[1] == '{') {
           $delimitEnd = '}';
-          else
+          }
+          else {
           $delimitEnd = ')';
+          }
           $possibleEntryStart = FALSE;
         }
       }
@@ -638,8 +640,10 @@ class PARSEENTRIES
 			  $function ($entry, $node);
 			}
       
-      
-      $nids[] = biblio_save_node($node, $batch, $session_id, $save);
+      $nid = biblio_save_node($node, $batch, $session_id, $save);
+      if (isset($nid)) {
+        $nids[] = $nid;
+      }
     }
     return (!empty($nids)) ? $nids : NULL;
   }
