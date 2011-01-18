@@ -271,8 +271,12 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
     case 'presave':
 
       $vsite = vsite_get_vsite();
-      $gid = $vsite -> sid;
-      $node -> og_groups = array($gid);
+      $node -> og_groups = array($vsite -> sid);
+      
+      //remove newline charcters from the abstract (displayed as breaks by filters)
+      if(strlen($node->biblio_abst_e)){
+        $node->biblio_abst_e = str_replace(array("\r\n", "\r", "\n"), " ", $node->biblio_abst_e);
+      }
     break;
     case 'update':
       drupal_set_message('publication node updated');
