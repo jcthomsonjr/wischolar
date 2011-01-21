@@ -174,17 +174,19 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     $form['submit_type'] = array('#type' => 'submit', '#disabled' => true, '#access' => false, '#value' => t('Select Publication Type'));
 
 
-    //authors should always be open
     if(array_key_exists('author',$form)){
       $form['author'] ['#collapsed'] = false;
     }
 
+    if(array_key_exists('biblio_abst_e_field',$form) && array_key_exists('biblio_abst_e',$form['biblio_abst_e_field'])){
+      $form['biblio_abst_e'] = $form['biblio_abst_e_field']['biblio_abst_e'];
+      unset($form['biblio_abst_e_field']);
+    }//remove fieldset
+    
     if(is_array($form['taxonomy']) && array_key_exists('copy_to_biblio',$form['taxonomy'])){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
     }
 
-    $form['biblio_abst_e_field']['#collapsed'] = false;
-    
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['biblio_abst_e_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['body_field'] = 0; //Disable vert. tabs
@@ -202,7 +204,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     );
     
     //Move these form elements into thier own group
-    foreach (array('field_biblio_extra','biblio_notes','biblio_url','attachments', 'field_biblio_image','body_field','biblio_abst_e_field','biblio_abst_f_field') as $extra_field){
+    foreach (array('field_biblio_extra','biblio_notes','biblio_url','attachments', 'field_biblio_image','body_field','biblio_abst_e_field','biblio_abst_e') as $extra_field){
       if(array_key_exists($extra_field,$form)){
         $form['extra_fields_group'][$extra_field] = $form[$extra_field];
         unset($form[$extra_field]);
