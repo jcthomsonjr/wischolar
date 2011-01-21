@@ -143,6 +143,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 	  }
 	  else{
 	    $form['field_biblio_image']['#access'] = FALSE;
+	    if(isset($form['field_biblio_image'][0])) $form['field_biblio_image'][0]['#access'];
 	  }
 
   	if($form_state['storage']['biblio_type'] || $form['#node']->biblio_type){
@@ -195,21 +196,23 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     $form['#vertical_tabs']['attachments'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['extra_fields_group'] = 0; //Disable vert. tabs
 
-    $form['extra_fields_group'] = array(
-      '#type' => 'fieldset',
-		  '#title' => t('Publication Extras'),
-		  '#weight' => 29,
-		  '#collapsible' => TRUE,
-		  '#collapsed' => TRUE,
-    );
-    
-    //Move these form elements into thier own group
-    foreach (array('field_biblio_extra','biblio_notes','biblio_url','attachments', 'field_biblio_image','body_field','biblio_abst_e_field','biblio_abst_e') as $extra_field){
-      if(array_key_exists($extra_field,$form)){
-        $form['extra_fields_group'][$extra_field] = $form[$extra_field];
-        unset($form[$extra_field]);
-      }
-    }
+    if(strlen($form['biblio_type']['#default_value'])){
+	    $form['extra_fields_group'] = array(
+	      '#type' => 'fieldset',
+			  '#title' => t('Publication Extras'),
+			  '#weight' => 29,
+			  '#collapsible' => TRUE,
+			  '#collapsed' => TRUE,
+	    );
+	    
+	    //Move these form elements into thier own group
+	    foreach (array('field_biblio_extra','biblio_notes','biblio_url','attachments', 'field_biblio_image','body_field','biblio_abst_e_field','biblio_abst_e') as $extra_field){
+	    	if(array_key_exists($extra_field,$form)){
+	    		$form['extra_fields_group'][$extra_field] = $form[$extra_field];
+	    		unset($form[$extra_field]);
+	    	}
+	    }
+    }//If the publication type field has been set
     
   }
 }
