@@ -155,6 +155,12 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(is_array($form['biblio_notes_field']) && is_array($form['biblio_notes_field']['biblio_notes'])){
     	$form['biblio_notes'] = $form['biblio_notes_field']['biblio_notes'];
       unset($form['biblio_notes_field']);
+      
+      ctools_include('ajax');
+      ctools_include('modal');
+      ctools_modal_add_js();
+      //Adding to the description in code here since it needs to have a dynamic URL
+      $form['biblio_notes']['#description'] .= ' Based on your settings your notes are '.(variable_get('scholar_publication_note_in_teaser',false)?"public":"private").', '.ctools_modal_text_button('click here', 'cp/features/scholar_publications', 'customize publications').' to change it';
     }
 
   	if(array_key_exists('other_fields',$form)) scholar_publications_hide_form_value($form['other_fields']);
@@ -177,6 +183,8 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
     }
 
+    $form['biblio_abst_e_field']['#collapsed'] = false;
+    
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['biblio_abst_e_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['body_field'] = 0; //Disable vert. tabs
@@ -187,14 +195,14 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 
     $form['extra_fields_group'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Publication Extras'),
-      '#weight' => 1000,
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
+		  '#title' => t('Publication Extras'),
+		  '#weight' => 29,
+		  '#collapsible' => TRUE,
+		  '#collapsed' => TRUE,
     );
     
     //Move these form elements into thier own group
-    foreach (array('field_biblio_extra','biblio_notes','biblio_url','attachments', 'field_biblio_image') as $extra_field){
+    foreach (array('field_biblio_extra','biblio_notes','biblio_url','attachments', 'field_biblio_image','body_field','biblio_abst_e_field','biblio_abst_f_field') as $extra_field){
       if(array_key_exists($extra_field,$form)){
         $form['extra_fields_group'][$extra_field] = $form[$extra_field];
         unset($form[$extra_field]);
