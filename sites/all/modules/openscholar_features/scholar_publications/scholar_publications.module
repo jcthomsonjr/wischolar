@@ -172,14 +172,6 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(array_key_exists('author',$form)){
       $form['author'] ['#collapsed'] = false;
     }
-    if(array_key_exists('contributors1_wrapper',$form)){
-      $form['contributors1_wrapper'] ['#collapsed'] = false;
-      $form['contributors1_wrapper'] ['#weight'] = -3.5;
-    }
-
-    if(array_key_exists('contributors2_wrapper',$form)){
-      $form['contributors2_wrapper'] ['#weight'] = -3.5;
-    }
 
     if(is_array($form['taxonomy']) && array_key_exists('copy_to_biblio',$form['taxonomy'])){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
@@ -190,7 +182,25 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     $form['#vertical_tabs']['body_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors1_wrapper'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors2_wrapper'] = 0; //Disable vert. tabs
+    $form['#vertical_tabs']['attachments'] = 0; //Disable vert. tabs
+    $form['#vertical_tabs']['extra_fields_group'] = 0; //Disable vert. tabs
 
+    $form['extra_fields_group'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Publication Extras'),
+      '#weight' => 1000,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    
+    //Move these form elements into thier own group
+    foreach (array('field_biblio_extra','biblio_notes','biblio_url','attachments', 'field_biblio_image') as $extra_field){
+      if(array_key_exists($extra_field,$form)){
+        $form['extra_fields_group'][$extra_field] = $form[$extra_field];
+        unset($form[$extra_field]);
+      }
+    }
+    
   }
 }
 
