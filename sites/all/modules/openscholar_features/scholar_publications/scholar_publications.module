@@ -218,6 +218,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 	    		unset($form[$extra_field]);
 	    	}
 	    }
+	    
     }//If the publication type field has been set
     
   }
@@ -547,6 +548,10 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
     $s_output .= $node->content['teaser']['#prefix'];
   }//honor drupal prefix
 
+  if($style == 'chicago' && in_array($node->biblio_type, array(1000)) && empty($node->biblio_publisher)){
+  	$node->biblio_publisher = "Working Paper";
+  }//Note that this is a working paper after the title and before the year
+  
   // first add the styled entry...
   $s_output .= theme('biblio_style', $node, $base, $style, $inline);
 
@@ -746,6 +751,10 @@ function _scholar_publications_get_plain_citation($node){
   $style = biblio_get_style();
   $base  = variable_get('biblio_base', 'biblio');
 
+  if($style == 'chicago' && in_array($node->biblio_type, array(1000)) && empty($node->biblio_publisher)){
+    $node->biblio_publisher = "Working Paper";
+  }//Note that this is a working paper after the title and before the year
+  
   $citation = theme('biblio_style', $node, $base, $style);
 
   $citation = strip_tags($citation);
