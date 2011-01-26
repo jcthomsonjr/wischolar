@@ -109,3 +109,21 @@ function scholar_publications_update_6004(&$sandbox){
     
   return $res;
 }
+
+/**
+ *  Update the biblio config
+ */
+function scholar_publications_update_6005(&$sandbox){
+	//Update the biblio settings again
+	$res = scholar_publications_update_6004($sandbox);
+	
+	//This needs to be set to use as the auto increment
+	variable_set('biblio_last_ftdid', 471);
+	
+	$res[] = array(
+      'success' => true,
+      'query' => 'Updated biblio last ftid field',
+    );
+    
+  return $res;
+}
