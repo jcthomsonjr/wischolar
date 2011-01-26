@@ -32,7 +32,7 @@ function scholar_base_id_safe($string) {
 function scholar_base_preprocess_page(&$vars, $hook) {
 
   $vars['styles'] .= $vars['conditional_styles'] = variable_get('conditional_styles_' . $GLOBALS['theme'], '');
-
+  //dpm($vars['conditional_styles']);
   $body_classes = array($vars['body_classes']);
 
   //Replace left and right with first and second
@@ -41,10 +41,9 @@ function scholar_base_preprocess_page(&$vars, $hook) {
   $body_classes = str_replace($original,$new,$body_classes);
   if (!$vars['is_front']) {
     // Add unique classes for each page/site section
-    // (This snippet comes from Zen.)
+    // (This snippet comes from Zen but is modified.)
     $path = drupal_get_path_alias($_GET['q']);
-    list($section, ) = explode('/', $path, 2);
-    $body_classes[] = scholar_base_id_safe('page-' . $path);
+    list($section, ) = explode('/', $_GET['q'], 2);
     $body_classes[] = scholar_base_id_safe('section-' . $section);
     if (arg(0) == 'node') {
       if (arg(1) == 'add') {
