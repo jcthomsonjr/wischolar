@@ -89,6 +89,11 @@ function scholar_publications_menu_alter(&$items){
     $items["{$s_bib_base}/filter"]['type'] = MENU_CALLBACK;
   }//Remove the filter local task
 
+  // run exports through our function so we can change filename
+  $items[$s_bib_base.'/export']['page callback'] = 'scholar_publications_export';
+  $items[$s_bib_base.'/export']['file'] = 'scholar_publications.module';
+  $items[$s_bib_base.'/export']['file path'] = drupal_get_path('module', 'scholar_publications');
+  
 }
 
 /**
@@ -108,6 +113,18 @@ function scholar_publications_spaces_settings() {
  * Alter the import publications form
  */
 function scholar_publications_form_alter(&$form, $form_state, $form_id){
+
+  $show_form_ids = array('content_field_overview_form', 'content_display_overview_form');
+  //only show the 'field_biblio_image' field for book or book chapter nodes
+  if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))){
+    $form['field_biblio_image']['#access'] = TRUE; //only show the 'field_biblio_image' field for book or book chapter nodes
+  }
+  elseif(in_array($form_id, $show_form_ids)){
+    $form['field_biblio_image']['#access'] = TRUE;  // show the book cover image field on the content field/display edit forms
+  }
+  else{
+    $form['field_biblio_image']['#access'] = FALSE;
+  }
 
   if ($form_id == 'biblio_import_form') {
     // the original form is asking to set the userID for these entries
@@ -175,11 +192,12 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     $form['submit_type'] = array('#type' => 'submit', '#disabled' => true, '#access' => false, '#value' => t('Select Publication Type'));
 
 
+    //authors should always be open
     if(array_key_exists('author',$form)){
       $form['author'] ['#collapsed'] = false;
     }
-
-    if(array_key_exists('biblio_abst_e_field',$form) && array_key_exists('biblio_abst_e',$form['biblio_abst_e_field'])){
+	
+	if(array_key_exists('biblio_abst_e_field',$form) && array_key_exists('biblio_abst_e',$form['biblio_abst_e_field'])){
       $form['biblio_abst_e'] = $form['biblio_abst_e_field']['biblio_abst_e'];
       unset($form['biblio_abst_e_field']);
     }//remove fieldset
@@ -220,7 +238,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 	    }
 	    
     }//If the publication type field has been set
-    
+   
   }
 }
 
@@ -244,7 +262,34 @@ function scholar_publications_overview(){
 
   if(isset($_REQUEST['format'])){
   	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
-  	return biblio_export($_REQUEST['format']);
+  	ob_start();
+  	$output = biblio_export($_REQUEST['format']);
+  	if (empty($output)) {
+  		// the export didn't return anything, which means it output directly to the browser
+  		$output = ob_get_clean();
+  		// get site owner's name
+  		$owner_name = $vsite->group->name;
+  		switch ($_REQUEST['format']) {
+  			case 'tagged':
+          		drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-publications-tagged.enw"');
+  			break;
+  			case 'xml':
+  			case 'endnote8':
+  				 drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-publications-EndNote8.xml"');
+  			break;
+  			case 'bibtex':
+  				 drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-publications-Bibtex.bib"');
+  			break;
+  			case 'csv':
+  				drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-publications-export.csv"');
+  			break;
+  		}
+  		echo $output;
+  	}
+  	else {
+  		ob_end_clean();
+  		return $output;
+  	}
   }
 
   global $pager_total_items;
@@ -284,7 +329,7 @@ function scholar_publications_db_rewrite_sql($sql, $primary_table, $primary_fiel
 }
 
 /**
- * hoook nodeapi
+ * hook nodeapi
  */
 function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   if ($node -> type != 'biblio') return;
@@ -598,17 +643,17 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
  * @param $inline
  * @return unknown_type
  */
-function scholar_publications_biblio_author_link($author, $aid, $base='biblio', $inline = FALSE) {
+function scholar_publications_biblio_author_link($author, $base='biblio', $inline = FALSE) {
   $db_result = db_query("SELECT n.nid as nid FROM {biblio_contributor_data} bcd INNER JOIN {node} n  ON n.uid = bcd.drupal_uid
-                         WHERE n.type = 'vsite' AND bcd.cid = %d", $aid);
+                         WHERE n.type = 'vsite' AND bcd.cid = %d", $author->cid);
   $a_node = db_fetch_array($db_result);
   $current_vsite = vsite_get_vsite();
-	if(!$a_node || $current_vsite->group->nid == $a_node['nid']) return check_plain($author); //Return if there is no vsite
+	if(!$a_node || $current_vsite->group->nid == $a_node['nid']) return check_plain($author->name); //Return if there is no vsite
 
 	$vsite = new vsite('og',$a_node['nid'],false);
 
 	$options = array('attributes' => array('target' => '_blank'),'purl' => array('provider' => $vsite->purl_provider, 'id' => $vsite->group->nid));
-  $html = l(trim($author), "publications", $options );
+  $html = l(trim($author->name), "publications", $options );
 
   return $html;
 }
@@ -764,7 +809,6 @@ function _scholar_publications_get_plain_citation($node){
   return $citation;
 }
 
-
 /**
  * hook link_alter
  * modify the export links to use ctools
@@ -841,4 +885,45 @@ function scholar_publications_biblio_download_links($node = NULL) {
   }
 
   return $files;
+}
+
+function scholar_publications_export($format = "tagged", $nid = null, $popup = false, $version = 8) {
+	$vsite = vsite_get_vsite();
+	
+	$title = 'publications';
+	if ($nid !== null) {
+		$node = node_load($nid);
+		$title = str_replace(' ', '_', $node->title);
+		$title = substr($title, 0, 8);
+	}
+	
+	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
+  	ob_start();
+  	$output = biblio_export($format, $nid, $popup, $version);
+  	if (empty($output)) {
+  		// the export didn't return anything, which means it output directly to the browser
+  		$output = ob_get_clean();
+  		// get site owner's name
+  		$owner_name = $vsite->group->name;
+  		switch ($format) {
+  			case 'tagged':
+          		drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-'.$title.'-tagged.enw"');
+  			break;
+  			case 'xml':
+  			case 'endnote8':
+  				 drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-'.$title.'.xml"');
+  			break;
+  			case 'bibtex':
+  				 drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-'.$title.'-Bibtex.bib"');
+  			break;
+  			case 'csv':
+  				drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-'.$title.'-export.csv"');
+  			break;
+  		}
+  		echo $output;
+  	}
+  	else {
+  		ob_end_clean();
+  		return $output;
+  	}
 }
