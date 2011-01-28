@@ -615,9 +615,27 @@ function iqss_gking_pub_by_type_block(){
 }
 
 /**
+ * Implementation of hook_cron().
+ */
+function iqss_gking_cron() {
+  
+	$n_last_update = variable_get('iqss_gking_last_updated_filefields',0);
+  $s_src_dir = file_directory_path() . variable_get('gking_script_tmpdir', "/gking/tmpdir/");
+	if ($handle = opendir($s_src_dir)) {
+	    while (false !== ($file = readdir($handle))) {
+	        if (is_file($file) && filectime($s_src_dir.$file) >= $n_last_update) {
+	            iqss_gking_update_filefield($file,true);
+	        }
+	    }
+	    closedir($handle);
+	}
+	variable_set('iqss_gking_last_updated_filefields',time());
+}
+
+/**
  * Update a node that has a file by the same name attached
  */
-function iqss_gking_update_filefield($s_file){
+function iqss_gking_update_filefield($s_file, $b_return = false){
   $s_src_path = file_directory_path() . variable_get('gking_script_tmpdir', "/gking/tmpdir/") . $s_file;
   $s_dst_path = file_directory_path() . "/gking/files/" . $s_file;
 
@@ -631,11 +649,13 @@ function iqss_gking_update_filefield($s_file){
   if (file_copy($s_src_path, $s_dst_path, FILE_EXISTS_REPLACE)) {
     db_query("UPDATE {files} SET filesize = %d, timestamp = NOW() WHERE fid = %d ", filesize($s_src_path), $fid);
     print "Success: {$s_file}";
-    exit();
+    if(!$b_return) exit();
+    return true;
   }
 
   print "Error: Could not copy file:: {$s_dst_path}";
-  exit();
+  if(!$b_return) exit();
+  return false;
 }
 
 /**
