@@ -42,7 +42,7 @@ function scholar_base_preprocess_page(&$vars, $hook) {
   if (!$vars['is_front']) {
     // Add unique classes for each page/site section
     // (This snippet comes from Zen but is modified.)
-    $path = drupal_get_path_alias($_GET['q']);
+    //$path = drupal_get_path_alias($_GET['q']);
     list($section, ) = explode('/', $_GET['q'], 2);
     $body_classes[] = scholar_base_id_safe('section-' . $section);
     if (arg(0) == 'node') {

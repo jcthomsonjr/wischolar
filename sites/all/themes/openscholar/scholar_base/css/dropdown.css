@@ -3,7 +3,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   text-align: left;
   position: absolute;
   right: 0;
-  top: 0;
+  top: 16px;
   z-index:1001;
   white-space: nowrap;
   }
@@ -51,7 +51,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   }
 
 html.js div.ctools-dropdown div.ctools-dropdown-container {
-  min-width: 153px;
+  min-width: 111px;
   background: #fff;
   border: 1px solid #b2b2b2;
   border-bottom-color: #898989;
@@ -110,7 +110,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 
 .ctools-dropdown-container-wrapper .flag-wrapper span.flag-throbber {
   position: absolute;
-  right: 0;
+  right: -5px;
   top: 0;
   }
 
@@ -137,14 +137,15 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   font-weight: normal;
   }
 
-.vsite-admin a.ctools-dropdown-link {
+.node .vsite-admin a.ctools-dropdown-link {
   background: url(../images/admin-link.png) 0 3px no-repeat transparent;
-  padding: 0 0 0 20px !important;
+  padding: 1px 0 1px 20px !important;
   font-size: 11px;
   font-family: 'helvetica neue', helvetica, arial, sans-serif;
+  position: absolute;
   }
 
-a.ctools-dropdown-link:hover {
+.node:hover .vsite-admin a.ctools-dropdown-link {
   background-position: 0 -16px;
   }
 
