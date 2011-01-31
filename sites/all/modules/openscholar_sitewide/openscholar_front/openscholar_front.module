@@ -114,3 +114,31 @@ function openscholar_front_getyoursitebutton() {
   return  ($allow) ? l('Get your web site!', 'site/register') : l('Go to your site', $site_link);
 
 }
+
+/**
+ * hook_theme
+ */
+function openscholar_front_theme() {
+  
+  $items = array();
+  if(module_exists('vsite')){
+  
+	  //Alter the title to link correctly to the vsite
+	  $items['views_view_field__openscholar_sites__title'] = array(
+	    'arguments' => array('view' => NULL, 'options' => NULL, 'row' => NULL ),
+	    'function' => 'theme_views_view_field_link_to_vsite',
+	    'path' => drupal_get_path('module','vsite')."/includes/",
+	    'file' => 'vsiteapi.inc',
+	  );
+	  
+	  //Alter the logo to link correctly to the vsite
+	  $items['views_view_field__openscholar_sites__field_vsite_logo_fid'] = array(
+	    'arguments' => array('view' => NULL, 'options' => NULL, 'row' => NULL ),
+	    'function' => 'theme_views_view_field_link_to_vsite',
+	    'path' => drupal_get_path('module','vsite')."/includes/",
+	    'file' => 'vsiteapi.inc',
+	  );
+  }
+  
+  return $items;
+}
