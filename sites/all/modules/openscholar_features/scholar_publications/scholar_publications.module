@@ -116,7 +116,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 
   $show_form_ids = array('content_field_overview_form', 'content_display_overview_form');
   //only show the 'field_biblio_image' field for book or book chapter nodes
-  if ($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(100,101))){
+  if ($form_id == 'biblio_node_form' && array_key_exists('field_biblio_image',$form) && in_array($form['biblio_type']['#default_value'], array(100,101))){
     $form['field_biblio_image']['#access'] = TRUE; //only show the 'field_biblio_image' field for book or book chapter nodes
   }
   elseif(in_array($form_id, $show_form_ids)){
@@ -160,7 +160,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 	  }
 	  else{
 	    $form['field_biblio_image']['#access'] = FALSE;
-	    if(isset($form['field_biblio_image'][0])) $form['field_biblio_image'][0]['#access'];
+	    if(isset($form['field_biblio_image'][0])) $form['field_biblio_image'][0]['#access'] = false;
 	  }
 
   	if($form_state['storage']['biblio_type'] || $form['#node']->biblio_type){

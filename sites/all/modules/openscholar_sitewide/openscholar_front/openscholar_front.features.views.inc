@@ -56,9 +56,9 @@ function _openscholar_front_views_default_views() {
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
-      'link_to_node' => 0,
+      'link_to_node' => 1,
       'label_type' => 'none',
-      'format' => 'openscholar_front_logo_linked',
+      'format' => 'openscholar_front_logo_default',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
