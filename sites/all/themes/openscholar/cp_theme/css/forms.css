@@ -11,7 +11,7 @@ fieldset {
   background:#fff;
   border: none;
   margin-bottom: .5em;
-  padding: 9px 0 12px 0;
+  padding: 0 0 12px 0;
   }
 
 .page-cp-appearance #cp-settings-form fieldset {
@@ -24,7 +24,9 @@ td fieldset, fieldset fieldset {
   }
 
 .form-item {
-  margin-top: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
   }
 
 .fieldset-wrapper {
@@ -61,10 +63,13 @@ div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane {
   padding-top: 1em;
   }
 
+.form-item label,
 div.vertical-tabs-panes .description,
 .vertical-tabs-pane div.form-item label {
   font-weight: bold;
-  color: #666;
+  color: #5A5959;
+  text-transform: none;
+  font-size: 12px;
   }
 
 div.vertical-tabs-panes .form-item .description {
@@ -81,7 +86,6 @@ fieldset legend {
   border-top: 1px solid #D9D9D9;
   border-bottom: none;
   }
-
 
 legend, legend a {
   color: #333;
@@ -101,10 +105,9 @@ legend,
   font-size: 11px;
   }
 
-
 html.js fieldset.collapsible legend a {
-  background: url(../images/open-close.png) no-repeat 0 -20px transparent;
-  padding-left: 26px;
+  background: url(../images/open-close.png) no-repeat 0 -20px #3F3F3F3;
+  padding-left: 29px;
   color: #000;
   }
 
@@ -113,53 +116,29 @@ html.js fieldset.collapsed legend a {
   color:#999;
   }
 
+.container-inline .fieldset-title .fieldset-content,
+.fieldset.titled .fieldset-content,
 .collapsible {
-  background-color: #F3F3F3;;
+  background-color: #F3F3F3;
   }
-
 
 .collapsed {
   background-color: #fff;
   }
 
+
 .form-region-main .resizable-textarea {
   width:100%;
   }
 
-/*
-.node-form .form-region-right {
-  margin-top: 14px;
-  }
-*/
-
-/*
-.section-cp .fieldset-wrapper .fieldset-wrapper,
-.section-cp .og-vocab-taxonomy .fieldset-wrapper,  {
-	margin: 0;
-	}
-
-.section-cp .og-vocab-taxonomy {
-  margin: 10px -3px;
-  padding: 10px 3px 10px 10px;
-  border: 1px solid #dfe5e6;
-  background: #f2f5f5;
-  }
-
-.section-cp .og-vocab-taxonomy legend {
-  font-size: 1em;
-  }
-
-.section-cp div.form-item {
-	margin: 0 1em 0 0;
-	border: none;
-  }
-
-.section-cp #dialog-main div.form-item {
-  margin:0;
-  }
-*/
 .views-exposed-form .views-exposed-widget {
   padding: 0 2em 0 0;
+  }
+
+
+.container-inline .fieldset-content,
+.fieldset-content {
+  border: none;
   }
 
 #views-bulk-operations-submit {
@@ -480,7 +459,7 @@ form div.buttons {
 {
   display:inline-block;
   vertical-align: top;
-  width: 48.5%;
+  width: 49.5%;
   }
 
 
