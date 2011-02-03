@@ -93,7 +93,7 @@ function scholar_publications_menu_alter(&$items){
   $items[$s_bib_base.'/export']['page callback'] = 'scholar_publications_export';
   $items[$s_bib_base.'/export']['file'] = 'scholar_publications.module';
   $items[$s_bib_base.'/export']['file path'] = drupal_get_path('module', 'scholar_publications');
-  
+
 }
 
 /**
@@ -178,7 +178,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
       ctools_include('modal');
       ctools_modal_add_js();
       //Adding to the description in code here since it needs to have a dynamic URL
-      $form['biblio_notes']['#description'] .= ' Based on your settings your notes are '.(variable_get('scholar_publication_note_in_teaser',false)?"public":"private").', '.ctools_modal_text_button('click here', 'cp/features/scholar_publications', 'customize publications').' to change it';
+      $form['biblio_notes']['#description'] .= ' Your notes are currently set to <strong>'.(variable_get('scholar_publication_note_in_teaser',false)?"public":"private").'</strong>. '.ctools_modal_text_button('Change Note Settings.', 'cp/features/scholar_publications', 'customize publications');
     }
 
   	if(array_key_exists('other_fields',$form)) scholar_publications_hide_form_value($form['other_fields']);
@@ -196,7 +196,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(array_key_exists('author',$form)){
       $form['author'] ['#collapsed'] = false;
     }
-	
+
 	if(array_key_exists('biblio_abst_e_field',$form) && array_key_exists('biblio_abst_e',$form['biblio_abst_e_field'])){
       $form['biblio_abst_e'] = $form['biblio_abst_e_field']['biblio_abst_e'];
       unset($form['biblio_abst_e_field']);
@@ -889,14 +889,14 @@ function scholar_publications_biblio_download_links($node = NULL) {
 
 function scholar_publications_export($format = "tagged", $nid = null, $popup = false, $version = 8) {
 	$vsite = vsite_get_vsite();
-	
+
 	$title = 'publications';
 	if ($nid !== null) {
 		$node = node_load($nid);
 		$title = str_replace(' ', '_', $node->title);
 		$title = substr($title, 0, 8);
 	}
-	
+
 	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
   	ob_start();
   	$output = biblio_export($format, $nid, $popup, $version);
