@@ -19,7 +19,7 @@
   * @return
   *	  db results from query described by vsite_min and last_visit
  */
-function _openscholar_log_usage_report_list_hosts($vsites, $age, $verbose) {
+function _openscholar_log_usage_list_hosts($vsites, $age, $verbose) {
 	//table has host, host_name, vsite, age, views, version, last_visit
 	$sql = 'SELECT DISTINCT host FROM {openscholar_usage_log}
 		WHERE DATE_SUB(CURDATE(), INTERVAL %d DAY) <= last_visit
@@ -48,7 +48,7 @@ function _openscholar_log_usage_report_list_hosts($vsites, $age, $verbose) {
  * @return
  *	  Array of hosts deemed valid.
  */
-function _openscholar_log_usage_report_filter_hosts($hosts, $verbose) {
+function _openscholar_log_usage_filter_hosts($hosts, $verbose) {
 	$_hosts = array();
 	while ($data = db_fetch_object($hosts)) {
 		$_hosts[] = $data->host;
@@ -87,7 +87,7 @@ function _is_openscholar($content) {
  * @param $verbose
  * 			If true, show debug messages
  */
-function _openscholar_log_usage_report_ping_hosts($hosts, $connections, $verbose) {
+function _openscholar_log_usage_ping_hosts($hosts, $connections, $verbose) {
 
 	$curling = array();		 //active curl handles
 	$done = array();			//store finished host => content

@@ -2,17 +2,16 @@
 // $Id$
 
 /** 
- * @file
- *   openscholar log viewer drush commands
+ * @file  openscholar log viewer drush commands
  */
 
 /**
  * Implementation of drush_help
  */
 
-function openscholar_log_usage_report_drush_help($section) {
+function openscholar_log_usage_drush_help($section) {
     switch ($section) {
-    case 'drush:check-installations':
+    case 'drush:check_installations':
         return dt("Check which OpenScholar installation sites appear active.");
     }
 }
@@ -20,7 +19,7 @@ function openscholar_log_usage_report_drush_help($section) {
 /**
  * Implementation of drush_command
  */
-function openscholar_log_usage_report_drush_command() {
+function openscholar_log_usage_drush_command() {
 	$items = array();
 	
 	$items['check-installations'] = array(
@@ -29,7 +28,7 @@ function openscholar_log_usage_report_drush_command() {
 			'vsites' => 'Minimum number of vsites an installation can have. (default=5)',
 			'age' => 'Days since last visit.  Sites with last visits older than this value will be disregarded. (default=90)',
 			'connections' => 'How many simultaneous connections to use when pinging servers.  File handle limits vary from system to system.  (default=16)',
-			'verbose' => 'Show debugging output (default=FALSE).'
+			'verbose' => 'Show debugging output (default=FALSE).',
 		),
 		'examples' => array(
 			'drush @site check-installations --vsites=5 --age=30' => 'Check logs on @site for OpenScholar installations with at least 5 vsites and visited within the last 30 days.',
@@ -46,7 +45,8 @@ function openscholar_log_usage_report_drush_command() {
  * 
  * Breaks if any variables are invalid
   */
-function drush_openscholar_log_usage_report_check_installations_validate() {
+
+function drush_openscholar_log_usage_check_installations_validate() {
 	
 	$vsites =      (int)_drush_get_option_type('vsites', 'int', 5);
 	$age =         (int)_drush_get_option_type('age', 'int', 90);
@@ -67,27 +67,28 @@ function drush_openscholar_log_usage_report_check_installations_validate() {
 	
 }
 
+
 /**
  * Checks known openscholar installations
  *
  * @returns List of urls
  */
-function drush_openscholar_log_usage_report_check_installations() {
-	require_once drupal_get_path('module','openscholar_log_usage').'/openscholar_log_usage_report.inc';
+function drush_openscholar_log_usage_check_installations() {
+	require_once drupal_get_path('module','openscholar_log_usage').'/openscholar_log_usage.inc';
 
 	$vsites =      (int)_drush_get_option_type('vsites', 'int' , 5);
 	$age =         (int)_drush_get_option_type('age', 'int', 90);
 	$connections = (int)_drush_get_option_type('connections', 'int', 16);
 	$verbose =     (bool)_drush_get_option_type('verbose', 'boolean', FALSE);
 			
-	$_hosts    = _openscholar_log_usage_report_list_hosts($vsites, $age, $verbose);
-	$_filtered = _openscholar_log_usage_report_filter_hosts($_hosts, $verbose);
-	$_os_hosts = _openscholar_log_usage_report_ping_hosts($_filtered, $connections, $verbose);
+	$_hosts    = _openscholar_log_usage_list_hosts($vsites, $age, $verbose);
+	$_filtered = _openscholar_log_usage_filter_hosts($_hosts, $verbose);
+	$_os_hosts = _openscholar_log_usage_ping_hosts($_filtered, $connections, $verbose);
 	
 	foreach ($_os_hosts as $host => $content) {
             echo "$host\n";
 	}
-	
+	//return TRUE;
 }
 
 /**
