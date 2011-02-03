@@ -14,8 +14,6 @@ fieldset {
   padding: 0 0 12px 0;
   }
 
-
-
 .page-cp-appearance #cp-settings-form fieldset {
   padding-top: 0;
   }
@@ -25,6 +23,8 @@ fieldset fieldset {
   padding: 0;
   background: transparent;
   }
+
+/* Reset Rubik */
 
 .block .item-list,
 .block .form-item,
@@ -46,8 +46,18 @@ table .form-item {
   border-radius: 0;
   }
 
+/*
+.container-inline .fieldset-title .fieldset-content, .fieldset.titled .fieldset-content {
+  padding-top: 0;
+  }
+*/
+
 .fieldset-wrapper {
   padding: 0 9px;
+  }
+
+.fieldset-title {
+  border:none;
   }
 
 .fieldset-wrapper .fieldset-wrapper,
@@ -167,6 +177,10 @@ select option {
   max-width:99%;
   }
 
+.column-side select option {
+  max-width: 279px;
+  }
+
 select option {
   padding: 2px 5px;
   }
@@ -179,16 +193,10 @@ select option {
   margin: 0 0 1em 0;
   }
 
-/*
-.section-cp .form-radios input {
-  margin: 3px 3px 3px 0;
-  }
-*/
 .node-form .form-text {
   font-size: .85em;
   width: 99.9%;
   }
-
 
 input.form-autocomplete,
 input.form-text,
@@ -206,6 +214,10 @@ textarea.form-textarea {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+  width: 100%;
+  }
+
+#field_biblio_extra_values input.fluid {
   width: 100%;
   }
 
@@ -308,8 +320,6 @@ table.features div.feature div.description {
   width:auto;
   }
 
-
-
 h3#modal-title {
   float: none;
   margin-bottom: 1.5em;
@@ -336,7 +346,7 @@ fieldset.group-account-basics {
   }
 
 #node-form .draggable td {
-    padding: 0 4px;
+    padding: 0;
     }
 
 .draggable a.tabledrag-handle {
@@ -344,7 +354,7 @@ fieldset.group-account-basics {
   float:left;
   height:1.7em;
   margin:-0.4em 0 -0.4em -0.5em;
-  padding:0.42em 1.5em 0.42em 0.5em;
+  padding:0.4em;
   text-decoration:none;
   }
 
@@ -480,7 +490,7 @@ fieldset.group-account-basics {
 
 #field-biblio-extra-items,
 #edit-field-biblio-image-0-upload-wrapper .description {
-  padding-bottom: 1em;
+  padding: 1em 0;
   clear:both;
   }
 
