@@ -14,19 +14,36 @@ fieldset {
   padding: 0 0 12px 0;
   }
 
+
+
 .page-cp-appearance #cp-settings-form fieldset {
   padding-top: 0;
   }
 
-td fieldset, fieldset fieldset {
+td fieldset,
+fieldset fieldset {
   padding: 0;
   background: transparent;
   }
 
-.form-item {
+.block .item-list,
+.block .form-item,
+.admin-panel .admin-list,
+.form-item,
+.teaser-checkbox .form-item,
+.form-item .form-item,
+.fieldset .form-item,
+table .form-item {
   border: none;
   padding: 0;
   margin: 0;
+  background:transparent;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
   }
 
 .fieldset-wrapper {
@@ -159,7 +176,7 @@ select option {
   }
 
 .form-radios {
-  margin: 1em 0;
+  margin: 0 0 1em 0;
   }
 
 /*
@@ -298,10 +315,6 @@ h3#modal-title {
   margin-bottom: 1.5em;
   }
 
-.ctools-use-modal-processed .buttons	{
-  margin-top: 30px;
-  }
-
 a.close-this {
   display:block;
   float:right;
@@ -394,13 +407,6 @@ fieldset.group-account-basics {
   margin-right: 46px;
   }
 
-/* USER CREATION */
-
-form div.buttons {
-  text-align: left;
-  margin-left: 200px;
-  }
-
 /* CONTENT PAGES FILTERING AND UPDATING OPTIONS */
 
 .vsite_content_filter_box .fieldset-wrapper, #views-bulk-operations-select .fieldset-wrapper {
@@ -455,13 +461,18 @@ form div.buttons {
 #edit-field-scholar-software-method-value-wrapper,
 #edit-field-scholar-software-name-0-value-wrapper,
 #edit-vsite-users-first-name-0-value-wrapper,
-#edit-vsite-users-last-name-0-value-wrapper
-{
+#edit-vsite-users-last-name-0-value-wrapper,
+#edit-settings-generic-admin-menu-wrapper,
+#edit-settings-generic-vsite-domain-value-wrapper,
+#edit-settings-generic-private-vsite-wrapper,
+#contact-mail-page #edit-name-wrapper,
+#contact-mail-page #edit-mail-wrapper,
+#contact-mail-page #edit-subject-wrapper,
+#contact-mail-page #edit-cid-wrapper {
   display:inline-block;
   vertical-align: top;
   width: 49.5%;
   }
-
 
 #field-biblio-extra-items .description {
   float: left;
@@ -485,6 +496,10 @@ form div.buttons {
 #biblio-authors td.biblio-contributor {
   width: 78%;
 }
+
+#contact-mail-page #edit-cid-wrapper select.form-select {
+  width: 100%;
+  }
 
 /* EVENT CREATION */
 

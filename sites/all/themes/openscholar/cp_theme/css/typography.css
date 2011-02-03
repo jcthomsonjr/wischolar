@@ -1,4 +1,7 @@
-body, input, textarea, select  {
+body,
+input,
+textarea,
+select  {
   font: .85em/1.5em 'helvetica neue', helvetica, arial, sans-serif;
   }
 
@@ -32,7 +35,6 @@ h2.with-tabs {
   margin-bottom: .3em;
   }
 
-
 .section-admin h2.title {
   background: url(../images/admin-logo.png) no-repeat 0 50% transparent;
   padding-left: 125px;
@@ -48,15 +50,23 @@ h4 {
   font-size: 1em;
   }
 
-p, div.messages, #content-main .views-row, .node .content ul, .node .content ol, .taxonomy-term-description {
+p,
+div.messages,
+#content-main .views-row,
+.node .content ul,
+.node .content ol,
+.taxonomy-term-description {
   margin: 0 0 1.53em 0;
   }
 
-#header h1, #header h2, #header p {
+#header h1,
+#header h2,
+#header p {
   margin: 0 0 .1em 0;
   }
 
-a:link, a:visited {
+a:link,
+a:visited {
   text-decoration: none;
   color: #1c4fad;
   font-weight: 700;
@@ -83,7 +93,8 @@ p.copy {
   min-height: .5em;
   }
 
-p.copy a, p.copy a:visited {
+p.copy a,
+p.copy a:visited {
   font-style: normal;
   text-decoration: none;
   color: #76797C;
@@ -111,7 +122,6 @@ p.copy a.footer-login:hover {
   background: #fff;
   }
 
-
 .marker,
 ul.admin li a,
 ul.admin li a:visited,
@@ -120,7 +130,6 @@ a.ctools-dropdown-link,
 a.context-button {
   color: #4272DB;
   font-weight: normal;
-
   }
 
 ul.admin li:hover a,
@@ -440,8 +449,10 @@ a.delete {
 /* BUTTONS */
 
 input.form-submit,
-input.form-button, button,
-#modalContent a.close {
+input.form-button,
+button,
+#modalContent a.close,
+.views-exposed-form .views-exposed-widget .form-submit {
   background: url(../images/button.png) repeat-x 0 0 #e8e8e8;
   color: #000 !important;
   border: 1px solid #c4c4c4;
@@ -483,7 +494,9 @@ button:active {
 #edit-preview,
 #edit-preview-changes,
 #edit-delete,
-#edit-reset {
+#edit-reset,
+#modalContent a.close,
+.buttons input.close {
   -moz-border-radius:14px;
   -webkit-border-radius:14px;
   border-radius:14px;

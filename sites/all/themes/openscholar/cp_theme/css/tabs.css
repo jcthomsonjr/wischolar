@@ -7,13 +7,9 @@ ul.primary-tabs li {
   }
 
 ul.primary-tabs li a:link,
-ul.primary-tabs li a:visited {
-  background-color: transparent;
-  color: #000;
-  }
-
-ul.primary-tabs li a:link,
-ul.primary-tabs li a:visited {
+ul.primary-tabs li a:visited,
+.primary-tabs li.active a,
+.primary-tabs li.active a.active{
   background: #DFE1E3;
   color: #000;
   font-weight: 700;
@@ -21,6 +17,7 @@ ul.primary-tabs li a:visited {
   -webkit-border-radius: 0;
   border-radius: 0;
   border:none;
+  padding: 4px 9px 12px 9px;
   }
 
 ul.primary-tabs li.active a,
@@ -29,10 +26,10 @@ ul.primary-tabs li a.active:visited,
 ul.primary-tabs li.active a:hover,
 ul.primary-tabs li.active a:focus  {
   background: #fff;
-  padding: 4px 9px 12px 9px;
   -moz-border-radius: 0;
   -webkit-border-radius: 0;
   border-radius: 0;
+  border:none;
   }
 
 ul.primary-tabs li a:hover,
