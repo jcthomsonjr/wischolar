@@ -122,7 +122,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
   elseif(in_array($form_id, $show_form_ids)){
     $form['field_biblio_image']['#access'] = TRUE;  // show the book cover image field on the content field/display edit forms
   }
-  else{
+  elseif (isset($form['field_biblio_image'])){
     $form['field_biblio_image']['#access'] = FALSE;
   }
 
