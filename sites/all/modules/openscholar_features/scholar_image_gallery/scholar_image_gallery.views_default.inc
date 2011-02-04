@@ -85,6 +85,11 @@ function scholar_image_gallery_views_default_views() {
       'field' => 'sticky',
       'relationship' => 'none',
     ),
+    'created' => array(
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+    ),
     'title' => array(
       'id' => 'title',
       'table' => 'node',
@@ -316,6 +321,31 @@ function scholar_image_gallery_views_default_views() {
         'button' => 'Use default',
       ),
       'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('sorts', array(
+    'sticky' => array(
+      'order' => 'DESC',
+      'id' => 'sticky',
+      'table' => 'node',
+      'field' => 'sticky',
+      'relationship' => 'none',
+    ),
+    'created' => array(
+      'order' => 'ASC',
+      'granularity' => 'second',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
     ),
   ));
   $handler->override_option('items_per_page', 0);
