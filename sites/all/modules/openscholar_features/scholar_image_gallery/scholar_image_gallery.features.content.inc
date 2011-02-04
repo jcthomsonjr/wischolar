@@ -119,7 +119,7 @@ function scholar_image_gallery_content_default_fields() {
       'progress_indicator' => 'bar',
       'max_filesize_per_file' => '2M',
       'max_filesize_per_node' => '',
-      'max_resolution' => '640x400',
+      'max_resolution' => '1024x768',
       'min_resolution' => '0',
       'alt' => '',
       'custom_alt' => 0,
