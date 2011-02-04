@@ -1,3 +1,7 @@
+div#admin-toolbar span.admin-toggle {
+  background: url("../images/admin-sprite.png") no-repeat scroll 0 0 transparent;
+  }
+
 .admin-menu #admin-toolbar,
 .admin-menu div#admin-toolbar.ne,
 .admin-menu div#admin-toolbar.nw {
@@ -9,16 +13,17 @@
   -webkit-border-radius: 0;
   border-radius: 0;
   border: none;
-  font-weight: 700;
+  font-weight: 300;
   color: #fff;
   -moz-text-shadow: none;
   text-shadow: none;
-}
+  text-transform: uppercase;
+  }
 
 #admin-toolbar #block-menu-cp ul.menu li a {
   background: url('../images/topmenu-icons.png') no-repeat scroll 0 0 transparent;
   display: block;
-  height: 26px;
+  height: 24px;
   line-height:24px;
   margin-left: 0;
   overflow: hidden;
@@ -31,11 +36,11 @@
   }
 
 #admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(3) a {
-  background-position: 0 -54px;
+  background-position: 0 -55px;
   }
 
 #admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(4) a {
-  background-position: 0 -82px;
+  background-position: 0 -83px;
   }
 
 #admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(5) a {
@@ -51,13 +56,38 @@
   }
 
 div#admin-toolbar div.admin-blocks {
-  background: #9fadba;
   -moz-box-shadow: 0 .2em 3em #000;
   -webkit-box-shadow: 0 .2em 3em #000;
   box-shadow: 0 1em 2em #000;
   }
 
+div#admin-toolbar.vertical,
+div#admin-toolbar.vertical div.admin-blocks,
+div#admin-toolbar.horizontal,
+div#admin-toolbar.horizontal div.admin-blocks,
+div#admin-toolbar div.admin-tabs {
+  background: #f2f3f3;
+  color: #000;
+  }
+
+#admin-toolbar.vertical ul.menu li a,
+#admin-toolbar.horizontal ul.menu li a{
+  border: none;
+  color: #000;
+  }
+
 /* HORIZONTAL */
+
+div#admin-toolbar.horizontal div.admin-tabs {
+  background: #222;
+  height: 25px;
+  }
+
+div#admin-toolbar.horizontal div.admin-tab,
+div#admin-toolbar.horizontal div.admin-tab a {
+  color: #ccc;
+  }
+
 
 div#admin-toolbar.horizontal div.block-content {
   height:auto;
@@ -72,7 +102,7 @@ div#admin-toolbar.horizontal ul.menu li {
   }
 
 #admin-toolbar.horizontal ul.menu li a:hover {
-  color: yellow;
+  color: blue;
   background: transparent;
   }
 
@@ -82,7 +112,7 @@ div#admin-toolbar.horizontal ul.menu li {
   top:20px;
   }
 
-div#admin-toolbar.vertical div.admin-block {
+div#admin-toolbar.vertical div.admin-blocks {
   width: 100%;
   padding:0;
   }
@@ -94,21 +124,19 @@ div#admin-toolbar.vertical div.block-content {
   }
 
 body.admin-expanded div#admin-toolbar.vertical div.admin-blocks {
-  border-right:1px solid #bcc2c7;
   width:259px;
   }
 
-div#admin-toolbar.vertical,
-div#admin-toolbar.vertical div.admin-blocks,
-div#admin-toolbar div.admin-tabs {
-  background:#000;
-  color: #fff;
+#admin-toolbar.vertical ul.menu li.leaf,
+#admin-toolbar.vertical ul.drilldown-active-menu li.leaf {
+  background-position: 217px -106px;
   }
 
-#admin-toolbar.vertical ul.menu li a {
+#admin-toolbar.vertical ul.menu li {
+  padding: 3px 10px 10px;
   border-bottom: 1px solid #c7ccd1;
   border-top: 1px solid #e9eaeb;
-}
+  }
 
 
 #admin-toolbar.vertical ul.menu li a:hover {
@@ -118,9 +146,7 @@ div#admin-toolbar div.admin-tabs {
 
 #admin-toolbar.vertical ul.menu li a.active {
   background:#8898a9;
-  color: #fff;
-  -moz-text-shadow: rgba(122,124,127);
-  text-shadow: rgba(122,124,127);
+  color: #000;
   }
 
 div#admin-toolbar.vertical div.admin-tab {
@@ -134,9 +160,4 @@ div#admin-toolbar.vertical div.admin-tab {
   border: none;
   background: #B5BACF;
   text-shadow: 0 1px 0 #eee;
-  }
-
-div#admin-toolbar, div#admin-toolbar * {
-  color: #000;
-  font-weight: bold;
   }

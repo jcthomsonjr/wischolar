@@ -1,22 +1,19 @@
 body {
     color:#666;
     font-family: palatino, baskerville, "palatino linotype", "Times New Roman", Times, Georgia, serif;
+    background: url(images/body-bg-no-sidebar.jpg) 50% 135px repeat-y #6d2a01;
+    min-width:1000px;
     }
 
-#wrapper {
-  background: url(images/body-bg-no-sidebar.jpg) 50% 135px repeat-y #6d2a01;
-  min-width:1000px;
-  }
-
-body.sidebar-first #wrapper {
+body.sidebar-first {
     background-image: url(images/body-bg-left-sidebar.jpg);
     }
 
-body.sidebar-second #wrapper {
+body.sidebar-second {
     background-image: url(images/body-bg-right-sidebar.jpg);
     }
 
-body.two-sidebars #wrapper {
+body.two-sidebars {
     background-image: url(images/body-bg-both-sidebar.jpg);
     }
 

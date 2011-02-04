@@ -1,5 +1,5 @@
 div#admin-toolbar span.admin-toggle {
-  background: url("../images/sprite.png") no-repeat scroll 0 0 transparent;
+  background: url("../images/admin-sprite.png") no-repeat scroll 0 0 transparent;
   }
 
 .admin-menu #admin-toolbar,
@@ -78,6 +78,16 @@ div#admin-toolbar div.admin-tabs {
 
 /* HORIZONTAL */
 
+div#admin-toolbar.horizontal div.admin-tabs {
+  background: #222;
+  height: 25px;
+  }
+
+div#admin-toolbar.horizontal div.admin-tab,
+div#admin-toolbar.horizontal div.admin-tab a {
+  color: #ccc;
+  }
+
 
 div#admin-toolbar.horizontal div.block-content {
   height:auto;
@@ -150,10 +160,4 @@ div#admin-toolbar.vertical div.admin-tab {
   border: none;
   background: #B5BACF;
   text-shadow: 0 1px 0 #eee;
-  }
-
-div#admin-toolbar,
-div#admin-toolbar * {
-  color: #000;
-  font-weight: bold;
   }
