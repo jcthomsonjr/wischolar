@@ -166,7 +166,8 @@ function apachesolr_biblio_apachesolr_update_index(&$document, $node) {
               $first = FALSE;
               $document->sort_ss_biblio_first_author = $author;
             }
-            $document->setMultiValue('sm_biblio_contributors', $author);
+            $document->setMultiValue('sm_biblio_contributors', $author); //Used for Facets
+            $document->setMultiValue('tm_biblio_contributors', $author); //Used for text searching
           }
         }
       }
