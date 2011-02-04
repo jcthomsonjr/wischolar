@@ -70,7 +70,7 @@
             </div><!-- /content-top -->
             <?php endif; ?>
 
-            <div id="content">
+            <div id="content" class="clearfix">
             <?php print $context_links;?>
             <?php if (!empty($title)): ?>
               <h2 class="title<?php if ($tabs) : print ' with-tabs'; endif;?>"><?php print $title; ?></h2>
