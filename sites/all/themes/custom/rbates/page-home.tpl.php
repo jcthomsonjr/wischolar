@@ -9,11 +9,7 @@
 </head>
 
 <body class="<?php print $body_classes; ?>">
-    <?php if ($cp_toolbar) : ?>
-    <div id="top">
-  	   <?php print $cp_toolbar;?>
-  	 </div>
-  	 <?php endif;?>
+
   <div id="wrapper">
    <div id="wrapper-inner">
     <div id="container">

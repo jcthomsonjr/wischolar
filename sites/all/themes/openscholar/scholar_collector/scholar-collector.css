@@ -1,22 +1,22 @@
-html {
-  min-width: 960px;
-  }
-
 body {
-    background: url(images/body-bg-no-sidebar.jpg) 50% 135px repeat-y #6d2a01;
     color:#666;
     font-family: palatino, baskerville, "palatino linotype", "Times New Roman", Times, Georgia, serif;
     }
 
-body.sidebar-first {
+#wrapper {
+  background: url(images/body-bg-no-sidebar.jpg) 50% 135px repeat-y #6d2a01;
+  min-width:1000px;
+  }
+
+body.sidebar-first #wrapper {
     background-image: url(images/body-bg-left-sidebar.jpg);
     }
 
-body.sidebar-second {
+body.sidebar-second #wrapper {
     background-image: url(images/body-bg-right-sidebar.jpg);
     }
 
-body.two-sidebars {
+body.two-sidebars #wrapper {
     background-image: url(images/body-bg-both-sidebar.jpg);
     }
 
