@@ -209,7 +209,7 @@ function adminformcols_config_form($form_state, $form_id) {
       ),
     );
     
-    if (isset($field['#collapsed'])) {
+    if ($field['#collapsible']) {
     	$form['conf'][$field['#region']][$key][$key.'_collapsed'] = array(
     		'#type' => 'checkbox',
     	  '#default_value' => $field['#collapsed'],
@@ -399,7 +399,7 @@ function _adminformcols_get_form_fields($form_id, $parameters, $file, $form_id) 
       $field['#weight'] = isset($field['#weight']) ? $field['#weight'] : 0;
       
       // check the database - get settings from there if it exists
-      $q = db_query("SELECT region, weight, collapsed, hidden FROM {adminformcols_fields} WHERE form_id = %d AND name = '%s' ORDER BY weight ASC", $form_id, $key);
+      $q = db_query("SELECT region, weight, collapsed, hidden FROM {adminformcols_fields} WHERE form_id = '%s' AND name = '%s' ORDER BY weight ASC", $form_id, $key);
       $r = db_fetch_array($q);
       if ($r['region']) {
         $field['#region_original'] = $field['#region'];

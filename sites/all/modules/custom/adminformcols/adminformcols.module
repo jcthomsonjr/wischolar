@@ -98,7 +98,7 @@ function adminformcols_form_alter(&$form, &$form_state, $form_id) {
       // we found it in the _fields table, so we populate it with data from the table
       if ($r = db_fetch_array($q)) {
         $form[$key]['#region'] = $r['region'];
-        if ($form[$key]['#type'] == 'fieldset') {
+        if ($form[$key]['#type'] == 'fieldset' && $form[$key]['#collapsible']) {
           $form[$key]['#collapsed'] = $r['collapsed'];
         }
         $form[$key]['#access'] = !$r['hidden'];
