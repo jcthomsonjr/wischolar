@@ -20,15 +20,31 @@ function adminformcols_uninstall() {
 
 function adminformcols_schema() {
   $schema = array();
-  
+
   $schema['adminformcols_enabled'] = array(
     'description' => 'A list of all admin forms for adminformcols to reference.',
+/*    'export' => array(
+      'key' => 'form_id',
+      'identifier' => 'form_columns',
+      'default hook' => 'default_form_columns',
+      'api' => array(
+        'owner' => 'adminformcols',
+        'api' => 'default_form_columns',
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
+      'load callback' => 'form_columns_load',
+      'save callback' => 'form_columns_save',
+      'delete callback' => 'form_columns_delete',
+      'export callback' => 'form_columns_export',
+      'import callback' => 'form_columns_import',
+    ),*/
     'fields' => array(
-      'fid' => array(
-        'description' => 'Primary identifier for a form.',
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE
+      'form_id' => array(
+        'description' => 'The path to get to this form.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
       ),
       'enabled' => array(
         'description' => 'Are we using adminformcols on this one?',
@@ -36,13 +52,6 @@ function adminformcols_schema() {
         'size' => 'tiny',
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'form_id' => array(
-        'description' => 'The path to get to this form.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
       ),
       'params' => array(
         'description' => 'Default params that should be passed to the form builder function.',
@@ -52,16 +61,16 @@ function adminformcols_schema() {
         'default' => '',
       ),
     ),
-    'primary key' => array('fid'),
+    'primary key' => array('form_id'),
   );
   
   $schema['adminformcols_fields'] = array(
     'description' => 'The fields in a given form and their region',
     'fields' => array(
-      'fid' => array(
+      'form_id' => array(
         'description' => 'Form identifier.',
-        'type' => 'int',
-        'unsigned' => TRUE,
+        'type' => 'varchar',
+        'length' => 255,
         'not null' => TRUE
       ),
       'name' => array(
@@ -69,7 +78,6 @@ function adminformcols_schema() {
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
-        'default' => '',
       ),
       'region' => array(
         'description' => 'The region the field goes in.',
@@ -99,10 +107,7 @@ function adminformcols_schema() {
         'default' => 0,
       )
     ),
-    'indexes' => array(
-      'fid' => array('fid'),
-      'name' => array('name'),
-    )
+    'primary key' => array('form_id', 'name'),
   );
   
   return $schema;

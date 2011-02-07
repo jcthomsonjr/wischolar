@@ -1,7 +1,22 @@
 <?php
+// $Id;
 
 function adminformcols_front_form($form_state) {
   $form = array();
+  
+  $form['add_form'] = array(
+  	'#type' => 'textfield',
+    '#title' => t('Add Form to List'),
+    '#description' => t('Enter a path or form_id to add it to list below for editting.'),
+    '#maxlength' => 255,
+    '#size' => 60,
+  );
+  
+  $form['submit1'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  
   $form['container'] = array(
     '#type' => 'markup',
     '#value' => '',
@@ -11,7 +26,7 @@ function adminformcols_front_form($form_state) {
   // put together a list of all the admin forms available
   $res = db_query("SELECT * FROM {adminformcols_enabled}");
   while ($r = db_fetch_array($res)) {
-    $form['container']['form_'.$r['fid']] = array(
+    $form['container']['form_'.$r['form_id']] = array(
       '#type' => 'checkbox',
       '#title' => t($r['form_id']),
       '#default_value' => $r['enabled']?1:0,
@@ -19,7 +34,7 @@ function adminformcols_front_form($form_state) {
     );
   }
   
-  $form['submit'] = array(
+  $form['submit2'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
@@ -39,11 +54,50 @@ function adminformcols_front_form_submit($form, &$form_state) {
     $frags = explode('_', $key);
     if ($frags[0] != 'form') continue;
     
-    db_query("UPDATE {adminformcols_enabled} SET enabled = %d WHERE fid = %d", $field['#value'], $frags[1]);
+    db_query("UPDATE {adminformcols_enabled} SET enabled = %d WHERE form_id = %d", $field['#value'], $frags[1]);
+  }
+  
+  if (!empty($form_state['values']['add_form'])) {
+  	$new_form = $form_state['values']['add_form'];
+  	$closest = '';
+  	$lev = 500;
+  	$found_form = '';
+  	// check to make sure it's a valid path or form_id
+  	$q = db_query("SELECT path, page_arguments FROM {menu_router} WHERE page_callback = 'drupal_get_form' AND ( path LIKE '%%%s%%' OR page_arguments LIKE '%%%s%%' )", $new_form, $new_form);
+  	while ($r = db_fetch_array($q)) {
+  		$r['page_arguments'] = unserialize($r['page_arguments']);
+  		if ($r['page_arguments'][0] == $new_form) {
+  			// we found it in page arguments. add it
+  			$found_form = $new_form;
+  			break;
+  		}
+  		else {
+  			// we found it's path. we have to find the closest path match and use that
+  			$dist = levenshtein($new_form, $r['path']);
+  			if ($dist == 0) {
+  				$found_form = $r['page_arguments'][0];
+  				$lev = 0;
+  				break;
+  			}
+  			elseif ($dist < $lev) {
+  				$found_form = $r['page_arguments'][0];
+  				$lev = $dist;
+  			}
+  		}
+  	}
+  	
+  	if (!empty($found_form)) {
+  		// we now have a known existing form_id. insert it.
+  		// if it's already there, good. Mission accomplished.
+  		@db_query("INSERT INTO {adminformcols_enabled} VALUES ('%s', 0, '')", $found_form);
+  	}
+  	else {
+  		drupal_set_message(sprintf('No form found with path %1$s or form_id %1$s', $form_state['values']['add_form']), 'error');
+  	}
   }
 }
 
-function adminformcols_config_form($form_state, $fid) {
+function adminformcols_config_form($form_state, $form_id) {
   require_once(drupal_get_path('module', 'nodeformcols') . '/nodeformcols.admin.inc');
   $form = array();
   // fields:
@@ -52,7 +106,7 @@ function adminformcols_config_form($form_state, $fid) {
   // list of regions
   
   // getting initial parameters and the such
-  $q = db_query("SELECT fid, form_id, params, page_arguments, file, enabled FROM {adminformcols_enabled} INNER JOIN {menu_router} WHERE fid = %d AND INSTR(page_arguments, form_id)", $fid);
+  $q = db_query("SELECT form_id, params, page_arguments, file, enabled FROM {adminformcols_enabled} INNER JOIN {menu_router} WHERE form_id = '%s' AND INSTR(page_arguments, form_id)", $form_id);
   $r = db_fetch_array($q);
   $r['params'] = unserialize($r['params']);
   $r['page_arguments'] = unserialize($r['page_arguments']);
@@ -73,8 +127,9 @@ function adminformcols_config_form($form_state, $fid) {
       $r['params'][$k] = '';
   }
   
-  $form_fields = _adminformcols_get_form_fields($form_name, $r['params'], $r['file'], $fid);
+  $form_fields = _adminformcols_get_form_fields($form_name, $r['params'], $r['file'], $form_id);
   
+  // setting #region to 'none' places it out of the columns
   $form['header'] = array(
   	'#type' => 'markup',
   	'#value' => ucwords(str_replace('_' ,' ', $form_name)),
@@ -83,8 +138,12 @@ function adminformcols_config_form($form_state, $fid) {
   	'#suffix' => '</h2>'
   );
   
+  // tells the form that it's fields will be in columns
   $form['#columns'] = TRUE;
+  
   // building the form
+  
+  // puts the enabled field in the right region by default
   $form['enabled'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enabled'),
@@ -92,6 +151,7 @@ function adminformcols_config_form($form_state, $fid) {
     '#region' => 'right',
   );
   
+  // and the param fields as well
   if (count($r['params']) > 0) {  
     $form['params'] = array(
       '#type' => 'fieldset',
@@ -101,7 +161,7 @@ function adminformcols_config_form($form_state, $fid) {
     );
     
     foreach ($r['params'] as $key => $param) {
-      $form['params']['param_'.$key] = array(
+      $form['params'][$key.'_param'] = array(
         '#type' => 'textfield',
         '#title' => t('Parameter #').($key+1),
         '#size' => 60,
@@ -111,7 +171,10 @@ function adminformcols_config_form($form_state, $fid) {
   }
   
   // get the fields in the form
-  $form_fields = _adminformcols_get_form_fields($form_name, $r['params'], $r['file'], $fid);
+  // as well as their relevant data
+  $form_fields = _adminformcols_get_form_fields($form_name, $r['params'], $r['file'], $form_id);
+  
+  // by leaving the #region blank, it is automatically placed in Main
   $form['conf'] = array(
     '#type' => 'markup',
     '#value' => '',
@@ -120,7 +183,7 @@ function adminformcols_config_form($form_state, $fid) {
   );
   
   $options = _adminformcols_regions();
-  //$options['none'] = 'None';
+  $options['none'] = 'None';
   foreach ($form_fields as $key => $field) {
     $form['conf'][$field['#region']][$key] = array(
     	'#weight' => $field['#weight'],
@@ -163,11 +226,12 @@ function adminformcols_config_form($form_state, $fid) {
     }
   }
   
-  $form['fid'] = array(
+  $form['column_form_id'] = array(
     '#type' => 'hidden',
-    '#value' => $r['fid'],
+    '#value' => $r['form_id'],
   );
   
+  // the submit button goes in the footer region by default
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
@@ -182,12 +246,17 @@ function adminformcols_config_form($form_state, $fid) {
 
 function adminformcols_config_form_submit($form, &$form_state) {
   
-  $q = db_query("SELECT * FROM {adminformcols_enabled} WHERE fid = %d", $form_state['values']['fid']);
+  $q = db_query("SELECT * FROM {adminformcols_enabled} WHERE form_id = %d", $form_state['values']['column_form_id']);
   $res = db_fetch_array($q);
   $res['params'] = unserialize($res['params']);
   
   // runs through each form value
-  // if its a field, we update the region in the _fields database
+  
+  // each field has one of 4 parameters. 
+  // the pattern is fieldname_attribute
+  // we assume the attribute wont have a _, but the fieldname can have as many as it likes
+  // once we know it's an attribute, stick it in the _fields database
+  
   // if its a param, we update the params in the _enabled database
   
   foreach ($form_state['values'] as $field => $value) {
@@ -195,24 +264,20 @@ function adminformcols_config_form_submit($form, &$form_state) {
     $type = array_pop($frags);
     $field = implode('_', $frags);
     if ($type == 'region' || $type == 'collapsed' || $type == 'hidden' || $type == 'weight') {
+    	$region = '';
+    	$collapsed = $hidden = $weight = 0;
     	$$type = $value;
-      $q = db_query("SELECT region FROM {adminformcols_fields} WHERE fid = %d AND name = '%s'", $form_state['values']['fid'], $field);
-        $r = db_fetch_array($q);
-        if ($r) {
-          // it exists already
-          db_query("UPDATE {adminformcols_fields} SET %s = '%s' WHERE fid=%d AND name = '%s'", $type, $value, $form_state['values']['fid'], $field);
-        }
-        else {
-          // it doesn't exist, make a new one
-          db_query("INSERT INTO {adminformcols_fields} VALUES (%d, '%s', '%s', %d, %d, %d)", $form_state['values']['fid'], $field, $region, $weight, $collapsed, $hidden);        
-        }
+      if (!@db_query("INSERT INTO {adminformcols_fields} VALUES ('%s', '%s', '%s', %d, %d, %d)", $form_state['values']['column_form_id'], $field, $region, $weight, $collapsed, $hidden)) {
+        // it exists already. update instead
+        db_query("UPDATE {adminformcols_fields} SET %s = '%s' WHERE form_id = '%s' AND name = '%s'", $type, $value, $form_state['values']['column_form_id'], $field);
+      }
     }
     elseif ($type == 'param') {
       $res['params'][(int)$field] = $value;
     }
   }
   
-  db_query("UPDATE {adminformcols_enabled} SET enabled = %d, params = '%s' WHERE fid = %d", $form_state['values']['enabled'], $res['params']?serialize($res['params']):'', $form_state['values']['fid']);
+  db_query("UPDATE {adminformcols_enabled} SET enabled = %d, params = '%s' WHERE form_id = '%s'", $form_state['values']['enabled'], $res['params']?serialize($res['params']):'', $form_state['values']['column_form_id']);
 }
 
 /*
@@ -243,11 +308,13 @@ function theme_adminformcols_front_form_table($container) {
   foreach ($container as $field_name => $field) {
     $frags = explode('_', $field_name);
     if ($frags[0] != 'form') continue;
+    array_shift($frags);
+    $field_name = implode('_', $frags);
 
     $row = array();
     $row[] = ucwords(str_replace('_',' ',$field['#title']));
     $row[] = drupal_render($field);
-    $row[] = l('Edit Form', 'admin/settings/system_forms/'.$frags[1]);
+    $row[] = l('Edit Form', 'admin/settings/system_forms/'.$field_name);
     
     $rows[] = $row;
   }
@@ -296,7 +363,7 @@ function theme_adminformcols_config_form_table($container) {
  * @param unknown_type $file
  */
 
-function _adminformcols_get_form_fields($form_id, $parameters, $file, $fid) {
+function _adminformcols_get_form_fields($form_id, $parameters, $file, $form_id) {
 	if (empty($form_id)) return array();
   if (!empty($file))
     include_once($file);
@@ -322,7 +389,8 @@ function _adminformcols_get_form_fields($form_id, $parameters, $file, $fid) {
   
   $fields = array();
   foreach ($form as $key => $field) {
-    if (substr($key, 0, 1) == '#' || substr($key, 0, 8) == 'section_' || (isset($field['#access']) && $field['#access'] == FALSE) ||
+  	// filtering
+    if (substr($key, 0, 1) == '#' || substr($key, 0, 8) == 'section_' || 
           $field['#type']=='value' || $field['#type']=='hidden'|| $field['#type']=='token') {
         continue;
       }
@@ -330,13 +398,14 @@ function _adminformcols_get_form_fields($form_id, $parameters, $file, $fid) {
       // Ensure a weight so that we don't have to worry about it later
       $field['#weight'] = isset($field['#weight']) ? $field['#weight'] : 0;
       
-      $q = db_query("SELECT region, weight, collapsed, hidden FROM {adminformcols_fields} WHERE fid = %d AND name = '%s' ORDER BY weight ASC", $fid, $key);
+      // check the database - get settings from there if it exists
+      $q = db_query("SELECT region, weight, collapsed, hidden FROM {adminformcols_fields} WHERE form_id = %d AND name = '%s' ORDER BY weight ASC", $form_id, $key);
       $r = db_fetch_array($q);
       if ($r['region']) {
         $field['#region_original'] = $field['#region'];
         $field['#region'] = $r['region'];
       }
-      if ($field['#type'] == 'fieldset') $field['#collapsed'] = $r['collapsed']?$r['collapsed']:0;
+      if ($field['#type'] == 'fieldset' && $field['#collapsible']) $field['#collapsed'] = $r['collapsed']?$r['collapsed']:$field['#collapsed'];
       $field['#hidden'] = $r['hidden'];
       
       if (!$field['#region']) {

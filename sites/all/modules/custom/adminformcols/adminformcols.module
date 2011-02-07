@@ -1,4 +1,5 @@
 <?php
+// $Id;
 
 /** 
  * @file
@@ -18,6 +19,7 @@
  *  TODO: 
  *    Columns in non-root field elements?
  *    Different column configurations?
+ *    Hook into various exportable modules?
  */
 
 /**
@@ -68,16 +70,8 @@ function adminformcols_menu_alter($items) {
     
     $form_id = $menu['page arguments'][0];
     
-    // is this path in the table already?
-    $q = db_query("SELECT COUNT(*) AS c FROM {adminformcols_enabled} WHERE form_id = '%s'", $form_id);
-    $r = db_fetch_array($q);
-    if ($r['c'] == 0) {
-      // it isn't, let's add it
-      
-      // remove the load calls from the path:
-      // $path = preg_replace('/%[a-zA-Z_\-]+/', '%', $path);
-      db_query("INSERT INTO {adminformcols_enabled} VALUES (0,0,'%s','')", $form_id);
-    }
+    // insert it. if it's already there, good. Mission accomplished.
+    @db_query("INSERT INTO {adminformcols_enabled} VALUES ('%s',0,'')", $form_id);
   }
   
   // then reset the module's weight to whatever it was
@@ -88,17 +82,20 @@ function adminformcols_menu_alter($items) {
  * Implementation of hook_form_alter().
  */
 function adminformcols_form_alter(&$form, &$form_state, $form_id) {
-  $q = db_query("SELECT fid FROM {adminformcols_enabled} WHERE form_id = '%s' AND enabled = 1", $form_id);
-  if ($fid = db_fetch_array($q)) {
-    $fid = $fid['fid'];
+	// find the form_id for this form. If it doesn't have one, or if the form is disabled, we skip most of this.
+  $q = db_query("SELECT form_id FROM {adminformcols_enabled} WHERE form_id = '%s' AND enabled = 1", $form_id);
+  if ($form_id = db_fetch_array($q)) {
+    $form_id = $form_id['form_id'];
     
+    // for each form element, we look for it in the _fields table
     foreach ($form as $key => $value) {
       if (substr($key, 0, 1) == '#' || substr($key, 0, 8) == 'section_' ||
             $value['#type']=='value' || $value['#type']=='hidden'|| $value['#type']=='token') {
           continue;
         }
-      $q = db_query("SELECT region, weight, collapsed, hidden FROM {adminformcols_fields} WHERE fid = %d AND name = '%s'", $fid, $key);
+      $q = db_query("SELECT region, weight, collapsed, hidden FROM {adminformcols_fields} WHERE form_id = '%s' AND name = '%s'", $form_id, $key);
       
+      // we found it in the _fields table, so we populate it with data from the table
       if ($r = db_fetch_array($q)) {
         $form[$key]['#region'] = $r['region'];
         if ($form[$key]['#type'] == 'fieldset') {
@@ -111,6 +108,7 @@ function adminformcols_form_alter(&$form, &$form_state, $form_id) {
     
     $form['#columns'] = TRUE;
   }
+  // make sure the theme is on the form so it gets formatted properly
   if ($form['#columns']) {
   	$form['#theme'] = 'adminformcols_form';
   } 
@@ -122,11 +120,15 @@ function template_preprocess_adminformcols_form(&$aVars) {
   
   $default_region = variable_get('nodeformcols_default_region', NODEFORMCOLS_DEFAULT_REGION);
   $form = &$aVars['form'];
+  // we aren't adding columns to this form, so exit out now
   if (!$form['#columns']) return; 
   $classes = array('node-form');
   
   $regions = array();
+  // put the regions after 'none' region elements
+  // the layout is screwed up badly without it
   $weight = 0;
+  // set up the region elements
   foreach (_adminformcols_regions() as $name => $title) {
     $regions[$name] = array(
         '#prefix' => '<div class="form-region-' . $name . '">',
@@ -140,7 +142,7 @@ function template_preprocess_adminformcols_form(&$aVars) {
     // run through the list of fields
     // if they have a #region set, put them in that region
     // then remove them from the form
-    // we'll put the regions back in at the end
+    // we'll put the regions, with their form element children, in at the end
       if (substr($key, 0, 1)=='#' ||
           $field['#type']=='value' || $field['#type']=='hidden'|| $field['#type']=='token') {
         continue;
@@ -161,6 +163,7 @@ function template_preprocess_adminformcols_form(&$aVars) {
     }
   }
   
+  // add the necessary classes
   foreach ($regions as $name => $reg) {
     if (count($reg) > 0) {
       $classes[] = 'node-form-has-region-' . $name;
@@ -196,10 +199,96 @@ function adminformcols_theme() {
 
 /**
  * Returns an array of accepted fields
- * Maybe: Add hook so modules can add fields?
+ * TODO:
+ *   get regions for current column config
  */
 function _adminformcols_regions() {
-  return array('main' => 'Main', 'right' => 'Right', 'footer' => 'Footer');
+  return array('none' => 'None', 'main' => 'Main', 'right' => 'Right', 'footer' => 'Footer');
+}
+
+/**
+ * Implementation of hook_features_api
+ */
+function adminformcols_features_api() {
+	return array(
+	  'form_columns_config' => array(
+	    'name' => 'Form Columns Configs',
+	    'file' => drupal_get_path('module', 'adminformcols').'/adminformcols.features.inc',
+	    'default_hook' => 'form_columns_config_features_default_settings',
+	    'feature_source' => TRUE,
+	  ),
+	);
+}
+
+
+/**
+ * Implementation of hook_ctools_plugin_api.
+
+function adminformcols_ctools_plugin_api($owner, $api) {
+	if ($owner == 'adminformcols' && api == 'default_form_columns') {
+		return array('version' => 1);
+	}
+}
+
+/**
+ * Implementation of hook_ctools_plugin_directory.
+
+function adminformcols_ctools_plugin_directory($module, $type) {
+	if ($type == 'export_ui') {
+		return 'plugins/export_ui';
+	}
+}
+
+/**
+ * CRUD functions for ctools
+
+function form_columns_load($name) {
+	ctools_include('export');
+	
+	$obj = ctools_export_load_object('adminformcols_enabled', 'names', array($name));
+	$obj = $obj[$name];
+	$obj->working_form_id = $obj->form_id;
+	$obj->fields = array();
+	$q = db_query("SELECT * FROM {adminformcols_fields} WHERE form_id = '%s'", $obj->form_id);
+	while($r = db_fetch_object($q)) {
+		$key = $r->name;
+		unset($r->form_id, $r->name);
+		$obj->fields[$key] = $r;
+	}
+	
+	return $obj;
+}
+
+function form_columns_save($obj) {
+	$form_id = $obj->form_id = $obj->working_form_id;
+	if(!@db_query("INSERT INTO {adminformcols_enabled} SET form_id = '%s', enabled = %d", $form_id, $obj->enabled)) {
+		db_query("UPDATE {adminformcols_enabled} SET enabled = %d WHERE form_id = '%s'", $obj->enabled, $form_id);
+	}
+	foreach ($obj->fields as $field_name => $data) {
+		if(!@db_query("INSERT INTO {adminformcols_fields} SET form_id = '%s', name = '%s', region = '%s', weight = %d, collapsed = %d, hidden = %d", $form_id, $field_name, $data->region, $data->weight, $data->collapsed, $data->hidden)) {
+			db_query("UPDATE {adminformcols_fields} SET region = '%s', weight = %d, collapsed = %d, hidden = %d WHERE form_id = '%s' AND name = '%s'", $data->region, $data->weight, $data->collapsed, $data->hidden, $form_id, $field_name);
+		}
+	}
+	
+	return true;
+}
+
+function form_columns_delete($obj) {
+	db_query("DELETE FROM {adminformcols_enabled} WHERE form_id = '%s'", $obj->form_id);
+	foreach ($obj->fields as $field_name => $data) {
+		db_query("DELETE FROM {adminformcols_fields} WHERE form_id = '%s' AND name = '%s'", $obj->form_id, $field_name);
+	}
+}
+
+function form_columns_export($obj) {
+  $schema = ctools_export_get_schema($obj->table);
+  if (!isset($identifier)) {
+    $identifier = $schema['export']['identifier'];
+  }
+	$output = ctools_export_object($obj->table, $obj, '');
+	$output .= '$' . $identifier . '->fields = ' . ctools_var_export($obj->fields, '') . ";\n";
+	
+	return $output;
 }
 
 
@@ -217,7 +306,7 @@ function _adminformcols_regions() {
  * 6. The actual work is done in a preprocess function. It specifically aims for node_form.
  * 7. Grabs the placement for each field.
  * 8. Sorts the fields into arrays by their region. Ex. $region['main'] will have all the fields that go in main in it.
- * 9. Unsets the form id.
+ * 9. Unsets the field from the form.
  * 10. Adds the regions back into the form data
  
  
@@ -236,7 +325,7 @@ function _adminformcols_regions() {
  * 9. See NFC
  * 10. See NFC
  
- Note that in very few cases, I will have to write my own functions that essentially do what NFC does. I can't just outright use them
+ Note that except for very few cases, I will have to write my own functions that essentially do what NFC does. I can't just outright use them
  since NFC has node-specific implementation details in almost every function.
  
  */
