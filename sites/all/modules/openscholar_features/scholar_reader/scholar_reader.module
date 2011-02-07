@@ -42,7 +42,7 @@ function scholar_reader_vsite_widgets(){
         'label' => 'Latest feed items',
         'type' => 'context_ui',
   );
-      
+
   $items['scholar_reader_my_twitter_feed'] = array(
         'module' => 'scholar_reader',
         'delta' => 'my_twitter_feed',
@@ -150,10 +150,12 @@ function _scholar_reader_twitter_wgt(){
 
 	if(!($vsite = vsite_get_vsite()) || !$vsite->feature_access('scholar_software')) return array();
 
-	//Do they have thier feed set?
+	//Do they have their feed set?
 	if(!strlen($vsite->settings['reader']['twitter_username'])) return array();
 
+	//Fix this? Probably a better way of getting the twitter id..
+  $twitterid = str_replace("from:",'',$vsite->settings['reader']['twitter_username']);
 	$output = twitter_pull_render ($vsite->settings['reader']['twitter_username']);
-
+  $output .= '<div class="twitter-followme">' . l('Follow me on Twitter','http://twitter.com/' . $twitterid) .'</div>';
 	return array('subject' => "Twitter Updates",'content' => $output);
 }
