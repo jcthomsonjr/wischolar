@@ -131,6 +131,11 @@ function scholar_software_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 				      '#value' => l($project->title, 'node/' . $project->nid),
 				      '#weight' => content_extra_field_weight($node->type, 'scholar_software_parent_project'),
 				    );
+				    
+				    //Set seperate page title for Release page
+					  $s_version = "{$node->field_versionmajor[0]['value']}.{$node->field_versionpatch[0]['value']}" . (!empty($node->field_versionextra[0]['value']) ? "-{$node->field_versionextra[0]['value']}" : '');
+				    drupal_set_title($project->title." <span class='version-info'>Release: ".$s_version."</span>");
+				    
         	}//Displaying standalone page
         break;
       }
