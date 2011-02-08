@@ -37,7 +37,11 @@
       <div class="content">
         <?php print $content; ?>
       </div>
-      <?php print $links; ?>
+      <?php if ($links): ?>
+      <div class="links links-inline">
+      <?php print $links;?>
+    </div>
+    <?php endif;?>
     <?php endif;?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->

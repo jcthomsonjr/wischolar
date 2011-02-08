@@ -1,6 +1,5 @@
 <div id="node-<?php print $node->nid; ?>" class="<?php print $node_classes; ?>">
   <div class="node-inner">
-
     <?php if ($unpublished): ?>
       <div class="unpublished"><?php print t('Unpublished'); ?></div>
     <?php endif; ?>
@@ -20,7 +19,11 @@
       <div class="content">
         <?php print $content; ?>
       </div>
-     <?php print $links; ?>
+     <?php if ($links):?>
+      <div class="links links-inline">
+      <?php print $links;?>
+    </div>
+    <?php endif ?>
     <?php } ?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->

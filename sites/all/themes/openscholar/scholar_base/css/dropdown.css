@@ -21,6 +21,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
 #content .ctools-dropdown-container-wrapper ul.links li {
   padding: 0;
   display: block;
+  float: none;
   margin: 0;
   background-image: none;
   text-transform:capitalize;
@@ -140,10 +141,13 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 .node .vsite-admin a.ctools-dropdown-link {
   background: url(../images/admin-link.png) 0 4px no-repeat transparent;
   padding: 1px 0 1px 20px !important;
+  height: 16px;
+  }
+
+.node .os-links .vsite-admin a.ctools-dropdown-link {
+  position: absolute;
   font-size: 11px;
   font-family: 'helvetica neue', helvetica, arial, sans-serif;
-  position: absolute;
-  height: 16px;
   }
 
 .node:hover .vsite-admin a.ctools-dropdown-link {

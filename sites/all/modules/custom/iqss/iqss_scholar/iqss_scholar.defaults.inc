@@ -14,16 +14,18 @@ function _iqss_scholar_config_variables(){
   'pinserver_auth_str' => 'Good signature from "authzproxy"',
   'pinserver_support_contact' => 'scholars_dev_support@help.hmdc.harvard.edu',
   'pinserver_hash_huid' => 0,
-  
+
   //Remote Content Nodes
   'iqss_remote_source_node_types' => array('cv','scholar_software_project','page'),
   'iqss_remote_source_valid_ogs' => '3633', //Enable on Garys Site
+  //imageapi image quality setting
+  'imageapi_jpeg_quality' => 100,
   );
-  
+
   // mollom settings (default) these will be replaced by domain specific if applicable
   $conf['mollom_private_key'] = '32a73b2d09c7576f1a5d4ca73ca9dead';
   $conf['mollom_public_key'] = 'fa9e0e813449535e5fcf06d6dda0d0f3';
-      
+
   return $conf;
 }
 
