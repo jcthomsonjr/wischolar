@@ -101,8 +101,11 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
         if (!empty($node->biblio_issue))      // issue (=day)
         $output .= " " . $node->biblio_issue;
 
-        if (!empty($node->biblio_year))      // year
-        $output .= ", " . $node->biblio_year;
+	      if(strtotime($node->biblio_date)){ //Newspaper or Mag and the full date is set
+	        $output .= ", " . date("F j, Y",strtotime($node->biblio_date)) ;
+	      }elseif (!empty($node->biblio_year)){      // year
+	        $output .= " (" . $node->biblio_year . ")";
+	      }
       }
       else // journal article (or a magazine article with volume numbers)
       {

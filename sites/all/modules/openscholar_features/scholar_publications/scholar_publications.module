@@ -221,25 +221,38 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 			  '#weight' => 14,
 			  '#collapsible' => TRUE,
 			  '#collapsed' => TRUE,
+	      '#tree' => false,
 	    );
-
-	    $a_publication_extras = array('attachments','biblio_notes','biblio_abst_e_field','biblio_abst_e','body_field','biblio_url', 'field_biblio_image','field_biblio_extra');
-
-	    //Pub url in the main section for some biblio types
-	    if($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(125, 113, 107))) unset($a_publication_extras[array_search('biblio_url',$a_publication_extras)]);
-
-	    //Move these form elements into thier own group
-	    foreach ($a_publication_extras as $n_count => $extra_field){
-	    	if(array_key_exists($extra_field,$form)){
-	    		$form['extra_fields_group'][$extra_field] = $form[$extra_field];
-	    		$form['extra_fields_group'][$extra_field]['#weight'] = $n_count;
-	    		unset($form[$extra_field]);
-	    	}
-	    }
+	    if(!isset($form['#after_build'])) $form['#after_build'] = array();
+	    $form['#after_build'][] = 'scholar_publications_move_extras';
 
     }//If the publication type field has been set
 
   }
+}
+
+/**
+ * Move some fields within the "Publication Extras" fieldset to clean up the biblio form
+ *
+ * @param array $form
+ * @param array $form_state
+ */
+function scholar_publications_move_extras($form, &$form_state){
+  $a_publication_extras = array('attachments','biblio_notes','biblio_abst_e_field','biblio_abst_e','body_field','biblio_url', 'field_biblio_image','field_biblio_extra');
+
+  //Pub url in the main section for some biblio types
+  if($form_id == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(125, 113, 107))) unset($a_publication_extras[array_search('biblio_url',$a_publication_extras)]);
+
+  //Move these form elements into thier own group
+  foreach ($a_publication_extras as $n_count => $extra_field){
+    if(array_key_exists($extra_field,$form)){
+      $form['extra_fields_group'][$extra_field] = $form[$extra_field];
+      $form['extra_fields_group'][$extra_field]['#weight'] = $n_count;
+      unset($form[$extra_field]);
+    }
+  }
+      
+  return $form;
 }
 
 function scholar_publications_hide_form_value(&$element){

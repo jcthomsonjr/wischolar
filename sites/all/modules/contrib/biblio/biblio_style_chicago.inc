@@ -107,9 +107,12 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
       if (!empty($node->biblio_issue))      // issue
       $output .=  ", no. " . $node->biblio_issue;
 
-      if (!empty($node->biblio_year))      // year
-      $output .= " (" . $node->biblio_year . ")";
-
+      if(in_array($node->biblio_type,array(105,106)) && strtotime($node->biblio_date)){ //Newspaper or Mag and the full date is set
+      	$output .= ", " . date("F j, Y",strtotime($node->biblio_date)) ;
+      }elseif (!empty($node->biblio_year)){      // year
+        $output .= " (" . $node->biblio_year . ")";
+      }
+      
       if (!empty($node->biblio_pages))      // pages
       {
         if (!empty($node->biblio_year) || !empty($node->biblio_volume) || !empty($node->biblio_issue) || !empty($node->biblio_alternate_title) || !empty($node->biblio_secondary_title)) // only add ": " if either year, volume, issue, abbrev_journal or publication isn't empty
