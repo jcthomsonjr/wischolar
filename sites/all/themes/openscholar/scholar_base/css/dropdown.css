@@ -62,8 +62,8 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   -moz-border-radius:5px;
   -webkit-border-radius:5px;
   border-radius: 5px;
-  -moz-box-shadow:  #888 0 4px 10px;
-  -webkit-box-shadow:  #888 0 4px 10px;
+  -moz-box-shadow:  rgba(0,0,0,0.8) 0 4px 10px;
+  -webkit-box-shadow:  rgba(0,0,0,0.8) 0 4px 10px;
   box-shadow: 0 4px 10px #888;
   opacity: .93;
   }
@@ -139,8 +139,8 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   }
 
 .node .vsite-admin a.ctools-dropdown-link {
-  background: url(../images/admin-link.png) 0 4px no-repeat transparent;
-  padding: 1px 0 1px 20px !important;
+  background: url('../images/admin-link.png') 0 4px no-repeat transparent;
+  padding: 1px 0 10px 20px !important;
   height: 16px;
   }
 
@@ -148,10 +148,13 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   position: absolute;
   font-size: 11px;
   font-family: 'helvetica neue', helvetica, arial, sans-serif;
+  text-align: left;
+  text-indent: -999em;
+
   }
 
 .node:hover .vsite-admin a.ctools-dropdown-link {
-  background-position: 0 -15px;
+  background-position: 0 -25px;
   }
 
 .empty-content .item-list ul.context-links li {

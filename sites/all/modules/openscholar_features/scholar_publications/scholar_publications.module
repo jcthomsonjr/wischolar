@@ -142,7 +142,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
       "#value" => 1
     );
     $form['filetype']['#type'] = 'radios';
-    unset( $form['filetype']['#options']['none']);
+    unset($form['filetype']['#options']['none']);
     $form['filetype']['#default_value'] = 'bib';
     // just unset the taxonomy settings for now.
     unset($form['import_taxonomy']);
@@ -578,7 +578,10 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
 	$links = module_invoke_all('link', 'node', $node, '');
   drupal_alter('link', $links, $node);
 
-	$s_output  .= '<div class="outline-node"></div><div class="os-links">' . theme('links', $links) . '</div>' . "\n" ;
+  if ($links) {
+	  $s_output  .= '<div class="os-links">' . theme('links', $links) . '</div>' . "\n" ;
+	}
+
   if (!$node->status) $s_output .= '<div id="node-'.$node->nid.'" class="node node-unpublished">';
 
   if (count($node->field_biblio_image[0]) && array_key_exists('filepath',$node->field_biblio_image[0])) {
