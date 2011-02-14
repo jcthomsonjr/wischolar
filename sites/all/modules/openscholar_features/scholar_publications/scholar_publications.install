@@ -115,10 +115,10 @@ function scholar_publications_update_6004(&$sandbox){
  */
 function scholar_publications_update_6005(&$sandbox){
 	//Update the biblio settings again
-	$res = scholar_publications_update_6004($sandbox);
+	$res = svn ($sandbox);
 	
 	//This needs to be set to use as the auto increment
-	variable_set('biblio_last_ftdid', 471);
+	variable_set('biblio_last_ftdid', 491);
 	
 	$res[] = array(
       'success' => true,
