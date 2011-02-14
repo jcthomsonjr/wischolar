@@ -66,7 +66,8 @@ h3.cv-direct-download {
   color: #fff;
   }
 
-h3.cv-direct-download a, h3.cv-direct-download a:visited {
+h3.cv-direct-download a,
+h3.cv-direct-download a:visited {
   color: #fa8b18;
   }
 
@@ -74,7 +75,11 @@ h4 {
   margin-bottom: 27px;
   }
 
-h2.title, .block h3.title, #pub_type_tabs h3.title, .taxonomy-term-child h3.taxonomy-heading, #block-vsite_menus-1 li {
+h2.title,
+.block h3.title,
+#pub_type_tabs h3.title,
+.taxonomy-term-child h3.taxonomy-heading,
+#block-vsite_menus-1 li {
   margin: 0 -16px .5em -16px;
   padding: 13px 16px 16px 16px;
   background: #fcfcfc;
@@ -170,11 +175,13 @@ a.more {
   padding: 11px 38px 10px 0;
   }
 
-.block .item-list .pager {
+.block .item-list .pager,
+.twitter-followme {
   background:#fff;
   margin: 0 -16px -26px -16px;
   padding: 1em 0;
   border-top: 1px solid #E5E5E5;
+  text-align: center;
   }
 
 .block .item-list .pager li {
@@ -208,7 +215,8 @@ a.more {
   line-height: 38px;
   }
 
-#sidebar-second #block-iqss_gking-areas_of_research a, #sidebar-second #block-iqss_gking-areas_of_research a:visited {
+#sidebar-second #block-iqss_gking-areas_of_research a,
+#sidebar-second #block-iqss_gking-areas_of_research a:visited {
   color: #fff;
   }
 
@@ -451,7 +459,10 @@ body.section-category .node {
   margin-bottom: 8px;
   }
 
-#sidebar-second, #header-right, #sidebar-first, #header-left {
+#sidebar-second,
+#header-right,
+#sidebar-first,
+#header-left {
   width: 261px;
   }
 
@@ -469,12 +480,15 @@ body.section-category .node {
   padding-left: 8px;
   }
 
-#content-wrapper, #header-wrapper {
+#content-wrapper,
+#header-wrapper {
   padding-right: 269px;
   padding-left: 269px;
   }
 
-#content-main, #sidebar-first, #sidebar-second {
+#content-main,
+#sidebar-first,
+#sidebar-second {
   padding-bottom: 105px;
   }
 
@@ -490,7 +504,8 @@ body.header-right-main #header-wrapper {
   padding-left:8px;
   }
 
-.header-main-right #header-main, .header-left-main-right #header-main {
+.header-main-right #header-main,
+.header-left-main-right #header-main {
   padding:0;
   margin-right: 8px;
   }
@@ -513,7 +528,6 @@ body.header-right-main #header-wrapper {
   width: 547px;
   font-size:1.1em;
   }
-
 
 #header #block-scholar_biocv-bio_blurb h3 {
   display:none;
@@ -547,6 +561,15 @@ body.header-right-main #header-wrapper {
   -webkit-border-radius: 10px 0 0 10px;
   border-radius: 10px 0 0 10px;
   }
+
+html.js div.ctools-dropdown div.ctools-dropdown-container {
+  min-width: 141px;
+  }
+
+html.js .page-home #header-main div.ctools-dropdown div.ctools-dropdown-container {
+ top: 0;
+ left:-27px;
+ }
 
 /* Publications Tabs & Research Group Tabs */
 
@@ -728,6 +751,7 @@ body.page-iqss-gking-research-group h3 {
   text-indent: 0;
   width: auto;
   height: auto;
+  text-shadow: none;
   }
 
 #footer-inner #vsite-widgets-search-form label {
@@ -795,7 +819,7 @@ body.page-iqss-gking-research-group h3 {
 
 #footer #search-form input#edit-submit {
   background: #79929c;
-  color: #fff;
+  color: #fff !important;
   width: 52px;
   height: 20px;
   text-indent:0;
@@ -804,6 +828,7 @@ body.page-iqss-gking-research-group h3 {
   -webkit-border-radius: 0;
   margin: 0;
   float:right;
+  text-shadow: none;
   }
 
 
@@ -834,7 +859,6 @@ body.page-iqss-gking-research-group h3 {
 .biblio-note {
   margin: 0 0.6em 0 0;
   }
-
 
 
 /* TAXONOMY */
