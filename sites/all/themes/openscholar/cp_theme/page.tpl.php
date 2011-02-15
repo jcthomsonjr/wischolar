@@ -26,7 +26,7 @@
       -->
       <div id='page-title' class='clear-block'>
         <?php if ($help_toggler) print $help_toggler ?>
-        <h1 class='page-title'><span class='icon'></span><?php if ($title) print $title ?></h1>
+        <h1 class='page-title'><span class='icon'></span><?php if ($title && $node) print $title ?></h1>
         <?php if ($tabs): ?><?php print $tabs ?><?php endif; ?>
       </div>
 

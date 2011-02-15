@@ -49,7 +49,7 @@ function scholar_front_home(){
     	$s_hide_link = l("Forever","cp/confirm_message/welcome_message",array('attributes'=>array('class'=>'hide'),'query' => array('source'=>$_GET['q']) ));
     	$s_close_link = l("For now","",array('attributes'=>array('class'=>'close','onClick'=>'$("div#message_welcome_message").remove(); return false;')));
 
-    	$s_info = l("Add your personal information",'cp/users/myaccount/personal');
+    	$s_info = l("Add/edit your site information",'cp/settings/site_info/'.$vsite->sid);
     	$s_features = l("Enable or disable features for your site",'cp/features');
     	$s_members = l("Manage who may use your site",'cp/users/members');
     	$s_theme = l("Change the look of your site",'cp/appearance');
