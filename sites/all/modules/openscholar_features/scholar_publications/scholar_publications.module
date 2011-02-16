@@ -367,7 +367,6 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       }
     break;
     case 'update':
-      drupal_set_message('publication node updated');
     case 'insert':
     	//Associate biblio authors with site owners
       if(!empty($node->biblio_contributors)){

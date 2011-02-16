@@ -31,7 +31,7 @@ class scholar_dvn_settings_feature implements space_setting {
     $form['dvn_next_steps'] = array(
       '#type' => 'markup',
       '#title' => t('Next Steps'),
-      '#value' => '<h3>Next Steps: </h3><span class="field-prefix">To complete embedding the Dataverse in this OpenScholar site, go to your Dataverse Options, click Edit Layout Branding and select "Disable customization if Dataverse is embedded an OpenScholar site</span>',
+      '#value' => '<h3>Next Steps: </h3><span class="field-prefix">To complete embedding the Dataverse in this OpenScholar site, go to your Dataverse Options, click Edit Layout Branding and select "Disable customization if Dataverse is embedded in an OpenScholar site</span>',
     );
     return $form;
   }

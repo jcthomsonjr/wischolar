@@ -196,7 +196,7 @@ function cite_distribute_form_submit(){
     }
   }
   $output = theme('cite_distribute_form_msg', $modules);
-  drupal_set_message(t($output));
+  if($output) drupal_set_message(t($output));
 }
 
 /**
