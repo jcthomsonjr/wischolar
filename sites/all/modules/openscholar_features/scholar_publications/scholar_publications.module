@@ -205,6 +205,10 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(is_array($form['taxonomy']) && array_key_exists('copy_to_biblio',$form['taxonomy'])){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
     }
+    
+    if(array_key_exists('field_biblio_extra',$form) && is_array($form['field_biblio_extra'])){
+      $form['field_biblio_extra']['field_biblio_extra_add_more']['#value'] = 'Add Another Field';
+    }
 
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['biblio_abst_e_field'] = 0; //Disable vert. tabs
@@ -238,6 +242,9 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
  * @param array $form_state
  */
 function scholar_publications_move_extras($form, &$form_state){
+	//The JS Call Expects the field to be in the orig position so we can't move them for the "Add More" callbacks
+	if(strpos($_GET['q'],"content/js_add_more") === 0) return $form;
+	
   $a_publication_extras = array('attachments','biblio_notes','biblio_abst_e_field','biblio_abst_e','body_field','biblio_url', 'field_biblio_image','field_biblio_extra');
 
   //Pub url in the main section for some biblio types
