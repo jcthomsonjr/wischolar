@@ -452,9 +452,33 @@ function scholar_image_gallery_views_default_views() {
       ),
     ),
   ));
+  $handler->override_option('sorts', array(
+    'created' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'sticky' => array(
+      'order' => 'DESC',
+      'id' => 'sticky',
+      'table' => 'node',
+      'field' => 'sticky',
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+    ),
+  ));
   $handler->override_option('arguments', array());
   $handler->override_option('title', 'Recent images');
-  $handler->override_option('items_per_page', 4);
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', 'Recent images');
   $handler->override_option('block_caching', -1);
