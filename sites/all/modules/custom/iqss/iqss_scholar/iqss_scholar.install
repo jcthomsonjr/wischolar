@@ -28,6 +28,7 @@ function _iqss_scholar_init_mollom_forms(){
 	db_query("REPLACE INTO `mollom_form` VALUES('user_register', 1, 'a:0:{}', 'user')");
 	db_query("REPLACE INTO `mollom_form` VALUES('user_pass', 1, 'a:0:{}', 'user')");
 	db_query("REPLACE INTO `mollom_form` VALUES('comment_form', 1, 'a:0:{}', 'comment')");
+	db_query("REPLACE INTO `mollom_form` VALUES('vsite_support_contact_mail_owner', 1, 'a:0:{}', 'contact')");
 	
 	$res[] = array(
       'success' => true,
@@ -35,4 +36,11 @@ function _iqss_scholar_init_mollom_forms(){
     );
     
     return $res;
+}
+
+function iqss_scholar_update_6002(&$sandbox){
+  //Init mollom forms
+  $res = _iqss_scholar_init_mollom_forms();
+  
+  return $res;
 }

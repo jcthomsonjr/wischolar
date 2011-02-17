@@ -54,8 +54,11 @@ function iqss_scholar_strongarm(){
  * Alter Mollom Settings
  */
 function iqss_scholar_mollom_form_info_alter(&$form_info, $form_id){
-	$a_mollom_forms = array('contact_mail_page','contact_mail_user','user_register','user_pass','comment_form');
+	$a_mollom_forms = array('contact_mail_page','contact_mail_user','user_register','user_pass','comment_form','vsite_support_contact_mail_owner');
 
+	//Mollom only for logged out users
+	if(cp_access_cp()) $form_info['bypass access'][] = 'access content'; //adding a permission everyone has always
+	
   $form_info['mode'] = (in_array($form_id,$a_mollom_forms))? MOLLOM_MODE_CAPTCHA:MOLLOM_MODE_DISABLED;
 }
 
