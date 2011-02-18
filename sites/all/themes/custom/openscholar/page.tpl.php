@@ -104,7 +104,7 @@
             $login_link = theme('vsite_login_link',"Login",array('class' => 'footer-login'));
           ?>
           <p class="copy">
-          <?php print $login_link;?> &copy; President &amp; Fellows Harvard University. IQSS, 1737 Cambridge Street, Cambridge, MA, 02138 p: (617) 496-2450  <span id="powered-link"><?php print $home_link; ?></span></p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
+          <?php print $login_link;?> &copy; President &amp; Fellows Harvard University. IQSS, 1737 Cambridge Street, Cambridge, MA, 02138 <a href="http://openscholar.harvard.edu/contact">Contact Form</a> <span id="powered-link"><?php print $home_link; ?></span></p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
         </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->
