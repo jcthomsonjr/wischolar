@@ -30,6 +30,7 @@ body {
  -webkit-border-radius: 6px;
  }
 
+body.no-sidebars #content-main,
 .front #content-bottom {
   padding: 0;
   }
@@ -256,14 +257,10 @@ html[xmlns] #content-bottom:after {
   display:block;
   }
 
-#block-views-openscholar_sites-block_2 .view-openscholar-sites .views-admin-links {
-  float: right;
-  margin-right: 6px;
-  }
-
-#block-views-openscholar_sites-block_2 .view-openscholar-sites .views-admin-links ul {
-  padding: 0;
-  clear:none;
+#block-views-openscholar_sites-block_2 ul {
+  padding-top: 27px;
+  width: 860px;
+  margin: 0 0 0 85px;
   }
 
 #block-views-openscholar_sites-block_2, #footer {
@@ -285,26 +282,69 @@ html[xmlns] #content-bottom:after {
 
 #block-views-openscholar_sites-block_2 {
   clear: both;
+  background:#fff;
+  position:relative;
   }
 
 #block-views-openscholar_sites-block_2 .views-row {
   float: left;
-  width: 127px;
-  margin-right:25px;
   clear: none;
-  font-size: 12px;
-  margin-top: 50px;
-  line-height: normal;
+  width: 270px;
+  margin: 2px 8px;
+  overflow: hidden;
   }
 
-#block-views-openscholar_sites-block_2 .views-row-6 {
-  margin-right: 0;
+#block-views-openscholar_sites-block_2 .views-row,
+.view-openscholar-sites td {
+  height: 100px;
+  font-size: 12px;
+  }
+
+#block-views-openscholar_sites-block_2 img,
+.view-openscholar-sites img,
+.view-openscholar-sites img {
+  border: 1px solid #8b8b8b;
+  float: left;
+  margin:0 10px 5px 0;
+  }
+
+.views-field-description p {
+  font-weight: normal;
+  line-height: 1.1em;
+  margin: 0 auto;
+  font-size: 11px;
+  }
+
+.view-openscholar-sites .views-field-title a {
+  font-weight: bold;
   }
 
 #block-views-openscholar_sites-block_2 .more-link {
   clear: both;
-  margin-right: 15px;
-  padding-bottom: 3px;
+  text-align:right;
+  }
+
+#block-views-openscholar_sites-block_2 .views-admin-links {
+  position:absolute;
+  right:0;
+  top: 0;
+  width: 103px;
+  }
+
+#block-views-openscholar_sites-block_2 .views-admin-links ul {
+  background: transparent;
+  height: auto;
+  padding: 0;
+  margin:0;
+  }
+
+#block-views-openscholar_sites-block_2 .more-link a {
+  background: url(images/black-arrow-right.png) no-repeat 100% 50% #fff;
+  padding-right: 11px;
+  color: #000;
+  text-transform: capitalize;
+  font-weight: bold;
+  margin-right: 30px;
   }
 
 a.imagecache-openscholar_front_logo {
@@ -314,7 +354,6 @@ a.imagecache-openscholar_front_logo {
   display:block;
   }
 
-#block-views-openscholar_sites-block_2 img,
-.view-iqss-project-sites img {
+#block-views-openscholar_sites-block_2 img, .view-iqss-project-sites img {
   border: 1px solid #535252;
   }

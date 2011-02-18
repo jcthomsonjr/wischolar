@@ -12,7 +12,7 @@ body {
 /* TYPOGRAPHY*/
 
 a, a:visited {
-    color:#a3a18c;
+    color:#807e6d;
     text-decoration: none;
     }
 
@@ -36,19 +36,24 @@ h2.title {
   font-size: .8em;
   }
 
-#sidebar-second h3.title, #sidebar-first h3.title {
+.sidebar h3.title {
   color: #d43808;
   font: 13px/normal "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
   font-weight: normal;
   text-transform:uppercase;
   letter-spacing: .5px;
+  margin-bottom: 10px;
   }
 
 #sidebar-second h3.title {
   color:#416803;
   }
 
-#sidebar-second li a, #sidebar-first li a {
+.sidebar .views-row {
+  margin-bottom: 2em;
+  }
+
+.sidebar li a {
   color: #757575;
   font-weight:normal;
   }
@@ -68,24 +73,27 @@ p.copy {
   }
 
 
-#sidebar-first, #sidebar-second {
-  font-size: .8em;
-  line-height: 1.1em;
+.sidebar {
+  font-size: 12px;
+  line-height: 1.41em;
   }
 
-#sidebar-first, #header-left {
+#sidebar-first,
+#header-left {
   width: 152px;
   right: 232px;
   padding-left: 43px;
   padding-right: 17px;
   }
 
-#sidebar-second, #header-right {
+#sidebar-second,
+#header-right {
   width: 164px;
   padding-left: 38px;
   }
 
-#content-wrapper, #header-wrapper {
+#content-wrapper,
+#header-wrapper {
   padding-left: 212px;
   padding-right: 265px;
   }
@@ -97,7 +105,7 @@ p.copy {
 #footer {
     text-align: center;
     background:url(images/footer.png) no-repeat 0 0 #fff;
-    padding-top: 24px;
+    padding-top: 37px;
     }
 
 #header {
@@ -106,19 +114,28 @@ p.copy {
   padding: 0 33px;
   }
 
-body.sidebar-first #container, body.sidebar-first #header, body.sidebar-first #footer {
+body.sidebar-first #container,
+body.sidebar-first #header,
+body.two-sidebars #footer {
   background-position: -1012px 0;
   }
 
-body.sidebar-second #container, body.no-sidebars #header, body.no-sidebars #footer {
+body.sidebar-second #container,
+body.no-sidebars #header,
+body.no-sidebars #footer {
   background-position: -2024px 0;
   }
 
-body.no-sidebars #container, body.no-sidebars #footer, body.navbar-off #header, body.navbar-off #container  {
+body.no-sidebars #container,
+body.navbar-off #header,
+body.navbar-off #container  {
   background-position: -3036px 0;
   }
 
-body.no-sidebars #header, body.no-sidebars #content-wrapper, body.sidebar-second #content-wrapper, body.no-sidebars #footer {
+body.no-sidebars #header,
+body.no-sidebars #content-wrapper,
+body.sidebar-second #content-wrapper,
+body.no-sidebars #footer {
   padding-left: 43px;
   }
 
@@ -162,8 +179,8 @@ body.navbar-off #sidebar-first {
     }
 
 #header h2 {
-  font-size: 25px;
-  line-height: 28px;
+  font-size: 19px;
+  line-height: 19px;
   font-style:normal;
   }
 
@@ -218,10 +235,12 @@ body.navbar-off #sidebar-first {
   height: 52px;
   }
 
-
 /*Footer */
 
-#footer, body.no-sidebars #footer, body.sidebar-second #footer, body.sidebar-first #footer {
+#footer,
+body.no-sidebars #footer,
+body.sidebar-second #footer,
+body.sidebar-first #footer {
   padding-left: 0;
   padding-right: 0;
   }
