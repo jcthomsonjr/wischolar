@@ -686,6 +686,8 @@ function purl_form($provider, $id, $value = '', $required = TRUE) {
     '#tree' => TRUE,
     '#element_validate' => array('purl_form_validate'),
   );
+  
+  if(!$processor) return $form;
 
   $processors = _purl_options();
 
