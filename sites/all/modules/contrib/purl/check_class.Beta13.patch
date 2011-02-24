@@ -1,0 +1,13 @@
+Index: purl.module
+===================================================================
+--- purl.module	(revision 4924)
++++ purl.module	(working copy)
+@@ -878,7 +878,7 @@
+   if (!isset($processors[$method])) {
+     ctools_include('plugins');
+     $class = ctools_plugin_load_class('purl', 'processor', $method, 'handler');
+-    $processors[$method] = new $class();
++    if($class) $processors[$method] = new $class();
+   }
+   return isset($processors[$method]) ? $processors[$method] : NULL;
+ }
