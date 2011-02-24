@@ -52,8 +52,9 @@ function iqss_pinserver_register_form_alter(&$form, $form_state, $form_id){
         //change email field description
         $form['mail']['#description'] =  t('A valid e-mail address is required. All e-mails from OpenScholar will be sent to this address.');
       }
+      
       //if user is has create vsite permissions, then load additional field(s)
-      if (node_access('create', variable_get('scholar_content_type', 'vsite'))){
+      if (user_access("create openscholar site on behalf of others")){
         //add huid field
         _iqss_pinserver_register_huid_field($form);
         ctools_ajax_associate_url_to_element($form, $form['huid'], url('iqss-pinserver-register/huid_js'), 'ctools-use-ajax-onchange');
@@ -88,7 +89,7 @@ function iqss_pinserver_register_vsite_users_profile_node_submit($form, &$form_s
  */
 function iqss_pinserver_register_validate($form, &$form_state){
   //check if multiple sites is limited and if site already exists
-  if(variable_get('scholar_create_multiple_sites', 0) == 0 && iqss_pinserver_register_check_row($form_state['values']['huid'])){
+  if($uid && !user_access("create openscholar site on behalf of others") && count(vsite_get_vsite_by_owner($uid)) >= variable_get('openscholar_vsites_per_user', 1)){
     $commands[] = _scholarregister_vsite_error();
     ctools_ajax_render($commands);
   }
@@ -106,24 +107,24 @@ function iqss_pinserver_register_submit($form, $form_state){
     return;
   }
   //if user information is present, then add user info to the database
-  else{    
+  else{
     $huid = !empty($form_state['values']['huid'])  ? $form_state['values']['huid'] : NULL;
     iqss_pinserver_register_add_row($form_state['new_user'] ->uid, $huid);
     
-    if ((in_array('anonymous user', $user -> roles) && !node_access('create', variable_get('scholar_content_type', 'vsite')))){
-    // log user in    
-    $user = $form_state['new_user'];
-    watchdog('user', 'Session opened for %name.', array('%name' => $user->name));
-    // Update the user table timestamp noting user has logged in.
-    // This is also used to invalidate one-time login links.
-    $user->login = time();
-    db_query("UPDATE {users} SET login = %d WHERE uid = %d", $user->login, $user->uid);
-
-    // Regenerate the session ID to prevent against session fixation attacks.
-    sess_regenerate();
+    if (in_array('anonymous user', $user -> roles) && !user_access("create openscholar site on behalf of others")){
+	    // log user in
+	    $user = $form_state['new_user'];
+	    watchdog('user', 'Session opened for %name.', array('%name' => $user->name));
+	    // Update the user table timestamp noting user has logged in.
+	    // This is also used to invalidate one-time login links.
+	    $user->login = time();
+	    db_query("UPDATE {users} SET login = %d WHERE uid = %d", $user->login, $user->uid);
+	
+	    // Regenerate the session ID to prevent against session fixation attacks.
+	    sess_regenerate();
     }
     //need to call hook_user here???
-    //user_module_invoke('login', $edit, $user);   
+    //user_module_invoke('login', $edit, $user);
      
     //remove pinserver session vars
     pinserver_remove_session();
@@ -164,10 +165,10 @@ function  iqss_pinserver_register_huid_js() {
  */
 function iqss_pinserver_register_mail_alter(&$message){
 
-  if ($message['id'] == 'scholarregister_scholar-register-notify'){ 
+  if ($message['id'] == 'scholarregister_scholar-register-notify'){
 
     //altering the contents of the welcome email
-    $params = iqss_pinserver_register_notify($message['user'], $message['vsite']);    
+    $params = iqss_pinserver_register_notify($message['user'], $message['vsite']);
     $message['subject'] = $params['subject'];
     $message['body'] = $params['body'];
     }
@@ -221,21 +222,16 @@ function iqss_pinserver_register_form_access(){
 
   //system check logic
   $settings_info = pinserver_check_system_settings();
-  switch ($settings_info['value']){
-    case true;
-    //proceed;
-    break;
-    case false:
-      error_log($settings_info['message']);
-      $support_mail = strlen(PIN_SUPPORT_CONTACT) ?  PIN_SUPPORT_CONTACT :  'scholar_dev@help.hmdc.harvard.edu';
-      drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail)));
-      drupal_goto();
-      break;
+  if($settings_info['value'] == false){
+    error_log($settings_info['message']);
+    $support_mail = strlen(PIN_SUPPORT_CONTACT) ?  PIN_SUPPORT_CONTACT :  'scholar_dev@help.hmdc.harvard.edu';
+    drupal_set_message(t("New web sites are not available at this time but should be available shortly.  Please check back within the hour or email us at:  !support_mail", array('!support_mail' => $support_mail)));
+    drupal_goto();
   }
 
   /*** Check what to do before loading scholarregister form ***/
-  //user is logged in - already owns a site and/or has create vsite permissions - no need to send to pinserver
-  if((in_array('authenticated user', $user -> roles) && vsite_get_vsite_by_owner($user->uid)) || node_access('create', variable_get('scholar_content_type', 'vsite'))){
+  //user already owns a site or has create vsite permissions - no need to send to pinserver
+  if(vsite_get_vsite_by_owner($user->uid) || user_access("create openscholar site on behalf of others")){
     return scholarregister_form_process();
   }
 
@@ -256,11 +252,11 @@ function iqss_pinserver_register_form_access(){
         $user->login = time();
         db_query("UPDATE {users} SET login = %d WHERE uid = %d", $user->login, $user->uid);
         // Regenerate the session ID to prevent against session fixation attacks.
-        sess_regenerate();       
+        sess_regenerate();
       }
     }
      return scholarregister_form_process();
-  } 
+  }
 }
 
 /**
@@ -339,12 +335,12 @@ function _iqss_pinserver_register_huid_field(&$form){
 function iqss_pinserver_register_scholarregister_message(&$message, $form, $domain){
   global $user, $base_url;
 
-  $word_replace = node_access('create', variable_get('scholar_content_type', 'vsite')) ? 'the' : 'your';
-  $logged_in = in_array('authenticated user', $user -> roles) ? 'You are now logged in. ' : '';  
+  $word_replace = user_access("create openscholar site on behalf of others") ? 'the' : 'your';
+  $logged_in = in_array('authenticated user', $user -> roles) ? 'You are now logged in. ' : '';
   
   $message  = '<div id="success-message">';
   $message .= '<p>Success! ' . ucfirst($word_replace) . ' new site has been created.</p>';
-  $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';  
+  $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';
   $message .= '<p>' . $logged_in . 'Check your email account for further details on how to get started with adding features and customizing your site.</p>';
   $message .= '</div>';
 }

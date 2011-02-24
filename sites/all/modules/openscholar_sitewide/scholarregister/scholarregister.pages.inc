@@ -6,9 +6,7 @@
 function scholarregister_signup_form(){
   global $user;
   $form = array();
-   //check if user is has create site permission
-  $create_site_access = node_access('create', variable_get('scholar_content_type', 'vsite'));
-
+  
   drupal_add_css(drupal_get_path('module', 'scholarregister') . '/theme/scholarregister.css');
 
   // clear any drupal_messages. Ajax takes care of them
@@ -17,16 +15,26 @@ function scholarregister_signup_form(){
   ctools_add_js('ajax-responder');
   $form['#prefix'] = '<div id = "user_register">';
   $form['#suffix'] = '</div>';
+  
+  //Create sites on behalf of others
+  $b_create_sites = user_access("create openscholar site on behalf of others");
+  //Create site(s) for yourself
+  $b_create_own_sites = user_access("create own openscholar site");
+  
+  if($_REQUEST['register_for']) $site_owner = user_load(intval($_REQUEST['register_for']));
+  
+  if(!$site_owner) $site_owner = $user;
+  $existing_sites = vsite_get_vsite_by_owner($site_owner->uid);
 
-  //this is a current site owner creating another site, use existing account information when creating new site
-  if(vsite_get_vsite_by_owner($user->uid) && variable_get('scholar_create_multiple_sites', 0) == 1 && !$create_site_access){
+  //this is a current site owner creating another site for himself, use existing account information
+  if( (!$b_create_sites || ($b_create_sites && $_REQUEST['register_for']) || ($b_create_own_sites && !$b_create_sites)) && $existing_sites && count($existing_sites) < variable_get('openscholar_vsites_per_user', 1)){
     $form['create_multiple_sites']['#type'] = 'value';
     $form['create_multiple_sites']['#value'] = 1;
 
-    _scholarregister_add_form_items($form);
+    _scholarregister_add_form_items($form,$site_owner);
   }
   //non site owner trying to create a site, use the existing user account information when creating the new site
-   elseif(!vsite_get_vsite_by_owner($user->uid) && in_array('authenticated user', $user -> roles) && !$create_site_access){
+   elseif(isset($user->name) && isset($user->mail) && !vsite_get_vsite_by_owner($user->uid) && (!$b_create_sites && $b_create_own_sites)){
     $form['create_site_is_authenticated']['#type'] = 'value';
     $form['create_site_is_authenticated']['#value'] = 1;
 
@@ -34,31 +42,45 @@ function scholarregister_signup_form(){
     _scholarregister_add_form_items($form);
   }
 
-  // otherwise this is an anonymouse user, show the normal form
+  // otherwise show the normal form
   else{
-  // username
-  $form['name'] = array(
-      '#type' => 'textfield',
-      '#size' => 35,
-      '#title' => ($create_site_access) ? t('Choose Site Owner\'s Username') : t('Desired user name'),
-      '#required' => TRUE,
-      '#description' => t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores.'),
-      '#prefix' => '<div id="name-field">',
-      '#suffix' => '<div id="name-suffix"></div></div>',
-  );
-  ctools_ajax_associate_url_to_element($form, $form['name'], url('scholarregister/name_js'), 'ctools-use-ajax-onchange');
-
-  // last name
-  $form['mail'] = array(
-      '#type' => 'textfield',
-      '#size' => 35,
-      '#title' => ($create_site_access) ? t('Site Owner\'s email address') :  t('Your email address'),
-      '#required' => TRUE,
-      '#description' => t('A valid e-mail address is required. All e-mails from OpenScholar will be sent to this address.'),
-      '#prefix' => '<div id="mail-field">',
-      '#suffix' => '<div id="mail-suffix"></div></div>'
-  );
-  ctools_ajax_associate_url_to_element($form, $form['mail'], url('scholarregister/mail_js'), 'ctools-use-ajax-onchange');
+  	//$b_create_sites || $b_create_own_sites
+  	
+	  // username
+	  $form['name'] = array(
+	      '#type' => 'textfield',
+	      '#size' => 35,
+	      '#title' => ($b_create_sites) ? t('Choose Site Owner\'s Username') : t('Desired user name'),
+	      '#required' => TRUE,
+	      '#description' => t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores.'),
+	      '#prefix' => '<div id="name-field">',
+	      '#suffix' => '<div id="name-suffix"></div></div>',
+	  );
+	  ctools_ajax_associate_url_to_element($form, $form['name'], url('scholarregister/name_js'), 'ctools-use-ajax-onchange');
+	
+	  // last name
+	  $form['mail'] = array(
+	      '#type' => 'textfield',
+	      '#size' => 35,
+	      '#title' => ($b_create_sites) ? t('Site Owner\'s email address') :  t('Your email address'),
+	      '#required' => TRUE,
+	      '#description' => t('A valid e-mail address is required. All e-mails from OpenScholar will be sent to this address.'),
+	      '#prefix' => '<div id="mail-field">',
+	      '#suffix' => '<div id="mail-suffix"></div></div>'
+	  );
+	  ctools_ajax_associate_url_to_element($form, $form['mail'], url('scholarregister/mail_js'), 'ctools-use-ajax-onchange');
+	  
+	   //if user is user with special access then load any additional fields (password, etc.)
+	  if ($b_create_sites){
+	    
+	    drupal_add_css(drupal_get_path('module', 'scholarregister') .'/scholarregister.css', 'module', 'all', FALSE);
+	
+	    //add password field
+	    _scholarregister_password_field($form);
+	
+	    //add send mail field
+	    _scholarregister_send_mail_field($form);
+	  }
 
   } //else clause ends here
 
@@ -66,7 +88,7 @@ function scholarregister_signup_form(){
   global $base_url;
   $form['domain'] = array(
       '#type' => 'textfield',
-      '#title' => ($create_site_access) ?  t('Select a Domain Name') :  t('Your Domain Name'),
+      '#title' => ($b_create_sites) ?  t('Select a Domain Name') :  t('Your Domain Name'),
       '#required' => TRUE,
       '#field_prefix' => $base_url . '/',
       '#size' => 35,
@@ -80,21 +102,9 @@ function scholarregister_signup_form(){
   );
   ctools_ajax_associate_url_to_element($form, $form['domain'], url('scholarregister/domain_js'), 'ctools-use-ajax-onchange');
 
-    //if user is user with special access then load any additional fields (password, etc.)
-  if ($create_site_access){
-    $path = drupal_get_path('module', 'scholarregister');
-    drupal_add_css($path .'/scholarregister.css', 'module', 'all', FALSE);
-
-    //add password field
-    _scholarregister_password_field($form);
-
-    //add send mail field
-    _scholarregister_send_mail_field($form);
-  }
-
   $form['submit'] = array(
       '#type' => 'submit',
-      '#value' => t('Create your site'),
+      '#value' => ($b_create_sites) ?  t('Create a new site') :  t('Create your site'),
       '#weight' => 40,
       '#attributes' => array('class' => 'ctools-use-ajax' ),
       '#suffix' => '<div id="submit-suffix"></div>'
@@ -126,7 +136,7 @@ function scholarregister_signup_form_validate($form, &$form_state){
   foreach ($fields as $field){
     if ($form_state['values'][$field]){
       if(call_user_func('scholarregister_validate_' . $field, $form_state['values'][$field] )){
-        $commands[] = _scholarregister_vsite_error();
+      	  $commands[] = _scholarregister_vsite_error();
       }
     }
   }
@@ -137,12 +147,12 @@ if (!empty($commands)) ctools_ajax_render($commands);
  * the submit handler for the registration form
  */
 function scholarregister_signup_form_submit($form, &$form_state) {
-      //capture domain field
-      $domain = $form_state ['values'] ['domain'];
+    //capture domain field
+    $domain = $form_state ['values'] ['domain'];
 
-      //This if/else clause determines which user account to give owership when creating a new site
-     if ($form ['create_multiple_sites']['#value']  == 1 ||  $form ['create_site_is_authenticated']['#value'] == 1){
-      global $user;
+    //This if/else clause determines which user account to give owership when creating a new site
+    if ($form ['create_multiple_sites']['#value']  == 1 ||  $form ['create_site_is_authenticated']['#value'] == 1){
+      $user = user_load(array('name' => $form_state ['values'] ['register_for']));
       $name = $user -> name;
       $mail  = $user -> mail;
       ///this is a 'scholar user' user who is creating a site for first time
@@ -201,7 +211,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   }
 
   //additional tasks and workflow if user with special access is creating site
-  if ((in_array('authenticated user', $user -> roles) && node_access('create', variable_get('scholar_content_type', 'vsite')))){
+  if (in_array('authenticated user', $user -> roles) && user_access("create openscholar site on behalf of others")){
     if($vsite){
       global $user;
       if($user -> uid !== '1'){
@@ -224,22 +234,27 @@ function scholarregister_signup_form_submit($form, &$form_state) {
 /**
  * Functions to add form elements
  */
-function _scholarregister_add_form_items(&$form){
+function _scholarregister_add_form_items(&$form, $site_owner = false){
   global $user;
+  if(!$site_owner) $site_owner = $user;
    //TODO: alter div id's
   $form['name'] = array(
-  '#type' => 'item',
-  '#title' =>  t('Your username'),
-  '#value' => $user -> name,
-  '#prefix' => '<div id="name-item">',
-  '#suffix' => '</div>',
+	  '#type' => 'item',
+	  '#title' =>  t('Username'),
+	  '#value' => $site_owner -> name,
+	  '#prefix' => '<div id="name-item">',
+	  '#suffix' => '</div>',
+  );
+  $form['register_for'] = array(
+	  '#type' => 'value',
+	  '#value' => $site_owner -> name,
   );
   $form['mail'] = array(
-  '#type' => 'item',
-  '#title' =>  t('Your email address'),
-  '#value' => $user -> mail,
-  '#prefix' => '<div id="mail-item">',
-  '#suffix' => '</div>',
+	  '#type' => 'item',
+	  '#title' =>  t('Email Address'),
+	  '#value' => $site_owner -> mail,
+	  '#prefix' => '<div id="mail-item">',
+	  '#suffix' => '</div>',
   );
 }
 

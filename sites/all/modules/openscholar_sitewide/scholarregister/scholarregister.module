@@ -42,13 +42,7 @@ function scholarregister_menu(){
  *@return boolean
  */
 function scholarregister_form_access(){
-  global $user;
-  if (user_access('access content')){
-    return true;
-  }
-  else {
-    return false;
-  }
+  return scholarregister_vsite_exists_access();
 }
 
 /**
@@ -56,15 +50,12 @@ function scholarregister_form_access(){
  */
 function scholarregister_form_process(){
   global $user;
-  //check if user has create site permission
-  $create_site_access = node_access('create', variable_get('scholar_content_type', 'vsite'));
 
   //check if user should be re-directed somewhere
-  if ($vsites = vsite_get_vsite_by_owner($user->uid)){
-    if (!scholarregister_vsite_exists_access($vsites) && !$create_site_access){
-      return drupal_goto(_scholarregister_get_redirect($vsites));  //redirect user away from the form
-    }
+  if (!scholarregister_vsite_exists_access()){
+    return drupal_goto(_scholarregister_get_redirect(vsite_get_vsite_by_owner($user->uid)));  //redirect user away from the form
   }
+
   return drupal_get_form('scholarregister_signup_form'); //load the form
 }
 
@@ -72,38 +63,26 @@ function scholarregister_form_process(){
  * Handles access rules for when site owner is attempting to create a another site
  * @return  boolean
  */
-function scholarregister_vsite_exists_access($vsites = array()){
-  //if user has permissions to create sites, return true
-  if ( node_access('create', variable_get('scholar_content_type', 'vsite' ))) {
-    return true;
+function scholarregister_vsite_exists_access($vsites = false){
+  
+	if(!$vsites){
+		global $user;
+		$vsites = vsite_get_vsite_by_owner($user->uid);
+	}
+	
+	//if user has permissions to create sites, return true
+  if (!user_access("create openscholar site on behalf of others") &&
+      !user_access("create own openscholar site")) {
+    return false;
   }
 
-  //check global variable whether user can create multiple sites
-  $multple_sites=  variable_get('scholar_create_multiple_sites', 0); //the default is one site only
-
-  //user owns one site
-  if (count($vsites) == 1){
-    switch ($multple_sites){
-      case 0:
-        return false;
-        break;
-      case 1:
-        return true;
-        break;
-    }
+  //user owns one or more sites
+  if (count($vsites) >= variable_get('openscholar_vsites_per_user', 1)){
+  	//check whether user can create multiple sites
+    return user_access("create openscholar site on behalf of others");
   }
-  //user owns multiple sites
-  if (count($vsites) > 1) {
-    switch ($multple_sites){
-      case 0:
-        //this should never happen unless the $multiple_sites value is switched from 1 to 0 after site has been live
-        return  false;
-        break;
-      case 1:
-        return  true;
-        break;
-    }
-  }
+  
+  return true;
 }
 
 /**
@@ -136,9 +115,14 @@ function _scholarregister_get_redirect($vsites = array()){
  */
 function scholarregister_name_js() {
   $name = $_POST ['ctools_changed'];
-
+  
   if ($error = scholarregister_validate_name($name)){
-    scholarregister_ctools_message('#name-suffix', $error, 'error');
+  	$user = user_load(array('name' => $name));
+  	if(!user_access("create openscholar site on behalf of others") || !$user || count(vsite_get_vsite_by_owner($user->uid)) >= variable_get('openscholar_vsites_per_user', 1)){
+      scholarregister_ctools_message('#name-suffix', $error, 'error');
+  	}else{
+  		scholarregister_ctools_message('#name-suffix', "Notice: This user already exists and has ".count(vsite_get_vsite_by_owner($user->uid))." sites. ".l("Click here","site/register",array("query" => array("register_for" => $user->uid)))." to create a site for them.", 'error');
+  	}
   }
   // username is available
   scholarregister_ctools_message('#name-suffix', "available", 'status');
@@ -150,7 +134,7 @@ function scholarregister_name_js() {
 function scholarregister_mail_js() {
   $mail = $_POST['ctools_changed'];
   if ($error = scholarregister_validate_mail($mail)){
-    scholarregister_ctools_message('#mail-suffix', $error, 'error');
+      scholarregister_ctools_message('#mail-suffix', $error, 'error');
   }
 
   scholarregister_ctools_message('#mail-suffix', "available", 'status');
@@ -192,7 +176,10 @@ function scholarregister_validate_mail($mail) {
     return $error;
   }
   elseif (_scholarregister_mail_exists($mail)){
-    return "The e-mail address \"$mail\" already exists";
+  	$user = user_load(array('mail' => $mail));
+  	if(!user_access("create openscholar site on behalf of others") || !$user || count(vsite_get_vsite_by_owner($user->uid)) >= variable_get('openscholar_vsites_per_user', 1)){
+  		return "The e-mail address \"$mail\" already exists";
+  	}
   }
 }
 
@@ -329,7 +316,7 @@ function _scholarregister_mail_exists($mail){
 function scholarregister_message($form, $domain){
   global $user, $base_url;
 
-  $word_replace = node_access('create', variable_get('scholar_content_type', 'vsite')) ? 'the' : 'your';
+  $word_replace = user_access("create openscholar site on behalf of others") ? 'the' : 'your';
     
   $message  = '<div id="success-message">';
   $message .= '<p>Success! ' . ucfirst($word_replace) . ' new site has been created.</p>';
@@ -344,23 +331,6 @@ function scholarregister_message($form, $domain){
   return $message;
 }
 
-///**
-// * Implement Hook openscholar_admin_settings
-// * @return array
-// */
-//function scholarregister_openscholar_admin_settings(){
-//  $a_settings = array();
-//
-//  $a_settings['openscholar_register_email_message'] = array(
-//    '#type' => 'textarea',
-//	  '#title' => t('Email Registration Message'),
-//	  '#default_value' => variable_get('openscholar_register_email_message', _scholarregister_get_default_mail_message()),
-//	  '#required' => TRUE,
-//    '#description' => t(""),
-//  );
-//
-//  return $a_settings;
-//}
 
 function _scholarregister_get_default_mail_message(){
   return "Hi !username,\n\nYour new web site at !site has been activated.\n\nYour web site url is !scholar_site_url\nYou may now log in by clicking on this link or copying and pasting it in your browser: \n\n !login_url \n\nThis is a one-time login, so it can be used only once. After logging in, you will be redirected to !scholar_edit_url so you can change your password. Once you have set your own password, you will be able to log in at !site_login_uri as username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team";
