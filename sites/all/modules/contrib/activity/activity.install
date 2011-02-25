@@ -6,7 +6,7 @@ function activity_install() {
   // Set Trigger's weight to 2 so that it will fire AFTER pathauto. This makes
   // pathauto alias' work.
   if (activity_bad_trigger_weight()) {
-    drupal_set_message(t('In order for proper Pathauto behavior with Activity module, the Trigger module\'s weight needs to be fixed up. !clickhere', array('!clickhere' => l(t('Click here to fix Trigger\'s weight'), 'admin/activity/weight', array('query' => drupal_get_destination())))), 'error');
+    drupal_set_message(t('In order for proper Pathauto behavior with Activity module, the Trigger module\'s weight needs to be fixed up. !clickhere', array('!clickhere' => l(t('Click here to fix Trigger\'s weight'), 'admin/activity/weight', array('query' => drupal_get_destination())))), 'warning');
   }
 }
 
