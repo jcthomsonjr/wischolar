@@ -143,11 +143,22 @@ function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real
     'title' => $user -> uid ? 'Log out' : 'Log in',
     'href' =>  $user -> uid ? 'logout' : 'user',
   );
-
-  $items[] = array(
-    'title' => 'Create your web site',
-    'href' => 'site/register',
-  );
+  
+  $vsites = vsite_get_vsite_by_owner($user->uid);
+  if (!scholarregister_vsite_exists_access($vsites)) {
+    if(!$vsites) return ""; //No sites ora ablility to create one
+    
+    $items[] = array(
+	    'title' => ((count($vsites) > 1) ? 'Go to your sites' : "Go to your site"),
+	    'href' => ((count($vsites) > 1) ? 'user' : "node/".$vsites[0] -> sid),
+	  );
+  }else{
+  	//Create a site
+  	$items[] = array(
+	    'title' => ((count($vsites) > 1)?"Create a web site.":'Get your web site!'),
+	    'href' => 'site/register',
+	  );
+  }
 
   $txt = 'Need a Site for a Project?';
   $url = 'http://projects.iq.harvard.edu';
