@@ -154,7 +154,11 @@ function _iqss_rbuild_parseVersion($s_version){
   $extra = "";
   list($major,$patch) = explode(".",$s_version,2);
   
-  if(strstr($patch,"-")) list($patch,$extra) = explode("-",$patch,2);
+  if(strstr($patch,"-")){
+  	list($patch,$extra) = explode("-",$patch,2);
+  }elseif (strstr($patch,".")) {
+  	list($patch,$extra) = explode(".",$patch,2);
+  }
     
   return array(intval($major),intval($patch),strval($extra));
 }
