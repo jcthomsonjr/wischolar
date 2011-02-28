@@ -146,12 +146,12 @@ function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real
   
   $vsites = vsite_get_vsite_by_owner($user->uid);
   if (!scholarregister_vsite_exists_access($vsites)) {
-    if(!$vsites) return ""; //No sites ora ablility to create one
-    
-    $items[] = array(
-	    'title' => ((count($vsites) > 1) ? 'Go to your sites' : "Go to your site"),
-	    'href' => ((count($vsites) > 1) ? 'user' : "node/".$vsites[0] -> sid),
-	  );
+    if($vsites){
+	    $items[] = array(
+		    'title' => ((count($vsites) > 1) ? 'Go to your sites' : "Go to your site"),
+		    'href' => ((count($vsites) > 1) ? 'user' : "node/".$vsites[0] -> sid),
+		  );
+    } //No sites ora ablility to create one
   }else{
   	//Create a site
   	$items[] = array(
