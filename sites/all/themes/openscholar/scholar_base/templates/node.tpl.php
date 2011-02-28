@@ -10,7 +10,7 @@
       </h3>
     <?php endif; ?>
     <?php if ($unpublished): ?>
-      <div class="unpublished"><?php print t('Unpublished'); ?></div>
+      <p class="unpublished"><?php print t('Unpublished'); ?></p>
     <?php endif; ?>
     <?php if ($submitted): ?>
         <p class="submitted"><?php print $submitted; ?></p>

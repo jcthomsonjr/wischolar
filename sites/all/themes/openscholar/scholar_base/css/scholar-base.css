@@ -8,11 +8,11 @@ body {
   }
 
  /* Firebug bug */
- /*
+
 body.admin-menu {
   position:static !important;
   }
-*/
+
 
 #tinymce {
   background: #fff !important;
@@ -69,20 +69,21 @@ img {
 
 #scholar-shield {
   width: 75px;
+  margin: 0 auto;
+  text-align: center;
   }
 
 #scholar-shield img,
 #logo img {
   /* themers can change the size of the shields and logo without uploading new images */
   max-width: 100%;
-  max-height: 100%;
    }
 
 /* TOP OPENSCHOLAR ADMIN BAR */
 
 #top {
   height: 42px;
-  background:url(../images/top-bottom-bg.png) repeat-x #000 0 -9px;
+  background:url('../images/top-bottom-bg.png') repeat-x #000 0 -9px;
   position:relative;
   }
 
@@ -105,7 +106,7 @@ body.admin-menu #top {
 
 
 body.cp-toolbar-mini #top ul.links {
-  background: url(../images/toolbar-mini-tab.png) no-repeat 0 0;
+  background: url('../images/toolbar-mini-tab.png') no-repeat 0 0;
   height: 22px;
   z-index:100;
   }
@@ -120,7 +121,8 @@ body.cp-toolbar-mini #top ul.links {
   width: 100%;
   }
 
-body.no-sidebars #content-main, body.header-main #header-main {
+body.no-sidebars #content-main,
+body.header-main #header-main {
   padding: 0;
   padding-left: 2em;
   padding-right: 2em;
@@ -128,7 +130,10 @@ body.no-sidebars #content-main, body.header-main #header-main {
   float:none;
   }
 
-#header-wrapper, #navbar, #content-wrapper, #footer {
+#header-wrapper,
+#navbar,
+#content-wrapper,
+#footer {
   clear: both;
   }
 
@@ -143,21 +148,27 @@ body.no-sidebars #content-main, body.header-main #header-main {
   padding-bottom: 0;
   }
 
-#header-left, #header-right, #sidebar-first, #sidebar-second {
+#header-left,
+#header-right,
+#sidebar-first,
+#sidebar-second {
   width: 200px;
   }
 
-#content-wrapper, #header-wrapper {
+#content-wrapper,
+#header-wrapper {
   padding-left: 220px; /* left width incl. padding */
   padding-right: 240px; /*right width incl. padding plus center padding */
   }
 
-#header-left, #sidebar-first {
+#header-left,
+#sidebar-first {
   right: 240px; /* left width incl. padding plus center padding */
   margin-left: -100%;
   }
 
-#header-right, #sidebar-second {
+#header-right,
+#sidebar-second {
   margin-right: -100%;
   }
 
@@ -165,7 +176,8 @@ body.sidebar-second #content-wrapper {
    padding-left: 0;
    }
 
-body.sidebar-first #content-wrapper, body.header-left-main #header-wrapper {
+body.sidebar-first #content-wrapper,
+body.header-left-main #header-wrapper {
   padding-right: 40px; /* Only the padding of center div */
   }
 
@@ -185,16 +197,23 @@ body.header-left-main #header-wrapper {
   padding-right: 0;
   }
 
-body.header-left-right #header-wrapper, body.header-main #header-wrapper, body.header-right #header-wrapper, body.header-left #header-wrapper{
+body.header-left-right #header-wrapper,
+body.header-main #header-wrapper,
+body.header-right #header-wrapper,
+body.header-left #header-wrapper{
   padding: 0;
   }
 
-body.header-left-right #header-left, body.header-left-right #header-right, body.header-left #header-left, body.header-right #header-right {
+body.header-left-right #header-left,
+body.header-left-right #header-right,
+body.header-left #header-left,
+body.header-right #header-right {
   width: 45%;
   right: auto;
   }
 
-body.header-left-right #header-left, body.header-left-right #header-right {
+body.header-left-right #header-left,
+body.header-left-right #header-right {
   margin:0;
   }
 
@@ -207,18 +226,16 @@ body.header-left-right #header-right {
   clear:both;
   }
 
-
 /* FOOTER */
-
 
 #footer {
   padding-top: 50px;
   }
 
-#footer .block, #footer-message {
+#footer .block,
+#footer-message {
   display:inline;
   }
-
 
 /* NODE */
 
@@ -326,7 +343,8 @@ div.error {
 
 /* As some Drupal themers use clear-block, we add both classes */
 
-.clearfix:after, .clear-block:after {
+.clearfix:after,
+.clear-block:after {
   content: ".";
 	display: block;
 	clear: both;

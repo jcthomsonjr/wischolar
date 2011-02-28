@@ -97,11 +97,22 @@ select option {
 
 .search-form div.form-item {
   border: none;
+  padding: 0;
   margin: 0;
   }
 
 .search-form label{
   display:none;
+  }
+
+.search-form .container-inline {
+  line-height:normal;
+  max-width: 278px;
+  padding-right:30px;
+  }
+
+.search-form .container-inline .form-item {
+  width: 100%;
   }
 
 .search-form .spelling-suggestions{
@@ -111,52 +122,49 @@ select option {
   display: inline;
 }
 
-.search-form .container-inline {
-  background: url(../images/searchglass.gif) no-repeat 100% 0;
-  height: 18px;
-  line-height:normal;
-  max-width: 278px;
-  padding-right:22px;
-  padding-left: 1px;
-  }
-
-.search-form .container-inline .form-item {
-  width: 100%;
-  }
-
 .search-form .container-inline .form-item,
 .search-form .form-submit {
   float:left;
   position: relative;
-  padding: 0;
   }
 
 .search-form .container-inline .form-item .form-text {
-  height: 14px;
-  padding: 3px 4px 0 0 !important;
+  height: 18px;
+  padding: 2px !important;
   border: none;
-  background: transparent;
+  border: 1px solid #d0d7e1;
+  border-bottom-color:#9eaebb;
+  -moz-border-top-colors: #d0d7e1;
+	-moz-border-left-colors: #d0d7e1;
+	-moz-border-bottom-colors: #9eaebb;
+  border-right:none;
+  background: #fff;
   width:100%;
+  margin: 0 -5px;
   }
 
 #header-right #vsite-widgets-search-form #edit-search {
   width: 43px;
   }
 
-.search-form input.form-submit {
-  background: transparent;
+.search-form input.form-submit,
+#search-block-form #edit-submit,
+#search-form #edit-submit{
+  border: medium none;
   font-size: 10px;
-  width: 18px;
-  height: 18px;
-  border: none;
+  height: 24px;
+  width: 24px;
+  margin: 0 -100% 0 0 !important;
   padding: 0 !important;
   text-indent: -999em;
-  margin-right: -100%;
+  background: url('../images/scholarbase-sprite.png') no-repeat 0 -64px;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
   }
 
 #search-form fieldset.search-advanced {
   clear: left;
-
   }
 
 

@@ -1,5 +1,5 @@
 body {
-  font: .85em/1.5em 'helvetica neue', helvetica, arial, sans-serif;
+  font: 13px/1.5em 'helvetica neue', helvetica, arial, sans-serif;
   }
 
 h1 {
@@ -26,9 +26,8 @@ h2.title span.version-info {
   }
 
 .section-admin h2.title {
-  background: url(../images/admin-logo.png) no-repeat 0 50% transparent;
-  padding-left: 125px;
-  min-height: 52px;
+  background: url('../images/glasses.png') no-repeat 0 50% transparent;
+  padding-left: 79px;
   margin: 1em 0;
   }
 
@@ -58,6 +57,14 @@ a, a:visited {
   color: #005C9C;
   }
 
+a:hover {
+  text-decoration: underline;
+  }
+
+.sidebar a {
+  word-wrap: break-word;
+  }
+
 p.copy {
   color: #76797C;
   font-size: 11px;
@@ -81,37 +88,52 @@ p.copy a:hover {
   }
 
 p.copy a.footer-login {
-  background: #e9f1c6 !important;
-  color: #000 !important;
-  border: 1px solid #565b5d !important;
-  padding: 0 9px 1px 9px !important;
-  -moz-border-radius:20px;
-  -webkit-border-radius:20px;
-  margin-left: 4px;
-  margin-top: 2px;
+  margin: 4px;
   float: left;
-  line-height: 18px;
+  line-height: normal;
+  padding-bottom:1px important!;
   }
 
-p.copy a.footer-login:hover {
-  background: #fff !important;
+a.ctools-dropdown-link:hover {
+  text-decoration: underline;
+  }
+
+div.links a.ctools-dropdown-link,
+a.context-button,
+a.ctools-dropdown-link {
+  color: #A0BAFB !important;
+  font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
+  font-size: 11px;
+  }
+
+div.links a.ctools-dropdown-link:hover {
+  color: #daf3d5 !important;
+  }
+
+a.context-button,
+a.ctools-dropdown-link {
+  color: #7caa71 !important;
+  }
+
+a.context-button:hover,
+a.ctools-dropdown-link:hover {
+  color: #2e4928 !important;
   }
 
 .marker,
 ul.admin li a,
 ul.admin li a:visited,
 .addcategory a,
-a.ctools-dropdown-link,
-a.context-button {
-  color: #97c797 !important;
+div.links a.ctools-dropdown-link {
+  color: #a0bafb !important;
   }
 
 ul.admin li:hover a,
 ul.vsite-taxonomy-terms li:hover a,
 .addcategory:hover a,
 .node:hover a.ctools-dropdown-link,
-a.context-button:hover {
-  color: #228822 !important;
+div.links a.ctools-dropdown-link:hover {
+  color: #356df6 !important;
   background-color: transparent !important;
   }
 
@@ -124,7 +146,7 @@ p.copy #powered-link {
   }
 
 p.copy a.poweredby  {
-  background: url(../images/poweredby.png) no-repeat 0 0 transparent;
+  background: url('../images/poweredby.png') no-repeat 0 0 transparent;
   text-indent:-999em;
   display:block;
   width:145px;
@@ -158,6 +180,21 @@ p.copy a.poweredby:hover {
   content: ']';
   }
 
+.more-link {
+  text-align: right;
+  padding-bottom: .5em;
+  }
+
+.more-link a:after {
+  content:' »';
+  }
+
+p.unpublished {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #555;
+  }
+
 /*LISTS*/
 
 ul {
@@ -182,7 +219,9 @@ ol {
   padding:0 0 0 3px;
   }
 
-#content .node .terms ul, #content .node .content ul.links, #content .biblio-entry ul.links {
+#content .node .terms ul,
+#content .node .content ul.links,
+#content .biblio-entry ul.links {
   padding-left: 0;
   margin-top:0;
   }
@@ -195,7 +234,7 @@ ol {
   margin-top: 1.5em;
   }
 
-#content .node .os-links ul li ul {
+#content .node div.links ul li ul {
   margin:0;
   }
 
@@ -213,28 +252,32 @@ ul.inline li {
 
 .node div.links .links li {
   float: left;
+  font-size: 11px !important;
   }
 
 .node .node-inner .links li a {
   padding: 1px;
   min-height: 16px;
+  font-style: normal !important;
   }
 
 .block ul {
   padding-left: 0;
   }
 
-li.leaf, li.collapsed, ul.menu li.leaf, ul.menu li.collapsed {
+ul.menu li,
+li.leaf, li.collapsed,
+ul.menu li.leaf,
+ul.menu li.collapsed {
   padding: 0;
   list-style: none;
+  margin: 0;
   }
-
 
 ul.hierarchic {
   padding: 0;
   margin: 0;
   }
-
 
 ul.hierarchic li {
   list-style: none;
@@ -256,37 +299,51 @@ ul.hierarchic li a {
   padding-bottom: .1em;
   }
 
-ul.hierarchic ul a{
+ul.hierarchic ul a {
   padding:0 0 0 .5em;
   }
 
-ul.hierarchic ul ul a{
+ul.hierarchic ul ul a {
   padding:0 0 0 1.5em;
   }
 
-ul.hierarchic ul ul ul a{
+ul.hierarchic ul ul ul a {
   padding:0 0 0 2em;
   }
 
-ul.hierarchic ul ul ul ul a{
+ul.hierarchic ul ul ul ul a {
   padding:0 0 0 2.5em;
   }
 
-ul.pager {
+.item-list ul.pager {
   padding-top: 1em;
   border-top: 1px solid #ccc;
   text-align: center;
   }
 
-ul.pager li {
+.item-list ul.pager li {
   margin: 0;
   padding: .3em;
   display:inline;
   }
 
-ul.pager li.pager-current {
+.item-list ul.pager li a,
+.item-list ul.pager li a.active {
+  background: transparent;
+  text-decoration: none;
+  }
+
+.item-list ul.pager li.pager-current {
   background: #5ba4d9;
   color: #fff;
+  }
+
+dt {
+  font-weight: bold;
+  }
+
+dd {
+  margin-bottom: .5em;
   }
 
 dd.meta {
@@ -294,6 +351,28 @@ dd.meta {
   margin-bottom: 0;
   }
 
+.views-admin-links ul.links li {
+  float:left;
+  padding: 0;
+  margin: 0 1px;
+  font-size: 10px;
+  }
+
+.views-admin-links ul.links li:before {
+  content: '[';
+  }
+
+.views-admin-links ul.links li:after {
+  content: ']';
+  }
+
+li.scholar_publications_export {
+  margin-top: 1px;
+  }
+
+.item-list {
+  clear:both;
+  }
 
 /* OTHER */
 
@@ -303,25 +382,45 @@ legend {
 
 /* TOP OPENSCHOLAR MENUS */
 
-#top a, #top a:visited, #top ul.links li a, #top ul.links li a:visited {
+#top a,
+#top a:visited,
+#top ul.links li a,
+#top ul.links li a:visited {
   font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
   }
 
+body.cp-toolbar-mini #top ul.links {
+  z-index:100;
+  }
 
 body.cp-toolbar-mini #top ul.links li {
   margin:0;
-  background: url(../images/toolbar-mini-tab.png) no-repeat 0 0 transparent;
-  height: 22px;
+  margin-left: 20px;
+  background: #F4F4F4;
+  height: 21px;
   line-height: 19px;
-  padding: 0 6px;
-  float:left;
+  padding:0;
+  float:none;
+  display:none;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-right: 0;
   }
 
 body.cp-toolbar-mini #top ul.links li.first {
-  background: transparent;
+ display:block;
+ margin:0;
+ background: url('../images/toolbar-mini-tab.png') no-repeat 0 0 transparent;
+ padding: 0 6px;
+ border: none;
   }
 
-body.cp-toolbar-mini #top ul.links li a, body.cp-toolbar-mini #top ul.links li a:visited {
+body.cp-toolbar-mini #top ul.links:hover li {
+  display:block;
+  }
+
+body.cp-toolbar-mini #top ul.links li a,
+body.cp-toolbar-mini #top ul.links li a:visited {
   color:#6e6e6e;
   font-size: 11px;
   padding-left: 12px;
@@ -330,7 +429,7 @@ body.cp-toolbar-mini #top ul.links li a, body.cp-toolbar-mini #top ul.links li a
 
 body.cp-toolbar-mini #top ul.links li.first a {
   padding-left: 22px;
-  background: url(../images/wrench-mini.png) no-repeat 0 0 transparent;
+  background: url('../images/wrench-mini.png') no-repeat 0 0 transparent;
   margin-left: 5px;
   }
 
@@ -370,7 +469,7 @@ ul.admin li a:hover {
   }
 
 a.delete {
-  background: url(../images/delete.png) no-repeat;
+  background: url('../images/openscholar-sprite.png') no-repeat 0 -241px transparent;
   height: 11px;
   width: 10px;
   display: block;
@@ -380,13 +479,13 @@ a.delete {
 .close-this {
   width: 15px;
   height: 15px;
-  background: url(../images/close-icon.png) no-repeat transparent;
+  background: url('../images/openscholar-sprite.png') no-repeat 0 0 transparent;
   text-indent: -999em;
   }
 
 .empty-content {
   text-align: right;
-  background: url(../images/add-your-first.png) no-repeat 100% 0 transparent;
+  background: url('../images/add-your-first.png') no-repeat 100% 0 transparent;
   padding: 31px 18px 0 18px;
   height: 33px;
   line-height: 23px;
@@ -403,26 +502,67 @@ a.delete {
 
 /* BUTTONS */
 
-input.form-submit, input.form-button, button {
-  background: #e8e8e8;
-  color: #000;
+input.form-submit,
+input.form-button,
+button,
+.views-exposed-form .views-exposed-widget .form-submit,
+p.copy a.footer-login {
+  background: url('../images/openscholar-sprite.png') repeat-x 0 -280px #e8e8e8;
+  color: #000 !important;
   border: 1px solid #c4c4c4;
-  padding: 4px 12px !important;
-  -moz-border-radius:20px;
-  -webkit-border-radius:20px;
+  border-bottom-color: #707070;
+  padding: 0 9px !important;
+  -moz-border-radius:4px;
+  -webkit-border-radius:4px;
+  border-radius:4px;
+  -moz-text-shadow:#fff 0 1px 0;
+  -webkit-text-shadow:#fff 0 1px 0;
+  text-shadow:#fff 0 1px 0;
   margin: 5px 5px 15px 0;
   cursor: pointer;
   text-align: center;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: 11px;
   }
 
-input.form-submit:active, button:active {
+.fieldset-content .form-submit {
+  float:right;
+  }
+
+input.form-submit:hover,
+input.form-submit:active,
+button:active,
+p.copy a.footer-login:hover {
+  -moz-text-shadow:none;
+  -webkit-text-shadow:none;
+  text-shadow:none;
+  text-decoration: none;
+  border: 1px solid #c4c4c4;
+  }
+
+input.form-submit:active,
+button:active,
+p.copy a.footer-login:active {
   background:#fffcca;
   }
 
+
+#edit-submit,
+#edit-preview,
+#edit-preview-changes,
+#edit-delete,
+#edit-reset,
+.buttons input.close {
+  -moz-border-radius:14px;
+  -webkit-border-radius:14px;
+  border-radius:14px;
+  font-size: 13px;
+  padding: 0 12px !important;
+  }
+
+
 .advanced-help-link {
- background: url(../images/help.png) no-repeat;
+ background: url('../images/openscholar-sprite.png') 0 -150px no-repeat transparent;
  width: 15px;
  height: 15px;
  margin-right: 4px;
@@ -431,5 +571,5 @@ input.form-submit:active, button:active {
  }
 
 .advanced-help-link:hover {
-  background-position: 0 -15px;
+  background-position: 0 -165px;
   }

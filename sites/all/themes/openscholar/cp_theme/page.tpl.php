@@ -18,12 +18,10 @@
     <?php endif;?>
     -->
     <div id="container">
-      <!--
       <div id='branding' class='clear-block'>
         <div class='breadcrumb clear-block'><?php print $breadcrumb ?></div>
         <?php if ($user_links) print theme('links', $user_links) ?>
       </div>
-      -->
       <?php
         $menu_item = menu_get_item();
       ?>

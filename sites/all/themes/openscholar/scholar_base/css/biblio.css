@@ -101,7 +101,8 @@ dl.bibliomultiselect .form-item {
   font-weight: bold;
 }
 
-.biblio-title a {
+.biblio-title a,
+.biblio-title-chicago a {
   font-weight: bold !important;
   text-decoration: none !important;
   font-style: normal !important;
@@ -271,9 +272,26 @@ body.node-type-biblio .node-type-biblio .field-field-biblio-image {
   clear:none;
   }
 
-textarea.biblio-citation {
-  width: 100%;
+dd.biblio-citation,
+body.node-type-biblio .biblio-export {
   display:block;
-  padding:10px;
   border: 1px solid #ccc;
+  border-bottom: none;
+  overflow: visible;
+  padding:10px;
+  }
+
+dd.biblio-citation {
+  margin-bottom: 0;
+  }
+
+body.node-type-biblio .biblio-export {
+  border-top: none;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding-top:0;
+  }
+
+body.node-type-biblio #biblio-node h3 {
+  margin: 0
   }
