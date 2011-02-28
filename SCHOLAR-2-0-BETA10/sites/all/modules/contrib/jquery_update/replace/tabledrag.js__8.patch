@@ -1,0 +1,21 @@
+Index: tabledrag.js
+===================================================================
+RCS file: /cvs/drupal/drupal/misc/tabledrag.js,v
+retrieving revision 1.13.2.4
+diff -u -r1.13.2.4 tabledrag.js
+--- tabledrag.js	17 Sep 2008 07:59:39 -0000	1.13.2.4
++++ tabledrag.js	24 Oct 2008 17:49:21 -0000
+@@ -110,10 +110,10 @@
+     }
+ 
+     // Hide the column containing this field.
+-    if (hidden && cell[0] && cell.css('display') != 'none') {
++    if (hidden && cell[0]) {
+       // Add 1 to our indexes. The nth-child selector is 1 based, not 0 based.
+       var columnIndex = $('td', cell.parent()).index(cell.get(0)) + 1;
+-      var headerIndex = $('td:not(:hidden)', cell.parent()).index(cell.get(0)) + 1;
++      var headerIndex = $('td', cell.parent()).index(cell.get(0)) + 1;
+       $('tr', this.table).each(function(){
+         var row = $(this);
+         var parentTag = row.parent().get(0).tagName.toLowerCase();
+

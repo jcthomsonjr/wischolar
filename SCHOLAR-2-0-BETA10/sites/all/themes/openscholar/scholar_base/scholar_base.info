@@ -1,0 +1,71 @@
+name        = OpenScholar: Base Theme
+description = Base Theme for OpenScholar
+screenshot = screenshot.png
+core       = 6.x
+base theme = zen
+
+stylesheets[all][]    = tabs.css
+stylesheets[all][]    = html-elements.css
+stylesheets[all][]    = layout-garland.css
+stylesheets[all][]    = messages.css
+stylesheets[all][]    = wireframes.css
+stylesheets[all][]    = layout-fixed.css
+stylesheets[all][]    = layout-liquid.css
+stylesheets[all][]    = theme-settings.css
+stylesheets[all][]    = zen.css
+;stylesheets[all][]    = system.css
+
+stylesheets[all][]    = css/tabs.css
+stylesheets[all][]    = css/admin.css
+stylesheets[all][]    = css/taxonomy.css
+stylesheets[all][]    = css/scholar-base.css
+stylesheets[all][]    = css/typography.css
+stylesheets[all][]    = css/tables.css
+stylesheets[all][]    = css/comments.css
+stylesheets[all][]    = css/modal.css
+stylesheets[all][]    = css/ctools.css
+stylesheets[all][]    = css/dropdown.css
+stylesheets[all][]    = css/biblio.css
+stylesheets[all][]    = css/forms.css
+stylesheets[all][]    = css/toggle-slider.css
+stylesheets[all][]    = css/users.css
+stylesheets[all][]    = css/date.css
+
+stylesheets[print][] = css/print.css
+
+conditional-stylesheets[if IE][all][] = ie.css
+conditional-stylesheets[if lte IE 7][all][] = ie-7.css
+
+regions[header_top]    	= header top
+regions[header_left]    = header left
+regions[header_main]    = header main
+regions[header_right]   = header right
+regions[navbar]         = navigation bar
+regions[left]           = left sidebar
+regions[right]          = right sidebar
+regions[content_top]    = content top
+regions[content_bottom] = content bottom
+regions[footer]         = footer
+regions[closure_region] = closure
+
+features[] = logo
+features[] = name
+features[] = slogan
+features[] = mission
+features[] = node_user_picture
+features[] = comment_user_picture
+features[] = search
+features[] = favicon
+features[] = primary_links
+features[] = secondary_links
+
+settings[zen_block_editing]        = 0
+settings[zen_breadcrumb]           = no
+settings[zen_breadcrumb_separator] = ' › '
+settings[zen_breadcrumb_home]      = 0
+settings[zen_breadcrumb_trailing]  = 0
+settings[zen_breadcrumb_title]     = 0
+settings[zen_rebuild_registry]     = 0
+settings[zen_wireframes]           = 0
+
+

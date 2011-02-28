@@ -1,0 +1,108 @@
+<?php
+
+include_once('vsite_comments.features.inc');
+
+/**
+ * Implementation of hook_menu_alter
+ */
+function vsite_comments_menu_alter(&$items){
+  $items['comment/delete']['access callback'] = 'vsite_comments_admin_access';
+  $items['comment/edit']['access callback'] = 'vsite_comments_admin_access';
+}
+
+
+/**
+ * Access function for comment/delete menu entry
+ */
+function vsite_comments_admin_access(){
+  // if we are in a vsite, vsite admin can delete comments
+  $vsite = vsite_get_vsite();
+  if ($vsite && $vsite -> admin_access()){
+    return TRUE;
+  }
+  
+  return user_access('administer comments');
+}
+
+/**
+ * Implementation of hook_views_api
+ */
+function vsite_comments_views_api() {
+  return array(
+    'api' => 2,
+  );
+}
+
+/**
+ * Implementation of hook_views_handlers
+ */
+function vsite_comments_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'vsite_comments') .'/includes',
+    ),
+    'handlers' => array(
+      'vsite_comments_handler_field_comment_link_delete' => array(
+        'parent' => 'views_handler_field_comment_link',
+      ),
+      'vsite_comments_handler_field_comment_link_edit' => array(
+        'parent' => 'views_handler_field_comment_edit',
+      ),
+    ),
+  );
+}
+
+
+/**
+ * Implementation of hook_views_data_alter
+ * @see vsite_comments_views_handlers()
+ */
+function vsite_comments_views_data_alter(&$data) {
+  // we want our handler to be used
+  $data['comments']['delete_comment']['field']['handler'] = 'vsite_comments_handler_field_comment_link_delete';
+  $data['comments']['edit_comment']['field']['handler'] = 'vsite_comments_handler_field_comment_link_edit';
+  
+}
+
+/**
+ * Implementation of hook_form_alter
+ */
+function vsite_comments_form_alter(&$form, &$form_state, $form_id){
+	if (isset($form['#node']) && $form_id == $form['#node']->type .'_node_form') {
+		if(is_array($form['body_field']) && is_array($form['body_field']['format'])){
+			$body_field = $form['body_field'];
+		}elseif (is_array($form['extra_fields_group']['body_field']) && is_array($form['extra_fields_group']['body_field']['format'])){
+			$body_field = $form['extra_fields_group']['body_field'];
+		}
+		
+		if($body_field){
+			$a_formats = array();
+			foreach (element_children($body_field['format']) as $index) {
+				if($body_field['format'][$index]['#type'] == 'radio'){
+					//Remove comments HTML as option for nodes
+					if($body_field['format'][$index]['#title'] == "Comments HTML"){
+						unset($body_field['format'][$index]);
+					}else{
+					  $a_formats[$index] = $index;
+					}
+				}
+			}
+			
+			if(count($a_formats) == 1){
+				$body_field['format'] = array();
+				$body_field['format'][current($a_formats)] = array('#type' => 'value', '#value' => current($a_formats), '#parents' => array('format'));
+
+				$body_field['format']['format']['guidelines'] = array(
+	        '#title' => t('Formatting guidelines'),
+	        '#value' => '',
+	      );
+			}
+			
+			if(is_array($form['body_field']) && is_array($form['body_field']['format'])){
+	      $form['body_field'] = $body_field;
+	    }else{
+	      $form['extra_fields_group']['body_field'] = $body_field;
+	    }
+		}//Filters radios exist
+	}
+}

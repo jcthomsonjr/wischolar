@@ -1,0 +1,123 @@
+<?php
+
+include_once('scholar_classes.features.inc');
+
+function scholar_classes_init(){
+  global $conf;
+  
+  //Do not show files in teaser (overrides vsite strongarm) this will be handled by strongarm when we update it
+  $conf['itweak_upload_teaser_display_class'] = 0;
+  
+}
+
+/**
+ * hook link_alter (admin at the end of links)
+ */
+function scholar_classes_link_alter(&$links, $node){
+  if (isset($links['class_material_field_class'])) {
+    $old = $links['class_material_field_class'];
+    $old['attributes']['class'] = 'context-button';
+    
+    $links['class_material_field_class'] = array(
+      'title' => theme('context_links', array(
+        $old
+      )),
+      'html' => TRUE
+    );
+  }
+  
+  /*
+   * If a class_material node, we want all the children
+   * to be of class_material type too. But the default
+   * child type is set to 'book'. Alter here
+   */
+  if (!empty($links['book_add_child']) && $node->type == 'class_material') {
+    $links['book_add_child']['href'] = 'node/add/class-material';
+  }
+  
+}
+
+
+
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function scholar_classes_vsite_content_types_alter(&$content_types){
+  unset($content_types['class_material']);
+}
+
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_classes_context_links_alter(&$links) {
+  if (!empty($links['class'])) {
+    //$links['class']['query'] = drupal_get_destination();
+  }
+  
+  if (!empty($links['class_material'])) {
+    unset($links['class_material']);
+  }
+}
+
+
+/**
+ * Hook nodeapi
+ * Used to trickle deltes to an classes dependent class-materials
+ */
+function scholar_classes_nodeapi(&$node, $op, $a3, $a4){
+  if($node->type != 'class') return;
+  switch($op){
+    case 'delete':
+      vsite_include('vsite');
+      $a_referers = vsite_get_referrers($node->nid,array(),array('class_material'));
+      foreach ($a_referers as $nid => $info) node_delete($nid);
+    break;
+  }
+}
+
+/**
+ * Implementation of hook_strongarm().
+ */
+function scholar_classes_strongarm() {
+
+  // class
+   
+  $conf['node_options_class'] = array('status', 'revision');
+  $conf['upload_class'] = TRUE;
+ 
+  // Comments
+  $conf['comment_class'] = COMMENT_NODE_DISABLED;
+ 
+  // Disable preview button
+  $conf["show_preview_changes_class"] = FALSE;
+  $conf["show_diff_inline_class"] = TRUE;
+ 
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_class_pattern"] = "[space-og-path]/classes/[title-raw]";
+ 
+  
+  // class meterial
+  $conf['node_options_class_material'] = array('status', 'revision');
+  $conf['upload_class_material'] = TRUE;
+ 
+  // Comments
+  $conf['comment_class_material'] = COMMENT_NODE_DISABLED;
+ 
+  // Disable Diff button
+  $conf["show_preview_changes_class_material"] = FALSE;
+  $conf["show_diff_inline_class_material"] = TRUE;
+ 
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_class_material_pattern"] = "[space-og-path]/classes/[field_class-title-raw]/materials/[title-raw]";
+  
+  $conf['nodeformscols_field_placements_class_default'] = unserialize('a:16:{s:5:"title";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:1:"0";s:12:"has_required";b:1;s:5:"title";s:5:"Title";}s:10:"body_field";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"menu";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:13:"Menu settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:20:"revision_information";a:3:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:6:"hidden";i:0;}s:16:"comment_settings";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";s:16:"Comment settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:4:"path";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:17:"URL path settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"options";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:18:"Publishing options";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:6:"author";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:12:"has_required";b:0;s:5:"title";s:21:"Authoring information";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"book";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:12:"Book outline";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:8:"taxonomy";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";s:12:"Vocabularies";s:9:"collapsed";i:0;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:26:"Attach files to this class";s:6:"hidden";i:0;}s:20:"field_class_semester";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:8:"Semester";s:6:"hidden";i:0;}s:16:"field_class_year";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"2";s:12:"has_required";b:0;s:5:"title";s:7:"Offered";s:6:"hidden";i:0;}s:16:"field_class_link";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"3";s:12:"has_required";b:0;s:5:"title";s:4:"Link";s:6:"hidden";i:0;}s:10:"og_nodeapi";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:9:"Web Sites";s:9:"collapsed";i:0;s:6:"hidden";i:0;}}');
+  $conf['nodeformscols_field_placements_class_material_default'] = unserialize('a:14:{s:5:"title";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-5";s:12:"has_required";b:1;s:5:"title";s:13:"Booklet Title";}s:10:"body_field";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:5:"0.008";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"menu";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";s:13:"Menu settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:20:"revision_information";a:3:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:6:"hidden";i:0;}s:16:"comment_settings";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:16:"Comment settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:4:"path";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:17:"URL path settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"options";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:18:"Publishing options";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:6:"author";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:12:"has_required";b:0;s:5:"title";s:21:"Authoring information";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:3:"100";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"book";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:2:"10";s:12:"has_required";b:0;s:5:"title";N;s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:8:"taxonomy";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"30";s:12:"has_required";b:0;s:5:"title";s:35:"Attach files to this class material";s:6:"hidden";i:0;}s:11:"field_class";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"31";s:12:"has_required";b:0;s:5:"title";s:5:"Class";s:6:"hidden";i:0;}s:10:"og_nodeapi";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";s:9:"Web Sites";s:9:"collapsed";i:0;s:6:"hidden";i:0;}}');
+  
+  return $conf;
+}
+
+

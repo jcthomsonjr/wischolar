@@ -1,0 +1,289 @@
+body {
+  background: #E5E5E4;
+  color:#333;
+  }
+
+#container {
+  max-width: 1260px;
+  min-width: 780px;
+  padding-right: 15px;
+  }
+
+a, a:visited {
+  text-decoration: none;
+  padding: 2px;
+  }
+
+a:hover {
+  color:#000;
+  background:#ebea8d;
+  text-decoration: none;
+  }
+
+#logo a:hover {
+  background: transparent;
+  }
+
+
+h1, h2, h3, #sidebar-right a, #navbar, #header {
+  font-weight: bold;
+  }
+
+h1 a, h2 a, h3 a, #sidebar-right a {
+  font-style: normal;
+  }
+
+h2, h3, h4 {
+  margin-bottom: 0;
+  margin-top: 1em;
+  }
+
+h2, h2.title {
+  margin-bottom: 0;
+  }
+
+h2.title {
+  margin-bottom: .4em;
+  }
+
+/* LAYOUT */
+
+#content-wrapper .column {
+  padding:0;
+  }
+
+#sidebar-left, #header-left, #sidebar-right, #header-right {
+  width: 180px;
+  }
+
+#content-main, #content {
+    padding: 0;
+    padding-top: 1px;
+    }
+
+#content-wrapper .column {
+  padding:0;
+  }
+
+#sidebar-left {
+  right: 180px;
+  margin-top: 10px;
+  }
+
+#header-left {
+  right: 210px;
+  padding-left: 0;
+  }
+
+.header-main #header, .header-main-right #header {
+  margin-left: 189px;
+  }
+
+#sidebar-right {
+  margin-right: -180px
+  margin-top: 10px;
+  }
+
+#header-right {
+  padding-right: 0;
+  margin-right: -210px;
+  }
+
+body.sidebar-left #content-wrapper, body.header-left-main #header-wrapper {
+  padding-right: 0;
+  }
+
+#header-wrapper {
+  padding-left: 190px;
+  padding-right: 210px;
+  }
+
+#content-wrapper {
+  padding-left: 180px;
+  padding-right: 180px;
+  padding-top: 20px;
+  }
+
+#content {
+  background: #fff;
+  -moz-box-shadow: 0 3px 2em #ccc;
+  -webkit-box-shadow: 0 3px 2em #ccc;
+  box-shadow: 0 3px 2em #ccc;
+  padding: 20px 30px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  }
+
+/* HEADER ELEMENTS */
+
+
+#header {
+    padding-top: 16px;
+    text-transform: lowercase;
+    }
+
+#header h1 {
+    font-size: 2em;
+    }
+
+#header h3,
+#header a,
+#header a:visited,
+#header {
+  color:#888;
+  }
+
+#header h1 a, #header h1 a:visited {
+    text-decoration: none;
+    padding: 0;
+    margin-left: -2px;
+    color:#666;
+    }
+
+#header h2 {
+    font-size: 1.2em;
+    }
+
+#header a, #header a:visited {
+    text-decoration: none;
+    }
+
+#navbar .block ul.menu {
+  text-align: center;
+  }
+
+#navbar li {
+    margin-right: 1.5em;
+    text-transform: uppercase;
+    font-size: 1.1em;
+    }
+
+#navbar li a, #navbar li a:visited {
+    color: #fff;
+    }
+
+#navbar li a:hover {
+    color: #F9E433;
+    }
+
+#navbar li a.active:hover {
+  color: #fff;
+  }
+
+#scholar-shield {
+  width: 55px;
+  }
+
+#header-left #scholar-shield {
+  float:right;
+  }
+
+/* SIDEBARS */
+
+#sidebar-left,
+#sidebar-left ul.menu {
+    text-align: right;
+    }
+
+#sidebar-left a,
+#sidebar-left h3,
+#sidebar-left #block-vsite_widgets-1 {
+    padding-right: 12px;
+    }
+
+#sidebar-right a,
+#sidebar-right h3,
+#sidebar-right #block-vsite_widgets-1 {
+  padding-left:12px;
+  }
+
+#sidebar-left a,
+#sidebar-left a:visited,
+#sidebar-right a,
+#sidebar-right a:visited,
+.term-head {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  color: #666;
+  display:block;
+  font-weight: bold;
+  }
+
+#sidebar-left a:hover,
+#sidebar-right a:hover{
+  background: #bbb;
+  color: #000;
+  }
+
+#sidebar-left .term-head a,
+#sidebar-right .term-head a {
+  display:inline !important;
+  }
+
+#sidebar-left a.active,
+#sidebar-left .active-trail a,
+#sidebar-right a.active,
+#sidebar-right .active-trail a{
+    color: #000;
+    background:#CECECE;
+    font-weight: bold;
+    }
+
+#sidebar-left .views-admin-links ul li a, #sidebar-right .views-admin-links ul li a{
+  display:inline;
+  }
+
+
+/* Nodes */
+
+#content-main .node,
+body.section-node-edit #content,
+body.section-node-add #content,
+#comments,
+.biblio-entry {
+  padding: 1.5em;
+  padding-top:0;
+  }
+
+#content-main .node {
+  border-bottom: 1px solid #e5e5e4;
+  }
+
+#content h2.title,
+#content h3.cv-direct-download {
+  padding-left:1.5em;
+  }
+
+#comments {
+  background: #EFEFEF;
+  }
+
+h2#comments-title, .comment {
+  border: none;
+  padding-bottom: 0;
+  }
+
+h2#comments-title {
+  margin: 0;
+  font-size: 1.2em;
+  }
+
+.submitted {
+  color: #a1b1b1;
+  display:block;
+  }
+
+/*Footer*/
+
+#footer {
+  padding-top: 0;
+  }
+
+body.sidebar-right #footer, body.two-sidebars #footer {
+  padding-right: 200px;
+  }
+
+body.sidebar-left #footer, body.two-sidebars #footer {
+  padding-left: 200px;
+  }
