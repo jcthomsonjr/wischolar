@@ -1,0 +1,56 @@
+<?php
+
+include_once('scholar_announcements.features.inc');
+
+/**
+ * Implementation of hook_strongarm()
+ */
+function scholar_announcements_strongarm(){
+  $conf = array();
+
+  // Disable preview button
+  $conf["show_preview_changes_announcement"] = FALSE;
+  $conf["show_diff_inline_announcement"] = FALSE;
+ 
+  $conf['node_options_announcement'] = array('status', 'revision');
+  $conf['upload_announcement'] = TRUE;
+ 
+  // Comments
+  $conf['comment_announcement'] = COMMENT_NODE_DISABLED;
+ 
+  // Pathauto (optional) settings
+  $conf["pathauto_node_announcement_pattern"] = "[space-og-path]/announcements/[title-raw]";
+  
+  // submitted info
+  $conf['node_submitted_info_announcement'] = TRUE;
+  
+  $conf['nodeformscols_field_placements_announcement_default'] = unserialize('a:13:{s:5:"title";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:1:"0";s:12:"has_required";b:1;s:5:"title";s:5:"Title";}s:10:"body_field";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"menu";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:12:"has_required";b:0;s:5:"title";s:13:"Menu settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:20:"revision_information";a:3:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:6:"hidden";i:0;}s:16:"comment_settings";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";s:16:"Comment settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:4:"path";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:17:"URL path settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"options";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:18:"Publishing options";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:6:"author";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:21:"Authoring information";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"book";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:12:"Book outline";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:8:"taxonomy";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"3";s:12:"has_required";b:0;s:5:"title";s:33:"Attach files to this announcement";s:6:"hidden";i:0;}s:10:"og_nodeapi";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"2";s:12:"has_required";b:0;s:5:"title";s:9:"Web Sites";s:9:"collapsed";i:1;s:6:"hidden";i:0;}}');
+ 
+  return $conf;
+}
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_announcements_context_links_alter(&$links) {
+  if (!empty($links['announcement'])) {
+    $links['announcement']['query'] = drupal_get_destination();
+  }
+}
+
+/**
+ * hook vsite_widgets
+ */
+function scholar_announcements_vsite_widgets(){
+  $items = array();
+  $items['views_scholar_announcements-block_1'] = array(
+        'module' => 'views',
+        'delta' => 'scholar_announcements-block_1',
+        'weight' => -21,
+        'region' => false,
+        'status' => '0',
+        'label' => 'Latest Announcements',
+        'type' => 'context_ui',
+      );
+  return $items;
+}

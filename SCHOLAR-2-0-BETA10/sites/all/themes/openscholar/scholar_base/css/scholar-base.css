@@ -1,0 +1,384 @@
+* {
+  margin: 0;
+  padding:0;
+  }
+
+body {
+  background: #FFF;
+  margin: 0;
+  }
+
+#tinymce {
+  background: #fff !important;
+  min-width: 0 !important;
+  margin: 5px !important;
+  }
+
+body.admin-menu {
+  position: static !important;
+  }
+
+div.terms {
+  clear: left !important;
+  }
+
+.node-teaser {
+  position: relative;
+  }
+
+.os-links {
+  height: 18px;
+  float:right;
+  width: 14px;
+  padding: 0 0 5px 5px;
+  z-index:1;
+  }
+
+.os-links ul.links {
+  display:none;
+  }
+
+.node:hover .os-links ul.links {
+  display:block;
+  }
+
+.node-inner {
+  padding: 3px;
+  }
+
+.os-links-trail {
+  border:1px solid #356df6;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  }
+
+.os-links-trail .node-inner {
+  padding: 2px;
+  }
+
+.diminished {
+  color: #bbb !important;
+  }
+
+.diminished:before {
+  content: '[';
+  }
+
+.diminished:after {
+  content: ']';
+  }
+
+#scholar-shield {
+  text-align: center;
+  width: 65px;
+  margin: 0 auto;
+  }
+
+#scholar-shield img {
+  max-width: 100%;
+  }
+
+/* Used for inline images */
+
+.img-flL,
+.flL {
+  float: left;
+  margin: 0 1em .9em 0;
+  }
+
+.img-flR,
+.flR {
+  float: right;
+  margin: 0 0 .9em 1em;
+  }
+
+.img-center {
+  margin: 1.5em auto;
+  text-align: center;
+  }
+
+/* LAYOUT */
+
+
+/* Top admin bar */
+
+#top {
+  height: 42px;
+  background:url(../images/top-bottom-bg.png) repeat-x #000 0 -9px;
+  position:relative;
+  }
+
+#top a, #top a:visited, #top ul.links li a, #top ul.links li a:visited {
+  font-family: arial, sans-serif !important;
+  }
+
+body.cp-toolbar-mini #top {
+  position: absolute;
+  height: 20px;
+  right: 0;
+  top: 0;
+  padding: 0;
+  line-height: normal;
+  background: transparent;
+  z-index: 10;
+  }
+
+/* Remove when .mini class is added to #top, rather than body */
+body.admin-menu #top {
+  top: 22px;
+  }
+
+
+/*
+
+The following is the scheme for flexible one, two, or three column layouts.
+for more info see: http://www.alistapart.com/articles/holygrail/
+or: http://drupal.org/project/holygrail/
+
+*/
+
+#header-top, #navbar, #content-main, #header-main {
+  width: 100%;
+  }
+
+body.no-sidebars #content-main, body.header-main #header-main {
+  padding: 0;
+  padding-left: 2em;
+  padding-right: 2em;
+  width: auto;
+  float:none;
+  }
+
+#header-wrapper,
+#navbar,
+#content-wrapper,
+#footer {
+  clear: both;
+  }
+
+.column {
+  float: left;
+  position: relative;
+  padding: 10px;
+  }
+
+#header .column {
+  padding-top: 0;
+  padding-bottom: 0;
+  }
+
+#header-left,
+#header-right,
+#sidebar-left,
+#sidebar-right {
+  width: 200px;
+  }
+
+#content-wrapper,
+#header-wrapper {
+  padding-left: 220px; /* left width incl. padding */
+  padding-right: 240px; /*right width incl. padding plus center padding */
+  }
+
+#header-left,
+#sidebar-left {
+  right: 240px; /* left width incl. padding plus center padding */
+  margin-left: -100%;
+  }
+
+#header-right,
+#sidebar-right {
+  margin-right: -100%;
+  }
+
+body.sidebar-right #content-wrapper {
+   padding-left: 0;
+   }
+
+body.sidebar-left #content-wrapper,
+body.header-left-main #header-wrapper {
+  padding-right: 40px; /* Only the padding of center div */
+  }
+
+body.no-sidebars #content-wrapper {
+  padding: 0;
+  }
+
+body.header-main #header-main {
+  padding: 10px 0;
+  }
+
+body.header-main-right #header-wrapper {
+  padding-left: 0;
+  }
+
+body.header-left-main #header-wrapper {
+  padding-right: 0;
+  }
+
+body.header-left-right #header-wrapper,
+body.header-main #header-wrapper,
+body.header-right #header-wrapper,
+body.header-left #header-wrapper{
+  padding: 0;
+  }
+
+body.header-left-right #header-left,
+body.header-left-right #header-right,
+body.header-left #header-left,
+body.header-right #header-right {
+  width: 45%;
+  right: auto;
+  }
+
+body.header-left-right #header-left,
+body.header-left-right #header-right {
+  margin:0;
+  }
+
+body.header-left-right #header-right {
+  float:right;
+  }
+
+#sidebar-left .block, #sidebar-right .block {
+  margin-bottom: 1.5em;
+  clear:both;
+  }
+
+/* end of layouts scheme */
+
+
+
+#footer {
+  padding-top: 50px;
+  }
+
+#footer .block, #footer-message {
+  display:inline;
+  }
+
+
+/* Nodes */
+
+.node,
+.biblio-entry {
+  padding-top: .5em;
+  margin-bottom: 1.53em;
+  padding-left:0.188em;
+  padding-right:0.188em;
+  clear:both;
+  position: relative;
+  }
+
+.node-type-link {
+  margin-bottom: 0;
+  }
+
+.teaser-extra {
+  margin-left: 1em;
+  }
+
+/* Views */
+
+.views-row {
+  margin-bottom: 1.53em;
+  clear:both;
+  }
+
+
+/* MESSAGES */
+
+div.messages {
+  background:#BBDDFF;
+  border:1px solid #AACCEE;
+  color:#003366;
+  margin:0 0 10px;
+  padding:9px;
+  clear:both;
+  }
+
+div.status {
+  background:#CCFF88;
+  border:1px solid #BBEE77;
+  color:#336600;
+  margin:0 0 10px;
+  padding:9px;
+  }
+
+div.warning {
+  background: #FFEE66;
+  border:1px solid #EEDD55;
+  color:#884400;
+  margin:0 0 10px;
+  padding:9px;
+  }
+
+div.error {
+  background:#EE6633;
+  border:1px solid #DD5522;
+  color:#FFFFFF;
+  margin:0 0 10px;
+  padding:9px;
+  }
+
+div.messages .close-this {
+  float:right;
+  }
+
+/* SYSTEM THINGS */
+
+/* Animated throbber */
+
+.ahah-progress .throbber, .flag-waiting .flag-throbber {
+  -moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  background:transparent url(../images/throbber.gif) no-repeat scroll 0 50%;
+  float:left;
+  height:5px;
+  height: 100%;
+  margin:0 4px 0 8px;
+  width:21px;
+  }
+
+.flag-waiting .flag-throbber {
+  float:none;
+  padding-right: 21px;
+  }
+
+.form-button-wrapper div.ahah-progress,
+.form-button-wrapper div.throbber {
+  display:block;
+  position:absolute;
+  right: -22px;
+  top: 5px;
+  height:5px;
+  width:21px;
+  float: none;
+  }
+
+.clear-block:after,
+.clearfix:after {
+  content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+  }
+
+.clear-block,
+.clearfix{
+	display: inline-block;
+  }
+
+html[xmlns] .clear-block,
+html[xmlns] .clearfix{
+	display: block;
+  }
+
+* html .clear-block,
+* html .clearfix {
+	height: 1%;
+  }

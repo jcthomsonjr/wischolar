@@ -1,0 +1,150 @@
+<?php
+
+include_once('scholar_image_gallery.features.inc');
+
+/**
+ * Implementation of hook_init().
+ */
+function scholar_image_gallery_init() {
+  drupal_add_css(drupal_get_path('module', 'scholar_image_gallery') .'/scholar_image_gallery.css');
+}
+
+function scholar_image_gallery_link_alter(&$links, $node){
+  if(isset($links['image_field_gallery'])){
+    unset($links['image_field_gallery']);
+  }
+}
+
+/**
+ * hook  vsite_content_types_alter
+ */
+function scholar_image_gallery_vsite_content_types_alter(&$content_types){
+  unset($content_types['image']);
+}
+
+/**
+ * Implementation of hook_context_links_alter().
+ */
+function scholar_image_gallery_context_links_alter(&$links){
+  if (! empty($links['image'])) {
+    unset($links['image']);
+  }
+}
+
+
+/**
+ * hook strongarm
+ * @return unknown_type
+ */
+function scholar_image_gallery_strongarm(){
+  $conf = array();
+  $conf['upload_image'] = 0;
+  $conf['upload_gallery'] = 0;
+  
+  $conf["show_preview_changes_gallery"] = FALSE;
+  $conf["show_diff_inline_gallery"] = FALSE;
+  $conf["show_preview_changes_image"] = FALSE;
+  $conf["show_diff_inline_image"] = FALSE;
+  
+  // Comments
+  $conf['comment_image'] = COMMENT_NODE_DISABLED;
+  $conf['comment_gallery'] = COMMENT_NODE_DISABLED;
+
+  // Pathauto (optional) settings
+  $conf["pathauto_node_image_pattern"] = "[space-og-path]/galleries/[field_gallery-path]/[title-raw]";
+  $conf["pathauto_node_gallery_pattern"] = "[space-og-path]/galleries/[title-raw]";
+  
+  $conf['nodeformscols_field_placements_gallery_default'] = unserialize('a:13:{s:5:"title";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-5";s:12:"has_required";b:1;s:5:"title";s:5:"Title";}s:10:"body_field";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:5:"0.008";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"menu";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:12:"has_required";b:0;s:5:"title";s:13:"Menu settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:20:"revision_information";a:3:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:6:"hidden";i:0;}s:16:"comment_settings";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";s:16:"Comment settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:4:"path";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:17:"URL path settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"options";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:18:"Publishing options";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:6:"author";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:21:"Authoring information";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:3:"100";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"book";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:12:"Book outline";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:8:"taxonomy";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:10:"og_nodeapi";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";s:9:"Web Sites";s:9:"collapsed";i:0;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:5:"0.022";s:12:"has_required";b:0;s:5:"title";s:28:"Attach files to this gallery";s:6:"hidden";i:0;}}');
+  $conf['nodeformscols_field_placements_image_default'] = unserialize('a:14:{s:5:"title";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-5";s:12:"has_required";b:1;s:5:"title";s:5:"Title";}s:4:"menu";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:12:"has_required";b:0;s:5:"title";s:13:"Menu settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:20:"revision_information";a:3:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:6:"hidden";i:0;}s:16:"comment_settings";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";s:16:"Comment settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:4:"path";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:17:"URL path settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"options";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:18:"Publishing options";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:6:"author";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:21:"Authoring information";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:3:"100";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"book";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:12:"Book outline";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:8:"taxonomy";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:19:"field_gallery_image";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-4";s:12:"has_required";b:1;s:5:"title";s:5:"Image";}s:13:"field_gallery";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-3";s:12:"has_required";b:1;s:5:"title";s:7:"Gallery";}s:10:"og_nodeapi";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";s:9:"Web Sites";s:9:"collapsed";i:0;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:5:"0.023";s:12:"has_required";b:0;s:5:"title";s:26:"Attach files to this image";s:6:"hidden";i:0;}}');
+  
+  return $conf;
+}
+
+/**
+ * hook vsite_sidgets
+ * @return unknown_type
+ */
+function scholar_image_gallery_vsite_widgets(){
+  $items = array();
+  $items['views_scholar_image_gallery-block_1'] = array(
+    'module' => 'views',
+    'delta' => 'scholar_image_gallery-block_1',
+    'weight' => 20,
+    'region' => false,
+    'status' => '0',
+    'label' => 'Recent images',
+    'type' => 'context_ui',
+  );
+  return $items;
+}
+
+/**
+ * hook vsite_taxonomy_content_types_alter
+ * @return unknown_type
+ */
+function scholar_image_gallery_vsite_taxonomy_content_types_alter(&$types){
+  // no taxonomy for gallery/images
+  unset($types['gallery']);
+  unset($types['image']);
+}
+
+
+/**
+ * Hook nodeapi
+ * Used to trickle deltes to an image galleries dependent image childern
+ */
+function scholar_image_gallery_nodeapi(&$node, $op, $teaser, $a4){
+	if($node->type != 'gallery') return;
+  switch($op){
+    case 'view':
+      if($teaser && arg(0) == 'images' && !arg(1)){
+        $node->content['body']['#value'] = t('Created on @datetime',array('@datetime' => format_date($node->created)))
+                                          .$node->content['body']['#value'];
+      }
+    break;
+    case 'delete':
+    	vsite_include('vsite');
+    	$a_referers = vsite_get_referrers($node->nid,array(),array('image'));
+    	foreach ($a_referers as $nid => $info) node_delete($nid);
+    break;
+  }
+}
+
+/**
+ * implementation of hook_views_pre_render
+ * @param unknown_type $view
+ */
+function scholar_image_gallery_views_pre_render(&$view){
+  $vsite = vsite_get_vsite();
+  if ($view->name == 'scholar_image_gallery' && $vsite && $vsite->admin_access()) {
+    if ($view->current_display == 'node_content_1' || $view->current_display == 'node_content_2') {
+      
+      // ask nodreference_url module for the correct link
+      $link = nodereference_url_build_all_links($view->current_node, FALSE);
+      $link = theme('links', $link, $attributes = array('class' => 'image-upload'));
+      
+      // display a series of links depending on the number of images in the gallery
+      $links = array();
+      $count = count($view->result);
+      
+      switch ($count) {
+        case 0 :
+          $links = $link . $link . $link;
+          break;
+        case 1 :
+          $links = $link . $link;
+          break;
+        default :
+          $links = $link;
+      }
+      
+      // looks like attachment_after happens only if there is result already
+      if ($count) {
+        $view->attachment_after = $links;
+      }
+      else {
+        $view->display['default']->handler->options['empty'] = $links;
+      }
+    }
+  }
+}

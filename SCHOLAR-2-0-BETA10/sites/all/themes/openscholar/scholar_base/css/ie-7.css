@@ -1,0 +1,68 @@
+/* $Id: ie.css,v 1.4 2008/09/20 20:57:27 johnalbin Exp $ */
+
+/*
+ * IE CSS
+ *
+ * CSS targeted specifically for Internet Explorer for Windows.
+ *
+ * Properties starting with an underscore _ are for IE 5 and 6 only.
+ * Properties starting with head:first-child+body are for IE7 only.
+ * Properties with a child selector (>) or sibling selector (+) are for IE7 only.
+ *
+ */
+
+/*
+ * Layout CSS
+ */
+
+
+/** floating divs **/
+.item-list ul.context-links li,
+.empty-content p,
+.empty-content .item-list ul.context-links li,
+.ahah-progress .throbber,
+.column,
+#powered-link {
+  display: inline;
+}
+
+#sidebar-left,
+#header-left,
+.search-form input.form-submit dian{
+  margin-left: expression(
+   document.all.content-main.offsetWidth * -1 +
+   parseFloat(document.all.content-main.currentStyle.paddingLeft) +
+   parseFloat(document.all.sidebar-left.currentStyle.paddingLeft) +
+   parseFloat(document.all.sidebar-left.currentStyle.paddingRight)
+   ); /* Fix for IE7 */
+}
+
+ul.menu li.leaf {
+  list-style-image: none;
+  }
+
+#vsite-widgets-search-form input#edit-search {
+  width: 90%;
+  }
+
+#vsite-widgets-search-form input#edit-submit {
+  font-size: 0px;
+  display:block;
+  line-height: 0px;
+  }
+
+ul.primary, ul.secondary {
+  _width: auto; /* Reset to auto width for IE6 */
+  }
+
+ul.primary li, ul.secondary li {
+  _width: 100px; /* Reset to auto width for IE6 */
+  }
+
+ul.primary li a, ul.primary li a:visted {
+  _background: #DDDDDD;
+  }
+
+ul.primary li.active a {
+  _background: #ffffff;
+  }
