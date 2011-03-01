@@ -37,8 +37,10 @@ function iqss_remote_source_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
   		$node->iqss_remote_source_path = iqss_remote_source_get_source_url($node->nid);
   	break;
     case 'view':
-    	if(!$teaser && $page && iqss_remote_source_get_source_url($node->nid)){
+    	if((!$teaser && $page) && iqss_remote_source_get_source_url($node->nid)){
         $node->content['body']['#value'] .= iqss_remote_source_retrieve($node);
+    	}elseif ($teaser && !$page && iqss_remote_source_get_source_url($node->nid)) {
+    		$node->content['body']['#value'] = node_teaser(iqss_remote_source_retrieve($node));
     	}
     break;
     case 'insert':
