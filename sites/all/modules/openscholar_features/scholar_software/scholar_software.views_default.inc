@@ -1007,7 +1007,10 @@ function scholar_software_views_default_views() {
       'id' => 'status',
       'table' => 'node',
       'field' => 'status',
-      'relationship' => 'none',
+      'relationship' => 'field_scholar_software_project_nid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
     ),
     'type' => array(
       'operator' => 'in',
@@ -1058,6 +1061,23 @@ function scholar_software_views_default_views() {
       ),
       'relationship' => 'none',
       'reduce_duplicates' => 0,
+    ),
+    'status_1' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_1',
+      'table' => 'node',
+      'field' => 'status',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('access', array(
