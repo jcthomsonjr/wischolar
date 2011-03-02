@@ -40,7 +40,7 @@ function iqss_remote_source_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
     	if((!$teaser && $page) && iqss_remote_source_get_source_url($node->nid)){
         $node->content['body']['#value'] .= iqss_remote_source_retrieve($node);
     	}elseif ($teaser && !$page && iqss_remote_source_get_source_url($node->nid)) {
-    		$node->content['body']['#value'] = node_teaser(iqss_remote_source_retrieve($node));
+    		$node->content['body']['#value'] = node_teaser(iqss_remote_source_retrieve($node,false));
     	}
     break;
     case 'insert':
@@ -127,7 +127,7 @@ function iqss_remote_source_get_source_url($node_id){
  * @param $s_path The Subpath
  * @return string
  */
-function iqss_remote_source_retrieve($node){
+function iqss_remote_source_retrieve($node, $b_allow_source_path = true){
 
 	list($s_current_path) = explode("?",$_SERVER['REQUEST_URI']);
   if(substr($s_current_path,-1) != "/"){
@@ -137,7 +137,7 @@ function iqss_remote_source_retrieve($node){
   }
   
   $s_path = $_GET['source_extra'];
-  $a_data = strlen($s_path)? _iqss_remote_source_get_data($node,$s_path):_iqss_remote_source_get_data($node);
+  $a_data = ($b_allow_source_path && strlen($s_path))? _iqss_remote_source_get_data($node,$s_path):_iqss_remote_source_get_data($node);
   
   if(!$a_data['show_inline']){
   	if(strlen($a_data['content_type'])) header('Content-type: '.$a_data['content_type']);
@@ -211,6 +211,7 @@ function _iqss_remote_source_retrieve_remote_data($node, $s_url_extra,$o_cached_
   $b_inline = _iqss_remote_source_inline_content($a_headers['Content-Type']);
   
   if(!$b_inline && intval($a_headers['Content-Length']) > IQSS_REMOTE_SOURCE_MAX_CACHE_SIZE){
+  	unset($_REQUEST['destination']);
   	drupal_goto("{$s_docs_root}/{$s_url_extra}");
   }
   
