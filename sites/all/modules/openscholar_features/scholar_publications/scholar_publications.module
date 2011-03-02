@@ -205,7 +205,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(is_array($form['taxonomy']) && array_key_exists('copy_to_biblio',$form['taxonomy'])){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
     }
-    
+
     if(array_key_exists('field_biblio_extra',$form) && is_array($form['field_biblio_extra'])){
       $form['field_biblio_extra']['field_biblio_extra_add_more']['#value'] = 'Add Another Field';
     }
@@ -244,7 +244,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 function scholar_publications_move_extras($form, &$form_state){
 	//The JS Call Expects the field to be in the orig position so we can't move them for the "Add More" callbacks
 	if(strpos($_GET['q'],"content/js_add_more") === 0) return $form;
-	
+
   $a_publication_extras = array('attachments','biblio_notes','biblio_abst_e_field','biblio_abst_e','body_field','biblio_url', 'field_biblio_image','field_biblio_extra');
 
   //Pub url in the main section for some biblio types
@@ -258,7 +258,7 @@ function scholar_publications_move_extras($form, &$form_state){
       unset($form[$extra_field]);
     }
   }
-      
+
   return $form;
 }
 
@@ -399,8 +399,15 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       $node->content['field_biblio_extra']['#weight'] = 3;
 
       if($page){
+        // get max weight
+        $high = -100000;
+        foreach ($node->content as $row) {
+          if ($high < $row['#weight']) {
+            $high = $row['#weight'];
+          }
+        }
         $node->content['citation'] = array(
-          '#weight' => 2,
+          '#weight' => $high,
           '#value' => _scholar_publications_get_plain_citation($node),
         );
       }
@@ -814,7 +821,7 @@ function _scholar_publications_sort_type_by_numpubs($a,$b){
  * Return the citation without html
  * @param $node
  */
-function _scholar_publications_get_plain_citation($node){
+function _scholar_publications_get_plain_citation(&$node){
   $style = biblio_get_style();
   $base  = variable_get('biblio_base', 'biblio');
 
@@ -826,7 +833,53 @@ function _scholar_publications_get_plain_citation($node){
 
   $citation = strip_tags($citation);
 
-  $citation = "<h3>Citation:</h3><textarea class=\"biblio-citation\" onclick=\"focus();select();\" readonly=\"readonly\" rows=\"3\">{$citation}</textarea>";
+  $pattern = '|<[^>]+>(.*)</[^>]+>|U';
+  $body = $node->content['body']['#value'];
+  preg_match_all($pattern, $body, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+
+  $data = array();
+  foreach ($matches as $k => $m) {
+    if (empty($m[0][0])) continue;
+    if (strlen(strip_tags($m[0][0])) == 0) continue;
+
+    $new_d = array();
+    $end = 0;
+    if (isset($matches[$k+1])) {
+      $end = $matches[$k+1][0][1] - $m[0][1];
+    }
+    else {
+      $end = strlen($body) - 6 - $m[0][1];
+    }
+    $new_d['html'] = substr($body, $m[0][1], $end);
+    $new_d['text'] = strip_tags($new_d['html']);
+    $new_d['inside'] = $m[1][0];
+    $new_d['outside'] = str_replace(array($m[0][0], chr(226).chr(128).chr(147)), array('','-'), $new_d['html']);
+    $data[] = $new_d;
+  }
+
+  foreach ($data as $d) {
+    if (@strpos($citation, $d['text']) !== FALSE || @strpos($citation, $d['outside']) !== FALSE || @strpos($citation, $d['inside']) !== FALSE) {
+      $node->content['body']['#value'] = str_replace($d['html'], '', $node->content['body']['#value']);
+     // var_dump( $node->content['body']['#value']);
+    }
+  }
+
+  drupal_add_js('function selectText(ele) {
+	try {
+  	var div = document.createRange();
+    div.setStartBefore(ele);
+    div.setEndAfter(ele) ;
+  	window.getSelection().addRange(div);
+  }
+  catch (e) {
+  	// we\'re in internet explorer
+  	div = document.selection.createRange();
+  	div.moveToElementText(ele);
+  	div.select();
+  }
+}','inline');
+  $citation = "<dl><dt>Citation:</dt><dd class=\"biblio-citation\" onclick=\"if (event.target) selectText(event.target); else selectText(this);\">{$citation}</dd></dl>";
+  $citation .= _scholar_publications_export_link($node);
 
   return $citation;
 }
