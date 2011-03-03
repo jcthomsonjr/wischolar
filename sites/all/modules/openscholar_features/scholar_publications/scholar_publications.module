@@ -9,8 +9,8 @@ function scholar_publications_init(){
 		$init_run = true;
 		$space = vsite_get_vsite();
 
-		// the following is from spaces 2.0
-		/*
+		 // the following is from spaces 2.0
+		 /*
 	  if($space){
 	    global $conf;
 	    require_once drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc';
@@ -60,7 +60,7 @@ function scholar_publications_menu(){
     'title' => 'Publications',
     'page callback' => 'scholar_publications_overview',
     'access callback' => 'spaces_access_feature',
-    'access arguments' => array('view', 'scholar_publications'),
+    'access arguments' => array('view','scholar_publications'),
     'menu_name' => 'features',
   );
 
@@ -850,3 +850,47 @@ function scholar_publications_biblio_download_links($node = NULL) {
 
   return $files;
 }
+<<<<<<< .mine
+
+function scholar_publications_export($format = "tagged", $nid = null, $popup = false, $version = 8) {
+	$vsite = vsite_get_vsite();
+
+	$title = 'publications';
+	if ($nid !== null) {
+		$node = node_load($nid);
+		$title = str_replace(' ', '_', $node->title);
+		$title = substr($title, 0, 8);
+	}
+
+	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
+  	ob_start();
+  	$output = biblio_export($format, $nid, $popup, $version);
+  	if (empty($output)) {
+  		// the export didn't return anything, which means it output directly to the browser
+  		$output = ob_get_clean();
+  		// get site owner's name
+  		$owner_name = $vsite->group->name;
+  		switch ($format) {
+  			case 'tagged':
+          		drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-'.$title.'-tagged.enw"');
+  			break;
+  			case 'xml':
+  			case 'endnote8':
+  				 drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-'.$title.'.xml"');
+  			break;
+  			case 'bibtex':
+  				 drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-'.$title.'-Bibtex.bib"');
+  			break;
+  			case 'csv':
+  				drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-'.$title.'-export.csv"');
+  			break;
+  		}
+  		echo $output;
+  	}
+  	else {
+  		ob_end_clean();
+  		return $output;
+  	}
+}
+=======
+>>>>>>> .r5011
