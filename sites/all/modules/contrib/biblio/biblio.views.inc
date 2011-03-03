@@ -86,7 +86,12 @@ function biblio_views_handlers() {
       'biblio_handler_argument_many_to_one' => array(
         'parent' => 'views_handler_argument_many_to_one',
       ),
-
+/*
+ *  Sorting
+ */
+      'biblio_handler_sort_biblio_title' => array(
+        'parent' => 'views_handler_sort',
+      ),
 
       )
   );
@@ -155,6 +160,14 @@ function biblio_views_data() {
       'type'       => 'inner',
     ),
     );
+
+  $data['title_sort'] = array (
+    'title' => t('Sort By Title'),
+    'help' => t('Sort by Titles with their articles removed.'),
+    'sort' => array (
+      'handler' => 'biblio_handler_sort_biblio_title',
+    ),
+  );
 
   $viewsdata['biblio'] = $data;
 
