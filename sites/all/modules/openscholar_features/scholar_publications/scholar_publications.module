@@ -789,7 +789,7 @@ function scholar_publications_link_alter(&$links, $node){
  *
  * This is implemented so that an export links are displayed
  */
-function _scholar_publications_link($node) {
+function _scholar_publications_export_link($node) {
   $links = $parent = array();
   $base = variable_get('biblio_base', 'biblio');
 
