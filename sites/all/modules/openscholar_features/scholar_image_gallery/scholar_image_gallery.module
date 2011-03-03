@@ -88,7 +88,7 @@ function scholar_image_gallery_nodeapi(&$node, $op, $teaser, $a4){
  */
 function scholar_image_gallery_views_pre_render(&$view){
   $vsite = vsite_get_vsite();
-  if ($view->name == 'scholar_image_gallery' && $vsite && $vsite->admin_access()) {
+  if ($view->name == 'scholar_image_gallery' && $vsite && $vsite->access_admin()) {
     if ($view->current_display == 'node_content_1' || $view->current_display == 'node_content_2') {
       
       // ask nodreference_url module for the correct link

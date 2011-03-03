@@ -1,19 +1,11 @@
 <?php
 
 /**
- * Implementation of hook_context_default_contexts().
+ * Implementation of hook_ctools_plugin_api().
  */
-function scholar_dvn_context_default_contexts() {
-  $items = array();
-
-  $items['scholar-feature-dvn'] = array(
-    'namespace' => 'scholar',
-    'attribute' => 'feature',
-    'value' => 'dvn',
-    'description' => 'Datverse Feature Context',
-    'menu_trail' => array(
-      'data' => 'data',
-    ),
-  );
-  return $items;
+function scholar_dvn_ctools_plugin_api() {
+  list($module, $api) = func_get_args();
+  if ($module == "context" && $api == "context") {
+    return array("version" => 3);
+  }
 }

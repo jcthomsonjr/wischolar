@@ -44,7 +44,7 @@ function scholar_front_home(){
     //Add Site Name to the page title for the homepage
     //if(isset($vsite->settings['site']['headline'])) drupal_set_title(t(drupal_get_title().' | %site', array('%site' => $vsite->settings['site']['headline'])));
 
-    if($vsite->admin_access()  && (!array_key_exists('messages_confirmed',$vsite->settings)  || !$vsite->settings['messages_confirmed']['welcome_message'])){
+    if($vsite->access_admin()  && (!array_key_exists('messages_confirmed',$vsite->settings)  || !$vsite->settings['messages_confirmed']['welcome_message'])){
 
     	$s_hide_link = l("Forever","cp/confirm_message/welcome_message",array('attributes'=>array('class'=>'hide'),'query' => array('source'=>$_GET['q']) ));
     	$s_close_link = l("For now","",array('attributes'=>array('class'=>'close','onClick'=>'$("div#message_welcome_message").remove(); return false;')));
@@ -62,8 +62,8 @@ function scholar_front_home(){
 
     	//Add Content
     	$s_content = l("Add/manage content",'cp/content');
-    	$s_bio = ($vsite->feature_access('scholar_biocv') && !content_profile_load('bio', $vsite->group->uid))?"<li>".l("Add your bio",'node/add/bio',array('query' => array('destination'=>'biocv')))."</li>":"";
-    	$s_cv = ($vsite->feature_access('scholar_biocv') && !content_profile_load('cv', $vsite->group->uid))?"<li>".l("Add your cv",'node/add/cv',array('query' => array('destination'=>'biocv')))."</li>":"";
+    	$s_bio = ($vsite->access_feature($op = 'view', 'scholar_biocv') && !content_profile_load('bio', $vsite->group->uid))?"<li>".l("Add your bio",'node/add/bio',array('query' => array('destination'=>'biocv')))."</li>":"";
+    	$s_cv = ($vsite->access_feature($op = 'view', 'scholar_biocv')  && !content_profile_load('cv', $vsite->group->uid))?"<li>".l("Add your cv",'node/add/cv',array('query' => array('destination'=>'biocv')))."</li>":"";
 
     	$result = <<<MESSAGE
     	<div id="message_welcome_message" class="node-teaser">
@@ -95,7 +95,7 @@ function scholar_front_home(){
       </div>
     	{$result}
 MESSAGE;
-
+        vsite_include('vsiteapi');
     	$items = vsite_create_links();
       $result = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links').$result;
     }

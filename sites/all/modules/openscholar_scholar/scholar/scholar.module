@@ -5,7 +5,6 @@
  * @return unknown_type
  */
 function scholar_init(){
-
   $vsite = vsite_get_vsite();
   //Populate the scholar site node with some default information using the user object
   if($vsite && (!strlen($vsite->group->title) || !strlen($vsite->group->og_description) || $vsite->group->title == $vsite->purl)){
@@ -92,6 +91,7 @@ function scholar_strongarm(){
   return $conf;
 }
 
+/*
 function scholar_spaces_presets(){
   $items = array();
   vsite_include('vsiteapi');
@@ -175,6 +175,7 @@ function scholar_spaces_presets(){
 
   return $items;
 }
+*/
 
 /**
  * Implementation of hook_form_alter()

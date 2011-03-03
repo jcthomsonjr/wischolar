@@ -13,8 +13,8 @@ function scholar_dvn_menu(){
   $items['data'] = array(
     'title' => 'data',
     'page callback' => 'scholar_dvn_data',
-    'access callback' => 'spaces_feature_access',
-    'access arguments' => array('scholar_dvn'),
+    'access callback' => 'spaces_access_feature',
+    'access arguments' => array('view','scholar_dvn'),
     'menu_name' => 'features',
   );
 
@@ -32,7 +32,7 @@ function scholar_dvn_data(){
     if(strlen($_REQUEST['dvn_subpage'])) $path .= "/".ltrim($_REQUEST['dvn_subpage'],"/");
     return "<div id=\"feature-dataverse\"><iframe name=\"res\" scrolling=\"auto\" src =\"" . $path . "\"></iframe></div>";
   }
-  elseif ($vsite && $vsite->admin_access()) {
+  elseif ($vsite && $vsite->access_admin()) {
     $l1 = l('feature', "cp/features");
     $l2 = l('http://dvn.iq.harvard.edu', 'http://dvn.iq.harvard.edu', array('absolute' => TRUE));
     $result = "<p>No dataverse alias was found. Please set up your dataverse alias in your \"scholar dvn\" " . $l1 . " settings </p>";

@@ -6,8 +6,8 @@ function scholar_biocv_menu(){
   $items['biocv'] = array(
     'title' => 'Bio',
     'page callback' => 'scholar_biocv_bio',
-    'access callback' => 'spaces_feature_access',
-    'access arguments' => array('scholar_biocv'),
+    'access callback' => 'spaces_access_feature',
+    'access arguments' => array('view','scholar_biocv'),
     'menu_name' => 'features',
     'type' => MENU_NORMAL_ITEM,
   );
@@ -43,7 +43,7 @@ function scholar_biocv_submenu_access(){
 
   if (!$cv_node || $b_use_attachment) return false; //If they havn't made a cv or they are using an attachment for thier cv
 
-	return spaces_feature_access('scholar_biocv'); //Standard access
+	return spaces_access_feature('view', 'scholar_biocv'); //Standard access
 }
 
 /**
@@ -70,7 +70,7 @@ function scholar_biocv_bio(){
   $cv_node = content_profile_load('cv', $vsite -> group -> uid, $lang = '');
   $s_out = "";
 
-  if($vsite->admin_access()){
+  if($vsite->access_admin()){
   	$a_links = array();
     if ($bio_node){
       $a_links[] = array('custom' => true, 'title' => 'Edit your Bio', 'href' => "node/{$bio_node->nid}/edit", 'query' => drupal_get_destination());
@@ -132,7 +132,7 @@ function scholar_biocv_cv(){
   $cv_node = content_profile_load('cv', $vsite -> group -> uid, $lang = '');
   $s_out = "";
 
-  if($vsite->admin_access()){
+  if($vsite->access_admin()){
     $a_links = array();
     if ($cv_node){
       $a_links[] = array('custom' => true, 'title' => 'Edit your CV', 'href' => "node/{$cv_node->nid}/edit", 'query' => drupal_get_destination());

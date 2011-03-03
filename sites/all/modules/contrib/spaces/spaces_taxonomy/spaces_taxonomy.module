@@ -1,215 +1,66 @@
 <?php
-
-define('SPACES_TAXONOMY_FEATURE_ENABLED', 1);
+// $Id: spaces_taxonomy.module,v 1.1.2.4.2.4.2.6 2010/08/06 20:23:20 jmiccolis Exp $
 
 /**
- * Spaces Taxonomy must be included after the Spaces module. We check this
- * condition here -- if the check fails, at least we don't break Drupal.
+ * Implementaton of hook_enable().
  */
-if (function_exists('spaces_menu')) {
-  class space_taxonomy implements space {
-    var $title = NULL;
-    var $term = NULL;
+function spaces_taxonomy_enable() {
+  // Weight spaces_taxonomy to be after taxonomy.
+  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'taxonomy'"));
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'spaces_taxonomy'", ($weight + 1));
+}
 
-    /**
-     * Constructor
-     */
-    function __construct($type, $sid = NULL, $is_active = FALSE) {
-      if ($sid) {
-        if ($term = taxonomy_get_term($sid)) {
-          $this->title = $term->name;
-          $this->term = $term;
-        }
-      }
-      else {
-        $this->term = new StdClass();
-      }
-    }
-
-    /**
-     * Implementation of space->save().
-     */
-    function save() {
-      return;
-    }
-
-    /**
-     * Implementation of space->delete().
-     */
-    function delete() {
-      // We do not delete the group node here:
-      // 1. to allow the group to remain and perhaps later be re-registered as a space
-      // 2. to avoid recursion
-      return;
-    }
-
-    /**
-     * Implementation of space->feature_access().
-     */
-    function feature_access($feature = NULL) {
-      if (isset($this->features[$feature])) {
-        if ($this->features[$feature] != SPACES_FEATURE_DISABLED) {
-          return TRUE;
-        }
-      }
-      return FALSE;
-    }
-
-    /**
-     * Implementation of space->admin_access().
-     */
-    function admin_access() {
-      global $user;
-      return user_access('administer spaces');
-    }
-
-    /**
-     * Implementation of space->feature_options().
-     */
-    function feature_options() {
-      return array(
-        SPACES_FEATURE_DISABLED => t('Disabled'),
-        SPACES_TAXONOMY_FEATURE_ENABLED => t('Enabled'),
-      );
-    }
-
-    /**
-     * Implementation of space->user_links().
-     */
-    function user_links() {
-      return array();
-    }
-
-    /**
-     * Implementation of space->admin_links().
-     */
-    function admin_links() {
-      return array();
-    }
-
-    /**
-     * Implementation of space->form().
-     */
-    function form() {
-      return array();
-    }
-
-    /**
-     * Implementation of space->preset_validate().
-     */
-    function validate($values) {
-      // No need to validate
-      return;
-    }
-
-    /**
-     * Implementation of space->preset_submit().
-     */
-    function submit($values) {
-      return array();
-    }
-
-    /**
-     * Implementation of space->preset_enforce().
-     */
-    function preset_enforce($preset) {
-    }
-
-    /**
-     * Implementation of space->redirect().
-     */
-    function redirect($op = 'home') {
-      switch ($op) {
-        case 'home':
-          if (!empty($this->purl)) {
-            // Use the menu path of the selected feature as homepage
-            if ($home = $this->settings['home']) {
-              if (menu_get_item($home)) {
-                purl_goto($home, array('purl' => array('provider' => 'spaces_taxonomy', 'id' => $this->sid)));
-              }
-            }
-            // The previous checks fail, there is no valid homepage set
-            if ($this->admin_access() && user_access('configure spaces features')) {
-              drupal_set_message(t("Please setup your taxonomy space by choosing a homepage setting."));
-              purl_goto("spaces/features", array('purl' => array('provider' => 'spaces_taxonomy', 'id' => $this->sid)));
-            }
-          }
-          else if (user_access('administer spaces')) {
-            drupal_goto('admin/content/taxonomy/edit/term/'. $this->sid);
-          }
-          else {
-            drupal_goto('taxonomy/term/'. $this->sid);
-          }
-          break;
-        case 'features':
-          purl_goto('spaces/features', array('purl' => array('provider' => 'spaces_taxonomy', 'id' => $this->sid)));
-          break;
-      }
-    }
-
-    /**
-     * Implementation of space->menu_access().
-     */
-    function menu_access($op, $object = NULL, $is_active = TRUE) {
-      switch ($op) {
-        case 'node':
-          if ($is_active) {
-            $node = $object;
-            $form = !isset($node->nid) || isset($node->date) ? TRUE : FALSE;
-
-            $node_types = spaces_features_map('node');
-            // If the feature is spaces-related, see whether this feature is enabled for this space before allowing access.
-            if (!empty($node_types[$node->type])) {
-              $feature = $node_types[$node->type];
-              if ($this->feature_access($feature)) {
-                return TRUE;
-              }
-              else {
-                return FALSE;
-              }
-            }
-          }
-          return TRUE;
-        case 'menu':
-        case 'user':
-          return TRUE;
-      }
-    }
-
-    /**
-     * Implementation of space->router().
-     */
-    function router($op, $object = NULL, $is_active = TRUE) {
-      switch ($op) {
-        case 'menu':
-          if ($is_active && drupal_is_front_page()) {
-            $this->redirect('home');
-          }
-          break;
-      }
-    }
-
-    // Spaces Taxonomy views filter
-    function views_filter(&$query, $base_table = '', $relationship = '') {
-      switch ($base_table) {
-        case 'node':
-          $table = $query->ensure_table('term_node', $relationship);
-          $query->add_where(0, "$table.tid = %d", $this->sid);
-          break;
-      }
-    }
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function spaces_taxonomy_ctools_plugin_api($module, $api) {
+  if ($module == 'spaces' && $api == 'plugins') {
+    return array('version' => 3);
   }
 }
 
 /**
- * Implementation of hook_spaces_types().
+ * Implementation of hook_purl_provider().
  */
-function spaces_taxonomy_spaces_types() {
-  return array(
-    'taxonomy' => array(
+function spaces_taxonomy_purl_provider() {
+  $items = array();
+  $items["spaces_taxonomy"] = array(
+    'name' => t('Term space'),
+    'description' => t('Sets a space as the active space.'),
+    'callback' => 'spaces_init_space',
+    'callback arguments' => array('taxonomy'),
+    'example' => 'my-space',
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_spaces_plugins().
+ */
+function spaces_taxonomy_spaces_plugins() {
+  $plugins = array();
+  $plugins['space_taxonomy'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'spaces_taxonomy') .'/plugins',
+      'file' => 'space_taxonomy.inc',
       'class' => 'space_taxonomy',
-      'title' => t('Term space'),
-      'custom purl' => TRUE,
+      'parent' => 'space_type_purl',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implementation of hook_spaces_registry().
+ */
+function spaces_taxonomy_spaces_registry() {
+  return array(
+    'types' => array(
+      'taxonomy' => array(
+        'title' => t('Term space'),
+        'plugin' => 'space_taxonomy',
+        'path' => 'taxonomy/term/%',
+      ),
     ),
   );
 }
@@ -227,78 +78,100 @@ function spaces_taxonomy_menu() {
     'access arguments' => array('administer spaces'),
     'type' => MENU_LOCAL_TASK,
   );
-  $spaces_items = spaces_active_space_menu('taxonomy', FALSE);
-  foreach ($spaces_items as $path => $item) {
-    $spaces_items[$path]['access callback'] = 'user_access';
-    $spaces_items[$path]['access arguments'] = array('administer spaces');
-  }
-  $items = $items + $spaces_items;
-
   return $items;
 }
 
-/*
- * Implementation of hook_form_alter()
+/**
+ * Implementation of hook_menu_alter().
+ */
+function spaces_taxonomy_menu_alter(&$items) {
+  if (isset($items['taxonomy/term/%'])) {
+    $items['taxonomy/term/%/view'] = $items['taxonomy/term/%'];
+    $items['taxonomy/term/%/view']['type'] = MENU_DEFAULT_LOCAL_TASK;
+    $items['taxonomy/term/%/view']['title'] = 'View';
+    $items['taxonomy/term/%/view']['weight'] = -10;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
  */
 function spaces_taxonomy_form_alter(&$form, $form_state, $form_id) {
-  switch ($form_id) {
-    case 'taxonomy_form_term':
-      $vid = variable_get('spaces_taxonomy_vid', 0);
-      // Add delete submit handler
-      if (isset($form_state['confirm_delete'])) {
-        $form['#submit'][] = '_spaces_taxonomy_form_delete';
-      }
-      // Add taxonomy space submit handler
-      else if ($vid != 0 && $form['vid']['#value'] == $vid) {
-        // Get default value for prefix field
-        $tid = isset($form['tid']['#value']) ? $form['tid']['#value'] : 0;
+  if ($form['#id'] == 'node-form' && (arg(0) .'/'. arg(1) != 'admin/content')) {
+    $vid = variable_get('spaces_taxonomy_vid', 0);
+    $space = spaces_get_space();
+    if ($vid && !empty($form['taxonomy'][$vid]) && $space->type == 'taxonomy') {
+      $form['taxonomy'][$vid]['#disabled'] = TRUE;
+      $form['taxonomy'][$vid]['#default_value'] = $space->id;
+    }
+  }
+}
+
+/**
+ * Implementation of hook_form_alter() for taxonomy_form_term.
+ */
+function spaces_taxonomy_form_taxonomy_form_term_alter(&$form, $form_state) {
+  $vid = variable_get('spaces_taxonomy_vid', 0);
+  if ($vid && $form['vid']['#value'] == $vid) {
+    $tid = isset($form['tid']['#value']) ? $form['tid']['#value'] : 0;
+    $space = spaces_load('taxonomy', $tid);
+    if ($space) {
+      $space->activate();
+
+      $form['spaces'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Spaces'),
+        '#tree' => FALSE,
+        '#weight' => 0,
+      );
+
+      // Add PURL modifier form
+      $modifier = purl_load(array('id' => $tid, 'provider' => 'spaces_taxonomy'));
+      $form['spaces']['purl'] = purl_form('spaces_taxonomy', $tid, isset($modifier['value']) ? $modifier['value'] : '');
+
+      // Add presets form
+      $presets = spaces_preset_load(NULL, 'taxonomy');
+      if (count($presets) > 1) {
+        module_load_include('inc', 'spaces', 'spaces.admin');
+        $form['spaces']['spaces_preset'] = spaces_preset_form($presets, 'taxonomy');
         $space = spaces_load('taxonomy', $tid);
-
-        $form['spaces'] = array(
-          '#type' => 'fieldset',
-          '#title' => t('Spaces'),
-          '#tree' => FALSE,
-          '#weight' => 0,
-        );
-
-        // Add context prefix form
-        $form['spaces']['purl'] = purl_form('spaces_taxonomy', $tid, $space->purl);
-
-        // Add presets form
-        $form['spaces']['spaces_preset'] = spaces_form_presets($space);
-
-        // Add custom submit handler
-        $form['#submit'][] = '_spaces_taxonomy_form_submit';
+        $default_value = $space->controllers->variable->get('spaces_preset_taxonomy', 'space');
+        if (isset($default_value, $form['spaces']['spaces_preset']['spaces_preset_taxonomy']['#options'][$default_value])) {
+          $form['spaces']['spaces_preset']['spaces_preset_taxonomy']['#default_value'] = $default_value;
+        }
       }
-      break;        
+    }
   }
 }
 
 /**
- * Submit handler for deletion of a space term.
+ * Implementation of hook_taxonomy().
  */
-function _spaces_taxonomy_form_delete($form, &$form_state) {
-  $tid = $form_state['values']['tid'];
-  if ($tid) {
-    $space = spaces_load('taxonomy', $tid);
-    spaces_delete($space);
-  }
-}
+function spaces_taxonomy_taxonomy($op, $type, $array = NULL) {
+  if ($type === 'term') {
+    $term = $array;
+    switch ($op) {
+      case 'insert':
+      case 'update':
+        $space = spaces_load('taxonomy', $term['tid']);
+        if ($space) {
+          // Save preset values.
+          if (!empty($term['spaces_preset_taxonomy'])) {
+            $space->controllers->variable->set('spaces_preset_taxonomy', $term['spaces_preset_taxonomy']);
+          }
 
-/**
- * Submit handler for Spaces-enabled taxonomy terms.
- */
-function _spaces_taxonomy_form_submit($form, &$form_state) {
-  $tid = $form_state['values']['tid'];
-  if ($tid) {
-    $space = spaces_load('taxonomy', $tid);
-    if (isset($form_state['values']['purl']['value'])) {
-      $space->purl = $form_state['values']['purl']['value'];
+          // Save PURL modifier.
+          $modifier = array('provider' => 'spaces_taxonomy', 'id' => $term['tid'], 'value' => $term['purl']['value']);
+          purl_save($modifier);
+        }
+        break;
+      case 'delete':
+        spaces_delete('taxonomy', $term['tid']);
+
+        $modifier = array('provider' => 'spaces_taxonomy', 'id' => $term['tid']);
+        purl_delete($modifier);
+        break;
     }
-    if (isset($form_state['values']['preset'])) {
-      $space->preset = $form_state['values']['preset'];
-    }
-    $result = spaces_save($space);
   }
 }
 

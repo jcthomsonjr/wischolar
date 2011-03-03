@@ -43,7 +43,7 @@ function scholar_book_outline_access($node){
   global $user;
   if ($user -> uid == '1') return true;
   $vsite = vsite_get_vsite();
-  if ($vsite && $vsite->admin_access()) {
+  if ($vsite && $vsite->access_admin()) {
     $mlid = db_result(db_query("SELECT mlid from {book} WHERE nid = %d", $node -> nid));
     if($mlid){
       return true;

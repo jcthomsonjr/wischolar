@@ -1,41 +1,13 @@
 <?php
 
 /**
- * Implementation of hook_context_default_contexts().
+ * Implementation of hook_ctools_plugin_api().
  */
-function scholar_front_context_default_contexts() {
-  $items = array();
-
-  $items['scholar-feature-front'] = array(
-    'namespace' => 'scholar',
-    'attribute' => 'feature',
-    'value' => 'front',
-    'description' => 'The front page context',
-    'path' => array(
-      'home' => 'home',
-    ),
-    'block' => array(
-      'views_scholar_events_upcoming-block_1' => array(
-        'module' => 'views',
-        'delta' => 'scholar_events_upcoming-block_1',
-        'weight' => 20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Upcoming events',
-        'type' => 'context_ui',
-      ),
-      'views_scholar_announcements-block_1' => array(
-        'module' => 'views',
-        'delta' => 'scholar_announcements-block_1',
-        'weight' => 21,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Latest Announcements',
-        'type' => 'context_ui',
-      ),
-    ),
-  );
-  return $items;
+function scholar_front_ctools_plugin_api() {
+  list($module, $api) = func_get_args();
+  if ($module == "context" && $api == "context") {
+    return array("version" => 3);
+  }
 }
 
 /**
@@ -48,7 +20,7 @@ $flags[] = array (
   'content_type' => 'node',
   'name' => 'scholar_frontpage',
   'title' => 'Save to Front Page',
-  'global' => true,
+  'global' => '1',
   'types' => 
   array (
   ),

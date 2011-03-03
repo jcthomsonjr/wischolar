@@ -1,7 +1,9 @@
 <?php
+// $Id: spaces_handler_filter_spaces_current.inc,v 1.1.2.2.2.2.2.3 2009/12/17 22:33:05 alexb Exp $
+
 /**
  * Spaces view filter handler.
- * 
+ *
  * This filter delegates filtering to the 'views_filter' method on the calling space object.
  * Refer to the 'space_og' class in the Spaces OG module for an example implementation.  If
  * you are creating your own space type by implementing the 'space' interface, you can use
@@ -9,12 +11,18 @@
  */
 class spaces_handler_filter_spaces_current extends views_handler_filter {
   /**
-   * Meta query handler which delegates query building to the
-   * implementing spaces.
+   * override can_expose()
+   */
+  function can_expose() {
+    return FALSE;
+  }
+
+  /**
+   * Meta query handler which delegates query building to the implementing spaces.
    */
   function query() {
     $space = spaces_get_space();
-    if ($space && $space->type != 'site') {
+    if ($space) {
       if ($this->relationship) {
         $base_table = $this->view->query->relationships[$this->relationship]['table'];
       }
@@ -22,10 +30,6 @@ class spaces_handler_filter_spaces_current extends views_handler_filter {
         $base_table = $this->view->base_table;
       }
       $space->views_filter($this->view->query, $base_table, $this->relationship);
-    }
-    else if ($this->options['operator'] === 'all') {
-      // Set a failure condition and let the display manager handle it.
-      $this->view->build_info['fail'] = TRUE;
     }
   }
 
@@ -36,25 +40,16 @@ class spaces_handler_filter_spaces_current extends views_handler_filter {
    * define $form['operator'];
    */
   function operator_form(&$form, &$form_state) {
-    $options = $this->operator_options();
-    if (!empty($options)) {
-      $form['operator'] = array(
-        '#type' => 'select',
-        '#title' => t('When not in a space'),
-        '#default_value' => $this->operator,
-        '#options' => $options,
-        '#description' => t('Helpful if you want to use this view both inside and out of spaces.'),
-      );
-    }
+    $form['message'] = array(
+      '#type' => 'item',
+      '#value' => t('Items will be filtered to show only those that belong to the active space.'),
+    );
   }
 
   /**
-   * Provide filter application conditions.
+   * Override of admin_summary().
    */
-  function operator_options() {
-    return array(
-      'all' => t('Hide all results'),
-      'active' => t('Show all results'),
-    );
+  function admin_summary() {
+    return t('True');
   }
 }

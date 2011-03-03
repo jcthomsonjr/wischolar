@@ -1,214 +1,114 @@
 <?php
+// $Id: spaces.theme.inc,v 1.1.2.3.2.5 2010/08/05 06:22:33 yhahn Exp $
 
 /**
- * Form theming for the block customizer settings form.
- */
-function theme_spaces_block_customizer_settings_form($form) {
-  // Add draggable weights
-  drupal_add_js('misc/tableheader.js');
-  drupal_add_css(drupal_get_path('module', 'spaces') .'/spaces.css');
-  $output = '';
-
-  $contexts = element_children($form['contexts']);
-  foreach ($contexts as $identifier) {
-    $output .= "<div class='spaces-block-customizer clear-block'>";
-
-    // Add a context heading if there is more than 1 context in this feature
-    if (count($contexts) > 1) {
-      $output .= "<h3>{$form['contexts'][$identifier]['#title']}</h3>";
-    }
-
-    // List of block regions that should force an empty display
-    $force_empty = array('content');
-    global $theme_key;
-    init_theme();
-    $regions = system_region_list($theme_key);
-    foreach ($force_empty as $region) {
-      if (empty($form['contexts'][$identifier][$region]) && !empty($regions[$region])) {
-        $output .= "<div class='region-{$region}'>";
-        $output .= "<strong class='region'>{$regions[$region]}</strong>";
-        $output .= "<div class='spaces-empty'>". t('There are no options available for this region.') ."</div>";
-        $output .= "</div>";
-      }
-    }
-
-    foreach (element_children($form['contexts'][$identifier]) as $a) {
-      drupal_add_tabledrag("spaces-customizer-blocks-{$identifier}-{$a}", 'order', 'sibling', 'block-weight');
-      $rows = array();
-      uasort($form['contexts'][$identifier][$a], 'element_sort');
-      foreach (element_children($form['contexts'][$identifier][$a]) as $b) {
-        $form['contexts'][$identifier][$a][$b]['weight']['#attributes'] = array('class' => 'block-weight');
-        $row = array(
-          'dummy' => '',
-          'status' => drupal_render($form['contexts'][$identifier][$a][$b]['status']),
-          'title' => array('data' => drupal_render($form['contexts'][$identifier][$a][$b]['subject']), 'class' => 'fill'),
-          'weight' => drupal_render($form['contexts'][$identifier][$a][$b]['weight']),
-        );
-        $rows[] = array('data' => $row, 'class' => 'draggable');
-      }
-      $output .= "<div class='region-{$a}'>";
-      $output .= "<strong class='region'>{$form['contexts'][$identifier][$a]['#title']}</strong>";
-      $output .= theme('table', array(), $rows, array('id' => "spaces-customizer-blocks-{$identifier}-{$a}"));
-      $output .= "</div>";
-    }
-
-    $output .= "</div>";
-  }
-
-  $output .= drupal_render($form);
-  return $output;
-}
-
-/**
- * Form theme function for spaces presets.
- */
-function theme_spaces_form_presets($form) {
-  $output = '';
-  // Render presets in a table
-  $rows = array();
-  foreach (element_children($form['info']) as $id) {
-    unset($form['preset'][$id]['#title']);
-    $row = array(
-      drupal_render($form['preset'][$id]),
-      drupal_render($form['info'][$id]),
-    );
-    $rows[] = $row;
-  }
-  $output .= theme('table', array(array('data' => $form['preset']['#title'], 'colspan' => 2)), $rows);
-  drupal_render($form['preset']); // Throw out the rest of this element
-
-  $output .= drupal_render($form);
-  return $output;
-}
-
-/**
- * Theme function for spaces_preset_default_form().
- */
-function theme_spaces_preset_default_form($form) {
-  drupal_add_css(drupal_get_path('module', 'spaces') .'/spaces.css');
-  $output = '';
-  foreach (element_children($form['types']) as $type) {
-    // Build table rows
-    $rows = array();
-    if (!empty($form['types'][$type]['info'])) {
-      foreach (element_children($form['types'][$type]['info']) as $preset) {
-        $rows[] = array(
-          'data' => array(
-            drupal_render($form['types'][$type]['default'][$preset]),
-            drupal_render($form['types'][$type]['name'][$preset]),
-            $form['types'][$type]['info'][$preset]['#value']['description'],
-            $form['types'][$type]['info'][$preset]['#value']['links'],
-          ),
-          'class' => !empty($form['types'][$type]['info'][$preset]['#value']['disabled']) ? 'disabled' : '',
-        );
-      }
-    }
-    $rows[] = array(
-      array(
-        'data' => "<div class='buttons'>". l(t('Add preset'), 'admin/build/spaces/presets/add/'. $type, array('attributes' => array('class' => 'button'))) ."</div>",
-        'colspan' => 4,
-      )
-    );
-
-    // Add type heading and preset table to output
-    $output .= "<h3>{$form['types'][$type]['#title']}</h3>";
-    $output .= theme('table', array('', t('Preset'), t('Description'), ''), $rows, array('class' => 'spaces-admin'));
-  }
-  $output .= drupal_render($form['buttons']);
-  $output .= drupal_render($form);
-  return $output;
-}
-
-/**
- * Theme for spaces featuers/settings form.
- * @TODO: this could probably live in a preprocess/template file.
+ * Theme function for spaces_features_form().
  */
 function theme_spaces_features_form($form) {
-  drupal_add_css(drupal_get_path('module', 'features') .'/features.css');
   drupal_add_css(drupal_get_path('module', 'spaces') .'/spaces.css');
-  drupal_add_js(drupal_get_path('module', 'spaces') .'/spaces.js');
-
-  // Add draggable weights
-  drupal_add_js('misc/tableheader.js');
-  drupal_add_tabledrag('spaces-features', 'order', 'sibling', 'feature-weight');
-
-  $output = '';
-  foreach (array('features', 'settings') as $type) {
-    $header = array(
-      t('Settings'),
-      array('class' => 'action', 'data' => !isset($form['space']['#value']->sid) ? t('Locked') : ''),
-      '');
-    if ($type == 'features') {
-      $header[0] = t('Features');
-      $header[] = '';
-    }
-    $rows = array();
-    foreach (element_children($form[$type]) as $element) {
-      // Yank title & description fields off the form element for
-      // rendering in their own cells.
-      $feature_name = "<strong>{$form[$type][$element]['#title']}</strong>";
-      $feature_name .= "<div class='description'>{$form[$type][$element]['#description']}</div>";
-      $feature_name = "<div class='feature'>{$feature_name}</div>";
-
-      unset($form[$type][$element]['#title']);
-      unset($form[$type][$element]['#description']);
-
-      $row = array(
-        'name' => $feature_name,
-        'action' => drupal_render($form['customize'][$element]) . drupal_render($form['locked'][$type][$element]),
-        'option' => drupal_render($form[$type][$element]),
-      );
-
-      // Determine row classes
-      $class = '';
-      if ($type == 'features') {
-        $class = $form[$type][$element]['#default_value'] ? 'enabled' : 'disabled';
-      }
-      $class .= !empty($form[$type][$element]['#locked']) ? ' locked' : '';
-
-      // Add feature weighting
-      if ($type == 'features') {
-        $form['weights'][$element]['#attributes'] = array('class' => 'feature-weight');
-        $row['weight'] = drupal_render($form['weights'][$element]);
-        $class .= ' draggable';
-      }
-
-      // Collect data + classes & add to master array.
-      foreach ($row as $key => $data) {
-        $row[$key] = array('data' => $data, 'class' => $key);
-      }
-      $rows[] = array('data' => $row, 'class' => $class);
-    }
-    if (!empty($rows)) {
-      $output .= theme('table', $header, $rows, array('id' => 'spaces-'. $type, 'class' => 'features spaces-'. $type));
-    }
-
-    // Prevent section from being rendered by drupal_render().
-    unset($form[$type]);
+  $rows = array();
+  foreach (element_children($form['spaces_features']) as $feature) {
+    $rows[] = array(
+      array('class' => 'label', 'data' => drupal_render($form['labels'][$feature])),
+      array('class' => 'option', 'data' => drupal_render($form['spaces_features'][$feature])),
+      array('class' => 'actions', 'data' => drupal_render($form['settings'][$feature])),
+    );
   }
-
-  $output .= drupal_render($form['buttons']);
+  $output = theme('table', array(), $rows, array('class' => 'spaces'));
   $output .= drupal_render($form);
   return $output;
 }
 
 /**
- * Form theme function for customization items.
+ * Theme function for spaces_preset_form().
  */
-function theme_spaces_customize_item($form) {
-  $output = '';
+function theme_spaces_preset_form($form) {
+  drupal_add_css(drupal_get_path('module', 'spaces') .'/spaces.css');
+  $header = array(array('data' => check_plain($form['#title']), 'colspan' => isset($form['storage']) ? 4 : 3));
+  $type = $form['#space_type'];
   $rows = array();
-  foreach (element_children($form) as $element) {
-    if ($form[$element]['#type'] == 'fieldset') {
-      $title = $form[$element]['#title'];
-      unset($form[$element]['#title']);
-      unset($form[$element]['#type']);
+  if (!empty($form['#description'])) {
+    $rows[] = array(array('data' => "<div class='description'>{$form['#description']}</div>", 'colspan' => isset($form['storage']) ? 4 : 3));
+  }
+  foreach (element_children($form['labels']) as $preset) {
+    $row = array();
+    $row[] = array('class' => 'option', 'data' => drupal_render($form["spaces_preset_{$type}"][$preset]));
+    $row[] = array('class' => 'label', 'data' => drupal_render($form['labels'][$preset]));
+    if (isset($form['storage'][$preset])) {
+      $row[] = array('class' => 'storage', 'data' => drupal_render($form['storage'][$preset]));
+    }
+    $row[] = array('class' => 'actions', 'data' => drupal_render($form['actions'][$preset]));
+    $rows[] = array(
+      'class' => !empty($form["spaces_preset_{$type}"][$preset]) ? 'enabled' : 'disabled',
+      'data' => $row,
+    );
+  }
+  $output = theme('table', $header, $rows, array('class' => 'spaces'));
+  $output .= drupal_render($form);
+  return $output;
+}
+
+/**
+ * Theme function for spaces_overrides_form.
+ */
+function theme_spaces_overrides_form($form) {
+  drupal_add_js(drupal_get_path('module', 'spaces') . '/spaces.js');
+  drupal_add_css(drupal_get_path('module', 'spaces') .'/spaces.css');
+  $header = array(
+    theme('table_select_header_cell'),
+    array('data' => t('Type'), 'colspan' => 1),
+    array('data' => t('Override value'), 'colspan' => 2),
+  );
+  $rows = array();
+  foreach (array_keys(spaces_controllers()) as $controller) {
+    if (!empty($form[$controller])) {
+      foreach (element_children($form[$controller]) as $key) {
+        $label = $form[$controller][$key]['#title'];
+        $value = $form[$controller][$key]['#description'];
+        $inherited = !empty($form[$controller][$key]['#disabled']);
+        unset($form[$controller][$key]['#title'], $form[$controller][$key]['#description']);
+
+        $row = array(
+          'data' => array(
+            array('class' => 'option', 'data' => drupal_render($form[$controller][$key])),
+            array('class' => 'controller', 'data' => $controller),
+            array(
+              'class' => 'key',
+              'data' => l($label, $_GET['q'], array('fragment' => $key)) . '<span class="override-value"><pre>' .  $value . '</pre></span>',
+              'colspan' => $inherited ? 1 : 2,
+            ),
+          ),
+        );
+        if ($inherited) {
+          $row['class'] = 'inherited';
+          $row['data'][] = array('class' => 'tag', 'data' => t('inherited'));
+        }
+        $rows[] = $row;
+      }
+    }
+  }
+  if (count($rows)) {
+    if (isset($form['preset'])) {
+      $preset_label = $form['preset']['#title'];
+      unset($form['preset']['#title']);
       $rows[] = array(
-        "<strong>$title</strong>",
-        drupal_render($form[$element]),
+        array('data' => $preset_label, 'class' => 'action-label', 'colspan' => 2),
+        array('data' => drupal_render($form['preset']), 'class' => 'action-form', 'colspan' => 3),
+      );
+    }
+    if (isset($form['revert'])) {
+      $revert_label = $form['revert']['#title'];
+      unset($form['revert']['#title']);
+      $rows[] = array(
+        array('data' => $revert_label, 'class' => 'action-label', 'colspan' => 2),
+        array('data' => drupal_render($form['revert']), 'class' => 'action-form', 'colspan' => 3),
       );
     }
   }
-  $output .= theme('table', array(), $rows);
+  else {
+    $rows[] = array(array('data' => t('No overrides present.'), 'colspan' => 5));
+  }
+  $output = theme('table', $header, $rows, array('class' => 'spaces'));
+  $output .= drupal_render($form);
   return $output;
 }

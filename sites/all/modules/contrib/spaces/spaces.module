@@ -1,77 +1,560 @@
 <?php
-// $Id: spaces.module,v 1.25.4.33.2.32 2009/09/10 22:25:40 yhahn Exp $
-
-define('SPACES_FEATURE_DISABLED', 0);
-
-define('SPACES_PRESET_DEFAULT', 0);
-define('SPACES_PRESET_NORMAL', 1);
-define('SPACES_PRESET_OVERRIDDEN', 2);
+// $Id: spaces.module,v 1.25.4.33.2.32.2.47 2010/08/20 15:45:21 yhahn Exp $
 
 /**
- * Implementation of hook_init().
+ * Core API ===========================================================
  */
-function spaces_init() {
-  // This is a rather unfortunate and hackish way to get around
-  // module weights.
-  // @TODO replace this by eliminating spaces_site and instead
-  // making it the base space class.
-  if (!spaces_get_space() && module_exists('spaces_site')) {
-    module_invoke('spaces_site', 'init');
-  }
 
-  // We use a menu callback here rather than drupal_access_denied().
-  // Using drupal_access_denied() can terminate the page request before
-  // bootstrap completes, leading to all sorts of havoc.
-  if (!spaces_menu_access()) {
-    menu_set_active_item('spaces-access-denied');
+/**
+ * Spaces loader.
+ */
+function spaces_load($type, $id, $reset = FALSE) {
+  static $spaces = array();
+  if (!isset($spaces[$type][$id]) || $reset) {
+    $spaces[$type][$id] = FALSE;
+    ctools_include('plugins');
+    $registry = spaces_types();
+    $info = $registry[$type];
+    $plugins = ctools_get_plugins('spaces', 'plugins');
+    if (isset($plugins[$info['plugin']]) && $class = ctools_plugin_get_class($plugins[$info['plugin']], 'handler')) {
+      $space = new $class($type, $id);
+      if ($space->load()) {
+        $spaces[$type][$id] = $space;
+      }
+    }
   }
-  spaces_router('menu');
+  return $spaces[$type][$id];
+}
 
-  // Rebuild spaces menu on page callbacks where there is the
-  // potential for the addition/removal/alteration of features.
-  $router_item = menu_get_item();
-  switch ($router_item['path']) {
-    case 'admin/build/context':
-    case 'admin/build/features':
-    case 'admin/build/modules':
-      spaces_features_map(NULL, TRUE);
-      break;
+/**
+ * Remove all override values for a space.
+ */
+function spaces_delete($type, $id) {
+  return db_query("DELETE FROM {spaces_overrides} WHERE type = '%s' AND id = '%s'", $type, $id);
+}
+
+/**
+ * Initialize a space and set it to be the current active space.
+ */
+function spaces_init_space($type, $id) {
+  $space = spaces_load($type, $id);
+  if ($space) {
+    if ($space->activate()) {
+      // If there is already an active space we need to deactivate it.
+      // Note that this often causes a redirect.
+      if ($active = spaces_get_space()) {
+        if ($active->type != $space->type || $active->id != $space->id) {
+          $active->deactivate();
+        }
+      }
+      spaces_set_space($space);
+    }
+    else {
+      $space->deactivate();
+    }
   }
 }
 
 /**
- * Implementation of hook_perm().
+ * Wrapper function around spaces_set_space(). Retrieves the current
+ * active space for a given space type.
  */
-function spaces_perm() {
-  return array('administer spaces', 'configure spaces features');
+function spaces_get_space() {
+  return spaces_set_space();
 }
 
 /**
- * Implementation of hook_purl_provider().
+ * Sets the specified space as the current active space. Returns the
+ * active space if no space is provided.
+ *
+ * @param $space
+ *   The space object to set as the active space. Optional.
+ *
+ * @return
+ *   The active space object or FALSE if there is no active space.
  */
-function spaces_purl_provider() {
-  $items = array();
-  foreach(spaces_types() as $type => $info) {
-    $items['spaces_'. $type] = array(
-      'name' => $info['title'],
-      'description' => t('Sets a spaces context.'),
-      'callback' => 'spaces_init_context',
-      'callback arguments' => array($type),
-      'example' => 'my-space',
+function spaces_set_space($space = NULL) {
+  static $active_space;
+  if (isset($space)) {
+    $active_space = $space;
+    if (module_exists('context') && $plugin = context_get_plugin('condition', 'spaces_type')) {
+      $plugin->execute($space);
+    }
+  }
+  return isset($active_space) ? $active_space : FALSE;
+}
+
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function spaces_ctools_plugin_api($module, $api) {
+  if ($module == 'spaces' && $api == 'plugins') {
+    return array('version' => 3);
+  }
+}
+
+/**
+ * Implementation of hook_ctools_plugin_plugins().
+ */
+function spaces_ctools_plugin_plugins() {
+  return array(
+    'cache' => TRUE,
+    'use hooks' => TRUE,
+  );
+}
+
+/**
+ * Implementation of hook_spaces_plugins().
+ */
+function spaces_spaces_plugins() {
+  $plugins = array();
+  $plugins['space'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'spaces') .'/plugins',
+      'file' => 'space.inc',
+      'class' => 'space',
+    ),
+  );
+  $plugins['space_type'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'spaces') .'/plugins',
+      'file' => 'space_type.inc',
+      'class' => 'space_type',
+      'parent' => 'space',
+    ),
+  );
+  $plugins['space_type_purl'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'spaces') .'/plugins',
+      'file' => 'space_type_purl.inc',
+      'class' => 'space_type_purl',
+      'parent' => 'space_type',
+    ),
+  );
+  $plugins['spaces_controller'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'spaces') .'/plugins',
+      'file' => 'spaces_controller.inc',
+      'class' => 'spaces_controller',
+    ),
+  );
+  $plugins['spaces_controller_variable'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'spaces') .'/plugins',
+      'file' => 'spaces_controller_variable.inc',
+      'class' => 'spaces_controller_variable',
+      'parent' => 'spaces_controller',
+    ),
+  );
+  $plugins['spaces_controller_context'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'spaces') .'/plugins',
+      'file' => 'spaces_controller_context.inc',
+      'class' => 'spaces_controller_context',
+      'parent' => 'spaces_controller',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implementation of hook_spaces_registry().
+ */
+function spaces_spaces_registry() {
+  return array(
+    'controllers' => array(
+      'variable' => array(
+        'title' => t('Variable'),
+        'plugin' => 'spaces_controller_variable',
+      ),
+      'context' => array(
+        'title' => t('Context'),
+        'plugin' => 'spaces_controller_context',
+      ),
+    ),
+  );
+}
+
+/**
+ * Get the registry of spaces types.
+ */
+function spaces_types($reset = FALSE) {
+  return _spaces_registry('types', $reset);
+}
+
+/**
+ * Get the registry of spaces controllers.
+ */
+function spaces_controllers($reset = FALSE) {
+  return _spaces_registry('controllers', $reset);
+}
+
+/**
+ * Registry retrieval and caching.
+ */
+function _spaces_registry($key = NULL, $reset = FALSE) {
+  static $registry;
+  if (!isset($registry) || $reset) {
+    if (!$reset && $cache = cache_get('spaces_registry', 'cache')) {
+      $registry = $cache->data;
+    }
+    else {
+      $registry = module_invoke_all('spaces_registry');
+      drupal_alter('spaces_registry', $registry);
+      cache_set('spaces_registry', $registry);
+    }
+  }
+  if (isset($key)) {
+    return isset($registry[$key]) ? $registry[$key] : array();
+  }
+  return $registry;
+}
+
+/**
+ * Presets ============================================================
+ */
+
+/**
+ * Preset loader.
+ *
+ * @param $name
+ *   Optional name for the preset to load.
+ * @param $name
+ *   Optional spaces_type of the the presets to load.
+ *
+ * @return
+ *   Returns a fully-loaded preset.
+ */
+function spaces_preset_load($name = NULL, $space_type = NULL, $reset = FALSE) {
+  ctools_include('export');
+  static $presets;
+  if (!isset($presets) || $reset) {
+    if (!$reset && $cache = cache_get('spaces_presets', 'cache')) {
+      $presets = $cache->data;
+    }
+    else {
+      if ($reset) {
+        ctools_export_load_object_reset('spaces_presets');
+      }
+      $presets = ctools_export_load_object('spaces_presets', 'all');
+      cache_set('spaces_presets', $presets);
+    }
+  }
+
+  if (!isset($name) && !isset($space_type)) {
+    return $presets;
+  }
+  if (isset($name)) {
+    return isset($presets[$name]) ? $presets[$name] : FALSE;
+  }
+  if (isset($space_type)) {
+    $return = array();
+    foreach ($presets as $key => $preset) {
+      if ($preset->space_type === $space_type) {
+        $return[$key] = $preset;
+      }
+    }
+    return $return;
+  }
+}
+
+/**
+ * Inserts or updates a spaces preset into the database.
+ *
+ * @param $preset
+ *   The preset object to be inserted.
+ */
+function spaces_preset_save($preset) {
+  $existing = spaces_preset_load($preset->name, NULL, TRUE);
+  if ($existing && ($existing->export_type & EXPORT_IN_DATABASE)) {
+    drupal_write_record('spaces_presets', $preset, 'name');
+  }
+  else {
+    drupal_write_record('spaces_presets', $preset);
+  }
+  spaces_preset_load(NULL, NULL, TRUE); // Reset static cache
+  return TRUE;
+}
+
+/**
+ * Save a preset's values from a given space object.
+ *
+ * @param $preset
+ *   The preset object to be saved.
+ * @param $space
+ *   The space object whose values should be used for the preset.
+ */
+function spaces_preset_save_from_space($preset, $space) {
+  $space->activate();
+  foreach (array_keys(spaces_controllers()) as $controller) {
+    $preset->value[$controller] = array_merge(
+      $space->controllers->{$controller}->get(NULL, 'preset'),
+      $space->controllers->{$controller}->get(NULL, 'space')
     );
   }
-  return $items;
+  spaces_preset_save($preset);
 }
 
 /**
- * Context prefix provider callback.
+ * Deletes an existing preset.
+ *
+ * @param $preset
+ *   The preset object to be deleted.
+ *
+ * @return
+ *   Returns true on success, false on failure.
  */
-function spaces_init_context($type, $sid) {
-  static $once;
-  if (empty($once)) {
-    $space = spaces_load($type, $sid, TRUE);
-    spaces_set_space($space);
-    $once = TRUE;
+function spaces_preset_delete($preset) {
+  if (isset($preset->name) && ($preset->export_type & EXPORT_IN_DATABASE)) {
+    db_query("DELETE FROM {spaces_presets} WHERE name = '%s'", $preset->name);
+    spaces_preset_load(NULL, NULL, TRUE);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * CTools export function.
+ */
+function spaces_preset_export($object, $indent = '') {
+  $output = ctools_export_object('spaces_presets', $object, $indent);
+  $translatables = array();
+  foreach (array('title', 'description') as $key) {
+    if (!empty($object->{$key})) {
+      $translatables[] = $object->{$key};
+    }
+  }
+  $translatables = array_filter(array_unique($translatables));
+  if (!empty($translatables)) {
+    $output .= "\n";
+    $output .= "{$indent}// Translatables\n";
+    $output .= "{$indent}// Included for use with string extractors like potx.\n";
+    sort($translatables);
+    foreach ($translatables as $string) {
+      $output .= "{$indent}t(" . ctools_var_export($string) . ");\n";
+    }
+  }
+  return $output;
+}
+
+/**
+ * Other spaces actions ===============================================
+ */
+
+/**
+ * Examine the current request to see if it is a submission of a form built
+ * inside a space.
+ */
+function spaces_ahah_check() {
+  if (!empty($_POST) && isset($_POST['form_build_id'])) {
+    if ($form = form_get_cache($_POST['form_build_id'], $form_state)) {
+      if (isset($form['#space'])) {
+        list($type, $id) = explode(':', $form['#space']['#value']);
+        spaces_init_space($type, $id);
+      }
+    }
+  }
+}
+
+/**
+ * Calls the router method on all space types, giving them a chance to
+ * route requests accordingly.
+ *
+ * @param $op
+ *   The current "hook" or "hook op" identifier for the $space->router
+ *   to act on.
+ * @param $object
+ *   Optional object to pass to the $space->router.
+ */
+function spaces_router($op, $object = NULL) {
+  static $router;
+  if (!isset($router)) {
+    $router = array();
+    // Add the active space.
+    if ($space = spaces_get_space()) {
+      $router[$space->type] = $space;
+    }
+    // Iterate over space types and create instances of each.
+    ctools_include('plugins');
+    $plugins = ctools_get_plugins('spaces', 'plugins');
+    foreach (spaces_types() as $type => $info) {
+      if (!isset($router[$type]) && isset($plugins[$info['plugin']]) && $class = ctools_plugin_get_class($plugins[$info['plugin']], 'handler')) {
+        $router[$type] = new $class($type);
+      }
+    }
+  }
+  foreach ($router as $space) {
+    $space->router($op, $object);
+  }
+}
+
+/**
+ * Integration with Features ==========================================
+ */
+
+/**
+ * Retrieve all available features.
+ *
+ * @param $type
+ *   Optional type flag by which to filter available features.
+ * @param $reset
+ *   Optional boolean flag for resetting the static cache.
+ *
+ * @return
+ *   Keyed array of potential features.
+ */
+function spaces_features($type = NULL, $reset = FALSE) {
+  static $features;
+  static $by_type;
+  if (!isset($features) || $reset) {
+    $features = array();
+    $by_type = array();
+    // Include the 'site' key.
+    $types = array_merge(array_keys(spaces_types()), array('site'));
+    foreach (features_get_features() as $feature) {
+      if (module_exists($feature->name) && !empty($feature->info['spaces']['types'])) {
+        $features[$feature->name] = $feature;
+        $feature->info['spaces']['types'] = is_array($feature->info['spaces']['types']) ? $feature->info['spaces']['types'] : array($feature->info['spaces']['types']);
+        foreach ($feature->info['spaces']['types'] as $enabled_type) {
+          // Feature specifies 'all' type, allow it to be used with all types.
+          if ($enabled_type === 'all') {
+            foreach ($types as $t) {
+              $by_type[$t][$feature->name] = $feature;
+            }
+          }
+          // Feature specifies a valid space type.
+          elseif (in_array($enabled_type, $types, TRUE)) {
+            $by_type[$enabled_type][$feature->name] = $feature;
+          }
+          // The type specified was not found. Fallback to allow it to be used
+          // with the site space type.
+          else {
+            $by_type['site'][$feature->name] = $feature;
+          }
+        }
+      }
+    }
+  }
+  if (isset($type)) {
+    return !empty($by_type[$type]) ? $by_type[$type] : array();
+  }
+  return $features;
+}
+
+/**
+ * Access check for the current space.
+ */
+function spaces_access_space($account = NULL) {
+  $space = spaces_get_space();
+  return $space ? $space->access_space() : TRUE;
+}
+
+/**
+ * Access check for administrative access to the current space.
+ * An optional set of permissions can be provided to be added as AND
+ * conditions to the access check.
+ *
+ * @param $account
+ *   User account to check access for. Optional.
+ * @param $space
+ *   The space to check access against.
+ */
+function spaces_access_admin($account = NULL, $space = NULL) {
+  $space = isset($space) ? $space : spaces_get_space();
+  if ($space) {
+    return $space->access_admin($account);
+  }
+  return user_access('administer site configuration', $account);
+}
+
+/**
+ * Access callback for spaces, with extra permission checking.
+ */
+function spaces_access_admin_perms($perms = array(), $account = NULL, $space = NULL) {
+  $perm_access = TRUE;
+  if (!empty($perms)) {
+    foreach ($perms as $perm) {
+      $perm_access = $perm_access && user_access($perm, $account);
+    }
+  }
+  return ($perm_access ? spaces_access_admin($account, $space) : FALSE);
+}
+
+/**
+ * Access check for a given feature in the current space.
+ *
+ * @param $op
+ *   The operation to test access for. Optional, defaults to 'view'.
+ * @param $feature
+ *   Feature to test access against.
+ * @param $account
+ *   User account to test access for.
+ * @param $space
+ *   The space to check access against.
+ * @param $reset
+ *   Reset the access static cache.
+ */
+function spaces_access_feature($op = 'view', $feature, $account = NULL, $space = NULL, $reset = FALSE) {
+  static $cache;
+  $space = isset($space) ? $space : spaces_get_space();
+  $cid = $op . ':' . $feature . ':' . (isset($account) ? $account->uid : 'CURRENT_USER') . ':' . (!empty($space) ? "{$space->type}-{$space->id}" : "SITE_SPACE");
+  if (!isset($cache) || $reset) {
+    $cache = array();
+  }
+  if (!isset($cache[$cid])) {
+    // Allow access to features that are not spaces-compatible.
+    // Allow access to features in the admin section of the site so menu items
+    // are available on pages like 'admin/build/menu' and 'admin/build/context'.
+    $features = spaces_features();
+    if (!isset($features[$feature]) || arg(0) === 'admin') {
+      $cache[$cid] = TRUE;
+    }
+    // Active space
+    elseif ($space) {
+      $cache[$cid] = $space->access_feature($op, $feature, $account);
+    }
+    // No active space
+    else {
+      $features = variable_get('spaces_features', array());
+      $cache[$cid] = user_access('access content', $account) && !empty($features[$feature]);
+    }
+  }
+  return $cache[$cid];
+}
+
+/**
+ * Access callback for spaces, with extra permission checking.
+ */
+function spaces_access_feature_perms($op = 'view', $feature, $account = NULL, $space = NULL, $perms = array()) {
+  $access = spaces_access_feature($op, $feature, $account, $space);
+  if (!empty($perms)) {
+    foreach ($perms as $perm) {
+      $access = $access && user_access($perm);
+    }
+  }
+  return $access;
+}
+
+/**
+ * Access check for a user account page in the current space.
+ */
+function spaces_access_user($op = 'view', $account = NULL) {
+  $space = spaces_get_space();
+  return $space ? $space->access_user($op, $account) : TRUE;
+}
+
+/**
+ * Implemented hooks ==================================================
+ */
+
+/**
+ * Implementation of hook_help().
+ */
+function spaces_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#spaces':
+      $output = file_get_contents(drupal_get_path('module', 'spaces') .'/README.txt');
+      return module_exists('markdown') ? filter_xss_admin(module_invoke('markdown', 'filter', 'process', 0, -1, $output)) : '<pre>'. check_plain($output) .'</pre>';
   }
 }
 
@@ -80,59 +563,24 @@ function spaces_init_context($type, $sid) {
  */
 function spaces_menu() {
   $items = array();
-  $items['admin/build/spaces'] = array(
-    'title' => 'Spaces presets',
-    'description' => 'Create and configure spaces for your site.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('spaces_preset_default_form'),
-    'type' => MENU_NORMAL_ITEM,
-  );
-  $items['admin/build/spaces/presets'] = array(
-    'title' => 'Presets',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('spaces_preset_default_form'),
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => -1,
-  );
-  $items['admin/build/spaces/presets/add'] = array(
-    'title' => 'Add',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('spaces_preset_form', 'add'),
-  );
-  $items['admin/build/spaces/presets/edit'] = array(
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('spaces_preset_form', 'edit'),
-  );
-  $items['admin/build/spaces/presets/export'] = array(
-    'title' => 'Export preset',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('spaces_preset_export'),
-  );
-  $items['admin/build/spaces/presets/delete'] = array(
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('spaces_preset_delete_form', 5, 6),
-  );
-  $items['admin/build/spaces/presets/disable'] = array(
-    'page callback' => '_spaces_preset_disable_page',
-  );
-  $items['admin/build/spaces/presets/enable'] = array(
-    'page callback' => '_spaces_preset_enable_page',
-  );
-  foreach ($items as $path => $item) {
-    $items[$path]['access callback'] = 'user_access';
-    $items[$path]['access arguments'] = array('administer spaces');
-    $items[$path]['file'] = 'spaces_admin.inc';
-    if (!isset($item['type'])) {
-      $items[$path]['type'] = MENU_CALLBACK;
-    }
-  }
   $items['spaces-access-denied'] = array(
-    'title' => 'Access denied',
-    'description' => 'Page callback for early-stack spaces router access denied.',
-    'page callback' => 'spaces_access_denied',
-    'page arguments' => array(),
     'access callback' => FALSE,
     'type' => MENU_CALLBACK,
+  );
+  $items['spaces-frontpage'] = array(
+    'page callback' => 'spaces_frontpage',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['features'] = array(
+    'title' => 'Features',
+    'description' => 'Configure features for this space.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('spaces_features_form'),
+    'access callback' => 'spaces_access_admin',
+    'access arguments' => array(),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'spaces.admin.inc',
   );
   return $items;
 }
@@ -152,1306 +600,380 @@ function spaces_menu_alter(&$items) {
     $type_url_str = str_replace('_', '-', $type->type);
     $router_items[] = 'node/add/'. $type_url_str;
   }
-
   foreach ($router_items as $path) {
     if (isset($items[$path])) {
       $arguments = isset($items[$path]['access arguments']) ? $items[$path]['access arguments'] : array();
       $arguments[] = isset($items[$path]['access callback']) ? $items[$path]['access callback'] : NULL;
-
       $items[$path]['access callback'] = 'spaces_menu_access';
       $items[$path]['access arguments'] = $arguments;
     }
   }
+
+  // Graft space-specific settings pages into each space type's menu tree.
+  $graft = array();
+  $graft['features'] = $items['features'];
+  foreach ($items as $path => $item) {
+    if (strpos($path, 'features/') === 0) {
+      $graft[$path] = $item;
+    }
+  }
+  foreach (spaces_types() as $type => $info) {
+    if (isset($info['path'])) {
+      $graft['features']['type'] = MENU_LOCAL_TASK;
+      $graft['features']['access callback'] = 'spaces_access_admin';
+      $graft['features']['access arguments'] = array();
+
+      // For any child pages of the graft, increment load arguments by the
+      // number of args present in the path.
+      $argcount = count(explode('/', $info['path']));
+      foreach ($graft as $path => $item) {
+        $newitem = $item;
+        foreach (array('page arguments', 'access arguments', 'title arguments') as $key) {
+          if (!empty($newitem[$key])) {
+            foreach ($newitem[$key] as $position => $argument) {
+              if (is_numeric($argument)) {
+                $newitem[$key][$position] = $newitem[$key][$position] + $argcount;
+              }
+            }
+          }
+        }
+        $items["{$info['path']}/{$path}"] = $newitem;
+      }
+      $items["{$info['path']}/features/configure"] = array(
+        'title' => 'Configure',
+        'description' => 'Configure features for this space.',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('spaces_features_form'),
+        'access callback' => 'spaces_access_admin',
+        'access arguments' => array(),
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+        'file' => 'spaces.admin.inc',
+      );
+      $items["{$info['path']}/features/overrides"] = array(
+        'title' => 'Overrides',
+        'description' => 'Manage override values for this space.',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('spaces_overrides_form'),
+        'access callback' => 'spaces_access_admin_perms',
+        'access arguments' => array(array('administer spaces')),
+        'type' => MENU_LOCAL_TASK,
+        'file' => 'spaces.admin.inc',
+        'module' => 'spaces',
+      );
+    }
+  }
+
+  // Overrides of autocomplete callbacks using Views.
+  // @TODO: Implement taoxnomy autocomplete callback.
+  if (module_exists('views') && isset($items['user/autocomplete'])) {
+    $items['user/autocomplete']['page callback'] = 'spaces_user_autocomplete';
+    $items['user/autocomplete']['module'] = 'spaces';
+    $items['user/autocomplete']['file'] = 'spaces.admin.inc';
+  }
 }
 
 /**
- * Spaces menu access callback. Allows space types to manage menu
- * access as related to their space workflow. See hook_menu_alter()
- * for how the original menu access callback / argument gets passed
- * to an altered item. 
+ * Spaces menu access callback. Allows space types to manage access as
+ * related to their space workflow. See hook_menu_alter() for how
+ * menu access callbacks / arguments get passed.
  */
 function spaces_menu_access() {
+  // Run the standard Drupal access check.
   $args = func_get_args();
-  $op = 'menu';
-  $object = NULL;
-  if (!empty($args)) {
-    $access_callback = array_pop($args);
+  $access_callback = array_pop($args);
+  if (empty($access_callback) || call_user_func_array($access_callback, $args)) {
+    $map = features_get_component_map('node');
+
+    // Determine the access callback to use by inspecting args.
     if ($access_callback == 'node_access' && $args[0] == 'create') {
-      $object = new StdClass();
-      $object->type = $args[1];
-      $op = 'node';
-    }
-    else {
-      foreach ($args as $arg) {
-        if (is_object($arg)) {
-          $object = $arg;
-          if (isset($object->nid)) {
-            $op = 'node';
-          }
-          else if (isset($object->uid)) {
-            $op = 'user';
-          }
-          break;
-        }
+      $node_type = str_replace('-', '_', $args[1]);
+      $feature = !empty($map[$node_type]) ? reset($map[$node_type]) : NULL;
+      if ($feature) {
+        return spaces_access_feature('create', $feature);
       }
     }
+    else {
+      foreach (array_filter($args, 'is_object') as $object) {
+        if (isset($object->nid)) {
+          spaces_router('node', $object);
+          $feature = !empty($map[$object->type]) ? reset($map[$object->type]) : NULL;
+          if ($feature) {
+            return spaces_access_feature('view', $feature);
+          }
+        }
+        elseif (isset($object->uid)) {
+          spaces_router('user', $object);
+          return spaces_access_user('view', $object);
+        }
+        break;
+      }
+    }
+    return TRUE;
   }
-
-  $access = true;
-  $types = spaces_types();
-  // Check menu access for the active space type
-  if ($space = spaces_get_space()) {
-    $access = $access && $space->menu_access($op, $object);
-    unset($types[$space->type]);
-  }
-  // Run each non-active space type's menu access check
-  foreach ($types as $type => $info) {
-  	$space = new $info['class']($type);
-    $access = $access && $space->menu_access($op, $object, false);
-  }
-
-  $standard_access = !empty($access_callback) ? call_user_func_array($access_callback, $args) : TRUE;
-  return $access && $standard_access;
+  return FALSE;
 }
 
 /**
- * Menu callback for early access_denied calls. Going through the a menu
- * callback allows Drupal bootstrap to complete.
+ * Route the user to the proper homepage for this space.
+ *
+ * Assumes that the router path provided in hook_spaces_registry() for the
+ * space type describes a path with a loader argument to be replaced by the
+ * $space->id. See _menu_router_build() for the origin of the regex.
  */
-function spaces_access_denied() {
-  drupal_access_denied();
+function spaces_frontpage() {
+  $space = spaces_get_space();
+  if ($space) {
+    $types = spaces_types();
+    $type_info = $types[$space->type];
+    if (isset($type_info['path'])) {
+      $path = preg_replace('/%(|[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$/', $space->id, $type_info['path']);
+      menu_set_active_item($path);
+      return menu_execute_active_handler();
+    }
+  }
+  drupal_not_found();
   exit;
 }
 
 /**
- * Implementation of hook_help().
- */
-function spaces_help($path, $arg) {
-  switch ($path) {
-    case 'admin/build/spaces/presets/export':
-      return "<p>". t('You can use exported presets in your modules by returning an array of presets in <code>hook_spaces_presets()</code>.') ."</p>";
-  }
-}
-
-/**
- *  Implementation of hook_theme().
+ * Implementation of hook_theme().
  */
 function spaces_theme() {
   $items = array();
-  $items['spaces_features_form'] =
-  $items['spaces_customize_item'] =
-  $items['spaces_preset_default_form'] =
-  $items['spaces_form_presets'] =
-  $items['spaces_block_customizer_settings_form'] = array(
+  $base = array(
+    'arguments' => array('form' => array()),
     'file' => 'spaces.theme.inc',
+    'path' => drupal_get_path('module', 'spaces'),
   );
+  $items['spaces_features_form'] =
+  $items['spaces_preset_form'] =
+  $items['spaces_overrides_form'] = $base;
   return $items;
-}
-
-/**
- *  Implementation of hook_user().
- */
-function spaces_user($op, &$edit, &$account, $category = NULL) {
-  switch ($op) {
-    case 'view':
-    case 'form':
-      spaces_router('user', $account);
-      break;
-  }
-}
-
-/**
- * Implementation of hook_nodeapi().
- */
-function spaces_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
-  if ($op == 'view' && $page && menu_get_object() === $node) {
-    spaces_router('node', $node);
-  }
-  if ($op == 'prepare') {
-    spaces_router('node', $node);
-  }
-}
-
-/**
- * Implementation of hook_flush_caches().
- */
-function spaces_flush_caches() {
-  spaces_features_map(NULL, TRUE);
-  return array();
-}
-
-/**
- * Implementation of hook_spaces_settings().
- */
-function spaces_spaces_settings() {
-  return array(
-    'home' => array(
-      'class' => 'space_setting_home',
-      'file' => drupal_get_path('module', 'spaces') .'/spaces.spaces.inc',
-    ),
-  );
-}
-
-/**
- * Implementation of hook_spaces_customizers().
- */
-function spaces_spaces_customizers() {
-  return array(
-    'menu' => array(
-      'class' => 'space_customizer_menu',
-      'file' => drupal_get_path('module', 'spaces') .'/spaces.spaces.inc',
-    ),
-    'block' => array(
-      'class' => 'space_customizer_block',
-      'file' => drupal_get_path('module', 'spaces') .'/spaces.spaces.inc',
-    ),
-  );
 }
 
 /**
  * Implementation of hook_views_api().
  */
 function spaces_views_api() {
-  return array(
-    'api' => 2,
-    'path' => drupal_get_path('module', 'spaces') .'/includes',
-  );
+  return array('api' => 2, 'path' => drupal_get_path('module', 'spaces') .'/includes');
 }
 
 /**
- * Implementation of hook_features_api().
+ * Implementation of hook_perm().
  */
-function spaces_features_api() {
-  return array(
-    'spaces' => array(
-      'default_hook' => 'spaces_presets',
-      'default_file' => FEATURES_DEFAULTS_INCLUDED_COMMON,
-      'file' => drupal_get_path('module', 'spaces') .'/spaces.features.inc',
-    ),
-  );
+function spaces_perm() {
+  return array('administer spaces');
 }
 
 /**
- * Implementation of hook_context_conditions().
+ * Implementation of hook_init().
  */
-function spaces_context_conditions() {
-  $type_options = array();
-  foreach (spaces_types() as $type => $info) {
-    $type_options[$type] = $info['title'];
+function spaces_init() {
+  spaces_ahah_check();
+
+  if (module_exists('spaces_customtext')) {
+    global $language;
+    $language->language = ($language->language === 'spaces_customtext') ? spaces_customtext_cache() : $language->language;
   }
+  if (!spaces_access_space()) {
+    menu_set_active_item('spaces-access-denied');
+  }
+  spaces_router('init');
+}
 
+/**
+ * Implementation of hook_flush_caches().
+ */
+function spaces_flush_caches() {
+  cache_clear_all('spaces_map', 'cache', TRUE);
+  cache_clear_all('spaces_presets', 'cache', TRUE);
+  cache_clear_all('spaces_registry', 'cache', TRUE);
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function spaces_block($op, $delta = 0) {
+  if (module_exists('jquery_ui')) {
+    if ($op == 'list') {
+      return array(
+        'menu_editor' => array(
+          'info' => t('Reorder menu'),
+          'admin' => TRUE,
+        ),
+      );
+    }
+    elseif ($op == 'view' && $delta == 'menu_editor') {
+      if (spaces_access_admin()) {
+        // Check for User space type which doesn't support this feature.
+        $space = spaces_get_space();
+        if ($space && $space->type == 'user') {
+          return array();
+        }
+        return array(
+          'subject' => t('Reorder menu'),
+          'content' => drupal_get_form('spaces_get_menu_editor'),
+        );
+      }
+    }
+  }
+}
+
+// Retrieve a link to open the spaces menu editor.
+function spaces_get_menu_editor(&$form_state) {
+  jquery_ui_add(array('ui.draggable', 'ui.droppable', 'ui.sortable'));
+  // @TODO: Use Libraries API to split these JS libraries out.
+  drupal_add_js(drupal_get_path('module', 'context_ui') .'/json2.js');
+  drupal_add_js(drupal_get_path('module', 'context_ui') . '/jquery.pageEditor.js');
+  drupal_add_js(drupal_get_path('module', 'spaces') . '/spaces.js');
+  drupal_add_css(drupal_get_path('module', 'spaces') . '/spaces.css');
+
+  // Start from a system_settings_form.
+  $form = system_settings_form(array());
+  unset($form['#theme']);
+  $form['#attributes'] = array('class' => 'spaces-menu-editor');
+
+  $form['space_menu_items'] = array(
+    '#type' => 'hidden',
+    '#element_validate' => array('spaces_menu_items_validate'),
+  );
+  $form['buttons']['edit'] = array(
+    '#submit' => array(),
+    '#type' => 'submit',
+    '#value' => t('Edit'),
+    '#attributes' => array('class' => 'spaces-menu-editor'),
+  );
+  $form['buttons']['reset']['#access'] = FALSE;
+  $form['buttons']['submit']['#value'] = t('Save');
+  $form['buttons']['submit']['#attributes'] = array('class' => 'spaces-menu-save', 'style' => 'display: none;');
+  $form['buttons']['cancel'] = array(
+    '#submit' => array(),
+    '#value' => t('Cancel'),
+    '#type' => 'button',
+    '#attributes' => array('class' => 'spaces-menu-cancel', 'style' => 'display: none;'),
+  );
+  return $form;
+}
+
+/**
+ * Validate callback for spaces menu editor.
+ */
+function spaces_menu_items_validate($element, &$form_state) {
+  $base_path = base_path();
   $items = array();
-  $items['spaces_type'] = array(
-    '#title' => t('Spaces type'),
-    '#type' => 'checkboxes',
-    '#options' => $type_options,
-    '#description' => t('Set this context when the selected space types are active.'),
-  );
-  return $items;
-}
 
-/**
- * SPACES API =========================================================
- */
-
-/**
- * Interface for space objects.
- */
-interface space {
-  /**
-   * Core API-related functions
-   */
-  function __construct($type, $sid = NULL, $is_active = FALSE);
-  function save();
-  function delete();
-
-  /**
-   * Method that defines the feature options available for this space
-   * type.
-   *
-   * @return array
-   *   A FormAPI suitable options array of feature options.
-   */
-  function feature_options();
-
-  /**
-   * Method that allows the space type to add user links provided to
-   * visitors in a space.
-   *
-   * @return array()
-   *   Array of links for use with theme_links.
-   */
-  function user_links();
-
-  /**
-   * Method that allows the space type to provide to administrative links
-   * for users who pass the $space->admin_access() check. It is the
-   * responsibility of the caller to perform this access check.
-   *
-   * @return array()
-   *   Array of links for use with theme_links.
-   */
-  function admin_links();
-
-  /**
-   * Method that provides a space-type specific check for whether the
-   * provided feature is accessible by the current user.
-   *
-   * @param $feature
-   *   The feature identifier string.
-   *
-   * @return bool
-   *   TRUE if the user has access to this feature. FALSE if not.
-   */
-  function feature_access($feature = NULL);
-
-  /**
-   * Method that provides a space-type specific check for whether the
-   * the space can be administered by the current user.
-   *
-   * @return bool
-   *   TRUE if the user has admin access to this space. FALSE if not.
-   */
-  function admin_access();
-
-  /**
-   * Master router method that allows the space type to define routing
-   * workflow rules. Currently called at the following hooks:
-   *
-   * hook_menu(), where $may_cache == FALSE
-   * hook_nodeapi(), where $op == 'view'
-   * hook_form_alter(), when editing a node
-   * hook_user(), where $op == 'view'
-   *
-   * @param $op
-   *   The current hook from which the router is being called.
-   *   Can be one of the following: 'menu', 'node view', 'node form',
-   *   'user view'
-   * @param $object
-   *   The object relevant to the current $op called. e.g. when
-   *   $op == 'node view', $object is the node object.
-   * @param $is_active
-   *   Boolean for whether this router has been called as part of a
-   *   fully instantiated space object. If FALSE, the router should
-   *   not assume the space has been fully constructed and should take
-   *   the appropriate actions as necessary.
-   *
-   * @return bool
-   *   TRUE to allow the user to pass through. FALSE to return a
-   *   drupal_access_denied() page to the user.
-   */
-  function router($op, $object = NULL, $is_active = TRUE);
-
-  /**
-   * Redirect handler that abstracts redirect logic and allows space
-   * types to define their own definitions of various spaces concepts.
-   *
-   * @param $op
-   *   The page being redirected to. Currently only $op value is 'home'
-   */
-  function redirect($op = 'home');
-
-  /**
-   * Allows the space type to implement custom form options on the
-   * feature/preset form.
-   *
-   * @return array
-   *   A FormAPI element array. It will be included as a child element
-   *   of the master space feature form.
-   */
-  function form();
-
-  /**
-   * Validate handler for the space type's custom form.
-   *
-   * @param $values
-   *   The submitted values.
-   */
-  function validate($values);
-
-  /**
-   * Custom submit handler for the space type's custom form. For
-   * example, allows the space type to process values in preparation
-   * for spaces_save().
-   *
-   * @param $values
-   *   The submitted values.
-   * 
-   * @return array
-   *   An array of values.
-   */
-  function submit($values);
-
-  /**
-   * Views filter callback that allows the space type to filter views
-   * when it is the current active space.
-   *
-   * @param $query
-   *   The views query object.
-   */
-  function views_filter(&$query, $base_table = '', $relationship = '');
-
-  /**
-   * Allows the space type to take additional action when enforcing a
-   * preset against the current space.
-   *
-   * @param $preset
-   *   A spaces preset definition.
-   */
-  function preset_enforce($preset);
-}
-
-/**
- * Interface for space settings.
- */
-interface space_setting {
-  function __construct($id = NULL);
-  function form($space, $value = array());
-  function validate($space, $value);
-  function submit($space, $value);
-}
-
-/**
- * Interface for space customizers.
- */
-interface space_customizer {
-  function form($space, $feature);
-  function validate($space, $feature, $value);
-  function submit($space, $feature, $value);
-}
-
-/**
- * Implementation of hook_context_active_contexts_alter().
- */
-function spaces_context_active_contexts_alter(&$contexts) {
-  $space = spaces_get_space();
-  foreach ($contexts as $identifier => $context) {
-    if (!empty($context->block)) {
-      spaces_customizers();
-      space_customizer_block::customize($space, $identifier, $context->block);
-    }
-  }
-}
-
-/**
- * Load a space.
- *
- * @param $type
- *   The type of the space to be loaded. Must be one of the keys in the
- *   array returned by spaces_types(). 
- * @param $sid
- *   The id of the space to be loaded. If omitted, a "prototype" space
- *   will be constructed.
- * @param $is_active
- *   Optional boolean flag for whether this space is active or not.
- *   Defaults to FALSE.
- *
- * @return
- *   The requested space object or FALSE if something went wrong.
- */
-function spaces_load($type, $sid = NULL, $is_active = FALSE) {
-  $types = spaces_types();
-  if (isset($types[$type])) {
-    if (!empty($types[$type]['file']) && is_file($types[$type]['file'])) {
-      require_once $types[$type]['file'];
-    }
-    $class = $types[$type]['class'];
-
-    // Create a new space object
-    $space = new $class($type, $sid, $is_active);
-
-    // Initialize various space variables
-    $space->type = $type;
-    $space->features = array();
-    $space->settings = array();
-    $space->customizer = array();
-
-    // Initialize space specific settings if $sid is provided
-    if ($sid) {
-      $space->sid = $sid;
-
-      // Load the PURL modifier
-      if ($modifier = purl_load(array('provider' => "spaces_{$type}", 'id' => $sid))) {
-        $space->purl = $modifier['value'];
-      }
-
-      // Load features
-      $result = db_query("SELECT id, value FROM {spaces_features} WHERE sid = %d AND type = '%s' ORDER BY weight ASC", $sid, $type);
-      while ($row = db_fetch_object($result)) {
-        $space->features[$row->id] = $row->value;
-      }
-
-      // Load settings
-      $result = db_query("SELECT id, value FROM {spaces_settings} WHERE sid = %d AND type = '%s'", $sid, $type);
-      while ($row = db_fetch_object($result)) {
-        $space->settings[$row->id] = unserialize($row->value);
-      }
-
-      // Load customizer & preset
-      $row = db_fetch_object(db_query("SELECT customizer, preset FROM {spaces} WHERE sid = %d AND type = '%s'", $space->sid, $space->type));
-      $space->customizer = $row ? unserialize($row->customizer) : array();
-
-      // Enforce preset or use default if not found
-      $valid_presets = spaces_presets($type);
-      $default_presets = variable_get('spaces_default_presets', array());
-      if ($row && isset($valid_presets[$row->preset])) {
-        $space->preset = $row->preset;
-      }
-      else if (isset($default_presets[$type])) {
-        $space->preset = $default_presets[$type];
-      }
-      if (!empty($space->preset)) {
-        spaces_preset_enforce($space);
-      }
-    }
-
-    return $space;
-  }
-  return false;
-}
-
-/**
- * Saves a space object's feature/setting values.
- *
- * @param $space
- *   The space object to save.
- *
- * @return
- *   Returns TRUE on success, FALSE on failure.
- */
-function spaces_save($space) {
-  if (!empty($space->sid) && !empty($space->type)) {
-
-    // Force the preset if it is has changed
-    $existing = spaces_load($space->type, $space->sid);
-    if ($space->preset != $existing->preset) {
-      spaces_preset_enforce($space, TRUE);
-    }
-    else {
-      spaces_preset_enforce($space);
-    }
-
-    // Update features
-    db_query("DELETE FROM {spaces_features} WHERE sid = %d AND type = '%s'", $space->sid, $space->type);
-    $valid_features = spaces_features($space->type);
-    $weight = -10;
-    foreach ($space->features as $feature => $value) {
-      if (isset($valid_features[$feature])) {
-        $values = array($space->sid, $space->type, $feature, $value, $weight);
-        db_query("INSERT INTO {spaces_features} (sid, type, id, value, weight) VALUES (%d, '%s', '%s', '%s', %d)", $values);
+  // @TODO: Split out spaces_json_decode() into a library.
+  // Ideally, this would either be part of Drupal core or split out into a
+  // utility module/library.
+  $weight = -20;
+  if (!empty($form_state['values']['space_menu_items'])) {
+    foreach (spaces_json_decode($form_state['values']['space_menu_items']) as $i) {
+      if (strpos($i, $base_path) === 0) {
+        $path = substr($i, strlen($base_path));
+        $path = array_shift(explode('#', $path));
+        $path = drupal_get_normal_path($path);
+        $items[$path] = $weight;
         $weight++;
       }
     }
-
-    // Update settings
-    db_query("DELETE FROM {spaces_settings} WHERE sid = %d AND type = '%s'", $space->sid, $space->type);
-    // Build list of valid settings including those associated with features.
-    $valid_settings = spaces_settings($space->type);
-    foreach (spaces_feature_settings() as $feature => $settings) {
-      foreach ($settings as $id => $class) {
-        $valid_settings[$id] = $class;
-      }
-    }
-    foreach ($space->settings as $setting => $value) {
-      if (isset($valid_settings[$setting]) && !empty($value)) {
-        $value = serialize($value);
-        $values = array($space->sid, $space->type, $setting, $value);
-        db_query("INSERT INTO {spaces_settings} (sid, type, id, value) VALUES (%d, '%s', '%s', '%s')", $values);
-      }
-    }
-
-    // Update preset & customizer
-    $exists = db_result(db_query("SELECT count(sid) FROM {spaces} WHERE sid = %d AND type = '%s'", $space->sid, $space->type));
-    if ($exists) {
-      db_query("UPDATE {spaces} SET preset = '%s', customizer = '%s' WHERE sid = %d AND type = '%s'", $space->preset, serialize($space->customizer), $space->sid, $space->type);
-    }
-    else {
-      db_query("INSERT INTO {spaces} (sid, type, preset, customizer) VALUES(%d, '%s', '%s', '%s')", $space->sid, $space->type, $space->preset, serialize($space->customizer));
-    }
-
-    // Save context prefix if space type allows prefix customization
-    $types = spaces_types();
-    $save_purl = isset($types[$space->type]['custom purl']) && $types[$space->type]['custom purl'];
-    if ($space->purl && $save_purl) {
-      // We need to concatenate the type/sid so that collisions between space types do not occur.
-      $modifier = array(
-        'provider' => 'spaces_'. $space->type,
-        'id' => $space->sid,
-        'value' => $space->purl,
-      );
-      purl_save($modifier);
-    }
-
-    // Allow space type to do its own saving
-    $space->save();
-
-    return true;
   }
-  return false;
+  if (empty($items)) {
+    form_set_error('space_menu_items', t('Invalid submission'));
+  }
+  else {
+    $form_state['values']['space_menu_items'] = $items;
+  }
+
+  // Remove button values.
+  unset($form_state['values']['edit']);
+  unset($form_state['values']['cancel']);
 }
 
 /**
- * Deletes a space object's records in the database.
- *
- * @param $space
- *   The space object to delete.
- *
- * @return
- *   Returns TRUE for now.
+ * Order a navigation links menu according to the order customized for
+ * this space.
  */
-function spaces_delete($space) {
-  // Remove all features and settings
-  db_query("DELETE FROM {spaces} WHERE sid = %d AND type = '%s'", $space->sid, $space->type);
-  db_query("DELETE FROM {spaces_features} WHERE sid = %d AND type = '%s'", $space->sid, $space->type);
-  db_query("DELETE FROM {spaces_settings} WHERE sid = %d AND type = '%s'", $space->sid, $space->type);
-
-  // Delete the purl modifier
-  $modifier = array('provider' => 'spaces_'. $space->type, 'id'   => $space->sid);
-  purl_delete($modifier);
-
-  // Allow space type to do its own deleting
-  $space->delete();
-
-  return true;
-}
-
-/**
- * Enforces a spaces preset.
- */
-function spaces_preset_enforce(&$space, $force = FALSE) {
-  $presets = spaces_presets($space->type);
-  if (isset($space->preset) && isset($presets[$space->preset])) {
-    $preset = $presets[$space->preset]['preset'];
-
-    // Enforce features, settings, customizer
-    $keys = array('features', 'settings', 'customizer');
-    foreach ($keys as $key) {
-      if (isset($preset[$key]) && is_array($preset[$key])) {
-        // If forced, completely replace any existing settings.
-        if ($force) {
-          $space->{$key} = $preset[$key];
-        }
-        // Otherwise, attempt to preserve user-chosen settings.
-        else {
-          foreach ($preset[$key] as $k => $v) {
-            if (!empty($preset['locked'][$key][$k]) || !isset($space->{$key}[$k])) {
-              $space->{$key}[$k] = $v;
-            }
-          }
-        }
-      }
-    }
-
-    // Weights are a bit trickier
-    // Sorting features in a preset according to their weights
-    if (isset($preset['weights']) && is_array($preset['weights'])) {
-      // Exclude any weight values that don't correspond to entries in the features array.
-      $preset['weights'] = array_intersect_key($preset['weights'], $space->features);
-
-      // Fill in excessively high weight entries for any features that don't exist in
-      // the weights array.
-      $i = 0;
-      foreach (array_diff_key($space->features, $preset['weights']) as $feature => $value) {
-        $preset['weights'][$feature] = 1000 + $i;
-        $i++;
-      }
-
-      // Ensure the keys line up to begin with
-      ksort($preset['weights']);
-      ksort($space->features);
-      array_multisort($preset['weights'], $space->features, SORT_NUMERIC);
-    }
-
-    // Type-specific presets
-    $space->preset_enforce($preset);
-  }
-}
-
-/**
- * Invokes hook_spaces_types() to gather an array of space types and
- * associated classes.
- *
- * Implementing modules should provide an associate array in
- * hook_spaces_types() of the following format:
- *
- * return array(
- *   $id => array(
- *     'class' => $space_class,
- *     'title' => $space_type_name,
- *     'purl modifier' => $bool,
- *     'file' => $direct_path_to_file
- *   ),
- * );
- *
- * Where:
- *
- * $id: A unique string identifier for this space type. e.g. "og"
- * $space_class: The PHP class to construct for this space. e.g. "spaces_og"
- * $space_type_name: The human-readable name of your space type. e.g. "Group space"
- * $bool: TRUE or FALSE for whether spaces should provide a UI for
- *   users to provide a custom URL modifier for each space. If FALSE,
- *   the implementing module should implement
- *   hook_purl_modifiers() in order to provide PURL modifiers programatically.
- * $direct_path_to_file: the relative path from the Drupal root to the file that
- *   defines the PHP class. (Optional)
- *
- * @param $reset
- *   Optional reset flag for clearing the static cache.
- *
- * @return
- *   An array of space types where $key => $value corresponds to the space type => space class.
- */
-function spaces_types($reset = false) {
-  static $spaces_types;
-  if (!isset($spaces_types) || $reset) {
-    $spaces_types = module_invoke_all('spaces_types');
-    drupal_alter('spaces_types', $spaces_types);
-  }
-  return $spaces_types;
-}
-
-/**
- * Gather an array of spaces presets from the DB.
- * 
- * Spaces presets allow for easier space instantiation by the user in the UI.
- * A spaces preset lets you define which features are enabled and diabled and
- * pre-configure settings for a space instance, all of which a user would 
- * normally have to take care of in the UI.  The result of a spaces_preset
- * is a radio button on the UI that the user can select in order to use 
- * a defined preset for the instance of a space they are about to create.
- * Spaces presets can be built in the UI and then exported to code by
- * implementing hook_spaces_presets which should define and return the 
- * array exported from the UI on admin/build/space
- *
- * @param $type
- *   Optional space type to filter results by.
- * @param $include_disabled
- *   Optional flag to return all presets, including disabled ones.
- * @param $reset
- *   Optional reset flag for clearing the static cache.
- *
- * @return
- *   An array of space types where $key => $value corresponds to the space type => space class.
- */
-function spaces_presets($type = NULL, $include_disabled = FALSE, $reset = FALSE) {
-  static $presets;
-  if (!isset($presets)) {
-    $presets = array();
-    $disabled = variable_get('spaces_disabled_presets', array());
-
-    // Collect presets provided by modules in code
-    foreach (module_implements('spaces_presets') as $module) {
-      $items = module_invoke($module, 'spaces_presets');
-      foreach ($items as $id => $preset) {
-        $preset['disabled'] = isset($disabled[$preset['type']][$id]);
-        $preset['storage'] = SPACES_PRESET_DEFAULT;
-        $presets[$preset['type']][$id] = $preset;
-      }
-    }
-    // Allow modules to alter presets.
-    drupal_alter('spaces_presets', $presets);
-
-    $result = db_query("SELECT * FROM {spaces_presets}");
-    while ($row = db_fetch_object($result)) {
-      $preset = array(
-        'name' => check_plain($row->name),
-        'description' => check_plain($row->description),
-        'type' => check_plain($row->type),
-        'preset' => unserialize($row->value),
-        'disabled' => isset($disabled[$row->type][$row->id]),
-        'storage' => isset($presets[$row->type][$row->id]) ? SPACES_PRESET_OVERRIDDEN : SPACES_PRESET_NORMAL,
-      );
-      $presets[$row->type][$row->id] = $preset;
-    }
-  }
-  $return = $presets;
-  if (!$include_disabled) {
-    foreach (array_keys($return) as $preset_type) {
-      foreach ($return[$preset_type] as $id => $preset) {
-        if ($preset['disabled']) {
-          unset($return[$preset_type][$id]);
-        }
-      }
-    }
-  }
-  if ($type) {
-    return isset($return[$type]) ? $return[$type] : array();
-  }
-  return $return;
-}
-
-/**
- * Wrapper function around spaces_set_space(). Retrieves the current
- * active space.
- */
-function spaces_get_space() {
-  return spaces_set_space();
-}
-
-/**
- * Sets the specified space as the current active space. Returns the
- * active space if no space is provided.
- *
- * @param $space
- *   The space object to set as the active space. Optional.
- * @param $reset
- *   Optional flag to reset the static cache.
- *
- * @return
- *   The active space object or FALSE if there is no active space.
- */
-function spaces_set_space($space = NULL, $reset = FALSE) {
-  static $current_space;
-  if (!isset($current_space) || $reset) {
-    $current_space = $space;
-
-    if ($space) {
-      // Context integration with spaces_type setter.
-      context_set_by_condition('spaces_type', $space->type);
-    }
-  }
-  return is_object($current_space) ? $current_space : FALSE;
-}
-
-/**
- * Wrapper around implementations of $space->router. Provides
- * additional intelligence, including a global killswitch and routing
- * when no spaces are active.
- *
- * @param $op
- *   The current "hook" or "hook op" identifier for the $space->router
- *   to act on.
- * @param $object
- *   Optional object to pass to the $space->router.
- */
-function spaces_router($op, $object = NULL) {
-  // Check global killswitch
-  if (spaces_router_get()) {
-    $types = spaces_types();
-    // Run the router for the active space
-    if ($space = spaces_get_space()) {
-      $space->router($op, $object);
-      unset($types[$space->type]);
-    }
-    // Run each non-active space type's router
-    foreach ($types as $type => $info) {
-      $space = new $info['class']($type);
-      $space->router($op, $object,false);
-    }
-  }
-}
-
-/**
- * Wrapper around spaces_router_get().
- */
-function spaces_router_set($status) {
-  return spaces_router_get($status, TRUE);
-}
-
-/**
- * Sets a static variable that is used to disable spaces routing
- * altogether -- e.g. for install/update scripts, migrations, etc.
- *
- * @param $enabled
- *   Optional boolean for enabling/disabling spaces routing.
- * @param $reset
- *   Optional boolean for resetting the static cache.
- *
- * @return
- *   Returns a boolean for whether routing is enabled/disabled.
- */
-function spaces_router_get($enabled = 1, $reset = FALSE) {
-  static $status;
-  if (!isset($status) || $reset) {
-    $status = $enabled;
-  }
-  return $status;
-}
-
-/**
- * Retrieve all available features.
- *
- * @param $type
- *   Optional type flag by which to filter available features.
- * @param $reset
- *   Optional boolean flag for resetting the static cache.
- *
- * @return
- *   Keyed array of potential features.
- */
-function spaces_features($type = NULL, $reset = FALSE) {
-  static $spaces_features;
-  if (!isset($spaces_features) || $reset) {
-    $spaces_features = array('all' => array(), 'common' => array());
-    $features = features_get_features();
-    foreach ($features as $feature) {
-      if (module_exists($feature->name) && !empty($feature->info['spaces'])) {
-        if (!empty($feature->info['spaces']['types']) && is_array($feature->info['spaces']['types'])) {
-          foreach ($feature->info['spaces']['types'] as $t) {
-            $spaces_features[$t][$feature->name] = $feature;
-          }
-        }
-        else {
-          $spaces_features['common'][$feature->name] = $feature;
-        }
-        $spaces_features['all'][$feature->name] = $feature;
-      }
-    }
-    foreach (array_keys($spaces_features) as $t) {
-      if ($t != 'all' && $t != 'common') {
-        $spaces_features[$t] = array_merge($spaces_features[$t], $spaces_features['common']);
-      }
-    }
-  }
-  if ($type) {
-    return !empty($spaces_features[$type]) ? $spaces_features[$type] : $spaces_features['common'];
-  }
-  return $spaces_features['all'];
-}
-
-/**
- * Retrieve settings provided by a given feature.
- *
- * @param $feature
- *   Optional feature name whose settings should be returned.
- * @param $reset
- *   Boolean flag to reset static cache.
- *
- * @return
- *   An array of instantiated setting classes.
- */
-function spaces_feature_settings($feature = NULL, $reset = FALSE) {
-  static $feature_settings;
-  if (!isset($feature_settings) || $reset) {
-    $feature_settings = array();
-
-    // Exclude feature-specific settings here
-    $features = spaces_features();
-    foreach (module_implements('spaces_settings') as $module) {
-      if (isset($features[$module])) {
-        $settings = module_invoke($module, 'spaces_settings');
-        foreach ($settings as $id => $info) {
-          // Load any setting includes before instantiating its class.
-          if (is_array($info)) {
-            if (isset($info['file']) && is_file($info['file'])) {
-              require_once($info['file']);
-            }
-            if (isset($info['class']) && class_exists($info['class'])) {
-              $class = $info['class'];
-              $setting = new $class();
-            }
-          }
-          // This format is deprecated -- included for backwards compatibility.
-          else if (is_string($info) && class_exists($info)) {
-            $setting = new $info();
-          }
-          else if (is_object($info)) {
-            $setting = $info;
-          }
-          $feature_settings[$module][$id] = $setting;
-        }
-      }
-    }
-  }
-  if ($feature) {
-    return isset($feature_settings[$feature]) ? $feature_settings[$feature] : array();
-  }
-  return $feature_settings;
-}
-
-/**
- * Retrieve all available settings.
- *
- * @param $type
- *   Optional space type to return a subset of settings that only apply
- *   to the given space type.
- * @param $reset
- *   Optional boolean flag for resetting the static cache.
- *
- * @return
- *   Keyed array of potential settings.
- */
-function spaces_settings($type = NULL, $reset = FALSE) {
-  static $spaces_settings;
-  if (!isset($spaces_settings) || $reset) {
-    $spaces_settings = array('all' => array(), 'common' => array());
-
-    // Exclude feature-specific settings.
-    // Use spaces_feature_settings() to retrieve these.
-    $settings = array();
-    $features = spaces_features();
-    foreach (module_implements('spaces_settings') as $module) {
-      if (!isset($features[$module])) {
-        $settings = array_merge($settings, module_invoke($module, 'spaces_settings'));
-      }
-    }
-
-    foreach ($settings as $setting_name => $info) {
-      // Load any setting includes before instantiating its class.
-      if (is_array($info)) {
-        if (isset($info['file']) && is_file($info['file'])) {
-          require_once($info['file']);
-        }
-        if (isset($info['class']) && class_exists($info['class'])) {
-          $class = $info['class'];
-          $setting = new $class();
-        }
-      }
-      // This format is deprecated -- included for backwards compatibility.
-      else if (is_string($info) && class_exists($info)) {
-        $setting = new $info();
-      }
-      else if (is_object($info)) {
-        $setting = $info;
-      }
-      if (!empty($setting->types)) {
-        foreach ($setting->types as $t) {
-          if (!isset($spaces_settings[$t])) {
-            $spaces_settings[$t] = array();
-          }
-          $spaces_settings[$t][$setting_name] = $setting;
-        }
+function spaces_features_order_menu(&$links) {
+  $weights = variable_get('space_menu_items', array());
+  // Mark the first link with a class that will allow the spaces menu editor
+  // to find the menu in the DOM.
+  $first = TRUE;
+  foreach ($links as $k => $v) {
+    if ($first) {
+      $first = FALSE;
+      if (isset($links[$k]['attributes']['class'])) {
+        $links[$k]['attributes']['class'] .= ' spaces-menu-editable';
       }
       else {
-        $spaces_settings['common'][$setting_name] = $setting;
-      }
-      $spaces_settings['all'][$setting_name] = $setting;
-    }
-    foreach (array_keys($spaces_settings) as $t) {
-      if ($t != 'all' && $t != 'common') {
-        $spaces_settings[$t] = array_merge($spaces_settings[$t], $spaces_settings['common']);
+        $links[$k]['attributes']['class'] = 'spaces-menu-editable';
       }
     }
-  }
-  if ($type) {
-    return !empty($spaces_settings[$type]) ? $spaces_settings[$type] : $spaces_settings['common'];
-  }
-  return $spaces_settings['all'];
-}
-
-/**
- * Retrieve all available customizers.
- *
- * @param $reset
- *   Optional boolean flag for resetting the static cache.
- *
- * @return
- *   Keyed array of customizers.
- */
-function spaces_customizers($reset = FALSE) {
-  static $spaces_customizers;
-  if (!isset($spaces_customizers) || $reset) {
-    $customizers = module_invoke_all('spaces_customizers');
-    drupal_alter('spaces_customizers',$customizers);
-    foreach ($customizers as $customizer_name => $info) {
-      // Load any includes before instantiating its class.
-      if (is_array($info)) {
-        if (isset($info['file']) && is_file($info['file'])) {
-          require_once($info['file']);
-        }
-        if (isset($info['class']) && class_exists($info['class'])) {
-          $class = $info['class'];
-          $customizer = new $class();
-        }
-      }
-      // This format is deprecated -- included for backwards compatibility.
-      else if (is_string($info) && class_exists($info)) {
-        $customizer = new $info();
-      }
-      else if (is_object($info)) {
-        $customizer = $info;
-      }
-      $spaces_customizers[$customizer_name] = $customizer;
+    if (isset($weights[$v['href']])) {
+      $links[$k]['#weight'] = $weights[$v['href']];
     }
   }
-  return $spaces_customizers;
-}
-
-/**
- * Caches a map of feature component => feature name
- */
-function spaces_features_map($type = NULL, $reset = FALSE) {
-  static $map;
-  if (!isset($map) || $reset) {
-    $map = array();
-    $cache = cache_get('spaces_map', 'cache');
-
-    if ($cache && !$reset) {
-      $map = $cache->data;
-    }
-    else {
-      // Generate component to feature map based on feature info files
-      $features = spaces_features();
-      foreach ($features as $feature_name => $feature) {
-        foreach ($feature->info['features'] as $component => $items) {
-          if (is_array($items)) {
-            foreach ($items as $item) {
-              if (!isset($map[$component][$item])) {
-                $map[$component][$item] = $feature_name;
-              }
-            }
-          }
-        }
-      }
-      // Go through contexts and add relevant context components in as well
-      $contexts = context_enabled_contexts();
-      $components = array('node', 'views');
-      if (!empty($map['context'])) {
-        foreach ($map['context'] as $identifier => $feature_name) {
-          $context = $contexts[$identifier];
-          if (!empty($context)) {
-            foreach ($components as $component) {
-              if (!empty($context->{$component})) {
-                foreach ($context->{$component} as $item) {
-                  if (!isset($map[$component][$item])) {
-                    $map[$component][$item] = $feature_name;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      cache_set('spaces_map', $map, 'cache');
-    }
-  }
-  if (!empty($type)) {
-    return isset($map[$type]) ? $map[$type] : array();
-  }
-  return $map;
-}
-
-/**
- * Returns an array of items of a given type that belong to a given feature.
- */
-function spaces_features_items($type, $feature) {
-  $features = spaces_features();
-  if (!empty($features[$feature]) && !empty($features[$feature]->info['features'][$type])) {
-    return $features[$feature]->info['features'][$type];
-  }
-  return array();
-}
-
-/**
- * Implementation of hook_features_menu_links_alter().
- */
-function spaces_features_menu_links_alter(&$links) {
-  $space = spaces_get_space();
-  if ($space) {
-    // Load up the spaces menu links
-    spaces_customizers();
-    space_customizer_menu::customize($space, $links);
-
-    // Retrieve the menu cache for a path to feature mapping
-    $map = spaces_features_map('menu');
-
-    // Sort the menu by feature weight & hide any items for features
-    // that are not available (this **should**) be handled by access
-    // control on the links' respective menu callbacks, but awkward
-    // permissioning (e.g. user 1)  makes it nice for these to be
-    // hidden manually.
-    $weights = array_flip(array_keys($space->features));
-    $weighted = array();
-    foreach ($links as $k => $item) {
-      $feature = '';
-      if (!empty($map[$item['href']])) {
-        $feature = $map[$item['href']];
-      }
-      if (!empty($feature) && $space->feature_access($feature)) {
-        // Retrieve path > feature > weight
-        $links[$k]['#weight'] = $weights[$feature];
-      }
-      else {
-        unset($links[$k]);
-      }
-    }
+  if (!empty($weights)) {
     uasort($links, 'element_sort');
   }
 }
 
 /**
- * Preset options form that can be reused by implementing modules.
- *
- * @param $space
- *   A space object.
- *
- * @return
- *   A FormAPI array structure.
- */
-function spaces_form_presets($space) {
-  $presets = spaces_presets($space->type);
-  if ($presets) {
-    // If there's one preset, then select it and don't show the form.
-    if (count($presets) == 1) {
-      $form['preset'] = array('#type' => 'value', '#value' => array_shift(array_keys($presets)));
-    }
-    else {
-      $default_presets = variable_get('spaces_default_presets', array());
-      if (isset($space->preset) && !empty($presets[$space->preset])) {
-        $default_preset = $space->preset;
-      }
-      else if (isset($default_presets[$space->type])) {
-        $default_preset = $default_presets[$space->type];
-      }
-      else {
-        $default_preset = NULL;
-      }
-
-      // Radios for presets
-      $form = array(
-        '#tree' => false,
-        '#theme' => 'spaces_form_presets',
-      );
-      $form['preset'] = array(
-        '#title' => t('Preset'),
-        '#type' => 'radios',
-        '#required' => true,
-        '#options' => array(),
-        '#default_value' => $default_preset,
-      );
-      $form['info'] = array();
-      foreach ($presets as $id => $preset) {
-        $form['preset']['#options'][$id] = $preset['name'];
-        $form['info'][$id] = array(
-          '#type' => 'item',
-          '#title' => $preset['name'],
-          '#description' => $preset['description'],
-        );
-      }
-    }
-    return $form;
-  }
-  return array();
-}
-
-/**
- * Menu admin access wrapper.
- */
-function spaces_admin_access($type = NULL, $op = NULL) {
-  $return = false;
-  $space = spaces_get_space();
-  if ($space && $type == $space->type) {
-    $return = $space->admin_access();
-  }
-  if ($op == 'features') {
-    return $return && (user_access('administer spaces') || user_access('configure spaces features'));
-  }
-  return $return;
-}
-
-/**
- * Menu feature access wrapper.
- */
-function spaces_feature_access($feature = NULL) {
-  if ($space = spaces_get_space()) {
-    return user_access('access content') && $space->feature_access($feature);
-  }
-  return user_access('access content');
-}
-
-/**
- * A mild abstraction of hook_menu() items that can be used by
- * implementing modules to embed/graft relevant spaces items into the
- * menu tree.
- *
- * @param $space
- *   A space object.
- * @param $local_tasks
- *   Optional boolean flag for whether the items are fully rendered as
- *   local tasks.
- * @param $path_prefix
- *   A path to prefix the menu item paths by.
- *
- * @return
- *   An array of menu items.
- */
-function spaces_active_space_menu($type, $local_tasks = FALSE, $path_prefix = '') {
-  $types = spaces_types();
-  $arg_count = !empty($path_prefix) ? count(explode('/', $path_prefix)) : 0;
-  $path_prefix = !empty($path_prefix) ? $path_prefix .'/' : '';
-  $spaces_path = drupal_get_path('module', 'spaces');
-
-  $items[$path_prefix. 'spaces/features'] = array(
-    'title' => 'Features',
-    'page arguments' => array('spaces_features_form'),
-    'access arguments' => array($type, 'features'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 1,
-  );
-  $items[$path_prefix. 'spaces/features/%'] = array(
-    'title' => 'Features',
-    'page arguments' => array('spaces_customize_form', NULL, 2 + $arg_count),
-    'access arguments' => array($type, 'features'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 1,
-  );
-  foreach ($items as $path => $item) {
-    $items[$path]['page callback'] = 'drupal_get_form';
-    $items[$path]['access callback'] = 'spaces_admin_access';
-    $items[$path]['file'] = 'spaces_admin.inc';
-    $items[$path]['file path'] = $spaces_path;
-  }
-  return $items;
-}
-
-/**
- * THEME FUNCTIONS ====================================================
- */
-
-/**
- * Generates an array of admin links for the current space suitable
- * for use in theme_links().
- */
-function spaces_admin_links($space = NULL) {
-  $space = !isset($space) ? spaces_get_space() : $space;
-  if ($space && $space->admin_access()) {
-    $links = $space->admin_links();
-    drupal_alter('spaces_admin_links', $links, $space);
-    return $links;
-  }
-  return array();
-}
-
-/**
- * Generates an array of user links for the current space suitable
- * for use in theme_links().
- */
-function spaces_user_links($space = NULL) {
-  $space = !isset($space) ? spaces_get_space() : $space;
-  if ($space) {
-    $links = $space->user_links();
-    drupal_alter('spaces_user_links', $links, $space);
-    return $links;
-  }
-  return array();
-}
-
-/**
- * theme_block() preprocessor.
- */
-function spaces_preprocess_block(&$vars) {
-  $space = spaces_get_space();
-  if (!empty($vars['block'])) {
-    spaces_customizers();
-    space_customizer_block::customize_subject($space, $vars['block']);
-  }
-}
-
-/**
- * theme_page() preprocessor.
+ * Reorder primary menu links.
  */
 function spaces_preprocess_page(&$vars) {
-  $space = spaces_get_space();
-  if ($space) {
-    if ($links = spaces_admin_links()) {
-      $vars['space_admin_links'] = theme('links', $links);
-    }
-    if ($links = spaces_user_links()) {
-      $vars['space_user_links'] = theme('links', $links);
-    }
-    if (!empty($space->title)) {
-      $vars['space_title'] = l($space->title, '<front>');
-    }
-    $vars['body_classes'] .= " spaces-{$space->type}";
+  spaces_features_order_menu($vars['primary_links']);
+}
+
+/**
+ * Compatibility wrapper around json_decode().
+ */
+function spaces_json_decode($json, $assoc = FALSE) {
+  // Requires PHP 5.2.
+  if (function_exists('json_decode')) {
+    return json_decode($json, $assoc);
   }
+  return _spaces_json_decode($json);
+}
+
+/**
+ * From http://www.php.net/manual/en/function.json-decode.php#91216
+ * with modifications for consistency with output of json_decode().
+ *
+ * Original author: walidator.info 2009.
+ */
+function _spaces_json_decode($json) {
+  $comment = false;
+  $out = '$x = ';
+  for ($i=0; $i < strlen($json); $i++) {
+    if (!$comment) {
+      switch ($json[$i]) {
+        case '{':
+          $out .= ' (object) array(';
+          break;
+        case '}':
+          $out .= ')';
+          break;
+        case '[':
+          $out .= ' array(';
+          break;
+        case ']':
+          $out .= ')';
+          break;
+        case ':';
+          $out .= '=>';
+          break;
+        default:
+          $out .= $json[$i];
+          break;
+      }
+    }
+    else {
+      $out .= $json[$i];
+    }
+    if ($json[$i] == '"') {
+      $comment = !$comment;
+    }
+  }
+  eval($out . ';');
+  return $x;
 }

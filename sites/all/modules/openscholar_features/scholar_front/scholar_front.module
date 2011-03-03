@@ -53,7 +53,7 @@ function scholar_front_vsite_admin_link($type, $object){
   //check font page settings here, only execute if front page setting equals flag
   $vsite = vsite_get_vsite();
   if ($vsite->settings['front']['frontpage'] !== 'flag' || 
-      !($vsite -> admin_access()) ||
+      !($vsite -> access_admin()) ||
       !flag_fetch_definition($type)){
     return $links;
   }

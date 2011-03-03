@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * Implementation of hook_context_default_contexts().
+ */
+function scholar_events_context_default_contexts() {
+  $export = array();
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'scholar-feature-events';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        0 => 'event',
+      ),
+      'options' => array(),
+    ),
+    'views' => array(
+      'values' => array(
+        0 => 'scholar_events',
+        1 => 'scholar_events_upcoming',
+      ),
+      'options' => array(),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'calendar',
+    'block' => array(
+      'blocks' => array(
+        'vsite_taxonomy-0' => array(
+          'module' => 'vsite_taxonomy',
+          'delta' => '0',
+          'weight' => 20,
+          'region' => 'right',
+          'status' => '0',
+          'label' => 'Categories - A widget used to quickly filter categorized content',
+          'type' => 'context_ui',
+        ),
+        'vsite_widgets-2' => array(
+          'module' => 'vsite_widgets',
+          'delta' => '2',
+          'weight' => 21,
+          'region' => 'right',
+          'status' => '0',
+          'label' => 'ShareThis Button - Allows you to share posts using popular online services',
+          'type' => 'context_ui',
+        ),
+        'scholar_events-mini' => array(
+          'module' => 'scholar_events',
+          'delta' => 'mini',
+          'weight' => 22,
+          'region' => 'right',
+          'status' => '0',
+          'label' => 'Mini Calendar - A small calendar used to display your sites upcoming events',
+          'type' => 'context_ui',
+        ),
+        'views-scholar_events_upcoming-block_1' => array(
+          'module' => 'views',
+          'delta' => 'scholar_events_upcoming-block_1',
+          'weight' => 23,
+          'region' => 'right',
+          'status' => '0',
+          'label' => 'Upcoming events',
+          'type' => 'context_ui',
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 0;
+
+  $export['scholar-feature-events'] = $context;
+  return $export;
+}

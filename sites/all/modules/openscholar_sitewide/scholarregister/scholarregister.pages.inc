@@ -185,7 +185,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
   }
 
   // 2. Create the site
-  $preset = variable_get('scholar_default_preset', 'scholar');
+  $preset = variable_get('scholar_default_preset', 'os_personal');
   $vsite = scholarregister_vsite_create($name, $domain, $preset);
 
   if (!$vsite){
@@ -286,7 +286,7 @@ function _scholarregister_send_mail_field(&$form){
  */
 function scholarregister_vsite_create($name, $domain, $preset){
   vsite_include('vsiteapi');
-  return vsite_vsite_create($name, $domain, $preset);
+  return os_vsite_create($name, $domain, $preset);
 }
 
 function _scholarregister_vsite_error(){

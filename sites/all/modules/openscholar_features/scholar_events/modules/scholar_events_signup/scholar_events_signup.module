@@ -33,7 +33,7 @@ function scholar_events_signup_menu_access($node, $menu_type) {
   // (because currently you cant sign up annonymous users.
   vsite_include('vsiteapi');
   if ($vsite = vsite_get_vsite()){
-    if ($vsite -> admin_access()){
+    if ($vsite -> access_admin()){
       if ($menu_type === 'add'){
         return FALSE;
       }

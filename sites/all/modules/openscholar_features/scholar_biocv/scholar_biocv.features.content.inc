@@ -135,8 +135,8 @@ function scholar_biocv_content_default_fields() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Hook Text');
   t('PDF Upload');
+  t('Short Blurb');
 
   return $fields;
 }

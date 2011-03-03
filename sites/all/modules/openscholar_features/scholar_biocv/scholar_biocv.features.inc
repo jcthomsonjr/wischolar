@@ -1,40 +1,14 @@
 <?php
 
 /**
- * Implementation of hook_context_default_contexts().
- */
-function scholar_biocv_context_default_contexts() {
-  $items = array();
-
-  $items['scholar-feature-biocv'] = array(
-    'namespace' => 'scholar',
-    'attribute' => 'feature',
-    'value' => 'biocv',
-    'description' => 'scholar > biocv',
-    'path' => array(
-      'biocv' => 'biocv',
-    ),
-    'block' => array(
-      'vsite_taxonomy_0' => array(
-        'module' => 'vsite_taxonomy',
-        'delta' => '0',
-        'weight' => -20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Scholar site categories',
-        'type' => 'context_ui',
-      ),
-    ),
-  );
-  return $items;
-}
-
-/**
  * Implementation of hook_ctools_plugin_api().
  */
 function scholar_biocv_ctools_plugin_api() {
   list($module, $api) = func_get_args();
-  if ($module == "strongarm" && $api == "strongarm") {
+  if ($module == "context" && $api == "context") {
+    return array("version" => 3);
+  }
+  elseif ($module == "strongarm" && $api == "strongarm") {
     return array("version" => 1);
   }
 }

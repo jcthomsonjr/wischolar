@@ -1,47 +1,14 @@
 <?php
 
 /**
- * Implementation of hook_context_default_contexts().
- */
-function scholar_profiles_context_default_contexts() {
-  $items = array();
-
-  $items['scholar-feature-profiles'] = array(
-    'namespace' => 'scholar',
-    'attribute' => 'feature',
-    'value' => 'profiles',
-    'description' => 'scholar > profiles',
-    'node' => array(
-      '0' => 'person',
-    ),
-    'menu_trail' => array(
-      'people' => 'people',
-    ),
-    'views' => array(
-      '0' => 'scholar_profiles',
-    ),
-    'menu' => 'people',
-    'block' => array(
-      'vsite_taxonomy_0' => array(
-        'module' => 'vsite_taxonomy',
-        'delta' => '0',
-        'weight' => 20,
-        'region' => 'right',
-        'status' => '0',
-        'label' => 'Categories',
-        'type' => 'context_ui',
-      ),
-    ),
-  );
-  return $items;
-}
-
-/**
  * Implementation of hook_ctools_plugin_api().
  */
 function scholar_profiles_ctools_plugin_api() {
   list($module, $api) = func_get_args();
-  if ($module == "strongarm" && $api == "strongarm") {
+  if ($module == "context" && $api == "context") {
+    return array("version" => 3);
+  }
+  elseif ($module == "strongarm" && $api == "strongarm") {
     return array("version" => 1);
   }
 }

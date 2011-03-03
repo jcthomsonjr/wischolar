@@ -58,17 +58,6 @@ function scholar_book_strongarm() {
   $strongarm->value = TRUE;
 
   $export['upload_book'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'vertical_tabs_forms';
-  $strongarm->value = array(
-    'book_node_form' => array(
-      'book' => FALSE,
-    ),
-  );
-
-  $export['vertical_tabs_forms'] = $strongarm;
   
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
