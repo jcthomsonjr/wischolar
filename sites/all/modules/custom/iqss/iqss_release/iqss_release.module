@@ -1,13 +1,13 @@
 <?php
 
 //////////////////////////////////////////
-// UPDATE FUNCTIONS  
+// UPDATE FUNCTIONS
 // Scholar - Beta 2
 // Functions should return (bool) success
 //////////////////////////////////////////
 
 /**
- * Revert the "projects" view to use the new version 
+ * Revert the "projects" view to use the new version
  */
 function iqss_release_revert_iqss_project_view(){
 	
@@ -132,8 +132,9 @@ function iqss_release_install_scholar_reader() {
   $a_migrate_settings = array();
   foreach($sites as $site){
     $space =  spaces_load('og', $site);
-    if($space && array_key_exists('scholar_feeds',$space->features)){
-      $a_migrate_settings[$space->group->nid] = $space->features['scholar_feeds'];
+    $space_features = $space->controllers->variable->get('spaces_features');
+    if($space && array_key_exists('scholar_feeds',$space_features)){
+      $a_migrate_settings[$space->group->nid] = $space_features['scholar_feeds'];
     }
   }//Get the sites
   
@@ -147,7 +148,8 @@ function iqss_release_install_scholar_reader() {
   
   foreach($a_migrate_settings as $nid => $setting){
     $space =  spaces_load('og', $nid);
-    $space->features['scholar_reader'] = $setting;
+    $space_features = $space->controllers->variable->get('spaces_features');
+    $space_features['scholar_reader'] = $setting;
     spaces_save($space);
   }//Get the sites
   
@@ -228,7 +230,7 @@ function iqss_release_add_vsite_taxonimies(){
  */
 function iqss_release_set_default_domain(){
 	
-  //Set the default domain 
+  //Set the default domain
   // ie.) scholar.iq.harvard.edu in prod
   //      dev.whatever or localhost for dev
   variable_set('purl_base_domain','http://'.str_replace('http://','',$_SERVER['HTTP_HOST']));
@@ -237,7 +239,7 @@ function iqss_release_set_default_domain(){
 }
 
 /**
- * Update the filefield settings so that file alias' will 
+ * Update the filefield settings so that file alias' will
  * be used for files displayed on a node
  */
 function iqss_release_update_filefield_settings(){
@@ -246,9 +248,9 @@ function iqss_release_update_filefield_settings(){
   $types = og_get_types('group_post');
   
   $file_alias = array(
-    'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]', 
-    'tolower' => 0, 
-    'pathauto' => 0, 
+    'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]',
+    'tolower' => 0,
+    'pathauto' => 0,
     'transliterate' => 0,
     'display' => 1,
   );

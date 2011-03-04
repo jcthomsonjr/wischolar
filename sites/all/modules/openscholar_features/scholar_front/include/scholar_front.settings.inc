@@ -46,7 +46,7 @@ class scholar_front_settings_front implements space_setting {
     //Init the dependent dropdown (called here in case we are in a modal popup)
 
     // is scholar_biocv feature turned on for this vsite ?
-    $biocv_feature = array_key_exists("scholar_biocv", $vsite->features);
+    $biocv_feature = array_key_exists("scholar_biocv", variable_get('spaces_features',array()));
     $options = array(
       'bio' => t('Your bio page'),
       'feature' => t('Posts from specific feature(s)'),
