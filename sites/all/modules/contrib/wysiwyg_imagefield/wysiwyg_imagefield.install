@@ -1,0 +1,13 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the Wysiwyg ImageField module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function wysiwyg_imagefield_uninstall() {
+  // Delete variables.
+  db_query("DELETE FROM {variable} WHERE name LIKE 'wysiwyg_imagefield_%'");
+}

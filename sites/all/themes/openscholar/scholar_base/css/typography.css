@@ -31,7 +31,10 @@ h2.title span.version-info {
   margin: 1em 0;
   }
 
-h2, h3, h4,h5 {
+h2,
+h3,
+h4,
+h5 {
   margin-bottom: 1em;
   font-weight: 700;
   }
@@ -50,6 +53,10 @@ p, div.messages, #content-main .views-row, .node .content ul, .node .content ol,
 
 #header h1, #header h2, #header p {
   margin: 0 0 .1em 0;
+  }
+
+.node-teaser .content p:last-child {
+  margin: 0;
   }
 
 a, a:visited {
@@ -197,30 +204,36 @@ p.unpublished {
 
 /*LISTS*/
 
-ul {
-  padding-left:0;
+.node-inner ul li {
+  list-style: disc inside;
+  margin-bottom: .8em;
   }
 
-ul li {
-  list-style:none;
+.node-inner ul ul,
+.node-inner ol ul{
+  padding-left: 3.5em;
+  padding-top: .8em;
   }
 
 ol {
-  margin-left:18px;
-  padding-left:0;
+  padding-left:3em;
   }
 
-#content .node .content ul {
+ol li {
+  list-style: decimal outside;
+  }
+
+.node-inner .content ul {
   padding-left: 2em;
   }
 
-#content .node .content ul li {
+.node-inner .content ul li {
   list-style: disc outside;
   padding:0 0 0 3px;
   }
 
-#content .node .terms ul,
-#content .node .content ul.links,
+.node-inner .terms ul,
+.node-inner .content ul.links,
 #content .biblio-entry ul.links {
   padding-left: 0;
   margin-top:0;
@@ -230,24 +243,53 @@ ol {
   padding: 0;
   }
 
-#content .node ul li ul {
-  margin-top: 1.5em;
-  }
-
 #content .node div.links ul li ul {
   margin:0;
   }
 
-#content .node ul li li {
+.node-inner .content ul li li {
   list-style: circle outside;
   padding:0 0 0 3px;
   }
+
+.node-inner .content li ol li {
+	list-style-type: upper-roman;
+	}
+
+.node-inner .content li li ol li,
+.node-inner .content li li li ol li,
+.node-inner .content li li li li ol li {
+	list-style-type: lower-alpha;
+	}
+
+.node-inner .content li li ul li,
+.node-inner .content li li li ul li,
+.node-inner .content li li li li ul li {
+	list-style-type: circle;
+	}
+
+.node-inner .content ol li ol {
+	margin-bottom: 2.5em;
+	}
+
+.node-inner .content li p {
+	margin-top: 1.5em;
+	margin-bottom: 0
+	}
+
+.node-inner .content li p:first-child {
+	margin-top: 0
+	}
 
 #navbar li,
 #header-top li,
 .views-admin-links li,
 ul.inline li {
   display:inline;
+  }
+
+ul.links li {
+  padding:0;
   }
 
 .node div.links .links li {
@@ -290,7 +332,6 @@ ul.hierarchic li li {
   margin-bottom: 0;
   font-weight: normal;
   }
-
 
 ul.hierarchic li a {
   display:block;
@@ -372,6 +413,11 @@ li.scholar_publications_export {
 
 .item-list {
   clear:both;
+  }
+
+.node-inner .os-links ul li {
+  list-style: none;
+  margin: 0;
   }
 
 /* OTHER */

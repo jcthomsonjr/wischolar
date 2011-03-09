@@ -69,7 +69,7 @@ function _itweak_upload_isimage($file) {
  */
 function itweak_upload_imagecache_default_presets() {
   $presets = array();
-  
+
   $presets['AttachmentThumbnail'] = array(
     'presetname' => 'AttachmentThumbnail',
     'actions' => array(
@@ -85,7 +85,7 @@ function itweak_upload_imagecache_default_presets() {
       )
     )
   );
-  
+
   return $presets;
 }
 
@@ -707,9 +707,9 @@ $show_caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumb
         $teaser_images_max = variable_get('itweak_upload_teaser_images_' . $node->type, 0);
         if ($teaser_images_max === '') $teaser_images_max = -1;
         $cnt_other = _itweak_upload_preprocess_files($node->files, $thumbnails, $files_display, $derivative, $show_title, $show_caption, $options);
-        
+
         $node->itweak_upload = $thumbnails;
-        
+
         // Add regular attachment list
         if ($cnt_other) {
           if ($files_display != 4) {
@@ -816,7 +816,7 @@ function theme_itweak_upload_thumbnail($thumbnail, $href, $title_text = NULL, $c
  */
 function theme_itweak_upload_images_body($files, $limit = -1, $show_caption = FALSE, $options = NULL) {
   $items = array();
-  
+
   foreach ($files as $file) {
     if ($limit != -1 && count($items) >= $limit) break;
     $file = (object)$file;
@@ -895,7 +895,7 @@ function itweak_upload_comment(&$comment, $op) {
   if (!isset($comment->files) || !count($comment->files)) {
     return;
   }
-  
+
   // All we need is node type.
   // Maybe we can get it cheaper by simple query? However, it misses node_load cache that way.
   $node = node_load($comment->nid);

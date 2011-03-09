@@ -2,19 +2,21 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   display: none;
   text-align: left;
   position: absolute;
-  right: 0;
-  top: 16px;
+  right: -1px;
+  top: 0;
   z-index:1001;
   white-space: nowrap;
   }
 
-html.js div.ctools-dropdown div.ctools-dropdown-container ul li a,
-.vsite-admin a.ctools-dropdown-link {
-  display: block;
+html.js .os-links div.ctools-dropdown div.ctools-dropdown-container {
+  top: 14px;
   }
+
 
 html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   list-style-type: none;
+  margin: 0 !important;
+  padding: 0 !important;
   }
 
 .ctools-dropdown div.ctools-dropdown-container ul li,
@@ -25,6 +27,12 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   margin: 0;
   background-image: none;
   text-transform:capitalize;
+  font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
+  }
+
+.ctools-dropdown div.ctools-dropdown-container ul li:hover,
+#content .ctools-dropdown-container-wrapper ul.links li:hover {
+  background-color: #356df6 !important;
   }
 
 .context-links {
@@ -32,6 +40,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   }
 
 .ctools-dropdown-no-js .ctools-dropdown-link,
+.ctools-dropdown-no-js .ctools-dropdown-link-wrapper,
 .ctools-dropdown-no-js span.text {
   display: none;
   }
@@ -52,19 +61,17 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   }
 
 html.js div.ctools-dropdown div.ctools-dropdown-container {
-  min-width: 111px;
   background: #fff;
-  border: 1px solid #b2b2b2;
-  border-bottom-color: #898989;
+  border: 1px solid #666;
   margin: 0 1px 0 0;
   padding: 5px 0;
   color: #494949;
-  -moz-border-radius:5px;
-  -webkit-border-radius:5px;
-  border-radius: 5px;
-  -moz-box-shadow:  rgba(0,0,0,0.8) 0 4px 10px;
-  -webkit-box-shadow:  rgba(0,0,0,0.8) 0 4px 10px;
-  box-shadow: 0 4px 10px #888;
+  -moz-border-radius:5px 0 5px 5px;
+  -webkit-border-radius:5px 0 5px 5px;
+  border-radius: 5px 0 5px 5px;
+  -moz-box-shadow:  rgba(0,0,0,0.3) 0 2px 5px;
+  -webkit-box-shadow:  rgba(0,0,0,0.3) 0 2px 5px;
+  box-shadow: 0 2px 5px #777;
   opacity: .93;
   }
 
@@ -73,14 +80,14 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   margin: 0;
   float:right;
   background: url('../images/scholarbase-sprite.png') no-repeat 6px -385px #eaf7e7 !important;
-  padding: 1px 10px 2px 22px !important;
+  padding: 0 10px 0 23px !important;
+  border: 1px solid #ccdbc9;
   }
 
 .context-links:hover,
 .section-cp div.ctools-dropdown:hover {
   background-color: #daf3d5 !important;
   }
-
 
 .context-links li {
   list-style:none;
@@ -95,14 +102,15 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   font-style: normal !important;
   font-size: 11px !important;
   padding: 0 !important;
+  font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
   }
 
 .context-links .ctools-dropdown-container-wrapper a,
 .ctools-dropdown-container-wrapper ul.links li a,
 .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
-  background: #fff !important;
-  padding: 3px 0 3px 13px !important;
   color: #000 !important;
+  text-decoration: none;
+  padding: 3px 13px !important;
   }
 
 .ctools-dropdown-container-wrapper ul.links li.flag-featuredposts {
@@ -123,11 +131,10 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 
 .context-links .ctools-dropdown-container-wrapper a:hover,
 .ctools-dropdown-container-wrapper ul.links li a:hover {
-  background-color: #356df6 !important;
   color: #fff !important;
   text-transform: none;
-  font-weight: bold;
-  text-decoration: none;
+  text-decoration: none !important;
+  background-color: #356df6 !important;
   }
 
 .context-links .ctools-dropdown-container-wrapper .flag-wrapper a {
@@ -140,7 +147,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 
 .node .vsite-admin a.ctools-dropdown-link {
   background: url('../images/scholarbase-sprite.png') 0 -94px no-repeat transparent;
-  padding: 1px 0 10px 20px !important;
+  padding: 1px 0 3px 20px !important;
   height: 16px;
   }
 
@@ -159,12 +166,4 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 
 .empty-content .item-list ul.context-links li {
   float: left;
-  }
-
-.page-node-add-event .date-clear-block {
-  display:inline-block;
-  margin-right: 20px;
-  width: 45%;
-  padding: 4px 4px 4px 8px;
-  background:#e2f468;
   }
