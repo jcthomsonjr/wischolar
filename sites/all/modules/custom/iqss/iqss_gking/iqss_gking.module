@@ -618,7 +618,7 @@ function iqss_gking_pub_by_type_block(){
  * Implementation of hook_cron().
  */
 function iqss_gking_cron() {
-  
+
 	$n_last_update = variable_get('iqss_gking_last_updated_filefields',0);
   $s_src_dir = file_directory_path() . variable_get('gking_script_tmpdir', "/gking/tmpdir/");
 	if ($handle = opendir($s_src_dir)) {
@@ -953,4 +953,80 @@ function _iqss_gking_set_override_child_term($tid, $b_value){
     variable_set('iqss_gking::override_child_terms',$a_override_child_terms);
   }
 
+}
+
+function iqss_gking_itweak_upload_itweak_upload_preview($file, $derivative, $show_title = FALSE, $show_caption = FALSE, $options = NULL) {
+  // Only check for images
+  if (_itweak_upload_isimage($file)) {
+    list($xxx,$ft) = split('/',$file->filemime);
+    $ftt = strtoupper($ft);
+    $nt = ucwords($node->type);
+    //$text = empty($file->description) ? $file->filename : $file->description;
+    $text = $nt . ' ' . $ftt;
+    $href = file_create_url($file->filepath);
+    if ($derivative == '_none') {
+      return;
+	}
+	elseif ($derivative == '_original') {
+      $thumbnail = theme('image', file_create_path($file->filepath), $text, $text);
+	}
+	else {
+      $thumbnail = theme('imagecache', $derivative, file_create_path($file->filepath), $text, $text);
+    }
+    $text = check_plain($text);
+// Hack:    if ($show_caption > 1) { $thumbnail = $thumbnail . $text; $show_caption -= 2; }
+    $title_text = $show_title ? $text : NULL;
+	$caption_text = $show_caption ? $text : NULL;
+    return array(
+      '#type' => 'item',
+      '#value' => theme('itweak_upload_thumbnail', $thumbnail, $href, $title_text, $caption_text, $options),
+    );
+
+  }
+}
+
+function iqss_gking_itweak_upload_upload_attachments($files, $options = NULL) {
+  $header = array(t('Preview'), t('Attachment'), t('Size'));
+  $rows = array();
+  foreach ($files as $file) {
+    $file = (object)$file;
+    if ($file->list && empty($file->remove)) {
+      list($xxx,$ft) = split('/',$file->filemime);
+      $ftt = strtoupper($ft);
+      $nt = ucwords($node->type);
+      $extension = strtolower(substr(strrchr($file->filename, '.'), 1));
+      $href = file_create_url($file->filepath);
+      //$text = $file->description ? $file->description : $file->filename;
+      $text = $nt . ' ' . $ftt;
+      $row = array();
+      if (isset($file->preview)) {
+        $row[] = array(
+          'data' => drupal_render($file->preview),
+          'class' => 'mime mime-' . $extension,
+        );
+      }
+      else {
+        $row[] = array(
+          'data' => '',
+          'class' => 'mime mime-' . $extension,
+        );
+      }
+      $row[] = array(
+        'data' => l($text, $href, ($options && $file->access && (isset($file->preview) || _itweak_upload_isimage($file))) ? $options : array()),
+        'class' => 'file',
+      );
+      $row[] = array(
+        'data' => format_size($file->filesize),
+        'class' => 'size',
+      );
+      $rows[] = $row;
+    }
+  }
+  if (count($rows)) {
+    return
+      '<div class="itu-attachments">'
+      . theme('table', $header, $rows, array('class' => 'itu-attachment-list', 'id' => 'attachments'))
+      .'</div>'
+    ;
+  }
 }

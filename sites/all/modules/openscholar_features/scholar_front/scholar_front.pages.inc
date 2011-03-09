@@ -66,7 +66,7 @@ function scholar_front_home(){
     	$s_cv = ($vsite->access_feature($op = 'view', 'scholar_biocv')  && !content_profile_load('cv', $vsite->group->uid))?"<li>".l("Add your cv",'node/add/cv',array('query' => array('destination'=>'biocv')))."</li>":"";
 
     	$result = <<<MESSAGE
-    	<div id="message_welcome_message" class="node-teaser">
+    	<div id="message_welcome_message">
     	  <div class="toggle">$s_short_message</div>
     	  <div id="welcome_wrapper" class="slider">
 	    	  <h3>{$s_welcome_message}</h3>
