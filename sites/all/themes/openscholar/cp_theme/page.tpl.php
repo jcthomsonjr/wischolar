@@ -27,8 +27,9 @@
       ?>
       <div id='page-title' class='clear-block'>
         <?php if ($help_toggler) print $help_toggler ?>
-        <h1 class='page-title'><span class='icon'></span><?php if ($title && ($node || $menu_item['page_callback'] == 'node_add')) print $title ?></h1>
-        <?php if ($tabs): ?><?php print $tabs ?><?php endif; ?>
+        <?php if ($title && ($node || $menu_item['page_callback'] == 'node_add')):?>
+        <h1 class='page-title'><span class='icon'></span><?php print $title ?></h1><?php endif; ?>
+        <?php if ($tabs) { print $tabs; } ?>
       </div>
 
       <div id='page'>

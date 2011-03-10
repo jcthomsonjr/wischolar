@@ -3,17 +3,33 @@ body.openscholar-admin,#page {
   color:#5a5959;
   }
 
-#container {
+#container,
+body.section-cp-appearance #cp-settings-site,
+body.section-cp-appearance-theme #cp-settings-site {
   max-width: 980px;
   margin: 0 auto;
   }
 
-#page {
-  background: #fff;
+body.section-cp-appearance #container,
+body.section-cp-appearance-theme #container {
+  max-width: none;
+  width: 100%;
   }
 
-.page-node #page {
+#page {
+  background: #fff;
+  border: none;
+  }
+
+.page-node #page,
+body.section-cp-appearance #page,
+body.section-cp-appearance-theme #page {
   margin: 0;
+  }
+
+#page-title {
+  padding: 10px 30px;
+  min-height: 18px;
   }
 
 .innerframe .view-display-id-default form {

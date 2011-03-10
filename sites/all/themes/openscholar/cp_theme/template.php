@@ -1,10 +1,23 @@
 <?php
 
-function phptemplate_preprocess_page(&$vars, $hook) {
-$body_classes = array($vars['body_classes']);
-$body_classes[] = 'openscholar-admin';
-$vars['body_classes'] = implode(' ', $body_classes);
+function cp_theme_id_safe($string) {
+  // Replace with dashes anything that isn't A-Z, numbers, dashes, or underscores.
+  $string = strtr(drupal_strtolower($string), array(' ' => '-', '_' => '-', '[' => '-', ']' => ''));
+  $string = strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $string));
+  // If the first character is not a-z, add 'id' in front.
+  if (!ctype_lower($string{0})) { // Don't use ctype_alpha since it is locale aware.
+    $string = 'id' . $string;
+  }
+  return $string;
 }
+
+function phptemplate_preprocess_page(&$vars, $hook) {
+  $body_classes = array($vars['body_classes']);
+  $body_classes[] = 'openscholar-admin';
+  list($section, ) = explode('/', $_GET['q'],1);
+  $body_classes[] = cp_theme_id_safe('section-' . $section);
+  $vars['body_classes'] = implode(' ', $body_classes);
+  }
 
 /**
  * Form theming for the block customizer settings form.
