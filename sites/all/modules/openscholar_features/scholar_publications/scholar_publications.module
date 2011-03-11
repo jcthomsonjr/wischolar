@@ -899,3 +899,50 @@ function scholar_publications_export($format = "tagged", $nid = null, $popup = f
   		return $output;
   	}
 }
+/** 
+ * hook views_pre_view
+ */
+function vsite_content_views_pre_view(&$view) {
+	/* publications should be the only term to sort by pubdate. */
+	// Sub categories of publications have a name like publication_type.  this should hit all of them.
+	if (preg_match( '/^publication.*/', $view->name)) {
+		$sorts = array(
+			/* sticky nodes are sticky */
+			'sticky' => array (
+				'order' => 'ASC',
+				'id' => 'sticky',
+				'table' => 'node',
+				'field' => 'sticky',
+				'relationship' => 'none',
+			),
+			/* biblio year first for users who have only entered that */
+			'biblio_year' => array (
+				'order' => 'DESC',
+				'id' => 'biblio_year',
+				'table' => 'biblio',
+				'field' => 'biblio_year',
+				'relationship' => 'none',
+			),
+			/* then full biblio date */
+			/*'biblio_date' => array (
+				'order' => 'DESC',
+				'id' => 'biblio_date',
+				'table' => 'biblio',
+				'field' => 'biblio_date',
+				'relationship' => 'none',
+			),*/
+			/* and node created date if all else fails */
+			'created' => array (
+				'order' => 'DESC',
+				'granularity' => 'minute',
+				'id' => 'created',
+				'table' => 'node',
+				'field' => 'created',
+				'relationship' => 'none',
+			),
+		);
+		
+		$view->display_handler->set_option('sorts', $sorts);
+		
+	}
+}
