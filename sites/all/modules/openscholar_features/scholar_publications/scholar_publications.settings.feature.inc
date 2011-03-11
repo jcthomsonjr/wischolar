@@ -58,7 +58,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#default_value' => !array_key_exists('google_link',$value)?variable_get('biblio_google_link', 1):$value['google_link'],
       '#description' => t('This adds the necessary metadata to your web site to allow Google Scholar to properly index your publication.'),
     );
-    
+
     $form['note_in_teaser'] = array(
       '#type' => 'checkbox',
       '#title' => t('Show the "note" content in teaser?'),
@@ -86,7 +86,7 @@ class scholar_publications_settings_feature implements space_setting {
       '#title' => t('Select default order of the sort category'),
       '#default_value' => !array_key_exists('order',$value)?variable_get('biblio_order', 'DESC'):$value['order'],
       '#options' => array('DESC' => t('Descending'), 'ASC' => t('Ascending')),
-      
+
     );
 
     $form['sort_tabs'] = array(

@@ -116,6 +116,14 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     // the original form is asking to set the userID for these entries
     // Just the group admin for now. TODO list of users for this og
 
+    //Biblio's input form is way too big
+    $form['biblio_import_file'] = array (
+      '#type' => 'file',
+      '#title' => t('Import file'),
+      '#default_value' => '',
+      '#size' => ''
+    );
+
     $vsite = vsite_get_vsite();
     //$group_node = og_get_group_context();
     $uid = $vsite->group->uid;
