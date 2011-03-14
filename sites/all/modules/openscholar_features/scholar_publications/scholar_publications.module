@@ -903,32 +903,18 @@ function scholar_publications_export($format = "tagged", $nid = null, $popup = f
  * hook views_pre_view
  */
 function vsite_content_views_pre_view(&$view) {
-	/* publications should be the only term to sort by pubdate. */
-	
-//	if (preg_match( '/^publication.*/', $view->name)) {
-	if ($view->name == "publication_types") {
-		$sorts = $view->display['default']->display_options['sorts'];
-		$newsorts = array(
-			/* sticky nodes are sticky */
-			'sticky' => array (
-				'order' => 'ASC',
-				'id' => 'sticky',
-				'table' => 'node',
-				'field' => 'sticky',
-				'relationship' => 'none',
-			),
-			/* biblio year first for users who have only entered that */
-			'biblio_year' => array (
-				'order' => 'DESC',
-				'id' => 'biblio_year',
-				'table' => 'biblio',
-				'field' => 'biblio_year',
-				'relationship' => 'none',
-			),
-
-		);
+    if ($view->name == "publication_types") {
+        $sorts = $view->display['default']->display_options['sorts'];
+        $newsorts = array(
+            'biblio_year' => array (
+                'order' => 'DESC',
+                'id' => 'biblio_year',
+                'table' => 'biblio',
+                'field' => 'biblio_year',
+                'relationship' => 'none',
+            ),
+        );
 		
-		$view->display_handler->set_option('sorts', array_merge($newsorts, $sorts));
-		
-	}
+        $view->display_handler->set_option('sorts', array_merge($newsorts, $sorts));
+    }
 }
