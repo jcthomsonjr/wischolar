@@ -186,18 +186,22 @@ body.sidebar-first #content-wrapper, body.header-left-main #header-wrapper {
     text-align: right;
     }
 
-#sidebar-first a,
-#sidebar-first h3,
-#sidebar-first #block-vsite_widgets-1,
-#sidebar-first #block-scholar_reader-my_twitter_feed {
-    padding-right: 12px;
-    }
+#sidebar-first .block {
+  padding-right: 12px;
+  }
 
-#sidebar-second a,
-#sidebar-second h3,
-#sidebar-second #block-vsite_widgets-1,
-#sidebar-second #block-scholar_reader-my_twitter_feed{
+#sidebar-first .block a {
+  padding-right: 12px;
+  margin-right: -12px;
+  }
+
+#sidebar-second .block {
   padding-left:12px;
+  }
+
+#sidebar-second .block a {
+  margin-left: -12px;
+  padding-left: 12px;
   }
 
 #sidebar-first a,
