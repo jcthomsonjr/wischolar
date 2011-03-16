@@ -216,7 +216,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       global $user;
       if($user -> uid !== '1'){
         //if user has create permissions and not admin give user admin rights to og/vsite
-        og_save_subscription($vsite->sid, $user->uid, array('is_active' => 1, 'is_admin' => 1));
+        og_save_subscription($vsite->id, $user->uid, array('is_active' => 1, 'is_admin' => 1));
       }
     }
   }

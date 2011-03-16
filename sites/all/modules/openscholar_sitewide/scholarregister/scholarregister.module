@@ -249,7 +249,7 @@ function scholarregister_notify_user($vsite, $user){
       'absolute' => TRUE,
       'language' => $message['language']
     )),
-    '!site_url' => url('node/' . $vsite->sid),
+    '!site_url' => url('node/' . $vsite->id),
     '!edit_uri' => url('user/' . $user->uid . '/edit', array(
       'absolute' => TRUE,
       'language' => $message['language']
