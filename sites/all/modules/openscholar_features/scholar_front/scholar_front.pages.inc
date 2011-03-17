@@ -9,11 +9,11 @@ function scholar_front_home(){
 
   $vsite = vsite_get_vsite();
   if ($vsite) {
-    $front_type = $vsite->settings['front']['frontpage'];
-    switch ($front_type) {
+    $a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
+    switch ($a_front_settings['frontpage']) {
       case 'bio' :
         $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
-        if ($vsite->settings['front']['bio_title']){
+        if ($front_type['bio_title']){
           drupal_set_title(t('%title', array('%title' => $bio_node->title)));
         }
         $result =  node_view($bio_node,false,true,true);
@@ -21,7 +21,7 @@ function scholar_front_home(){
         break;
       case 'feature' :
       	vsite_include('vsiteapi');
-        $node_options = $vsite->settings['front']['node_options'];
+        $node_options = $a_front_settings['node_options'];
         if (!$node_options){
           $node_options = vsite_content_types();
         }
@@ -33,7 +33,7 @@ function scholar_front_home(){
         $result = scholar_front_home_feature($node_options);
         break;
       case 'html' :
-        $front_nid = $vsite->settings['front']['front_nid'];
+        $front_nid = $a_front_settings['front_nid'];
         $result = scholar_front_home_html($front_nid);
         break;
       case 'flag' :
@@ -41,10 +41,8 @@ function scholar_front_home(){
         break;
     }
 
-    //Add Site Name to the page title for the homepage
-    //if(isset($vsite->settings['site']['headline'])) drupal_set_title(t(drupal_get_title().' | %site', array('%site' => $vsite->settings['site']['headline'])));
-
-    if($vsite->access_admin()  && (!array_key_exists('messages_confirmed',$vsite->settings)  || !$vsite->settings['messages_confirmed']['welcome_message'])){
+    $a_messages_confirmed_settings = $vsite->controllers->variable->get('vsite_setting_messages_confirmed');
+    if($vsite->access_admin()  && (!is_array($a_messages_confirmed_settings)  || !$a_messages_confirmed_settings['welcome_message'])){
 
     	$s_hide_link = l("Forever","cp/confirm_message/welcome_message",array('attributes'=>array('class'=>'hide'),'query' => array('source'=>$_GET['q']) ));
     	$s_close_link = l("For now","",array('attributes'=>array('class'=>'close','onClick'=>'$("div#message_welcome_message").remove(); return false;')));

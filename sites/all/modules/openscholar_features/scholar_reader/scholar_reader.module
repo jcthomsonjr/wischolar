@@ -106,7 +106,7 @@ function scholar_reader_feed_validate($form, &$form_state) {
 function scholar_reader_context_default_contexts_alter(&$contexts){
 
   $vsite = vsite_get_vsite();
-  if(!$vsite || !strlen($vsite->settings['reader']['twitter_username'])){
+  if(!$vsite || !($a_reaader_settings = $vsite->controllers->variable->get('vsite_setting_reader')) || !strlen($a_reaader_settings['twitter_username'])){
     unset($contexts['scholar-feature-front']->block['scholar_reader_my_twitter_feed']);
     unset($contexts['vsite-section-public']->block['scholar_reader_my_twitter_feed']);
   }//Is there a bio created for this site? If not unset the applicable block
@@ -151,11 +151,12 @@ function _scholar_reader_twitter_wgt(){
 	if(!($vsite = vsite_get_vsite()) || !$vsite->access_feature($op = 'view', 'scholar_reader')) return array();
 
 	//Do they have their feed set?
-	if(!strlen($vsite->settings['reader']['twitter_username'])) return array();
+	$a_reaader_settings = $vsite->controllers->variable->get('vsite_setting_reader');
+	if(!strlen($a_reaader_settings['twitter_username'])) return array();
 
 	//Fix this? Probably a better way of getting the twitter id..
-  $twitterid = str_replace("from:",'',$vsite->settings['reader']['twitter_username']);
-	$output = twitter_pull_render ($vsite->settings['reader']['twitter_username']);
+  $twitterid = str_replace("from:",'',$a_reaader_settings['twitter_username']);
+	$output = twitter_pull_render ($a_reaader_settings['twitter_username']);
   $output .= '<div class="twitter-followme">' . l('Follow me on Twitter','http://twitter.com/' . $twitterid) .'</div>';
 	return array('subject' => "Twitter Updates",'content' => $output);
 }

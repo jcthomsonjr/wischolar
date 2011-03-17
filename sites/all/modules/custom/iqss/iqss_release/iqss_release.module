@@ -70,9 +70,10 @@ function iqss_release_move_site_logos() {
   if(count($spaces)){
   	foreach ($spaces as $vsite){
 		  if($vsite && !count($vsite->group->field_vsite_logo)){
-		    if($vsite->settings['logo'] && $vsite->settings['logo']['current_logo']){
+		    $logo_setting = $vsite->controllers->variable->get('vsite_setting_logo');
+		    if($logo_setting && $logo_setting['current_logo']){
 		      vsite_include('vsiteapi');
-		      $s_vsite_dest = vsite_add_imagefield_image($vsite->settings['logo']['current_logo'],'field_vsite_logo',$vsite->group);
+		      $s_vsite_dest = vsite_add_imagefield_image($logo_setting['current_logo'],'field_vsite_logo',$vsite->group);
 		      $n_imgs++;
 		    }
 		  }//Copy thier image to the site logo if they have not defined one

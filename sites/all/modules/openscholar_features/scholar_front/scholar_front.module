@@ -11,7 +11,7 @@ function scholar_front_menu(){
     'file' => 'scholar_front.pages.inc',
     'access arguments' => array('access content'),
     'weight' => 0,
-  );  
+  );
   return $items;
 }
 
@@ -21,8 +21,8 @@ function scholar_front_menu(){
 function scholar_front_spaces_settings(){
   return array(
     'front' => array(
-      'class' => 'scholar_front_settings_front', 
-      'file' => drupal_get_path('module', 'scholar_front') . '/include/scholar_front.settings.inc' 
+      'class' => 'scholar_front_settings_front',
+      'file' => drupal_get_path('module', 'scholar_front') . '/include/scholar_front.settings.inc'
     ),
   );
 }
@@ -52,7 +52,8 @@ function scholar_front_vsite_admin_link($type, $object){
   global $user;
   //check font page settings here, only execute if front page setting equals flag
   $vsite = vsite_get_vsite();
-  if ($vsite->settings['front']['frontpage'] !== 'flag' || 
+  $a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
+  if ($a_front_settings['frontpage'] !== 'flag' ||
       !($vsite -> access_admin()) ||
       !flag_fetch_definition($type)){
     return $links;
@@ -127,7 +128,7 @@ function scholar_front_nodeapi(&$node, $op, $a3, $a4){
 /**
  * Add the JS needed by our feature popup
  */
-function scholar_front_form_alter(&$form, $form_state, $form_id) { 
+function scholar_front_form_alter(&$form, $form_state, $form_id) {
   switch($form_id){
     case 'spaces_features_form':
     	//These are needed for the modal popup

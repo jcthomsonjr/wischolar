@@ -130,8 +130,9 @@ class scholar_publications_settings_feature implements space_setting {
   }
 
   public static function customize($space, $s_key, &$var = NULL) {
-    if (is_array($space->settings) && array_key_exists('scholar_publications',$space->settings) && array_key_exists($s_key,$space->settings['scholar_publications'])){
-      $var = $space->settings['scholar_publications'][$s_key];
+    $a_scholar_publications_settings = $vsite->controllers->variable->get('vsite_setting_scholar_publications');
+    if (is_array($a_scholar_publications_settings) && array_key_exists($s_key,$a_scholar_publications_settings)){
+      $var = $a_scholar_publications_settings[$s_key];
     }
   }
 }

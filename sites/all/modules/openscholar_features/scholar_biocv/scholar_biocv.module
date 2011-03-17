@@ -39,7 +39,8 @@ function scholar_biocv_submenu_access(){
 
   // load the bio node for the owner of this vsite
   $cv_node = content_profile_load('cv', $vsite -> group -> uid, $lang = '');
-  $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);
+  $a_biocv_settings = $vsite->controllers->variable->get('vsite_setting_scholar_biocv');
+  $b_use_attachment = (is_array($a_biocv_settings) && array_key_exists('use_pdf_as_cv',$a_biocv_settings) && $a_biocv_settings['use_pdf_as_cv']);
 
   if (!$cv_node || $b_use_attachment) return false; //If they havn't made a cv or they are using an attachment for thier cv
 
@@ -92,7 +93,8 @@ function scholar_biocv_bio(){
   }
 
   //ADD CV Link if Req
-  $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);
+  $a_biocv_settings = $vsite->controllers->variable->get('vsite_setting_scholar_biocv');
+  $b_use_attachment = (is_array($a_biocv_settings) && array_key_exists('use_pdf_as_cv',$a_biocv_settings) && $a_biocv_settings['use_pdf_as_cv']);
   if($cv_node && $b_use_attachment && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
   	$s_filefield_alias = 'filefield_paths/alias/' . $cv_node->field_cv_attach[0]['fid'];
   	$alias = drupal_get_path_alias($s_filefield_alias);
@@ -143,7 +145,8 @@ function scholar_biocv_cv(){
     $s_out .= theme('context_links', $a_links);
   }
 
-  $b_use_attachment = (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']);
+  $a_biocv_settings = $vsite->controllers->variable->get('vsite_setting_scholar_biocv');
+  $b_use_attachment = (is_array($a_biocv_settings) && array_key_exists('use_pdf_as_cv',$a_biocv_settings) && $a_biocv_settings['use_pdf_as_cv']);
   if ($cv_node && !$b_use_attachment){
     drupal_set_title(t('%title', array('%title' => $cv_node->title)));
     $s_out .= node_view($cv_node,false,true,true);
@@ -179,12 +182,15 @@ function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
       drupal_add_js($a_biocv_settings, 'setting');
       $form['title']['#required'] = false;
 
+      $a_biocv_settings = $vsite->controllers->variable->get('vsite_setting_scholar_biocv');
+      $b_use_attachment = (is_array($a_biocv_settings) && array_key_exists('use_pdf_as_cv',$a_biocv_settings) && $a_biocv_settings['use_pdf_as_cv']);
+  
       $vsite = vsite_get_vsite();
     	$form['use_pdf_as_cv'] = array(
 			  '#type' => 'checkbox',
     	  '#weight' => -10,
 			  '#title' => t('Use PDF upload as your CV'),
-    	  '#default_value' => (array_key_exists('scholar_biocv',$vsite->settings) && array_key_exists('use_pdf_as_cv',$vsite->settings['scholar_biocv']) && $vsite->settings['scholar_biocv']['use_pdf_as_cv']),
+    	  '#default_value' => $b_use_attachment,
        	'#description' => t('When this is checked the pdf you upload will be displayed on the cv section of your site.'),
 			);
 
@@ -214,13 +220,11 @@ function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
  */
 function scholar_biocv_cv_node_submit($form, &$form_state) {
 	$vsite = vsite_get_vsite();
-
+      
 	//Save to settings
-	if(!array_key_exists('scholar_biocv',$vsite->settings)) $vsite->settings['scholar_biocv'] = array();
-	$vsite->settings['scholar_biocv']['use_pdf_as_cv'] = !!$form_state['values']['use_pdf_as_cv'];
-	spaces_save($vsite);
-
-	if($vsite->settings['scholar_biocv']['use_pdf_as_cv'] && $_REQUEST['destination'] == 'biocv/cv'){
+	$vsite->controllers->variable->set('vsite_setting_scholar_biocv',!!$form_state['values']['use_pdf_as_cv']);
+	
+	if($vsite->controllers->variable->get('vsite_setting_scholar_biocv') && $_REQUEST['destination'] == 'biocv/cv'){
 		$_REQUEST['destination'] = 'biocv';
 	}//If they have just disabled the cv page then redirect to the main bio page
 }

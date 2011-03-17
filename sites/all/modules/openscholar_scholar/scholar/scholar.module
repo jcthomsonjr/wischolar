@@ -274,8 +274,11 @@ function _scholar_basicinfo_wdgt(){
     return $block;
   }
 
-  $s_email = ($scholar->settings['site']['scholar_link_to_contact'] !== 0 &&
-             ($scholar->settings['generic']['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
+  $a_site_settings = $vsite->controllers->variable->get('vsite_setting_site');
+  $a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
+  
+  $s_email = ($a_site_settings['scholar_link_to_contact'] !== 0 &&
+             ($a_generic_settings['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
   $s_address = count($scholar->group->field_vsite_address)?$scholar->group->field_vsite_address[0]['value']:"";
 
   $output =   "<h1>" . l($scholar->group->title, $scholar -> get_absolute_url()) ."</h1>" .
