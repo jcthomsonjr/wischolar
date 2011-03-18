@@ -14,7 +14,7 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
   $tid = $node->biblio_type;
   $style_name = biblio_get_style();
   module_load_include('inc','biblio',"biblio_style_$style_name");
-  
+
   $style_name = biblio_get_style();
   $style_function = "biblio_style_$style_name"."_author_options";
   module_load_include('inc','biblio',"biblio_style_$style_name");
@@ -35,9 +35,26 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
     $node->biblio_doi = l($node->biblio_doi, $doi_url, $attrib);
   }
 
+  $citation = _scholar_publications_get_plain_citation($node);
+
+  $empty_fields = array(
+  	'biblio_pages',
+  	'biblio_publisher',
+  	'biblio_volume',
+  	'biblio_issue',
+  	'biblio_year',
+  	'biblio_place_published',
+  	'biblio_type_name',
+  	'biblio_secondary_title'
+  );
+  $node->biblio_contributors = array();
+
   $author_text = "";
   foreach ($fields as $key => $row) {
-    
+    if (in_array($row['name'], $empty_fields)) {
+      continue;
+    }
+
     if ($row['type'] == 'contrib_widget' && !empty($node->biblio_contributors[$row['fid']][0]['name']) ) {
       $author_options = $style_function();
       $author_options['numberOfAuthorsTriggeringEtAl'] = 100; //set really high so we see all authors
@@ -93,6 +110,7 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
     $output .= '<div class="flL">' . theme('imagecache','book_cover', $node->field_biblio_image[0]['filepath']) . '</div>';
    }
   $output .= filter_xss($node->biblio_coins, array('span'));
+  $output .= $citation;
   $output .= $author_text;
   if (count($rows)){
     foreach ($rows as $row){

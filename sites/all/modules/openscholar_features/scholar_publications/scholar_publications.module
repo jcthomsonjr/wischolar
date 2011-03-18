@@ -311,12 +311,6 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       //Files weight gets changed to 4 so lets put this before files
       $node->content['field_biblio_extra']['#weight'] = 3;
 
-      if($page){
-        $node->content['citation'] = array(
-          '#weight' => 2,
-          '#value' => _scholar_publications_get_plain_citation($node),
-        );
-      }
     break;
   }
 }
@@ -728,7 +722,7 @@ function _scholar_publications_get_plain_citation($node){$style = biblio_get_sty
   $citation = theme('biblio_style', $node, $base, $style);
 
   $citation = strip_tags($citation);
-
+/*
   $pattern = '|<[^>]+>(.*)</[^>]+>|U';
   $body = $node->content['body']['#value'];
   preg_match_all($pattern, $body, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
@@ -759,7 +753,7 @@ function _scholar_publications_get_plain_citation($node){$style = biblio_get_sty
      // var_dump( $node->content['body']['#value']);
     }
   }
-
+*/
   drupal_add_js('function selectText(ele) {
 	try {
   	var div = document.createRange();
@@ -811,7 +805,7 @@ function _scholar_publications_export_link($node) {
 	    if ($show_link['xml'])    $links['biblio_xml']            = _build_biblio_xml_link($base, $node->nid);
 	    if ($show_link['bibtex']) $links['biblio_bibtex']         = _build_biblio_bibtex_link($base, $node->nid);
 	    if ($show_link['google']) $links['biblio_google_scholar'] = _build_google_scholar_link($node);
-	    $parent['scholar_publications_export'] = array('title' => theme('ctools_dropdown', t('Export'), $links, false,'biblio-export'), 'html' =>true);
+	    $parent = theme('ctools_dropdown', t('Export'), $links, false,'biblio-export');
 	  }
   }
   return $parent;
@@ -899,7 +893,7 @@ function scholar_publications_export($format = "tagged", $nid = null, $popup = f
   		return $output;
   	}
 }
-/** 
+/**
  * hook views_pre_view
  */
 function vsite_content_views_pre_view(&$view) {
@@ -914,7 +908,7 @@ function vsite_content_views_pre_view(&$view) {
                 'relationship' => 'none',
             ),
         );
-		
+
         $view->display_handler->set_option('sorts', array_merge($newsorts, $sorts));
     }
 }
