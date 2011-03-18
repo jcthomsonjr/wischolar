@@ -41,7 +41,7 @@ function scholar_reader_update_6000(){
     include_once('includes/install.inc');
 	  module_rebuild_cache();
 	  drupal_install_modules(array('twitter_pull'));
-	  $ret[] = array(
+	  $res[] = array(
 	    'success' => true,
 	    'query' => 'Installed scholar_pull module and enabled it',
 	  );
@@ -49,4 +49,22 @@ function scholar_reader_update_6000(){
   }
 
   return $res;
+}
+
+function scholar_reader_update_6001(&$sandbox){
+  
+  $res = array();
+  
+  $settings = array();
+  $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "reader" ');
+  while ($row = db_fetch_object($result)) {
+    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_setting_reader', '%s')", $row->type, $row->sid, $row->value);
+  }
+  $res[] = array(
+      'success' => true,
+      'query' => 'Migrated the Scholar Reader Settings',
+    );
+  
+  return $res;
+  
 }

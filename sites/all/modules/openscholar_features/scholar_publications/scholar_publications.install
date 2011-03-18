@@ -127,3 +127,21 @@ function scholar_publications_update_6005(&$sandbox){
     
   return $res;
 }
+
+function scholar_publications_update_6006(&$sandbox){
+  
+  $res = array();
+  
+  $settings = array();
+  $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "scholar_publications" ');
+  while ($row = db_fetch_object($result)) {
+    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_setting_scholar_publications', '%s')", $row->type, $row->sid, $row->value);
+  }
+  $res[] = array(
+      'success' => true,
+      'query' => 'Migrated the Publication Settings',
+    );
+  
+  return $res;
+  
+}
