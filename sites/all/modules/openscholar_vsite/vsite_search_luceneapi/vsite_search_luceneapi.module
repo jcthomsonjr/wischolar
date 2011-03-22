@@ -1,0 +1,786 @@
+<?php
+
+
+/**
+ * @file
+ */
+
+include_once('vsite_search_luceneapi.features.inc');
+
+/**
+ * Implementation of hook_block()
+ *
+ * @param string $op
+ * @param int $delta
+ * @param mixed $edit
+ */
+function vsite_search_luceneapi_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      $blocks[0]['info'] = t('Categories');
+      $blocks[1]['info'] = t('Faceted Browsing');
+      return $blocks;
+    case 'view':
+      switch ($delta) {
+        case 0:
+          require_once(drupal_get_path('module', 'luceneapi_facet') . '/luceneapi_facet.block.inc');
+          $content = luceneapi_facet_realm_render('block', 'luceneapi_node', 'node', TRUE);
+          return array(
+            'subject' => t('Scholar Site'),
+            'content' => luceneapi_facet_block_view('vsite_search_luceneapi')
+          );
+        case 1:
+          require_once(drupal_get_path('module', 'luceneapi_facet') . '/luceneapi_facet.block.inc');
+          //$content = luceneapi_facet_realm_render('block', 'luceneapi_node', 'node', TRUE);
+          //die('Cotnent = <br><pre>'.print_r($content,TRUE).'</pre>');
+          return array(
+            'subject' => t('Scholar Site'),
+            'content' => luceneapi_facet_realm_render('block', 'luceneapi_node', 'node', TRUE)
+          );
+        default:
+          if (user_access('use advanced search')) {
+            module_load_include('inc', 'luceneapi_facet', 'luceneapi_facet.block');
+            luceneapi_facet_css_js_add();
+            return array(
+              'subject' => t(''),
+              'content' => luceneapi_facet_block_view($delta),
+            );
+          }
+          break;
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter()
+ */
+function vsite_search_luceneapi_form_alter($form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'search_form':
+      // Remove the facets fieldset from the search form
+      unset($form['facets']);
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_theme_registry_alter()
+ *
+ * @param Mixed $theme_registry
+ *   Associative array representing a registry of theme and preprocess functions, and template suggestions
+ */
+function vsite_search_luceneapi_theme_registry_alter(&$theme_registry) {
+  // Replace the themeable function with a custom preprocess function
+  $theme_registry['luceneapi_facet_block']['function'] = '_vsite_search_luceneapi_preprocess_category_facets';
+}
+
+/**
+ * Custom preprocess function to group taxonomy terms by vocabulary name
+ *
+ * @param mixed $items
+ *   Associative array of category facets
+ * @param string $module
+ *   The name of the module handling the search
+ */
+function _vsite_search_luceneapi_preprocess_category_facets(&$items, $module) {
+  $output = '';
+  if (!empty($items)) {
+  foreach ($items as $item) {
+    foreach ($item['items'] as $value => $args) {
+      if ($item['element'] == 'category') {
+        $term = taxonomy_get_term($value);
+        if ($term) {
+          $vocab = taxonomy_vocabulary_load($term->vid);
+          if ($vocab) {
+            $item['items'][$vocab->name]['data'] = t($vocab->name);
+            $item['items'][$vocab->name]['children'][$value] = theme($args['function'], $args['text'], $args['path'], $args['options'], $args['count']);
+            unset($item['items'][$value]);
+          }
+        }
+      }
+      else {
+        $item['items'][$value] = theme(
+          $args['function'], $args['text'], $args['path'], $args['options'], $args['count']
+        );
+      }
+    }
+    $output .= theme('item_list', $item['items'], check_plain($item['title']));
+  }
+  }
+  return $output;
+}
+
+/**
+ * Implementation of hook_context_active_contexts_alter().
+ *
+ * @param mixed $contexts
+ *   Associative array of context objects
+ */
+function vsite_search_luceneapi_context_active_contexts_alter(&$contexts) {
+  // If one of the active contexts is the apachesolr_search context, remove some unneccessary blocks
+  if (in_array('vsite-search-luceneapi_search', array_keys($contexts))) {
+    if (!empty($contexts['vsite-section-public'])) {
+      foreach ($contexts['vsite-section-public']->reactions['block']['blocks'] as $index => $block) {
+        if (preg_match('/luceneapi_biblio_/', $block['delta'])) {
+          
+        }
+        switch ($block['delta']) {
+          case 'scholar_publications-block_1':
+          case 'scholar_announcements-block_1':
+          case 'publication_types-block_1':
+          case 'publication_years-block_1':
+          case 'publication_contributors-block_1':
+            unset($contexts['vsite-section-public']->reactions['block']['blocks'][$index]);
+            break;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implementation of hook_vsite_widgets()
+ *
+ * @return
+ *   Associative array representing a widget
+ */
+function vsite_search_luceneapi_vsite_widgets() {
+  $widgets = array();
+  /**
+   * Define a series of widgets for Search Lucene support, if the module is enabled
+   */
+  $widgets['luceneapi_facet'] = array(
+    'module' => 'luceneapi_facet',
+    'delta' => 'luceneapi_node',
+    'weight' => 0,
+    'region' => 'right',
+    'status' => '1',
+    'label' => t('Search Lucene Facets'),
+    'type' => 'context_ui',
+  );
+
+  $widgets['luceneapi_categories'] = array(
+    'module' => 'vsite_search',
+    'delta' => '0',
+    'weight' => 0,
+    'region' => 'right',
+    'status' => '1',
+    'label' => t('Lucene Categories'),
+    'type' => 'context_ui',
+  );
+  $facets = luceneapi_facet_facets_get('luceneapi_biblio', 'node');
+  foreach ($facets as $delta => $facet_field) {
+    if (preg_match('/^biblio_/', $delta)) {
+      if (luceneapi_facet_enabled($delta, 'luceneapi_node', 'block')) {
+        $widgets[$delta] = array(
+          'module' => 'vsite_search_luceneapi',
+          'delta' => $delta,
+          'weight' => 0,
+          'region' => 'right',
+          'status' => 1,
+          'label' => t($facet_field['title']),
+          'type' => 'context_ui',
+        );
+      }
+    }
+  }
+  //return $widgets;
+}
+
+/**
+ * Helper function for enabling facets.
+ *
+ * @param string $module
+ *   A string containing the module handling the search.
+ * @param array $names
+ *   An array of names that are part of the stored variable.  Supported values are 'block', 'fieldset'
+ * @param string $facet
+ *   A string representing the name of the facet to enable
+ * @see vsite_search_luceneapi_facet_clear_cache()
+ */
+function vsite_search_luceneapi_facet_enable($module, $names=array(), $facet) {
+  if (!empty($names)) {
+    foreach ($names as $name) {
+      $variable = sprintf('luceneapi_facet:%s:%s', $module, $name);
+      $facet_conf = variable_get($variable, array());
+      if (!empty($facet_conf)) {
+        // Mark the facet as enabled
+        $facet_conf[$facet] = $facet;
+        variable_set($variable, $facet_conf);
+      }
+    }
+    vsite_search_luceneapi_facet_clear_cache($module);
+  }
+}
+
+/**
+ * Helper function for disabling facets.
+ *
+ * @param string $module
+ *   A string containing the module handling the search.
+ * @param array $names
+ *   An array of names that are part of the stored variable.  Supported values are 'block', 'fieldset'
+ * @param string $facet
+ *   A string representing the name of the facet to disable
+ * @see vsite_search_luceneapi_facet_clear_cache()
+ */
+function vsite_search_luceneapi_facet_disable($module, $names=array(), $facet) {
+  if (!empty($names)) {
+    foreach ($names as $name) {
+      $variable = sprintf('luceneapi_facet:%s:%s', $module, $name);
+      $facet_conf = variable_get($variable, array());
+      if (!empty($facet_conf)) {
+        // Mark the facet as enabled
+        $facet_conf[$facet] = 0;
+        variable_set($variable, $facet_conf);
+      }
+    }
+    vsite_search_luceneapi_facet_clear_cache($module);
+  }
+}
+
+/**
+ * Helper function to clear cached facet items
+ */
+function vsite_search_luceneapi_facet_clear_cache($module) {
+  foreach (luceneapi_facet_realms_get() as $name => $realm) {
+    $cid = sprintf('%s:luceneapi_facet:%s:', $module, $name);
+    cache_clear_all($cid, LUCENEAPI_CACHE_TABLE, TRUE);
+  }
+}
+
+/**
+* Implementation of hook_luceneapi_facet.
+*/
+function vsite_search_luceneapi_luceneapi_facet($module, $type = NULL) {
+  if ($type == 'node') {
+    return array(
+      'category' => array(
+        'title' => t('Categories'),
+        'element' => 'category',
+        'field' => 'category',
+        'type' => 'select',
+        'callback' => 'luceneapi_facet_multiterm_callback',
+        'callback arguments' => array(
+          luceneapi_facet_value_get('category', array()), 'category', TRUE
+        ),
+        'delimiter' => ' ',
+        'description' => t('Filter by terms in all vsite vocabularies.')
+      ),
+    );
+  }
+}
+
+/**
+ * Provides access to the items after they are rendered.  This hook is useful
+ * for converting IDs to display names or adding the #options key to form
+ * elements.
+ *
+ * @param &$items
+ *   An array containing the rendered facet arrays.  In other words, they have
+ *   just been processed by the "callback" function in the $relam definition.
+ * @param $realm
+ *   A string containing the machine readable realm name the facets are being
+ *   rendered in.
+ * @param $module
+ *   A string containing the module handling the search.
+ * @param $type
+ *   A string containing the type of content $module indexes, NULL if no type.
+ * @return
+ *   NULL
+ */
+function vsite_search_luceneapi_luceneapi_facet_postrender_alter(&$items, $realm, $module, $type = NULL) {
+  // The example is only valid for "node" content.
+  if ($type != 'node') {
+    return;
+  }
+  
+  if ($realm == 'block') {
+    if (isset($items['category'])) {
+      $values = array_keys($items['category']['items']);
+      if (!empty($values)) {
+  
+        // SQL that converts IDs to term names.
+        $sql = "SELECT tid AS id, name FROM {term_data} WHERE tid IN (". db_placeholders($values) .")";
+        
+        // Adds display names to items.
+        if ($result = db_query($sql, $values)) {
+          while ($row = db_fetch_object($result)) {
+            if (isset($items['category']['items'][$row->id])) {
+              $items['category']['items'][$row->id]['text'] = t($row->name);
+            }
+          }
+        }
+      }
+    }
+    
+    /**
+     * Look at the type of query that has been performed, and set a flag regarding whether
+     * or not to show the biblio facets if the type:biblio filter is in effect
+     */
+    $show_biblio_facets = FALSE;
+    if ($module = luceneapi_search_executed()) {
+      $query = Zend_Search_Lucene_Search_QueryParser::parse(search_get_keys());
+      if ($query) {
+        module_invoke_all('luceneapi_query_alter', $query, $module, 'node');
+        $terms = $query->getQueryTerms();
+        if (!empty($terms)) {
+          foreach ($terms as $term) {
+            if ($term instanceof Zend_Search_Lucene_Index_Term) {
+              if ($term->field == 'type' && $term->text == 'biblio') {
+                $show_biblio_facets = TRUE;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    if (!$show_biblio_facets) {
+      // Loop through the items and remove the Biblio facet blocks if needed
+      if (!empty($items)) {
+        foreach ($items as $name => $item) {
+          if (preg_match('/^biblio_/', $name)) {
+            unset($items[$name]);
+          }
+        }
+      }
+    }
+    
+    // If the context is global, remove the author facet
+    $contexts = context_active_contexts();
+    if (!array_key_exists('vsite-section-public', $contexts)) {
+      unset($items['category']);
+      unset($items['author']);
+    }
+    else {
+      // There is a group context, so remove the OG facet
+      unset($items['im_og_gid']);
+    }
+  }
+  if (!empty($items)) {
+    foreach ($items as $name => $facet) {
+      switch ($facet['title']) {
+        case 'Organic Groups':
+          $items[$name]['title'] = t('Scholar Sites');
+          break;
+        case 'Citation Contributor':
+          $items[$name]['title'] = t('Authors');
+          break;
+        default:
+          $items[$name]['title'] = t($facet['title']);
+          $items[$name]['#description'] = t($facet['#description']);
+          break;
+      }
+      
+    }
+  }
+  
+  // If we're currently within the context of a vsite, don't show the OG facet block
+  $vsite = vsite_get_vsite();
+  if ($vsite) {
+    unset($items['im_og_gid']);
+  }
+}
+
+/**
+ * Allows for altering of the document object before it is added to the index.
+ * Invoking this hook allows developers to add additional fields, such as
+ * CCK data, to the index.
+ *
+ * @param $doc
+ *   A Zend_Search_Lucene_Document object being added to the index.
+ * @param $item
+ *   A mixed value modeling the content being added to the index, usually a
+ *   Drupal node object.
+ * @param $module
+ *   A string containing the Search Lucene API module that is indexing the
+ *   content.
+ * @param $type
+ *   A string containing the type of content indexed by $module.
+ * @return
+ *   NULL
+ */
+function vsite_search_luceneapi_luceneapi_document_alter($doc, $item, $module, $type = NULL) {
+  if ($type == 'node') {
+    try {
+      /**
+       * By default the "category" field is indexed, but the values can not be
+       * retrieved. This modifies the field so the categories can be retrieved
+       * from the index.
+       */
+      $doc->getField('category')->isStored = TRUE;
+      
+      // Index group posts
+      if (!empty($item->og_groups)) {
+        // The version of the ZF Components Search Lucene API is using does not support this feature. Unfortunately we have to delimit multiple values withing a single field.
+        //$group_nids = join(':', array_keys($item->og_groups));
+        
+        /**
+         * Adds the field to the Lucene document.  Valid field types are "keyword",
+         * "unindexed", "binary", "text", and "unstored".  See the Lucene field type
+         * documentation at http://drupal.org/node/655724 for more information on
+         * the index types.
+         */
+        //luceneapi_field_add($doc, 'keyword', 'im_og_gid', $group_nids);
+      }
+    }
+    catch (Exception $e) {
+      luceneapi_throw_error($e);
+    }
+  }
+}
+
+/**
+ * Implementation of hook_luceneapi_result_alter()
+ *
+ * @param mixed $result
+ *   Associative array representing a single search result
+ * @param string $module
+ *   The name of the module performing the search
+ * @param string $type
+ *   The type of search being performed
+ */
+function vsite_search_luceneapi_luceneapi_result_alter($result, $module, $type) {
+  if ($type == 'node') {
+    $node = node_load($result['node']->nid);
+    $result['snippet'] = node_view($node, TRUE, FALSE, TRUE);
+    // Remove the title, as the snippet will display it
+    unset($result['title']);
+  }
+}
+
+/**
+ * Allows modules to append subqueries to the search query.  This hook is most
+ * useful for adding filters, such as facets, to the search query.
+ *
+ * @param $query
+ *   A Zend_Search_Lucene_Search_Query_Boolean object modeling the search query.
+ * @param $module
+ *   A string containing the Search Lucene API module handling the executed
+ *   search.
+ * @param $type
+ *   A string containing the type of content $module indexes, NULL if no type.
+ * @return
+ *   NULL
+ */
+function vsite_search_luceneapi_luceneapi_query_alter($query, $module, $type = NULL) {
+  // Load the current vsite
+  $vsite = vsite_get_vsite();
+  if (!empty($vsite)) {
+    if ($type == 'node') {
+      // Add a required filter to the query to limit results to nodes belonging to this vsite
+      luceneapi_subquery_add($query, luceneapi_query_get('term', $vsite->group->nid, 'im_og_gid'), 'required', TRUE);
+    }
+  }
+
+  /**
+   * Nodes that are related to a feature may need to be filtered out if the feature is configured to be private.
+   * Bypass this check if the current uid is the site owner, or is a site member.
+   */
+  if (! og_is_group_member($vsite->group->nid, TRUE)) {
+    $content_types = array();
+    if (!empty(variable_get('spaces_features',array()))) {
+      foreach (variable_get('spaces_features',array()) as $name => $status) {
+        // 0 = disabled, 1 = private, 2 = public
+        if ($status < 2) {
+          $feature = features_get_features($name);
+          // Attempt to derive the content types that are part of this feature
+          if (!empty($feature->info['features']['node'])) {
+            foreach ($feature->info['features']['node'] as $content_type) {
+              $content_types[] = $content_type;
+            }
+          }
+          elseif (!empty($feature->info['features']['views'])) {
+            foreach ($feature->info['features']['views'] as $name) {
+              $view = views_get_view($name);
+              if ($view) {
+                foreach ($view->display as $display_name => $display_type) {
+                  if (!empty($display_type->display_options['filters']['type'])) {
+                    if ($display_type->display_options['filters']['type']['operator'] == 'in') {
+                      $content_types += array_values($display_type->display_options['filters']['type']['value']);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    $content_types = array_unique($content_types);
+    if (!empty($content_types)) {
+      foreach ($content_types as $type) {
+        // Exclude the content types belonging to private features
+        luceneapi_subquery_add($query, luceneapi_query_get('term', $type, 'type'), 'prohibited', TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Since Lucene isn't strong at returning an entire resultset, this hook is
+ * required by some realms that wish to display facets when either no search has
+ * been executed or a search returns empty results.
+ *
+ * @param $facets
+ *   An array containing facet definitions returned by hook_luceneapi_facet()
+ *   implementations.
+ * @param $realm
+ *   A string containing the machine readable realm name the facets are being
+ *   rendered in.
+ * @param $module
+ *   A string containing the search module that is collecting the available
+ *   facets.  If Search Lucene Content is collecting facets, then $module will
+ *   be "luceneapi_node".
+ * @return
+ *   An array of facets.
+ */
+function _vsite_search_luceneapi_luceneapi_facet_empty($facets, $realm, $module) {
+  //die('Facets:<br><pre>'.print_r($facets,tue).'</pre>');
+  $realms = luceneapi_facet_realms_get();
+  $realm = (string)$realm;
+  $type = luceneapi_index_type_get($module);
+  if ('node' != $type || 'block' != $realm) {
+    return;
+  }
+
+  // Initializes return array.
+  $items = array();
+
+  $content_types = array_unique(context_active_values('node'));
+  
+  // Load the current vsite and use the group id as a filter to only show content/facets for this particular vsite
+  $vsite = vsite_get_vsite();
+  if (!empty($vsite)) {
+    //$items += vsite_search_luceneapi_luceneapi_facet_empty_content_types($vsite->group->nid, $content_types);
+    //$items += vsite_search_luceneapi_facet_empty_authors($gid, $context['node']);
+    $items += vsite_search_luceneapi_luceneapi_facet_empty_taxonomy(array_keys($vsite->group->og_vocabularies), $content_types);
+  }
+  die('Item:<br><pre>' . print_r($items, TRUE) . '</pre>');
+  /**
+  foreach ($items as $item) {
+    if (!empty($item['items'])) {
+      //$output .= theme('item_list', $item['items'], check_plain($item['text']));
+      $output .= theme('luceneapi_facet_block', $item['items'], $module);
+    }
+  }
+  **/
+  $output .= theme('luceneapi_facet_block', $items, $module);
+  return $output;
+// allows modules to alter the rendered facets
+  drupal_alter('luceneapi_facet_postrender', $items, $realm, $module, $type);
+
+  die('Realm:<br><pre>' . print_r($realms[$realm], TRUE) . '</pre>');
+  // if a theme function is defined, themes the normalized array
+  if (NULL !== $realms[$realm]['theme hook']) {
+    $param_arr = array($realms[$realm]['theme hook'], $items, $module);
+    if (isset($realms[$realm]['theme arguments'])) {
+      $param_arr = array_merge($param_arr, (array)$realms[$realm]['theme arguments']);
+    }
+    $rendered = call_user_func_array('theme', $param_arr);
+  }
+  die('Rendered:<br><pre>' . print_r($rendered, TRUE) . '</pre>');
+  return $rendered;
+  $output = '';
+  
+  return $output;
+  return $items;
+}
+
+function vsite_search_luceneapi_luceneapi_facet_empty_content_types($gid=0, $content_types=array()) {
+  if ($gid && !empty($content_types)) {
+    $sql = 'SELECT n.type, COUNT(*) AS num'
+         .' FROM {node} n'
+         .' LEFT JOIN {node_type} t ON n.type = t.type'
+         .' LEFT JOIN {og_ancestry} og ON og.nid = n.nid'
+         .' WHERE n.status = 1'
+         .' AND n.type IN (' . db_placeholders($content_types, 'varchar') . ')'
+         .' AND og.group_nid = %d'
+         .' GROUP BY n.type'
+         .' ORDER BY num DESC';
+    $result = db_query(db_rewrite_sql($sql), $content_types, $gid);
+  }
+  
+  // Initializes the array containing facet information.  The array mimics how
+  // the luceneapi_facet_block_realm_render() function renders facets.
+  $items['group_type'] = array(
+    'title' => $facets['type']['title'],
+    'field' => $facets['type']['field'],
+    'element' => $facets['type']['element'],
+    'selected' => array(),
+    'count' => array(),
+    'items' => array(),
+  );
+
+  // Executes query and adds facet items to the $items array.
+  if ($result) {
+    while ($row = db_fetch_object($result)) {
+      $items['group_type']['items'][$row->type] = array(
+        'function' => 'luceneapi_facet_link',
+        'text' => $row->type,
+        'path' => sprintf('search/%s/%s:%s', $module, $facets['type']['element'], $row->type),
+        'options' => array(),
+        'count' => $row->num,
+        'gid' => $gid,
+      );
+    }
+  }
+  //die('Items:<br><pre>'.print_r($items,TRUE).'</pre>');
+  return $items;
+}
+
+function vsite_search_luceneapi_luceneapi_facet_empty_authors($gid, $content_types) {
+  $items = array();
+  
+  return $items;
+}
+
+function vsite_search_luceneapi_luceneapi_facet_empty_taxonomy($og_vocabs=array(), $content_types=array()) {
+  $items = array();
+  foreach ($og_vocabs as $vid) {
+    $items['group_category_' . $vid] = array(
+      'title' => t('Group Categories'),
+      'field' => 'category_' . $vid,
+      'element' => 'select',
+      'selected' => array(),
+      'count' => array(),
+      'items' => array(),
+    );
+    if (empty($content_types)) {
+      $sql = 'SELECT tn.vid as vid, tn.tid AS id, td.name as name, COUNT(*) AS num'
+           .' FROM {node} n'
+           .' LEFT JOIN {term_node} tn ON n.vid = tn.vid'
+           .' LEFT JOIN {term_data} td ON tn.tid = td.tid'
+           .' WHERE n.status = 1 '
+           .' AND td.vid = %d'
+           .' GROUP BY tn.tid'
+           .' ORDER BY num DESC';
+      $result = db_query(db_rewrite_sql($sql), $vid);
+    }
+    else {
+      $sql = 'SELECT tn.vid as vid, tn.tid AS id, td.name as name, COUNT(*) AS num'
+           .' FROM {node} n'
+           .' LEFT JOIN {term_node} tn ON n.vid = tn.vid'
+           .' LEFT JOIN {term_data} td ON tn.tid = td.tid'
+           .' WHERE n.status = 1'
+           .' AND td.vid = %d'
+           .' AND n.type IN (\'cv\',\'biblio\')'
+           .' GROUP BY tn.tid'
+           .' ORDER BY num DESC';
+      $result = db_query($sql, $vid, $content_types);
+    }
+    if ($result) {
+      while ($row = db_fetch_object($result)) {
+        $items['group_category_' . $vid]['items'][$row->id] = array(
+          'function' => 'luceneapi_facet_link',
+          'text' => $row->name,
+          'path' => sprintf('search/%s/%s:%s', 'luceneapi_node', 'category', $row->id),
+          'options' => array(),
+          'count' => $row->num,
+        );
+      }
+    }
+  }
+  //die('Items:<br><pre>'.print_r($items,TRUE).'</pre>');
+  return $items;
+}
+
+/**
+ * Implementation of hook_strongarm().
+ *
+ * Remove this function for Strongarm 6.x-2.x
+ */
+function vsite_search_luceneapi_strongarm() {
+  $conf = array();
+  $conf['luceneapi:min_word_length'] = '0';
+  $conf['luceneapi:permissions_group'] = 6;
+  $conf['luceneapi:permissions_other'] = 4;
+  $conf['luceneapi_facet:luceneapi_node:fieldset:expand'] = 0;
+  $conf['luceneapi_facet:luceneapi_node:hard_limit'] = 20;
+  $conf['luceneapi_facet:luceneapi_node:limit'] = 0;
+  $conf['luceneapi_node:cache_threshold'] = 5000;
+  $conf['luceneapi_node:caching_enabled'] = 1;
+  $conf['luceneapi_node:default_operator'] = 1;
+  $conf['luceneapi_node:hide_core_search'] = 1;
+  $conf['luceneapi_node:nodeaccess'] = 1;
+  $conf['luceneapi_node:optimize_on_update'] = 1;
+  $conf['luceneapi_node:resultset_limit'] = 0;
+  $conf['luceneapi_node:results_per_page'] = '10';
+  $conf['luceneapi_node:update_limit'] = '100';
+  $conf['luceneapi:default_search'] = 'luceneapi_node';
+  $conf['luceneapi_facet:luceneapi_node:block'] = array(
+    'author' => 'author',
+    'type' => 'type',
+    'category' => 'category',
+    'original_keys' => 'original_keys',
+    'im_og_gid' => 'im_og_gid',
+  );
+  $conf['luceneapi_facet:luceneapi_node:fieldset'] = array(
+    'author' => 'author',
+    'type' => 'type',
+    'original_keys' => 'original_keys',
+  );
+ 
+  // Enable all of the search lucene biblio facets
+  $fields = luceneapi_biblio_get_fields();
+  foreach ($fields as $fid => $field) {
+    switch ($field['name']) {
+      case 'biblio_tertiary_title':
+      case 'biblio_section':
+      case 'biblio_date':
+        break;
+      default:
+        $conf['luceneapi_facet:luceneapi_node:block'][$field['name']] = $field['name'];
+        $conf['luceneapi_facet:luceneapi_node:block:' . $field['name'] . ':' . 'weight'] = 0;
+        $conf['luceneapi_facet:luceneapi_node:fieldset'][$field['name']] = $field['name'];
+        break;
+    }
+    
+  }
+  $conf['luceneapi_facet:luceneapi_node:block']['biblio_contributors'] = 'biblio_contributors';
+  //$conf['luceneapi_facet:luceneapi_node:fieldset']['biblio_contributors'] = 'biblio_contributors';
+  
+  $conf['luceneapi_facet:luceneapi_node:block:original_keys:weight'] = -50;
+  $conf['luceneapi_facet:luceneapi_node:block:type:weight'] = -49;
+  $conf['luceneapi_facet:luceneapi_node:block:category:weight'] = -48;
+  $conf['luceneapi_facet:luceneapi_node:block:author:weight'] = -47;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_contributors:weight'] = -46;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_type_of_work:weight'] = -45;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_secondary_title:weight'] = -44;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_year:weight'] = -43;
+  $conf['luceneapi_facet:luceneapi_node:block:biblio_publisher:weight'] = -42;
+  
+  $conf['luceneapi_node:excluded_types'] = array(
+    'project' => 'project',
+    'vsite' => 'vsite',
+    'announcement' => 0,
+    'support_answer' => 0,
+    'blog' => 0,
+    'book' => 0,
+    'class' => 0,
+    'class_material' => 0,
+    'event' => 0,
+    'feature_request' => 0,
+    'feed' => 0,
+    'gallery' => 0,
+    'image' => 0,
+    'page' => 0,
+    'person' => 0,
+    'profile' => 0,
+    'biblio' => 0,
+    'support_question' => 0,
+    'scholar_sofware_project' => 0,
+    'scholar_software_release' => 0,
+    'vsite_users_profile' => 0,
+  );
+  $conf['luceneapi_facet:luceneapi_node:empty'] = array(
+    'no_results' => 0,
+    'no_search' => 0,
+    'counts' => 0,
+  );
+  return $conf;
+}

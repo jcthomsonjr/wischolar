@@ -1,0 +1,19 @@
+<?php
+
+function vsite_menus_update_6001(&$sandbox){
+  
+  $res = array();
+  
+  $settings = array();
+  $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "menu" ');
+  while ($row = db_fetch_object($result)) {
+    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_setting_menu', '%s')", $row->type, $row->sid, $row->value);
+  }
+  $res[] = array(
+      'success' => true,
+      'query' => 'Migrated the Menu Settings',
+    );
+  
+  return $res;
+  
+}
