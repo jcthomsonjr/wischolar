@@ -80,13 +80,13 @@ function vsite_widget_googletranslate(){
 }
 
 function vsite_widgets_shield(){
-  $scholar = vsite_get_vsite();
+	
 	$output = '';
 	if(!vsite_widgets_shield_access()){
 		return $output;
 	}//Disabled?
 
-	$a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
+	$a_generic_settings = variable_get('vsite_setting_generic');
 	if(is_array($a_generic_settings) && array_key_exists('shield',$a_generic_settings)){
 		$s_filename = array_pop(explode('/',$a_generic_settings['shield']));
 		$output = '<div id="scholar-shield"><img src="/'.drupal_get_path('module','vsite_design')."/theme/shield/shields/".$s_filename.'" /> </div>';
@@ -103,9 +103,8 @@ function vsite_widgets_shield(){
  * @param $widget //Access callbacks are passed the widget array
  */
 function vsite_widgets_shield_access($widget = false){
-  $scholar = vsite_get_vsite();
 
-  $a_generic_settings = $scholar->controllers->variable->get('vsite_setting_generic');
+  $a_generic_settings = variable_get('vsite_setting_generic');
   if(is_array($a_generic_settings) && array_key_exists('disable_shield',$a_generic_settings) &&$a_generic_settings['disable_shield']){
     return false;
   }//Disabled?
@@ -181,7 +180,6 @@ function vsite_widgets_context_default_contexts() {
       'attribute' => 'section',
       'value' => 'public',
       'description' => 'Active when you are in the public section of a vsite',
-      'block' => module_invoke_all('vsite_widgets'),
    );
 
   return $items;

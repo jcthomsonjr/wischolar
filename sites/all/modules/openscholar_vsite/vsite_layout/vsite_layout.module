@@ -276,7 +276,7 @@ function vsite_layout_filtered_widgets($page_type='all') {
  *
  * @param $a_widgets
  */
-function _vsite_layout_alter_theme_regions(&$a_widgets) {
+function vsite_layout_alter_theme_regions(&$a_widgets) {
 
   static  $a_settings;
 
@@ -296,26 +296,9 @@ function _vsite_layout_alter_theme_regions(&$a_widgets) {
     if (array_key_exists($s_widget, $a_widgets)) $a_widgets[$s_widget]['region'] = $s_region;
   }//alter based on theme settings
 
-  uasort($a_widgets, '_vsite_layout_sort_by_weight');
-
 }
 
-/**
- * Custom sort by block weight
- */
-function _vsite_layout_sort_by_weight($a, $b) {
-  if (is_object($a)) {
-    $a = (array)$a;
-  }
-  if (is_object($b)) {
-    $b = (array)$b;
-  }
-  
-  if ($a['weight'] == $b['weight']) {
-    return 0;
-  }
-  return ($a['weight'] < $b['weight']) ? -1 : 1;
-}
+
 
 /**
  * Returns an associative array by region with the widgets sorted correctly
@@ -613,4 +596,39 @@ function vsite_layout_spaces_features_form($form, &$form_state) {
     
     $a_layout_settings[$space->group->og_theme][$s_feature_name] = $a_feature_default;
   }
+}
+
+
+//////////////////////////////
+// NEW SPACES CODE >>>>>>>
+//////////////////////////////
+
+/**
+ * Implementation of hook_spaces_registry_alter().
+ */
+function vsite_layout_spaces_registry_alter(&$registry) {
+	
+	//Use our own context controller
+	if(isset($registry['controllers']['context'])){
+	  $registry['controllers']['context']['plugin'] = "spaces_controller_vsite_context";
+	}
+}
+
+
+
+/**
+ * Implementation of hook_spaces_plugins().
+ */
+function vsite_layout_spaces_plugins() {
+  $plugins = array();
+ 
+  $plugins['spaces_controller_vsite_context'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'vsite_layout') .'/plugins',
+      'file' => 'spaces_controller_vsite_context.inc',
+      'class' => 'spaces_controller_vsite_context',
+      'parent' => 'spaces_controller_context',
+    ),
+  );
+  return $plugins;
 }

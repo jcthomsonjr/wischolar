@@ -274,8 +274,8 @@ function _scholar_basicinfo_wdgt(){
     return $block;
   }
 
-  $a_site_settings = $vsite->controllers->variable->get('vsite_setting_site');
-  $a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
+  $a_site_settings = variable_get('vsite_setting_site');
+  $a_generic_settings = variable_get('vsite_setting_generic');
   
   $s_email = ($a_site_settings['scholar_link_to_contact'] !== 0 &&
              ($a_generic_settings['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
