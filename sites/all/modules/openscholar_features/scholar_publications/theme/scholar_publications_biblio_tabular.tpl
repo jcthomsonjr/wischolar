@@ -95,7 +95,7 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
     );
   }
 
-  if (isset ($node->biblio_year)) {
+  if (isset ($node->biblio_year) && !in_array('biblio_year', $empty_fields)) {
     $author_text .= check_plain($node->biblio_year) . ".&nbsp;&nbsp;";
   }
 
