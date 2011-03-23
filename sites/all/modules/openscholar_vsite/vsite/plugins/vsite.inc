@@ -45,17 +45,21 @@ class vsite extends space_og {
   /**
     * Implementation of space->router().
     */
-  public function router($op, $object = NULL, $is_active = TRUE) {
+  public function router($op, $object = NULL) {
+  	//Fixes bug where when menu's are loaded any menu that points to a node causes redirection, leaving this not so eligant code in place till the following is resolved
+  	// http://drupal.org/node/936234
+  	if(arg(0) == 'admin') return;
+  	
   	global $user;
     switch ($op) {
     	default:
 	    	$a_generic_settings = $this->controllers->variable->get('vsite_setting_generic');
-	      if ($is_active && $a_generic_settings['private_vsite'] && !og_is_group_member($this->id)) {
+	      if ($this->active && $a_generic_settings['private_vsite'] && !og_is_group_member($this->id)) {
 	        $this->redirect('private');
 	      }
       break;
     }
-    parent::router($op, $object, $is_active);
+    parent::router($op, $object);
   }
 
   public function redirect($op = 'home'){
