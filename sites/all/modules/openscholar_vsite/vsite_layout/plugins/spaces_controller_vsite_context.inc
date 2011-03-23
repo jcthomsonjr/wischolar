@@ -14,9 +14,10 @@ class spaces_controller_vsite_context extends spaces_controller_context {
       $context_name = array_shift($split);
       $context = context_load($context_name);
       
-      if(isset($context->reactions['block']['blocks'])){
+      list($namespace, $attribute, $value) = explode("-",$context_name);
+      if($namespace == "scholar" && $attribute == "feature" && $split[0] == "reaction" && $split[1] == "block" && isset($context->reactions['block']['blocks'])){
       	$this->merge_default_blocks($context->reactions['block']['blocks']);
-      }
+      }//Merge in the default blocks for the feature context
       return $context;
     }
     return FALSE;

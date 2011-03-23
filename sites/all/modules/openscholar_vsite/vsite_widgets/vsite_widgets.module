@@ -161,29 +161,7 @@ function vsite_widgets_vsite_widgets(){
 
 }
 
-/**
- * hook context_default_contexts
- * @return unknown_type
- */
-function vsite_widgets_context_default_contexts() {
-  $items = array ();
- 
-  $items [] = array (
-      'namespace' => 'vsite',
-      'attribute' => 'section',
-      'value' => 'cp',
-      'description' => 'Active when you are in the CP section of a vsite',
-      'block' => array(),
-   );
-   $items [] = array (
-      'namespace' => 'vsite',
-      'attribute' => 'section',
-      'value' => 'public',
-      'description' => 'Active when you are in the public section of a vsite',
-   );
 
-  return $items;
-}
 
 
 /**

@@ -1,10 +1,5 @@
 <?php
 
-
-/**
- * @file
- */
-
 /**
  *
  * @var string
@@ -12,6 +7,15 @@
  */
 define('CPTHEME', 'cp_theme');
 
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function cp_ctools_plugin_api() {
+  list($module, $api) = func_get_args();
+  if ($module == "context" && $api == "context") {
+    return array("version" => 3);
+  }
+}
 
 /**
  * Implementation of hook_block()
@@ -39,34 +43,6 @@ function cp_block($op = 'list', $delta = 0, $edit = array()) {
       }
       return $block;
   }
-}
-
-/**
- * Implementation of hook_context_default_contexts()
- */
-function cp_context_default_contexts() {
-  $items = array();
-  $items[] = array(
-    'namespace' => 'cp',
-    'attribute' => 'section',
-    'value' => 'cp',
-    'path' => array(
-      'cp/*' => 'cp/*'
-    ),
-    'block' => array(
-      'cp_0' => array(
-        'module' => 'cp',
-        'delta' => '0',
-        'weight' => 20,
-        'region' => 'left',
-        'status' => '0',
-        'label' => 'CP left block',
-        'type' => 'context_ui'
-      )
-    )
-  );
-
-  return $items;
 }
 
 /**

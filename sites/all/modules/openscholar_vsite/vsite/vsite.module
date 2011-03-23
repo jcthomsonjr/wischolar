@@ -5,19 +5,6 @@ include_once('vsite.features.inc');
 //The Vsite Object instanceof spaces
 include_once(drupal_get_path('module', 'vsite') .'/plugins/vsite_setting.inc');
 
-/**
- * Implementation of hook_ctools_plugin_api().
- */
-/*
-function vsite_ctools_plugin_api($module, $api) {
-  if ($module == "vsite" && $api == "vsite") {
-    return array("version" => 2);
-  }
-  else if ($module == 'vsite' && $api == 'plugins') {
-    return array('version' => 2);
-  }
-}
-*/
 
 /**
  * Implementation of hook spaces_plugins
