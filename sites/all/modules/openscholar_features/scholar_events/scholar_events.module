@@ -18,36 +18,26 @@ function scholar_events_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 /**
- * Implementation of hook_nodeapi().
- */
-function scholar_events_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
-  switch ($op) {
-    case 'view':
-      // Confirm we are actually on a page of relevance
-      if (menu_get_object() === $node && !empty($node->field_date)) {
-        $from = date_convert($node->field_date[0]['value'], DATE_ISO, DATE_OBJECT);
-        context_set('node', 'field_date', $from);
-      }
-      break;
-  }
-}
-
-/**
  * Block: contextual mini calendar block
  */
 function _scholar_events_block_mini($op, $edit) {
   if ($op == 'view') {
     $block = array();
+    
     // if in a node view, get date from the cck field
     // otherwise now();
-    $date = context_get('node', 'field_date');
+    $current_node = menu_get_object('node');
+    if($current_node && $current_node->field_date){
+    	$date = date_convert($node->field_date[0]['value'], DATE_ISO, DATE_OBJECT);
+    }
+    
     $date = $date ? $date : date_now();
     if ($date) {
       $year = date_format($date, 'Y');
       $month = date_format($date, 'm');
       $args = "$year-$month";
       $block['content'] = views_embed_view('scholar_events', 'block_1', $args);
-    } 
+    }
     return $block;
   }
 }
@@ -60,7 +50,7 @@ function scholar_events_vsite_widgets(){
   $items = array();
   
   /**
-   * this needs some work 
+   * this needs some work
    * because the block view expect a date argument
    * see _scholar_events_block_mini() above
    **/
