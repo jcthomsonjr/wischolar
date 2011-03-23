@@ -9,7 +9,7 @@ function vsite_content_menu() {
   $items = array();
 
   // views vsite_content defines 'cp/content'
-  
+
   $items['cp/content/all'] = array(
     'title' => 'All',
     //'page callback' => if missing, use the parent (views)
@@ -17,7 +17,7 @@ function vsite_content_menu() {
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
   );
-  
+
     //files
   $items['cp/content/files'] = array(
     'title' => 'Files',
@@ -27,11 +27,11 @@ function vsite_content_menu() {
     'access callback' => 'cp_access_cp',
     'weight' => 99,
   );
- 
+
   // a menu entry for each content type
   $content_types = features_get_component_map('node');
   $all_types = node_get_types('names');
-  
+
   foreach ($content_types as $type => $feature_name) {
     $items['cp/content/' . $type] = array(
       'title' => $all_types[$type],
@@ -39,7 +39,7 @@ function vsite_content_menu() {
       'access arguments' => array($type, $feature_name),
       'type' => MENU_LOCAL_TASK,
     );
-    
+
     if ($type == 'gallery') {
       $items['cp/content/' . $type . '/' . $type] = array(
         'title' => "Galleries",
@@ -55,9 +55,9 @@ function vsite_content_menu() {
         'weight' => 50,
       );
     }
-    
+
   }
-  
+
   return $items;
 }
 
@@ -74,9 +74,10 @@ function vsite_content_menu_alter(&$items){
  */
 function vsite_content_vsite_content_types_alter(&$content_types) {
   $cts  = features_get_component_map('node');
-  
+
   $site_features = variable_get('spaces_features', array());
   foreach ( $cts as $type => $feature_name ) {
+    $feature_name = $feature_name[0];
     if (!($site_features[$feature_name])) {
       unset($content_types[$type]);
     }
@@ -107,15 +108,15 @@ function vsite_content_views_pre_build(&$view) {
     }
     // taxonomy filter
     vsite_content_taxonomy_filter($view, $vsite);
-    
-    
+
+
     $type = strlen(arg(3))?arg(3):arg(2);
     if ($type && $type !== 'all') {
       $view->set_arguments(array(
           $type
       ));
 
-      
+
       //$view->display['default']->handler->options['header'] = $output;
     }
     else {
@@ -152,7 +153,7 @@ function vsite_content_content_types_filter(&$view, $vsite) {
       'field' => 'type',
       'relationship' => 'none',
     );
-  
+
   $view->set_item('page_1', 'filter', 'type', $v);
 }
 
@@ -165,7 +166,7 @@ function vsite_content_taxonomy_filter(&$view, $vsite) {
   if (count($vocabs)) {
     $vid = current(array_keys($vocabs));
   }
-  
+
   if ($vid) {
     $v = array(
       'operator' => 'or',
@@ -192,7 +193,7 @@ function vsite_content_taxonomy_filter(&$view, $vsite) {
       'relationship' => 'none',
       'reduce_duplicates' => 1
     );
-    
+
     $view->set_item('page_1', 'filter', 'tid', $v);
   }
 
@@ -240,17 +241,17 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     $type = arg(2);
     //set action to current url
     $form['#action'] = request_uri();
-    
+
     $options = array(
       'All' => check_plain('<Any>'),
       1 => 'Yes',
       0 => 'No'
     );
-    
+
     //get the site information
     $site = vsite_get_vsite();
     $vocabs = $site->get_vocabs($type);
-    
+
     if (count($vocabs)) {
       $vid = current(array_keys($vocabs));
       $terms = taxonomy_get_tree($vid);
@@ -264,7 +265,7 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
         }
       }
     }
-    
+
     if (! $vid || ! count($taxonomy_options)) {
       //remove Categores selection box
       unset($form['#info']['filter-tid']);
@@ -280,15 +281,15 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     //promoted to front page filter
     $form['promote']['#type'] = 'radios';
     $form['promote']['#options'] = $options;
-    
+
     //published status filter
     $form['status']['#type'] = 'radios';
     $form['status']['#options'] = $options;
-    
+
     //sticky on top of lists filter
     $form['sticky']['#type'] = 'radios';
     $form['sticky']['#options'] = $options;
-    
+
     // ugly reset button
     $vsite = vsite_get_vsite();
     if (!$vsite) {
@@ -296,7 +297,7 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
     }
     $active_menu = menu_get_item();
     $path = $vsite -> purl . '/' . $active_menu['path'];
-    
+
     $form['reset'] = array(
       '#type' => 'markup',
       '#value' => '<input class="form-button" type="reset" value="Reset" onClick="javascript:window.location=\'/'. $path .'\';" />',
@@ -310,7 +311,7 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
  */
 
 function vsite_content_form_alter(&$form, $form_state, $form_id) {
-  
+
   switch ($form_id) {
     case 'views_exposed_form':
       if ($form['#id'] == "views-exposed-form-vsite-content-page-1") {
@@ -328,7 +329,7 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
       }
     break;
     default:
-      
+
   }
 }
 
@@ -351,7 +352,7 @@ function _vsite_content_context_links() {
     vsite_include('vsiteapi');
     $items = vsite_create_links();
     $output = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links');
- 
+
   }
   return $output;
 }
@@ -360,7 +361,7 @@ function vsite_content_cp_confirm_overide() {
   return array(
     "node/%/delete" =>  "node_delete_confirm",
   );
-  
+
 }
 
 /**
@@ -380,12 +381,12 @@ function vsite_content_filefield_paths_process_file($new, $file, $settings, $nod
       if(strpos($old_file_path,'filefield_paths/alias/') === 0){
         $n_old_fid = intval(substr($old_file_path,22));
         $n_old_pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE dst = '%s' LIMIT 1", $orig_alias));
-        
+
         if(!field_file_load($n_old_fid)){
           //The file alias is orphaned and we should delete it
           path_set_alias(NULL,$alias); //Delete unused alias
           path_set_alias($path,$orig_alias,$n_old_pid); //Reassign old alias
-          
+
         }else{
 	        //If the file exists and is part of the same node then rename the alias
 	        $field_info = content_types($node->type);
@@ -396,7 +397,7 @@ function vsite_content_filefield_paths_process_file($new, $file, $settings, $nod
 	          //CCK Node
 	          $n_nid = db_result(@db_query("SELECT nid FROM {".current($field_info['tables'])."} WHERE ".$file['field']['field']['field_name']."_fid = %d ",$n_old_fid));
 	        }
-	        
+
 	        if($n_nid == $node->nid){
 	          //Switch the two paths
 	          $n_new_pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE dst = '%s' LIMIT 1", $alias));

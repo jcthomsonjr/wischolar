@@ -3,10 +3,8 @@
 include_once('os.features.inc');
 
 function os_init(){
-  dpm('something');
 $vsite = spaces_load("og", 5);
 $vsite = spaces_get_space();
-dpm($vsite);
 }
 
 /**
@@ -35,6 +33,6 @@ function os_vsite_create($name, $domain, $preset){
       'theme' => 'scholar_airstream',  // @todo $preset -> theme_detault
   );
   $vsite = install_create_node($title = $domain, $body = NULL, $properties = $properties);
-  
+
   return $vsite;
 }
