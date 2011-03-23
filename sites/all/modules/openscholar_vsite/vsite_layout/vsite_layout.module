@@ -266,7 +266,7 @@ function vsite_layout_filtered_widgets($page_type='all') {
   }
 
   //Allow theme to alter Widgets default region
-  _vsite_layout_alter_theme_regions($a_widgets);
+  vsite_layout_alter_theme_regions($a_widgets);
 
   return $a_widgets;
 }
