@@ -91,7 +91,7 @@ function vsite_layout_layout() {
   if (!empty($features[$page_type]) && !empty($features[$page_type]->info['features']['context'])) {
     $a_feature_contexts =  drupal_map_assoc($features[$page_type]->info['features']['context']);
   }
-  
+
   _check_for_disabled_widgets($wgts, $a_feature_contexts);
   $top = theme('vsite_layout_layout_widgets', $wgts, 'scholarlayout-top-widgets', 'scholarlayout-widgets-list');
 
@@ -124,7 +124,7 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars) {
   if (!empty($features[$s_page_type]) && !empty($features[$s_page_type]->info['features']['context'])) {
     $a_feature_contexts =  drupal_map_assoc($features[$s_page_type]->info['features']['context']);
   }
-  
+
   $vsite_layout_widgets = vsite_layout_region_widgets(FALSE, $s_page_type);
 
   foreach ($regions as $region => $s_label) {
@@ -141,7 +141,7 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars) {
 
 function vsite_layout_get_pagetypes($space) {
   if (!$space && !($space = vsite_get_vsite()))  return array(); //No valid space
-  
+
   static $a_page_types;
 
   if ($a_page_types) return $a_page_types;
@@ -149,7 +149,7 @@ function vsite_layout_get_pagetypes($space) {
   $features = spaces_features($space->type, TRUE);
   $a_page_types = array('all' => t('Default Settings'));
   $site_features = $space->controllers->variable->get('spaces_features');
-  
+
   if (!is_array($site_features)) {
     $a_ret = $a_page_types;
     unset($a_page_types);
@@ -194,7 +194,7 @@ function vsite_layout_top_widgets_callback() {
   if (!empty($features[$s_page_type]) && !empty($features[$s_page_type]->info['features']['context'])) {
     $a_feature_contexts =  drupal_map_assoc($features[$s_page_type]->info['features']['context']);
   }
-  
+
   _check_for_disabled_widgets($wgts, $a_feature_contexts);
   $top = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, $wgts_class);
 
@@ -215,7 +215,7 @@ function vsite_layout_region_widgets_callback() {
   if (!empty($features[$s_page_type]) && !empty($features[$s_page_type]->info['features']['context'])) {
     $a_feature_contexts =  drupal_map_assoc($features[$s_page_type]->info['features']['context']);
   }
-  
+
   $a_region_wgts = vsite_layout_region_widgets($scholar, $s_page_type);
   $a_themed_regions = array();
 
@@ -260,7 +260,7 @@ function vsite_layout_filtered_widgets($page_type='all') {
   if (!empty($features[$page_type]) && !empty($features[$page_type]->info['features']['context'])) {
     $a_feature_contexts =  drupal_map_assoc($features[$page_type]->info['features']['context']);
   }
-  
+
   if ($feature_contexts && count($feature_contexts) && array_key_exists(current($feature_contexts), $contexts) && is_array($contexts[current($feature_contexts)]->reactions['block']['blocks'])) {
     $a_widgets = array_merge($a_widgets, $contexts[current($feature_contexts)]->reactions['block']['blocks']);  //Everywhere plus the feature
   }
@@ -307,7 +307,7 @@ function vsite_layout_alter_theme_regions(&$a_widgets) {
  * @param string $page_type
  * @return array
  */
-function vsite_layout_region_widgets($scolar = FALSE, $page_type='all') {
+function vsite_layout_region_widgets($scholar = FALSE, $page_type='all') {
   if (!$scholar) $scholar = vsite_get_vsite();
 
   static $a_cached_region_widgets = array();
@@ -370,7 +370,7 @@ function _widget_settings_sort($a, $b) {
 function vsite_layout_context_active_contexts_alter(&$contexts) {
   //Get the current feature
   $s_feature = context_get('scholar', 'feature');
-  
+
   //Don't modify default contexts if:
   //  1. there are no active contexts
   //  2. We are not in a vsite
@@ -378,7 +378,7 @@ function vsite_layout_context_active_contexts_alter(&$contexts) {
   if (!count($contexts) || !($space = vsite_get_vsite()) || !array_key_exists('vsite-section-public', $contexts)){
     //Do not show any of the features default blocks in cp context
     if('cp' == context_get('vsite', 'section') && isset($contexts["scholar-feature-{$s_feature}"])) $contexts["scholar-feature-{$s_feature}"]->reactions['block']['blocks'] = array();
-    
+
     //If not CP or Public context return here and leave the defaults in place
     return;
   }
@@ -467,7 +467,7 @@ function _vsite_layout_generate_default_settings_ary($s_page_type = 'all', $b_in
 
 function _check_for_overrides(&$widgets, $s_region, $space = NULL) {
   if (!$space) $space = vsite_get_vsite();
-  
+
   $a_layout_settings = ($space)?$space->controllers->variable->get('vsite_setting_layout'):array();
 
   foreach (vsite_layout_get_pagetypes($space) as $s_page_nm => $s_page_readable) {
@@ -538,12 +538,12 @@ function _check_for_disabled_widgets(&$widgets, $a_feature_contexts, $space = NU
       }
       if (is_object($view)) $view->destroy();
     }
-    
+
     if(!$widgets[$s_wgt_name]['hidden'] && strlen($wgt['access callback']) && function_exists($wgt['access callback'])){
       //If there is an access function call it with the widget as a parameter
       $widgets[$s_wgt_name]['hidden'] = ! $wgt['access callback']($widgets[$s_wgt_name]);
     }
-    
+
   }//If the parent is a feature and it is disabled then lets not show this block or if views does not give access (usually using the feature access)
 
 }
@@ -571,7 +571,7 @@ function vsite_layout_spaces_features_form($form, &$form_state) {
   // Retrieve the space object from the form
   $space = $form_state['values']['space'];
   $a_layout_settings = $space->controllers->variable->get('vsite_setting_layout');
-  
+
   if (!is_array($a_layout_settings) || !array_key_exists($space->group->og_theme, $a_layout_settings) || !array_key_exists('all', $a_layout_settings[$space->group->og_theme])) return;  //Do we have default layout settings?
 
   require_once(drupal_get_path('module', 'vsite_layout') . '/includes/vsite_layout.settings.inc');
@@ -581,7 +581,7 @@ function vsite_layout_spaces_features_form($form, &$form_state) {
 
     $a_feature_default = _vsite_layout_generate_default_settings_ary($s_feature_name, FALSE);
     $a_feature_default = array_merge($a_feature_default, $a_layout_settings[$space->group->og_theme]['all']); //Combine default and all settings
-    
+
     $a_new_widgets = array_diff(array_keys($a_layout_settings[$space->group->og_theme]['all']), array_keys($a_all_default));
     foreach ($a_new_widgets as $s_widget_name) {
       if (!array_key_exists($s_widget_name, $a_feature_default) || $a_feature_default[$s_widget_name] === FALSE) $a_feature_default[$s_widget_name] = $a_layout_settings[$space->group->og_theme]['all'][$s_widget_name]; //Already on this page?
@@ -593,7 +593,7 @@ function vsite_layout_spaces_features_form($form, &$form_state) {
 
     //Widgets that have changed positions
     vsite_layout_settings_layout::moveRelevantSubpageWidgets($a_feature_default, $a_all_default, $a_layout_settings[$space->group->og_theme]['all'], $a_new_widgets);
-    
+
     $a_layout_settings[$space->group->og_theme][$s_feature_name] = $a_feature_default;
   }
 }
@@ -607,7 +607,7 @@ function vsite_layout_spaces_features_form($form, &$form_state) {
  * Implementation of hook_spaces_registry_alter().
  */
 function vsite_layout_spaces_registry_alter(&$registry) {
-	
+
 	//Use our own context controller
 	if(isset($registry['controllers']['context'])){
 	  $registry['controllers']['context']['plugin'] = "spaces_controller_vsite_context";
@@ -621,7 +621,7 @@ function vsite_layout_spaces_registry_alter(&$registry) {
  */
 function vsite_layout_spaces_plugins() {
   $plugins = array();
- 
+
   $plugins['spaces_controller_vsite_context'] = array(
     'handler' => array(
       'path' => drupal_get_path('module', 'vsite_layout') .'/plugins',
