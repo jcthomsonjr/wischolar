@@ -10,7 +10,7 @@ function scholar_biocv_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-biocv';
   $context->description = 'scholar > biocv';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'path' => array(
       'values' => array(

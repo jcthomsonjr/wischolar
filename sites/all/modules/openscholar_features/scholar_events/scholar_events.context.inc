@@ -10,7 +10,7 @@ function scholar_events_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-events';
   $context->description = '';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(

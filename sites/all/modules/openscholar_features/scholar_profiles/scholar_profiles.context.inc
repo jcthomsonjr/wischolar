@@ -10,7 +10,7 @@ function scholar_profiles_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-profiles';
   $context->description = 'scholar > profiles';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(

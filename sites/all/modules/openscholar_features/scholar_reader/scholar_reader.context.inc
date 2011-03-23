@@ -10,7 +10,7 @@ function scholar_reader_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-reader';
   $context->description = 'scholar > feed reader';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(

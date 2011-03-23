@@ -10,7 +10,7 @@ function scholar_front_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-front';
   $context->description = 'The front page context';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'path' => array(
       'values' => array(

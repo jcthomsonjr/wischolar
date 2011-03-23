@@ -10,7 +10,7 @@ function scholar_dvn_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-dvn';
   $context->description = 'Datverse Feature Context';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'menu' => array(
       'values' => array(

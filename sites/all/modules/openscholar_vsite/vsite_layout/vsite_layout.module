@@ -1,12 +1,6 @@
 <?php
 module_load_include('inc', 'vsite_layout', 'vsite_layout.overrides');
 
-function vsite_layout_init(){
-	if(!context_isset('scholar', 'feature')){
-	  context_set('scholar', 'feature', 'none');
-	}
-}
-
 /**
  * Implementation of hook_ctools_plugin_api().
  */

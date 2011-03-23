@@ -10,7 +10,7 @@ function scholar_announcements_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-announcements';
   $context->description = 'Announcements feature context';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(

@@ -223,8 +223,7 @@ function scholar_book_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
       if (menu_get_object() === $node) {
         // set the context to the roob book node
         if (! empty($node->book['bid'])) {
-          $type = db_result(db_query("SELECT type FROM {node} WHERE nid = %d", $node->book['bid']));
-          context_set_by_condition('node', $type, TRUE);
+          context_node_condition( node_load($node->book['bid']), 'view');
         }
       }
       break;

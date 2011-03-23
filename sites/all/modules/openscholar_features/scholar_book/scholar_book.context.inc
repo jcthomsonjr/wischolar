@@ -10,7 +10,7 @@ function scholar_book_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-book';
   $context->description = 'scholar > book';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(

@@ -10,7 +10,7 @@ function scholar_links_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'scholar-feature-links';
   $context->description = 'Links feature context';
-  $context->tag = '';
+  $context->tag = 'feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
