@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Helper to implementation of hook_views_default_views().
+ * Implementation of hook_views_default_views().
  */
-function _openscholar_front_views_default_views() {
+function openscholar_front_views_default_views() {
   $views = array();
 
   // Exported view: openscholar_sites
