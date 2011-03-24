@@ -86,7 +86,7 @@ function vsite_widgets_shield(){
 		return $output;
 	}//Disabled?
 
-	$a_generic_settings = variable_get('vsite_setting_generic');
+	$a_generic_settings = variable_get('vsite_setting_generic', array());
 	if(is_array($a_generic_settings) && array_key_exists('shield',$a_generic_settings)){
 		$s_filename = array_pop(explode('/',$a_generic_settings['shield']));
 		$output = '<div id="scholar-shield"><img src="/'.drupal_get_path('module','vsite_design')."/theme/shield/shields/".$s_filename.'" /> </div>';
