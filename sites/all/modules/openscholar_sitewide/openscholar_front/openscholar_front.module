@@ -9,29 +9,6 @@ include_once('openscholar_front.features.inc');
 include_once('openscholar_front.blocks.inc');
 
 /**
- * Implementation of hook init
- */
-function openscholar_front_init(){
-  $vsite = vsite_get_vsite();
-  if (!$vsite && !drupal_is_front_page()
-      && arg(0) != 'admin'){
-    //If we are not in admin set the context
-    context_set('openscholar', 'section', 'sitewide');
-  }
-}
-
-/**
- * Implementation of hook_strongarm()
- */
-function openscholar_front_strongarm(){
-    // Comments
-  $conf['comment_sitewide_page'] = COMMENT_NODE_DISABLED;
-
-  return $conf;
-}
-
-
-/**
  * Implementation of hook menu
  */
 function openscholar_front_menu(){
