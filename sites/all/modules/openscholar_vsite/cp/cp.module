@@ -88,11 +88,11 @@ function cp_init() {
   $user_tb_setting = (is_array($a_generic_settings) && array_key_exists('admin_menu', $a_generic_settings) && $a_generic_settings['admin_menu']) ? TRUE : FALSE;
 
   // if in cp always toolbar=on (full)
-  if (context_get('vsite', 'section') == 'cp' && $admin) {
+  if (context_isset('context','vsite-section-cp') && $admin) {
     $toolbar = "full";
   }
 
-  if (context_get('vsite', 'section') == 'public' && $admin) {
+  if (context_isset('context','vsite-section-public') && $admin) {
     if ($user_tb_setting) {
       $toolbar = "full";
     }
@@ -432,13 +432,6 @@ function cp_preprocess_page(&$vars) {
   // 2 new variables for top and left menus
   $vars ['cp_toolbar'] = $vars ['cp_left'] = '';
 
-//  if (context_get('toolbar', 'value') == "full") {
-//    $links = cp_toolbar_menu_links();
-//    $links = theme('cp_toolbar', $links);
-//    $vars ['cp_toolbar'] = $links;
-//    $vars ['body_classes'] .= ' cp-toolbar-full';
-//  }
-//  else
   if (context_get ( 'toolbar', 'value' ) == "mini") {
     global $user;
     $user_links = array();
@@ -747,7 +740,7 @@ function cp_vsite_generic_settings($space, $value = array()) {
  * @param $view
  */
 function cp_views_pre_render(&$view) {
-  if (context_get('vsite', 'section') != 'cp') return;
+  if (context_isset('context','vsite-section-cp')) return;
 
   $views = features_get_component_map('views');
   if (in_array($view->name, array_keys($views))  && !$view->display['default']->handler->get_option('empty')) {

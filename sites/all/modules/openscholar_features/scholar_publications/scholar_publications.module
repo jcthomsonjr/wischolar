@@ -415,17 +415,17 @@ function scholar_publications_preprocess_views_view(&$vars) {
 	      // Override the page title
 	      $vars['view']->build_info['title'] = preg_replace_callback('#\d{4}#', create_function('$matches', 'return _biblio_text_year($matches[0]);'), $vars['view']->build_info['title']);
 	      drupal_set_title($vars['view']->build_info['title']);
-	    }elseif ($vars['view']->current_display == 'block_1' && context_get('scholar','feature') == 'publications') {
+	    }elseif ($vars['view']->current_display == 'block_1' && context_isset('context','scholar-feature-publications')) {
         $vars['view']->build_info['title'] = "By Year"; //No need to be redundant on the pub feature
       }
     break;
     case "publication_types":
-      if($vars['view']->current_display == 'block_1' && context_get('scholar','feature') == 'publications') {
+      if($vars['view']->current_display == 'block_1' && context_isset('context','scholar-feature-publications')) {
         $vars['view']->build_info['title'] = "By Type"; //No need to be redundant on the pub feature
       }
     break;
     case "publication_contributors":
-      if($vars['view']->current_display == 'block_1' && context_get('scholar','feature') == 'publications') {
+      if($vars['view']->current_display == 'block_1' && context_isset('context','scholar-feature-publications')) {
         $vars['view']->build_info['title'] = "By Co-Author"; //No need to be redundant on the pub feature
       }
     break;
