@@ -940,6 +940,8 @@ function vsite_vsite_generic_settings($space, $value = array()){
  * Implementation hook_context_page_reaction()
  */
 function vsite_context_page_reaction() {
+  
+  vsite_include('vsiteapi');
   $active_feature = vsite_active_feature();
   if(!$active_feature) return;
   $a_active_contexts = context_active_contexts();
