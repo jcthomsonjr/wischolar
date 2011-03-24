@@ -1014,7 +1014,7 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
 
       $current->tid = $tids[0];
           
-      $output = theme('taxonomy_term_page', $tids, taxonomy_select_nodes($tids, $terms['operator'], $depth, false));
+      $output = theme('taxonomy_term_page', $tids, taxonomy_select_nodes($tids, $terms['operator'], $depth, true));
       return $output;
     
     }

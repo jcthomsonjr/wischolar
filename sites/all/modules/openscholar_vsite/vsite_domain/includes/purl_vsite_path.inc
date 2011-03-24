@@ -46,8 +46,15 @@ if (!class_exists('purl_vsite_path')) {
 	      if(vsite_excluded_path($path)) return; //Do not alter if this is a link to a excluded path
 	      
 	      if(array_key_exists('absolute',$options) && $options['absolute']){
-          global $base_url;
-          $options['base_url'] = variable_get('purl_base_domain', $base_url);
+	      	
+	      	$generic_settings = variable_get('vsite_settings_generic');
+          if(is_array($generic_settings) && str_replace('http://', '', $_SERVER['HTTP_HOST']) == $generic_settings['vsite_domain']){
+            $options['base_url'] = "http://".$generic_settings['vsite_domain'];
+          }else{
+          	global $base_url;
+            $options['base_url'] = variable_get('purl_base_domain', $base_url);
+          }//Check for a group domain
+          
         }//If we are asking for the absolute url then return the correct base url for a path provider
 	      
 	      return parent::rewrite($path, $options, $element);
