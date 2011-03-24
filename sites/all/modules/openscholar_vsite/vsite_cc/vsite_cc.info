@@ -1,5 +1,12 @@
-name = Vsite Creative Commons
-description = Creative Commons widgit for use with vsites
-dependencies[] = creativecommons
-dependencies[] = vsite
-core = 6.x
+core = "6.x"
+dependencies[] = "strongarm"
+dependencies[] = "vsite"
+dependencies[] = "creativecommons"
+description = "Creative Commons widget for VSites"
+features[ctools][] = "strongarm:strongarm:1"
+features[variable][] = "creativecommons_available_license_types"
+features[variable][] = "creativecommons_available_metadata"
+features[variable][] = "creativecommons_node_types"
+features[variable][] = "creativecommons_required_metadata"
+name = "Vsite Creative Commons"
+package = "OpenScholar Vsite"
