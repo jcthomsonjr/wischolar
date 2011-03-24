@@ -1,0 +1,16 @@
+<?php
+
+function vsite_cc_vsite_widgets() {
+
+  return array(
+    'vsite_cc_widget' => array (
+      'module' => 'creativecommons',
+      'delta' => 'node_license',
+      'weight' => 0,
+      'region' => 'right',
+      'status' => 0,
+      'label' => t('Creative Commons License'),
+      'type' => 'context_ui',
+    )
+  );
+}
