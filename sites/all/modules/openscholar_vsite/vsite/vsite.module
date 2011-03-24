@@ -247,6 +247,7 @@ function vsite_theme($cache, $type, $theme, $path) {
  * Implementation of preprocess_views_view().
  */
 function vsite_preprocess_views_view(&$vars) {
+  vsite_include('vsiteapi');
   if ($feature = vsite_active_feature()) {
     $contexts = context_enabled_contexts();
     $context = isset($contexts["scholar-feature-{$feature}"]) ? $contexts["scholar-feature-{$feature}"] : NULL;
@@ -940,6 +941,8 @@ function vsite_vsite_generic_settings($space, $value = array()){
  * Implementation hook_context_page_reaction()
  */
 function vsite_context_page_reaction() {
+  
+  vsite_include('vsiteapi');
   $active_feature = vsite_active_feature();
   if(!$active_feature) return;
   $a_active_contexts = context_active_contexts();
