@@ -9,17 +9,6 @@ include_once('openscholar_front.features.inc');
 include_once('openscholar_front.blocks.inc');
 
 /**
- * Implementation of hook_strongarm()
- */
-function openscholar_front_strongarm(){
-    // Comments
-  $conf['comment_sitewide_page'] = COMMENT_NODE_DISABLED;
-
-  return $conf;
-}
-
-
-/**
  * Implementation of hook menu
  */
 function openscholar_front_menu(){
