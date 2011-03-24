@@ -262,6 +262,8 @@ function vsite_layout_region_widgets_callback() {
 function vsite_layout_filtered_widgets($page_type='all') {
 
   $contexts = context_enabled_contexts();
+  $space = spaces_get_space();
+  //dpm($space);
 
   //The Default Widgets avalible everywhere
   $a_widgets = $contexts['vsite-section-public']->reactions['block']['blocks'];
