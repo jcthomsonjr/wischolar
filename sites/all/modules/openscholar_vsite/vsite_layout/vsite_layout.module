@@ -380,7 +380,7 @@ function _widget_settings_sort($a, $b) {
 //function vsite_layout_context_block_info_alter(&$blocks){
 function vsite_layout_context_active_contexts_alter(&$contexts) {
   //Get the current feature
-  $s_feature = context_get('scholar', 'feature');
+  $s_feature = vsite_active_feature();
 
   //Don't modify default contexts if:
   //  1. there are no active contexts
@@ -388,7 +388,7 @@ function vsite_layout_context_active_contexts_alter(&$contexts) {
   //  3. We are not public section
   if (!count($contexts) || !($space = vsite_get_vsite()) || !array_key_exists('vsite-section-public', $contexts)){
     //Do not show any of the features default blocks in cp context
-    if('cp' == context_get('vsite', 'section') && isset($contexts["scholar-feature-{$s_feature}"])) $contexts["scholar-feature-{$s_feature}"]->reactions['block']['blocks'] = array();
+    if(context_isset('context','vsite-section-cp') && isset($contexts["scholar-feature-{$s_feature}"])) $contexts["scholar-feature-{$s_feature}"]->reactions['block']['blocks'] = array();
 
     //If not CP or Public context return here and leave the defaults in place
     return;

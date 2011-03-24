@@ -163,7 +163,7 @@ function vsite_design_imagecache_default_presets() {
 function vsite_design_preprocess_page(&$vars){
   //Return if:
   if (! ($vsite = vsite_get_vsite()) || //In a Vsite?
-      context_get('vsite', 'section') == 'cp' || //We are in CP?
+      context_isset('context','vsite-section-cp') || //We are in CP?
       ! $vsite->group->og_theme || //Grop has a custom theme
       ! ($themes = list_themes()) || ! array_key_exists($vsite->group->og_theme, $themes) || //The theme is valid
       empty($themes[$vsite->group->og_theme]->stylesheets))

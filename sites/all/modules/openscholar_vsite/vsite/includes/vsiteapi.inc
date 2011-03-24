@@ -359,3 +359,24 @@ function theme_views_view_field_link_to_vsite($view, $field, $row) {
 
   return $view->field[$field->options['id']]->advanced_render($row);
 }
+
+/**
+ * Singleton that retrieves the active feature
+ */
+function vsite_active_feature($s_active_feature = false){
+	static $s_feature;
+	
+	if(!isset($s_feature)){
+		$contexts = context_get('context');
+    if(!empty($contexts) && is_array($contexts)){
+    	foreach ($contexts as $s_key => $context) {
+    		list($namespace,$key,$value) = explode("-",$s_key);
+    		if ($namespace == "scholar" && $key == "feature") {
+    			$s_feature = $value;
+    		}
+    	}
+    }
+	}
+	
+	return $s_feature;
+}

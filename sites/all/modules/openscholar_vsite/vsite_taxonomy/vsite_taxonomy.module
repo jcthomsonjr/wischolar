@@ -1046,9 +1046,9 @@ function vsite_taxonomy_term_count_nodes($tid, $type = 0, $cnt_childeren = true)
   
   if(is_string($type)){
      $a_types = array($type);
-	   if(!array_key_exists($type,content_types()) && context_get('scholar','feature')){
+	   if(!array_key_exists($type,content_types()) && vsite_active_feature()){
 	     $a_contexts = context_active_contexts();
-	     $o_feature = $a_contexts['scholar-feature-'.context_get('scholar','feature')];
+	     $o_feature = $a_contexts['scholar-feature-'.vsite_active_feature()];
 			 $type = 0;
 			 if($o_feature && isset($o_feature->node) && count($o_feature->node)){
 			   $type = implode(',',$o_feature->node);
