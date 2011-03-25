@@ -18,9 +18,16 @@ function vsite_layout_context_default_contexts() {
 	      '~scholar-feature-*' => '~scholar-feature-*',
 	    ),
 	  ),
+	  'path' => array(
+      'values' => array(
+        '~cp/*' => '~cp/*',
+      ),
+      'options' => array(
+      ),
+    ),
 	);
   $context->reactions = array();
-  $context->condition_mode = 0;
+  $context->condition_mode = CONTEXT_CONDITION_MODE_AND;
   $export['scholar-feature-none'] = $context;
   
   return $export;

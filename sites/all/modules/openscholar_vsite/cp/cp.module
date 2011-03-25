@@ -68,39 +68,15 @@ function cp_init() {
     return;
   }
 
-  $toolbar = "off";
-
-  // controlcp context
-  if (arg(0) == 'cp' || (arg(0) == 'node' && (arg(1) == 'add' || arg(2) == 'edit'))) {
-    context_set('vsite', 'section', 'cp');
-
-    // since we are here .. initialize cp theme
-    _cp_init_theme(); //MOVE INTO CONTEXT REACTION
-
-  }
-  else {
-    context_set('vsite', 'section', 'public');
-    og_set_theme($vsite->group); // TODO why dont you get it from space settings
+  //initialize cp theme
+  if (context_isset('context','vsite-section-cp')) {
+    _cp_init_theme(); //MOVE INTO CONTEXT REACTION?
+  }elseif (context_isset('context','vsite-section-public')) {
+    og_set_theme($vsite->group); //MOVE INTO CONTEXT REACTION?
   }
 
   $admin = $vsite->access_admin();
-  $a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
-  $user_tb_setting = (is_array($a_generic_settings) && array_key_exists('admin_menu', $a_generic_settings) && $a_generic_settings['admin_menu']) ? TRUE : FALSE;
-
-  // if in cp always toolbar=on (full)
-  if (context_isset('context','vsite-section-cp') && $admin) {
-    $toolbar = "full";
-  }
-
-  if (context_isset('context','vsite-section-public') && $admin) {
-    if ($user_tb_setting) {
-      $toolbar = "full";
-    }
-    else {
-      $toolbar = "mini";
-    }
-  }
-
+  
   if ($admin) {
     //add the javascript for intercepting confirm pages
     drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.js');
@@ -122,14 +98,30 @@ function cp_init() {
     drupal_add_js($modal_styles, 'setting');
 
   } //Allow special popups if they are admin
+}
 
+/**
+ * Return the type of toolbar to use
+ */
+function cp_get_toolbar_setting(){
+	if(!($vsite = vsite_get_vsite()) || !$vsite->access_admin()) return 'off';
+	
+  $a_generic_settings = variable_get('vsite_setting_generic');
+  $user_tb_setting = (is_array($a_generic_settings) && array_key_exists('admin_menu', $a_generic_settings) && $a_generic_settings['admin_menu']) ? TRUE : FALSE;
 
-  if ($toolbar == "full") {
-    drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
+  // if in cp always toolbar=on (full)
+  if (context_isset('context','vsite-section-cp') || $user_tb_setting) {
+    return "full";
   }
 
-  context_set("toolbar", "value", $toolbar);
-
+  if (context_isset('context','vsite-section-public') && $admin) {
+    
+  	if ($user_tb_setting) return "full";
+    
+    return "mini";
+  }
+  
+  return 'off';
 }
 
 /**
@@ -431,23 +423,30 @@ function cp_theme($cache, $type, $theme, $path) {
 function cp_preprocess_page(&$vars) {
   // 2 new variables for top and left menus
   $vars ['cp_toolbar'] = $vars ['cp_left'] = '';
-
-  if (context_get ( 'toolbar', 'value' ) == "mini") {
-    global $user;
-    $user_links = array();
-    $user_links[] = array('title' => 'Control Panel', 'href' => 'cp/features');
-    $user_links[] = array(
-      'title' => t('Hello <strong>!username</strong>', array('!username' => $user->name)),
-      'href' => 'cp/users',
-      'html' => TRUE
-    );
-    $user_links[] = array(
-      'title' => t('Logout'),
-      'href' => "logout",
-    );
-    $vars['cp_toolbar'] = theme('links', $user_links);
-    $vars['body_classes'] .= ' cp-toolbar-mini';
+  
+  switch (cp_get_toolbar_setting()) {
+  	case 'mini':
+  	  global $user;
+	    $user_links = array();
+	    $user_links[] = array('title' => 'Control Panel', 'href' => 'cp/features');
+	    $user_links[] = array(
+	      'title' => t('Hello <strong>!username</strong>', array('!username' => $user->name)),
+	      'href' => 'cp/users',
+	      'html' => TRUE
+	    );
+	    $user_links[] = array(
+	      'title' => t('Logout'),
+	      'href' => "logout",
+	    );
+	    $vars['cp_toolbar'] = theme('links', $user_links);
+	    $vars['body_classes'] .= ' cp-toolbar-mini';
+  	break;
+  	
+  	case 'full':
+  		drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
+  	break;
   }
+  
 }
 
 /**
