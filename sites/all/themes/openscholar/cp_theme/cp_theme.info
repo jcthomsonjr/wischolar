@@ -1,24 +1,39 @@
 name        = OpenScholar Admin
-description = Reformats visuals in Rubik theme for OpenScholar
-screenshot  = screenshot.png
-core        = 6.x
-base theme  = rubik
-engine      = phptemplate
+description = Admin Theme for OpenScholar, IQSS
+screenshot = screenshot.png
+core       = 6.x
+base theme = scholar_base
 
-;------ styles ------
-;stylesheets[screen][]   = style.css
-stylesheets[screen][]   = css/cp-theme.css
-stylesheets[screen][]   = css/modal.css
-stylesheets[screen][]   = css/typography.css
-stylesheets[screen][]   = css/spaces.css
-stylesheets[screen][]   = css/forms.css
-stylesheets[screen][]   = css/tabs.css
-stylesheets[screen][]   = css/admin-toolbar.css
-stylesheets[screen][]   = css/dropdown.css
-stylesheets[all][]   = css/wysiwyg_imagefield.css
+;--- remove default styles
+stylesheets[all][]    = zen.css
+;stylesheets[all][]   = defaults.css
+;stylesheets[all][]   = node.css
+;stylesheets[all][]   = system.css
+;stylesheets[all][]   = system-menu.css
+stylesheets[all][]    = user.css
 
-;------ styles, additional ------
-conditional-stylesheets[if lte IE 7][all][] = css/ie7.css
+;--- styles
+stylesheets[all][]   = css/cp-theme.css
+stylesheets[all][]   = css/cp-typography.css
+stylesheets[all][]   = css/spaces.css
+stylesheets[all][]   = css/forms.css
+stylesheets[all][]   = css/tabs.css
 
-;------ scripts ------
-scripts[]   = js/cp_theme.js
+;--- other styles
+conditional-stylesheets[if lte IE 7][all][] = ie.css
+
+;--- regions
+regions[header]         = header
+regions[footer]         = footer
+regions[closure_region] = closure
+regions[left]           = left sidebar
+regions[right]          = right sidebar
+regions[footer]         = footer
+regions[closure_region] = closure
+
+;--- features
+features[] = logo
+features[] = name
+features[] = search
+features[] = favicon
+features[] = primary_links

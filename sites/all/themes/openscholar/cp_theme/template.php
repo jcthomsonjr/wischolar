@@ -1,27 +1,33 @@
 <?php
-
-function cp_theme_id_safe($string) {
-  // Replace with dashes anything that isn't A-Z, numbers, dashes, or underscores.
-  $string = strtr(drupal_strtolower($string), array(' ' => '-', '_' => '-', '[' => '-', ']' => ''));
-  $string = strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $string));
-  // If the first character is not a-z, add 'id' in front.
-  if (!ctype_lower($string{0})) { // Don't use ctype_alpha since it is locale aware.
-    $string = 'id' . $string;
+/**
+ * Override or insert PHPTemplate variables into the templates.
+ */
+function cp_theme_preprocess_page(&$vars) {
+  $tabs2 =  menu_secondary_local_tasks();
+  if ($tabs2){
+    $vars['tabs2'] = '<ul class="tabs secondary clear-block">' . menu_secondary_local_tasks() . '</ul>';
   }
-  return $string;
 }
 
-function phptemplate_preprocess_page(&$vars, $hook) {
-  $body_classes = array($vars['body_classes']);
-  $body_classes[] = 'openscholar-admin';
-  list($section, ) = explode('/', $_GET['q'],1);
-  $body_classes[] = cp_theme_id_safe('section-' . $section);
-  $vars['body_classes'] = implode(' ', $body_classes);
+/**
+ * Returns the rendered local tasks. The default implementation renders
+ * them as tabs. Overridden to split the secondary tasks.
+ *
+ * @ingroup themeable
+ */
+function cp_theme_menu_local_tasks() {
+  $output = '';
+  $primary = menu_primary_local_tasks();
+  if ($primary){
+    $output .= '<ul class="tabs primary clear-block">' . $primary . '</ul>';
   }
+  return $output;
+}
+
 
 /**
  * Form theming for the block customizer settings form.
- *
+ * 
  * Overridden to remove tabledrag and the weights from this customizer
  */
 function cp_theme_spaces_block_customizer_settings_form($form) {
@@ -78,7 +84,7 @@ function cp_theme_spaces_block_customizer_settings_form($form) {
 
 /**
  * Form theme function for customization items.
- *
+ * 
  * Overridden: So that they remain in fieldsets
  */
 function cp_theme_spaces_customize_item($form) {

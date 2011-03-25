@@ -11,53 +11,24 @@ fieldset {
   background:#fff;
   border: none;
   margin-bottom: .5em;
-  padding: 0 0 12px 0;
+  padding: 9px 0 12px 0;
   }
 
 .page-cp-appearance #cp-settings-form fieldset {
   padding-top: 0;
   }
 
-td fieldset,
-fieldset fieldset {
+td fieldset, fieldset fieldset {
   padding: 0;
   background: transparent;
   }
 
-/* Reset Rubik */
-
-.block .item-list,
-.block .form-item,
-.admin-panel .admin-list,
-.form-item,
-.teaser-checkbox .form-item,
-.form-item .form-item,
-.fieldset .form-item,
-table .form-item {
-  border: none;
-  padding: 0;
-  margin: 0;
-  background:transparent;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  border-radius: 0;
+.form-item {
+  margin-top: 0;
   }
-
-/*
-.container-inline .fieldset-title .fieldset-content, .fieldset.titled .fieldset-content {
-  padding-top: 0;
-  }
-*/
 
 .fieldset-wrapper {
   padding: 0 9px;
-  }
-
-.fieldset-title {
-  border:none;
   }
 
 .fieldset-wrapper .fieldset-wrapper,
@@ -73,6 +44,7 @@ div.vertical-tabs {
   margin-top: 0;
   margin-right: 7px;
   margin-left: 191px;
+  background: #fff;
   }
 
 div.vertical-tabs ul.vertical-tabs-list {
@@ -90,13 +62,10 @@ div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane {
   padding-top: 1em;
   }
 
-.form-item label,
 div.vertical-tabs-panes .description,
 .vertical-tabs-pane div.form-item label {
   font-weight: bold;
-  color: #5A5959;
-  text-transform: none;
-  font-size: 12px;
+  color: #666;
   }
 
 div.vertical-tabs-panes .form-item .description {
@@ -113,6 +82,7 @@ fieldset legend {
   border-top: 1px solid #D9D9D9;
   border-bottom: none;
   }
+
 
 legend, legend a {
   color: #333;
@@ -132,9 +102,17 @@ legend,
   font-size: 11px;
   }
 
+#edit-upload-wrapper {
+  height: 22px;
+  }
+
+html.js fieldset.collapsed {
+  height: 20px;
+  }
+
 html.js fieldset.collapsible legend a {
-  background: url(../images/open-close.png) no-repeat 0 -20px #3F3F3F3;
-  padding-left: 29px;
+  background: url(../images/open-close.png) no-repeat 0 -20px transparent;
+  padding-left: 26px;
   color: #000;
   }
 
@@ -143,29 +121,53 @@ html.js fieldset.collapsed legend a {
   color:#999;
   }
 
-.container-inline .fieldset-title .fieldset-content,
-.fieldset.titled .fieldset-content,
 .collapsible {
-  background-color: #F3F3F3;
+  background-color: #F3F3F3;;
   }
+
 
 .collapsed {
   background-color: #fff;
   }
 
-
 .form-region-main .resizable-textarea {
   width:100%;
   }
 
-.views-exposed-form .views-exposed-widget {
-  padding: 0 2em 0 0;
+/*
+.node-form .form-region-right {
+  margin-top: 14px;
+  }
+*/
+
+/*
+.section-cp .fieldset-wrapper .fieldset-wrapper,
+.section-cp .og-vocab-taxonomy .fieldset-wrapper,  {
+	margin: 0;
+	}
+
+.section-cp .og-vocab-taxonomy {
+  margin: 10px -3px;
+  padding: 10px 3px 10px 10px;
+  border: 1px solid #dfe5e6;
+  background: #f2f5f5;
   }
 
+.section-cp .og-vocab-taxonomy legend {
+  font-size: 1em;
+  }
 
-.container-inline .fieldset-content,
-.fieldset-content {
-  border: none;
+.section-cp div.form-item {
+	margin: 0 1em 0 0;
+	border: none;
+  }
+
+.section-cp #dialog-main div.form-item {
+  margin:0;
+  }
+*/
+.views-exposed-form .views-exposed-widget {
+  padding: 0 2em 0 0;
   }
 
 #views-bulk-operations-submit {
@@ -177,8 +179,8 @@ select option {
   max-width:99%;
   }
 
-.column-side select option {
-  max-width: 279px;
+.form-region-right select option {
+  max-width: 236px;
   }
 
 select option {
@@ -190,25 +192,48 @@ select option {
   }
 
 .form-radios {
-  margin: 0 0 1em 0;
+  margin: 1em 0;
   }
 
+/*
+.section-cp .form-radios input {
+  margin: 3px 3px 3px 0;
+  }
+*/
 .node-form .form-text {
   font-size: .85em;
   width: 99.9%;
   }
 
+textarea,
+input,
+select {
+  background: #fff;
+  color:#666;
+  border-bottom: 1px solid #CECECE;
+  border-left: 1px solid #ABABAB;
+  border-right: 1px solid #ABABAB;
+  border-top: 1px solid #707070;
+  -webkit-box-shadow: rgba(255,255,255,.65) 0px 1px 1px;
+  -moz-border-bottom: 2px solid #F9F9F9 #CECECE;
+  -moz-border-left:  2px solid #F9F9F9 #ABABAB;
+  -moz-border-right:  2px solid #F9F9F9 #ABABAB;
+  -moz-border-top:  2px solid #F9F9F9 #707070;
+  }
+
+select {
+  border-color: #E8E8E8 #F0F0F0 #F8F8F8;
+  border-style: solid;
+  border-width: 2px;
+  -moz-border-bottom: 2px solid #E8E8E8;
+  -moz-border-left:  2px solid #F0F0F0;
+  -moz-border-right:  2px solid #F8F8F8;
+  -moz-border-top:  2px solid #F0F0F0;
+  }
+
 input.form-autocomplete,
 input.form-text,
 textarea.form-textarea {
-  /*bbackground: url(images/input-bg.png) repeat-x 0 0 #fff; */
-  background-color:#fff;
-  -moz-border-style: solid;
-  -moz-border-bottom-colors: #F9F9F9 #CECECE;
-  -moz-border-left-colors: #F9F9F9 #ABABAB;
-  -moz-border-right-colors: #F9F9F9 #ABABAB;
-  -moz-border-top-colors: #F9F9F9 #707070;
-  -moz-border-width: 2px;
   margin-top: -2px;
   padding: 4px 3px 2px;
   -moz-box-sizing: border-box;
@@ -217,12 +242,12 @@ textarea.form-textarea {
   width: 100%;
   }
 
-#field_biblio_extra_values input.fluid {
+.resizable-textarea {
   width: 100%;
   }
 
-.resizable-textarea {
-  width: 100%;
+#edit-settings-generic-google-analytics-id {
+  width: 175px;
   }
 
 select.form-select {
@@ -320,9 +345,15 @@ table.features div.feature div.description {
   width:auto;
   }
 
+
+
 h3#modal-title {
   float: none;
   margin-bottom: 1.5em;
+  }
+
+.ctools-use-modal-processed .buttons	{
+  margin-top: 30px;
   }
 
 a.close-this {
@@ -346,7 +377,7 @@ fieldset.group-account-basics {
   }
 
 #node-form .draggable td {
-    padding: 0;
+    padding: 0 4px;
     }
 
 .draggable a.tabledrag-handle {
@@ -354,7 +385,7 @@ fieldset.group-account-basics {
   float:left;
   height:1.7em;
   margin:-0.4em 0 -0.4em -0.5em;
-  padding:0.4em;
+  padding:0.42em 1.5em 0.42em 0.5em;
   text-decoration:none;
   }
 
@@ -415,6 +446,13 @@ fieldset.group-account-basics {
   float: left;
   width: 40%;
   margin-right: 46px;
+  }
+
+/* USER CREATION */
+
+form div.buttons {
+  text-align: left;
+  margin-left: 200px;
   }
 
 /* CONTENT PAGES FILTERING AND UPDATING OPTIONS */
@@ -478,7 +516,9 @@ fieldset.group-account-basics {
 #contact-mail-page #edit-name-wrapper,
 #contact-mail-page #edit-mail-wrapper,
 #contact-mail-page #edit-subject-wrapper,
-#contact-mail-page #edit-cid-wrapper {
+#contact-mail-page #edit-cid-wrapper,
+.page-node-add-event .date-clear-block,
+.page-node-edit-event .date-clear-block{
   display:inline-block;
   vertical-align: top;
   width: 49.5%;
@@ -490,7 +530,7 @@ fieldset.group-account-basics {
 
 #field-biblio-extra-items,
 #edit-field-biblio-image-0-upload-wrapper .description {
-  padding: 1em 0;
+  padding-bottom: 1em;
   clear:both;
   }
 
@@ -505,10 +545,4 @@ fieldset.group-account-basics {
 
 #contact-mail-page #edit-cid-wrapper select.form-select {
   width: 100%;
-  }
-
-/* EVENT CREATION */
-
-.page-node-add-event .date-clear-block {
-  background: #fff;
   }

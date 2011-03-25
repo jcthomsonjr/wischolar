@@ -1,5 +1,10 @@
 /* SPACES FEATURES */
 
+table#spaces-features {
+  padding-left: 200px;
+  width: 100%;
+  }
+
 form#spaces-preset-default-form h3,
 form#spaces-preset-form h3,
 form#spaces-features-form h3 {
@@ -12,21 +17,10 @@ table.spaces-features {
   margin:0px 0px 20px;
   }
 
-table.spaces-settings div.description {
-  white-space:normal;
-  }
-
-table.spaces-features td.name {
-  padding-left: 35px;
-  }
-
-table.spaces-features tr.enabled {
-  background:#e9edef;
-  border-bottom: 1px solid #fff;
-  }
+table.spaces-settings div.description { white-space:normal; }
 
 table.spaces-features tr.enabled td.name {
-  background: url(../images/check-mark.png) no-repeat 4px 50%;
+  background: url(../images/check-mark.png) no-repeat 18px 50%;
   }
 
 
@@ -34,7 +28,8 @@ table.spaces-features tr.disabled td.action a { display:none; }
 
 
 table.spaces-admin td.actions {
-  padding-top:10px; padding-bottom:10px;
+  padding-top:10px;
+  padding-bottom:10px;
   text-align:center;
   }
 
@@ -70,18 +65,16 @@ div#spaces-feature-menu div.menu-item div.item div.form-item {
   padding:5px 10px;
   }
 
-/* BLOCK CUSTOMIZER FORM */
-div.spaces-block-customizer {
-  }
-
 div.spaces-block-customizer strong.region {
   font-size:11px;
   color:#666;
   }
 
-
 /*Features */
 
+#spaces-features td.name, #spaces-features thead.tableHeader-processed th:first-child {
+  padding-left: 58px;
+  }
 
 #spaces-features a.tabledrag-handle {
   display:none;
