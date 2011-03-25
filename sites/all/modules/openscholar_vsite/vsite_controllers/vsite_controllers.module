@@ -1,0 +1,113 @@
+<?php
+
+/**
+ * Implementation of hook_menu().
+ * May be deleted later
+ */
+function vsite_controllers_menu() {
+  $menu = array();
+  $menu['vsite_controllers'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_controllers_form'),
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+
+  return $menu;
+}
+
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function vsite_controllers_ctools_plugin_api($module, $api) {
+  if ($module == 'spaces' && $api == 'plugins') {
+    return array('version' => 3);
+  }
+}
+
+/**
+ * Implementation of hook_ctools_plugin_plugins().
+ */
+function vsite_controllers_ctools_plugin_plugins() {
+  return array(
+    'cache' => TRUE,
+    'use hooks' => TRUE,
+  );
+}
+
+/**
+ * Implementation of hook_spaces_plugins
+ */
+function vsite_controllers_spaces_plugins() {
+  $plugins = array();
+  $plugins['spaces_controller_vsite_views'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'vsite_controllers') .'/plugins',
+      'file' => 'spaces_controller_vsite_views.inc',
+      'class' => 'spaces_controller_vsite_views',
+      'parent' => 'spaces_controller',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implementation of hook_spaces_registry().
+ */
+function vsite_controllers_spaces_registry() {
+  return array(
+    'controllers' => array(
+      'vsite_views' => array(
+        'title' => t('vsite_controllers_vsite_views'),
+        'plugin' => 'spaces_controller_vsite_views',
+      ),
+    ),
+  );
+}
+
+function vsite_controllers_views_pre_build(&$view) {
+  $space = spaces_get_space();
+  if ($space) {
+    $header_old = array (
+      'header' => $view->display['default']->display_options['header']
+    );
+    $override = $space->controllers->vsite_views->get($view->name);
+    if ($view->display_handler->options['header'] == $header_old['header']) {
+      $view->display_handler->options['header'] = $override['header'];
+      $view->display_handler->options['header_format'] = $override['header_format'];
+      $view->display_handler->options['header_empty'] = $override['header_empty'];
+    }
+  }
+}
+
+function vsite_controllers_form($form_state) {
+  $space = spaces_get_space();
+  if ($space) $overrides = $space->controllers->vsite_views->get('og_ghp_ron');
+  $form = array();
+  $form['header'] = array(
+    '#type' => 'textarea',
+    '#title' => 'header text',
+    '#default_value' => $overrides['header'],
+  );
+  $form['header_format'] = filter_form($overrides['header_format']);
+
+  $form['#submit'] = array('vsite_controllers_form_submit');
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Submit',
+  );
+
+  return $form;
+}
+
+function vsite_controllers_form_submit(&$form, &$form_state) {
+  $space = spaces_get_space();
+  if (!$space) return;
+
+  $override = array(
+    'header' => $form_state['values']['header'],
+    'header_format' => $form_state['values']['header_format'],
+  );
+
+  $space->controllers->vsite_views->set('og_ghp_ron', $override);
+}
