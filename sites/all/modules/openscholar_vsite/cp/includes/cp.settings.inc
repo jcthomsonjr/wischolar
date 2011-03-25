@@ -16,7 +16,6 @@ function cp_settings_form($form_id, $setting_id) {
 
   
   $form = array();
-
   if ($setting_id == 'logo') $form['#attributes'] = array('enctype' => "multipart/form-data");
   
   // just do have distinct id for each setting form

@@ -31,22 +31,25 @@ function vsite_layout_theme() {
 }
 
 /**
- * Implementation of hook_vsite_settings().
- */
-function vsite_layout_vsite_settings() {
-  return array(
-    'layout' => array(
-      'class' => 'vsite_layout_settings_layout',
-      'file' => drupal_get_path('module', 'vsite_layout') . '/includes/vsite_layout.settings.inc'
-    ),
-  );
-}
-
-/**
  * hook menu
  */
 function vsite_layout_menu() {
   $items = array();
+  
+  $items['cp/appearance'] = array(
+    'title' => "Appearance",
+    'page callback' => 'vsite_layout_layout',
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+  );
+  
+  $items['cp/appearance/layout'] = array(
+    'title' => "Site Layout",
+    'page callback' => 'vsite_layout_layout',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+  );
 
   $items["cp/appearance/layout/region_widgets_js"] =
   $items["cp/appearance/region_widgets_js"] = array(
@@ -64,13 +67,6 @@ function vsite_layout_menu() {
   return $items;
 }
 
-/**
- * hook menu alter
- */
-function vsite_layout_menu_alter(&$items) {
-  $items["cp/appearance/layout"]['page callback'] =
-  $items["cp/appearance"]['page callback'] = 'vsite_layout_layout';
-}
 
 /**
  * main entry point for "cp/settings/appearance"
@@ -93,22 +89,18 @@ function vsite_layout_layout() {
   $s_page_type =  (isset($_GET['page_type']))? $_GET['page_type']:'all';
 
   //top
-  $vsite_layout_widgets = vsite_layout_region_widgets($space, $s_page_type);
+  $vsite_layout_widgets = vsite_layout_region_widgets($s_page_type);
   $wgts = array_key_exists('unused', $vsite_layout_widgets)?$vsite_layout_widgets['unused']:array();
 
-
-  $features = spaces_features();
-  $feature_contexts = array();
-  if (!empty($features[$page_type]) && !empty($features[$page_type]->info['features']['context'])) {
-    $a_feature_contexts =  drupal_map_assoc($features[$page_type]->info['features']['context']);
-  }
-
-  _check_for_disabled_widgets($wgts, $a_feature_contexts);
+  //Disable widgets that are part of inactive features
+  _check_for_disabled_widgets($wgts);
+  
+  
   $top = theme('vsite_layout_layout_widgets', $wgts, 'scholarlayout-top-widgets', 'scholarlayout-widgets-list');
 
   //form
-  $args = func_get_args();
-  $form = call_user_func_array('drupal_get_form', $args);
+  module_load_include('inc', 'vsite_layout', 'includes/vsite_layout.admin');
+  $form = call_user_func_array('drupal_get_form', array('vsite_layout_settings_form'));
 
   return $top . $form;
 }
@@ -130,20 +122,15 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars) {
   }
 
   $s_page_type = (isset($_GET['page_type']))? $_GET['page_type']:'all';
-  $features = spaces_features();
-  $a_feature_contexts = array();
-  if (!empty($features[$s_page_type]) && !empty($features[$s_page_type]->info['features']['context'])) {
-    $a_feature_contexts =  drupal_map_assoc($features[$s_page_type]->info['features']['context']);
-  }
-
-  $vsite_layout_widgets = vsite_layout_region_widgets(FALSE, $s_page_type);
+  
+  $vsite_layout_widgets = vsite_layout_region_widgets($s_page_type);
 
   foreach ($regions as $region => $s_label) {
     $wgts_id = 'scholarlayout-' . str_replace('_', '-', $region);
     $wgts = array_key_exists($region, $vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
     if ($s_page_type == 'all') _check_for_overrides($wgts, $region);
 
-    _check_for_disabled_widgets($wgts, $a_feature_contexts);
+    _check_for_disabled_widgets($wgts);
     $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
   }
 
@@ -193,20 +180,15 @@ function vsite_layout_top_widgets_callback() {
   $scholar = vsite_get_vsite();
   $s_page_type = $_POST['settings']['layout']['page_type'];
 
-  $a_region_wgts = vsite_layout_region_widgets($scholar, $s_page_type);
+  $a_region_wgts = vsite_layout_region_widgets($s_page_type);
   //top
   $wgts = array_key_exists('unused', $a_region_wgts)?$a_region_wgts['unused']:array();
 
   $wgts_id = 'scholarlayout-top-widgets';
   $wgts_class = 'scholarlayout-widgets-list';
 
-  $features = spaces_features();
-  $a_feature_contexts = array();
-  if (!empty($features[$s_page_type]) && !empty($features[$s_page_type]->info['features']['context'])) {
-    $a_feature_contexts =  drupal_map_assoc($features[$s_page_type]->info['features']['context']);
-  }
-
-  _check_for_disabled_widgets($wgts, $a_feature_contexts);
+  //Disable widgets from disabled features
+  _check_for_disabled_widgets($wgts);
   $top = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, $wgts_class);
 
   drupal_json(array('status' => TRUE, 'data' => $top));
@@ -227,7 +209,7 @@ function vsite_layout_region_widgets_callback() {
     $a_feature_contexts =  drupal_map_assoc($features[$s_page_type]->info['features']['context']);
   }
 
-  $a_region_wgts = vsite_layout_region_widgets($scholar, $s_page_type);
+  $a_region_wgts = vsite_layout_region_widgets($s_page_type);
   $a_themed_regions = array();
 
   $regions = system_region_list('scholar_base');
@@ -235,7 +217,7 @@ function vsite_layout_region_widgets_callback() {
     $widgets = array_key_exists($region, $a_region_wgts)?$a_region_wgts[$region]:array();
     $wgts_id = 'scholarlayout-' . str_replace('_', '-', $region);
     if ($s_page_type == 'all') _check_for_overrides($widgets, $region, $scholar);
-    _check_for_disabled_widgets($widgets, $a_feature_contexts, $scholar);
+    _check_for_disabled_widgets($widgets, $scholar);
     $a_themed_regions[$region] = theme('vsite_layout_layout_widgets', $widgets, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
   }
   $a_themed_regions['content'] = theme('vsite_layout_layout_widgets', array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
@@ -316,144 +298,128 @@ function vsite_layout_alter_theme_regions(&$a_widgets) {
 /**
  * Returns an associative array by region with the widgets sorted correctly
  *
- * @param scholar $scolar
  * @param string $page_type
  * @return array
  */
-function vsite_layout_region_widgets($scholar = FALSE, $page_type='all') {
-  if (!$scholar) $scholar = vsite_get_vsite();
-
-  static $a_cached_region_widgets = array();
-  if (array_key_exists($page_type, $a_cached_region_widgets)) return $a_cached_region_widgets[$page_type];
-
-  $a_widgets = vsite_layout_filtered_widgets($page_type);
-
-  if (!$scholar) return is_array($a_widgets)?$a_widgets:array();
-
-  $a_site_settings = FALSE;
-  $a_layout_settings = $scholar->controllers->variable->get('vsite_setting_layout');
-  if (is_array($a_layout_settings) && array_key_exists($scholar->group->og_theme, $a_layout_settings) && array_key_exists($page_type, $a_layout_settings[$scholar->group->og_theme])) {
-    $a_site_settings = $a_layout_settings[$scholar->group->og_theme][$page_type];
-    _widget_settings_order(array_keys($a_site_settings));
-  }
-
-  $a_region_widgets = array();
-  foreach ($a_widgets as $s_widget_key => $widget) {
-    $widget = (array)$widget;
-    if (!$a_site_settings && $widget['region']) {
-      $a_region_widgets[$widget['region']][$s_widget_key] = $widget;
-    }
-    elseif ($a_site_settings && array_key_exists($s_widget_key, $a_site_settings)) {
-      $s_reg_identifier = ($a_site_settings[$s_widget_key] == false)? 'unused':$a_site_settings[$s_widget_key]; //False in settings array = Unused
-      $a_region_widgets[$s_reg_identifier][$s_widget_key] = $widget;
-    }
-    else {
-      $a_region_widgets['unused'][$s_widget_key] = $widget;
-    }
-  }
-
-  if ($a_site_settings) foreach ($a_region_widgets as $region => $a_widgets) uksort($a_region_widgets[$region], "_widget_settings_sort");
-
-  $a_cached_region_widgets[$page_type] = $a_region_widgets;
-  return $a_region_widgets;
+function vsite_layout_region_widgets( $page_type='all') {
+  
+	if($page_type == 'all') $page_type = 'none'; //No active feature
+	$context = context_load('scholar-feature-'.$page_type);
+	
+	$a_region_widgets = array();
+	if($context && ($a_widgets = $context->reactions['block']['blocks'])){
+	
+	  foreach ($a_widgets as $s_widget_key => $widget) {
+	    $widget = (array)$widget;
+	    if ($widget['region']) {
+	      $a_region_widgets[$widget['region']][$s_widget_key] = $widget;
+	    }
+	    else {
+	      $a_region_widgets['unused'][$s_widget_key] = $widget;
+	    }
+	  }
+	}
+  
+	return $a_region_widgets;
 }
 
-//Util function for storing the order
-function _widget_settings_order($order = FALSE) {
-  static $a_order;
-  if ($order) $a_order = $order;
+////Util function for storing the order
+//function _widget_settings_order($order = FALSE) {
+//  static $a_order;
+//  if ($order) $a_order = $order;
+//
+//  return $a_order;
+//}
+//
+////Utility function for sorting the widgets
+//function _widget_settings_sort($a, $b) {
+//  $a_order = _widget_settings_order();
+//
+//  return (array_search($a, $a_order) < array_search($b, $a_order)) ? -1 : 1;
+//}
 
-  return $a_order;
-}
 
-//Utility function for sorting the widgets
-function _widget_settings_sort($a, $b) {
-  $a_order = _widget_settings_order();
-
-  return (array_search($a, $a_order) < array_search($b, $a_order)) ? -1 : 1;
-}
-
-/**
- * Alter the blocks avalible on a given page,  Apply users saved settings
- * @param array(spaces_context) $contexts
- * @return boolean
- * @todo this function does not exist any longer
- */
-//function vsite_layout_context_block_info_alter(&$blocks){
-function vsite_layout_context_active_contexts_alter(&$contexts) {
-  //Get the current feature
-  $s_feature = vsite_active_feature();
-
-  //Don't modify default contexts if:
-  //  1. there are no active contexts
-  //  2. We are not in a vsite
-  //  3. We are not public section
-  if (!count($contexts) || !($space = vsite_get_vsite()) || !array_key_exists('vsite-section-public', $contexts)){
-    //Do not show any of the features default blocks in cp context
-    if(context_isset('context','vsite-section-cp') && isset($contexts["scholar-feature-{$s_feature}"])) $contexts["scholar-feature-{$s_feature}"]->reactions['block']['blocks'] = array();
-
-    //If not CP or Public context return here and leave the defaults in place
-    return;
-  }
-
-  /**
-   * Load the feature context
-   */
-  $feature_context = isset($contexts["scholar-feature-{$s_feature}"]) ? $contexts["scholar-feature-{$s_feature}"] : NULL;
-  $s_feature_module = FALSE;
-
-  //Loop through features and get the current feature for the context
-  if ($feature_context) {
-    foreach (spaces_features() as $feature) {
-      if (in_array("scholar-feature-{$s_feature}", drupal_map_assoc($feature->info['features']['context']))) {
-        $s_feature_module = $feature->name;
-        break;
-      }//Break when you find the feature
-    }//Loop through them
-  }//We have a feature
-
-  /**
-   * Load the Settings
-   */
-  if ($feature_context && $s_feature_module) {
-    $a_region_widgets = vsite_layout_region_widgets($space, $s_feature_module);
-  }//Is a feature  context active
-
-  //If we still don't have the settings get the default settings
-  if (!isset($a_region_widgets)) $a_region_widgets = vsite_layout_region_widgets($space);
-
-  /**
-   * Remove existing blocks from the public / sub contexts
-   */
-  $contexts['vsite-section-public']->reactions['block']['blocks'] = array();
-  if ($feature_context) $feature_context->reactions['block']['blocks'] = array();
-
-  /**
-   * Build The replacement block from the settings
-   */
-  foreach ($a_region_widgets as $s_region => $a_region) {
-    if ($feature_context) _check_for_disabled_widgets($a_region, array("scholar-feature-{$s_feature}"), $space); //Filter out disabled widgets
-
-    $n_weight = 0;
-    if ($s_region == 'unused') continue;
-    foreach ($a_region as $a_widget) {
-      if (isset($a_widget['hidden']) && $a_widget['hidden']) continue; //Skip disabled wgts
-
-      $a_widget['region'] = $s_region;
-      $a_widget['weight'] = $n_weight++;
-      if ($feature_context && $s_feature_module == $a_widget['module']) {
-        //Build new block settings for the feature
-        $feature_context->reactions['block']['blocks'][] = $a_widget;
-      }
-      else {
-        //Build new block settings for the public context
-        $contexts['vsite-section-public']->reactions['block']['blocks'][] = $a_widget;
-      }
-    }//For each widget in a region
-  }//For Each region in the settings
-
-  return TRUE;
-}
+///**
+// * Alter the blocks avalible on a given page,  Apply users saved settings
+// * @param array(spaces_context) $contexts
+// * @return boolean
+// * @todo this function does not exist any longer
+// */
+////function vsite_layout_context_block_info_alter(&$blocks){
+//function vsite_layout_context_active_contexts_alter(&$contexts) {
+//  //Get the current feature
+//  $s_feature = vsite_active_feature();
+//
+//  //Don't modify default contexts if:
+//  //  1. there are no active contexts
+//  //  2. We are not in a vsite
+//  //  3. We are not public section
+//  if (!count($contexts) || !($space = vsite_get_vsite()) || !array_key_exists('vsite-section-public', $contexts)){
+//    //Do not show any of the features default blocks in cp context
+//    if(context_isset('context','vsite-section-cp') && isset($contexts["scholar-feature-{$s_feature}"])) $contexts["scholar-feature-{$s_feature}"]->reactions['block']['blocks'] = array();
+//
+//    //If not CP or Public context return here and leave the defaults in place
+//    return;
+//  }
+//
+//  /**
+//   * Load the feature context
+//   */
+//  $feature_context = isset($contexts["scholar-feature-{$s_feature}"]) ? $contexts["scholar-feature-{$s_feature}"] : NULL;
+//  $s_feature_module = FALSE;
+//
+//  //Loop through features and get the current feature for the context
+//  if ($feature_context) {
+//    foreach (spaces_features() as $feature) {
+//      if (in_array("scholar-feature-{$s_feature}", drupal_map_assoc($feature->info['features']['context']))) {
+//        $s_feature_module = $feature->name;
+//        break;
+//      }//Break when you find the feature
+//    }//Loop through them
+//  }//We have a feature
+//
+//  /**
+//   * Load the Settings
+//   */
+//  if ($feature_context && $s_feature_module) {
+//    $a_region_widgets = vsite_layout_region_widgets($space, $s_feature_module);
+//  }//Is a feature  context active
+//
+//  //If we still don't have the settings get the default settings
+//  if (!isset($a_region_widgets)) $a_region_widgets = vsite_layout_region_widgets($space);
+//
+//  /**
+//   * Remove existing blocks from the public / sub contexts
+//   */
+//  $contexts['vsite-section-public']->reactions['block']['blocks'] = array();
+//  if ($feature_context) $feature_context->reactions['block']['blocks'] = array();
+//
+//  /**
+//   * Build The replacement block from the settings
+//   */
+//  foreach ($a_region_widgets as $s_region => $a_region) {
+//    if ($feature_context) _check_for_disabled_widgets($a_region, array("scholar-feature-{$s_feature}"), $space); //Filter out disabled widgets
+//
+//    $n_weight = 0;
+//    if ($s_region == 'unused') continue;
+//    foreach ($a_region as $a_widget) {
+//      if (isset($a_widget['hidden']) && $a_widget['hidden']) continue; //Skip disabled wgts
+//
+//      $a_widget['region'] = $s_region;
+//      $a_widget['weight'] = $n_weight++;
+//      if ($feature_context && $s_feature_module == $a_widget['module']) {
+//        //Build new block settings for the feature
+//        $feature_context->reactions['block']['blocks'][] = $a_widget;
+//      }
+//      else {
+//        //Build new block settings for the public context
+//        $contexts['vsite-section-public']->reactions['block']['blocks'][] = $a_widget;
+//      }
+//    }//For each widget in a region
+//  }//For Each region in the settings
+//
+//  return TRUE;
+//}
 
 
 /**
@@ -479,16 +445,20 @@ function _vsite_layout_generate_default_settings_ary($s_page_type = 'all', $b_in
 }
 
 function _check_for_overrides(&$widgets, $s_region, $space = NULL) {
-  if (!$space) $space = vsite_get_vsite();
-
+  if(!count($widgets)) return;
+	
+	if (!$space) $space = vsite_get_vsite();
+   
   $a_layout_settings = ($space)?$space->controllers->variable->get('vsite_setting_layout'):array();
 
   foreach (vsite_layout_get_pagetypes($space) as $s_page_nm => $s_page_readable) {
-    if ($s_page_nm == 'all' || !count($widgets)) continue;
-    $a_page_settings = (is_array($a_layout_settings[$space->group->og_theme][$s_page_nm]))?$a_layout_settings[$space->group->og_theme][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
-
+    if ($s_page_nm == 'all') continue;
+    //$a_page_settings = (is_array($a_layout_settings[$space->group->og_theme][$s_page_nm]))?$a_layout_settings[$space->group->og_theme][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
+    $context = context_load('scholar-feature-'.$page_type);
+    if(!($a_page_widgets = $context->reactions['block']['blocks'])) continue;
+    
     foreach ($widgets as $s_wgt_name => $wgt) {
-      if (!array_key_exists($s_wgt_name, $a_page_settings) || $a_page_settings[$s_wgt_name] != $s_region) {
+      if (!array_key_exists($s_wgt_name, $a_page_widgets) || $a_page_widgets[$s_wgt_name]['region'] != $s_region) {
         $widgets[$s_wgt_name]['overides'][] = $s_page_readable;
       }
     }
@@ -502,37 +472,11 @@ function _check_for_overrides(&$widgets, $s_region, $space = NULL) {
  * @param $a_feature_contexts array of contexts
  * @param $space space to check for overides
  */
-function _check_for_disabled_widgets(&$widgets, $a_feature_contexts, $space = NULL) {
+function _check_for_disabled_widgets(&$widgets, $space = NULL) {
   if (!count($widgets)) return; //Nothing to do because there are no widgets to act on
   if (!$space) $space = vsite_get_vsite(); //Get current Viste
 
-  //The following block of code customizes / disables a widget based on the feature settings
-  if (count($a_feature_contexts) && is_array($space->customizer) && is_array($space->customizer['block'])          //Make sure there are settings saved
-  && count(array_intersect($a_feature_contexts, array_keys($space->customizer['block'])))) {                        //that should be used to filter for this context
-
-    static $a_customized_widgets = array(); //Just store this once since it will not change
-    if (!array_key_exists($space->group->nid, $a_customized_widgets)) $a_customized_widgets[$space->group->nid] = array(); //Store flattened settings by site / context
-
-    //The widgets for this combo of contexts
-    $a_page_widgets = array();
-
-    foreach (array_intersect($a_feature_contexts, array_keys($space->customizer['block'])) as $s_context) {
-      if (!array_key_exists($s_context, $a_customized_widgets[$space->group->nid])) {
-        $a_customized_widgets[$space->group->nid][$s_context] = array(); //Store the blocks in the static variable
-        foreach ($space->customizer['block'][$s_context] as $a_context_widgets) $a_customized_widgets[$space->group->nid][$s_context] = array_merge($a_customized_widgets[$space->group->nid][$s_context], $a_context_widgets);
-      } //Gather the settings into the static var
-
-      $a_page_widgets = array_merge($a_page_widgets, $a_customized_widgets[$space->group->nid][$s_context]);
-    }
-
-    foreach ($widgets as $s_wgt_name => $wgt) {
-      if (array_key_exists($s_wgt_name, $a_page_widgets) && array_key_exists('status', $a_page_widgets[$s_wgt_name])) {
-        $widgets[$s_wgt_name]['hidden'] = !$a_page_widgets[$s_wgt_name]['status'];
-      }
-    }//Use the settings to change the widget
-  }
-
-  $space_features = $space->controllers->variable->get('spaces_features');
+  $space_features = variable_get('spaces_features');
   foreach ($widgets as $s_wgt_name => $wgt) {
     if (array_key_exists($wgt['module'], $space_features) && $space_features[$wgt['module']] == FEATURE_DISABLED) {
       //if this block is provided by a feature and that feature is disabled do not show the block
@@ -559,18 +503,6 @@ function _check_for_disabled_widgets(&$widgets, $a_feature_contexts, $space = NU
 
   }//If the parent is a feature and it is disabled then lets not show this block or if views does not give access (usually using the feature access)
 
-}
-
-/**
- * hook form_alter
- */
-function vsite_layout_form_alter(&$form, &$form_state, $form_id) {
-
-  //Add extra submit handler to spaces_features_form
-  if (arg(0) == 'cp' && $form_id == 'spaces_features_form') {
-    if (!is_array($form['#submit'])) $form['#submit'] = array();
-    array_push($form['#submit'], 'vsite_layout_spaces_features_form');
-  }//End  spaces_features_form
 }
 
 /**
