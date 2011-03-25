@@ -1,18 +1,17 @@
 #scholarlayout-container {
-  width: 980px;
-  height: 480px;
+  width: 848px;
+  height: 560px;
   position: relative;
   margin-left: 0;
-  margin-top: 6px;
+  margin-top: 10px;
   font-size: 12px;
-  background: #bac2c8;
   }
 
 #scholarlayout-container .scholarlayout-widgets-list {
   position: absolute;
   padding: 0;
   margin: 0;
-  border: 1px dashed #000;
+  border: 1px dashed #5e819e;
   background:#fff;
   }
 
@@ -59,8 +58,14 @@
   height:106px;
   background:#eaebe9;
   width: 100%;
+  padding-left: 22px;
   margin-bottom: 0;
   overflow:hidden;
+  }
+
+#cp-settings-site {
+  padding-top: 10px;
+  background:url(images/cp-settings-site.png) repeat-x 0 -22px transparent;
   }
 
 #cp-settings-site #cp-settings-form fieldset {
@@ -68,7 +73,7 @@
   }
 
 dd.scholarlayout-item {
-  font-size: 12px;
+  font-size: 1.2em;
   line-height: 1em;
   font-weight: bold;
   color:#565e66;
@@ -179,31 +184,22 @@ dd.scholarlayout-item .close-this {
   clear: both;
   }
 
-.section-cp-appearance #page {
-  background:url(images/cp-settings-site.png) repeat-x 0 -115px transparent;
-  }
-
-.section-cp-appearance form#cp-settings-form .fieldset-content {
-  padding-top: 0;
-  background: transparent;
-  }
-
 #edit-settings-layout-page-type-wrapper  {
   position: relative;
-  height: 30px;
-  background: #bac2c8;
-  padding: 5px;
+  height: 37px;
+
   }
 
 #edit-settings-layout-page-type-wrapper label,
 #edit-settings-layout-page-type-wrapper .description {
   color: #fff;
+  background:#666f7a;
   }
+
 
 #edit-settings-layout-page-type-wrapper label, #edit-settings-layout-page-type-wrapper select {
   float: left;
-  margin-left: 6px;
-  line-height: 30px;
+  margin-right: 6px;
   }
 
 #edit-settings-layout-page-type-wrapper .description {
@@ -258,16 +254,14 @@ dd.scholarlayout-item .close-this {
 .ahah-progress {
   position: absolute;
   left: 260px;
+  top:-9px;
   height: 31px;
   padding-top: 6px;
   float:none;
+  background: #666F7A;
   width: 200px;
-  color: #000;
-  font-size:11px;
+  color: #FBD242;
   line-height: 26px;
   font-weight:bold;
   }
 
-.ahah-progress img {
-  vertical-align: middle;
-  }

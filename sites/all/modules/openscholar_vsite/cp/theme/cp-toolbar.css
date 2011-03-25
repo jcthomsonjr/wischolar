@@ -1,64 +1,15 @@
-/*
-#admin-toolbar #block-menu-cp ul.menu li.leaf {
-  background: transparent;
-  height: 32px;
+#cp-toolbar-toolbar,
+#cp-toolbar-user {
+  height: 40px;
+  clear:none !important;
   }
-
-#admin-toolbar #block-menu-cp ul.menu li a {
-  -moz-border-radius: 5px 5px 5px 5px;
-  background: url('images/topmenu-icons.png') no-repeat scroll 0 0 transparent;
-  border-bottom: 1px solid #222222;
-  display: block;
-  height: 26px;
-  line-height:24px;
-  margin-left: 0;
-  overflow: hidden;
-  padding: 2px 10px 2px 32px;
-  white-space: nowrap;
-  }
-
-#admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(2) a {
-  background-position: 0 -27px;
-  }
-
-#admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(3) a {
-  background-position: 0 -54px;
-  }
-
-#admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(4) a {
-  background-position: 0 -82px;
-  }
-
-#admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(5) a {
-  background-position: 0 -111px;
-  }
-
-#admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(6) a {
-  background-position: 0 -139px;
-  }
-
-#admin-toolbar #block-menu-cp ul.menu li.leaf:nth-child(7) a {
-  background-position: 0 -167px;
-  }
-
-#admin-toolbar #block-menu-cp ul.menu li a:hover {
-  background-color: #ccc;
-  color: #000;
-  }
-*/
-
-/*
-#cp-top-admin-menus, #cp-toolbar-toolbar, #cp-toolbar-user {
-  height: 55px;
-  }
-
-*/
 
 #cp-toolbar-toolbar li, #cp-toolbar-user li {
+  height: 40px;
+  line-height: 40px;
   margin-top: 0;
   }
 
-/*
 #cp-toolbar-toolbar {
   float: left;
   margin-left: 10px;
@@ -67,35 +18,12 @@
 #cp-toolbar-user  {
   float: right;
   margin-right: 10px;
-  margin-top: 14px;
   }
-*/
 
-#cp-top-admin-menus li,
-#cp-top-admin-menus li a {
-  /* float: left;
-  margin-right: 18px;*/
+#cp-toolbar-toolbar li {
+  float: left;
+  margin-right: 18px;
   padding: 0;
-  display:block !important;
-  float: none !important;
-  clear:both;
-  font-size: 10px;
-  }
-
-#cp-top-admin-menus li a {
-  padding: 2px;
-  height:27px;
-  font-weight:bold;
-  color: #000;
-  text-shadow: rgba(255, 255, 255, 0.746094) 0px 1px 0px;
-  border-bottom: 1px solid #C7CCD1;
-  border-top: 1px solid #E9EAEB;
-  }
-
-#cp-top-admin-menus li a span.icon {
-  display:inline;
-  float:left;
-  margin-right: 4px;
   }
 
 #cp-toolbar-toolbar li.active-trail {
@@ -108,47 +36,50 @@
   }
 
 #cp-toolbar-toolbar li a {
+  padding-left: 30px !important;
+  background: url(images/topmenu-icons.png) no-repeat 0 0 transparent;
+  font-size: 10px !important;
+  line-height: 27px !important;
+  font-weight: normal !important;
+  color:#ddd !important;
   display:block !important;
+  height: 27px;
   margin-top: 6px !important;
   font-style: normal !important;
+  font-family: arial, sans-serif !important;
   text-decoration:none !important;
   }
 
-#cp-toolbar-toolbar li a .icon {
-  background: url(images/topmenu-icons.png) no-repeat 0 0 transparent;
-  margin: 0 auto;
-  height: 27px;
-  }
-
-#cp-toolbar-toolbar li a#admin-link-cp-features .icon {
+#cp-toolbar-toolbar li a#admin-link-cp-features {
   background-position: 0 0;
   }
 
-#cp-toolbar-toolbar li a#admin-link-cp-appearance .icon {
+#cp-toolbar-toolbar li a#admin-link-cp-appearance {
   background-position: 0 -28px;
   }
 
-#cp-toolbar-toolbar li a#admin-link-cp-settings .icon {
+#cp-toolbar-toolbar li a#admin-link-cp-settings {
   background-position: 0 -56px;
   }
 
-#cp-toolbar-toolbar li a#admin-link-cp-content .icon {
+#cp-toolbar-toolbar li a#admin-link-cp-content {
   background-position: 0 -84px;
   }
 
-#cp-toolbar-toolbar li a#admin-link-cp-users .icon {
+#cp-toolbar-toolbar li a#admin-link-cp-users {
   background-position: 0 -112px;
   }
-#cp-toolbar-toolbar li a#admin-link-cp-news .icon {
+#cp-toolbar-toolbar li a#admin-link-cp-news {
   background-position: 0 -140px;
   }
 
-#cp-toolbar-toolbar li a#admin-link-cp-support .icon {
+#cp-toolbar-toolbar li a#admin-link-cp-support {
   background-position: 0 -168px;
   }
 
-#cp-toolbar-user li a,
-#cp-toolbar-user li a:visited {
+#cp-toolbar-user li a, #cp-toolbar-user li a:visited {
+  font-size: 12px !important;
+  color: #ddd !important;
   }
 
 #cp-toolbar-user li.last a, #cp-toolbar-user li.last a:visited {
