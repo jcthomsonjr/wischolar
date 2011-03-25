@@ -98,6 +98,10 @@ function cp_init() {
     drupal_add_js($modal_styles, 'setting');
 
   } //Allow special popups if they are admin
+  
+  if(cp_get_toolbar_setting() == 'full'){
+  	drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
+  }
 }
 
 /**
@@ -237,7 +241,6 @@ function cp_menu() {
   foreach ($items as $path => $item) {
     if (!array_key_exists('menu_name', $item)) $items[$path]['menu_name'] = 'cp';
     if (!array_key_exists('access callback', $item)) $items[$path]['access callback'] = 'cp_access_cp';
-    //$items[$path]['access arguments'] = array('access content'); //TODO fix this
   }
 
   $items["cp/allow_callback_override"] = array(
@@ -443,7 +446,9 @@ function cp_preprocess_page(&$vars) {
   	break;
   	
   	case 'full':
-  		drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
+  		$links = cp_toolbar_menu_links();
+	    $vars ['cp_toolbar'] = theme('cp_toolbar', $links);
+	    $vars ['body_classes'] .= ' cp-toolbar-full';
   	break;
   }
   
@@ -839,4 +844,37 @@ function cp_context_links_alter(&$links) {
   	//We do not need a context link for every content type editable in the CP
   	$links = array_diff_key($links,$cp_context->conditions[$condition]['values']);
   }
+}
+
+/**
+ * Helper function to return user-specific links for the toolbar menu.
+ * @return
+ *   Associative array of links for the current user
+ */
+function cp_toolbar_menu_links() {
+  $links = array();
+
+  // Retrieve the admin menu from the database.
+  $tree = menu_tree_all_data('cp');
+  $links[0]['toolbar'] = cp_menu_navigation_links($tree);
+
+  // Add user-specific links
+  global $user;
+  $user_links = array();
+  $user_links[] = array(
+    'title' => t('Hello <strong>!username</strong>', array('!username' => $user->name)),
+    'href' => 'cp/users',
+    'html' => TRUE
+  );
+  $user_links[] = array('title' => t('Logout'), 'href' => "logout");
+  if (context_get('vsite', 'section') == 'cp') {
+    $user_links[] = array(
+      'title' => t('Back to <strong>!sitename</strong>', array('!sitename' => vsite_get_vsite()->purl)),
+      'href' => "",
+      'html' => TRUE
+    );
+  }
+  $links[0]['user'] = $user_links;
+
+  return $links;
 }
