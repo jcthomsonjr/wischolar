@@ -47,8 +47,9 @@ if (!class_exists('purl_vsite_path')) {
 	      
 	      if(array_key_exists('absolute',$options) && $options['absolute']){
 	      	
-	      	$generic_settings = variable_get('vsite_settings_generic');
-          if(is_array($generic_settings) && str_replace('http://', '', $_SERVER['HTTP_HOST']) == $generic_settings['vsite_domain']){
+	      	if($element->id) $vsite = vsite_get_vsite($element->id);
+	      	$generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
+          if(is_array($generic_settings) && $generic_settings['vsite_domain']){
             $options['base_url'] = "http://".$generic_settings['vsite_domain'];
           }else{
           	global $base_url;

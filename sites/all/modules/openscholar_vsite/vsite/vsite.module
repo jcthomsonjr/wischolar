@@ -247,6 +247,7 @@ function vsite_theme($cache, $type, $theme, $path) {
  * Implementation of preprocess_views_view().
  */
 function vsite_preprocess_views_view(&$vars) {
+  vsite_include('vsiteapi');
   if ($feature = vsite_active_feature()) {
     $contexts = context_enabled_contexts();
     $context = isset($contexts["scholar-feature-{$feature}"]) ? $contexts["scholar-feature-{$feature}"] : NULL;
