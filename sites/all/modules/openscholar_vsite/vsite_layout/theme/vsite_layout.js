@@ -13,16 +13,16 @@ Drupal.behaviors.scholarlayout = function() {
     	});
 
 
-	    $("#edit-settings-layout-page-type").bind('change', function(e){
+	    $("#edit-page-type").bind('change', function(e){
 	    	if(scholarlayout_catchchanges()){
-	    		$('#edit-settings-layout-secret-hidden-ahah').val($("#edit-settings-layout-page-type").val());
-		    	$('#edit-settings-layout-secret-hidden-ahah').trigger('go_ahah');
-		    	$("#edit-settings-layout-page-type").trigger('go_ahah');
+	    		$('#edit-secret-hidden-ahah').val($("#edit-page-type").val());
+		    	$('#edit-secret-hidden-ahah').trigger('go_ahah');
+		    	$("#edit-page-type").trigger('go_ahah');
 		    	$("#scholarforms_save_warning").remove();
 		    	scholarlayout_add_sortable(layoutRegions);
 	    	}else{
 	    		//revert
-	    		$('#edit-settings-layout-page-type').val($("#edit-settings-layout-secret-hidden-ahah").val());
+	    		$('#edit-page-type').val($("#edit-secret-hidden-ahah").val());
 	    	}
 	    });
 
@@ -67,7 +67,7 @@ function scholarlayout_afterdrag(event, ui) {
 	      if(ids.length) ids += "|";
 	      ids += value.id;
 	    } );
-	   	$('#edit-settings-layout-'+region.id).val(ids);
+	   	$('#edit-'+region.id).val(ids);
 	  });
 
 	  //Reset top box after widgets have been moved
