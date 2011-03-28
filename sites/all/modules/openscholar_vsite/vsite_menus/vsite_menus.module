@@ -218,7 +218,6 @@ function vsite_menus_get_menu_tree($s_menu = 'primary', $b_html = TRUE, $b_check
   if ($b_make_feature_active && module_exists('context')) {
     $a_new_links = array();
     foreach ($a_settings_menu as $key => $link) {
-    	dpm('replace context_menu_set_active');
       $a_new = array();//current(context_menu_set_active(array($link['link'])));
       if (is_array($a_new['attributes']) && $a_new['attributes']['class'] == 'active') {
         $a_settings_menu[$key]['link']['in_active_trail'] = TRUE;
