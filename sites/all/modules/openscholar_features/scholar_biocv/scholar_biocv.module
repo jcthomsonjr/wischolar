@@ -25,6 +25,17 @@ function scholar_biocv_menu(){
     'menu_name' => 'features',
     'type' => MENU_LOCAL_TASK,
   );
+  
+ $items['features/scholar_biocv'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_biocv_settings'),
+    'access callback' => module_exists('spaces') ? 'spaces_access_admin' : 'user_access',
+    'access arguments' => module_exists('spaces') ? array() : array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'scholar_biocv.pages.inc',
+  );
+  
 
   return $items;
 }
