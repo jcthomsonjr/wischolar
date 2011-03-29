@@ -46,16 +46,13 @@ function cite_distribute_flag_default_flags($flags = array(), $i =0) {
     'unflag_message' => '',
     'unflag_denied_text' => '',
     'link_type' => 'normal', //normal, toggle, confirm
-    'roles' =>
-    array (
-    'flag' =>
-    array (
-    0 => '2',
-    ),
-    'unflag' =>
-    array (
-    0 => '2',
-    ),
+    'roles' => array (
+    	'flag' => array (
+    		0 => '2',
+    	),
+    	'unflag' => array (
+    		0 => '2',
+    	),
     ),
     //hiding these on page, teaser, and edit node
     'show_on_page' => false,
@@ -64,15 +61,14 @@ function cite_distribute_flag_default_flags($flags = array(), $i =0) {
     'access_author' => '',
     'i18n' => 0,
     'status' => true,
-    'locked' =>
-    array (
-    'name' => 'name',
-    'show_on_page' => 'show_on_page',
-    'show_on_teaser' => 'show_on_teaser',
-    'show_on_form' => 'show_on_form',
-    'global' => 'global',
-    'link_type' => 'link_type',
-    'types' => 'types',
+    'locked' => array (
+    	'name' => 'name',
+    	'show_on_page' => 'show_on_page',
+    	'show_on_teaser' => 'show_on_teaser',
+    	'show_on_form' => 'show_on_form',
+    	'global' => 'global',
+    	'link_type' => 'link_type',
+    	'types' => 'types',
     ),
     'api_version' => 2,
     'module' => 'cite_distribute',
@@ -512,8 +508,36 @@ function cite_distribute_fix_filepath($filepath){
 function cite_distribute_place_template($module, $filepath, $filename, $template, $flag = NULL){
   //make sure trailing slash is included at the end of the file path
   $filepath = cite_distribute_fix_filepath($filepath);
+  
+  //ensure file path is a directory.  create it if necessary.
+  if (!is_dir($filepath)) {
+  	$mkdir = mkdir($filepath, 0775, TRUE);
+  }
+  
   //place the file in the correct directory location
   $place_template = file_put_contents( $filepath . $filename, $template, $flag);
+  
+  //log errors
+  if (!$place_template) { 
+  	watchdog("cite_distribute", 
+  	  	     "cite_distribute failed to create file @file in path @filepath.  Attempted to write template: @template", 
+  			 array('@file'=>$filename,'@filepath'=>$filepath,'@template'=>$template),
+  			 WATCHDOG_ERROR
+  			 ); 
+  }
+  
+  //define a hook that checks each module to see if they have any additional tasks
+  //repec needs to create an archive and series template.
+  /// no, not a hook.  we don't need to give every module on the site a chance to react.  just the one being called.  $module->callback ftw.
+  $submodules = module_invoke_all('cite_distribute_register');
+  foreach($submodules as $m) {
+  	if ($m['name'] == $module &&
+  		isset($m['callback']) &&
+  		function_exists( $m['callback'] )) {
+  			$m['callback']();
+  	}
+  }
+  
 }
 
 /**
