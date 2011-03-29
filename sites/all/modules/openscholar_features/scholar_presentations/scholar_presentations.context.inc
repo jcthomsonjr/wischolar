@@ -3,57 +3,57 @@
 /**
  * Implementation of hook_context_default_contexts().
  */
-function scholar_announcements_context_default_contexts() {
+function scholar_presentations_context_default_contexts() {
   $export = array();
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'openscholar-feature-announcements';
-  $context->description = 'Announcements';
+  $context->name = 'openscholar-feature-presentations';
+  $context->description = 'Presentations';
   $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'announcement',
+        0 => 'presentation',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_announcements',
+        0 => 'scholar_presentations',
       ),
       'options' => array(),
     ),
   );
   $context->reactions = array(
-    'menu' => 'announcements',
+    'menu' => 'presentations',
     'block' => array(
       'blocks' => array(
-        'views-scholar_announcements-block_1' => array(
+        'views-scholar_presentations-block_1' => array(
           'module' => 'views',
-          'delta' => 'scholar_announcements-block_1',
-          'weight' => -21,
+          'delta' => 'scholar_presentations-block_1',
+          'weight' => 38,
           'region' => 'right',
           'status' => '0',
-          'label' => 'Latest Announcements',
+          'label' => 'Recent Presentations',
           'type' => 'context_ui',
         ),
         'vsite_taxonomy-0' => array(
           'module' => 'vsite_taxonomy',
           'delta' => '0',
-          'weight' => -20,
+          'weight' => 39,
           'region' => 'right',
           'status' => '0',
-          'label' => 'Scholar site categories',
+          'label' => 'Categories - Filter categorized content',
           'type' => 'context_ui',
         ),
         'vsite_widgets-2' => array(
           'module' => 'vsite_widgets',
           'delta' => '2',
-          'weight' => 50,
+          'weight' => 40,
           'region' => 'right',
           'status' => '0',
-          'label' => 'AddThis button',
+          'label' => 'ShareThis Button - Allows you to share posts using popular online services',
           'type' => 'context_ui',
         ),
       ),
@@ -63,8 +63,8 @@ function scholar_announcements_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Announcements feature context');
+  t('Presentations feature context');
 
-  $export['openscholar-feature-announcements'] = $context;
+  $export['openscholar-feature-presentations'] = $context;
   return $export;
 }

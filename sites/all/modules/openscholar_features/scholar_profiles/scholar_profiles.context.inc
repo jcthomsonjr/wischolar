@@ -8,9 +8,9 @@ function scholar_profiles_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-profiles';
-  $context->description = 'scholar > profiles';
-  $context->tag = 'feature';
+  $context->name = 'openscholar-feature-profiles';
+  $context->description = 'People Profiles';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
@@ -53,6 +53,6 @@ function scholar_profiles_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('scholar > profiles');
 
-  $export['scholar-feature-profiles'] = $context;
+  $export['openscholar-feature-profiles'] = $context;
   return $export;
 }

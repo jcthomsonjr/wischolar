@@ -8,9 +8,9 @@ function scholar_software_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-software';
-  $context->description = '';
-  $context->tag = 'feature';
+  $context->name = 'openscholar-feature-software';
+  $context->description = 'Software and Software Releases';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
@@ -73,6 +73,6 @@ function scholar_software_context_default_contexts() {
   );
   $context->condition_mode = 0;
 
-  $export['scholar-feature-software'] = $context;
+  $export['openscholar-feature-software'] = $context;
   return $export;
 }

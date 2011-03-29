@@ -8,9 +8,9 @@ function scholar_pages_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-section-pages';
+  $context->name = 'openscholar-feature-pages';
   $context->description = 'Custom Pages';
-  $context->tag = 'Section';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
@@ -29,6 +29,6 @@ function scholar_pages_context_default_contexts() {
   t('Custom Pages');
   t('Section');
 
-  $export['scholar-section-pages'] = $context;
+  $export['openscholar-feature-pages'] = $context;
   return $export;
 }

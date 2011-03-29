@@ -8,9 +8,9 @@ function scholar_biocv_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-biocv';
-  $context->description = 'scholar > biocv';
-  $context->tag = 'feature';
+  $context->name = 'openscholar-feature-biocv';
+  $context->description = 'Bio and CV';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'path' => array(
       'values' => array(
@@ -40,6 +40,6 @@ function scholar_biocv_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('scholar > biocv');
 
-  $export['scholar-feature-biocv'] = $context;
+  $export['openscholar-feature-biocv'] = $context;
   return $export;
 }

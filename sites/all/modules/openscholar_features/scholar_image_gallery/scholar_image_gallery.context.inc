@@ -8,9 +8,9 @@ function scholar_image_gallery_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-image_gallery';
-  $context->description = 'scholar > image gallery';
-  $context->tag = 'feature';
+  $context->name = 'openscholar-feature-image_gallery';
+  $context->description = 'Image Galleries';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
@@ -66,6 +66,6 @@ function scholar_image_gallery_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('scholar > image gallery');
 
-  $export['scholar-feature-image_gallery'] = $context;
+  $export['openscholar-feature-image_gallery'] = $context;
   return $export;
 }

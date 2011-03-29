@@ -8,9 +8,9 @@ function scholar_dvn_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-dvn';
-  $context->description = 'Datverse Feature Context';
-  $context->tag = 'feature';
+  $context->name = 'openscholar-feature-dvn';
+  $context->description = 'Datverse';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'menu' => array(
       'values' => array(
@@ -26,6 +26,6 @@ function scholar_dvn_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('Datverse Feature Context');
 
-  $export['scholar-feature-dvn'] = $context;
+  $export['openscholar-feature-dvn'] = $context;
   return $export;
 }

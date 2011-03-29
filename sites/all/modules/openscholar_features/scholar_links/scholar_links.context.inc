@@ -8,9 +8,9 @@ function scholar_links_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-links';
-  $context->description = 'Links feature context';
-  $context->tag = 'feature';
+  $context->name = 'openscholar-feature-links';
+  $context->description = 'Links';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
@@ -56,6 +56,6 @@ function scholar_links_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('Links feature context');
 
-  $export['scholar-feature-links'] = $context;
+  $export['openscholar-feature-links'] = $context;
   return $export;
 }

@@ -8,9 +8,9 @@ function scholar_events_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-events';
-  $context->description = '';
-  $context->tag = 'feature';
+  $context->name = 'openscholar-feature-events';
+  $context->description = 'Calendar and Events';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
@@ -71,6 +71,6 @@ function scholar_events_context_default_contexts() {
   );
   $context->condition_mode = 0;
 
-  $export['scholar-feature-events'] = $context;
+  $export['openscholar-feature-events'] = $context;
   return $export;
 }

@@ -8,9 +8,9 @@ function scholar_book_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-book';
-  $context->description = 'scholar > book';
-  $context->tag = 'feature';
+  $context->name = 'openscholar-feature-book';
+  $context->description = 'Books';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
@@ -56,6 +56,6 @@ function scholar_book_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('scholar > book');
 
-  $export['scholar-feature-book'] = $context;
+  $export['openscholar-feature-book'] = $context;
   return $export;
 }

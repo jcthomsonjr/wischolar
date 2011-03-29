@@ -8,9 +8,9 @@ function scholar_publications_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'scholar-feature-publications';
+  $context->name = 'openscholar-feature-publications';
   $context->description = 'Publications';
-  $context->tag = 'feature';
+  $context->tag = 'Feature';
   $context->conditions = array(
     'node' => array(
       'values' => array(
@@ -62,6 +62,6 @@ function scholar_publications_context_default_contexts() {
   );
   $context->condition_mode = 0;
 
-  $export['scholar-feature-publications'] = $context;
+  $export['openscholar-feature-publications'] = $context;
   return $export;
 }
