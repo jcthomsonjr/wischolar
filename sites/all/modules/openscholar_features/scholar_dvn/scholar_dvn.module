@@ -17,6 +17,16 @@ function scholar_dvn_menu(){
     'access arguments' => array('view','scholar_dvn'),
     'menu_name' => 'features',
   );
+  
+ $items['features/scholar_dvn'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_dvn_settings'),
+    'access callback' => module_exists('spaces') ? 'spaces_access_admin' : 'user_access',
+    'access arguments' => module_exists('spaces') ? array() : array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'scholar_dvn.pages.inc',
+  );
 
   return $items;
 }
@@ -24,10 +34,10 @@ function scholar_dvn_menu(){
 function scholar_dvn_data(){
   drupal_add_js(drupal_get_path('module', 'scholar_dvn') .'/scholar_dvn.js');
   $vsite = vsite_get_vsite();
+  $dvn_alias = variable_get('scholar_dvn_dvn_alias', '');
   
-  if ($vsite && ($a_dvn_settings = $vsite->controllers->variable->get('vsite_setting_scholar_dvn'))) {
+  if ($vsite && $dvn_alias) {
     // Show DVN in iframe
-    $dvn_alias = $a_dvn_settings['dvn_alias'];
     $path = "http://dvn.iq.harvard.edu/dvn/dv/" . $dvn_alias;
     if(strlen($_REQUEST['dvn_subpage'])) $path .= "/".ltrim($_REQUEST['dvn_subpage'],"/");
     return "<div id=\"feature-dataverse\"><iframe name=\"res\" scrolling=\"auto\" src =\"" . $path . "\"></iframe></div>";
@@ -58,14 +68,3 @@ function scholar_dvn_preprocess_page(&$vars){
   }
 }
 
-/**
- * Implementation of hook_spaces_settings().
- */
-function scholar_dvn_spaces_settings() {
-  return array(
-    'scholar_dvn' => array(
-      'class' => 'scholar_dvn_settings_feature',
-      'file' => drupal_get_path('module', 'scholar_dvn') .'/scholar_dvn.settings.feature.inc',
-    ),
-  );
-}
