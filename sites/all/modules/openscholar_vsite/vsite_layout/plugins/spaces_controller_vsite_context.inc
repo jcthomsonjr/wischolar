@@ -15,7 +15,7 @@ class spaces_controller_vsite_context extends spaces_controller_context {
       $context = context_load($context_name);
 
       list($namespace, $attribute, $value) = explode("-",$context_name);
-      if($namespace == "scholar" && $attribute == "feature" && $split[0] == "reaction" && $split[1] == "block"){
+      if($namespace == "openscholar" && $attribute == "feature" && $split[0] == "reaction" && $split[1] == "block"){
       	if(!isset($context->reactions['block']['blocks'])){
       		$context->reactions['block']['blocks'] = array();
       	}

@@ -371,7 +371,7 @@ function vsite_active_feature($s_active_feature = false){
     if(!empty($contexts) && is_array($contexts)){
     	foreach ($contexts as $s_key => $context) {
     		list($namespace,$key,$value) = explode("-",$s_key);
-    		if ($namespace == "scholar" && $key == "feature") {
+    		if ($namespace == "openscholar" && $key == "feature") {
     			$s_feature = $value;
     		}
     	}
