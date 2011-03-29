@@ -18,7 +18,6 @@ function vsite_layout_theme() {
   return array(
     'vsite_layout_layout' => array(
       'template' => 'vsite_layout-layout',
-      //'arguments' => array('vsite_layout_widgets' => NULL),
       'path' => drupal_get_path('module', 'vsite_layout') . '/theme'
     ),
 
@@ -41,6 +40,8 @@ function vsite_layout_menu() {
     'page callback' => 'vsite_layout_layout',
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
+    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
+    'file' => 'vsite_layout.admin.inc',
   );
   
   $items['cp/appearance/layout'] = array(
@@ -49,6 +50,8 @@ function vsite_layout_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
+    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
+    'file' => 'vsite_layout.admin.inc',
   );
 
   $items["cp/appearance/layout/region_widgets_js"] =
@@ -56,53 +59,19 @@ function vsite_layout_menu() {
     'page callback' => 'vsite_layout_region_widgets_callback',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
+    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
+    'file' => 'vsite_layout.admin.inc',
   );
   $items["cp/appearance/layout/top_widgets_js"] =
   $items["cp/appearance/top_widgets_js"] = array(
     'page callback' => 'vsite_layout_top_widgets_callback',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
+    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
+    'file' => 'vsite_layout.admin.inc',
   );
 
   return $items;
-}
-
-
-/**
- * main entry point for "cp/settings/appearance"
- */
-function vsite_layout_layout() {
-  jquery_ui_add(array('ui.draggable', 'ui.droppable', 'ui.sortable'));
-
-  drupal_add_js(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.js');
-  drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.css');
-  drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/cp-layout-map.css');
-
-  $space = vsite_get_vsite();
-  $a_info = drupal_parse_info_file(drupal_get_path('theme', $space->group->og_theme) . "/" . $space->group->og_theme . ".info");
-  if (is_array($a_info) && array_key_exists('scholar', $a_info) && array_key_exists('cp_layout_css', $a_info['scholar'])) {
-    //cp_layout_css
-    drupal_add_css(drupal_get_path('theme', $space->group->og_theme) . "/" . $a_info['scholar']['cp_layout_css']);
-  }
-
-
-  $s_page_type =  (isset($_GET['page_type']))? $_GET['page_type']:'all';
-
-  //top
-  $vsite_layout_widgets = vsite_layout_region_widgets($s_page_type);
-  $wgts = array_key_exists('unused', $vsite_layout_widgets)?$vsite_layout_widgets['unused']:array();
-
-  //Disable widgets that are part of inactive features
-  _check_for_disabled_widgets($wgts);
-  
-  
-  $top = theme('vsite_layout_layout_widgets', $wgts, 'scholarlayout-top-widgets', 'scholarlayout-widgets-list');
-
-  //form
-  module_load_include('inc', 'vsite_layout', 'includes/vsite_layout.admin');
-  $form = call_user_func_array('drupal_get_form', array('vsite_layout_settings_form'));
-
-  return $top . $form;
 }
 
 /**
@@ -135,135 +104,6 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars) {
   }
 
   $vars['vsite_layout_content'] = theme('vsite_layout_layout_widgets', array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
-}
-
-function vsite_layout_get_pagetypes($space) {
-  if (!$space && !($space = vsite_get_vsite()))  return array(); //No valid space
-
-  static $a_page_types;
-
-  if ($a_page_types) return $a_page_types;
-
-  $features = spaces_features($space->type, TRUE);
-  $a_page_types = array('all' => t('Default Settings'));
-  $site_features = $space->controllers->variable->get('spaces_features');
-
-  if (!is_array($site_features)) {
-    $a_ret = $a_page_types;
-    unset($a_page_types);
-    return $a_ret;
-  }
-
-  $a_features = array();
-  foreach ($site_features as $s_feature_key => $privacy) {
-    if (!array_key_exists($s_feature_key, $features) || $privacy == FEATURE_DISABLED) continue;
-
-    //Move front to the ... front of the list
-    if (strstr($s_feature_key, 'front')) {
-      $a_features = array_merge(array($s_feature_key => $features[$s_feature_key]->info['name']), $a_features);
-      continue;
-    }
-
-    $a_features[$s_feature_key] = $features[$s_feature_key]->info['name'];
-  }
-
-  $a_page_types = array_merge($a_page_types, $a_features);
-  return $a_page_types;
-}
-
-/**
- * Callback to swap out the top widgets avalible for different pages
- * @param $s_region
- * @return string
- */
-function vsite_layout_top_widgets_callback() {
-  $scholar = vsite_get_vsite();
-  $s_page_type = $_POST['settings']['layout']['page_type'];
-
-  $a_region_wgts = vsite_layout_region_widgets($s_page_type);
-  //top
-  $wgts = array_key_exists('unused', $a_region_wgts)?$a_region_wgts['unused']:array();
-
-  $wgts_id = 'scholarlayout-top-widgets';
-  $wgts_class = 'scholarlayout-widgets-list';
-
-  //Disable widgets from disabled features
-  _check_for_disabled_widgets($wgts);
-  $top = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, $wgts_class);
-
-  drupal_json(array('status' => TRUE, 'data' => $top));
-}
-
-/**
- * Callback to swap out the regions avalible for different pages
- * @param $s_region
- * @return string
- */
-function vsite_layout_region_widgets_callback() {
-  $scholar = vsite_get_vsite();
-  $s_page_type = $_POST['settings']['layout']['page_type'];
-
-  $features = spaces_features();
-  $a_feature_contexts = array();
-  if (!empty($features[$s_page_type]) && !empty($features[$s_page_type]->info['features']['context'])) {
-    $a_feature_contexts =  drupal_map_assoc($features[$s_page_type]->info['features']['context']);
-  }
-
-  $a_region_wgts = vsite_layout_region_widgets($s_page_type);
-  $a_themed_regions = array();
-
-  $regions = system_region_list('scholar_base');
-  foreach ($regions as $region => $s_label) {
-    $widgets = array_key_exists($region, $a_region_wgts)?$a_region_wgts[$region]:array();
-    $wgts_id = 'scholarlayout-' . str_replace('_', '-', $region);
-    if ($s_page_type == 'all') _check_for_overrides($widgets, $region, $scholar);
-    _check_for_disabled_widgets($widgets, $scholar);
-    $a_themed_regions[$region] = theme('vsite_layout_layout_widgets', $widgets, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
-  }
-  $a_themed_regions['content'] = theme('vsite_layout_layout_widgets', array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
-
-  $output= '<div id="scholarlayout-container">' .
-           $a_themed_regions['header_main'] .
-           $a_themed_regions['header_left'] .
-           $a_themed_regions['header_right'] .
-           $a_themed_regions['navbar'] .
-           $a_themed_regions['left'] .
-           $a_themed_regions['content'] .
-           $a_themed_regions['right'] .
-           $a_themed_regions['footer'] . "</div>";
-
-  drupal_json(array('status' => TRUE, 'data' => $output));
-}
-
-/**
- * Get the blocks that are avalible given a context
- *
- * @param $page_type
- * @return array
- */
-function vsite_layout_filtered_widgets($page_type='all') {
-
-  $contexts = context_enabled_contexts();
-  $space = spaces_get_space();
-  //dpm($space);
-
-  //The Default Widgets avalible everywhere
-  $a_widgets = $contexts['vsite-section-public']->reactions['block']['blocks'];
-
-  $features = spaces_features();
-  $feature_contexts = array();
-  if (!empty($features[$page_type]) && !empty($features[$page_type]->info['features']['context'])) {
-    $a_feature_contexts =  drupal_map_assoc($features[$page_type]->info['features']['context']);
-  }
-
-  if ($feature_contexts && count($feature_contexts) && array_key_exists(current($feature_contexts), $contexts) && is_array($contexts[current($feature_contexts)]->reactions['block']['blocks'])) {
-    $a_widgets = array_merge($a_widgets, $contexts[current($feature_contexts)]->reactions['block']['blocks']);  //Everywhere plus the feature
-  }
-
-  //Allow theme to alter Widgets default region
-  vsite_layout_alter_theme_regions($a_widgets);
-
-  return $a_widgets;
 }
 
 /**
@@ -323,105 +163,6 @@ function vsite_layout_region_widgets( $page_type='all') {
 	return $a_region_widgets;
 }
 
-////Util function for storing the order
-//function _widget_settings_order($order = FALSE) {
-//  static $a_order;
-//  if ($order) $a_order = $order;
-//
-//  return $a_order;
-//}
-//
-////Utility function for sorting the widgets
-//function _widget_settings_sort($a, $b) {
-//  $a_order = _widget_settings_order();
-//
-//  return (array_search($a, $a_order) < array_search($b, $a_order)) ? -1 : 1;
-//}
-
-
-///**
-// * Alter the blocks avalible on a given page,  Apply users saved settings
-// * @param array(spaces_context) $contexts
-// * @return boolean
-// * @todo this function does not exist any longer
-// */
-////function vsite_layout_context_block_info_alter(&$blocks){
-//function vsite_layout_context_active_contexts_alter(&$contexts) {
-//  //Get the current feature
-//  $s_feature = vsite_active_feature();
-//
-//  //Don't modify default contexts if:
-//  //  1. there are no active contexts
-//  //  2. We are not in a vsite
-//  //  3. We are not public section
-//  if (!count($contexts) || !($space = vsite_get_vsite()) || !array_key_exists('vsite-section-public', $contexts)){
-//    //Do not show any of the features default blocks in cp context
-//    if(context_isset('context','vsite-section-cp') && isset($contexts["scholar-feature-{$s_feature}"])) $contexts["scholar-feature-{$s_feature}"]->reactions['block']['blocks'] = array();
-//
-//    //If not CP or Public context return here and leave the defaults in place
-//    return;
-//  }
-//
-//  /**
-//   * Load the feature context
-//   */
-//  $feature_context = isset($contexts["scholar-feature-{$s_feature}"]) ? $contexts["scholar-feature-{$s_feature}"] : NULL;
-//  $s_feature_module = FALSE;
-//
-//  //Loop through features and get the current feature for the context
-//  if ($feature_context) {
-//    foreach (spaces_features() as $feature) {
-//      if (in_array("scholar-feature-{$s_feature}", drupal_map_assoc($feature->info['features']['context']))) {
-//        $s_feature_module = $feature->name;
-//        break;
-//      }//Break when you find the feature
-//    }//Loop through them
-//  }//We have a feature
-//
-//  /**
-//   * Load the Settings
-//   */
-//  if ($feature_context && $s_feature_module) {
-//    $a_region_widgets = vsite_layout_region_widgets($space, $s_feature_module);
-//  }//Is a feature  context active
-//
-//  //If we still don't have the settings get the default settings
-//  if (!isset($a_region_widgets)) $a_region_widgets = vsite_layout_region_widgets($space);
-//
-//  /**
-//   * Remove existing blocks from the public / sub contexts
-//   */
-//  $contexts['vsite-section-public']->reactions['block']['blocks'] = array();
-//  if ($feature_context) $feature_context->reactions['block']['blocks'] = array();
-//
-//  /**
-//   * Build The replacement block from the settings
-//   */
-//  foreach ($a_region_widgets as $s_region => $a_region) {
-//    if ($feature_context) _check_for_disabled_widgets($a_region, array("scholar-feature-{$s_feature}"), $space); //Filter out disabled widgets
-//
-//    $n_weight = 0;
-//    if ($s_region == 'unused') continue;
-//    foreach ($a_region as $a_widget) {
-//      if (isset($a_widget['hidden']) && $a_widget['hidden']) continue; //Skip disabled wgts
-//
-//      $a_widget['region'] = $s_region;
-//      $a_widget['weight'] = $n_weight++;
-//      if ($feature_context && $s_feature_module == $a_widget['module']) {
-//        //Build new block settings for the feature
-//        $feature_context->reactions['block']['blocks'][] = $a_widget;
-//      }
-//      else {
-//        //Build new block settings for the public context
-//        $contexts['vsite-section-public']->reactions['block']['blocks'][] = $a_widget;
-//      }
-//    }//For each widget in a region
-//  }//For Each region in the settings
-//
-//  return TRUE;
-//}
-
-
 /**
  * Create a default settings array from defaults
  *
@@ -442,27 +183,6 @@ function _vsite_layout_generate_default_settings_ary($s_page_type = 'all', $b_in
   }
 
   return $a_default;
-}
-
-function _check_for_overrides(&$widgets, $s_region, $space = NULL) {
-  if(!count($widgets)) return;
-	
-	if (!$space) $space = vsite_get_vsite();
-   
-  $a_layout_settings = ($space)?$space->controllers->variable->get('vsite_setting_layout'):array();
-
-  foreach (vsite_layout_get_pagetypes($space) as $s_page_nm => $s_page_readable) {
-    if ($s_page_nm == 'all') continue;
-    //$a_page_settings = (is_array($a_layout_settings[$space->group->og_theme][$s_page_nm]))?$a_layout_settings[$space->group->og_theme][$s_page_nm]:_vsite_layout_generate_default_settings_ary($s_page_nm);
-    $context = context_load('scholar-feature-'.$page_type);
-    if(!($a_page_widgets = $context->reactions['block']['blocks'])) continue;
-    
-    foreach ($widgets as $s_wgt_name => $wgt) {
-      if (!array_key_exists($s_wgt_name, $a_page_widgets) || $a_page_widgets[$s_wgt_name]['region'] != $s_region) {
-        $widgets[$s_wgt_name]['overides'][] = $s_page_readable;
-      }
-    }
-  }
 }
 
 /**

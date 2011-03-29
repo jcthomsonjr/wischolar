@@ -9,7 +9,7 @@ function scholar_publications_context_default_contexts() {
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
   $context->name = 'scholar-feature-publications';
-  $context->description = '';
+  $context->description = 'Publications';
   $context->tag = 'feature';
   $context->conditions = array(
     'node' => array(
