@@ -250,7 +250,7 @@ function vsite_preprocess_views_view(&$vars) {
   vsite_include('vsiteapi');
   if ($feature = vsite_active_feature()) {
     $contexts = context_enabled_contexts();
-    $context = isset($contexts["scholar-feature-{$feature}"]) ? $contexts["scholar-feature-{$feature}"] : NULL;
+    $context = isset($contexts["openscholar-feature-{$feature}"]) ? $contexts["openscholar-feature-{$feature}"] : NULL;
     $view = $vars['view'];
     $space = spaces_get_space();
 
@@ -947,7 +947,7 @@ function vsite_context_page_reaction() {
   if(!$active_feature) return;
   $a_active_contexts = context_active_contexts();
 
-  $feature_context = $a_active_contexts['scholar-feature-'.$active_feature];
+  $feature_context = $a_active_contexts['openscholar-feature-'.$active_feature];
   if(!$feature_context) return;
 
   //Use the default feature menu to get the default view

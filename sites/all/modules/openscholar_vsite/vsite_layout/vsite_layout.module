@@ -144,7 +144,7 @@ function vsite_layout_alter_theme_regions(&$a_widgets) {
 function vsite_layout_region_widgets( $page_type='all') {
   
 	if($page_type == 'all') $page_type = 'none'; //No active feature
-	$context = context_load('scholar-feature-'.$page_type);
+	$context = context_load('openscholar-feature-'.$page_type);
 	
 	$a_region_widgets = array();
 	if($context && ($a_widgets = $context->reactions['block']['blocks'])){

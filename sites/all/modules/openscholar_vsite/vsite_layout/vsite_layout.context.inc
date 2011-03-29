@@ -15,7 +15,7 @@ function vsite_layout_context_default_contexts() {
   $context->conditions = array(
 	  'context' => array(
 	    'values' => array(
-	      '~scholar-feature-*' => '~scholar-feature-*',
+	      '~openscholar-feature-*' => '~openscholar-feature-*',
 	    ),
 	  ),
 	  'path' => array(

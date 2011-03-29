@@ -220,7 +220,7 @@ function vsite_layout_get_pagetypes($space) {
   $a_features = array();
   foreach ($contexts as $s_key => $context) {
     //Is this a site "Section"?
-    if(strpos($s_key,"scholar-feature-") !== 0 || !($s_shortname = str_replace("scholar-feature-","",$s_key))) continue;
+    if(strtolower($context->tag) != 'feature' || !($s_shortname = str_replace("openscholar-feature-","",$s_key))) continue;
 
     //Is the feature Enabled?
     if(isset($feature_context_map[$s_key]) && !$a_feature_permissions[$feature_context_map[$s_key]] && !in_array($s_shortname,$a_first)) continue;
@@ -261,7 +261,7 @@ function _check_for_overrides(&$widgets, $s_region, $space = NULL) {
   foreach (vsite_layout_get_pagetypes($space) as $s_page_nm => $s_page_readable) {
     if ($s_page_nm == 'all') continue;
     
-    $context = context_load('scholar-feature-'.$page_type);
+    $context = context_load('openscholar-feature-'.$page_type);
     if(!($a_page_widgets = $context->reactions['block']['blocks'])) continue;
     
     foreach ($widgets as $s_wgt_name => $wgt) {

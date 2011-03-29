@@ -236,7 +236,7 @@ function scholar_publications_overview(){
   //Display Empty Result Text
   $contexts = context_enabled_contexts();
   $nodetype = null;
-  if(array_key_exists('scholar-feature-publications',$contexts) && ($context = $contexts["scholar-feature-publications"])){
+  if(array_key_exists('openscholar-feature-publications',$contexts) && ($context = $contexts["openscholar-feature-publications"])){
     if (!empty($context->node)) {
       reset($context->node);
       $nodetype = current($context->node);
@@ -415,17 +415,17 @@ function scholar_publications_preprocess_views_view(&$vars) {
 	      // Override the page title
 	      $vars['view']->build_info['title'] = preg_replace_callback('#\d{4}#', create_function('$matches', 'return _biblio_text_year($matches[0]);'), $vars['view']->build_info['title']);
 	      drupal_set_title($vars['view']->build_info['title']);
-	    }elseif ($vars['view']->current_display == 'block_1' && context_isset('context','scholar-feature-publications')) {
+	    }elseif ($vars['view']->current_display == 'block_1' && context_isset('context','openscholar-feature-publications')) {
         $vars['view']->build_info['title'] = "By Year"; //No need to be redundant on the pub feature
       }
     break;
     case "publication_types":
-      if($vars['view']->current_display == 'block_1' && context_isset('context','scholar-feature-publications')) {
+      if($vars['view']->current_display == 'block_1' && context_isset('context','openscholar-feature-publications')) {
         $vars['view']->build_info['title'] = "By Type"; //No need to be redundant on the pub feature
       }
     break;
     case "publication_contributors":
-      if($vars['view']->current_display == 'block_1' && context_isset('context','scholar-feature-publications')) {
+      if($vars['view']->current_display == 'block_1' && context_isset('context','openscholar-feature-publications')) {
         $vars['view']->build_info['title'] = "By Co-Author"; //No need to be redundant on the pub feature
       }
     break;
