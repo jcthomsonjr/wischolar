@@ -38,7 +38,7 @@ function vsite_domain_purl_provider() {
 function vsite_domain_apply_context($type, $sid) {
   static $once;
   if (empty($once)) {
-    spaces_init_context($type, $sid);
+    spaces_init_space($type, $sid);
     $space = spaces_get_space();
     $space->purl_provider = 'vsite_domain';
     $once = TRUE;
