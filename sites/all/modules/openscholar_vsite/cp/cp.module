@@ -312,7 +312,9 @@ function cp_feature_customize($js, $feature_name){
   );
   //$output = ctools_modal_form_wrapper('user_login', $form_state);
   
-
+  // note that we are assuming that all feature form settings are 
+  // named ${feature_name}_settings the function that generate the form 
+  // in in ${feature_name}_settings
   module_load_include('inc', $feature_name, $feature_name . ".pages");
   $output = ctools_modal_form_wrapper($feature_name . '_settings', $form_state);
   //$output = ctools_modal_form_wrapper('user_login', $form_state);
