@@ -185,25 +185,18 @@ class vsite extends space_og {
     //No provider loaded
     return FALSE;
   }
-  
+
   /**
    * Override of excluded_paths().
    * The parent exlcudes 'features' and 'features/*' 
    * We want them back
    */
-  protected function excluded_paths() {
+  protected function excluded_paths(){
     $excluded = parent::excluded_paths();
+    
     unset($excluded[array_search('features', $excluded)]);
     unset($excluded[array_search('features/*', $excluded)]);
-    /*
-    $dont = array('features', 'features/*');
-    foreach($excluded as $key => $value){
-      if (in_array($value, $dont)){
-        unset($excluded[$key]);
-      }
-    }
-    dpm($excluded);
-    */
+    
     return $excluded;
   }
 }
