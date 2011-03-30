@@ -2,21 +2,21 @@
 
 
 function scholar_dvn_update_6001(&$sandbox){
-  
+
   $res = array();
-  
+
   $settings = array();
   $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "scholar_dvn" ');
   while ($row = db_fetch_object($result)) {
-    $value = unserialize($result -> value);
+    $value = unserialize($row -> value);
     // there is only one system variable here: dvn_alias
-    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'dvn_alias', '%s')", $row->type, $row->sid, $value['dvn_alias']);
+    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'scholar_dvn_dvn_alias', '%s')", $row->type, $row->sid, serialize($value['scholar_dvn_dvn_alias']));
   }
   $res[] = array(
       'success' => true,
       'query' => 'Migrated the DVN Settings',
     );
-  
+
   return $res;
-  
+
 }

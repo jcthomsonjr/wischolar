@@ -2,11 +2,11 @@
 
 function scholar_dvn_settings(){
   $base_url = 'http://dvn.iq.harvard.edu/dvn/dv/';
-  $form['dvn_alias'] = array(
+  $form['scholar_dvn_dvn_alias'] = array(
     '#type' => 'textfield', 
     '#title' => t('Dataverse alias'), 
     '#field_prefix' => $base_url, 
-    '#default_value' => variable_get('dvn_alias', ''),
+    '#default_value' => variable_get('scholar_dvn_dvn_alias', ''),
     '#size' => 60, 
     '#maxlength' => 128, 
     '#required' => TRUE 

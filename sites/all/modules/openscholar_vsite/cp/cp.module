@@ -76,7 +76,7 @@ function cp_init() {
   }
 
   $admin = $vsite->access_admin();
-  
+
   if ($admin) {
     //add the javascript for intercepting confirm pages
     drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.js');
@@ -98,7 +98,7 @@ function cp_init() {
     drupal_add_js($modal_styles, 'setting');
 
   } //Allow special popups if they are admin
-  
+
   if(cp_get_toolbar_setting() == 'full'){
   	drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
   }
@@ -109,8 +109,8 @@ function cp_init() {
  */
 function cp_get_toolbar_setting(){
 	if(!($vsite = vsite_get_vsite()) || !$vsite->access_admin()) return 'off';
-	
-  $a_generic_settings = variable_get('vsite_setting_generic');
+
+  $a_generic_settings = variable_get('vsite_setting_generic', array());
   $user_tb_setting = (is_array($a_generic_settings) && array_key_exists('admin_menu', $a_generic_settings) && $a_generic_settings['admin_menu']) ? TRUE : FALSE;
 
   // if in cp always toolbar=on (full)
@@ -119,12 +119,12 @@ function cp_get_toolbar_setting(){
   }
 
   if (context_isset('context','vsite-section-public') && $admin) {
-    
+
   	if ($user_tb_setting) return "full";
-    
+
     return "mini";
   }
-  
+
   return 'off';
 }
 
@@ -426,7 +426,7 @@ function cp_theme($cache, $type, $theme, $path) {
 function cp_preprocess_page(&$vars) {
   // 2 new variables for top and left menus
   $vars ['cp_toolbar'] = $vars ['cp_left'] = '';
-  
+
   switch (cp_get_toolbar_setting()) {
   	case 'mini':
   	  global $user;
@@ -444,14 +444,14 @@ function cp_preprocess_page(&$vars) {
 	    $vars['cp_toolbar'] = theme('links', $user_links);
 	    $vars['body_classes'] .= ' cp-toolbar-mini';
   	break;
-  	
+
   	case 'full':
   		$links = cp_toolbar_menu_links();
 	    $vars ['cp_toolbar'] = theme('cp_toolbar', $links);
 	    $vars ['body_classes'] .= ' cp-toolbar-full';
   	break;
   }
-  
+
 }
 
 /**

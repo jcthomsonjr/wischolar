@@ -65,7 +65,7 @@ function scholar_publications_menu(){
   );
 
   // import export
-   $items['publications/import'] = array(
+  $items['publications/import'] = array(
     'title'             => 'Import',
     'page callback'     => 'drupal_get_form',
     'page arguments'    => array('biblio_import_form'),
@@ -76,7 +76,17 @@ function scholar_publications_menu(){
     //'type'              => MENU_LOCAL_TASK,
     'type'              => MENU_CALLBACK,
     'weight'            => 10,
-   );
+  );
+
+  $items['features/scholar_publications'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_publication_settings'),
+    'access callback' => module_exists('spaces') ? 'spaces_access_admin' : 'user_access',
+    'access arguments' => module_exists('spaces') ? array() : array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'scholar_publications.pages.inc',
+  );
 
   return $items;
 }
@@ -340,24 +350,24 @@ function scholar_publications_block($op = 'list', $delta = false, $edit = array(
 function scholar_publications_vsite_widgets(){
   $items = array();
   $items['views_scholar_publications-block_1'] = array(
-        'module' => 'views',
-        'delta' => 'scholar_publications-block_1',
-        'weight' => 20,
-        'region' => false,
-        'status' => '0',
-        'label' => 'Recent publications',
-        'type' => 'context_ui',
-      );
+    'module' => 'views',
+    'delta' => 'scholar_publications-block_1',
+    'weight' => 20,
+    'region' => false,
+    'status' => '0',
+    'label' => 'Recent publications',
+    'type' => 'context_ui',
+  );
 
   $items['scholar_publications_co_authors'] = array(
-        'module' => 'scholar_publications',
-        'delta' => 'co_authors',
-        'weight' => 20,
-        'region' => false,
-        'status' => '0',
-        'label' => 'Co-Authors List',
-        'type' => 'context_ui',
-      );
+    'module' => 'scholar_publications',
+    'delta' => 'co_authors',
+    'weight' => 20,
+    'region' => false,
+    'status' => '0',
+    'label' => 'Co-Authors List',
+    'type' => 'context_ui',
+  );
 
   // Publication Types
   $items['views_publication_types-block_1'] = array(
@@ -528,7 +538,7 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   $openurl_base = variable_get('biblio_baseopenurl', '');
   if ($openurl_base) $s_output .= theme('biblio_openurl', biblio_openurl($node));
 
-  if(variable_get('scholar_publication_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
+  if(variable_get('scholar_publications_note_in_teaser',false) && $node->biblio_notes)  $s_output .= '<span class="biblio-note">'. check_plain($node->biblio_notes) ."\n</span>";
 
   // add links to attached files (if any) unless we have an image, then it would be crowded
   if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
