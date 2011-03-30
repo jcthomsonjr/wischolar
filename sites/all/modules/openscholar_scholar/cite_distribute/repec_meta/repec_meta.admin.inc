@@ -31,7 +31,15 @@ function repec_meta_config(){
       '#description' => t('Enter your institution\'s 3 letter archive code' )
        
   	);
-  
+  	
+  $form['repec_meta']['repec_meta_provider_institution'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Provider Institution Code'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('repec_meta_provider_institution',''),
+      '#description' => t('Enter your institution\'s provider code.  e.g. RePEc:edi:adsflkj' )
+       
+  	);
   $form['repec_meta']['repec_meta_archive_path'] = array(
       '#type' => 'textfield',
       '#title' => t('Archive Root Path'),
