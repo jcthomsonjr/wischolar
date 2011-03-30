@@ -3,10 +3,10 @@ Drupal.verticalTabs = Drupal.verticalTabs || {};
 
 Drupal.verticalTabs.cite_distribute_selections = function() {
   var vals = [];
-  if ($('#edit-googlescholar-meta-module').attr('checked')) {
+  if ($('#edit-googlescholar-meta').attr('checked')) {
     vals.push(Drupal.t('Google Scholar'));
   }
-  if ($('#edit-repec-meta-module').attr('checked')) {
+  if ($('#edit-repec-meta').attr('checked')) {
     vals.push(Drupal.t('RePEc'));
   }
   else {
@@ -15,5 +15,5 @@ Drupal.verticalTabs.cite_distribute_selections = function() {
   if (vals.join(', ') == '') {
     return Drupal.t('None');
   }
-  return vals.join(' ');
+  return vals.join(', ');
 }
