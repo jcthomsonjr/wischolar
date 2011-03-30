@@ -67,20 +67,31 @@ function vsite_controllers_spaces_registry() {
 
 function vsite_controllers_views_pre_build(&$view) {
   $space = spaces_get_space();
-  //dpm($view);
   if ($space) {
     // space->get($view->name.':'.$view->display_handler->display->id)
     // apply settings to view->display_handler
+    if (isset($view->display_handler->default_display)) {
+      $default_override = $space->controllers->vsite_views->get($view->name.':default');
+      if (is_array($default_override)) {
+        $view->display_handler->default_display->options = array_merge($view->display_handler->default_display->options, $default_override);
+      }
+    }
+
     $override = $space->controllers->vsite_views->get($view->name.':'.$view->display_handler->display->id);
     if (is_array($override)) {
       $view->display_handler->options = array_merge($view->display_handler->options, $override);
+      if (isset($view->display_handler->default_display)) {
+        foreach ($override as $key => $value) {
+          $view->display_handler->options['defaults'][$key] = FALSE;
+        }
+      }
     }
   }
 }
 
 function vsite_controllers_form($form_state) {
   $space = spaces_get_space();
-  if ($space) $overrides = $space->controllers->vsite_views->get('og_ghp_ron');
+  if ($space) $overrides = $space->controllers->vsite_views->get('og_ghp_ron:default');
   else {
     dpm('You\'re not in a space. This isn\'t going to go well for you.');
   }
@@ -90,7 +101,14 @@ function vsite_controllers_form($form_state) {
     '#title' => 'header text',
     '#default_value' => $overrides['header'],
   );
-  $form['header_format'] = filter_form($overrides['header_format']);
+  $form['header_format'] = filter_form($overrides['header_format'], NULL, array('header_format'));
+
+  $form['footer'] = array(
+    '#type' => 'textarea',
+    '#title' => 'footer text',
+    '#default_value' => $overrides['footer'],
+  );
+  $form['footer_format'] = filter_form($overrides['footer_format'], NULL, array('footer_format'));
 
   $form['#submit'] = array('vsite_controllers_form_submit');
   $form['submit'] = array(
@@ -110,5 +128,5 @@ function vsite_controllers_form_submit(&$form, &$form_state) {
     'header_format' => $form_state['values']['header_format'],
   );
 
-  $space->controllers->vsite_views->set('og_ghp_ron', $override);
+  $space->controllers->vsite_views->set('og_ghp_ron:default', $override);
 }
