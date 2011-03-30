@@ -198,6 +198,21 @@ function vsite_layout_settings_form($value = array()){
 }
 
 /**
+ * Reset to defaults
+ */
+function vsite_layout_settings_form_reset($form, &$form_state) {
+    //Loop through and ->del all the context settings
+}
+
+/**
+ * Save Settings
+ */
+function vsite_layout_settings_form_submit($form, &$form_state) {
+   
+}
+
+
+/**
  * Return a List of the Page Types Avalible
  *
  * @param vsite $space
@@ -210,11 +225,12 @@ function vsite_layout_get_pagetypes($space) {
   if ($a_page_types) return $a_page_types;
 
   $contexts = context_load();
+  $space_features = spaces_features('og');
   $a_feature_permissions = $space->controllers->variable->get('spaces_features');
 
   module_load_include('inc', 'features', 'features.export');
   $feature_context_map = features_get_default_map('context');
-
+  
   $a_first = array('front','none'); //Include First in the List
   $a_page_types = array();
   $a_features = array();
@@ -222,8 +238,8 @@ function vsite_layout_get_pagetypes($space) {
     //Is this a site "Section"?
     if(strtolower($context->tag) != 'feature' || !($s_shortname = str_replace("openscholar-feature-","",$s_key))) continue;
 
-    //Is the feature Enabled?
-    if(isset($feature_context_map[$s_key]) && !$a_feature_permissions[$feature_context_map[$s_key]] && !in_array($s_shortname,$a_first)) continue;
+    //If this is a spaces feature is the feature Enabled?
+    if(isset($space_features[$feature_context_map[$s_key]]) && !$a_feature_permissions[$feature_context_map[$s_key]] ) continue;
     
     $s_nice_name = ($context->description)? ucfirst($context->description): ucfirst($s_shortname);
     

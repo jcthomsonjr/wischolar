@@ -23,7 +23,7 @@ function os_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'spaces_preset_og';
-  $strongarm->value = 'os_personal';
+  $strongarm->value = 'scholar';
 
   $export['spaces_preset_og'] = $strongarm;
   $strongarm = new stdClass;
