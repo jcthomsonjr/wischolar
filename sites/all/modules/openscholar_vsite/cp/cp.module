@@ -376,9 +376,11 @@ function cp_form_alter(&$form, &$form_state, $form_id){
       // by convenction feature settings form is at features/feature_name
       $item = menu_get_item('features/' . $f_name);
 
+      $spaces_features = variable_get('spaces_features', array());
+      $is_enabled = $spaces_features[$f_name];
       // if the href of this items is just 'features' (i.e. parent), that path does not exist
       // and so no settings exists for this feature
-      if ($item && $item['href'] != 'features') {
+      if ($item && $item['href'] != 'features' && $item['access'] && $is_enabled) {
         $link = ctools_modal_text_button('customize', 'features/nojs/' . $f_name, 'customize ' . $f_name); //, 'ctools-modal-openscholar-style-default');
         
         $form['settings'][$f_name] = array(
