@@ -72,7 +72,7 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
     case 'login' :
       //If the destination has not been set then try and send them to thier site or a list of thier sites
       if(strlen($_REQUEST['destination'])) break;
-      
+
       // site owners
       if ($vsites = vsite_get_vsite_by_owner($account->uid)) {
         if (count($vsites) == 1){
@@ -232,7 +232,7 @@ function vsite_theme($cache, $type, $theme, $path) {
     'path' => $path."/includes/",
     'file' => 'vsiteapi.inc',
   );
-  
+
   $items['vsite_login_link'] = array(
     'arguments' => array('link_text' => NULL, 'a_attributes' => NULL),
     'path' => $path."/includes/",
@@ -369,10 +369,10 @@ function vsite_get_vsite_by_owner($uid = NULL){
  */
 function vsite_get_vsite_by_node($node){
   if (is_object($node)) $node = $node->nid;
- 
+
   if(!$node) return false;
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
-  
+
   $sites = array();
   $sql = db_query("SELECT oa.group_nid as group_nid FROM {og_ancestry} oa INNER JOIN {node} n ON n.nid = oa.group_nid WHERE n.type = '%s' AND oa.nid = %d", $scholar_content_type, (int)$node);
 
@@ -471,7 +471,7 @@ function vsite_preprocess_page(&$vars){
   vsite_include('vsiteapi');
   $version_info = vsite_get_version_information();
   $vars['openscholar_version_info'] = $version_info;
-  
+
   //Add a div around the messages block
   if(strlen($vars['messages'])) $vars['messages'] = "<div id= \"messages\">".$vars['messages']."</div>";
 }
@@ -531,7 +531,7 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
       }
 
       $form['#redirect'] = false;
-      
+
       module_load_include('inc', 'spaces_og', 'spaces_og.pages');
       _spaces_og_make_hidden($form['purl']);
       _spaces_og_make_hidden($form['book']);
@@ -606,16 +606,17 @@ function vsite_form_alter(&$form, $form_state, $form_id) {
         	if(array_key_exists('promote',$form['options'])){
         		_spaces_og_make_hidden($form['options']['promote']);
         	}
-
-        	$a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
-          if($a_front_settings['frontpage'] == 'flag'){
-            $form['options']['vsite_promote_to_front'] = array('#type' => 'checkbox',
-                '#title' => "Promote to front page",
-                "#default_value" => false,
-                "#description" => t("If checked this post will be shown in your front page"));
-            if($nid){
-            	$flag = flag_get_flag('scholar_frontpage');
-              $form['options']['vsite_promote_to_front']['#default_value'] = $flag->is_flagged($nid);
+          if ($vsite) {
+          	$a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
+            if($a_front_settings['frontpage'] == 'flag'){
+              $form['options']['vsite_promote_to_front'] = array('#type' => 'checkbox',
+                  '#title' => "Promote to front page",
+                  "#default_value" => false,
+                  "#description" => t("If checked this post will be shown in your front page"));
+              if($nid){
+              	$flag = flag_get_flag('scholar_frontpage');
+                $form['options']['vsite_promote_to_front']['#default_value'] = $flag->is_flagged($nid);
+              }
             }
           }
 
@@ -659,7 +660,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       }
     break;
   	case 'presave':
-  		
+
   	  // -- Take Care of the Issues present when pathauto and purl coexist --
   	  // To elaborate, since purl adds a prefix to the path to distinguish between vsite's we must manually
   	  // check to make sure that the url without the prefix does not match an existing path.
@@ -818,7 +819,7 @@ function vsite_cp_settings(){
  * Implementation of hook_context_active_contexts_alter().
  */
 function vsite_context_active_contexts_alter($contexts) {
-  
+
   if($contexts['vsite-section-public']){
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/vsite-admin-links.css');
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite.js');
@@ -941,7 +942,7 @@ function vsite_vsite_generic_settings($space, $value = array()){
  * Implementation hook_context_page_reaction()
  */
 function vsite_context_page_reaction() {
-  
+
   vsite_include('vsiteapi');
   $active_feature = vsite_active_feature();
   if(!$active_feature) return;

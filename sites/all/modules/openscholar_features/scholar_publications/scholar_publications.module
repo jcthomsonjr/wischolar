@@ -81,7 +81,7 @@ function scholar_publications_menu(){
   $items['features/scholar_publications'] = array(
     'title' => 'Settings',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholar_publication_settings'),
+    'page arguments' => array('scholar_publications_settings'),
     'access callback' => module_exists('spaces') ? 'spaces_access_admin' : 'user_access',
     'access arguments' => module_exists('spaces') ? array() : array('administer site configuration'),
     'type' => MENU_CALLBACK,

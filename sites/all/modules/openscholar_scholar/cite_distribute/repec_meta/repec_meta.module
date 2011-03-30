@@ -353,18 +353,74 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
 function _check_index() {
   //gather two of the module's system variables need for this function
   $archive_code = variable_get('repec_meta_archive_code','');
-  //$archive_url = variable_get('repec_meta_archive_url','');
+  $archive_url = variable_get('repec_meta_archive_url','');
   $archive_path = variable_get('repec_meta_archive_path','');
-  //$inst_name = variable_get('repec_meta_inst_name','');
-
+  $inst_name = variable_get('repec_meta_inst_name','');
+  $maintainer_email = variable_get('repec_meta_maintainer_email', '');
+  $maintainer_name = variable_get('repec_meta_maintainer_name', '');
+  $provider_institution = variable_get('repec_meta_provider_institution', '');
+  
   $filepath = $archive_path . '/RePEc/' . $archive_code  . '/'; // . $template_type . '/';
   $arch = $archive_code . 'arch.rdf';
   $seri = $archive_code . 'seri.rdf';
   
   if (!file_exists($filepath.$arch)) {
+	$archive  = "Template-type: ReDIF-Archive 1.0\n";
+	$archive .= 'Handle: RePEc:' . $archive_code . "\n";
+	$archive .= 'Name: ' . "Harvard IQSS" . "\n";
+	$archive .= 'Maintainer-Email: ' . $maintainer_email . "\n";
+	$archive .= 'Description: ' . $inst_name . "\n";
+	$archive .= 'URL: ' . $archive_url . "\n"; 
+	file_put_contents($filepath.$arch, $archive);
   }
   
   if (!file_exists($filepath.$seri)) {
+  	$series = '';
+  	
+  	/* get repec types */
+  	$query = "SELECT type,name FROM {repec_types}";
+  	$result = db_query($query);
+  	while ($r = db_fetch_array($result)) {
+  		
+  		/* map result type to redif type */
+  		switch ($r['type']) {
+  			case 'bookch': 
+  				$redif_type = "Chapter";
+  				break;
+  			case 'booktm': 
+  				$redif_type = "Book";
+  				break;
+  			case 'journl': 
+  				$redif_type = "Article";
+  				break;
+  			case 'sftwre': 
+  				$redif_type = "Software";
+  				break;
+  			case 'wpaper': 
+  				$redif_type = "Paper";
+  				break;
+  		}
+  		
+  		$series .= "Template-type: ReDIF-Series 1.0\n";		
+		$series .= 'Name: ' . 'IQSS ' . $r['name'] . ' Series' . "\n";
+		$series .= 'Provider-Name: ' . 'The Institute for Quantitative Social Science at Harvard University' . "\n"; 
+		$series .= 'Provider-Homepage: ' . 'http://www.iq.harvard.edu' . "\n";
+		$series .= 'Provider-Institution:  ' . $provider_institution . "\n"; 
+		$series .= 'Maintainer-Name: ' . $maintainer_name . "\n";
+		$series .= 'Maintainer-Email: ' . $maintainer_email . "\n";
+		$series .= 'Type: ' . 'ReDIF-' . $redif_type . "\n";
+  		$series .= 'Handle: ' . 'RePEc:qss:' . $r['type'] . "\n";
+  	
+  		/*
+  	 	* Other series options:
+  	 	* Order-Email, Order-Homepage, Order-Postal, Price, Restriction, Maintainer-Phone, Maintainer-Fax, Editor-Name, Editor-Email, Notification, ISSN
+  	 	* http://ideas.repec.org/t/seritemplate.html
+  	 	*/
+  		
+  		$series .= "\n";
+  	}
+  	
+  	file_put_contents($filepath.$seri, $series);
   }
 
 }

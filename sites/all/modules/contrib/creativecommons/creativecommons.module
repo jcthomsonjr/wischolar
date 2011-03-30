@@ -83,14 +83,16 @@ function creativecommons_menu() {
     'weight' => 10,
   );
 
-  $items['admin/settings/creativecommons/import'] = array(
-    'title' => 'Import',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('creativecommons_import_form'),
-    'access arguments' => array('administer creative commons'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 20,
-  );
+  if (module_exists('creativecommons_lite')) {
+    $items['admin/settings/creativecommons/import'] = array(
+      'title' => 'Import',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('creativecommons_import_form'),
+      'access arguments' => array('administer creative commons'),
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 20,
+    );
+  }
 
   return $items;
 }
@@ -210,7 +212,7 @@ function creativecommons_settings() {
   }
   $form['creativecommons_display']['creativecommons_nc_img'] = array(
     '#type' => 'radios',
-    '#title' => t('Noncommercial image style'),
+    '#title' => t('Noncommercial image style (only changes when using Icons)'),
     '#options' => $nc_img_options,
     '#default_value' => variable_get('creativecommons_nc_img', ''),
   );
@@ -753,14 +755,19 @@ function creativecommons_get_locales() {
   $uri = '/locales';
   $xml = creativecommons_get_xml($uri);
 
-  $parser = new SimpleXMLElement($xml);
-  $locales = array('');
-  foreach ($parser->locale as $locale) {
-    $id = (string)$locale['id'];
-    $locales[$id] = $id;
+  try {
+    $parser = new SimpleXMLElement($xml);
+    $locales = array('');
+    foreach ($parser->locale as $locale) {
+      $id = (string)$locale['id'];
+      $locales[$id] = $id;
+    }
+    asort($locales);
+    return $locales;
   }
-  asort($locales);
-  return $locales;
+  catch (Exception $e) {
+    return array('error' => 'Error Getting Locales');
+  }
 }
 
 /**
@@ -896,7 +903,12 @@ function creativecommons_license_sort($x, $y) {
     $y = creativecommons_get_license_type_from_uri($y);
   }
 
-  return $order[$x] - $order[$y];
+  $order_x = array_key_exists($x, $order) ? $order[$x] : 10;
+  $order_y = array_key_exists($y, $order) ? $order[$y] : 10;
+
+  return $order_x - $order_y;
+
+  //return $order[$x] - $order[$y];
 }
 
 
@@ -1763,7 +1775,7 @@ function creativecommons_link($type, $node = NULL, $teaser = FALSE) {
   $links = array();
 
   if ($type == 'node') {
-    if ($teaser == 1 && $node->teaser && $node->cc && $node->cc->is_available()) {
+    if ($teaser == 1 && $node->cc && $node->cc->is_available()) {
       $links['creativecommons'] = array(
         'title' => $node->cc->get_image('tiny_icons'),
         'href' => $node->cc->uri,

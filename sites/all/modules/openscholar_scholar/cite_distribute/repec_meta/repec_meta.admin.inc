@@ -31,7 +31,15 @@ function repec_meta_config(){
       '#description' => t('Enter your institution\'s 3 letter archive code' )
        
   	);
-  
+  	
+  $form['repec_meta']['repec_meta_provider_institution'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Provider Institution Code'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('repec_meta_provider_institution',''),
+      '#description' => t('Enter your institution\'s provider code.  e.g. RePEc:edi:adsflkj' )
+       
+  	);
   $form['repec_meta']['repec_meta_archive_path'] = array(
       '#type' => 'textfield',
       '#title' => t('Archive Root Path'),
@@ -50,8 +58,23 @@ function repec_meta_config(){
       '#description' => t("Enter your institution's archive base URL. 
       Do not include any directories in the URL. <br> For example: http://test.repec.com" )  
   	);	
-  			
-  return system_settings_form($form);
+
+  	$form['repec_meta']['repec_meta_maintainer_email'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Maintainer\'s Email Address'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('repec_meta_archive_maintainer_email',''),
+      '#description' => t("Email address for contacting the maintainer of this archive." )  
+  	);  			
+
+  	$form['repec_meta']['repec_meta_maintainer_name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Maintainer\'s Name'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('repec_meta_archive_maintainer_name',''),
+      '#description' => t("Name of the maintainer of this RePEc archive." )  
+  	);  			
+  	return system_settings_form($form);
 }
 
 /**
