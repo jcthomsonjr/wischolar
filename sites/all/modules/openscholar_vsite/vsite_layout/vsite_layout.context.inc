@@ -10,7 +10,7 @@ function vsite_layout_context_default_contexts() {
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
   $context->name = 'openscholar-feature-none';
-  $context->description = 'Default Page Settings';
+  $context->description = 'Default Settings';
   $context->tag = 'Feature';
   $context->conditions = array(
 	  'context' => array(
