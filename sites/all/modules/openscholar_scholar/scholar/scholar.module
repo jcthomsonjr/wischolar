@@ -92,6 +92,15 @@ function scholar_strongarm(){
 }
 
 /**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function scholar_ctools_plugin_api($module, $api) {
+  if ($module == "spaces" && $api == "spaces") {
+    return array("version" => 3);
+  }
+}
+
+/**
  * Implementation of hook_spaces_presets().
  */
 function scholar_spaces_presets() {
