@@ -91,54 +91,6 @@ function scholar_strongarm(){
   return $conf;
 }
 
-/**
- * Implementation of hook_ctools_plugin_api().
- */
-function scholar_ctools_plugin_api($module, $api) {
-  if ($module == "spaces" && $api == "spaces") {
-    return array("version" => 3);
-  }
-}
-
-/**
- * Implementation of hook_spaces_presets().
- */
-function scholar_spaces_presets() {
-  $export = array();
-  $spaces_presets = new stdClass;
-  $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
-  $spaces_presets->api_version = 3;
-  $spaces_presets->name = 'Scholar site preset';
-  $spaces_presets->title = 'Scholar Web Site';
-  $spaces_presets->description = 'All users may view public content from this group. Users must request to join this group.';
-  $spaces_presets->space_type = 'og';
-  $spaces_presets->value = array(
-    'variable' => array(
-      'spaces_features' => array(
-        'scholar_announcements' => 0,
-        'scholar_publications' => 2,
-        'scholar_front' => 2,
-        'scholar_biocv' => 2,
-        'scholar_classes' => 2,
-        'scholar_pages' => 2,
-        'scholar_image_gallery' => 0,
-        'scholar_reader' => 0,
-        'scholar_announcements' => 0,
-        'scholar_blog' => 0,
-        'scholar_dvn' => 0,
-        'scholar_links' => 0,
-        'scholar_software' => 0
-      ),
-      'spaces_og_selective' => 3,
-      'spaces_og_register' => 0,
-      'spaces_og_directory' => 1,
-      'spaces_og_private' => 0,
-    ),
-  );
-  $export['scholar'] = $spaces_presets;
-
-  return $export;
-}
 
 /**
  * Implementation of hook_form_alter()

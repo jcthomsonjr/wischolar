@@ -29,3 +29,56 @@ function vsite_layout_spaces_plugins() {
   );
   return $plugins;
 }
+
+/**
+ * Implementation of hook_spaces_registry_alter().
+ *
+ * This will add the default blocks to the feature contexts for the space preset
+ */
+function vsite_layout_spaces_presets_alter(&$presets) {
+	$space_preset = variable_get("spaces_preset_vsite", NULL);
+	
+	if($space_preset && isset($presets[$space_preset])){
+		if(!isset($presets[$space_preset]->value['context'])) $presets[$space_preset]->value['context'] = array();
+		
+		//'context:reaction:block'['blocks'] => array();
+		$contexts = context_load();
+		foreach ($contexts as $s_key => $context) {
+			if(strtolower($context->tag) != 'feature') continue;
+			$blocks = $context;
+			vsite_layout_merge_default_blocks($blocks);
+			
+			if(is_array($blocks)){
+			  $presets[$space_preset]->value['context'][$s_key.":reaction:block"]['blocks'] = $blocks;
+			}
+		}
+		
+	}
+}
+
+
+/**
+ * Merge default blocks with passed blocks
+ */
+function vsite_layout_merge_default_blocks(&$blocks) {
+  if(!is_array($blocks)) return;
+
+  $default_blocks = module_invoke_all('vsite_widgets');
+  $blocks = array_merge($default_blocks,$blocks);  //Everywhere plus the feature
+  //Allow the theme to alter the default block regions
+  vsite_layout_alter_theme_regions($blocks);
+
+  uasort($blocks, 'vsite_layout_sort_block_by_weight');
+}
+
+/**
+ * Custom sort by block weight
+ */
+function vsite_layout_sort_block_by_weight($a, $b) {
+  $a = (array)$a;
+  $b = (array)$b;
+  
+  if ($a['weight'] == $b['weight']) return 0;
+  
+  return ($a['weight'] < $b['weight']) ? -1 : 1;
+}
