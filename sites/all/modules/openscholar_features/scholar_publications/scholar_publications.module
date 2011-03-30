@@ -350,24 +350,24 @@ function scholar_publications_block($op = 'list', $delta = false, $edit = array(
 function scholar_publications_vsite_widgets(){
   $items = array();
   $items['views_scholar_publications-block_1'] = array(
-        'module' => 'views',
-        'delta' => 'scholar_publications-block_1',
-        'weight' => 20,
-        'region' => false,
-        'status' => '0',
-        'label' => 'Recent publications',
-        'type' => 'context_ui',
-      );
+    'module' => 'views',
+    'delta' => 'scholar_publications-block_1',
+    'weight' => 20,
+    'region' => false,
+    'status' => '0',
+    'label' => 'Recent publications',
+    'type' => 'context_ui',
+  );
 
   $items['scholar_publications_co_authors'] = array(
-        'module' => 'scholar_publications',
-        'delta' => 'co_authors',
-        'weight' => 20,
-        'region' => false,
-        'status' => '0',
-        'label' => 'Co-Authors List',
-        'type' => 'context_ui',
-      );
+    'module' => 'scholar_publications',
+    'delta' => 'co_authors',
+    'weight' => 20,
+    'region' => false,
+    'status' => '0',
+    'label' => 'Co-Authors List',
+    'type' => 'context_ui',
+  );
 
   // Publication Types
   $items['views_publication_types-block_1'] = array(

@@ -45,7 +45,14 @@ function scholar_publication_settings($space) {
     '#title' => t('Show the "note" content in teaser?'),
     //'#description' => t('This alters the bibliographic format of your publications.'),
     '#default_value' => variable_get('scholar_publications_note_in_teaser',false),
-    '#description' => t('If this is checked and you add a note to a publicaction then it will show as part of a publications teaser.'),
+    '#description' => t('If this is checked and you add a note to a publication then it will show as part of a publications teaser.'),
+  );
+
+  $form['scholar_publications_external_link_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('External Link Name'),
+    '#description' => t('What to call links to resources not on this page.'),
+    '#default_value' => variable_get('scholar_publications_external_link_name', 'Website'),
   );
 
   $form['biblio_rowsperpage'] = array(
