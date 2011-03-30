@@ -20,6 +20,7 @@ function repec_meta_cite_distribute_register(){
   'repository'    => 'RePEc',
   'file'          => 'multiple', 
   'dynamic_paths' => TRUE, 
+  'callback'	  => '_check_index',
   );
   return $module_info;
 }
@@ -342,4 +343,28 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
     }
   }
   return $template;
+}
+
+/*
+ *  @function _check_index
+ * ensures that archive and series indexes exist.  
+ * instead of callback, maybe this could happen in repec_meta_cite_distribute_template?
+ */
+function _check_index() {
+  //gather two of the module's system variables need for this function
+  $archive_code = variable_get('repec_meta_archive_code','');
+  //$archive_url = variable_get('repec_meta_archive_url','');
+  $archive_path = variable_get('repec_meta_archive_path','');
+  //$inst_name = variable_get('repec_meta_inst_name','');
+
+  $filepath = $archive_path . '/RePEc/' . $archive_code  . '/'; // . $template_type . '/';
+  $arch = $archive_code . 'arch.rdf';
+  $seri = $archive_code . 'seri.rdf';
+  
+  if (!file_exists($filepath.$arch)) {
+  }
+  
+  if (!file_exists($filepath.$seri)) {
+  }
+
 }

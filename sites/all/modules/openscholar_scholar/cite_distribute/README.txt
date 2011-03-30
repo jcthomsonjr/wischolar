@@ -121,9 +121,10 @@ must return the keys and value options listed below:
  "dynamic_paths": A boolean value whether your module uses dynamic paths to store files.
       "filename": The name for your file, required only when 'file' => 'single'
           "flag": Optional flag used in PHP 5 file_put_contents() function
-          "hide_flag": Set this to 1 if you don't want any content types to be associated with the flag    
+     "hide_flag": Set this to 1 if you don't want any content types to be associated with the flag    
    "rebuild_all": A boolean value. TRUE returns all values when running api mode function. 
-   "place_once": tells the API only to write to the file one time
+    "place_once": tells the API only to write to the file one time
+      "callback": Optional name of function to call during cite_distribute_place_template().
 
    
 1) Here is an multiple file/dynamic path example from repec_meta.module     

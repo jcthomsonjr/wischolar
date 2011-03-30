@@ -9,7 +9,7 @@ function scholar_biocv_update_6001(&$sandbox){
   while ( $row = db_fetch_object($result) ) {
     $value = unserialize($result->value);
     // there is only one system variable here: use_pdf_as_cv
-    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'use_pdf_as_cv', '%s')", $row->type, $row->sid, $value['use_pdf_as_cv']);
+    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'scholar_biocv_use_pdf_as_cv', '%s')", $row->type, $row->sid, serialize($value['use_pdf_as_cv']));
   }
   $res[] = array(
     'success' => true, 
