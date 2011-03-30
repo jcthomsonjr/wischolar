@@ -163,27 +163,27 @@ function vsite_layout_region_widgets( $page_type='all') {
 	return $a_region_widgets;
 }
 
-/**
- * Create a default settings array from defaults
- *
- * @param string $s_page_type
- * @param bool   $b_include_regionless  include widgets without regions
- * @return array
- */
-function _vsite_layout_generate_default_settings_ary($s_page_type = 'all', $b_include_regionless = TRUE) {
-  $a_default = array();
-
-  $a_widgets = vsite_layout_filtered_widgets($s_page_type);
-  foreach ($a_widgets as $s_setting_id => $widget) {
-    if (is_object($widget)) {
-      $widget = (array)$widget;
-    }
-    if (!$b_include_regionless && $widget['region'] == FALSE) continue;
-    $a_default[$s_setting_id] = $widget['region'];
-  }
-
-  return $a_default;
-}
+///**
+// * Create a default settings array from defaults
+// *
+// * @param string $s_page_type
+// * @param bool   $b_include_regionless  include widgets without regions
+// * @return array
+// */
+//function _vsite_layout_generate_default_settings_ary($s_page_type = 'all', $b_include_regionless = TRUE) {
+//  $a_default = array();
+//
+//  $a_widgets = vsite_layout_filtered_widgets($s_page_type);
+//  foreach ($a_widgets as $s_setting_id => $widget) {
+//    if (is_object($widget)) {
+//      $widget = (array)$widget;
+//    }
+//    if (!$b_include_regionless && $widget['region'] == FALSE) continue;
+//    $a_default[$s_setting_id] = $widget['region'];
+//  }
+//
+//  return $a_default;
+//}
 
 /**
  * Check to see if a widget should be disabled
@@ -225,41 +225,42 @@ function _check_for_disabled_widgets(&$widgets, $space = NULL) {
 
 }
 
-/**
- * Submit handler to handle setting up default layout for new features
- *
- * This will also filter down any changes that you have made to the default layout to your new feature
- */
-function vsite_layout_spaces_features_form($form, &$form_state) {
-  if (empty($form_state['values']['features'])) return; //Are there features to act on?
-
-  // Retrieve the space object from the form
-  $space = $form_state['values']['space'];
-  $a_layout_settings = $space->controllers->variable->get('vsite_setting_layout');
-
-  if (!is_array($a_layout_settings) || !array_key_exists($space->group->og_theme, $a_layout_settings) || !array_key_exists('all', $a_layout_settings[$space->group->og_theme])) return;  //Do we have default layout settings?
-
-  require_once(drupal_get_path('module', 'vsite_layout') . '/includes/vsite_layout.settings.inc');
-  $a_all_default = _vsite_layout_generate_default_settings_ary();
-  foreach ($form_state['values']['features'] as $s_feature_name => $n_privacy) {
-    if (!in_array($n_privacy, array(SPACES_OG_PUBLIC, SPACES_OG_PRIVATE)) || array_key_exists($s_feature_name, $a_layout_settings[$space->group->og_theme])) continue; //If it is disabled or already has setings skip it
-
-    $a_feature_default = _vsite_layout_generate_default_settings_ary($s_feature_name, FALSE);
-    $a_feature_default = array_merge($a_feature_default, $a_layout_settings[$space->group->og_theme]['all']); //Combine default and all settings
-
-    $a_new_widgets = array_diff(array_keys($a_layout_settings[$space->group->og_theme]['all']), array_keys($a_all_default));
-    foreach ($a_new_widgets as $s_widget_name) {
-      if (!array_key_exists($s_widget_name, $a_feature_default) || $a_feature_default[$s_widget_name] === FALSE) $a_feature_default[$s_widget_name] = $a_layout_settings[$space->group->og_theme]['all'][$s_widget_name]; //Already on this page?
-    }//Add new widgets
-
-    foreach (array_diff(array_keys($a_all_default), array_keys($a_layout_settings[$space->group->og_theme]['all'])) as $s_widget_name) {
-      if (array_key_exists($s_widget_name, $a_feature_default) && $a_feature_default[$s_widget_name] == $a_all_default[$s_widget_name]) unset($a_feature_default[$s_widget_name]); //Already on this page?
-    }//Remove widgets
-
-    //Widgets that have changed positions
-    vsite_layout_settings_layout::moveRelevantSubpageWidgets($a_feature_default, $a_all_default, $a_layout_settings[$space->group->og_theme]['all'], $a_new_widgets);
-
-    $a_layout_settings[$space->group->og_theme][$s_feature_name] = $a_feature_default;
-  }
-}
+//
+///**
+// * Submit handler to handle setting up default layout for new features
+// *
+// * This will also filter down any changes that you have made to the default layout to your new feature
+// */
+//function vsite_layout_spaces_features_form($form, &$form_state) {
+//  if (empty($form_state['values']['features'])) return; //Are there features to act on?
+//
+//  // Retrieve the space object from the form
+//  $space = $form_state['values']['space'];
+//  $a_layout_settings = $space->controllers->variable->get('vsite_setting_layout');
+//
+//  if (!is_array($a_layout_settings) || !array_key_exists($space->group->og_theme, $a_layout_settings) || !array_key_exists('all', $a_layout_settings[$space->group->og_theme])) return;  //Do we have default layout settings?
+//
+//  require_once(drupal_get_path('module', 'vsite_layout') . '/includes/vsite_layout.settings.inc');
+//  $a_all_default = _vsite_layout_generate_default_settings_ary();
+//  foreach ($form_state['values']['features'] as $s_feature_name => $n_privacy) {
+//    if (!in_array($n_privacy, array(SPACES_OG_PUBLIC, SPACES_OG_PRIVATE)) || array_key_exists($s_feature_name, $a_layout_settings[$space->group->og_theme])) continue; //If it is disabled or already has setings skip it
+//
+//    $a_feature_default = _vsite_layout_generate_default_settings_ary($s_feature_name, FALSE);
+//    $a_feature_default = array_merge($a_feature_default, $a_layout_settings[$space->group->og_theme]['all']); //Combine default and all settings
+//
+//    $a_new_widgets = array_diff(array_keys($a_layout_settings[$space->group->og_theme]['all']), array_keys($a_all_default));
+//    foreach ($a_new_widgets as $s_widget_name) {
+//      if (!array_key_exists($s_widget_name, $a_feature_default) || $a_feature_default[$s_widget_name] === FALSE) $a_feature_default[$s_widget_name] = $a_layout_settings[$space->group->og_theme]['all'][$s_widget_name]; //Already on this page?
+//    }//Add new widgets
+//
+//    foreach (array_diff(array_keys($a_all_default), array_keys($a_layout_settings[$space->group->og_theme]['all'])) as $s_widget_name) {
+//      if (array_key_exists($s_widget_name, $a_feature_default) && $a_feature_default[$s_widget_name] == $a_all_default[$s_widget_name]) unset($a_feature_default[$s_widget_name]); //Already on this page?
+//    }//Remove widgets
+//
+//    //Widgets that have changed positions
+//    vsite_layout_settings_layout::moveRelevantSubpageWidgets($a_feature_default, $a_all_default, $a_layout_settings[$space->group->og_theme]['all'], $a_new_widgets);
+//
+//    $a_layout_settings[$space->group->og_theme][$s_feature_name] = $a_feature_default;
+//  }
+//}
 

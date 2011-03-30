@@ -41,7 +41,6 @@ function vsite_layout_spaces_presets_alter(&$presets) {
 	if($space_preset && isset($presets[$space_preset])){
 		if(!isset($presets[$space_preset]->value['context'])) $presets[$space_preset]->value['context'] = array();
 		
-		//'context:reaction:block'['blocks'] => array();
 		$contexts = context_load();
 		foreach ($contexts as $s_key => $context) {
 			if(strtolower($context->tag) != 'feature') continue;
@@ -70,6 +69,7 @@ function vsite_layout_merge_default_blocks(&$blocks) {
 
   uasort($blocks, 'vsite_layout_sort_block_by_weight');
 }
+
 
 /**
  * Custom sort by block weight
