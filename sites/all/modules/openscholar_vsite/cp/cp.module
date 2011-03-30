@@ -310,24 +310,25 @@ function cp_feature_customize($js, $feature_name){
     'title' => $feature_title, 
     'ajax' => TRUE 
   );
-  //$output = ctools_modal_form_wrapper('user_login', $form_state);
-  
-  // note that we are assuming that all feature form settings are 
-  // named ${feature_name}_settings the function that generate the form 
-  // in in ${feature_name}_settings
-  module_load_include('inc', $feature_name, $feature_name . ".pages");
-  $output = ctools_modal_form_wrapper($feature_name . '_settings', $form_state);
-  //$output = ctools_modal_form_wrapper('user_login', $form_state);
-  
+    
+  // We should have all feature form settings named ${feature_name}_settings 
+  // but just in case
+  $item = menu_get_item('features/'. $feature_name);
+
+  // the page callback should be drupal_get_form and the first arg is form_id
+  $form_id = $item['page_arguments'][0];
+  // if any file needs to be included (ususall ${feature_name}.pages.inc
+  if ($file = $item['file']){
+    require_once($file);
+  }
+
+  $output = ctools_modal_form_wrapper($form_id, $form_state);
 
   if (empty($output)) {
     $output = array();
     $output[] = ctools_modal_command_dismiss();
   }
-  else {
-    $output[] = ctools_ajax_command_append('div#modal-content div.buttons', '<input class="form-submit close" onClick="$(\'div.modal-header a.close\').click(); return false;" value="Cancel" />');
-  }
-  
+
   ctools_ajax_render($output);
 }
 
