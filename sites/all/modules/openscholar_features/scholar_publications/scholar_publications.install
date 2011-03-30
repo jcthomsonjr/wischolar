@@ -5,7 +5,7 @@
  */
 function scholar_publications_install(){
 
-  
+
 }
 
 function scholar_publications_enable() {
@@ -16,7 +16,7 @@ function scholar_publications_enable() {
 
 function _scholar_publications_set_system_weight($weight) {
 	if(!is_int($weight)) return false;
-	
+
   return db_query("UPDATE {system} SET weight = %d WHERE name = 'scholar_publications'", $weight);
 }
 
@@ -25,9 +25,9 @@ function _scholar_publications_set_system_weight($weight) {
  * @param $sandbox
  */
 function scholar_publications_update_6001(&$sandbox){
-	 
+
   $result[] =  db_query("UPDATE {biblio_field_type} SET common = 1 WHERE ftdid = %d ", 27);
-  
+
   return $result;
 }
 
@@ -76,16 +76,16 @@ function scholar_publications_update_6004(&$sandbox){
       'success' => false,
       'query' => 'Unable to locate biblio_settings.inc',
     );
-  
+
   if(!file_exists(drupal_get_path('module', 'scholar_publications') .'/includes/biblio_settings.inc')) return;
-  
+
   list($biblio_field_type, $biblio_field_type_data, $biblio_contributor_type, $biblio_contributor_type_data) = include(drupal_get_path('module', 'scholar_publications') .'/includes/biblio_settings.inc');
-  
+
   db_query('DELETE FROM {biblio_field_type}');
   foreach($biblio_field_type as $type){
     drupal_write_record('biblio_field_type', $type);
   }
-  
+
   db_query('DELETE FROM {biblio_field_type_data}');
   foreach($biblio_field_type_data as $type_data){
     drupal_write_record('biblio_field_type_data', $type_data);
@@ -101,12 +101,12 @@ function scholar_publications_update_6004(&$sandbox){
     //Run the query manually to override the serials
     db_query("INSERT INTO {biblio_contributor_type_data} (auth_type, title, hint) VALUES ( %d, '%s', '%s')",array($contrib_type_data['auth_type'],$contrib_type_data['title'],$contrib_type_data['hint']));
   }
-  
+
   $res[0] = array(
       'success' => true,
       'query' => 'Biblio settings have been updated',
     );
-    
+
   return $res;
 }
 
@@ -116,32 +116,39 @@ function scholar_publications_update_6004(&$sandbox){
 function scholar_publications_update_6005(&$sandbox){
 	//Update the biblio settings again
 	$res = scholar_publications_update_6004($sandbox);
-	
+
 	//This needs to be set to use as the auto increment
 	variable_set('biblio_last_ftdid', 491);
-	
+
 	$res[] = array(
       'success' => true,
       'query' => 'Updated biblio last ftid field',
     );
-    
+
   return $res;
 }
 
 function scholar_publications_update_6006(&$sandbox){
-  
+
   $res = array();
-  
+
   $settings = array();
   $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "scholar_publications" ');
   while ($row = db_fetch_object($result)) {
-    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_setting_scholar_publications', '%s')", $row->type, $row->sid, $row->value);
+    $value = unserialize($row->value);
+
+    foreach ($value as $key => $data) {
+      if (strpos($key, 'biblio_') === FALSE && strpos($key, 'scholar_publications_') === FALSE && strpos($key, 'bkn_') === FALSE) {
+        $key = 'scholar_publications_'.$key;
+      }
+      db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', '%s', '%s')", $row->type, $row->sid, $key, serialize($data));
+    }
   }
   $res[] = array(
       'success' => true,
       'query' => 'Migrated the Publication Settings',
     );
-  
+
   return $res;
-  
+
 }

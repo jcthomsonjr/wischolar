@@ -49,6 +49,6 @@ function vsite_filter_reset() {
 
     drupal_write_record('filters', $d, array('fid'));
   }
-  dpm('Filters have been reset to OpenScholar defaults.');
+  drupal_set_message('Filters have been reset to OpenScholar defaults.');
   drupal_goto();
 }

@@ -67,15 +67,13 @@ function vsite_controllers_spaces_registry() {
 
 function vsite_controllers_views_pre_build(&$view) {
   $space = spaces_get_space();
+  //dpm($view);
   if ($space) {
-    $header_old = array (
-      'header' => $view->display['default']->display_options['header']
-    );
-    $override = $space->controllers->vsite_views->get($view->name);
-    if ($view->display_handler->options['header'] == $header_old['header']) {
-      $view->display_handler->options['header'] = $override['header'];
-      $view->display_handler->options['header_format'] = $override['header_format'];
-      $view->display_handler->options['header_empty'] = $override['header_empty'];
+    // space->get($view->name.':'.$view->display_handler->display->id)
+    // apply settings to view->display_handler
+    $override = $space->controllers->vsite_views->get($view->name.':'.$view->display_handler->display->id);
+    if (is_array($override)) {
+      $view->display_handler->options = array_merge($view->display_handler->options, $override);
     }
   }
 }
@@ -83,6 +81,9 @@ function vsite_controllers_views_pre_build(&$view) {
 function vsite_controllers_form($form_state) {
   $space = spaces_get_space();
   if ($space) $overrides = $space->controllers->vsite_views->get('og_ghp_ron');
+  else {
+    dpm('You\'re not in a space. This isn\'t going to go well for you.');
+  }
   $form = array();
   $form['header'] = array(
     '#type' => 'textarea',
