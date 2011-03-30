@@ -366,7 +366,7 @@ function _check_index() {
   
   if (!file_exists($filepath.$arch)) {
 	$archive  = "Template-type: ReDIF-Archive 1.0\n";
-	$archive .= 'Handle: RePEc: ' . $archive_code . "\n";
+	$archive .= 'Handle: RePEc:' . $archive_code . "\n";
 	$archive .= 'Name: ' . "Harvard IQSS" . "\n";
 	$archive .= 'Maintainer-Email: ' . $maintainer_email . "\n";
 	$archive .= 'Description: ' . $inst_name . "\n";
