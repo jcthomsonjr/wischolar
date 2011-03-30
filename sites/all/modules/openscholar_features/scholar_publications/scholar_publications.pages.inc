@@ -1,5 +1,5 @@
 <?php
-function scholar_publication_settings($space) {
+function scholar_publications_settings($space) {
 
   include_once drupal_get_path('module', 'biblio') .'/biblio.admin.inc';
 
