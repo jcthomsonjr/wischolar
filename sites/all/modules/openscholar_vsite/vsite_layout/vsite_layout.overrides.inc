@@ -36,7 +36,7 @@ function vsite_layout_spaces_plugins() {
  * This will add the default blocks to the feature contexts for the space preset
  */
 function vsite_layout_spaces_presets_alter(&$presets) {
-	$space_preset = variable_get("spaces_preset_vsite", NULL);
+	$space_preset = variable_get("spaces_preset_og", NULL);
 	
 	if($space_preset && isset($presets[$space_preset])){
 		if(!isset($presets[$space_preset]->value['context'])) $presets[$space_preset]->value['context'] = array();
@@ -45,7 +45,7 @@ function vsite_layout_spaces_presets_alter(&$presets) {
 		$contexts = context_load();
 		foreach ($contexts as $s_key => $context) {
 			if(strtolower($context->tag) != 'feature') continue;
-			$blocks = $context;
+			$blocks = isset($context->reactions['block']['blocks'])? $context->reactions['block']['blocks']:array();
 			vsite_layout_merge_default_blocks($blocks);
 			
 			if(is_array($blocks)){

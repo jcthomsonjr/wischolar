@@ -8,7 +8,7 @@ function os_spaces_presets() {
   $spaces_presets = new stdClass;
   $spaces_presets->disabled = FALSE; /* Edit this to true to make a default spaces_presets disabled initially */
   $spaces_presets->api_version = 3;
-  $spaces_presets->name = 'os_personal';
+  $spaces_presets->name = 'scholar';
   $spaces_presets->title = 'OS personal';
   $spaces_presets->description = 'OpenScholar personal site';
   $spaces_presets->space_type = 'og';
@@ -44,6 +44,6 @@ function os_spaces_presets() {
   t('OS personal');
   t('OpenScholar personal site');
 
-  $export['os_personal'] = $spaces_presets;
+  $export['scholar'] = $spaces_presets;
   return $export;
 }
