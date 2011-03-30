@@ -219,6 +219,7 @@ class creativecommons_license {
    * @param $style -- either button_large, button_small, icons or tiny_icons
    */
   function get_image($style) {
+
     if (empty($this->type)) {
       $this->type = 'all-rights-reserved';
     }
@@ -257,17 +258,23 @@ class creativecommons_license {
         if (!isset($px)) {
           $px = '32';
         }
-
+        
+        //explode to add euro or yen icons
         foreach (explode('-', $this->type) as $filename) {
+          
           // NC options
           if ($filename == 'nc' && $nc) {
             $filename .= '-'. $nc;
           }
+          
           if($filename == 'rights') {
             $filename = $this->type;
           }
-
-          $img[] = '<img src="'. $img_dir .'/icons/'. $filename .'.png" style="border-width: 0pt; width: '. $px .'px; height: '. $px .'px;" alt="'. $name[$filename] .'"/>';
+          
+          //quick fix for #957584... this entire function needs love
+          if ($filename != 'all' && $filename != 'reserved') {
+            $img[] = '<img src="'. $img_dir .'/icons/'. $filename .'.png" style="border-width: 0pt; width: '. $px .'px; height: '. $px .'px;" alt="'. $name[$filename] .'"/>';
+          }
         }
         break;
     }
