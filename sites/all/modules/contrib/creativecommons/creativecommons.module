@@ -82,7 +82,7 @@ function creativecommons_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 10,
   );
-  
+
   if (module_exists('creativecommons_lite')) {
     $items['admin/settings/creativecommons/import'] = array(
       'title' => 'Import',
@@ -755,14 +755,19 @@ function creativecommons_get_locales() {
   $uri = '/locales';
   $xml = creativecommons_get_xml($uri);
 
-  $parser = new SimpleXMLElement($xml);
-  $locales = array('');
-  foreach ($parser->locale as $locale) {
-    $id = (string)$locale['id'];
-    $locales[$id] = $id;
+  try {
+    $parser = new SimpleXMLElement($xml);
+    $locales = array('');
+    foreach ($parser->locale as $locale) {
+      $id = (string)$locale['id'];
+      $locales[$id] = $id;
+    }
+    asort($locales);
+    return $locales;
   }
-  asort($locales);
-  return $locales;
+  catch (Exception $e) {
+    return array('error' => 'Error Getting Locales');
+  }
 }
 
 /**
@@ -897,10 +902,10 @@ function creativecommons_license_sort($x, $y) {
     $x = creativecommons_get_license_type_from_uri($x);
     $y = creativecommons_get_license_type_from_uri($y);
   }
-  
-  $order_x = array_key_exists($x, $order) ? $order[$x] : 10; 
-  $order_y = array_key_exists($y, $order) ? $order[$y] : 10; 
-	
+
+  $order_x = array_key_exists($x, $order) ? $order[$x] : 10;
+  $order_y = array_key_exists($y, $order) ? $order[$y] : 10;
+
   return $order_x - $order_y;
 
   //return $order[$x] - $order[$y];
