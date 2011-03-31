@@ -317,10 +317,17 @@ function repec_meta_uninstall() {
    //install repec meta tables
   drupal_uninstall_schema('repec_meta');
  
- //remove system variables 
+  //remove system variables 
+  $vars = array('archive_code', 'archive_url', 'archive_path', 'inst_name', 'show_widget', 'maintainer_name', 'maintainer_email', 'provider_institution');
+  
+  foreach($vars as $var) {
+  	variable_del('repec_meta_' . $var);
+  }
+  /*
   variable_del('repec_meta_archive_code');
   variable_del('repec_meta_archive_url');
   variable_del('repec_meta_archive_path');
   variable_del('repec_meta_inst_name');
   variable_del('repec_meta_show_widget');
+  */
 }
