@@ -178,13 +178,14 @@ function vsite_layout_check_for_disabled_widgets(&$widgets, $space = NULL) {
 }
 
 /**
- * preprocessor function for vsite_layout-layout.tpl.php
+ * helper function for vsite_layout-layout.tpl.php
  * Introduces a variable for each region in the admin_base theme
  * e.g. $vsite_layout_header_left will contain a themed list of
  * block names in the header_left
  */
-function vsite_layout_preprocess_vsite_layout_layout(&$vars) {
+function vsite_layout_cp_region_contents() {
 
+	$vars = array();
   $vsite_layout_widgets = array();
 
   $regions = system_region_list('scholar_base');
@@ -203,10 +204,12 @@ function vsite_layout_preprocess_vsite_layout_layout(&$vars) {
     if ($s_page_type == 'none') vsite_layout_check_for_overrides($wgts, $region);
 
     vsite_layout_check_for_disabled_widgets($wgts);
-    $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
+    $vars[ $region] = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
   }
 
-  $vars['vsite_layout_content'] = theme('vsite_layout_layout_widgets', array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
+  $vars['content'] = theme('vsite_layout_layout_widgets', array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
+  
+  return $vars;
 }
 
 
@@ -284,7 +287,7 @@ function vsite_layout_settings_form($form_state){
   );
 
   $form['layout_markup'] = array(
-    '#value' => theme('vsite_layout_layout'),
+    '#value' => theme('vsite_layout_layout',vsite_layout_cp_region_contents()),
   );
   
   // pass the settingid too
