@@ -75,6 +75,29 @@ function repec_meta_perm(){
 }
 
 /**
+ * Implementation of hook_nodeapi()
+ */
+function repec_meta_nodeapi(&$node, $op, $a3){
+  switch ($op){
+    case 'validate':
+      //in validate, $a3 is $form
+      if($node -> type == "biblio" && $node->repec_meta ) {
+		foreach ($a3['#post']['biblio_contributors'] as $bc) {
+			foreach ($bc as $author) {
+				if ( isset($author['name']) && strlen($author['name'])>0 ) {
+					/* an author has been set */
+					return;
+				}
+			}
+		}
+		form_set_error('biblio_contributors', t('At least one author is required for RePEc distribtuion'));
+      } 
+      
+  }
+}
+
+
+/**
 * repec_meta_templates_submit()
 * @return updates repec_biblio_types table, if successful returns message function
 */
