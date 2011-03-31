@@ -357,6 +357,16 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
       $property = $t_data->data;
       $template .= $t_data->identifier . ': ' . trim($node->$property) . "\n";
     }
+    
+    elseif ($t_data->identifier == 'Editor-Name') {
+    	$property = $t_data->data;
+    	foreach($node->$property as $bc) {
+    		/* List all editors.  Editors are repeatable */
+    		foreach ($bc as $editor) {
+    			$template .= $t_data->identifier . ':' . $editor['name'] . "\n";
+    		}
+    	}
+    }
 
     else{
       $property = $t_data->data;
