@@ -12,7 +12,7 @@ function vsite_layout_ctools_plugin_api() {
 }
 
 /**
- * hook theme
+ * Define the themes used for the layout portion of the CP
  */
 function vsite_layout_theme() {
   return array(
@@ -30,7 +30,7 @@ function vsite_layout_theme() {
 }
 
 /**
- * hook menu
+ * Define the Menu Entries for the Cp Layout Management
  */
 function vsite_layout_menu() {
   $items = array();
@@ -75,43 +75,11 @@ function vsite_layout_menu() {
 }
 
 /**
- * preprocessor function for vsite_layout-layout.tpl.php
- * Introduces a variable for each region in the admin_base theme
- * e.g. $vsite_layout_header_left will contain a themed list of
- * block names in the header_left
- */
-function vsite_layout_preprocess_vsite_layout_layout(&$vars) {
-
-  $vsite_layout_widgets = array();
-
-  $regions = system_region_list('scholar_base');
-
-  foreach ($regions as $region => $s_label) {
-    $vsite_layout_widgets[$region] = array();
-  }
-
-  $s_page_type = (isset($_GET['page_type']))? $_GET['page_type']:'all';
-  
-  $vsite_layout_widgets = vsite_layout_region_widgets($s_page_type);
-
-  foreach ($regions as $region => $s_label) {
-    $wgts_id = 'scholarlayout-' . str_replace('_', '-', $region);
-    $wgts = array_key_exists($region, $vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
-    if ($s_page_type == 'all') _check_for_overrides($wgts, $region);
-
-    _check_for_disabled_widgets($wgts);
-    $vars['vsite_layout_' . $region] = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
-  }
-
-  $vars['vsite_layout_content'] = theme('vsite_layout_layout_widgets', array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
-}
-
-/**
  * Alter the default location for the theme widgets
  *
  * @param $a_widgets
  */
-function vsite_layout_alter_theme_regions(&$a_widgets) {
+function vsite_layout_vsite_default_blocks_alter(&$a_widgets) {
 
   static  $a_settings;
 
@@ -136,131 +104,13 @@ function vsite_layout_alter_theme_regions(&$a_widgets) {
 
 
 /**
- * Returns an associative array by region with the widgets sorted correctly
- *
- * @param string $page_type
- * @return array
+ * Custom sort by block weight
  */
-function vsite_layout_region_widgets( $page_type='all') {
+function vsite_layout_sort_block_by_weight($a, $b) {
+  $a = (array)$a;
+  $b = (array)$b;
   
-	if($page_type == 'all') $page_type = 'none'; //No active feature
-	$context = context_load('openscholar-feature-'.$page_type);
-	
-	$a_region_widgets = array();
-	if($context && ($a_widgets = $context->reactions['block']['blocks'])){
-	
-	  foreach ($a_widgets as $s_widget_key => $widget) {
-	    $widget = (array)$widget;
-	    if ($widget['region']) {
-	      $a_region_widgets[$widget['region']][$s_widget_key] = $widget;
-	    }
-	    else {
-	      $a_region_widgets['unused'][$s_widget_key] = $widget;
-	    }
-	  }
-	}
+  if ($a['weight'] == $b['weight']) return 0;
   
-	return $a_region_widgets;
+  return ($a['weight'] < $b['weight']) ? -1 : 1;
 }
-
-///**
-// * Create a default settings array from defaults
-// *
-// * @param string $s_page_type
-// * @param bool   $b_include_regionless  include widgets without regions
-// * @return array
-// */
-//function _vsite_layout_generate_default_settings_ary($s_page_type = 'all', $b_include_regionless = TRUE) {
-//  $a_default = array();
-//
-//  $a_widgets = vsite_layout_filtered_widgets($s_page_type);
-//  foreach ($a_widgets as $s_setting_id => $widget) {
-//    if (is_object($widget)) {
-//      $widget = (array)$widget;
-//    }
-//    if (!$b_include_regionless && $widget['region'] == FALSE) continue;
-//    $a_default[$s_setting_id] = $widget['region'];
-//  }
-//
-//  return $a_default;
-//}
-
-/**
- * Check to see if a widget should be disabled
- *
- * @param $widgets array or widgets
- * @param $a_feature_contexts array of contexts
- * @param $space space to check for overides
- */
-function _check_for_disabled_widgets(&$widgets, $space = NULL) {
-  if (!count($widgets)) return; //Nothing to do because there are no widgets to act on
-  if (!$space) $space = vsite_get_vsite(); //Get current Viste
-
-  $space_features = variable_get('spaces_features');
-  foreach ($widgets as $s_wgt_name => $wgt) {
-    if (array_key_exists($wgt['module'], $space_features) && $space_features[$wgt['module']] == FEATURE_DISABLED) {
-      //if this block is provided by a feature and that feature is disabled do not show the block
-      $widgets[$s_wgt_name]['hidden'] = TRUE;
-
-    }
-    elseif ($wgt['module'] == 'views') {
-      $account = $GLOBALS['user'];
-      //Insetad of checking as admin use the site owner so they see the same blocks
-      if ($account->uid == 1) $account = user_load(array('uid' => $space->group->uid));
-
-      //if this block is provided by views then check it's access
-      list($name, $display_id) = explode('-', $wgt['delta']);
-      if (($view = views_get_view($name)) && !$view->access($display_id, $account)) {
-        $widgets[$s_wgt_name]['hidden'] = TRUE;
-      }
-      if (is_object($view)) $view->destroy();
-    }
-
-    if(!$widgets[$s_wgt_name]['hidden'] && strlen($wgt['access callback']) && function_exists($wgt['access callback'])){
-      //If there is an access function call it with the widget as a parameter
-      $widgets[$s_wgt_name]['hidden'] = ! $wgt['access callback']($widgets[$s_wgt_name]);
-    }
-
-  }//If the parent is a feature and it is disabled then lets not show this block or if views does not give access (usually using the feature access)
-
-}
-
-//
-///**
-// * Submit handler to handle setting up default layout for new features
-// *
-// * This will also filter down any changes that you have made to the default layout to your new feature
-// */
-//function vsite_layout_spaces_features_form($form, &$form_state) {
-//  if (empty($form_state['values']['features'])) return; //Are there features to act on?
-//
-//  // Retrieve the space object from the form
-//  $space = $form_state['values']['space'];
-//  $a_layout_settings = $space->controllers->variable->get('vsite_setting_layout');
-//
-//  if (!is_array($a_layout_settings) || !array_key_exists($space->group->og_theme, $a_layout_settings) || !array_key_exists('all', $a_layout_settings[$space->group->og_theme])) return;  //Do we have default layout settings?
-//
-//  require_once(drupal_get_path('module', 'vsite_layout') . '/includes/vsite_layout.settings.inc');
-//  $a_all_default = _vsite_layout_generate_default_settings_ary();
-//  foreach ($form_state['values']['features'] as $s_feature_name => $n_privacy) {
-//    if (!in_array($n_privacy, array(SPACES_OG_PUBLIC, SPACES_OG_PRIVATE)) || array_key_exists($s_feature_name, $a_layout_settings[$space->group->og_theme])) continue; //If it is disabled or already has setings skip it
-//
-//    $a_feature_default = _vsite_layout_generate_default_settings_ary($s_feature_name, FALSE);
-//    $a_feature_default = array_merge($a_feature_default, $a_layout_settings[$space->group->og_theme]['all']); //Combine default and all settings
-//
-//    $a_new_widgets = array_diff(array_keys($a_layout_settings[$space->group->og_theme]['all']), array_keys($a_all_default));
-//    foreach ($a_new_widgets as $s_widget_name) {
-//      if (!array_key_exists($s_widget_name, $a_feature_default) || $a_feature_default[$s_widget_name] === FALSE) $a_feature_default[$s_widget_name] = $a_layout_settings[$space->group->og_theme]['all'][$s_widget_name]; //Already on this page?
-//    }//Add new widgets
-//
-//    foreach (array_diff(array_keys($a_all_default), array_keys($a_layout_settings[$space->group->og_theme]['all'])) as $s_widget_name) {
-//      if (array_key_exists($s_widget_name, $a_feature_default) && $a_feature_default[$s_widget_name] == $a_all_default[$s_widget_name]) unset($a_feature_default[$s_widget_name]); //Already on this page?
-//    }//Remove widgets
-//
-//    //Widgets that have changed positions
-//    vsite_layout_settings_layout::moveRelevantSubpageWidgets($a_feature_default, $a_all_default, $a_layout_settings[$space->group->og_theme]['all'], $a_new_widgets);
-//
-//    $a_layout_settings[$space->group->og_theme][$s_feature_name] = $a_feature_default;
-//  }
-//}
-
