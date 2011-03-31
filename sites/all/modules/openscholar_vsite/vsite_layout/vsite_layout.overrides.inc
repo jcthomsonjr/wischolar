@@ -19,6 +19,7 @@ function vsite_layout_spaces_registry_alter(&$registry) {
 function vsite_layout_spaces_plugins() {
   $plugins = array();
  
+  //define the vsite controller for contexts
   $plugins['spaces_controller_vsite_context'] = array(
     'handler' => array(
       'path' => drupal_get_path('module', 'vsite_layout') .'/plugins',
@@ -31,7 +32,7 @@ function vsite_layout_spaces_plugins() {
 }
 
 /**
- * Implementation of hook_spaces_registry_alter().
+ * Implementation of hook_spaces_preset_alter().
  *
  * This will add the default blocks to the feature contexts for the space preset
  */
@@ -43,7 +44,7 @@ function vsite_layout_spaces_presets_alter(&$presets) {
 		
 		$contexts = context_load();
 		foreach ($contexts as $s_key => $context) {
-			if(strtolower($context->tag) != 'feature') continue;
+			if(strpos($s_key,"openscholar-feature-") !== 0) continue;
 			$blocks = isset($context->reactions['block']['blocks'])? $context->reactions['block']['blocks']:array();
 			vsite_layout_merge_default_blocks($blocks);
 			
@@ -58,27 +59,19 @@ function vsite_layout_spaces_presets_alter(&$presets) {
 
 /**
  * Merge default blocks with passed blocks
+ *
+ * Gathers default blocks via the hook and calls alter hook which
+ * lets other modules make changes, an example is some themes like
+ * to change the default region of a block
  */
 function vsite_layout_merge_default_blocks(&$blocks) {
   if(!is_array($blocks)) return;
 
   $default_blocks = module_invoke_all('vsite_widgets');
   $blocks = array_merge($default_blocks,$blocks);  //Everywhere plus the feature
-  //Allow the theme to alter the default block regions
-  vsite_layout_alter_theme_regions($blocks);
+  
+  //Allow the theme and others to alter the default block regions
+  drupal_alter('vsite_default_blocks',$blocks);
 
   uasort($blocks, 'vsite_layout_sort_block_by_weight');
-}
-
-
-/**
- * Custom sort by block weight
- */
-function vsite_layout_sort_block_by_weight($a, $b) {
-  $a = (array)$a;
-  $b = (array)$b;
-  
-  if ($a['weight'] == $b['weight']) return 0;
-  
-  return ($a['weight'] < $b['weight']) ? -1 : 1;
 }
