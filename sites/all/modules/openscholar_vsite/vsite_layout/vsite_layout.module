@@ -18,7 +18,8 @@ function vsite_layout_theme() {
   return array(
     'vsite_layout_layout' => array(
       'template' => 'vsite_layout-layout',
-      'path' => drupal_get_path('module', 'vsite_layout') . '/theme'
+      'path' => drupal_get_path('module', 'vsite_layout') . '/theme',
+      'arguments' => array('regions' => NULL),
     ),
 
     'vsite_layout_layout_widgets' => array(

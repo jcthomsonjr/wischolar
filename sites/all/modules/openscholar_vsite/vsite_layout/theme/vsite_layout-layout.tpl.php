@@ -1,10 +1,10 @@
 <div id="scholarlayout-container" class="pad">
-  <?php print $vsite_layout_header_main; ?>
-  <?php print $vsite_layout_header_left; ?>
-  <?php print $vsite_layout_header_right; ?>
-  <?php print $vsite_layout_navbar; ?>
-  <?php print $vsite_layout_left; ?>
-  <?php print $vsite_layout_content; ?>
-  <?php print $vsite_layout_right; ?>
-  <?php print $vsite_layout_footer; ?>
+  <?php print $regions['header_main']; ?>
+  <?php print $regions['header_left']; ?>
+  <?php print $regions['header_right']; ?>
+  <?php print $regions['navbar']; ?>
+  <?php print $regions['left']; ?>
+  <?php print $regions['content']; ?>
+  <?php print $regions['right']; ?>
+  <?php print $regions['footer']; ?>
 </div>
