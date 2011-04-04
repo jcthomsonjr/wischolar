@@ -6,7 +6,21 @@ function scholar_reader_init(){
   drupal_add_css(drupal_get_path('module', 'scholar_reader') .'/theme/scholar-reader.css');
 }
 
+function scholar_reader_menu() {
+  $menu = array();
 
+  $menu['features/scholar_reader'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_reader_settings'),
+    'access callback' => module_exists('spaces') ? 'spaces_access_admin' : 'user_access',
+    'access arguments' => module_exists('spaces') ? array() : array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'scholar_reader.pages.inc',
+  );
+
+  return $menu;
+}
 
 /**
  * Implementation of hook_context_links_alter().
@@ -116,7 +130,7 @@ function scholar_reader_context_default_contexts_alter(&$contexts){
 
 /**
  * Implementation of hook_spaces_settings().
- */
+
 function scholar_reader_spaces_settings(){
   return array(
     'reader' => array(
@@ -124,7 +138,7 @@ function scholar_reader_spaces_settings(){
       'file' => drupal_get_path('module', 'scholar_reader') . '/include/scholar_reader.settings.inc'
     ),
   );
-}
+} */
 
 /**
  * Define the scholar reader blocks with hook block
@@ -151,12 +165,12 @@ function _scholar_reader_twitter_wgt(){
 	if(!($vsite = vsite_get_vsite()) || !$vsite->access_feature($op = 'view', 'scholar_reader')) return array();
 
 	//Do they have their feed set?
-	$a_reaader_settings = $vsite->controllers->variable->get('vsite_setting_reader');
-	if(!strlen($a_reaader_settings['twitter_username'])) return array();
+	$a_reader_settings = variable_get('vsite_setting_reader');
+	if(!strlen($a_reader_settings['twitter_username'])) return array();
 
 	//Fix this? Probably a better way of getting the twitter id..
-  $twitterid = str_replace("from:",'',$a_reaader_settings['twitter_username']);
-	$output = twitter_pull_render ($a_reaader_settings['twitter_username']);
+  $twitterid = str_replace("from:",'',$a_reader_settings['scholar_reader_twitter_username']);
+	$output = twitter_pull_render ($a_reader_settings['scholar_reader_twitter_username']);
   $output .= '<div class="twitter-followme">' . l('Follow me on Twitter','http://twitter.com/' . $twitterid) .'</div>';
 	return array('subject' => "Twitter Updates",'content' => $output);
 }
