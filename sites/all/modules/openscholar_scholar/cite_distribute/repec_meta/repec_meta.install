@@ -323,11 +323,4 @@ function repec_meta_uninstall() {
   foreach($vars as $var) {
   	variable_del('repec_meta_' . $var);
   }
-  /*
-  variable_del('repec_meta_archive_code');
-  variable_del('repec_meta_archive_url');
-  variable_del('repec_meta_archive_path');
-  variable_del('repec_meta_inst_name');
-  variable_del('repec_meta_show_widget');
-  */
 }
