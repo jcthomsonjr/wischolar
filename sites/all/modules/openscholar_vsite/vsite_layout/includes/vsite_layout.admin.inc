@@ -1,7 +1,14 @@
 <?php
 
 /**
+ * Page/JS Callbacks and Theme Functions
+ */
+
+/**
+ * Page Callback
  * main entry point for "cp/settings/appearance"
+ *
+ * Renders the page for editing block layouts
  */
 function vsite_layout_layout() {
   jquery_ui_add(array('ui.draggable', 'ui.droppable', 'ui.sortable'));
@@ -15,36 +22,34 @@ function vsite_layout_layout() {
   if (is_array($a_info) && array_key_exists('scholar', $a_info) && array_key_exists('cp_layout_css', $a_info['scholar'])) {
     //cp_layout_css
     drupal_add_css(drupal_get_path('theme', $space->group->og_theme) . "/" . $a_info['scholar']['cp_layout_css']);
-  }
+  }//Apply CSS for custom theme Layouts
 
-
-  $s_page_type =  (isset($_GET['page_type']))? $_GET['page_type']:'all';
-
-  //top
+  $s_page_type = isset($_GET['page_type'])?$_GET['page_type']:'none';
+  
+  //Get the widgets avalible for this page type
   $vsite_layout_widgets = vsite_layout_region_widgets($s_page_type);
   $wgts = array_key_exists('unused', $vsite_layout_widgets)?$vsite_layout_widgets['unused']:array();
 
   //Disable widgets that are part of inactive features
-  _check_for_disabled_widgets($wgts);
+  vsite_layout_check_for_disabled_widgets($wgts);
   
-  
+  //Markup for Top Widgets Section
   $top = theme('vsite_layout_layout_widgets', $wgts, 'scholarlayout-top-widgets', 'scholarlayout-widgets-list');
 
-  //form
-  module_load_include('inc', 'vsite_layout', 'includes/vsite_layout.admin');
+  //Print the Form
   $form = call_user_func_array('drupal_get_form', array('vsite_layout_settings_form'));
 
   return $top . $form;
 }
 
 /**
- * Callback to swap out the regions avalible for different pages
+ * Javascript Callback to swap out the regions avalible for different pages
  * @param $s_region
  * @return string
  */
 function vsite_layout_region_widgets_callback() {
   $scholar = vsite_get_vsite();
-  $s_page_type = $_POST['page_type'];
+  $s_page_type = ($_POST['page_type'])?$_POST['page_type']:"none";
 
   $features = spaces_features();
   $a_feature_contexts = array();
@@ -59,8 +64,8 @@ function vsite_layout_region_widgets_callback() {
   foreach ($regions as $region => $s_label) {
     $widgets = array_key_exists($region, $a_region_wgts)?$a_region_wgts[$region]:array();
     $wgts_id = 'scholarlayout-' . str_replace('_', '-', $region);
-    if ($s_page_type == 'all') _check_for_overrides($widgets, $region, $scholar);
-    _check_for_disabled_widgets($widgets, $scholar);
+    if ($s_page_type == 'none') vsite_layout_check_for_overrides($widgets, $region);
+    vsite_layout_check_for_disabled_widgets($widgets, $scholar);
     $a_themed_regions[$region] = theme('vsite_layout_layout_widgets', $widgets, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
   }
   $a_themed_regions['content'] = theme('vsite_layout_layout_widgets', array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
@@ -79,39 +84,148 @@ function vsite_layout_region_widgets_callback() {
 }
 
 /**
- * Callback to swap out the top widgets avalible for different pages
+ * Javascript Callback to swap out the top widgets avalible for different pages
  * @param $s_region
  * @return string
  */
 function vsite_layout_top_widgets_callback() {
   $scholar = vsite_get_vsite();
-  $s_page_type = $_POST['page_type'];
   
-  $a_region_wgts = vsite_layout_region_widgets($s_page_type);
-  //top
+  $s_page_type = ($_POST['page_type'])?$_POST['page_type']:"none";
+  $a_region_wgts = vsite_layout_region_widgets( $s_page_type );
+  //The widgets in the unused Top Area
   $wgts = array_key_exists('unused', $a_region_wgts)?$a_region_wgts['unused']:array();
 
   $wgts_id = 'scholarlayout-top-widgets';
   $wgts_class = 'scholarlayout-widgets-list';
 
   //Disable widgets from disabled features
-  _check_for_disabled_widgets($wgts);
+  vsite_layout_check_for_disabled_widgets($wgts);
   $top = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, $wgts_class);
 
   drupal_json(array('status' => TRUE, 'data' => $top));
+  
 }
 
 
+/**
+ * For the Layout Display, Add help text to widgets are overridden in a child page
+ *
+ * This is not used outside of the CP
+ *
+ * @param array $widgets
+ * @param string $s_region
+ * @param vsite $space
+ */
+function vsite_layout_check_for_overrides(&$widgets, $s_region) {
+  if(!count($widgets)) return;
+   
+  foreach (vsite_layout_get_pagetypes() as $s_page_nm => $s_page_readable) {
+    if ($s_page_nm == 'none') continue;
+    
+    $context = context_load('openscholar-feature-'.$s_page_nm);
+    if(!($a_page_widgets = $context->reactions['block']['blocks'])) continue;
+    
+    foreach ($widgets as $s_wgt_name => $wgt) {
+      if (!array_key_exists($s_wgt_name, $a_page_widgets) || $a_page_widgets[$s_wgt_name]['region'] != $s_region) {
+        $widgets[$s_wgt_name]['overides'][] = $s_page_readable;
+      }
+    }
+  }
+}
 
+/**
+ * For the Layout Display, Check to see if a widget should be disabled
+ * If so add a parameter telling the object to be display none
+ *
+ * This is not used outside of the CP
+ *
+ * @param $widgets array or widgets
+ * @param $a_feature_contexts array of contexts
+ * @param $space space to check for overides
+ */
+function vsite_layout_check_for_disabled_widgets(&$widgets, $space = NULL) {
+  if (!count($widgets)) return; //Nothing to do because there are no widgets to act on
+  if (!$space) $space = vsite_get_vsite(); //Get current Viste
+
+  $space_features = variable_get('spaces_features');
+  foreach ($widgets as $s_wgt_name => $wgt) {
+    if (array_key_exists($wgt['module'], $space_features) && !$space_features[$wgt['module']]) {
+      //if this block is provided by a feature and that feature is disabled do not show the block
+      $widgets[$s_wgt_name]['hidden'] = TRUE;
+
+    }
+    elseif ($wgt['module'] == 'views') {
+      $account = $GLOBALS['user'];
+      //Insetad of checking as admin use the site owner so they see the same blocks
+      if ($account->uid == 1) $account = user_load(array('uid' => $space->group->uid));
+
+      //if this block is provided by views then check it's access
+      list($name, $display_id) = explode('-', $wgt['delta']);
+      if (($view = views_get_view($name)) && !$view->access($display_id, $account)) {
+        $widgets[$s_wgt_name]['hidden'] = TRUE;
+      }
+      if (is_object($view)) $view->destroy();
+    }
+
+    if(!$widgets[$s_wgt_name]['hidden'] && strlen($wgt['access callback']) && function_exists($wgt['access callback'])){
+      //If there is an access function call it with the widget as a parameter
+      $widgets[$s_wgt_name]['hidden'] = ! $wgt['access callback']($widgets[$s_wgt_name]);
+    }
+
+  }//If the parent is a feature and it is disabled then lets not show this block or if views does not give access (usually using the feature access)
+
+}
+
+/**
+ * helper function for vsite_layout-layout.tpl.php
+ * Introduces a variable for each region in the admin_base theme
+ * e.g. $vsite_layout_header_left will contain a themed list of
+ * block names in the header_left
+ */
+function vsite_layout_cp_region_contents() {
+
+	$vars = array();
+  $vsite_layout_widgets = array();
+
+  $regions = system_region_list('scholar_base');
+
+  foreach ($regions as $region => $s_label) {
+    $vsite_layout_widgets[$region] = array();
+  }
+
+  $s_page_type = (isset($_GET['page_type']))? $_GET['page_type']:'none';
+  
+  $vsite_layout_widgets = vsite_layout_region_widgets($s_page_type);
+
+  foreach ($regions as $region => $s_label) {
+    $wgts_id = 'scholarlayout-' . str_replace('_', '-', $region);
+    $wgts = array_key_exists($region, $vsite_layout_widgets)?$vsite_layout_widgets[$region]:array();
+    if ($s_page_type == 'none') vsite_layout_check_for_overrides($wgts, $region);
+
+    vsite_layout_check_for_disabled_widgets($wgts);
+    $vars[ $region] = theme('vsite_layout_layout_widgets', $wgts, $wgts_id, 'scholarlayout-widgets-list', ucwords($s_label));
+  }
+
+  $vars['content'] = theme('vsite_layout_layout_widgets', array(), 'scholarlayout-content-main', 'scholarlayout-widgets-list', 'Main Content');
+  
+  return $vars;
+}
+
+
+/**
+ * Form Controlls
+ */
+  
 /*
- * The form for setting the block values
+ * The CP form for saving the block values and thier order
  */
 function vsite_layout_settings_form($form_state){
   
-	$space = vsite_get_vsite();
-	if(!$space) return array();
-	
-	// just do have distinct id for each setting form
+  $space = vsite_get_vsite();
+  if(!$space) return array();
+  
+  // just do have distinct id for each setting form
   $form['#prefix'] = '<div id = "cp-settings-layout">';
   $form['#suffix'] = '</div>';
   
@@ -173,7 +287,7 @@ function vsite_layout_settings_form($form_state){
   );
 
   $form['layout_markup'] = array(
-    '#value' => theme('vsite_layout_layout'),
+    '#value' => theme('vsite_layout_layout',vsite_layout_cp_region_contents()),
   );
   
   // pass the settingid too
@@ -199,29 +313,29 @@ function vsite_layout_settings_form($form_state){
 }
 
 /**
- * Reset to defaults
+ * Reset function for the CP blocks form to return the settings for the current theme to defaults
  */
 function vsite_layout_settings_form_reset($form, &$form_state) {
-	$space = vsite_get_vsite();
+  $space = vsite_get_vsite();
   if(!$space) return;
   
   foreach (array_keys(vsite_layout_get_pagetypes($space)) as $s_page_type) {
-  	$space->controllers->context->del('openscholar-feature-'.$s_page_type.":reaction:block:".$space->group->og_theme);
+    $space->controllers->context->del('openscholar-feature-'.$s_page_type.":reaction:block:".$space->group->og_theme);
   }
 }
 
 /**
- * Save Settings
+ * Save Handler for the CP Layout Form
  */
 function vsite_layout_settings_form_submit($form, &$form_state) {
   $space = vsite_get_vsite();
   if(!$space) return;
   
-	$s_page_type = $form_state['values']['page_type'];
-	$regions = array_keys(system_region_list('scholar_base'));
-	
-	//Gather the region settings from the form values
-	$region_setting = array();
+  $s_page_type = $form_state['values']['page_type'];
+  $regions = array_keys(system_region_list('scholar_base'));
+  
+  //Gather the region settings from the form values
+  $region_setting = array();
   foreach ($form_state['values'] as $field => $value) {
     $field = str_replace('-', '_', str_replace('scholarlayout-', '', $field));
     if (!in_array($field, $regions)) continue;
@@ -233,8 +347,8 @@ function vsite_layout_settings_form_submit($form, &$form_state) {
   //Apply the region settings
   $a_avalible_blocks = $space->controllers->context->get('openscholar-feature-'.$s_page_type.":reaction:block","preset");
   foreach ($a_avalible_blocks['blocks'] as $s_key => $block) {
-  	$a_avalible_blocks['blocks'][$s_key]['region'] = isset($setting[$s_key])? $setting[$s_key]:false;
-  	$a_avalible_blocks['blocks'][$s_key]['weight'] = array_search($s_key,array_keys($setting));
+    $a_avalible_blocks['blocks'][$s_key]['region'] = isset($setting[$s_key])? $setting[$s_key]:false;
+    $a_avalible_blocks['blocks'][$s_key]['weight'] = array_search($s_key,array_keys($setting));
   }
   
   uasort($a_avalible_blocks['blocks'], 'vsite_layout_sort_block_by_weight'); //Put them in the right order to simplify showing them in the cp
@@ -246,6 +360,11 @@ function vsite_layout_settings_form_submit($form, &$form_state) {
   }
 }
 
+
+
+/**
+ * CP Layout Helper Functions
+ */
 
 /**
  * Return a List of the Page Types Avalible
@@ -271,7 +390,7 @@ function vsite_layout_get_pagetypes($space) {
   $a_features = array();
   foreach ($contexts as $s_key => $context) {
     //Is this a site "Section"?
-    if(strtolower($context->tag) != 'feature' || !($s_shortname = str_replace("openscholar-feature-","",$s_key))) continue;
+    if(strpos($s_key,"openscholar-feature-") !== 0 || !($s_shortname = str_replace("openscholar-feature-","",$s_key))) continue;
 
     //If this is a spaces feature is the feature Enabled?
     if(isset($space_features[$feature_context_map[$s_key]]) && !$a_feature_permissions[$feature_context_map[$s_key]] ) continue;
@@ -296,59 +415,33 @@ function vsite_layout_get_pagetypes($space) {
 }
 
 /**
- * For the Layout Display, Show what widgets are overridden in a child page
+ * Helper function for the CP Layout form save when saving the default context
  *
- * @param array $widgets
- * @param string $s_region
- * @param vsite $space
- */
-function _check_for_overrides(&$widgets, $s_region, $space = NULL) {
-  if(!count($widgets)) return;
-  
-  if (!$space) $space = vsite_get_vsite();
-   
-  $a_layout_settings = ($space)?$space->controllers->variable->get('vsite_setting_layout'):array();
-
-  foreach (vsite_layout_get_pagetypes($space) as $s_page_nm => $s_page_readable) {
-    if ($s_page_nm == 'all') continue;
-    
-    $context = context_load('openscholar-feature-'.$page_type);
-    if(!($a_page_widgets = $context->reactions['block']['blocks'])) continue;
-    
-    foreach ($widgets as $s_wgt_name => $wgt) {
-      if (!array_key_exists($s_wgt_name, $a_page_widgets) || $a_page_widgets[$s_wgt_name]['region'] != $s_region) {
-        $widgets[$s_wgt_name]['overides'][] = $s_page_readable;
-      }
-    }
-  }
-}
-
-/**
- * This function takes a new default setting and finds the diff from the old, and applies those to other page types that are not overridden
+ * Takes a new default setting and finds the diff from the old, and applies those to other page types that are not overridden
  */
 function vsite_layout_apply_changes_to_default($a_new_setting){
-	$space = vsite_get_vsite();
-	$a_prev_setting = $space->controllers->context->get("openscholar-feature-none:reaction:block");
-	
-	$a_new_wgts = array();
-	$a_rem_wgts = array();
-	$a_moved_wgts = array();
-	$a_weight_wgts = array();
-	foreach ($a_new_setting['blocks'] as $key => $block) {
-		if($block['region'] != $a_prev_setting['blocks'][$key]['region']){
-			if(!$block['region']){
-				$a_rem_wgts[] = $key;
-			}elseif(!$a_prev_setting['blocks'][$key]['region']){
-				$a_new_wgts[] = $key;
-			}else{
-				$a_moved_wgts[] = $key;
-			}
-		}//region change
-		
-		if($block['weight'] != $a_prev_setting['blocks'][$key]['weight']){
-			$a_weight_wgts[$key] =  $block['weight'] - $a_prev_setting['blocks'][$key]['weight'];
-		}//Weight Change
-	}//gather changes
+  $space = vsite_get_vsite();
+  $a_prev_setting = $space->controllers->context->get("openscholar-feature-none:reaction:block");
+  
+  $a_new_wgts = array();
+  $a_rem_wgts = array();
+  $a_moved_wgts = array();
+  $a_weight_wgts = array();
+  foreach ($a_new_setting['blocks'] as $key => $block) {
+    if($block['region'] != $a_prev_setting['blocks'][$key]['region']){
+      if(!$block['region']){
+        $a_rem_wgts[] = $key;
+      }elseif(!$a_prev_setting['blocks'][$key]['region']){
+        $a_new_wgts[] = $key;
+      }else{
+        $a_moved_wgts[] = $key;
+      }
+    }//region change
+    
+    if($block['weight'] != $a_prev_setting['blocks'][$key]['weight']){
+      $a_weight_wgts[$key] =  $block['weight'] - $a_prev_setting['blocks'][$key]['weight'];
+    }//Weight Change
+  }//gather changes
 
   foreach (array_keys(vsite_layout_get_pagetypes($space)) as $s_page_nm) {
     if ($s_page_nm == 'none') continue;
@@ -386,4 +479,31 @@ function vsite_layout_apply_changes_to_default($a_new_setting){
     uasort($a_new_page['blocks'], 'vsite_layout_sort_block_by_weight'); //Put them in the right order to simplify showing them in the cp
     $space->controllers->context->set('openscholar-feature-'.$s_page_nm.":reaction:block:".$space->group->og_theme, $a_new_page);
   }
+}
+
+/**
+ * Returns an associative array by region of widgets
+ *
+ * @param string $page_type
+ * @return array
+ */
+function vsite_layout_region_widgets( $page_type = 'none') {
+  
+  $context = context_load('openscholar-feature-'.$page_type);
+  
+  $a_region_widgets = array();
+  if($context && ($a_widgets = $context->reactions['block']['blocks'])){
+  
+    foreach ($a_widgets as $s_widget_key => $widget) {
+      $widget = (array)$widget;
+      if ($widget['region']) {
+        $a_region_widgets[$widget['region']][$s_widget_key] = $widget;
+      }
+      else {
+        $a_region_widgets['unused'][$s_widget_key] = $widget;
+      }
+    }
+  }
+  
+  return $a_region_widgets;
 }

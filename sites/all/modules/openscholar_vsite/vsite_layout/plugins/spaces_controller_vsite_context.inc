@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Context controller.
+ * Vsite Context controller.
  */
 class spaces_controller_vsite_context extends spaces_controller_context {
 
@@ -40,8 +40,17 @@ class spaces_controller_vsite_context extends spaces_controller_context {
       	
         $this->values['space'][$row->id] = unserialize($row->value);
       }
+      
       // Overwrite/Create block settings defaulting to theme block settings
-      $this->values['space'] = array_merge($this->values['space'],$theme_block_overwrites);
+      foreach ($theme_block_overwrites as $s_key => $theme_overwrites) {
+      	if(isset($this->values['space'][$s_key])){
+      		//There are also standard settings, add the theme settings also
+      		$this->values['space'][$s_key]['blocks'] = aray_merge($this->values['space'][$s_key]['blocks'],$theme_overwrites['blocks']);
+      	}else{
+      		//Only the theme settings are avalible, use them
+      		$this->values['space'][$s_key] = $theme_overwrites;
+      	}
+      }
       
       $this->loaded_all['space'] = TRUE;
     }
