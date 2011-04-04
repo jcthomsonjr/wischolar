@@ -103,13 +103,13 @@ function repec_meta_nodeapi(&$node, $op, $a3){
 */
 function repec_meta_templates_submit($form_id, $form_values) {
   
-  //creating an array of biblio types from query
+  //creating an array of [b]iblio types from query
   $sql_biblio = db_query("SELECT * FROM {biblio_types}");
   while ($data = db_fetch_object($sql_biblio)){
   	$b[$data->tid] = $data->name; 
   }
   
-  //creating an array of repec types from query
+  //creating an array of [r]epec types from query
   $sql_repec = db_query("SELECT * FROM {repec_types}");
   while ($data = db_fetch_object($sql_repec)){
   	$r[$data->tid] = $data->type; 
@@ -184,6 +184,15 @@ function repec_meta_fields_submit($form_id, $form_values) {
     //repec type loop end bracket - will continue to next repec type
   }
   return repec_meta_msg($msg = 'saved');
+}
+
+/**
+ * repec_meta_api
+ * generate repec data for all (or a limited number of?) nodes without repec data
+ * this is called by cron.  also exposed so other mods can control when repec stuff gets generated
+ */
+function repec_meta_api() {
+	cite_distribute_mode_controller(NULL, "repec_meta", "api");
 }
   
 /**

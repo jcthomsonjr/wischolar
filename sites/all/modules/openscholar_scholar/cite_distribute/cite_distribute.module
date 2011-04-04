@@ -27,10 +27,41 @@ function cite_distribute_flag_default_flags($flags = array(), $i = 0) {
 	
 	$submodules = cite_distribute_installed_mods ();
 	foreach ( $submodules as $module ) {
-		$flags [] = array ('content_type' => 'node', 'name' => $module ['name'], 'title' => $module ['repository'], 'global' => false, 'types' => array ('biblio' ), // 'types' => isset($module['hide_flag']) ?  array() : array('biblio'), //TODO need to finish this
-'flag_short' => $module ['repository'], 'flag_long' => $module ['repository'], 'flag_message' => '', 'unflag_short' => 'Remove from ' . $module ['repository'], 'unflag_long' => 'Remove from ' . $module ['repository'], 'unflag_message' => '', 'unflag_denied_text' => '', 'link_type' => 'normal', //normal, toggle, confirm
-'roles' => array ('flag' => array (0 => '2' ), 'unflag' => array (0 => '2' ) ), //hiding these on page, teaser, and edit node
-		'show_on_page' => false, 'show_on_teaser' => false, 'show_on_form' => false, 'access_author' => '', 'i18n' => 0, 'status' => true, 'locked' => array ('name' => 'name', 'show_on_page' => 'show_on_page', 'show_on_teaser' => 'show_on_teaser', 'show_on_form' => 'show_on_form', 'global' => 'global', 'link_type' => 'link_type', 'types' => 'types' ), 'api_version' => 2, 'module' => 'cite_distribute' );
+		$flags [] = array (
+		  'content_type' => 'node', 
+		  'name' => $module ['name'], 
+		  'title' => $module ['repository'], 
+		  'global' => false, 'types' => array ('biblio' ), 
+		  // 'types' => isset($module['hide_flag']) ?  array() : array('biblio'), //TODO need to finish this
+			'flag_short' => $module ['repository'], 
+			'flag_long' => $module ['repository'], 
+			'flag_message' => '', 
+			'unflag_short' => 'Remove from ' . $module ['repository'],
+		  'unflag_long' => 'Remove from ' . $module ['repository'], 
+		  'unflag_message' => '', 
+		  'unflag_denied_text' => '', 
+		  'link_type' => 'normal', //normal, toggle, confirm
+			'roles' => array (
+				'flag' => array (0 => '2' ),
+			  'unflag' => array (0 => '2' ) 
+			), //hiding these on page, teaser, and edit node
+			'show_on_page' => false, 
+			'show_on_teaser' => false, 
+			'show_on_form' => false, 
+			'access_author' => '', 
+			'i18n' => 0, 
+			'status' => true, 
+			'locked' => array (
+			  'name' => 'name', 
+			  'show_on_page' => 'show_on_page', 
+			  'show_on_teaser' => 'show_on_teaser', 
+			  'show_on_form' => 'show_on_form', 
+			  'global' => 'global', 
+			  'link_type' => 'link_type', 
+			  'types' => 'types' 
+			), 
+			'api_version' => 2, 
+			'module' => 'cite_distribute' );
 	}
 	return $flags;
 }
@@ -228,7 +259,7 @@ function cite_distribute_update_val($module_mode) {
 			$update_val = 1;
 			break;
 		
-		case 'cron' :
+		case 'batch' :
 			$update_val = 1;
 			break;
 		
@@ -265,11 +296,13 @@ function cite_distribute_widget_process($module, $nid) {
 	//check to see if nid already exists in repec meta
 	$sql = db_result ( db_query ( "SELECT nid FROM {cite_distribute} WHERE nid = %d AND type = '%s'", $node->nid, $module ) ) ? 
 
-	// node already exists in cite_distribute table, updating information
-	db_query ( "UPDATE {cite_distribute} SET uid = %d, nid = %d, type= '%s', tid = %d , upd = %d , modified = now()
-  WHERE nid = %d and type = '%s'", $user->uid, $node->nid, $module, $node->biblio_type, $update_val, $node->nid, $module ) : // node already exists in Drupal but never been added to cite_distribute table
-	db_query ( "INSERT INTO {cite_distribute} (uid, nid, type, tid, upd, created)
-  VALUES (%d, %d, '%s', %d, %d, now())", $user->uid, $node->nid, $module, $node->biblio_type, $update_val );
+	  // node already exists in cite_distribute table, updating information
+	  db_query ( "UPDATE {cite_distribute} SET uid = %d, nid = %d, type= '%s', tid = %d , upd = %d , modified = now()
+    WHERE nid = %d and type = '%s'", $user->uid, $node->nid, $module, $node->biblio_type, $update_val, $node->nid, $module ) : 
+
+	  // node already exists in Drupal but never been added to cite_distribute table
+	  db_query ( "INSERT INTO {cite_distribute} (uid, nid, type, tid, upd, created)
+    VALUES (%d, %d, '%s', %d, %d, now())", $user->uid, $node->nid, $module, $node->biblio_type, $update_val );
 	
 	//if the module mode is per submission, send to the controller now
 	if ($module_mode == 'per_submission') {
@@ -297,9 +330,9 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 			$iteration = 1;
 			
 			//check for optional api_values key
-			$sql = ($module_info [0] ['rebuild_all']) ? //returns all values of specfied type regardless of upd value
-			db_query ( "SELECT * FROM {cite_distribute} WHERE type = '%s'", $module ) : //returns all values of specfied type where upd = 1
-			db_query ( "SELECT * FROM {cite_distribute} WHERE type = '%s' AND upd = %d", $module, 1 );
+			$sql = ($module_info [0] ['rebuild_all']) ?      //returns all values of specfied type regardless of upd value
+			  db_query ( "SELECT * FROM {cite_distribute} WHERE type = '%s'", $module ) :      //returns all values of specfied type where upd = 1
+			  db_query ( "SELECT * FROM {cite_distribute} WHERE type = '%s' AND upd = %d", $module, 1 );
 			
 			//before the loop we are checking if this is a single file/rebuild all type template
 			//in which WE DELETE THE FILE HERE BEFORE THE REBUILD
@@ -357,7 +390,9 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 			
 
 			//update the cite distribute table "upd" collumn when complete
-			cite_distribute_api_complete ( $module );
+			if ($place_template) {
+				cite_distribute_api_complete ( $module );
+			}
 			break;
 		
 		case 'batch' :
@@ -410,6 +445,7 @@ function cite_distribute_fix_filepath($filepath) {
  * @param string $file_path - OPTIONAL path to appropriate archive directory
  * @param string $flag - OPTIONAL PHP 5 file_put_contents() flag, such as FILE_APPEND
  *
+ * @return boolean, return val of file_put_contents
  */
 function cite_distribute_place_template($module, $filepath, $filename, $template, $flag = NULL) {
 	//make sure trailing slash is included at the end of the file path
@@ -426,18 +462,17 @@ function cite_distribute_place_template($module, $filepath, $filename, $template
 	//log errors
 	if (! $place_template) {
 		watchdog ( "cite_distribute", "cite_distribute failed to create file @file in path @filepath.  Attempted to write template: @template", array ('@file' => $filename, '@filepath' => $filepath, '@template' => $template ), WATCHDOG_ERROR );
-	}
-	
-	//define a hook that checks each module to see if they have any additional tasks
-	//repec needs to create an archive and series template.
-	/// no, not a hook.  we don't need to give every module on the site a chance to react.  just the one being called.  $module->callback ftw.
-	$submodules = module_invoke_all ( 'cite_distribute_register' );
-	foreach ( $submodules as $m ) {
-		if ($m ['name'] == $module && isset ( $m ['callback'] ) && function_exists ( $m ['callback'] )) {
-			$m ['callback'] ();
+	} else {
+		//after writing to a file, run submodule's callback function
+		$submodules = module_invoke_all ( 'cite_distribute_register' );
+		foreach ( $submodules as $m ) {
+			if ($m['name'] == $module && isset ( $m['callback'] ) && function_exists ( $m['callback'] )) {
+				$m['callback']();
+			}
 		}
 	}
-
+	
+	return $place_template;
 }
 
 /**
