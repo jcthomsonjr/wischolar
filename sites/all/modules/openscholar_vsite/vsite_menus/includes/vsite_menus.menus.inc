@@ -201,7 +201,7 @@ class vsite_menus_menus implements vsite_setting {
   public static function get_disabled_menus() {
   	//tmp till this is rewritten
   	module_load_include('inc', 'vsite_layout', 'vsite_layout.admin');
-  	
+return;
     $disabled_choices = array('vsite_menus_0' => 'primary', 'vsite_menus_1' => 'secondary');//If these blocks are not used they will be disabled
     foreach (vsite_layout_get_pagetypes($space) as $s_page_type => $s_name) {
       $a_region_wgts = vsite_layout_region_widgets($space, $s_page_type);
