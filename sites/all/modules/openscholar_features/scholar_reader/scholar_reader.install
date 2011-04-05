@@ -52,19 +52,20 @@ function scholar_reader_update_6000(){
 }
 
 function scholar_reader_update_6001(&$sandbox){
-  
+
   $res = array();
-  
+
   $settings = array();
   $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "reader" ');
   while ($row = db_fetch_object($result)) {
-    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_setting_reader', '%s')", $row->type, $row->sid, $row->value);
+    $value = unserialize($row);
+    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'scholar_reader_twitter_username', '%s')", $row->type, $row->sid, $value['twitter_username']);
   }
   $res[] = array(
       'success' => true,
       'query' => 'Migrated the Scholar Reader Settings',
     );
-  
+
   return $res;
-  
+
 }
