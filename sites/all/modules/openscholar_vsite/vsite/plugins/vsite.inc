@@ -197,6 +197,14 @@ class vsite extends space_og {
     unset($excluded[array_search('features', $excluded)]);
     unset($excluded[array_search('features/*', $excluded)]);
     
+    $more = array(
+      'user', 
+      'users/%', 
+      'private_site', 
+      'help/%/%' 
+    );
+    
+    $excluded = array_merge($excluded, $more);
     return $excluded;
   }
 }

@@ -1033,18 +1033,6 @@ function vsite_excluded_path($q){
 }
 
 /**
- * Paths that should be excluded from a vsite
- */
-function vsite_vsite_excluded_paths(){
-  return array(
-    'user',
-    'users/%',
-    'private_site',
-    'help/%/%',
-  );
-}
-
-/**
  * Lookup the correct purl provider given a node to create a absolute deep link
  */
 function vsite_add_purl_provider($node, &$options){
