@@ -1,0 +1,139 @@
+<?php
+
+/**
+ * Context controller.
+ */
+class spaces_controller_vsite_menu extends spaces_controller {
+  
+  /**
+   * Split the single vsite_menu object into array of individual plugin values.
+   */
+  protected function plugin_values($menu_links) {
+
+    //$plugins['menu_name']
+    $plugins = array();
+    
+    //Assign to Menus
+    foreach ($menu_links as $key => $link) {
+    	$plugins[$link['menu_name']][$key] = $link;
+    }
+    
+    //Sort By Weight
+    foreach ($plugins as $s_menu => $a_links) {
+    	uasort($plugins[$s_menu], array($this, 'sort_menulink_by_weight'));
+    }
+    
+    return $plugins;
+  }
+
+  /**
+   * Override of load_space_values().
+   *
+   * All overrides are retrieved at once for a given space to reduce the number
+   * of queries run when a space is active.
+   */
+  protected function load_space_values($id = NULL) {
+    if (!$this->loaded_all['space']) {
+      $result = db_query("
+        SELECT object_id AS id, value
+        FROM {spaces_overrides}
+        WHERE type = '%s'
+          AND id = '%s'
+          AND object_type = '%s'",
+        $this->space_type, $this->space_id, $this->controller);
+      while ($row = db_fetch_object($result)) {
+        $this->values['space'][$row->id] = unserialize($row->value);
+      }
+      
+      //Look at the Defaults to make sure there is nothing to add
+      $this->add_missing_defaults($this->values['space']);
+      
+      $this->loaded_all['space'] = TRUE;
+    }
+  }
+  
+  /**
+   * Override of load_preset_values().
+   *
+   * All overrides are retrieved at once for a given space to reduce the number
+   * of queries run when a space is active.
+   */
+  protected function load_preset_values($id = NULL) {
+    if (!$this->loaded_all['preset']) {
+    	parent::load_preset_values($id);
+    	$this->add_missing_defaults($this->values['preset']);
+    }
+  }
+
+  /**
+   * Add in menu links that are in the default but not in the passed array
+   *
+   * @param array $menu_settings
+   */
+  protected function add_missing_defaults(&$menu_settings){
+  	if(!$this->loaded_all['original']) return false;
+  	
+  	//Look at the Defaults to make sure there is nothing to add
+    foreach ($this->values['original'] as $s_menu => $a_menu_links) {
+      if(!isset($menu_settings[$s_menu])) continue;
+        
+      foreach ($a_menu_links as $s_link_key => $a_default_link) {
+        if(!isset($menu_settings[$s_menu][$s_link_key])){
+          $menu_settings[$s_menu][$s_link_key] = $a_default_link;
+        }
+      }
+    }
+  }
+  
+  /**
+   * Override of load_original_values().
+   *
+   * Note that $id here is menu name, but all menus will be loaded
+   */
+  protected function load_original_values($id = NULL) {
+    if (empty($this->loaded_all['original'])) {
+    	
+      //Ignore ID and load them all at once to prevent multiple unneeded queries
+      module_load_include('inc', 'features', 'features.export');
+      $a_menu_links = features_get_default('menu_links');
+      
+      $this->values['original'] = $this->plugin_values($a_menu_links);
+      $this->loaded_all['original'] = TRUE;
+    }
+  }
+  
+  /**
+   * Override to the wrapper around load_[environment]_values.
+   */
+  protected function load_values($environment = NULL, $id = NULL) {
+    //Load orig first since preset and space depend on it
+    $this->load_original_values();
+    
+    switch ($environment) {
+      case 'original':
+        break;
+      case 'preset':
+        $this->load_preset_values($id);
+        break;
+      case 'space':
+        $this->load_space_values($id);
+        break;
+      default:
+        $this->load_preset_values();
+        $this->load_space_values();
+        break;
+    }
+  }
+  
+	/**
+	* Custom sort by menu link weight
+	*/
+	protected function sort_menulink_by_weight($a, $b) {
+		$a = (array)$a;
+		$b = (array)$b;
+		
+		if ($a['weight'] == $b['weight']) return 0;
+		
+		return ($a['weight'] < $b['weight']) ? -1 : 1;
+	}
+}
