@@ -31,32 +31,160 @@ function vsite_menus_menu() {
 }
 
 /**
- * Implementation of hook_theme().
+ * Implemenation of hook_theme().
  */
-function vsite_menus_theme($cache, $type, $theme, $path) {
-  $path = drupal_get_path('module', 'vsite_menus') ;
-  
-  $items['vsite_menus_radios'] = array(
-    'arguments' => array('element' => NULL, 'disabled' => array()),
-    'path' => $path,
-    'file' => 'menu_theme.inc',
+function vsite_menus_theme() {
+  return array(
+    'vsite_menus_settings_form' => array(
+      'path' => drupal_get_path('module', 'vsite_menus') . '/includes',
+      'file' => 'vsite_menus.admin.inc',
+      'arguments' => array('form' => NULL),
+    ),
   );
-  
-  return $items;
 }
 
 /**
- * MENU LINK Maintnance functions
+ * MENU LINK Modification functions
  * these functions handle hooking into the controller from the node form
  */
+
+/**
+ * Change the options for the node save form so that only the active vsite menus are displayed
+ *
+ * @param $form array
+ * @param $form_state array
+ * @param $form_id string
+ * /
+ */
+function vsite_menus_form_alter(&$form, $form_state, $form_id) {
+  //Are we on a node form?
+  if (isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
+    
+  	
+  	$vsite = vsite_get_vsite();
+  	//If we are not in a site or this is not a og content type do not continue
+  	vsite_include('vsiteapi');
+    if (!$vsite || !array_key_exists($form['type']['#value'], vsite_content_types(array(0, 1, 2)))) return;
+  	
+    /**
+     * Menu Form Settings
+     */
+    
+  	unset($form['menu']); //Remove default menu handler
+  	
+  	$form['vsite_menu'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Menu settings'),
+      '#access' => ($vsite->access_admin() || user_access('administer menu')),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+      '#tree' => TRUE,
+      '#weight' => -2,
+      '#attributes' => array('class' => 'menu-item-form'),
+  	  '#description' => "Add a link to this post in one of your site's menus.  First add a link title, and then specify the menu.",
+    );
+    $item = $form['#node']->vsite_menu;
+
+    if ($item['key']) {
+      // There is an existing link.
+      $form['vsite_menu']['delete'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Delete this menu item.'),
+      );
+    }
+
+    $form['vsite_menu']['#item'] = $item;
+
+    $form['vsite_menu']['link_title'] = array('#type' => 'textfield',
+      '#title' => t('Link Title'),
+      '#default_value' => $item['link_title'],
+      '#description' => t("The exact wording of how you would like the link to appear in your menu. Leave blank if you do not wish to add this post to any menu."),
+      '#required' => FALSE,
+    );
+    // Generate a list of possible menus
+    $options = variable_get('scholar_site_menus', FALSE);
+    $default = ($item['menu_name'])?$item['menu_name']:current(array_keys($options));
+    $form['vsite_menu']['parent'] = array(
+      '#type' => 'radios',
+      '#title' => t('Choose a Menu'),
+      '#default_value' => $default,
+      '#options' => $options,
+      '#description' => t("Select the menu where you would like this link to appear. Some menu's may not show on your page if they are not included in your ".l("Page Layout",'cp/appearance/layout',array('attributes' => array('target' => '_blank')))."."),
+      '#attributes' => array('class' => 'menu-title-select'),
+    );
+
+    $form['vsite_menu']['weight'] = array(
+      '#type' => 'value',
+      '#value' => ($item['weight'])?$item['weight']:50,
+    );
+  	
+    
+   /**
+    * Path Form Settings
+    */
+      
+    //Alter the path settings to include the purl
+    if (module_exists('path')) {
+      $form['path']['#access'] = ($vsite->access_admin() || user_access('administer menu'));
+        
+      if (module_exists('pathauto')) {
+        //BELOW HERE -- Create PathAuto Form Modifications
+        $node = $form['#node'];
+      
+        // See if there is a pathauto pattern or default applicable
+        if (isset($form['language'])) {
+          $language = isset($form['language']['#value']) ? $form['language']['#value'] : $form['language']['#default_value'];
+          $pattern = trim(variable_get('pathauto_node_'. $form['type']['#value'] .'_'. $language .'_pattern', false));
+        }
+        
+        if(!$pattern) trim(variable_get('pathauto_node_'. $form['type']['#value'] .'_pattern', variable_get('pathauto_node_pattern', '')));
+          
+        // If there is a pattern AND the user is allowed to create aliases AND the path textbox is present on this form
+        if (!empty($pattern) &&isset($form['path']['path']) && ($vsite->access_admin() || user_access('administer menu'))) {
+          
+            $output = t('An alias will be generated for you. If you wish to create your own, untick this option.');
+      
+            drupal_add_js(drupal_get_path('module', 'pathauto') .'/pathauto.js');
+            $form['path']['#collapsed'] = FALSE;
+      
+            $form['path']['pathauto_perform_alias'] = array(
+              '#type' => 'checkbox',
+              '#title' => t('Automatic alias'),
+              '#default_value' => isset($node->pathauto_perform_alias) ? $node->pathauto_perform_alias : TRUE,
+              '#description' => $output,
+              '#weight' => -1,
+            );
+      
+            if (!empty($node->pathauto_perform_alias) && !empty($node->old_alias) && $node->path == '') {
+              $form['path']['path']['#default_value'] = $node->old_alias;
+              $node->path = $node->old_alias;
+            }
+      
+            //For Pathauto to remember the old alias and prevent the Path-module from deleteing it when Pathauto wants to preserve it
+            if (isset($node->path)) {
+              $form['path']['old_alias'] = array('#type' => 'value', '#value' => $node->path);
+            }
+            
+            if ($vsite && strpos($form['path']['path']['#default_value'], $vsite->purl . '/') === 0) {
+              $form['path']['path']['#default_value'] = substr($form['path']['path']['#default_value'], strlen($vsite->purl . '/'));
+            }
+          }
+        }
+      }
+      
+  }
+}
 
 /**
  * Implements hook_menu_node_insert().
  * /
  */
 function vsite_menus_menu_node_insert($item, $node) {
-  require_once(drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc');
-  vsite_include('vsiteapi');
+	$vsite = vsite_get_vsite();
+	
+	
+  //require_once(drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc');
+  //vsite_include('vsiteapi');
   $site = vsite_get_vsite();
   $a_menus_settings = $site->controllers->variable->get('vsite_setting_menus');
   
@@ -107,115 +235,7 @@ function vsite_menus_menu_node_delete($item, $node) {
 
 
 
-/**
- * Change the options for the node save form so that only the active vsite menus are displayed
- *
- * @param $form array
- * @param $form_state array
- * @param $form_id string
- * /
- */
-function vsite_menus_form_alter(&$form, $form_state, $form_id) {
-	//Are we on a node form?
-  if (isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
-    
-  	require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
-    vsite_include('vsiteapi');
-    $a_scholar_types = vsite_content_types(array(0, 1, 2));
-    $o_scholar = vsite_get_vsite();
-    
-    if ($o_scholar && is_array($form['menu'])) {
-      //Add the site to the attributes for the menu
-      if (!is_array($form['menu']['options']['#value'])) $form['menu']['options']['#value'] = array();
-      if (!array_key_exists('attributes', $form['menu']['options']['#value'])) $form['menu']['options']['#value']['attributes'] = array();
-      
-      $form['menu']['options']['#value']['attributes']['site'] = $o_scholar->group->nid;
-    }//If we are in a vsite and a menu entry can be made for this node type, add the group id to the menu entry
-    
-    if ($o_scholar && array_key_exists($form['type']['#value'], $a_scholar_types)) {
-      
-    	//Add some descriptive text to help people understand what this fieldset is for
-      $form['menu']['#description'] = "Add a link to this post in one of your site's menus.  First add a link title, and then specify the menu.";
-      $form['menu']['link_title']['#description'] = "The exact wording of how you would like the link to appear in your menu. Leave blank if you do not wish to add this post to any menu.";
 
-    	$a_primary = menu_load(variable_get('scholar_primary_menu', FALSE));
-      $a_secondary = menu_load(variable_get('scholar_secondary_menu', FALSE));
-      
-      $disabled_choices = vsite_menus_menus::get_disabled_menus();  //Get disabled menus
-      $a_choices = array();
-      $a_choices[variable_get('scholar_primary_menu', FALSE) . ":0"] = t($a_primary['title'].(in_array('primary', $disabled_choices)?" (Disabled)":""));
-      $a_choices[variable_get('scholar_secondary_menu', FALSE) . ":0"] = t($a_secondary['title'].(in_array('secondary', $disabled_choices)?" (Disabled)":""));
-      
-      $form['menu']['#access'] = ($o_scholar->access_admin() || user_access('administer menu'));
-      $form['menu']['link_title']['#title'] = "Link Title";
-      $form['menu']['parent']['#type'] = "radios";
-      $form['menu']['parent']['#title'] = "Choose a Menu";
-      $form['menu']['parent']['#options'] = $a_choices;
-      $form['menu']['parent']['#default_value'] = !in_array('primary', $disabled_choices)? variable_get('scholar_primary_menu', FALSE).":0": variable_get('scholar_secondary_menu', FALSE).":0";
-      $form['menu']['parent']['#description'] = "Select the menu where you would like this link to appear. Menu's will show as 'disabled' if they are not included in your ".l("Page Layout",'cp/appearance/layout',array('attributes' => array('target' => '_blank'))).".";
-      unset($form['menu']['hidden']);
-
-      $a_menus_settings = $o_scholar->controllers->variable->get('vsite_setting_menus');
-      if (is_array($a_menus_settings['menu_items']) && array_key_exists($form['menu']['mlid']['#value'], $a_menus_settings['menu_items'])) {
-		    $form['menu']['weight']['#value'] = $a_menus_settings['menu_items'][$form['menu']['mlid']['#value']]['weight'];
-		  }//Use the weight from the settings if there is one
-		  
-      $form['menu']['weight']['#type'] = 'value'; //Make the weight hidden
-      
-      //Alter the path settings to include the purl
-      if (module_exists('path')) {
-        $form['path']['#access'] = ($o_scholar->access_admin() || user_access('administer menu'));
-        
-        if (module_exists('pathauto')) {
-          //BELOW HERE -- Create PathAuto Form Modifications
-          $node = $form['#node'];
-      
-          // See if there is a pathauto pattern or default applicable
-          if (isset($form['language'])) {
-            $language = isset($form['language']['#value']) ? $form['language']['#value'] : $form['language']['#default_value'];
-            $pattern = trim(variable_get('pathauto_node_'. $form['type']['#value'] .'_'. $language .'_pattern', ''));
-          }
-          if (empty($pattern)) {
-            $pattern = trim(variable_get('pathauto_node_'. $form['type']['#value'] .'_pattern', ''));
-            if (empty($pattern)) {
-              $pattern = trim(variable_get('pathauto_node_pattern', ''));
-            }
-          }
-          // If there is a pattern AND the user is allowed to create aliases AND the path textbox is present on this form
-          if (!empty($pattern) &&isset($form['path']['path']) && ($o_scholar->access_admin() || user_access('administer menu'))) {
-          
-            $output = t('An alias will be generated for you. If you wish to create your own, untick this option.');
-      
-            drupal_add_js(drupal_get_path('module', 'pathauto') .'/pathauto.js');
-            $form['path']['#collapsed'] = FALSE;
-      
-            $form['path']['pathauto_perform_alias'] = array(
-              '#type' => 'checkbox',
-              '#title' => t('Automatic alias'),
-              '#default_value' => isset($node->pathauto_perform_alias) ? $node->pathauto_perform_alias : TRUE,
-              '#description' => $output,
-              '#weight' => -1,
-            );
-      
-            if (!empty($node->pathauto_perform_alias) && !empty($node->old_alias) && $node->path == '') {
-              $form['path']['path']['#default_value'] = $node->old_alias;
-              $node->path = $node->old_alias;
-            }
-      
-            //For Pathauto to remember the old alias and prevent the Path-module from deleteing it when Pathauto wants to preserve it
-            if (isset($node->path)) {
-              $form['path']['old_alias'] = array('#type' => 'value', '#value' => $node->path);
-            }
-            
-            if ($o_scholar && strpos($form['path']['path']['#default_value'], $o_scholar->purl . '/') === 0) {
-              $form['path']['path']['#default_value'] = substr($form['path']['path']['#default_value'], strlen($o_scholar->purl . '/'));
-            }
-          }
-        }
-      }
-    }//If this is a active scholar type?
-  }
-}
 
 
 /**
@@ -467,6 +487,7 @@ function vsite_menus_get_menu_tree($s_menu){
       
       $menu_links[$key] = array('link' => array_merge($router_info,$ml,array('mlid' => $n_tmp_mlid++)), 'below' => false);
     }
+    
     //Gather Node access info
     $node_links = array();
     menu_tree_collect_node_links($menu_links,$node_links);
