@@ -1,6 +1,34 @@
 <?php
 
-//OLD CP UI, Remove?
+/**
+ * Define the Menu Entries for the Cp Menu Management
+ */
+function vsite_menus_menu() {
+  $items = array();
+  
+  $items['cp/settings'] = array(
+    'title' => "Settings",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_menus_settings_form'),
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+    'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
+    'file' => 'vsite_menus.admin.inc',
+  );
+  
+  $items['cp/settings/menus'] = array(
+    'title' => "Site Menus",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_menus_settings_form'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+    'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
+    'file' => 'vsite_menus.admin.inc',
+  );
+
+  return $items;
+}
 
 /**
  * Implementation of hook_theme().
