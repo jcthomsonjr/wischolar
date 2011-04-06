@@ -14,7 +14,7 @@ function cp_ctools_plugin_api(){
   list($module, $api) = func_get_args();
   if ($module == "context" && $api == "context") {
     return array(
-      "version" => 3 
+      "version" => 3
     );
   }
 }
@@ -86,15 +86,15 @@ function cp_init(){
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/jquery_ui/jquery.ui/themes/openscholar/ui.all.css');
     //Add the JqueryUI JS for the confirm boxes
     jquery_ui_add(array(
-      'ui.dialog', 
-      'effects.core', 
-      'ui.draggable', 
-      'ui.resizable' 
+      'ui.dialog',
+      'effects.core',
+      'ui.draggable',
+      'ui.resizable'
     ));
     drupal_add_js(array(
       'cp_confirm_overide_handler' => array(
-        "js" => 1 
-      ) 
+        "js" => 1
+      )
     ), 'setting');
     
     $modal_styles = _cp_get_modal_styles();
@@ -139,7 +139,7 @@ function cp_get_toolbar_setting(){
  */
 function cp_views_api(){
   return array(
-    'api' => 2 
+    'api' => 2
   );
 }
 
@@ -162,8 +162,8 @@ function cp_menu(){
   $space = vsite_get_vsite();
   $a_default_setting_created = array();
   $a_menu_names = array(
-    'cp/settings' => "Settings", 
-    'cp/appearance' => "Appearance" 
+    'cp/settings' => "Settings",
+    'cp/appearance' => "Appearance"
   );
   
   // we go on all settings and make a menu entry for all of them
@@ -177,15 +177,15 @@ function cp_menu(){
     if (! empty($setting_form)) {
       $s_parent = isset($setting->parent_menu) ? $setting->parent_menu : 'settings';
       $items['cp/' . $s_parent . '/' . $setting->id] = array(
-        'title' => $setting_form['#title'], 
-        'page callback' => 'drupal_get_form', 
+        'title' => $setting_form['#title'],
+        'page callback' => 'drupal_get_form',
         'page arguments' => array(
-          'cp_settings_form', 
-          $setting->id 
-        ), 
-        'type' => MENU_LOCAL_TASK, 
-        'file' => 'cp.settings.inc', 
-        'file path' => drupal_get_path('module', 'cp') . '/includes' 
+          'cp_settings_form',
+          $setting->id
+        ),
+        'type' => MENU_LOCAL_TASK,
+        'file' => 'cp.settings.inc',
+        'file path' => drupal_get_path('module', 'cp') . '/includes'
       );
       
       if (! array_key_exists($s_parent, $a_default_setting_created) || ((isset($setting->weight) ? $setting->weight : 0) < $a_default_setting_created[$s_parent]['weight'])) {
@@ -196,8 +196,8 @@ function cp_menu(){
         
 
         $a_default_setting_created[$s_parent] = array(
-          'weight' => (isset($setting->weight) ? $setting->weight : 0), 
-          'menu' => 'cp/' . $s_parent . '/' . $setting->id 
+          'weight' => (isset($setting->weight) ? $setting->weight : 0),
+          'menu' => 'cp/' . $s_parent . '/' . $setting->id
         );
         $a_setting = $items['cp/' . $s_parent . '/' . $setting->id];
         //Create Local Task
@@ -226,8 +226,8 @@ function cp_menu(){
     
     if (! array_key_exists($s_parent, $a_default_setting_created) && ! strstr($a_settings['path'], '%')) {
       $a_default_setting_created[$s_parent] = array(
-        'weight' => 0, 
-        'menu' => 'cp/' . $s_parent . '/' . $a_settings['path'] 
+        'weight' => 0,
+        'menu' => 'cp/' . $s_parent . '/' . $a_settings['path']
       );
       
       //Create Local Task
@@ -243,22 +243,22 @@ function cp_menu(){
   }
   
   $items["cp/features"] = array(
-    'title' => 'Features', 
-    'page callback' => 'drupal_get_form', 
+    'title' => 'Features',
+    'page callback' => 'drupal_get_form',
     'page arguments' => array(
-      'spaces_features_form' 
-    ), 
-    'file' => 'spaces.admin.inc', 
-    'file path' => $spaces_path, 
-    'weight' => 0 
+      'spaces_features_form'
+    ),
+    'file' => 'spaces.admin.inc',
+    'file path' => $spaces_path,
+    'weight' => 0
   );
   
-  // ctools ajaxify features settings forms 
+  // ctools ajaxify features settings forms
   $items["features/%ctools_js/%"] = array(
-    'title' => 'Features', 
-    'page callback' => 'cp_feature_customize', 
-    'page arguments' => array(1, 2), 
-    'weight' => 1 
+    'title' => 'Features',
+    'page callback' => 'cp_feature_customize',
+    'page arguments' => array(1, 2),
+    'weight' => 1
   );
   
   // make them all part of 'cp' menu
@@ -270,30 +270,30 @@ function cp_menu(){
   }
   
   $items["cp/allow_callback_override"] = array(
-    'page callback' => 'cp_is_confirm_overide_page', 
-    'type' => MENU_CALLBACK, 
-    'access callback' => 'cp_access_cp' 
+    'page callback' => 'cp_is_confirm_overide_page',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'cp_access_cp'
   );
   
   $items['cp/confirm_message/%'] = array(
-    'page callback' => 'cp_confirm_message_view', 
-    'type' => MENU_CALLBACK, 
-    'access callback' => 'cp_access_cp', 
+    'page callback' => 'cp_confirm_message_view',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'cp_access_cp',
     'page arguments' => array(
-      2 
-    ) 
+      2
+    )
   );
     
   // space overrides menu entry for ctools popup
   // @todo: not quite working - unused
   /*
   $items["cp/features/%ctools/overrides"] = array(
-    'title' => 'Overrides', 
-    'page callback' => 'cp_spaces_overrides', 
-    'page arguments' => array(2), 
+    'title' => 'Overrides',
+    'page callback' => 'cp_spaces_overrides',
+    'page arguments' => array(2),
     'access callback' => 'spaces_access_admin_perms',
     'access arguments' => array(array('administer spaces')),
-    'type' => MENU_CALLBACK 
+    'type' => MENU_CALLBACK
   );
   */
   
@@ -324,11 +324,11 @@ function cp_feature_customize($js, $feature_name){
   $feature_title = features_get_feature_title($feature);
   
   $form_state = array(
-    'title' => $feature_title, 
-    'ajax' => TRUE 
+    'title' => $feature_title,
+    'ajax' => TRUE
   );
     
-  // We should have all feature form settings named ${feature_name}_settings 
+  // We should have all feature form settings named ${feature_name}_settings
   // but just in case
   $item = menu_get_item('features/'. $feature_name);
 
@@ -377,7 +377,6 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     ctools_include('modal');
     ctools_modal_add_js();
     
-    dpm('Old Spaces customizers need to be changed to custom controllers');
     //    $customizers = spaces_customizers();
     
     foreach ( array_keys($form['spaces_features']) as $f_name ) {
@@ -399,8 +398,8 @@ function cp_form_alter(&$form, &$form_state, $form_id){
       if ($item && $item['href'] != 'features' && $item['access'] && $is_enabled) {
         $link = ctools_modal_text_button('customize', 'features/nojs/' . $f_name, 'customize ' . $f_name); //, 'ctools-modal-openscholar-style-default');
         $form['settings'][$f_name] = array(
-          '#type' => 'markup', 
-          '#value' => $link 
+          '#type' => 'markup',
+          '#value' => $link
         );
       }
     
@@ -410,9 +409,9 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     if (spaces_access_admin_perms(array('administer spaces' ))) {
       $link = l(t('Overrides'), 'cp/features/overrides');
       $form['buttons']['overrides'] = array(
-        '#type' => 'markup', 
-        '#value' => $link, 
-        '#weight' => 100 
+        '#type' => 'markup',
+        '#value' => $link,
+        '#weight' => 100
       );
     }
   }
@@ -437,11 +436,11 @@ function cp_theme($cache, $type, $theme, $path){
   
   $items['cp_toolbar'] = array(
     'arguments' => array(
-      'tree' => array() 
-    ), 
-    'template' => 'cp-toolbar', 
-    'path' => $path, 
-    'file' => 'theme.inc' 
+      'tree' => array()
+    ),
+    'template' => 'cp-toolbar',
+    'path' => $path,
+    'file' => 'theme.inc'
   );
   
   return $items;
@@ -464,19 +463,19 @@ function cp_preprocess_page(&$vars){
       global $user;
       $user_links = array();
       $user_links[] = array(
-        'title' => 'Control Panel', 
-        'href' => 'cp/features' 
+        'title' => 'Control Panel',
+        'href' => 'cp/features'
       );
       $user_links[] = array(
         'title' => t('Hello <strong>!username</strong>', array(
-          '!username' => $user->name 
-        )), 
-        'href' => 'cp/users', 
-        'html' => TRUE 
+          '!username' => $user->name
+        )),
+        'href' => 'cp/users',
+        'html' => TRUE
       );
       $user_links[] = array(
-        'title' => t('Logout'), 
-        'href' => "logout" 
+        'title' => t('Logout'),
+        'href' => "logout"
       );
       $vars['cp_toolbar'] = theme('links', $user_links);
       $vars['body_classes'] .= ' cp-toolbar-mini';
@@ -507,7 +506,7 @@ function cp_menu_navigation_links($tree, $b_highlight_first_submenu = FALSE){
     $l['href'] = $item['link']['href'];
     $l['title'] = "<span class='icon'></span>" . $item['link']['title'];
     $l['attributes'] = array(
-      'id' => 'admin-link-' . $id 
+      'id' => 'admin-link-' . $id
     );
     $l['html'] = TRUE;
     
@@ -524,7 +523,7 @@ function cp_menu_navigation_links($tree, $b_highlight_first_submenu = FALSE){
     $s_key = key($links);
     $l = array_shift($links);
     $links = array_merge(array(
-      "{$s_key} active-trail" => $l 
+      "{$s_key} active-trail" => $l
     ), $links);
   }
   return $links;
@@ -601,36 +600,36 @@ function _cp_get_modal_styles(){
   return array(
     'openscholar-style-compact' => array(
       'modalSize' => array(
-        'type' => 'fixed', 
-        'width' => 50, 
-        'height' => 30, 
-        'addWidth' => 20, 
-        'addHeight' => 15 
-      ), 
+        'type' => 'fixed',
+        'width' => 50,
+        'height' => 30,
+        'addWidth' => 20,
+        'addHeight' => 15
+      ),
       'modalOptions' => array(
-        'opacity' => .5, 
-        'background-color' => '#000' 
-      ), 
-      'animation' => 'fadeIn', 
-      'modalTheme' => 'CToolsSampleModal', 
-      'throbber' => theme('image', ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), t('Loading...'), t('Loading')) 
-    ), 
+        'opacity' => .5,
+        'background-color' => '#000'
+      ),
+      'animation' => 'fadeIn',
+      'modalTheme' => 'CToolsSampleModal',
+      'throbber' => theme('image', ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), t('Loading...'), t('Loading'))
+    ),
     'openscholar-style-default' => array(
       'modalSize' => array(
-        'type' => 'fixed', 
-        'width' => 500, 
-        'height' => 300, 
-        'addWidth' => 20, 
-        'addHeight' => 15 
-      ), 
+        'type' => 'fixed',
+        'width' => 500,
+        'height' => 300,
+        'addWidth' => 20,
+        'addHeight' => 15
+      ),
       'modalOptions' => array(
-        'opacity' => .5, 
-        'background-color' => '#000' 
-      ), 
-      'animation' => 'fadeIn', 
-      'modalTheme' => 'CToolsSampleModal', 
-      'throbber' => theme('image', ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), t('Loading...'), t('Loading')) 
-    ) 
+        'opacity' => .5,
+        'background-color' => '#000'
+      ),
+      'animation' => 'fadeIn',
+      'modalTheme' => 'CToolsSampleModal',
+      'throbber' => theme('image', ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), t('Loading...'), t('Loading'))
+    )
   );
 }
 
@@ -695,7 +694,7 @@ function cp_is_confirm_overide_page($page = NULL){
     
     //return a json object
     print drupal_json(array(
-      'overideable_settings' => $a_return 
+      'overideable_settings' => $a_return
     ));
     exit();
   } //Was this called by javascript?
@@ -711,11 +710,11 @@ function cp_vsite_settings(){
   
   //Setting that allows you to store the confirm time of messages, they can then be re-shown on intervals or hidden after they have been seen once
   $a_settings = array(
-    'messages_confirmed' => array(), 
+    'messages_confirmed' => array(),
     'home' => array(
-      'class' => 'cp_settings_home', 
-      'file' => drupal_get_path('module', 'cp') . '/includes/cp_home.settings.inc' 
-    ) 
+      'class' => 'cp_settings_home',
+      'file' => drupal_get_path('module', 'cp') . '/includes/cp_home.settings.inc'
+    )
   );
   
   return $a_settings;
@@ -744,7 +743,7 @@ function cp_confirm_message_view($s_message){
 
   //return a json object
   print drupal_json(array(
-    'status' => $b_status 
+    'status' => $b_status
   ));
   exit();
 }
@@ -773,11 +772,11 @@ function cp_vsite_generic_settings($space, $value = array()){
   //Show Admin Menu Setting
   $a_settings['admin_menu'] = array(
     'form' => array(
-      '#type' => 'checkbox', 
-      '#title' => t('Display Admin Menu Bar.'), 
-      '#description' => "The admin menu bar displays at the top of the page when you are logged in as a site administrator.", 
-      '#default_value' => (is_array($value) && array_key_exists('admin_menu', $value)) ? $value['admin_menu'] : 0 
-    ) 
+      '#type' => 'checkbox',
+      '#title' => t('Display Admin Menu Bar.'),
+      '#description' => "The admin menu bar displays at the top of the page when you are logged in as a site administrator.",
+      '#default_value' => (is_array($value) && array_key_exists('admin_menu', $value)) ? $value['admin_menu'] : 0
+    )
   );
   
   return $a_settings;
@@ -806,16 +805,16 @@ function cp_cp_adminmenu_panes($s_menu){
     case 'site_config' :
       return array(
         'features' => array(
-          '#title' => t('Site Features'), 
+          '#title' => t('Site Features'),
           'list' => array(
-            '#type' => 'markup', 
-            '#value' => theme('links', cp_customize_features_list()) 
-          ), 
+            '#type' => 'markup',
+            '#value' => theme('links', cp_customize_features_list())
+          ),
           'customize' => array(
-            '#type' => 'markup', 
-            '#value' => drupal_get_form('spaces_features_form') 
-          ) 
-        ) 
+            '#type' => 'markup',
+            '#value' => drupal_get_form('spaces_features_form')
+          )
+        )
       );
       break;
   }
@@ -828,11 +827,11 @@ function cp_customize_features_list(){
   
   foreach ( $features as $feature ) {
     $links[$feature->name] = array(
-      'title' => $feature->info['name'], 
-      'href' => 'cp/features/' . $feature->name, 
+      'title' => $feature->info['name'],
+      'href' => 'cp/features/' . $feature->name,
       'attributes' => array(
-        'class' => 'ctools-use-modal' 
-      ) 
+        'class' => 'ctools-use-modal'
+      )
     );
   }
   
@@ -916,22 +915,22 @@ function cp_toolbar_menu_links(){
   $user_links = array();
   $user_links[] = array(
     'title' => t('Hello <strong>!username</strong>', array(
-      '!username' => $user->name 
-    )), 
-    'href' => 'cp/users', 
-    'html' => TRUE 
+      '!username' => $user->name
+    )),
+    'href' => 'cp/users',
+    'html' => TRUE
   );
   $user_links[] = array(
-    'title' => t('Logout'), 
-    'href' => "logout" 
+    'title' => t('Logout'),
+    'href' => "logout"
   );
   if (context_get('vsite', 'section') == 'cp') {
     $user_links[] = array(
       'title' => t('Back to <strong>!sitename</strong>', array(
-        '!sitename' => vsite_get_vsite()->purl 
-      )), 
-      'href' => "", 
-      'html' => TRUE 
+        '!sitename' => vsite_get_vsite()->purl
+      )),
+      'href' => "",
+      'html' => TRUE
     );
   }
   $links[0]['user'] = $user_links;
