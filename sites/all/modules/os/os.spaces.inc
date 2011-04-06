@@ -33,8 +33,8 @@ function os_spaces_presets() {
       'spaces_og_register' => 1,
       'spaces_og_directory' => 1,
       'spaces_og_private' => 0,
-      'site_frontpage' => 'classes',
-      'site_frontpage_path' => 'classes',
+      'site_frontpage' => 'home',
+      'site_frontpage_path' => 'home',
       'default_theme' => 'scholar_airstream',
     ),
   );

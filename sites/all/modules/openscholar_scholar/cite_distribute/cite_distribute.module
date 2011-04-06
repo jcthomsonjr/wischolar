@@ -98,24 +98,24 @@ function cite_distribute_remove_flag($module = NULL) {
  */
 function cite_distribute_form_alter(&$form, $form_state, $form_id) {
 	if ($form_id == 'views_bulk_operations_form__1') {
-		$repos = array ();
-		foreach ( cite_distribute_installed_mods () as $mod ) {
-			$repos [] = $mod ['repository'];
+		$repos = array();
+		foreach( cite_distribute_installed_mods() as $mod ) {
+			$repos[] = $mod['repository'];
 		}
 		
-		if (arg ( 0 ) == 'cp' && arg ( 1 ) == 'content' && arg ( 2 ) == 'biblio') {
-			if (is_array ( $form ['select'] ['operation'] ['#options'] )) {
-				foreach ( $form ['select'] ['operation'] ['#options'] as $key => $operation ) {
-					if (in_array ( $operation, $repos ))
-						$form ['select'] ['operation'] ['#options'] [$key] = 'Distribute to ' . $operation;
+		if (arg(0) == 'cp' && arg(1) == 'content' && arg(2) == 'biblio') {
+			if (is_array ($form['select']['operation']['#options'] )) {
+				foreach ($form['select']['operation']['#options'] as $key => $operation ) {
+					if (in_array ($operation, $repos))
+						$form['select']['operation']['#options'][$key] = 'Distribute to ' . $operation;
 				}
 			}
 		} else {
 			//remove cite distribute bulk ops flags form the drop down list
-			if (! empty ( $form ['select'] ['operation'] ['#options'] )) {
-				foreach ( $form ['select'] ['operation'] ['#options'] as $key => $operation ) {
-					if (in_array ( $operation, $repos ))
-						unset ( $form ['select'] ['operation'] ['#options'] [$key] );
+			if (! empty( $form['select']['operation']['#options'] )) {
+				foreach ( $form['select']['operation']['#options'] as $key => $operation ) {
+					if (in_array( $operation, $repos ))
+						unset ( $form['select']['operation']['#options'][$key] );
 				}
 			}
 		}

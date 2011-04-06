@@ -5,6 +5,8 @@ function scholar_publications_settings($space) {
 
   $s_style = biblio_get_style();
 
+  $form['#columns'] = TRUE;
+
   $form['biblio_no_year_text'] = array(
     '#type' => 'textfield',
     '#title' => t('Unpublished Label'),
@@ -18,6 +20,7 @@ function scholar_publications_settings($space) {
     //'#description' => t('This alters the bibliographic format of your publications.'),
     '#default_value' => $s_style,
     '#options' => _biblio_admin_get_styles(),
+    '#region' => 'right',
   );
 
   $form['biblio_export_links'] = array(
@@ -30,6 +33,7 @@ function scholar_publications_settings($space) {
       'bibtex'  => t('BibTex'),
     ),
     '#description' => t('Each selected format will appear in its own export link.'),
+    '#region' => 'right',
   );
 
   $form['biblio_google_link'] = array(
@@ -38,6 +42,7 @@ function scholar_publications_settings($space) {
     '#return_value' => 1,
     '#default_value' => variable_get('biblio_google_link', 1),
     '#description' => t('This adds the necessary metadata to your web site to allow Google Scholar to properly index your publication.'),
+    '#region' => 'right',
   );
 
   $form['scholar_publications_note_in_teaser'] = array(
@@ -46,6 +51,7 @@ function scholar_publications_settings($space) {
     //'#description' => t('This alters the bibliographic format of your publications.'),
     '#default_value' => variable_get('scholar_publications_note_in_teaser',false),
     '#description' => t('If this is checked and you add a note to a publication then it will show as part of a publications teaser.'),
+    '#region' => 'right',
   );
 
   $form['scholar_publications_external_link_name'] = array(
@@ -88,6 +94,7 @@ function scholar_publications_settings($space) {
   $form['bkn'] = array(
     '#type' => 'fieldset',
     '#title' =>t('Author Lookup Services'),
+    '#region' => 'footer',
   );
 
   // check these with others
@@ -105,6 +112,8 @@ function scholar_publications_settings($space) {
     '#default_value' => variable_get('bkn_mode', 2),
     '#options' => array(t('Lookup via autocomplete (many requests to bkn)'), t('User Initiated (single request)'), t('Disabled')),
   );
+
+  $form['buttons']['#region'] = 'footer';
 
   return system_settings_form($form);
 }

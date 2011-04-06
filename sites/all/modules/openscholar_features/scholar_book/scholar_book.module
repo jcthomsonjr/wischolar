@@ -32,6 +32,17 @@ function scholar_book_menu(){
     'type' => MENU_LOCAL_TASK,
     'weight' => 50,
   );
+
+  $items['features/scholar_book'] = array(
+    'title' => 'Book Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_book_settings'),
+    'access callback' => module_exists('spaces') ? 'spaces_access_admin' : 'user_access',
+    'access arguments' => module_exists('spaces') ? array() : array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'scholar_book.pages.inc',
+  );
+
   return $items;
 }
 /**
@@ -83,7 +94,7 @@ function scholar_book_link_alter(&$links, $node){
 
 /**
  * Implementation of hook_spaces_settings().
- */
+
 function scholar_book_spaces_settings() {
   return array(
     'scholar_book' => array(
@@ -91,7 +102,7 @@ function scholar_book_spaces_settings() {
       'file' => drupal_get_path('module', 'scholar_book') .'/scholar_book.settings.feature.inc',
     ),
   );
-}
+}*/
 
 
 /**
@@ -388,19 +399,11 @@ function scholar_book_context_links_alter(&$links) {
 /**
  * helper function to return vsite settings for book's toc location
  */
-function scholar_book_toc_location(){
-  vsite_include('vsiteapi');
-  $vsite = vsite_get_vsite();
-  $book_settings = $vsite->controllers->variable->get('vsite_setting_scholar_book');
-    
-  if (is_array($book_settings)
-    && $book_settings['scholar_book_toc_location'] == 1) {
+function scholar_book_toc_location() {
+  if (variable_get('scholar_book_toc_location', 0) == 1) {
       return SCHOLAR_BOOK_TOC_CONTENT;
     }
     else {
       return SCHOLAR_BOOK_TOC_WIDGET;
     }
-
 }
-
-
