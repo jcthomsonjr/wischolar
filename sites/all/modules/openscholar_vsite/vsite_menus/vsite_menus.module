@@ -1,37 +1,30 @@
 <?php
 
-
-function vsite_menus_init() {
-   drupal_add_css(drupal_get_path('module', 'vsite_menus') . '/theme/vsite_menus.css');
-}
+//OLD CP UI, Remove?
 
 /**
- * Implementation of hook_vsite_settings().
+ * Implementation of hook_theme().
  */
-function vsite_menus_vsite_settings() {
-  return array(
-    'menus' => array(
-      'class' => 'vsite_menus_menus',
-      'file' => drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc'
-    )
-  );
-}
-
-/**
- * Implementation of hook_spaces_customizers().
- */
-function vsite_menus_spaces_customizers_alter(&$customizers) {
-  if (array_key_exists('menu', $customizers)) {
-    $customizers['menu']['class'] = 'vsite_menus_customizer_menu';
-    $customizers['menu']['file'] = drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.customizer.inc';
-  }
+function vsite_menus_theme($cache, $type, $theme, $path) {
+  $path = drupal_get_path('module', 'vsite_menus') ;
   
-  return $customizers;
+  $items['vsite_menus_radios'] = array(
+    'arguments' => array('element' => NULL, 'disabled' => array()),
+    'path' => $path,
+    'file' => 'menu_theme.inc',
+  );
+  
+  return $items;
 }
 
+/**
+ * MENU LINK Maintnance functions
+ * these functions handle hooking into the controller from the node form
+ */
 
 /**
  * Implements hook_menu_node_insert().
+ * /
  */
 function vsite_menus_menu_node_insert($item, $node) {
   require_once(drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc');
@@ -61,6 +54,7 @@ function vsite_menus_menu_node_insert($item, $node) {
 
 /**
  * Implements hook_menu_node_update().
+ * /
  */
 function vsite_menus_menu_node_update($item, $node) {
   vsite_menus_menu_node_insert($item, $node);
@@ -68,6 +62,7 @@ function vsite_menus_menu_node_update($item, $node) {
 
 /**
  * Implements hook_menu_node_delete().
+ * /
  */
 function vsite_menus_menu_node_delete($item, $node) {
   require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
@@ -82,20 +77,7 @@ function vsite_menus_menu_node_delete($item, $node) {
 }
 
 
-/**
- * Implementation of hook_theme().
- */
-function vsite_menus_theme($cache, $type, $theme, $path) {
-  $path = drupal_get_path('module', 'vsite_menus') ;
-  
-  $items['vsite_menus_radios'] = array(
-    'arguments' => array('element' => NULL, 'disabled' => array()),
-    'path' => $path,
-    'file' => 'menu_theme.inc',
-  );
-  
-  return $items;
-}
+
 
 /**
  * Change the options for the node save form so that only the active vsite menus are displayed
@@ -103,6 +85,7 @@ function vsite_menus_theme($cache, $type, $theme, $path) {
  * @param $form array
  * @param $form_state array
  * @param $form_id string
+ * /
  */
 function vsite_menus_form_alter(&$form, $form_state, $form_id) {
 	//Are we on a node form?
@@ -209,6 +192,7 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
 
 /**
  * Implementation of hook_nodeapi().
+ * /
  */
 function vsite_menus_nodeapi(&$node, $op, $teaser, $page) {
   if (module_exists('path')) {
@@ -236,64 +220,6 @@ function vsite_menus_nodeapi(&$node, $op, $teaser, $page) {
         break;
     }
   }
-}
-
-/**
- * Iplementation of hook block
- *
- * @param string $op
- * @param int $delta
- * @param array $edit
- */
-function vsite_menus_block($op = 'list', $delta = 0, $edit = array()) {
-  if (!user_access('access content')) return;
-  
-  $blocks = array();
-  if ($op == 'list') {
-    $blocks[0] = array('info' => t('Primary menu'), 'cache' => BLOCK_CACHE_PER_PAGE);
-    $blocks[1] = array('info' => t('Secondary menu'), 'cache' => BLOCK_CACHE_PER_PAGE);
-    return $blocks;
-  }
-  elseif ($op == 'view') {
-    switch ($delta) {
-      case 0:
-        $block['subject'] = t(''); // intentionally left empty for now.
-        $block['content'] = vsite_menus_get_menu_tree(variable_get('scholar_primary_menu', FALSE), TRUE, FALSE, TRUE);
-        return $block ;
-      case 1:
-        $block['subject'] = t(''); // intentionally left empty for now.
-        $block['content'] = vsite_menus_get_menu_tree(variable_get('scholar_secondary_menu', FALSE), TRUE, FALSE, TRUE);
-        return $block;
-    }
-  }
-}
-
-/**
- * Implementation of hook_vsite_widgets
- * @return array
- */
-function vsite_menus_vsite_widgets() {
-  
-  return array(
-    'vsite_menus_0' => array(
-      'module' => 'vsite_menus',
-      'delta' => '0',
-      'weight' => 20,
-      'region' => 'navbar',
-      'status' => '0',
-      'label' => 'Primary menu',
-      'type' => 'context_ui',
-    ),
-    'vsite_menus_1' => array(
-      'module' => 'vsite_menus',
-      'delta' => '1',
-      'weight' => 20,
-      'region' => 'left',
-      'status' => '0',
-      'label' => 'Secondary menu',
-      'type' => 'context_ui',
-    ),
-  );
 }
 
 /**
@@ -423,10 +349,116 @@ function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primar
 
 
 
+/**
+ * Menu Rendering Functions
+ *
+ * Retrieve the data from the controller and display it to the user
+ */
 
 
-///////// NEW ///////////
+/**
+ * Iplementation of hook block
+ *
+ * @param string $op
+ * @param int $delta
+ * @param array $edit
+ */
+function vsite_menus_block($op = 'list', $delta = 0, $edit = array()) {
+  if (!user_access('access content')) return;
+  
+  $blocks = array();
+  if ($op == 'list') {
+    $blocks[0] = array('info' => t('Primary menu'), 'cache' => BLOCK_CACHE_PER_PAGE);
+    $blocks[1] = array('info' => t('Secondary menu'), 'cache' => BLOCK_CACHE_PER_PAGE);
+    return $blocks;
+  }
+  elseif ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        $block['subject'] = t(''); // intentionally left empty for now.
+        $block['content'] = vsite_menus_get_menu_tree(variable_get('scholar_primary_menu', FALSE), TRUE, FALSE, TRUE);
+        return $block ;
+      case 1:
+        $block['subject'] = t(''); // intentionally left empty for now.
+        $block['content'] = vsite_menus_get_menu_tree(variable_get('scholar_secondary_menu', FALSE), TRUE, FALSE, TRUE);
+        return $block;
+    }
+  }
+}
 
+/**
+ * Implementation of hook_vsite_widgets
+ * @return array
+ */
+function vsite_menus_vsite_widgets() {
+  
+  return array(
+    'vsite_menus_0' => array(
+      'module' => 'vsite_menus',
+      'delta' => '0',
+      'weight' => 20,
+      'region' => 'navbar',
+      'status' => '0',
+      'label' => 'Primary menu',
+      'type' => 'context_ui',
+    ),
+    'vsite_menus_1' => array(
+      'module' => 'vsite_menus',
+      'delta' => '1',
+      'weight' => 20,
+      'region' => 'left',
+      'status' => '0',
+      'label' => 'Secondary menu',
+      'type' => 'context_ui',
+    ),
+  );
+}
+
+/**
+ * Return the menu tree object for a scholar site, adapted for the current page
+ *
+ * @param string $s_menu
+ */
+function vsite_menus_get_menu_tree($s_menu){
+  $space = vsite_get_vsite();
+  if(!$space) return menu_tree($s_menu);
+  
+  static $menu_output = array();
+
+  if (!isset($menu_output[$s_menu])) {
+    //Get Menu for this site
+    $menu_links = $space->controllers->vsite_menu->get($s_menu);
+    
+    //Tmp MLID used for array keys when using menu's node access functions
+    $n_tmp_mlid = 1;
+    
+    //Apply tmp mlid and menu_router information to links
+    foreach ($menu_links as $key => $ml){
+      $router_info = db_fetch_array(db_query("SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description
+          FROM {menu_router} m WHERE m.path = '%s' ", $ml['router_path']));
+      
+      $menu_links[$key] = array('link' => array_merge($router_info,$ml,array('mlid' => $n_tmp_mlid++)), 'below' => false);
+    }
+    //Gather Node access info
+    $node_links = array();
+    menu_tree_collect_node_links($menu_links,$node_links);
+    
+    //Check Node and menu access
+    menu_tree_check_access($menu_links, $node_links);
+    
+    //Render the Menu
+    $menu_output[$s_menu] = menu_tree_output($menu_links);
+  }
+  return $menu_output[$s_menu];
+  
+}
+
+
+
+
+/**
+ * Controller Plugin Hooks
+ */
 
 /**
  * Implementation of hook_spaces_registry().
@@ -460,41 +492,3 @@ function vsite_menus_spaces_plugins() {
   return $plugins;
 }
 
-/**
- * Return the menu tree object for a scholar site, adapted for the current page
- *
- * @param string $s_menu
- */
-function vsite_menus_get_menu_tree($s_menu){
-  $space = vsite_get_vsite();
-  if(!$space) return menu_tree($s_menu);
-  
-  static $menu_output = array();
-
-  if (!isset($menu_output[$s_menu])) {
-  	//Get Menu for this site
-    $menu_links = $space->controllers->vsite_menu->get($s_menu);
-    
-    //Tmp MLID used for array keys when using menu's node access functions
-    $n_tmp_mlid = 1;
-    
-    //Apply tmp mlid and menu_router information to links
-    foreach ($menu_links as $key => $ml){
-    	$router_info = db_fetch_array(db_query("SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description
-    	    FROM {menu_router} m WHERE m.path = '%s' ", $ml['router_path']));
-    	
-    	$menu_links[$key] = array('link' => array_merge($router_info,$ml,array('mlid' => $n_tmp_mlid++)), 'below' => false);
-    }
-    //Gather Node access info
-    $node_links = array();
-    menu_tree_collect_node_links($menu_links,$node_links);
-    
-    //Check Node and menu access
-    menu_tree_check_access($menu_links, $node_links);
-    
-    //Render the Menu
-    $menu_output[$s_menu] = menu_tree_output($menu_links);
-  }
-  return $menu_output[$s_menu];
-  
-}
