@@ -204,17 +204,10 @@ function vsite_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'scholar_primary_menu';
-  $strongarm->value = 'features';
+  $strongarm->name = 'scholar_site_menus';
+  $strongarm->value = array('features' => "Primary Menu", 'scholar_secondary_menu' => "Secondary Menu");
 
-  $export['scholar_primary_menu'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'scholar_secondary_menu';
-  $strongarm->value = 'scholar_secondary_menu';
-
-  $export['scholar_secondary_menu'] = $strongarm;
+  $export['scholar_site_menus'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;

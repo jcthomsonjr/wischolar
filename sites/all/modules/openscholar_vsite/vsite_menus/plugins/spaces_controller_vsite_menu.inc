@@ -136,4 +136,26 @@ class spaces_controller_vsite_menu extends spaces_controller {
 		
 		return ($a['weight'] < $b['weight']) ? -1 : 1;
 	}
+	
+  /**
+   * Get multiple values from this controller
+   *
+   * @param $menus
+   *   An array of the menus to retrieve.
+   *
+   * @param $environment
+   *   The realm of to fetch the setting for either 'space', 'preset', or
+   *   'original'. Optional.
+   */
+  function get_multiple($menus, $environment = NULL) {
+    
+  	$a_all_links = array();
+  	
+  	foreach ($menus as $id) {
+  		$ret = $this->get($id,$enviroment);
+  		$a_all_links = is_array($a_all_links, $ret);
+  	}
+  	
+    return $a_all_links;
+  }
 }
