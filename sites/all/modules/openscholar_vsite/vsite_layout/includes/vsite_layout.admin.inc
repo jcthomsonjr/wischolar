@@ -148,7 +148,7 @@ function vsite_layout_check_for_disabled_widgets(&$widgets, $space = NULL) {
   if (!count($widgets)) return; //Nothing to do because there are no widgets to act on
   if (!$space) $space = vsite_get_vsite(); //Get current Viste
 
-  $space_features = variable_get('spaces_features');
+  $space_features = variable_get('spaces_features', array());
   foreach ($widgets as $s_wgt_name => $wgt) {
     if (array_key_exists($wgt['module'], $space_features) && !$space_features[$wgt['module']]) {
       //if this block is provided by a feature and that feature is disabled do not show the block
@@ -371,7 +371,7 @@ function vsite_layout_settings_form_submit($form, &$form_state) {
  *
  * @param vsite $space
  */
-function vsite_layout_get_pagetypes($space) {
+function vsite_layout_get_pagetypes($space = null) {
   if (!$space && !($space = vsite_get_vsite()))  return array(); //No valid space
 
   static $a_page_types;
