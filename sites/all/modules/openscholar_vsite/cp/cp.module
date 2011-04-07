@@ -27,11 +27,11 @@ function cp_ctools_plugin_api(){
  * @param unknown_type $edit
  */
 function cp_block($op = 'list', $delta = 0, $edit = array()){
-  
+
   switch ($op) {
     case 'list' :
       $blocks[0]['info'] = t('CP left block');
-      
+
       return $blocks;
     case 'view' :
       switch ($delta) {
@@ -40,7 +40,7 @@ function cp_block($op = 'list', $delta = 0, $edit = array()){
           $block = cp_left_block_view();
           break;
         default :
-          
+
           break;
       }
       return $block;
@@ -65,11 +65,11 @@ function cp_left_block_view(){
 function cp_init(){
   global $user;
   $vsite = vsite_get_vsite();
-  
+
   if (! $vsite) {
     return;
   }
-  
+
   //initialize cp theme
   if (context_isset('context', 'vsite-section-cp')) {
     _cp_init_theme(); //MOVE INTO CONTEXT REACTION?
@@ -77,9 +77,9 @@ function cp_init(){
   elseif (context_isset('context', 'vsite-section-public')) {
     og_set_theme($vsite->group); //MOVE INTO CONTEXT REACTION?
   }
-  
+
   $admin = $vsite->access_admin();
-  
+
   if ($admin) {
     //add the javascript for intercepting confirm pages
     drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.js');
@@ -96,12 +96,12 @@ function cp_init(){
         "js" => 1
       )
     ), 'setting');
-    
+
     $modal_styles = _cp_get_modal_styles();
     drupal_add_js($modal_styles, 'setting');
-  
+
   } //Allow special popups if they are admin
-  
+
 
   if (cp_get_toolbar_setting() == 'full') {
     drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
@@ -114,23 +114,23 @@ function cp_init(){
 function cp_get_toolbar_setting(){
   if (! ($vsite = vsite_get_vsite()) || ! $vsite->access_admin())
     return 'off';
-  
+
   $a_generic_settings = variable_get('vsite_setting_generic', array());
   $user_tb_setting = (is_array($a_generic_settings) && array_key_exists('admin_menu', $a_generic_settings) && $a_generic_settings['admin_menu']) ? TRUE : FALSE;
-  
+
   // if in cp always toolbar=on (full)
   if (context_isset('context', 'vsite-section-cp') || $user_tb_setting) {
     return "full";
   }
-  
+
   if (context_isset('context', 'vsite-section-public') && $admin) {
-    
+
     if ($user_tb_setting)
       return "full";
-    
+
     return "mini";
   }
-  
+
   return 'off';
 }
 
@@ -154,10 +154,10 @@ function cp_menu_alter(&$items){
 function cp_menu(){
   $spaces_path = drupal_get_path('module', 'spaces');
   //$items = spaces_active_space_menu('og', FALSE, 'cp/settings');
-  
+
 
   $items = array();
-  
+
   // other setting by classess
   $space = vsite_get_vsite();
   $a_default_setting_created = array();
@@ -165,13 +165,14 @@ function cp_menu(){
     'cp/settings' => "Settings",
     'cp/appearance' => "Appearance"
   );
-  
+
   // we go on all settings and make a menu entry for all of them
   foreach ( cp_get_vsite_settings(TRUE) as $setting ) {
+    // TODO: rewrite for conversion to systems_settings_form
     //Explicitly remove from menus
     if (! $setting || isset($setting->menu_name) && ! $setting->menu_name)
       continue;
-      
+
     //@TODO Dont know why we have a manual exclusion here and we need to find a way to do this without using vsite_get_vsite
     $setting_form = $setting->form($space, NULL);
     if (! empty($setting_form)) {
@@ -187,13 +188,13 @@ function cp_menu(){
         'file' => 'cp.settings.inc',
         'file path' => drupal_get_path('module', 'cp') . '/includes'
       );
-      
+
       if (! array_key_exists($s_parent, $a_default_setting_created) || ((isset($setting->weight) ? $setting->weight : 0) < $a_default_setting_created[$s_parent]['weight'])) {
-        
+
         if (array_key_exists($s_parent, $a_default_setting_created)) {
           $items[$a_default_setting_created[$s_parent]['menu']]['type'] = MENU_LOCAL_TASK;
         } //Remove existing def. local task
-        
+
 
         $a_default_setting_created[$s_parent] = array(
           'weight' => (isset($setting->weight) ? $setting->weight : 0),
@@ -202,38 +203,38 @@ function cp_menu(){
         $a_setting = $items['cp/' . $s_parent . '/' . $setting->id];
         //Create Local Task
         $items['cp/' . $s_parent . '/' . $setting->id]['type'] = MENU_DEFAULT_LOCAL_TASK;
-        
+
         //Crate Main Menu Item
         unset($a_setting['type']);
         $a_setting['title'] = $a_menu_names['cp/' . $s_parent];
         $items['cp/' . $s_parent] = $a_setting;
         $items['cp/' . $s_parent]['weight'] = 1;
       }
-      
+
       if (isset($setting->weight))
         $items['cp/' . $s_parent . '/' . $setting->id]['weight'] = $setting->weight;
       if (isset($setting->menu_name))
         $items['cp/' . $s_parent . '/' . $setting->id]['menu_name'] = $setting->menu_name;
     }
-  
+
   }
-  
+
   foreach ( module_invoke_all("cp_settings") as $a_settings ) {
     if (is_array($a_settings)) {
       $s_parent = isset($a_settings['parent']) ? $a_settings['parent'] : 'settings';
       $items['cp/' . $s_parent . '/' . $a_settings['path']] = $a_settings;
     }
-    
+
     if (! array_key_exists($s_parent, $a_default_setting_created) && ! strstr($a_settings['path'], '%')) {
       $a_default_setting_created[$s_parent] = array(
         'weight' => 0,
         'menu' => 'cp/' . $s_parent . '/' . $a_settings['path']
       );
-      
+
       //Create Local Task
       $a_settings['type'] = MENU_DEFAULT_LOCAL_TASK;
       $items['cp/' . $s_parent . '/' . $a_settings['path']] = $a_settings;
-      
+
       //Crate Main Menu Item
       unset($a_settings['type']);
       $a_settings['name'] = $a_menu_names['cp/' . $s_parent];
@@ -241,7 +242,7 @@ function cp_menu(){
       $items['cp/' . $s_parent]['weight'] = 1;
     } //Default created yet?  also make sure there are no dynamic params
   }
-  
+
   $items["cp/features"] = array(
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
@@ -252,7 +253,7 @@ function cp_menu(){
     'file path' => $spaces_path,
     'weight' => 0
   );
-  
+
   // ctools ajaxify features settings forms
   $items["features/%ctools_js/%"] = array(
     'title' => 'Features',
@@ -260,7 +261,7 @@ function cp_menu(){
     'page arguments' => array(1, 2),
     'weight' => 1
   );
-  
+
   // make them all part of 'cp' menu
   foreach ( $items as $path => $item ) {
     if (! array_key_exists('menu_name', $item))
@@ -268,13 +269,13 @@ function cp_menu(){
     if (! array_key_exists('access callback', $item))
       $items[$path]['access callback'] = 'cp_access_cp';
   }
-  
+
   $items["cp/allow_callback_override"] = array(
     'page callback' => 'cp_is_confirm_overide_page',
     'type' => MENU_CALLBACK,
     'access callback' => 'cp_access_cp'
   );
-  
+
   $items['cp/confirm_message/%'] = array(
     'page callback' => 'cp_confirm_message_view',
     'type' => MENU_CALLBACK,
@@ -283,7 +284,7 @@ function cp_menu(){
       2
     )
   );
-    
+
   // space overrides menu entry for ctools popup
   // @todo: not quite working - unused
   /*
@@ -296,7 +297,7 @@ function cp_menu(){
     'type' => MENU_CALLBACK
   );
   */
-  
+
   return $items;
 }
 
@@ -313,21 +314,21 @@ function cp_access_cp(){
  * callback function for our popup forms
  */
 function cp_feature_customize($js, $feature_name){
-  
+
   if (! js) {
     return drupal_get_form($feature_name . '_settings');
   }
-  
+
   ctools_include('modal');
   ctools_include('ajax');
   $feature = feature_load($feature_name);
   $feature_title = features_get_feature_title($feature);
-  
+
   $form_state = array(
     'title' => $feature_title,
     'ajax' => TRUE
   );
-    
+
   // We should have all feature form settings named ${feature_name}_settings
   // but just in case
   $item = menu_get_item('features/'. $feature_name);
@@ -363,7 +364,7 @@ function cp_feature_customize($js, $feature_name){
  *   String representing the name of the current form
  */
 function cp_form_alter(&$form, &$form_state, $form_id){
-  
+
   /*
    * we'd like to remove the space settings from 'spaces_features_form'
    * and make 'settings' link as a popup link
@@ -376,21 +377,21 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     ctools_include('ajax');
     ctools_include('modal');
     ctools_modal_add_js();
-    
+
     //    $customizers = spaces_customizers();
-    
+
     foreach ( array_keys($form['spaces_features']) as $f_name ) {
       if ($f_name[0] == '#')
         continue;
-        
+
       // change feature title based on installation type (scholar / project) @todo ugly
       $installation_name = variable_get('openscholar_installation_mode', 'scholar');
       $form['features'][$f_name]['#title'] = str_replace('scholar', $installation_name, $form['features'][$f_name]['#title']);
-      
+
       // is this feature customizable ?
       // by convenction feature settings form is at features/feature_name
       $item = menu_get_item('features/' . $f_name);
-      
+
       $spaces_features = variable_get('spaces_features', array());
       $is_enabled = $spaces_features[$f_name];
       // if the href of this items is just 'features' (i.e. parent), that path does not exist
@@ -402,9 +403,9 @@ function cp_form_alter(&$form, &$form_state, $form_id){
           '#value' => $link
         );
       }
-    
+
     }
-      
+
     // just  quick way for admins to see overrides
     if (spaces_access_admin_perms(array('administer spaces' ))) {
       $link = l(t('Overrides'), 'cp/features/overrides');
@@ -415,7 +416,7 @@ function cp_form_alter(&$form, &$form_state, $form_id){
       );
     }
   }
-  
+
   //Call Confirm Override
   if (in_array($form_id, cp_get_confirm_form_overides()))
     cp_confirm_override($form, $form_state, $form_id);
@@ -433,7 +434,7 @@ function cp_form_alter(&$form, &$form_state, $form_id){
  */
 function cp_theme($cache, $type, $theme, $path){
   $path = drupal_get_path('module', 'cp') . '/theme';
-  
+
   $items['cp_toolbar'] = array(
     'arguments' => array(
       'tree' => array()
@@ -442,7 +443,7 @@ function cp_theme($cache, $type, $theme, $path){
     'path' => $path,
     'file' => 'theme.inc'
   );
-  
+
   return $items;
 }
 
@@ -457,7 +458,7 @@ function cp_theme($cache, $type, $theme, $path){
 function cp_preprocess_page(&$vars){
   // 2 new variables for top and left menus
   $vars['cp_toolbar'] = $vars['cp_left'] = '';
-  
+
   switch (cp_get_toolbar_setting()) {
     case 'mini' :
       global $user;
@@ -480,7 +481,7 @@ function cp_preprocess_page(&$vars){
       $vars['cp_toolbar'] = theme('links', $user_links);
       $vars['body_classes'] .= ' cp-toolbar-mini';
       break;
-    
+
     case 'full' :
       $links = cp_toolbar_menu_links();
       $vars['cp_toolbar'] = theme('cp_toolbar', $links);
@@ -498,10 +499,10 @@ function cp_menu_navigation_links($tree, $b_highlight_first_submenu = FALSE){
   foreach ( $tree as $item ) {
     if ($item['link']['type'] == MENU_CALLBACK)
       continue;
-    
+
     $class = '';
     $id = str_replace('/', '-', $item['link']['href']);
-    
+
     $l = $item['link']['localized_options'];
     $l['href'] = $item['link']['href'];
     $l['title'] = "<span class='icon'></span>" . $item['link']['title'];
@@ -509,16 +510,16 @@ function cp_menu_navigation_links($tree, $b_highlight_first_submenu = FALSE){
       'id' => 'admin-link-' . $id
     );
     $l['html'] = TRUE;
-    
+
     $class = ' path-' . $id;
     if (cp_in_active_trail($item['link']['href'])) {
       $b_highlight_first_submenu = FALSE;
       $class .= ' active-trail';
     }
-    
+
     $links['menu-' . $item['link']['mlid'] . $class] = $l;
   }
-  
+
   if ($b_highlight_first_submenu) {
     $s_key = key($links);
     $l = array_shift($links);
@@ -573,7 +574,7 @@ function cp_user($op, &$edit, &$account, $category = NULL){
           if ($a_grp['uid'] != $account->uid)
             continue;
           $space = spaces_load('og', $a_grp['nid']);
-          
+
           $a_contact_settings = $space->controllers->variable->get('vsite_setting_contact');
           $a_contact_settings['email'] = $account->mail;
           $space->controllers->variable->set('vsite_setting_contact', $a_contact_settings);
@@ -667,7 +668,7 @@ function cp_confirm_override(&$form, &$form_state, $form_id){
  * @return array
  */
 function cp_is_confirm_overide_page($page = NULL){
-  
+
   if (! $_POST['js'] || $page) {
     //Just check and return as usual
     $a_router_item = menu_get_item($page);
@@ -678,20 +679,20 @@ function cp_is_confirm_overide_page($page = NULL){
     $vsite = vsite_get_vsite();
     if (count($_POST['paths'])) {
       foreach ( $_POST['paths'] as $path ) {
-        
+
         //Get the correct path and remove the site name from the front
         if (strpos($path, 'http') !== 0)
           $path = "http://hostname" . $path;
         $a_path_parts = @parse_url($path);
         if (is_array($a_path_parts)) {
           $s_search_path = (strpos($a_path_parts['path'], '/' . $vsite->purl) == 0) ? substr($a_path_parts['path'], strlen($vsite->purl) + 2) : $a_path_parts['path'];
-          
+
           $a_router_item = menu_get_item($s_search_path);
           $a_return[$a_path_parts['path']] = ($a_router_item && array_key_exists($a_router_item['path'], cp_get_confirm_form_overides()));
         }
       } //Check each path
     }
-    
+
     //return a json object
     print drupal_json(array(
       'overideable_settings' => $a_return
@@ -707,7 +708,7 @@ function cp_is_confirm_overide_page($page = NULL){
  *   Associative array containing Spaces settings for Control Panels
  */
 function cp_vsite_settings(){
-  
+
   //Setting that allows you to store the confirm time of messages, they can then be re-shown on intervals or hidden after they have been seen once
   $a_settings = array(
     'messages_confirmed' => array(),
@@ -716,7 +717,7 @@ function cp_vsite_settings(){
       'file' => drupal_get_path('module', 'cp') . '/includes/cp_home.settings.inc'
     )
   );
-  
+
   return $a_settings;
 }
 
@@ -726,20 +727,20 @@ function cp_vsite_settings(){
 function cp_confirm_message_view($s_message){
   $vsite = vsite_get_vsite();
   $b_status = FALSE;
-  
+
   if ($vsite && strlen($s_message)) {
     $a_messages_settings = $vsite->controllers->variable->get('vsite_setting_messages_confirmed');
     $b_status = time();
-    
+
     $a_messages_settings[$s_message] = $b_status;
     $vsite->controllers->variable->set('vsite_setting_messages_confirmed', $a_messages_settings);
   }
-  
+
   if ($_GET['source']) {
     drupal_goto($_GET['source']);
     return;
   } //Redirect if we ask it to
-  
+
 
   //return a json object
   print drupal_json(array(
@@ -755,10 +756,10 @@ function cp_confirm_message_view($s_message){
  */
 function cp_get_confirm_form_overides(){
   static $a_overides;
-  
+
   if (! $a_overides)
     $a_overides = module_invoke_all('cp_confirm_overide');
-  
+
   return $a_overides;
 }
 
@@ -768,17 +769,17 @@ function cp_get_confirm_form_overides(){
  */
 function cp_vsite_generic_settings($space, $value = array()){
   $a_settings = array();
-  
+
   //Show Admin Menu Setting
-  $a_settings['admin_menu'] = array(
+  $a_settings['cp_admin_menu'] = array(
     'form' => array(
       '#type' => 'checkbox',
       '#title' => t('Display Admin Menu Bar.'),
       '#description' => "The admin menu bar displays at the top of the page when you are logged in as a site administrator.",
-      '#default_value' => (is_array($value) && array_key_exists('admin_menu', $value)) ? $value['admin_menu'] : 0
+      '#default_value' => variable_get('cp_admin_menu', ''), //TODO: What should be the default here?
     )
   );
-  
+
   return $a_settings;
 }
 
@@ -792,7 +793,7 @@ function cp_vsite_generic_settings($space, $value = array()){
 function cp_views_pre_render(&$view){
   if (context_isset('context', 'vsite-section-cp'))
     return;
-  
+
   $views = features_get_component_map('views');
   if (in_array($view->name, array_keys($views)) && ! $view->display['default']->handler->get_option('empty')) {
     $view->display['default']->handler->set_option('empty', t(' '));
@@ -800,7 +801,7 @@ function cp_views_pre_render(&$view){
 }
 
 function cp_cp_adminmenu_panes($s_menu){
-  
+
   switch ($s_menu) {
     case 'site_config' :
       return array(
@@ -821,10 +822,10 @@ function cp_cp_adminmenu_panes($s_menu){
 }
 
 function cp_customize_features_list(){
-  
+
   $vsite = vsite_get_vsite();
   $features = spaces_features($vsite->type, TRUE);
-  
+
   foreach ( $features as $feature ) {
     $links[$feature->name] = array(
       'title' => $feature->info['name'],
@@ -834,12 +835,12 @@ function cp_customize_features_list(){
       )
     );
   }
-  
+
   //Include Modal Javascript
   ctools_include('ajax');
   ctools_include('modal');
   ctools_modal_add_js();
-  
+
   return $links;
 }
 
@@ -850,7 +851,7 @@ function cp_get_vsite_settings($reset = FALSE){
   static $vsite_settings;
   if (! isset($vsite_settings) || $reset) {
     $vsite_settings = array();
-    
+
     // Exclude feature-specific settings.
     // Use spaces_feature_settings() to retrieve these.
     $settings = array();
@@ -860,8 +861,9 @@ function cp_get_vsite_settings($reset = FALSE){
         $settings = array_merge($settings, module_invoke($module, 'vsite_settings'));
       }
     }
-    
+
     foreach ( $settings as $setting_name => $info ) {
+      // TODO: rewrite for conversion to systems_settings_form
       // Load any setting includes before instantiating its class.
       if (is_array($info)) {
         if (isset($info['file']) && is_file($info['file'])) {
@@ -879,11 +881,11 @@ function cp_get_vsite_settings($reset = FALSE){
       else if (is_object($info)) {
         $setting = $info;
       }
-      
+
       $vsite_settings[$setting_name] = $setting;
     }
   }
-  
+
   return $vsite_settings;
 }
 
@@ -905,11 +907,11 @@ function cp_context_links_alter(&$links){
  */
 function cp_toolbar_menu_links(){
   $links = array();
-  
+
   // Retrieve the admin menu from the database.
   $tree = menu_tree_all_data('cp');
   $links[0]['toolbar'] = cp_menu_navigation_links($tree);
-  
+
   // Add user-specific links
   global $user;
   $user_links = array();
@@ -934,6 +936,6 @@ function cp_toolbar_menu_links(){
     );
   }
   $links[0]['user'] = $user_links;
-  
+
   return $links;
 }
