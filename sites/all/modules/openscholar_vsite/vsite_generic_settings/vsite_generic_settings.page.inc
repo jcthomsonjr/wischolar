@@ -11,19 +11,29 @@ function vsite_generic_settings_get_settings($reset = FALSE) {
 }
 
 function vsite_generic_settings_form($form_state) {
-    $form = array(
-    	'#title' => "Other Settings",
-      '#validate' => array(),
-    );
+  $form = array(
+  	'#title' => "Other Settings",
+    '#validate' => array(),
+  );
 
-    $a_settings = vsite_generic_settings_get_settings();
-    foreach ($a_settings as $s_key => $setting) {
-      if (!array_key_exists('form', $setting)) continue;
-      $form[$s_key] = $setting['form'];
-      if (is_array($setting['form']['#validate'])) {
-        $form['#validate'] = array_merge($form['#validate'], $setting['form']['#validate']);
+  $a_settings = vsite_generic_settings_get_settings();
+  foreach ($a_settings as $s_key => $setting) {
+    if (!array_key_exists('form', $setting)) continue;
+    $form[$s_key] = $setting['form'];
+    if (is_array($setting['form']['#validate'])) {
+      $form['#validate'] = array_merge($form['#validate'], $setting['form']['#validate']);
+    }
+    if (is_array($setting['css'])) {
+      foreach ($setting['css'] as $file) {
+        drupal_add_css($file);
       }
     }
-    return system_settings_form($form);
+    if (is_array($setting['js'])) {
+      foreach ($setting['js'] as $file) {
+        drupal_add_js($file);
+      }
+    }
+  }
+  return system_settings_form($form);
 }
 
