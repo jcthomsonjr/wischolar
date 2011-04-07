@@ -9,7 +9,7 @@ function openscholar_front_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_sitewide_page';
-  $strongarm->value = COMMENT_NODE_DISABLED;
+  $strongarm->value = 0;
 
   $export['comment_sitewide_page'] = $strongarm;
   return $export;
