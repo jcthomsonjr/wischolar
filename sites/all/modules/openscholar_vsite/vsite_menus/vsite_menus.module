@@ -30,18 +30,6 @@ function vsite_menus_menu() {
   return $items;
 }
 
-/**
- * Implemenation of hook_theme().
- */
-function vsite_menus_theme() {
-  return array(
-    'vsite_menus_settings_form' => array(
-      'path' => drupal_get_path('module', 'vsite_menus') . '/includes',
-      'file' => 'vsite_menus.admin.inc',
-      'arguments' => array('form' => NULL),
-    ),
-  );
-}
 
 /**
  * MENU LINK Modification functions
@@ -104,30 +92,43 @@ function vsite_menus_nodeapi(&$node, $op) {
       }
       break;
     case 'delete':
-      $a_site_menu_links = $site->controllers->vsite_menu->get_multiple( array_keys(variable_get('scholar_site_menus',array())) );
-    	foreach ($a_site_menu_links as $key => $link) {
-        if($link['link_path'] == "node/{$node->nid}"){
-        	$vsite->controllers->vsite_menu->delete_menu_item($link['menu_name'], $key);
-        }
+      $node_link = vsite_menus_get_menu_item("node/{$node->nid}",$vsite);
+    	if(count($node_link)){
+        $vsite->controllers->vsite_menu->delete_menu_item($node_link['menu_name'], $node_link['key']);
       }
       break;
     case 'prepare':
       if (empty($node->vsite_menu)) {
       	$a_site_menus = array_keys(variable_get('scholar_site_menus',array()));
-      	$a_site_menu_links = $vsite->controllers->vsite_menu->get_multiple( $a_site_menus );
-        $node_link = array();
-      	foreach ($a_site_menu_links as $key => $link) {
-      		if($link['link_path'] == "node/{$node->nid}"){
-      			$node_link = $link;
-      			break;
-      		}
-      	}
+      	$node_link = vsite_menus_get_menu_item("node/{$node->nid}",$vsite);
       	
         // Set default values.
         $node->vsite_menu = $node_link + array('link_title' => '', 'key' => null, 'menu_name' => current($a_site_menus), 'module' => 'vsite_menu', 'weight' => 0, 'options' => array(), 'user_created' => 1);
       }
       break;
   }
+}
+
+/**
+ * Return the vsite_menus menu item given a path
+ * @param string $path
+ */
+function vsite_menus_get_menu_item($path, $vsite = false){
+	if(!$vsite && !($vsite = vsite_get_vsite())) return array();
+	
+	$a_site_menus = array_keys(variable_get('scholar_site_menus',array()));
+	$a_site_menu_links = $vsite->controllers->vsite_menu->get_multiple( $a_site_menus );
+	
+	$a_menu_link = array();
+  foreach ($a_site_menu_links as $key => $link) {
+    if($link['link_path'] == $path){
+    	if(!$link['key']) $link['key'] = $key;
+      $a_menu_link = $link;
+      break;
+    }
+  }
+  
+  return $a_menu_link;
 }
 
 /**
