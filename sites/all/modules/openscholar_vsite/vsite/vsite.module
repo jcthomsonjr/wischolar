@@ -12,11 +12,11 @@ function vsite_spaces_plugins(){
   $plugins = array();
   $plugins['vsite'] = array(
     'handler' => array(
-      'path' => drupal_get_path('module', 'vsite') . '/plugins', 
-      'file' => 'vsite.inc', 
-      'class' => 'vsite', 
-      'parent' => 'space_og' 
-    ) 
+      'path' => drupal_get_path('module', 'vsite') . '/plugins',
+      'file' => 'vsite.inc',
+      'class' => 'vsite',
+      'parent' => 'space_og'
+    )
   );
   return $plugins;
 }
@@ -25,7 +25,7 @@ function vsite_spaces_plugins(){
  * Alter the registry to replace spaces_og with vsite
  */
 function vsite_spaces_registry_alter(&$registry){
-  
+
   if (isset($registry['types']['og'])) {
     $registry['types']['og']['plugin'] = 'vsite';
   }
@@ -33,28 +33,28 @@ function vsite_spaces_registry_alter(&$registry){
 
 function vsite_menu(){
   $items = array();
-  
+
   // nodeautocomplete callback for scholar
   $items['vsite/node/autocomplete'] = array(
-    'type' => MENU_CALLBACK, 
-    'title' => 'something', 
-    'page callback' => 'vsite_node_autocomplete', 
-    'file' => 'nodeautocomplete.inc', 
+    'type' => MENU_CALLBACK,
+    'title' => 'something',
+    'page callback' => 'vsite_node_autocomplete',
+    'file' => 'nodeautocomplete.inc',
     'access arguments' => array(
-      'access content' 
-    ), 
-    'file path' => drupal_get_path('module', 'vsite') . '/includes' 
+      'access content'
+    ),
+    'file path' => drupal_get_path('module', 'vsite') . '/includes'
   );
-  
+
   $items['private_site'] = array(
-    'type' => MENU_CALLBACK, 
-    'title' => 'Private Site', 
-    'page callback' => 'vsite_private_site_login', 
+    'type' => MENU_CALLBACK,
+    'title' => 'Private Site',
+    'page callback' => 'vsite_private_site_login',
     'access arguments' => array(
-      'access content' 
-    ) 
+      'access content'
+    )
   );
-  
+
   return $items;
 }
 
@@ -67,7 +67,7 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
       //If the destination has not been set then try and send them to thier site or a list of thier sites
       if (strlen($_REQUEST['destination']))
         break;
-        
+
       // site owners
       if ($vsites = vsite_get_vsite_by_owner($account->uid)) {
         if (count($vsites) == 1) {
@@ -81,9 +81,9 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
           if (($account->login == 0) || (arg(0) == 'user' && arg(1) == 'reset')) {
             purl_goto("cp/users", array(
               'purl' => array(
-                'provider' => $vsite->purl_provider, 
-                'id' => $vsite->id 
-              ) 
+                'provider' => $vsite->purl_provider,
+                'id' => $vsite->id
+              )
             ));
           }
           else {
@@ -91,14 +91,14 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
             $vsite->redirect('home');
           }
         }
-        
+
         if (count($vsites) > 1) {
           //asssumes user is owner of multiple vsites
           $_REQUEST['destination'] = 'user';
           return;
         }
       }
-      
+
       // non site owners
       if (! $vsites) {
         if (($account->login == 0) || (arg(0) == 'user' && arg(1) == 'reset')) {
@@ -173,11 +173,11 @@ function vsite_strongarm(){
  */
 function vsite_include($inc_files){
   $inc_files = is_array($inc_files) ? $inc_files : array(
-    $inc_files 
+    $inc_files
   );
-  
+
   $path = dirname(__FILE__);
-  
+
   foreach ( $inc_files as $inc ) {
     if (file_exists("$path/includes/$inc.inc")) {
       include_once "$path/includes/$inc.inc";
@@ -196,8 +196,8 @@ function vsite_link($type, $object, $teaser = FALSE){
     $vsite = vsite_get_vsite();
     if ($vsite && $vsite->access_admin()) {
       $links['vsite-admin'] = array(
-        'title' => theme('ctools_dropdown', "Admin", vsite_get_admin_links('node', $object), false, 'vsite-admin'), 
-        'html' => TRUE 
+        'title' => theme('ctools_dropdown', "Admin", vsite_get_admin_links('node', $object), false, 'vsite-admin'),
+        'html' => TRUE
       );
     }
     return $links;
@@ -214,7 +214,7 @@ function vsite_link_alter(&$links, $node){
     unset($links['vsite-admin']);
     $links = array_merge($old, $links);
   }
-  
+
   if (isset($links['node_read_more']))
     unset($links['node_read_more']);
 }
@@ -224,29 +224,29 @@ function vsite_link_alter(&$links, $node){
  */
 function vsite_theme($cache, $type, $theme, $path){
   $path = drupal_get_path('module', 'vsite');
-  
+
   $items['vsite_logo'] = array(
     'arguments' => array(
-      'scholar' => NULL, 
-      's_logo_field' => NULL, 
-      'preset' => NULL, 
-      'alt' => NULL, 
-      'title' => NULL, 
-      'attributes' => NULL 
-    ), 
-    'path' => $path . "/includes/", 
-    'file' => 'vsiteapi.inc' 
+      'scholar' => NULL,
+      's_logo_field' => NULL,
+      'preset' => NULL,
+      'alt' => NULL,
+      'title' => NULL,
+      'attributes' => NULL
+    ),
+    'path' => $path . "/includes/",
+    'file' => 'vsiteapi.inc'
   );
-  
+
   $items['vsite_login_link'] = array(
     'arguments' => array(
-      'link_text' => NULL, 
-      'a_attributes' => NULL 
-    ), 
-    'path' => $path . "/includes/", 
-    'file' => 'vsiteapi.inc' 
+      'link_text' => NULL,
+      'a_attributes' => NULL
+    ),
+    'path' => $path . "/includes/",
+    'file' => 'vsiteapi.inc'
   );
-  
+
   return $items;
 }
 
@@ -260,21 +260,21 @@ function vsite_preprocess_views_view(&$vars){
     $context = isset($contexts["openscholar-feature-{$feature}"]) ? $contexts["openscholar-feature-{$feature}"] : NULL;
     $view = $vars['view'];
     $space = spaces_get_space();
-    
+
     if ($space && $context && strpos($view->current_display, 'page') !== FALSE && empty($view->result) && empty($vars['empty'])) {
       static $once;
       if (! $once) {
         $once = TRUE;
-        
+
         $output = '';
         global $user;
-        
+
         // Get the first nodetype
         if (! empty($context->node)) {
           reset($context->node);
           $nodetype = current($context->node);
         }
-        
+
         $vars['empty'] = vsite_empty_view_message($nodetype, $space);
       }
     }
@@ -290,12 +290,12 @@ function vsite_preprocess_views_view(&$vars){
  */
 function vsite_empty_view_message($s_node_type, $space){
   global $user;
-  
+
   if (! empty($s_node_type) && node_access('create', $s_node_type) && ($space->type == 'og') && $space->menu_access('node')) {
     $types = node_get_types();
     if ($type = $types[$s_node_type]) {
       $output .= '<p class="empty-content">' . t('Add your first <span class="show-content-type">!type</span> to get started', array(
-        '!type' => $type->name 
+        '!type' => $type->name
       )) . '</p>';
       //$output .=  theme('context_links', context_links()) ."</div>";
     }
@@ -303,7 +303,7 @@ function vsite_empty_view_message($s_node_type, $space){
   else {
     $output .= t('There is currently no content to view in this section.');
   }
-  
+
   return $output;
 }
 
@@ -318,7 +318,7 @@ function vsite_get_vsite($sid = false){
   static $inactive_vsites;
   if (! isset($inactive_vsites))
     $inactive_vsites = array();
-  
+
   if (! $sid || ! intval($sid)) {
     $space = spaces_get_space();
   }
@@ -327,7 +327,7 @@ function vsite_get_vsite($sid = false){
       $inactive_vsites[$sid] = spaces_load('og', $sid, FALSE);
     $space = $inactive_vsites[$sid];
   }
-  
+
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
   if ($space && $space->type == 'og' && $space->group->type == $scholar_content_type) {
     return $space;
@@ -346,20 +346,20 @@ function vsite_get_vsite($sid = false){
 function vsite_get_vsite_by_owner($uid = NULL){
   if ($uid == NULL)
     return NULL;
-  
+
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
   $sites = array();
   $sql = db_query("SELECT nid FROM {node} WHERE type = '%s' AND uid = %d", $scholar_content_type, ( int ) $uid);
-  
+
   while ( $res = db_fetch_array($sql) ) {
     $sites[] = $res['nid'];
   }
-  
+
   switch (count($sites)) {
     case 0 :
       return NULL;
       break;
-    
+
     //assumes that user owns multiple sites
     default :
       if (! empty($sites)) {
@@ -381,23 +381,23 @@ function vsite_get_vsite_by_owner($uid = NULL){
 function vsite_get_vsite_by_node($node){
   if (is_object($node))
     $node = $node->nid;
-  
+
   if (! $node)
     return false;
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
-  
+
   $sites = array();
   $sql = db_query("SELECT oa.group_nid as group_nid FROM {og_ancestry} oa INNER JOIN {node} n ON n.nid = oa.group_nid WHERE n.type = '%s' AND oa.nid = %d", $scholar_content_type, ( int ) $node);
-  
+
   while ( $res = db_fetch_array($sql) ) {
     $sites[] = $res['group_nid'];
   }
-  
+
   switch (count($sites)) {
     case 0 :
       return false;
       break;
-    
+
     //assumes that node could be in multiple sites
     default :
       if (! empty($sites)) {
@@ -430,7 +430,7 @@ function vsite_is_front(){
  */
 function vsite_preprocess_node(&$vars){
   $node = $vars['node'];
-  
+
   // we dont print "submitted" info unless the feature explicitely asks
   if (! variable_get('node_submitted_info_' . $node->type, FALSE)) {
     $vars['submitted'] = '';
@@ -448,11 +448,11 @@ function vsite_preprocess_page(&$vars){
     $vars['css'] = drupal_add_css();
     $vars['styles'] = drupal_get_css();
   }
-  
+
   // need to know if there is anything in the navbar for css theming
   $body_class_extra = $vars['navbar'] ? ' navbar-on' : ' navbar-off';
   $vars['body_classes'] .= $body_class_extra;
-  
+
   // alter $head_title for SEO purposes
   // set the basics here. Let specific installation (scholar / project)
   // do the rest (see scholar_preprocess_page)
@@ -461,36 +461,36 @@ function vsite_preprocess_page(&$vars){
     $vsite_title = $vsite->group->title;
     if (vsite_is_front()) {
       $head_title = array(
-        $vsite_title 
+        $vsite_title
       );
     }
     else {
       $head_title = array(
-        strip_tags(drupal_get_title()), 
-        $vsite_title 
+        strip_tags(drupal_get_title()),
+        $vsite_title
       );
     }
     $head_title = implode(' | ', $head_title);
     $vars['head_title'] = $head_title;
   }
-  
+
   //REPLACE THE Default Jquery UI CSS (if Needed)
   if (array_key_exists(JQUERY_UI_PATH . '/themes/base/ui.all.css', $vars['css']['all']['module'])) {
     //Override
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/jquery_ui/jquery.ui/themes/openscholar/ui.all.css');
     $vars['css'] = drupal_add_css();
-    
+
     //Remove invalid
     unset($vars['css']['all']['module'][JQUERY_UI_PATH . '/themes/base/ui.all.css']);
-    
+
     $vars['styles'] = drupal_get_css($vars['css']);
   }
-  
+
   //Include the Package version info for use in the template
   vsite_include('vsiteapi');
   $version_info = vsite_get_version_information();
   $vars['openscholar_version_info'] = $version_info;
-  
+
   //Add a div around the messages block
   if (strlen($vars['messages']))
     $vars['messages'] = "<div id= \"messages\">" . $vars['messages'] . "</div>";
@@ -524,12 +524,12 @@ function vsite_form_alter(&$form, $form_state, $form_id){
     // Hiding the  body splitting checkbox in the node forms
     if (! empty($form['body_field'])) {
       $form['body_field']['teaser_include'] = array(
-        '#type' => 'value', 
-        '#value' => 1 
+        '#type' => 'value',
+        '#value' => 1
       );
     }
   }
-  
+
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
   switch ($form_id) {
     case $scholar_content_type . '_node_form' :
@@ -540,27 +540,27 @@ function vsite_form_alter(&$form, $form_state, $form_id){
       $form['#prefix'] = '<div id = "cp-settings-site">';
       $form['#suffix'] = '</div>';
       $form['pre_fieldset'] = array(
-        '#value' => "<fieldset>", 
-        '#weight' => - 1000 
+        '#value' => "<fieldset>",
+        '#weight' => - 1000
       );
       $form['post_fieldset'] = array(
-        '#value' => "</fieldset>", 
-        '#weight' => 1000 
+        '#value' => "</fieldset>",
+        '#weight' => 1000
       );
       $form['field_vsite_logo']['#weight'] = 33;
-      
+
       //No vertical tabs fieldsets
       vertical_tabs_save_config($form_id, array());
-      
+
       if (array_key_exists('taxonomy', $form)) {
         if ($n_affil_tag = variable_get('vsite_taxonomy_affiliation', false)) {
           unset($form['taxonomy'][$n_affil_tag]);
         } //Remove the affiliation form till we get some defaults in here
         $form['taxonomy']['#collapsible'] = false;
       }
-      
+
       $form['#redirect'] = false;
-      
+
       module_load_include('inc', 'spaces_og', 'spaces_og.pages');
       _spaces_og_make_hidden($form['purl']);
       _spaces_og_make_hidden($form['book']);
@@ -576,7 +576,7 @@ function vsite_form_alter(&$form, $form_state, $form_id){
       _spaces_og_make_hidden($form['author']);
       _spaces_og_make_hidden($form['options']);
       unset($form['spaces_preset']['#theme']); //Remove theme
-      
+
 
       if (array_search('_spaces_og_group_node_form_submit', $form['#submit'])) {
         unset($form['#submit'][array_search('_spaces_og_group_node_form_submit', $form['#submit'])]);
@@ -589,38 +589,38 @@ function vsite_form_alter(&$form, $form_state, $form_id){
           // Recurse into spaces_og hiding the site select form
           _spaces_og_make_hidden($form['spaces_og']);
         }
-        
+
         if (array_key_exists('spaces', $form)) {
           //Get rid of the incorect description
           _spaces_og_make_hidden($form['spaces']);
         }
       }
-      
+
       if (isset($form['type']) && isset($form['#node']) && ($form_id == $form['type']['#value'] . '_node_form') && ! is_content_profile($form['type']['#value'])) {
         //Node Form (Not Content Profile Nodes)
-        
+
 
         if (module_exists('override_node_options') && array_key_exists('revision_information', $form) && array_key_exists('options', $form)) {
           $form['options']['#access'] = true;
-          
+
           ctools_include('dependent');
           if (array_key_exists('log', $form['revision_information'])) {
             $form['options']['log'] = $form['revision_information']['log'];
             $form['options']['log']['#weight'] = 5;
             $form['options']['log']['#process'] = array(
-              'ctools_dependent_process' 
+              'ctools_dependent_process'
             );
             $form['options']['log']['#dependency'] = array(
               'edit-revision-1' => array(
-                1 
-              ) 
+                1
+              )
             );
             if (! is_array($form['#validate']))
               $form['#validate'] = array();
             if (! in_array('cp_validate_node_flags', $form['#validate']))
               $form['#validate'][] = 'vsite_validate_node_flags';
           } //Add the description box for new revision
-          
+
 
           if (array_key_exists('revision', $form['revision_information'])) {
             $form['options']['revision'] = $form['revision_information']['revision'];
@@ -631,14 +631,14 @@ function vsite_form_alter(&$form, $form_state, $form_id){
             if (! is_array($form['#validate']))
               $form['#validate'] = array();
           } //Add the "new revision" checkbox
-          
+
 
           $form['options']['sticky']['#description'] = "Sticky posts stay at the top of lists with non-sticky items ordered below them";
-          
+
           module_load_include('inc', 'spaces_og', 'spaces_og.pages');
           _spaces_og_make_hidden($form['revision_information']);
         } //Move the revision information under the options tab
-        
+
 
         $nid = ! empty($form['nid']['#value']) ? $form['nid']['#value'] : NULL;
         if (module_exists('override_node_options') && array_key_exists('options', $form)) {
@@ -651,10 +651,10 @@ function vsite_form_alter(&$form, $form_state, $form_id){
             $a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
             if ($a_front_settings['frontpage'] == 'flag') {
               $form['options']['vsite_promote_to_front'] = array(
-                '#type' => 'checkbox', 
-                '#title' => "Promote to front page", 
-                "#default_value" => false, 
-                "#description" => t("If checked this post will be shown in your front page") 
+                '#type' => 'checkbox',
+                '#title' => "Promote to front page",
+                "#default_value" => false,
+                "#description" => t("If checked this post will be shown in your front page")
               );
               if ($nid) {
                 $flag = flag_get_flag('scholar_frontpage');
@@ -662,19 +662,19 @@ function vsite_form_alter(&$form, $form_state, $form_id){
               }
             }
           }
-          
+
           $form['options']['vsite_make_featured'] = array(
-            '#type' => 'checkbox', 
-            '#title' => "Make this Featured", 
-            "#default_value" => false, 
-            "#description" => "Make this a featured item. Featured items can be configured to show on the front page within the front page settings." 
+            '#type' => 'checkbox',
+            '#title' => "Make this Featured",
+            "#default_value" => false,
+            "#description" => "Make this a featured item. Featured items can be configured to show on the front page within the front page settings."
           );
           if ($nid) {
             $flag = flag_get_flag('featuredposts');
             $form['options']['vsite_make_featured']['#default_value'] = $flag->is_flagged($nid);
           }
         } //Overide the default promote functionality in favor of ours
-      
+
 
       }
       break;
@@ -705,20 +705,20 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
       if ($node->nid && $node->pathauto_perform_alias && module_exists('path') && module_exists('pathauto') && ($vsite = vsite_get_vsite())) {
         if ($form['title']['#default_value'] != $form['title']['#value']) {
           $alias = url("node/" . $node->nid, array(
-            'absolute' => true 
+            'absolute' => true
           ));
           drupal_set_message("The title of your post has been changed. The path ({$alias}) to this post has NOT been changed. If this no longer represents the post you may change it by editing the post and modifying 'URL path settings'.", 'warning');
         } //The title has changed
       }
       break;
     case 'presave' :
-      
+
       // -- Take Care of the Issues present when pathauto and purl coexist --
       // To elaborate, since purl adds a prefix to the path to distinguish between vsite's we must manually
       // check to make sure that the url without the prefix does not match an existing path.
       $vsite = vsite_get_vsite();
       if (module_exists('path') && module_exists('pathauto') && $vsite) {
-        
+
         _pathauto_include();
         // Get the specific pattern or the default
         if (variable_get('language_content_type_' . $node->type, 0)) {
@@ -737,14 +737,14 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
             $placeholders = pathauto_get_placeholders('node', $node);
             $src = "node/$node->nid";
             $alias = pathauto_create_alias('node', 'return', $placeholders, $src, $node->nid, $node->type, $node->language);
-            
+
             $s_proccessor = defined('PURL_VSITE_PATH') ? PURL_VSITE_PATH : PURL_PATH;
             $processor = purl_get_processor($s_proccessor);
             $parsed = purl_parse($processor, $alias);
             foreach ( $parsed as $element ) {
               $alias = $processor->remove($alias, $element);
             }
-            
+
             if (_pathauto_path_is_callback($alias)) {
               //Cancel the pathauto for this node
               $node->pathauto_perform_alias = false;
@@ -753,7 +753,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
           }
         }
       } //END fix pathauto / purl conflicts
-      
+
 
       //Have this node avalible to the public and we will hide private using the vsite->menu_access function
       $map = features_get_component_map('node');
@@ -771,13 +771,13 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
         $flag = flag_get_flag('scholar_frontpage');
         $flag->flag($s_action, $node->nid);
       }
-      
+
       if (isset($node->vsite_make_featured)) {
         $s_action = ($node->vsite_make_featured == 1) ? 'flag' : 'unflag';
         $flag = flag_get_flag('featuredposts');
         $flag->flag($s_action, $node->nid);
       }
-      
+
       break;
     case 'view' :
       //////////
@@ -813,7 +813,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
  * @see http://drupal.org/node/511914
  */
 function vsite_spaces_types_alter(&$items){
-  
+
   //Change the class for the og object to "vsite"
   $items['og']['class'] = 'vsite';
 }
@@ -826,16 +826,16 @@ function vsite_spaces_types_alter(&$items){
 function vsite_group_load($n_vsite_id = false){
   if ($n_vsite_id === false)
     $n_vsite_id = vsite_group_to_arg();
-    
+
   //Same as Site ID
   $o_group_node = node_load($n_vsite_id);
   $vsite = vsite_get_vsite();
-  
+
   if ($o_group_node->type == variable_get('scholar_content_type', 'vsite') && //Make sure that they have update permissions or they are accessing the node withing the context of thier own site
 ($o_group_node->nid == $vsite->group->nid || node_access('update', $o_group_node))) { //Does not replace the functonality of 'access callback' but provides a stopgap
     return $o_group_node;
   }
-  
+
   return false;
 }
 
@@ -854,20 +854,20 @@ function vsite_group_to_arg(){
  *
  */
 function vsite_cp_settings(){
-  
+
   return array(
     array(
-      'path' => 'site_info/%vsite_group', 
-      'title' => 'Site Information', 
-      'page callback' => 'node_page_edit', 
-      'file' => 'node.pages.inc', 
-      'file path' => drupal_get_path('module', 'node'), 
+      'path' => 'site_info/%vsite_group',
+      'title' => 'Site Information',
+      'page callback' => 'node_page_edit',
+      'file' => 'node.pages.inc',
+      'file path' => drupal_get_path('module', 'node'),
       'page arguments' => array(
-        3 
-      ), 
-      'weight' => 0, 
-      'type' => MENU_LOCAL_TASK 
-    ) 
+        3
+      ),
+      'weight' => 0,
+      'type' => MENU_LOCAL_TASK
+    )
   );
 }
 
@@ -875,7 +875,7 @@ function vsite_cp_settings(){
  * Implementation of hook_context_active_contexts_alter().
  */
 function vsite_context_active_contexts_alter($contexts){
-  
+
   if ($contexts['vsite-section-public']) {
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/vsite-admin-links.css');
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite.js');
@@ -903,8 +903,8 @@ function vsite_get_admin_links($type, $object){
  */
 function vsite_perm(){
   return array(
-    "create own openscholar site", 
-    "create openscholar site on behalf of others" 
+    "create own openscholar site",
+    "create openscholar site on behalf of others"
   );
 }
 
@@ -914,29 +914,29 @@ function vsite_perm(){
 function node_vsite_admin_link($type, $object){
   $links = array();
   if ($type == 'node') {
-    
+
     if (node_access('update', $object)) {
       $links['node-edit'] = array(
-        'title' => t('Edit'), 
-        'href' => "node/{$object->nid}/edit", 
+        'title' => t('Edit'),
+        'href' => "node/{$object->nid}/edit",
         'attributes' => array(
-          'class' => 'icon-edit' 
-        ), 
+          'class' => 'icon-edit'
+        ),
         'query' => array(
-          'destination' => $_GET['q'] 
-        ) 
+          'destination' => $_GET['q']
+        )
       );
     }
     if (node_access('delete', $object)) {
       $links['node-delete'] = array(
-        'title' => t('Delete'), 
-        'href' => "node/{$object->nid}/delete", 
+        'title' => t('Delete'),
+        'href' => "node/{$object->nid}/delete",
         'attributes' => array(
-          'class' => 'icon-delete' 
-        ), 
+          'class' => 'icon-delete'
+        ),
         'query' => array(
-          'destination' => $_GET['q'] 
-        ) 
+          'destination' => $_GET['q']
+        )
       );
     }
   }
@@ -954,12 +954,12 @@ function node_vsite_admin_link($type, $object){
 function vsite_system_info_alter(&$info, $file){
   if ($file->type == 'module')
     return;
-    
+
   //If this is a scholar theme then add the correct regions
   if (array_key_exists('scholar', $info) && array_key_exists('theme_type', $info['scholar']) && $info['scholar']['theme_type'] == 'scholar') {
     if (! is_array($info['regions']))
       $info['regions'] = array();
-    
+
     $info['regions']['header_top'] = "header top";
     $info['regions']['header_left'] = "header left";
     $info['regions']['header_main'] = "header main";
@@ -971,7 +971,7 @@ function vsite_system_info_alter(&$info, $file){
     $info['regions']['content_bottom'] = "content bottom";
     $info['regions']['footer'] = "footer";
     $info['regions']['closure_region'] = "closure";
-  
+
   }
 }
 
@@ -982,7 +982,7 @@ function vsite_private_site_login(){
   if (! user_is_logged_in()) {
     $s_html = drupal_get_form('user_login');
   }
-  
+
   return "This site is private, you must be logged in and be a site member to view." . $s_html;
 }
 
@@ -990,19 +990,19 @@ function vsite_private_site_login(){
  * Implement Hook vsite_generic_settings
  * @return array
  */
-function vsite_vsite_generic_settings($space, $value = array()){
+function vsite_vsite_generic_settings(){
   $a_settings = array();
-  
-  $a_settings['private_vsite'] = array(
+
+  $a_settings['vsite_private'] = array(
     'form' => array(
-      '#prefix' => "<br />", 
-      '#type' => 'checkbox', 
-      '#title' => t('Make your site Private'), 
-      '#default_value' => is_array($value) && array_key_exists('private_vsite', $value) ? $value['private_vsite'] : 0, 
-      '#description' => "If private your vsite will only be avalible when you are logged in, regular users will see a message and be giving the choice to login." 
-    ) 
+      '#prefix' => "<br />",
+      '#type' => 'checkbox',
+      '#title' => t('Make your site Private'),
+      '#default_value' => variable_get('vsite_private', 0),
+      '#description' => "If private your vsite will only be avalible when you are logged in, regular users will see a message and be giving the choice to login.",
+    )
   );
-  
+
   return $a_settings;
 }
 
@@ -1010,17 +1010,17 @@ function vsite_vsite_generic_settings($space, $value = array()){
  * Implementation hook_context_page_reaction()
  */
 function vsite_context_page_reaction(){
-  
+
   vsite_include('vsiteapi');
   $active_feature = vsite_active_feature();
   if (! $active_feature)
     return;
   $a_active_contexts = context_active_contexts();
-  
+
   $feature_context = $a_active_contexts['openscholar-feature-' . $active_feature];
   if (! $feature_context)
     return;
-    
+
   //Use the default feature menu to get the default view
   if (($s_menu = array_search('scholar_' . $active_feature, features_get_component_map('menu')))) {
     $default_feature_menu = ( object ) menu_get_item($s_menu);
@@ -1029,7 +1029,7 @@ function vsite_context_page_reaction(){
       return;
     }
   }
-  
+
   //if there is no default view set, lets try determine which one it is
   if (count($feature_context->views) == 1) {
     $o_view = views_get_view(current($feature_context->views));
@@ -1038,7 +1038,7 @@ function vsite_context_page_reaction(){
       return;
     }
   } //there is only one view associated with the context
-  
+
 
   if (count($feature_context->path) == 1) {
     $default_feature_menu = ( object ) menu_get_item(current($feature_context->path));
@@ -1053,10 +1053,10 @@ function vsite_context_page_reaction(){
 
 function vsite_set_default_feature_view($s_view = NULL){
   static $cached_view;
-  
+
   if ($s_view !== NULL)
     $cached_view = $s_view;
-  
+
   return isset($cached_view) ? $cached_view : false;
 }
 
@@ -1073,13 +1073,13 @@ function vsite_get_default_feature_view(){
 function vsite_excluded_path($q){
   static $a_exluded_paths;
   static $a_map_q;
-  
+
   if (! strlen($q))
     return false;
-  
+
   if (! isset($a_map_q))
     $a_map_q = array();
-  
+
   if (! isset($a_exluded_paths)) {
     $a_exluded_paths = array();
     foreach ( module_implements('vsite_excluded_paths') as $module ) {
@@ -1088,9 +1088,9 @@ function vsite_excluded_path($q){
       $a_exluded_paths += is_array($a_paths) ? $a_paths : array();
     }
   }
-  
+
   if (! isset($a_map_q[$q])) {
-    
+
     list($ancestors, $placeholders) = menu_get_ancestors(array_slice(arg(NULL, $q), 0, MENU_MAX_PARTS));
     if (! count(array_intersect($a_exluded_paths, $ancestors))) {
       //If no ancestors match then there is no need to lookup the correct path in the db
@@ -1100,10 +1100,10 @@ function vsite_excluded_path($q){
       $a_map_q[$q] = db_result(db_query_range('SELECT path FROM {menu_router} WHERE path IN (' . implode(',', $placeholders) . ') ORDER BY fit DESC', $ancestors, 0, 1));
     }
   }
-  
+
   if (! $a_map_q[$q])
     return false; //Can't load the path so it isn't excluded
-  
+
 
   return in_array($a_map_q[$q], $a_exluded_paths);
 }
@@ -1112,26 +1112,26 @@ function vsite_excluded_path($q){
  * Lookup the correct purl provider given a node to create a absolute deep link
  */
 function vsite_add_purl_provider($node, &$options){
-  
+
   $a_vsites = vsite_get_vsite_by_node($node);
-  
+
   if (! $a_vsites || ! count($a_vsites))
     return;
-  
+
   while ( $vsite = array_shift($a_vsites) ) {
-    
+
     if ($vsite && $vsite->purl_provider) {
       $options['purl'] = array(
-        'provider' => $vsite->purl_provider, 
-        'id' => $vsite->id 
+        'provider' => $vsite->purl_provider,
+        'id' => $vsite->id
       );
       $options['absolute'] = true;
       return; //Found a provider
     }
   }
-  
+
   //If there were no purl options for the vsite
   $options['purl'] = array(
-    'disabled' => TRUE 
+    'disabled' => TRUE
   );
 }

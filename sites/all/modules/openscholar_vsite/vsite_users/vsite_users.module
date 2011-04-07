@@ -17,7 +17,7 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL) {
 
     case 'logout':
       $_REQUEST['destination'] = '';
-      
+
       // If they are on a site route user to 'home' page of the site that they
       // were visting
       if ($vsite = vsite_get_vsite()) {
@@ -43,7 +43,7 @@ function vsite_users_profile_alter(&$account) {
  */
 function vsite_users_menu() {
   $items = array();
-  
+
   $items['cp/users'] = array(
     'title' => 'Users',
     'page callback' => 'vsite_user_edit',
@@ -52,7 +52,7 @@ function vsite_users_menu() {
     'file' => 'user.pages.inc',
     'weight' => 2,
   );
-  
+
   $items['cp/users/myaccount'] = array(
     'title' => 'My Account',
     'page callback' => 'vsite_user_edit',
@@ -61,7 +61,7 @@ function vsite_users_menu() {
     'file path' => drupal_get_path('module', 'user'),
     'file' => 'user.pages.inc',
   );
-  
+
   $items['cp/users/members'] = array(
     'title' => 'Manage Members',
     'page callback' => 'vsite_users_members',
@@ -69,7 +69,7 @@ function vsite_users_menu() {
       'type' => MENU_LOCAL_TASK,
     'weight' => 1, // should be the first one
   );
-  
+
   $items['cp/users/myaccount/edit'] = array(
     'title' => 'My Account',
     'page callback' => 'vsite_user_edit',
@@ -78,7 +78,7 @@ function vsite_users_menu() {
     'file path' => drupal_get_path('module', 'user'),
     'file' => 'user.pages.inc',
   );
-  
+
   $items['cp/users/myaccount/personal'] = array(
     'title' => 'Personal Information',
     'page callback' => 'vsite_user_content_profile_edit_page',
@@ -89,14 +89,14 @@ function vsite_users_menu() {
     'file path' => drupal_get_path('module', 'node'),
     'type' => MENU_LOCAL_TASK,
   );
-  
+
 
   // make them all part of 'cp' menu
   foreach ($items as $path => $item) {
     $items[$path]['menu_name'] = 'cp';
     $items[$path]['access callback'] = 'cp_access_cp';
   }
-  
+
   $items['cp/users/add'] = array(
     'title' => 'Add User',
     'page callback' => 'vsite_users_add_user',
@@ -105,7 +105,7 @@ function vsite_users_menu() {
     'type' => MENU_CALLBACK,
     'weight' => 10
   );
-  
+
   $items['cp/users/user_lookup'] = array(
     'title' => '',
     'page callback' => 'vsite_users_lookup_user',
@@ -114,7 +114,7 @@ function vsite_users_menu() {
     'type' => MENU_CALLBACK,
     'weight' => 10
   );
-  
+
   return $items;
 }
 
@@ -180,7 +180,7 @@ function vsite_users_mail_alter(&$message) {
     //Edit the UCreate Email Message
     case 'ucreate_ucreate-create':
         $message['subject'] = t('An account has been created for you at !site_name', array('!site_name' => variable_get('site_name', 'OpenScholar')));
-    
+
         $vsite = vsite_get_vsite();
 
         //Get the just created user
@@ -190,13 +190,13 @@ function vsite_users_mail_alter(&$message) {
       //  $edit = array('pass' => $password);
         $o_profile = content_profile_load('vsite_users_profile', $n_new_user);
        // user_save($o_user, $edit);
-        
+
          //checking for custom welcome message string submitted in form
      $personal_msg_text = (!empty($_POST['welcome_message_body'])) ?
          "\n================================================\n" .
          $_POST['welcome_message_body'] .
          "\n================================================\n\n" : '' ;
-      
+
       $a_msg_variables = array(
           '!personal_message' => $personal_msg_text,
           '!username' => $o_user->name,
@@ -258,12 +258,12 @@ function vsite_users_strongarm() {
 
   // Comments
   $conf['comment_vsite_users_profile'] = COMMENT_NODE_DISABLED;
-  
+
   // Automatic node title for profile nodes
   $conf['ant_vsite_users_profile'] = 1;
   $conf['ant_pattern_vsite_users_profile'] = '[vsite_users_first_name-raw] [vsite_users_last_name-raw]';
   $conf['ant_php_vsite_users_profile'] = 0;
-  
+
   return $conf;
 }
 /**
@@ -289,7 +289,7 @@ function vsite_users_ucreate_role($name = 'scholar user') {
  */
 function vsite_user_edit() {
   global $user;
-  
+
   return user_edit($user);
 }
 
@@ -300,7 +300,7 @@ function vsite_user_edit() {
 function vsite_user_edit_access() {
   $vsite = vsite_get_vsite();
   if (!$vsite) return FALSE;
-  
+
   return user_edit_access(user_load($vsite->group->uid));
 }
 
@@ -310,7 +310,7 @@ function vsite_user_edit_access() {
  */
 function vsite_user_content_profile_edit_page($s_type) {
   global $user;
-  
+
   return content_profile_page_edit($s_type, $user);
 }
 
@@ -346,13 +346,13 @@ function vsite_users_form_vsite_users_profile_node_form_alter(&$form, &$form_sta
     if (!$form['name']) $form['name'] = array('#type' => 'value', '#value' => $form['author']['name']['#default_value']); //Fix admin only bug
     return;
   }//If we are not in CP use the regular alter func.
-  
+
   if (isset($form['#redirect'])) unset($form['#redirect']);
-  
+
   if (isset($form['buttons']['submit'])) {
     $form['buttons']['submit']['#submit'][] = 'vsite_users_form_vsite_users_profile_node_submit';
   }
-  
+
   $form['buttons']['preview']['#access'] = FALSE;
   $form['buttons']['delete']['#access'] = FALSE;
 }
@@ -392,25 +392,25 @@ function vsite_users_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
  * Edit the ucreate form to hide the site dialogue and set defaults
  */
 function vsite_users_form_alter(&$form, $form_state, $form_id) {
-  
+
   switch ($form_id) {
     case 'ucreate_user_form':
       $vsite = vsite_get_vsite();
       $form['og_register']['og_register']['#value'] = array($vsite->id => $vsite->title);
       $form['og_register']['og_register']['#type'] = 'value';
       $form['og_register']['#type'] = 'value';
-      
+
       //using a default role for new users created with ucreate (set in hook_strongarm)
       $form['roles']['#type'] = 'value';
       $form['roles']['#value'] = variable_get('ucreate_default_roles', array());
-      
+
       $form['name']['#weight'] = 1;
       $form['name']['#description'] = "The shortname used to login usually first initial + last name";
-      
+
       $form['mail']['#weight'] = 2;
       $form['mail_confirm']['#weight'] = 3;
       $form['welcome_message_body']['#weight'] = 4;
-      
+
       //Add Registration info to form
       $form['vsite_users_first_name'] = array(
       '#type' => 'textfield',
@@ -427,31 +427,31 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
       '#weight' => -2,
       '#description' => ''
       );
-      
+
 
       if (is_array($form['#submit']) && array_search('ucreate_user_form_submit', $form['#submit']) !== FALSE) unset($form['#submit'][array_search('ucreate_user_form_submit', $form['#submit'])]); //Hijack this submit
-      
+
       if (is_array($form['#validate']) && array_search('ucreate_user_form_validate', $form['#validate']) !== FALSE) unset($form['#validate'][array_search('ucreate_user_form_validate', $form['#validate'])]); //Hijack this submit validate
-      
+
       //We will do our own mail validation
       if (isset($form['mail']['#element_validate'])) unset($form['mail']['#element_validate']);
       if (isset($form['name']['#element_validate'])) unset($form['name']['#element_validate']);
-      
+
       //Add Validate handler
       if (!is_array($form['#validate'])) $form['#validate'] = array();
       array_unshift($form['#validate'], 'vsite_users_user_form_validate');
-      
+
       //Add submit handler for registration info
       if (!is_array($form['#submit'])) $form['#validate'] = array();
       array_unshift($form['#submit'], 'vsite_users_user_form_submit');
       ctools_include('dependent');
-      
+
       foreach (element_children($form) as $s_key) {
         if (!in_array($form[$s_key]['#type'], array('textarea', 'textfield'))) continue;
         $form[$s_key]['#process'] = array('ctools_dependent_process');
         $form[$s_key]['#dependency'] = array('radio:create_type' => array('new'));
       }
-      
+
       $form['create_type'] = array(
         '#title' => "",
         '#type' => 'radios',
@@ -461,7 +461,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
         '#weight' => -6,
         '#attributes' => array('style' => "display:none;")
       );
-      
+
       $form['lookup_user'] = array(
         '#type' => 'textfield',
         '#title' => "Find an Existing User",
@@ -473,14 +473,14 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
         '#dependency' => array('radio:create_type' => array('existing')),
         '#description' => "Type in a persons name, login, or e-mail address to search for their account.",
       );
-      
+
       $form['add_new_user'] = array(
         '#type' => 'item',
         '#value' => '<a href="#" onClick="$(\'#edit-create-type-new\').attr(\'checked\', true); $(\'#edit-create-type-new\').change(); $(this).parent(\'div.form-item\').hide(); $(\'#edit-lookup-user\').val(\'\'); return false;" class="context-button" title="add a new user">Add new user</a>',
         '#description' => 'If you can\'t find their account, click "Add new user" to create a new account',
         '#weight' => -4,
       );
-      
+
       if (array_key_exists('input', $form_state) && array_key_exists('create_type', $form_state['input']) && $form_state['input']['create_type'] == 'existing') {
         $form['vsite_users_first_name']['#required'] =
         $form['vsite_users_last_name']['#required'] =
@@ -488,19 +488,19 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
         $form['mail_confirm']['#required'] =
         $form['name']['#required'] = FALSE;
       }
-      
+
     break;
-    
+
     case 'user_profile_form':
       //Redirect the save password form to the profile page
       if (!array_key_exists('redirect_from_reset', $form)) $form['redirect_from_reset'] = array('#type' => 'hidden', '#default_value' => FALSE);
-      
+
       if ($_SERVER['REDIRECT_STATUS'] == '200' && strstr($_SERVER['HTTP_REFERER'], 'user/reset') !== FALSE) {
         $form['redirect_from_reset']['#value'] = TRUE;
       }//Are we coming from the special login link?
-      
+
       $form['#submit'][] = 'vsite_users_redirect_reset_submit';
-      
+
       unset($form['account']['#title']);
       //Remove unused fields
       if (array_key_exists('contact', $form)) vsite_users_hide_form_value($form['contact']);
@@ -511,7 +511,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
       //Remove unused fields
       if (array_key_exists('path', $form)) vsite_users_hide_form_value($form['path']);
       if (array_key_exists('attachments', $form)) vsite_users_hide_form_value($form['attachments']);
-      
+
       //Hide the picture till it is used in some way, people are confusing this with site logo
       if (array_key_exists('field_user_profile_photo', $form)) vsite_users_hide_form_value($form['field_user_profile_photo']);
     break;
@@ -547,7 +547,7 @@ function vsite_users_user_form_validate($form, &$form_state) {
     ucreate_validate_mail($form['mail'], $form_state);
     ucreate_validate_name($form['name'], $form_state);
   }
-  
+
 }
 
 /**
@@ -559,13 +559,13 @@ function vsite_users_user_form_submit($form, &$form_state) {
     $account = user_load(array('name' => $form_state['values']['lookup_user']));
     $s_message = t('[!name] is now a member of [!group]', array('!name' => $account->name, '!group' =>  $vsite->group->title));
   }
-  
+
   if ($account || ($account = user_load(array('name' => $form_state['values']['name']))) || ($account = user_load(array('mail' => $form_state['values']['mail'])))) {
     og_save_subscription($vsite->group->nid, $account->uid, array('is_active' => 1));
     drupal_set_message($s_message?$s_message:t('A user with the name [!name] and e-mail address[!email] already existed, they are now a member of [!group]', array('!name' => $account->name, '!email' => $account->mail, '!group' =>  $vsite->group->title)));
     return TRUE;
   }
-  
+
   // If user roles were handled through a UI element, process accordingly.
   // This sucks. See user_save() for why this is necessary.
   if ($form['roles']['#type'] != 'value') {
@@ -580,7 +580,7 @@ function vsite_users_user_form_submit($form, &$form_state) {
 
   //Create the user and store it in the form for other submit functions
   $form_state['user'] = ucreate_user_create($form_state['values']);
-  
+
   //Create the profile node for the new user
   $node = new stdClass();
   $node -> vsite_users_first_name[0]['value'] = $form_state['values']['vsite_users_first_name'];
@@ -625,7 +625,7 @@ function vsite_users_cp_confirm_overide() {
     "og/create_admin/%/%" => "og_create_admin_confirm",
     "og/delete_admin/%/%" => "og_remove_admin_confirm",
   );
-  
+
 }
 
 /**
@@ -634,17 +634,17 @@ function vsite_users_cp_confirm_overide() {
  */
 function vsite_users_vsite_generic_settings($space, $value = array()) {
   $a_settings = array();
-  
+
   //Should Vsite Contact forms allow anon. contact?
-  $a_settings['contact_form_anonymous'] = array(
+  $a_settings['vsite_users_contact_form_anonymous'] = array(
     'form' => array(
       '#type' => 'checkbox',
       '#title' => t('Anonymous Contact'),
-      '#default_value' => is_array($value) && array_key_exists('contact_form_anonymous', $value) ? $value['contact_form_anonymous']:1,
+      '#default_value' => variable_get('vsite_users_contact_form_anonymous', 1),
       '#description' => "When this is checked a user does not need to be logged in to contact you.",
     )
   );
-  
+
   return $a_settings;
 }
 

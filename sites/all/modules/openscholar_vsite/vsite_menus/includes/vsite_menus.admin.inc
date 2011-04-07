@@ -7,31 +7,41 @@
  * The CP form for saving the block values and thier order
  */
 function vsite_menus_settings_form($form_state){
-  
+
   $space = vsite_get_vsite();
   if(!$space) return array();
-  
+
   // just do have distinct id for each setting form
   $form['#prefix'] = '<div id = "cp-settings-menus">';
   $form['#suffix'] = '</div>';
-  
-  $menu_links = $space->controllers->vsite_menu->get('features');
-  $form = vsite_menus_settings_build_form($menu_links);
+
+  $a_site_menus = variable_get('scholar_site_menus',array());
+  // a_site_menu = array where key is menu_name and value is the "display name"
+
+  //user_created
+
+  //all that were avalible orig..
+  $all_initial = $space->controllers->vsite_menu->get_multiple( array_keys($a_site_menus), 'original' );
+
+  //Get the menu links for a menu (for this site)
+  $menu_links = $space->controllers->vsite_menu->get( 'the_menu_key' );
+
+  //$form = vsite_menus_settings_build_form($menu_links);
   $form['#menu'] =  "Primary Menu";
 
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save settings'),
   );
-  
+
   $form['reset'] = array(
     '#type' => 'submit',
     '#value' => t('Reset to defaults'),
     '#submit' => array('vsite_menus_settings_form_reset'),
   );
-  
+
   return $form;
-  
+
 }
 
 /**
@@ -48,7 +58,7 @@ function vsite_menus_settings_form_after_build($form, &$form_state) {
 function vsite_menus_settings_form_reset($form, &$form_state) {
   $space = vsite_get_vsite();
   if(!$space) return;
-  
+
 //  foreach (array_keys(vsite_layout_get_pagetypes($space)) as $s_page_type) {
 //    $space->controllers->context->del('openscholar-feature-'.$s_page_type.":reaction:block:".$space->group->og_theme);
 //  }
@@ -60,8 +70,8 @@ function vsite_menus_settings_form_reset($form, &$form_state) {
 function vsite_menus_settings_form_submit($form, &$form_state) {
   $space = vsite_get_vsite();
   if(!$space) return;
-  
-  
+
+
 }
 
 
@@ -70,19 +80,19 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
  */
 function vsite_menus_settings_build_form($tree) {
   $form = array('#tree' => TRUE);
-  
+
   foreach ($tree as $s_key => $item) {
     $title = '';
-    
+
     $form[$s_key]['#item'] = $item;
-    
+
     $form[$s_key]['#attributes'] = $item['hidden'] ? array('class' => 'menu-disabled') : array('class' => 'menu-enabled');
     $form[$s_key]['link_title']['#value'] = l($item['link_title'], $item['link_path']) . ($item['hidden'] ? ' ('. t('disabled') .')' : '');
     $form[$s_key]['hidden'] = array(
       '#type' => 'checkbox',
       '#default_value' => !$item['hidden'],
     );
-    
+
     $form[$s_key]['weight'] = array(
       '#type' => 'weight',
       '#delta' => 50,
@@ -92,10 +102,10 @@ function vsite_menus_settings_build_form($tree) {
       '#type' => 'hidden',
       '#value' => $s_key,
     );
-    
+
     // Build a list of operations.
     $operations = array();
-    
+
     // Only items created by the user can be deleted.
     if ($item['user_created'] == 1) {
       $operations['delete'] = l(t('delete'), 'admin/build/menu/item/'. $item['mlid'] .'/delete');
@@ -157,7 +167,7 @@ function theme_vsite_menus_settings_form($form) {
       $rows[] = $row;
     }
   }
-  
+
   $output = '';
   if ($rows) {
     $output .= theme('table', $header, $rows, array('id' => 'vsite-menus-settings'));

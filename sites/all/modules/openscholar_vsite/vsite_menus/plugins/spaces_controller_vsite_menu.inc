@@ -69,8 +69,9 @@ class spaces_controller_vsite_menu extends spaces_controller {
    * Add in menu links that are in the default but not in the passed array
    *
    * @param array $menu_settings
+   * @param boolean $as_hidden
    */
-  protected function add_missing_defaults(&$menu_settings){
+  protected function add_missing_defaults(&$menu_settings, $as_hidden = false){
   	if(!$this->loaded_all['original']) return false;
   	
   	//Look at the Defaults to make sure there is nothing to add
@@ -79,6 +80,7 @@ class spaces_controller_vsite_menu extends spaces_controller {
         
       foreach ($a_menu_links as $s_link_key => $a_default_link) {
         if(!isset($menu_settings[$s_menu][$s_link_key])){
+        	if($as_hidden) $a_default_link['hidden'] = 1;
           $menu_settings[$s_menu][$s_link_key] = $a_default_link;
         }
       }
@@ -173,5 +175,13 @@ class spaces_controller_vsite_menu extends spaces_controller {
   	}
   	
   	return false;
+  }
+  
+  /**
+   * Override of set()
+   */
+  function set($id, $value) {
+  	$this->add_missing_defaults($value,true);
+  	parent::set($id,$value);
   }
 }
