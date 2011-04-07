@@ -921,15 +921,15 @@ function vsite_private_site_login(){
  * Implement Hook vsite_generic_settings
  * @return array
  */
-function vsite_vsite_generic_settings($space, $value = array()){
+function vsite_vsite_generic_settings(){
   $a_settings = array();
 
-  $a_settings['private_vsite'] = array(
+  $a_settings['vsite_private'] = array(
     'form' => array(
       '#prefix' => "<br />",
       '#type' => 'checkbox',
       '#title' => t('Make your site Private'),
-      '#default_value' => is_array($value) && array_key_exists('private_vsite',$value) ? $value['private_vsite']:0,
+      '#default_value' => variable_get('vsite_private', 0),
       '#description' => "If private your vsite will only be avalible when you are logged in, regular users will see a message and be giving the choice to login.",
     )
   );
