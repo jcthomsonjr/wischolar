@@ -467,8 +467,7 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
   
   $existing = false;
   if($form['#term']['tid']){
-  	$mlid = vsite_taxonomy_get_term_mlid($form['#term']['tid']);
-  	if($mlid) $existing = menu_link_load($mlid);
+  	$existing = vsite_menus_get_menu_item( _vsite_taxonomy_get_term_path($form['#term']['tid']) );
   }
   
   $form['advanced']['menu'] = array(
@@ -478,33 +477,22 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
     '#description' => "Creates a menu entry that will link to the items associated with this term"
 	);
 	
-	$form['advanced']['menu']['menu_title'] = array(
+	$form['advanced']['menu']['link_title'] = array(
 	  '#type' => 'textfield',
 	  '#title' => t('Menu Title'),
-	  '#default_value' => $existing?$existing['title']:$form['identification']['name']['#default_value'],
+	  '#default_value' => $existing?$existing['link_title']:$form['identification']['name']['#default_value'],
 	  '#size' => 20,
 	  '#maxlength' => 40,
 	  '#required' => false,
 	);
 	
-	$s_default = 0;
-	if($existing){
-		if($existing['menu_name'] == variable_get('scholar_primary_menu',false)){
-			$s_default = 'primary';
-		}elseif ($existing['menu_name'] == variable_get('scholar_secondary_menu',false)){
-			$s_default = 'secondary';
-		}
-	}
+	$s_default = ($existing)?$existing['menu_name']:0;
 	
-	$form['advanced']['menu']['menu_location'] = array(
+	$form['advanced']['menu']['menu_name'] = array(
 	  '#type' => 'select',
 	  '#title' => t('Menu Location'),
 	  '#default_value' => $s_default,
-	  '#options' => array(
-	    0 => t('No Menu'),
-	    'primary' => t('Primary Menu'),
-	    'secondary' => t('Secondary Menu'),
-	  ),
+	  '#options' => array_merge(array(0 => t('No Menu')), variable_get('scholar_site_menus',array())),
 	);
 	
 	$form['#submit'][] = 'vsite_taxonomy_form_taxonomy_form_term_submit';
@@ -514,9 +502,11 @@ function vsite_taxonomy_taxonomy ($op, $type, $object) {
   switch($op) {
     case 'delete':
       if ($type == 'term'){
-        $existing = vsite_taxonomy_get_term_mlid($object['tid']);
+      	//delete the menu item for this term when the term is deleted
+      	$existing = vsite_menus_get_menu_item( _vsite_taxonomy_get_term_path($object['tid']) );
         if($existing){
-        	vsite_menu_delete_vsite_menu_link($existing);  //Delete the menu that goes with this term
+        	$vsite = vsite_get_vsite();
+        	$vsite->controllers->vsite_menu->delete_menu_item($existing['menu_name'], $existing['key']);
         }
       }
       break;
@@ -528,39 +518,39 @@ function vsite_taxonomy_taxonomy ($op, $type, $object) {
  */
 function vsite_taxonomy_form_taxonomy_form_term_submit($form, &$form_state){
 	$vsite = vsite_get_vsite();
-	if(!$vsite) return;
-	
-  if ($form_state['clicked_button']['#value'] == t('Delete')) return;
-  
+	if(!$vsite || $form_state['clicked_button']['#value'] == t('Delete')) return;
+	/**
+	 * Handle Adding removing or Updating the menu link for this taxonomy term
+	 */
 	$existing = false;
 	if($form_state['tid']){
-		$existing = vsite_taxonomy_get_term_mlid($form_state['tid']);
-	}
+		$existing = vsite_menus_get_menu_item( _vsite_taxonomy_get_term_path($form_state['tid']) );
+	}//Does this menu entry already exist
 	
-  
-	
-	if($form_state['values']['menu_location'] && $form_state['tid']){
-		$s_link_path = _vsite_taxonomy_get_term_path($form_state['tid']);
+	if($form_state['values']['menu_name'] && $form_state['values']['link_title'] && $form_state['tid']){
+		
 		if($existing){
-			vsite_menu_update_vsite_menu_link($existing, $s_link_path, $form_state['values']['menu_title'], ($form_state['values']['menu_location'] == 'primary'), $n_weight = 0, $n_plid = 0, $vsite->group->nid);
-		}else{
-			vsite_menu_create_vsite_menu_link($s_link_path, $form_state['values']['menu_title'], ($form_state['values']['menu_location'] == 'primary'), $n_weight = 0, $n_plid = 0, $vsite->group->nid);
-		}
-	}elseif ($existing){
-		vsite_menu_delete_vsite_menu_link($existing);
-	}
-}
-
-/**
- * Return the lid for a term if it exists
- *
- * @param number $tid
- */
-function vsite_taxonomy_get_term_mlid($tid){
-	$s_link_path = _vsite_taxonomy_get_term_path($tid);
-  $item = db_fetch_array(db_query("SELECT ml.mlid as mlid FROM {menu_links} ml WHERE ml.link_path = '%s' ", $s_link_path));
+      list($old_menu,$path) = explode(":",$existing['key'],2);
+      if($old_menu != $form_state['values']['menu_name']){
+        $vsite->controllers->vsite_menu->delete_menu_item($old_menu,$existing['key']);
+      }//Delete this link from the old menu?
+    }
     
-  return is_array($item)? $item['mlid']:false;
+    $item['menu_name'] = $form_state['values']['menu_name'];
+    $item['link_title'] = trim($form_state['values']['link_title']);
+    $item['link_path'] = _vsite_taxonomy_get_term_path($form_state['tid']);
+    $item['options']['attributes']['title'] = trim($node->title);
+    $item['key'] = $item['menu_name'].":".$item['link_path'];
+    $item = $item + array('router_path' => 'taxonomy/term/%', 'module' => 'vsite_taxonomy', 'weight' => 60, 'user_created' => 1);
+          
+    // Add or Update the menu link
+    $a_menu = $vsite->controllers->vsite_menu->get( $item['menu_name'] );
+    $vsite->controllers->vsite_menu->set( $item['menu_name'], array_merge($a_menu,array($item['menu_name'].":".$item['link_path'] => $item)));
+		
+	}elseif (count($existing)){
+		//Remove the link if they deselect the menu or remove the link name
+		$vsite->controllers->vsite_menu->delete_menu_item($existing['menu_name'], $existing['key']);
+	}
 }
 
 /**
@@ -578,9 +568,6 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
         'class' => 'ctools-use-dialog edit-link'
       )
     );
-
-    $current = menu_get_item();
-
   }
   elseif ($type == 'term') {
 
@@ -602,7 +589,6 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
 	      )
 	    );
     }
-    
   }
 
   return $links;
