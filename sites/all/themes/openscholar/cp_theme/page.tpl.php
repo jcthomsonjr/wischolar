@@ -27,7 +27,7 @@
           <div class="innerframe">
            <?php
              $menu_item = menu_get_item();
-             if($context_links && !$node && $menu_item['page_callback'] != 'node_add') print $context_links; //If we have context links and are not editing/viewing a node in CP
+//             if($context_links && !$node && $menu_item['page_callback'] != 'node_add') print $context_links; //If we have context links and are not editing/viewing a node in CP
            ?>
             <?php //main tabs ($tabs) comes in the block on the left ?>
             <?php if (!empty($title) && ($node || $menu_item['page_callback'] == 'node_add')){ ?>
