@@ -49,6 +49,88 @@ function vsite_menus_theme() {
  */
 
 /**
+ * Implementation of hook_nodeapi().
+ */
+function vsite_menus_nodeapi(&$node, $op) {
+	$vsite = vsite_get_vsite();
+	if(!$vsite && is_array($node->og_groups)){
+	  foreach ($node->og_groups as $n_gid){
+      if(($vsite = vsite_get_vsite($n_gid))) break;
+    }
+	}//Try and Load the vsite from the group in the node object
+	if(!$vsite) return;
+	
+  switch ($op) {
+  	case 'presave':
+  		//Manage Vsite Path settings
+      if (module_exists('path') && module_exists('pathauto')) {
+        // About to be saved (before insert/update)
+        // Only add to an alias if the checkbox was not provided or if the checkbox was provided and is unchecked
+        if (!isset($node->pathauto_perform_alias) || !$node->pathauto_perform_alias) {
+          if (strlen($node->path) && strpos($node->path, $vsite->purl . "/") !== 0 && $vsite && $node->nid != $vsite->group->nid && strlen($vsite->purl)) {
+            $node->path = $vsite->purl . "/" . $node->path;
+          }//Did they provide a path?  is the site purl already prepended?
+        }
+      }//Is Pathauto Enabled?
+      break;
+    case 'insert':
+    case 'update':
+      if (isset($node->vsite_menu)) {
+        $item = &$node->vsite_menu;
+        if (!empty($item['delete'])) {
+        	if(!$item['key']) break; //This does not exist in the menu
+        	
+        	//Delete the menu link for this node
+        	$vsite->controllers->vsite_menu->delete_menu_item($item['menu_name'],$item['key']);
+        }
+        elseif (trim($item['link_title'])) {
+        	if(strlen($item['key'])){
+        	  list($old_menu,$path) = explode(":",$item['key'],2);
+        	  if($old_menu != $item['menu_name']){
+        	  	$vsite->controllers->vsite_menu->delete_menu_item($old_menu,$item['key']);
+        	  }//Delete this link from the old menu?
+        	}
+        	
+          $item['link_title'] = trim($item['link_title']);
+          $item['link_path'] = "node/$node->nid";
+          $item['options']['attributes']['title'] = trim($node->title);
+          $item['key'] = $item['menu_name'].":".$item['link_path'];
+          $item = $item + array('router_path' => 'node/%', 'module' => 'vsite_menu', 'weight' => 0, 'user_created' => 1);
+          
+          // Add/Update the menu link
+          $a_menu = $vsite->controllers->vsite_menu->get( $item['menu_name'] );
+          $vsite->controllers->vsite_menu->set( $item['menu_name'], array_merge($a_menu,array($item['menu_name'].":".$item['link_path'] => $item)));
+        }
+      }
+      break;
+    case 'delete':
+      $a_site_menu_links = $site->controllers->vsite_menu->get_multiple( array_keys(variable_get('scholar_site_menus',array())) );
+    	foreach ($a_site_menu_links as $key => $link) {
+        if($link['link_path'] == "node/{$node->nid}"){
+        	$vsite->controllers->vsite_menu->delete_menu_item($link['menu_name'], $key);
+        }
+      }
+      break;
+    case 'prepare':
+      if (empty($node->vsite_menu)) {
+      	$a_site_menus = array_keys(variable_get('scholar_site_menus',array()));
+      	$a_site_menu_links = $vsite->controllers->vsite_menu->get_multiple( $a_site_menus );
+        $node_link = array();
+      	foreach ($a_site_menu_links as $key => $link) {
+      		if($link['link_path'] == "node/{$node->nid}"){
+      			$node_link = $link;
+      			break;
+      		}
+      	}
+      	
+        // Set default values.
+        $node->vsite_menu = $node_link + array('link_title' => '', 'key' => null, 'menu_name' => current($a_site_menus), 'module' => 'vsite_menu', 'weight' => 0, 'options' => array(), 'user_created' => 1);
+      }
+      break;
+  }
+}
+
+/**
  * Change the options for the node save form so that only the active vsite menus are displayed
  *
  * @param $form array
@@ -85,7 +167,7 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
     );
     $item = $form['#node']->vsite_menu;
 
-    if ($item['key']) {
+    if ($item['key'] && $item['user_created']) {
       // There is an existing link.
       $form['vsite_menu']['delete'] = array(
         '#type' => 'checkbox',
@@ -104,7 +186,7 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
     // Generate a list of possible menus
     $options = variable_get('scholar_site_menus', FALSE);
     $default = ($item['menu_name'])?$item['menu_name']:current(array_keys($options));
-    $form['vsite_menu']['parent'] = array(
+    $form['vsite_menu']['menu_name'] = array(
       '#type' => 'radios',
       '#title' => t('Choose a Menu'),
       '#default_value' => $default,
@@ -116,6 +198,11 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
     $form['vsite_menu']['weight'] = array(
       '#type' => 'value',
       '#value' => ($item['weight'])?$item['weight']:50,
+    );
+    
+    $form['vsite_menu']['key'] = array(
+      '#type' => 'value',
+      '#value' => ($item['key'])?$item['key']:null,
     );
   	
     
@@ -175,227 +262,133 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
   }
 }
 
-/**
- * Implements hook_menu_node_insert().
- * /
- */
-function vsite_menus_menu_node_insert($item, $node) {
-	$vsite = vsite_get_vsite();
-	
-	
-  //require_once(drupal_get_path('module', 'vsite_menus') . '/includes/vsite_menus.menus.inc');
-  //vsite_include('vsiteapi');
-  $site = vsite_get_vsite();
-  $a_menus_settings = $site->controllers->variable->get('vsite_setting_menus');
-  
-  if (!is_array($a_menus_settings) || !is_array($a_menus_settings['menu_items'])) {
-    return;
-  }//If there are no spaces settings saved for menu then we don't have anything to do
-  
-  $a_scholar_types = vsite_content_types();
-  
-  if ($site && array_key_exists($node->type, $a_scholar_types) && ($item->menu_name == variable_get('scholar_primary_menu', FALSE) || $item->menu_name == variable_get('scholar_secondary_menu', FALSE))) {
-    
-    $s_menu_key = $item->menu_name == variable_get('scholar_primary_menu', FALSE)?'primary':'secondary';
-    
-    $a_menus_settings['menu_items'][$item->mlid] = array('menu' => $s_menu_key, 'weight' => $item->weight);
-    
-    $site->controllers->variable->set('vsite_setting_menus',vsite_menus_menus::create_menus($a_menus_settings));
-  }
-  elseif ($site && array_key_exists($item->mlid, $a_menus_settings['menu_items'])) {
-    unset($a_menus_settings['menu_items'][$item->mlid]);
-    $site->controllers->variable->set('vsite_setting_menus',vsite_menus_menus::create_menus($a_menus_settings));
-  }//Add or remove t from the spaces menu
-}
 
-/**
- * Implements hook_menu_node_update().
- * /
- */
-function vsite_menus_menu_node_update($item, $node) {
-  vsite_menus_menu_node_insert($item, $node);
-}
-
-/**
- * Implements hook_menu_node_delete().
- * /
- */
-function vsite_menus_menu_node_delete($item, $node) {
-  require_once(drupal_get_path('module', 'vsite_menus') .'/includes/vsite_menus.menus.inc');
-  vsite_include('vsiteapi');
-  $site = vsite_get_vsite();
-  $a_scholar_types = vsite_content_types();
-  
-  
-  if ($site && is_array($a_scholar_types) && array_key_exists($node->type, $a_scholar_types) && ($a_menus_settings = $site->controllers->variable->get('vsite_setting_menus')) && array_key_exists($item->mlid, $a_menus_settings['menu_items'])) {
-    $site->controllers->variable->get('vsite_setting_menus',vsite_menus_menus::create_menus($a_menus_settings));
-  }
-}
-
-
-
-
-
-
-
-/**
- * Implementation of hook_nodeapi().
- * /
- */
-function vsite_menus_nodeapi(&$node, $op, $teaser, $page) {
-  if (module_exists('path')) {
-    switch ($op) {
-      case 'presave':
-        if (module_exists('path') && module_exists('pathauto')) {
-          // About to be saved (before insert/update)
-          // Only add to an alias if the checkbox was not provided or if the checkbox was provided and is unchecked
-          if (!isset($node->pathauto_perform_alias) || !$node->pathauto_perform_alias) {
-            $vsite = vsite_get_vsite();
-            if(!$vsite && is_array($node->og_groups)){
-              foreach ($node->og_groups as $n_gid){
-                if(($vsite = vsite_get_vsite($n_gid))) break;
-              }
-            }//Try and load the vsite from the node object if we are not in the space
-            
-            if (strlen($node->path) && strpos($node->path, $vsite->purl . "/") !== 0 && $vsite && $node->nid != $vsite->group->nid && strlen($vsite->purl)) {
-              $node->path = $vsite->purl . "/" . $node->path;
-            }//Did they provide a path?  is the site purl already prepended?
-          }
-        }//Is Pathauto Enabled?
-         
-        break;
-      default:
-        break;
-    }
-  }
-}
-
-/**
- * Deletes a custom menu link created in the context of a vsite
- *
- *  @param $n_mlid (number) existing link id
- *  @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
- *
- * @return (number) the mlid of the created menu item or false on failure
- */
-function vsite_menu_delete_vsite_menu_link($n_mlid, $sid = NULL) {
-  $vsite = vsite_get_vsite();
-  if (!$sid) {
-    $sid = $vsite->group->nid;
-  }
-  elseif ($vsite->group->nid != $sid) {
-    $vsite = spaces_load('og', $sid, TRUE);
-  }
-  
-  menu_link_delete($n_mlid);
-  $a_menus_settings = $o_scholar->controllers->variable->get('vsite_setting_menus');
-  if (is_array($a_menus_settings)) {
-    if (($n_p_index = array_search($n_mlid, $a_menus_settings['primary']))){
-      unset($a_menus_settings['primary'][$n_p_index]);
-    }
-    if (($n_s_index = array_search($n_mlid, $a_menus_settings['secondary']))){
-      unset($a_menus_settings['secondary'][$n_s_index]);
-    }
-  }
-  
-  if ($n_s_index || $n_p_index){
-    $o_scholar->controllers->variable->set('vsite_setting_menus',$a_menus_settings);
-  }
-  
-  return $n_mlid;
-}
-
-/**
- * Creates a custom menu link created in the context of a vsite
- *
- * @param $s_path (string) link path
- * @param $s_title (string) link title
- * @param $b_primary_menu (boolean) true for promary menu, false for secondary
- * @param $n_weight (number) menu weight
- * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
- * @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
- *
- * @return (number) the mlid of the created menu item or false on failure
- */
-function vsite_menu_create_vsite_menu_link($s_path, $s_title, $b_primary_menu = TRUE, $n_weight = 0, $n_plid = 0, $sid = NULL) {
-  //Create the menu item
-  return vsite_menu_update_vsite_menu_link(FALSE, $s_path, $s_title, $b_primary_menu, $n_weight, $n_plid, $sid);
-}
-
-
-/**
- * Updates an custom menu link created in the context of a vsite
- *
- * @param $n_mlid (number) existing link id
- * @param $s_path (string) link path
- * @param $s_title (string) link title
- * @param $b_primary_menu (boolean) true for promary menu, false for secondary
- * @param $n_weight (number) menu weight
- * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
- * @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
- *
- * @return (number) the mlid of the affected menu or false on failure
- */
-function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primary_menu = TRUE, $n_weight = 0, $n_plid = 0, $sid = NULL) {
-  $vsite = vsite_get_vsite();
-  if (!$sid) {
-    $sid = $vsite->group->nid;
-  }
-  elseif ($vsite->group->nid != $sid) {
-    $vsite = spaces_load('og', $sid, TRUE);
-  }
-  
-  if (!$sid || !strlen($s_path) || !strlen($s_title)) return FALSE;
-
-  $s_menu = $b_primary_menu? variable_get('scholar_primary_menu', FALSE):variable_get('scholar_secondary_menu', FALSE);
-  
-   $a_settings = array(
-   'delete' => 0,
-   'module' => 'menu',
-   'has_children' => 0,
-   'customized' => 0,
-   'options' => array(
-     'attributes' => array(
-       'site' => $sid,
-       'title' => $s_title,
-     ),
-   ),
-   'expanded' => 0,
-   'link_title' => $s_title,
-   'parent' => $s_menu . ':' . $n_plid,  //(Menu Key and Parent link ID 0 for no parent    ie. scholar_secondary_menu:0 for secondary menu at root level)
-   'weight' => $n_weight,  //(Link Weight)
-   'plid' => $n_plid,  //(Parent Link ID again or 0 for root)
-   'menu_name' => $s_menu,
-   'link_path' => $s_path,
-  );
-  
-  if (intval($n_mlid)) $a_settings['mlid'] = $n_mlid;
-    
-  $n_mlid = menu_link_save($a_settings);
-  
-  //Change Vsite Settings
-  $b_settings_changed = FALSE;
-  $a_menus_settings = $o_scholar->controllers->variable->get('vsite_setting_menus');
-  $a_settings_menu = is_array($a_menus_settings)?$a_menus_settings[($b_primary_menu?'primary':'secondary')]:FALSE;
-  if ($a_settings_menu && !in_array($n_mlid, $a_settings_menu)) {
-    $a_settings_menu[] = intval($n_mlid);
-    $b_settings_changed = TRUE;
-    $a_menus_settings[($b_primary_menu?'primary':'secondary')] = $a_settings_menu;
-  }//If thier are custom user settings add this menu to them
-  
-  $a_inactive_menu = is_array($a_menus_settings)?$a_menus_settings[($b_primary_menu?'secondary':'primary')]:FALSE;
-  if ($a_inactive_menu && in_array($n_mlid, $a_inactive_menu)) {
-    unset($a_inactive_menu[array_search($n_mlid, $a_inactive_menu)]);
-    $b_settings_changed = TRUE;
-    $a_menus_settings[($b_primary_menu?'secondary':'primary')] = $a_inactive_menu;
-  }//Remove the custom link from the menus that it was in
-  
-  if ($b_settings_changed) spaces_save($vsite);
-  
-  return $n_mlid;
-}
-
-
+///**
+// * Deletes a custom menu link created in the context of a vsite
+// *
+// *  @param $n_mlid (number) existing link id
+// *  @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
+// *
+// * @return (number) the mlid of the created menu item or false on failure
+// */
+//function vsite_menu_delete_vsite_menu_link($n_mlid, $sid = NULL) {
+//  $vsite = vsite_get_vsite();
+//  if (!$sid) {
+//    $sid = $vsite->group->nid;
+//  }
+//  elseif ($vsite->group->nid != $sid) {
+//    $vsite = spaces_load('og', $sid, TRUE);
+//  }
+//
+//  menu_link_delete($n_mlid);
+//  $a_menus_settings = $o_scholar->controllers->variable->get('vsite_setting_menus');
+//  if (is_array($a_menus_settings)) {
+//    if (($n_p_index = array_search($n_mlid, $a_menus_settings['primary']))){
+//      unset($a_menus_settings['primary'][$n_p_index]);
+//    }
+//    if (($n_s_index = array_search($n_mlid, $a_menus_settings['secondary']))){
+//      unset($a_menus_settings['secondary'][$n_s_index]);
+//    }
+//  }
+//
+//  if ($n_s_index || $n_p_index){
+//    $o_scholar->controllers->variable->set('vsite_setting_menus',$a_menus_settings);
+//  }
+//
+//  return $n_mlid;
+//}
+//
+///**
+// * Creates a custom menu link created in the context of a vsite
+// *
+// * @param $s_path (string) link path
+// * @param $s_title (string) link title
+// * @param $b_primary_menu (boolean) true for promary menu, false for secondary
+// * @param $n_weight (number) menu weight
+// * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
+// * @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
+// *
+// * @return (number) the mlid of the created menu item or false on failure
+// */
+//function vsite_menu_create_vsite_menu_link($s_path, $s_title, $b_primary_menu = TRUE, $n_weight = 0, $n_plid = 0, $sid = NULL) {
+//  //Create the menu item
+//  return vsite_menu_update_vsite_menu_link(FALSE, $s_path, $s_title, $b_primary_menu, $n_weight, $n_plid, $sid);
+//}
+//
+//
+///**
+// * Updates an custom menu link created in the context of a vsite
+// *
+// * @param $n_mlid (number) existing link id
+// * @param $s_path (string) link path
+// * @param $s_title (string) link title
+// * @param $b_primary_menu (boolean) true for promary menu, false for secondary
+// * @param $n_weight (number) menu weight
+// * @param $n_plid (number) for menu trees, if you want this menu item to be the child of an existing item (use with caution)
+// * @param $sid (number)  optional - pass the site id allows for altering /adding menu links programatically to a site
+// *
+// * @return (number) the mlid of the affected menu or false on failure
+// */
+//function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primary_menu = TRUE, $n_weight = 0, $n_plid = 0, $sid = NULL) {
+//  $vsite = vsite_get_vsite();
+//  if (!$sid) {
+//    $sid = $vsite->group->nid;
+//  }
+//  elseif ($vsite->group->nid != $sid) {
+//    $vsite = spaces_load('og', $sid, TRUE);
+//  }
+//
+//  if (!$sid || !strlen($s_path) || !strlen($s_title)) return FALSE;
+//
+//  $s_menu = $b_primary_menu? variable_get('scholar_primary_menu', FALSE):variable_get('scholar_secondary_menu', FALSE);
+//
+//   $a_settings = array(
+//   'delete' => 0,
+//   'module' => 'menu',
+//   'has_children' => 0,
+//   'customized' => 0,
+//   'options' => array(
+//     'attributes' => array(
+//       'site' => $sid,
+//       'title' => $s_title,
+//     ),
+//   ),
+//   'expanded' => 0,
+//   'link_title' => $s_title,
+//   'parent' => $s_menu . ':' . $n_plid,  //(Menu Key and Parent link ID 0 for no parent    ie. scholar_secondary_menu:0 for secondary menu at root level)
+//   'weight' => $n_weight,  //(Link Weight)
+//   'plid' => $n_plid,  //(Parent Link ID again or 0 for root)
+//   'menu_name' => $s_menu,
+//   'link_path' => $s_path,
+//  );
+//
+//  if (intval($n_mlid)) $a_settings['mlid'] = $n_mlid;
+//
+//  $n_mlid = menu_link_save($a_settings);
+//
+//  //Change Vsite Settings
+//  $b_settings_changed = FALSE;
+//  $a_menus_settings = $o_scholar->controllers->variable->get('vsite_setting_menus');
+//  $a_settings_menu = is_array($a_menus_settings)?$a_menus_settings[($b_primary_menu?'primary':'secondary')]:FALSE;
+//  if ($a_settings_menu && !in_array($n_mlid, $a_settings_menu)) {
+//    $a_settings_menu[] = intval($n_mlid);
+//    $b_settings_changed = TRUE;
+//    $a_menus_settings[($b_primary_menu?'primary':'secondary')] = $a_settings_menu;
+//  }//If thier are custom user settings add this menu to them
+//
+//  $a_inactive_menu = is_array($a_menus_settings)?$a_menus_settings[($b_primary_menu?'secondary':'primary')]:FALSE;
+//  if ($a_inactive_menu && in_array($n_mlid, $a_inactive_menu)) {
+//    unset($a_inactive_menu[array_search($n_mlid, $a_inactive_menu)]);
+//    $b_settings_changed = TRUE;
+//    $a_menus_settings[($b_primary_menu?'secondary':'primary')] = $a_inactive_menu;
+//  }//Remove the custom link from the menus that it was in
+//
+//  if ($b_settings_changed) spaces_save($vsite);
+//
+//  return $n_mlid;
+//}
+//
+//
 
 /**
  * Menu Rendering Functions
@@ -414,22 +407,20 @@ function vsite_menu_update_vsite_menu_link($n_mlid, $s_path, $s_title, $b_primar
 function vsite_menus_block($op = 'list', $delta = 0, $edit = array()) {
   if (!user_access('access content')) return;
   
+  $site_menus = variable_get('scholar_site_menus',array());
   $blocks = array();
   if ($op == 'list') {
-    $blocks[0] = array('info' => t('Primary menu'), 'cache' => BLOCK_CACHE_PER_PAGE);
-    $blocks[1] = array('info' => t('Secondary menu'), 'cache' => BLOCK_CACHE_PER_PAGE);
+  	foreach (array_values($site_menus) as $n_key => $menu_name) {
+  		$blocks[$n_key] = array('info' => t($menu_name), 'cache' => BLOCK_CACHE_PER_PAGE);
+  	}
     return $blocks;
   }
   elseif ($op == 'view') {
-    switch ($delta) {
-      case 0:
-        $block['subject'] = t(''); // intentionally left empty for now.
-        $block['content'] = vsite_menus_get_menu_tree(variable_get('scholar_primary_menu', FALSE), TRUE, FALSE, TRUE);
-        return $block ;
-      case 1:
-        $block['subject'] = t(''); // intentionally left empty for now.
-        $block['content'] = vsite_menus_get_menu_tree(variable_get('scholar_secondary_menu', FALSE), TRUE, FALSE, TRUE);
-        return $block;
+  	$menu_keys = array_keys($site_menus);
+    if($menu_keys[$delta]) {
+      $block['subject'] = t(''); // intentionally left empty for now.
+      $block['content'] = vsite_menus_get_menu_tree( $menu_keys[$delta] );
+      return $block ;
     }
   }
 }
