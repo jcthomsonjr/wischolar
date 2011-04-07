@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 function vsite_users_install() {
 
@@ -6,4 +6,15 @@ function vsite_users_install() {
 
 function vsite_users_enable() {
 
+}
+
+function vsite_users_update_6001(&$sandbox) {
+  if (db_table_exists('spaces_settings')) {
+    $result = db_query("SELECT * FROM {spaces_settings} WHERE id = 'generic'");
+    while ($row = db_fetch_object($result)) {
+      $value = unserialize($row->value);
+
+      db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', 'vsite_users_contact_form_anonymous', '%s')", $row->type, $row->sid, serialize($value['contact_form_anonymous']));
+    }
+  }
 }
