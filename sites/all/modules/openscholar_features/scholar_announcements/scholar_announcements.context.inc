@@ -63,7 +63,8 @@ function scholar_announcements_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Announcements feature context');
+  t('Announcements');
+  t('Feature');
 
   $export['openscholar-feature-announcements'] = $context;
   return $export;
