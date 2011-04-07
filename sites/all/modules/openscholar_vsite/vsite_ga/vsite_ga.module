@@ -5,7 +5,7 @@
  */
 function vsite_ga_menu(){
   $items = array();
-  
+
   $items['admin/settings/scholar_ga'] = array(
     'type' => MENU_NORMAL_ITEM,
     'title' => 'Google Analytics for OpenScholar',
@@ -17,7 +17,8 @@ function vsite_ga_menu(){
     'access arguments' => array('administer site configuration'),
     'weight' => 10,
   );
-
+/*
+ * Do we really need this?
   $items['admin/settings/scholar_ga/settings'] = array(
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'title' => 'Settings for OpenScholar Google Analytics',
@@ -28,8 +29,8 @@ function vsite_ga_menu(){
     'access arguments' => array('administer site configuration'),
     'weight' => 0,
 	// test commit
-  );
-  
+  ); */
+
   return $items;
 }
 
@@ -37,19 +38,19 @@ function vsite_ga_menu(){
  * Implementation hook vsite_generic_settings()
  * @return array
  */
-function vsite_ga_vsite_generic_settings($space, $value = array()){
+function vsite_ga_vsite_generic_settings(){
   $a_settings = array();
- 
-  $a_settings['google_analytics_id'] = array(
-  'form' => array(
-  '#type' => 'textfield',
-  '#title' => t('Enter your Google Analytics ID'),
-  '#size' => 20,
-  '#maxlength' => 255,
-  '#weight' => 100,
-  '#default_value' => is_array($value) && array_key_exists('google_analytics_id',$value) ? $value['google_analytics_id']: '',
-  '#description' => t("Entering your ID this will send page and visitor data to your Google Analytics account. Go to the <a href=\"http://www.google.com/analytics/\">Google Analytics site</a> to set one up. Your ID will be in the format UA-XXXXXXX-XX."),
-  '#element_validate' => array('vsite_ga_analytics_id_validate')
+
+  $a_settings['vsite_ga_google_analytics_id'] = array(
+    'form' => array(
+      '#type' => 'textfield',
+      '#title' => t('Enter your Google Analytics ID'),
+      '#size' => 20,
+      '#maxlength' => 255,
+      '#weight' => 100,
+      '#default_value' => variable_get('vsite_ga_google_analytics_id',''),
+      '#description' => t("Entering your ID this will send page and visitor data to your Google Analytics account. Go to the <a href=\"http://www.google.com/analytics/\">Google Analytics site</a> to set one up. Your ID will be in the format UA-XXXXXXX-XX."),
+      '#element_validate' => array('vsite_ga_analytics_id_validate')
   	)
   );
   return $a_settings;
@@ -59,7 +60,7 @@ function vsite_ga_init() {
   $ga_vars = _vsite_ga_ga_id_vars();
   if(!count($ga_vars)) return;  //if no ga ids are saved, then return
   global $user;
-  
+
   // Build tracker code for footer.
 
   $script = '';
@@ -110,15 +111,24 @@ function _vsite_ga_ga_id_vars(){
   $ga_vars = array();
 
   //global id
-  if (trim(strlen(variable_get('vsite_ga_global_id' , '')))) {
-    $ga_vars['global_id'] =    variable_get('vsite_ga_global_id' , '');
-  }
-  
-  //site-specific id
   $vsite = vsite_get_vsite();
-  if(is_object($vsite) && ($a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic')) && isset($a_generic_settings['google_analytics_id'])){
-    if (trim(strlen($a_generic_settings['google_analytics_id']))){
-      $ga_vars['vsite_id'] = $a_generic_settings['google_analytics_id'];
+  if ($vsite) {
+    if (strlen($vsite->controllers->variable->get('vsite_ga_google_analytics_id', 'original'))) {
+      $ga_vars['global_id'] = variable_get('vsite_ga_global_id' , '');
+    }
+
+    //site-specific id
+    if($local_id = variable_get('vsite_ga_google_analytics_id', '')) {
+      if (strlen($local_id)) {
+        $ga_vars['vsite_id'] = $local_id;
+      }
+    }
+  }
+  else {
+    if($global_id = variable_get('vsite_ga_google_analytics_id', '')) {
+      if (strlen($global_id)) {
+        $ga_vars['global_id'] = $global_id;
+      }
     }
   }
   return $ga_vars;
@@ -132,5 +142,5 @@ function vsite_ga_analytics_id_validate($element, $form_state) {
 	if($element['#value'] && !preg_match($pattern, trim($element['#value']))) {
 		form_error($element, t('This field does not follow the correct format.'));
 	}
-	
+
 }
