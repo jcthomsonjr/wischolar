@@ -12,16 +12,15 @@ function openscholar_front_context_default_contexts() {
   $context->description = 'openscholar sitewide, no vsite context';
   $context->tag = '';
   $context->conditions = array(
-    'path' => array(
-      'values' => array(
-        '~admin' => '~admin',
-      ),
-      'options' => array(),
-    ),
     'context' => array(
       'values' => array(
         '~openscholar-section-*' => '~openscholar-section-*',
         '~vsite-section-*' => '~vsite-section-*',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        '~admin' => '~admin',
       ),
     ),
   );
@@ -31,25 +30,19 @@ function openscholar_front_context_default_contexts() {
         'openscholar_front-site_info' => array(
           'module' => 'openscholar_front',
           'delta' => 'site_info',
-          'weight' => 37,
           'region' => 'header_main',
-          'status' => '0',
-          'label' => 'OpenScholar: Site info',
-          'type' => 'context_ui',
+          'weight' => 0,
         ),
         'openscholar_front-top_links' => array(
           'module' => 'openscholar_front',
           'delta' => 'top_links',
-          'weight' => 37,
           'region' => 'header_right',
-          'status' => '0',
-          'label' => 'OpenScholar: Top links',
-          'type' => 'context_ui',
+          'weight' => 0,
         ),
       ),
     ),
   );
-  $context->condition_mode = 0;
+  $context->condition_mode = 1;
 
   // Translatables
   // Included for use with string extractors like potx.
@@ -65,9 +58,8 @@ function openscholar_front_context_default_contexts() {
   $context->conditions = array(
     'path' => array(
       'values' => array(
-        '<front>' => '<front>',
+        'welcome' => 'welcome',
       ),
-      'options' => array(),
     ),
   );
   $context->reactions = array(
@@ -76,47 +68,32 @@ function openscholar_front_context_default_contexts() {
         'openscholar_front-site_info' => array(
           'module' => 'openscholar_front',
           'delta' => 'site_info',
-          'weight' => 36,
           'region' => 'header_main',
-          'status' => '0',
-          'label' => 'OpenScholar: Site info',
-          'type' => 'context_ui',
+          'weight' => 0,
         ),
         'openscholar_front-top_links' => array(
           'module' => 'openscholar_front',
           'delta' => 'top_links',
-          'weight' => 36,
           'region' => 'header_right',
-          'status' => '0',
-          'label' => 'OpenScholar: Top links',
-          'type' => 'context_ui',
+          'weight' => 0,
         ),
         'openscholar_front-video_info' => array(
           'module' => 'openscholar_front',
           'delta' => 'video_info',
-          'weight' => 36,
           'region' => 'content_top',
-          'status' => '0',
-          'label' => 'OpenScholar: Video info',
-          'type' => 'context_ui',
-        ),
-        'views-openscholar_sites-block_2' => array(
-          'module' => 'views',
-          'delta' => 'openscholar_sites-block_2',
-          'weight' => 36,
-          'region' => 'content_bottom',
-          'status' => '0',
-          'label' => 'Latest Web Sites',
-          'type' => 'context_ui',
+          'weight' => 0,
         ),
         'openscholar_front-site_mission' => array(
           'module' => 'openscholar_front',
           'delta' => 'site_mission',
-          'weight' => 37,
           'region' => 'content_top',
-          'status' => '0',
-          'label' => 'OpenScholar: Mission Statement',
-          'type' => 'context_ui',
+          'weight' => 1,
+        ),
+        'views-openscholar_sites-block_2' => array(
+          'module' => 'views',
+          'delta' => 'openscholar_sites-block_2',
+          'region' => 'content_bottom',
+          'weight' => 0,
         ),
       ),
     ),

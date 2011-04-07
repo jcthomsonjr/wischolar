@@ -15,8 +15,18 @@ function vsite_menus_settings_form($form_state){
   $form['#prefix'] = '<div id = "cp-settings-menus">';
   $form['#suffix'] = '</div>';
   
-  $menu_links = $space->controllers->vsite_menu->get('features');
-  $form = vsite_menus_settings_build_form($menu_links);
+  $a_site_menus = variable_get('scholar_site_menus',array());
+  // a_site_menu = array where key is menu_name and value is the "display name"
+  
+  //user_created
+  
+  //all that were avalible orig..
+  $all_initial = $space->controllers->get_multiple( array_keys($a_site_menus), 'original' );
+  
+  //Get the menu links for a menu (for this site)
+  $menu_links = $space->controllers->vsite_menu->get( 'the_menu_key' );
+  
+  //$form = vsite_menus_settings_build_form($menu_links);
   $form['#menu'] =  "Primary Menu";
 
   $form['submit'] = array(

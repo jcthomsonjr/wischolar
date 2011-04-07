@@ -69,8 +69,9 @@ class spaces_controller_vsite_menu extends spaces_controller {
    * Add in menu links that are in the default but not in the passed array
    *
    * @param array $menu_settings
+   * @param boolean $as_hidden
    */
-  protected function add_missing_defaults(&$menu_settings){
+  protected function add_missing_defaults(&$menu_settings, $as_hidden = false){
   	if(!$this->loaded_all['original']) return false;
   	
   	//Look at the Defaults to make sure there is nothing to add
@@ -79,6 +80,7 @@ class spaces_controller_vsite_menu extends spaces_controller {
         
       foreach ($a_menu_links as $s_link_key => $a_default_link) {
         if(!isset($menu_settings[$s_menu][$s_link_key])){
+        	if($as_hidden) $a_default_link['hidden'] = 1;
           $menu_settings[$s_menu][$s_link_key] = $a_default_link;
         }
       }
@@ -147,15 +149,39 @@ class spaces_controller_vsite_menu extends spaces_controller {
    *   The realm of to fetch the setting for either 'space', 'preset', or
    *   'original'. Optional.
    */
-  function get_multiple($menus, $environment = NULL) {
+  public function get_multiple($menus, $environment = NULL) {
     
   	$a_all_links = array();
   	
   	foreach ($menus as $id) {
-  		$ret = $this->get($id,$enviroment);
-  		$a_all_links = is_array($a_all_links, $ret);
+  		$ret = $this->get($id,$environment);
+  		$a_all_links = array_merge($a_all_links, $ret);
   	}
   	
     return $a_all_links;
+  }
+  
+  /**
+   * Delete a menu item from a menu by menu_item key
+   * @param string $menu
+   * @param string $link_key
+   */
+  public function delete_menu_item($menu, $link_key){
+  	$a_menu_seting = $this->get( $menu );
+  	
+  	if(is_array($a_menu_seting) && isset($a_menu_seting[$link_key])){
+      unset($a_menu_seting[$link_key]);
+      return $this->set( $menu, $a_menu_seting);
+  	}
+  	
+  	return false;
+  }
+  
+  /**
+   * Override of set()
+   */
+  function set($id, $value) {
+  	$this->add_missing_defaults($value,true);
+  	parent::set($id,$value);
   }
 }

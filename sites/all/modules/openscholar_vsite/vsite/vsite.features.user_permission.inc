@@ -39,11 +39,19 @@ function vsite_user_default_permissions() {
     ),
   );
 
-  // Exported permission: configure spaces features
-  $permissions['configure spaces features'] = array(
-    'name' => 'configure spaces features',
+  // Exported permission: create openscholar site on behalf of others
+  $permissions['create openscholar site on behalf of others'] = array(
+    'name' => 'create openscholar site on behalf of others',
+    'roles' => array(),
+  );
+
+  // Exported permission: create own openscholar site
+  $permissions['create own openscholar site'] = array(
+    'name' => 'create own openscholar site',
     'roles' => array(
-      '0' => 'scholar admin',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'scholar user',
     ),
   );
 
@@ -140,33 +148,6 @@ function vsite_user_default_permissions() {
       '0' => 'anonymous user',
       '1' => 'authenticated user',
       '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: view users outside groups
-  $permissions['view users outside groups'] = array(
-    'name' => 'view users outside groups',
-    'roles' => array(
-      '0' => 'scholar admin',
-    ),
-  );
-  
-   // Exported permission: create openscholar site on behalf of others
-  $permissions[] = array(
-    'name' => 'create openscholar site on behalf of others',
-    'roles' => array(
-      '0' => 'scholar site creator',
-    ),
-  );
-
-  // Exported permission: create own openscholar site
-  $permissions[] = array(
-    'name' => 'create own openscholar site',
-    'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar site creator',
       '3' => 'scholar user',
     ),
   );
