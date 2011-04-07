@@ -27,7 +27,10 @@ function vsite_generic_settings_menu() {
     'page arguments' => array('vsite_generic_settings_form'),
     'file' => 'vsite_generic_settings.page.inc',
     'access callback' => 'cp_access_cp',
+    'type' => MENU_LOCAL_TASK,
   );
+
+  return $items;
 }
 
 /**
