@@ -1,7 +1,18 @@
 <?php
 /**
- * Form Controlls
+ * Form Controls
  */
+
+function _vsite_menus_get_menus() {
+  $menus = variable_get('scholar_site_menus', array(
+    'features' => 'Primary Menu',
+    'scholar_secondary_menu' => 'Secondary Menu',
+  ));
+
+  $menus += array('none' => 'Not in a Menu');
+
+  return $menus;
+}
 
 /*
  * The CP form for saving the block values and thier order
@@ -14,20 +25,82 @@ function vsite_menus_settings_form($form_state){
   // just do have distinct id for each setting form
   $form['#prefix'] = '<div id = "cp-settings-menus">';
   $form['#suffix'] = '</div>';
+  $form['conf'] = array(
+    '#type' => 'markup',
+    '#value' => '',
+    '#theme' => array('vsite_menus_settings'),
+  );
 
-  $a_site_menus = variable_get('scholar_site_menus',array());
-  // a_site_menu = array where key is menu_name and value is the "display name"
+  $a_site_menus = _vsite_menus_get_menus();
 
   //user_created
 
   //all that were avalible orig..
-  $all_initial = $space->controllers->vsite_menu->get_multiple( array_keys($a_site_menus), 'original' );
-
+  $all_initial = $space->controllers->vsite_menu->get_multiple(array_keys($a_site_menus));
+dpm($space);
   //Get the menu links for a menu (for this site)
-  $menu_links = $space->controllers->vsite_menu->get( 'the_menu_key' );
+  //$menu_links = $space->controllers->vsite_menu->get( 'the_menu_key' );
+  $menus = array();
 
   //$form = vsite_menus_settings_build_form($menu_links);
-  $form['#menu'] =  "Primary Menu";
+  foreach ($all_initial as $key => $link) {
+    $frags = explode(':', $key);
+    if (count($frags) == 1) {
+      // this link isn't in a menu already
+      $link['menu_name'] = 'none';
+      $menus[$frags[0]] = $link;
+    }
+    else {
+      // this link is in a menu.
+      // if it's in one of the accepted menus, put it there
+      // otherwise, put it in none
+
+      if (isset($a_site_menus[$frags[0]])) {
+        $link['menu_name'] = $frags[0];
+        $menus[$frags[1]] = $link;
+      }
+      else {
+        $link['menu_name'] = 'none';
+        $menus[$frags[1]] = $link;
+      }
+    }
+  }
+
+  foreach ($menus as $key => $link) {
+    $form['conf'][$link['menu_name']][$key] = array(
+      '#tree' => TRUE,
+      '#weight' => $link['weight'],
+      'name' => array(
+        '#type' => 'markup',
+        '#value' => !empty($link['link_title']) ? $link['link_title'] : ucwords(str_replace('_', ' ', $key)),
+      ),
+      'region' => array(
+        '#type' => 'select',
+        '#options' => $a_site_menus,
+        '#default_value' => $link['menu_name'],
+        '#attributes' => array(
+          'class' => 'field-region-select field-region-'. $link['menu_name'],
+        ),
+      ),
+      'weight' => array(
+        '#type' => 'textfield',
+        '#default_value' => $link['weight'],
+        '#size' => 3,
+        '#attributes' => array(
+          'class' => 'field-weight field-weight-'. $link['menu_name'],
+        ),
+      ),
+      'hidden' => array(
+        '#type' => 'checkbox',
+        '#title' => t('Hide'),
+        '#default_value' => $link['hidden'],
+      ),
+      'region-old' => array(
+        '#type' => 'hidden',
+        '#value' => $link['menu_name'],
+      ),
+    );
+  }
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -40,6 +113,8 @@ function vsite_menus_settings_form($form_state){
     '#submit' => array('vsite_menus_settings_form_reset'),
   );
 
+  $form['#after_build'][] = 'vsite_menus_settings_form_after_build';
+
   return $form;
 
 }
@@ -49,7 +124,19 @@ function vsite_menus_settings_form($form_state){
  */
 function vsite_menus_settings_form_after_build($form, &$form_state) {
   //CSS To be included with the form
+  drupal_add_js('misc/tableheader.js');
+  drupal_add_js(drupal_get_path('module', 'nodeformcols') . '/js/nodeformcols.js');
   drupal_add_css(drupal_get_path('module', 'vsite_menus') . '/theme/vsite_menus.css');
+
+  $regions = _vsite_menus_get_menus();    // this line is why I needed to copy it
+  foreach ($regions as $region => $title) {
+    if (is_array($form['conf'][$region])) {
+      uasort($form['conf'][$region], "element_sort");
+    }
+    drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
+    drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
+  }
+  return $form;
 }
 
 /**
@@ -71,7 +158,29 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
   $space = vsite_get_vsite();
   if(!$space) return;
 
+  $menus = $space->controllers->vsite_menu->get();
 
+  foreach ($form_state['values'] as $key => $data) {
+    if (!is_array($data)) continue;
+
+
+    $link = &$menus[$data['region-old']][$data['region-old'].':'.$key];
+    if ($data['region-old'] != $data['region']) {
+      $menus[$data['region']][$data['region'].':'.$key] = &$link;
+      unset($menus[$data['region-old']][$data['region-old'].':'.$key]);
+    }
+
+    $link['menu_name'] = $data['region'];
+    $link['weight'] = $data['weight'];
+    $link['hidden'] = $data['hidden'];
+
+    //$space->controllers->vsite_menu->set($data['region'].':'.$key, $link);
+  }
+  dpm($menus);
+
+  foreach ($menus as $key => $data) {
+    $space->controllers->vsite_menu->set($key, $data);
+  }
 }
 
 
