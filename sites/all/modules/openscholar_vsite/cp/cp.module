@@ -702,26 +702,6 @@ function cp_is_confirm_overide_page($page = NULL){
 }
 
 /**
- * Implementation of hook_vsite_settings().
- *
- * @return mixed
- *   Associative array containing Spaces settings for Control Panels
- */
-function cp_vsite_settings(){
-
-  //Setting that allows you to store the confirm time of messages, they can then be re-shown on intervals or hidden after they have been seen once
-  $a_settings = array(
-    'messages_confirmed' => array(),
-    'home' => array(
-      'class' => 'cp_settings_home',
-      'file' => drupal_get_path('module', 'cp') . '/includes/cp_home.settings.inc'
-    )
-  );
-
-  return $a_settings;
-}
-
-/**
  * Confirm that a message has been seen for a vsite
  */
 function cp_confirm_message_view($s_message){
