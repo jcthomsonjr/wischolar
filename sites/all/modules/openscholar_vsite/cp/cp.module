@@ -189,27 +189,27 @@ function cp_menu(){
         'file path' => drupal_get_path('module', 'cp') . '/includes'
       );
 
-      if (! array_key_exists($s_parent, $a_default_setting_created) || ((isset($setting->weight) ? $setting->weight : 0) < $a_default_setting_created[$s_parent]['weight'])) {
-
-        if (array_key_exists($s_parent, $a_default_setting_created)) {
-          $items[$a_default_setting_created[$s_parent]['menu']]['type'] = MENU_LOCAL_TASK;
-        } //Remove existing def. local task
-
-
-        $a_default_setting_created[$s_parent] = array(
-          'weight' => (isset($setting->weight) ? $setting->weight : 0),
-          'menu' => 'cp/' . $s_parent . '/' . $setting->id
-        );
-        $a_setting = $items['cp/' . $s_parent . '/' . $setting->id];
-        //Create Local Task
-        $items['cp/' . $s_parent . '/' . $setting->id]['type'] = MENU_DEFAULT_LOCAL_TASK;
-
-        //Crate Main Menu Item
-        unset($a_setting['type']);
-        $a_setting['title'] = $a_menu_names['cp/' . $s_parent];
-        $items['cp/' . $s_parent] = $a_setting;
-        $items['cp/' . $s_parent]['weight'] = 1;
-      }
+//      if (! array_key_exists($s_parent, $a_default_setting_created) || ((isset($setting->weight) ? $setting->weight : 0) < $a_default_setting_created[$s_parent]['weight'])) {
+//
+//        if (array_key_exists($s_parent, $a_default_setting_created)) {
+//          $items[$a_default_setting_created[$s_parent]['menu']]['type'] = MENU_LOCAL_TASK;
+//        } //Remove existing def. local task
+//
+//
+//        $a_default_setting_created[$s_parent] = array(
+//          'weight' => (isset($setting->weight) ? $setting->weight : 0),
+//          'menu' => 'cp/' . $s_parent . '/' . $setting->id
+//        );
+//        $a_setting = $items['cp/' . $s_parent . '/' . $setting->id];
+//        //Create Local Task
+//        $items['cp/' . $s_parent . '/' . $setting->id]['type'] = MENU_DEFAULT_LOCAL_TASK;
+//
+//        //Crate Main Menu Item
+//        unset($a_setting['type']);
+//        $a_setting['title'] = $a_menu_names['cp/' . $s_parent];
+//        $items['cp/' . $s_parent] = $a_setting;
+//        $items['cp/' . $s_parent]['weight'] = 1;
+//      }
 
       if (isset($setting->weight))
         $items['cp/' . $s_parent . '/' . $setting->id]['weight'] = $setting->weight;
