@@ -54,6 +54,18 @@ function vsite_menu(){
       'access content'
     )
   );
+  
+  $items['cp/settings/site_info/%vsite_group'] = array(
+    'title' => 'Site Information',
+    'page callback' => 'node_page_edit',
+    'file' => 'node.pages.inc',
+    'file path' => drupal_get_path('module', 'node'),
+    'page arguments' => array(3),
+    'weight' => 0,
+    'type' => MENU_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+  );
 
   return $items;
 }
@@ -847,28 +859,6 @@ function vsite_group_load($n_vsite_id = false){
 function vsite_group_to_arg(){
   $vsite = vsite_get_vsite();
   return $vsite->group->nid;
-}
-
-/**
- * Implements hook cp_settings
- *
- */
-function vsite_cp_settings(){
-
-  return array(
-    array(
-      'path' => 'site_info/%vsite_group',
-      'title' => 'Site Information',
-      'page callback' => 'node_page_edit',
-      'file' => 'node.pages.inc',
-      'file path' => drupal_get_path('module', 'node'),
-      'page arguments' => array(
-        3
-      ),
-      'weight' => 0,
-      'type' => MENU_LOCAL_TASK
-    )
-  );
 }
 
 /**

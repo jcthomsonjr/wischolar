@@ -219,29 +219,6 @@ function cp_menu(){
 
   }
 
-  foreach ( module_invoke_all("cp_settings") as $a_settings ) {
-    if (is_array($a_settings)) {
-      $s_parent = isset($a_settings['parent']) ? $a_settings['parent'] : 'settings';
-      $items['cp/' . $s_parent . '/' . $a_settings['path']] = $a_settings;
-    }
-
-    if (! array_key_exists($s_parent, $a_default_setting_created) && ! strstr($a_settings['path'], '%')) {
-      $a_default_setting_created[$s_parent] = array(
-        'weight' => 0,
-        'menu' => 'cp/' . $s_parent . '/' . $a_settings['path']
-      );
-
-      //Create Local Task
-      $a_settings['type'] = MENU_DEFAULT_LOCAL_TASK;
-      $items['cp/' . $s_parent . '/' . $a_settings['path']] = $a_settings;
-
-      //Crate Main Menu Item
-      unset($a_settings['type']);
-      $a_settings['name'] = $a_menu_names['cp/' . $s_parent];
-      $items['cp/' . $s_parent] = $a_settings;
-      $items['cp/' . $s_parent]['weight'] = 1;
-    } //Default created yet?  also make sure there are no dynamic params
-  }
 
   $items["cp/features"] = array(
     'title' => 'Features',
@@ -699,26 +676,6 @@ function cp_is_confirm_overide_page($page = NULL){
     ));
     exit();
   } //Was this called by javascript?
-}
-
-/**
- * Implementation of hook_vsite_settings().
- *
- * @return mixed
- *   Associative array containing Spaces settings for Control Panels
- */
-function cp_vsite_settings(){
-
-  //Setting that allows you to store the confirm time of messages, they can then be re-shown on intervals or hidden after they have been seen once
-  $a_settings = array(
-    'messages_confirmed' => array(),
-    'home' => array(
-      'class' => 'cp_settings_home',
-      'file' => drupal_get_path('module', 'cp') . '/includes/cp_home.settings.inc'
-    )
-  );
-
-  return $a_settings;
 }
 
 /**
