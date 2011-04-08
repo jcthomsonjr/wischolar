@@ -28,7 +28,19 @@ function cp_context_default_contexts() {
     ),
   );
   $context->reactions = array(
-    'block' => array(),
+    'block' => array(
+      'blocks' => array(
+        'cp_0' => array(
+          'module' => 'cp',
+          'delta' => '0',
+          'weight' => 20,
+          'region' => 'left',
+          'status' => '0',
+          'label' => 'CP left menu',
+          'type' => 'context_ui',
+        ),
+      ),
+    ),
   );
   $context->condition_mode = 0;
   $export['vsite-section-cp'] = $context;
