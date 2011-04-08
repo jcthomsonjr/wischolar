@@ -189,27 +189,27 @@ function cp_menu(){
         'file path' => drupal_get_path('module', 'cp') . '/includes'
       );
 
-      if (! array_key_exists($s_parent, $a_default_setting_created) || ((isset($setting->weight) ? $setting->weight : 0) < $a_default_setting_created[$s_parent]['weight'])) {
-
-        if (array_key_exists($s_parent, $a_default_setting_created)) {
-          $items[$a_default_setting_created[$s_parent]['menu']]['type'] = MENU_LOCAL_TASK;
-        } //Remove existing def. local task
-
-
-        $a_default_setting_created[$s_parent] = array(
-          'weight' => (isset($setting->weight) ? $setting->weight : 0),
-          'menu' => 'cp/' . $s_parent . '/' . $setting->id
-        );
-        $a_setting = $items['cp/' . $s_parent . '/' . $setting->id];
-        //Create Local Task
-        $items['cp/' . $s_parent . '/' . $setting->id]['type'] = MENU_DEFAULT_LOCAL_TASK;
-
-        //Crate Main Menu Item
-        unset($a_setting['type']);
-        $a_setting['title'] = $a_menu_names['cp/' . $s_parent];
-        $items['cp/' . $s_parent] = $a_setting;
-        $items['cp/' . $s_parent]['weight'] = 1;
-      }
+//      if (! array_key_exists($s_parent, $a_default_setting_created) || ((isset($setting->weight) ? $setting->weight : 0) < $a_default_setting_created[$s_parent]['weight'])) {
+//
+//        if (array_key_exists($s_parent, $a_default_setting_created)) {
+//          $items[$a_default_setting_created[$s_parent]['menu']]['type'] = MENU_LOCAL_TASK;
+//        } //Remove existing def. local task
+//
+//
+//        $a_default_setting_created[$s_parent] = array(
+//          'weight' => (isset($setting->weight) ? $setting->weight : 0),
+//          'menu' => 'cp/' . $s_parent . '/' . $setting->id
+//        );
+//        $a_setting = $items['cp/' . $s_parent . '/' . $setting->id];
+//        //Create Local Task
+//        $items['cp/' . $s_parent . '/' . $setting->id]['type'] = MENU_DEFAULT_LOCAL_TASK;
+//
+//        //Crate Main Menu Item
+//        unset($a_setting['type']);
+//        $a_setting['title'] = $a_menu_names['cp/' . $s_parent];
+//        $items['cp/' . $s_parent] = $a_setting;
+//        $items['cp/' . $s_parent]['weight'] = 1;
+//      }
 
       if (isset($setting->weight))
         $items['cp/' . $s_parent . '/' . $setting->id]['weight'] = $setting->weight;
@@ -219,29 +219,6 @@ function cp_menu(){
 
   }
 
-  foreach ( module_invoke_all("cp_settings") as $a_settings ) {
-    if (is_array($a_settings)) {
-      $s_parent = isset($a_settings['parent']) ? $a_settings['parent'] : 'settings';
-      $items['cp/' . $s_parent . '/' . $a_settings['path']] = $a_settings;
-    }
-
-    if (! array_key_exists($s_parent, $a_default_setting_created) && ! strstr($a_settings['path'], '%')) {
-      $a_default_setting_created[$s_parent] = array(
-        'weight' => 0,
-        'menu' => 'cp/' . $s_parent . '/' . $a_settings['path']
-      );
-
-      //Create Local Task
-      $a_settings['type'] = MENU_DEFAULT_LOCAL_TASK;
-      $items['cp/' . $s_parent . '/' . $a_settings['path']] = $a_settings;
-
-      //Crate Main Menu Item
-      unset($a_settings['type']);
-      $a_settings['name'] = $a_menu_names['cp/' . $s_parent];
-      $items['cp/' . $s_parent] = $a_settings;
-      $items['cp/' . $s_parent]['weight'] = 1;
-    } //Default created yet?  also make sure there are no dynamic params
-  }
 
   $items["cp/features"] = array(
     'title' => 'Features',
@@ -702,26 +679,6 @@ function cp_is_confirm_overide_page($page = NULL){
 }
 
 /**
- * Implementation of hook_vsite_settings().
- *
- * @return mixed
- *   Associative array containing Spaces settings for Control Panels
- */
-function cp_vsite_settings(){
-
-  //Setting that allows you to store the confirm time of messages, they can then be re-shown on intervals or hidden after they have been seen once
-  $a_settings = array(
-    'messages_confirmed' => array(),
-    'home' => array(
-      'class' => 'cp_settings_home',
-      'file' => drupal_get_path('module', 'cp') . '/includes/cp_home.settings.inc'
-    )
-  );
-
-  return $a_settings;
-}
-
-/**
  * Confirm that a message has been seen for a vsite
  */
 function cp_confirm_message_view($s_message){
@@ -887,17 +844,6 @@ function cp_get_vsite_settings($reset = FALSE){
   }
 
   return $vsite_settings;
-}
-
-/**
- * Implementation of hook_context_links_alter().
- */
-function cp_context_links_alter(&$links){
-  $cp_context = context_get('context', 'vsite-section-cp');
-  if ($cp_context && ! empty($cp_context->conditions['node']['values'])) {
-    //We do not need a context link for every content type editable in the CP
-    $links = array_diff_key($links, $cp_context->conditions['node']['values']);
-  }
 }
 
 /**
