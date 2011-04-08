@@ -2,8 +2,7 @@
   width: 848px;
   height: 560px;
   position: relative;
-  margin-left: 0;
-  margin-top: 10px;
+  margin: 0;
   font-size: 12px;
   }
 
@@ -53,7 +52,6 @@
 #scholarlayout-container #scholarlayout-content-main {
   background: #efefef;
   }
-
 #scholarlayout-top-widgets {
   height:106px;
   background:#eaebe9;
@@ -63,18 +61,18 @@
   overflow:hidden;
   }
 
-#cp-settings-site {
+#vsite-layout-settings-form {
   padding-top: 10px;
-  background:url(images/cp-settings-site.png) repeat-x 0 -22px transparent;
+  margin-top: 0 !important;
   }
 
-#cp-settings-site #cp-settings-form fieldset {
+#vsite-layout-settings-form #cp-settings-form fieldset {
   background: transparent;
   }
 
 dd.scholarlayout-item {
-  font-size: 1.2em;
-  line-height: 1em;
+  font-size: 13px;
+  line-height: 15px;
   font-weight: bold;
   color:#565e66;
   cursor: pointer;
@@ -83,15 +81,14 @@ dd.scholarlayout-item {
 
 #scholarlayout-top-widgets dd.scholarlayout-item {
   float: left;
-  width: 118px;
-  height: 21px;
+  width: 98px;
+  padding: 75px 15px 0 15px;
+  height: 31px;
   text-align: center;
   color:#444545;
-  padding-top: 85px;
-  background:url(images/widget-bg.png) no-repeat transparent 50% 10px;
+  background:url('images/widget-bg.png') no-repeat transparent 50% 10px;
   line-height: 86%;
   font-size: 11px;
-
   }
 
 #scholarlayout-container dd.scholarlayout-item {
@@ -156,6 +153,7 @@ dd.scholarlayout-item .close-this {
 
 .layout-exceptions h4 {
   padding-top: 3px;
+  margin:0;
   }
 
 .layout-exceptions li {
