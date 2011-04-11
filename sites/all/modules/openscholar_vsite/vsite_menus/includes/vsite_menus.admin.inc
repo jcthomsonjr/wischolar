@@ -163,7 +163,6 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
   foreach ($form_state['values'] as $key => $data) {
     if (!is_array($data)) continue;
 
-
     $link = &$menus[$data['region-old']][$data['region-old'].':'.$key];
     if ($data['region-old'] != $data['region']) {
       $menus[$data['region']][$data['region'].':'.$key] = &$link;
@@ -174,9 +173,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
     $link['weight'] = $data['weight'];
     $link['hidden'] = $data['hidden'];
 
-    //$space->controllers->vsite_menu->set($data['region'].':'.$key, $link);
   }
-  dpm($menus);
 
   foreach ($menus as $key => $data) {
     $space->controllers->vsite_menu->set($key, $data);
