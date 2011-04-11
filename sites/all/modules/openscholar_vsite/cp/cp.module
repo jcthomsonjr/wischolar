@@ -114,8 +114,7 @@ function cp_init(){
 function cp_get_toolbar_setting(){
   if (! ($vsite = vsite_get_vsite()) || ! $vsite->access_admin()) return 'off';
 
-  $a_generic_settings = variable_get('vsite_setting_generic', array());
-  $user_tb_setting = (is_array($a_generic_settings) && array_key_exists('admin_menu', $a_generic_settings) && $a_generic_settings['admin_menu']) ? TRUE : FALSE;
+  $user_tb_setting = variable_get('cp_admin_menu', 0);
 
   // if in cp always toolbar=on (full)
   if (context_isset('context', 'vsite-section-cp') || $user_tb_setting) {
