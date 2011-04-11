@@ -1,4 +1,5 @@
 <?php
+// $Id: imagecache.inc,v 1.2.2.2 2011/01/20 22:14:48 quicksketch Exp $
 
 /**
  * @file

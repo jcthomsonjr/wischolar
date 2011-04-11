@@ -1,4 +1,5 @@
 <?php
+// $Id: insert-widget.tpl.php,v 1.1.2.1 2011/01/21 00:11:48 quicksketch Exp $
 
 /**
  * @file

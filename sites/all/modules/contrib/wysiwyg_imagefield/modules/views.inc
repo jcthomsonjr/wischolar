@@ -1,7 +1,8 @@
 <?php
+// $Id: views.inc,v 1.1 2010/08/06 11:05:26 deciphered Exp $
 /**
  * @file
- * Views module integration.
+ * Adds Views integration.
  */
 
 function wysiwyg_imagefield_views_query_alter(&$view, &$query) {
@@ -59,8 +60,8 @@ function wysiwyg_imagefield_views_default_views() {
    */
   $view = new view;
   $view->name = 'wysiwyg_imagefield';
-  $view->description = 'Display all available files for use with FileField Sources in the Wysiwyg ImageField module.';
-  $view->tag = 'Wysiwyg ImageField';
+  $view->description = 'Display all available files for use with FileField Sources in the WYSIWYG ImageField module.';
+  $view->tag = 'WYSIWYG ImageField';
   $view->view_php = '';
   $view->base_table = 'files';
   $view->is_cacheable = FALSE;

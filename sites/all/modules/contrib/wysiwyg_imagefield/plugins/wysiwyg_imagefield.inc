@@ -1,27 +1,21 @@
 <?php
+// $Id: wysiwyg_imagefield.inc,v 1.1 2010/08/06 11:05:26 deciphered Exp $
 /**
  * @file
- * Define Wysiwyg ImageField Wysiwyg plugin.
+ * Define WYSIWYG ImageField WYSIWYG plugin.
  */
 
 /**
  * Implements hook_INCLUDE_plugin().
  */
 function wysiwyg_imagefield_wysiwyg_imagefield_plugin() {
-  $plugins = array();
-
-  // Define plugin if $_SESSION['wysiwyg_imagefield'] is set or page is Wysiwyg profile form.
-  if (isset($_SESSION['wysiwyg_imagefield']) || strpos(request_uri(), 'admin/settings/wysiwyg') >= 1) {
-    $plugins['wysiwyg_imagefield'] = array(
-      'title' => t('Wysiwyg ImageField'),
-      'vendor url' => 'http://drupal.org/project/wysiwyg_imagefield',
-      'icon file' => 'wysiwyg_imagefield.gif',
-      'icon title' => t('Wysiwyg ImageField'),
-      'settings' => array(),
-    );
-
-    unset($_SESSION['wysiwyg_imagefield']);
-  }
+  $plugins['wysiwyg_imagefield'] = array(
+    'title' => t('WYSIWYG ImageField'),
+    'vendor url' => 'http://drupal.org/project/wysiwyg_imagefield',
+    'icon file' => 'wysiwyg_imagefield.gif',
+    'icon title' => t('WYSIWYG ImageField'),
+    'settings' => array(),
+  );
 
   return $plugins;
 }

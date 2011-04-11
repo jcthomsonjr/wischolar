@@ -1,3 +1,4 @@
+// $Id: insert.js,v 1.6.2.4 2011/01/20 23:11:35 quicksketch Exp $
 
 (function ($) {
 

@@ -1,6 +1,7 @@
+// $Id: wysiwyg_imagefield.js,v 1.2 2010/08/08 03:18:59 deciphered Exp $
 
 (function ($) {
-  // Make sure Wysiwyg ImageField objects are defined.
+  // Make sure WYSIWYG ImageField objects are defined.
   Drupal.wysiwygImageField = Drupal.wysiwygImageField || {};
   Drupal.wysiwygImageField.hookSetPosition = Drupal.wysiwygImageField.hookSetPosition || {};
 
@@ -16,10 +17,10 @@
      * Execute the button.
      */
     invoke: function(data, settings, instanceId) {
-      $($('#wysiwyg_imagefield-wrapper').children().get(0)).css('display', 'none');
       $('#wysiwyg_imagefield-wrapper').css('display', 'block').dialog('open');
       Drupal.wysiwygImageField.focus();
       Drupal.wysiwygImageField.setPosition();
+      $($('#wysiwyg_imagefield-wrapper').children().get(0)).css('display', 'none');
       if ($('#wysiwyg_imagefield-wrapper').children().length == 1) {
         $('#wysiwyg_imagefield-wrapper table .filefield-element:last').parent().parent().appendTo($('#wysiwyg_imagefield-wrapper'));
       }
@@ -29,10 +30,10 @@
      * Create wysiwyg_imagefield dialog window.
      */
     attach: function(content, settings, instanceId) {
-      // @TODO: Use Modal Frame API if available.
       $('#wysiwyg_imagefield-wrapper').dialog({
         autoOpen: false,
-        title: Drupal.settings.WysiwygImageField.title
+        height: 'inherit',
+        title: Drupal.t('WYSIWYG ImageField')
       });
       Drupal.wysiwygImageField.init();
       return content;
@@ -83,16 +84,11 @@
 
       // Position dialog.
       $('#wysiwyg_imagefield-dialog').css({
-        height: null,
         left: $(id).position().left + 35,
-        overflow: 'visible',
         top: $(id).position().top + 50,
         width: $(id).width() - 100 > 475 ? $(id).width() - 100 : 475
       });
-      $('#wysiwyg_imagefield-wrapper').css({
-        height: null,
-        width: null
-      });
+      $('#wysiwyg_imagefield-wrapper').css('width', 'inherit');
 
       // Invoke Drupal.wysiwygImageField.hookSetPosition().
       if (Drupal.wysiwygImageField.hookSetPosition != undefined) {

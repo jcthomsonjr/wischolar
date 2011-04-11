@@ -5,7 +5,7 @@ body {
     }
 
 #wrapper {
-  margin-top: 22px;
+  margin-top: 42px;
   }
 
 #container,
@@ -30,9 +30,7 @@ body {
  -webkit-border-radius: 6px;
  }
 
-body.front #header-main,
-body.front #content-main,
-body.front #content-bottom {
+.front #content-bottom {
   padding: 0;
   }
 
@@ -49,23 +47,15 @@ a:hover {
   font-weight:normal;
   font-size: 26px;
   line-height: 44px;
+  margin-left: 30px;
   float:left;
   }
 
-.front #header h1 {
-  margin-left: 30px;
-
-  }
-
-#header h1 a,
-#header h1 a:visited {
+#header h1 a, #header h1 a:visited {
   color: #313030;
   }
 
-h2,
-h3,
-#sidebar-first a,
-#header {
+h2, h3, #sidebar-left a, #header {
   font-weight: bold;
   }
 
@@ -86,8 +76,9 @@ div.form-item {
 /*HEADER */
 
 #header {
-  min-height: 56px;
+  min-height: 70px;
   }
+
 
 #block-openscholar_front-top_links .content {
   float:right;
@@ -242,9 +233,7 @@ td, td.description {
   float: right;
   }
 
-p.single,
-ul.single,
-ul.single li {
+p.single, ul.single, ul.single li {
   display:inline;
   }
 
@@ -268,7 +257,7 @@ html[xmlns] #content-bottom:after {
   }
 
 #block-views-openscholar_sites-block_2 ul {
-  padding-top: 27px;
+  padding-top: 12px;
   width: 860px;
   margin: 0 0 0 85px;
   }
@@ -326,12 +315,11 @@ html[xmlns] #content-bottom:after {
   }
 
 .view-openscholar-sites .views-field-title a {
-  font-weight: bold;
+  font-weight: normal;
   }
 
 #block-views-openscholar_sites-block_2 .more-link {
   clear: both;
-  text-align:right;
   }
 
 #block-views-openscholar_sites-block_2 .views-admin-links {
@@ -355,7 +343,10 @@ html[xmlns] #content-bottom:after {
   text-transform: capitalize;
   font-weight: bold;
   margin-right: 30px;
-  font-size:11px;
+  }
+
+#block-views-openscholar_sites-block_2 .more-link a:after {
+  content: none;
   }
 
 a.imagecache-openscholar_front_logo {

@@ -15,7 +15,11 @@
 </head>
 
 <body class="<?php print $body_classes; ?>">
-  <!--[if lte IE 6]><script src="/<?php print $directory;?>/js/ie6-warning/ie6-warning.js"></script> <script>window.onload=function(){e("/<?php print $directory;?>/js/ie6-warning/")}</script><![endif]-->
+    <?php if ($cp_toolbar) : ?>
+    <div id="top">
+  	   <?php print $cp_toolbar;?>
+  	 </div>
+  	 <?php endif;?>
   <div id="wrapper">
     <div id="wrapper-inner">
       <div id="container">
@@ -93,14 +97,14 @@
               print $tabbedpubs['content'];
               ?>
               <?php print $content; ?>
-            </div> <!-- /content -->
+          </div> <!-- /content -->
 
-            <?php if (!empty($content_bottom)): ?>
-              <div id="content-bottom">
-                <?php print $content_bottom; ?>
-              </div><!--/content-bottom-->
-            <?php endif; ?>
-            </div><!-- /content main -->
+          <?php if (!empty($content_bottom)): ?>
+            <div id="content-bottom">
+              <?php print $content_bottom; ?>
+            </div><!--/content-bottom-->
+          <?php endif; ?>
+          </div><!-- /content main -->
 
               <?php if (!empty($left)): ?>
           <div id="sidebar-first" class="sidebar column">
@@ -117,14 +121,17 @@
       </div> <!-- / content wrapper -->
       <div id="footer">
         <div id="footer-inner">
+          <?php if ($footer_message): ?>
+            <div id="footer-message"><?php print $footer_message; ?></div>
+          <?php endif; ?>
+          <?php if ($footer) : ?>
+            <?php print $footer; ?>
+          <?php endif; ?>
           <?php
             $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
             $login_link = theme('vsite_login_link',"Login",array('class' => 'footer-login'));
           ?>
-          <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> <span id="powered-link"><?php print $home_link; ?></span></p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
-          <?php if ($footer) : ?>
-            <?php print $footer; ?>
-          <?php endif; ?>
+          <p class="copy"><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
         </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->
