@@ -37,13 +37,17 @@ function vsite_menus_settings_form($form_state){
 
   //all that were avalible orig..
   $all_initial = $space->controllers->vsite_menu->get_multiple(array_keys($a_site_menus));
-dpm($space);
+
   //Get the menu links for a menu (for this site)
   //$menu_links = $space->controllers->vsite_menu->get( 'the_menu_key' );
   $menus = array();
 
   //$form = vsite_menus_settings_build_form($menu_links);
   foreach ($all_initial as $key => $link) {
+    $path = $link['link_path'];
+    $menu = menu_get_item($path);
+    if (!$menu['access']) continue;
+
     $frags = explode(':', $key);
     if (count($frags) == 1) {
       // this link isn't in a menu already
@@ -71,8 +75,9 @@ dpm($space);
       '#tree' => TRUE,
       '#weight' => $link['weight'],
       'name' => array(
-        '#type' => 'markup',
-        '#value' => !empty($link['link_title']) ? $link['link_title'] : ucwords(str_replace('_', ' ', $key)),
+        '#type' => 'textfield',
+        '#size' => 30,
+        '#default_value' => !empty($link['link_title']) ? $link['link_title'] : ucwords(str_replace('_', ' ', $key)),
       ),
       'region' => array(
         '#type' => 'select',
@@ -90,16 +95,24 @@ dpm($space);
           'class' => 'field-weight field-weight-'. $link['menu_name'],
         ),
       ),
-      'hidden' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Hide'),
-        '#default_value' => $link['hidden'],
-      ),
       'region-old' => array(
         '#type' => 'hidden',
         '#value' => $link['menu_name'],
       ),
     );
+
+    if ($link['user_created']) {
+      $form['conf'][$link['menu_name']][$key]['delete'] = array(
+        '#type' => 'checkbox',
+        '#default_value' => 0,
+      );
+    }
+    else {
+      $form['conf'][$link['menu_name']][$key]['delete'] = array(
+        '#type' => 'markup',
+        '#value' => t('Can not delete'),
+      );
+    }
   }
 
   $form['submit'] = array(
@@ -169,9 +182,13 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
       unset($menus[$data['region-old']][$data['region-old'].':'.$key]);
     }
 
+    $link['link_title'] = $data['name'];
     $link['menu_name'] = $data['region'];
     $link['weight'] = $data['weight'];
-    $link['hidden'] = $data['hidden'];
+
+    if ($link['delete']) {
+      unset($menus[$data['region']][$data['region'].':'.$key]);
+    }
 
   }
 
