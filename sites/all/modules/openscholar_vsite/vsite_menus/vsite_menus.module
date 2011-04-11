@@ -35,11 +35,6 @@ function vsite_menus_menu() {
  */
 function vsite_menus_theme() {
   return array(
-    'vsite_menus_settings_form' => array(
-      'path' => drupal_get_path('module', 'vsite_menus') . '/includes',
-      'file' => 'vsite_menus.admin.inc',
-      'arguments' => array('form' => NULL),
-    ),
     'vsite_menus_settings' => array(
       'path' => drupal_get_path('module', 'vsite_menus').'/theme',
       'template' => 'vsite-menu-settings',

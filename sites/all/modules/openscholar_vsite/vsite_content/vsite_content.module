@@ -89,6 +89,7 @@ function vsite_content_vsite_content_types_alter(&$content_types) {
  */
 function vsite_content_content_access($type, $feature_name) {
 
+  vsite_include('vsiteapi');
   return ( cp_access_cp() //CP Access
            && array_key_exists($type, vsite_content_types(array(FEATURE_PRIVATE,FEATURE_PUBLIC))) //avalible content type?
            && !is_content_profile($type) //not a content profile

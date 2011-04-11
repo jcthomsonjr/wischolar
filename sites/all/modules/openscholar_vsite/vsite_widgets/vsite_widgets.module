@@ -86,11 +86,8 @@ function vsite_widgets_shield(){
 		return $output;
 	}//Disabled?
 
-	$a_generic_settings = variable_get('vsite_setting_generic', array());
-	if(is_array($a_generic_settings) && array_key_exists('shield',$a_generic_settings)){
-		$s_filename = array_pop(explode('/',$a_generic_settings['shield']));
-		$output = '<div id="scholar-shield"><img src="/'.drupal_get_path('module','vsite_design')."/theme/shield/shields/".$s_filename.'" /> </div>';
-	}
+	$s_filename = variable_get('vsite_design_shield', drupal_get_path('module','vsite_design')."/theme/shield/shields/harvard_shield.png");
+	$output = '<div id="scholar-shield"><img src="'.url($s_filename, array('alias' => TRUE)).'" /> </div>';
 
 	$block['subject'] = t('');
 	$block['content'] = $output;
@@ -104,12 +101,7 @@ function vsite_widgets_shield(){
  */
 function vsite_widgets_shield_access($widget = false){
 
-  $a_generic_settings = variable_get('vsite_setting_generic', array());
-  if(is_array($a_generic_settings) && array_key_exists('disable_shield',$a_generic_settings) &&$a_generic_settings['disable_shield']){
-    return false;
-  }//Disabled?
-
-  return true;
+  return !variable_get('vsite_design_disable_shield', FALSE);
 }
 
 function vsite_widgets_vsite_widgets(){

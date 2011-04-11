@@ -343,7 +343,7 @@ function iqss_gking_term_page($str_tids = '', $depth = 'all'){
         break;
       }
     }
-  } //If this term has no childeren and it is at least 2 deep in the vocabs tree then display the parent.
+  } //If this term has no children and it is at least 2 deep in the vocabs tree then display the parent.
 
 
   drupal_set_title(check_plain($term->name)."<span class='term-admin-links'>".ctools_modal_text_button("Sort Section","taxonomy/nojs/nodeorder/$term->tid","","term-admin-link")."</span>");
