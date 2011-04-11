@@ -9,13 +9,15 @@
 </head>
 
 <body class="<?php print $body_classes; ?>">
-  <!--[if lte IE 6]><script src="/<?php print $directory;?>/js/ie6-warning/ie6-warning.js"></script> <script>window.onload=function(){e("/<?php print $directory;?>/js/ie6-warning/")}</script><![endif]-->
+    <?php if ($cp_toolbar) : ?>
+    <div id="top">
+  	   <?php print $cp_toolbar;?>
+  	 </div>
+  	 <?php endif;?>
   <div id="wrapper">
     <div id="wrapper-inner">
       <div id="container">
-
       <?php if ($header_top || $header_main || $header_left || $header_right || $navbar) : ?>
-
       <div id="header">
         <?php if (!empty($header_top)): ?>
         <div id="header-top">
@@ -51,9 +53,9 @@
       </div> <!-- /header -->
       <?php endif; ?>
 
-      <div id="content-wrapper">
-       <div id="content-wrapper-inner">
-        <div id="content-main" class="column">
+      <div id="content-wrapper" class="clear-block">
+        <div id="content-wrapper-inner">
+          <div id="content-main" class="column">
           <?php $path = drupal_get_path_alias($_GET['q']); ?>
           <?php if (!empty($content_top) || $path == 'classes'): ?>
             <div id="content-top">
@@ -61,15 +63,12 @@
               <?php
                 if ($path == 'classes') {
                    $block = module_invoke('iqss_gking', 'block', 'view', 'student_materials');
-                   //print '<div class="node">';
                    print '<h2 class="title">' . $block['subject'] . '</h2>';
                    print $block['content'];
-                   //print '</div>';
                 }
               ?>
             </div><!-- /content-top -->
             <?php endif; ?>
-
             <div id="content" class="clearfix">
             <?php print $context_links;?>
             <?php if (!empty($title)): ?>
@@ -82,20 +81,17 @@
               <?php print $messages; ?>
               <?php print $content; ?>
             </div> <!-- /content -->
-
             <?php if (!empty($content_bottom)): ?>
               <div id="content-bottom">
                 <?php print $content_bottom; ?>
               </div><!--/content-bottom-->
             <?php endif; ?>
             </div><!-- /content main -->
-
-              <?php if (!empty($left)): ?>
-          <div id="sidebar-first" class="sidebar column">
+          <?php if (!empty($left)): ?>
+          <div id="sidebar-first" class="column sidebar">
             <?php print $left; ?>
           </div> <!-- /sidebar-first -->
           <?php endif; ?>
-
           <?php if (!empty($right)): ?>
           <div id="sidebar-second" class="sidebar column">
             <?php print $right; ?>
@@ -105,14 +101,14 @@
       </div> <!-- / content wrapper -->
       <div id="footer">
         <div id="footer-inner">
+          <?php if ($footer) : ?>
+            <?php print $footer; ?>
+          <?php endif; ?>
           <?php
             $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
             $login_link = theme('vsite_login_link',"Login",array('class' => 'footer-login'));
           ?>
-          <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> <span id="powered-link"><?php print $home_link; ?></span></p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
-          <?php if ($footer) : ?>
-            <?php print $footer; ?>
-          <?php endif; ?>
+          <p class="copy"><?php print $login_link;?> <span id="powered-link"><?php print $home_link; ?></span></p>
         </div><!-- /#footer-inner -->
       </div> <!-- /#footer -->
     </div> <!-- /container -->

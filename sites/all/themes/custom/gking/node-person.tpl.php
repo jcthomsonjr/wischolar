@@ -40,6 +40,10 @@
       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
       <?php endif; ?>
     <?php endif; ?>
-    <?php print $links; ?>
+    <?php if ($links): ?>
+    <div class="links clearfix">
+      <?php print $links; ?>
+    </div>
+    <?php endif;?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->
