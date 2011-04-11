@@ -869,7 +869,7 @@ function cp_toolbar_menu_links(){
     'title' => t('Logout'),
     'href' => "logout"
   );
-  if (context_get('vsite', 'section') == 'cp') {
+  if (context_isset('context', 'vsite-section-cp')) {
     $user_links[] = array(
       'title' => t('Back to <strong>!sitename</strong>', array(
         '!sitename' => vsite_get_vsite()->purl
