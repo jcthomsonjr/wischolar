@@ -573,17 +573,17 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
  * @param $inline
  * @return unknown_type
  */
-function scholar_publications_biblio_author_link($author, $aid, $base='biblio', $inline = FALSE) {
+function scholar_publications_biblio_author_link($author) {
   $db_result = db_query("SELECT n.nid as nid FROM {biblio_contributor_data} bcd INNER JOIN {node} n  ON n.uid = bcd.drupal_uid
-                         WHERE n.type = 'vsite' AND bcd.cid = %d", $aid);
+                         WHERE n.type = 'vsite' AND bcd.cid = %d", $author['cid']);
   $a_node = db_fetch_array($db_result);
   $current_vsite = vsite_get_vsite();
-	if(!$a_node || $current_vsite->group->nid == $a_node['nid']) return check_plain($author); //Return if there is no vsite
+	if(!$a_node || $current_vsite->group->nid == $a_node['nid']) return check_plain(trim($author['name'])); //Return if there is no vsite
 
-	$vsite = new vsite('og',$a_node['nid'],false);
+	$vsite = vsite_get_vsite($a_node['nid']);
 
 	$options = array('attributes' => array('target' => '_blank'),'purl' => array('provider' => $vsite->purl_provider, 'id' => $vsite->group->nid));
-  $html = l(trim($author), "publications", $options );
+  $html = l(trim($author['name']), "publications", $options );
 
   return $html;
 }

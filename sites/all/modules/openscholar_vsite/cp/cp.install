@@ -83,7 +83,10 @@ function cp_update_6003(&$sandbox) {
       db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', 'cp_admin_menu', '%s')", $row->type, $row->sid, serialize($value['admin_menu']));
 
     }
-    $res[] = 'CP Settings Migrated.';
+    $res[] = array(
+      'success' => true,
+    	'query' => 'CP Settings Migrated.'
+    );
   }
 
   return $res;

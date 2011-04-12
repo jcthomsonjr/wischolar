@@ -17,3 +17,24 @@ function vsite_menus_update_6001(&$sandbox){
   return $res;
   
 }
+
+function vsite_menus_update_6002(&$sandbox){
+  
+  $res = array();
+  module_rebuild_cache();
+  
+  // Uninstall blog module if need
+  if(module_exists('menu_node')){
+    
+    module_disable(array('menu_node')); //Disables but does not uninstall
+    
+    $res[] = array(
+      'success' => true,
+      'query' => 'Disabled menu_node module',
+    );
+    
+  }
+  
+  return $res;
+  
+}

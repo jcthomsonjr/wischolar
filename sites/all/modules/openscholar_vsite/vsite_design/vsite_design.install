@@ -107,7 +107,10 @@ function vsite_design_update_6002(&$sandbox) {
       db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', 'vsite_design_shield', '%s')", $row->type, $row->sid, serialize($value['shield']));
 
     }
-    $res[] = 'Vsite Design Settings Migrated.';
+    $res[] = array(
+    	'success' => true,
+      'query' => 'Vsite Design Settings Migrated.'
+    );
   }
 
   return $res;

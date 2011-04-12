@@ -13,7 +13,10 @@ function vsite_ga_update_6001(&$sandbox) {
 
       db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', 'vsite_ga_google_analytics_id', '%s')", $row->type, $row->sid, serialize($value['google_analytics_id']));
     }
-    $res[] = 'Google Analytics settings migrated.';
+    $res[] = array(
+    	'success' => true,
+      'query' => 'Google Analytics settings migrated.'
+    );
   }
 
   return $res;

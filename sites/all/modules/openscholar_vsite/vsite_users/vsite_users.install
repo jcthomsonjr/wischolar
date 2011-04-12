@@ -18,7 +18,10 @@ function vsite_users_update_6001(&$sandbox) {
 
       db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', 'vsite_users_contact_form_anonymous', '%s')", $row->type, $row->sid, serialize($value['contact_form_anonymous']));
     }
-    $res[] = 'Vsite Users settings migrated.';
+    $res[] = array(
+    	'success' => true,
+      'query' => 'Vsite Users settings migrated.'
+    );
   }
 
   return $res;

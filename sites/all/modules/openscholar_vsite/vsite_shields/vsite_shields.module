@@ -1,0 +1,189 @@
+<?php
+
+function vsite_shields_menu() {
+  $items = array();
+
+  $items['admin/settings/shields'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_shields_form'),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('administer site configuration'),
+  );
+
+  return $items;
+}
+
+function vsite_shields_theme() {
+  $items = array();
+
+  $items['vsite_shields_theme_shieldpicker'] = array(
+    'arguments' => array('file' => array()),
+    'template' => 'vsite_shields-theme-shieldpicker',
+    'path' => drupal_get_path('module', 'vsite_shields')."/theme",
+  );
+  $items['vsite_shields_admin_table'] = array(
+    'arguments' => array('table' => array()),
+  );
+
+  return $items;
+}
+
+function vsite_shields_form($form_state) {
+  $form = array();
+
+  /*
+   * actions:
+   * upload shield
+   * delete shield
+   * hide shield
+   * set default
+   * allow nothing but upload and set default if it's the harvard shield set
+   */
+
+  $form['new_shield'] = array(
+    '#type' => 'file',
+    '#size' => 60,
+    '#title' => t('Upload New Shield'),
+    '#description' => t('Your new shield will appear below for selection. If this is your first shield, it will replace the Harvard shields below.'),
+  );
+
+  drupal_add_css(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.css');
+  drupal_add_js(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.js');
+  drupal_add_js(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields.greyout.js');
+
+  $custom_shields_path = drupal_get_path('module', 'vsite_shields').'/theme/shields_cust';
+  $shields = file_scan_directory($custom_shields_path, '.*');
+
+  if (empty($shields)) {
+    // user hasn't uploaded any shields yet. Display the harvard shields.
+    $s_shield_dir = drupal_get_path('module','vsite_shields')."/theme/shields";
+    $shields = file_scan_directory($s_shield_dir, '.*', array('.', '..'));
+  }
+
+  $form['container'] = array(
+    '#type' => 'markup',
+    '#value' => '',
+    '#theme' => 'vsite_shields_form_table',
+  );
+
+  $c = &$form['container'];
+
+  foreach ($shields as $shield) {
+    $c[$shield->filename] = array(
+      '#type' => 'markup',
+      '#tree' => TRUE,
+      'image' => array(
+        '#type' => 'markup',
+        '#value' => theme('vsite_shields_theme_picker'),
+      ),
+      'delete' => array(
+        '#type' => 'checkbox',
+        '#title' => NULL,
+        '#default_value' => 0,
+      ),
+      'hidden' => array(
+        '#type' => 'checkbox',
+        '#title' => NULL,
+        '#default_value' => 0,
+      ),
+    );
+    $shield_options[$shield->filename] = $shield->filename;
+  }
+
+  $form['default'] = array(
+    '#type' => 'radios',
+    '#options' => $shield_options,
+    '#default_value' => variable_get('vsite_shields_shield', drupal_get_path('module','vsite_shields')."/theme/shields/harvard_shield.png"),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+
+  return $form;
+}
+
+function vsite_shields_form_submit(&$form, &$form_state) {
+
+}
+
+function theme_vsite_shields_form_table($container) {
+  dpm($container);
+}
+
+/**
+ * Implement Hook vsite_generic_settings
+ * @return array
+ */
+function vsite_design_vsite_generic_settings(){
+  $a_settings = array();
+
+  //Disable the shield
+  $a_settings['vsite_shields_disable_shield'] = array(
+    'form' => array(
+      '#prefix' => "<br />",
+      '#type' => 'checkbox',
+      '#title' => t('Disable Shields'),
+      '#attributes' => array('onChange' => "vsite_shields_grey_out(this);"),
+      '#default_value' => variable_get('vsite_shields_disable_shield', 0),
+      '#description' => "Select the shield that you wish to appear in the 'shield widget' on your site.  Click disable to display none.",
+    )
+  );
+
+  $a_settings['vsite_shields_shield_manager'] = array(
+    'form' => array(
+      '#type' => 'markup',
+      '#prefix' => '<div id="vsite_shields_manager_link">',
+      '#value' => l('Manage Shields', 'admin/settings/shields'),
+      '#suffix' => '</div>',
+    )
+  );
+
+  //The shield List
+  $s_shield_dir = drupal_get_path('module','vsite_shields')."/theme/shields";
+  $a_shields = file_scan_directory($s_shield_dir, '.*', array('.', '..'));
+
+  $shield_options = array();
+  foreach ($a_shields as $shield)  $shield_options[$shield->filename] = theme('vsite_shields_theme_shieldpicker', $shield);
+
+  $a_settings['vsite_shields_shield'] = array(
+    'form' => array(
+      '#prefix' => "<div class='shield_wrapper clear-block'>",
+      '#title' => t('Shield'),
+      '#type' => 'radios',
+      '#options' => $shield_options,
+      '#default_value' => variable_get('vsite_shields_shield', drupal_get_path('module','vsite_shields')."/theme/shields/harvard_shield.png"),
+      '#suffix' => '</div>',
+    ),
+    'css' => array(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.css'),
+    'js' => array(
+      drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.js',
+      drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields.greyout.js',
+    ),
+  );
+  //END Shield List
+
+  return $a_settings;
+}
+
+function vsite_shields_imagecache_default_preset() {
+  $presets = array();
+
+  $presets['vsite_design_default_shield'] = array (
+    'presetname' => 'vsite_design_default_shield',
+    'actions' => array (
+      0 => array (
+        'weight' => '0',
+        'module' => 'imagecache',
+        'action' => 'imagecache_scale_and_crop',
+        'data' => array (
+          'width' => '62',
+          'height' => '75',
+        ),
+      ),
+    ),
+  );
+
+  return $presets;
+}
