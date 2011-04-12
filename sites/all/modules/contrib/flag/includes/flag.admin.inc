@@ -1,5 +1,5 @@
 <?php
-// $Id: flag.admin.inc,v 1.1.4.2.2.16 2010/09/02 02:34:27 mooffie Exp $
+// $Id: flag.admin.inc,v 1.1.4.2.2.19 2011/01/10 13:02:32 mooffie Exp $
 
 /**
  * @file
@@ -53,7 +53,7 @@ function theme_flag_admin_page($flags, $default_flags) {
   foreach ($default_flags as $name => $flag) {
     if (!isset($flags[$name])) {
       $ops = array();
-      if ($flag->api_version < FLAG_API_VERSION) {
+      if (!$flag->is_compatible()) {
         $flag_updates_needed = TRUE;
         $ops['flags_update'] = array('title' => '<strong>' . t('update code') . '</strong>', 'href' => $flag->admin_path('update'), 'html' => TRUE);
       }
@@ -101,7 +101,7 @@ function theme_flag_admin_page($flags, $default_flags) {
   }
 
   if (!module_exists('rules')) {
-    $output .= '<p>' . t('Flagging an item may trigger <em>rules</em>. However, you don\'t have the <a href="@rule-url">Rules</a> module enabled, so you won\'t be able to enjoy this feature. The Rules module is a more extensive solution than Flag actions.', array('@rules-url' => url('http://drupal.org/node/407070'))) . '</p>';
+    $output .= '<p>' . t('Flagging an item may trigger <em>rules</em>. However, you don\'t have the <a href="@rules-url">Rules</a> module enabled, so you won\'t be able to enjoy this feature. The Rules module is a more extensive solution than Flag actions.', array('@rules-url' => url('http://drupal.org/node/407070'))) . '</p>';
   }
   else {
     $output .= '<p>' . t('Flagging an item may trigger <a href="@rules-url">rules</a>.', array('@rules-url' => url('admin/rules/trigger'))) . '</p>';
@@ -505,7 +505,7 @@ function flag_delete_confirm(&$form_state, $flag) {
   return confirm_form($form,
     t('Are you sure you want to delete %title?', array('%title' => $flag->get_title())),
     !empty($_GET['destination']) ? $_GET['destination'] : 'admin/build/flags',
-    isset($flag->module) ? t('This flag is provided by the @module module. It will loose any customizations and be disabled.', array('@module' => node_get_types('name', $flag->module))) : t('This action cannot be undone.'),
+    isset($flag->module) ? t('This flag is provided by the %module module. It will loose any customizations and be disabled.', array('%module' => $flag->module)) : t('This action cannot be undone.'),
     t('Delete'), t('Cancel')
   );
 }
