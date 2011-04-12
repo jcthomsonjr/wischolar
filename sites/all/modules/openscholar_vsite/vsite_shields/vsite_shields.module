@@ -7,6 +7,7 @@ function vsite_shields_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vsite_shields_form'),
     'type' => MENU_CALLBACK,
+    'title' => 'Shield Manager',
     'access arguments' => array('administer site configuration'),
   );
 
@@ -21,7 +22,7 @@ function vsite_shields_theme() {
     'template' => 'vsite_shields-theme-shieldpicker',
     'path' => drupal_get_path('module', 'vsite_shields')."/theme",
   );
-  $items['vsite_shields_admin_table'] = array(
+  $items['vsite_shields_form_table'] = array(
     'arguments' => array('table' => array()),
   );
 
@@ -30,6 +31,7 @@ function vsite_shields_theme() {
 
 function vsite_shields_form($form_state) {
   $form = array();
+  $form['#attributes'] = array('enctype' => "multipart/form-data");
 
   /*
    * actions:
@@ -47,18 +49,18 @@ function vsite_shields_form($form_state) {
     '#description' => t('Your new shield will appear below for selection. If this is your first shield, it will replace the Harvard shields below.'),
   );
 
-  drupal_add_css(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.css');
-  drupal_add_js(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.js');
-  drupal_add_js(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields.greyout.js');
-
   $custom_shields_path = drupal_get_path('module', 'vsite_shields').'/theme/shields_cust';
   $shields = file_scan_directory($custom_shields_path, '.*');
 
+  $delete = true;
   if (empty($shields)) {
     // user hasn't uploaded any shields yet. Display the harvard shields.
     $s_shield_dir = drupal_get_path('module','vsite_shields')."/theme/shields";
     $shields = file_scan_directory($s_shield_dir, '.*', array('.', '..'));
+    $delete = false;
   }
+
+  $shield_info = variable_get('vsite_shields_shield_info', array());
 
   $form['container'] = array(
     '#type' => 'markup',
@@ -67,34 +69,40 @@ function vsite_shields_form($form_state) {
   );
 
   $c = &$form['container'];
+  $curr_default = variable_get('vsite_shields_shield', drupal_get_path('module','vsite_shields')."/theme/shields/harvard_shield.png");
 
   foreach ($shields as $shield) {
-    $c[$shield->filename] = array(
+    $c[$shield->name] = array(
       '#type' => 'markup',
       '#tree' => TRUE,
       'image' => array(
         '#type' => 'markup',
-        '#value' => theme('vsite_shields_theme_picker'),
+        '#value' => $shield,
+      ),
+      'default' => array(
+        '#type' => 'radio',
+        '#name' => 'default',
+        '#return_value' => $shield->filename,
+        '#default_value' => ($shield->filename==$curr_default)?1:0,
       ),
       'delete' => array(
         '#type' => 'checkbox',
         '#title' => NULL,
         '#default_value' => 0,
+        '#access' => $delete,
       ),
       'hidden' => array(
         '#type' => 'checkbox',
         '#title' => NULL,
-        '#default_value' => 0,
+        '#default_value' => $shield_info[$shield->name]['hidden'],
+        '#return_value' => 1,
+      ),
+      'full_path' => array(
+        '#type' => 'hidden',
+        '#value' => $shield->filename,
       ),
     );
-    $shield_options[$shield->filename] = $shield->filename;
   }
-
-  $form['default'] = array(
-    '#type' => 'radios',
-    '#options' => $shield_options,
-    '#default_value' => variable_get('vsite_shields_shield', drupal_get_path('module','vsite_shields')."/theme/shields/harvard_shield.png"),
-  );
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -105,11 +113,67 @@ function vsite_shields_form($form_state) {
 }
 
 function vsite_shields_form_submit(&$form, &$form_state) {
+  $shield_info = variable_get('vsite_shields_shield_info', array());
 
+  foreach ($form_state['values'] as $name => $data) {
+    if (!is_array($data)) continue;
+
+    if ($data['delete']) {
+      // delete image
+      db_query("DELETE FROM {files} WHERE filepath = '%s'", $data['full_path']);
+      unset($shield_info[$name]);
+    }
+    else {
+      $shield_info[$name]['hidden'] = $data['hidden'];
+      $shield_info[$name]['default'] = $data['default'];
+      if ($data['default']) {
+        variable_set('vsite_shields_shield', $data['full_path']);
+      }
+    }
+  }
+
+  if ($form_state['values']['new_shield']) {
+    if (isset($shield_info['harvard_shield'])) {
+    // we're uploading a new shield, but the harvard shields are still here
+      $shield_info = array();
+    }
+
+    $new_file = file_save_upload('new_shield', array(), drupal_get_path('module', 'vsite_shields').'/theme/shields_cust');
+    file_set_status($new_file, FILE_STATUS_PERMANENT);
+    if (empty($shield_info)) {
+      // this is our first new shield. make it the default by... default...
+      $shield_info[$new_file['filename']]['default'] = TRUE;
+      variable_set('vsite_shields_shield', $new_file['destination']);
+    }
+
+    $shield_info[$new_file['filename']]['hidden'] = 0;
+  }
+
+  variable_set('vsite_shields_shield_info', $shield_info);
 }
 
 function theme_vsite_shields_form_table($container) {
-  dpm($container);
+  $header = array(
+    t('Shield'),
+    t('Default'),
+    t('Hidden'),
+    t('Delete'),
+  );
+
+  $rows = array();
+  foreach (element_children($container) as $field_name) {
+    $field = $container[$field_name];
+
+    $r = array();
+    $r[] = theme('vsite_shields_theme_shieldpicker', $field['image']['#value']);
+    $r[] = drupal_render($field['default']);
+    $r[] = drupal_render($field['hidden']);
+    $r[] = $field['#access']?drupal_render($field['delete']):'Cannot delete';
+
+    $rows[] = $r;
+  }
+
+  return theme('table', $header, $rows);
 }
 
 /**
