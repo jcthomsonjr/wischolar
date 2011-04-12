@@ -106,7 +106,10 @@ function vsite_update_6005(&$sandbox) {
       db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', 'vsite_private', '%s')", $row->type, $row->sid, serialize($value['private_vsite']));
 
     }
-    $res[] = 'VSite Settings Migrated.';
+    $res[] = array(
+    	'success' => true,
+      'query' => 'VSite Settings Migrated.'
+    );
   }
 
   return $res;
