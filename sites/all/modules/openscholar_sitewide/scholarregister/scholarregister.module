@@ -64,12 +64,12 @@ function scholarregister_form_process(){
  * @return  boolean
  */
 function scholarregister_vsite_exists_access($vsites = false){
-  
+
 	if(!$vsites){
 		global $user;
 		$vsites = vsite_get_vsite_by_owner($user->uid);
 	}
-	
+
 	//if user has permissions to create sites, return true
   if (!user_access("create openscholar site on behalf of others") &&
       !user_access("create own openscholar site")) {
@@ -81,7 +81,7 @@ function scholarregister_vsite_exists_access($vsites = false){
   	//check whether user can create multiple sites
     return user_access("create openscholar site on behalf of others");
   }
-  
+
   return true;
 }
 
@@ -115,7 +115,7 @@ function _scholarregister_get_redirect($vsites = array()){
  */
 function scholarregister_name_js() {
   $name = $_POST ['ctools_changed'];
-  
+
   if ($error = scholarregister_validate_name($name)){
   	$user = user_load(array('name' => $name));
   	if(!user_access("create openscholar site on behalf of others") || !$user || count(vsite_get_vsite_by_owner($user->uid)) >= variable_get('openscholar_vsites_per_user', 1)){
@@ -234,7 +234,7 @@ function scholarregister_notify_user($vsite, $user){
 
   $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
   $timestamp = time();
-  
+
   $msg_variables = array(
     '!username' => $user->name,
     '!site' => variable_get('site_name', 'OpenScholar'),
@@ -257,10 +257,10 @@ function scholarregister_notify_user($vsite, $user){
     '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
     '!password' => $password
   );
-  
+
   //detemine if user is creating first site or additional site, send appropriate message
   $body = (count(vsite_get_vsite_by_owner($user -> uid)) > 1) ?
-  
+
    t("Hi !username,\n\nYour new web site at !site has been activated. Your web site url is !scholar_site_url\n\nYou will be able to log into your site at !site_login_uri with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables)
    :t(variable_get('openscholar_register_email_message', _scholarregister_get_default_mail_message()), $msg_variables);
 
@@ -276,7 +276,7 @@ function scholarregister_notify_user($vsite, $user){
 function scholarregister_mail($key, &$message, $params) {
   $message['subject'] = $params['subject'];
   $message['body'] = $params['body'];
-  
+
   //these values be used with any mail alter hooks
  $message['vsite'] = $params['vsite'];
  $message['user'] = $params['user'];
@@ -317,15 +317,15 @@ function scholarregister_message($form, $domain){
   global $user, $base_url;
 
   $word_replace = user_access("create openscholar site on behalf of others") ? 'the' : 'your';
-    
-  $message  = '<div id="success-message">';
+
+  $message  = '<div id="success-message" class="status">';
   $message .= '<p>Success! ' . ucfirst($word_replace) . ' new site has been created.</p>';
   $message .= '<p>The url of ' . $word_replace . ' site is ' . $base_url . '/' . $domain . ' ' . l(t("Go there now"), $base_url . '/' . $domain) . '</p>';
   if (in_array('anonymous user', $user -> roles)){
     $message .= '<p>Check your email account for further details on how to login in to start adding features and content.</p>';
   }
   $message .= '</div>';
-  
+
   //give other modules a chance to alter message
   module_invoke_all('scholarregister_message',  $message, $form, $domain);
   return $message;
