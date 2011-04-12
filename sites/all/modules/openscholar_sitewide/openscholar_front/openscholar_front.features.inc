@@ -17,47 +17,39 @@ function openscholar_front_ctools_plugin_api() {
  * Implementation of hook_flag_default_flags().
  */
 function openscholar_front_flag_default_flags() {
-$flags = array();
-// Exported flag: "Featured web sites".
-$flags[] = array (
-  'content_type' => 'node',
-  'name' => 'featured_web_sites',
-  'title' => 'Featured web sites',
-  'global' => '1',
-  'types' => 
-  array (
-    0 => 'vsite',
-  ),
-  'flag_short' => 'feature',
-  'flag_long' => 'make it featured web site',
-  'flag_message' => 'featured',
-  'unflag_short' => 'unfeature',
-  'unflag_long' => 'remove from featured web site',
-  'unflag_message' => 'unfeature',
-  'unflag_denied_text' => '',
-  'link_type' => 'toggle',
-  'roles' => 
-  array (
-    'flag' => 
-    array (
+  $flags = array();
+  // Exported flag: "Featured web sites".
+  $flags['featured_web_sites'] = array(
+    'content_type' => 'node',
+    'title' => 'Featured web sites',
+    'global' => '1',
+    'types' => array(
+      '0' => 'vsite',
     ),
-    'unflag' => 
-    array (
+    'flag_short' => 'feature',
+    'flag_long' => 'make it featured web site',
+    'flag_message' => 'featured',
+    'unflag_short' => 'unfeature',
+    'unflag_long' => 'remove from featured web site',
+    'unflag_message' => 'unfeature',
+    'unflag_denied_text' => '',
+    'link_type' => 'toggle',
+    'roles' => array(
+      'flag' => array(),
+      'unflag' => array(),
     ),
-  ),
-  'show_on_page' => 0,
-  'show_on_teaser' => 0,
-  'show_on_form' => 0,
-  'access_author' => '',
-  'i18n' => 0,
-  'module' => 'openscholar_front',
-  'locked' => 
-  array (
-    0 => 'name',
-  ),
-  'api_version' => 2,
-);
-return $flags;
+    'show_on_page' => 0,
+    'show_on_teaser' => 0,
+    'show_on_form' => 0,
+    'access_author' => '',
+    'i18n' => 0,
+    'module' => 'openscholar_front',
+    'locked' => array(
+      '0' => 'name',
+    ),
+    'api_version' => 2,
+  );
+  return $flags;
 }
 
 /**
