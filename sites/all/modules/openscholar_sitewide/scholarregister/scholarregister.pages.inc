@@ -6,7 +6,7 @@
 function scholarregister_signup_form(){
   global $user;
   $form = array();
-  
+
   drupal_add_css(drupal_get_path('module', 'scholarregister') . '/theme/scholarregister.css');
 
   // clear any drupal_messages. Ajax takes care of them
@@ -15,14 +15,14 @@ function scholarregister_signup_form(){
   ctools_add_js('ajax-responder');
   $form['#prefix'] = '<div id = "user_register">';
   $form['#suffix'] = '</div>';
-  
+
   //Create sites on behalf of others
   $b_create_sites = user_access("create openscholar site on behalf of others");
   //Create site(s) for yourself
   $b_create_own_sites = user_access("create own openscholar site");
-  
+
   if($_REQUEST['register_for']) $site_owner = user_load(intval($_REQUEST['register_for']));
-  
+
   if(!$site_owner) $site_owner = $user;
   $existing_sites = vsite_get_vsite_by_owner($site_owner->uid);
 
@@ -45,7 +45,7 @@ function scholarregister_signup_form(){
   // otherwise show the normal form
   else{
   	//$b_create_sites || $b_create_own_sites
-  	
+
 	  // username
 	  $form['name'] = array(
 	      '#type' => 'textfield',
@@ -57,7 +57,7 @@ function scholarregister_signup_form(){
 	      '#suffix' => '<div id="name-suffix"></div></div>',
 	  );
 	  ctools_ajax_associate_url_to_element($form, $form['name'], url('scholarregister/name_js'), 'ctools-use-ajax-onchange');
-	
+
 	  // last name
 	  $form['mail'] = array(
 	      '#type' => 'textfield',
@@ -69,15 +69,15 @@ function scholarregister_signup_form(){
 	      '#suffix' => '<div id="mail-suffix"></div></div>'
 	  );
 	  ctools_ajax_associate_url_to_element($form, $form['mail'], url('scholarregister/mail_js'), 'ctools-use-ajax-onchange');
-	  
+
 	   //if user is user with special access then load any additional fields (password, etc.)
 	  if ($b_create_sites){
-	    
+
 	    drupal_add_css(drupal_get_path('module', 'scholarregister') .'/scholarregister.css', 'module', 'all', FALSE);
-	
+
 	    //add password field
 	    _scholarregister_password_field($form);
-	
+
 	    //add send mail field
 	    _scholarregister_send_mail_field($form);
 	  }
@@ -88,13 +88,13 @@ function scholarregister_signup_form(){
   global $base_url;
   $form['domain'] = array(
       '#type' => 'textfield',
-      '#title' => ($b_create_sites) ?  t('Select a Domain Name') :  t('Your Domain Name'),
+      '#title' => ($b_create_sites) ?  t('Select a Domain Name') :  t('Your URL'),
       '#required' => TRUE,
       '#field_prefix' => $base_url . '/',
       '#size' => 35,
       '#weight' => 20,
       '#default_value' => $form_values['name'],
-      '#description' => t('Example the choice of \'jdoe\' would result in domain name: %site. Your choice must be a minimum of 3 characters long. Punctuation is not allowed except for hyphens and underscores.', array(
+      '#description' => t('Minimum of 3 characters. Punctuation is not allowed except for hyphens and underscores. <br />Example: a choice of \'jdoe\' would result in the URL: %site.', array(
           '%site' => $base_url . '/jdoe'
       )),
       '#prefix' => '<div id="domain-field">',
@@ -200,7 +200,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     $form_state['vsite'] = $vsite;
     // 3. send e-mail to the user (unless specified not to by user with special access)
     $send_mail = ($form_state ['values'] ['send_mail'] == 0) ? FALSE : scholarregister_notify_user($vsite, $user);
-    
+
   // 4. let user know this was all sucessful
     //ctools_add_js ( 'ajax-responder' );
     $commands = array ();
@@ -267,7 +267,7 @@ function _scholarregister_password_field(&$form){
   '#type' => 'password_confirm',
   '#size' => 35,
   '#required' => TRUE,
-  '#description' => 'Create a password for the site owner\'s user account.'
+  '#description' => ''
   );
 }
 

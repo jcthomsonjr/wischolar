@@ -1,34 +1,31 @@
-
-/*FORM */
-
-body.page-site-register #content-main,
-body.page-site-register #content-wrapper,
-body.page-site-register .form-item,
-body.page-site-register #name-field,
-body.page-site-register #mail-field,
-body.page-site-register #edit-password-wrapper {
-  margin: 0;
-  padding:0;
+.page-site #container {
+  width: 600px;
   }
 
-body.page-site-register #content-main,
-body.page-site-register #content-wrapper
- {
-  float: none;
-  clear: none;
+.page-site #container h2.title,
+.page-site #container #edit-submit {
+  margin:15px 0 25px 0;
   }
 
-body.page-site-register #user_register,
-body.page-site-register #domain-field,
-body.page-site-register #edit-password-wrapper {
-  clear: both;
-  padding: 25px 0;
-  position: relative;
+.page-site #container #edit-submit {
+  float:right;
   }
 
 #scholarregister-signup-form #name-field,
 #scholarregister-signup-form #mail-field {
-  padding-bottom: 25px;
+  padding-bottom: 5px;
+  }
+
+#scholarregister-signup-form .form-item {
+  margin:10px 0;
+  }
+
+#scholarregister-signup-form label {
+  font-size:0.8em;
+  }
+
+#scholarregister-signup-form input.form-text, #scholarregister-signup-form textarea.form-textarea, #scholarregister-signup-form div.description {
+  width: 94%;
   }
 
 #scholarregister-signup-form #name-field,
@@ -37,70 +34,32 @@ body.page-site-register #edit-password-wrapper {
 #edit-password-pass2-wrapper,
 #edit-password-pass1-wrapper,
 #edit-password-pass2-wrapper {
-  width: 49%;
+  display:inline-block;
+  vertical-align: top;
+  width: 49.5%;
+  margin: 0;
+  }
+
+#scholarregister-signup-form,
+#edit-password-wrapper,
+#domain-field,
+#edit-send-mail-wrapper,
+.page-site #container #domain-suffix {
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+  }
+
+#domain-field .field-prefix,
+#domain-field input.form-text {
   float:left;
-  margin: 0;
-  position: relative;
+  margin-right: 3px;
   }
 
-#scholarregister-signup-form #mail-field,
-#edit-password-pass2-wrapper {
-  float: right;
+#domain-field input.form-text {
+  width: 200px !important;
   }
 
-body.page-site-register #name-item {
- padding-top: 10px;
- }
-
-body.page-site-register #name-item label{
-  float: left;
-  padding-top: 3px;
-  padding-right: 7px;
-  }
-
-body.page-site-register #mail-item{
-  padding-top: 10px;
-  }
-
-body.page-site-register #mail-item label{
-  float: left;
-  padding-top: 3px;
-  padding-right: 7px;
-  }
-
-.form-actions {
-  text-align: right;
-  }
-
-body.page-site-register {
-  margin-top: 13px;
-  }
-
-body.page-site-register #success-message p {
-  margin-top: 13px;
-  margin-bottom: 0;
-  font-size: 16px;
-  color:#7e7e7e;
-  }
-
-#name-field input, #mail-field input,
-#edit-password-wrapper input {
-  width: 93%;
-  margin: 0;
-  }
-
-body.page-site-register div.password-description {
-  max-width: none;
-  }
-
-body.page-site-register div.error, body.page-site-register div.warning {
-  clear: both;
-  }
-
-body.page-site-register div.warning li {
-  list-style: disc inside;
-  }
-
-body.page-site-register #edit-submit {
-  float:right;
+#domain-field .description {
+  clear:left;
+  margin: 3px 0;
   }
