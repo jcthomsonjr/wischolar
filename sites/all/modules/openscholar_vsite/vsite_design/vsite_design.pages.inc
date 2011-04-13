@@ -22,7 +22,7 @@ function vsite_design_theme_picker_form($form_state) {
     ksort($enabled);
   }
 
-  $form = array('#title' => 'Theme', '#theme' => 'vsite_design_theme_form');
+  $form = array('#title' => 'Theme');
 
   $options = array(); //Radio Options
 
@@ -74,7 +74,12 @@ function vsite_design_theme_picker_form($form_state) {
 
   $form['#submit'][] = 'vsite_design_theme_picker_form_submit';
 
-  return system_settings_form($form);
+  $form = system_settings_form($form);
+
+  // system_settings_form sets a new theme. replace it with our theme
+  $form['#theme'] = 'vsite_design_theme_form';
+
+  return $form;
 }
 
 function vsite_design_theme_picker_form_submit(&$form, &$form_state) {
