@@ -7,10 +7,6 @@ body {
     font-family: "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
     }
 
-#page {
-  background: url(images/body-bg.png) repeat-x 0 0 #fff;
-  }
-
 .wrap {
     width: 910px;
     margin: 0 auto;
@@ -51,22 +47,36 @@ h1 a, h2 a, h3 a, #sidebar-second a {
 
 /* LAYOUT ELEMENTS */
 
-#sidebar-first, #header-left {
+#header,
+#navbar {
+  background: #A03A25;
+  }
+
+#content-area {
+  background: url('images/body-bg.png') repeat-x 0 0 #fff;
+  padding-top: 20px;
+  }
+
+#sidebar-first,
+#header-left {
     width: 180px;
     right: 210px;
     padding-left: 0;
     }
 
-#sidebar-second, #header-right {
+#sidebar-second,
+#header-right {
   padding-right: 0;
   }
 
-#content-area .hg-container, #header .hg-container {
+#content-area .hg-container,
+#header .hg-container {
     padding-left: 190px;
     padding-right: 230px
     }
 
-body.sidebar-first #content-area .hg-container, body.header-left-main #header .hg-container {
+body.sidebar-first #content-area .hg-container,
+body.header-left-main #header .hg-container {
   padding-right: 20px;
   }
 
@@ -74,29 +84,15 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
     border-left: 1px solid #ccc;
     }
 
-
 #footer {
-    text-align: center;
-    }
-
-
-#footer {
-    text-align: center;
     font-size: .9em;
     }
-
 
 /* HEADER ELEMENTS */
 
 #header {
-    height: 205px;
-    margin-bottom: 26px;
-    padding-top: 26px;
+    padding: 26px 0 16px 0;
     color: #FFF;
-    }
-
-#header .hg-container {
-    height: 165px;
     }
 
 #header h1 {
@@ -131,7 +127,6 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
     font-size: 1.1em;
     background: #a03a25;
     }
-
 
 /* MAIN CONTENT AREA */
 
