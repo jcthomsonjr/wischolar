@@ -181,7 +181,7 @@ function _vsite_get_theme_type( $s_set_theme_type = false ){
  */
 function _vsite_is_vsite_theme($atheme){
   $vsite = vsite_get_vsite();
-  $site_key = $vsite?$vsite->purl:false;
+  $site_key = $vsite?$vsite->group->purl:false;
 
   return (array_key_exists('scholar',$atheme->info)
        && array_key_exists('theme_type',$atheme->info['scholar'])
@@ -231,7 +231,7 @@ function vsite_add_imagefield_image($source, $field_name, &$node){
 
   if(og_is_group_type($node->type)){
     $vsite = spaces_load('og',$node->nid);
-    $files_path .= $vsite->purl;
+    $files_path .= $vsite->group->purl;
     file_check_directory($files_path,FILE_CREATE_DIRECTORY);
     $files_path .= '/files';
     file_check_directory($files_path,FILE_CREATE_DIRECTORY);
@@ -323,7 +323,7 @@ function vsite_get_version_information(){
 
   $a_info['vsite'] = false;
   if($vsite = vsite_get_vsite()){
-    $a_info['vsite'] = $vsite->purl;
+    $a_info['vsite'] = $vsite->group->purl;
   }
 
   $a_info['host'] = variable_get('purl_base_domain',$_SERVER['HTTP_HOST']);

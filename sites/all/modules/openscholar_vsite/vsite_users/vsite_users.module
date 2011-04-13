@@ -201,7 +201,7 @@ function vsite_users_mail_alter(&$message) {
           '!personal_message' => $personal_msg_text,
           '!username' => $o_user->name,
           '!site' => variable_get('site_name', 'OpenScholar'),
-          '!login_url' => str_replace($vsite->purl . '/', '', user_pass_reset_url($o_user)), //remove purl from url
+          '!login_url' => str_replace($vsite->group->purl . '/', '', user_pass_reset_url($o_user)), //remove purl from url
           '!uri' => $base_url,
           '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
           '!mailto' => $o_user->mail,

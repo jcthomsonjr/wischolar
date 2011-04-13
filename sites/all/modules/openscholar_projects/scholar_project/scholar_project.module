@@ -215,7 +215,7 @@ function _scholar_project_basicinfo_wdgt(){
 
   $block = array();
   $block['subject'] = t('');
-  $block['content'] = l('Project Site (' . $scholar->purl . ')', $scholar->get_absolute_url());
+  $block['content'] = l('Project Site (' . $scholar->group->purl . ')', $scholar->get_absolute_url());
 
   if(!strlen($scholar->group->title)) return $block;
 

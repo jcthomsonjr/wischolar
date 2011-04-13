@@ -7,15 +7,15 @@
 function scholar_init(){
   $vsite = vsite_get_vsite();
   //Populate the scholar site node with some default information using the user object
-  if($vsite && (!strlen($vsite->group->title) || !strlen($vsite->group->og_description) || $vsite->group->title == $vsite->purl)){
+  if($vsite && (!strlen($vsite->group->title) || !strlen($vsite->group->og_description) || $vsite->group->title == $vsite->group->purl)){
 
 
     if(($profile = content_profile_load('vsite_users_profile',$vsite->group->uid))){
 
-      if((!strlen($vsite->group->title) || $vsite->group->title == $vsite->purl) && is_array($profile->vsite_users_first_name[0])){
+      if((!strlen($vsite->group->title) || $vsite->group->title == $vsite->group->purl) && is_array($profile->vsite_users_first_name[0])){
         $vsite->group->title = $profile->vsite_users_first_name[0]['value']." ".$profile->vsite_users_last_name[0]['value'];
 
-        if((!strlen($vsite->group->og_description) || $vsite->group->og_description == "$vsite->purl's web site") && is_array($profile->vsite_users_title[0])){
+        if((!strlen($vsite->group->og_description) || $vsite->group->og_description == "{$vsite->group->purl}'s web site") && is_array($profile->vsite_users_title[0])){
          $vsite->group->og_description = $profile->vsite_users_title[0]['value'];
         }//Save default title
 
@@ -173,7 +173,7 @@ function _scholar_basicinfo_wdgt(){
 
   $block = array();
   $block['subject'] = t('');
-  $block['content'] = l('Scholar Web Site ('.$scholar->purl. ')', $scholar -> get_absolute_url()) ; //will get overridden
+  $block['content'] = l('Scholar Web Site ('.$scholar->group->purl. ')', $scholar -> get_absolute_url()) ; //will get overridden
 
   if(!strlen($scholar->group->title)){
     $content_profile = content_profile_load('vsite_users_profile',$scholar->group->uid);

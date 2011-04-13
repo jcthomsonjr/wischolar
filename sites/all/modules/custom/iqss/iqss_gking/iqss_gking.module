@@ -177,7 +177,7 @@ function iqss_gking_filter_by_type_block(){
 function iqss_gking_on_gking_site(){
   $vsite = vsite_get_vsite();
 
-  return ($vsite && $vsite->purl == 'gking');
+  return ($vsite && $vsite->group->purl == 'gking');
 }
 
 

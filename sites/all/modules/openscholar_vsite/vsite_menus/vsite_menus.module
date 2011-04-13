@@ -67,8 +67,8 @@ function vsite_menus_nodeapi(&$node, $op) {
         // About to be saved (before insert/update)
         // Only add to an alias if the checkbox was not provided or if the checkbox was provided and is unchecked
         if (!isset($node->pathauto_perform_alias) || !$node->pathauto_perform_alias) {
-          if (strlen($node->path) && strpos($node->path, $vsite->purl . "/") !== 0 && $vsite && $node->nid != $vsite->group->nid && strlen($vsite->purl)) {
-            $node->path = $vsite->purl . "/" . $node->path;
+          if (strlen($node->path) && strpos($node->path, $vsite->group->purl . "/") !== 0 && $vsite && $node->nid != $vsite->group->nid && strlen($vsite->group->purl)) {
+            $node->path = $vsite->group->purl . "/" . $node->path;
           }//Did they provide a path?  is the site purl already prepended?
         }
       }//Is Pathauto Enabled?
@@ -265,8 +265,8 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
               $form['path']['old_alias'] = array('#type' => 'value', '#value' => $node->path);
             }
 
-            if ($vsite && strpos($form['path']['path']['#default_value'], $vsite->purl . '/') === 0) {
-              $form['path']['path']['#default_value'] = substr($form['path']['path']['#default_value'], strlen($vsite->purl . '/'));
+            if ($vsite && strpos($form['path']['path']['#default_value'], $vsite->group->purl . '/') === 0) {
+              $form['path']['path']['#default_value'] = substr($form['path']['path']['#default_value'], strlen($vsite->group->purl . '/'));
             }
           }
         }

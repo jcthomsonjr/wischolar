@@ -660,7 +660,7 @@ function cp_is_confirm_overide_page($page = NULL){
           $path = "http://hostname" . $path;
         $a_path_parts = @parse_url($path);
         if (is_array($a_path_parts)) {
-          $s_search_path = (strpos($a_path_parts['path'], '/' . $vsite->purl) == 0) ? substr($a_path_parts['path'], strlen($vsite->purl) + 2) : $a_path_parts['path'];
+          $s_search_path = (strpos($a_path_parts['path'], '/' . $vsite->group->purl) == 0) ? substr($a_path_parts['path'], strlen($vsite->group->purl) + 2) : $a_path_parts['path'];
 
           $a_router_item = menu_get_item($s_search_path);
           $a_return[$a_path_parts['path']] = ($a_router_item && array_key_exists($a_router_item['path'], cp_get_confirm_form_overides()));
@@ -873,7 +873,7 @@ function cp_toolbar_menu_links(){
   if (context_isset('context', 'vsite-section-cp')) {
     $user_links[] = array(
       'title' => t('Back to <strong>!sitename</strong>', array(
-        '!sitename' => vsite_get_vsite()->purl
+        '!sitename' => vsite_get_vsite()->group->purl
       )),
       'href' => "",
       'html' => TRUE

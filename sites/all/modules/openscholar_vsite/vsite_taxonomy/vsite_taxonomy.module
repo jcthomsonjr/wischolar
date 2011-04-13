@@ -1112,8 +1112,8 @@ function vsite_taxonomy_preprocess_node(&$vars){
 function vsite_taxonomy_token_values($type, $object = NULL, $options = array()) {
   $vsite = vsite_get_vsite();
   if ($vsite){
-    $tokens['taxonomy-vsite-prefix-path'] = check_plain($vsite->purl);
-    $tokens['taxonomy-vsite-prefix-path-raw'] = $vsite->purl;
+    $tokens['taxonomy-vsite-prefix-path'] = check_plain($vsite->group->purl);
+    $tokens['taxonomy-vsite-prefix-path-raw'] = $vsite->group->purl;
       
     return $tokens;
   }
