@@ -201,7 +201,8 @@ class vsite extends space_og {
       'user', 
       'users/%', 
       'private_site', 
-      'help/%/%' 
+      'help/%/%',
+      'site/register', 
     );
     
     $excluded = array_merge($excluded, $more);
