@@ -186,7 +186,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
     $link['menu_name'] = $data['region'];
     $link['weight'] = $data['weight'];
 
-    if ($link['delete']) {
+    if ($data['delete']) {
       unset($menus[$data['region']][$data['region'].':'.$key]);
     }
 
