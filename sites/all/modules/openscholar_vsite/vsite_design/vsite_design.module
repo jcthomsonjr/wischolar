@@ -7,6 +7,14 @@ include_once('vsite_design.features.inc');
  */
 function vsite_design_menu(){
   $items = array();
+  $items['cp/appearance/theme'] = array(
+    'title' => t('Appearance - Theme'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_design_theme_picker_form'),
+    'file' => 'vsite_design.pages.inc',
+    'access callback' => 'cp_access_cp',
+  );
+
   $items['cp/settings/theme/swap_screenshot/%'] = array(
     'page callback' => 'vsite_design_swap_screenshot',
     'page arguments' => array(4),
@@ -189,18 +197,18 @@ function vsite_design_preprocess_page(&$vars){
  */
 function theme_vsite_design_theme_form($form) {
 
-	$output = drupal_render($form['maintheme']);
+	$output = drupal_render($form['vsite_design_maintheme']);
 
 	//UL List
 	$output .= '<ul class = "theme-picker">';
-	foreach ($form['maintheme']['#enabled_themes'] as $o_theme){
+	foreach ($form['vsite_design_maintheme']['#enabled_themes'] as $o_theme){
 		$s_sub_theme = '';
 		$a_info = array_merge((array)$o_theme->info, array('theme_name'=>$o_theme->name));
 
-		if(array_key_exists($o_theme->name.'_flavor',$form)){
-			$s_sub_theme =  drupal_render($form[$o_theme->name.'_flavor']);
+		if(array_key_exists('vsite_design_'.$o_theme->name.'_flavor',$form)){
+			$s_sub_theme =  drupal_render($form['vsite_design_'.$o_theme->name.'_flavor']);
 
-			if($s_flavor = $form[$o_theme->name.'_flavor']['#default_value']){
+			if($s_flavor = $form['vsite_design_'.$o_theme->name.'_flavor']['#default_value']){
 				$theme_flavors = vsite_design_get_flavors();
 
 				if(array_key_exists($s_flavor,$theme_flavors) && array_key_exists('screenshot',$theme_flavors[$s_flavor]) && $theme_flavors[$s_flavor]['module'] == $o_theme->name){
@@ -210,7 +218,7 @@ function theme_vsite_design_theme_form($form) {
 			}//Is a sub-flavor set?
 		}//Are there flavors to select from?
 
-		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['maintheme']['#default_value'])?'checked':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' .
+		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['vsite_design_maintheme']['#default_value'])?'checked':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' .
 		             theme('vsite_design_theme_picker', $a_info ,$s_sub_theme) .
 		           '</li>';
 	}

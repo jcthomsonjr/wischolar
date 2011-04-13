@@ -176,10 +176,24 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
   foreach ($form_state['values'] as $key => $data) {
     if (!is_array($data)) continue;
 
-    $link = &$menus[$data['region-old']][$data['region-old'].':'.$key];
-    if ($data['region-old'] != $data['region']) {
-      $menus[$data['region']][$data['region'].':'.$key] = &$link;
-      unset($menus[$data['region-old']][$data['region-old'].':'.$key]);
+    // set some vars for readability
+    $region_old = $data['region-old'];
+    $menu_old_key = $region_old.':'.$key;
+    $region = $data['region'];
+    $menu_key = $region.':'.$key;
+
+    // the underlying structure is like this:
+    // $menus['features']['features:bio']
+    // it requires a bit of mess here
+
+    $link =& $menus[$region_old][$menu_old_key];
+
+    if ($region_old != $region) {
+      // the regions are different.
+      // move the link into the new region
+      $menus[$region][$menu_key] =& $link;
+      // and remove it from the old
+      unset($menus[$region_old][$menu_old_key]);
     }
 
     $link['link_title'] = $data['name'];
@@ -187,9 +201,9 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
     $link['weight'] = $data['weight'];
 
     if ($data['delete']) {
-      unset($menus[$data['region']][$data['region'].':'.$key]);
+      // we're deleting the link
+      unset($menus[$region][$menu_key]);
     }
-
   }
 
   foreach ($menus as $key => $data) {

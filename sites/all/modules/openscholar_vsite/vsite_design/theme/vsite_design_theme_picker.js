@@ -1,7 +1,7 @@
 if (Drupal.jsEnabled) {
   $(document).ready(function() {
 
-    var n_container = $('#cp-settings-form .form-radios .form-item').length;
+    var n_container = $('#vsite-design-theme-picker-form .form-radios .form-item').length;
 
     $(".item-theme-picker:first").addClass('active');
     $('div#prev,div#next,.theme_subnav li').cpSlidingContainer({
@@ -19,7 +19,7 @@ if (Drupal.jsEnabled) {
     	$("#edit-settings-theme-" + $(this).attr('id')).attr("checked", "checked").change();
     });
     
-    $('#cp-settings-form').submit(function(event) {
+    $('vsite-design-theme-picker-form').submit(function(event) {
     	//Add the ajax spinner
     	if(!$('#design-submit-waiting').length) $('#edit-submit').after('<div id="design-submit-waiting" class="ctools-ajaxing" count="0"> &nbsp; </div>');
     	

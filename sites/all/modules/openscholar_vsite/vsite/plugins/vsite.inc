@@ -10,29 +10,29 @@ class vsite extends space_og {
 
   //Set to allow feature access even if it is not enabled
   public static $override_allow_feature_access = false;
-  
+
   //Store the current provider in our multi-provider system
   public $purl_provider = false;
-  
+
   function feature_options() {
     return array(0 => t('Disabled'), 1 => t('Public'), 2 => 'Private');
   }
-  
+
   /**
    * Return the absolute URL to this vsite
    */
   public function get_absolute_url($path = ""){
-    
+
     return url($path, array( 'purl' => array( 'provider' => $this->purl_provider,'id' => $this->id), 'absolute' => true));
-    
+
   }
-  
+
   /**
    * Override of activate().
    */
   function activate() {
     if (parent::activate()) {
-      
+
 	    if ($this->group->og_theme && !$this->group->theme) {
 	      $this->group->theme = $this->group->og_theme;
 	    }//This must be set on load so that when you save the value will persist
@@ -41,7 +41,7 @@ class vsite extends space_og {
     }
     return FALSE;
   }
-  
+
   /**
     * Implementation of space->router().
     */
@@ -49,12 +49,12 @@ class vsite extends space_og {
   	//Fixes bug where when menu's are loaded any menu that points to a node causes redirection, leaving this not so eligant code in place till the following is resolved
   	// http://drupal.org/node/936234
   	if(arg(0) == 'admin') return;
-  	
+
   	global $user;
     switch ($op) {
     	default:
-	    	$a_generic_settings = $this->controllers->variable->get('vsite_setting_generic');
-	      if ($this->active && $a_generic_settings['private_vsite'] && !og_is_group_member($this->id)) {
+	    	$private = $this->controllers->variable->get('vsite_private');
+	      if ($this->active && $private && !og_is_group_member($this->id)) {
 	        $this->redirect('private');
 	      }
       break;
@@ -66,9 +66,9 @@ class vsite extends space_og {
     switch ($op) {
       case 'home' :
         if (! empty($this->purl)) {
-        	
+
         	$home = 'home';  //Hardcoded for now
-        	
+
           // Use the menu path of the selected feature as homepage
           if (menu_get_item($home)) {
             purl_goto($home, array( 'purl' => array( 'provider' => $this->purl_provider,'id' => $this->id)));
@@ -94,7 +94,7 @@ class vsite extends space_og {
       	break;
     }
   }
-  
+
 	/**
 	 * Returns the vocabularies associated with a vsite.
 	 * If a content type is provided, return vocabs associated
@@ -103,45 +103,45 @@ class vsite extends space_og {
 	 * @return array
 	 */
 	public function get_vocabs($node_type = NULL){
-	  
+
 	  if ($this->group) {
-	    
+
 	    if (isset($this->group->og_vocabularies)) {
 	      if (!$node_type) {
 	        return $this->group->og_vocabularies;
 	      }
-	      
+
 	      $result = array();
-	      
+
 	      foreach ( $this->group->og_vocabularies as $v ) {
 	        if (in_array($node_type, array_keys($v->nodes))) {
 	          $result[$v->vid] = $v;
 	        }
 	      }
-	      
+
 	      return $result;
 	    }
 	  }
 	}
-	
+
   /**
    * Override of access_feature().
    */
   function access_feature($op = 'view', $feature, $account = NULL) {
-    
+
     if(self::$override_allow_feature_access){
       //allow access to all feature menu items on this page for display purposes
       //Used in CP so that all features menu entries will be displayed for sorting
       return true;
     }
-    
+
     if($feature == 'vsite' && user_access('access content')) $access = true;
-    
+
     if(!$access) $access = parent::access_feature($op, $feature, $account);
 
     return $access;
   }
-	
+
 	/**
 	 *
 	 * @param $op
@@ -155,7 +155,7 @@ class vsite extends space_og {
 
     return $access;
   }
-  
+
   /**
    * If this space is loaded outside a active context (ie) externally from the home page
    * then determine which purl_provider would be best
@@ -163,7 +163,7 @@ class vsite extends space_og {
    * domain if they have that set otherwise path
    */
   protected function verify_purl() {
-    
+
     $domain_method = variable_get('purl_method_vsite_domain',false);
     $elements = purl_active()->get($domain_method);
     foreach ($elements as $element) {
@@ -172,7 +172,7 @@ class vsite extends space_og {
         return TRUE;
       }
     }
-    
+
     $method = variable_get("purl_method_spaces_{$this->type}", 'path');
     $elements = purl_active()->get($method);
     foreach ($elements as $element) {
@@ -181,30 +181,30 @@ class vsite extends space_og {
         return TRUE;
       }
     }
-    
+
     //No provider loaded
     return FALSE;
   }
 
   /**
    * Override of excluded_paths().
-   * The parent exlcudes 'features' and 'features/*' 
+   * The parent exlcudes 'features' and 'features/*'
    * We want them back
    */
   protected function excluded_paths(){
     $excluded = parent::excluded_paths();
-    
+
     unset($excluded[array_search('features', $excluded)]);
     unset($excluded[array_search('features/*', $excluded)]);
-    
+
     $more = array(
-      'user', 
-      'users/%', 
-      'private_site', 
+      'user',
+      'users/%',
+      'private_site',
       'help/%/%',
-      'site/register', 
+      'site/register',
     );
-    
+
     $excluded = array_merge($excluded, $more);
     return $excluded;
   }
