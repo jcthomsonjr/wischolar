@@ -1,5 +1,4 @@
 <?php
-// $Id: better_formats.module,v 1.23.2.19 2010/10/12 14:40:46 dragonwize Exp $
 
 /**
  * @file
@@ -227,7 +226,7 @@ function better_formats_node_type_form_submit($form, &$form_state) {
 }
 
 /**
- * Creates base format default entry for a newly created role from role from.
+ * Creates base format default entry for a newly created role.
  *
  * @see better_formats_form_alter()
  */
@@ -237,22 +236,14 @@ function better_formats_new_role($form, &$form_state) {
           FROM {role}
           ORDER BY rid DESC";
   $row = db_fetch_object(db_query_range($sql, 0, 1));
+  $rid = $row->rid;
 
-  better_formats_create_role($row->rid);
-}
-
-/**
- * Creates base format default entry for a newly created role.
- *
- * @see better_formats_new_role()
- */
-function better_formats_create_role($rid) {
-  // Create format default stubs for a role.
-  $types = array('node', 'comment', 'block');
-  foreach ($types as $type) {
-    $values = array('rid' => $rid, 'type' => $type, 'format' => 0, 'type_weight' => 1, 'weight' => 25);
-    drupal_write_record('better_formats_defaults', $values);
-  }
+  // Create stubs in per role table.
+  $sql = "INSERT INTO {better_formats_defaults}
+          VALUES (%d, '%s', %d, %d, %d)";
+  db_query($sql, $rid, 'node', 0, 1, 25);
+  db_query($sql, $rid, 'comment', 0, 1, 25);
+  db_query($sql, $rid, 'block', 0, 1, 25);
 }
 
 /**
@@ -265,23 +256,6 @@ function better_formats_delete_role($form, &$form_state) {
   $sql = "DELETE FROM {better_formats_defaults}
           WHERE rid = %d";
   db_query($sql, $form['rid']['#value']);
-}
-
-/**
- * Ensure that all roles have Better Format entries in the database.
- */
-function better_formats_check_roles() {
-  // Get all roles that do not have BF entries.
-  $sql = "SELECT r.rid
-          FROM {role} r
-          LEFT JOIN {better_formats_defaults} bf
-            ON r.rid = bf.rid
-          WHERE bf.type_weight IS NULL";
-  $result = db_query($sql);
-  while ($role = db_fetch_object($result)) {
-    // Add BF entries.
-    better_formats_create_role($role->rid);
-  }
 }
 
 /**
@@ -334,8 +308,9 @@ function better_formats_text_process($element, $edit, $form_state, $form) {
     $parents    = array_merge($element['#parents'] , array($filter_key));
     $default    = better_formats_get_default_format('node', $form['type']['#value']);
 
-    // Overwrite format default if new node.
-    if (!isset($form_state['values']['nid']) || empty($format)) {
+    // Overwrite format default if new node unless the field has a default text
+    // or is being previewed.
+    if ((!isset($form_state['values']['nid']) && !isset($element['#default_value']['value'])) || empty($format)) {
       $format = $default;
     }
     $format = filter_resolve_format($format);
@@ -553,8 +528,8 @@ function better_formats_filter_form($value = FILTER_FORMAT_DEFAULT, $default_for
     $collapsible    = user_access('collapsible format selection');
     $fieldset_title = variable_get('better_formats_fieldset_title', '');
 
-    if (module_exists('i18n_strings') && $fieldset_title) {
-      $fieldset_title = tt($fieldset_title);
+    if (module_exists('i18nstrings') && $fieldset_title) {
+      $fieldset_title = i18nstrings($fieldset_title);
     }
     else {
       $fieldset_title = $fieldset_title ? $fieldset_title : t('Input format');
@@ -653,8 +628,8 @@ function better_formats_filter_form($value = FILTER_FORMAT_DEFAULT, $default_for
  */
 function theme_better_formats_filter_tips_more_info() {
   $text = variable_get('better_formats_long_tips_link_text', '');
-  if (module_exists('i18n_strings') && $text) {
-    $text = tt($text);
+  if (module_exists('i18nstrings') && $text) {
+    $text = i18nstrings($text);
   }
   else {
     $text = $text ? $text : t('More information about formatting options');

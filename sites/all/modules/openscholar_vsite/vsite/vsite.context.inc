@@ -11,13 +11,19 @@ function vsite_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'vsite-section-public';
   $context->description = 'Active when you are in the public section of a vsite.';
-  $context->tag = '';
+  $context->tag = 'Section';
   $context->conditions = array(
     'path' => array(
       'values' => array(
         '~cp/*' => '~cp/*',
+        '~admin/*' => '~admin/*',
       ),
       'options' => array(
+      ),
+    ),
+    'context' => array(
+      'values' => array(
+        '~vsite-section-cp' => '~vsite-section-cp',
       ),
     ),
   );

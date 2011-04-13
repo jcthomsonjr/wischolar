@@ -14,14 +14,23 @@ function scholar_image_gallery_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'gallery',
-        1 => 'image',
+        'gallery' => 'gallery',
+        'image' => 'image',
+      ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'images' => 'images',
+        'images/*' => 'images/*',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_image_gallery',
+        'scholar_image_gallery:page_1' => 'scholar_image_gallery:page_1',
       ),
       'options' => array(),
     ),

@@ -14,19 +14,26 @@ function scholar_software_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'scholar_software_project',
-        1 => 'scholar_software_release',
+        'scholar_software_project' => 'scholar_software_project',
+        'scholar_software_release' => 'scholar_software_release',
+      ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'software' => 'software',
+        'software/*' => 'software/*',
       ),
       'options' => array(),
     ),
     'views' => array(
-      'values' => array(
-        0 => 'scholar_software_projects',
-        1 => 'scholar_software_releases',
-        2 => 'scholar_software_updates',
-      ),
-      'options' => array(),
-    ),
+	    'values' => array(
+	      'scholar_software_projects:page_1' => 'scholar_software_projects:page_1',
+	      'scholar_software_releases:page_1' => 'scholar_software_releases:page_1',
+	    ),
+	  ),
   );
   $context->reactions = array(
     'menu' => 'software',

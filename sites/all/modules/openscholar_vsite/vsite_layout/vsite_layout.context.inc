@@ -16,6 +16,7 @@ function vsite_layout_context_default_contexts() {
 	  'context' => array(
 	    'values' => array(
 	      '~openscholar-feature-*' => '~openscholar-feature-*',
+        'vsite-section-public' => 'vsite-section-public',
 	    ),
 	  ),
 	  'path' => array(

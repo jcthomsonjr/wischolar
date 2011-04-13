@@ -20,16 +20,16 @@ body.cp-toolbar-full {
   background-position: 50% 42px;
   }
 
-#wrapper {
+#page {
     width: 100%;
     background: url(images/menu-strip.png) repeat-x 0 100px transparent;
     }
 
-body.front #wrapper {
+body.front #page {
     background: transparent;
     }
 
-#container {
+.wrap {
     width: 676px;
     background: url(images/header.jpg) no-repeat 50% 0 transparent;
     margin: 0 auto;
@@ -37,9 +37,7 @@ body.front #wrapper {
     padding-right: 54px;
     }
 
-
-
-body.front #container {
+body.front .wrap {
     width: 100%;
     margin-left: 0;
     }
@@ -53,32 +51,41 @@ a:hover {
     color:#000;
     }
 
-
-h1, .title {
+h1,
+.title {
   font: 25px/1em 'ArmWrestlerBold', sans-serif;
   text-transform:uppercase;
   letter-spacing: -1px;
   font-weight:normal;
   }
 
-h1 a, h1 a:visited {
+h1 a,
+h1 a:visited {
   color: #FBF3E6;
   }
 
-h2, h3, #sidebar-second a, #navbar, #header {
+h2,
+h3,
+#sidebar-second a,
+#navbar,
+#header {
     font-weight: normal;
     }
 
-h3 a, #sidebar-second a {
+h3 a,
+#sidebar-second a {
     font-style: bold;
     }
 
-h2, h3, h4 {
+h2,
+h3,
+h4 {
   margin-bottom: 0;
   margin-top: 1em;
   }
 
-h2.title, h3.title {
+h2.title,
+h3.title {
   margin-bottom: 1em;
   color: #444;
   font-size: 1.2em;
@@ -87,7 +94,6 @@ h2.title, h3.title {
 
 h3.title {
   font-size: 1em;
-
   }
 
 /* LAYOUT ELEMENTS */
@@ -97,7 +103,8 @@ h3.title {
    right: 208px;
     }
 
-#header-left, #header-right {
+#header-left,
+#header-right {
   width: 100px;
   right: 120px;
   padding: 0;
@@ -109,13 +116,13 @@ h3.title {
   margin-right: -90px;
   }
 
-#content-wrapper {
+#content-area .hg-container {
   padding-left: 188px;
   padding-right: 241px;
   padding-top: 30px;
   }
 
-#header-wrapper {
+#header .hg-container {
   padding-right: 90px;
   padding-left: 100px;
   }
@@ -130,35 +137,31 @@ h3.title {
     width: auto;
     }
 
-
 /* HEADER ELEMENTS */
-
-
-#header {
-    height: 141px;
-    }
 
 #header .column {
   padding-top: 10px;
   }
 
-#header-wrapper, #content-wrapper, #navbar, #footer {
- }
-
-#header-wrapper {
-  height: 114px;
-  }
-
-#header, #header h1, #header h2, #header h3, #header a, #header a:visited {
+#header,
+#header h1,
+#header h2,
+#header h3,
+#header a,
+#header a:visited {
     color:#fff;
     }
 
-#header a, #header a:visited {
+#header a,
+#header a:visited {
     text-decoration: none;
     border-bottom: 1px solid #c16e04;
     }
 
-#header h1 a, #header h1 a:visited, #header #logo a, #header #logo a:visited {
+#header h1 a,
+#header h1 a:visited,
+#header #logo a,
+#header #logo a:visited {
     text-decoration: none;
     border: none;
     }
@@ -180,14 +183,14 @@ h3.title {
     height: 32px;
     }
 
-
 #navbar li {
     font-size: 1.1em;
     line-height: normal;
     float:left;
     }
 
-#navbar li a, #navbar li a:visited {
+#navbar li a,
+#navbar li a:visited {
     color: #523507;
     border: none;
     display: block;
@@ -195,7 +198,9 @@ h3.title {
     font-weight: bold;
     }
 
-#navbar li a:hover, #navbar li a.active, #navbar .active-trail a {
+#navbar li a:hover,
+#navbar li a.active,
+#navbar .active-trail a {
     color:#fff;
     background: #b8690c;
     }

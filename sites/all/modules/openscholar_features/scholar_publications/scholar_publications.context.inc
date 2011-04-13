@@ -14,9 +14,11 @@ function scholar_publications_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'biblio',
+        'biblio' => 'biblio',
       ),
-      'options' => array(),
+      'options' => array(
+        'node_form' => '0',
+      ),
     ),
     'path' => array(
       'values' => array(

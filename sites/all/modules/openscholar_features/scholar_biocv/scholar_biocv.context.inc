@@ -12,6 +12,15 @@ function scholar_biocv_context_default_contexts() {
   $context->description = 'Bio and CV';
   $context->tag = 'Feature';
   $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'bio' => 'bio',
+        'cv' => 'cv',
+      ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
     'path' => array(
       'values' => array(
         'biocv' => 'biocv',

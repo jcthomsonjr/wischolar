@@ -14,14 +14,24 @@ function scholar_events_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'event',
+        'event' => 'event',
+      ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'calendar' => 'calendar',
+        'calendar/*' => 'calendar/*',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_events',
-        1 => 'scholar_events_upcoming',
+        'scholar_events:page_1' => 'scholar_events:page_1',
+        'scholar_events_upcoming:page_1' => 'scholar_events_upcoming:page_1',
+        'scholar_events_upcoming:page_2' => 'scholar_events_upcoming:page_2',
       ),
       'options' => array(),
     ),

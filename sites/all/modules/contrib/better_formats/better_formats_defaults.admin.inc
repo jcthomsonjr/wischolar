@@ -1,5 +1,4 @@
 <?php
-// $Id: better_formats_defaults.admin.inc,v 1.3.2.12 2010/10/12 14:40:46 dragonwize Exp $
 
 /**
  * @file
@@ -17,10 +16,6 @@
  * @see better_formats_defaults_admin_form_submit()
  */
 function better_formats_defaults_admin_form() {
-  // Ensure all roles have a BF default entries in the database.
-  better_formats_check_roles();
-
-  // Build defaults form.
   $form = array(
     '#tree' => TRUE,
   );

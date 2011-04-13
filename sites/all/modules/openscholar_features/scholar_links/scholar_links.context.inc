@@ -16,11 +16,19 @@ function scholar_links_context_default_contexts() {
       'values' => array(
         0 => 'link',
       ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'links' => 'links',
+      ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_links',
+        'scholar_links:page_1' => 'scholar_links:page_1',
       ),
       'options' => array(),
     ),

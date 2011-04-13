@@ -11,7 +11,7 @@ function cp_context_default_contexts() {
   $context->api_version = 3;
   $context->name = 'vsite-section-cp';
   $context->description = 'Active when you are in the CP section of a vsite.';
-  $context->tag = '';
+  $context->tag = 'Section';
   $context->conditions = array(
     'node' => array(
       'values' => array_keys(features_get_component_map('node')),
@@ -21,6 +21,7 @@ function cp_context_default_contexts() {
     ),
     'path' => array(
       'values' => array(
+        'cp' => 'cp',
         'cp/*' => 'cp/*',
       ),
       'options' => array(

@@ -1,16 +1,14 @@
 body {
-    background: #efefef;
-    color:#313030;
-    font:.9em/165% arial, helvetica, sans-serif;
-    }
+  background: #efefef;
+  color:#313030;
+  font:.9em/165% arial, helvetica, sans-serif;
+  }
 
-#wrapper {
+#page {
   margin-top: 42px;
   }
 
-#container,
-.front #content-top,
-.front #content-bottom {
+.wrap {
   width: 900px;
   margin: 0 auto;
   }
@@ -18,18 +16,19 @@ body {
 .not-front #content-main,
 .front #content-top,
 .front #content-bottom {
- padding: 30px 0 40px 0;
- background: #fff;
- border: 1px solid #ccc;
- -moz-border-radius: 6px;
- -webkit-border-radius: 6px;
- }
+  padding: 30px 0 40px 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  }
 
 .front #content-bottom {
   padding: 0;
   }
 
-a, a:visited {
+a,
+a:visited {
   color:#990000;
   text-decoration: none;
   }
@@ -46,7 +45,8 @@ a:hover {
   float:left;
   }
 
-#header h1 a, #header h1 a:visited {
+#header h1 a,
+#header h1 a:visited {
   color: #313030;
   }
 
@@ -73,7 +73,6 @@ div.form-item {
 #header {
   min-height: 70px;
   }
-
 
 #block-openscholar_front-top_links .content {
   float:right;
@@ -108,7 +107,7 @@ ul#top-front li#get-form a:hover {
 
 /* Footer */
 
-#footer {
+#footer .wrap {
   padding: 10px 30px 30px 30px;
   }
 
@@ -157,7 +156,6 @@ td, td.description {
   position: relative;
   margin-bottom: 10px;
   }
-
 
 .front #content-top #block-openscholar_front-video_info {
   float:left;
