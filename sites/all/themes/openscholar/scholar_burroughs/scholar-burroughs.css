@@ -12,7 +12,7 @@ body.cp-toolbar-full {
   background-position: 50% 42px;
   }
 
-#container {
+.wrap {
   width: 1000px;
   min-height: 1536px;
   margin: 0 auto;
@@ -20,15 +20,15 @@ body.cp-toolbar-full {
   padding-top: 1px;
   }
 
-body.sidebar-first #container {
+body.sidebar-first .wrap {
   background-image: url(images/top-leftsidebar.jpg);
   }
 
-body.sidebar-second #container {
+body.sidebar-second .wrap {
   background-image: url(images/top-rightsidebar.jpg);
   }
 
-body.two-sidebars #container {
+body.two-sidebars .wrap {
   background-image: url(images/top-bothsidebar.jpg);
   }
 
@@ -91,7 +91,7 @@ h2.title {
   margin-right: -160px;
   }
 
-#content-wrapper, body.sidebar-first #content-wrapper,  body.sidebar-second #content-wrapper {
+#content-area .hg-container, body.sidebar-first #content-area .hg-container,  body.sidebar-second #content-area .hg-container {
     padding-left: 115px !important;
     padding-right: 160px !important;
     }
@@ -130,7 +130,7 @@ h2.title {
   margin-right:-164px;
   }
 
-#header-wrapper {
+#header .hg-container {
   padding-left: 129px;
   padding-right: 164px;
   }

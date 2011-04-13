@@ -98,12 +98,11 @@ body.cp-toolbar-mini #top ul.links {
 
 /* LAYOUT */
 
-/* The following is the scheme for flexible one, two, or three column layouts */
+/* The following is the scheme for flexible one, two, or three column layouts
+  Read more about this method at http://www.alistapart.com/articles/holygrail/
+*/
 
 
-#header-top, #navbar, #content-main, #header-main {
-  width: 100%;
-  }
 
 body.no-sidebars #content-main,
 body.header-main #header-main {
@@ -112,13 +111,6 @@ body.header-main #header-main {
   padding-right: 2em;
   width: auto;
   float:none;
-  }
-
-#header-wrapper,
-#navbar,
-#content-wrapper,
-#footer {
-  clear: both;
   }
 
 .column {
@@ -139,10 +131,14 @@ body.header-main #header-main {
   width: 200px;
   }
 
-#content-wrapper,
-#header-wrapper {
+.hg-container {
   padding-left: 220px; /* left width incl. padding */
   padding-right: 240px; /*right width incl. padding plus center padding */
+  }
+
+#content-main,
+#header-main {
+  width: 100%;
   }
 
 #header-left,
@@ -156,16 +152,16 @@ body.header-main #header-main {
   margin-right: -100%;
   }
 
-body.sidebar-second #content-wrapper {
+body.sidebar-second #content-area .hg-container {
    padding-left: 0;
    }
 
-body.sidebar-first #content-wrapper,
-body.header-left-main #header-wrapper {
+body.sidebar-first #content-area .hg-container,
+body.header-left-main #header .hg-container {
   padding-right: 40px; /* Only the padding of center div */
   }
 
-body.no-sidebars #content-wrapper {
+body.no-sidebars #content-area .hg-container {
   padding: 0;
   }
 
@@ -173,18 +169,18 @@ body.header-main #header-main {
   padding: 10px 0;
   }
 
-body.header-main-right #header-wrapper {
+body.header-main-right #header .hg-container {
   padding-left: 0;
   }
 
-body.header-left-main #header-wrapper {
+body.header-left-main #header .hg-container {
   padding-right: 0;
   }
 
-body.header-left-right #header-wrapper,
-body.header-main #header-wrapper,
-body.header-right #header-wrapper,
-body.header-left #header-wrapper{
+body.header-left-right #header .hg-container,
+body.header-main #header .hg-container,
+body.header-right #header .hg-container,
+body.header-left #header .hg-container{
   padding: 0;
   }
 
@@ -205,7 +201,8 @@ body.header-left-right #header-right {
   float:right;
   }
 
-#sidebar-first .block, #sidebar-second .block {
+#sidebar-first .block,
+#sidebar-second .block {
   margin-bottom: 1.5em;
   clear:both;
   }

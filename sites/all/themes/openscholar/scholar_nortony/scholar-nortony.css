@@ -7,7 +7,7 @@
 body,
 #header,
 #footer,
-#wrapper {
+#page {
   background: #2f341f;
   color:#37352B;
   font-family: georgia, serif;
@@ -69,7 +69,7 @@ p.copy {
 
 /* LAYOUT ELEMENTS */
 
-#container {
+.wrap {
   width: 938px;
   margin: 0 auto;
   background: url(images/container.png) repeat-y 0 0 #fff;
@@ -86,12 +86,12 @@ p.copy {
   right: 250px;
   }
 
-#content-wrapper {
+#content-area .hg-container {
   padding-left: 230px;
   padding-right: 250px;
   }
 
-body.sidebar-second #content-wrapper {
+body.sidebar-second #content-area .hg-container {
   padding-left:10px;
   }
 
@@ -100,15 +100,15 @@ body.sidebar-second #content-wrapper {
   padding-bottom: 45px;
    }
 
-body.sidebar-first #container {
+body.sidebar-first .wrap {
   background-position: -708px 0;
   }
 
-body.sidebar-second #container {
+body.sidebar-second .wrap {
   background-position: 708px 0;
   }
 
-body.no-sidebars #container  {
+body.no-sidebars .wrap  {
   background:#fff;
   }
 
@@ -139,14 +139,14 @@ p.copy a.poweredby {
   right: 164px;
   }
 
-#header-wrapper {
+#header .hg-container {
   padding-left: 140px;
   padding-top: 10px;
   padding-bottom:5px;
   }
 
-body.header-main #header-wrapper,
-body.header-main-right #header-wrapper {
+body.header-main #header .hg-container,
+body.header-main-right #header .hg-container {
   padding-right:298px;
   }
 
