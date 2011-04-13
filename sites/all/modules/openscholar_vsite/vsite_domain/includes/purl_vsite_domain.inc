@@ -52,11 +52,11 @@ if (!class_exists('purl_vsite_domain')) {
     }
   
     private function remove_scholar_purl($path) {
-      if (!($vsite = vsite_get_vsite()) || !strlen($vsite->purl)) return $path;
+      if (!($vsite = vsite_get_vsite()) || !strlen($vsite->group->purl)) return $path;
       $args = explode('/', $path);
   
       // Remove the value from the front of the query string
-      if (current($args) === (string) $vsite->purl) {
+      if (current($args) === (string) $vsite->group->purl) {
         array_shift($args);
       }
       return implode('/', $args);
@@ -84,15 +84,15 @@ if (!class_exists('purl_vsite_domain')) {
      * so that aliased paths will be picked up
      */
     public function adjust(&$value, $item, &$q) {
-      if ( (!($vsite = vsite_get_vsite()) && !($vsite = vsite_get_vsite($item->id))) || !strlen($vsite->purl)) return;
+      if ( (!($vsite = vsite_get_vsite()) && !($vsite = vsite_get_vsite($item->id))) || !strlen($vsite->group->purl)) return;
       
       if (trim($_GET['q'], '/') == trim($_REQUEST['q'], '/')) {
-        vsite_domain_processed_purls($vsite->purl);
+        vsite_domain_processed_purls($vsite->group->purl);
         
         $args = explode('/', trim($_GET['q'], '/'));
   
         // Add the value to the front of the query string
-        if (current($args) !== (string) $vsite->purl) array_unshift($args, $vsite->purl);
+        if (current($args) !== (string) $vsite->group->purl) array_unshift($args, $vsite->group->purl);
         
         $qstring = implode('/', $args); //String with purl added
         $qstring_alias = drupal_lookup_path('source', $qstring); //Alias of that url

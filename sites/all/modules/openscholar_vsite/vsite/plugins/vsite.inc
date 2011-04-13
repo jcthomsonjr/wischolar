@@ -65,7 +65,7 @@ class vsite extends space_og {
   public function redirect($op = 'home'){
     switch ($op) {
       case 'home' :
-        if (! empty($this->purl)) {
+        if (! empty($this->group->purl)) {
 
         	$home = 'home';  //Hardcoded for now
 
