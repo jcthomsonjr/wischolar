@@ -7,32 +7,22 @@ $vsite = spaces_load("og", 5);
 $vsite = spaces_get_space();
 }
 
-/**
- * Create a OpenScholar web site (vsite)
- *
- * @param $name the username (site owner)
- * @param $mail the e-mail address of the user creating the site
- * @param $domain the domain name of the site
- * @return the node object if successful
- */
-function os_vsite_create($name, $domain, $preset){
-  install_include(array(
-      'node'
-  ));
-  $properties = array(
-      'name' => $name,
-      'type' => variable_get('scholar_content_type', 'vsite'),
-      'promote' => '0',
-      'purl' => array(
-          'value' => $domain,
-          'provider' => 'vsite_og',
-          'id' => NULL
-      ),
-      'spaces_preset_og' => $preset,
-      'og_description' => "$domain's web site",
-      'theme' => 'scholar_airstream',  // @todo $preset -> theme_detault
-  );
-  $vsite = install_create_node($title = $domain, $body = NULL, $properties = $properties);
 
-  return $vsite;
+
+
+/**
+ * Includes different inc files
+ */
+function os_include($inc_files){
+  $inc_files = is_array($inc_files) ? $inc_files : array(
+    $inc_files
+  );
+
+  $path = dirname(__FILE__);
+
+  foreach ( $inc_files as $inc ) {
+    if (file_exists("$path/includes/$inc.inc")) {
+      include_once "$path/includes/$inc.inc";
+    }
+  }
 }

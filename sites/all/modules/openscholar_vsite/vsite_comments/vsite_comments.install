@@ -10,19 +10,17 @@ function vsite_comments_install(){
   db_query("UPDATE {system} SET weight = %d WHERE name = 'vsite_comments'", ($weight + 1));
   
   $ret = array();
-  install_include(array(
-    'filter' 
-  ));
+  os_include('os.crud');
   
   // add the format filter ...
-  $format_id = install_add_format('Comments HTML', $cache = 1);
+  $format_id = os_add_format('Comments HTML', $cache = 1);
   
   // roles are probably not yet in the system 
   // i.e. install profile installs this module before
   // creating extra roles
   $roles = array(1,2,3,4);
   // and assing these roles to the format 
-  install_format_set_roles($roles, $format_id);
+  os_format_set_roles($roles, $format_id);
   
   _vsite_comments_wysiwyg_config($format_id);
   

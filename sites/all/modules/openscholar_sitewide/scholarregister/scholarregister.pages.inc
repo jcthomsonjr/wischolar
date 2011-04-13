@@ -149,7 +149,7 @@ if (!empty($commands)) ctools_ajax_render($commands);
 function scholarregister_signup_form_submit($form, &$form_state) {
     //capture domain field
     $domain = $form_state ['values'] ['domain'];
-
+    os_include('os.crud');
     //This if/else clause determines which user account to give owership when creating a new site
     if ($form ['create_multiple_sites']['#value']  == 1 ||  $form ['create_site_is_authenticated']['#value'] == 1){
       $user = user_load(array('name' => $form_state ['values'] ['register_for']));
@@ -157,9 +157,8 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       $mail  = $user -> mail;
       ///this is a 'scholar user' user who is creating a site for first time
       if ($form ['create_site_is_authenticated']['#value'] == 1){
-          install_include(array('user'));
           $rid = array_search(variable_get('scholar_manager_role', 'scholar admin'), user_roles());
-          install_add_user_to_role($user ->uid, $rid); //need to add 'scholar admin' role
+          os_add_user_to_role($user ->uid, $rid); //need to add 'scholar admin' role
       }
     }
 
@@ -171,8 +170,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
       $roles = variable_get('scholar_manager_role', 'scholar admin');
 
       //1. Create the user account
-      install_include(array('user'));
-      $user = install_add_user($name, $password, $mail, $roles = array($roles), $status = 1);
+      $user = os_add_user($name, $password, $mail, $roles = array($roles), $status = 1);
       if (!$user){ // unlikely
         $commands [] = _scholarregister_vsite_error();
         ctools_ajax_render ( $commands );
@@ -285,8 +283,8 @@ function _scholarregister_send_mail_field(&$form){
  * Create a scholar vsite
  */
 function scholarregister_vsite_create($name, $domain, $preset){
-  vsite_include('vsiteapi');
-  return os_vsite_create($name, $domain, $preset);
+  os_include('os.crud');
+  return os_create_vsite($name, $domain, $preset);
 }
 
 function _scholarregister_vsite_error(){
