@@ -33,16 +33,23 @@ function vsite_design_theme_picker_form($form_state) {
 
     //show flavors if there is more than the default theme flavor defined
     if (isset($theme_flavors) && is_array($theme_flavors) && count($theme_flavors)) {
-    	$a_options = array('' => $info['flavor_name'] . " (Default)");
+    	$a_options = array('default' => ($info['flavor_name']?$info['flavor_name']:'Default').' (Default)');
+    	$default = '';
     	foreach ($theme_flavors as $s_key => $a_info) {
-    	  $a_options[$s_key] = $a_info['name'];
+    	  if (isset($a_info['flavor_name'])) {
+    	    $a_options[$s_key] = $a_info['flavor_name']." (Default)";
+    	    $default = $s_key;
+    	  }
+    	  else {
+    	    $a_options[$s_key] = $a_info['name'];
+    	  }
     	}
 
       $form['vsite_design_'.$info['theme_name'] . '_flavor'] = array(
         '#type' => 'select',
         '#title' => 'Flavor',
         '#options' => $a_options,
-        '#default_value' => variable_get('vsite_design_'.$info['theme_name'].'_flavor', ''),
+        '#default_value' => variable_get('vsite_design_'.$info['theme_name'].'_flavor', $default),
         '#process' => array(
           'ctools_dependent_process'
         ),
@@ -72,6 +79,7 @@ function vsite_design_theme_picker_form($form_state) {
 
   $form['#prefix'] = theme('vsite_design_theme_subnav', count($enabled));
 
+  $form['#validate'][] = 'vsite_design_theme_picker_form_validate';
   $form['#submit'][] = 'vsite_design_theme_picker_form_submit';
 
   $form = system_settings_form($form);
@@ -82,6 +90,18 @@ function vsite_design_theme_picker_form($form_state) {
   return $form;
 }
 
+function vsite_design_theme_picker_form_validate(&$form, &$form_state) {
+  foreach ($form_state['values'] as $key => $data) {
+    if (strpos($key, 'ctools-ajax-url') !== FALSE ) {
+      unset($form_state['values'][$key]);
+    }
+  }
+}
+
 function vsite_design_theme_picker_form_submit(&$form, &$form_state) {
-  // not sure if this'll even run
+  // save the theme selection into og_theme
+
+  $space = spaces_get_space();
+  $space->group->og_theme = $form_state['values']['vsite_design_maintheme'];
+  og_update_group($space->group);
 }
