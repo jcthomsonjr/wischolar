@@ -24,8 +24,7 @@ function cp_context_default_contexts() {
         'cp' => 'cp',
         'cp/*' => 'cp/*',
       ),
-      'options' => array(
-      ),
+      'options' => array(),
     ),
   );
   $context->reactions = array(

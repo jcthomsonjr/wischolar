@@ -181,7 +181,9 @@ class spaces_controller_vsite_menu extends spaces_controller {
    * Override of set()
    */
   function set($id, $value) {
-  	$this->add_missing_defaults($value,true);
-  	parent::set($id,$value);
+  	$tmp = array($id => $value);
+  	$this->add_missing_defaults($tmp,true);
+  	
+  	parent::set($id,$tmp[$id]);
   }
 }
