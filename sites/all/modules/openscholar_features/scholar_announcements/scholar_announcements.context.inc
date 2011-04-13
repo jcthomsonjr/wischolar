@@ -14,13 +14,22 @@ function scholar_announcements_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'announcement',
+        'announcement' => 'announcement',
       ),
-      'options' => array(),
+      'options' => array(
+        'node_form' => '0',
+      ),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_announcements',
+        'scholar_announcements:page_1' => 'scholar_announcements:page_1',
+      ),
+      'options' => array(),
+    ),
+    'path' => array(
+      'values' => array(
+        'announcements' => 'announcements',
+        'announcements/*' => 'announcements/*',
       ),
       'options' => array(),
     ),

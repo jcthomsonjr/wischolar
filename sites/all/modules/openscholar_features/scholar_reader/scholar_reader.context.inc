@@ -14,19 +14,22 @@ function scholar_reader_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'feed',
+        'feed' => 'feed',
       ),
-      'options' => array(),
+      'options' => array(
+        'node_form' => '0',
+      ),
     ),
-    'menu' => array(
+    'path' => array(
       'values' => array(
         'reader' => 'reader',
+        'reader/*' => 'reader/*',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_reader',
+        'scholar_reader:page_1' => 'scholar_reader:page_1',
       ),
       'options' => array(),
     ),

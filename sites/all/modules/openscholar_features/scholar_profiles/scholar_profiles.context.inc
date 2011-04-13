@@ -14,19 +14,22 @@ function scholar_profiles_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'person',
+        'person' => 'person',
       ),
-      'options' => array(),
+      'options' => array(
+        'node_form' => '0',
+      ),
     ),
-    'menu' => array(
+    'path' => array(
       'values' => array(
         'people' => 'people',
+        'people/*' => 'people/*',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_profiles',
+        'scholar_profiles:page_1' => 'scholar_profiles:page_1',
       ),
       'options' => array(),
     ),

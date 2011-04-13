@@ -14,13 +14,22 @@ function scholar_presentations_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'presentation',
+        'presentation' => 'presentation',
+      ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'presentations' => 'presentations',
+        'presentations/*' => 'presentations/*',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_presentations',
+        'scholar_presentations:page_1' => 'scholar_presentations:page_1',
       ),
       'options' => array(),
     ),

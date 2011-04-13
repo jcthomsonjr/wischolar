@@ -14,13 +14,22 @@ function scholar_blog_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'blog',
+        'blog' => 'blog',
+      ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'blog' => 'blog',
+        'blog/*' => 'blog/*',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_blog',
+        'scholar_blog:page_1' => 'scholar_blog:page_1',
       ),
       'options' => array(),
     ),

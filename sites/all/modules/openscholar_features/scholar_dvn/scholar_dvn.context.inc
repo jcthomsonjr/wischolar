@@ -12,7 +12,7 @@ function scholar_dvn_context_default_contexts() {
   $context->description = 'Datverse';
   $context->tag = 'Feature';
   $context->conditions = array(
-    'menu' => array(
+    'path' => array(
       'values' => array(
         'data' => 'data',
       ),

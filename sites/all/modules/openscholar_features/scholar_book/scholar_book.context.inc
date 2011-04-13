@@ -14,13 +14,22 @@ function scholar_book_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'book',
+        'book' => 'book',
+      ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'documents' => 'documents',
+        'documents/*' => 'documents/*',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_books',
+        'scholar_books:page_1' => 'scholar_books:page_1',
       ),
       'options' => array(),
     ),

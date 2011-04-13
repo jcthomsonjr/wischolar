@@ -14,14 +14,23 @@ function scholar_classes_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        0 => 'class',
-        1 => 'class_material',
+        'class' => 'class',
+        'class_material' => 'class_material',
+      ),
+      'options' => array(
+        'node_form' => '0',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'classes' => 'classes',
+        'classes/*' => 'classes/*',
       ),
       'options' => array(),
     ),
     'views' => array(
       'values' => array(
-        0 => 'scholar_classes',
+        'scholar_classes:page_1' => 'scholar_classes:page_1',
       ),
       'options' => array(),
     ),
