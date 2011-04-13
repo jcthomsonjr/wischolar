@@ -8,10 +8,10 @@
  */
 
 /**
- * Enable themes.
+ * Enable a theme.
  *
- * @param $themes
- *   An array of theme names
+ * @param $theme
+ *   Unique string that is the name of theme.
  */
 function install_enable_theme($themes) {
   system_theme_data();

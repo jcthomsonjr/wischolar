@@ -1,5 +1,5 @@
 <?php
-// $Id: filter.inc,v 1.1.2.4.2.3 2009/08/05 22:14:53 jamesandres Exp $
+// $Id: filter.inc,v 1.1.2.4.2.2 2009/06/16 16:55:35 jamesandres Exp $
 
 /**
  * Set the roles that can be used with the filter.
@@ -31,36 +31,6 @@ function install_format_set_roles($roles, $format_id) {
 function install_add_format($name, $cache = 1) {
   db_query("INSERT INTO {filter_formats} (name, roles, cache) VALUES ('%s', '', %d)", $name, $cache);
   return db_last_insert_id('filter_formats', 'format');
-}
-
-/**
- * Remove an existing input format.
- *
- * @param $name
- *   The human-readable name of the format.
- * @return
- *   The deleted format ID, or FALSE if the format is not found.
- */
-function install_remove_format($name) {
-  $format = db_result(db_query("SELECT format FROM {filter_formats} WHERE name = '%s'", $name));
-
-  if ($format) {
-    db_query("DELETE FROM {filter_formats} WHERE format = %d", $format);
-    db_query("DELETE FROM {filters} WHERE format = %d", $format);
-
-    $default = variable_get('filter_default_format', 1);
-    // Replace existing instances of the deleted format with the default format.
-    db_query("UPDATE {node_revisions} SET format = %d WHERE format = %d", $default, $format);
-    db_query("UPDATE {comments} SET format = %d WHERE format = %d", $default, $format);
-    db_query("UPDATE {boxes} SET format = %d WHERE format = %d", $default, $format);
-
-    cache_clear_all($format . ':', 'cache_filter', TRUE);
-  }
-  else {
-    $format = FALSE;
-  }
-
-  return $format;
 }
 
 /**

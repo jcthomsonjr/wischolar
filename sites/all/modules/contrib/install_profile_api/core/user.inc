@@ -26,7 +26,7 @@ function install_add_user($username, $password, $email, $roles = array(), $statu
     }
   }
 
-  return user_save(
+  user_save(
     new stdClass(),
     array(
       'name' => $username, 
@@ -35,7 +35,7 @@ function install_add_user($username, $password, $email, $roles = array(), $statu
       'roles' => $role_assignments,
       'status' => $status
     )
-  );
+  );	
 }
 
 /**
