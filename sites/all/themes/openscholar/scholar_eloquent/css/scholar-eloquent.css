@@ -1,22 +1,21 @@
-html {
+html,body {
     min-width: 910px;
     }
 
 body {
-    background-color: #44514f;
-    color:#000;
-    font: 15px/normal 'Book Antiqua', garamond, 'times new roman', times, serif;
-    }
+  background-color: #44514f;
+  color:#000;
+  font: 15px/normal 'Book Antiqua', garamond, 'times new roman', times, serif;
+  }
 
 #page {
-  padding-top: 10px;
+  width: 950px;
+  margin: 30px auto;
   }
 
 .wrap {
-    width: 950px;
-    margin: 0 auto;
-    background:url(../images/bg.png) top center repeat-y #434f4d;
-    }
+  padding: 0 30px
+  }
 
 a, a:visited {
     color:#723319;
@@ -25,7 +24,6 @@ a, a:visited {
 a:hover {
     text-decoration: underline;
     }
-
 
 h1, h2, h3, #header {
     color:#484b63;
@@ -63,74 +61,17 @@ img {
   }
 
 
-/* LAYOUT ELEMENTS */
-
-#sidebar-first, #header-left, #sidebar-second, #header-right {
-  width: 180px;
-  line-height: 130%;
-  }
-
-#sidebar-first, #header-left {
-  right: 246px;
-  padding-left: 36px;
-  }
-
-#sidebar-first {
-  width: 149px;
-  right: 216px;
-  border-right: 1px solid #ccc;
-  }
-
-body.header-left-main #header .hg-container {
-  padding-right: 0;
-  }
-
-#sidebar-second, #header-right {
-  padding-right: 36px;
-  margin-right: -246px;
-  }
-
-#header-right {
-  width: 70px;
-  margin-right: -136px;
-  }
-
-#content-area .hg-container, #header .hg-container {
-  padding-left: 226px;
-  padding-right: 246px;
-  }
-
-#content-area .hg-container {
-  padding-left: 196px;
-  }
-
-#header .hg-container {
-  padding-right: 136px;
-  height: 145px;
-  }
-
-body.sidebar-second #content-area .hg-container {
-  padding-left: 60px;
-  }
-
-body.sidebar-first #content-area .hg-container {
-  padding-right: 50px;
-  }
-
-body.no-sidebars #content-area .hg-container {
-  padding: 0 55px;
-  }
-
 /* HEADER ELEMENTS */
 
 #header {
-    background: #44514F url(../images/top.png) no-repeat 50% 100%;
-    color: #F7F3EA;
-    padding-bottom: 18px;
-    }
+  color: #F7F3EA;
+  padding-bottom: 18px;
+  }
 
-#header h1, #header h2, #header p {
-  text-shadow: #222 0 0 .4em;
+#header h1,
+#header h2,
+#header p {
+  text-shadow: #222 0 0 0.4em;
   }
 
 #header h1 {
@@ -146,7 +87,10 @@ body.no-sidebars #content-area .hg-container {
   font-size:18px;
   }
 
-#header a, #header a:visited,#header h2, #header p {
+#header a,
+#header a:visited,
+#header h2,
+#header p {
     text-decoration: none;
     color: #F7F3EA;
     }
@@ -155,78 +99,73 @@ body.no-sidebars #content-area .hg-container {
     color:#F9E433;
     }
 
-#header-main .content {
-  margin-left: 12px;
-  }
-
-#logo img {
-  width: 160px;
-  }
-
 #navbar ul.menu {
   text-align:center;
   }
 
 #block-vsite_menus-0 li {
-    margin: 0 1em;
-    text-transform: uppercase;
-    font-size: 1.1em;
-    }
+  margin: 0 1em;
+  text-transform: uppercase;
+  font-size: 1.1em;
+  }
 
 #sidebar-first #block-vsite_menus-0 li {
   margin:0;
   }
 
-#navbar a, #navbar a:visited {
-    color:#D4D5D3;
-    }
+#navbar a,
+#navbar a:visited {
+  color:#D4D5D3;
+  }
 
-#navbar a:hover, #navbar a.active, #navbar .active-trail a {
-    color: #F8EE7C;
-    text-decoration: none;
-    }
+#navbar a:hover,
+#navbar a.active,
+#navbar .active-trail a {
+  color: #F8EE7C;
+  text-decoration: none;
+  }
 
 /* MAIN CONTENT AREA */
 
+#content-area {
+  background: #F7F3EA;
+  -moz-box-shadow: 2px 0 2em #374240;
+  -webkit-box-shadow: 2px 0 2em #374240;
+  box-shadow: 2px 0 2em #374240;
+  }
+
+#content-area .wrap {
+  padding: 0 15px;
+  }
+
 body.sidebar-first #content {
-    margin-left: 30px;
-    }
+  margin-left: 30px;
+  }
 
 body.sidebar-second #content {
-    margin-right: 30px;
-    }
+  margin-right: 30px;
+  }
 
 body.two-sidebars #content {
-    margin-left: 20px;
-    margin-right: 20px;
-    }
+  margin-left: 20px;
+  margin-right: 20px;
+  }
 
 /* Footer*/
+
 #footer {
-  text-align: center;
-  background: url(../images/bottom.png) no-repeat 1px 0 #44514F;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-top: 6px;
   }
 
-
-#footer a, p.copy {
-    color: #CFCFCF;
-    }
+#footer a,
+p.copy {
+  color: #CFCFCF;
+  }
 
 #footer a:hover {
-    color: #fff;
-    border-color:#CFCFCF;
-    }
-
-#footer #footer-login {
-  color: #333;
+  color: #fff;
+  border-color:#CFCFCF;
   }
-
-#footer #footer-login:hover {
-    color: #333;
-    border-color:#CFCFCF;
-    }
 
 p.copy a.poweredby {
   background-position: 0 -26px;

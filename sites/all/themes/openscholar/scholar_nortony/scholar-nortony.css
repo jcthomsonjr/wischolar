@@ -69,7 +69,7 @@ p.copy {
 
 /* LAYOUT ELEMENTS */
 
-.wrap {
+#page {
   width: 938px;
   margin: 0 auto;
   background: url(images/container.png) repeat-y 0 0 #fff;
@@ -100,15 +100,15 @@ body.sidebar-second #content-area .hg-container {
   padding-bottom: 45px;
    }
 
-body.sidebar-first .wrap {
+body.sidebar-first #page {
   background-position: -708px 0;
   }
 
-body.sidebar-second .wrap {
+body.sidebar-second #page {
   background-position: 708px 0;
   }
 
-body.no-sidebars .wrap  {
+body.no-sidebars #page  {
   background:#fff;
   }
 
@@ -194,6 +194,7 @@ body.header-main-right #header-main {
   width: auto;
   background: url(images/navbar.png) 0 0 repeat-x transparent;
   height: 48px;
+  padding: 0;
   }
 
 #navbar li {
@@ -241,12 +242,7 @@ body.header-main-right #header-main {
   color:#fff;
   }
 
-#logo img {
-  height: 74px;
-  }
-
 #scholar-shield {
-  width: 55px;
   margin-right:0;
   }
 
