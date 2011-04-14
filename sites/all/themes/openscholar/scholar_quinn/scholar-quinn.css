@@ -3,10 +3,10 @@ body {
   color:#333;
   }
 
-.wrap {
+#page {
   max-width: 1260px;
   min-width: 780px;
-  padding-right: 15px;
+  margin: 0 auto;
   }
 
 a, a:visited {
@@ -23,7 +23,6 @@ a:hover {
 #logo a:hover {
   background: transparent;
   }
-
 
 h1, h2, h3, #sidebar-second a, #navbar, #header {
   font-weight: bold;
@@ -52,11 +51,15 @@ h2.title {
   padding:0;
   }
 
-#sidebar-first, #header-left, #sidebar-second, #header-right {
+#sidebar-first,
+#header-left,
+#sidebar-second,
+#header-right {
   width: 180px;
   }
 
-#content-main, #content {
+#content-main,
+#content {
     padding: 0;
     padding-top: 1px;
     }
@@ -75,7 +78,8 @@ h2.title {
   padding-left: 0;
   }
 
-.header-main #header, .header-main-right #header {
+.header-main #header,
+.header-main-right #header {
   margin-left: 189px;
   }
 
@@ -101,7 +105,7 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
 #content-area .hg-container {
   padding-left: 180px;
   padding-right: 180px;
-  padding-top: 20px;
+  padding-top: 15px;
   }
 
 #content {
@@ -117,11 +121,14 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
 
 /* HEADER ELEMENTS */
 
-
 #header {
     padding-top: 16px;
     text-transform: lowercase;
     }
+
+#header .wrap {
+  margin: 0 200px;
+  }
 
 #header h1 {
     font-size: 2em;
@@ -181,6 +188,10 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
 
 /* SIDEBARS */
 
+.sidebar {
+  font-size: 1.1em;
+  }
+
 #sidebar-first,
 #sidebar-first ul.menu {
     text-align: right;
@@ -231,10 +242,10 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
 #sidebar-first .active-trail a,
 #sidebar-second a.active,
 #sidebar-second .active-trail a{
-    color: #000;
-    background:#CECECE;
-    font-weight: bold;
-    }
+  color: #000;
+  background:#CECECE;
+  font-weight: bold;
+  }
 
 #sidebar-first .views-admin-links ul li a, #sidebar-second .views-admin-links ul li a{
   display:inline;
@@ -286,10 +297,12 @@ h2#comments-title {
   padding-top: 0;
   }
 
-body.sidebar-second #footer, body.two-sidebars #footer {
+body.sidebar-second #footer .wrap,
+body.two-sidebars #footer .wrap{
   padding-right: 200px;
   }
 
-body.sidebar-first #footer, body.two-sidebars #footer {
+body.sidebar-first #footer .wrap,
+body.two-sidebars #footer .wrap {
   padding-left: 200px;
   }
