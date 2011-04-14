@@ -783,6 +783,44 @@ function filefield_paths_file_move(&$file, $replace = FILE_EXISTS_RENAME) {
   return TRUE;
 }
 
+/**
+ * Return the required path settings for the named filefield instance.
+ *
+ * A CRUD utility for filefield_paths
+ *
+ * @param a unique identifier for the given field instance - {$type-$field}
+ * This identifier pattern is the same that features.content.inc uses
+ *
+ * @return a row array from the filefield_paths DB table - with the 'serialized'
+ * blobs unpacked.
+ */
+function filefield_paths_item_load($identifier) {
+  list($type_name, $field_name) = explode('-', $identifier);
+  $row = db_fetch_array(
+    db_query("SELECT * FROM {filefield_paths} WHERE type = '%s' AND field = '%s'", $type_name, $field_name)
+  );
+  if (!empty($row)) {
+    $ffp = array();
+    // Each cell in the row gets exposed, retrieve the schema to figure this out.
+    $schema = drupal_get_schema('filefield_paths');
+    foreach ($schema['fields'] as $field => $field_def) {
+      $ffp[$field] = empty($field_def['serialize']) ? $row[$field] : unserialize($row[$field]);
+    }
+    return $ffp;
+  }
+  return NULL;
+}
+
+/**
+ * Delete the identified row
+ *
+ * A CRUD utility for filefield_paths
+ */
+function filefield_paths_item_delete($identifier) {
+  list($type_name, $field_name) = explode('-', $identifier);
+  db_query("DELETE FROM {filefield_paths} WHERE type = '%s' AND field = '%s'", $type_name, $field_name);
+}
+
 function _filefield_paths_strip_path($path) {
   $dirpath = file_directory_path();
   $dirlen = drupal_strlen($dirpath);
@@ -830,4 +868,27 @@ function _filefield_paths_check_directory(&$directory, $mode = 0, $form_item = N
   }
 
   return TRUE;
+}
+
+/**
+ * Implementation of hook_features_api().
+ *
+ * Main info hook that features uses to determine what components are provided
+ *
+ * The 'component' for this module is named 'filefield_paths_item' not just
+ * 'filefield_paths' to follow recommended practice documented in features.api
+ *
+ * We export individual filefield_paths_item instances, although seldom on their
+ * own, usually as part of a bigger package. When a content type or cck field is
+ * being exported, these settings come along for the ride.
+ */
+function filefield_paths_features_api() {
+  return array(
+    'filefield_paths_item' => array(
+      'name' => t('Filefield paths'),
+      'default_hook' => 'filefield_paths_item_default_items',
+      'feature_source' => TRUE,
+      'default_file' => FEATURES_DEFAULTS_INCLUDED,
+    ),
+  );
 }
