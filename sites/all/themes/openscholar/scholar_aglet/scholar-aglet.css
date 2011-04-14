@@ -43,127 +43,93 @@ p.copy {
 
 /* LAYOUT ELEMENTS */
 
-.wrap {
-  background: url(images/bg.png) repeat-y 0 0 transparent;
+#page {
+  background: url('images/bg.png') repeat-y 0 0 transparent;
   width: 1096px;
   margin:auto;
   padding-top:0;
   }
 
-#content-area .hg-container,
-.sidebar-first #content-area .hg-container,
-.sidebar-second #content-area .hg-container,
-.no-sidebars #content-area .hg-container {
-  padding:0;
+#page-wrapper {
+  background:url('images/footer.png') no-repeat 0 100% transparent;
   }
 
-#sidebar-first,
-#header-left {
-  width: 152px;
-  right: 232px;
-  padding-left: 43px;
-  padding-right: 17px;
+.wrap {
+  margin:0 48px;
   }
 
-#header-right {
-  width: 164px;
-  padding-left: 38px;
-  }
 
-#header .hg-container {
-  padding-left: 212px;
-  padding-right: 265px;
-  margin-top:12px;
-  height: 99px;
+#header .wrap {
+  min-height: 99px;
   background:#d9e3e5;
   }
 
-
-#header,
-#footer,
-#content-area .hg-container {
-  padding-right: 48px;
-  padding-left: 48px;
-  }
-
 #footer {
-    text-align: center;
-    background:url(images/footer.png) no-repeat 50% 0 #186274;
-    padding-top: 0;
-    clear:both;
-    height: 163px;
-    }
+  padding-top: 0;
+  height: 158px;
+  position: relative;
+  }
 
 #header {
   background: url(images/header.png) no-repeat 50% 0;
   padding-top:1px;
   }
 
-#navbar, #content-main {
-  width:auto;
-  }
-
-
-.column {
-  position:static;
-  padding: 0;
-  }
-
-#content-main {
-  padding-right:31px;
-  width:auto;
+#content-main #content {
+  padding-right:21px;
   padding-left: 0;
   padding-top: 30px;
   }
 
-.no-sidebars #content-main {
-  padding-right: 85px;
+#sidebar-first {
+  width: 221px;
+  padding-top:30px;
+  padding-left: 0;
+  padding-right:0;
+  right: 173px;
+  background:#e0ece8;
   }
-
-.sidebar-second #content-main {
-  width: 678px;
-  }
-
-.sidebar-first #content-main {
-  width: 704px;
-  }
-
-.two-sidebars #content-main {
-  width: 457px;
-  }
-
-body.header-main #header .hg-container,
-body.header-main-right #header .hg-container {
-  padding-left: 37px;
-  }
-
-body.two-sidebars #content-area .hg-container,
-body.sidebar-second #content-area .hg-container,
-body.sidebar-first #content-area .hg-container,
-body.no-sidebars #content-area .hg-container {
-  padding-left: 85px;
-  }
-
-body.no-sidebars #content-area .hg-container {
-  width:auto;
-  padding-right: 85px;
-  }
-
-/* SIDEBAR ELEMENTS */
 
 #sidebar-second {
   width:254px;
-  padding:30px 0 0 0;
-  margin:0;
+  padding-top:30px;
+  padding-left: 0;
+  padding-right:0;
   background: #d9e3e5;
   }
 
-#sidebar-first {
-  width: 221px;
-  padding:30px 0 0 0;
-  right: 173px;
-  margin: 0;
-  background:#e0ece8;
+#content-main,
+#sidebar-first,
+#sidebar-second {
+  padding-bottom: 20010px;  /* X + padding-bottom */
+  margin-bottom: -20000px;  /* X */
+  }
+
+#content-area .hg-container {
+  overflow: hidden;
+  }
+
+.page-datavere #content-area .hg-container {
+  overflow: visible;
+  }
+
+/*
+  Instead of the [sidebar, main-content, sidebar] layout we can easily change the layout to [main-content, sidebar, sidebar] thusly. Easy.
+*/
+
+.two-sidebars #content-area .hg-container {
+  padding-left: 0;
+  padding-right: 495px; /* Total sidebar width + content-main padding */
+  }
+
+.two-sidebars #sidebar-first {
+  margin-left: 0;
+  margin-right: -241px; /* Total FIRST sidebar width + content-main padding */
+  right: 0;
+  }
+
+.two-sidebars #sidebar-second {
+  right: -221px;        /* Total FIRST sidebar width */
   }
 
 #sidebar-second a,
@@ -208,21 +174,6 @@ body.no-sidebars #content-area .hg-container {
 
 /* HEADER ELEMENTS */
 
-#header .column {
-  padding: 19px 0 0 0;
-  }
-
-#header-right {
-  width: 219px;
-  padding-right: 35px;
-  padding-left: 0;
-  }
-
-.header-main #header .hg-container,
-.header-main-right #header .hg-container {
-  padding-right:254px;
-  }
-
 #header h1,
 #header h2,
 #header p {
@@ -255,7 +206,10 @@ body.no-sidebars #content-area .hg-container {
     }
 
 #navbar {
-  width: auto;
+  padding: 0;
+  }
+
+#navbar .wrap {
   height: 43px;
   padding-left: 25px;
   padding-right: 25px;
@@ -288,12 +242,12 @@ body.no-sidebars #content-area .hg-container {
   float:left;
   }
 
-#block-vsite_menus-1 {
+#header #block-vsite_menus-1 {
   width: 251px;
   float:right;
   }
 
-#block-vsite_menus-1 ul li {
+#header #block-vsite_menus-1 ul li {
   list-style: none;
   border-left: 1px solid #000;
   padding-left: 11px;
@@ -303,13 +257,13 @@ body.no-sidebars #content-area .hg-container {
   line-height: 1.3em;
   }
 
-#block-vsite_menus-1 li a,
-#block-vsite_menus-1 li a:visited{
+#header #block-vsite_menus-1 li a,
+#header #block-vsite_menus-1 li a:visited{
   color: #000;
   font-size: 12px;
   }
 
-#block-vsite_menus-1 li a:hover {
+#header #block-vsite_menus-1 li a:hover {
   text-decoration:underline;
   }
 
@@ -325,18 +279,10 @@ body.no-sidebars #content-area .hg-container {
   text-decoration: none;
   }
 
-#logo img {
-  height: 84px;
-  }
-
-#scholar-shield img {
-  height: 52px;
-  }
-
 /*Footer */
 
 #footer .wrap {
-  padding: 34px 37px;
+  padding: 34px 58px;
   background:#c7d0d2;
   height:33px;
   }

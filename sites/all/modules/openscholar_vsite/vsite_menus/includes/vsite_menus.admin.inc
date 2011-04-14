@@ -45,10 +45,12 @@ function vsite_menus_settings_form($form_state){
   //$form = vsite_menus_settings_build_form($menu_links);
   foreach ($all_initial as $key => $link) {
     $path = $link['link_path'];
-    $menu = menu_get_item($path);
-    if (!$menu['access']) continue;
+    if (!$link['external']) {
+      $menu = menu_get_item($path);
+      if (!$menu['access']) continue;
+    }
 
-    $frags = explode(':', $key);
+    $frags = explode(':', $key, 2);
     if (count($frags) == 1) {
       // this link isn't in a menu already
       $link['menu_name'] = 'none';
@@ -71,7 +73,7 @@ function vsite_menus_settings_form($form_state){
   }
 
   foreach ($menus as $key => $link) {
-    $form['conf'][$link['menu_name']][$key] = array(
+    $form['conf'][$link['menu_name']][str_replace('.', '__', $key)] = array(
       '#tree' => TRUE,
       '#weight' => $link['weight'],
       'name' => array(
@@ -100,20 +102,28 @@ function vsite_menus_settings_form($form_state){
         '#value' => $link['menu_name'],
       ),
     );
-
-    if ($link['user_created']) {
-      $form['conf'][$link['menu_name']][$key]['delete'] = array(
-        '#type' => 'checkbox',
-        '#default_value' => 0,
-      );
-    }
-    else {
-      $form['conf'][$link['menu_name']][$key]['delete'] = array(
-        '#type' => 'markup',
-        '#value' => t('Can not delete'),
-      );
-    }
   }
+
+  $form['new_menu'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'New Menu Entry',
+    'new_menu_title' => array(
+      '#type' => 'textfield',
+      '#title' => t('Menu Title'),
+      '#description' => t('What text will appear for the entry.'),
+    ),
+    'new_menu_url' => array(
+      '#type' => 'textfield',
+      '#title' => t('URL'),
+      '#description' => t('Enter the URL for the new menu entry.'),
+    ),
+    'new_menu_region' => array(
+      '#type' => 'select',
+      '#title' => t('Default Region'),
+      '#description' => t('Which menu should this entry go in?'),
+      '#options' => array_diff_key($a_site_menus, array('none' => 0)),
+    ),
+  );
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -127,6 +137,7 @@ function vsite_menus_settings_form($form_state){
   );
 
   $form['#after_build'][] = 'vsite_menus_settings_form_after_build';
+  $form['#validate'][] = 'vsite_menus_setting_form_validate';
 
   return $form;
 
@@ -164,6 +175,23 @@ function vsite_menus_settings_form_reset($form, &$form_state) {
 //  }
 }
 
+function vsite_menus_setting_form_validate(&$form, &$form_state) {
+  if ($form_state['values']['new_menu_title'] XOR $form_state['values']['new_menu_url']) {
+    // if one or the other is set
+    form_set_error($form_state['values']['new_menu_title']?'new_menu_url':'new_menu_title', t('Missing URL or Title for new link!'));
+  }
+  elseif ($form_state['values']['new_menu_title'] && $form_state['values']['new_menu_url']) {
+    $faux_link = array(
+      'link_path' => $form_state['values']['new_menu_url'],
+      'link_title' => $form_state['values']['new_menu_title'],
+    );
+    if (!menu_valid_path($faux_link)) {
+      // the link isn't valid.
+      form_set_error('new_menu_url', t('The URL is not valid'));
+    }
+  }
+}
+
 /**
  * Save Handler for the CP Menus Form
  */
@@ -175,6 +203,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
 
   foreach ($form_state['values'] as $key => $data) {
     if (!is_array($data)) continue;
+    $key = str_replace('__', '.', $key);
 
     // set some vars for readability
     $region_old = $data['region-old'];
@@ -200,64 +229,35 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
     $link['menu_name'] = $data['region'];
     $link['weight'] = $data['weight'];
 
-    if ($data['delete']) {
+    if ($link['user_created'] && $region == 'none' || !isset($link['link_path'])) {
       // we're deleting the link
       unset($menus[$region][$menu_key]);
     }
   }
 
+  if ($form_state['values']['new_menu_title'] && $form_state['values']['new_menu_url']) {
+    // add a new menu
+    $new_link = array(
+      'menu_name' => $form_state['values']['new_menu_region'],
+      'link_path' => $form_state['values']['new_menu_url'],
+      'router_path' => $form_state['values']['new_menu_url'],
+      'link_title' => check_plain($form_state['values']['new_menu_title']),
+      'options' => array(),
+      'module' => 'system',
+      'hidden' => '0',
+      'external' => menu_path_is_external($form_state['values']['new_menu_url'])?'1':'0',
+      'has_children' => '0',
+      'expanded' => '0',
+      'weight' => '0',
+      'user_created' => TRUE,
+    );
+
+    $new_menu_key = $new_link['menu_name'].':'.$new_link['link_path'];
+    $menus[$new_link['menu_name']][$new_menu_key] = $new_link;
+  }
+
   foreach ($menus as $key => $data) {
     $space->controllers->vsite_menu->set($key, $data);
   }
+  dpm($space);
 }
-
-
-/**
- * Helper function for menu_overview_form().
- */
-function vsite_menus_settings_build_form($tree) {
-  $form = array('#tree' => TRUE);
-
-  foreach ($tree as $s_key => $item) {
-    $title = '';
-
-    $form[$s_key]['#item'] = $item;
-
-    $form[$s_key]['#attributes'] = $item['hidden'] ? array('class' => 'menu-disabled') : array('class' => 'menu-enabled');
-    $form[$s_key]['link_title']['#value'] = l($item['link_title'], $item['link_path']) . ($item['hidden'] ? ' ('. t('disabled') .')' : '');
-    $form[$s_key]['hidden'] = array(
-      '#type' => 'checkbox',
-      '#default_value' => !$item['hidden'],
-    );
-
-    $form[$s_key]['weight'] = array(
-      '#type' => 'weight',
-      '#delta' => 50,
-      '#default_value' => isset($form_state[$s_key]['weight']) ? $form_state[$s_key]['weight'] : $item['weight'],
-    );
-    $form[$s_key]['key'] = array(
-      '#type' => 'hidden',
-      '#value' => $s_key,
-    );
-
-    // Build a list of operations.
-    $operations = array();
-
-    // Only items created by the user can be deleted.
-    if ($item['user_created'] == 1) {
-      $operations['delete'] = l(t('delete'), 'admin/build/menu/item/'. $item['mlid'] .'/delete');
-    }
-    // Set the reset column.
-    elseif ($item['customized']) {
-      $operations['reset'] = l(t('reset'), 'admin/build/menu/item/'. $item['mlid'] .'/reset');
-    }
-
-    $form[$s_key]['operations'] = array();
-    foreach ($operations as $op => $value) {
-      $form[$s_key]['operations'][$op] = array('#value' => $value);
-    }
-
-  }
-  return $form;
-}
-

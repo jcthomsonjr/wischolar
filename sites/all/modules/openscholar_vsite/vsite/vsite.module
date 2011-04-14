@@ -54,7 +54,7 @@ function vsite_menu(){
       'access content'
     )
   );
-  
+
   $items['cp/settings/site_info/%vsite_group'] = array(
     'title' => 'Site Information',
     'page callback' => 'node_page_edit',
@@ -563,14 +563,7 @@ function vsite_form_alter(&$form, $form_state, $form_id){
 
       //No vertical tabs fieldsets
       vertical_tabs_save_config($form_id, array());
-
-      if (array_key_exists('taxonomy', $form)) {
-        if ($n_affil_tag = variable_get('vsite_taxonomy_affiliation', false)) {
-          unset($form['taxonomy'][$n_affil_tag]);
-        } //Remove the affiliation form till we get some defaults in here
-        $form['taxonomy']['#collapsible'] = false;
-      }
-
+      
       $form['#redirect'] = false;
 
       module_load_include('inc', 'spaces_og', 'spaces_og.pages');
@@ -769,7 +762,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
 
       //Have this node avalible to the public and we will hide private using the vsite->menu_access function
       $map = features_get_component_map('node');
-      $feature_name = $map[$node->type];
+      $feature_name = $map[$node->type][0];
       if ($vsite && $vsite->access_feature($op = 'view', $feature_name)) {
         $node->og_public = OG_VISIBLE_BOTH;
       } //Does this person have the ability to create public nodes on this vsite?
