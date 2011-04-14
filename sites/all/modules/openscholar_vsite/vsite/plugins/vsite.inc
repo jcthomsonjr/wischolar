@@ -28,23 +28,6 @@ class vsite extends space_og {
   }
 
   /**
-   * Override of activate().
-   */
-  function activate(){
-    if (parent::activate()) {
-      // the parent has initialized og theme. 
-      // if in cp we want a different theme
-      if (arg(0) == 'cp') {
-        global $custom_theme;
-        $custom_theme = variable_get('cp_theme', CPTHEME);
-      }
-      
-      return TRUE;
-    }
-    return FALSE;
-  }
-
-  /**
     * Implementation of space->router().
     */
   public function router($op, $object = NULL) {

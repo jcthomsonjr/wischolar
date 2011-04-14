@@ -69,6 +69,12 @@ function cp_init(){
   if (! $vsite) {
     return;
   }
+    
+  //initialize cp theme
+  if (context_isset('context', 'vsite-section-cp')) {
+    global $custom_theme;
+    $custom_theme = CPTHEME;
+  }
 
   $admin = $vsite->access_admin();
 
