@@ -1,15 +1,10 @@
-@font-face {
-	font-family: 'ArmWrestlerBold';
-	src: url('fonts/ArmWrestler.eot');
-	src: local('fonts/ArmWrestler'), local('fonts/ArmWrestler-Bold'), url('fonts/ArmWrestler.woff') format('woff'), url('fonts/ArmWrestler.ttf') format('truetype'), url('fonts/ArmWrestler.svg#ArmWrestler-Bold') format('svg');
-}
+@import url('http://fonts.googleapis.com/css?family=Arvo:regular,bold');
 
 body {
-    background: url(images/fabric-strip.jpg) repeat-y 50% 0 #39240c;
+    background: url('images/fabric-strip.jpg') repeat-y 0 0 #fcf5e5;
     color:#282828;
-    font-family: "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
+    min-width: 960px;
     }
-
 
 /* Safari begins background image at an odd place */
 @media screen and (-webkit-min-device-pixel-ratio:0){
@@ -20,26 +15,10 @@ body.cp-toolbar-full {
   background-position: 50% 42px;
   }
 
-#page {
-    width: 100%;
-    background: url(images/menu-strip.png) repeat-x 0 100px transparent;
-    }
-
-body.front #page {
-    background: transparent;
-    }
-
 .wrap {
-    width: 676px;
-    background: url(images/header.jpg) no-repeat 50% 0 transparent;
-    margin: 0 auto;
-    padding-left: 193px;
-    padding-right: 54px;
-    }
-
-body.front .wrap {
-    width: 100%;
-    margin-left: 0;
+    padding: 0 10px 0 0;
+    min-width: 943px;
+    margin-left: 193px;
     }
 
 a, a:visited {
@@ -52,10 +31,10 @@ a:hover {
     }
 
 h1,
-.title {
-  font: 25px/1em 'ArmWrestlerBold', sans-serif;
+.title,
+#navbar li {
+  font: 25px/normal 'Arvo', sans-serif;
   text-transform:uppercase;
-  letter-spacing: -1px;
   font-weight:normal;
   }
 
@@ -119,7 +98,7 @@ h3.title {
 #content-area .hg-container {
   padding-left: 188px;
   padding-right: 241px;
-  padding-top: 30px;
+  padding-top: 15px;
   }
 
 #header .hg-container {
@@ -139,6 +118,12 @@ h3.title {
 
 /* HEADER ELEMENTS */
 
+#header .wrap {
+  background: #3C240C;
+  margin-left:181px;
+  padding-left: 12px;
+  }
+
 #header .column {
   padding-top: 10px;
   }
@@ -149,44 +134,39 @@ h3.title {
 #header h3,
 #header a,
 #header a:visited {
-    color:#fff;
-    }
+  color:#fff;
+  text-transform: uppercase;
+  line-height: normal;
+  }
 
-#header a,
-#header a:visited {
-    text-decoration: none;
-    border-bottom: 1px solid #c16e04;
-    }
-
-#header h1 a,
-#header h1 a:visited,
-#header #logo a,
-#header #logo a:visited {
-    text-decoration: none;
-    border: none;
-    }
+#header p a,
+#header p a:visited {
+  text-decoration: none;
+  font-size: 12px;
+  }
 
 #header h2 {
-    font-size: 1.1em;
-    line-height: 1em;
-    }
-
-#header p {
-    margin-bottom: 0;
-    }
-
-#logo img {
-  width: 80px;
+  font-size: 14px;
   }
 
 #navbar {
-    height: 32px;
-    }
+  height: 41px;
+  background: url(images/navbar-cutout.png) no-repeat 0 0 transparent;
+  padding:0;
+  }
+
+#navbar .wrap {
+  background: url(images/menu-strip.png) repeat-x 0 0 transparent;
+  padding:0;
+  margin-left: 193px;
+  height:41px;
+  }
 
 #navbar li {
     font-size: 1.1em;
     line-height: normal;
     float:left;
+    margin-top:13px;
     }
 
 #navbar li a,
@@ -203,4 +183,5 @@ h3.title {
 #navbar .active-trail a {
     color:#fff;
     background: #b8690c;
+    text-decoration: none;
     }

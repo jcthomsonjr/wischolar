@@ -16,14 +16,14 @@
     <div id="page-wrapper">
       <?php if (!empty($header_top)): ?>
       <div id="header-top">
-        <div class="wrap">
+        <div class="wrap clearfix">
           <?php print $header_top; ?>
         </div>
       </div><!-- /header-top -->
       <?php endif; ?>
       <?php if ($header_main || $header_left || $header_right) : ?>
-      <div id="header" class="clearfix">
-        <div class="wrap">
+      <div id="header">
+        <div class="wrap clearfix">
           <div class="hg-container">
             <?php if (!empty($header_main)): ?>
             <div id="header-main" class="column">
@@ -45,14 +45,14 @@
       </div><!-- /header -->
       <?php endif; ?>
       <?php if (!empty($navbar)): ?>
-      <div id="navbar" class="clearfix">
-        <div class="wrap">
+      <div id="navbar">
+        <div class="wrap clearfix">
           <?php print $navbar; ?>
         </div><!--/wrap-->
       </div><!-- /navbar -->
       <?php endif; ?>
-      <div id="content-area" class="clearfix">
-        <div class="wrap">
+      <div id="content-area">
+        <div class="wrap clearfix">
           <div class="hg-container">
           <div id="content-main" class="column">
             <?php if (!empty($content_top)): ?>
@@ -60,7 +60,7 @@
               <?php print $content_top; ?>
             </div><!-- /content-top -->
             <?php endif; ?>
-            <div id="content" class="clearfix">
+            <div id="content">
             <?php print $context_links;?>
             <?php if (!empty($title)): ?>
               <h2 class="title<?php if ($tabs) : print ' with-tabs'; endif;?>"><?php print $title; ?></h2>
@@ -92,8 +92,8 @@
         </div> <!-- / hg-container -->
         </div><!--/wrap-->
       </div> <!-- / content area -->
-      <div id="footer" class="clearfix">
-        <div class="wrap">
+      <div id="footer">
+        <div class="wrap clearfix">
           <?php if ($footer) : ?>
             <?php print $footer; ?>
           <?php endif; ?>
