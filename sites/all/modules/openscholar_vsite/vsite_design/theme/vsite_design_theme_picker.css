@@ -15,7 +15,8 @@ ul.theme-picker {
 li.item-theme-picker  {
   background: url(images/theme-picker-bg.png) no-repeat top center transparent;
   padding: 23px 0 30px 0;
-  float: left;
+  display: inline-block;
+	vertical-align: top;
   width: 600px;
   text-align: center;
   }
@@ -30,14 +31,14 @@ ul.theme-picker li.checked img {
   margin-top: 0;
   }
 
-#vsite-design-theme-picker-form #next, #vsite-design-theme-picker-form #prev {
+.theme_subnav #next, .theme_subnav #prev {
   width: 15px;
   height: 14px;
   background: transparent url(images/arrows.png) 0 0 no-repeat;
   margin-top: 3px;
   }
 
-#vsite-design-theme-picker-form #prev {
+.theme_subnav #prev {
   background-position: 0 -14px;
   }
 
@@ -67,7 +68,7 @@ ul.theme-picker li.checked h3, .item-theme-picker li.checked .form-item {
   margin-top: 0;
   }
 
-#cp-settings-theme {
+#vsite-design-theme-picker-form {
   font-weight: bold;
   color: #4a4a4a;
   font-size: 1.1em;
@@ -79,14 +80,14 @@ ul.theme-picker li.checked h3, .item-theme-picker li.checked .form-item {
   padding-top: 13px;
   background:#eaebe9;
   height: 32px;
-  padding-left: 30px;
+  padding-bottom: 17px;
   padding-left: 30px;
   margin-left: -30px;
   margin-top: -30px;
   }
 
 .theme_subnav h3, .theme_subnav ul, .theme_subnav li, #next, #prev {
-  float: left;
+  display: inline-block;
   margin-right: 10px;
   }
 
