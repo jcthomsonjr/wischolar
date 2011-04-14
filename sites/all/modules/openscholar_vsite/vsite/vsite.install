@@ -115,4 +115,29 @@ function vsite_update_6005(&$sandbox) {
   return $res;
 }
 
+function vsite_update_6006(&$sandbox) {
+  $res = array();
+
+  if (module_exists('strongarm')) {
+    //this will revert any inadvertant strongarm values that have been saved in the database, this is
+    //needed since the way strongarm works has changed
+  	
+    $vars = strongarm_vars_load(true,true);
+    foreach ($vars as $name => $variable) {
+      $default = ctools_get_default_object('variable', $name);
+      if($default && $variable->value != $default->value){
+        variable_del($name);
+      }
+    }
+    strongarm_flush_caches();
+    
+    $res[] = array(
+      'success' => true,
+      'query' => 'Strongarm Settings Migrated'
+    );
+  }
+
+  return $res;
+}
+
 

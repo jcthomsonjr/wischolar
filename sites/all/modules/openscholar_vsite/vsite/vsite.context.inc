@@ -28,7 +28,6 @@ function vsite_context_default_contexts() {
     ),
   );
   $context->reactions = array(
-    'block' => array(),
   );
   $context->condition_mode = 0;
   $export['vsite-section-public'] = $context;

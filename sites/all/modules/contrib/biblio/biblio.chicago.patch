@@ -1,0 +1,35 @@
+--- biblio_style_chicago.inc	2011-04-14 13:27:09.000000000 -0400
++++ biblio_style_chicago.inc	2011-04-11 11:50:40.000000000 -0400
+@@ -104,8 +104,8 @@ function biblio_style_chicago($node, $ba
+       if (!empty($node->biblio_volume))      // volume
+       $output .= " " . $node->biblio_volume;
+ 
+-      if (!empty($node->biblio_issue))      // issue
+-      $output .=  ", no. " . $node->biblio_issue;
++//      if (!empty($node->biblio_issue))      // issue
++//      $output .=  ", no. " . $node->biblio_issue;
+ 
+       if(in_array($node->biblio_type,array(105,106)) && strtotime($node->biblio_date)){ //Newspaper or Mag and the full date is set
+       	$output .= ", " . date("F j, Y",strtotime($node->biblio_date)) ;
+@@ -269,8 +269,8 @@ function biblio_style_chicago($node, $ba
+         if (!empty($node->biblio_volume))      // series volume
+         $output .= $node->biblio_volume;
+ 
+-        if (!empty($node->biblio_issue))      // series issue (I'm not really sure if -- for this cite style -- the series issue should be rather omitted here)
+-        $output .= ", no. " . $node->biblio_issue; // is it correct to format series issues similar to journal article issues?
++//        if (!empty($node->biblio_issue))      // series issue (I'm not really sure if -- for this cite style -- the series issue should be rather omitted here)
++//        $output .= ", no. " . $node->biblio_issue; // is it correct to format series issues similar to journal article issues?
+       }
+ 
+       if (!preg_match("/[?!.][ \"<i>]*$/", $output)) $output .= ".";
+@@ -402,8 +402,8 @@ function biblio_style_chicago($node, $ba
+         if (!empty($node->biblio_volume))      // series volume
+         $output .= $node->biblio_volume;
+ 
+-        if (!empty($node->biblio_issue))      // series issue (I'm not really sure if -- for this cite style -- the series issue should be rather omitted here)
+-        $output .= ", no. " . $node->biblio_issue; // is it correct to format series issues similar to journal article issues?
++//        if (!empty($node->biblio_issue))      // series issue (I'm not really sure if -- for this cite style -- the series issue should be rather omitted here)
++//        $output .= ", no. " . $node->biblio_issue; // is it correct to format series issues similar to journal article issues?
+       }
+ 
+       if (!empty($node->thesis))      // thesis

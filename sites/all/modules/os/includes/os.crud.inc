@@ -9,7 +9,7 @@
  * @param $mail the e-mail address of the user creating the site
  * @param $domain the domain name of the site
  * @return the node object if successful
- * 
+ *
  */
 function os_create_vsite($name, $domain, $preset){
   $properties = array(
@@ -61,13 +61,13 @@ function os_add_user($username, $password, $email, $roles = array(), $status = 1
   return user_save(
     new stdClass(),
     array(
-      'name' => $username, 
+      'name' => $username,
       'pass' => $password,
       'mail' => $email,
       'roles' => $role_assignments,
       'status' => $status
     )
-  );	
+  );
 }
 
 
@@ -111,6 +111,27 @@ function os_get_rid($name) {
     $roles[$name] = db_result(db_query_range("SELECT rid FROM {role} WHERE name ='%s'", $name, 0, 1));
   }
   return $roles[$name];
+}
+
+
+/**
+ * Add the permission for a certain role.
+ */
+function os_add_permissions($rid, $perms) {
+  // Retrieve the currently set permissions.
+  $result = db_query("SELECT p.perm FROM {role} r INNER JOIN {permission} p ON p.rid = r.rid WHERE r.rid = %d ", $rid);
+  $existing_perms = array();
+  while ($row = db_fetch_object($result)) {
+    $existing_perms += explode(', ', $row->perm);
+  }
+  // If this role already has permissions, merge them with the new permissions being set.
+  if (count($existing_perms) > 0) { 
+    $perms = array_unique(array_merge($perms, (array)$existing_perms));
+  }
+
+  // Update the permissions.
+  db_query('DELETE FROM {permission} WHERE rid = %d', $rid);
+  db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, '%s')", $rid, implode(', ', $perms));
 }
 
 
@@ -221,7 +242,7 @@ function os_add_format($name, $cache = 1) {
  *
  * NOTE: the module name + the delta is what uniquely identifies a filter
  */
-function os_remove_filter($format_id, $module, $delta) {	
+function os_remove_filter($format_id, $module, $delta) {
   db_query("DELETE FROM {filters} WHERE format = %d AND module = '%s' AND delta = %d", $format_id, $module, $delta);
 }
 
