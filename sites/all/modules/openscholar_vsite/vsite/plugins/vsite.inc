@@ -31,8 +31,17 @@ class vsite extends space_og {
    * Override of activate().
    */
   function activate(){
+    if (!$this->verify_purl()) {
+      $this->purge_request_destination();
+      
+      // Lookup PURL provider
+      if($this->purl_provider){
+        purl_goto($_GET['q'], array('query' => drupal_query_string_encode($_GET, array('q')), 'purl' => array('provider' => $this->purl_provider, 'id' => $this->id)));
+      }//Just like the check in spaces_purl_provider but with dynamic provider
+    }
+    
     if (parent::activate()) {
-      // the parent has initialized og theme. 
+      // the parent has initialized og theme.
       // if in cp we want a different theme
       if (arg(0) == 'cp') {
         global $custom_theme;
@@ -54,7 +63,18 @@ class vsite extends space_og {
 
   	global $user;
     switch ($op) {
-    	default:
+    	case 'node':
+    		//Route home if we are viewing the group node
+        if (og_is_group_type($object->type)) {
+          //We are loading a group node, instead redirect to this groups home page
+          if (isset($object->nid) && (!$object->active || ($this->active && $this->id != $object->nid)) && $space = spaces_load('og', $object->nid)) {
+          	$space->activate();
+            $space->redirect('home');
+            return;
+          }
+        }
+    	break;
+    	case 'init':
 	    	$private = $this->controllers->variable->get('vsite_private');
 	      if ($this->active && $private && !og_is_group_member($this->id)) {
 	        $this->redirect('private');
@@ -67,9 +87,9 @@ class vsite extends space_og {
   public function redirect($op = 'home'){
     switch ($op) {
       case 'home' :
-        if (! empty($this->group->purl)) {
+        if (! empty($this->purl_provider)) {
 
-        	$home = 'home';  //Hardcoded for now
+        	$home = variable_get('site_frontpage','home');
 
           // Use the menu path of the selected feature as homepage
           if (menu_get_item($home)) {
@@ -170,7 +190,7 @@ class vsite extends space_og {
     $elements = purl_active()->get($domain_method);
     foreach ($elements as $element) {
       if ($element->provider == "vsite_domain" && $element->id == $this->id) {
-        $this->purl_provider = $domain_method;
+        $this->purl_provider = "vsite_domain";
         return TRUE;
       }
     }
@@ -179,15 +199,28 @@ class vsite extends space_og {
     $elements = purl_active()->get($method);
     foreach ($elements as $element) {
       if ($element->provider == "spaces_{$this->type}" && $element->id == $this->id) {
-        $this->purl_provider = $method;
+        $this->purl_provider = "spaces_{$this->type}";
         return TRUE;
       }
     }
+    
+    //No provider is active, lookup from id so redirection works
+    //Return false if we have reached here
+    $valid_providers = array();
+    $result = db_query("SELECT provider FROM {purl} WHERE id = %d ", $this->id);
+    while ($provider = db_result($result)) $valid_providers[] = $provider;
+    
+    if(in_array('vsite_domain',$valid_providers)){
+    	//This site has a domain provider
+    	$this->purl_provider = 'vsite_domain';
+    }elseif (in_array("spaces_{$this->type}",$valid_providers)){
+    	//This site has a default provider
+    	$this->purl_provider = "spaces_{$this->type}";
+    }//Set from db
 
-    //No provider loaded
     return FALSE;
   }
-
+  
   /**
    * Override of excluded_paths().
    * The parent exlcudes 'features' and 'features/*'
