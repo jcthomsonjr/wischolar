@@ -66,21 +66,6 @@ function vsite_design_theme(){
 }
 
 /**
- * Implementation of hook_vsite_settings().
- */
-function vsite_design_vsite_settings() {
-  $a_settings = array(
-    'theme' => array(
-      'class' => 'vsite_design_settings_theme',
-      'file' => drupal_get_path('module', 'vsite_design') .'/includes/vsite_design.settings.theme.inc',
-    ),
-  );
-
-  return $a_settings;
-}
-
-
-/**
  * Implementation of hook_imagecache_default_presets().
  */
 function vsite_design_imagecache_default_presets() {
