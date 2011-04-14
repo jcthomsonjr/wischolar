@@ -64,6 +64,11 @@ function scholar_publications_context_default_contexts() {
   );
   $context->condition_mode = 0;
 
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Feature');
+  t('Publications');
+
   $export['openscholar-feature-publications'] = $context;
   return $export;
 }

@@ -9,7 +9,7 @@
  * @param $mail the e-mail address of the user creating the site
  * @param $domain the domain name of the site
  * @return the node object if successful
- * 
+ *
  */
 function os_create_vsite($name, $domain, $preset){
   $properties = array(
@@ -61,13 +61,13 @@ function os_add_user($username, $password, $email, $roles = array(), $status = 1
   return user_save(
     new stdClass(),
     array(
-      'name' => $username, 
+      'name' => $username,
       'pass' => $password,
       'mail' => $email,
       'roles' => $role_assignments,
       'status' => $status
     )
-  );	
+  );
 }
 
 
@@ -221,7 +221,7 @@ function os_add_format($name, $cache = 1) {
  *
  * NOTE: the module name + the delta is what uniquely identifies a filter
  */
-function os_remove_filter($format_id, $module, $delta) {	
+function os_remove_filter($format_id, $module, $delta) {
   db_query("DELETE FROM {filters} WHERE format = %d AND module = '%s' AND delta = %d", $format_id, $module, $delta);
 }
 

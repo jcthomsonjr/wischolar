@@ -43,6 +43,211 @@ function scholar_publications_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'nodeformscols_field_placements_biblio_default';
+  $strongarm->value = array(
+    'title' => array(
+      'region' => 'main',
+      'weight' => '-46',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'menu' => array(
+      'region' => 'right',
+      'weight' => '7',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'revision_information' => array(
+      'region' => 'right',
+      'weight' => '2',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'comment_settings' => array(
+      'region' => 'right',
+      'weight' => '6',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'path' => array(
+      'region' => 'right',
+      'weight' => '8',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'options' => array(
+      'region' => 'right',
+      'weight' => '5',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'author' => array(
+      'region' => 'right',
+      'weight' => '4',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'buttons' => array(
+      'region' => 'main',
+      'weight' => '17',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'nid' => array(
+      'region' => 'main',
+      'weight' => '6',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'vid' => array(
+      'region' => 'main',
+      'weight' => '7',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'uid' => array(
+      'region' => 'main',
+      'weight' => '8',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'created' => array(
+      'region' => 'main',
+      'weight' => '9',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'type' => array(
+      'region' => 'main',
+      'weight' => '-45',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'language' => array(
+      'region' => 'main',
+      'weight' => '10',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'changed' => array(
+      'region' => 'main',
+      'weight' => '11',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'biblio_doi_lookup' => array(
+      'region' => 'main',
+      'weight' => '5',
+      'has_required' => FALSE,
+      'title' => 'DOI Lookup',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'biblio_cut_paste' => array(
+      'region' => 'main',
+      'weight' => '4',
+      'has_required' => FALSE,
+      'title' => 'Paste',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'biblio_type' => array(
+      'region' => 'main',
+      'weight' => '-45',
+      'has_required' => TRUE,
+      'title' => 'Publication Type',
+    ),
+    'book' => array(
+      'region' => 'right',
+      'weight' => '3',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'taxonomy' => array(
+      'region' => 'right',
+      'weight' => '0',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'attachments' => array(
+      'region' => 'main',
+      'weight' => '12',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'field_biblio_extra' => array(
+      'region' => 'main',
+      'weight' => '13',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'field_biblio_image' => array(
+      'region' => 'main',
+      'weight' => '16',
+      'has_required' => FALSE,
+      'title' => 'Book Cover',
+      'hidden' => 0,
+    ),
+    'og_initial_groups' => array(
+      'region' => 'main',
+      'weight' => '14',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'og_nodeapi' => array(
+      'region' => 'main',
+      'weight' => '15',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'cite_distribute_selections' => array(
+      'region' => 'right',
+      'weight' => '1',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'submit_type' => array(
+      'region' => 'main',
+      'weight' => '-45',
+      'has_required' => FALSE,
+      'title' => 'Select Publication Type',
+      'hidden' => 0,
+    ),
+  );
+
+  $export['nodeformscols_field_placements_biblio_default'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'og_content_type_usage_biblio';
+  $strongarm->value = 'group_post_standard';
+
+  $export['og_content_type_usage_biblio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_biblio_pattern';
   $strongarm->value = '[space-og-path]/publications/[title-raw]';
 
@@ -68,19 +273,5 @@ function scholar_publications_strongarm() {
   $strongarm->value = TRUE;
 
   $export['upload_biblio'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'nodeformscols_field_placements_biblio_default';
-  $strongarm->value = unserialize('a:27:{s:5:"title";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:3:"-46";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"menu";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:20:"revision_information";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:16:"comment_settings";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"path";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"8";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:7:"options";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:6:"author";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"17";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:3:"nid";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:3:"vid";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:3:"uid";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"8";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:7:"created";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"9";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"type";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:3:"-45";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:8:"language";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"10";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:7:"changed";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"11";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:17:"biblio_doi_lookup";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:10:"DOI Lookup";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:16:"biblio_cut_paste";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:5:"Paste";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:11:"biblio_type";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:3:"-45";s:12:"has_required";b:1;s:5:"title";s:16:"Publication Type";}s:4:"book";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:8:"taxonomy";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"12";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:18:"field_biblio_extra";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"13";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:18:"field_biblio_image";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"16";s:12:"has_required";b:0;s:5:"title";s:10:"Book Cover";s:6:"hidden";i:0;}s:17:"og_initial_groups";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"14";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:10:"og_nodeapi";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"15";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:26:"cite_distribute_selections";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:11:"submit_type";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:3:"-45";s:12:"has_required";b:0;s:5:"title";s:23:"Select Publication Type";s:6:"hidden";i:0;}}');
-
-  $export['nodeformscols_field_placements_biblio_default'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'og_content_type_usage_biblio';
-  $strongarm->value = 'group_post_standard';
-
-  $export['og_content_type_usage_biblio'] = $strongarm;
   return $export;
 }
