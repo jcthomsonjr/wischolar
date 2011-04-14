@@ -54,7 +54,7 @@ function vsite_menu(){
       'access content'
     )
   );
-  
+
   $items['cp/settings/site_info/%vsite_group'] = array(
     'title' => 'Site Information',
     'page callback' => 'node_page_edit',
@@ -769,7 +769,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
 
       //Have this node avalible to the public and we will hide private using the vsite->menu_access function
       $map = features_get_component_map('node');
-      $feature_name = $map[$node->type];
+      $feature_name = $map[$node->type][0];
       if ($vsite && $vsite->access_feature($op = 'view', $feature_name)) {
         $node->og_public = OG_VISIBLE_BOTH;
       } //Does this person have the ability to create public nodes on this vsite?
