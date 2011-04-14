@@ -62,7 +62,7 @@ function vsite_design_theme_picker_form($form_state) {
 
       //Screenshot callback
       if($info['screenshot']) {
-        ctools_ajax_associate_url_to_element($form, $form[$info['theme_name'] . '_flavor'], url('cp/settings/theme/swap_screenshot/'.$info['theme_name']),'ctools-use-ajax-onchange');
+        ctools_ajax_associate_url_to_element($form, $form['vsite_design_'.$info['theme_name'].'_flavor'], url('cp/settings/theme/swap_screenshot/'.$info['theme_name']),'ctools-use-ajax-onchange');
       }
     }
 

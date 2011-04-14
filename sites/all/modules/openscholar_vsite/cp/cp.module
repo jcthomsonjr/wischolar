@@ -65,7 +65,7 @@ function cp_left_block_view(){
 function cp_init(){
   global $user;
   $vsite = vsite_get_vsite();
-  
+
   if (! $vsite) {
     return;
   }
@@ -150,72 +150,8 @@ function cp_menu_alter(&$items){
  */
 function cp_menu(){
   $spaces_path = drupal_get_path('module', 'spaces');
-  //$items = spaces_active_space_menu('og', FALSE, 'cp/settings');
-
 
   $items = array();
-
-  // other setting by classess
-  $space = vsite_get_vsite();
-  $a_default_setting_created = array();
-  $a_menu_names = array(
-    'cp/settings' => "Settings",
-    'cp/appearance' => "Appearance"
-  );
-
-  // we go on all settings and make a menu entry for all of them
-  foreach ( cp_get_vsite_settings(TRUE) as $setting ) {
-    // TODO: rewrite for conversion to systems_settings_form
-    //Explicitly remove from menus
-    if (! $setting || isset($setting->menu_name) && ! $setting->menu_name)
-      continue;
-
-    //@TODO Dont know why we have a manual exclusion here and we need to find a way to do this without using vsite_get_vsite
-    $setting_form = $setting->form($space, NULL);
-    if (! empty($setting_form)) {
-      $s_parent = isset($setting->parent_menu) ? $setting->parent_menu : 'settings';
-      $items['cp/' . $s_parent . '/' . $setting->id] = array(
-        'title' => $setting_form['#title'],
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array(
-          'cp_settings_form',
-          $setting->id
-        ),
-        'type' => MENU_LOCAL_TASK,
-        'file' => 'cp.settings.inc',
-        'file path' => drupal_get_path('module', 'cp') . '/includes'
-      );
-
-//      if (! array_key_exists($s_parent, $a_default_setting_created) || ((isset($setting->weight) ? $setting->weight : 0) < $a_default_setting_created[$s_parent]['weight'])) {
-//
-//        if (array_key_exists($s_parent, $a_default_setting_created)) {
-//          $items[$a_default_setting_created[$s_parent]['menu']]['type'] = MENU_LOCAL_TASK;
-//        } //Remove existing def. local task
-//
-//
-//        $a_default_setting_created[$s_parent] = array(
-//          'weight' => (isset($setting->weight) ? $setting->weight : 0),
-//          'menu' => 'cp/' . $s_parent . '/' . $setting->id
-//        );
-//        $a_setting = $items['cp/' . $s_parent . '/' . $setting->id];
-//        //Create Local Task
-//        $items['cp/' . $s_parent . '/' . $setting->id]['type'] = MENU_DEFAULT_LOCAL_TASK;
-//
-//        //Crate Main Menu Item
-//        unset($a_setting['type']);
-//        $a_setting['title'] = $a_menu_names['cp/' . $s_parent];
-//        $items['cp/' . $s_parent] = $a_setting;
-//        $items['cp/' . $s_parent]['weight'] = 1;
-//      }
-
-      if (isset($setting->weight))
-        $items['cp/' . $s_parent . '/' . $setting->id]['weight'] = $setting->weight;
-      if (isset($setting->menu_name))
-        $items['cp/' . $s_parent . '/' . $setting->id]['menu_name'] = $setting->menu_name;
-    }
-
-  }
-
 
   $items["cp/features"] = array(
     'title' => 'Features',
@@ -430,10 +366,10 @@ function cp_theme($cache, $type, $theme, $path){
  *   Associative array containing variables to pass to the page in the theme layer
  */
 function cp_preprocess_page(&$vars){
-	
+
   // 2 new variables for top and left menus
   $vars['cp_toolbar'] = $vars['cp_left'] = '';
-  
+
   switch (cp_get_toolbar_setting()) {
     case 'mini' :
       global $user;
