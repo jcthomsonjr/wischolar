@@ -114,6 +114,27 @@ function os_get_rid($name) {
 }
 
 
+/**
+ * Add the permission for a certain role.
+ */
+function os_add_permissions($rid, $perms) {
+  // Retrieve the currently set permissions.
+  $result = db_query("SELECT p.perm FROM {role} r INNER JOIN {permission} p ON p.rid = r.rid WHERE r.rid = %d ", $rid);
+  $existing_perms = array();
+  while ($row = db_fetch_object($result)) {
+    $existing_perms += explode(', ', $row->perm);
+  }
+  // If this role already has permissions, merge them with the new permissions being set.
+  if (count($existing_perms) > 0) { 
+    $perms = array_unique(array_merge($perms, (array)$existing_perms));
+  }
+
+  // Update the permissions.
+  db_query('DELETE FROM {permission} WHERE rid = %d', $rid);
+  db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, '%s')", $rid, implode(', ', $perms));
+}
+
+
 // NODE
 
 /**
