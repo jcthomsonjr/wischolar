@@ -152,26 +152,27 @@ function vsite_design_preprocess_page(&$vars){
   }
 
   // load the css for the theme flavor
-  $a_theme_settings = $vsite->controllers->variable->get('vsite_setting_theme');
-  if (is_array($a_theme_settings)) {
-    $theme_flavors = vsite_design_get_flavors();
-  	if ($a_theme_settings['flavor'] && array_key_exists($a_theme_settings['flavor'],$theme_flavors)) {
-      $s_flavor = $a_theme_settings['flavor'];
+  $flavor = variable_get('vsite_design_'.$vsite->group->og_theme.'_flavor', '');
 
-  		if(!array_key_exists('css',$theme_flavors[$s_flavor])) $theme_flavors[$s_flavor]['css'] = array(); //Default
+  $theme_flavors = vsite_design_get_flavors($vsite->group->og_theme);
+	if ($flavor && isset($theme_flavors[$flavor])) {
 
-      foreach ($theme_flavors[$s_flavor]['css'] as $s_css){
-      	drupal_add_css($theme_flavors[$s_flavor]['path'].'/'.$s_css, 'theme', 'all', false);
-      }
+		if(!array_key_exists('css',$theme_flavors[$flavor])) {
+		  $theme_flavors[$flavor]['css'] = array(); //Default
+		}
 
-      if(array_key_exists('conditional-css',$theme_flavors[$s_flavor])){
-      	global $conf;
-        $conf['conditional_styles_'.$theme_flavors[$s_flavor]['module']] = $conf['conditional_styles_'.$theme_flavors[$s_flavor]['module']].
-                                                                           _vsite_design_get_conditional_styles($theme_flavors[$s_flavor]['conditional-css'],$theme_flavors[$s_flavor]['path']);
-      }//Add the flavors conditional style
-
+    foreach ($theme_flavors[$flavor]['css'] as $s_css){
+    	drupal_add_css($theme_flavors[$flavor]['path'].'/'.$s_css, 'theme', 'all', false);
     }
+
+    if(array_key_exists('conditional-css',$theme_flavors[$flavor])){
+    	global $conf;
+      $conf['conditional_styles_'.$theme_flavors[$flavor]['module']] = $conf['conditional_styles_'.$theme_flavors[$flavor]['module']].
+                                                                         _vsite_design_get_conditional_styles($theme_flavors[$flavor]['conditional-css'],$theme_flavors[$flavor]['path']);
+    }//Add the flavors conditional style
+
   }
+
 
   $vars['css'] = drupal_add_css();
   $vars['styles'] = drupal_get_css();
