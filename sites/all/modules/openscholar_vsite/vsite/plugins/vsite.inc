@@ -28,21 +28,6 @@ class vsite extends space_og {
   }
 
   /**
-   * Override of activate().
-   */
-  function activate() {
-    if (parent::activate()) {
-
-	    if ($this->group->og_theme && !$this->group->theme) {
-	      $this->group->theme = $this->group->og_theme;
-	    }//This must be set on load so that when you save the value will persist
-
-      return TRUE;
-    }
-    return FALSE;
-  }
-
-  /**
     * Implementation of space->router().
     */
   public function router($op, $object = NULL) {

@@ -563,14 +563,7 @@ function vsite_form_alter(&$form, $form_state, $form_id){
 
       //No vertical tabs fieldsets
       vertical_tabs_save_config($form_id, array());
-
-      if (array_key_exists('taxonomy', $form)) {
-        if ($n_affil_tag = variable_get('vsite_taxonomy_affiliation', false)) {
-          unset($form['taxonomy'][$n_affil_tag]);
-        } //Remove the affiliation form till we get some defaults in here
-        $form['taxonomy']['#collapsible'] = false;
-      }
-
+      
       $form['#redirect'] = false;
 
       module_load_include('inc', 'spaces_og', 'spaces_og.pages');

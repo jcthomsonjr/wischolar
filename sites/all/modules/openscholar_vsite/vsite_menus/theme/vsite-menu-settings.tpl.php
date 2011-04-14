@@ -12,7 +12,6 @@ $regions = _vsite_menus_get_menus();  // this line is why I needed to copy it
   <thead>
     <tr>
       <th><?php print t('Link'); ?></th>
-      <th><?php print t('Delete'); ?></th>
       <th><?php print t('Menu'); ?></th>
       <th><?php print t('Weight'); ?></th>
     </tr>
@@ -37,7 +36,6 @@ $regions = _vsite_menus_get_menus();  // this line is why I needed to copy it
           ?>
         <tr class="draggable <?php print $row % 2 == 0 ? 'odd' : 'even'; ?>">
           <td><?php print drupal_render($data['name']) ?></td>
-          <td><?php print drupal_render($data['delete']) ?></td>
           <td><?php print drupal_render($data['region']) ?></td>
           <td><?php print drupal_render($data['weight']) ?></td>
         </tr>
