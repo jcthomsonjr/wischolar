@@ -30,13 +30,15 @@ class vsite extends space_og {
   /**
    * Override of activate().
    */
-  function activate() {
+  function activate(){
     if (parent::activate()) {
-
-	    if ($this->group->og_theme && !$this->group->theme) {
-	      $this->group->theme = $this->group->og_theme;
-	    }//This must be set on load so that when you save the value will persist
-
+      // the parent has initialized og theme. 
+      // if in cp we want a different theme
+      if (arg(0) == 'cp') {
+        global $custom_theme;
+        $custom_theme = variable_get('cp_theme', CPTHEME);
+      }
+      
       return TRUE;
     }
     return FALSE;

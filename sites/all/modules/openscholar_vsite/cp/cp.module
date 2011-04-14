@@ -70,14 +70,6 @@ function cp_init(){
     return;
   }
 
-  //initialize cp theme
-  if (context_isset('context', 'vsite-section-cp')) {
-    _cp_init_theme(); //MOVE INTO CONTEXT REACTION?
-  }
-  elseif (context_isset('context', 'vsite-section-public')) {
-    og_set_theme($vsite->group); //MOVE INTO CONTEXT REACTION?
-  }
-
   $admin = $vsite->access_admin();
 
   if ($admin) {
@@ -493,16 +485,6 @@ function cp_user($op, &$edit, &$account, $category = NULL){
       }
       break;
   }
-}
-
-/**** Helper function ****/
-
-/**
- * initialize admin theme
- */
-function _cp_init_theme(){
-  global $custom_theme;
-  $custom_theme = CPTHEME;
 }
 
 /**
