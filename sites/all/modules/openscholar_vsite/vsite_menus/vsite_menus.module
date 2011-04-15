@@ -361,6 +361,10 @@ function vsite_menus_get_menu_tree($s_menu){
       $router_info = db_fetch_array(db_query("SELECT m.load_functions, m.to_arg_functions, m.access_callback, m.access_arguments, m.page_callback, m.page_arguments, m.title, m.title_callback, m.title_arguments, m.type, m.description
           FROM {menu_router} m WHERE m.path = '%s' ", $ml['router_path']));
       $ml['options'] = (isset($ml['options']))?serialize($ml['options']):serialize(array());
+      if (!is_array($router_info)) {
+        // custom entries don't have an entry in the router table
+        $router_info = array();
+      }
       $menu_links[$key] = array('link' => array_merge($router_info,$ml,array('mlid' => $n_tmp_mlid++)), 'below' => false);
     }
 
