@@ -259,5 +259,4 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
   foreach ($menus as $key => $data) {
     $space->controllers->vsite_menu->set($key, $data);
   }
-  dpm($space);
 }

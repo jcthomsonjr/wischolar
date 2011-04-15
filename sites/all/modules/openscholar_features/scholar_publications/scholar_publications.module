@@ -263,12 +263,11 @@ function scholar_publications_overview(){
 function scholar_publications_db_rewrite_sql($sql, $primary_table, $primary_field,  $args) {
 
   $vsite = vsite_get_vsite();
-  $gid = $group_node -> nid;
   $base_url = 'publications'; //og_settings_variable_get($gid, 'og_biblio_base', 'biblio');
   if ($vsite  && arg(0) == $base_url && strstr($sql,"biblio") !== false){
     if ($primary_table == 'n' && strstr($sql, 'biblio')){
       $query['join'] = 'INNER JOIN {og_ancestry} oga ON n.nid = oga.nid';
-      $query['where'] =  'oga.group_nid = '. $vsite -> sid;
+      $query['where'] =  'oga.group_nid = '. $vsite -> group-> nid;
       return $query;
 	  }
   }
