@@ -1,35 +1,28 @@
+@import url('http://fonts.googleapis.com/css?family=Inconsolata');
 
 html {
     min-width: 1000px;
     }
 
 body {
-    background: url(images/body-bg.jpg) repeat-y center top #fff;
+    background: url('images/body-bg.jpg') repeat-y center top #fff;
     color:#282828;
+    font:15px/22px 'Inconsolata', arial, serif;
     }
 
 body.cp-toolbar-full {
   background-position: 50% 42px;
   }
 
-.wrap {
-  width: 1000px;
+#page {
   min-height: 1536px;
-  margin: 0 auto;
-  background: url(images/top.jpg) no-repeat transparent;
-  padding-top: 1px;
+  padding-top:150px;
+  background: url('images/top.jpg') no-repeat center top transparent;
   }
 
-body.sidebar-first .wrap {
-  background-image: url(images/top-leftsidebar.jpg);
-  }
-
-body.sidebar-second .wrap {
-  background-image: url(images/top-rightsidebar.jpg);
-  }
-
-body.two-sidebars .wrap {
-  background-image: url(images/top-bothsidebar.jpg);
+.wrap {
+  width:870px;
+  margin:0 auto;
   }
 
 a, a:visited {
@@ -42,8 +35,8 @@ a:hover {
     text-decoration: underline;
     }
 
-
-#header, #sidebar-second #sidebar-first {
+#header,
+#sidebar-second #sidebar-first {
     font-weight: bold;
     }
 
@@ -57,90 +50,44 @@ h2.title {
   margin-bottom: 1em;
   }
 
-#block-vsite_menus-0, h3.title {
-  font-size: 1.2em;
-  }
-
-.links li {
-  font-size: .8em;
-  }
-
 /* LAYOUT ELEMENTS */
 
-#sidebar-first, #sidebar-second {
-  font-size: 11px;
-  line-height: 1.3em;
-  font-variant: small-caps;
-  }
-
-#sidebar-first {
-  padding-top: 30px;
-  width: 95px;
-  right: 135px;
-  text-align: right;
-  }
-
-#sidebar-first ul.menu {
-  text-align: right;
-  }
-
-#sidebar-second {
-  width: 100px;
-  padding-right:35px;
-  padding-left: 5px;
-  margin-right: -160px;
-  }
-
-#content-area .hg-container, body.sidebar-first #content-area .hg-container,  body.sidebar-second #content-area .hg-container {
-    padding-left: 115px !important;
-    padding-right: 160px !important;
-    }
 
 #footer {
     text-align: center;
     font-size: .9em;
     }
 
-
-
-
 /* HEADER ELEMENTS */
 
-
 #header {
-  margin: 113px 198px 0 175px;
   padding-bottom: 15px;
-  overflow:hidden;
   }
 
-#navbar {
-  width: auto;
-  margin: 10px;
+#navbar .wrap {
+  border: 1px solid #ccc;
+  border-left: none;
+  border-right: none;
+  padding: 10px;
   }
 
-#header-left {
-  width: 129px;
-  padding: 0;
-  right: 149px;
+#navbar li {
+  margin-right: 15px;
   }
 
-#header-right {
-  width: 144px;
-  padding:0;
-  margin-right:-164px;
+#header h1 {
+  font-size: 30px
+  font-weight: bold;
   }
 
-#header .hg-container {
-  padding-left: 129px;
-  padding-right: 164px;
+#header h2,
+#header p {
+  font-size: 16px;
+  line-height: 18px;
   }
 
-#header h1, #header h2, #header p {
-    font-size: 16px;
-    line-height: 18px;
-    }
-
-#header h1 a, #header h1 a:visited {
+#header h1 a,
+#header h1 a:visited {
     color:#282828;
     }
 
@@ -148,34 +95,3 @@ h2.title {
     color:#282828;
     text-decoration: none;
     }
-
-#navbar {
-  }
-
-#navbar #block-vsite_menus-0 li {
-    float:left;
-    margin-right: 1.3em;
-    }
-
-#logo img {
-  height: 100px;
-  }
-
-#scholar-shield img {
-  height: 52px;
-  }
-
-/* MAIN CONTENT AREA */
-
-#content {
-    padding: 0 50px;
-    }
-
-
-/* Nodes */
-
-.submitted {
-  color: #a1b1b1;
-  border-bottom: 1px solid #a1b1b1;
-  display:block;
-  }
