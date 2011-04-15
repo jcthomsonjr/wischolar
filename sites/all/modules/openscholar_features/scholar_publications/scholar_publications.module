@@ -102,6 +102,10 @@ function scholar_publications_menu_alter(&$items){
     $items["{$s_bib_base}/filter"]['type'] = MENU_CALLBACK;
   }//Remove the filter local task
 
+  // run exports through our function so we can change filename
+  $items[$s_bib_base.'/export']['page callback'] = 'scholar_publications_export';
+  $items[$s_bib_base.'/export']['file'] = 'scholar_publications.module';
+  $items[$s_bib_base.'/export']['file path'] = drupal_get_path('module', 'scholar_publications');
 }
 
 /**
@@ -291,7 +295,7 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
     case 'presave':
 
       $vsite = vsite_get_vsite();
-      $gid = $vsite -> sid;
+      $gid = $vsite -> group -> nid;
       $node -> og_groups = array($gid);
     break;
     case 'update':
@@ -874,34 +878,34 @@ function scholar_publications_export($format = "tagged", $nid = null, $popup = f
 	}
 
 	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
-  	ob_start();
-  	$output = biblio_export($format, $nid, $popup, $version);
-  	if (empty($output)) {
-  		// the export didn't return anything, which means it output directly to the browser
-  		$output = ob_get_clean();
-  		// get site owner's name
-  		$owner_name = $vsite->group->name;
-  		switch ($format) {
-  			case 'tagged':
-          		drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-'.$title.'-tagged.enw"');
-  			break;
-  			case 'xml':
-  			case 'endnote8':
-  				 drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-'.$title.'.xml"');
-  			break;
-  			case 'bibtex':
-  				 drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-'.$title.'-Bibtex.bib"');
-  			break;
-  			case 'csv':
-  				drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-'.$title.'-export.csv"');
-  			break;
-  		}
-  		echo $output;
-  	}
-  	else {
-  		ob_end_clean();
-  		return $output;
-  	}
+	ob_start();
+	$output = biblio_export($format, $nid, $popup, $version);
+	if (empty($output)) {
+		// the export didn't return anything, which means it output directly to the browser
+		$output = ob_get_clean();
+		// get site owner's name
+		$owner_name = $vsite->group->name;
+		switch ($format) {
+			case 'tagged':
+        drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-'.$title.'-tagged.enw"');
+			break;
+			case 'xml':
+			case 'endnote8':
+				drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-'.$title.'.xml"');
+			break;
+			case 'bibtex':
+				drupal_set_header('Content-Disposition:  filename="'.$owner_name.'-'.$title.'-Bibtex.bib"');
+			break;
+			case 'csv':
+        drupal_set_header('Content-Disposition: attachment; filename="'.$owner_name.'-'.$title.'-export.csv"');
+			break;
+		}
+    echo $output;
+	}
+  else {
+    ob_end_clean();
+    return $output;
+	}
 }
 /**
  * hook views_pre_view
