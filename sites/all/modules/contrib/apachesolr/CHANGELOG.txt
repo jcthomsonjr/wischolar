@@ -1,12 +1,38 @@
-// $Id: CHANGELOG.txt,v 1.1.2.99.2.110 2010/04/08 18:47:13 robertDouglass Exp $
+// $Id: CHANGELOG.txt,v 1.1.2.99.2.132 2010/09/04 12:07:15 robertDouglass Exp $
 
 Apache Solr integration x.x-x.x, xxxx-xx-xx
 ------------------------------
 
 Apache Solr integration 6.x-2.x, xxxx-xx-xx
 ------------------------------
+#840358 by pwolanin | torstenzenk: Fixed Error searching Taxonomies.
+#828412 by eosrei | jpmckinney: Fixed apachesolr_get_facet_definition() searches incorrect field for definition.
+#864146 by pwolanin | jpmckinney: Fixed When moving fq to q.alt, we should parenthesize each fq.
+NEW MODULE: ApacheSolr Text; takes care of text fields from CCK with content permissions.
+#704190 by pwolanin: Added Add page callbacks to display conf files in the index in reports.
+#878996 by pwolanin | weri: Added Don't break the loop .
+#373824 by pwolanin | David Stosik: Fixed Attachment count is not displayed in search results.
+#896324 by ahankinson | jpmckinney: Fixed module_invoke() called too late.
+#901720 by robertDouglass: Fixed Highlighting snippets in search results not flexible enough, and logic improvement.
+#899590 by robertDouglass: Changed CCK facet definitions needs to expand its role and have a 'facets' param.
+#899560 by robertDouglass: Fixed apachesolr_do_query() has to take $params by reference.
+#751004 by pwolanin, jpmckinney, rjbrown99, robertDouglass | EugenMayer, camidoo: Fixed Respect NODE_BUILD_SEARCH_INDEX exclusion setting.
+#885950 by pwolanin, csevb10 preserve added/removed filters when filterstring is re-parsed.
+#880488 by pwolanin: security hardening: don't use unserialize on untrusted data.
+#867448 by B-Prod | jpmckinney: Fixed Apache taxonomy search does not include the search.pages.inc file.
+#864160 by pwolanin: Allow the caller a last chance to modify the query and params.
+#847040 by Agileware: Allow other modules to use facet only searching.
+#536990 by pwolanin | jpmckinney, janusman: always index content as an anonymous user.
+#592522 by pwolanin, quaoar: use multi-table sytax for MySQL to avoid killer sub-selects.
+#835850 by pwolanin: add more replicated files to solrconfig.xml master section.
+#830976 by eosrei, pwolanin: make sure we return a non-zero ping time on success.
+#824154 by pwolanin: update schema.xml to add preserveOriginal="1" to WordDelimiterFilterFactory.
+#804590 by ygerasimov: Bug in building query from subqueries in Solr_Base_Query
+#818608 by nofun: fix 5.3 warning on get_object_vars() 
+#382878 by smoothify: Store the real teaser in the index
 
-Apache Solr integration 6.x-2.0-BETA1, 2010-04-08
+
+Apache Solr integration 6.x-2.0-BETA2, 2010-04-08
 ------------------------------
 #660754 by jhedstrom: Added Allow key sorting of facets.
 #614644 by netsensei | robertDouglass: Fixed Forms attached to Apachesolr search results won't work.

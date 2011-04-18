@@ -1,5 +1,5 @@
 <?php
-// $Id: apachesolr_search.install,v 1.1.2.5.2.2 2009/12/01 14:05:21 robertDouglass Exp $
+// $Id: apachesolr_search.install,v 1.1.2.5.2.4 2010/05/03 18:50:27 jpmckinney Exp $
 
 /**
  * @file
@@ -14,6 +14,8 @@ function apachesolr_search_uninstall() {
   $stored = variable_get('apachesolr_index_last', array());
   unset($stored['apachesolr_search']);
   variable_set('apachesolr_index_last', $stored);
+  // Remove blocks.
+  db_query('DELETE FROM {blocks} WHERE module = "apachesolr_search"');
 }
 
 /**
@@ -38,12 +40,12 @@ function apachesolr_search_update_6000() {
 function apachesolr_search_update_6001() {
   $ret = array();
   if ($fields = apachesolr_cck_fields()) {
-     foreach ($fields as $name => $field) {
-       $index_key = substr(apachesolr_index_key($field), 0, 32);
-       $new_delta = $field['field_name'];
-       $ret[] = update_sql("UPDATE {blocks} SET delta = '". $new_delta ."' WHERE module = 'apachesolr_search' AND delta = '". $index_key ."'");
-       $ret[] = update_sql("UPDATE {blocks_roles} SET delta = '". $new_delta ."' WHERE module = 'apachesolr_search' AND delta = '". $index_key ."'");
-     }
+    foreach ($fields as $name => $field) {
+      $index_key = substr(apachesolr_index_key($field), 0, 32);
+      $new_delta = $field['field_name'];
+      $ret[] = update_sql("UPDATE {blocks} SET delta = '". $new_delta ."' WHERE module = 'apachesolr_search' AND delta = '". $index_key ."'");
+      $ret[] = update_sql("UPDATE {blocks_roles} SET delta = '". $new_delta ."' WHERE module = 'apachesolr_search' AND delta = '". $index_key ."'");
+    }
   }
   return $ret;
 }

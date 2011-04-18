@@ -1,4 +1,4 @@
-/* $Id: README.txt,v 1.1.2.1.2.24.2.7 2009/12/22 11:54:12 robertDouglass Exp $ */
+/* $Id: README.txt,v 1.1.2.1.2.24.2.10 2010/07/25 16:31:43 pwolanin Exp $ */
 
 This module integrates Drupal with the Apache Solr search platform. Solr search
 can be used as a replacement for core content search and boasts both extra
@@ -106,7 +106,7 @@ The 'Zend' directory should normally be under the apachesolr
 directory, but may be elsewhere if you set that location to be
 in your PHP include path.
 
-Now, you should  enable the "Apache Solr framework" and "Apache Solr search" 
+Now, you should enable the "Apache Solr framework" and "Apache Solr search" 
 modules. Check that you can connect to Solr at ?q=admin/setting/apachesolr
 Now run cron on your Drupal site until your content is indexed. You
 can monitor the index at ?q=admin/settings/apachesolr/index
@@ -188,6 +188,13 @@ hook_apachesolr_modify_query(&$query, &$params, $caller);
           $query->add_filter("uid", 1);         
         }        
 
+CALLER_finalize_query(&$query, &$params);
+
+  The module calling apachesolr_do_query() may implement a function that is run after
+  hook_apachesolr_modify_query() and allows the caller to make final changes to the
+  query and params before the query is sent to Solr.  The function name is built
+  from the $caller parameter to apachesolr_do_query().
+
 hook_apachesolr_prepare_query(&$query, &$params, $caller);
 
   This is pretty much the same as hook_apachesolr_modify_query() but runs earlier
@@ -210,22 +217,22 @@ hook_apachesolr_cck_fields_alter(&$mappings)
   text fields with option widgets:
 
     $mappings['text'] = array(
-      'optionwidgets_select' => array('callback' => '', 'index_type' => 'string'),
-      'optionwidgets_buttons' => array('callback' => '', 'index_type' => 'string')
+      'optionwidgets_select' => array('indexing_callback' => '', 'index_type' => 'string'),
+      'optionwidgets_buttons' => array('indexing_callback' => '', 'index_type' => 'string')
     );
 
   In your _alter hook implementation you can add additional field types such as:
 
-    $mappings['number_integer']['number'] = array('callback' => '', 'index_type' => 'integer');
+    $mappings['number_integer']['number'] = array('indexing_callback' => '', 'index_type' => 'integer');
 
   You can allso add a mapping for a specific field.  This will take precedence over any
   mapping for a general field type. A field-specific mapping would look like:
 
-    $mappings['per-field']['field_model_name'] = array('callback' => '', 'index_type' => 'string');
+    $mappings['per-field']['field_model_name'] = array('indexing_callback' => '', 'index_type' => 'string');
 
   or
 
-    $mappings['per-field']['field_model_price'] = array('callback' => '', 'index_type' => 'float');
+    $mappings['per-field']['field_model_price'] = array('indexing_callback' => '', 'index_type' => 'float');
 
 hook_apachesolr_types_exclude($namespace)
 
