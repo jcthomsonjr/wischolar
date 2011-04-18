@@ -65,35 +65,48 @@ a:hover {
 /* LAYOUT */
 
 #page {
-  margin-top: 7px;
-  }
-
-.wrap {
   width: 954px;
   background: rgba(0,0,0,.40);
-  margin: 0 auto;
+  margin: 10px auto;
   padding: 21px 23px;
   }
 
-#header .wrap,
+#header,
+#navbar {
+  display:inline-block;
+  }
+
+#header {
+  width:540px;
+  padding-bottom: 9px;
+  }
+
+#navbar {
+  width: 414px;
+  padding: 0 0 0 0;
+  min-height: 71px;
+  }
+
+#content-area {
+  clear:both;
+  padding-top: 9px;
+  }
+
+#content-area,
 #footer .wrap {
-  padding-bottom:90px;
-  background: url(images/header-footer.png) no-repeat 540px 100% transparent;
+  background: url(images/header-footer.png) no-repeat 100% 0 transparent;
   }
 
 #footer .wrap {
-  background-position: 100% 0;
+  padding-top:16px;
   }
 
-.one-sidebar #header {
-  background-position: 748px 100%;
-  }
-
-.one-sidebar #footer {
+.one-sidebar #content-area,
+.one-sidebar #footer .wrap {
   background-position: 748px 0;
   }
 
-.no-sidebars #header,
+.no-sidebars #content-area,
 .no-sidebars #footer {
   background: transparent;
   }
@@ -132,7 +145,6 @@ a:hover {
   }
 
 #logo img {
-  height: 55px;
   border: 1px solid #5e5c58;
   }
 
@@ -164,10 +176,6 @@ a:hover {
 #header .hg-container {
   padding-left: 68px;
   padding-right: 88px;
-  }
-
-#scholar-shield {
-  width: 55px;
   }
 
 .navbar-on #header .hg-container {
@@ -213,7 +221,8 @@ a:hover {
 
 
 #footer {
-  padding-top: 30px;
+  padding-top: 0;
+  margin-top:-4px;
   height: auto;
   }
 

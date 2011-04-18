@@ -232,7 +232,7 @@ function scholarregister_notify_user($vsite, $user){
     '!site_name' => variable_get('site_name', 'OpenScholar')
   ));
 
-  $scholar_site_url =  $site_url = url("node/" . $vsite -> sid, $options = array('absolute' => TRUE));
+  $scholar_site_url =  $site_url = url("node/" . $vsite -> group -> nid, $options = array('absolute' => TRUE));
   $timestamp = time();
 
   $msg_variables = array(

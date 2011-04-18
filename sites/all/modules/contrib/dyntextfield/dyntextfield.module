@@ -26,22 +26,23 @@ function dyntextfield_menu() {
       'type'              => MENU_CALLBACK,
     )
   );
-  
+
   return $items;
 }
 
 function dyntextfield_lookup_keys($s_table_name, $s_prefix){
-  
+
+
   $matches = array();
-  $result = db_query("SELECT DISTINCT %s_label as label FROM {content_%s} WHERE %s_label LIKE '%s' ORDER BY %s_label DESC LIMIT 20 ", $s_table_name,$s_table_name,$s_table_name,$s_prefix."%",$s_table_name);
-  
+  $result = db_query("SELECT DISTINCT %s_label as label FROM {content_".$s_table_name."} WHERE %s_label LIKE '%s' ORDER BY %s_label DESC LIMIT 20 ", $s_table_name,$s_table_name,$s_table_name,$s_prefix."%",$s_table_name);
+
   while ($item = db_fetch_object($result)) {
     $matches[$item->label] = str_replace($s_prefix,"<b>$s_prefix</b>",$item->label);
   }
-  
+
   print drupal_to_js($matches);
   exit();
-  
+
 }
 
 //==========================================//
@@ -84,13 +85,13 @@ function dyntextfield_field_settings($op, $field) {
         '#title' => t('Maximum length'),
         '#default_value' => is_numeric($field['max_length']) ? $field['max_length'] : 255,
         '#required' => FALSE,
-       
+
         // Use #element_validate to validate the settings.
         '#element_validate' => array('_dyntextfield_length_validate'),
         '#description' => t('The maximum length of the field in characters. Must be a number between 1 and 255'),
       );
       return $form;
-     
+
     // Return an array of the names of the field settings
     // defined by this module. These are the items that
     // CCK will store in the field definition
@@ -194,7 +195,7 @@ function dyntextfield_field($op, &$node, $field, &$items, $teaser, $page) {
      case 'update':
        // If there was an AHAH add more button in this field, don't save it.
        unset($items[$field['field_name'] .'_add_more']);
-       
+
        //Prepare for DB Save (move from fieldset)
       foreach ($items as $delta => $item) {
         if(!array_key_exists('dyntext_fieldset',$item)){
@@ -206,7 +207,7 @@ function dyntextfield_field($op, &$node, $field, &$items, $teaser, $page) {
         }
       }
      break;
-      
+
   }
 }
 
@@ -354,19 +355,19 @@ function theme_dyntextfield_formatter_plain($element) {
 }
 
 /**
- * 
+ *
  */
 function theme_dyntextfield_form_table(&$form) {
-  
+
   $content = '<table><tr>';
   foreach ($form as $key => $value) {
     if(substr($key,0,1) == '#') continue;
     $content .= '<td>'.drupal_render($form[$key]).'</td>';
   }
   $content .= '</tr></table>';
-  
+
   return $content;
-  
+
 }
 
 //==========================================//
@@ -489,12 +490,12 @@ function dyntextfield_widget_settings($op, $widget) {
 */
 function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
   $element = array();
-  
+
   $element['dyntext_fieldset'] = array (
     '#type' => 'fieldset',
     '#theme' => 'dyntextfield_form_table'
   );
-  
+
   $element['dyntext_fieldset']['label'] = array(
     '#title' => t('Field Name'),
     '#type' => 'textfield',
@@ -504,7 +505,7 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
     '#attributes' => array('class' => 'dyntextfield'),
     '#maxlength' => !empty($field['max_length']) ? $field['max_length'] : NULL,
   );
-  
+
   $element['dyntext_fieldset']['value'] = array(
     '#title' => t('Field Value'),
     '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
@@ -512,7 +513,7 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
     '#attributes' => array('class' => 'dyntextfield'),
     '#maxlength' => !empty($field['max_length']) ? $field['max_length'] : NULL,
   );
-  
+
   switch($field['widget']['type']){
     case 'dyntextfield_textareawidget':
       $element['dyntext_fieldset']['value']['#type'] = 'textarea';
@@ -521,8 +522,8 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
     default:
       $element['dyntext_fieldset']['value']['#type'] = 'textfield';
   }
-  
- 
+
+
   // Used so that hook_field('validate') knows where to
   // flag an error in deeply nested forms.
   if (empty($form['#parents'])) {
@@ -532,7 +533,7 @@ function dyntextfield_widget(&$form, &$form_state, $field, $items, $delta = 0) {
     '#type' => 'value',
     '#value' => implode('][', array_merge($form['#parents'], array('value'))),
   );
- 
+
   return $element;
 }
 
@@ -540,7 +541,7 @@ function dyntextfield_form_alter(&$form, $form_state, $form_id) {
 
   // this next bit is to remove all the dyntextfield form elements when
   // pub type is not selected on a biblio form
-  if ($form_id == "biblio_node_form") { 
+  if ($form_id == "biblio_node_form") {
     if (!isset($form_state['values']['biblio_type']) &&
         empty($form_state['post']['biblio_type']) &&
         empty($form_state['submitted']) &&
@@ -554,21 +555,21 @@ function dyntextfield_form_alter(&$form, $form_state, $form_id) {
       }
     }
   }
-  
+
   return $form;
 }
 
 /**
  * Provide an interface for exporting our fields to bibtex
- * 
+ *
  * @param $pub object publication
- * @param $bibtex string 
+ * @param $bibtex string
  */
 function dyntextfield_biblio_bibtex_export_post($pub, &$bibtex){
 
   $node = node_load($pub->nid);
-  $result = db_query("SELECT field_name  FROM `content_node_field_instance` WHERE `type_name` = '%s' AND `widget_type` = 'dyntextfield_widget' ",$pub->type);
-  
+  $result = db_query("SELECT field_name  FROM {content_node_field_instance} WHERE `type_name` = '%s' AND `widget_type` = 'dyntextfield_widget' ",$pub->type);
+
   $i = 0;
   while($a_field = db_fetch_array($result)){
   	$s_field_name = $a_field['field_name'];
@@ -582,15 +583,15 @@ function dyntextfield_biblio_bibtex_export_post($pub, &$bibtex){
 
 /**
  * Provide an interface for impoting our fields to the biblio type
- * 
+ *
  * @param $entry array settings
- * @param $node array 
+ * @param $node array
  */
 function dyntextfield_biblio_bibtex_import($entry, &$node){
 
-  $result = db_query("SELECT field_name  FROM `content_node_field_instance` WHERE `type_name` = 'biblio' AND `widget_type` = 'dyntextfield_widget' ");
+  $result = db_query("SELECT field_name  FROM {content_node_field_instance} WHERE `type_name` = 'biblio' AND `widget_type` = 'dyntextfield_widget' ");
   $a_field = db_fetch_array($result);
-  
+
   $i = 0;
   if($a_field){
   	$s_field_name = $a_field['field_name'];

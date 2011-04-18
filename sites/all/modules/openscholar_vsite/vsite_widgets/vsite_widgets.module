@@ -86,7 +86,7 @@ function vsite_widgets_shield(){
 		return $output;
 	}//Disabled?
 
-	$s_filename = variable_get('vsite_design_shield', drupal_get_path('module','vsite_design')."/theme/shield/shields/harvard_shield.png");
+	$s_filename = variable_get('vsite_shields_shield', drupal_get_path('module','vsite_shields')."/theme/shields/harvard_shield.png");
 	$output = '<div id="scholar-shield"><img src="'.url($s_filename, array('alias' => TRUE)).'" /> </div>';
 
 	$block['subject'] = t('');

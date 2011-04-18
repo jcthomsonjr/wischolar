@@ -17,7 +17,7 @@
 }
 
 body {
-  background-color: #373c3e;
+  background: url('images/body-bg.png') repeat-x #373c3e;
   font:14px/17px 'MyriadProRegular', sans-serif;
   color: #050505;
   }
@@ -47,10 +47,6 @@ body {
   font-size: 20px;
   }
 
-#logo img {
-  max-width: 180px
-  }
-
 #sidebar-first h3,
 #sidebar-second h3,
 #sidebar-second div.litecal .litecal-title h3.litecal-title,
@@ -67,11 +63,6 @@ body {
   margin-bottom: 1em;
   }
 
-.block-vsite_menus li a,
-.block-vsite_menus li a:visited {
-  color: #ec8501;
-  font-weight: bold;
-  }
 
 #header-main .block-vsite_menus li a:hover {
   color: #fff;
@@ -80,13 +71,17 @@ body {
 /* LAYOUT */
 
 #page {
-  background: url('images/body-bg.png') repeat-x #373c3e;
   padding-top: 15px;
-  }
-
-.wrap {
   width: 970px;
   margin: 0 auto;
+  }
+
+#content-area {
+  clear:both;
+  }
+
+#content-area .wrap {
+  background: #fff;
   }
 
 #header {
@@ -95,18 +90,16 @@ body {
 
 #navbar {
   clear: none;
-  float:left;
-  margin-top: 6px;
+  float:right;
+  margin-top: -30px;
+  width: 768px;
+  padding:0;
   }
 
 #scholar-shield {
   margin: 10px 0 0 auto;
   }
 
-body.header-left-main #navbar,
-body.header-left-main-right #navbar {
-  margin-left: 200px;
-  }
 
 #sidebar-first,
 #sidebar-second {
@@ -160,13 +153,19 @@ body.no-sidebars #content-main {
 
 /* HTML ITEMS */
 
-#block-vsite_menus-0 li {
+#navbar li {
   display: inline;
   margin-right: 16px;
   }
 
-#block-vsite_menus-0 li.last {
+#navbar li.last {
   margin-right: 0;
+  }
+
+#navbar li a,
+#navbar li a:visited {
+  color:#ec8501;
+  font-size: 16px;
   }
 
 #footer {
