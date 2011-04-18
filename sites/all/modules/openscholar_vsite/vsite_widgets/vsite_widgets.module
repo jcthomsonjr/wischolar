@@ -86,13 +86,14 @@ function vsite_widgets_shield(){
 		return $output;
 	}//Disabled?
 
-	$s_filename = variable_get('vsite_shields_shield', drupal_get_path('module','vsite_shields')."/theme/shields/harvard_shield.png");
-	$output = '<div id="scholar-shield"><img src="'.url($s_filename, array('alias' => TRUE)).'" /> </div>';
+	$s_filename = variable_get('vsite_shields_shield', '');
+	if ($s_filename) {
+	  $block['subject'] = t('');
+	  $block['content'] = '<div id="scholar-shield"><img src="'.url($s_filename, array('alias' => TRUE)).'" /> </div>';
 
-	$block['subject'] = t('');
-	$block['content'] = $output;
-
-	return $block;
+	  return $block;
+	}
+	return $output;
 }
 
 /**
