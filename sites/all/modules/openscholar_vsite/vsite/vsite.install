@@ -140,4 +140,31 @@ function vsite_update_6006(&$sandbox) {
   return $res;
 }
 
+/**
+ * Switch from lightbox to shadowbox
+ */
+function vsite_update_6007(&$sandbox){
 
+        $res = array();
+  module_rebuild_cache();
+
+  if(module_exists('lightbox2')){
+    module_disable(array('lightbox2'));
+  }
+
+  // Enable shadowbox module if need
+  if(!module_exists('shadowbox')){
+
+    include_once('includes/install.inc');
+
+    drupal_install_modules(array('shadowbox'));
+    $res[] = array(
+      'success' => true,
+      'query' => 'Installed shadowbox module and enabled it',
+    );
+
+  }
+
+  return $res;
+
+}
