@@ -118,9 +118,26 @@ function cp_context_node_condition_alter(&$node,$op){
 			if (context_isset('context', 'vsite-section-cp')) {
 		    global $custom_theme;
 		    $custom_theme = CPTHEME;
+		    
+				if (cp_get_toolbar_setting() == 'full') {
+		      drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
+		    }//Also add the css if we missed that
 		  }
 		break;
 	}
+}
+
+/**
+ * Implementation of hook_context_links_alter().
+ *
+ * Remove node links automatically added by the cp context
+ */
+function cp_context_links_alter(&$links){
+  $cp_context = context_get('context', 'vsite-section-cp');
+  if ($cp_context && !empty($cp_context->conditions['node']['values'])) {
+    //We do not need a context link for every content type editable in the CP
+    $links = array_diff_key($links, array_flip($cp_context->conditions['node']['values']));
+  }
 }
 
 /**
