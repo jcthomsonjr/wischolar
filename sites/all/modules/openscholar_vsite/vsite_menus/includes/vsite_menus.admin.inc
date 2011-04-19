@@ -148,7 +148,6 @@ function vsite_menus_settings_form($form_state){
  */
 function vsite_menus_settings_form_after_build($form, &$form_state) {
   //CSS To be included with the form
-  drupal_add_js('misc/tableheader.js');
   drupal_add_js(drupal_get_path('module', 'nodeformcols') . '/js/nodeformcols.js');
   drupal_add_css(drupal_get_path('module', 'vsite_menus') . '/theme/vsite_menus.css');
 

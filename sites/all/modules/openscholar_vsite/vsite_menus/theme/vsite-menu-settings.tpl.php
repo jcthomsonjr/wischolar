@@ -9,13 +9,6 @@ $regions = _vsite_menus_get_menus();  // this line is why I needed to copy it
 
 ?>
 <table id="fields" class="sticky-enabled">
-  <thead>
-    <tr>
-      <th><?php print t('Link'); ?></th>
-      <th><?php print t('Menu'); ?></th>
-      <th><?php print t('Weight'); ?></th>
-    </tr>
-  </thead>
   <tbody>
     <?php $row = 0; ?>
     <?php foreach ($regions as $region => $title): ?>
@@ -24,7 +17,7 @@ $regions = _vsite_menus_get_menus();  // this line is why I needed to copy it
       </tr>
       <?php if (empty($element[$region])): ?>
       <tr class="region-message region-<?php print $region?>-message <?php print empty($element[$region]) ? 'region-empty' : 'region-populated'; ?>">
-        <td colspan="4"><em><?php print t('No fields in this region'); ?></em></td>
+        <td colspan="4"><em><?php print t('No links in this menu'); ?></em></td>
       </tr>
       <?php endif; ?>
       <?php if (!empty($element[$region])): ?>
