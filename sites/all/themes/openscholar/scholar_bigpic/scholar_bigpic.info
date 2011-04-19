@@ -8,7 +8,7 @@ core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-bigpic.css
 conditional-stylesheets[if lte IE 7][all][] = scholar-bigpic-ie7.css
-conditional-stylesheets[if IE 8][all][] = scholar-bigpic-ie8.css
+conditional-stylesheets[if lt IE 9][all][] = scholar-bigpic-ie.css
 
 scholar[theme_type]   = "scholar"
 scholar[theme_access] = "public"
