@@ -1,25 +1,46 @@
 body {
-  background-image: url(images/fabric-strip-modern-white.png);
+  background-image: url('images/fabric-strip-modern-white.png');
+  background-color: #f3f3f3;
+  }
+
+#header .wrap {
   background-color: #414141;
   }
 
-#wrapper {
-  background-image: url(images/menu-strip-modern-white.png);
+#navbar {
+  height: 41px;
+  background: url('images/navbar-cutout-modern-white.png') no-repeat 0 0 transparent;
+  padding:0;
   }
 
-#container {
-  background-image: url(images/header-modern-white.png);
+#navbar .wrap {
+  background: url('images/menu-strip-modern-white.png') repeat-x 0 0 transparent;
+  padding:0;
+  margin-left: 193px;
+  height:41px;
   }
 
 a, a:visited {
   color: #57737F;
   }
 
-#navbar li a, #navbar li a:visited {
-  color: #fff;
+#navbar li {
+  margin-top: 0;
+  height: 41px;
+  line-height: 41px;
   }
 
-#navbar li a:hover, #navbar li a.active, #navbar .active-trail a {
+#navbar li a,
+#navbar li a:visited {
+  color: #fff;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: #464441;
+  }
+
+#navbar li a:hover,
+#navbar li a.active,
+#navbar .active-trail a {
   background: #e5e5e5;
   color: #464441;
   }
