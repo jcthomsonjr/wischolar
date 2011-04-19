@@ -118,6 +118,10 @@ function cp_context_node_condition_alter(&$node,$op){
 			if (context_isset('context', 'vsite-section-cp')) {
 		    global $custom_theme;
 		    $custom_theme = CPTHEME;
+		    
+				if (cp_get_toolbar_setting() == 'full') {
+		      drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
+		    }//Also add the css if we missed that
 		  }
 		break;
 	}
