@@ -27,6 +27,16 @@ function vsite_menus_menu() {
     'file' => 'vsite_menus.admin.inc',
   );
 
+  $items['cp/settings/menus/add'] = array(
+    'title' => "New Menu Link",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_menus_new_link_form'),
+    'type' => MENU_CALLBACK,
+    'access callback' => 'user_access',
+    'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
+    'file' => 'vsite_menus.admin.inc',
+  );
+
   return $items;
 }
 
@@ -40,6 +50,12 @@ function vsite_menus_theme() {
       'template' => 'vsite-menu-settings',
       'arguments' => array('element' => array()),
     ),
+  );
+}
+
+function vsite_menus_confirm_popup_paths() {
+  return array(
+    'cp/settings/menus/add',
   );
 }
 
@@ -359,12 +375,12 @@ function vsite_menus_get_menu_tree($s_menu){
     //Apply tmp mlid and menu_router information to links
     foreach ($menu_links as $key => $ml){
     	$ml['options'] = (isset($ml['options']))?serialize($ml['options']):serialize(array());
-      
+
     	if (menu_path_is_external($ml['link_path']) || !is_array($router_info = menu_get_item($ml['router_path']))) {
         // Custom/External Links will not have an entry in the router table
     		$router_info = array();
       }
-      
+
       $menu_links[$key] = array('link' => array_merge($router_info,$ml,array('mlid' => $n_tmp_mlid++)), 'below' => false);
     }
 

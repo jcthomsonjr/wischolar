@@ -105,12 +105,33 @@ function vsite_menus_settings_form($form_state){
   }
   $form['new_menu_link'] = array(
     '#type' => 'markup',
-    '#value' => '<a href="#" class="vsite-menus-new-menu">Add New Link</a>',
+    '#value' => l("Add New Link", "cp/settings/menus/add", array('attributes' => array('class' => 'vsite-menus-new-menu'))),
   );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save settings'),
+  );
+
+  $form['reset'] = array(
+    '#type' => 'submit',
+    '#value' => t('Reset to defaults'),
+    '#submit' => array('vsite_menus_settings_form_reset'),
+  );
+
+  $form['#after_build'][] = 'vsite_menus_settings_form_after_build';
+
+  return $form;
+
+}
+
+function vsite_menus_new_link_form(&$form_state) {
+  $form = array();
+
+  $a_site_menus = _vsite_menus_get_menus();
 
   $form['new_menu'] = array(
     '#type' => 'fieldset',
-    '#title' => 'New Menu Entry',
     'new_menu_title' => array(
       '#type' => 'textfield',
       '#title' => t('Menu Title'),
@@ -129,22 +150,15 @@ function vsite_menus_settings_form($form_state){
     ),
   );
 
-  $form['submit'] = array(
+  $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save settings'),
   );
 
-  $form['reset'] = array(
-    '#type' => 'submit',
-    '#value' => t('Reset to defaults'),
-    '#submit' => array('vsite_menus_settings_form_reset'),
-  );
-
-  $form['#after_build'][] = 'vsite_menus_settings_form_after_build';
-  $form['#validate'][] = 'vsite_menus_setting_form_validate';
+  $form['#validate'][] = 'vsite_menus_settings_form_validate';
+  $form['#submit'][] = 'vsite_menus_settings_form_submit';
 
   return $form;
-
 }
 
 /**
@@ -154,7 +168,8 @@ function vsite_menus_settings_form_after_build($form, &$form_state) {
   //CSS To be included with the form
   drupal_add_js(drupal_get_path('module', 'nodeformcols') . '/js/nodeformcols.js');
   drupal_add_css(drupal_get_path('module', 'vsite_menus') . '/theme/vsite_menus.css');
-  drupal_add_js('
+ /* not using it, but save it for later
+  * drupal_add_js('
   	Drupal.behaviors.VsiteMenus = function() {
   		$("#vsite-menus-settings-form fieldset").hide();
   		$("a.vsite-menus-new-menu").click(function() {
@@ -178,7 +193,7 @@ function vsite_menus_settings_form_after_build($form, &$form_state) {
   			Drupal.attachBehaviors();
   			return false;
   		});
-  	}', 'inline');
+  	}', 'inline');*/
 
   $regions = _vsite_menus_get_menus();    // this line is why I needed to copy it
   foreach ($regions as $region => $title) {
@@ -203,7 +218,7 @@ function vsite_menus_settings_form_reset($form, &$form_state) {
 //  }
 }
 
-function vsite_menus_setting_form_validate(&$form, &$form_state) {
+function vsite_menus_settings_form_validate(&$form, &$form_state) {
   if ($form_state['values']['new_menu_title'] XOR $form_state['values']['new_menu_url']) {
     // if one or the other is set
     form_set_error($form_state['values']['new_menu_title']?'new_menu_url':'new_menu_title', t('Missing URL or Title for new link!'));
