@@ -165,7 +165,7 @@ function _scholar_reader_twitter_wgt(){
 	if(!($vsite = vsite_get_vsite()) || !$vsite->access_feature($op = 'view', 'scholar_reader')) return array();
 
 	//Do they have their feed set?
-	$s_twitter = variable_get('scholar_reader_twitter_username');
+	$s_twitter = variable_get('scholar_reader_twitter_username', NULL);
 	if(!strlen($s_twitter)) return array();
 
 	//Fix this? Probably a better way of getting the twitter id..
