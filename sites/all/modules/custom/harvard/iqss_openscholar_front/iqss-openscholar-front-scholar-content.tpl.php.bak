@@ -140,7 +140,7 @@
 </div><!--/panel wrapper -->
 </div>
 <?php
-  jcarousel_add($selector = '#features-carousel', $options = array(),$skin = 'os_front',$skin_path = $directory . '/carousel.css');
+  //jcarousel_add($selector = '#features-carousel', $options = array(),$skin = 'os_front',$skin_path = $directory . '/carousel.css');
  ?>
 
 <script type="text/javascript">
