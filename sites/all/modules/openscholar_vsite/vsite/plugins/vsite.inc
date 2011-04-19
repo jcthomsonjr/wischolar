@@ -33,8 +33,7 @@ class vsite extends space_og {
   function activate(){
     if (!$this->verify_purl()) {
       $this->purge_request_destination();
-      
-      // Lookup PURL provider
+
       if($this->purl_provider){
         purl_goto($_GET['q'], array('query' => drupal_query_string_encode($_GET, array('q')), 'purl' => array('provider' => $this->purl_provider, 'id' => $this->id)));
       }//Just like the check in spaces_purl_provider but with dynamic provider
