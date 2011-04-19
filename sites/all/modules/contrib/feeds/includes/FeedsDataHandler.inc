@@ -1,11 +1,6 @@
 <?php
 // $Id: FeedsDataHandler.inc,v 1.5 2010/03/29 02:55:50 alexb Exp $
 
-//Include the class if has not been
-if(!class_exists('DataHandler')){
-	data_include('DataHandler');
-}
-
 /**
  * @file
  * Data handler used in FeedsDataProcessor.
