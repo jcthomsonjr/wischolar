@@ -271,7 +271,9 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
  */
 function scholar_publications_move_extras($form, &$form_state){
   //The JS Call Expects the field to be in the orig position so we can't move them for the "Add More" callbacks
-  if(strpos($_GET['q'],"content/js_add_more") === 0) return $form;
+  if(strpos($_GET['q'],"content/js_add_more") === 0 || strpos($_GET['q'],"filefield/ahah/biblio/field_biblio_image") === 0 ) { 
+    return $form;
+  }
 
   $a_publication_extras = array('attachments','biblio_notes','biblio_abst_e_field','biblio_abst_e','body_field','biblio_url', 'field_biblio_image','field_biblio_extra');
 

@@ -105,7 +105,7 @@ function vsite_menus_settings_form($form_state){
   }
   $form['new_menu_link'] = array(
     '#type' => 'markup',
-    '#value' => l("Add New Link", "cp/settings/menus/add", array('attributes' => array('class' => 'vsite-menus-new-menu'))),
+    '#value' => l("Add New Link", "cp/settings/menus/add/nojs", array('attributes' => array('class' => 'vsite-menus-new-menu ctools-use-modal'))),
   );
 
   $form['submit'] = array(
@@ -123,6 +123,28 @@ function vsite_menus_settings_form($form_state){
 
   return $form;
 
+}
+
+function vsite_menus_new_link_callback($js) {
+  if ($js) {
+    ctools_include('ajax');
+    ctools_include('modal');
+
+     $form_state = array(
+      'title' => t('New Menu Link'),
+      'ajax' => TRUE,
+     );
+
+     // get the ctools page now
+     $output = ctools_modal_form_wrapper('vsite_menus_new_link_form', $form_state);
+     if (empty($output)) {
+       $output[] = ctools_ajax_command_reload();
+     }
+     ctools_ajax_render($output);
+  }
+  else {
+    return drupal_get_form('vsite_menus_new_link_form');
+  }
 }
 
 function vsite_menus_new_link_form(&$form_state) {
@@ -276,6 +298,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
       // we're deleting the link
       unset($menus[$region][$menu_key]);
     }
+    drupal_set_message(t("Menu Settings Saved."), 'status', false);
   }
 
   if ($form_state['values']['new_menu_title'] && $form_state['values']['new_menu_url']) {
@@ -297,6 +320,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
 
     $new_menu_key = $new_link['menu_name'].':'.$new_link['link_path'];
     $menus[$new_link['menu_name']][$new_menu_key] = $new_link;
+    drupal_set_message(t("New Link Added."), 'status', false);
   }
 
   foreach ($menus as $key => $data) {
