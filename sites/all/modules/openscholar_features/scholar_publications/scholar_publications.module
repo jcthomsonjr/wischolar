@@ -126,6 +126,18 @@ function scholar_publications_spaces_settings() {
  */
 function scholar_publications_form_alter(&$form, $form_state, $form_id){
 
+	$show_form_ids = array('content_field_overview_form', 'content_display_overview_form');
+  //only show the 'field_biblio_image' field for book or book chapter nodes
+  if ($form_id == 'biblio_node_form' && array_key_exists('field_biblio_image',$form) && in_array($form['biblio_type']['#default_value'], array(100,101))){
+    $form['field_biblio_image']['#access'] = TRUE; //only show the 'field_biblio_image' field for book or book chapter nodes
+  }
+  elseif(in_array($form_id, $show_form_ids)){
+    $form['field_biblio_image']['#access'] = TRUE;  // show the book cover image field on the content field/display edit forms
+  }
+  elseif (isset($form['field_biblio_image'])){
+    $form['field_biblio_image']['#access'] = FALSE;
+  }
+
   if ($form_id == 'biblio_import_form') {
     // the original form is asking to set the userID for these entries
     // Just the group admin for now. TODO list of users for this og
@@ -168,6 +180,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 	  }
 	  else{
 	    $form['field_biblio_image']['#access'] = FALSE;
+	    if(isset($form['field_biblio_image'][0])) $form['field_biblio_image'][0]['#access'] = false;
 	  }
 
   	if($form_state['storage']['biblio_type'] || $form['#node']->biblio_type){
@@ -180,6 +193,12 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(is_array($form['biblio_notes_field']) && is_array($form['biblio_notes_field']['biblio_notes'])){
     	$form['biblio_notes'] = $form['biblio_notes_field']['biblio_notes'];
       unset($form['biblio_notes_field']);
+      
+      ctools_include('ajax');
+      ctools_include('modal');
+      ctools_modal_add_js();
+      //Adding to the description in code here since it needs to have a dynamic URL
+      $form['biblio_notes']['#description'] .= ' Your notes are currently set to <strong>'.(variable_get('scholar_publication_note_in_teaser',false)?"public":"private").'</strong>. '.ctools_modal_text_button('Change Note Settings.', 'cp/features/scholar_publications', 'customize publications');
     }
 
   	if(array_key_exists('other_fields',$form)) scholar_publications_hide_form_value($form['other_fields']);
@@ -205,9 +224,18 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(array_key_exists('contributors2_wrapper',$form)){
       $form['contributors2_wrapper'] ['#weight'] = -3.5;
     }
+    
+    if(array_key_exists('biblio_abst_e_field',$form) && array_key_exists('biblio_abst_e',$form['biblio_abst_e_field'])){
+      $form['biblio_abst_e'] = $form['biblio_abst_e_field']['biblio_abst_e'];
+      unset($form['biblio_abst_e_field']);
+    }//remove fieldset
 
     if(is_array($form['taxonomy']) && array_key_exists('copy_to_biblio',$form['taxonomy'])){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
+    }
+    
+    if(array_key_exists('field_biblio_extra',$form) && is_array($form['field_biblio_extra'])){
+      $form['field_biblio_extra']['field_biblio_extra_add_more']['#value'] = 'Add Another Field';
     }
 
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
@@ -215,8 +243,51 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     $form['#vertical_tabs']['body_field'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors1_wrapper'] = 0; //Disable vert. tabs
     $form['#vertical_tabs']['contributors2_wrapper'] = 0; //Disable vert. tabs
+    $form['#vertical_tabs']['attachments'] = 0; //Disable vert. tabs
+    $form['#vertical_tabs']['extra_fields_group'] = 0; //Disable vert. tabs
+
+    if(strlen($form['biblio_type']['#default_value'])){
+      $form['extra_fields_group'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Publication Extras'),
+        '#weight' => 14,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#tree' => false,
+      );
+      if(!isset($form['#after_build'])) $form['#after_build'] = array();
+      $form['#after_build'][] = 'scholar_publications_move_extras';
+
+    }//If the publication type field has been set
 
   }
+}
+
+/**
+ * Move some fields within the "Publication Extras" fieldset to clean up the biblio form
+ *
+ * @param array $form
+ * @param array $form_state
+ */
+function scholar_publications_move_extras($form, &$form_state){
+  //The JS Call Expects the field to be in the orig position so we can't move them for the "Add More" callbacks
+  if(strpos($_GET['q'],"content/js_add_more") === 0) return $form;
+
+  $a_publication_extras = array('attachments','biblio_notes','biblio_abst_e_field','biblio_abst_e','body_field','biblio_url', 'field_biblio_image','field_biblio_extra');
+
+  //Pub url in the main section for some biblio types
+  if($form['#id'] == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(125, 113, 107))) unset($a_publication_extras[array_search('biblio_url',$a_publication_extras)]);
+
+  //Move these form elements into thier own group
+  foreach ($a_publication_extras as $n_count => $extra_field){
+    if(array_key_exists($extra_field,$form)){
+      $form['extra_fields_group'][$extra_field] = $form[$extra_field];
+      $form['extra_fields_group'][$extra_field]['#weight'] = $n_count;
+      unset($form[$extra_field]);
+    }
+  }
+
+  return $form;
 }
 
 function scholar_publications_hide_form_value(&$element){
@@ -526,6 +597,10 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (isset($node->content['teaser']['#prefix'])) {
     $s_output .= $node->content['teaser']['#prefix'];
   }//honor drupal prefix
+  
+  if($style == 'chicago' && in_array($node->biblio_type, array(1000)) && empty($node->biblio_publisher)){
+    $node->biblio_publisher = "Working Paper";
+  }//Note that this is a working paper after the title and before the year
 
   // first add the styled entry...
   $s_output .= theme('biblio_style', $node, $base, $style, $inline);
@@ -725,7 +800,8 @@ function _scholar_publications_sort_type_by_numpubs($a,$b){
  * Return the citation without html
  * @param $node
  */
-function _scholar_publications_get_plain_citation($node){$style = biblio_get_style();
+function _scholar_publications_get_plain_citation($node){
+	$style = biblio_get_style();
   $base  = variable_get('biblio_base', 'biblio');
 
   if($style == 'chicago' && in_array($node->biblio_type, array(1000)) && empty($node->biblio_publisher)){
