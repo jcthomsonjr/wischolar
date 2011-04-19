@@ -16,7 +16,7 @@
  limitations under the License.
 -->
 
-<config>
+<config name="drupal-1.9.6">
 
   <!-- Set this to 'false' if you want solr to continue working after it has 
        encountered an severe configuration error.  In a production environment, 
@@ -52,7 +52,7 @@
     -->
     <ramBufferSizeMB>32</ramBufferSizeMB>
     <maxMergeDocs>2147483647</maxMergeDocs>
-    <maxFieldLength>10000</maxFieldLength>
+    <maxFieldLength>20000</maxFieldLength>
     <writeLockTimeout>1000</writeLockTimeout>
     <commitLockTimeout>10000</commitLockTimeout>
 
@@ -172,8 +172,8 @@
          maxTime - oldest uncommited update (in ms) is this long ago
     -->
     <autoCommit> 
-      <maxDocs>50</maxDocs>
-      <maxTime>15000</maxTime> 
+      <maxDocs>2000</maxDocs>
+      <maxTime>120000</maxTime> 
     </autoCommit>
 
 
@@ -423,7 +423,7 @@
     <lst name="master">
         <str name="replicateAfter">commit</str>
         <str name="replicateAfter">startup</str>
-        <str name="confFiles">schema.xml,stopwords.txt,elevate.xml</str>
+        <str name="confFiles">schema.xml,mapping-ISOLatin1Accent.txt,protwords.txt,stopwords.txt,synonyms.txt,elevate.xml</str>
     </lst>
 </requestHandler>
  MASTER_REPLICATION_END -->
@@ -479,11 +479,11 @@
      <str name="hl.mergeContiguous">true</str>
    <!-- instructs Solr to return the field itself if no query terms are
         found -->
-     <str name="f.body.hl.alternateField">body</str>
+     <str name="f.body.hl.alternateField">teaser</str>
      <str name="f.body.hl.maxAlternateFieldLength">256</str>
      <!-- JS: I wasn't getting good results here... I'm turning off for now
-     because I was getting periods (.) by themselves at the begining of
-     snippets and don't feel like deubgging anymore.  Without the regex is
+     because I was getting periods (.) by themselves at the beginning of
+     snippets and don't feel like debugging anymore.  Without the regex is
      faster too -->
      <!--<str name="f.body.hl.fragmenter">regex</str>--> <!-- defined below -->
 

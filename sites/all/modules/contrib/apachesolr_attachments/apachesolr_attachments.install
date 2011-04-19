@@ -85,28 +85,11 @@ function apachesolr_attachments_schema() {
         'type' => 'text',
         'not null' => TRUE,
         'size' => 'big'),
-      'failed' => array(
-        'description' => 'flag to indicate if the file was unsuccessfully parsed',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'default' => '0',
-      ),
-      'attempts' => array(
-        'description' => 'a count of the number of attempts made to index the file.',
-        'type' => 'int',
-        'default' => '0',
-      ),
-      'last_attempt' => array(
-        'description' => 'timestamp indicating the last attempt to index the file.',
-    'type' => 'int',
-    'not null' => TRUE,
-      ),
-    ),
+     ),
     'indexes' => array(
       'nid' => array('nid'),
       'removed' => array('removed'),
-      'failed' => array('failed'),
-    ),
+      ),
     'primary key' => array('fid'),
     );
 
@@ -145,36 +128,5 @@ function apachesolr_attachments_update_6000() {
 function apachesolr_attachments_update_6001() {
   $ret = array();
   apachesolr_clear_last_index('apachesolr_attachments');
-  return $ret;
-}
-
-/**
- * Add failed, attempts, and last_attempted fields to {apachesolr_attachments_files}.
- */
-function apachesolr_attachments_update_6002() {
-  $ret = array();
-
-  $schema = array(
-    'description' => 'flag to indicate if the file was unsuccessfully parsed',
-    'type' => 'int',
-    'unsigned' => TRUE,
-    'default' => '0',
-  );
-  db_add_field($ret, 'apachesolr_attachments_files', 'failed', $schema);
-
-  $schema = array(
-    'description' => 'a count of the number of attempts made to index the file.',
-    'type' => 'int',
-    'default' => '0',
-  );
-  db_add_field($ret, 'apachesolr_attachments_files', 'attempts', $schema);
-
-  $schema = array(
-    'description' => 'timestamp indicating the last attempt to index the file.',
-    'type' => 'int',
-    'not null' => TRUE,
-  );
-  db_add_field($ret, 'apachesolr_attachments_files', 'last_attempt', $schema);
-  db_add_index($ret, 'apachesolr_attachments_files', 'failed', array('failed'));
   return $ret;
 }

@@ -103,6 +103,10 @@ function vsite_menus_settings_form($form_state){
       ),
     );
   }
+  $form['new_menu_link'] = array(
+    '#type' => 'markup',
+    '#value' => '<a href="#" class="vsite-menus-new-menu">Add New Link</a>',
+  );
 
   $form['new_menu'] = array(
     '#type' => 'fieldset',
@@ -148,9 +152,33 @@ function vsite_menus_settings_form($form_state){
  */
 function vsite_menus_settings_form_after_build($form, &$form_state) {
   //CSS To be included with the form
-  drupal_add_js('misc/tableheader.js');
   drupal_add_js(drupal_get_path('module', 'nodeformcols') . '/js/nodeformcols.js');
   drupal_add_css(drupal_get_path('module', 'vsite_menus') . '/theme/vsite_menus.css');
+  drupal_add_js('
+  	Drupal.behaviors.VsiteMenus = function() {
+  		$("#vsite-menus-settings-form fieldset").hide();
+  		$("a.vsite-menus-new-menu").click(function() {
+  			Drupal.CTools.Modal.show();
+  			$("#modal-title").html($("#vsite-menus-settings-form fieldset legend").html());
+  			$("#modal-content").html($("#vsite-menus-settings-form fieldset").html());
+
+  			$("#modal-content").append($("#edit-submit").clone().attr("id", "edit-submit-modal").attr("value", "Add New Link"));
+  			$("#edit-submit-modal").click(function() {
+  				$("#modal-content .form-text").each(function () {
+  					$("#vsite-menus-settings-form #"+$(this).attr("id")).val($(this).val());
+  				});
+  				$("#vsite-menus-settings-form #edit-new-menu-region").val($("#modal-content #edit-new-menu-region").val());
+  				$("#vsite-menus-settings-form").submit();
+  			});
+
+  			$("#modal-content").append("<input type=\"button\" id=\"edit-cancel\" class=\"form-button\" value=\"Cancel\">");
+  			$("#edit-cancel").click(function() {
+  				Drupal.CTools.Modal.dismiss();
+  			});
+  			Drupal.attachBehaviors();
+  			return false;
+  		});
+  	}', 'inline');
 
   $regions = _vsite_menus_get_menus();    // this line is why I needed to copy it
   foreach ($regions as $region => $title) {

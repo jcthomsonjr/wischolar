@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- $Id: schema.xml,v 1.1.2.1.2.32.2.3 2010/03/29 08:37:45 robertDouglass Exp $ -->
+<!-- $Id: schema.xml,v 1.1.2.1.2.32.2.6 2010/06/11 21:59:52 pwolanin Exp $ -->
 
 <!--
  This is the Solr schema file. This file should be named "schema.xml" and
@@ -11,7 +11,7 @@
  http://wiki.apache.org/solr/SchemaXml
 -->
 
-<schema name="drupal-0.9.5" version="1.2">
+<schema name="drupal-1.9.6" version="1.2">
     <!-- attribute "name" is the name of this schema and is only used for display purposes.
          Applications should change this to reflect the nature of the search collection.
          version="1.2" is Solr's version number for the schema syntax and semantics.  It should
@@ -167,7 +167,14 @@
                 words="stopwords.txt"
                 enablePositionIncrements="true"
                 />
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.WordDelimiterFilterFactory"
+                generateWordParts="1"
+                generateNumberParts="1"
+                catenateWords="1"
+                catenateNumbers="1"
+                catenateAll="0"
+                splitOnCaseChange="1"
+                preserveOriginal="1"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.SnowballPorterFilterFactory" language="English" protected="protwords.txt"/>
         <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
@@ -181,7 +188,14 @@
                 words="stopwords.txt"
                 enablePositionIncrements="true"
                 />
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.WordDelimiterFilterFactory"
+                generateWordParts="1"
+                generateNumberParts="1"
+                catenateWords="0"
+                catenateNumbers="0"
+                catenateAll="0"
+                splitOnCaseChange="1"
+                preserveOriginal="1"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.SnowballPorterFilterFactory" language="English" protected="protwords.txt"/>
         <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
@@ -326,8 +340,6 @@
    <copyField source="name" dest="sort_name"/>
    <!-- Copy terms to a single field that contains all taxonomy term names -->
    <copyField source="ts_vid_*" dest="taxonomy_names"/>
-   <!-- The teaser can be used when a better snippet is not available -->
-   <copyField source="body" dest="teaser" maxChars="300"/>
   
    <!-- A set of fields to contain text extracted from tag contents which we
         can boost at query time. -->
@@ -406,7 +418,7 @@
    <!-- BACKWARDS COMPATIBILITY -->
    <!-- Here is where we store fields which are no longer used -->
    
-   <!-- Fields previously used for sorting  -->
+   <!-- Fields previously used for sorting -->
    <field name="stitle" type="string" indexed="true" stored="true"/>
    <field name="title_sort" type="sortString" indexed="true" stored="false"/>
 

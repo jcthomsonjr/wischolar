@@ -805,10 +805,11 @@ function scholar_publications_link_alter(&$links, $node){
  * This is implemented so that an export links are displayed
  */
 function _scholar_publications_export_link($node) {
-  $links = $parent = array();
+  $links = array();
+  $parent = '';
   $base = variable_get('biblio_base', 'biblio');
 
-  if ($type == 'node' && $node->type == 'biblio') {
+  if ($node->type == 'biblio') {
     if(biblio_access('export', $node)){
 	    $links = array();
 	    $show_link = variable_get('biblio_export_links', array('rtf' => TRUE,'tagged' => TRUE, 'xml' => TRUE, 'bibtex' => TRUE));
