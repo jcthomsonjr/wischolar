@@ -27,5 +27,5 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
 
 $(document).ready(function() {
- $('#header h1').jTypeWriter();
+ $('#header h1 a').jTypeWriter();
 });

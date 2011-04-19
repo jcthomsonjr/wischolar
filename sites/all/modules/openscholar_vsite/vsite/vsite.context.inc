@@ -29,7 +29,7 @@ function vsite_context_default_contexts() {
   );
   $context->reactions = array(
   );
-  $context->condition_mode = 0;
+  $context->condition_mode = 1;
   $export['vsite-section-public'] = $context;
   
   return $export;

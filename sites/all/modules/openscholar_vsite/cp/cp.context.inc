@@ -14,7 +14,7 @@ function cp_context_default_contexts() {
   $context->tag = 'Section';
   $context->conditions = array(
     'node' => array(
-      'values' => array_keys(features_get_component_map('node')),
+      'values' => array_merge(array_keys(features_get_component_map('node')),array('biblio')), //Not all types are returned by the component map, a smarter api function is needed here
       'options' => array(
         'node_form' => '2',
       ),

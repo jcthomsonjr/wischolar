@@ -1,25 +1,37 @@
 body {
-  background-image: url(images/fabric-strip-grungy-green.jpg);
+  background-image: url('images/fabric-strip-grungy-green.jpg');
+  background-color: #FBF4E5;
+  }
+
+#header .wrap {
   background-color: #212519;
   }
 
-#wrapper {
-  background-image: url(images/menu-strip-grungy-green.png);
+#navbar {
+  height: 41px;
+  background: url('images/navbar-cutout-grungy-green.png') no-repeat 0 0 transparent;
+  padding:0;
   }
 
-#container {
-  background-image: url(images/header-grungy-green.png);
+#navbar .wrap {
+  background: url('images/menu-strip-grungy-green.png') repeat-x 0 0 transparent;
+  padding:0;
+  margin-left: 193px;
+  height:41px;
   }
 
 a, a:visited {
   color: #898F47;
   }
 
-#navbar li a, #navbar li a:visited {
+#navbar li a,
+#navbar li a:visited {
   color: #212519;
   }
 
-#navbar li a:hover, #navbar li a.active, #navbar .active-trail a {
+#navbar li a:hover,
+#navbar li a.active,
+#navbar .active-trail a {
   background: #dcdace;
   color: #212519;
   }
