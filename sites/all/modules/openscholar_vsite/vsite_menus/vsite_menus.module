@@ -27,10 +27,10 @@ function vsite_menus_menu() {
     'file' => 'vsite_menus.admin.inc',
   );
 
-  $items['cp/settings/menus/add'] = array(
+  $items['cp/settings/menus/add/%ctools_js'] = array(
     'title' => "New Menu Link",
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('vsite_menus_new_link_form'),
+    'page callback' => 'vsite_menus_new_link_callback',
+    'page arguments' => array(4),
     'type' => MENU_CALLBACK,
     'access callback' => 'user_access',
     'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
@@ -50,12 +50,6 @@ function vsite_menus_theme() {
       'template' => 'vsite-menu-settings',
       'arguments' => array('element' => array()),
     ),
-  );
-}
-
-function vsite_menus_confirm_popup_paths() {
-  return array(
-    'cp/settings/menus/add',
   );
 }
 
