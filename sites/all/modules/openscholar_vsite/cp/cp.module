@@ -136,7 +136,7 @@ function cp_context_links_alter(&$links){
   $cp_context = context_get('context', 'vsite-section-cp');
   if ($cp_context && !empty($cp_context->conditions['node']['values'])) {
     //We do not need a context link for every content type editable in the CP
-    $links = array_diff_key($links, $cp_context->conditions['node']['values']);
+    $links = array_diff_key($links, array_flip($cp_context->conditions['node']['values']));
   }
 }
 
