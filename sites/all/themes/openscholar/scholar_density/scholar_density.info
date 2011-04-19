@@ -8,8 +8,8 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-density.css
-conditional-stylesheets[if IE][all][] = scholar-density-ie.css
 conditional-stylesheets[if lte IE 7][all][] = scholar-density-ie7.css
+conditional-stylesheets[if lt IE 9][all][] = scholar-density-ie.css
 scripts[] = scholar_density.js
 
 scholar[theme_type]   = "scholar"
