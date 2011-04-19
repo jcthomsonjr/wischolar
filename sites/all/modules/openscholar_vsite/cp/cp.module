@@ -107,6 +107,23 @@ function cp_init(){
 }
 
 /**
+ * Perform checks after the node conditions have been set by contexts
+ *
+ * @param node $node
+ * @param string $op
+ */
+function cp_context_node_condition_alter(&$node,$op){
+	switch ($op) {
+		case 'form':
+			if (context_isset('context', 'vsite-section-cp')) {
+		    global $custom_theme;
+		    $custom_theme = CPTHEME;
+		  }
+		break;
+	}
+}
+
+/**
  * Return the type of toolbar to use
  */
 function cp_get_toolbar_setting(){
