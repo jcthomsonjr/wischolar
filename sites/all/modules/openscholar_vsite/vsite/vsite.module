@@ -69,6 +69,37 @@ function vsite_menu(){
 
   return $items;
 }
+//
+///**
+// * Implementation of hook_menu_alter().
+// */
+//function vsite_menu_alter(&$items) {
+//  $router_items = array();
+//
+//  $feature_components = features_get_component_map();
+//  foreach (array_keys($feature_components['views']) as $s_view) {
+//	  if ($view = views_get_view($s_view)) {
+//		  foreach (array_keys($view->display) as $id) {
+//	      $plugin = views_fetch_plugin_data('display', $view->display[$id]->display_plugin);
+//	      if (!empty($plugin['uses hook menu'])) {
+//	        // This view uses hook menu.
+//	        if ($view->set_display($id)) {
+//	          $router_items[] = $view->display_handler->get_option('path');
+//	        }
+//	      }
+//	    }
+//	  }
+//  }//Get views router items
+//
+//  foreach ($router_items as $path) {
+//    if (isset($items[$path])) {
+//      $arguments = isset($items[$path]['access arguments']) ? $items[$path]['access arguments'] : array();
+//      $arguments[] = isset($items[$path]['access callback']) ? $items[$path]['access callback'] : NULL;
+//      $items[$path]['access callback'] = 'spaces_menu_access';
+//      $items[$path]['access arguments'] = $arguments;
+//    }
+//  }//Use spaces menu access funtion
+//}
 
 /**
  * Implementation of hook_user().
