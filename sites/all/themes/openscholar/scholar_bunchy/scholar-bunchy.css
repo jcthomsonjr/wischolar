@@ -100,44 +100,63 @@ body {
   margin: 10px 0 0 auto;
   }
 
-
-#sidebar-first,
-#sidebar-second {
+#sidebar-first {
   width: 157px;
-  border-left: 1px solid #919191;
-  padding: 0 6px 0 9px;
-  margin: 0 !important;
+  padding-top:0;
+  padding-left: 9px;
+  padding-right:6px;
   right: 0;
+  border-left: 1px solid #919191;
+  margin: 0;
+  }
+
+#sidebar-second {
+  width:157px;
+  padding-top:0;
+  padding-left: 9px;
+  padding-right:6px;
+  border-left: 1px solid #919191;
   }
 
 #content-area .hg-container {
   background: #fdfdfd;
-  overflow:hidden;
   padding-top: 10px;
   padding-bottom: 30px;
-  padding-right: 0;
+  }
+
+/*
+  Instead of the [sidebar, main-content, sidebar] layout we can easily change the layout to [main-content, sidebar, sidebar] thusly.
+*/
+
+#content-area .hg-container,
+body.two-sidebars #content-area .hg-container {
+  padding-left: 0 !important;
+  }
+
+body.sidebar-first #content-area .hg-container {
+  padding-right: 193px; /* sidebar-first width + content-main padding */
+  }
+
+body.sidebar-second #content-area .hg-container {
+  padding-right: 173px; /* sidebar-second width */
+  }
+
+body.two-sidebars #content-area .hg-container {
   padding-left: 0;
+  padding-right: 364px; /* Total sidebar width + content-main padding */
   }
 
-.both-sidebars #content-main {
-  padding-right: 346px;
+body.sidebar-first #sidebar-first {
+  margin-right: -173px;
   }
 
-#content-main,
-body.no-sidebars #content-main {
-  padding: 10px 30px;
-  width: auto;
+body.two-sidebars #sidebar-first {
+  margin-right: -193px; /* Total FIRST sidebar width + content-main padding */
+  right: 0;
   }
 
-.one-sidebar #content-main,
-.two-sidebars #content-main {
-  padding-right: 10px;
-  padding-left: 30px;
-  width: 754px;
-  }
-
-.two-sidebars #content-main {
-  width:582px;
+.two-sidebars #sidebar-second {
+  right: -173px;        /* Total FIRST sidebar width */
   }
 
 #header-left {

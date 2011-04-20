@@ -77,7 +77,7 @@ p.copy {
 
 #content-main #content {
   padding-right:21px;
-  padding-left: 0;
+  padding-left: 25px;
   padding-top: 30px;
   }
 
@@ -88,6 +88,7 @@ p.copy {
   padding-right:0;
   right: 173px;
   background:#e0ece8;
+  margin: 0;
   }
 
 #sidebar-second {
@@ -114,16 +115,33 @@ p.copy {
   }
 
 /*
-  Instead of the [sidebar, main-content, sidebar] layout we can easily change the layout to [main-content, sidebar, sidebar] thusly. Easy.
+  Instead of the [sidebar, main-content, sidebar] layout we can easily change the layout to [main-content, sidebar, sidebar] thusly.
 */
 
-.two-sidebars #content-area .hg-container {
+#content-area .hg-container,
+body.two-sidebars #content-area .hg-container {
+  padding-left: 0 !important;
+  }
+
+body.sidebar-first #content-area .hg-container {
+  padding-right: 241px; /* sidebar-first width + content-main padding  */
+  }
+
+body.sidebar-second #content-area .hg-container {
+  padding-right: 254px; /* sidebar-second width */
+  }
+
+body.two-sidebars #content-area .hg-container {
   padding-left: 0;
   padding-right: 495px; /* Total sidebar width + content-main padding */
   }
 
-.two-sidebars #sidebar-first {
-  margin-left: 0;
+body.sidebar-first #sidebar-first {
+  margin-right: -221px;
+  right: 20px /* content-main padding */
+  }
+
+body.two-sidebars #sidebar-first {
   margin-right: -241px; /* Total FIRST sidebar width + content-main padding */
   right: 0;
   }
@@ -177,12 +195,12 @@ p.copy {
 #header h1,
 #header h2,
 #header p {
-    font-size: 25px;
-    line-height: normal;
-    font-weight:normal;
-    color:#000;
-    margin: 0;
-    }
+  font-size: 25px;
+  line-height: normal;
+  font-weight:normal;
+  color:#000;
+  margin: 0;
+  }
 
 #header h2 {
   font-size: 18px;
@@ -197,13 +215,13 @@ p.copy {
 
 #header h1 a,
 #header h1 a:visited {
-    color:#000;
-    }
+  color:#000;
+  }
 
 #header h1 a:hover {
-    color:#282828;
-    text-decoration: none;
-    }
+  color:#282828;
+  text-decoration: none;
+  }
 
 #navbar {
   padding: 0;
@@ -217,9 +235,9 @@ p.copy {
   }
 
 #navbar li {
-    float:left;
-    padding:0;
-    }
+  float:left;
+  padding:0;
+  }
 
 #navbar li.last {
   margin-right: 0;
@@ -236,7 +254,6 @@ p.copy {
   padding-right: 12px;
   padding-left: 12px;
   }
-
 
 #header #block-vsite_menus-1 {
   width: 251px;
