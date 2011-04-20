@@ -168,3 +168,29 @@ function vsite_update_6007(&$sandbox){
   return $res;
 
 }
+
+/**
+ * Add the new OS module that holds global configuration and settings
+ * @param array $sandbox
+ */
+function vsite_update_6008(&$sandbox){
+
+  $res = array();
+  module_rebuild_cache();
+
+  // Enable openscholar_front module if need
+  if(!module_exists('os')){
+
+    include_once('includes/install.inc');
+
+    drupal_install_modules(array('os'));
+    $res[] = array(
+      'success' => true,
+      'query' => 'Installed "Openscholar" module and enabled it',
+    );
+
+  }
+
+  return $res;
+
+}
