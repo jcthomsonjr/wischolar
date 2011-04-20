@@ -96,7 +96,7 @@ function vsite_layout_vsite_default_blocks_alter(&$a_widgets) {
   }
 
   foreach ($a_settings as $s_widget => $s_region) {
-    $s_region = strlen($s_region)?$s_region:false;
+    $s_region = (strlen($s_region) && $s_region != 'false')?$s_region:false;
     if (array_key_exists($s_widget, $a_widgets)) $a_widgets[$s_widget]['region'] = $s_region;
   }//alter based on theme settings
 
