@@ -72,11 +72,6 @@ function vsite_domain_purl_processor() {
   return $info;
 }
 
-
-
-
-
-
 /**
  * Implement Hook vsite_generic_settings
  * @return array
@@ -91,9 +86,10 @@ function vsite_domain_vsite_generic_settings() {
 
 	  $s_vsite_domain = variable_get('vsite_domain_name', '');
 
+	  $space = spaces_get_space();
 	  $a_settings['vsite_domain_name'] = array(
 	    'form' => purl_form('vsite_domain', $space->group->nid, $s_vsite_domain),
-	    'submit' => 'vsite_domain_vsite_generic_settings_domain_submit',
+	    'submit' => array('vsite_domain_vsite_generic_settings_domain_submit'),
 	  );
 
 	  //Set the title since purl does not give you control over this
@@ -132,34 +128,35 @@ function vsite_domain_vsite_generic_settings_domain_validate($form) {
  * @param $space vsite
  * @param $value array
  */
-function vsite_domain_vsite_generic_settings_domain_submit($space, &$value) {
+function vsite_domain_vsite_generic_settings_domain_submit(&$form, &$form_state) {
 
-    if (is_array($value['vsite_domain'])) {
+  $value = &$form_state['values'];
+  if (is_array($value['vsite_domain_name'])) {
 
-      $modifier = array(
-        'provider' => $value['vsite_domain']['provider'],
-        'id' => $value['vsite_domain']['id'],
-        'value' => $value['vsite_domain']['value'],
-      );
+    $modifier = array(
+      'provider' => $value['vsite_domain_name']['provider'],
+      'id' => $value['vsite_domain_name']['id'],
+      'value' => $value['vsite_domain_name']['value'],
+    );
 
-      if (strlen($modifier['value']) && $value['vsite_domain']['vsite_domain_proccessing'] == 0) {
-        //Save the new purl
-        if (purl_validate($modifier)) {
-          $id = db_result(db_query("SELECT id FROM {purl} WHERE id = '%s' AND provider = '%s' ", $modifier['id'], $modifier['provider']));
-          if (!empty($id)) {
-            drupal_write_record('purl', $modifier, array('provider', 'id')); //UPDATE
-          }
-          else {
-            drupal_write_record('purl', $modifier); //CREATE
-          }
-        }//Valid?
-      }
-      else {
-        //Delete an old purl
-        purl_delete($modifier);
-      }
+    if (strlen($modifier['value']) && $value['vsite_domain_name']['vsite_domain_proccessing'] == 0) {
+      //Save the new purl
+      if (purl_validate($modifier)) {
+        $id = db_result(db_query("SELECT id FROM {purl} WHERE id = '%s' AND provider = '%s' ", $modifier['id'], $modifier['provider']));
+        if (!empty($id)) {
+          drupal_write_record('purl', $modifier, array('provider', 'id')); //UPDATE
+        }
+        else {
+          drupal_write_record('purl', $modifier); //CREATE
+        }
+      }//Valid?
     }
-    $value['vsite_domain'] = $value['vsite_domain']['value'];
+    else {
+      //Delete an old purl
+      purl_delete($modifier);
+    }
+  }
+  $value['vsite_domain_name'] = $value['vsite_domain_name']['value'];
 }
 
 /**
