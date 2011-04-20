@@ -32,7 +32,8 @@ function vsite_menus_menu() {
     'page callback' => 'vsite_menus_new_link_callback',
     'page arguments' => array(4),
     'type' => MENU_CALLBACK,
-    'access callback' => 'user_access',
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
     'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
     'file' => 'vsite_menus.admin.inc',
   );
@@ -128,6 +129,18 @@ function vsite_menus_nodeapi(&$node, $op) {
         $node->vsite_menu = $node_link + array('link_title' => '', 'key' => null, 'menu_name' => current($a_site_menus), 'module' => 'vsite_menu', 'weight' => 0, 'options' => array(), 'user_created' => 1);
       }
       break;
+  }
+}
+
+/**
+ * hook preprocess page
+ */
+function vsite_menus_preprocess_page(&$vars){
+  // Suggest the page title be the same as the title of the
+  // active menu item (which can be changed by vsite users)
+  $item = menu_get_item();
+  if ($vsite_item = vsite_menus_get_menu_item($item['path'])){
+    $vars['title'] = $vsite_item['link_title'];
   }
 }
 

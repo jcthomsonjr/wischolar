@@ -1,5 +1,5 @@
 <?php
-// $Id: ucreate_og.module,v 1.2.4.7 2009/11/04 13:29:35 alexb Exp $
+// $Id: ucreate_og.module,v 1.2.4.10 2010/07/14 14:49:51 alexb Exp $
 /*
  * @file
  * Sign up users to og groups when creating them with U create.
@@ -23,7 +23,7 @@ function ucreate_og_form_alter(&$form, $form_state, $form_id) {
 function ucreate_og_mail_alter(&$message) {
   if ($message['id'] == 'ucreate_ucreate-create' && $account = _ucreate_og_get_last_edit()) {
     if (is_array($account['ucreate_og_group_titles'])) {
-      $message['body'] .= "\n\n". t('We also added you as member to the group(s): !groups', array('!groups' => implode(', ', $account['ucreate_og_group_titles'])));
+      $message['body'][] = "\n\n". t('We also added you as member to the group(s): !groups', array('!groups' => implode(', ', $account['ucreate_og_group_titles'])));
     }
   }
 }
@@ -102,21 +102,26 @@ function _ucreate_og_form(&$form) {
   $options = array();
   foreach ($group_options as $group) {
     $group = (object) $group;
-    $options[$group->nid] = '<span class="og-registration-'. $group->nid .'">'. t('Subscribe to @name.', array('@name' => $group->title)) .'</span>';
-    if ($group->selective) {
-      $options[$group->nid] .= ' '. t('(approval needed)');
+    if ($group->status) {
+      $options[$group->nid] = '<span class="og-registration-'. $group->nid .'">'. t('Subscribe to @name.', array('@name' => $group->title)) .'</span>';
+      if ($group->selective) {
+        $options[$group->nid] .= ' '. t('(approval needed)');
+      }
     }
   }
   $form['og_register']['og_register']['#options'] = $options;
-
+  // Completely disable OG options if there are no groups
+  if (empty($options)) {
+    unset($form['og_register']);
+  }
   // Disable OG options (and select it) if only 1 group
-  if (count($options) == 1) {
+  else if (count($options) == 1) {
     // We need to process this correctly (differently) on the hook_user() insert handler
     $form['og_register']['og_register']['#type'] = 'hidden';
     $form['og_register']['og_register']['#value'] = key($options);
 
     $form['og_register']['message']['#type'] = 'item';
-    $group = current($group_options);
+    $group = array_shift($group_options);
     $form['og_register']['message']['#value'] = t('This user will be added to !group.', array('!group' => $group['title']));
   }
   // If group context is set, select it by default

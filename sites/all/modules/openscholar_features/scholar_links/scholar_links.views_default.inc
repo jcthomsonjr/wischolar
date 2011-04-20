@@ -89,6 +89,7 @@ function scholar_links_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'spaces_feature',
     'spaces_feature' => 'scholar_links',
+    'perm' => 'access content',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',

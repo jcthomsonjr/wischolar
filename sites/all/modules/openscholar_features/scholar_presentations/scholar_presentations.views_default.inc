@@ -96,6 +96,7 @@ function scholar_presentations_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'spaces_feature',
     'spaces_feature' => 'scholar_presentations',
+    'perm' => 'access content',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',

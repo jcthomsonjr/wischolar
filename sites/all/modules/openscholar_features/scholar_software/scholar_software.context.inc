@@ -29,11 +29,11 @@ function scholar_software_context_default_contexts() {
       'options' => array(),
     ),
     'views' => array(
-	    'values' => array(
-	      'scholar_software_projects:page_1' => 'scholar_software_projects:page_1',
-	      'scholar_software_releases:page_1' => 'scholar_software_releases:page_1',
-	    ),
-	  ),
+      'values' => array(
+        'scholar_software_projects:page_1' => 'scholar_software_projects:page_1',
+        'scholar_software_releases:page_1' => 'scholar_software_releases:page_1',
+      ),
+    ),
   );
   $context->reactions = array(
     'menu' => 'software',
@@ -79,6 +79,11 @@ function scholar_software_context_default_contexts() {
     ),
   );
   $context->condition_mode = 0;
+
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Feature');
+  t('Software and Software Releases');
 
   $export['openscholar-feature-software'] = $context;
   return $export;

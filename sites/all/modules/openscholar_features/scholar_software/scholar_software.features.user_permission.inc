@@ -24,6 +24,18 @@ function scholar_software_user_default_permissions() {
     ),
   );
 
+  // Exported permission: delete own scholar_software_project content
+  $permissions['delete own scholar_software_project content'] = array(
+    'name' => 'delete own scholar_software_project content',
+    'roles' => array(),
+  );
+
+  // Exported permission: delete own scholar_software_release content
+  $permissions['delete own scholar_software_release content'] = array(
+    'name' => 'delete own scholar_software_release content',
+    'roles' => array(),
+  );
+
   // Exported permission: edit own scholar_software_project content
   $permissions['edit own scholar_software_project content'] = array(
     'name' => 'edit own scholar_software_project content',

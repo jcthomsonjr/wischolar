@@ -8,9 +8,6 @@
  */
 class vsite extends space_og {
 
-  //Set to allow feature access even if it is not enabled
-  public static $override_allow_feature_access = false;
-
   //Store the current provider in our multi-provider system
   public $purl_provider = false;
 
@@ -143,30 +140,10 @@ class vsite extends space_og {
    * Override of access_feature().
    */
   function access_feature($op = 'view', $feature, $account = NULL) {
+  	
+    if($feature == 'vsite' && user_access('access content')) return true;
 
-    if(self::$override_allow_feature_access){
-      //allow access to all feature menu items on this page for display purposes
-      //Used in CP so that all features menu entries will be displayed for sorting
-      return true;
-    }
-
-    if($feature == 'vsite' && user_access('access content')) $access = true;
-
-    if(!$access) $access = parent::access_feature($op, $feature, $account);
-
-    return $access;
-  }
-
-	/**
-	 *
-	 * @param $op
-	 * @param $feature
-	 * @param $account
-	 */
-  function privacy_access_feature($privacy = array(FEATURE_PUBLIC), $feature, $account = NULL) {
-    $access = $this->access_feature('view', $feature, $account);
-
-    if(!$access) return $access;
+    $access = parent::access_feature($op, $feature, $account);
 
     return $access;
   }

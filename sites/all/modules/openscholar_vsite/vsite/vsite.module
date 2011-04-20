@@ -563,7 +563,7 @@ function vsite_form_alter(&$form, $form_state, $form_id){
 
       //No vertical tabs fieldsets
       vertical_tabs_save_config($form_id, array());
-      
+
       $form['#redirect'] = false;
 
       module_load_include('inc', 'spaces_og', 'spaces_og.pages');
@@ -1117,4 +1117,40 @@ function vsite_add_purl_provider($node, &$options){
   $options['purl'] = array(
     'disabled' => TRUE
   );
+}
+
+/**
+ * Implementation of hook_token_values().
+ **/
+function vsite_token_values($type, $object = NULL, $options = array()) {
+  if ($type == 'node' && (property_exists($object, 'og_groups') || property_exists($object, 'spaces_og'))) {
+    $node = $object;
+    if (property_exists($node, 'spaces_og')) {
+      $gid = $node->spaces_og['gid'];
+    }
+    elseif (property_exists($object, 'og_groups')) {
+      $gid = current($node->og_groups);
+    }
+    $space = spaces_load('og', $gid);
+    $tokens['vsite-path'] = check_plain($space->group->purl);
+    $tokens['vsite-path-raw'] = $space->group->purl;
+    return $tokens;
+  }
+  else {
+    return array(
+      'vsite-path' => '',
+      'vsite-path-raw' => '',
+    );
+  }
+}
+
+/**
+ * Implementation of hook_token_list().
+ **/
+function vsite_token_list($type = 'all') {
+  if ($type == 'node' || $type == 'all') {
+    $tokens['node']['vsite-path'] = t("The filtered value of the vsite prefix path");
+    $tokens['node']['vsite-path-raw'] = t("The raw value of the vsite prefix path");
+    return $tokens;
+  }
 }
