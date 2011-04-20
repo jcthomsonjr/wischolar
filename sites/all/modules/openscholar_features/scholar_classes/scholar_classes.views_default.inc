@@ -194,6 +194,7 @@ function scholar_classes_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'spaces_feature',
     'spaces_feature' => 'scholar_classes',
+    'perm' => 'access content',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',

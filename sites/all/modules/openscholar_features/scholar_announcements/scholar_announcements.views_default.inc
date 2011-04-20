@@ -96,6 +96,7 @@ function scholar_announcements_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'spaces_feature',
     'spaces_feature' => 'scholar_announcements',
+    'perm' => 'access content',
   ));
   $handler->override_option('cache', array(
     'type' => 'none',
