@@ -59,7 +59,7 @@ function scholar_reader_update_6001(&$sandbox){
   $settings = array();
   $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "reader" ');
   while ($row = db_fetch_object($result)) {
-    $value = unserialize($row);
+    $value = unserialize($row->value);
     db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'scholar_reader_twitter_username', '%s')", $row->type, $row->sid, $value['twitter_username']);
   }
   $res[] = array(
