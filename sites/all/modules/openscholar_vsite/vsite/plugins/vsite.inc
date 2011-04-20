@@ -148,20 +148,6 @@ class vsite extends space_og {
     return $access;
   }
 
-	/**
-	 *
-	 * @param $op
-	 * @param $feature
-	 * @param $account
-	 */
-  function privacy_access_feature($privacy = array(FEATURE_PUBLIC), $feature, $account = NULL) {
-    $access = $this->access_feature('view', $feature, $account);
-
-    if(!$access) return $access;
-
-    return $access;
-  }
-
   /**
    * If this space is loaded outside a active context (ie) externally from the home page
    * then determine which purl_provider would be best
