@@ -44,17 +44,9 @@ function vsite_widgets_addthis(){
     return;
   }
 
-  if(!function_exists('_addthis_create_button')){
-  	error_log("Unable to find addthis function Line:".__LINE__." File:".__FILE__);
-  	return;
-  }
-
-//  //For now we will just show this on node pages this may be customizable in the future
-//  $active_node = menu_get_object('node');
-//  if(!is_object($active_node)) return;
-
+  $addthis_widget_type = variable_get('addthis_widget_type', 'addthis_button');
   $block['subject'] = t(''); //t('AddThis');
-  $block['content'] = _addthis_create_button($active_node);
+  $block['content'] = theme($addthis_widget_type);
   return $block;
 
 }
