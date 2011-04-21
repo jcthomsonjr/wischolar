@@ -396,7 +396,7 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
   switch ($form_id) {
     case 'ucreate_user_form':
       $vsite = vsite_get_vsite();
-      $form['og_register']['og_register']['#value'] = array($vsite->id => $vsite->title);
+      $form['og_register']['og_register']['#value'] = $vsite->id;
       $form['og_register']['og_register']['#type'] = 'value';
       $form['og_register']['#type'] = 'value';
 
