@@ -1132,14 +1132,14 @@ function vsite_token_values($type, $object = NULL, $options = array()) {
       $gid = current($node->og_groups);
     }
     $space = spaces_load('og', $gid);
-    $tokens['vsite-path'] = check_plain($space->group->purl);
-    $tokens['vsite-path-raw'] = $space->group->purl;
+    $tokens['space-og-path'] = check_plain($space->group->purl);
+    $tokens['space-og-path-raw'] = $space->group->purl;
     return $tokens;
   }
   else {
     return array(
-      'vsite-path' => '',
-      'vsite-path-raw' => '',
+      'space-og-path' => '',
+      'space-og-path-raw' => '',
     );
   }
 }
@@ -1149,8 +1149,8 @@ function vsite_token_values($type, $object = NULL, $options = array()) {
  **/
 function vsite_token_list($type = 'all') {
   if ($type == 'node' || $type == 'all') {
-    $tokens['node']['vsite-path'] = t("The filtered value of the vsite prefix path");
-    $tokens['node']['vsite-path-raw'] = t("The raw value of the vsite prefix path");
+    $tokens['node']['space-og-path'] = t("The filtered value of the vsite prefix path");
+    $tokens['node']['space-og-path-raw'] = t("The raw value of the vsite prefix path");
     return $tokens;
   }
 }
