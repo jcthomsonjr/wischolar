@@ -74,8 +74,8 @@ function vsite_shields_form($form_state) {
       'default' => array(
         '#type' => 'radio',
         '#name' => 'default',
-        '#return_value' => $shield->filename,
-        '#default_value' => ($shield->filename==$curr_default)?1:0,
+        '#return_value' => 1,
+        '#value' => ($shield->filename==$curr_default)?1:0,
       ),
       'delete' => array(
         '#type' => 'checkbox',
@@ -124,17 +124,31 @@ function vsite_shields_form_submit(&$form, &$form_state) {
     }
   }
 
-  if ($form_state['values']['new_shield']) {
+  foreach ($shield_info as $key => $val) {
+    if (!isset($form_state['values'][$key])) {
+      unset($shield_info[$key]);
+    }
+  }
 
-    $new_file = file_save_upload('new_shield', array(), drupal_get_path('module', 'vsite_shields').'/theme/shields');
-    file_set_status($new_file, FILE_STATUS_PERMANENT);
+  if ($_FILES['files']['error']['new_shield'] == UPLOAD_ERR_OK) {
+
+    // drupal's file commands don't let me put anything outside the Drupal's 'files' directory.
+    // so I gotta do it myself or find somewhere else to put it
+    $dest = drupal_get_path('module', 'vsite_shields').'/theme/shields/'.$_FILES['files']['name']['new_shield'];
+    $new_file = file_save_upload('new_shield');
+    rename($new_file->filepath, $dest);
+    //file_move($new_file, drupal_get_path('module', 'vsite_shields').'/theme/shields');
+    $new_file->filepath = $dest;
+    $new_file->destination = $dest;
+    $new_filed->status = FILE_STATUS_PERMANENT;
+    drupal_write_record('files', $new_file, 'fid');
     if (empty($shield_info)) {
       // this is our first new shield. make it the default by... default...
-      $shield_info[$new_file['filename']]['default'] = TRUE;
+      $shield_info[$new_file->filename]['default'] = TRUE;
       variable_set('vsite_shields_shield', $new_file['destination']);
     }
 
-    $shield_info[$new_file['filename']]['hidden'] = 0;
+    $shield_info[$new_file->filename]['hidden'] = 0;
   }
 
   variable_set('vsite_shields_shield_info', $shield_info);
@@ -156,7 +170,7 @@ function theme_vsite_shields_form_table($container) {
     $r[] = theme('vsite_shields_theme_shieldpicker', $field['image']['#value']);
     $r[] = drupal_render($field['default']);
     $r[] = drupal_render($field['hidden']);
-    $r[] = $field['#access']?drupal_render($field['delete']):'Cannot delete';
+    $r[] = drupal_render($field['delete']);
 
     $rows[] = $r;
   }
@@ -168,7 +182,7 @@ function theme_vsite_shields_form_table($container) {
  * Implement Hook vsite_generic_settings
  * @return array
  */
-function vsite_design_vsite_generic_settings(){
+function vsite_shields_vsite_generic_settings(){
   $a_settings = array();
 
   //Disable the shield
@@ -193,28 +207,46 @@ function vsite_design_vsite_generic_settings(){
   );
 
   //The shield List
-  $s_shield_dir = drupal_get_path('module','vsite_shields')."/theme/shields";
-  $a_shields = file_scan_directory($s_shield_dir, '.*', array('.', '..'));
+  $a_shields = variable_get('vsite_shields_shield_info', array());
 
-  $shield_options = array();
-  foreach ($a_shields as $shield)  $shield_options[$shield->filename] = theme('vsite_shields_theme_shieldpicker', $shield);
+  if (count($a_shields)) {
+    $shield_options = array();
+    $path_prefix = drupal_get_path('module', 'vsite_shields').'/theme/shields/';
+    foreach ($a_shields as $fname => $shield)  {
+      if (!$shield['hidden']) {
+        $shield_obj = new stdClass();
+        $shield_obj->filename = $path_prefix.$fname;
+        $shield_options[$shield_obj->filename] = theme('vsite_shields_theme_shieldpicker', $shield_obj);
+      }
+    }
 
-  $a_settings['vsite_shields_shield'] = array(
-    'form' => array(
-      '#prefix' => "<div class='shield_wrapper clear-block'>",
-      '#title' => t('Shield'),
-      '#type' => 'radios',
-      '#options' => $shield_options,
-      // use the spaces original value, which should always be set as long as a shield has been uploaded
-      '#default_value' => variable_get('vsite_shields_shield', ''),
-      '#suffix' => '</div>',
-    ),
-    'css' => array(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.css'),
-    'js' => array(
-      drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.js',
-      drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields.greyout.js',
-    ),
-  );
+    $a_settings['vsite_shields_shield'] = array(
+      'form' => array(
+        '#prefix' => "<div class='shield_wrapper clear-block'>",
+        '#title' => t('Shield'),
+        '#type' => 'radios',
+        '#options' => $shield_options,
+        // use the spaces original value, which should always be set as long as a shield has been uploaded
+        '#default_value' => variable_get('vsite_shields_shield', ''),
+        '#suffix' => '</div>',
+      ),
+      'css' => array(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.css'),
+      'js' => array(
+        drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.js',
+        drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields.greyout.js',
+      ),
+    );
+  }
+  else {
+    $a_settings['vsite_shields_shield'] = array(
+      'form' => array (
+        '#type' => 'markup',
+        '#value' => t('Your site has no shields to display.'),
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+      ),
+    );
+  }
   //END Shield List
 
   return $a_settings;
