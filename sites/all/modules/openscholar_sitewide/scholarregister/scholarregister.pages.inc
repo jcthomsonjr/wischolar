@@ -80,7 +80,12 @@ function scholarregister_signup_form(){
 
 	    //add send mail field
 	    _scholarregister_send_mail_field($form);
-	  }
+	  }else{
+      $form['send_mail'] = array(
+        '#type' => 'value',
+        '#value' => 1,
+      );
+    }
 
   } //else clause ends here
 
