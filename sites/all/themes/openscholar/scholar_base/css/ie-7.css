@@ -10,36 +10,25 @@ p.copy #powered-link,
 p.copy a.footer-login,
 .img-flL,
 .img-flR,
-body.cp-toolbar-mini #top ul.links li,
-body.header-left-right #header-right {
+body.cp-toolbar-mini #top ul.links li {
   display: inline;
   }
 
-
-body.two-sidebars #sidebar-first {
-	left: 220px; /* Total width, including padding of right col */
-	}
-
-body.sidebar-first #sidebar-first {
-	left: 0;
-	}
-
-body.header-left-main-right #header-left {
-  left: -200px;
-  }
-
-body.header-left-main #header-left {
-	left: 200px;
-	}
-
-#sidebar-first,
-#header-left,
-.search-form input.form-submit {
+#sidebar-first {
   margin-left: expression(
    document.all.content-main.offsetWidth * -1 +
    parseFloat(document.all.content-main.currentStyle.paddingLeft) +
    parseFloat(document.all.sidebar-first.currentStyle.paddingLeft) +
    parseFloat(document.all.sidebar-first.currentStyle.paddingRight)
+   ); /* Fix for IE7 */
+}
+
+#header-left {
+  margin-left: expression(
+   document.all.header-main.offsetWidth * -1 +
+   parseFloat(document.all.header-main.currentStyle.paddingLeft) +
+   parseFloat(document.all.header-left.currentStyle.paddingLeft) +
+   parseFloat(document.all.header-left.currentStyle.paddingRight)
    ); /* Fix for IE7 */
 }
 
