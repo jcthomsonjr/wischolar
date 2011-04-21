@@ -116,7 +116,7 @@ function iqss_openscholar_front_block($op = 'list', $delta = 0) {
  */
 function iqss_openscholar_front_preprocess_page(&$vars){
   //Add the footer copyright message for iqss sites
-  if ('sitewide_front' == context_get('openscholar', 'section')) {
+  if (context_isset('context','openscholar-section-sitewide_front')) {
     $vars['footer_message'] = t("&copy; President &amp; Fellows Harvard University. <a class='iqss-link' href='http://iq.harvard.edu'>Institute for Quantitative Social Science</a> ") . l('Contact Us','http://openscholar.harvard.edu/contact',array('attributes'=> array('class'=>'iqss-link')));
     }
 }

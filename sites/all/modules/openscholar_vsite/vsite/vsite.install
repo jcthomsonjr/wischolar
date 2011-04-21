@@ -194,3 +194,27 @@ function vsite_update_6008(&$sandbox){
   return $res;
 
 }
+
+/**
+ * Update content types that had been overridden to use lightbox to now use shadowbox
+ * @param array $sandbox
+ */
+function vsite_update_6009(&$sandbox){
+
+  $res = array();
+  
+  $result = db_query("SELECT name  FROM `variable` WHERE `name` LIKE 'itweak_upload_thumbnail_link%' AND value = 's:18:\"lightbox2slideshow\";'");
+
+  while ($var = db_result($result)){
+  	variable_set($var,'shadowboxgrouped');
+  }
+  
+  $res[] = array(
+   'success' => true,
+   'query' => 'Transitioned content types from lightbox to shadowbox',
+  );
+
+  return $res;
+
+}
+

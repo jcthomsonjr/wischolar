@@ -241,7 +241,7 @@ function scholar_image_gallery_views_default_views() {
       'empty_zero' => 0,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'imagefield__lightbox2__gallery_thumb__original',
+      'format' => 'shadowbox_gallery___gallery_thumb___original',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -386,7 +386,7 @@ function scholar_image_gallery_views_default_views() {
       'empty_zero' => 0,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'imagefield__lightbox2__gallery_small_thumb__original',
+      'format' => 'shadowbox_gallery___gallery_small_thumb___original',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -436,7 +436,7 @@ function scholar_image_gallery_views_default_views() {
       ),
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'imagefield__lightshow2__square_50_50__original',
+      'format' => 'shadowbox_gallery_field___square_50_50___original',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',

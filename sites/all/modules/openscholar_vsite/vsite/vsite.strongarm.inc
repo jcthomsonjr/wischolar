@@ -253,5 +253,19 @@ function vsite_strongarm() {
   $strongarm->value = '2048';
 
   $export['upload_usersize_default'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'itweak_upload_thumbnail_link_default';
+  $strongarm->value = 'shadowboxgrouped';
+
+  $export['itweak_upload_thumbnail_link_default'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'shadowbox_resize_duration';
+  $strongarm->value = '0.15';
+
+  $export['shadowbox_resize_duration'] = $strongarm;
   return $export;
 }
