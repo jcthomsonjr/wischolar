@@ -44,7 +44,7 @@ END;
     jcarousellite_add($js);
   }
   else
-  if (module_exists('jcarousel')) {
+  if (variable_get('itweak_upload_use_jcarousel',false) && module_exists('jcarousel')) {
     $selector = '.attachment-thumbs';
     $options = array('scroll' => 1);
     $skin = 0 ? 'ie7' : 'tango';
@@ -837,6 +837,8 @@ $show_caption = FALSE;   // FIXME - setting: = variable_get('itweak_upload_thumb
         if ($teaser_images_max === '') $teaser_images_max = -1;
         $cnt_other = _itweak_upload_preprocess_files($node->files, $thumbnails, $files_display, $derivative, $show_title, $show_caption, $options);
 
+        $node->itweak_upload = $thumbnails;
+        
         // Add regular attachment list
         if ($cnt_other) {
           if ($files_display != 4) {
