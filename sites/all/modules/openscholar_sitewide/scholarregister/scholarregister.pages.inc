@@ -27,7 +27,7 @@ function scholarregister_signup_form(){
   $existing_sites = vsite_get_vsite_by_owner($site_owner->uid);
 
   //this is a current site owner creating another site for himself, use existing account information
-  if( (!$b_create_sites || ($b_create_sites && $_REQUEST['register_for']) || ($b_create_own_sites && !$b_create_sites)) && $existing_sites && count($existing_sites) < variable_get('openscholar_vsites_per_user', 1)){
+  if( (!$b_create_sites || ($b_create_sites && $_REQUEST['register_for']) || ($b_create_own_sites && !$b_create_sites)) && ($b_create_sites || $existing_sites) && count($existing_sites) < variable_get('openscholar_vsites_per_user', 1)){
     $form['create_multiple_sites']['#type'] = 'value';
     $form['create_multiple_sites']['#value'] = 1;
 
