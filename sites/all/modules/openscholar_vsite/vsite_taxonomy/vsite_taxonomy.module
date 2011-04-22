@@ -54,6 +54,9 @@ function vsite_taxonomy_theme() {
     'vsite_taxonomy_term' => array(
       'arguments' => array('term' => NULL, 'term_filter' => null, 'b_description' => true),
     ),
+    'vsite_taxonomy_form' => array(
+      'arguments' => array('form' => array()),
+    ),
   );
 }
 
@@ -235,11 +238,12 @@ function vsite_taxonomy_form($form_state) {
   foreach ($vocabs as $vid => $v) {
 
     $form_id = 'taxonomy_overview_terms';
-    $form_state = array('storage' => NULL, 'submitted' => FALSE);
-    $args = array($form_id, &$form_state, taxonomy_vocabulary_load($vid));
+    $form_state_frag = array('storage' => NULL, 'submitted' => FALSE);
+    $args = array($form_id, &$form_state_frag, taxonomy_vocabulary_load($vid));
 
     $form_frag = call_user_func_array('drupal_retrieve_form', $args);
-    drupal_prepare_form($form_id, $form_frag, $form_state);
+    drupal_prepare_form($form_id, $form_frag, $form_state_frag);
+    unset($form_frag['#parents']);
 
     $fieldset = array(
       '#type' => 'fieldset',
@@ -250,7 +254,6 @@ function vsite_taxonomy_form($form_state) {
 
     $fieldset += $form_frag;
     $form[$v->name] = $fieldset;
-    dpm($fieldset);
   }
 
   return $form;
@@ -264,6 +267,27 @@ function vsite_taxonomy_form_submit($form, &$form_state) {
 
     taxonomy_overview_terms_submit($vocab_form, $vocab_form_state);
   }
+}
+
+function theme_vsite_taxonomy_form($form) {
+  $content = '';
+  foreach (element_children($form) as $element) {
+    $element_content = drupal_render($form[$element]);
+    if ($form[$element]['#type'] == 'fieldset') {
+      $element_content = str_replace('id="taxonomy"', 'id="taxonomy-'.$element.'"', $element_content);
+      // tabledrag
+      if ($form[$element]['#parent_fields']) {
+        drupal_add_tabledrag('taxonomy-'.$element, 'match', 'parent', 'term-parent', 'term-parent', 'term-id', FALSE);
+        drupal_add_tabledrag('taxonomy-'.$element, 'depth', 'group', 'term-depth', NULL, NULL, FALSE);
+      }
+    }
+    $content .= $element_content;
+  }
+
+  // prevents js error
+  drupal_add_js('Drupal.behaviors.termDrag = function(context) {}','inline');
+
+  return $content;
 }
 
 /**
