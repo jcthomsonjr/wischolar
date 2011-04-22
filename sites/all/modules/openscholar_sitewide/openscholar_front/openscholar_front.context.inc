@@ -25,22 +25,6 @@ function openscholar_front_context_default_contexts() {
     ),
   );
   $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'openscholar_front-site_info' => array(
-          'module' => 'openscholar_front',
-          'delta' => 'site_info',
-          'region' => 'header_main',
-          'weight' => 0,
-        ),
-        'openscholar_front-top_links' => array(
-          'module' => 'openscholar_front',
-          'delta' => 'top_links',
-          'region' => 'header_right',
-          'weight' => 0,
-        ),
-      ),
-    ),
   );
   $context->condition_mode = 1;
 
@@ -65,6 +49,18 @@ function openscholar_front_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'openscholar_front-site_info' => array(
+          'module' => 'openscholar_front',
+          'delta' => 'site_info',
+          'region' => 'header_main',
+          'weight' => 0,
+        ),
+        'openscholar_front-top_links' => array(
+          'module' => 'openscholar_front',
+          'delta' => 'top_links',
+          'region' => 'header_right',
+          'weight' => 0,
+        ),
         'openscholar_front-site_info' => array(
           'module' => 'openscholar_front',
           'delta' => 'site_info',

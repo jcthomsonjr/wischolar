@@ -496,6 +496,9 @@ function vsite_preprocess_page(&$vars){
   $version_info = vsite_get_version_information();
   $vars['openscholar_version_info'] = $version_info;
 
+  //Show all active contexts
+  //$vars['messages'] = $vars['messages'].kprint_r(context_active_contexts(), TRUE);
+
   //Add a div around the messages block
   if (strlen($vars['messages']))
     $vars['messages'] = "<div id= \"messages\">" . $vars['messages'] . "</div>";
