@@ -69,9 +69,6 @@ function vsite_layout_merge_default_blocks(&$blocks) {
 
   $default_blocks = module_invoke_all('vsite_widgets');
   $blocks = array_merge($default_blocks,$blocks);  //Everywhere plus the feature
-  
-  //Allow the theme and others to alter the default block regions
-  drupal_alter('vsite_default_blocks',$blocks);
 
   uasort($blocks, 'vsite_layout_sort_block_by_weight');
 }
