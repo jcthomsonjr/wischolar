@@ -107,7 +107,8 @@ h2.title {
     color:#414040;
     }
 
-#header h1 a, #header h1 a:visited {
+#header h1 a,
+#header h1 a:visited {
     text-decoration: none;
     padding: 0;
     }
@@ -133,14 +134,24 @@ h2.title {
 
 
 #sidebar-first,
-#header-left {
+#header-left,
+#logo {
   width: 166px;
-  right: 206px;
+  }
+
+#sidebar-first,
+#header-left {
+  left: -206px;
   }
 
 #sidebar-second,
 #header-right {
   width: 166px;
+  }
+
+#header #header-right,
+#header #header-left {
+  padding-top: 20px;
   }
 
 .hg-container {
