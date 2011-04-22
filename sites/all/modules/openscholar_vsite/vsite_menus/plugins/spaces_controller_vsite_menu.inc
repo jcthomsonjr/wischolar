@@ -61,6 +61,20 @@ class spaces_controller_vsite_menu extends spaces_controller {
   protected function load_preset_values($id = NULL) {
     if (!$this->loaded_all['preset']) {
     	parent::load_preset_values($id);
+    	
+    	//Apply weight overrides if this preset contains them
+    	if(array_key_exists('vsite_menu_weights',$this->values['preset'])){
+    		foreach ($this->values['preset']['vsite_menu_weights'] as $s_key => $n_weight) {
+    			list($menu,$path) = split(":",$s_key,2);
+    			if(isset($this->values['preset'][$menu][$s_key])){
+    				$this->values['preset'][$menu][$s_key]['weight'] = $n_weight;
+    			}elseif (isset($this->values['original'][$menu][$s_key])){
+    				$this->values['original'][$menu][$s_key]['weight'] = $n_weight;
+    			}
+    		}
+    		unset($this->values['preset']['vsite_menu_weights']);
+    	}//Override default weights
+    	
     	$this->add_missing_defaults($this->values['preset']);
     }
   }
