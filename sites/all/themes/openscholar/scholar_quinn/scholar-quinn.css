@@ -9,7 +9,6 @@ body {
   margin: 0 auto;
   }
 
-
 a, a:visited {
   text-decoration: none;
   padding: 2px;
@@ -52,18 +51,11 @@ h2.title {
   padding:0;
   }
 
-#header .wrap {
-  min-width: 960px;
-  }
-
-#content-area .wrap {
-  min-width: 960px;
-  }
-
 #sidebar-first,
 #header-left,
 #sidebar-second,
-#header-right {
+#header-right,
+#logo {
   width: 180px;
   }
 
@@ -78,12 +70,12 @@ h2.title {
   }
 
 #sidebar-first {
-  right: 180px;
+  left: -180px;
   margin-top: 10px;
   }
 
 #header-left {
-  right: 210px;
+  left: -210px;
   padding-left: 0;
   }
 
@@ -132,13 +124,9 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
 /* HEADER ELEMENTS */
 
 #header {
-    padding-top: 16px;
+    padding: 6px 180px 0 180px;
     text-transform: lowercase;
     }
-
-#header .wrap {
-  margin: 0 200px;
-  }
 
 #header h1 {
     font-size: 2em;
@@ -304,15 +292,5 @@ h2#comments-title {
 /*Footer*/
 
 #footer {
-  padding-top: 0;
-  }
-
-body.sidebar-second #footer .wrap,
-body.two-sidebars #footer .wrap{
-  padding-right: 200px;
-  }
-
-body.sidebar-first #footer .wrap,
-body.two-sidebars #footer .wrap {
-  padding-left: 200px;
+  padding: 0 180px;
   }
