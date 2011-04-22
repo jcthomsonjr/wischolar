@@ -27,23 +27,17 @@
           <div class="hg-container">
             <?php if (!empty($header_main)): ?>
             <div id="header-main" class="column">
-              <div class="vertical-centering">
-                <?php print $header_main; ?>
-              </div>
+              <?php print $header_main; ?>
             </div><!-- /header-main -->
             <?php endif; ?>
             <?php if (!empty($header_left)): ?>
             <div id="header-left" class="column">
-              <div class="vertical-centering">
-                <?php print $header_left; ?>
-              </div>
+              <?php print $header_left; ?>
             </div><!-- /header-left -->
             <?php endif; ?>
             <?php if (!empty($header_right)): ?>
             <div id="header-right" class="column">
-              <div class="vertical-centering">
-                <?php print $header_right; ?>
-              </div>
+              <?php print $header_right; ?>
             </div><!-- /header-right -->
             <?php endif; ?>
           </div><!-- /hg-container -->
