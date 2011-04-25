@@ -312,15 +312,14 @@ function cp_form_alter(&$form, &$form_state, $form_id){
    * and make 'settings' link as a popup link
    */
   if (arg(0) == 'cp' && $form_id == 'spaces_features_form') {
-    // we dont need settings here
-    unset($form['settings']);
-    //unset($form['buttons']['reset']); //Remove reset to defaults button
+    
+    unset($form['settings']); // we dont need settings here
+    unset($form['buttons']['reset']); //Remove reset to defaults button
+    
     $site = $form['space']['#value'];
     ctools_include('ajax');
     ctools_include('modal');
     ctools_modal_add_js();
-
-    //    $customizers = spaces_customizers();
 
     foreach ( array_keys($form['spaces_features']) as $f_name ) {
       if ($f_name[0] == '#')

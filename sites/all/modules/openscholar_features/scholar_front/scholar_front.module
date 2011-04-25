@@ -136,6 +136,13 @@ function scholar_front_form_alter(&$form, $form_state, $form_id) {
       ctools_add_css('dropdown');
       ctools_add_js('dependent');
       drupal_add_js("misc/autocomplete.js");
+      
+		  /*
+		   * remove home page settings and make them part of the front page features settings
+		   */
+      unset($form['site_frontpage']); // we dont need settings here
+      unset($form['site_frontpage_path']); //Remove reset to defaults button
+  
     break;
   }
 }

@@ -3,36 +3,6 @@ include_once('scholar_publications.features.inc');
 
 function scholar_publications_init(){
 
-	static $init_run;
-
-	if(!isset($init_run)){
-		$init_run = true;
-		$space = vsite_get_vsite();
-
-		 // the following is from spaces 2.0
-		 /*
-	  if($space){
-	    global $conf;
-	    require_once drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc';
-
-	    scholar_publications_settings_feature::customize($space, 'style',$conf['biblio_style']);
-	    scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_allow_autocomplete',$conf['bkn_contrib_lookup_allow_autocomplete']);
-	    scholar_publications_settings_feature::customize($space,'bkn_contrib_lookup_mode',$conf['bkn_contrib_lookup_mode']);
-	    scholar_publications_settings_feature::customize($space,'sort',$conf['biblio_sort']);
-	    scholar_publications_settings_feature::customize($space,'sort_tabs',$conf['biblio_sort_tabs']);
-	    scholar_publications_settings_feature::customize($space,'order',$conf['biblio_order']);
-	    scholar_publications_settings_feature::customize($space,'rowsperpage',$conf['rowsperpage']);
-	    scholar_publications_settings_feature::customize($space,'export_links', $conf['biblio_export_links']);
-	    scholar_publications_settings_feature::customize($space,'google_link', $conf['biblio_google_link']);
-	    scholar_publications_settings_feature::customize($space,'no_publication_date', $conf['biblio_no_year_text']);
-	    scholar_publications_settings_feature::customize($space,'note_in_teaser', $conf['scholar_publication_note_in_teaser']);
-	    scholar_publications_settings_feature::customize($space,'link_title_url', $conf['biblio_link_title_url']);
-	    scholar_publications_settings_feature::customize($space,'author_links', $conf['biblio_author_links']);
-
-	  }
-	  */
-	}
-
 	jquery_ui_add(array('ui.tabs'));
 }
 
@@ -106,18 +76,6 @@ function scholar_publications_menu_alter(&$items){
   $items[$s_bib_base.'/export']['page callback'] = 'scholar_publications_export';
   $items[$s_bib_base.'/export']['file'] = 'scholar_publications.module';
   $items[$s_bib_base.'/export']['file path'] = drupal_get_path('module', 'scholar_publications');
-}
-
-/**
- * Implementation of hook_spaces_settings().
- */
-function scholar_publications_spaces_settings() {
-  return array(
-    'scholar_publications' => array(
-      'class' => 'scholar_publications_settings_feature',
-      'file' => drupal_get_path('module', 'scholar_publications') .'/scholar_publications.settings.feature.inc',
-    ),
-  );
 }
 
 /**
@@ -271,7 +229,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
  */
 function scholar_publications_move_extras($form, &$form_state){
   //The JS Call Expects the field to be in the orig position so we can't move them for the "Add More" callbacks
-  if(strpos($_GET['q'],"content/js_add_more") === 0 || strpos($_GET['q'],"filefield/ahah/biblio/field_biblio_image") === 0 ) { 
+  if(strpos($_GET['q'],"content/js_add_more") === 0 || strpos($_GET['q'],"filefield/ahah/biblio/field_biblio_image") === 0 ) {
     return $form;
   }
 
