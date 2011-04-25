@@ -260,15 +260,25 @@ function vsite_taxonomy_form($form_state) {
       '#tree' => TRUE,
       '#theme' => 'taxonomy_overview_terms',
     );
-    $form['submit'] = $form_frag['submit'];
-    $form['reset_alphabetical'] = $form_frag['reset_alphabetical'];
+    $form['buttons']['submit'] = $form_frag['submit'];
+    $form['buttons']['reset_alphabetical'] = $form_frag['reset_alphabetical'];
     unset($form_frag['submit'], $form_frag['reset_alphabetical']);
 
     $fieldset += $form_frag;
     $form[$v->name] = $fieldset;
   }
-  $form['submit']['#weight'] = 1;
-  $form['reset_alphabetical']['#weight'] = 2;
+  $form['buttons'] += array(
+    '#type' => 'markup',
+    '#prefix' => '<div>',
+    '#suffix' => '</div>',
+    '#weight' => 1,
+  );
+  $form['add_new_vocab'] = array(
+    '#type' => 'markup',
+    '#value' => '<div>'.l('Add New Vocabulary', 'vsite/taxonomy/nojs/add/vocabulary',  array('attributes' => array('class' => 'ctools-use-dialog context-button'))).'</div>',
+  );
+
+  drupal_set_title(t('Taxonomy'));
 
   return $form;
 }
@@ -724,6 +734,7 @@ function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state
   $form['settings']['#collapsible'] = false;
 
   // filter the content type based on the vsite
+  vsite_include('vsiteapi');
   $vocab_types = vsite_content_types();
   drupal_alter('vsite_content_types', $vocab_types);
   $form['content_types']['nodes']['#options'] = $vocab_types;
