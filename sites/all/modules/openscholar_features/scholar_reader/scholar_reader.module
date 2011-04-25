@@ -129,18 +129,6 @@ function scholar_reader_context_default_contexts_alter(&$contexts){
 }
 
 /**
- * Implementation of hook_spaces_settings().
-
-function scholar_reader_spaces_settings(){
-  return array(
-    'reader' => array(
-      'class' => 'scholar_reader_settings_reader',
-      'file' => drupal_get_path('module', 'scholar_reader') . '/include/scholar_reader.settings.inc'
-    ),
-  );
-} */
-
-/**
  * Define the scholar reader blocks with hook block
  */
 function scholar_reader_block($op = 'list', $delta = false, $edit = array()) {

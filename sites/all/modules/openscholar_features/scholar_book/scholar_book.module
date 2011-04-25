@@ -92,18 +92,6 @@ function scholar_book_link_alter(&$links, $node){
   $links['book_add_child']['attributes']['class'] = 'context-button';
 }
 
-/**
- * Implementation of hook_spaces_settings().
-
-function scholar_book_spaces_settings() {
-  return array(
-    'scholar_book' => array(
-      'class' => 'scholar_book_settings_feature',
-      'file' => drupal_get_path('module', 'scholar_book') .'/scholar_book.settings.feature.inc',
-    ),
-  );
-}*/
-
 
 /**
  * Implementation of hook_block().

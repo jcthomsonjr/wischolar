@@ -241,18 +241,6 @@ function scholar_biocv_cv_node_submit($form, &$form_state) {
 }
 
 /**
- * Implementation of hook_spaces_settings().
- */
-function scholar_biocv_spaces_settings() {
-  return array(
-    'scholar_biocv' => array(
-      'class' => 'scholar_biocv_settings_feature',
-      'file' => drupal_get_path('module', 'scholar_biocv') .'/scholar_biocv.settings.feature.inc',
-    ),
-  );
-}
-
-/**
  * Define the scholar biocv blocks with hook block
  */
 function scholar_biocv_block($op = 'list', $delta = false, $edit = array()) {
