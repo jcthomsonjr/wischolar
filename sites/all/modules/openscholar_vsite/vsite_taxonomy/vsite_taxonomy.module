@@ -263,6 +263,10 @@ function vsite_taxonomy_form($form_state) {
     $form['buttons']['submit'] = $form_frag['submit'];
     $form['buttons']['reset_alphabetical'] = $form_frag['reset_alphabetical'];
     unset($form_frag['submit'], $form_frag['reset_alphabetical']);
+    $form_frag['add_new_term'] = array(
+      '#type' => 'markup',
+      '#value' =>  l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/".$vid."/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))),
+    );
 
     $fieldset += $form_frag;
     $form[$v->name] = $fieldset;
@@ -307,7 +311,6 @@ function theme_vsite_taxonomy_form($form) {
         drupal_add_tabledrag('taxonomy-'.$element, 'match', 'parent', 'term-parent', 'term-parent', 'term-id', FALSE);
         drupal_add_tabledrag('taxonomy-'.$element, 'depth', 'group', 'term-depth', NULL, NULL, FALSE);
       }
-      $element_content = str_replace('</fieldset>', l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/".$form[$element]['#vocabulary']['vid']."/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))).'</fieldset>', $element_content);
     }
     $content .= $element_content;
   }
