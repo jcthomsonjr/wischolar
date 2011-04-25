@@ -186,6 +186,7 @@ function dyntextfield_field($op, &$node, $field, &$items, $teaser, $page) {
       foreach ($items as $delta => $item) {
         $dyntext_label = check_plain($item['label']);
         $dyntext_value = check_plain($item['value']);
+        $dyntext_value = check_markup($dyntext_value, 'filter_urlfilter');
         $items[$delta]['safe'] = $dyntext_label.": ".$dyntext_value;
         $items[$delta]['safe_label'] = $dyntext_label;
         $items[$delta]['safe_value'] = $dyntext_value;

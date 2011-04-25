@@ -244,6 +244,9 @@ function vsite_taxonomy_form($form_state) {
     $form_frag = call_user_func_array('drupal_retrieve_form', $args);
     drupal_prepare_form($form_id, $form_frag, $form_state_frag);
     unset($form_frag['#parents']);
+    if (!$form_frag['#parent_fields']) {
+      unset($form_frag['#parent_fields']);
+    }
 
     $fieldset = array(
       '#type' => 'fieldset',
@@ -261,11 +264,13 @@ function vsite_taxonomy_form($form_state) {
 
 function vsite_taxonomy_form_submit($form, &$form_state) {
   foreach ($form_state['values'] as $v_name => $vocab_form_state) {
-    $vocab_form_state['values'] = $vocab_form_state;
-    $vocab_form = $form[$v_name];
-    $vocab_form['#post'] = $form['#post'];
+    if (is_array($vocab_form_state)) {
+      $vocab_form_state['values'] = $vocab_form_state;
+      $vocab_form = $form[$v_name];
+      $vocab_form['#post'] = $form['#post'];
 
-    taxonomy_overview_terms_submit($vocab_form, $vocab_form_state);
+      taxonomy_overview_terms_submit($vocab_form, $vocab_form_state);
+    }
   }
 }
 
