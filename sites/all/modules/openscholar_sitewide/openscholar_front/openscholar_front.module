@@ -73,7 +73,7 @@ function openscholar_front_getyoursitebutton() {
   if ( !scholarregister_vsite_exists_access($vsites)) {
     if(!$vsites) return "";
     
-	  $site_link = (count($vsites) > 1) ? 'user' :  "node/".$vsites[0] -> sid;
+	  $site_link = (count($vsites) > 1) ? 'user' :  "node/".$vsites[0] -> id;
 	  $site_text  = (count($vsites) > 1) ? 'Go to your sites' : "Go to your site";
 	  return l($site_text, $site_link);
   }

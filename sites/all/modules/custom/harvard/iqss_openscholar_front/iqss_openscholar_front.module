@@ -148,7 +148,7 @@ function theme_iqss_openscholar_front_block_top_links(){ // @todo make it a real
     if($vsites){
 	    $items[] = array(
 		    'title' => ((count($vsites) > 1) ? 'Go to your sites' : "Go to your site"),
-		    'href' => ((count($vsites) > 1) ? 'user' : "node/".$vsites[0] -> sid),
+		    'href' => ((count($vsites) > 1) ? 'user' : "node/".$vsites[0] -> id),
 		  );
     } //No sites ora ablility to create one
   }else{
