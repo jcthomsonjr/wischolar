@@ -115,3 +115,16 @@ function vsite_design_update_6002(&$sandbox) {
 
   return $res;
 }
+
+function vsite_design_update_6003(&$sandbox) {
+  // shield settings were moved into vsite_shields
+  db_query("UPDATE {variable} SET name = 'vsite_shields_shield' WHERE name = 'vsite_design_shield'");
+  db_query("UPDATE {variable} SET name = 'vsite_shields_disable_shield' WHERE name = 'vsite_design_disable_shield'");
+  db_query("UPDATE {spaces_overrides} SET object_id = 'vsite_shields_shield' WHERE object_id = 'vsite_design_shield'");
+  db_query("UPDATE {spaces_overrides} SET object_id = 'vsite_shields_disable_shield' WHERE object_id = 'vsite_design_disable_shields'");
+  drupal_install_modules(array('vsite_shields'));
+
+  $res[] = array(
+    'success' => true,
+    'query' => 'Shields settings moved from vsite_design to vsite_shield');
+}
