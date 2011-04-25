@@ -62,18 +62,30 @@ class spaces_controller_vsite_menu extends spaces_controller {
     if (!$this->loaded_all['preset']) {
     	parent::load_preset_values($id);
     	
-    	//Apply weight overrides if this preset contains them
-    	if(array_key_exists('vsite_menu_weights',$this->values['preset'])){
-    		foreach ($this->values['preset']['vsite_menu_weights'] as $s_key => $n_weight) {
-    			list($menu,$path) = split(":",$s_key,2);
-    			if(isset($this->values['preset'][$menu][$s_key])){
-    				$this->values['preset'][$menu][$s_key]['weight'] = $n_weight;
-    			}elseif (isset($this->values['original'][$menu][$s_key])){
-    				$this->values['original'][$menu][$s_key]['weight'] = $n_weight;
-    			}
-    		}
-    		unset($this->values['preset']['vsite_menu_weights']);
-    	}//Override default weights
+    	/**
+    	 * If a feature list exists in the preset setup the default menu item
+    	 * order so that it mirrors the order of the features listed
+    	 */
+      $preset_name = variable_get("spaces_preset_{$this->space_type}", NULL);
+      if ($preset_name && $preset = spaces_preset_load($preset_name)) {
+      	
+        if (isset($preset->value['variable']) && isset($preset->value['variable']['spaces_features'])) {
+        	$order = array_flip(array_keys($preset->value['variable']['spaces_features']));
+          $feature_menus = features_get_component_map('menu_links');
+          
+          foreach ($feature_menus as $s_key => $a_feature) {
+	          if(!isset($order[current($a_feature)])) continue;
+	        	
+	          $n_weight = $order[current($a_feature)] - count($order);
+	        	list($menu,$path) = split(":",$s_key,2);
+	          if(isset($this->values['preset'][$menu][$s_key])){
+	            $this->values['preset'][$menu][$s_key]['weight'] = $n_weight;
+	          }elseif (isset($this->values['original'][$menu][$s_key])){
+	            $this->values['original'][$menu][$s_key]['weight'] = $n_weight;
+	          }
+	        }
+        }
+      }
     	
     	$this->add_missing_defaults($this->values['preset']);
     }

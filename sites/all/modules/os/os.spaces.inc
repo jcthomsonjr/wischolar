@@ -22,9 +22,9 @@ function os_spaces_presets() {
         'scholar_classes' => 2,
         'scholar_pages' => 2,
         'scholar_image_gallery' => 0,
-        'scholar_reader' => 0,
         'scholar_announcements' => 0,
         'scholar_blog' => 0,
+        'scholar_reader' => 0,
         'scholar_dvn' => 0,
         'scholar_links' => 0,
         'scholar_software' => 0
@@ -37,23 +37,6 @@ function os_spaces_presets() {
       'site_frontpage_path' => 'home',
       'default_theme' => 'scholar_airstream',
     ),
-    'vsite_menu' => array(
-      'vsite_menu_weights' => array(
-        "features:presentations" => 10,
-        "features:software" => 12,
-        "features:publications" => 11,
-        "features:links" => 8,
-        "features:classes" => 4,
-        "features:data" => 1,
-        "features:people" => 9,
-        "features:images" => 7,
-        "features:documents" => 5,
-        "features:blog" => 3,
-        "features:biocv" => 2,
-        "features:announcements" => 0,
-        "features:reader" => 6,
-      ),
-    )
   );
 
   // Translatables
