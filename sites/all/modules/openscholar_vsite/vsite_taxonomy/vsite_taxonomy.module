@@ -64,7 +64,7 @@ function vsite_taxonomy_theme() {
 /**
  * Common access callback function for different menu entries
  */
-function vsite_taxonomy_determine_access(){
+function vsite_taxonomy_determine_access($perm){
   $vsite = vsite_get_vsite();
   $node = $vsite -> group;
   return og_vocab_determine_access($node, $perm);
@@ -217,6 +217,8 @@ function vsite_taxonomy_vocabs(){
   return $output;
 }
 
+// CP Form Functions
+
 function vsite_taxonomy_form($form_state) {
 
   dialog_add_js();
@@ -232,8 +234,6 @@ function vsite_taxonomy_form($form_state) {
   // then in the submit, I'll send each fieldset off to taxonomy's
   // submit handler.
 
-  // I'm going to do some hackish things to start, which I'll fix later
-
   $form = array();
   foreach ($vocabs as $vid => $v) {
 
@@ -248,16 +248,27 @@ function vsite_taxonomy_form($form_state) {
       unset($form_frag['#parent_fields']);
     }
 
+    foreach ($form_frag as $k => $field) {
+      if (is_array($field) && isset($field['#term'])) {
+        $form_frag[$k]['edit']['#value'] = l('Edit', "vsite/taxonomy/nojs/terms/edit/".$field['#term']['tid'], array('attributes' => array('class' => 'ctools-use-dialog')));
+      }
+    }
+
     $fieldset = array(
       '#type' => 'fieldset',
       '#title' => ucfirst($v->name),
       '#tree' => TRUE,
       '#theme' => 'taxonomy_overview_terms',
     );
+    $form['submit'] = $form_frag['submit'];
+    $form['reset_alphabetical'] = $form_frag['reset_alphabetical'];
+    unset($form_frag['submit'], $form_frag['reset_alphabetical']);
 
     $fieldset += $form_frag;
     $form[$v->name] = $fieldset;
   }
+  $form['submit']['#weight'] = 1;
+  $form['reset_alphabetical']['#weight'] = 2;
 
   return $form;
 }
@@ -280,11 +291,13 @@ function theme_vsite_taxonomy_form($form) {
     $element_content = drupal_render($form[$element]);
     if ($form[$element]['#type'] == 'fieldset') {
       $element_content = str_replace('id="taxonomy"', 'id="taxonomy-'.$element.'"', $element_content);
+
       // tabledrag
       if ($form[$element]['#parent_fields']) {
         drupal_add_tabledrag('taxonomy-'.$element, 'match', 'parent', 'term-parent', 'term-parent', 'term-id', FALSE);
         drupal_add_tabledrag('taxonomy-'.$element, 'depth', 'group', 'term-depth', NULL, NULL, FALSE);
       }
+      $element_content = str_replace('</fieldset>', l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/".$form[$element]['#vocabulary']['vid']."/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))).'</fieldset>', $element_content);
     }
     $content .= $element_content;
   }
@@ -294,6 +307,8 @@ function theme_vsite_taxonomy_form($form) {
 
   return $content;
 }
+
+// END CP Form Functions
 
 /**
  * recursive function to build the tree of terms
