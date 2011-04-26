@@ -12,19 +12,16 @@ function scholar_front_context_default_contexts() {
   $context->description = 'Site front page';
   $context->tag = 'Feature';
   $context->conditions = array(
-    'node' => array(
-	    'values' => array(
-	      'vsite' => 'vsite',
-	    ),
-	    'options' => array(
-	      'node_form' => '0',
-	    ),
-	  ),
-	  'path' => array(
+    'path' => array(
 	    'values' => array(
 	      '<front>' => '<front>',
 	    ),
 	  ),
+	  'context' => array(
+      'values' => array(
+        'vsite-section-public' => 'vsite-section-public',
+      ),
+    ),
   );
   $context->reactions = array(
     'block' => array(
