@@ -137,6 +137,26 @@ function scholar_front_preprocess_page(&$vars){
 }
 
 /**
+ * Implementation of hook_context_page_condition().
+ *
+ * Last chance to make changes before the reactions start
+ */
+function scholar_front_context_page_condition() {
+	
+	$active_contexts = context_active_contexts();
+	$b_found_feature = context_isset('context','openscholar-feature-front');
+	foreach ($active_contexts as $key => $context){
+		if(strpos($key,"openscholar-feature-") !== 0 || $key == 'openscholar-feature-front') continue;
+		if($b_found_feature){
+			unset($active_contexts[$key]);//Allow only one feature active
+		}
+		$b_found_feature = true;
+	}
+	
+	context_set('context',$active_contexts);
+}
+
+/**
  * Add the JS needed by our feature popup
  */
 function scholar_front_form_alter(&$form, $form_state, $form_id) {

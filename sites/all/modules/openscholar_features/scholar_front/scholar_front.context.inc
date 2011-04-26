@@ -19,7 +19,7 @@ function scholar_front_context_default_contexts() {
 	  ),
 	  'context' => array(
       'values' => array(
-        'vsite-section-public' => 'vsite-section-public',
+        '~openscholar-section-sitewide_front' => '~openscholar-section-sitewide_front',
       ),
     ),
   );
@@ -47,7 +47,7 @@ function scholar_front_context_default_contexts() {
       ),
     ),
   );
-  $context->condition_mode = 0;
+  $context->condition_mode = 1;
 
   // Translatables
   // Included for use with string extractors like potx.
