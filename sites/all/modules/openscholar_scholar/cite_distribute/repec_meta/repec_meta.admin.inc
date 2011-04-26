@@ -63,7 +63,7 @@ function repec_meta_config(){
       '#type' => 'textfield',
       '#title' => t('Maintainer\'s Email Address'),
       '#required' => TRUE,
-      '#default_value' => variable_get('repec_meta_archive_maintainer_email',''),
+      '#default_value' => variable_get('repec_meta_maintainer_email',''),
       '#description' => t("Email address for contacting the maintainer of this archive." )  
   	);  			
 
@@ -71,9 +71,17 @@ function repec_meta_config(){
       '#type' => 'textfield',
       '#title' => t('Maintainer\'s Name'),
       '#required' => TRUE,
-      '#default_value' => variable_get('repec_meta_archive_maintainer_name',''),
+      '#default_value' => variable_get('repec_meta_maintainer_name',''),
       '#description' => t("Name of the maintainer of this RePEc archive." )  
-  	);  			
+  	);
+
+  	$form['repec_meta']['repec_meta_provider_homepage'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Provider\'s Homepage'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('repec_meta_provider_homepage',''),
+      '#description' => t("Homepage for this archive." )  
+  	);  
   	return system_settings_form($form);
 }
 
