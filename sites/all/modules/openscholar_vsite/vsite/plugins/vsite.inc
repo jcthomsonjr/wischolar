@@ -222,9 +222,9 @@ class vsite extends space_og {
    * If so go ahead and run the context node conditions for the cp theme
    */
   private function check_context_node_form(){
-    $menu = menu_get_item();
-    if($menu['path'] == 'node/%/edit'){
-    	context_node_condition($menu['page_arguments'][0], 'form');
-    }
+//    $menu = menu_get_item();
+//    if($menu['path'] == 'node/%/edit'){
+//    	context_node_condition($menu['page_arguments'][0], 'form');
+//    }
   }
 }
