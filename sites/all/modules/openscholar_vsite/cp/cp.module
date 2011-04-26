@@ -258,7 +258,8 @@ function cp_access_cp(){
 function cp_feature_customize($js, $feature_name){
 
   if (! js) {
-    return drupal_get_form($feature_name . '_settings');
+  	drupal_goto('features/'. $feature_name);
+  	return;
   }
 
   ctools_include('modal');

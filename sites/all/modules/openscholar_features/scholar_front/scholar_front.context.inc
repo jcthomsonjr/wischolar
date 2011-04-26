@@ -22,7 +22,7 @@ function scholar_front_context_default_contexts() {
 	  ),
 	  'path' => array(
 	    'values' => array(
-	      'home' => 'home',
+	      '<front>' => '<front>',
 	    ),
 	  ),
   );

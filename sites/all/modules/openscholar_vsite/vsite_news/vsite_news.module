@@ -144,7 +144,7 @@ function vsite_news_activity_action($object, $context) {
   
   $vsite = vsite_get_vsite();
 
-  if (!in_array($object->type, array_keys(vsite_content_types(2)))) return FALSE; //Is this type public?
+  if (!in_array($object->type, array_keys(vsite_content_types()))) return FALSE; //Is this type public?
   
   $a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
   $a_access_settings = $vsite->controllers->variable->get('vsite_setting_access');
