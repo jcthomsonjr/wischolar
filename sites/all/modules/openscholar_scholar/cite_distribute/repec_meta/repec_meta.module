@@ -254,7 +254,7 @@ function repec_meta_cite_distribute_template($node, $module_mode, $iteration = N
   $template = repec_meta_template_process($node, $template_id, $template_type, $archive_code);
 
   //using http creating files as the template type, underscore, node type
-  $filepath = $archive_path . '/RePEc/' . $archive_code  . '/' . $template_type . '/';
+  $filepath = $archive_path . $template_type . '/';
   
   //if being utilized for multiple openscholar installations, prefix filename 
   //with the scholar type to prevent file name conflicts
@@ -306,12 +306,12 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
 
   while ($t_data = db_fetch_object($sql_make_template)) {
 
-    if ($t_data->identifier == 'Template-Type'){
+  	switch($t_data->identifier) {
+    case 'Template-Type':
       $template .= $t_data->identifier . ': ' . $t_data->data . "\n";
-    }
+      break;
 
-    elseif ($t_data->identifier == 'Author-Name') {
-
+    case 'Author-Name':
       //removes link html tags, for example '<a href='
       $author_names = $t_data->data;
       $author_names = strip_tags($author_names);
@@ -330,44 +330,45 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
       //repec requires this line to be in the template. There SHOULD always
       //be at least one author or contributor listed however
       else {$template .= $t_data->identifier . ': ' . '' . "\n";}
-    }
+      break;
 
     //formatting biblio date to repec date format (yyyy-mm)
-    elseif ($t_data->identifier == 'Creation-Date'){
+    case 'Creation-Date':
       $property = $t_data->data;
       if (strlen($property)){
         $repec_date = repec_meta_format_date($node->$property);
         $template .= $t_data->identifier . ': ' . $repec_date . "\n";
       }
-    }
-    elseif ($t_data->identifier == 'File-URL'){
+      break;
+      
+    case 'File-URL':
       $template .= $t_data->identifier . ': ' . $file_url . "\n";
-    }
+      break;
 
-    elseif ($t_data->identifier == 'File-Format'){
-
+    case 'File-Format':
       // $template .= $t_data->identifier . ': ' . 'Application/pdf' . "\n";
-    }
-    elseif ($t_data->identifier == 'Handle'){
+	  break;
+	  
+    case 'Handle':
       $template .= $t_data->identifier . ': ' . $handle . "\n";
-    }
+      break;
 
-    elseif ($t_data->identifier == 'Keywords'){
+    case 'Keywords':
       if(is_array($node->biblio_keywords)){
-      $template .= $t_data->identifier . ': ' .  implode(',', $node->biblio_keywords). "\n";
+        $template .= $t_data->identifier . ': ' .  implode(',', $node->biblio_keywords). "\n";
       }
-    }
+      break;
 
-    elseif ($t_data->identifier == 'Pages'){
-     $template .= $t_data->identifier . ': ' . $node->biblio_pages . "\n";
-    }
+    case 'Pages':
+      $template .= $t_data->identifier . ': ' . $node->biblio_pages . "\n";
+      break;
 
-    elseif ($t_data->identifier == 'Title'){
+    case 'Title':
       $property = $t_data->data;
       $template .= $t_data->identifier . ': ' . trim($node->$property) . "\n";
-    }
+      break;
     
-    elseif ($t_data->identifier == 'Editor-Name') {
+    case 'Editor-Name':
     	$property = $t_data->data;
     	foreach($node->$property as $bc) {
     		/* List all editors.  Editors are repeatable */
@@ -375,9 +376,9 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
     			$template .= $t_data->identifier . ':' . $editor['name'] . "\n";
     		}
     	}
-    }
+      break;
 
-    else{
+    default: 
       $property = $t_data->data;
       if (strlen($property)){
         $template .= $t_data->identifier . ': ' . $node->$property . "\n";
@@ -401,8 +402,9 @@ function _check_index() {
   $maintainer_email = variable_get('repec_meta_maintainer_email', '');
   $maintainer_name = variable_get('repec_meta_maintainer_name', '');
   $provider_institution = variable_get('repec_meta_provider_institution', '');
+  $provider_homepage = variable_get('repec_meta_provider_homepage', '');
   
-  $filepath = $archive_path . '/RePEc/' . $archive_code  . '/'; // . $template_type . '/';
+  $filepath = $archive_path; // . $template_type . '/';
   $arch = $archive_code . 'arch.rdf';
   $seri = $archive_code . 'seri.rdf';
   
@@ -445,8 +447,8 @@ function _check_index() {
   		
   		$series .= "Template-type: ReDIF-Series 1.0\n";		
 		$series .= 'Name: ' . 'IQSS ' . $r['name'] . ' Series' . "\n";
-		$series .= 'Provider-Name: ' . 'The Institute for Quantitative Social Science at Harvard University' . "\n"; 
-		$series .= 'Provider-Homepage: ' . 'http://www.iq.harvard.edu' . "\n";
+		$series .= 'Provider-Name: ' . $inst_name . "\n"; 
+		$series .= 'Provider-Homepage: ' . $provider_homepage . "\n";
 		$series .= 'Provider-Institution:  ' . $provider_institution . "\n"; 
 		$series .= 'Maintainer-Name: ' . $maintainer_name . "\n";
 		$series .= 'Maintainer-Email: ' . $maintainer_email . "\n";

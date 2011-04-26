@@ -1,0 +1,24 @@
+<?php
+
+function vsite_shields_install() {
+  // search for values that point to old locations and update them.
+
+  $q = db_query("SELECT * FROM {spaces_overrides} WHERE object_id = 'vsite_shields_shield'");
+  while ($row = db_fetch_object($q)) {
+    $row->value = unserialize($row->value);
+
+    if (strpos($row->value, 'theme/shield/shields') !== FALSE ) {
+      $row->value = str_replace('vsite_design/theme/shield/shields', 'vsite_shields/theme/shields', $row->value);
+      drupal_write_record('spaces_overrides', $row, array('type', 'id', 'object_type', 'object_id'));
+    }
+  }
+
+  $q = db_query("SELECT * FROM {variable} WHERE name = 'vsite_shields_shield'");
+  if ($row = db_fetch_object($q)) {
+    $row->value = unserialize($row->value);
+    if (strpos($row->value, 'theme/shield/shields') !== FALSE ) {
+      $row->value = str_replace('vsite_design/theme/shield/shields', 'vsite_shields/theme/shields', $row->value);
+      drupal_write_record('variable', $row, array('name'));
+    }
+  }
+}
