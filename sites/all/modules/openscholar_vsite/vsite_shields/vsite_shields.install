@@ -13,7 +13,7 @@ function vsite_shields_install() {
     }
   }
 
-  $q = db_query("SELECT * FROM {variables} WHERE name = 'vsite_shields_shield'");
+  $q = db_query("SELECT * FROM {variable} WHERE name = 'vsite_shields_shield'");
   if ($row = db_fetch_object($q)) {
     $row->value = unserialize($row->value);
     if (strpos($row->value, 'theme/shield/shields') !== FALSE ) {
