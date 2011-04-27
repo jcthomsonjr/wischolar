@@ -11,27 +11,27 @@ function scholar_front_settings($form_state) {
   vsite_include('vsiteapi');
   ctools_include('dependent');
   ctools_include('form');
-    
+
   $front_page = variable_get('site_frontpage', 'scholar_front/features');
   $spaces_features = variable_get('spaces_features',array());
-        
+
   $options = array(
     'scholar_front/features' => t('Posts from specific feature(s)'),
     'html' => t('Use an Existing or Create a new post'),
     'path' => t('Enter a path'),
     'scholar_front/flag' => t('Hand-pick content as you go')
   );
-  
+
   if (($bio_node = content_profile_load("bio", $vsite->group->uid)) && $spaces_features['scholar_biocv']){
     $options["node/".$bio_node->nid] = t('Your bio page');
   }
-  
+
   $def_html_node = false;
   if(!isset($options[$front_page]) && ($menu_item = menu_get_item($front_page)) && $menu_item['path'] == "node/%"){
   	$def_html_node = $menu_item['page_arguments'][0];
   	$front_page = 'html';
   }
-  
+
   $s_html_path = "";
   if(strlen($front_page) && !isset($options[$front_page])){
   	$s_html_path = $front_page;
@@ -45,12 +45,12 @@ function scholar_front_settings($form_state) {
     '#default_value' => isset($options[$front_page]) ? $front_page : 'scholar_front/features',
     '#element_validate' => array('scholar_front_settings_validate'),
   );
-  
+
   $items = vsite_create_links();
   foreach($items as &$item){
     $item['query'] = 'action=setfront';
   }
-    
+
   // Do they want to Select A Post
   $form['scholar_front_frontpage_nid'] = vsite_node_autocomplete_element("Select a post");
   $form['scholar_front_frontpage_nid']['#description'] = t('Select the post your want to set as a front page or create a new one') .
@@ -59,7 +59,7 @@ function scholar_front_settings($form_state) {
   $form['scholar_front_frontpage_nid']['#dependency'] = array('edit-site-frontpage' => array('html'));
 
   if ($def_html_node) $form['scholar_front_frontpage_nid']['#default_value'] = $def_html_node->title . " [nid:{$def_html_node->nid}]";
-  
+
   // Do they want to Select A Post
   $form['scholar_front_frontpage_path'] = array(
     '#type' => 'textfield',
@@ -74,7 +74,7 @@ function scholar_front_settings($form_state) {
 
   if ($def_html_node) $form['scholar_front_frontpage_nid']['#default_value'] = $def_html_node->title . " [nid:{$def_html_node->nid}]";
 
-  
+
   //If they have selected bio/node as feature
   $form['scholar_front_show_title'] = array(
     '#type' => 'checkbox',
@@ -85,10 +85,10 @@ function scholar_front_settings($form_state) {
     '#dependency' => array(
       'edit-site-frontpage' => array("node/".$bio_node->nid, "html", "path")),
   );
-  
+
   $options = vsite_content_types();
   drupal_alter('vsite_content_types', $options);
-  
+
   $default_value = variable_get('scholar_front_feature_nodes',array_keys($options));
 
   $form['scholar_front_feature_nodes'] = array(
@@ -111,7 +111,7 @@ function scholar_front_settings($form_state) {
 
 function scholar_front_settings_validate($element, &$form_state){
 	$vsite = vsite_get_vsite();
-  
+
 	switch ($element['#value']) {
       case 'scholar_front/features' :
         $exists = false;
@@ -150,10 +150,10 @@ function scholar_front_settings_validate($element, &$form_state){
  * @return the content to be rendered in the content area of the front page
  */
 function scholar_front_features(){
-  
+
 	vsite_include('vsiteapi');
   $node_options = $a_front_settings['node_options'];
-  
+
   if (!$node_options){
     $node_options = vsite_content_types();
   }
@@ -187,10 +187,10 @@ function scholar_front_features(){
   $view->init();
   $view->set_display('default');
   $view -> execute();
-  
-  return $view->render() . _scholar_front_admin_frontpage();
+
+  return  _scholar_front_admin_frontpage() . $view->render();
 }
-  
+
 /**
  * Menu callback for "home"
  * Get the vsite home page settings and act accordingly
@@ -201,7 +201,7 @@ function scholar_front_home(){
   $vsite = vsite_get_vsite();
   if ($vsite) {
   	$result = _scholar_front_admin_frontpage();
-  	
+
     $a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
     switch ($a_front_settings['frontpage']) {
       case 'bio' :
@@ -244,7 +244,8 @@ function scholar_front_home(){
  */
 function _scholar_front_admin_frontpage(){
 	  $vsite = vsite_get_vsite();
-	 
+	  $result = '';
+
     $a_messages_confirmed_settings = variable_get('vsite_setting_messages_confirmed',array());
     if($vsite && $vsite->access_admin()  && (!is_array($a_messages_confirmed_settings)  || !$a_messages_confirmed_settings['welcome_message'])){
 
@@ -261,6 +262,7 @@ function _scholar_front_admin_frontpage(){
       //Created in the last 26 hours?
       $s_welcome_message = (time() - $vsite->group->created < 93600)?"Welcome to your new website!":"";
       $s_short_message = (time() - $vsite->group->created < 93600)?"Not sure what to do now? Need help <span>getting started?</span>":"Need quick access to <span>common settings?</span>";
+      drupal_add_js(drupal_get_path('module', 'vsite').'/theme/vsite.js', 'module');
 
       //Add Content
       $s_content = l("Add/manage content",'cp/content');
@@ -302,8 +304,8 @@ MESSAGE;
       $items = vsite_create_links();
       $result = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links').$result;
     }
-    
-    $result;
+
+    return $result;
 }
 
 /**
