@@ -59,7 +59,11 @@ class vsite extends space_og {
           //We are loading a group node, instead redirect to this groups home page
           if (isset($object->nid) && (!$object->active || ($this->active && $this->id != $object->nid)) && $space = spaces_load('og', $object->nid)) {
           	$space->activate();
-            $space->redirect('home');
+          	
+          	$current_url = url($_GET['q'], array('absolute' => TRUE, 'query' => drupal_query_string_encode($_GET, array('q'))));
+          	if($current_url != rtrim($this->get_absolute_url(),"/")){
+              purl_goto("<front>", array( 'purl' => array( 'provider' => $space->purl_provider,'id' => $space->id)));
+          	}
             return;
           }
         }
@@ -67,44 +71,11 @@ class vsite extends space_og {
     	case 'init':
 	    	$private = $this->controllers->variable->get('vsite_private');
 	      if ($this->active && $private && !og_is_group_member($this->id)) {
-	        $this->redirect('private');
+	        purl_goto("private_site", array('purl' => array( 'provider' => $this->purl_provider, 'id' => $this->id)));
 	      }
       break;
     }
     parent::router($op, $object);
-  }
-
-  public function redirect($op = 'home'){
-    switch ($op) {
-      case 'home' :
-        if (! empty($this->purl_provider)) {
-
-        	$home = variable_get('site_frontpage','home');
-
-          // Use the menu path of the selected feature as homepage
-          if (menu_get_item($home)) {
-            purl_goto($home, array( 'purl' => array( 'provider' => $this->purl_provider,'id' => $this->id)));
-            break; //if we get here we have an infinate redirect situation and are on the correct page
-          }
-
-          // The previous checks fail, there is no valid homepage set
-          if ($this->access_admin() && user_access('configure spaces features')) {
-            drupal_set_message(t("Please setup your group by choosing a homepage setting."));
-            purl_goto("cp/settings/features", array( 'purl' => array('provider' => $this->purl_provider, 'id' => $this->id) ));
-          }
-        }
-        else {
-          drupal_goto('node/' . $this->id . '/edit');
-        }
-        menu_set_active_item('spaces-access-denied');
-        break;
-      case 'features' :
-        purl_goto("cp/settings/features", array('purl' => array( 'provider' => $this->purl_provider, 'id' => $this->id)));
-        break;
-      case 'private':
-      	purl_goto("private_site", array('purl' => array( 'provider' => $this->purl_provider, 'id' => $this->id)));
-      	break;
-    }
   }
 
 	/**
