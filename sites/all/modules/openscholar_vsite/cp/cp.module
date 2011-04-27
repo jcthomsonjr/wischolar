@@ -69,7 +69,16 @@ function cp_init(){
   if (! $vsite) {
     return;
   }
-    
+  
+  /**
+   * Perform a check to see if we are on a node form
+   * If so go ahead and run the context node conditions for the cp theme
+   */
+  $menu = menu_get_item();
+  if($menu['path'] == 'node/%/edit'){
+    context_node_condition($menu['page_arguments'][0], 'form');
+  }
+   
   //initialize cp theme
   if (context_isset('context', 'vsite-section-cp')) {
     global $custom_theme;
