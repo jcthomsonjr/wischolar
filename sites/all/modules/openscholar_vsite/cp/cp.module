@@ -69,7 +69,16 @@ function cp_init(){
   if (! $vsite) {
     return;
   }
-    
+  
+  /**
+   * Perform a check to see if we are on a node form
+   * If so go ahead and run the context node conditions for the cp theme
+   */
+  $menu = menu_get_item();
+  if($menu['path'] == 'node/%/edit'){
+    context_node_condition($menu['page_arguments'][0], 'form');
+  }
+   
   //initialize cp theme
   if (context_isset('context', 'vsite-section-cp')) {
     global $custom_theme;
@@ -104,27 +113,6 @@ function cp_init(){
   if (cp_get_toolbar_setting() == 'full') {
     drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
   }
-}
-
-/**
- * Perform checks after the node conditions have been set by contexts
- *
- * @param node $node
- * @param string $op
- */
-function cp_context_node_condition_alter(&$node,$op){
-	switch ($op) {
-		case 'form':
-			if (context_isset('context', 'vsite-section-cp')) {
-		    global $custom_theme;
-		    $custom_theme = CPTHEME;
-		    
-				if (cp_get_toolbar_setting() == 'full') {
-		      drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
-		    }//Also add the css if we missed that
-		  }
-		break;
-	}
 }
 
 /**
@@ -258,7 +246,8 @@ function cp_access_cp(){
 function cp_feature_customize($js, $feature_name){
 
   if (! js) {
-    return drupal_get_form($feature_name . '_settings');
+  	drupal_goto('features/'. $feature_name);
+  	return;
   }
 
   ctools_include('modal');

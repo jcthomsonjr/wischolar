@@ -1,16 +1,16 @@
 <?php
 
-define('FEATURE_PUBLIC', 2);
-define('FEATURE_PRIVATE', 1);
+define('FEATURE_PUBLIC', 1);
+define('FEATURE_PRIVATE', 2);
 define('FEATURE_DISABLED', 0);
 
 /**
  * Return the content type of a vsite based on the privacy
- * @param $privacy and array (or single value) (0 -> disabled, 1 -> private, 2 -> public)
+ * @param $privacy and array (or single value) (0 -> disabled, 2 -> private, 1 -> public)
  * @param $vsite optional / the active vsite if nothing provided
  * @return unknown_type
  */
-function vsite_content_types($privacy = array(2), $vsite = NULL){
+function vsite_content_types($privacy = array(1), $vsite = NULL){
   if (! is_array($privacy)) {
     $privacy = array(
         $privacy

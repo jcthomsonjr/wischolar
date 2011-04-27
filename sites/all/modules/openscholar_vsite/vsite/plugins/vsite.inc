@@ -88,7 +88,7 @@ class vsite extends space_og {
           }
 
           // The previous checks fail, there is no valid homepage set
-          if ($this->admin_access() && user_access('configure spaces features')) {
+          if ($this->access_admin() && user_access('configure spaces features')) {
             drupal_set_message(t("Please setup your group by choosing a homepage setting."));
             purl_goto("cp/settings/features", array( 'purl' => array('provider' => $this->purl_provider, 'id' => $this->id) ));
           }
@@ -208,6 +208,7 @@ class vsite extends space_og {
       'private_site',
       'help/%/%',
       'site/register',
+      'welcome',
     );
 
     $excluded = array_merge($excluded, $more);

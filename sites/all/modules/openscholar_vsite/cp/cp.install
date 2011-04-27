@@ -59,15 +59,6 @@ function cp_update_6002(&$sandbox){
       'query' => 'Migrated the Contact Settings',
     );
 
-  $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "front" ');
-  while ($row = db_fetch_object($result)) {
-    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_setting_front', '%s')", $row->type, $row->sid, $row->value);
-  }
-  $res[] = array(
-      'success' => true,
-      'query' => 'Migrated the Front Page Settings',
-    );
-
   return $res;
 
 }

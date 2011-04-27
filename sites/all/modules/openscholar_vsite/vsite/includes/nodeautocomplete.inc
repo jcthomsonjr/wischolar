@@ -9,8 +9,8 @@ function vsite_node_autocomplete_element($title = NULL){
   $item = array(
     '#type' => 'textfield',
     '#title' => $title ? $title : t('Select a node'),
-    '#maxlength' => 80,
-    '#autocomplete_path' => 'vsite/node/autocomplete', 
+    '#maxlength' => 180,
+    '#autocomplete_path' => 'vsite/node/autocomplete',
     '#element_validate' => array('vsite_node_autocomplete_validate'),
   );
   
@@ -68,6 +68,6 @@ function _vsite_node_autocomplete_title_to_nid($title){
 function _vsite_node_autocomplete_nid_to_title($nid){
   $query = "SELECT n.title FROM {node} n WHERE n.nid=%d";
   $title = db_result(db_query($query, $nid));
-  $title .= ' [nid:' . $nid . ']'; 
+  $title .= ' [nid:' . $nid . ']';
   return $title;
 }

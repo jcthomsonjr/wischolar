@@ -12,19 +12,16 @@ function scholar_front_context_default_contexts() {
   $context->description = 'Site front page';
   $context->tag = 'Feature';
   $context->conditions = array(
-    'node' => array(
+    'path' => array(
 	    'values' => array(
-	      'vsite' => 'vsite',
-	    ),
-	    'options' => array(
-	      'node_form' => '0',
+	      '<front>' => '<front>',
 	    ),
 	  ),
-	  'path' => array(
-	    'values' => array(
-	      'home' => 'home',
-	    ),
-	  ),
+	  'context' => array(
+      'values' => array(
+        '~openscholar-section-sitewide_front' => '~openscholar-section-sitewide_front',
+      ),
+    ),
   );
   $context->reactions = array(
     'block' => array(
@@ -50,7 +47,7 @@ function scholar_front_context_default_contexts() {
       ),
     ),
   );
-  $context->condition_mode = 0;
+  $context->condition_mode = 1;
 
   // Translatables
   // Included for use with string extractors like potx.
