@@ -131,7 +131,7 @@ function scholar_front_settings_validate($element, &$form_state){
       case 'path' :
         if (!$form_state['values']['scholar_front_frontpage_path']) {
           form_set_error('frontpage', "You must enter a path to display.");
-        }elseif(!($menu_item = menu_get_item($form_state['values']['scholar_front_frontpage_path']))){
+        }elseif(!($menu_item = menu_get_item($form_state['values']['scholar_front_frontpage_path'])) || $form_state['values']['scholar_front_frontpage_path'] == 'welcome'){
         	form_set_error('scholar_front_frontpage_path', "Unknown path, please make sure you did not include [{$vsite->get_absolute_url()}].");
         }else{
           $form_state['values']['site_frontpage'] = $form_state['values']['scholar_front_frontpage_path'];
