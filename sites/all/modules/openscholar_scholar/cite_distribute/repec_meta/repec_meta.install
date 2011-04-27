@@ -308,6 +308,37 @@ $insert = db_query("INSERT INTO `repec_type_details` (`weight`, `tid`, `type`, `
 }
 
 /**
+ * Add publishers 
+ */
+
+function repec_meta_update_6008() {
+	$ret = array('success' => TRUE,	'query' => 'RePEc publication entries added');
+	
+		foreach(array('sftwre', 'bookch', 'wpaper') as $type) {
+		$weight = db_result(db_query("SELECT MAX(weight) FROM {repec_type_details} WHERE type = '%s'", $type));
+		$tid    = db_result(db_query("SELECT MAX(tid)    FROM {repec_type_details} WHERE type = '%s'", $type));
+		$record = array(
+			'weight' => $weight + 1,
+			'tid' => $tid + 1,
+			'type' => $type,
+			'identifier' => 'Publisher',
+			'data' => 'biblio_publisher',
+			'required' => 0,
+			'active' => 1,
+		);
+		$r = drupal_write_record('repec_type_details', $record, 'id');
+
+		if ($r == 0) {
+			$ret = array( 'success' => FALSE, 'query' => 'RePEc update failed');
+		} else {
+			watchdog('repec_meta update', 'Updated repec_meta publications for type %type.', array('%type' => $type));
+		}
+	}
+	
+	return $ret;
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function repec_meta_uninstall() {
