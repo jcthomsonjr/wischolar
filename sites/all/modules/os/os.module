@@ -18,3 +18,72 @@ function os_include($inc_files){
     }
   }
 }
+
+/**
+ * Implementation of hook_user().
+ */
+function os_user($op, &$edit, &$account, $category = NULL){
+  switch ($op) {
+    case 'login' :
+      //If the destination has not been set then try and send them to thier site or a list of thier sites
+      //Or if the destination was set to the global site frontpage, do the same
+      if (strlen($_REQUEST['destination']) && $_REQUEST['destination'] != variable_get('site_frontpage','welcome'))
+        break;
+
+      // site owners
+      if ($vsites = vsite_get_vsite_by_owner($account->uid)) {
+        if (count($vsites) == 1) {
+          //since there is only one element in the array the vsite object is $vsite_arr[0]
+          $vsite = $vsites[0];
+          //For login lets send them to their domain
+          $domain_name = variable_get('vsite_domain_name','');
+          if ($domain_name)
+            $vsite->purl_provider = 'vsite_domain';
+            // if is logging in for the first time or need to reset password
+          if (($account->login == 0) || (arg(0) == 'user' && arg(1) == 'reset')) {
+            purl_goto("cp/users", array(
+              'purl' => array(
+                'provider' => $vsite->purl_provider,
+                'id' => $vsite->id
+              )
+            ));
+          }
+          else {
+            //returning single site owner
+            $_REQUEST['destination'] = $vsite->group->purl;
+          }
+        }
+        elseif (count($vsites) > 1) {
+          //asssumes user is owner of multiple vsites
+          $_REQUEST['destination'] = 'user';
+          return;
+        }
+      }
+      else {
+        // user has no vsites
+        if (($account->login == 0) || (arg(0) == 'user' && arg(1) == 'reset')) {
+          //direct user to account edit page to change password
+          $route = 'user/' . $account->uid . '/edit';
+        }
+        else {
+          $route = 'user';
+        }
+        $_REQUEST['destination'] = $route;
+        return;
+      }
+      break;
+    case 'logout':
+      // If we don't have a destination, send them to the home of the site they were visiting
+      // The only time there should be no destination is if they're in the CP
+      if (!$_REQUEST['destination']) {
+        if ($vsite = vsite_get_vsite()) {
+          $_REQUEST['destination'] = $vsite -> get_absolute_url();
+        }
+        else {
+          $_REQUEST['destination'] = '<front>';
+        }
+      }
+      break;
+
+  }
+}
