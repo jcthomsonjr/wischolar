@@ -14,22 +14,6 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL) {
       '#value' => vsite_users_show_groups_list($account),
       );
       break;
-
-    case 'logout':
-     // $_REQUEST['destination'] = '';
-
-      // If we don't have a destination, send them to the home of the site they were visiting
-      // The only time there's no destination is if they're in the CP
-      if (!$_REQUEST['destination']) {
-        if ($vsite = vsite_get_vsite()) {
-          $_REQUEST['destination'] = $vsite -> get_absolute_url();
-        }
-        else {
-          $_REQUEST['destination'] = '<front>';
-        }
-      }
-      break;
-
     case 'form':
       break;
   }

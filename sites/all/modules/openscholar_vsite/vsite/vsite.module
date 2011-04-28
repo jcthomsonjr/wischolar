@@ -77,7 +77,8 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
   switch ($op) {
     case 'login' :
       //If the destination has not been set then try and send them to thier site or a list of thier sites
-      if (strlen($_REQUEST['destination']))
+      //Or if the destination was set to the global site frontpage, do the same
+      if (strlen($_REQUEST['destination']) && $_REQUEST['destination'] != variable_get('site_frontpage','welcome'))
         break;
 
       // site owners
@@ -100,19 +101,17 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
           }
           else {
             //returning single site owner
-            $vsite->redirect('home');
+            $_REQUEST['destination'] = $vsite->group->purl;
           }
         }
-
-        if (count($vsites) > 1) {
+        elseif (count($vsites) > 1) {
           //asssumes user is owner of multiple vsites
           $_REQUEST['destination'] = 'user';
           return;
         }
       }
-
-      // non site owners
-      if (! $vsites) {
+      else {
+        // user has no vsites
         if (($account->login == 0) || (arg(0) == 'user' && arg(1) == 'reset')) {
           //direct user to account edit page to change password
           $route = 'user/' . $account->uid . '/edit';
@@ -124,6 +123,19 @@ function vsite_user($op, &$edit, &$account, $category = NULL){
         return;
       }
       break;
+    case 'logout':
+      // If we don't have a destination, send them to the home of the site they were visiting
+      // The only time there should be no destination is if they're in the CP
+      if (!$_REQUEST['destination']) {
+        if ($vsite = vsite_get_vsite()) {
+          $_REQUEST['destination'] = $vsite -> get_absolute_url();
+        }
+        else {
+          $_REQUEST['destination'] = '<front>';
+        }
+      }
+      break;
+
   }
 }
 
