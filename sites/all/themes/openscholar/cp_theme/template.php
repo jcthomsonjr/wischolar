@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Override or insert PHPTemplate variables into the templates.
  */
