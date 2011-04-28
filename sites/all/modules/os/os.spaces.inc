@@ -16,11 +16,11 @@ function os_spaces_presets() {
     'variable' => array(
       'spaces_features' => array(
         'scholar_announcements' => 0,
-        'scholar_publications' => 1,
-        'scholar_front' => 1,
-        'scholar_biocv' => 1,
-        'scholar_classes' => 1,
-        'scholar_pages' => 1,
+        'scholar_publications' => 2,
+        'scholar_front' => 2,
+        'scholar_biocv' => 2,
+        'scholar_classes' => 2,
+        'scholar_pages' => 2,
         'scholar_image_gallery' => 0,
         'scholar_announcements' => 0,
         'scholar_blog' => 0,
