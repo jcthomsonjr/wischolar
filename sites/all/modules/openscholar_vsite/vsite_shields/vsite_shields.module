@@ -92,6 +92,10 @@ function vsite_shields_form($form_state) {
         '#type' => 'hidden',
         '#value' => $shield->filename,
       ),
+      'filename' => array(
+        '#type' => 'hidden',
+        '#value' => $shield->basename,
+      ),
     );
   }
 
@@ -113,21 +117,23 @@ function vsite_shields_form_submit(&$form, &$form_state) {
       // delete image
       db_query("DELETE FROM {files} WHERE filepath = '%s'", $data['full_path']);
       file_delete($data['full_path']);
-      unset($shield_info[$name]);
+      unset($shield_info[$data['filename']]);
     }
     else {
-      $shield_info[$name]['hidden'] = $data['hidden'];
-      $shield_info[$name]['default'] = $data['default'];
+      $shield_info[$data['filename']]['hidden'] = $data['hidden'];
+      $shield_info[$data['filename']]['default'] = $data['default'];
       if ($data['default']) {
         variable_set('vsite_shields_shield', $data['full_path']);
       }
+      $shield_info[$data['filename']]['found'] = true;
     }
   }
 
   foreach ($shield_info as $key => $val) {
-    if (!isset($form_state['values'][$key])) {
+    if (!$val['found']) {
       unset($shield_info[$key]);
     }
+    unset($shield_info[$key]['found']);
   }
 
   if ($_FILES['files']['error']['new_shield'] == UPLOAD_ERR_OK) {
@@ -140,7 +146,7 @@ function vsite_shields_form_submit(&$form, &$form_state) {
     //file_move($new_file, drupal_get_path('module', 'vsite_shields').'/theme/shields');
     $new_file->filepath = $dest;
     $new_file->destination = $dest;
-    $new_filed->status = FILE_STATUS_PERMANENT;
+    $new_file->status = FILE_STATUS_PERMANENT;
     drupal_write_record('files', $new_file, 'fid');
     if (empty($shield_info)) {
       // this is our first new shield. make it the default by... default...
