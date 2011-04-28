@@ -51,17 +51,8 @@ function scholar_image_gallery_imagecache_default_presets() {
           'action' => 'imagecache_scale',
           'data' => array(
             'width' => '100%',
-            'height' => '133',
+            'height' => '125',
             'upscale' => 0,
-          ),
-        ),
-        '1' => array(
-          'weight' => '0',
-          'module' => 'imagecache',
-          'action' => 'imagecache_scale_and_crop',
-          'data' => array(
-            'width' => '113',
-            'height' => '113',
           ),
         ),
       ),

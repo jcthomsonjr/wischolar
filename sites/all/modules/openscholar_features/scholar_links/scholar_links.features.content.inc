@@ -45,7 +45,7 @@ function scholar_links_content_default_fields() {
       'class' => '',
     ),
     'display' => array(
-      'url_cutoff' => '80',
+      'url_cutoff' => '0',
     ),
     'url' => 0,
     'title' => 'none',
@@ -70,7 +70,7 @@ function scholar_links_content_default_fields() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('href');
+  t('URL');
 
   return $fields;
 }
