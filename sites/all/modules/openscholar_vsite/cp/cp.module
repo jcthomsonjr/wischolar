@@ -69,7 +69,7 @@ function cp_init(){
   if (! $vsite) {
     return;
   }
-  
+
   /**
    * Perform a check to see if we are on a node form
    * If so go ahead and run the context node conditions for the cp theme
@@ -84,7 +84,7 @@ function cp_init(){
 	    $plugin->execute($tmp_node, 'form');
 	  }
   }
-   
+
   //initialize cp theme
   if (context_isset('context', 'vsite-section-cp')) {
     global $custom_theme;
@@ -307,10 +307,10 @@ function cp_form_alter(&$form, &$form_state, $form_id){
    * and make 'settings' link as a popup link
    */
   if (arg(0) == 'cp' && $form_id == 'spaces_features_form') {
-    
+
     unset($form['settings']); // we dont need settings here
     unset($form['buttons']['reset']); //Remove reset to defaults button
-    
+
     $site = $form['space']['#value'];
     ctools_include('ajax');
     ctools_include('modal');
@@ -820,7 +820,8 @@ function cp_toolbar_menu_links(){
   );
   $user_links[] = array(
     'title' => t('Logout'),
-    'href' => "logout"
+    'href' => "logout",
+    'query' => !context_isset('context', 'vsite-section-cp')?array('destination' => $_GET['q']):'',
   );
   if (context_isset('context', 'vsite-section-cp')) {
     $user_links[] = array(
