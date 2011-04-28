@@ -378,12 +378,28 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
     	}
       break;
       
-      //publication status for journals
+      
+  /* Several types (below) need indication that they were published by another 
+   * source so repec can link to that source instead of assuming we published the
+   * paper/book/whatever.
+   */ 
     case 'Journal':
     case 'Provider-Name':
     case 'Publisher':
     	$property = $t_data->data;
-    	$template .= 'Publication-Status: Published in ' . $node->$property . "\n";
+    	if (isset($node->$property) && strlen($node->$property) > 0) {
+	    	
+    		$template .= 'Publication-Status: Published in ' . $node->$property;
+
+    	  foreach(array('volume', 'issue', 'pages') as $extra) {
+    	  	$e = 'biblio_' . $extra;
+      		if (isset($node->$e)) {
+        		$template .= ' ' . $extra . ' ' . $node->$e;
+      		}
+    		}
+    		$template .= "\n"; 
+	    	
+    	}
     	break;
     	
 
@@ -395,22 +411,6 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
     }
   }
 
-  /* Several types (below) need indication that they were published by another 
-   * source so repec can link to that source instead of assuming we published the
-   * paper/book/whatever.
-   */ 
-  /*
-  if (in_array($template_type, array('journl', 'bookch', 'booktm', 'sftwre'))) {
-    $property = $t_data->data;
-    $template .= 'Publication-Status: Published in ' . $node->$property;
-    foreach(array('volume', 'issue', 'pages') as $extra) {
-      if (isset($node["biblio_$extra"])) {
-        $template .= $extra . ' ' . $node["biblio_$extra"] . ' ';
-      }
-    }
-    $template .= "\n"; 
-  }*/
-  
   return $template;
 }
 
