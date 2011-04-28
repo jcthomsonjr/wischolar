@@ -122,6 +122,27 @@ function cp_init(){
 }
 
 /**
+ * Perform checks after the node conditions have been set by contexts
+ *
+ * @param node $node
+ * @param string $op
+ */
+function cp_context_node_condition_alter(&$node,$op){
+	switch ($op) {
+		case 'form':
+			if (context_isset('context', 'vsite-section-cp')) {
+		    global $custom_theme;
+		    $custom_theme = CPTHEME;
+
+				if (cp_get_toolbar_setting() == 'full') {
+		      drupal_add_css(drupal_get_path('module', 'cp') . '/theme/cp-toolbar.css');
+		    }//Also add the css if we missed that
+		  }
+		break;
+	}
+}
+
+/**
  * Implementation of hook_context_links_alter().
  *
  * Remove node links automatically added by the cp context
@@ -282,6 +303,9 @@ function cp_feature_customize($js, $feature_name){
   if (empty($output)) {
     $output = array();
     $output[] = ctools_modal_command_dismiss();
+  }
+  else {
+    $output[] = ctools_ajax_command_append('div#modal-content div.buttons','<input class="form-submit close" onClick="$(\'div.modal-header a.close\').click(); return false;" value="Cancel" />');
   }
 
   ctools_ajax_render($output);
