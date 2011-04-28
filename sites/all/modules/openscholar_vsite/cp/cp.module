@@ -77,6 +77,12 @@ function cp_init(){
   $menu = menu_get_item();
   if($menu['path'] == 'node/%/edit'){
     context_node_condition($menu['page_arguments'][0], 'form');
+  }elseif ($menu['page_callback'] == "node_add"){
+  	$tmp_node = (object) array("type" => $menu['page_arguments'][0]);
+  	
+	  if ($plugin = context_get_plugin('condition', 'node')) {
+	    $plugin->execute($tmp_node, 'form');
+	  }
   }
    
   //initialize cp theme

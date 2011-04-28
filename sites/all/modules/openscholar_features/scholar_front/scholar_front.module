@@ -5,6 +5,16 @@ include_once('scholar_front.features.inc');
 function scholar_front_menu(){
   $items = array();
   
+  //Backwards Compatiblility (redirects Home)
+  $items['home'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => '',
+    'page callback' => 'scholar_front_redirect_home',
+    'file' => 'scholar_front.pages.inc',
+    'access arguments' => array('access content'),
+    'weight' => 0,
+  );
+  
   $items['scholar_front/features'] = array(
     'type' => MENU_CALLBACK,
     'title' => '',
