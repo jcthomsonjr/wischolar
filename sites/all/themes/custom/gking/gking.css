@@ -1,4 +1,6 @@
-html, body, #container {
+html,
+body,
+#page {
   min-height: 100%;
   }
 
@@ -6,6 +8,10 @@ body {
   font: 12px/1.4em 'helvetica neue', helvetica, arial, sans-serif;
   color: #000;
   background: url(images/bg.png) repeat-y 50% 0 #333;
+  }
+
+#page {
+  position: relative;
   }
 
 /* TYPOGRAPHY */
@@ -172,7 +178,6 @@ a.more {
  background: url(images/arrow-white.png) 100% 50% no-repeat transparent;
   }
 
-
 #content .context-links {
   margin-top: 5px;
   }
@@ -304,7 +309,6 @@ a.more {
 /* BASIC LAYOUT */
 
 
-#wrapper,
 #navbar {
   background: url(images/navbar.png) 50% 0 no-repeat transparent;
   }
@@ -344,7 +348,7 @@ a.more {
   right: 293px;
   }
 
-#container {
+.wrap {
   width: 984px;
   margin: 0 auto;
   padding: 1px 8px;
@@ -369,6 +373,7 @@ a.more {
 #navbar {
   top:0;
   left: 0;
+  right:0;
   height: 39px;
   padding: 0;
   position:absolute;
@@ -399,7 +404,7 @@ a.more {
   text-transform: uppercase;
   }
 
-#navbar ul{
+#navbar ul {
   width: 826px;
   float: right;
   }
@@ -425,7 +430,7 @@ a.more {
   }
 
 #block-scholar-1 h1 {
-  width: 173px;
+  width: 168px;
   text-align: center;
   font-weight: normal;
   letter-spacing: 5px;
@@ -437,7 +442,7 @@ a.more {
   color:#fff;
   background:#636363;
   display:block;
-  width: 173px;
+  width: 168px;
   height: 29px;
   }
 
@@ -451,8 +456,8 @@ a.more {
   }
 
 #navbar ul li a {
-  padding-left: 12px;
-  padding-right: 12px;
+  padding-left: 10px;
+  padding-right: 10px;
   background-color:#db7002;
   }
 
@@ -472,7 +477,15 @@ a.more {
   overflow-x: hidden;
   }
 
-#content-wrapper .block {
+#content-area {
+  padding-top: 38px;
+  }
+
+.page-home #content-area {
+  padding-top: 0;
+  }
+
+#content-area .block {
   margin-bottom: 8px;
   }
 
@@ -482,7 +495,6 @@ a.more {
 #header-left {
   width: 261px;
   }
-
 
 #sidebar-first {
   right: 269px;
@@ -497,8 +509,7 @@ a.more {
   padding-left: 8px;
   }
 
-#content-wrapper,
-#header-wrapper {
+.hg-container {
   padding-right: 269px;
   padding-left: 269px;
   }
@@ -509,15 +520,15 @@ a.more {
   padding-bottom: 105px;
   }
 
-.page-home #content-wrapper {
+.page-home #content-area .hg-container {
   padding-right: 208px;
   }
 
-body.header-left-main #header-wrapper {
+body.header-left-main #header .hg-container {
   padding-right:8px;
   }
 
-body.header-right-main #header-wrapper {
+body.header-right-main #header .hg-container {
   padding-left:8px;
   }
 
@@ -712,7 +723,8 @@ body.page-iqss-gking-research-group h3 {
     border-top:1px solid #ccc;
     }
 
-#footer-inner {
+#footer .wrap {
+  width: auto;
   }
 
 #footer .block,
@@ -736,19 +748,19 @@ body.page-iqss-gking-research-group h3 {
   margin-right: 14px;
   }
 
-#footer-inner #vsite-widgets-search-form {
+#footer .wrap #vsite-widgets-search-form {
   width: 302px;
   background-image: none;
   }
 
-#footer-inner #vsite-widgets-search-form .form-item {
+#footer .wrap #vsite-widgets-search-form .form-item {
   padding: 0;
   margin: 0;
   border:none;
   float: left;
   }
 
-#footer-inner #vsite-widgets-search-form #edit-search-wrapper input {
+#footer .wrap #vsite-widgets-search-form #edit-search-wrapper input {
   width: 231px;
   height: auto;
   border: 1px solid #ddd;
@@ -757,7 +769,7 @@ body.page-iqss-gking-research-group h3 {
   border-top-color: #7c7c7c;
   }
 
-#footer-inner #vsite-widgets-search-form input.form-submit {
+#footer .wrap #vsite-widgets-search-form input.form-submit {
   float: right;
   background: #79939c;
   color: #fff;
@@ -772,7 +784,7 @@ body.page-iqss-gking-research-group h3 {
   text-shadow: none;
   }
 
-#footer-inner #vsite-widgets-search-form label {
+#footer .wrap #vsite-widgets-search-form label {
   display:none;
   }
 
@@ -848,7 +860,6 @@ body.page-iqss-gking-research-group h3 {
   margin: 0 !important;
   text-shadow: none;
   }
-
 
 #footer #google_translate_element {
   margin-top: 15px;
@@ -950,7 +961,6 @@ body.section-category .no-indent .node-teaser {
    padding-right:25px;
    }
 
-
 /* Alt Branding */
 
 body.gking-alt #wrapper {
@@ -984,7 +994,6 @@ body.gking-alt #block-scholar-1 h1 a {
 body.gking-alt #footer {
   left: 173px;
   }
-
 
 /* REMOVE AFTER REMOTE-SOURCE MODULE IS FIXED */
 

@@ -5,22 +5,21 @@ core       = 6.x
 base theme = scholar_base
 
 ;--- remove default styles
-stylesheets[all][]    = zen.css
-;stylesheets[all][]   = defaults.css
-;stylesheets[all][]   = node.css
-;stylesheets[all][]   = system.css
-;stylesheets[all][]   = system-menu.css
 stylesheets[all][]    = user.css
 
 ;--- styles
 stylesheets[all][]   = css/cp-theme.css
 stylesheets[all][]   = css/cp-typography.css
+stylesheets[all][]   = css/modal.css
 stylesheets[all][]   = css/spaces.css
 stylesheets[all][]   = css/forms.css
 stylesheets[all][]   = css/tabs.css
+stylesheets[all][]   = css/wysiwyg_imagefield.css
 
 ;--- other styles
 conditional-stylesheets[if lte IE 7][all][] = ie.css
+
+scripts[]            = js/cp_theme.js
 
 ;--- regions
 regions[header]         = header
