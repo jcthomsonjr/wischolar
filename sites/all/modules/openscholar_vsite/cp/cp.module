@@ -404,6 +404,14 @@ function cp_theme($cache, $type, $theme, $path){
     'file' => 'theme.inc'
   );
 
+  $items['form_buttons'] = array(
+    'arguments' => array(
+      'tree' => array()
+    ),
+    'template' => 'form-simple',
+    'path' => $path,
+    'file' => 'form-simple.tpl.php'
+  );
   return $items;
 }
 
@@ -859,4 +867,25 @@ function cp_toolbar_menu_links(){
   $links[0]['user'] = $user_links;
 
   return $links;
+}
+
+/**
+ * Preprocessor for handling form button for most forms.
+ */
+function cp_preprocess_form_buttons(&$vars) {
+  if (empty($vars['buttons']) || !element_children($vars['buttons'])) {
+    if (isset($vars['form']['buttons']) && element_children($vars['form']['buttons'])) {
+      $vars['buttons'] = $vars['form']['buttons'];
+      unset($vars['form']['buttons']);
+    }
+    else {
+      $vars['buttons'] = array();
+      foreach (element_children($vars['form']) as $key) {
+        if (isset($vars['form'][$key]['#type']) && in_array($vars['form'][$key]['#type'], array('submit', 'button'))) {
+          $vars['buttons'][$key] = $vars['form'][$key];
+          unset($vars['form'][$key]);
+        }
+      }
+    }
+  }
 }
