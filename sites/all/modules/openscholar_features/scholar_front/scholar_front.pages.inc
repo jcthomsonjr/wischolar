@@ -53,6 +53,7 @@ function scholar_front_settings($form_state) {
 
   // Do they want to Select A Post
   $form['scholar_front_frontpage_nid'] = vsite_node_autocomplete_element("Select a post");
+  $form['scholar_front_frontpage_nid']['#element_validate'] = array('scholar_front_settings_frontpage_nid_validate');
   $form['scholar_front_frontpage_nid']['#description'] = t('Select the post your want to set as a front page or create a new one') .
                                                          theme('ctools_dropdown', t('add new'), $items, FALSE, 'context-links');
   $form['scholar_front_frontpage_nid']['#process'] = array('ctools_dependent_process');
@@ -140,6 +141,12 @@ function scholar_front_settings_validate($element, &$form_state){
       case 'flag' :
       default :
       //do nothing
+  }
+}
+
+function scholar_front_settings_frontpage_nid_validate($element, $form_state) {
+  if ($form_state['values']['site_frontpage'] == 'html') {
+    vsite_node_autocomplete_validate($element, $form_state);
   }
 }
 

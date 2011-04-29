@@ -377,6 +377,31 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
     		}
     	}
       break;
+      
+      
+  /* Several types (below) need indication that they were published by another 
+   * source so repec can link to that source instead of assuming we published the
+   * paper/book/whatever.
+   */ 
+    case 'Journal':
+    case 'Provider-Name':
+    case 'Publisher':
+    	$property = $t_data->data;
+    	if (isset($node->$property) && strlen($node->$property) > 0) {
+	    	
+    		$template .= 'Publication-Status: Published in ' . $node->$property;
+
+    	  foreach(array('volume', 'issue', 'pages') as $extra) {
+    	  	$e = 'biblio_' . $extra;
+      		if (isset($node->$e)) {
+        		$template .= ' ' . $extra . ' ' . $node->$e;
+      		}
+    		}
+    		$template .= "\n"; 
+	    	
+    	}
+    	break;
+    	
 
     default: 
       $property = $t_data->data;
@@ -385,6 +410,7 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
       }
     }
   }
+
   return $template;
 }
 
