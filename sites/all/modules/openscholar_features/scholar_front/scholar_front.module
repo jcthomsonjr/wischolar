@@ -184,6 +184,10 @@ function scholar_front_form_alter(&$form, $form_state, $form_id) {
       unset($form['site_frontpage']); // we dont need settings here
       unset($form['site_frontpage_path']); //Remove reset to defaults button
   
+      /*
+       * Do not allow users to disable front feature
+       */
+      $form['spaces_features']['scholar_front']["#disabled"] = true;
     break;
   }
 }
