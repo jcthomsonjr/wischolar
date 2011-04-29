@@ -81,6 +81,11 @@ function scholar_events_context_default_contexts() {
   );
   $context->condition_mode = 0;
 
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Calendar and Events');
+  t('Feature');
+
   $export['openscholar-feature-events'] = $context;
   return $export;
 }

@@ -340,6 +340,7 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     ctools_include('modal');
     ctools_modal_add_js();
 
+    $spaces_features = variable_get('spaces_features', array());
     foreach ( array_keys($form['spaces_features']) as $f_name ) {
       if ($f_name[0] == '#')
         continue;
@@ -352,7 +353,6 @@ function cp_form_alter(&$form, &$form_state, $form_id){
       // by convenction feature settings form is at features/feature_name
       $item = menu_get_item('features/' . $f_name);
 
-      $spaces_features = variable_get('spaces_features', array());
       $is_enabled = $spaces_features[$f_name];
       // if the href of this items is just 'features' (i.e. parent), that path does not exist
       // and so no settings exists for this feature
