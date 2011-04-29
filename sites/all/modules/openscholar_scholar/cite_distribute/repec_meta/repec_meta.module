@@ -393,7 +393,7 @@ function repec_meta_template_process($node, $template_id, $template_type, $archi
 
     	  foreach(array('volume', 'issue', 'pages') as $extra) {
     	  	$e = 'biblio_' . $extra;
-      		if (isset($node->$e)) {
+      		if (isset($node->$e) && strlen($node->$e) > 0) {
         		$template .= ' ' . $extra . ' ' . $node->$e;
       		}
     		}
