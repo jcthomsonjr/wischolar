@@ -115,6 +115,24 @@ class vsite extends space_og {
     if($feature == 'vsite' && user_access('access content')) return true;
 
     $access = parent::access_feature($op, $feature, $account);
+    
+    //Check 'Private' Settings
+    $features = variable_get('spaces_features', array());
+    if($access && $features[$feature] > 1){
+    	//Handle privacy levels that are not simple Public/Disabled
+    	switch ($features[$feature]){
+    		//Private
+    		case 2:
+    			if(!og_is_group_member($this->id, TRUE, $account->uid)){
+    				$access = false;
+    			}//Admin or group member?
+    		break;
+    		default:
+	    		//Unknown Privacy Level
+	    		$access = false;
+    		break;
+    	}
+    }
 
     return $access;
   }
