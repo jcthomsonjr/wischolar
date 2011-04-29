@@ -232,7 +232,7 @@ function scholarregister_notify_user($vsite, $user){
     '!site_name' => variable_get('site_name', 'OpenScholar')
   ));
 
-  $scholar_site_url =  $site_url = url("node/" . $vsite -> group -> nid, $options = array('absolute' => TRUE));
+  $scholar_site_url =  $site_url = url("node/" . $vsite -> nid, $options = array('absolute' => TRUE));
   $timestamp = time();
 
   $msg_variables = array(
@@ -240,7 +240,7 @@ function scholarregister_notify_user($vsite, $user){
     '!site' => variable_get('site_name', 'OpenScholar'),
     '!scholar_site_url' => $scholar_site_url,
     '!login_url' => user_pass_reset_url($user),
-    '!site_login_uri' => url($vsite -> purl . '/home', array('absolute' => TRUE)),
+    '!site_login_uri' => url($vsite -> purl['value'] . '/home', array('absolute' => TRUE)),
     '!uri' => $base_url,
     '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
     '!mailto' => $user->mail,
@@ -249,12 +249,12 @@ function scholarregister_notify_user($vsite, $user){
       'absolute' => TRUE,
       'language' => $message['language']
     )),
-    '!site_url' => url('node/' . $vsite->id),
+    '!site_url' => url('node/' . $vsite->nid),
     '!edit_uri' => url('user/' . $user->uid . '/edit', array(
       'absolute' => TRUE,
       'language' => $message['language']
     )),
-    '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
+    '!scholar_edit_url' => url($vsite -> purl['value'] . "/cp/users/myaccount", array('absolute' => TRUE)),
     '!password' => $password
   );
 
