@@ -67,16 +67,25 @@ p.copy {
 /* LAYOUT ELEMENTS */
 
 #page {
-  width: 1012px;
+  width: 980px;
   margin: 0 auto;
   padding: 1px 0 0 0;
-  background: url('images/container.png') repeat-y 0 0 transparent;
+  background: url('images/container.png') 0 0 repeat-y #fff;
+  -moz-box-shadow: 0 0 30px #555;
+  -webkit-box-shadow: 0 0 30px #555;
+  box-shadow: 0 0 30px #555;
   }
 
-#page-wrapper {
-  background:url('images/footer.png') no-repeat 0 100% transparent;
-  width: 980px;
-  padding: 0 16px;
+.sidebar-first #page {
+  background-position: -980px 0;
+  }
+
+.sidebar-second #page {
+  background-position: -1960px 0;
+  }
+
+.two-sidebars #page {
+  background-position: -2940px 0;
   }
 
 .sidebar {
@@ -116,30 +125,6 @@ body.header-left-main-right #header {
   background: transparent;
   }
 
-body.sidebar-first #page {
-  background-position: -1012px 0;
-  }
-
-body.two-sidebars #page-wrapper {
-  background-position: -1012px 100%;
-  }
-
-body.sidebar-second #page {
-  background-position: -2024px 0;
-  }
-
-body.no-sidebars #page-wrapper {
-  background-position: -2024px 100%;
-  }
-
-body.no-sidebars #page {
-  background-position: -3036px 0;
-  }
-
-body.no-sidebars #page-wrapper {
-  background-position: -3036px 100%;
-  }
-
 body.no-sidebars #header,
 body.no-sidebars #content-area .hg-container,
 body.sidebar-second #content-area .hg-container,
@@ -151,7 +136,21 @@ body.sidebar-first #content-area .hg-container {
   padding-left: 210px;
   }
 
-/* SIDEBAR ELEMENTS */
+.sidebar-first #content-main,
+.two-sidebars #content-main{
+  background: #f8f7ee;
+  }
+
+#sidebar-first {
+  background: #fff;
+  }
+
+#sidebar-second {
+  background: #edecdd;
+  }
+
+
+/*SIDEBAR ELEMENTS */
 
 body.navbar-off #sidebar-first {
   padding-top: 0;
@@ -248,12 +247,14 @@ body.navbar-off #sidebar-first {
 
 /*Footer */
 
-#footer,
-body.no-sidebars #footer,
-body.sidebar-second #footer,
-body.sidebar-first #footer {
-  padding-left: 0;
-  padding-right: 0;
+#footer {
+  padding-top: 0;
+  }
+
+#footer .wrap {
+  padding: 0 30px;
+  position:relative;
+  bottom: -42px;
   }
 
 /* Nodes */
