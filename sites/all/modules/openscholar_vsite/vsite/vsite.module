@@ -479,6 +479,10 @@ function vsite_form_alter(&$form, $form_state, $form_id){
         '#value' => 1
       );
     }
+    
+    if(isset($form['buttons']['preview'])){
+    	$form['buttons']['preview']['#access'] = user_access('vsite_node_form_preview');
+    }
   }
 
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');

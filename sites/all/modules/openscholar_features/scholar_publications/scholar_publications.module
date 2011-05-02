@@ -582,7 +582,13 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
 
   if( in_array($node->biblio_type, array(113,100,102,1001)) && strlen($node->biblio_url)){
-    $s_output .= '<span class="teaser-extra">'. l(variable_get('scholar_publications_external_link_name',"Website"),$node->biblio_url).'</span>';
+  	$url = $node->biblio_url;
+  	$name = "Website";
+  	if (function_exists('shorten_url') && variable_get('scholar_publications_shorten_citations', 0)) {
+  		$name =  shorten_url($url);
+  		$url = 'http://' . $name;
+  	}
+    $s_output .= '<span class="teaser-extra">'. l(variable_get('scholar_publications_external_link_name', $name), $url).'</span>';
   }//This is a software,data, article, book biblio entry, and it has a External URL
 
   if (strlen($node->biblio_abst_e)) $s_output .= '<div class="biblio-abstract-display slider">'. $node->biblio_abst_e ."\n</div>";
@@ -962,4 +968,24 @@ function vsite_content_views_pre_view(&$view) {
 
         $view->display_handler->set_option('sorts', array_merge($newsorts, $sorts));
     }
+}
+
+/**
+ * Implement Hook vsite_generic_settings
+ * @return array
+ */
+function scholar_publications_vsite_generic_settings() {
+  $a_settings = array();
+
+  //Should urls in citations be shortened?
+  $a_settings['scholar_publications_shorten_citations'] = array(
+    'form' => array(
+      '#type' => 'checkbox',
+      '#title' => t('Shorten citation URLs'),
+      '#default_value' => variable_get('scholar_publications_shorten_citations', 0),
+      '#description' => "When this is checked URLs in citation links will be shortened.",
+    )
+  );
+
+  return $a_settings;
 }

@@ -208,7 +208,7 @@ function vsite_update_6009(&$sandbox){
 
   $res = array();
   
-  $result = db_query("SELECT name  FROM `variable` WHERE `name` LIKE 'itweak_upload_thumbnail_link%' AND value = 's:18:\"lightbox2slideshow\";'");
+  $result = db_query("SELECT name  FROM {variable} WHERE `name` LIKE 'itweak_upload_thumbnail_link%' AND value = 's:18:\"lightbox2slideshow\";'");
 
   while ($var = db_result($result)){
   	variable_set($var,'shadowboxgrouped');
@@ -223,3 +223,26 @@ function vsite_update_6009(&$sandbox){
 
 }
 
+/**
+ * Remove path aliases to vsite nodes, they mirror the homepage and will now trigger the node loading instead of a sites homepage
+ * @param array $sandbox
+ */
+function vsite_update_6010(&$sandbox){
+
+  $res = array();
+  
+  $scholar_content_type = variable_get('scholar_content_type', 'vsite');
+  $result = db_query("SELECT n.nid as nid  FROM {node} n INNER JOIN {url_alias} ua ON ua.src = CONCAT('node/',n.nid) WHERE n.type = '%s' ",$scholar_content_type);
+
+  while ($nid = db_result($result)){
+    db_query("DELETE FROM {url_alias} WHERE src = 'node/%s' ",$nid);
+  }
+  
+  $res[] = array(
+   'success' => true,
+   'query' => 'Removed aliases directly to og nodes',
+  );
+
+  return $res;
+
+}
