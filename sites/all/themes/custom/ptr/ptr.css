@@ -4,64 +4,29 @@ html,body {
   }
 
 body {
-  background: url(images/body-no-sidebars.png) repeat-y 50% 0 #fff;
+  background: url('images/body-a.png') repeat-y 50% 0 #fff;
   font-family:"helvetica neue",helvetica, Arial,sans-serif;
   }
 
-body.sidebar-first {
-  background-image: url(images/body-sidebar-first.png);
+body.sidebar-second,
+body.two-sidebars{
+  background-image: url('images/body-b.png');
   }
 
-body.sidebar-second {
-  background-image: url(images/body-sidebar-second.png);
-  }
-
-body.two-sidebars {
-  background-image: url(images/body-two-sidebars.png);
-  }
-
-
-#wrapper {
-  background: url(images/wrapper-no-sidebars.png) no-repeat 50% 0 transparent;
-  }
-
-body.sidebar-first #wrapper {
-  background-image: url(images/wrapper-left-sidebar.png);
-  }
-
-body.sidebar-second #wrapper {
-  background-image: url(images/wrapper-sidebar-second.png);
-  }
-
-body.two-sidebars #wrapper {
-  background-image: url(images/wrapper-two-sidebars.png);
+#header {
+  background: url('images/header.png') no-repeat 50% 0 transparent;
+  height: 139px;
   }
 
 #footer {
-  background: url(images/footer-no-sidebars.png) no-repeat 50% 0 transparent;
-  min-width:900px;
-  }
-
-body.sidebar-first #footer {
-  background-image: url(images/footer-sidebar-first.png);
-  }
-
-body.sidebar-second #footer {
-  background-image: url(images/footer-sidebar-second.png);
-  }
-
-body.two-sidebars #footer {
-  background-image: url(images/footer-two-sidebars.png);
+  background: rgba(237,237,237,0.63);
   }
 
 /* MAIN LAYOUT COMPONENTS */
 
-
-#container {
+.wrap {
   width: 900px;
   margin: 0 auto;
-  padding-top: 1px;
-  padding-bottom: 40px;
   }
 
 #content-main {
@@ -69,19 +34,14 @@ body.two-sidebars #footer {
   padding: 11px 30px;
   }
 
-#content-wrapper {
+#content-area .hg-container {
   padding-left:200px;
   padding-right:260px;
   }
 
-#header-wrapper {
+#header .hg-container {
   padding-left:200px;
   padding-right:220px;
-  }
-
-
-#header {
- height: 141px;
   }
 
 #footer {
@@ -91,13 +51,7 @@ body.two-sidebars #footer {
   bottom:0;
   left: 0;
   height: 50px;
-  padding: 0;
-  background: url(images/footer-sidebar-second.png) repeat-y 50% 0 #fff;
-  text-align: center;
-  }
-
-body.sidebar-first #footer, body.no-sidebars #footer {
-  background-image: url(images/footer-no-sidebar-second.png);
+  padding: 5px;
   }
 
 /*TYPOGRAPHY*/
@@ -124,9 +78,9 @@ body.sidebar-first #footer, body.no-sidebars #footer {
   display:block;
   }
 
-#header h2 {
-  font-size: 12px;
-  margin: 0 10px 3px 0;
+#header h2,
+#header p {
+  display:none;
   }
 
 h2.title {
