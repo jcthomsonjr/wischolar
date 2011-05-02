@@ -232,7 +232,7 @@ function scholarregister_notify_user($vsite, $user){
     '!site_name' => variable_get('site_name', 'OpenScholar')
   ));
 
-  $scholar_site_url =  $site_url = url("node/" . $vsite -> nid, $options = array('absolute' => TRUE));
+  $scholar_site_url =  $site_url = url($vsite -> group -> purl, $options = array('absolute' => TRUE));
   $timestamp = time();
 
   $msg_variables = array(
@@ -240,7 +240,7 @@ function scholarregister_notify_user($vsite, $user){
     '!site' => variable_get('site_name', 'OpenScholar'),
     '!scholar_site_url' => $scholar_site_url,
     '!login_url' => user_pass_reset_url($user),
-    '!site_login_uri' => url($vsite -> purl['value'] . '/home', array('absolute' => TRUE)),
+    '!site_login_uri' => url($vsite -> group -> purl . '/home', array('absolute' => TRUE)),
     '!uri' => $base_url,
     '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
     '!mailto' => $user->mail,
@@ -249,12 +249,12 @@ function scholarregister_notify_user($vsite, $user){
       'absolute' => TRUE,
       'language' => $message['language']
     )),
-    '!site_url' => url('node/' . $vsite->nid),
+    '!site_url' => url($vsite -> group -> purl),
     '!edit_uri' => url('user/' . $user->uid . '/edit', array(
       'absolute' => TRUE,
       'language' => $message['language']
     )),
-    '!scholar_edit_url' => url($vsite -> purl['value'] . "/cp/users/myaccount", array('absolute' => TRUE)),
+    '!scholar_edit_url' => url($vsite -> group -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
     '!password' => $password
   );
 
@@ -263,7 +263,7 @@ function scholarregister_notify_user($vsite, $user){
 
    t("Hi !username,\n\nYour new web site at !site has been activated. Your web site url is !scholar_site_url\n\nYou will be able to log into your site at !site_login_uri with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables)
    :t(variable_get('openscholar_register_email_message', _scholarregister_get_default_mail_message()), $msg_variables);
-
+echo $body;
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
     drupal_set_message(t('Error sending notification mail to user.'), 'error');

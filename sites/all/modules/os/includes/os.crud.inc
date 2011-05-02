@@ -25,8 +25,8 @@ function os_create_vsite($name, $domain, $preset){
       'og_description' => "$domain's web site",
       'theme' => 'scholar_airstream',  // @todo $preset -> theme_detault
   );
-  $vsite = os_create_node($title = $domain, $body = NULL, $properties = $properties);
-
+  $vsite = os_create_node($domain, NULL, $properties);
+  $vsite = spaces_load('og', $vsite->nid, true);
   return $vsite;
 }
 
@@ -98,7 +98,7 @@ function os_add_role($name) {
   if (!$rid) {
     db_query("INSERT INTO {role} (name) VALUES ('%s')", $name);
   }
-  
+
   return ($rid) ? $rid : os_get_rid($name);
 }
 
@@ -125,7 +125,7 @@ function os_add_permissions($rid, $perms) {
     $existing_perms += explode(', ', $row->perm);
   }
   // If this role already has permissions, merge them with the new permissions being set.
-  if (count($existing_perms) > 0) { 
+  if (count($existing_perms) > 0) {
     $perms = array_unique(array_merge($perms, (array)$existing_perms));
   }
 
@@ -171,6 +171,7 @@ function os_save_node($properties = array()) {
 
   $node = (object) $node;
   node_save($node);
+  $node = node_load($node->nid, NULL, TRUE);  // force a reloading of the node
 
   return $node;
 }
