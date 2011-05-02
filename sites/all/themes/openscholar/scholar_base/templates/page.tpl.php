@@ -16,7 +16,7 @@
     <div id="page-wrapper">
       <?php if (!empty($header_top)): ?>
       <div id="header-top">
-        <div class="wrap clearfix">
+        <div class="wrap">
           <?php print $header_top; ?>
         </div>
       </div><!-- /header-top -->
