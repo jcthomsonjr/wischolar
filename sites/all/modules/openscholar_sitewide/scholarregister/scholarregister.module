@@ -263,7 +263,7 @@ function scholarregister_notify_user($vsite, $user){
 
    t("Hi !username,\n\nYour new web site at !site has been activated. Your web site url is !scholar_site_url\n\nYou will be able to log into your site at !site_login_uri with username:\n\n!username\n\nWe hope you will enjoy your new web site.\n\nSincerely,\nThe !site Team", $msg_variables)
    :t(variable_get('openscholar_register_email_message', _scholarregister_get_default_mail_message()), $msg_variables);
-echo $body;
+
   $params['body'] = $body;
   if (! drupal_mail('scholarregister', 'scholar-register-notify', $user->mail, $language, $params, $from)) {
     drupal_set_message(t('Error sending notification mail to user.'), 'error');
