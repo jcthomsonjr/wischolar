@@ -1,17 +1,58 @@
-body {
+body,
+#footer {
   background:#0c0c0c;
   }
 
-#header-wrapper, #navbar {
+#page,
+#page-wrapper {
+  width: 100%;
   background: transparent;
   }
 
-#header-wrapper {
-  margin-top: 10px;
+.wrap {
+  width:1000px;
+  padding: 0 48px;
+  margin: 0 auto;
   }
 
-#navbar {
-  height: 43px;
+#header {
+  background:url('images/header.png') repeat-x 0 100%;
+  height: 110px;
+  }
+
+#header .wrap {
+  background:url('images/header-wrap.png') no-repeat 50% 100%;
+  min-height: 0;
+  height: 110px;
+  }
+
+#navbar,
+#content-area {
+  background: #9a9c9f;
+  }
+
+#navbar .wrap {
+  background:url('images/nav-wrap.png') repeat-y 50% 0;
+  padding: 0 48px;
+  }
+
+#content-area .wrap {
+  background:url('images/content-wrap.png') repeat-y 50% 0;
+  }
+
+#footer .wrap {
+  background:#d0d7d8;
+  width: 884px;
+  }
+
+#header .wrap .hg-container {
+  padding-top: 10px;
+  }
+
+#navbar,
+#navbar .wrap,
+#navbar li {
+  height: 36px;
   }
 
 #sidebar-first {
@@ -34,12 +75,14 @@ h2.title, h3.title {
   background: #b7bec1;
   }
 
-#navbar li a, #navbar li a:visited {
+#navbar li a,
+#navbar li a:visited {
   border:none;
   color: #fff;
   display:block;
-  height: 43px;
+  height: 36px;
   line-height: 36px;
+  position:relative;
   }
 
 #navbar li.last a {
@@ -50,35 +93,20 @@ h2.title, h3.title {
 #navbar li a.active,
 #navbar li.active-trail a,
 #navbar li.active-trail a:hover {
-  background: url(images/nav-over.png) 50% 100% transparent;
+  background: url('images/nav-over.png') no-repeat 50% 0 transparent;
   color: #fff;
+  top: 0;
+  height: 43px;
   }
 
 #navbar li a:hover {
-  background-position: 0 100%;
+  background-position: 0 0;
   color: #000;
   }
 
-#content-wrapper {
-  position: relative;
-  top: -7px;
-  margin-bottom: -7px;
-  }
-
-#container {
-  background-image:url(images/bg.png);
-  }
-
-#header {
-  background-image:url(images/header.png);
-  }
-
-#footer {
-  background-image:url(images/footer.png);
-  }
-
-#footer-inner {
-  background: transparent;
+#navbar li a.active:hover {
+  background-position: 50% 0;
+  color: #fff;
   }
 
 #header h1 a, #header h1 a:visited, #header #block-vsite_menus-1 li a, #header #block-vsite_menus-1 li a:visited {
@@ -89,24 +117,11 @@ h2.title, h3.title {
   border-color: #ebf1ff;
   }
 
-#wrapper {
-  background: url(images/wrapper.png) 0 0 repeat-x #9a9c9f;
-  }
-
-#wrapper-inner {
-  background: url(images/wrapper-bottom.png) 0 100% repeat-x #9a9c9f;
-  }
-
-#wrapper-inner {
-  background-position: 0 100%;
-  background-color:transparent;
-  }
-
 #header h1 {
   width: 405px;
   height:63px;
   text-indent: -999em;
-  background: url(images/logo.png) 0 0 no-repeat #4a4a4a;
+  background: url('images/logo.png') 0 0 no-repeat #4a4a4a;
   }
 
 #header h1 a, #header h1 a:visited {

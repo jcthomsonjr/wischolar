@@ -311,16 +311,17 @@ body.two-sidebars #sidebar-first {
 /* SEARCH */
 
 #header .search-form .container-inline {
-  background-image: url(images/search.png);
+  background-image: url('images/search.png');
   height: 28px;
-  width:218px;
+  width:173px;
   padding-right: 0;
   margin-top:15px;
+  padding-left: 27px;
   }
 
-#header .search-form .container-inline .form-item,
-#header .search-form .form-submit {
-  float:right;
+#header #search-form #edit-submit {
+  margin: 0 0 0 -100% !important;
+  left: -27px;
   }
 
 #header .search-form .container-inline .form-item .form-text {
@@ -329,15 +330,8 @@ body.two-sidebars #sidebar-first {
   background:transparent;
   }
 
-#header #edit-keys-wrapper {
-  width: 190px;
-  }
-
 #header .search-form input.form-submit,
 #header #search-block-form #edit-submit,
 #header #search-form #edit-submit{
-  margin: 0;
-  width:27px;
-  height: 28px;
   background: transparent;
   }
