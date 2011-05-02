@@ -16,19 +16,7 @@ body.header-main #header-main {
 	padding-bottom: 0;
 	}
 
-#container {
-	background: transparent url(images/container.png) repeat-y 0 0;
-	}
-
-#footer {
-	background: #909D9C url(images/footer.png) no-repeat 0 0;
-	}
-
-#header {
-	background: transparent url(images/header.png) no-repeat 0 0;
-	}
-
-#header-wrapper {
+#header .hg-container {
 	padding-left: 248px;
 	height:123px;
 	}
@@ -46,7 +34,7 @@ body.header-main #header-main {
 #header-main h1 {
 	width: 208px;
 	height: 113px;
-	background: url(images/logo.png) no-repeat 0 0;
+	background: url('images/logo.png') no-repeat 0 0;
 	text-indent: -999em;
 	float: left;
 	margin: 0 17px;
@@ -61,32 +49,38 @@ body.header-main #header-main {
 #navbar li {
 	padding-left: 1px;
 	border-right: 1px solid #BBBBBB;
-	line-height: 29px;
 	}
 
 #navbar li a {
-	line-height: 29px;
+	line-height: 14px;
+	display:block;
 	}
 
-#navbar li a:hover, #navbar li a.active, #navbar li.active-trail a {
+#navbar li a:hover,
+#navbar li a.active,
+#navbar li.active-trail a {
 	background: #C55B28;
 	color: #fff;
 	}
 
-#sidebar-second h3.title, #sidebar-first h3.title {
+#sidebar-second h3.title,
+#sidebar-first h3.title {
 	color:#C55B28;
 	}
 
-#sidebar-second li a, #sidebar-first li a {
+#sidebar-second li a,
+#sidebar-first li a {
 	color: #0C54B3;
 	}
 
-#sidebar-second ul.menu li, #sidebar-first ul.booktoc li {
+#sidebar-second ul.menu li,
+#sidebar-first ul.booktoc li {
 	padding: 2px 0;
 	line-height: 1.5em;
 	}
 
-#sidebar-second ul.menu li a, #sidebar-first ul.booktoc li a {
+#sidebar-second ul.menu li a,
+#sidebar-first ul.booktoc li a {
 	display: block;
 	border-bottom: 1px dotted #ccc;
 	}
@@ -163,7 +157,8 @@ td.welcome {
 	border-left: 1px dotted #ccc;
 	}
 
-.view-Downloads .views-field-title, .view-Downloads .views-field-teaser {
+.view-Downloads .views-field-title,
+.view-Downloads .views-field-teaser {
 	padding: 0 8px;
 	}
 
@@ -191,7 +186,7 @@ td.welcome {
 	margin: 0 auto;
 	width:144px;
 	height:36px;
-	background:url(images/download_bkgnd.gif) no-repeat;
+	background:url('images/download_bkgnd.gif') no-repeat;
 	text-align:center;
 	}
 
@@ -216,7 +211,7 @@ td.welcome {
 	}
 
 .action_button {
-	background:transparent url(images/button_bkgnd.gif) no-repeat scroll 0 0;
+	background:transparent url('images/button_bkgnd.gif') no-repeat scroll 0 0;
 	height:36px;
 	margin:0 auto;
 	text-align:center;
