@@ -55,6 +55,11 @@ function scholar_reader_update_6000(){
 function scholar_reader_update_6001(&$sandbox){
 
   $res = array();
+  
+  if(!db_table_exists('spaces_overrides')){
+    $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
+    return $res;
+  }
 
   $settings = array();
   $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "reader" ');

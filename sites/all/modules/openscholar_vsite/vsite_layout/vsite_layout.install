@@ -16,6 +16,11 @@ function vsite_layout_update_6001(&$sandbox) {
 
 function vsite_layout_update_6002(&$sandbox) {
   module_load_include('inc', 'vsite_layout', 'vsite_layout.overrides');
+  
+  if(!db_table_exists('spaces_overrides')){
+    $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
+    return $res;
+  }
 
   $n_success = 0;
   $a_return = array();

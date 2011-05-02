@@ -4,6 +4,11 @@ function scholar_front_update_6001(&$sandbox){
 
   $res = array();
   
+  if(!db_table_exists('spaces_overrides')){
+    $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
+    return $res;
+  }
+  
   //Remove setting that may have been created incorectly before upgrade
   db_query('DELETE FROM {spaces_overrides} WHERE type LIKE "og" AND object_type = "variable" AND object_id LIKE "vsite_setting_front" ');
   

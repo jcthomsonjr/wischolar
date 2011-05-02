@@ -98,6 +98,11 @@ function vsite_update_6004(&$sandbox) {
 function vsite_update_6005(&$sandbox) {
   $res = array();
 
+  if(!db_table_exists('spaces_overrides')){
+    $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
+    return $res;
+  }
+  
   if (db_table_exists('spaces_settings')) {
     $result = db_query("SELECT * FROM {spaces_settings} WHERE id = 'generic'");
     while ($row = db_fetch_object($result)) {

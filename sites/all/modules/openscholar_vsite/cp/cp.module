@@ -242,19 +242,6 @@ function cp_menu(){
     )
   );
 
-  // space overrides menu entry for ctools popup
-  // @todo: not quite working - unused
-  /*
-  $items["cp/features/%ctools/overrides"] = array(
-    'title' => 'Overrides',
-    'page callback' => 'cp_spaces_overrides',
-    'page arguments' => array(2),
-    'access callback' => 'spaces_access_admin_perms',
-    'access arguments' => array(array('administer spaces')),
-    'type' => MENU_CALLBACK
-  );
-  */
-
   return $items;
 }
 
