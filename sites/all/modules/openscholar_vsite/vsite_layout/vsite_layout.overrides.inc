@@ -9,6 +9,7 @@ function vsite_layout_spaces_registry_alter(&$registry) {
   if(isset($registry['controllers']['context'])){
     $registry['controllers']['context']['plugin'] = "spaces_controller_vsite_context";
   }
+  
 }
 
 

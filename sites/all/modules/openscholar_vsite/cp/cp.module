@@ -292,7 +292,8 @@ function cp_feature_customize($js, $feature_name){
     $output[] = ctools_modal_command_dismiss();
   }
   else {
-    $output[] = ctools_ajax_command_append('div#modal-content div.buttons','<input class="form-submit close" onClick="$(\'div.modal-header a.close\').click(); return false;" value="Cancel" />');
+    $output[] = ctools_ajax_command_append('#modal-content div.buttons','<input class="form-submit close" onClick="$(\'div.modal-header a.close\').click(); return false;" value="Cancel" />');
+    $output[] = ctools_ajax_command_after('#modal-content #edit-reset','<input class="form-submit close" onClick="$(\'div.modal-header a.close\').click(); return false;" value="Cancel" />');
   }
 
   ctools_ajax_render($output);

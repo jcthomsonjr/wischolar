@@ -92,7 +92,7 @@ function template_preprocess_formcolumns_form(&$aVars) {
   // we aren't adding columns to this form, so exit out now
   if (!$form['#columns']) return $aVars;
 
-  drupal_add_css(drupal_get_path('module', 'nodeformcols') . '/css/nodeformcols.css');
+  drupal_add_css(drupal_get_path('module', 'formcolumns') . '/formcolumns.css');
 
   $default_region = variable_get('nodeformcols_default_region', NODEFORMCOLS_DEFAULT_REGION);
   $classes = array('node-form');
