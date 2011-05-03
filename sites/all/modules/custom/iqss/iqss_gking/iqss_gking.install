@@ -62,3 +62,22 @@ function iqss_gking_update_6003(&$sandbox){
   }
   return $return;
 }
+
+/**
+ * Copy Publication Blocks to Gary's Taxonomy context (to match somthing previously set in code)
+ * @param $sandbox
+ */
+function iqss_gking_update_6004(&$sandbox){
+  $res = array();
+  $gking_sid = 3633; //gary's site id
+
+  $result = db_query("SELECT value  FROM {spaces_overrides} WHERE type = 'og' AND `id` = '%d' AND object_type = 'context' AND object_id LIKE 'openscholar-feature-publications:reaction:block:gking' " , $gking_sid);
+
+  if($value = db_result($result)){
+  	db_query("DELETE FROM {spaces_overrides} WHERE type = 'og' AND `id` = '%d' AND object_type = 'context' AND object_id LIKE 'openscholar-feature-taxonomy:reaction:block:gking'", $gking_sid);
+    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('og','%d','context','openscholar-feature-taxonomy:reaction:block:gking', '%s')", $gking_sid, $value );
+  }else{
+  	$res['#abort'] = array('success' => FALSE, 'query' => 'gking: Waiting for vsite_layout updates to run.');
+  }
+  return $res;
+}

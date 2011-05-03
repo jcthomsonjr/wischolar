@@ -24,12 +24,6 @@ function iqss_gking_init(){
 
   drupal_add_css(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.css");
   drupal_add_js(drupal_get_path('module', 'iqss_gking') . "/iqss_gking.js");
-
-  $router_item = menu_get_item();
-  if (strpos($router_item['path'], 'taxonomy/term') === 0 && !context_get('scholar','feature')) {
-    context_set('scholar','feature','publications');
-  }
-
 }
 
 /**
