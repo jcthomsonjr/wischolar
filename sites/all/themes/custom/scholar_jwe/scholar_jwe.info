@@ -5,7 +5,9 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-jwe.css
-conditional-stylesheets[if IE][all][] = scholar-jwe-ie.css
+conditional-stylesheets[if lte IE 7][all][] = scholar-jwe-ie.css
+
+scripts[] = scholar_jwe.js
 
 scholar[widgets][vsite_widgets_0] = false
 scholar[theme_type]   = "scholar"

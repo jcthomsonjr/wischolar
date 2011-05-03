@@ -18,6 +18,11 @@
         <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
       <?php endif; ?>
      <?php endif; ?>
+     <?php if ($page && $links):?>
+    <div class="os-links links links-inline">
+      <?php print $links;?>
+    </div>
+    <?php endif ?>
     <div class="content">
       <?php print $content; ?>
       <?php
@@ -31,10 +36,5 @@
       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
       <?php endif; ?>
     <?php endif; ?>
-    <?php if ($page && $links):?>
-    <div class="links links-inline">
-      <?php print $links;?>
-    </div>
-    <?php endif ?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->

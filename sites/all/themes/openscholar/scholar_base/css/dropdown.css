@@ -2,7 +2,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   display: none;
   text-align: left;
   position: absolute;
-  right: -1px;
+  right: -15px;
   top: 0;
   z-index:1001;
   white-space: nowrap;
@@ -11,7 +11,6 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 html.js .os-links div.ctools-dropdown div.ctools-dropdown-container {
   top: 14px;
   }
-
 
 html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   list-style-type: none;
@@ -62,7 +61,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
 
 html.js div.ctools-dropdown div.ctools-dropdown-container {
   background: #fff;
-  border: 1px solid #666;
+  border: 1px solid #a8bed8;
   margin: 0 1px 0 0;
   padding: 5px 0;
   color: #494949;
@@ -98,19 +97,20 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   width: 100%;
   }
 
-.context-links a {
+#content-area .hg-container .context-links a {
   font-style: normal !important;
   font-size: 11px !important;
   padding: 0 !important;
   font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
   }
 
-.context-links .ctools-dropdown-container-wrapper a,
-.ctools-dropdown-container-wrapper ul.links li a,
-.context-links .ctools-dropdown-container-wrapper .flag-wrapper {
+#content-area .hg-container .context-links .ctools-dropdown-container-wrapper a,
+#content-area .hg-container .ctools-dropdown-container-wrapper ul.links li a,
+#content-area .hg-container .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
   color: #000 !important;
-  text-decoration: none;
+  text-decoration: none !important;
   padding: 3px 13px !important;
+  font-weight: normal !important;
   }
 
 .ctools-dropdown-container-wrapper ul.links li.flag-featuredposts {
@@ -123,18 +123,19 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   top: 0;
   }
 
-.ctools-dropdown-no-js .ctools-dropdown-container-wrapper ul.links li a,
-.ctools-dropdown-no-js .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
+#content-area .hg-container .ctools-dropdown-no-js .ctools-dropdown-container-wrapper ul.links li a,
+#content-area .hg-container .ctools-dropdown-no-js .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
   padding:0 1px !important;
   color: #228822 !important;
   }
 
-.context-links .ctools-dropdown-container-wrapper a:hover,
-.ctools-dropdown-container-wrapper ul.links li a:hover {
+#content-area .hg-container .context-links .ctools-dropdown-container-wrapper a:hover,
+#content-area .hg-container .ctools-dropdown-container-wrapper ul.links li a:hover {
   color: #fff !important;
-  text-transform: none;
+  text-transform: none !important;
   text-decoration: none !important;
   background-color: #356df6 !important;
+  font-weight: normal !important;
   }
 
 .context-links .ctools-dropdown-container-wrapper .flag-wrapper a {
@@ -157,7 +158,6 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   font-family: 'helvetica neue', helvetica, arial, sans-serif;
   text-align: left;
   text-indent: -999em;
-
   }
 
 .node:hover .vsite-admin a.ctools-dropdown-link {

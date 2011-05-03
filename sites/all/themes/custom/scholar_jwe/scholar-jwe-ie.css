@@ -1,3 +1,8 @@
-BODY.two-sidebars #sidebar-first {
-	LEFT: -235px!important;
+#sidebar-left {
+  margin-left: expression(
+   document.all.content-main.offsetWidth * -1 +
+   parseFloat(document.all.content-main.currentStyle.paddingLeft) +
+   parseFloat(document.all.sidebar-left.currentStyle.paddingLeft) +
+   parseFloat(document.all.sidebar-left.currentStyle.paddingRight)
+   ); /* Fix for IE7 */
 }

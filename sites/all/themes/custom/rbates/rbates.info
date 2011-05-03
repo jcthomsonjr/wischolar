@@ -1,4 +1,3 @@
-; $Id: rbates.info,v 1.12 2008/09/21 22:43:32 swortis Exp $
 name        = Robert Bates Custom Theme
 description = Custom Theme for Robert Bates.
 
@@ -7,6 +6,8 @@ core       = 6.x
 base theme = scholar_weft
 stylesheets[all][]   = rbates.css
 conditional-stylesheets[if lte IE 7][all][]   = rbates-ie.css
+
+scripts[]               = rbates.js
 
 widgets[vsite_widgets_0] = false
 scholar[theme_type]   = "scholar"
