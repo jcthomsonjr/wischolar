@@ -112,6 +112,21 @@ function scholar_publications_settings($space) {
     '#default_value' => variable_get('bkn_mode', 2),
     '#options' => array(t('Lookup via autocomplete (many requests to bkn)'), t('User Initiated (single request)'), t('Disabled')),
   );
+  
+  //Should urls in citations be shortened?
+  $form['scholar_publications'] = array(
+    '#type' => 'fieldset',
+    '#title' =>t('Include URL in citation'),
+    '#region' => 'footer',
+  );
+  $form['scholar_publications']['scholar_publications_shorten_citations'] = array(
+   '#type' => 'checkbox',
+   '#title' => t('When this is checked, URLs in citation links will be shortened.'),
+   '#default_value' => variable_get('scholar_publications_shorten_citations', 0),
+    );
+
+  
+
 
   $form['buttons']['#region'] = 'footer';
 
