@@ -113,34 +113,6 @@ function _vsite_search_luceneapi_preprocess_category_facets(&$items, $module) {
 }
 
 /**
- * Implementation of hook_context_active_contexts_alter().
- *
- * @param mixed $contexts
- *   Associative array of context objects
- */
-function vsite_search_luceneapi_context_active_contexts_alter(&$contexts) {
-  // If one of the active contexts is the apachesolr_search context, remove some unneccessary blocks
-  if (in_array('vsite-search-luceneapi_search', array_keys($contexts))) {
-    if (!empty($contexts['vsite-section-public'])) {
-      foreach ($contexts['vsite-section-public']->reactions['block']['blocks'] as $index => $block) {
-        if (preg_match('/luceneapi_biblio_/', $block['delta'])) {
-          
-        }
-        switch ($block['delta']) {
-          case 'scholar_publications-block_1':
-          case 'scholar_announcements-block_1':
-          case 'publication_types-block_1':
-          case 'publication_years-block_1':
-          case 'publication_contributors-block_1':
-            unset($contexts['vsite-section-public']->reactions['block']['blocks'][$index]);
-            break;
-        }
-      }
-    }
-  }
-}
-
-/**
  * Implementation of hook_vsite_widgets()
  *
  * @return
@@ -350,9 +322,8 @@ function vsite_search_luceneapi_luceneapi_facet_postrender_alter(&$items, $realm
       }
     }
     
-    // If the context is global, remove the author facet
-    $contexts = context_active_contexts();
-    if (!array_key_exists('vsite-section-public', $contexts)) {
+    // If not in a vsite, remove the author facet
+    if (!vsite_get_vsite()) {
       unset($items['category']);
       unset($items['author']);
     }
@@ -551,7 +522,13 @@ function _vsite_search_luceneapi_luceneapi_facet_empty($facets, $realm, $module)
   // Initializes return array.
   $items = array();
 
-  $content_types = array_unique(context_active_values('node'));
+  // Get the content types from the current feature
+  $content_types = array();
+  $active_feature = vsite_active_feature();
+  if($active_feature){
+    $a_info = features_get_features($active_feature);
+    $content_types = $a_info->info['features']['node'];
+  }
   
   // Load the current vsite and use the group id as a filter to only show content/facets for this particular vsite
   $vsite = vsite_get_vsite();
