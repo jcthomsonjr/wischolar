@@ -19,7 +19,7 @@ function vsite_news_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         'op' => $op,
         'node' => $node
       );
-          
+
       actions_do('vsite_news_activity_action', $node, $context);
     break;
   }
@@ -31,7 +31,7 @@ function vsite_news_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 function vsite_news_menu() {
 
   $items = array();
-  
+
   $items['cp/news'] = array(
     'title' => 'News',
     'page callback' => 'vsite_news_activity',
@@ -47,7 +47,7 @@ function vsite_news_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 0,
   );
-  
+
   /*
   $items['cp/news/feeds'] = array(
     'title' => 'Latest feeds',
@@ -57,7 +57,7 @@ function vsite_news_menu() {
     'weight' => 3,
   );
   */
-  
+
   /*
   $items['cp/news/following'] = array(
     'title' => 'My Friends',
@@ -66,7 +66,7 @@ function vsite_news_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
   );
-  
+
   $items['cp/news/sites'] = array(
     'title' => 'Tag Friends',
     'page callback' => 'vsite_news_sites',
@@ -85,7 +85,7 @@ function vsite_news_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 5,
   );
-  
+
   return $items;
 }
 
@@ -128,7 +128,7 @@ function vsite_news_action_info() {
       'any' => TRUE,
     ),
   );
-  
+
   return $info;
 }
 
@@ -139,17 +139,17 @@ function vsite_news_action_info() {
  * @return unknown_type
  */
 function vsite_news_activity_action($object, $context) {
-  
+
   if (!vsite_get_vsite()) return FALSE;
-  
+
   $vsite = vsite_get_vsite();
 
   if (!in_array($object->type, array_keys(vsite_content_types()))) return FALSE; //Is this type public?
-  
-  $a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
+
+  $is_private = $vsite->controllers->variable->get('vsite_private');
   $a_access_settings = $vsite->controllers->variable->get('vsite_setting_access');
-  if (is_array($a_generic_settings) && $a_generic_settings['private_vsite']) return FALSE; //If the site is private do not log
-  
+  if ($is_private) return FALSE; //If the site is private do not log
+
   //Setup the advanced Patterns
   $context['node-pattern-en'] =
   $context['everyone-pattern-en'] = '[in-vsite], [type-name] [action]:';
@@ -171,7 +171,7 @@ function vsite_news_activity_action($object, $context) {
   }
   $context['node-pattern-en'] = str_replace('[action]', $s_action, $context['node-pattern-en']);
   $context['everyone-pattern-en'] = str_replace('[action]', $s_action, $context['everyone-pattern-en']);
-  
+
   if ($vsite && $vsite->group->uid) {
     $dds_users_vsite = "[author-name]";//Default is "by UserName (or real name)"
     if (strlen($vsite->group->title)){
@@ -181,7 +181,7 @@ function vsite_news_activity_action($object, $context) {
     $context['everyone-pattern-en'] = str_replace('[in-vsite]', $s_users_vsite, $context['everyone-pattern-en']);//third person message
     $context['node-pattern-en'] = str_replace('[in-vsite]', $s_users_vsite, $context['node-pattern-en']); //First person message
   }
-  
+
   return activity_record($object, $context);
 }
 
@@ -191,7 +191,7 @@ function vsite_news_activity_action($object, $context) {
 function vsite_news_activity_grants($activity) {
   $vsite = vsite_get_vsite();
   if (!$vsite) return array();
-    
+
   return array(
     'vsite' => array($vsite->group->nid), // the module_id that will be used
   );
@@ -229,7 +229,7 @@ function vsite_news_access_records_alter(&$grants, $context) {
 function vsite_news_activity_access_grants($acccount) {
   $view = views_get_view('vsite_news_follow');
   $view->execute();
-  
+
   $realm_ids = array();
   foreach ($view->result as $o_site) {
     $realm_ids['vsite'][] = $o_site->nid;
@@ -253,13 +253,13 @@ function vsite_news_vsite_settings() {
  * hook_theme
  */
 function vsite_news_theme() {
-  
+
   $items = array();
-  
+
   $items['views_view_field__vsite_activity__title'] = array(
     'arguments' => array('view' => NULL, 'options' => NULL, 'row' => NULL ),
   );
-  
+
   if(module_exists('vsite')){
     //Alter the title to link correctly to the vsite
     $items['views_view_field__vsite_news_follow_candidate__title'] = array(
@@ -268,7 +268,7 @@ function vsite_news_theme() {
       'path' => drupal_get_path('module','vsite')."/includes/",
       'file' => 'vsiteapi.inc',
     );
-         
+
     //Alter the logo to link correctly to the vsite
     $items['views_view_field__vsite_news_follow_candidate__field_vsite_logo_fid'] = array(
       'arguments' => array('view' => NULL, 'options' => NULL, 'row' => NULL ),
@@ -277,7 +277,7 @@ function vsite_news_theme() {
       'file' => 'vsiteapi.inc',
     );
   }
-  
+
   return $items;
 }
 
@@ -289,8 +289,8 @@ function theme_views_view_field__vsite_activity__title($view, $field, $row) {
   //purl_disable(TRUE);
   $field->options['alter']['path'] =  TRUE;
   $s_content = $field->render($row);
-  
-  
+
+
   $tokens = array();
   $alt = $field->options['alter']['alt'];
   if (!empty($alt) && $alt !== '') {
@@ -304,12 +304,12 @@ function theme_views_view_field__vsite_activity__title($view, $field, $row) {
 
   $nid_alias = $field->aliases['nid'];
   $nid = $row->$nid_alias;
-  
+
   $options = array('html' => 'TRUE');
-  
+
   //Add the correct purl provider
   vsite_add_purl_provider($nid,$options);
-  
+
   // Use strip tags as there should never be HTML in the path.
   $path = strip_tags(strtr($path, $tokens));
 
@@ -323,7 +323,7 @@ function theme_views_view_field__vsite_activity__title($view, $field, $row) {
     $path = strtr($path, array('#' . $url['fragment'] => ''));
     $options['fragment'] = $url['fragment'];
   }
-    
+
   if ($alt) {
     $options['attributes']['title'] = $alt;
     $options['attributes']['alt'] = $alt;
@@ -337,6 +337,6 @@ function theme_views_view_field__vsite_activity__title($view, $field, $row) {
   $s_content = l($s_content, $path, $options);
 
   $field->last_render = $s_content;
-  
+
   return $s_content;
 }

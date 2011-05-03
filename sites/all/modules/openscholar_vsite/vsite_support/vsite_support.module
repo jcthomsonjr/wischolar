@@ -82,8 +82,8 @@ function vsite_support_menu() {
 function vsite_support_site_contact() {
   if (!($vsite = vsite_get_vsite()) || !($user = user_load($vsite->group->uid))) return MENU_ACCESS_DENIED;
 
-  $a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
-  if ($a_generic_settings['contact_form_anonymous'] === 0 && !user_is_logged_in()) {
+  $contact_anon = $vsite->controllers->variable->get('vsite_users_contact_anonymous');
+  if ($contact_anon === 0 && !user_is_logged_in()) {
     $output = t('You need to be logged in in order to send mail to this user.');
   }
   elseif (!flood_is_allowed('contact', variable_get('contact_hourly_threshold', 3))) {
@@ -115,14 +115,14 @@ function vsite_support_contact_mail_owner(&$form_state, $recipient) {
       '#title' => t('E-Mail Address: '),
     );
   }
-  
+
   if(($user_profile = content_profile_load('vsite_users_profile',$recipient->uid)) && is_array($user_profile->vsite_users_first_name[0])){
     //Does this user have a user profile? with their name?
     $recipient->name = $user_profile->vsite_users_first_name[0]['value']." ".$user_profile->vsite_users_last_name[0]['value'];
   }elseif (($vsite = vsite_get_vsite()) && strlen($vsite->group->title)){
     $recipient->name = $vsite->group->title;
   }
-  
+
   $form['to'] = array('#type' => 'item',
     '#title' => t('To'),
     '#value' => theme('username', $recipient),
@@ -194,9 +194,10 @@ function vsite_support_site_contact_access() {
   if (!($vsite = vsite_get_vsite()) || !($user = user_load($vsite->group->uid))) return FALSE;
 
   return TRUE;
-  
-  $a_generic_settings = $vsite->controllers->variable->get('vsite_setting_generic');
-  return ($a_generic_settings['contact_form'] !== 0 && ($a_generic_settings['contact_form_anonymous'] !== 0 || user_is_logged_in()));
+
+  $contact_anon = $vsite->controllers->variable->get('vsite_users_contact_anonymous');
+  // there was a contact form var here, but I don't know where it's set from
+  return ($contact_anon !== 0 || user_is_logged_in());
 }
 
 

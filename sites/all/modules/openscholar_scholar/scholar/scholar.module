@@ -190,10 +190,10 @@ function _scholar_basicinfo_wdgt(){
   }
 
   $a_site_settings = variable_get('vsite_setting_site', array());
-  $a_generic_settings = variable_get('vsite_setting_generic', array());
+  $contact_anon = variable_get('vsite_users_contact_form_anonymous', TRUE);
 
   $s_email = ($a_site_settings['scholar_link_to_contact'] !== 0 &&
-             ($a_generic_settings['contact_form_anonymous'] !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
+             ($contact_anon !== 0 || user_is_logged_in()))?l("(email)","contact_owner"):"";
   $s_address = count($scholar->group->field_vsite_address)?$scholar->group->field_vsite_address[0]['value']:"";
 
   $output =   "<h1>" . l($scholar->group->title, $scholar -> get_absolute_url()) ."</h1>" .
