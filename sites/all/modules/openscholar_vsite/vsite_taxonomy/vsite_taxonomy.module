@@ -77,17 +77,10 @@ function vsite_taxonomy_menu() {
   $items = array ();
   // main entry; lists vsite vocabs. It's a local task
   // menu so it shows in the cp/content
-  $items ['cp/settings/taxonomy'] = array (
-    'title' => 'Taxonomy',
-    'page callback' => 'vsite_taxonomy_vocabs',
-    'access callback' => 'cp_access_cp',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => -1,
-  );
 
   // TODO: remove old menu
-  $items ['cp/settings/taxonomy_temp'] = array (
-    'title' => 'Taxonomy Temp',
+  $items ['cp/settings/taxonomy'] = array (
+    'title' => 'Taxonomy',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vsite_taxonomy_form'),
     'access callback' => 'cp_access_cp',
@@ -181,7 +174,7 @@ function vsite_taxonomy_menu_alter(&$items) {
  * callback function for cp/content/taxonomy
  * which is the entry point in the taxonomy page
  * (list of all vsite vocabs and their terms)
- */
+
 function vsite_taxonomy_vocabs(){
   dialog_add_js();
   drupal_add_js('misc/collapse.js');
@@ -215,7 +208,7 @@ function vsite_taxonomy_vocabs(){
   $output .= '</ul>'; // close vsite-taxonomy-wrapper
 
   return $output;
-}
+}*/
 
 // CP Form Functions
 
@@ -233,6 +226,7 @@ function vsite_taxonomy_form($form_state) {
   // stick the elements in a fieldset with #tree = TRUE
   // then in the submit, I'll send each fieldset off to taxonomy's
   // submit handler.
+  // each vocabulary is encapsulated in the form and in form_state[values]
 
   $form = array();
   foreach ($vocabs as $vid => $v) {
@@ -265,7 +259,15 @@ function vsite_taxonomy_form($form_state) {
     unset($form_frag['submit'], $form_frag['reset_alphabetical']);
     $form_frag['add_new_term'] = array(
       '#type' => 'markup',
+      '#prefix' => '<div>',
+      '#suffix' => '</div>',
       '#value' =>  l('Add new term to this vocabulary', "vsite/taxonomy/nojs/terms/".$vid."/add_term", array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))),
+    );
+    $form_frag['edit_vocab'] = array(
+      '#type' => 'markup',
+      '#prefix' => '<div>',
+      '#suffix' => '</div>',
+      '#value' => ' '.l('Edit vocabulary', 'vsite/taxonomy/nojs/edit/vocabulary/'.$vid, array('attributes' => array('class' => 'admin ctools-use-dialog context-button'))),
     );
 
     $fieldset += $form_frag;
@@ -294,7 +296,9 @@ function vsite_taxonomy_form_submit($form, &$form_state) {
       $vocab_form = $form[$v_name];
       $vocab_form['#post'] = $form['#post'];
 
-      taxonomy_overview_terms_submit($vocab_form, $vocab_form_state);
+      foreach ($vocab_form['#submit'] as $submit) {
+        $submit($vocab_form, $vocab_form_state);
+      }
     }
   }
 }
@@ -775,9 +779,9 @@ function vsite_taxonomy_term_by_context($tid, $s_feature = false){
   $view->set_arguments(array( $tid ));
 
   if($s_feature){
-		if(!context_set_by_condition('path',$s_feature, true)){
-	  	context_set_by_condition('node', $s_feature, true);
-	  }//Assume that it is a menu path, if not try content type
+	//	if(!context_set_by_condition('path',$s_feature, true)){
+  //	  context_set_by_condition('node', $s_feature, true);
+	//  }//Assume that it is a menu path, if not try content type
 
 	  //Filter by content types
 	  //$a_context_types = context_active_values("node");
