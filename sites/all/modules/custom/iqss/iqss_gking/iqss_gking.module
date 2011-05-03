@@ -235,36 +235,36 @@ function _iqss_gking_areas_of_research_wgt(){
   );
 }
 
-function iqss_gking_context_active_contexts_alter(&$contexts){
-  if (! iqss_gking_on_gking_site())
-    return;
-
-//  $vsite = vsite_get_vsite();
-//  $router_item = menu_get_item();
-//  if (strpos($router_item['path'], 'taxonomy/term') === 0) {
-
-//    $contexts['vsite-section-public']->block['iqss_gking_areas_of_research'] = array(
-//        'module' => 'iqss_gking',
-//        'delta' => 'areas_of_research',
-//        'weight' => 5,
-//        'region' => 'right',
-//        'status' => '0',
-//        'label' => 'Areas of Research',
-//    );
-
-
+/**
+ * Implementation of hook_context_load_alter().
+ */
+function iqss_gking_context_load_alter(&$context) {
+  if (! iqss_gking_on_gking_site()) return;
+  
+  if($context->name == 'openscholar-feature-taxonomy'){
+     
+  	$context->reactions['block']['blocks']['iqss_gking_areas_of_research'] = array(
+      'module' => 'iqss_gking',
+      'delta' => 'areas_of_research',
+      'weight' => 5,
+      'region' => 'right',
+      'status' => '0',
+      'label' => 'Areas of Research',
+    );
+		
+		
     //Add this block category pages on (Lets you filter the category by publictaion type)
-//    $contexts['vsite-section-public']->block['filter_by_type-filter_by_type'] = array(
-//        'module' => 'iqss_gking',
-//        'delta' => 'filter_by_type',
-//        'weight' => - 21,
-//        'region' => 'right',
-//        'status' => '0',
-//        'label' => 'Filter Taxonomy by Publication Type',
-//        'type' => 'context_ui'
-//    );
-//  }
-
+	 $context->reactions['block']['blocks']['filter_by_type-filter_by_type'] = array(
+      'module' => 'iqss_gking',
+      'delta' => 'filter_by_type',
+      'weight' => - 21,
+      'region' => 'right',
+      'status' => '0',
+      'label' => 'Filter Taxonomy by Publication Type',
+      'type' => 'context_ui'
+    );
+  }
+  
 }
 
 /**
