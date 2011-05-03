@@ -78,64 +78,41 @@ function vsite_search_apachesolr_form_alter(&$form, $form_state, $form_id) {
   }
 }
 
-/**
- * Implementation of hook_context_active_contexts_alter().
- *
- * @param mixed $contexts
- *   Associative array of context objects
- */
-function vsite_search_apachesolr_context_active_contexts_alter(&$contexts) {
-  //die('Contexts:<br><pre>'.print_r($contexts,TRUE).'</pre>');
-  // If one of the active contexts is the apachesolr_search context, remove some unneccessary blocks
-  if (in_array('vsite-search-apachesolr_search', array_keys($contexts))) {
-    // Look at the type of query that has been performed, and set a flag regarding whether or not to show the biblio facets if the type:biblio filter is in effect
-    $show_biblio_facets = FALSE;
-    $query = apachesolr_current_query();
-    if ($query) {
-      if ($query->has_filter('type', 'biblio')) {
-        $show_biblio_facets = TRUE;
-      }
-    }
 
-    if (!empty($contexts['vsite-section-public'])) {
-      foreach ($contexts['vsite-section-public']->reactions['block']['blocks'] as $index => $block) {
-        if (preg_match('/apachesolr_biblio_/', $block['delta'])) {
-          
-        }
-        switch ($block['delta']) {
-          case 'scholar_publications-block_1':
-          case 'scholar_announcements-block_1':
-          case 'publication_types-block_1':
-          case 'publication_years-block_1':
-          case 'publication_contributors-block_1':
-            unset($contexts['vsite-section-public']->reactions['block']['blocks'][$index]);
-            break;
-        }
-      }
-    }
-    // Global search, no vsite context
-    else {
-      // Remove the Filter by Author facet block
-      unset($contexts['vsite-search-apachesolr_search']->reactions['block']['blocks']['apachesolr_search_uid']);
-      // Remove the Filter by Contributor facet block
-      unset($contexts['vsite-search-apachesolr_search']->reactions['block']['blocks']['apachesolr_biblio_sm_biblio_contributors']);
-    }
-    
-    // Loop through the apachesolr_search blocks and remove the Biblio facet blocks if needed
-    foreach ($contexts['vsite-search-apachesolr_search']->reactions['block']['blocks'] as $bid => $block) {
-      if (preg_match('/^apachesolr_biblio_/', $bid)) {
-        if (!$show_biblio_facets) {
-          unset($contexts['vsite-search-apachesolr_search']->reactions['block']['blocks'][$bid]);
-        }
-      }
-    }
+/**
+ * Implementation of hook_context_load_alter().
+ */
+function vsite_search_apachesolr_context_load_alter(&$context) {
+  
+	if($context->name == 'openscholar-feature-search'){
+		  $vsite = vsite_get_vsite();
+		  
+		  $show_biblio_facets = FALSE;
+	    if ($query = apachesolr_current_query()) {
+	      if ($query->has_filter('type', 'biblio')) {
+	        $show_biblio_facets = TRUE;
+	      }
+	    }
+	    
+		  // Loop through the apachesolr_search blocks and remove the Biblio facet blocks if needed
+	    foreach ($context->reactions['block']['blocks'] as $bid => $block) {
+	      if (preg_match('/^apachesolr_biblio-/', $bid) && !$show_biblio_facets) {
+	        unset($context->reactions['block']['blocks'][$bid]);
+	      }
+	    }
+			
+		  if ($vsite) {
+		  	//If the context is within a specific vsite, remove the og facet block
+		    unset($context->reactions['block']['blocks']['apachesolr_og-im_og_gid']);
+		  }else{
+		  	//Not in a vsite
+		  	// Remove the Filter by Author facet block
+        unset($context->reactions['block']['blocks']['apachesolr_search-uid']);
+        // Remove the Filter by Contributor facet block
+        unset($context->reactions['block']['blocks']['apachesolr_biblio-sm_biblio_contributors']);
+		  }
   }
   
-  // If the context is within a specific vsite, remove the og facet block
-  $vsite = vsite_get_vsite();
-  if ($vsite) {
-    unset($contexts['vsite-search-apachesolr_search']->reactions['block']['blocks']['im_og_gid']);
-  }
 }
 
 /**
@@ -234,19 +211,20 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
    */
   $vsite = vsite_get_vsite();
   if (!empty($vsite)) {
+  	vsite_include('vsiteapi');
+  	
     // Add filter for group_id
     $query->add_filter('im_og_gid', $vsite->group->nid);
     
     $content_types = array();
-    
     /**
      * Nodes that are related to a feature may need to be filtered out if the feature is configured to be private.
      * Bypass this check if the current uid is the site owner, or is a site member.
      */
     if (! og_is_group_member($vsite->group->nid, TRUE)) {
       foreach (variable_get('spaces_features',array()) as $name => $status) {
-        // 0 = disabled, 1 = private, 2 = public
-        if ($status < 2) {
+        // 0 = disabled, 2 = private, 1 = public
+        if (in_array($status,array(0,2))) {
           $feature = features_get_features($name);
           // Attempt to derive the content types that are part of this feature
           if (!empty($feature->info['features']['node'])) {
@@ -272,21 +250,28 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
         $content_types = array_unique($content_types);
       }
       
-      $paths = array_unique(context_active_values('path'));
-      if (!empty($paths)) {
-        foreach ($paths as $path) {
-          //die('Path = '.$path);
-          if (preg_match('/^category\/tags\//', $path) || preg_match('/^category\//', $path)) {
-            $pieces = explode('/', $_GET['q']);
-            if (is_numeric($pieces[2])) {
-              $query->add_filter('tid', $pieces[2]);
-            }
-          }
-        }
+      if (context_isset('context','openscholar-feature-taxonomy')) {
+        $menu = menu_get_item();
+        dpm("FIlTER SEARCH by TID");
+//      	foreach ($paths as $path) {
+//          //die('Path = '.$path);
+//          if (preg_match('/^category\/tags\//', $path) || preg_match('/^category\//', $path)) {
+//            $pieces = explode('/', $_GET['q']);
+//            if (is_numeric($pieces[2])) {
+//              $query->add_filter('tid', $pieces[2]);
+//            }
+//          }
+//        }
       }
       
-      // Get the content types from the current context
-      $node_types = array_unique(context_active_values('node'));
+      // Get the content types from the current feature
+      $node_types = array();
+      $active_feature = vsite_active_feature();
+      if($active_feature){
+        $a_info = features_get_features($active_feature);
+        $node_types = $a_info->info['features']['node'];
+      }
+      
       if (!empty($node_types)) {
         /**
          * If there is more than one content type active in this context, additional filters need to be applied to the Solr query object
@@ -328,7 +313,13 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
     }
     else {
       // Get the content types from the current context
-      $node_types = array_unique(context_active_values('node'));
+      $node_types = array();
+      $active_feature = vsite_active_feature();
+      if($active_feature){
+        $a_info = features_get_features($active_feature);
+        $node_types = $a_info->info['features']['node'];
+      }
+      
       if (!empty($node_types)) {
         /**
          * If there is more than one content type active in this context, additional filters need to be applied to the Solr query object

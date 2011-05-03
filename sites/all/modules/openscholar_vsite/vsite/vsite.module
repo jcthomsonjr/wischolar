@@ -756,17 +756,6 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
 }
 
 /**
- * Implements hook spaces_types_alter
- *
- * @see http://drupal.org/node/511914
- */
-function vsite_spaces_types_alter(&$items){
-
-  //Change the class for the og object to "vsite"
-  $items['og']['class'] = 'vsite';
-}
-
-/**
  * Returns the group node given the id in a url
  * @param $n_vsite_id integer (VSITE ID)
  * @return object node
@@ -798,18 +787,21 @@ function vsite_group_to_arg(){
 }
 
 /**
- * Implementation of hook_context_active_contexts_alter().
+ * A preprocess_page() function that is called *before* all other
+ * preprocessors (including template_preprocess_page()). This allows
+ * any final context reactions to be triggered
  */
-function vsite_context_active_contexts_alter($contexts){
-
-  if ($contexts['vsite-section-public']) {
+function vsite_page_alter(&$vars) {
+  
+  if (context_isset('context', 'vsite-section-public')) {
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/vsite-admin-links.css');
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite.js');
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite-autoclose-status.js');
   }
-  elseif ($contexts['vsite-section-cp']) {
+  elseif (context_isset('context', 'vsite-section-cp')) {
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite-autoclose-status.js');
   }
+  
 }
 
 /**
