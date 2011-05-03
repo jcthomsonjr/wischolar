@@ -11,7 +11,7 @@
 <body class="<?php print $body_classes; ?>">
 
 <div id="startpage" class="page">
-  <div id="startpage-header" class="contain header">
+  <div id="startpage-header" class="wrap header">
   <h1>Scholars at Harvard</h1>
   <h2>Personal Websites Exclusively for Harvard Scholars</h2>
   <ul id="header-info" class="inline">
@@ -23,7 +23,7 @@
   </ul>
   <?php print $search_box; ?>
 </div><!--/startpage-header -->
-  <div id="start-content" class="contain dark">
+  <div id="start-content" class="wrap dark">
   <div id="col-1" class="col clearfix">
     <div class="top">
       <p><strong>Scholars at Harvard</strong> offers you the next generation scholarly web site.  With it, you can easily create and manage a highly dynamic, powerful, and customizable site, with an easy-to-use interface and a look and feel that is uniquely yours.</p>
@@ -72,13 +72,13 @@
 
 <div id="reasons" class="page">
   <div id="reasons_header" class="header">
-    <div class="contain">
+    <div class="wrap">
       <h1><a href="#">Scholars at Harvard</a></h1>
       <?php print l('Get Your Site Now','site/register',array('attributes'=>array('class' =>'big-button'))); ?>
     </div>
     </div>
     <a id="reasons-home" href="#">Home</a>
-    <ul id="features" class="contain dark clearfix">
+    <ul id="features" class="wrap dark clearfix">
         <li id="feature-academic-content">
           <h3>Create Anything Related to an Academic Site</h3>
           <p>CV, bio, publications, blogs, announcements, links, events, image galleries, class materials, presentations. Easy as using a word processor.</p>
@@ -162,18 +162,19 @@
 
 
       </ul>
-  <ul id="more-info" class="contain clearfix">
+  <ul id="more-info" class="wrap clearfix">
     <li class="docs"><span><strong><?php print variable_get('site_name', ''); ?></strong> includes complete <strong>documentation</strong>. <?php print l('Go there now.','help/vsitehelp/OpenScholar-Documentation',array('attributes'=>array('target'=>'_blank')));?></span></li>
     <li class="os-link"><span><strong><?php print variable_get('site_name', ''); ?></strong> is built on <strong>OpenScholar</strong>, an open-source web-creation tool developed right here at Harvard. <?php print l('Learn more.','http://openscholar.harvard.edu',array('attributes'=>array('html'=>TRUE, 'target'=>'_blank')));?></span></li>
   </ul>
-  <div class="contain">
-    <div class="footer">
-  <?php if ($footer) : ?>
+  <div class="footer">
+    <div class="wrap">
+    <?php if ($footer) : ?>
     <?php print $footer; ?>
-  <?php endif; ?>
-  <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> </p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
-</div> <!-- /footer -->
-  </div>
+    <?php endif; ?>
+    <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> </p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
+    </div>
+  </div> <!-- /footer -->
+
 </div><!--/reasons -->
 
 <?php if ($closure_region): ?>

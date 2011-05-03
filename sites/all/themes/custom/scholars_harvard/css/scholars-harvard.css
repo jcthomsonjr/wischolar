@@ -9,20 +9,20 @@ body {
   font-family: 'PT Sans', arial, serif;
   }
 
-#container {
+.wrap {
   width:980px;
-  margin: 77px auto 0 auto !important;
+  margin: 0 auto;
   }
 
-#content-wrapper {
+#content-area .hg-container {
   background: #fff;
   border-radius: 5px;
   -moz-border-radius: 5px;
   }
 
-#wrapper {
-position: relative;
-}
+#page {
+  position: relative;
+  }
 
 #content-main,
 body.no-sidebars #content-main {
@@ -66,8 +66,8 @@ p.copy a.poweredby {
 /* FRONT PAGE*/
 
 
-.section-user #wrapper,
-.page-user #wrapper {
+.section-user #page,
+.page-user #page {
   margin-top: 30px;
   }
 
@@ -88,14 +88,14 @@ p.copy a.poweredby {
   display:none;
   }
 
-.wrap {
+.front .wrap {
   background: url('../images/wrap.png') no-repeat 50% 0 transparent;
   min-height: 1300px;
   }
 
-.contain {
-  width: 980px;
-  margin: 0 auto;
+.front .page .wrap {
+  background: transparent;
+  min-height: 0;
   }
 
 .dark {
@@ -195,9 +195,14 @@ a.big-button:hover {
   }
 
 #reasons a.big-button,
-#wrapper a.big-button {
+#page a.big-button {
   float: right;
   width:451px;
+  }
+
+.page-site a.big-button {
+  width: 442px;
+  padding-left: 22px;
   }
 
 a.iqss-link {
@@ -497,7 +502,8 @@ p.copy a:hover {
   }
 
 #features {
-  padding-top: 80px;
+  padding-top: 56px;
+  background: #fff;
   }
 
 #features li {
@@ -505,7 +511,6 @@ p.copy a:hover {
   width:196px;
   height: 315px;
   margin: 0;
-  background-color: #fff;
   padding: 16px 24px;
   border:1px solid #e8e9eb;
   border-left: none;
@@ -578,7 +583,7 @@ p.copy a:hover {
 
 #more-info li {
   float:left;
-  width: 49.5%;
+  width: 49.8%;
   border-right: 1px solid #ccc;
   }
 

@@ -7,17 +7,17 @@
   <?php print $scripts; ?>
 </head>
 <body class="<?php print $body_classes; ?>">
-  <div id="wrapper">
-    <div id="wrapper-inner">
+  <div id="page">
+    <div id="page-wrapper">
       <div id="reasons_header" class="header">
-        <div class="contain">
+        <div class="wrap">
             <h1><a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home">Scholars at Harvard</a></h1>
             <?php print l('Get Your Site Now','site/register',array('attributes'=>array('class' =>'big-button'))); ?>
           </div>
         </div>
-      <div id="container">
-      <div id="content-wrapper" class="clear-block">
-        <div id="content-wrapper-inner">
+      <div id="content-area">
+        <div class="wrap">
+            <div class="hg-container">
           <div id="content-main" class="column">
             <?php if (!empty($content_top)): ?>
               <div id="content-top">
@@ -52,21 +52,23 @@
             <?php print $right; ?>
           </div> <!-- /sidebar-right -->
           <?php endif; ?>
-        </div> <!-- / content wrapper inner -->
-      </div> <!-- / content wrapper -->
+        </div> <!-- / hg-container -->
+          </div>
+      </div>
       <div class="footer">
-    <?php if ($footer) : ?>
-      <?php print $footer; ?>
-    <?php endif; ?>
-    <?php
-      $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
-      $login_link = theme('vsite_login_link',"Login",array('class' => 'footer-login'));
-    ?>
-    <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> <span id="powered-link"><?php print $home_link; ?></span></p>
+        <div class="wrap">
+          <?php if ($footer) : ?>
+            <?php print $footer; ?>
+          <?php endif; ?>
+          <?php
+            $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
+            $login_link = theme('vsite_login_link',"Login",array('class' => 'footer-login'));
+          ?>
+          <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> <span id="powered-link"><?php print $home_link; ?></span></p>
+    </div>
   </div> <!-- /footer -->
-    </div> <!-- /container -->
-    </div><!-- /wrapper-inner -->
-  </div> <!-- /wrapper -->
+    </div><!-- /page-wrapper -->
+  </div> <!-- /page -->
   <?php if ($closure_region): ?>
     <div id="closure-blocks"><?php print $closure_region; ?></div>
   <?php endif; ?>
