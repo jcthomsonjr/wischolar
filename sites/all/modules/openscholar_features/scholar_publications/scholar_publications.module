@@ -19,7 +19,7 @@ function scholar_publications_context_links_alter(&$links) {
     );
 
     $links['biblio']['query'] = drupal_get_destination();
-    $links ['biblio'] ['title'] = "publication";
+    $links ['biblio']['title'] = "Add publication";
 
     $links = array_reverse($links);
   }
