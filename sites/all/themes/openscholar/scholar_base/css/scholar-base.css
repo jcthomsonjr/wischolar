@@ -100,15 +100,6 @@ body.cp-toolbar-mini #top ul.links {
   Read more about this method at http://www.alistapart.com/articles/holygrail/
 */
 
-body.no-sidebars #content-main,
-body.header-main #header-main {
-  padding: 0;
-  padding-left: 2em;
-  padding-right: 2em;
-  width: auto;
-  float:none;
-  }
-
 .column {
   float: left;
   position: relative;
@@ -132,6 +123,12 @@ body.header-main #header-main {
   width: 100%;
   }
 
+body.no-sidebars #content-main,
+body.header-main #header-main {
+  width: auto;
+  float:none;
+  }
+
 #header-left,
 #sidebar-first {
   left: -240px; /* left width incl. padding plus center padding */
@@ -143,7 +140,9 @@ body.header-main #header-main {
   margin-right: -100%;
   }
 
-body.sidebar-second #content-area .hg-container {
+body.sidebar-second #content-area .hg-container,
+body.header-main #header .hg-container,
+body.header-main-right #header .hg-container {
    padding-left: 0;
    }
 
@@ -204,7 +203,7 @@ body.header-left-right #header-right {
 /* FOOTER */
 
 #footer {
-  padding: 50px 0 5px;
+  padding: 10px 0;
   }
 
 #footer .block,

@@ -63,13 +63,12 @@ p.copy a.poweredby {
   font-weight: bold;
   }
 
-/* FRONT PAGE*/
-
-
-.section-user #page,
-.page-user #page {
-  margin-top: 30px;
+.page-site #user_register {
+  border: none;
+  padding-bottom: 10px;
   }
+
+/* FRONT PAGE*/
 
 .page {
   position: relative;
@@ -108,21 +107,6 @@ p.copy a.poweredby {
   height: 76px;
   }
 
-.section-user #startpage-header #header-info,
-.section-user #startpage-header #search-theme-form,
-.section-user #startpage-header h2,
-.page-site-register #startpage-header #header-info,
-.page-site-register #startpage-header #search-theme-form,
-.page-site-register #startpage-header h2,
-.section-user #reasons_header,
-.page-site-register #reasons_header{
-  display:none;
-  }
-
-.section-user #startpage-header {
-  width: auto;
-  }
-
 .header h1,
 .header h2,
 .header ul,
@@ -138,6 +122,11 @@ p.copy a.poweredby {
   height:56px;
   background: url('../images/logo.png') no-repeat 0 0 transparent;
   margin-top:11px;
+  }
+
+.section-site .header h1 {
+  margin-left: 30px;
+  margin-bottom: 5px;
   }
 
 .header h1 a,
@@ -200,7 +189,12 @@ a.big-button:hover {
   width:451px;
   }
 
-.page-site a.big-button {
+.section-site a.big-button {
+  display:none;
+  }
+
+.page-site a.big-button,
+.section-user #reasons_header a.big-button {
   width: 442px;
   padding-left: 22px;
   }
@@ -476,6 +470,20 @@ p.copy a:hover {
   -webkit-box-shadow: 0 10px 16px rgba(0,0,0,0.15);
   box-shadow: 0 10px 16px rgba(0,0,0,0.15);
   z-index: 10;
+  }
+
+.section-user #reasons_header {
+  display:none;
+  }
+
+.section-site #reasons_header {
+  position:static;
+  background: transparent;
+  height: auto;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  z-index: 0;
   }
 
 #reasons-home {

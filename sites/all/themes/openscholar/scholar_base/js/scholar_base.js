@@ -11,7 +11,5 @@ $.fn.vAlign = function() {
 
 
 $(document).ready(function() {
-
   $('#block-scholar-1').vAlign();
-
 });
