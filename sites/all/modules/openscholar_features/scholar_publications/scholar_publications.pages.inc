@@ -121,7 +121,7 @@ function scholar_publications_settings($space) {
   );
   $form['scholar_publications']['scholar_publications_shorten_citations'] = array(
    '#type' => 'checkbox',
-   '#title' => t('When this is checked, URLs in citation links will be shortened.'),
+   '#title' => t('When this is checked, a shortened URL will be included in the citation.'),
    '#default_value' => variable_get('scholar_publications_shorten_citations', 0),
     );
 
