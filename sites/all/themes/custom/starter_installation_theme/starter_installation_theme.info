@@ -1,9 +1,35 @@
-; $Id: starter_installation_theme.info,v 1.12 2008/09/21 22:43:32 swortis Exp $
 name        = Starter Installation Theme
-description = Copy this and build a theme for your OpenScholar installation (front page etc)
+description = Copy this and build a theme for your OpenScholar installation (your front page)
 screenshot = screenshot.png
 core       = 6.x
-base theme = openscholar_default
-stylesheets[all][]   = starter-installation-theme.css
+base theme  = scholar_base
+
+stylesheets[all][]   = css/starter-installation-theme.css
+
 ; Set the conditional stylesheets that are processed by IE.
-conditional-stylesheets[if IE][all][] = starter-installation-theme-ie.css
+conditional-stylesheets[if IE][all][] = css/starter-installation-theme-ie.css
+
+;------ regions ------
+regions[header_top]    	= header top
+regions[header_left]    = header left
+regions[header_main]    = header main
+regions[header_right]   = header right
+regions[navbar]         = navigation bar
+regions[left]           = left sidebar
+regions[right]          = right sidebar
+regions[content_top]    = content top
+regions[content_bottom] = content bottom
+regions[footer]         = footer
+regions[closure_region] = closure
+
+;------ features ------
+features[] = logo
+features[] = name
+features[] = slogan
+features[] = mission
+features[] = node_user_picture
+features[] = comment_user_picture
+features[] = search
+features[] = favicon
+features[] = primary_links
+features[] = secondary_links

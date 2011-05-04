@@ -25,9 +25,11 @@
       <?php print $links;?>
     </div>
     <?php endif ?>
+    <?php if ($content): ?>
     <div class="content">
       <?php print $content; ?>
     </div>
+    <?php endif; ?>
     <?php if (!$page): ?>
       <?php if ($terms): ?>
       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>

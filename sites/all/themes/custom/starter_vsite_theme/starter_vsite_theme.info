@@ -1,10 +1,11 @@
-; $Id: starter_vsite_theme.info,v 1.12 2008/09/21 22:43:32 swortis Exp $
 name        = Starter vSite Theme
 description = Copy this and build a vsite theme
 screenshot = screenshot.png
 core       = 6.x
 
-;As this theme is a sub-theme the default base theme is set to scholar_base. However, if you are basing your theme on one of the OpenScholar vsite themes (example, scholar_theme_01) you would indicate the base theme here (example: "base theme = scholar_theme_01")
+;As this theme is a sub-theme the default base theme is set to scholar_base. However, if you are
+;basing your theme on one of the OpenScholar vsite themes (example, 'scholar_stripy') you would
+; indicate the base theme here (example: "base theme = scholar_stripy")
 base theme = scholar_base
 
 
@@ -13,11 +14,6 @@ stylesheets[all][]   = starter-vsite-theme.css
 
 ; Set the conditional stylesheets that are processed by IE.
 conditional-stylesheets[if lte IE 7][all][] = starter-vsite-theme-ie.css
-
-
-;scholar[widgets][vsite_widgets_3] = left
-scholar[widgets][vsite_menus_0] = header_main
-scholar[theme_type]   = "scholar"
 
 ;You can select whether your theme is public (i.e. can be used by everyone) or private (can only be used by the vsite with same domain name as the theme. For example if you are creating a site for a Professor Bob Smith, who has the domain 'bsmith', you and want the theme to be only available to Bob Smith, you should name the theme 'bsmith'
 scholar[theme_access] = "public"
