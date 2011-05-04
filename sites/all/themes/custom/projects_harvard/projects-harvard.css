@@ -24,38 +24,17 @@
 	font-style: normal;
 }
 
-
 body {
-  background:#666;
   font: 12px/17px 'helvetica neue', helvetica, arial,sans-serif;
   padding-bottom:30px;
   }
 
-/*
-#extradiv {
-  top: 620px;
-  width: 100%;
-  height: 1px;
-  background: red;
-  position: absolute;
-  }
-*/
-
-#wrapper {
-  margin-top: 0;
-  }
-
-#container {
+.wrap {
   width: 980px;
-  margin: 30px auto 0 auto;
+  margin: 0 auto;
   }
 
-.front #container,
-.section-search #container {
-  margin-top: 0;
-  }
-
-#content-wrapper {
+#content-area .hg-container{
   background: #fff;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
@@ -65,11 +44,11 @@ body {
   box-shadow: 0 5px 2em rgba(0,0,0,0.35);
   }
 
-body.no-sidebars #content-wrapper {
+body.no-sidebars #content-area .hg-container{
   padding-top:1px;
   }
 
-#content-wrapper .column {
+#content-area .hg-container .column {
   padding-top: 30px;
   }
 
@@ -80,7 +59,7 @@ body.no-sidebars #content-wrapper {
   width: 980px;
   }
 
-body.sidebar-right #content-wrapper {
+body.sidebar-right #content-area .hg-container{
   padding-left: 30px;
   }
 
@@ -116,19 +95,22 @@ h2 {
   margin-left: 9px;
   }
 
-#header h1 a, #header h1 a:visited {
+#header h1 a,
+#header h1 a:visited {
   display:block;
   width: 231px;
   height: 76px;
   }
 
-#header h1 a, #header h1 a:visited {
+#header h1 a,
+#header h1 a:visited {
   display:block;
   width: 231px;
   height: 76px;
   }
 
-#header h1 a, #header h1 a:visited {
+#header h1 a,
+#header h1 a:visited {
     color:#282828;
     }
 
@@ -136,7 +118,7 @@ h2 {
   width: 218px;
   }
 
-#header-wrapper {
+#header .hg-container {
   padding-right: 258px;
   }
 
@@ -199,7 +181,7 @@ p.big-button {
   }
 
 p.big-button a {
-  background:url(images/get-your-site-button.png) no-repeat transparent;
+  background:url('images/get-your-site-button.png') no-repeat transparent;
   line-height: 48px !important;
   font-size: 19px;
   display: block;
@@ -257,7 +239,8 @@ ul#top-front li {
   margin-top: 21px;
   }
 
-ul#top-front li a, ul#top-front li a:visited {
+ul#top-front li a,
+ul#top-front li a:visited {
   color: #FFF;
   }
 
@@ -276,12 +259,12 @@ ul#top-front li a:hover {
   margin-left:30px;
   }
 
-#content .featureblock h3, #content .featureblock p {
+#content .featureblock h3,
+#content .featureblock p {
   font-size: 14px;
   line-height: 1.3em;
   margin-bottom: 1em;
   }
-
 
 #panel-viewer {
   overflow:hidden;
@@ -352,7 +335,7 @@ row {
 #about-abstract {
   width:398px;
   padding: 0;
-  background:url(images/abs-mid.png) repeat-y 0 0 transparent;
+  background:url('images/abs-mid.png') repeat-y 0 0 transparent;
   position:relative;
   top:-10px;
   float:right
@@ -369,12 +352,14 @@ row {
   padding-bottom: 0;
   }
 
-#about-abstract ul.preview-points, #about-abstract ul.preview-points li {
+#about-abstract ul.preview-points,
+#about-abstract ul.preview-points li {
   margin: 0;
   padding: 0;
   }
 
-#about-abstract ul.preview-points li, #about-abstract h2 {
+#about-abstract ul.preview-points li,
+#about-abstract h2 {
   padding: 16px 12px 16px 21px;
   clear:both;
   }
@@ -394,14 +379,16 @@ row {
   margin-left: 13px;
   }
 
-#about-abstract h2, #about-abstract h3, #about-abstract p {
+#about-abstract h2,
+#about-abstract h3,
+#about-abstract p {
   margin-right: 10px;
   margin-bottom: 0;
   line-height: 1.4em;
   }
 
 #about-abstract h2 {
-  background:url(images/abs-top.png) no-repeat 0 0;
+  background:url('images/abs-top.png') no-repeat 0 0;
   font-size: 18px;
   line-height: 1.3em;
   color: #555;
@@ -415,7 +402,7 @@ row {
   margin: 0 0 0 1em;
   width:67px;
   height:67px;
-  background: url(images/widget.png) no-repeat 0 0 transparent;
+  background: url('images/widget.png') no-repeat 0 0 transparent;
   }
 
 #about-abstract .illust-widget {
@@ -425,18 +412,18 @@ row {
 #about-abstract .illust-wrench {
   width:70px;
   height: 79px;
-  background-image: url(images/wrench.png);
+  background-image: url('images/wrench.png');
   }
 
 #about-abstract .illust-theme {
   width:108px;
   height: 77px;
-  background-image: url(images/theme.png);
+  background-image: url('images/theme.png');
   }
 
 #about-abstract ul.preview-points #learn-more-toggle {
   padding: 0;
-  background: url(images/abs-bot.png) 0 100% no-repeat;
+  background: url('images/abs-bot.png') 0 100% no-repeat;
   min-height: 108px;
   }
 
@@ -449,7 +436,7 @@ row {
 
 
 #about-abstract ul.preview-points #learn-more-toggle a span {
-  background: url(images/learn-more-scholars.png) no-repeat 0 0;
+  background: url('images/learn-more-scholars.png') no-repeat 0 0;
   width: 328px;
   height: 25px;
   text-indent:-999em;
@@ -462,7 +449,7 @@ row {
   }
 
 #activity-toggle a, #activity-toggle a:visited {
-  background: url(images/pointer-prev.png) no-repeat 0 50%;
+  background: url('images/pointer-prev.png') no-repeat 0 50%;
   padding-left: 26px;
   font-weight:bold;
   color: #000;
@@ -531,7 +518,7 @@ row {
   width: 212px;
   font-size: 15px;
   line-height: 23px;
-  background: url(images/help-button.jpg) no-repeat 225px 50%;
+  background: url('images/help-button.jpg') no-repeat 225px 50%;
   padding-top: 15px;
   padding-right:113px;
   margin-right: 19px;
@@ -539,7 +526,7 @@ row {
   }
 
 .row-openscholar p.os-link {
-  background: url(images/floating-glasses.png) no-repeat 225px 50%;
+  background: url('images/floating-glasses.png') no-repeat 225px 50%;
   margin-bottom: 0;
   width: 230px;
   }
@@ -631,7 +618,7 @@ td, td.description {
   }
 
 #block-views-openscholar_sites-block_2 h3 {
-  background: url(images/featured.png) 0 0 no-repeat transparent;
+  background: url('images/featured.png') 0 0 no-repeat transparent;
   text-indent: -999em;
   width:70px;
   height: 64px;
@@ -703,7 +690,7 @@ td, td.description {
   }
 
 #block-views-openscholar_sites-block_2 .more-link a {
-  background: url(images/black-arrow-right.png) no-repeat 100% 50% #fff;
+  background: url('images/black-arrow-right.png') no-repeat 100% 50% #fff;
   padding-right: 11px;
   color: #000;
   text-transform: capitalize;
@@ -714,14 +701,14 @@ td, td.description {
 /* END of old Scholars at Harvard CSS */
 
 body {
-  background:url(images/projects-bg.png) fixed repeat-x 0 100% #a13804;
+  background:url('images/projects-bg.png') fixed repeat-x 0 100% #a13804;
   }
 
 #header h1 {
   width: 233px;
   height: 76px;
   margin-left: 0px;
-  background: url(images/projects-at-harvard-logo.png) 0 0 no-repeat;
+  background: url('images/projects-at-harvard-logo.png') 0 0 no-repeat;
   }
 
 .row-video {
@@ -730,15 +717,15 @@ body {
   }
 
 #word-out {
-  background:url(images/front-row2-wordout.jpg);
+  background:url('images/front-row2-wordout.jpg');
   }
 
 #feature-events {
-  background:url(images/front-row2-events.png);
+  background:url('images/front-row2-events.png');
   }
 
 #block-views-iqss_project_sites-block_1 h3 {
-  background: url(images/triangle-new-left.png) no-repeat transparent;
+  background: url('images/triangle-new-left.png') no-repeat transparent;
   width: 51px;
   height: 46px;
   text-indent: -999em;
