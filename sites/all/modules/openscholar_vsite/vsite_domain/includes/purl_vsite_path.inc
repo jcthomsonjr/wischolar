@@ -29,6 +29,8 @@ if (!class_exists('purl_vsite_path')) {
         if ($a_settings->provider == 'spaces_og' && variable_get('purl_base_domain', FALSE)) {
           $vsite = spaces_load('og', $a_settings->id);
           $vsite_domain = $vsite->controllers->variable->get('vsite_domain_name');
+          if(!is_string($vsite_domain)) $vsite_domain = false;
+          
           if (in_array($a_settings->value, self::$a_disabled) ||
              (strlen($vsite_domain) &&
              str_replace('http://', '', $_SERVER['HTTP_HOST']) != $vsite_domain) ||

@@ -50,10 +50,8 @@ function scholar_biocv_submenu_access(){
 
   // load the bio node for the owner of this vsite
   $cv_node = content_profile_load('cv', $vsite -> group -> uid, $lang = '');
-  $a_biocv_settings = $vsite->controllers->variable->get('vsite_setting_scholar_biocv');
-  $b_use_attachment = (is_array($a_biocv_settings) && array_key_exists('use_pdf_as_cv',$a_biocv_settings) && $a_biocv_settings['use_pdf_as_cv']);
 
-  if (!$cv_node || $b_use_attachment) return false; //If they havn't made a cv or they are using an attachment for thier cv
+  if (!$cv_node || variable_get('scholar_biocv_use_pdf_as_cv', 0)) return false; //If they havn't made a cv or they are using an attachment for thier cv
 
 	return spaces_access_feature('view', 'scholar_biocv'); //Standard access
 }
@@ -104,9 +102,7 @@ function scholar_biocv_bio(){
   }
 
   //ADD CV Link if Req
-  $a_biocv_settings = $vsite->controllers->variable->get('vsite_setting_scholar_biocv');
-  $b_use_attachment = (is_array($a_biocv_settings) && array_key_exists('use_pdf_as_cv',$a_biocv_settings) && $a_biocv_settings['use_pdf_as_cv']);
-  if($cv_node && $b_use_attachment && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
+  if($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
   	$s_filefield_alias = 'filefield_paths/alias/' . $cv_node->field_cv_attach[0]['fid'];
   	$alias = drupal_get_path_alias($s_filefield_alias);
 
@@ -156,12 +152,10 @@ function scholar_biocv_cv(){
     $s_out .= theme('context_links', $a_links);
   }
 
-  $a_biocv_settings = $vsite->controllers->variable->get('vsite_setting_scholar_biocv');
-  $b_use_attachment = (is_array($a_biocv_settings) && array_key_exists('use_pdf_as_cv',$a_biocv_settings) && $a_biocv_settings['use_pdf_as_cv']);
-  if ($cv_node && !$b_use_attachment){
+  if ($cv_node && !variable_get('scholar_biocv_use_pdf_as_cv', 0)){
     drupal_set_title(t('%title', array('%title' => $cv_node->title)));
     $s_out .= node_view($cv_node,false,true,true);
-  }elseif($cv_node && $b_use_attachment && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
+  }elseif($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
   	drupal_set_title(t('%title', array('%title' => $cv_node->title)));
 
   	$s_out .= t("<h3>").l('Download CV', file_create_url($cv_node->field_cv_attach[0]['filepath']),array('attributes' => array('class' => "cv-direct-download"))).t("</h3>please use the above link to download a PDF copy of my CV</p>");
@@ -193,15 +187,12 @@ function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
       drupal_add_js($a_biocv_settings, 'setting');
       $form['title']['#required'] = false;
 
-      $a_biocv_settings = $vsite->controllers->variable->get('vsite_setting_scholar_biocv');
-      $b_use_attachment = (is_array($a_biocv_settings) && array_key_exists('use_pdf_as_cv',$a_biocv_settings) && $a_biocv_settings['use_pdf_as_cv']);
-  
       $vsite = vsite_get_vsite();
     	$form['use_pdf_as_cv'] = array(
 			  '#type' => 'checkbox',
     	  '#weight' => -10,
 			  '#title' => t('Use PDF upload as your CV'),
-    	  '#default_value' => $b_use_attachment,
+    	  '#default_value' => variable_get('scholar_biocv_use_pdf_as_cv', 0),
        	'#description' => t('When this is checked the pdf you upload will be displayed on the cv section of your site.'),
 			);
 
@@ -231,11 +222,12 @@ function scholar_biocv_form_alter(&$form, $form_state, $form_id) {
  */
 function scholar_biocv_cv_node_submit($form, &$form_state) {
 	$vsite = vsite_get_vsite();
-      
+  if(!$vsite) return;
+    
 	//Save to settings
-	$vsite->controllers->variable->set('vsite_setting_scholar_biocv',!!$form_state['values']['use_pdf_as_cv']);
+	$vsite->controllers->variable->set('scholar_biocv_use_pdf_as_cv', $form_state['values']['use_pdf_as_cv']);
 	
-	if($vsite->controllers->variable->get('vsite_setting_scholar_biocv') && $_REQUEST['destination'] == 'biocv/cv'){
+	if($vsite->controllers->variable->get('scholar_biocv_use_pdf_as_cv') && $_REQUEST['destination'] == 'biocv/cv'){
 		$_REQUEST['destination'] = 'biocv';
 	}//If they have just disabled the cv page then redirect to the main bio page
 }
