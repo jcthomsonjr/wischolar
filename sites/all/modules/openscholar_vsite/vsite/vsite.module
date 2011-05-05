@@ -464,6 +464,18 @@ function vsite_theme_registry_alter(&$theme_registry){
   }
   array_unshift($new_paths, $original_path);
   $theme_registry['node']['theme paths'] = array_merge($new_paths, $theme_registry['node']['theme paths']);
+  
+  // Add a page preprocess function to the very top of the theme_page()
+  // stack so that we can add page elements based on contexts *before* the page theming
+  // is executed.
+  if (!in_array('vsite_page_alter', $theme_registry['page']['preprocess functions'])) {
+    array_unshift($theme_registry['page']['preprocess functions'], 'vsite_page_alter');
+    //If context alter is already in the preprocess function move it back to the front
+    if($n_key = array_search('context_page_alter',$theme_registry['page']['preprocess functions'])){
+    	unset($theme_registry['page']['preprocess functions'][$n_key]);
+    	array_unshift($theme_registry['page']['preprocess functions'], 'context_page_alter');
+    }
+  }
 }
 
 /**
