@@ -606,11 +606,11 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
 	require_once (drupal_get_path('module', 'taxonomy').'/taxonomy.pages.inc');
 	$terms = taxonomy_terms_parse_string($str_tids);
 	$tid = is_array($terms['tids'])?current($terms['tids']):false;
-	
+
 	$view = views_get_view('vsite_taxonomy_view');
   $view->init();
   $view->set_display('default');
-  
+
   if ($tid) {
     $view->set_arguments(array( $tid ));
   }
@@ -641,7 +641,7 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
   $output .= $view->render();
 
   if ($term->name) drupal_set_title(check_plain($term->name));
-  
+
   return $output;
 
 //  if ($terms['tids']) {
@@ -1194,6 +1194,7 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
   if($form['#vocabulary']['tags']){
     $form['advanced']['parent']['#type'] = 'value';
     unset($form['advanced']['parent']['#theme']);
+    $form['identification']['name']['#element_validate'][] = 'vsite_taxonomy_form_term_name_validate';
   }
 
   $existing = false;
@@ -1227,6 +1228,14 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
   );
 
   $form['#submit'][] = 'vsite_taxonomy_form_taxonomy_form_term_submit';
+}
+
+function vsite_taxonomy_form_term_name_validate($element, &$form_state) {
+  if ($form_state['args']['vocabulary']->tags && $form_state['values']['op'] != $form_state['values']['delete']) {
+    if (db_result(db_query("SELECT COUNT(*) FROM {term_data} WHERE vid = %d AND name = '%s'", $form_state['args']['vocabulary']->vid, $form_state['values']['name']))) {
+      form_set_error('name', t('May not have 2 terms with the same name in a free-tagging vocabulary.'));
+    }
+  }
 }
 
 /**
