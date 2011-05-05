@@ -290,14 +290,16 @@ function vsite_taxonomy_form($form_state) {
 }
 
 function vsite_taxonomy_form_submit($form, &$form_state) {
+  $new_form_state = $form_state;
   foreach ($form_state['values'] as $v_name => $vocab_form_state) {
     if (is_array($vocab_form_state)) {
-      $vocab_form_state['values'] = $vocab_form_state;
+      $vocab_new_state = $new_form_state;
+      $vocab_new_state['values'] = $vocab_form_state;
       $vocab_form = $form[$v_name];
-      $vocab_form['#post'] = $form['#post'];
+      $vocab_form['#post'] += $form['#post'][$v_name];
 
       foreach ($vocab_form['#submit'] as $submit) {
-        $submit($vocab_form, $vocab_form_state);
+        $submit($vocab_form, $vocab_new_state);
       }
     }
   }
