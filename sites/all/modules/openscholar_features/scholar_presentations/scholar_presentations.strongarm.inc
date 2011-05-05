@@ -206,6 +206,13 @@ function scholar_presentations_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_node_presentation_pattern';
+  $strongarm->value = '[space-og-path]/presentations/[title-raw]';
+
+  $export['pathauto_node_presentation_pattern'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'show_diff_inline_presentation';
   $strongarm->value = 0;
 

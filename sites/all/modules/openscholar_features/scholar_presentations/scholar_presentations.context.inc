@@ -72,7 +72,8 @@ function scholar_presentations_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Presentations feature context');
+  t('Feature');
+  t('Presentations');
 
   $export['openscholar-feature-presentations'] = $context;
   return $export;
