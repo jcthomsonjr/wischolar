@@ -1,11 +1,16 @@
-html.js div.ctools-dropdown div.ctools-dropdown-container {
+html.js div.ctools-dropdown-container {
   display: none;
   text-align: left;
   position: absolute;
-  right: -15px;
+  right: 0;
   top: 0;
   z-index:1001;
   white-space: nowrap;
+  }
+
+html.js .os-links div.ctools-dropdown div.ctools-dropdown-container,
+html.js .view-vsite-content  div.ctools-dropdown div.ctools-dropdown-container {
+  right: -13px;
   }
 
 html.js .os-links div.ctools-dropdown div.ctools-dropdown-container {
@@ -29,11 +34,6 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
   }
 
-.ctools-dropdown div.ctools-dropdown-container ul li:hover,
-#content .ctools-dropdown-container-wrapper ul.links li:hover {
-  background-color: #356df6 !important;
-  color: #fff !important;
-  }
 
 .context-links {
   float: right;
@@ -51,7 +51,6 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   float: left;
   border: none;
   padding: 0 !important;
-  margin-right: .5em;
   clear: none;
   width: auto;
   }
@@ -95,15 +94,6 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   list-style: none;
   padding: 0;
   display:block;
-  width: 100%;
-  }
-
-.context-links a {
-  font-style: normal !important;
-  font-size: 11px !important;
-  padding: 0 !important;
-  font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
-  display:block;
   }
 
 .context-links .ctools-dropdown-container-wrapper a,
@@ -111,12 +101,18 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
   color: #000;
   text-decoration: none !important;
-  padding: 3px 13px !important;
-  font-weight: normal !important;
+  padding: 3px 10px !important;
+  font-weight: bold !important;
+  font-size: 11px !important;
+  font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
+  width: 124px;
+  letter-spacing: .5px;
+  display:block;
   }
 
 /* the "Admin/Actions" link */
-.node a.ctools-dropdown-link {
+.node a.ctools-dropdown-link,
+h2.title a.ctools-dropdown-link {
   background: url('../images/scholarbase-sprite.png') 0 -94px no-repeat transparent;
   padding: 1px 0 3px 20px !important;
   height: 16px;
@@ -141,11 +137,11 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 .context-links .ctools-dropdown-container-wrapper a:hover,
 .ctools-dropdown ul.links li a:hover,
 .ctools-dropdown-container-wrapper ul.links li a:hover {
-  color: #fff !important;
+  color: #ffffff !important;
   text-transform: none !important;
   text-decoration: none !important;
-  background-color: #356df6 !important;
-  font-weight: normal !important;
+  background: #356df6 !important;
+  font-weight: bold !important;
   }
 
 .context-links .ctools-dropdown-container-wrapper .flag-wrapper a {
