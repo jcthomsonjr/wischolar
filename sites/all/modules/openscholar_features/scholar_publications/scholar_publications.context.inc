@@ -27,6 +27,11 @@ function scholar_publications_context_default_contexts() {
       ),
       'options' => array(),
     ),
+    'views' => array(
+      'values' => array(
+        'publication_types:page_1' => 'publication_types:page_1',
+      ),
+    ),
   );
   $context->reactions = array(
     'menu' => 'publications',

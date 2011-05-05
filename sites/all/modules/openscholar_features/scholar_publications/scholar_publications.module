@@ -151,7 +151,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(is_array($form['biblio_notes_field']) && is_array($form['biblio_notes_field']['biblio_notes'])){
     	$form['biblio_notes'] = $form['biblio_notes_field']['biblio_notes'];
       unset($form['biblio_notes_field']);
-      
+
       ctools_include('ajax');
       ctools_include('modal');
       ctools_modal_add_js();
@@ -182,7 +182,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(array_key_exists('contributors2_wrapper',$form)){
       $form['contributors2_wrapper'] ['#weight'] = -3.5;
     }
-    
+
     if(array_key_exists('biblio_abst_e_field',$form) && array_key_exists('biblio_abst_e',$form['biblio_abst_e_field'])){
       $form['biblio_abst_e'] = $form['biblio_abst_e_field']['biblio_abst_e'];
       unset($form['biblio_abst_e_field']);
@@ -191,7 +191,7 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
     if(is_array($form['taxonomy']) && array_key_exists('copy_to_biblio',$form['taxonomy'])){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
     }
-    
+
     if(array_key_exists('field_biblio_extra',$form) && is_array($form['field_biblio_extra'])){
       $form['field_biblio_extra']['field_biblio_extra_add_more']['#value'] = 'Add Another Field';
     }
@@ -546,6 +546,10 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
 	if($wrapper) $s_output  .= "\n".'<div class="biblio-entry">'."\n" ;
   if (!$node->status) $s_output .= '<div id="node-'.$node->nid.'" class="node node-unpublished">';
 
+  $links = module_invoke_all('link', 'node', $node, '');
+  drupal_alter('link', $links, $node);
+  $s_output .= '<div class="os-links">' . theme('links', $links) . '</div>';
+
   if (count($node->field_biblio_image[0]) && array_key_exists('filepath',$node->field_biblio_image[0])) {
     $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover_thumb', $node->field_biblio_image[0]['filepath'],'','',NULL,FALSE), $node -> path, array('html' => TRUE)) . '</div>';
   }
@@ -557,7 +561,7 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (isset($node->content['teaser']['#prefix'])) {
     $s_output .= $node->content['teaser']['#prefix'];
   }//honor drupal prefix
-  
+
   if($style == 'chicago' && in_array($node->biblio_type, array(1000)) && empty($node->biblio_publisher)){
     $node->biblio_publisher = "Working Paper";
   }//Note that this is a working paper after the title and before the year
@@ -593,10 +597,6 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
 
   if (!$node->status) $s_output .= '</div>';
 
-  $links = module_invoke_all('link', 'node', $node, '');
-  drupal_alter('link', $links, $node);
-
-  $s_output .= theme('links', $links);
   if($wrapper) $s_output .= "\n</div>";
 
   return $s_output;
@@ -768,16 +768,16 @@ function _scholar_publications_get_plain_citation($node){
     $node->biblio_publisher = "Working Paper";
   }//Note that this is a working paper after the title and before the year
 
- 
-  
+
+
   $citation = theme('biblio_style', $node, $base, $style);
-  
+
 	//add url to citation
-	if (function_exists('shorten_url') && variable_get('scholar_publications_shorten_citations', 0)) { 
-		global $base_url; 
+	if (function_exists('shorten_url') && variable_get('scholar_publications_shorten_citations', 0)) {
+		global $base_url;
 		$citation .= shorten_url($base_url . '/' . $node->path);
 	}
-	
+
   $citation = strip_tags($citation);
 /*
   $pattern = '|<[^>]+>(.*)</[^>]+>|U';

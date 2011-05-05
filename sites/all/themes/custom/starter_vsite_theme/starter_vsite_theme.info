@@ -8,12 +8,13 @@ core       = 6.x
 ; indicate the base theme here (example: "base theme = scholar_stripy")
 base theme = scholar_base
 
-
 ;Add theme style sheets here.
 stylesheets[all][]   = starter-vsite-theme.css
 
 ; Set the conditional stylesheets that are processed by IE.
 conditional-stylesheets[if lte IE 7][all][] = starter-vsite-theme-ie.css
+
+scholar[theme_type]   = "scholar"
 
 ;You can select whether your theme is public (i.e. can be used by everyone) or private (can only be used by the vsite with same domain name as the theme. For example if you are creating a site for a Professor Bob Smith, who has the domain 'bsmith', you and want the theme to be only available to Bob Smith, you should name the theme 'bsmith'
 scholar[theme_access] = "public"

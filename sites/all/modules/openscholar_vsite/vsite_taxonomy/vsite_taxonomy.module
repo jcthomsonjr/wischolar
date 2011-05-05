@@ -644,26 +644,6 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all'){
 
   return $output;
 
-//  if ($terms['tids']) {
-//    $result = db_query(db_rewrite_sql('SELECT t.tid, t.name FROM {term_data} t WHERE t.tid IN ('. db_placeholders($terms['tids']) .')', 't', 'tid'), $terms['tids']);
-//    $tids = array(); // we rebuild the $tids-array so it only contains terms the user has access to.
-//    $names = array();
-//    while ($term = db_fetch_object($result)) {
-//      $tids[] = $term->tid;
-//      $names[] = $term->name;
-//    }
-//
-//    if ($names) {
-//      $title = implode(', ', $names);
-//      drupal_set_title(check_plain($title));
-//
-//      $current->tid = $tids[0];
-//
-//      $output = theme('taxonomy_term_page', $tids, taxonomy_select_nodes($tids, $terms['operator'], $depth, true));
-//      return $output;
-//
-//    }
-//  }
 }
 
 /**
