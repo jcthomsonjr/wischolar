@@ -77,7 +77,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 
 .context-links,
 .section-cp div.ctools-dropdown {
-  margin: 0;
+  margin: 0 30px 0 0;
   float:right;
   background: url('../images/scholarbase-sprite.png') no-repeat 6px -385px #eaf7e7 !important;
   padding: 0 10px 0 23px !important;
@@ -103,6 +103,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   font-size: 11px !important;
   padding: 0 !important;
   font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
+  display:block;
   }
 
 .context-links .ctools-dropdown-container-wrapper a,
@@ -112,6 +113,13 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   text-decoration: none !important;
   padding: 3px 13px !important;
   font-weight: normal !important;
+  }
+
+/* the "Admin/Actions" link */
+.node a.ctools-dropdown-link {
+  background: url('../images/scholarbase-sprite.png') 0 -94px no-repeat transparent;
+  padding: 1px 0 3px 20px !important;
+  height: 16px;
   }
 
 .ctools-dropdown-container-wrapper ul.links li.flag-featuredposts {
@@ -146,13 +154,6 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 
 .ctools-dropdown-no-js .ctools-dropdown-container-wrapper ul.links li a:hover {
   font-weight: normal;
-  }
-
-.node .vsite-admin a.ctools-dropdown-link,
-h2.title li.vsite-admin a.ctools-dropdown-link {
-  background: url('../images/scholarbase-sprite.png') 0 -94px no-repeat transparent;
-  padding: 1px 0 3px 20px !important;
-  height: 16px;
   }
 
 .node .os-links .vsite-admin a.ctools-dropdown-link {

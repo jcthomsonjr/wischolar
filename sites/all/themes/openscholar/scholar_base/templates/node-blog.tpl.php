@@ -24,7 +24,7 @@
     <div class="content">
       <?php print $content; ?>
     </div>
-    <?php if ($page && links): ?>
+    <?php if ($page && $links): ?>
       <div class="links links-inline">
         <?php print $links;?>
       </div>
