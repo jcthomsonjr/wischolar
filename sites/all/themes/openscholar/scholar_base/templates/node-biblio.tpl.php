@@ -16,8 +16,6 @@
       <?php if ($terms): ?>
         <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
       <?php endif; ?>
-    </div>
-    <?php endif ?>
       <div class="content">
         <?php print $content; ?>
       </div>
