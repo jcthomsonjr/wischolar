@@ -140,7 +140,9 @@ function vsite_menus_preprocess_page(&$vars){
   // active menu item (which can be changed by vsite users)
   $item = menu_get_item();
   if ($vsite_item = vsite_menus_get_menu_item($item['path'])){
-    $vars['title'] = $vsite_item['link_title'];
+    if($vsite_item['link_title']){
+      $vars['title'] = $vsite_item['link_title'];
+    }
   }
 }
 

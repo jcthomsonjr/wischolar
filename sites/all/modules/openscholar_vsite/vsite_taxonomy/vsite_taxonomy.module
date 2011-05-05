@@ -541,6 +541,7 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all', $s_feature = f
 	
 	$terms = taxonomy_terms_parse_string($str_tids);
 	$tid = is_array($terms['tids'])?current($terms['tids']):false;
+
 	$term = taxonomy_get_term($tid);
 	if(!$term) return MENU_NOT_FOUND;
 	
@@ -1148,6 +1149,7 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
   if($form['#vocabulary']['tags']){
     $form['advanced']['parent']['#type'] = 'value';
     unset($form['advanced']['parent']['#theme']);
+    $form['identification']['name']['#element_validate'][] = 'vsite_taxonomy_form_term_name_validate';
   }
 
   $existing = false;
@@ -1181,6 +1183,14 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
   );
 
   $form['#submit'][] = 'vsite_taxonomy_form_taxonomy_form_term_submit';
+}
+
+function vsite_taxonomy_form_term_name_validate($element, &$form_state) {
+  if ($form_state['args']['vocabulary']->tags && $form_state['values']['op'] != $form_state['values']['delete']) {
+    if (db_result(db_query("SELECT COUNT(*) FROM {term_data} WHERE vid = %d AND name = '%s'", $form_state['args']['vocabulary']->vid, $form_state['values']['name']))) {
+      form_set_error('name', t('May not have 2 terms with the same name in a free-tagging vocabulary.'));
+    }
+  }
 }
 
 /**

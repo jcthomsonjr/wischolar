@@ -73,7 +73,8 @@ function scholar_image_gallery_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('scholar > image gallery');
+  t('Feature');
+  t('Image Galleries');
 
   $export['openscholar-feature-image_gallery'] = $context;
   return $export;

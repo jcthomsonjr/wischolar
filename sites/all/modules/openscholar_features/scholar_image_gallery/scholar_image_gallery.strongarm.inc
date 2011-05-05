@@ -40,6 +40,231 @@ function scholar_image_gallery_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'nodeformscols_field_placements_gallery_default';
+  $strongarm->value = array(
+    'title' => array(
+      'region' => 'main',
+      'weight' => '-5',
+      'has_required' => TRUE,
+      'title' => 'Title',
+    ),
+    'body_field' => array(
+      'region' => 'main',
+      'weight' => '0.008',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'menu' => array(
+      'region' => 'right',
+      'weight' => '2',
+      'has_required' => FALSE,
+      'title' => 'Menu settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'revision_information' => array(
+      'region' => 'right',
+      'weight' => '3',
+      'hidden' => 0,
+    ),
+    'comment_settings' => array(
+      'region' => 'right',
+      'weight' => '7',
+      'has_required' => FALSE,
+      'title' => 'Comment settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'path' => array(
+      'region' => 'right',
+      'weight' => '6',
+      'has_required' => FALSE,
+      'title' => 'URL path settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'options' => array(
+      'region' => 'right',
+      'weight' => '5',
+      'has_required' => FALSE,
+      'title' => 'Publishing options',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'author' => array(
+      'region' => 'right',
+      'weight' => '4',
+      'has_required' => FALSE,
+      'title' => 'Authoring information',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'buttons' => array(
+      'region' => 'main',
+      'weight' => '100',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'book' => array(
+      'region' => 'right',
+      'weight' => '1',
+      'has_required' => FALSE,
+      'title' => 'Book outline',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'taxonomy' => array(
+      'region' => 'right',
+      'weight' => '0',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'og_nodeapi' => array(
+      'region' => 'main',
+      'weight' => '0',
+      'has_required' => FALSE,
+      'title' => 'Web Sites',
+      'collapsed' => 0,
+      'hidden' => 0,
+    ),
+    'attachments' => array(
+      'region' => 'main',
+      'weight' => '0.022',
+      'has_required' => FALSE,
+      'title' => 'Attach files to this gallery',
+      'hidden' => 0,
+    ),
+  );
+
+  $export['nodeformscols_field_placements_gallery_default'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'nodeformscols_field_placements_image_default';
+  $strongarm->value = array(
+    'title' => array(
+      'region' => 'main',
+      'weight' => '-5',
+      'has_required' => TRUE,
+      'title' => 'Title',
+    ),
+    'menu' => array(
+      'region' => 'right',
+      'weight' => '2',
+      'has_required' => FALSE,
+      'title' => 'Menu settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'revision_information' => array(
+      'region' => 'right',
+      'weight' => '3',
+      'hidden' => 0,
+    ),
+    'comment_settings' => array(
+      'region' => 'right',
+      'weight' => '7',
+      'has_required' => FALSE,
+      'title' => 'Comment settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'path' => array(
+      'region' => 'right',
+      'weight' => '6',
+      'has_required' => FALSE,
+      'title' => 'URL path settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'options' => array(
+      'region' => 'right',
+      'weight' => '5',
+      'has_required' => FALSE,
+      'title' => 'Publishing options',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'author' => array(
+      'region' => 'right',
+      'weight' => '4',
+      'has_required' => FALSE,
+      'title' => 'Authoring information',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'buttons' => array(
+      'region' => 'main',
+      'weight' => '100',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'book' => array(
+      'region' => 'right',
+      'weight' => '1',
+      'has_required' => FALSE,
+      'title' => 'Book outline',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'taxonomy' => array(
+      'region' => 'right',
+      'weight' => '0',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'field_gallery_image' => array(
+      'region' => 'main',
+      'weight' => '-4',
+      'has_required' => TRUE,
+      'title' => 'Image',
+    ),
+    'field_gallery' => array(
+      'region' => 'main',
+      'weight' => '-3',
+      'has_required' => TRUE,
+      'title' => 'Gallery',
+    ),
+    'og_nodeapi' => array(
+      'region' => 'main',
+      'weight' => '0',
+      'has_required' => FALSE,
+      'title' => 'Web Sites',
+      'collapsed' => 0,
+      'hidden' => 0,
+    ),
+    'attachments' => array(
+      'region' => 'main',
+      'weight' => '0.023',
+      'has_required' => FALSE,
+      'title' => 'Attach files to this image',
+      'hidden' => 0,
+    ),
+  );
+
+  $export['nodeformscols_field_placements_image_default'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'og_content_type_usage_gallery';
+  $strongarm->value = 'group_post_standard';
+
+  $export['og_content_type_usage_gallery'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'og_content_type_usage_image';
+  $strongarm->value = 'group_post_standard';
+
+  $export['og_content_type_usage_image'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_gallery_pattern';
   $strongarm->value = '[space-og-path]/galleries/[title-raw]';
 
@@ -48,7 +273,7 @@ function scholar_image_gallery_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_image_pattern';
-  $strongarm->value = '';
+  $strongarm->value = '[space-og-path]/galleries/[field_gallery-path]/[title-raw]';
 
   $export['pathauto_node_image_pattern'] = $strongarm;
   $strongarm = new stdClass;
@@ -93,33 +318,5 @@ function scholar_image_gallery_strongarm() {
   $strongarm->value = 0;
 
   $export['upload_image'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'nodeformscols_field_placements_gallery_default';
-  $strongarm->value = unserialize('a:13:{s:5:"title";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-5";s:12:"has_required";b:1;s:5:"title";s:5:"Title";}s:10:"body_field";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:5:"0.008";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"menu";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:12:"has_required";b:0;s:5:"title";s:13:"Menu settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:20:"revision_information";a:3:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:6:"hidden";i:0;}s:16:"comment_settings";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";s:16:"Comment settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:4:"path";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:17:"URL path settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"options";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:18:"Publishing options";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:6:"author";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:21:"Authoring information";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:3:"100";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"book";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:12:"Book outline";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:8:"taxonomy";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:10:"og_nodeapi";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";s:9:"Web Sites";s:9:"collapsed";i:0;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:5:"0.022";s:12:"has_required";b:0;s:5:"title";s:28:"Attach files to this gallery";s:6:"hidden";i:0;}}');
-
-  $export['nodeformscols_field_placements_gallery_default'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'nodeformscols_field_placements_image_default';
-  $strongarm->value = unserialize('a:14:{s:5:"title";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-5";s:12:"has_required";b:1;s:5:"title";s:5:"Title";}s:4:"menu";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:12:"has_required";b:0;s:5:"title";s:13:"Menu settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:20:"revision_information";a:3:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:6:"hidden";i:0;}s:16:"comment_settings";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";s:16:"Comment settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:4:"path";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:17:"URL path settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"options";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:18:"Publishing options";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:6:"author";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:21:"Authoring information";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:3:"100";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"book";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:12:"Book outline";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:8:"taxonomy";a:5:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:19:"field_gallery_image";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-4";s:12:"has_required";b:1;s:5:"title";s:5:"Image";}s:13:"field_gallery";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:2:"-3";s:12:"has_required";b:1;s:5:"title";s:7:"Gallery";}s:10:"og_nodeapi";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";s:9:"Web Sites";s:9:"collapsed";i:0;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:5:"0.023";s:12:"has_required";b:0;s:5:"title";s:26:"Attach files to this image";s:6:"hidden";i:0;}}');
-
-  $export['nodeformscols_field_placements_image_default'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'og_content_type_usage_gallery';
-  $strongarm->value = 'group_post_standard';
-
-  $export['og_content_type_usage_gallery'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'og_content_type_usage_image';
-  $strongarm->value = 'group_post_standard';
-
-  $export['og_content_type_usage_image'] = $strongarm;
   return $export;
 }
