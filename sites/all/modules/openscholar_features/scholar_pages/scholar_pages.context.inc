@@ -27,7 +27,7 @@ function scholar_pages_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Custom Pages');
-  t('Section');
+  t('Feature');
 
   $export['openscholar-feature-pages'] = $context;
   return $export;
