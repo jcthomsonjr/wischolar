@@ -12,4 +12,8 @@ $.fn.vAlign = function() {
 
 $(document).ready(function() {
   $('#block-scholar-1').vAlign();
+  if ($('.page-node .node li.vsite-admin')) {
+    $('.page-node .node li.vsite-admin').appendTo('h2.title');
+    $('a.ctools-dropdown-link').html('Actions');
+  }
 });

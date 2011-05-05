@@ -32,6 +32,7 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
 .ctools-dropdown div.ctools-dropdown-container ul li:hover,
 #content .ctools-dropdown-container-wrapper ul.links li:hover {
   background-color: #356df6 !important;
+  color: #fff !important;
   }
 
 .context-links {
@@ -97,17 +98,17 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   width: 100%;
   }
 
-#content-area .hg-container .context-links a {
+.context-links a {
   font-style: normal !important;
   font-size: 11px !important;
   padding: 0 !important;
   font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
   }
 
-#content-area .hg-container .context-links .ctools-dropdown-container-wrapper a,
-#content-area .hg-container .ctools-dropdown-container-wrapper ul.links li a,
-#content-area .hg-container .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
-  color: #000 !important;
+.context-links .ctools-dropdown-container-wrapper a,
+.ctools-dropdown ul.links li a,
+.context-links .ctools-dropdown-container-wrapper .flag-wrapper {
+  color: #000;
   text-decoration: none !important;
   padding: 3px 13px !important;
   font-weight: normal !important;
@@ -123,14 +124,15 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   top: 0;
   }
 
-#content-area .hg-container .ctools-dropdown-no-js .ctools-dropdown-container-wrapper ul.links li a,
-#content-area .hg-container .ctools-dropdown-no-js .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
+.ctools-dropdown-no-js .ctools-dropdown-container-wrapper ul.links li a,
+.ctools-dropdown-no-js .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
   padding:0 1px !important;
   color: #228822 !important;
   }
 
-#content-area .hg-container .context-links .ctools-dropdown-container-wrapper a:hover,
-#content-area .hg-container .ctools-dropdown-container-wrapper ul.links li a:hover {
+.context-links .ctools-dropdown-container-wrapper a:hover,
+.ctools-dropdown ul.links li a:hover,
+.ctools-dropdown-container-wrapper ul.links li a:hover {
   color: #fff !important;
   text-transform: none !important;
   text-decoration: none !important;
@@ -146,7 +148,8 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   font-weight: normal;
   }
 
-.node .vsite-admin a.ctools-dropdown-link {
+.node .vsite-admin a.ctools-dropdown-link,
+h2.title li.vsite-admin a.ctools-dropdown-link {
   background: url('../images/scholarbase-sprite.png') 0 -94px no-repeat transparent;
   padding: 1px 0 3px 20px !important;
   height: 16px;
@@ -166,4 +169,15 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
 
 .empty-content .item-list ul.context-links li {
   float: left;
+  }
+
+h2.title li.vsite-admin {
+  float: right;
+  text-align: right;
+  }
+
+h2.title li.vsite-admin a {
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: bold;
   }
