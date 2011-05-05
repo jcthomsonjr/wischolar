@@ -17,11 +17,6 @@
        <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
       <?php endif; ?>
     <?php endif; ?>
-    <?php if ($page && $links):?>
-    <div class="os-links links links-inline">
-      <?php print $links;?>
-    </div>
-    <?php endif ?>
     <div class="content">
     <?php if ($page && $node->field_scholar_software_logo[0]['fid']): ?>
       <div class="flR">
@@ -30,6 +25,11 @@
     <?php endif; ?>
       <?php print $content; ?>
     </div>
+    <?php if ($page && $links):?>
+    <div class="links links-inline">
+      <?php print $links;?>
+    </div>
+    <?php endif ?>
     <?php if (!$page): ?>
      <?php if ($terms): ?>
        <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
