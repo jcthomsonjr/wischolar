@@ -8,15 +8,7 @@ include_once('vsite_content.features.inc');
 function vsite_content_menu() {
   $items = array();
 
-  // views vsite_content defines 'cp/content'
 
-  $items['cp/content/all'] = array(
-    'title' => 'All',
-    //'page callback' => if missing, use the parent (views)
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'menu_name' => 'cp',
-    'access callback' => 'cp_access_cp',
-  );
 
     //files
   $items['cp/content/files'] = array(
@@ -28,35 +20,7 @@ function vsite_content_menu() {
     'weight' => 99,
   );
 
-  // a menu entry for each content type
-  $content_types = features_get_component_map('node');
-  $all_types = node_get_types('names');
 
-  foreach ($content_types as $type => $feature_name) {
-    $items['cp/content/' . $type] = array(
-      'title' => $all_types[$type],
-      'access callback' => 'vsite_content_content_access',
-      'access arguments' => array($type, $feature_name),
-      'type' => MENU_LOCAL_TASK,
-    );
-
-    if ($type == 'gallery') {
-      $items['cp/content/' . $type . '/' . $type] = array(
-        'title' => "Galleries",
-        'access callback' => 'vsite_content_content_access',
-        'access arguments' => array($type, $feature_name),
-        'type' => MENU_DEFAULT_LOCAL_TASK,
-      );
-      $items['cp/content/' . $type . '/image'] = array(
-        'title' => "All images in Galleries",
-        'access callback' => 'vsite_content_content_access',
-        'access arguments' => array($type, $feature_name),
-        'type' => MENU_LOCAL_TASK,
-        'weight' => 50,
-      );
-    }
-
-  }
 
   return $items;
 }
@@ -72,6 +36,7 @@ function vsite_content_menu_alter(&$items){
 /**
  * hook  vsite_content_types_alter
  */
+/*
 function vsite_content_vsite_content_types_alter(&$content_types) {
   $cts  = features_get_component_map('node');
 
@@ -83,122 +48,12 @@ function vsite_content_vsite_content_types_alter(&$content_types) {
     }
   }
 }
-
-/**
- * access callback
- */
-function vsite_content_content_access($type, $feature_name) {
-
-  vsite_include('vsiteapi');
-  return ( cp_access_cp() //CP Access
-           && array_key_exists($type, vsite_content_types(array(FEATURE_PRIVATE,FEATURE_PUBLIC))) //avalible content type?
-           && !is_content_profile($type) //not a content profile
-         );
-
-}
+*/
 
 
-/**
- * hook views_pre_build
- */
-function vsite_content_views_pre_build(&$view) {
-  if ($view->name == 'vsite_content') {
-    $vsite = vsite_get_vsite();
-    if (!$vsite) {
-      return;
-    }
-    // taxonomy filter
-    vsite_content_taxonomy_filter($view, $vsite);
 
 
-    $type = strlen(arg(3))?arg(3):arg(2);
-    if ($type && $type !== 'all') {
-      $view->set_arguments(array(
-          $type
-      ));
 
-
-      //$view->display['default']->handler->options['header'] = $output;
-    }
-    else {
-
-        // add a "type" filter to this view
-    vsite_content_content_types_filter($view, $vsite);
-
-    }
-  }
-}
-
-/**
- * adds a "type" filter to a given view
- */
-function vsite_content_content_types_filter(&$view, $vsite) {
-  // map content types => feature name
-  $content_types = features_get_component_map('node');
-
-  drupal_alter('vsite_content_types', $content_types);
-  // content types to set in the filter
-  $ctypes = array();
-  foreach ( $content_types as $type => $feature_name ) {
-    $ctypes[$type] = $type;
-  }
-
-  $v = array(
-      'operator' => 'in',
-      'value' => $ctypes,
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array('operator' => FALSE, 'label' => ''),
-      'id' => 'type',
-      'table' => 'node',
-      'field' => 'type',
-      'relationship' => 'none',
-    );
-
-  $view->set_item('page_1', 'filter', 'type', $v);
-}
-
-/**
- * add taxonomy filter to a view
- */
-function vsite_content_taxonomy_filter(&$view, $vsite) {
-  $vocabs = $vsite->get_vocabs();
-
-  if (count($vocabs)) {
-    $vid = current(array_keys($vocabs));
-  }
-
-  if ($vid) {
-    $v = array(
-      'operator' => 'or',
-      'value' => array(),
-      'group' => '0',
-      'exposed' => TRUE,
-      'expose' => array(
-        'use_operator' => 0,
-        'operator' => 'tid_op',
-        'identifier' => 'tid',
-        'label' => 'Category',
-        'optional' => 1,
-        'single' => 0,
-        'remember' => 0,
-        'reduce' => 0
-      ),
-      'type' => 'select',
-      'limit' => TRUE,
-      'vid' => $vid,
-      'id' => 'tid',
-      'table' => 'term_node',
-      'field' => 'tid',
-      'hierarchy' => 0,
-      'relationship' => 'none',
-      'reduce_duplicates' => 1
-    );
-
-    $view->set_item('page_1', 'filter', 'tid', $v);
-  }
-
-}
 
 
 
@@ -219,6 +74,7 @@ function vsite_content_files() {
  * Change the title of the vbo select element
  */
 
+
 function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_state, $form_id = 'views_bulk_operations_form__1') {
   //Add collapsible JS
   drupal_add_js('misc/collapse.js');
@@ -228,6 +84,7 @@ function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_st
    $form['select']['#title'] = 'Update options';
   }
 }
+
 
 
 /**
@@ -314,6 +171,7 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
  * Edit the content view form to put it into fieldsets
  */
 
+
 function vsite_content_form_alter(&$form, $form_state, $form_id) {
 
   switch ($form_id) {
@@ -336,6 +194,7 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
 
   }
 }
+
 
 function _vsite_content_context_links() {
   $type = arg(2);
