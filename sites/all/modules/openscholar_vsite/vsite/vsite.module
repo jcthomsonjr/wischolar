@@ -134,25 +134,6 @@ function vsite_include($inc_files){
 }
 
 /**
- * hook link
- * Adds a node link which contains some other administrative
- * links. (see hook_vsite_admin_link)
- */
-function vsite_link($type, $object, $teaser = FALSE){
-  if ('node' == $type) {
-    $links = array();
-    $vsite = vsite_get_vsite();
-    if ($vsite && $vsite->access_admin()) {
-      $links['vsite-admin'] = array(
-        'title' => theme('ctools_dropdown', "Admin", vsite_get_admin_links('node', $object), false, 'vsite-admin'),
-        'html' => TRUE
-      );
-    }
-    return $links;
-  }
-}
-
-/**
  * hook link_alter
  * Move the admin links (above) at the end of the node links
  */
@@ -378,11 +359,24 @@ function vsite_is_front(){
  */
 function vsite_preprocess_node(&$vars){
   $node = $vars['node'];
-
+  
+  $links = array();
+  $vsite = vsite_get_vsite();
+  
+  /*
+   * Adds a node link which contains some other administrative
+   * links. (see hook_vsite_admin_link)
+   */
+ 
+  if ($vsite && $vsite->access_admin()) {
+    $vars['vsite_admin_links'] = theme('ctools_dropdown', "Admin", vsite_get_admin_links('node', $node), false, 'vsite-admin');
+  }
+  
   // we dont print "submitted" info unless the feature explicitely asks
   if (! variable_get('node_submitted_info_' . $node->type, FALSE)) {
     $vars['submitted'] = '';
   }
+
 }
 
 /**
