@@ -18,7 +18,21 @@ function vsite_taxonomy_context_default_contexts() {
       ),
     ),
   );
-  $context->reactions = array();
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'vsite_taxonomy-filter_feature' => array(
+          'module' => 'vsite_taxonomy',
+          'delta' => 'filter_feature',
+          'weight' => 0,
+          'region' => 'right',
+          'status' => '0',
+          'label' => 'Categories - Filter categorized content by type',
+          'type' => 'context_ui',
+        ),
+      ),
+    ),
+  );
   $context->condition_mode = 0;
 
   // Translatables
