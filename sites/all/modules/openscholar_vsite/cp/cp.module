@@ -335,7 +335,7 @@ function cp_form_alter(&$form, &$form_state, $form_id){
 
       // change feature title based on installation type (scholar / project) @todo ugly
       $installation_name = variable_get('openscholar_installation_mode', 'scholar');
-      $form['features'][$f_name]['#title'] = str_replace('scholar', $installation_name, $form['features'][$f_name]['#title']);
+      $form['features'][$f_name]['#title'] = $form['features'][$f_name]['#title'];
 
       // is this feature customizable ?
       // by convenction feature settings form is at features/feature_name
