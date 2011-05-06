@@ -33,22 +33,7 @@ function vsite_content_menu_alter(&$items){
   $items['node/%node/edit']['type'] = MENU_CALLBACK;
 }
 
-/**
- * hook  vsite_content_types_alter
- */
-/*
-function vsite_content_vsite_content_types_alter(&$content_types) {
-  $cts  = features_get_component_map('node');
 
-  $site_features = variable_get('spaces_features', array());
-  foreach ( $cts as $type => $feature_name ) {
-    $feature_name = $feature_name[0];
-    if (!($site_features[$feature_name])) {
-      unset($content_types[$type]);
-    }
-  }
-}
-*/
 
 
 
@@ -109,35 +94,7 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
       0 => 'No'
     );
 
-    //get the site information
-    $site = vsite_get_vsite();
-    $vocabs = $site->get_vocabs($type);
 
-    if (count($vocabs)) {
-      $vid = current(array_keys($vocabs));
-      $terms = taxonomy_get_tree($vid);
-      // remove those terms that do not have any node associated with
-      // TODO : if "all" only terms for some content types should be shown (hook vsite_content_content_types_alter()
-      $taxonomy_options = array();
-      foreach ($terms as $term) {
-        $n = ($type && $type !== 'all') ? taxonomy_term_count_nodes($term->tid, $type) : taxonomy_term_count_nodes($term->tid);
-        if ($n) {
-          $taxonomy_options[$term->tid] = $term->name;
-        }
-      }
-    }
-
-    if (! $vid || ! count($taxonomy_options)) {
-      //remove Categores selection box
-      unset($form['#info']['filter-tid']);
-      unset($form['tid']);
-    }
-    else {
-      $taxonomy_options[$term->tid] = $term->name;
-      $form['tid']['#options'] = $taxonomy_options;
-      //5 terms max shown per select box
-      $form['tid']['#size'] = count($taxonomy_options) < 6 ? count($taxonomy_options) : 5;
-    }
 
     //promoted to front page filter
     $form['promote']['#type'] = 'radios';
@@ -180,13 +137,15 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
         $vals = $form_state['input'];
         //is the filter set? if so don't collapse it
         $s_state = (!is_array($vals) || !(strlen($vals['title'] || $vals['promote'] != 'All' || $vals['sticky'] != 'All' || $vals['status'] != 'All' || count($vals['tid']))))?'collapsed':'';
-      $form['#prefix'] = _vsite_content_context_links() . '<fieldset class="vsite_content_filter_box collapsible ' . $s_state . '"><legend>Filter options</legend>';
+      $form['#prefix'] = '<fieldset class="vsite_content_filter_box collapsible"><legend>Filter options</legend>';
         $form['#suffix'] = '</fieldset>';
       }
     break;
     case 'views_bulk_operations_form__1':
       if (arg(0) == 'cp' && arg(1) == 'content') {
-        if (is_array($form['select']['#attributes'] )) $form['select']['#attributes'] += array('class' => 'vsite_content_bulk_update collapsible collapsed');
+        if (is_array($form['select']['#attributes'] )) {
+          $form['select']['#attributes'] += array('class' => 'vsite_content_bulk_update collapsible collapsed');
+        }
         else $form['select']['#attributes'] = array('class' => 'vsite_content_bulk_update collapsible collapsed');
       }
     break;
@@ -196,37 +155,7 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
 }
 
 
-function _vsite_content_context_links() {
-  $type = arg(2);
 
-  if ($type && $type !== 'all') {
-    $type_url_str = str_replace('_', '-', $type);
-    $all_types = node_get_types('names');
-    $links = array();
-    $links [] = array(
-      'href' => 'node/add/' . $type_url_str, 'title' => $all_types[$type], 'query' => array(
-      'destination' => 'cp/content/' . $type
-    )
-    );
-    $output = $type ? theme('context_links', $links) : '';
-  }
-  else {
-    // the "add new *" links
-    vsite_include('vsiteapi');
-    $items = vsite_create_links();
-    $output = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links');
-
-  }
-  return $output;
-}
-/* intereferes with confirm_popup
-function vsite_content_cp_confirm_overide() {
-  return array(
-    "node/%/delete" =>  "node_delete_confirm",
-  );
-
-}
-*/
 /**
  * Implements hook_filefield_paths_process_file().
  */
