@@ -62,7 +62,8 @@ function scholar_links_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Links feature context');
+  t('Feature');
+  t('Links');
 
   $export['openscholar-feature-links'] = $context;
   return $export;

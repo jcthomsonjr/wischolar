@@ -81,7 +81,8 @@ function scholar_reader_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('scholar > feed reader');
+  t('Feature');
+  t('Feed Reader');
 
   $export['openscholar-feature-reader'] = $context;
   return $export;

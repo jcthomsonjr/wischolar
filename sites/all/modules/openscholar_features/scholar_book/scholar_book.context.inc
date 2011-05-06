@@ -63,7 +63,8 @@ function scholar_book_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('scholar > book');
+  t('Books');
+  t('Feature');
 
   $export['openscholar-feature-book'] = $context;
   return $export;

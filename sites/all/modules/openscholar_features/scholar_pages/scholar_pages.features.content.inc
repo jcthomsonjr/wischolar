@@ -3,28 +3,40 @@
 /**
  * Implementation of hook_content_default_fields().
  */
-function scholar_links_content_default_fields() {
+function scholar_pages_content_default_fields() {
   $fields = array();
 
-  // Exported field: field_link_href
-  $fields['link-field_link_href'] = array(
-    'field_name' => 'field_link_href',
-    'type_name' => 'link',
+  // Exported field: field_oembed_video
+  $fields['page-field_oembed_video'] = array(
+    'field_name' => 'field_oembed_video',
+    'type_name' => 'page',
     'display_settings' => array(
-      'weight' => '1',
+      'weight' => '101',
       'parent' => '',
       'label' => array(
         'format' => 'hidden',
       ),
       'teaser' => array(
         'format' => 'hidden',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
-        'format' => 'hidden',
+        'format' => 'oembed_default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
         'exclude' => 0,
       ),
       '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -35,7 +47,7 @@ function scholar_links_content_default_fields() {
     ),
     'widget_active' => '1',
     'type' => 'link',
-    'required' => '1',
+    'required' => '0',
     'multiple' => '0',
     'module' => 'link',
     'active' => '1',
@@ -43,9 +55,10 @@ function scholar_links_content_default_fields() {
       'target' => 'default',
       'rel' => '',
       'class' => '',
+      'title' => '',
     ),
     'display' => array(
-      'url_cutoff' => '0',
+      'url_cutoff' => '80',
     ),
     'url' => 0,
     'title' => 'none',
@@ -55,14 +68,13 @@ function scholar_links_content_default_fields() {
     'widget' => array(
       'default_value' => array(
         '0' => array(
-          'title' => '',
           'url' => '',
         ),
       ),
       'default_value_php' => NULL,
-      'label' => 'Link URL',
-      'weight' => '-1',
-      'description' => 'The web address of the link. Starts with: http://',
+      'label' => 'Video Embed',
+      'weight' => 0,
+      'description' => 'Copy a link to an online video to embed it into your site.',
       'type' => 'link',
       'module' => 'link',
     ),
@@ -70,7 +82,7 @@ function scholar_links_content_default_fields() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Link URL');
+  t('Video Embed');
 
   return $fields;
 }

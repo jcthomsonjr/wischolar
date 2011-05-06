@@ -47,7 +47,8 @@ function scholar_biocv_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('scholar > biocv');
+  t('Bio and CV');
+  t('Feature');
 
   $export['openscholar-feature-biocv'] = $context;
   return $export;

@@ -71,6 +71,27 @@ function scholar_pages_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'content_extra_weights_page';
+  $strongarm->value = array(
+    'title' => '-5',
+    'body_field' => '-1',
+    'revision_information' => '3',
+    'author' => '2',
+    'options' => '4',
+    'comment_settings' => '7',
+    'menu' => '-3',
+    'taxonomy' => '-4',
+    'book' => '1',
+    'path' => '5',
+    'attachments' => '6',
+    'creativecommons' => '8',
+    'og_nodeapi' => '-2',
+  );
+
+  $export['content_extra_weights_page'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_options_page';
   $strongarm->value = array(
     0 => 0,
@@ -201,7 +222,7 @@ function scholar_pages_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_page_pattern';
-  $strongarm->value = '[space-og-path]/pages/[title-raw]';
+  $strongarm->value = '';
 
   $export['pathauto_node_page_pattern'] = $strongarm;
   $strongarm = new stdClass;

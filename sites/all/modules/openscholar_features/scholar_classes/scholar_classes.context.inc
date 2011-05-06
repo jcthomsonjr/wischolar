@@ -71,6 +71,11 @@ function scholar_classes_context_default_contexts() {
   );
   $context->condition_mode = 0;
 
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Classes and Class Materials');
+  t('Feature');
+
   $export['openscholar-feature-classes'] = $context;
   return $export;
 }

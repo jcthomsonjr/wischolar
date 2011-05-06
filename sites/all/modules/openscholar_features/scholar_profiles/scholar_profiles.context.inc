@@ -54,7 +54,8 @@ function scholar_profiles_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('scholar > profiles');
+  t('Feature');
+  t('People Profiles');
 
   $export['openscholar-feature-profiles'] = $context;
   return $export;

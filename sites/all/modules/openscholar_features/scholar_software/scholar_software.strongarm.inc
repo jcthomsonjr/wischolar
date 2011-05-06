@@ -22,6 +22,29 @@ function scholar_software_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'content_extra_weights_scholar_software_project';
+  $strongarm->value = array(
+    'title' => '-7',
+    'body_field' => '-3',
+    'revision_information' => '0',
+    'author' => '-1',
+    'options' => '2',
+    'comment_settings' => '5',
+    'menu' => '-5',
+    'taxonomy' => '-6',
+    'book' => '-2',
+    'path' => '6',
+    'attachments' => '4',
+    'creativecommons' => '7',
+    'og_nodeapi' => '-4',
+    'scholar_software_recommended_releases' => '1',
+    'scholar_software_recent_releases' => '3',
+  );
+
+  $export['content_extra_weights_scholar_software_project'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_options_scholar_software_project';
   $strongarm->value = array(
     0 => 'status',
