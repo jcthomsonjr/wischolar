@@ -543,8 +543,11 @@ function scholar_publications_theme_registry_alter(&$theme_registry){
 function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style = 'classic', $inline = false, $wrapper = true) {
   $s_output = "";
 
-	if($wrapper) $s_output  .= "\n".'<div class="biblio-entry">'."\n" ;
-  if (!$node->status) $s_output .= '<div id="node-'.$node->nid.'" class="node node-unpublished">';
+	if($wrapper) {
+	  $s_output  .= "\n".'<div id="node-' . $node->nid . '" class="biblio-entry node node-teaser';
+    if (!$node->status) $s_output .= ' node-unpublished';
+    $s_output .='">';
+  }
 
   $links = module_invoke_all('link', 'node', $node, '');
   drupal_alter('link', $links, $node);
@@ -594,8 +597,6 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (isset($node->content['teaser']['#suffix'])) {
     $s_output .= $node->content['teaser']['#suffix'];
   }//honor drupal suffix
-
-  if (!$node->status) $s_output .= '</div>';
 
   if($wrapper) $s_output .= "\n</div>";
 

@@ -15,6 +15,6 @@ $(document).ready(function() {
   $('#scholar-shield').vAlign();
   if ($('.page-node .node li.vsite-admin')) {
     $('.page-node .node li.vsite-admin').appendTo('h2.title');
-    $('li.vsite-admin a.ctools-dropdown-link').html('Actions');
+    $('.page-node li.vsite-admin a.ctools-dropdown-link').html('Actions');
   }
 });
