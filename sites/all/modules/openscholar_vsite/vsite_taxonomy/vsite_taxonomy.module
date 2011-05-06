@@ -51,8 +51,6 @@ function vsite_taxonomy_theme() {
   return array(
     'vsite_taxonomy_term' => array(
       'arguments' => array('term' => NULL, 'term_filter' => null, 'b_description' => true),
-      'path' => drupal_get_path('module', 'vsite_taxonomy'),
-      'file' => 'vsite_taxonomy.admin.inc',
     ),
     'vsite_taxonomy_form' => array(
       'arguments' => array('form' => array()),
@@ -321,7 +319,7 @@ function vsite_taxonomy_block_view(){
  */
 function vsite_taxonomy_strongarm(){
   $conf = array();
-  $conf['pathauto_taxonomy_pattern'] = "[taxonomy-vsite-prefix-path-raw]/category/[vocab-raw]/[catpath-raw]";
+  //$conf['pathauto_taxonomy_pattern'] = "[taxonomy-vsite-prefix-path-raw]/category/[vocab-raw]/[catpath-raw]";
 
   //Global Taxonomies
   $result = db_query("SELECT vid FROM {vocabulary} LEFT JOIN {og_vocab} ov USING(vid) WHERE ov.nid IS NULL");
@@ -409,7 +407,7 @@ function theme_vsite_taxonomy_term($term, $b_description = true, $b_admin_links 
     $term_link = $term->name;
 
   }else{
-    $term_link = l($term->name, "taxonomy/term/$term->tid", array('title' => t($term->description)));
+    $term_link = l($term->name, _vsite_taxonomy_get_term_path($term->tid), array('title' => t($term->description)));
   }
 
   $item = '<div class="term-head">' . $term_link;
