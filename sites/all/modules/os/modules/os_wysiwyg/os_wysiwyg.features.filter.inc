@@ -22,21 +22,16 @@ function os_wysiwyg_filter_default_formats() {
         'weight' => '-10',
       ),
       '1' => array(
-        'module' => 'embedfilter',
-        'delta' => '0',
-        'weight' => '-9',
-      ),
-      '2' => array(
         'module' => 'oembed',
         'delta' => '0',
         'weight' => '-8',
       ),
-      '3' => array(
+      '2' => array(
         'module' => 'filter',
         'delta' => '2',
         'weight' => '-7',
       ),
-      '4' => array(
+      '3' => array(
         'module' => 'filter',
         'delta' => '3',
         'weight' => '-6',
