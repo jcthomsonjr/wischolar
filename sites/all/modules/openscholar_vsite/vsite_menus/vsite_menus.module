@@ -169,6 +169,28 @@ function vsite_menus_get_menu_item($path, $vsite = false){
 }
 
 /**
+ * Return the vsite_menus menu item(s) given a feature
+ * @param string $path
+ */
+function vsite_menus_get_feature_menu_item($s_feature, $vsite = false){
+  if(!$vsite && !($vsite = vsite_get_vsite())) return array();
+
+  $link_map = features_get_component_map('menu_links');
+  
+  $a_return = array();
+  foreach ($link_map as $s_key => $a_features){
+  	if(!in_array($s_feature,$a_features)) continue;
+  	
+  	list($s_def_menu, $s_path) = explode(':',$s_key,2);
+  	if($a_menu = vsite_menus_get_menu_item($s_path,$vsite)){
+  		$a_return[] = $a_menu;
+  	}
+  }
+
+  return $a_return;
+}
+
+/**
  * Change the options for the node save form so that only the active vsite menus are displayed
  *
  * @param $form array
@@ -406,7 +428,6 @@ function vsite_menus_get_menu_tree($s_menu){
   return $menu_output[$s_menu];
 
 }
-
 
 
 

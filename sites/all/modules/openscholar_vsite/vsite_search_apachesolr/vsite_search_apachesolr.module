@@ -250,18 +250,9 @@ function vsite_search_apachesolr_apachesolr_modify_query(&$query, &$params, $cal
         $content_types = array_unique($content_types);
       }
       
-      if (context_isset('context','openscholar-feature-taxonomy')) {
-        $menu = menu_get_item();
-        dpm("FIlTER SEARCH by TID");
-//      	foreach ($paths as $path) {
-//          //die('Path = '.$path);
-//          if (preg_match('/^category\/tags\//', $path) || preg_match('/^category\//', $path)) {
-//            $pieces = explode('/', $_GET['q']);
-//            if (is_numeric($pieces[2])) {
-//              $query->add_filter('tid', $pieces[2]);
-//            }
-//          }
-//        }
+      if (vsite_taxonomy_active_term()) {
+      	$term = vsite_taxonomy_active_term();
+      	$query->add_filter('tid', $term->tid);
       }
       
       // Get the content types from the current feature

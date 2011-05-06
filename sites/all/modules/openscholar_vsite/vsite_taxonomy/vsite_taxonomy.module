@@ -258,13 +258,17 @@ function vsite_taxonomy_vsite_admin_link($type, $object){
 function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
-      $blocks[0]['info'] = t('Categories - Filter categorized content');
+      $blocks[0]['info'] = t('Categories - Show content in a Category');
+      $blocks['filter_feature']['info'] = t('Categories - Filter categorized content by type');
       return $blocks;
     case 'view':
-      switch ($delta) {
+    	switch ($delta) {
+      	case 'filter_feature':
+      	  $block = vsite_taxonomy_category_by_feature_block();
+      	break;
         case 0:
         default:
-          $block = vsite_taxonomy_block_view();
+          $block = vsite_taxonomy_feature_categories_block();
           break;
       }
 
@@ -275,7 +279,7 @@ function vsite_taxonomy_block($op = 'list', $delta = 0, $edit = array()) {
 /**
  * callback function for "Site categories" block displayed inside a feature
  */
-function vsite_taxonomy_block_view(){
+function vsite_taxonomy_feature_categories_block(){
   $vsite = vsite_get_vsite();
   $block = array();
   $terms_html = "";
@@ -313,6 +317,69 @@ function vsite_taxonomy_block_view(){
   return $block;
 }
 
+/**
+ * Links to Filter the active category by a feature
+ */
+function vsite_taxonomy_category_by_feature_block(){
+	//Are we viewing a taxonomy term?
+	if(!($term = vsite_taxonomy_active_term())) return array();
+	
+	$vocab = taxonomy_vocabulary_load($term->vid);
+	$node_map = features_get_component_map('node');
+	
+	$active_menu = menu_get_item();
+	$s_filtered_feature = false;
+	if($active_menu['path'] == 'taxonomy/term/%/%'){
+		$s_filtered_feature = $active_menu['page_arguments'][2];
+	}//Already Filtered by a feature
+	
+	$a_feature_nodes = array();
+  foreach ($vocab->nodes as $s_node) {
+    if(array_key_exists($s_node,$node_map)){
+    	foreach ($node_map[$s_node] as $s_feature) {
+    		if(!isset($a_feature_nodes[$s_feature])){
+    			$a_feature_nodes[$s_feature] = array();
+    		}
+    		$a_feature_nodes[$s_feature][] = $s_node;
+    	}
+    }
+  }//Make a list of features and the node types that are selected for this taxonomy
+  
+  $items = array();
+  foreach ($a_feature_nodes as $s_feature => $a_nodes) {
+  	
+      $n_count = vsite_taxonomy_term_count_nodes($term->tid,false,$a_nodes);
+      if(!$n_count) continue;
+      
+      $a_menu_item = vsite_menus_get_feature_menu_item($s_feature);
+      if(count($a_menu_item)){
+      	$a_menu_item = current($a_menu_item);
+      	$s_text = ucwords($a_menu_item['link_title']);
+      }else{
+      	$feature_info = features_get_info('feature', $s_feature);
+      	$s_text = ucwords(str_ireplace('scholar ','',$feature_info->info['name']));
+      }
+      $link = "taxonomy/term/{$term->tid}/{$s_feature}";
+      
+      if($s_feature == $s_filtered_feature){
+      	$s_text = "(-) ".$s_text;
+      	$link = "taxonomy/term/{$term->tid}";
+      }
+      
+      $s_text .= " ($n_count)";
+      
+      $items[] = l($s_text,$link);
+  }
+	
+  if(count($items) < 2){
+  	return array();
+  }
+  
+  return array(
+    'subject' => "Filter by Feature",
+    'content' => theme('item_list', $items, NULL, 'ul'),
+  );
+}
 
 ///**
 // * Implementation of hook_strongarm
@@ -539,6 +606,22 @@ function vsite_taxonomy_taxonomy_import($gid, $definition){
 }
 
 /**
+ * Retrieve the active taxonomy term (if any)
+ *
+ * @param object $term //Term to set
+ * @param bool $reset //Clear the value?
+ */
+function vsite_taxonomy_active_term($term = false, $reset = false){
+	static $active_term;
+	
+	if($term || $reset){
+		$active_term = $term;
+	}
+	
+	return $active_term;
+}
+
+/**
  * Menu callback; displays all nodes associated with a term.
  */
 function vsite_taxonomy_term_page($str_tids = '', $depth = 'all', $s_feature = false){
@@ -549,12 +632,20 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all', $s_feature = f
 	$term = taxonomy_get_term($tid);
 	if(!$term) return MENU_NOT_FOUND;
 	
+	vsite_taxonomy_active_term($term);
+	
 	$vocab = taxonomy_vocabulary_load($term->vid);
-	if(!$s_feature && count($vocab->nodes) == 1){
-	  $node_map = features_get_component_map('node');
-		if(array_key_exists(current($vocab->nodes),$node_map)){
-	    $s_feature =  current($node_map[current($vocab->nodes)]);
-	  }
+	if(!$s_feature){
+		$node_map = features_get_component_map('node');
+		foreach ($vocab->nodes as $s_node) {
+			if(array_key_exists($s_node,$node_map) && !$s_feature){
+				$s_feature =  current($node_map[$s_node]);
+	    }elseif (array_key_exists($s_node,$node_map) && $s_feature != current($node_map[$s_node])){
+	    	//Found a second feature represented
+	    	$s_feature = false;
+	    	break;
+	    }
+		}
 	}//If there is only one type for this vocab show the feature's view
  
 	$output = "";
@@ -569,12 +660,18 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all', $s_feature = f
 	  }
 	
 	  if($s_feature){
-	  	  $map = context_condition_map();
-	      $a_context_types = $map['node'];
-	
-	    if(count($a_context_types)){
+		  $node_map = features_get_component_map('node');
+	  
+		  $a_node_types = array();
+		  foreach ($node_map as $s_node => $a_features){
+		    if(!in_array($s_feature,$a_features)) continue;
+		    
+		    $a_node_types[] = $s_node;
+		  }
+		  
+	    if(count($a_node_types)){
 	      $filter = $view->get_item('default','filter','type');
-	      $filter['value'] = $a_context_types;
+	      $filter['value'] = $a_node_types;
 	      $view->set_item('default','filter','type',$filter);
 	    }
 	  }//If we should restrict by feature
@@ -653,39 +750,51 @@ function vsite_taxonomy_term_by_feature($term, $s_feature){
  * @param $tid
  *   The term's ID
  *
- * @param $type
- *   The $node->type. If given, vsite_taxonomy_term_count_nodes only counts
- *   nodes of $type that are classified with the term $tid.
- *
  * @param $cnt_childeren
  *   Boolean - Should the children be included in the node count
+ *
+ * @param $a_content_types
+ *   The array( $node->type ). If given, vsite_taxonomy_term_count_nodes only counts
+ *   nodes of $type that are classified with the term $tid.
  *
  * @return int
  *   An integer representing a number of nodes.
  *   Results are statically cached.
  */
-function vsite_taxonomy_term_count_nodes($tid, $cnt_childeren = true) {
+function vsite_taxonomy_term_count_nodes($tid, $cnt_childeren = true, $a_content_types = array()) {
   static $count;
-
+  static $count_by_type;
   $vsite = vsite_get_vsite();
 
-  if (!isset($count)) {
+  if (!count($a_content_types) && !isset($count)) {
     $result = db_query('SELECT t.tid, COUNT(n.nid) AS c FROM {term_node} t INNER JOIN {node} n ON t.vid = n.vid INNER JOIN {og_ancestry} og ON n.nid = og.nid WHERE n.status <> 0 AND og.group_nid = %d GROUP BY t.tid',$vsite->group->nid);
 
     $count = array();
     while ($term = db_fetch_object($result)) {
       $count[$term->tid] = $term->c;
     }
+  }elseif (count($a_content_types) && !isset($count_by_type[implode(":",$a_content_types)])){
+  	$result = db_query("SELECT t.tid, COUNT(n.nid) AS c FROM {term_node} t INNER JOIN {node} n ON t.vid = n.vid INNER JOIN {og_ancestry} og ON n.nid = og.nid WHERE n.status <> 0 AND n.type IN(".db_placeholders($a_content_types,'varchar').") AND og.group_nid = %d GROUP BY t.tid", array_merge($a_content_types, array($vsite->group->nid)));
+  	
+  	if(!is_array($count_by_type)) $count_by_type = array();
+    $count_by_type[implode(":",$a_content_types)] = array();
+    while ($term = db_fetch_object($result)) {
+      $count_by_type[implode(":",$a_content_types)][$term->tid] = $term->c;
+    }
   }
 
   $children_count = 0;
   if($cnt_childeren){
     foreach (_taxonomy_term_children($tid) as $c) {
-      $children_count += vsite_taxonomy_term_count_nodes($c);
+      $children_count += vsite_taxonomy_term_count_nodes($c,$cnt_childeren,$a_content_types);
     }
   }//Should the childeren be counted?
 
-  return $children_count + (isset($count[$tid]) ? $count[$tid] : 0);
+  if (count($a_content_types)){
+  	return $children_count + (isset($count_by_type[implode(":",$a_content_types)][$tid]) ? $count_by_type[implode(":",$a_content_types)][$tid] : 0);
+  }else{
+    return $children_count + (isset($count[$tid]) ? $count[$tid] : 0);
+  }
 }
 
 /**
