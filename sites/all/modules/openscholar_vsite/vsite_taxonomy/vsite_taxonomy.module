@@ -314,21 +314,21 @@ function vsite_taxonomy_block_view(){
 }
 
 
-/**
- * Implementation of hook_strongarm
- */
-function vsite_taxonomy_strongarm(){
-  $conf = array();
-  //$conf['pathauto_taxonomy_pattern'] = "[taxonomy-vsite-prefix-path-raw]/category/[vocab-raw]/[catpath-raw]";
-
-  //Global Taxonomies
-  $result = db_query("SELECT vid FROM {vocabulary} LEFT JOIN {og_vocab} ov USING(vid) WHERE ov.nid IS NULL");
-  while($vid = db_result($result)) $conf['pathauto_taxonomy_'.$vid.'_pattern'] = "category/[vocab-raw]/[catpath-raw]";
-
-  $conf['vertical_tabs_forms']['taxonomy_form_vocabulary'] = TRUE;
-
-  return $conf;
-}
+///**
+// * Implementation of hook_strongarm
+// */
+//function vsite_taxonomy_strongarm(){
+//  $conf = array();
+//  //$conf['pathauto_taxonomy_pattern'] = "[taxonomy-vsite-prefix-path-raw]/category/[vocab-raw]/[catpath-raw]";
+//
+//  //Global Taxonomies
+//  $result = db_query("SELECT vid FROM {vocabulary} LEFT JOIN {og_vocab} ov USING(vid) WHERE ov.nid IS NULL");
+//  while($vid = db_result($result)) $conf['pathauto_taxonomy_'.$vid.'_pattern'] = "category/[vocab-raw]/[catpath-raw]";
+//
+//  $conf['vertical_tabs_forms']['taxonomy_form_vocabulary'] = TRUE;
+//
+//  return $conf;
+//}
 
 
 /**
@@ -709,83 +709,3 @@ function vsite_taxonomy_preprocess_node(&$vars){
     unset($vars['terms']); //Do not show "in xxx,yyy" in the teaser view
   }
 }
-
-/**
- * Implementation of hook_token_values().
- **/
-function vsite_taxonomy_token_values($type, $object = NULL, $options = array()) {
-  $vsite = vsite_get_vsite();
-  if ($vsite){
-    $tokens['taxonomy-vsite-prefix-path'] = check_plain($vsite->group->purl);
-    $tokens['taxonomy-vsite-prefix-path-raw'] = $vsite->group->purl;
-
-    return $tokens;
-  }
-
-  return array(
-    'taxonomy-vsite-prefix-path' => '',
-    'taxonomy-vsite-prefix-path-raw' => '',
-  );
-}
-
-/**
- * Implementation of hook_token_list().
- **/
-function vsite_taxonomy_token_list($type = 'all') {
-
-  //Works for taxonomy type (must be in vsite context)
-  if($type == 'taxonomy' || $type == 'all'){
-	  $tokens['taxonomy']['taxonomy-vsite-prefix-path'] = t("The filtered value of the vsite prefix path for taxonomies");
-	  $tokens['taxonomy']['taxonomy-vsite-prefix-path-raw'] = t("The raw value of the vsite prefix path for taxonomies");
-  }
-
-  return $tokens;
-}
-
-
-function vsite_taxonomy_views_pre_build(&$view){
-  if(!isset($_REQUEST['views_filter_tid'])) return;
-
-  $o_current_page_view = views_get_page_view();
-  if($o_current_page_view->view->name != $view->name || $o_current_page_view->view->current_display != $view->current_display && $view->base_table == 'node') return;
-
-  $term = taxonomy_get_term($_REQUEST['views_filter_tid']);
-  if(!$term) return;
-
-  //Filter def to filter view by provided tid
-  $a_tid_filter = array(
-    'operator' => 'and',
-    'value' => array(0 => $term->tid),
-    'group' => 0,
-    'exposed' => false,
-    'limit' => TRUE,
-    'vid' => $term->vid,
-    'id' => 'tid',
-    'table' => 'term_node',
-    'field' => 'tid',
-    'hierarchy' => 0,
-    'relationship' => 'none',
-    'reduce_duplicates' => 0,
-  );
-
-  if(is_array($view->display_handler->options['filters'])){
-    $view->display_handler->options['filters']['tid'] = $a_tid_filter;
-  }else{
-    $view->display_handler->default_display->options['filters']['tid'] = $a_tid_filter;
-  }
-
-  if(array_key_exists('title',$view->display_handler->options)){
-    $view->display_handler->options['title'] = $term->name;
-  }else{
-    $view->display_handler->default_display->options['title']  = $term->name;
-  }
-
-  if(array_key_exists('header',$view->display_handler->options)){
-    $view->display_handler->options['header'] = '<div class="taxonomy-term-description">'.$term->description.'</div>';
-  }else{
-    $view->display_handler->default_display->options['header']  = '<div class="taxonomy-term-description">'.$term->description.'</div>';
-  }//maintain header_format settings
-
-}
-
-
