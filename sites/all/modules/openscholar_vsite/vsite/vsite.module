@@ -360,14 +360,8 @@ function vsite_is_front(){
 function vsite_preprocess_node(&$vars){
   $node = $vars['node'];
   
-  $links = array();
-  $vsite = vsite_get_vsite();
-  
-  /*
-   * Adds a node link which contains some other administrative
-   * links. (see hook_vsite_admin_link)
-   */
- 
+  // node admin links (see hook_vsite_admin_link)
+   
   if ($vsite && $vsite->access_admin()) {
     $vars['vsite_admin_links'] = theme('ctools_dropdown', "Admin", vsite_get_admin_links('node', $node), false, 'vsite-admin');
   }
