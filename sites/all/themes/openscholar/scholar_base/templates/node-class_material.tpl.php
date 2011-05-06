@@ -1,9 +1,9 @@
 <div id="node-<?php print $node->nid; ?>" class="<?php print $node_classes; ?>">
   <div class="node-inner">
+    <div class="os-links">
+      <?php print $vsite_admin_links; ?>
+    </div>
     <?php if (!$page): ?>
-      <div class="os-links">
-        <?php print $links; ?>
-      </div>
       <h3 class="title">
         <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
       </h3>
@@ -24,15 +24,16 @@
     <div class="content">
       <?php print $content; ?>
     </div>
-    <?php if ($page && $links): ?>
-      <div class="links links-inline">
-        <?php print $links;?>
-      </div>
-      <?php endif;?>
+
     <?php if (!$page): ?>
       <?php if ($terms): ?>
       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
       <?php endif; ?>
     <?php endif; ?>
+    <?php if ($links): ?>
+      <div class="links links-inline">
+        <?php print $links;?>
+      </div>
+      <?php endif;?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->

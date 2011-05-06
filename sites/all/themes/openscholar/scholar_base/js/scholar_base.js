@@ -9,12 +9,7 @@ $.fn.vAlign = function() {
 };
 })(jQuery);
 
-
 $(document).ready(function() {
   $('#block-scholar-1').vAlign();
   $('#scholar-shield').vAlign();
-  if ($('.page-node .node li.vsite-admin')) {
-    $('.page-node .node li.vsite-admin').appendTo('h2.title');
-    $('.page-node li.vsite-admin a.ctools-dropdown-link').html('Actions');
-  }
 });
