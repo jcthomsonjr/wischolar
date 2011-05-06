@@ -46,6 +46,169 @@ function scholar_profiles_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'nodeformscols_field_placements_person_default';
+  $strongarm->value = array(
+    'title' => array(
+      'region' => 'main',
+      'weight' => '3',
+      'hidden' => 0,
+    ),
+    'body_field' => array(
+      'region' => 'main',
+      'weight' => '5',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'menu' => array(
+      'region' => 'right',
+      'weight' => '1',
+      'has_required' => FALSE,
+      'title' => 'Menu settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'revision_information' => array(
+      'region' => 'right',
+      'weight' => '2',
+      'hidden' => 0,
+    ),
+    'comment_settings' => array(
+      'region' => 'right',
+      'weight' => '6',
+      'has_required' => FALSE,
+      'title' => 'Comment settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'path' => array(
+      'region' => 'right',
+      'weight' => '5',
+      'has_required' => FALSE,
+      'title' => 'URL path settings',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'options' => array(
+      'region' => 'right',
+      'weight' => '4',
+      'has_required' => FALSE,
+      'title' => 'Publishing options',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'author' => array(
+      'region' => 'right',
+      'weight' => '3',
+      'has_required' => FALSE,
+      'title' => 'Authoring information',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'buttons' => array(
+      'region' => 'main',
+      'weight' => '13',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
+    'book' => array(
+      'region' => 'right',
+      'weight' => '0',
+      'has_required' => FALSE,
+      'title' => 'Book outline',
+      'collapsed' => 1,
+      'hidden' => 0,
+    ),
+    'field_person_firstname' => array(
+      'region' => 'main',
+      'weight' => '0',
+      'has_required' => TRUE,
+      'title' => 'First Name',
+    ),
+    'field_person_lastname' => array(
+      'region' => 'main',
+      'weight' => '2',
+      'has_required' => TRUE,
+      'title' => 'Last Name',
+    ),
+    'field_person_middlename' => array(
+      'region' => 'main',
+      'weight' => '1',
+      'has_required' => FALSE,
+      'title' => 'Middle Name or Initial',
+      'hidden' => 0,
+    ),
+    'field_person_title' => array(
+      'region' => 'main',
+      'weight' => '4',
+      'has_required' => FALSE,
+      'title' => 'Professional Title/Affiliation',
+      'hidden' => 0,
+    ),
+    'field_person_address' => array(
+      'region' => 'main',
+      'weight' => '6',
+      'has_required' => FALSE,
+      'title' => 'Address',
+      'hidden' => 0,
+    ),
+    'field_person_phone' => array(
+      'region' => 'main',
+      'weight' => '7',
+      'has_required' => FALSE,
+      'title' => 'Phone',
+      'hidden' => 0,
+    ),
+    'field_person_email' => array(
+      'region' => 'main',
+      'weight' => '8',
+      'has_required' => FALSE,
+      'title' => 'Email',
+      'hidden' => 0,
+    ),
+    'field_person_website' => array(
+      'region' => 'main',
+      'weight' => '9',
+      'has_required' => FALSE,
+      'title' => 'Web Site',
+      'hidden' => 0,
+    ),
+    'field_person_photo' => array(
+      'region' => 'main',
+      'weight' => '10',
+      'has_required' => FALSE,
+      'title' => 'Photo',
+      'hidden' => 0,
+    ),
+    'og_nodeapi' => array(
+      'region' => 'main',
+      'weight' => '12',
+      'has_required' => FALSE,
+      'title' => 'Web Sites',
+      'collapsed' => 0,
+      'hidden' => 0,
+    ),
+    'attachments' => array(
+      'region' => 'main',
+      'weight' => '11',
+      'has_required' => FALSE,
+      'title' => 'Attach files to this person',
+      'hidden' => 0,
+    ),
+  );
+
+  $export['nodeformscols_field_placements_person_default'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'og_content_type_usage_person';
+  $strongarm->value = 'group_post_standard';
+
+  $export['og_content_type_usage_person'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_person_pattern';
   $strongarm->value = '[space-og-path]/people/[title-raw]';
 
@@ -71,19 +234,5 @@ function scholar_profiles_strongarm() {
   $strongarm->value = FALSE;
 
   $export['upload_person'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'nodeformscols_field_placements_person_default';
-  $strongarm->value = unserialize('a:21:{s:5:"title";a:3:{s:6:"region";s:4:"main";s:6:"weight";s:1:"3";s:6:"hidden";i:0;}s:10:"body_field";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"menu";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:13:"Menu settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:20:"revision_information";a:3:{s:6:"region";s:5:"right";s:6:"weight";s:1:"2";s:6:"hidden";i:0;}s:16:"comment_settings";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:16:"Comment settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:4:"path";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"5";s:12:"has_required";b:0;s:5:"title";s:17:"URL path settings";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"options";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:18:"Publishing options";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:6:"author";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"3";s:12:"has_required";b:0;s:5:"title";s:21:"Authoring information";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:7:"buttons";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"13";s:12:"has_required";b:0;s:5:"title";N;s:6:"hidden";i:0;}s:4:"book";a:6:{s:6:"region";s:5:"right";s:6:"weight";s:1:"0";s:12:"has_required";b:0;s:5:"title";s:12:"Book outline";s:9:"collapsed";i:1;s:6:"hidden";i:0;}s:22:"field_person_firstname";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:1:"0";s:12:"has_required";b:1;s:5:"title";s:10:"First Name";}s:21:"field_person_lastname";a:4:{s:6:"region";s:4:"main";s:6:"weight";s:1:"2";s:12:"has_required";b:1;s:5:"title";s:9:"Last Name";}s:23:"field_person_middlename";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"1";s:12:"has_required";b:0;s:5:"title";s:22:"Middle Name or Initial";s:6:"hidden";i:0;}s:18:"field_person_title";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"4";s:12:"has_required";b:0;s:5:"title";s:30:"Professional Title/Affiliation";s:6:"hidden";i:0;}s:20:"field_person_address";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"6";s:12:"has_required";b:0;s:5:"title";s:7:"Address";s:6:"hidden";i:0;}s:18:"field_person_phone";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"7";s:12:"has_required";b:0;s:5:"title";s:5:"Phone";s:6:"hidden";i:0;}s:18:"field_person_email";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"8";s:12:"has_required";b:0;s:5:"title";s:5:"Email";s:6:"hidden";i:0;}s:20:"field_person_website";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:1:"9";s:12:"has_required";b:0;s:5:"title";s:8:"Web Site";s:6:"hidden";i:0;}s:18:"field_person_photo";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"10";s:12:"has_required";b:0;s:5:"title";s:5:"Photo";s:6:"hidden";i:0;}s:10:"og_nodeapi";a:6:{s:6:"region";s:4:"main";s:6:"weight";s:2:"12";s:12:"has_required";b:0;s:5:"title";s:9:"Web Sites";s:9:"collapsed";i:0;s:6:"hidden";i:0;}s:11:"attachments";a:5:{s:6:"region";s:4:"main";s:6:"weight";s:2:"11";s:12:"has_required";b:0;s:5:"title";s:27:"Attach files to this person";s:6:"hidden";i:0;}}');
-
-  $export['nodeformscols_field_placements_person_default'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'og_content_type_usage_person';
-  $strongarm->value = 'group_post_standard';
-
-  $export['og_content_type_usage_person'] = $strongarm;
   return $export;
 }

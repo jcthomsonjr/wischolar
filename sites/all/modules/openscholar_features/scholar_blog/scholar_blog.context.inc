@@ -88,6 +88,11 @@ function scholar_blog_context_default_contexts() {
   );
   $context->condition_mode = 0;
 
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Blogs');
+  t('Feature');
+
   $export['openscholar-feature-blog'] = $context;
   return $export;
 }
