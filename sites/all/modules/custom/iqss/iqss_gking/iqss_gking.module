@@ -391,7 +391,7 @@ function iqss_gking_people(){
   //We are in the People feature on this page
   context_set('scholar','feature','profiles');
 
-  if (! iqss_gking_on_gking_site() || isset($_REQUEST['views_filter_tid'])) return views_page('scholar_profiles', 'page_1'); //If this isn't Gary just display the standard
+  if (! iqss_gking_on_gking_site() ) return views_page('scholar_profiles', 'page_1'); //If this isn't Gary just display the standard
 
   $vsite = vsite_get_vsite();
   $vocabs = $vsite->get_vocabs('person');

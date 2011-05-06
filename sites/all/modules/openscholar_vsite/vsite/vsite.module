@@ -948,37 +948,13 @@ function vsite_context_page_reaction(){
   $a_active_contexts = context_active_contexts();
 
   $feature_context = $a_active_contexts['openscholar-feature-' . $active_feature];
-  if (! $feature_context)
-    return;
-
-  //Use the default feature menu to get the default view
-  if (($s_menu = array_search('scholar_' . $active_feature, features_get_component_map('menu')))) {
-    $default_feature_menu = ( object ) menu_get_item($s_menu);
-    if ($default_feature_menu->page_callback == 'views_page') {
-      vsite_set_default_feature_view($default_feature_menu->page_arguments[0]);
-      return;
-    }
+  if (! $feature_context) return;
+  
+  $view_info = vsite_feature_default_view('scholar_'.$active_feature);
+  
+  if(is_array($view_info)){
+  	vsite_set_default_feature_view($view_info['view']);
   }
-
-  //if there is no default view set, lets try determine which one it is
-  if (count($feature_context->views) == 1) {
-    $o_view = views_get_view(current($feature_context->views));
-    if (is_object($o_view) && $o_view->get_url()) {
-      vsite_set_default_feature_view($o_view->name);
-      return;
-    }
-  } //there is only one view associated with the context
-
-
-  if (count($feature_context->path) == 1) {
-    $default_feature_menu = ( object ) menu_get_item(current($feature_context->path));
-    if ($default_feature_menu->page_callback == 'views_page') {
-      vsite_set_default_feature_view($default_feature_menu->page_arguments[0]);
-      return;
-    }
-  } //there is only one path associated with the context and it points to a view
-
-
 }
 
 function vsite_set_default_feature_view($s_view = NULL){
@@ -1100,4 +1076,47 @@ function vsite_token_list($type = 'all') {
     $tokens['node']['space-og-path-raw'] = t("The raw value of the vsite prefix path");
     return $tokens;
   }
+}
+
+/**
+ * Return the default view for a feature
+ */
+function vsite_feature_default_view($feature){
+
+  //Use the default feature menu to get the default view
+  foreach (features_get_component_map('menu_links') as $s_menu_key => $a_features) {
+    if(!in_array( $feature, $a_features)) continue;
+    
+    list($s_menu,$s_path) = explode(":",$s_menu_key,2);
+    $default_feature_menu = ( object ) menu_get_item($s_path);
+    if ($default_feature_menu->page_callback == 'views_page') {
+      return array('view' => $default_feature_menu->page_arguments[0], 'display' => $default_feature_menu->page_arguments[1]);
+    }
+  }
+
+  $feature_context = context_load('openscholar-feature-' . str_replace('scholar_','',$feature));
+  if (!$feature_context) return false;
+  
+  //if there is no default view set, lets try determine which one it is
+  if (isset($feature_context->conditions['views']['values'])) {
+    foreach ($feature_context->conditions['views']['values'] as $s_view_key) {
+      list($view,$display) = explode(":",$s_view_key,2);
+      if(strpos($display,'page') === false) continue;
+
+      return array('view' => $view, 'display' => $display);
+    }
+  }
+
+  if (isset($feature_context->conditions['path']['values'])) {
+    foreach ($feature_context->conditions['path']['values'] as $path) {
+      if(strpos($path,'~') !== false || strpos($path,'*') !== false) continue; //Exclude Wildcards
+      
+      $default_feature_menu = ( object ) menu_get_item($path);
+      if ($default_feature_menu->page_callback == 'views_page') {
+      	array('view' => $default_feature_menu->page_arguments[0], 'display' => $default_feature_menu->page_arguments[1]);
+      }
+    }
+  } //there is a path associated with the context and it points to a view
+
+  return false;
 }
