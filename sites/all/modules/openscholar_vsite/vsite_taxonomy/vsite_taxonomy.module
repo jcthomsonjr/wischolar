@@ -357,7 +357,7 @@ function vsite_taxonomy_category_by_feature_block(){
       	$s_text = ucwords($a_menu_item['link_title']);
       }else{
       	$feature_info = features_get_info('feature', $s_feature);
-      	$s_text = ucwords(str_ireplace('scholar ','',$feature_info->info['name']));
+      	$s_text = ucwords( $feature_info->info['name'] );
       }
       $link = "taxonomy/term/{$term->tid}/{$s_feature}";
       
