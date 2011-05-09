@@ -95,7 +95,7 @@ function cp_init(){
 
   if ($admin) {
     //add the javascript for intercepting confirm pages
-    drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.js');
+    //drupal_add_js(drupal_get_path('module', 'cp') . '/theme/cp-confirm-overide.js');
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/jquery_ui/jquery.ui/themes/openscholar/ui.all.css');
     //Add the JqueryUI JS for the confirm boxes
     jquery_ui_add(array(
@@ -104,11 +104,11 @@ function cp_init(){
       'ui.draggable',
       'ui.resizable'
     ));
-    drupal_add_js(array(
+   /* drupal_add_js(array(
       'cp_confirm_overide_handler' => array(
         "js" => 1
       )
-    ), 'setting');
+    ), 'setting');*/
 
     $modal_styles = _cp_get_modal_styles();
     drupal_add_js($modal_styles, 'setting');
@@ -226,7 +226,7 @@ function cp_menu(){
     if (! array_key_exists('access callback', $item))
       $items[$path]['access callback'] = 'cp_access_cp';
   }
-
+/*
   $items["cp/allow_callback_override"] = array(
     'page callback' => 'cp_is_confirm_overide_page',
     'type' => MENU_CALLBACK,
@@ -241,7 +241,7 @@ function cp_menu(){
       2
     )
   );
-
+*/
   return $items;
 }
 
@@ -361,10 +361,11 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     }
   }
 
+  /*
   //Call Confirm Override
   if (in_array($form_id, cp_get_confirm_form_overides()))
     cp_confirm_override($form, $form_state, $form_id);
-
+*/
 }
 
 /**
@@ -595,21 +596,21 @@ function cp_menu_link_alter(&$item, $menu){
 /**
  * Overides for the confirm form
  *
- */
+ *//*
 function cp_confirm_override(&$form, &$form_state, $form_id){
   if (cp_is_confirm_overide_page()) {
     $_POST['form_id'] = $form_id;
     $form_state['submitted'] = TRUE;
     unset($form['#token']);
   } //Set the form values to fake a confirm.
-}
+}*/
 
 /**
  * Return true if this page is a confirm overide page
  *
  * @param $page (current page if NULL)
  * @return array
- */
+ *//*
 function cp_is_confirm_overide_page($page = NULL){
 
   if (! $_POST['js'] || $page) {
@@ -643,7 +644,7 @@ function cp_is_confirm_overide_page($page = NULL){
     exit();
   } //Was this called by javascript?
 }
-
+*/
 /**
  * Confirm that a message has been seen for a vsite
  */
@@ -676,7 +677,7 @@ function cp_confirm_message_view($s_message){
  * Get confirm pages that should be overridden
  *
  * @return array
- */
+ *//*
 function cp_get_confirm_form_overides(){
   static $a_overides;
 
@@ -685,7 +686,7 @@ function cp_get_confirm_form_overides(){
 
   return $a_overides;
 }
-
+*/
 /**
  * Implement Hook vsite_generic_settings
  * @return array
