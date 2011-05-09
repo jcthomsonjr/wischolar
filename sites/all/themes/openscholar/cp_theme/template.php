@@ -59,3 +59,38 @@ function cp_theme_views_view_field__og_members__name($view, $field, $row) {
 	return check_plain($row->{$field->field_alias});
 	//return ctools_modal_text_button(check_plain($row->{$field->field_alias}), 'cp/users/edit/'. $row->{$field->aliases['uid']} , 'edit '.$row->{$field->field_alias});
 }
+
+/**
+ * override theme function for spaces_features_form().
+ * @see spaces/spaces.theme.inc
+ * The only thing this does is add class 'enabled' to the 
+ * row of the enabled features 
+ */
+function cp_theme_spaces_features_form($form){
+  $rows = array();
+  $spaces_features = variable_get('spaces_features', array());
+  foreach ( element_children($form['spaces_features']) as $f_name => $feature ) {
+    $class = ($spaces_features[$feature]) ? 'enabled' : '';
+    $rows[] = array(
+      'data' => array(
+        array(
+          'class' => 'label', 
+          'data' => drupal_render($form['labels'][$feature]) 
+        ), 
+        array(
+          'class' => 'option', 
+          'data' => drupal_render($form['spaces_features'][$feature]) 
+        ), 
+        array(
+          'class' => 'actions', 
+          'data' => drupal_render($form['settings'][$feature]) 
+        ) 
+      ), 
+      'class' => $class 
+    )
+    ;
+  }
+  $output = theme('table', array(), $rows, array('class' => 'spaces'));
+  $output .= drupal_render($form);
+  return $output;
+}
