@@ -258,6 +258,7 @@ function vsite_taxonomy_taxonomy ($op, $type, $object) {
 		        $vsite->controllers->vsite_menu->delete_menu_item($existing['menu_name'], $existing['key']);
 		      }
 		      
+		      $features = spaces_features('og');
 		      // If the category is deleted, remove the path aliases
 			    foreach ($features as $s_feature => $a_info) {
             $source = _vsite_taxonomy_get_term_path($object->tid,$s_feature);
@@ -265,6 +266,39 @@ function vsite_taxonomy_taxonomy ($op, $type, $object) {
           }
           break;
 		  }
+    break;
+    case 'vocabulary':
+      $a_aliased_features = array();
+      foreach ($object['nodes'] as $s_node) {
+        if(!array_key_exists($s_node,$node_map) || in_array(current($node_map[$s_node]),$a_aliased_features)) continue;
+        $s_feature =  current($node_map[$s_node]);
+        $s_feature_path = null;
+        
+        //Use the default feature menu to get the default path
+        foreach (features_get_component_map('menu_links') as $s_menu_key => $a_features) {
+          if(!in_array( $s_feature, $a_features)) continue;
+          list($s_menu,$s_feature_path) = explode(":",$s_menu_key,2);
+        }
+        
+        if(!isset($s_feature_path)){
+          $a_view_info = vsite_feature_default_view($s_feature);
+          $o_view = views_get_view($a_view_info['view']);
+          if(!$o_view) continue;
+          $s_feature_path = $o_view->get_url();
+          if($n_pos = strpos($s_feature_path,"/")) $s_feature_path = substr($s_feature_path,0,$n_pos);
+        }
+              
+        if(!strlen($s_feature_path)) continue;
+        
+          if ($term->name) {
+              $a_placeholders = pathauto_get_placeholders('taxonomy', $term);
+              $a_placeholders['tokens'][] = '[feature-path]';
+              $a_placeholders['values']['[feature-path]'] = $s_feature_path;
+              $source = _vsite_taxonomy_get_term_path($term->tid,$s_feature);
+              
+              pathauto_create_alias('vsite_taxonomy', $op, $a_placeholders, $source, $term->tid, $term->vid);
+          }
+      }
     break;
   }
 }
