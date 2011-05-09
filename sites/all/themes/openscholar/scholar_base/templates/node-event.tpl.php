@@ -1,7 +1,7 @@
 <div id="node-<?php print $node->nid; ?>" class="<?php print $node_classes; ?>">
   <div class="node-inner">
     <div class="os-links">
-      <?php print $vsite_admin_links; ?>
+      <?php $vsite_admin_links; ?>
     </div>
     <?php if (!$page): ?>
       <h3 class="title">

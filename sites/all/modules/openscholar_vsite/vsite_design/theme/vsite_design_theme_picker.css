@@ -1,4 +1,9 @@
-#cp-content .innerframe #cp-settings-theme form#vsite-design-theme-picker-form, #cp-content .innerframe #cp-settings-theme form#vsite-design-theme-picker-form fieldset {
+.page-cp-appearance-theme #cp-content {
+  overflow:hidden;
+  }
+
+#cp-content .innerframe #cp-settings-theme form#vsite-design-theme-picker-form,
+#cp-content .innerframe #cp-settings-theme form#vsite-design-theme-picker-form fieldset {
   margin:0;
   padding: 0;
   }
@@ -10,29 +15,45 @@
 ul.theme-picker {
   width: 2000em;
   clear: both;
+  padding:4px 0;
   }
 
 li.item-theme-picker  {
-  padding: 23px 0 30px 0;
+  padding: 0;
+  margin: 3px 13px;
   display: inline-block;
 	vertical-align: top;
-  width: 600px;
-  text-align: center;
-  }
-
-ul.theme-picker li img {
-  margin-top: 2px;
+  width: 550px;
+  height: 550px;
+  position:relative;
   -moz-box-shadow: 0 0 20px #888;
   -webkit-box-shadow: 0 0 20px #888;
   box-shadow: 0 0 20px #888;
+  color:#fff;
   }
 
-ul.theme-picker li.checked img {
-  border: 3px solid red;
-  margin-top: 0;
+ul.theme-picker li.checked {
+  border: 3px solid #d31a15;
+  margin: 0 10px;
   }
 
-.theme_subnav #next, .theme_subnav #prev {
+ul.theme-picker li .theme-info {
+  position: absolute;
+  background: rgba(42,101,152,0.9);
+  border-top: 1px solid #2a6598;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 30px;
+  min-height: 65px;
+  }
+
+ul.theme-picker li.checked .theme-info {
+  background: #1c598d;
+  }
+
+.theme_subnav #next,
+.theme_subnav #prev {
   width: 15px;
   height: 14px;
   background: transparent url(images/arrows.png) 0 0 no-repeat;
@@ -43,16 +64,25 @@ ul.theme-picker li.checked img {
   background-position: 0 -14px;
   }
 
-.theme-picker h3, ul.theme-picker li p, .item-theme-picker .form-item {
+.theme-picker h3,
+ul.theme-picker li p,
+.item-theme-picker .form-item {
   margin-top: 3px;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 16px;
   margin-bottom: 0;
   }
 
+.theme-picker h3,
+ul.theme-picker li p {
+  float:left;
+  width: 55%;
+  }
+
 .section-cp .item-theme-picker .form-item {
-  vertical-align: top;
   margin-left: 4px;
+  float: right;
+  width: 30%;
   }
 
 .item-theme-picker .form-item label {
@@ -62,29 +92,29 @@ ul.theme-picker li.checked img {
 
 ul.theme-picker li p  {
   display:block;
+  clear: left;
   }
 
-
-ul.theme-picker li.checked h3, .item-theme-picker li.checked .form-item {
+ul.theme-picker li.checked h3,
+.item-theme-picker li.checked .form-item {
   margin-top: 0;
   }
 
 #vsite-design-theme-picker-form {
-  font-weight: bold;
-  color: #4a4a4a;
   font-size: 1.1em;
   padding-top: 1px !important;
   margin: 0 !important;
   }
 
 .theme_subnav {
-  padding-top: 13px;
+  padding-top: 4px;
   background:#eaebe9;
-  height: 32px;
+  height: 27px;
   padding-left: 30px;
   }
 
-.theme_subnav h3, .theme_subnav ul, .theme_subnav li, #next, #prev {
+.theme_subnav h3, .theme_subnav ul,
+.theme_subnav li, #next, #prev {
   display: inline-block;
   margin-right: 10px;
   }
@@ -116,6 +146,6 @@ form#vsite-design-theme-picker-form div.form-radios {
   clear: both;
   }
 
-.page-cp-settings-theme input#edit-submit {
+.page-cp-appearance-theme input#edit-submit {
   margin-left: 30px;
   }
