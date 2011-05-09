@@ -291,7 +291,7 @@ function cite_distribute_widget_process($module, $nid) {
 	
 	//get formal repository name
 	$module_info = module_invoke ( $module, 'cite_distribute_register' );
-	$repository_name = $module_info [0] ['repository'];
+	$repository_name = $module_info[0]['repository'];
 	
 	//check to see if nid already exists in repec meta
 	$sql = db_result ( db_query ( "SELECT nid FROM {cite_distribute} WHERE nid = %d AND type = '%s'", $node->nid, $module ) ) ? 
@@ -330,20 +330,20 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 			$iteration = 1;
 			
 			//check for optional api_values key
-			$sql = ($module_info [0] ['rebuild_all']) ?      //returns all values of specfied type regardless of upd value
+			$sql = ($module_info[0]['rebuild_all']) ?      //returns all values of specfied type regardless of upd value
 			  db_query ( "SELECT * FROM {cite_distribute} WHERE type = '%s'", $module ) :      //returns all values of specfied type where upd = 1
 			  db_query ( "SELECT * FROM {cite_distribute} WHERE type = '%s' AND upd = %d", $module, 1 );
 			
 			//before the loop we are checking if this is a single file/rebuild all type template
 			//in which WE DELETE THE FILE HERE BEFORE THE REBUILD
-			if (($module_info [0] ['rebuild_all']) && $module_info [0] ['file'] == 'single') {
-				$filepath = cite_distribute_fix_filepath ( variable_get ( $module_info [0] ['name'] . '_archive_path', '' ) );
-				$unlink_path = $filepath . $module_info [0] ['filename'];
+			if (($module_info[0]['rebuild_all']) && $module_info[0]['file'] == 'single') {
+				$filepath = cite_distribute_fix_filepath ( variable_get ( $module_info[0]['name'] . '_archive_path', '' ) );
+				$unlink_path = $filepath . $module_info[0]['filename'];
 				$unlink_file = unlink ( $unlink_path );
 			}
 			
 			//place_once key IS set in hook_cite_dsitribute_register, used for creating singular bibtex file
-			if ($module_info [0] ['place_once'] && ($module_info [0] ['file'] !== 'none')) {
+			if ($module_info[0]['place_once'] && ($module_info[0]['file'] !== 'none')) {
 				while ( $data = db_fetch_object ( $sql ) ) {
 					$node [] = node_load ( $data->nid );
 				}
@@ -354,17 +354,17 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 				$make_template = module_invoke ( $module, 'cite_distribute_template', $node, $module_mode );
 				
 				//getting filename - checking for dynamic versus static filenames
-				$filename = (($module_info [0] ['file']) == 'single') ? $module_info [0] ['filename'] : $make_template ['filename'];
+				$filename = (($module_info[0]['file']) == 'single') ? $module_info[0]['filename'] : $make_template ['filename'];
 				
 				//getting filepath - checking for dynamic versus static filepaths
-				$filepath = ($module_info [0] ['dynamic_paths']) ? $make_template ['filepath'] : cite_distribute_fix_filepath ( variable_get ( $module_info [0] ['name'] . '_archive_path', '' ) );
+				$filepath = ($module_info[0]['dynamic_paths']) ? $make_template ['filepath'] : cite_distribute_fix_filepath ( variable_get ( $module_info[0]['name'] . '_archive_path', '' ) );
 				
 				//now place the template file
-				$place_template = cite_distribute_place_template ( $module, $filepath, $filename, $make_template ['template'], $module_info [0] ['flag'] );
+				$place_template = cite_distribute_place_template ( $module, $filepath, $filename, $make_template ['template'], $module_info[0]['flag'] );
 			}
 			
 			//place_once key NOT set in hook_cite_dsitribute_register
-			if (! $module_info [0] ['place_once'] && ($module_info [0] ['file'] !== 'none')) {
+			if (! $module_info[0]['place_once'] && ($module_info[0]['file'] !== 'none')) {
 				while ( $data = db_fetch_object ( $sql ) ) {
 					$node = node_load ( $data->nid );
 					
@@ -372,22 +372,26 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 					//send to the "make_template" passing it an array of nodes
 					$make_template = module_invoke ( $module, 'cite_distribute_template', $node, $module_mode, $iteration );
 					//getting filename - checking for dynamic versus static filenames
-					$filename = (($module_info [0] ['file']) == 'single') ? $module_info [0] ['filename'] : $make_template ['filename'];
+					$filename = (($module_info[0]['file']) == 'single') ? $module_info[0]['filename'] : $make_template ['filename'];
 					
 					//getting filepath - checking for dynamic versus static filepaths
-					$filepath = ($module_info [0] ['dynamic_paths']) ? $make_template ['filepath'] : cite_distribute_fix_filepath ( variable_get ( $module_info [0] ['name'] . '_archive_path', '' ) );
+					$filepath = ($module_info[0]['dynamic_paths']) ? $make_template ['filepath'] : cite_distribute_fix_filepath ( variable_get ( $module_info[0]['name'] . '_archive_path', '' ) );
 					
 					//now place the template file
-					$place_template = cite_distribute_place_template ( $module, $filepath, $filename, $make_template ['template'], $module_info [0] ['flag'] );
+					$place_template = cite_distribute_place_template ( $module, $filepath, $filename, $make_template ['template'], $module_info[0]['flag'] );
 					
 					$iteration ++;
 				}
 			}
 			
 			//If the submodule has set has 'file' => 'none', so cite_distribute will not deal with files
-			//at all. Instead it lets the submodule deal with the data output, e.g., the submodule
+			//at all.   Instead it lets the submodule deal with the data output, e.g., the submodule
 			//could send the output via preprocess hook to a template file
-			
+			if ($module_info[0]['file'] === 'none') {
+				$ret = module_invoke($module, 'cite_distribute_push', $node, $module_node, $iteration);
+				$place_template = true; // or not if it didn't work
+				
+			}
 
 			//update the cite distribute table "upd" collumn when complete
 			if ($place_template) {
@@ -401,22 +405,22 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 		
 		case 'per_submission' :
 			//submodule is not using files
-			if ($module_info [0] ['file'] == 'none') {
+			if ($module_info[0]['file'] == 'none') {
 				return cite_distribute_mode_controller ( $node = NULL, $module, $module_mode = 'api' );
 			}
 			//this when a submodule uses one file and runs the api funtion
-			if ($module_info [0] ['file'] == 'single') {
+			if ($module_info[0]['file'] == 'single') {
 				//if these two conditions are true then halt execution of placing the file because the api function
 				//is called to deal with these conditions
 				return cite_distribute_mode_controller ( $node = NULL, $module, $module_mode = 'api' );
 			}
 			
-			if ($module_info [0] ['file'] == 'multiple') {
+			if ($module_info[0]['file'] == 'multiple') {
 				$make_template = module_invoke ( $module, 'cite_distribute_template', $node, $module_mode, $iteration = 1 );
 				//getting filepath - checking for dynamic versus static filepaths
-				$filepath = ($module_info [0] ['dynamic_paths']) ? $make_template ['filepath'] : cite_distribute_fix_filepath ( variable_get ( $module_info [0] ['name'] . '_archive_path', '' ) );
+				$filepath = ($module_info[0]['dynamic_paths']) ? $make_template ['filepath'] : cite_distribute_fix_filepath ( variable_get ( $module_info[0]['name'] . '_archive_path', '' ) );
 				
-				$place_template = cite_distribute_place_template ( $module, $filepath, $make_template ['filename'], $make_template ['template'], $module_info [0] ['flag'] );
+				$place_template = cite_distribute_place_template ( $module, $filepath, $make_template ['filename'], $make_template ['template'], $module_info[0]['flag'] );
 			}
 			break;
 	}
