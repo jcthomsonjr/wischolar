@@ -74,7 +74,8 @@ function vsite_widget_googletranslate(){
 function vsite_widgets_shield(){
 
 	$output = '';
-	if(!vsite_widgets_shield_access()){
+	$shields = variable_get('vsite_shields_shield_info', array());
+	if(!vsite_widgets_shield_access() || empty($shields)) {
 		return $output;
 	}//Disabled?
 
