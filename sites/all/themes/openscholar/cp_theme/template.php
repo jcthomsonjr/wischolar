@@ -74,7 +74,7 @@ function cp_theme_spaces_features_form($form){
     $rows[] = array(
       'data' => array(
         array(
-          'class' => 'label', 
+          'class' => 'name', 
           'data' => drupal_render($form['labels'][$feature]) 
         ), 
         array(
@@ -90,7 +90,7 @@ function cp_theme_spaces_features_form($form){
     )
     ;
   }
-  $output = theme('table', array(), $rows, array('class' => 'spaces'));
+  $output = theme('table', array(), $rows, array('class' => 'spaces-features'));
   $output .= drupal_render($form);
   return $output;
 }

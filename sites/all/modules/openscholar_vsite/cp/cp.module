@@ -319,7 +319,6 @@ function cp_form_alter(&$form, &$form_state, $form_id){
    * and make 'settings' link as a popup link
    */
   if (arg(0) == 'cp' && $form_id == 'spaces_features_form') {
-
     unset($form['settings']); // we dont need settings here
     unset($form['buttons']['reset']); //Remove reset to defaults button
 
@@ -329,13 +328,12 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     ctools_modal_add_js();
 
     $spaces_features = variable_get('spaces_features', array());
+    $vsite = vsite_get_vsite();
+    $features = spaces_features('og');
+    
     foreach ( array_keys($form['spaces_features']) as $f_name ) {
       if ($f_name[0] == '#')
         continue;
-
-      // change feature title based on installation type (scholar / project) @todo ugly
-      $installation_name = variable_get('openscholar_installation_mode', 'scholar');
-      $form['features'][$f_name]['#title'] = $form['features'][$f_name]['#title'];
 
       // is this feature customizable ?
       // by convenction feature settings form is at features/feature_name
