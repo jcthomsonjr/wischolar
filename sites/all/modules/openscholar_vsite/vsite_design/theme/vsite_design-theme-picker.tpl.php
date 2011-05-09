@@ -16,9 +16,8 @@
     $screenshot = theme('image', $info['screenshot'], t('Screenshot for %theme theme', array('%theme' => $info['name'])), '', array('class' => 'screenshot', 'id' => 'screenshot_' . $info['theme_name']), FALSE);
   }
 ?>
-<div class="item-theme-picker">
-
   <?php echo $screenshot?>
-  <h3><?php echo $info['name'] ?></h3><?php echo $sub_theme ?>
-	<p> <?php echo $info['description'] ?></p>
-</div>
+  <div class="theme-info">
+    <h3><?php echo $info['name'] ?></h3><?php echo $sub_theme ?>
+	  <p> <?php echo $info['description'] ?></p>
+	</div>

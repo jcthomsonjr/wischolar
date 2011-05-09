@@ -14,9 +14,19 @@ a, a:visited {
   padding: 2px;
   }
 
+a.toggle,
+a.toggle:visited {
+  padding-right: 15px;
+  background-position: 100% -193px;
+  }
+
+a.toggle.expanded {
+  background-position: 100% -212px;
+  }
+
 a:hover {
   color:#000;
-  background:#ebea8d;
+  background-color:#ebea8d;
   text-decoration: none;
   }
 
@@ -244,10 +254,6 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
   color: #000;
   background:#CECECE;
   font-weight: bold;
-  }
-
-#sidebar-first .views-admin-links ul li a, #sidebar-second .views-admin-links ul li a{
-  display:inline;
   }
 
 /* Nodes */
