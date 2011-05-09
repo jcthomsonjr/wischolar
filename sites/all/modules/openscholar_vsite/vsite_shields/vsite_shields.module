@@ -49,7 +49,7 @@ function vsite_shields_form($form_state) {
     '#description' => t('Your new shield will appear below for selection. If this is your first shield, it will replace the Harvard shields below.'),
   );
 
-  $custom_shields_path = drupal_get_path('module', 'vsite_shields').'/theme/shields';
+  $custom_shields_path = file_create_path().'/vsite_shields';
   $shields = file_scan_directory($custom_shields_path, '.*');
 
   $shield_info = variable_get('vsite_shields_shield_info', array());
@@ -61,7 +61,7 @@ function vsite_shields_form($form_state) {
   );
 
   $c = &$form['container'];
-  $curr_default = variable_get('vsite_shields_shield', drupal_get_path('module','vsite_shields')."/theme/shields/harvard_shield.png");
+  $curr_default = variable_get('vsite_shields_shield', '');
 
   foreach ($shields as $shield) {
     $c[$shield->name] = array(
@@ -74,8 +74,8 @@ function vsite_shields_form($form_state) {
       'default' => array(
         '#type' => 'radio',
         '#name' => 'default',
-        '#return_value' => 1,
-        '#value' => ($shield->filename==$curr_default)?1:0,
+        '#return_value' => $shield->basename,
+        '#value' => $shield_info[$shield->basename]['default']?$shield->basename:'',
       ),
       'delete' => array(
         '#type' => 'checkbox',
@@ -85,16 +85,8 @@ function vsite_shields_form($form_state) {
       'hidden' => array(
         '#type' => 'checkbox',
         '#title' => NULL,
-        '#default_value' => $shield_info[$shield->name]['hidden'],
+        '#default_value' => $shield_info[$shield->basename]['hidden'],
         '#return_value' => 1,
-      ),
-      'full_path' => array(
-        '#type' => 'hidden',
-        '#value' => $shield->filename,
-      ),
-      'filename' => array(
-        '#type' => 'hidden',
-        '#value' => $shield->basename,
       ),
     );
   }
@@ -104,28 +96,50 @@ function vsite_shields_form($form_state) {
     '#value' => t('Submit'),
   );
 
+  $form['#validate'][] = 'vsite_shields_form_validate';
+
   return $form;
+}
+
+function vsite_shields_form_validate($form, &$form_state) {
+
+  $shields = $form['container'];
+  $default = $form['#post']['default'];
+  foreach ($form_state['values'] as $name => $data) {
+    if (!is_array($data)) continue;
+    $shield = $shields[$name]['image']['#value'];
+
+    if ($data['hidden'] && $shield->basename == $default) {
+      form_set_error($name, t('Cannot hide the default shield.'));
+    }
+  }
 }
 
 function vsite_shields_form_submit(&$form, &$form_state) {
   $shield_info = variable_get('vsite_shields_shield_info', array());
 
+  $shields = $form['container'];
+  $default = $form['#post']['default'];
   foreach ($form_state['values'] as $name => $data) {
     if (!is_array($data)) continue;
+    $shield = $shields[$name]['image']['#value'];
 
     if ($data['delete']) {
       // delete image
       db_query("DELETE FROM {files} WHERE filepath = '%s'", $data['full_path']);
-      file_delete($data['full_path']);
-      unset($shield_info[$data['filename']]);
+      file_delete($shield->filename);
+      unset($shield_info[$shield->basename]);
     }
     else {
-      $shield_info[$data['filename']]['hidden'] = $data['hidden'];
-      $shield_info[$data['filename']]['default'] = $data['default'];
-      if ($data['default']) {
-        variable_set('vsite_shields_shield', $data['full_path']);
+      $shield_info[$shield->basename]['hidden'] = $data['hidden'];
+      if ($shield->basename == $default) {
+        $shield_info[$shield->basename]['default'] = 1;
+        variable_set('vsite_shields_shield', $shield->filename);
       }
-      $shield_info[$data['filename']]['found'] = true;
+      else {
+        $shield_info[$shield->basename]['default'] = 0;
+      }
+      $shield_info[$shield->basename]['found'] = true;
     }
   }
 
@@ -140,10 +154,9 @@ function vsite_shields_form_submit(&$form, &$form_state) {
 
     // drupal's file commands don't let me put anything outside the Drupal's 'files' directory.
     // so I gotta do it myself or find somewhere else to put it
-    $dest = drupal_get_path('module', 'vsite_shields').'/theme/shields/'.$_FILES['files']['name']['new_shield'];
+    $dest = file_create_path().'/vsite_shields/'.$_FILES['files']['name']['new_shield'];
     $new_file = file_save_upload('new_shield');
-    rename($new_file->filepath, $dest);
-    //file_move($new_file, drupal_get_path('module', 'vsite_shields').'/theme/shields');
+    file_move($new_file, file_create_path().'/vsite_shields/');
     $new_file->filepath = $dest;
     $new_file->destination = $dest;
     $new_file->status = FILE_STATUS_PERMANENT;
@@ -151,7 +164,7 @@ function vsite_shields_form_submit(&$form, &$form_state) {
     if (empty($shield_info)) {
       // this is our first new shield. make it the default by... default...
       $shield_info[$new_file->filename]['default'] = TRUE;
-      variable_set('vsite_shields_shield', $new_file['destination']);
+      variable_set('vsite_shields_shield', $new_file->destination);
     }
 
     $shield_info[$new_file->filename]['hidden'] = 0;
@@ -203,26 +216,30 @@ function vsite_shields_vsite_generic_settings(){
     )
   );
 
-  $a_settings['vsite_shields_shield_manager'] = array(
-    'form' => array(
-      '#type' => 'markup',
-      '#prefix' => '<div id="vsite_shields_manager_link">',
-      '#value' => l('Manage Shields', 'admin/settings/shields'),
-      '#suffix' => '</div>',
-    )
-  );
+  if (user_access('administer shields')) {
+    $a_settings['vsite_shields_shield_manager'] = array(
+      'form' => array(
+        '#type' => 'markup',
+        '#prefix' => '<div id="vsite_shields_manager_link">',
+        '#value' => l('Manage Shields', 'admin/settings/shields'),
+        '#suffix' => '</div>',
+      )
+    );
+  }
 
   //The shield List
   $a_shields = variable_get('vsite_shields_shield_info', array());
 
   if (count($a_shields)) {
     $shield_options = array();
-    $path_prefix = drupal_get_path('module', 'vsite_shields').'/theme/shields/';
+    $path_prefix = file_create_path().'/vsite_shields/';
     foreach ($a_shields as $fname => $shield)  {
       if (!$shield['hidden']) {
         $shield_obj = new stdClass();
         $shield_obj->filename = $path_prefix.$fname;
-        $shield_options[$shield_obj->filename] = theme('vsite_shields_theme_shieldpicker', $shield_obj);
+        if (file_exists($shield_obj->filename)) {
+          $shield_options[$shield_obj->filename] = theme('vsite_shields_theme_shieldpicker', $shield_obj);
+        }
       }
     }
 
@@ -243,7 +260,7 @@ function vsite_shields_vsite_generic_settings(){
       ),
     );
   }
-  else {
+  if (empty($shield_options)) {
     $a_settings['vsite_shields_shield'] = array(
       'form' => array (
         '#type' => 'markup',
@@ -258,11 +275,11 @@ function vsite_shields_vsite_generic_settings(){
   return $a_settings;
 }
 
-function vsite_shields_imagecache_default_preset() {
+function vsite_shields_imagecache_default_presets() {
   $presets = array();
 
-  $presets['vsite_design_default_shield'] = array (
-    'presetname' => 'vsite_design_default_shield',
+  $presets['vsite_shields_default_shield'] = array (
+    'presetname' => 'vsite_shields_default_shield',
     'actions' => array (
       0 => array (
         'weight' => '0',

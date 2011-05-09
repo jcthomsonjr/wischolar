@@ -1047,12 +1047,20 @@ function vsite_token_values($type, $object = NULL, $options = array()) {
     $tokens['space-og-path-raw'] = $space->group->purl;
     return $tokens;
   }
-  else {
-    return array(
-      'space-og-path' => '',
-      'space-og-path-raw' => '',
-    );
+  elseif ($type == 'taxonomy' && $object->vid && ($a_vocab_groups = og_vocab_get_group($object->vid))){
+  	$space = spaces_load('og', current($a_vocab_groups));
+  	
+  	if($space){
+	  	$tokens['space-og-path'] = check_plain($space->group->purl);
+	    $tokens['space-og-path-raw'] = $space->group->purl;
+	    return $tokens;
+  	}
   }
+  
+  return array(
+    'space-og-path' => '',
+    'space-og-path-raw' => '',
+  );
 }
 
 /**
@@ -1078,6 +1086,7 @@ function vsite_feature_default_view($feature){
     list($s_menu,$s_path) = explode(":",$s_menu_key,2);
     $default_feature_menu = ( object ) menu_get_item($s_path);
     if ($default_feature_menu->page_callback == 'views_page') {
+    	if(!is_array($default_feature_menu->page_arguments)) $default_feature_menu->page_arguments = unserialize($default_feature_menu->page_arguments);
       return array('view' => $default_feature_menu->page_arguments[0], 'display' => $default_feature_menu->page_arguments[1]);
     }
   }
@@ -1101,6 +1110,7 @@ function vsite_feature_default_view($feature){
       
       $default_feature_menu = ( object ) menu_get_item($path);
       if ($default_feature_menu->page_callback == 'views_page') {
+      	if(!is_array($default_feature_menu->page_arguments)) $default_feature_menu->page_arguments = unserialize($default_feature_menu->page_arguments);
       	array('view' => $default_feature_menu->page_arguments[0], 'display' => $default_feature_menu->page_arguments[1]);
       }
     }
