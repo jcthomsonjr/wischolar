@@ -361,9 +361,9 @@ function theme_views_view_field_link_to_vsite($view, $field, $row) {
 }
 
 /**
- * Singleton that retrieves the active feature
+ * Static function that retrieves the active feature
  */
-function vsite_active_feature($s_active_feature = false){
+function vsite_active_feature(){
 	static $s_feature;
 	
 	if(!isset($s_feature)){

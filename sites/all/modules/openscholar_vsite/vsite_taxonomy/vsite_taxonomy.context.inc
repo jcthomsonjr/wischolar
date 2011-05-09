@@ -17,6 +17,11 @@ function vsite_taxonomy_context_default_contexts() {
         'taxonomy/term/*' => 'taxonomy/term/*',
       ),
     ),
+    'context' => array(
+      'values' => array(
+        '~openscholar-feature-*' => '~openscholar-feature-*',
+      ),
+    ),
   );
   $context->reactions = array(
     'block' => array(
@@ -33,7 +38,7 @@ function vsite_taxonomy_context_default_contexts() {
       ),
     ),
   );
-  $context->condition_mode = 0;
+  $context->condition_mode = 1;
 
   // Translatables
   // Included for use with string extractors like potx.
