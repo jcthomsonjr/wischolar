@@ -328,9 +328,7 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     ctools_modal_add_js();
 
     $spaces_features = variable_get('spaces_features', array());
-    $vsite = vsite_get_vsite();
-    $features = spaces_features('og');
-    
+
     foreach ( array_keys($form['spaces_features']) as $f_name ) {
       if ($f_name[0] == '#')
         continue;
