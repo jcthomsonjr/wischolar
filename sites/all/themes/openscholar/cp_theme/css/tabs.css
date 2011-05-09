@@ -3,9 +3,10 @@ h2.with-tabs {
   }
 
 div.tabs {
-  float:right;
   height: auto;
-  margin-top:0;
+  position:absolute;
+  left: 0;
+  right: 0;
   }
 
 ul.secondary li {
@@ -13,46 +14,59 @@ ul.secondary li {
   }
 
 div.tabs ul {
-  margin: 0 0 5px 0;
-  padding: 0 0 0 10px;
+  margin: 0 auto;
+  padding: 0;
   border-width: 0;
   list-style: none;
   white-space: nowrap;
   line-height: normal;
   background:#fff;
-  height: 43px;
+  text-align:center;
+  font-size: 0; /* removes white space between li's */
   }
 
 div.tabs li {
-	float: left;
+	display: inline-block;
 	margin: 0;
 	padding: 0;
-	font-size: 14px;
   }
 
-div.tabs li a {
-	display: block;
+div.tabs li a,
+div.tabs li a:visited {
+	display: inline-block;
 	margin: 0;
-	padding: 13px 17px 7px 20px;
 	border-width: 0;
 	font-weight: bold;
 	text-decoration: none;
-	color: #918f8f;
-	background: #fff;
-	border-left: 1px dashed #cecece;
+	border: 1px solid #cecece;
+	border-left:none;
+	border-top: none;
+	color: #626161;
+  padding: 6px 23px;
+  font-size: 13px;
   }
 
-div.tabs li:nth-child(1) a {
-  border-left: none;
+div.tabs li a.active {
+  background: #b8c0c0;
+  color: #000;
+  text-decoration: none;
+  text-shadow:0 1px 0 #e6e8ea;
+  border-color:#a4abab;
+  }
+
+div.tabs li:first-child a {
+  border-left: 1px solid #cecece;
+  -moz-border-radius: 0 0 0 8px;
+  }
+
+div.tabs li:last-child a {
+  -moz-border-radius: 0 0 8px 0;
   }
 
 div.tabs li a:hover {
-	background-color: transparent;
+	background-color: #e7eaef;
   }
 
-div.tabs li.active a,
-div.tabs li.active a:hover {
-	border-right-style: solid;
-	border-bottom: none;
-	color: #000;
+div.tabs li a.active {
+	background: #c5d0e2 !important;
   }
