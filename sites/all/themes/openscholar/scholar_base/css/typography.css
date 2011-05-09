@@ -303,7 +303,6 @@ ul.inline li {
 
 ul.links li {
   padding:0;
-
   }
 
 .node .links li {
@@ -407,7 +406,7 @@ dd.meta {
   }
 
 .views-admin-links ul.links li {
-  float:left;
+  display:inline;
   padding: 0;
   margin: 0 1px;
   font-size: 10px;
@@ -419,6 +418,13 @@ dd.meta {
 
 .views-admin-links ul.links li:after {
   content: ']';
+  }
+
+.views-admin-links ul li a,
+.views-admin-links ul li a:visited {
+  padding: 0 !important;
+  margin: 0 !important;
+  display:inline !important;
   }
 
 li.scholar_publications_export {
