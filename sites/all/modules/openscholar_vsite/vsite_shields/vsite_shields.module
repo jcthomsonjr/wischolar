@@ -260,7 +260,7 @@ function vsite_shields_vsite_generic_settings(){
       ),
     );
   }
-  else {
+  if (empty($shield_options)) {
     $a_settings['vsite_shields_shield'] = array(
       'form' => array (
         '#type' => 'markup',

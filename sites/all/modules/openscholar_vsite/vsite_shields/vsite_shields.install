@@ -67,16 +67,20 @@ function vsite_shields_update_6002(&$sandbox) {
   $files = current($files);
   $old_path = str_replace($files->basename, '', $files->filename);
 
+  $shield_info = array();
   $old_shields = file_scan_directory($old_path, '[^\.]*\.');
   foreach ($old_shields as $old_shld) {
     file_copy($old_shld->filename, $new_path, FILE_EXISTS_REPLACE);
     db_query("UPDATE {variable} SET value = '%s' WHERE name = 'vsite_shields_shield' AND value LIKE '%%%s%%'", serialize($old_shld->filename), $old_shld->basename);
-    db_query("UPDATE {spaces_overrides} SET value = '%s' WHERE object_type = 'variable' AND object_id = 'vsite_shiels_shield' AND value LIKE '%%%s%%'", serialize($old_shld->filename), $old_shld->basename);
+    $default = db_affected_rows();
+    db_query("UPDATE {spaces_overrides} SET value = '%s' WHERE object_type = 'variable' AND object_id = 'vsite_shields_shield' AND value LIKE '%%%s%%'", serialize($old_shld->filename), $old_shld->basename);
+    $shield_info[$old_shld->basename] = array('hidden' => 0, 'default' => $default);
   }
 
+  variable_set('vsite_shields_shield_info', $shield_info);
   $res[] = array(
     'success' => TRUE,
-    'query' => 'Shields have been moved to new location.',
+    'query' => 'Shields have been moved to '.$new_path.'.',
   );
 
   return $res;
