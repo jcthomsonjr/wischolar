@@ -6,6 +6,11 @@
 function os_user_default_roles() {
   $roles = array();
 
+  // Exported role: administrator
+  $roles['administrator'] = array(
+    'name' => 'administrator',
+  );
+
   // Exported role: anonymous user
   $roles['anonymous user'] = array(
     'name' => 'anonymous user',
@@ -14,6 +19,11 @@ function os_user_default_roles() {
   // Exported role: authenticated user
   $roles['authenticated user'] = array(
     'name' => 'authenticated user',
+  );
+
+  // Exported role: manager
+  $roles['manager'] = array(
+    'name' => 'manager',
   );
 
   // Exported role: scholar admin
