@@ -155,6 +155,19 @@ function vsite_taxonomy_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
+  
+  foreach (spaces_features('og') as $s_feature => $a_info) {
+  	$s_path = _vsite_taxonomy_get_term_path(1,$s_feature,true);
+  	if(strpos($s_path,"taxonomy") !== 0){
+  	  $s_path = str_replace("1","%",$s_path);
+  	  $items[$s_path] = array(
+		    'page callback' => 'vsite_taxonomy_term_page',
+		    'page arguments' => array(2,'all',$s_feature,true),
+		    'access arguments' => array('access content'),
+		    'type' => MENU_CALLBACK,
+		  );
+  	}
+  }
 
   return $items;
 }
@@ -171,7 +184,7 @@ function vsite_taxonomy_menu_alter(&$items) {
  * recursive function to build the tree of terms
  * @see vsite_taxonomy_vocabs
  */
-function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_taxonomy_term', $b_description = true, $b_show_empty = true, $b_show_admin_links = true, $s_term_feature = false){
+function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_taxonomy_term', $b_description = true, $b_show_empty = true, $b_show_admin_links = true, $s_term_feature = false, $b_feature_context = false){
   $items = array();
   
   $a_filter_nodes = array();
@@ -186,122 +199,24 @@ function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_
   while ( $index < count($tree) && $tree[$index]->depth >= $current_depth ) {
     $term = $tree[$index];
     $count = vsite_taxonomy_term_count_nodes($term->tid,false,$a_filter_nodes);
-    $item = theme($s_term_theme, $term, $b_description, $b_show_admin_links, $s_term_feature);
+    
     if ($tree[$index + 1]->depth > $current_depth) {
       $index ++;
-      $item = array(
-        'data' => $item,
-        'children' => vsite_taxonomy_build_list_items($index, $tree, $s_term_theme, $b_description, $b_show_empty, $b_show_admin_links, $s_term_feature)
-      );
-
-      if($b_show_empty || $count || count($item['children'])) $items[] = $item;
+      if($b_show_empty || $count || count($item['children'])){
+	      $items[] = array(
+	        'data' => theme($s_term_theme, $term, $b_description, $b_show_admin_links, $s_term_feature, $b_feature_context),
+	        'children' => vsite_taxonomy_build_list_items($index, $tree, $s_term_theme, $b_description, $b_show_empty, $b_show_admin_links, $s_term_feature, $b_feature_context)
+	      );
+      }
     }
     else {
-    	if($b_show_empty || $count) $items[] = $item;
+    	if($b_show_empty || $count) $items[] = theme($s_term_theme, $term, $b_description, $b_show_admin_links, $s_term_feature, $b_feature_context);
       $index ++;
     }
   }
   return $items;
 }
 
-function vsite_taxonomy_taxonomy ($op, $type, $object) {
-  switch ($type) {
-    case 'term':
-			switch($op) {
-		  	case 'insert':
-		    case 'update':
-		      $term = (object) $object;
-		
-		      // Clear the taxonomy term's static cache.
-		      if ($op == 'update') {
-		        taxonomy_get_term($term->tid, TRUE);
-		      }
-		
-		      if ($term->name) {
-		      	$a_aliased_features = array();
-			      $vocab = taxonomy_vocabulary_load($term->vid);
-			      $node_map = features_get_component_map('node');
-			      foreach ($vocab->nodes as $s_node) {
-			        if(!array_key_exists($s_node,$node_map) || in_array(current($node_map[$s_node]),$a_aliased_features)) continue;
-			        $s_feature =  current($node_map[$s_node]);
-		      		$s_feature_path = null;
-		      		
-		      		//Use the default feature menu to get the default path
-						  foreach (features_get_component_map('menu_links') as $s_menu_key => $a_features) {
-						    if(!in_array( $s_feature, $a_features)) continue;
-						    list($s_menu,$s_feature_path) = explode(":",$s_menu_key,2);
-						  }
-						  
-						  if(!isset($s_feature_path)){
-			      		$a_view_info = vsite_feature_default_view($s_feature);
-			      		$o_view = views_get_view($a_view_info['view']);
-			      		if(!$o_view) continue;
-			      		$s_feature_path = $o_view->get_url();
-			      		if($n_pos = strpos($s_feature_path,"/")) $s_feature_path = substr($s_feature_path,0,$n_pos);
-						  }
-		      	  
-		      		if(!strlen($s_feature_path)) continue;
-		      		$a_placeholders = pathauto_get_placeholders('taxonomy', $term);
-		      		$a_placeholders['tokens'][] = '[feature-path]';
-		      		$a_placeholders['values']['[feature-path]'] = $s_feature_path;
-		      		$source = _vsite_taxonomy_get_term_path($term->tid,$s_feature);
-		      		
-		      		pathauto_create_alias('vsite_taxonomy', $op, $a_placeholders, $source, $term->tid, $term->vid);
-		      	}
-		      }
-		    break;
-		    case 'delete':
-		      //delete the menu item for this term when the term is deleted
-		      $existing = vsite_menus_get_menu_item( _vsite_taxonomy_get_term_path($object['tid']) );
-		      if($existing){
-		       	$vsite = vsite_get_vsite();
-		        $vsite->controllers->vsite_menu->delete_menu_item($existing['menu_name'], $existing['key']);
-		      }
-		      
-		      $features = spaces_features('og');
-		      // If the category is deleted, remove the path aliases
-			    foreach ($features as $s_feature => $a_info) {
-            $source = _vsite_taxonomy_get_term_path($object->tid,$s_feature);
-            path_set_alias($source);
-          }
-          break;
-		  }
-    break;
-    case 'vocabulary':
-      $a_aliased_features = array();
-      foreach ($object['nodes'] as $s_node) {
-        if(!array_key_exists($s_node,$node_map) || in_array(current($node_map[$s_node]),$a_aliased_features)) continue;
-        $s_feature =  current($node_map[$s_node]);
-        $s_feature_path = null;
-        
-        //Use the default feature menu to get the default path
-        foreach (features_get_component_map('menu_links') as $s_menu_key => $a_features) {
-          if(!in_array( $s_feature, $a_features)) continue;
-          list($s_menu,$s_feature_path) = explode(":",$s_menu_key,2);
-        }
-        
-        if(!isset($s_feature_path)){
-          $a_view_info = vsite_feature_default_view($s_feature);
-          $o_view = views_get_view($a_view_info['view']);
-          if(!$o_view) continue;
-          $s_feature_path = $o_view->get_url();
-          if($n_pos = strpos($s_feature_path,"/")) $s_feature_path = substr($s_feature_path,0,$n_pos);
-        }
-              
-        if(!strlen($s_feature_path)) continue;
-        
-          if ($term->name) {
-              $a_placeholders = pathauto_get_placeholders('taxonomy', $term);
-              $a_placeholders['tokens'][] = '[feature-path]';
-              $a_placeholders['values']['[feature-path]'] = $s_feature_path;
-              $source = _vsite_taxonomy_get_term_path($term->tid,$s_feature);
-              
-              pathauto_create_alias('vsite_taxonomy', $op, $a_placeholders, $source, $term->tid, $term->vid);
-          }
-      }
-    break;
-  }
-}
 
 /**
  * Implementation of hook_vsite_admin_link
@@ -419,7 +334,7 @@ function vsite_taxonomy_feature_categories_block(){
       $terms = taxonomy_get_tree($taxonomy->vid);
 
       $n_index = 0;
-      $items = vsite_taxonomy_build_list_items($n_index, $terms,'vsite_taxonomy_term', $b_description = false, $b_show_empty = false, $b_show_admin_links = false, $s_term_filter = ($active_feature?"scholar_".$active_feature:false));
+      $items = vsite_taxonomy_build_list_items($n_index, $terms,'vsite_taxonomy_term', $b_description = false, $b_show_empty = false, $b_show_admin_links = false, $s_term_filter = ($active_feature?"scholar_".$active_feature:false), true);
 
       if (count($items)) {
       	$terms_html .= strlen($terms_html)?'</div></div><div class="block block-views"><div class="content">':"";
@@ -443,7 +358,11 @@ function vsite_taxonomy_category_by_feature_block(){
 	$vocab = taxonomy_vocabulary_load($term->vid);
 	$node_map = features_get_component_map('node');
 	
-	$s_filtered_feature = $_REQUEST['f_filter'];
+  $active_menu = menu_get_item();
+  $s_filtered_feature = false;
+  if($active_menu['path'] == 'taxonomy/term/%/%'){
+    $s_filtered_feature = $active_menu['page_arguments'][2];
+  }//Already Filtered by a feature?
 	
 	$a_feature_nodes = array();
   foreach ($vocab->nodes as $s_node) {
@@ -471,8 +390,8 @@ function vsite_taxonomy_category_by_feature_block(){
       	$feature_info = features_get_info('feature', $s_feature);
       	$s_text = ucwords( $feature_info->info['name'] );
       }
-      $link = "taxonomy/term/{$term->tid}";
-      $options = array('query' => array('f_filter' => $s_feature));
+      $link = _vsite_taxonomy_get_term_path($term->tid,$s_feature);
+      $options = array();
       
       if($s_feature == $s_filtered_feature){
       	$s_text = "(-) ".$s_text;
@@ -581,7 +500,7 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
  * theme a term
  * @param unknown_type $term
  */
-function theme_vsite_taxonomy_term($term, $b_description = true, $b_admin_links = true, $s_term_feature = array()){
+function theme_vsite_taxonomy_term($term, $b_description = true, $b_admin_links = true, $s_term_feature = false, $b_feature_context = false){
 	
 	$a_filter_nodes = array();
   if($s_term_feature){
@@ -598,7 +517,7 @@ function theme_vsite_taxonomy_term($term, $b_description = true, $b_admin_links 
     $term_link = $term->name;
 
   }else{
-    $term_link = l($term->name, _vsite_taxonomy_get_term_path($term->tid,$s_term_feature), array('title' => t($term->description)));
+    $term_link = l($term->name, _vsite_taxonomy_get_term_path($term->tid,$s_term_feature, $b_feature_context), array('title' => t($term->description)));
   }
 
   $item = '<div class="term-head">' . $term_link;
@@ -748,7 +667,7 @@ function vsite_taxonomy_active_term($term = false, $reset = false){
 /**
  * Menu callback; displays all nodes associated with a term.
  */
-function vsite_taxonomy_term_page($str_tids = '', $depth = 'all', $s_feature = false){
+function vsite_taxonomy_term_page($str_tids = '', $depth = 'all', $s_feature = false, $b_feature_context = false){
 	
 	$terms = taxonomy_terms_parse_string($str_tids);
 	$tid = is_array($terms['tids'])?current($terms['tids']):false;
@@ -758,10 +677,27 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all', $s_feature = f
 	
 	vsite_taxonomy_active_term($term);
 	
-	if($_REQUEST['f_filter']){
-		$s_feature = $_REQUEST['f_filter'];
-	}elseif ($s_feature){
-	  $a_menu_item = vsite_menus_get_feature_menu_item($s_feature);
+  if($s_feature && $b_feature_context){
+    //Maintain the context
+    $s_feature_context = 'openscholar-feature-'.str_replace('scholar_','',$s_feature);
+    context_set('context',$s_feature_context,context_load($s_feature_context));
+  }
+	
+	$vocab = taxonomy_vocabulary_load($term->vid);
+	$node_map = features_get_component_map('node');
+	$s_one_feature = false;//If there is only one feature represented for this vocab
+	foreach ($vocab->nodes as $s_node) {
+		if(array_key_exists($s_node,$node_map) && !$s_one_feature){
+		  $s_one_feature =  current($node_map[$s_node]);
+	  }elseif (array_key_exists($s_node,$node_map) && $s_one_feature != current($node_map[$s_node])){
+	   //Found a second feature represented
+	   $s_one_feature = false;
+	   break;
+	  }
+  }//If there is only one type for this vocab show the feature's view
+	
+  if ($b_feature_context && !$s_one_feature){
+    $a_menu_item = vsite_menus_get_feature_menu_item($s_feature);
     if(count($a_menu_item)){
       $a_menu_item = current($a_menu_item);
       $s_fname = ucwords($a_menu_item['link_title']);
@@ -770,28 +706,10 @@ function vsite_taxonomy_term_page($str_tids = '', $depth = 'all', $s_feature = f
       $s_fname = ucwords( $feature_info->info['name'] );
     }
     $s_header_extra = "Showing results in '{$s_fname}'. ".l("Show all posts",_vsite_taxonomy_get_term_path($term->tid));
-	}
+  }elseif (!$s_feature){
+  	$s_feature = $s_one_feature;
+  }
 	
-	$vocab = taxonomy_vocabulary_load($term->vid);
-	if(!$s_feature){
-		$node_map = features_get_component_map('node');
-		foreach ($vocab->nodes as $s_node) {
-			if(array_key_exists($s_node,$node_map) && !$s_feature){
-				$s_feature =  current($node_map[$s_node]);
-	    }elseif (array_key_exists($s_node,$node_map) && $s_feature != current($node_map[$s_node])){
-	    	//Found a second feature represented
-	    	$s_feature = false;
-	    	break;
-	    }
-		}
-	}//If there is only one type for this vocab show the feature's view
-	
-	if($s_feature && !$_REQUEST['f_filter']){
-		//Maintain the context
-		$s_feature_context = 'openscholar-feature-'.str_replace('scholar_','',$s_feature);
-		context_set('context',$s_feature_context,context_load($s_feature_context));
-	}
- 
 	$output = "";
 	if(!$s_feature || !($output = vsite_taxonomy_term_by_feature($term, $s_feature))){
 	  //Render Default Taxonomy View
@@ -948,10 +866,28 @@ function vsite_taxonomy_term_count_nodes($tid, $cnt_childeren = true, $a_content
  *
  * @param number $tid
  */
-function _vsite_taxonomy_get_term_path($tid, $s_term_feature= false){
+function _vsite_taxonomy_get_term_path($tid, $s_term_feature= false, $b_feature_context = false){
   $s_link_path = "taxonomy/term/".$tid;
   
-  if($s_term_feature) $s_link_path .= "/{$s_term_feature}";
+  if($s_term_feature && !$b_feature_context) $s_link_path .= "/{$s_term_feature}";
+  
+  if($s_term_feature && $b_feature_context){
+    $a_menu_item = vsite_menus_get_feature_menu_item($s_term_feature);
+    if(is_array($a_menu_item)) $a_menu_item = current($a_menu_item);
+    $s_path = is_array($a_menu_item)?$a_menu_item['link_path']:false;
+    
+    if(!$s_path){
+      $a_view_info = vsite_feature_default_view($s_term_feature);
+      $o_view = views_get_view($a_view_info['view']);
+
+      if($o_view){
+        $s_path = $o_view->get_url();
+        if($n_pos = strpos($s_path,"/")) $s_path = substr($s_path,0,$n_pos);
+      }
+    }
+    
+    if($s_path) $s_link_path = "{$s_path}/term/".$tid;
+  }//Within a Feature Context
 
   return $s_link_path;
 }

@@ -69,6 +69,12 @@ function iqss_gking_update_6003(&$sandbox){
  */
 function iqss_gking_update_6004(&$sandbox){
   $res = array();
+  
+  if(!db_table_exists('spaces_overrides')){
+    $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
+    return $res;
+  }
+  
   $gking_sid = 3633; //gary's site id
 
   $result = db_query("SELECT value  FROM {spaces_overrides} WHERE type = 'og' AND `id` = '%d' AND object_type = 'context' AND object_id LIKE 'openscholar-feature-publications:reaction:block:gking' " , $gking_sid);
