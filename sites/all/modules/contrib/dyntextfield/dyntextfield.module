@@ -34,7 +34,7 @@ function dyntextfield_lookup_keys($s_table_name, $s_prefix){
 
 
   $matches = array();
-  $result = db_query("SELECT DISTINCT %s_label as label FROM {content_%s} WHERE %s_label LIKE '%s' ORDER BY %s_label DESC LIMIT 20 ", $s_table_name,$s_table_name,$s_table_name,$s_prefix."%",$s_table_name);
+  $result = db_query("SELECT DISTINCT %s_label as label FROM {content_".$s_table_name."} WHERE %s_label LIKE '%s' ORDER BY %s_label DESC LIMIT 20 ", $s_table_name,$s_table_name,$s_prefix."%",$s_table_name);
 
   while ($item = db_fetch_object($result)) {
     $matches[$item->label] = str_replace($s_prefix,"<b>$s_prefix</b>",$item->label);
