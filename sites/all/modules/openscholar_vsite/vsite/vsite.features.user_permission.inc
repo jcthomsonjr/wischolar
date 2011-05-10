@@ -17,6 +17,14 @@ function vsite_user_default_permissions() {
     ),
   );
 
+  // Exported permission: attach creative commons
+  $permissions['attach creative commons'] = array(
+    'name' => 'attach creative commons',
+    'roles' => array(
+      '0' => 'scholar admin',
+    ),
+  );
+
   // Exported permission: collapse format fieldset by default
   $permissions['collapse format fieldset by default'] = array(
     'name' => 'collapse format fieldset by default',
@@ -111,6 +119,15 @@ function vsite_user_default_permissions() {
     'roles' => array(
       '0' => 'scholar admin',
       '1' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: use creative commons user defaults
+  $permissions['use creative commons user defaults'] = array(
+    'name' => 'use creative commons user defaults',
+    'roles' => array(
+      '0' => 'authenticated user',
+      '1' => 'scholar admin',
     ),
   );
 
