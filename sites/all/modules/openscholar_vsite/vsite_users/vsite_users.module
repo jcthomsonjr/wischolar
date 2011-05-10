@@ -607,12 +607,12 @@ function vsite_users_redirect_reset_submit($form, &$form_state) {
  * Returns an array of urls to overide and create cp_confirm_popups for
  * @return array
  */
-function vsite_users_cp_confirm_overide() {
+function vsite_users_confirm_popup_paths() {
   return array(
-    "og/unsubscribe/%/%" =>  "og_confirm_unsubscribe",
-    "og/subscribe/%" =>      "og_confirm_subscribe",
-    "og/create_admin/%/%" => "og_create_admin_confirm",
-    "og/delete_admin/%/%" => "og_remove_admin_confirm",
+    "og/unsubscribe/%/%",
+    "og/subscribe/%",
+    "og/create_admin/%/%",
+    "og/delete_admin/%/%",
   );
 
 }
