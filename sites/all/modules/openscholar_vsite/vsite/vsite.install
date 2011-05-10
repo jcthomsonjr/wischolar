@@ -278,7 +278,7 @@ function vsite_update_6012(&$sandbox){
   $res = array();
   module_rebuild_cache();
 
-  $modules = array( 'conditional_styles', 'crayon', 'nfcbiblio', 'confirm_popup', 'os_wysiwyg');
+  $modules = array( 'conditional_styles', 'nfcbiblio', 'confirm_popup', 'os_wysiwyg');
   
   foreach ($modules as $mod) {
 	  if(!module_exists($mod)){
