@@ -63,31 +63,32 @@ img {
 
 /* TOP OPENSCHOLAR ADMIN BAR */
 
-#top {
+.cp-toolbar-full #top {
   height: 42px;
   background:url('../images/top-bottom-bg.png') repeat-x #000 0 -9px;
-  position:absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
+  position:relative;
+  z-index: 996;
   }
 
-body.cp-toolbar-mini #top {
+.cp-toolbar-mini #top {
   height: 20px;
   padding: 0;
   line-height: normal;
   background: transparent;
   left: auto;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
   }
 
 /* Remove when .mini class is added to #top, rather than body */
 
-body.admin-menu #top {
+.admin-menu.cp-toolbar-mini #top {
   top: 22px;
   }
 
-body.cp-toolbar-mini #top ul.links {
+.cp-toolbar-mini #top ul.links {
   background: url('../images/toolbar-mini-tab.png') no-repeat 0 0;
   height: 22px;
   z-index:100;

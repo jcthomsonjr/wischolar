@@ -34,10 +34,6 @@ html.js div.ctools-dropdown div.ctools-dropdown-container ul {
   font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
   }
 
-.context-links {
-  float: right;
-  }
-
 .ctools-dropdown-no-js .ctools-dropdown-link,
 .ctools-dropdown-no-js .ctools-dropdown-link-wrapper,
 .ctools-dropdown-no-js span.text {
@@ -82,6 +78,13 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   border: 1px solid #ccdbc9;
   }
 
+
+.section-cp .context-links {
+  margin-right: 40px;
+  padding: 6px 10px 6px 23px !important;
+  background-position: 6px -380px !important;
+  }
+
 .context-links:hover,
 .section-cp div.ctools-dropdown:hover {
   background-color: #daf3d5 !important;
@@ -95,10 +98,19 @@ html.js div.ctools-dropdown div.ctools-dropdown-container {
   display:block;
   }
 
-.context-links .ctools-dropdown-container-wrapper a,
+.context-links a,
+.context-links a:visited {
+  color: #7CAA71 !important;
+  }
+
+.context-links a:hover {
+  color: #7CAA71 !important;
+  }
+
+.context-links .ctools-dropdown a,
 .ctools-dropdown ul.links li a,
 .context-links .ctools-dropdown-container-wrapper .flag-wrapper {
-  color: #000;
+  color: #000 !important;
   text-decoration: none !important;
   padding: 3px 10px !important;
   font-weight: bold !important;
@@ -168,6 +180,8 @@ h2.title a.ctools-dropdown-link {
   font-style: normal;
   color:#b0c6fb;
   }
+
+
 
 .node .os-links .vsite-admin a.ctools-dropdown-link:hover {
   text-decoration: underline;

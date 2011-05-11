@@ -3,13 +3,13 @@ Drupal.behaviors.iqss_gking = function() {
 
   iqss_gking_research_group_tabify();
 
-  $('.page-home #block-iqss_gking-areas_of_research .col dt span').hover(function() {
+  $('.front #block-iqss_gking-areas_of_research .col dt span').hover(function() {
     //Rem 1 for Sticky
 	window.clearTimeout(timer_block_iqss_gking_areas_of_research);
 
-  $('.page-home #block-iqss_gking-areas_of_research dt.active').removeClass('active');
-	$('.page-home #block-iqss_gking-areas_of_research dd').fadeOut('fast');
-	$('.page-home #block-iqss_gking-areas_of_research .more').hide();
+  $('.front #block-iqss_gking-areas_of_research dt.active').removeClass('active');
+	$('.front #block-iqss_gking-areas_of_research dd').fadeOut('fast');
+	$('.front #block-iqss_gking-areas_of_research .more').hide();
 
     $(this).parent('dt').addClass('active');
 
@@ -25,12 +25,12 @@ Drupal.behaviors.iqss_gking = function() {
 };
 
 function iqss_gking_areas_of_research_load_next(){
-  if($('.page-home #block-iqss_gking-areas_of_research .col dt span:hover').length ||
-    !$('.page-home #block-iqss_gking-areas_of_research').length) return;
+  if($('.front #block-iqss_gking-areas_of_research .col dt span:hover').length ||
+    !$('.front #block-iqss_gking-areas_of_research').length) return;
 
   var next_el = false;
   var found_active = false;
-  $('.page-home #block-iqss_gking-areas_of_research .col dt span').each(function(index) {
+  $('.front #block-iqss_gking-areas_of_research .col dt span').each(function(index) {
     if(!next_el) next_el = $(this);
     if(found_active){
       next_el = $(this);

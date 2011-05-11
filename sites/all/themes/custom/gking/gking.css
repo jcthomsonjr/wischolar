@@ -131,13 +131,6 @@ h2.title,
   font-size: 1.3em;
   }
 
-/*
-.block h3.title, #block-vsite_menus-1 li.first {
-  -moz-border-radius: 4px 4px 0 0;
-  -webkit-border-radius: 4px 4px 0 0;
-  }
-*/
-
 #content .node h3.title {
   border: none;
   padding: 0;
@@ -160,14 +153,6 @@ a:hover {
   text-decoration: underline;
   }
 
-.toggle {
-  background-position: 100% 3px;
-  }
-
-.toggle.expanded {
-  background-position: 98% 15px;
-  }
-
 a.more {
  font-weight: bold;
  text-decoration: none;
@@ -182,24 +167,28 @@ a.more {
   margin-top: 5px;
   }
 
-.section-biocv #content .context-links {
+#content .context-links ul {
+  padding-left: 0 !important;
+  }
+
+.section-biocv #content .context-links ul {
   margin-top: -96px;
   }
 
-.page-home .more-link {
+.front .more-link {
   background: none repeat scroll 0 0 #FFFFFF;
   float: right;
   padding: 0 10px 5px;
   text-align: right;
   }
 
-.page-home .more-link a {
+.front .more-link a {
   text-decoration: none;
   font-weight: bold;
   color: #000;
   }
 
-.page-home .more-link a:hover {
+.front .more-link a:hover {
   text-decoration: underline;
   }
 
@@ -293,7 +282,6 @@ a.more {
   color: #444;
   display:block;
   padding: 10px 16px 16px;
-
   }
 
 #block-vsite_menus-1 li a:hover {
@@ -311,6 +299,13 @@ a.more {
 
 #navbar {
   background: url(images/navbar.png) 50% 0 no-repeat transparent;
+  }
+
+.front #navbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
   }
 
 .column {
@@ -333,7 +328,7 @@ a.more {
   background: #fff;
   }
 
-.page-home #content {
+.front #content {
   background:transparent;
   border: none;
   padding-right: 0;
@@ -355,6 +350,11 @@ a.more {
   position: relative;
   }
 
+#navbar .wrap {
+  width: 1000px;
+  padding: 0;
+  }
+
 #content-main .node,
 #content-main .views-row,
 .taxonomy-term-description {
@@ -370,17 +370,18 @@ a.more {
 
 /* HEADER */
 
-#navbar {
-  top:0;
-  left: 0;
-  right:0;
+#navbar,
+#navbar .wrap {
   height: 39px;
   padding: 0;
-  position:absolute;
   }
 
 #header {
   min-height: 38px;
+  }
+
+.front #header {
+  padding-top: 38px;
   }
 
 #header-wrapper {
@@ -471,17 +472,13 @@ a.more {
   display:none;
   }
 
-.page-home #header-right .block {
+.front #header-right .block {
   height: 218px;
   overflow:scroll;
   overflow-x: hidden;
   }
 
 #content-area {
-  padding-top: 38px;
-  }
-
-.page-home #content-area {
   padding-top: 0;
   }
 
@@ -501,7 +498,7 @@ a.more {
   padding-right: 8px;
   }
 
-.page-home #sidebar-second {
+.front #sidebar-second {
   width: 200px;
   }
 
@@ -520,7 +517,7 @@ a.more {
   padding-bottom: 105px;
   }
 
-.page-home #content-area .hg-container {
+.front #content-area .hg-container {
   padding-right: 208px;
   }
 
@@ -574,34 +571,41 @@ body.header-right-main #header .hg-container {
   font-weight: bold;
   }
 
-.page-home #header-main {
+.front #header-main {
   position: relative;
   }
 
-.page-home #header-main .ctools-dropdown {
+.front #header-main .context-links {
   position: absolute;
   top:217px;
   right: 0;
-  background: #eaeaea;
+  margin:0;
+  background-color: #eaeaea !important;
   width: 120px;
-  padding: 0 0 0 7px;
+  padding: 0 0 0 15px !important;
+  border: none;
+  float: none;
   -moz-border-radius: 10px 0 0 10px;
   -webkit-border-radius: 10px 0 0 10px;
   border-radius: 10px 0 0 10px;
+  }
+
+.front #header-main .context-links div.links a.ctools-dropdown-link {
+  color: #000 !important;
   }
 
 html.js div.ctools-dropdown div.ctools-dropdown-container {
   min-width: 141px;
   }
 
-html.js .page-home #header-main div.ctools-dropdown div.ctools-dropdown-container {
+html.js .front #header-main div.ctools-dropdown div.ctools-dropdown-container {
  top: 0;
  left:-27px;
  }
 
 /* Publications Tabs & Research Group Tabs */
 
-.page-home #content-main #pub_type_tabs {
+.front #content-main #pub_type_tabs {
   background:url(images/pubs-bg.png) repeat-x 0 0 #fff;
   padding: 0 26px;
   }
@@ -934,7 +938,7 @@ body.section-category .no-indent .node-teaser {
 
 /*FRONT PAGE BIO*/
 
-.page-home #node-3793 {
+.front #node-3793 {
   position: fixed;
   background: #fff;
   margin:0;
@@ -951,7 +955,7 @@ body.section-category .no-indent .node-teaser {
   display:none;
   }
 
-.page-home #node-3793 .node-inner {
+.front #node-3793 .node-inner {
    position:absolute;
    overflow:auto;
    bottom: 0;

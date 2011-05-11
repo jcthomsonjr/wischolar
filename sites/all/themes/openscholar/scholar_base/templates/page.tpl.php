@@ -61,7 +61,11 @@
             </div><!-- /content-top -->
             <?php endif; ?>
             <div id="content">
-            <?php print $context_links;?>
+            <?php if($context_links):?>
+            <div class="context-links">
+              <?php print $context_links;?>
+            </div>
+            <?php endif; ?>
             <?php if (!empty($title)): ?>
               <h2 class="title<?php if ($tabs) : print ' with-tabs'; endif;?>"><?php print $title; ?></h2>
              <?php endif; ?>
