@@ -8,9 +8,7 @@ include_once('vsite_content.features.inc');
 function vsite_content_menu() {
   $items = array();
 
-
-
-    //files
+  //files
   $items['cp/content/files'] = array(
     'title' => 'Files',
     'page callback' => 'vsite_content_files',
@@ -19,9 +17,18 @@ function vsite_content_menu() {
     'access callback' => 'cp_access_cp',
     'weight' => 99,
   );
-
-
-
+  
+  //Add local task for cp content
+  $items['cp/content/all'] = array(
+    'title' => 'Content',
+    'page callback' => 'views_page',
+    'page arguments' => array('vsite_content','page_1'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+    'weight' => -10,
+  );
+  
   return $items;
 }
 
@@ -31,15 +38,8 @@ function vsite_content_menu() {
 function vsite_content_menu_alter(&$items){
   //Remove the edit local task, this will be handled by the context links.
   $items['node/%node/edit']['type'] = MENU_CALLBACK;
+  
 }
-
-
-
-
-
-
-
-
 
 
 /**
@@ -93,9 +93,7 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
       1 => 'Yes',
       0 => 'No'
     );
-
-
-
+    
     //promoted to front page filter
     $form['promote']['#type'] = 'radios';
     $form['promote']['#options'] = $options;
@@ -127,8 +125,6 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
 /**
  * Edit the content view form to put it into fieldsets
  */
-
-
 function vsite_content_form_alter(&$form, $form_state, $form_id) {
 
   switch ($form_id) {
