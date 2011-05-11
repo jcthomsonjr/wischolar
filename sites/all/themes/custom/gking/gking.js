@@ -22,12 +22,12 @@ $(document).ready(function() {
 
     $('#block-scholar_biocv-bio_blurb a.more').attr("href","#");
 
-    var container = $("body.section-home #node-3793");
+    var container = $("body.front #node-3793");
     container.prepend('<a class="more" href="#">CLOSE X</a>');
     container.find('.content').prepend('<h3 class="cv-direct-download">Full CV: <a href="http://gking.harvard.edu/vitae/vitae.pdf">PDF</a></h3><div class="clear"></div>');
 
 
-    $("body.page-home a.more").click(function(event){
+    $("body.front a.more").click(function(event){
       container.find('a.more').toggle();
       if (container.is(".bio-open")) {
         container.removeClass("bio-open").animate({height:'0'},"1500");

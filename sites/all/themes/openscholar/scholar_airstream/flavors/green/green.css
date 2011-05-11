@@ -23,17 +23,26 @@ a:hover {
 
 /*Navbar & sidebar shared */
 
-#navbar a, #navbar a:visited, #sidebar-first a, #sidebar-first a:visited {
+#navbar a,
+#navbar a:visited,
+#sidebar-first ul.menu li a,
+#sidebar-first ul.menu li a:visited {
   color: #282828;
   }
 
-#navbar a:hover, #sidebar-first a:hover, #navbar a.active, #sidebar-first a.active, #navbar li.active-trail, #sidebar-first li.active-trail {
+#navbar a:hover,
+#sidebar-first ul.menu li a:hover,
+#navbar a.active,
+#sidebar-first  ul.menu li a.active,
+#navbar li.active-trail,
+#sidebar-first  ul.menu li.active-trail {
   background:#e4eddb;
   }
 
-
 /*Navbar Specific */
 
-#sidebar-first li a, #navbar li, #navbar li.first {
-  border-color: #b0c0a0;
+#navbar li,
+#navbar li.first,
+#sidebar-first li a {
+ border-color: #b0c0a0;
   }

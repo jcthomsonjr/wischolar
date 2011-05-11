@@ -35,7 +35,7 @@
               <?php print $header_main; ?>
               <?php
                 $items = vsite_create_links();
-                print theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links');
+                print '<div class="context-links">' . theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'links') . '</div>';
               ?>
             </div><!-- /header-main -->
             <?php endif; ?>
@@ -70,13 +70,9 @@
             </div><!-- /content-top -->
             <?php endif; ?>
             <div id="content">
-            <?php print $context_links;?>
             <?php if (!empty($title)): ?>
               <h2 class="title<?php if ($tabs) : print ' with-tabs'; endif;?>"><?php print $title; ?></h2>
              <?php endif; ?>
-             <?php if (!empty($tabs)): ?>
-              <div class="tabs"><?php print $tabs; ?></div>
-              <?php endif; ?>
             <?php print $help; ?>
             <?php print $messages;?>
 

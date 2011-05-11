@@ -10,7 +10,7 @@ $.fn.vAlign = function() {
 })(jQuery);
 
 $(document).ready(function() {
-  $('#block-scholar-1').vAlign();
-  $('#block-scholar_project-1').vAlign();
-  $('#scholar-shield').vAlign();
+  $('#header #block-scholar-1').vAlign();
+  $('#header #block-scholar_project-1').vAlign();
+  $('#header #scholar-shield').vAlign();
 });

@@ -1,20 +1,15 @@
 body,
-#top,
+.cp-toolbar-full #top,
 #footer {
   overflow: hidden;
   }
 
-#container {
-	margin: 0;
-	width: 100%;
-	}
-
 #main-content,
-#top,
+.cp-toolbar-full #top,
 #footer,
 #cp-sidemenu,
 #cp-content,
-#sidebar-right {
+#sidebar-second {
 	padding: 0;
 	margin: 0;
 	left: 0;
@@ -29,7 +24,7 @@ body,
 
 #cp-sidemenu,
 #cp-content,
-#sidebar-right {
+#sidebar-second {
   overflow: auto;
   }
 
@@ -40,7 +35,7 @@ body,
 	float: none;
 	}
 
-#top,
+.cp-toolbar-full #top,
 #footer {
 	top: 0;
 	bottom: auto;
@@ -56,7 +51,7 @@ body,
 
 #cp-sidemenu,
 #cp-content,
-#sidebar-right {
+#sidebar-second {
 	top: 0;
 	bottom: 0;
 	}
@@ -73,17 +68,17 @@ body,
   width: auto;
   }
 
-body.sidebar-right #cp-content,
+body.sidebar-second #cp-content,
 body.two-sidebars #cp-content {
   right: 171px;
   }
 
 body.no-sidebars #cp-content,
-body.sidebar-right #cp-content {
+body.sidebar-second #cp-content {
   left:0;
   }
 
-#sidebar-right {
+#sidebar-second {
   width: 175px;
   padding: 35px 10px 0 15px;
   background: #f2f3f3;
@@ -108,66 +103,52 @@ body.sidebar-right #cp-content {
   min-height:200px;
   }
 
-#main-content #cp-content .frame,
-#main-content #cp-content .innerframe {
-  position: static;
-  }
-
-#sidebar-right .innerframe {
+#sidebar-second .innerframe {
   width: 185px;
   }
 
 #main-content .frame {
   background: #fff;
-  max-width: 810px;
   }
 
-.page-cp-appearance-theme #main-content .frame,
-.page-cp-appearance #main-content .frame,
-.page-cp-content #main-content .frame,
-.page-cp-content-feed #main-content .frame,
-.page-cp-content-gallery #main-content .frame,
-.page-cp-content-class #main-content .frame,
-.page-cp-content-class-material #main-content .frame,
-.page-cp-content-announcement #main-content .frame,
-.page-cp-content-book #main-content .frame,
-.page-cp-content-event #main-content .frame,
-.page-cp-content-image #main-content .frame,
-.page-cp-content-link #main-content .frame,
-.page-cp-content-page #main-content .frame,
-.page-cp-content-presentation #main-content .frame,
-.page-cp-content-biblio #main-content .frame,
-.page-cp-content-scholar-files #main-content .frame,
-.page-cp-content-scholar-software-project #main-content .frame,
-.page-cp-content-scholar-software-release #main-content .frame,
-.page-cp-content-blog #main-content .frame,
-.page-cp-content-files #main-content .frame{
-  max-width: none;
-  }
-
+/* max width at 980px, centered for these pages */
 .section-node-add #main-content .frame,
 .section-node-edit #main-content .frame,
 .section-node-add #main-content .innerframe,
 .section-node-edit #main-content .innerframe,
 .page-cp-features #main-content .frame,
 .page-cp-features #main-content .innerframe {
-  margin:0 auto;
   overflow: visible;
   max-width: 980px;
   padding-top:1px;
+  margin: 0 auto;
   }
 
+#cp-settings-menus,
+#cp-settings-site,
+#vsite-generic-settings-form,
+#vsite-taxonomy-form {
+  max-width: 810px;
+  }
+
+#user-profile-form,
+.page-cp-users-myaccount-personal #node-form,
+#contact-mail-page {
+  max-width: 721px;
+  margin-top: 18px;
+  }
 
 #cp-content .innerframe form,
 .view-display-id-page_1,
 #cp-content .views-processed,
 #cp-content .view-vsite-support {
-  margin: 12px 0 0 30px;
-  clear:both;
+  margin: 12px 30px;
   }
 
-.view-display-id-page_1 {
-  clear: none;
+#cp-content .views-processed,
+#cp-content .view-vsite-support {
+  max-width: 980px;
+  clear:both;
   }
 
 .page-cp-appearance-theme #cp-content .innerframe form,
@@ -188,14 +169,14 @@ body.sidebar-right #cp-content {
   }
 
 .help {
-  right: 23px;
-  top: 13px;
+  right: 8px;
+  top: 4px;
   position: absolute;
   }
 
 /* For use with admin_menu module only */
 
-body.admin-menu #top {
+body.admin-menu.cp-toolbar-full #top {
   top: 22px;
   }
 
