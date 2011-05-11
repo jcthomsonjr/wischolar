@@ -30,7 +30,10 @@ if (!class_exists('purl_vsite_domain')) {
     }
     
     function detect($q) {
-      if(vsite_excluded_path($q)){
+    	$plugin = ctools_get_plugins('spaces', 'plugins','vsite');
+      if($plugin) $class = ctools_plugin_get_class($plugin, 'handler');
+      
+      if(isset($class) && call_user_func(array($class,'is_excluded_path'),$q)){
         global $base_url;
         return $base_url;  //Match based on global base URL
       }else{
@@ -66,7 +69,9 @@ if (!class_exists('purl_vsite_domain')) {
      * Either force the url, or set it back to the base.
      */
     public function rewrite(&$path, &$options, $element) {
-      if(vsite_excluded_path($path)) return; //Do not alter if this is a link to a excluded path
+    	$plugin = ctools_get_plugins('spaces', 'plugins','vsite');
+      if($plugin) $class = ctools_plugin_get_class($plugin, 'handler');
+      if(isset($class) && call_user_func(array($class,'is_excluded_path'),$path)) return; //Do not alter if this is a link to a excluded path
       
       $options['absolute'] = TRUE;
       if (!_purl_skip($element, $options)) {

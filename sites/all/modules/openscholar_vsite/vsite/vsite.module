@@ -252,8 +252,7 @@ function vsite_get_vsite($sid = false){
     $space = spaces_get_space();
   }
   else {
-    if (! array_key_exists($sid, $inactive_vsites))
-      $inactive_vsites[$sid] = spaces_load('og', $sid, FALSE);
+    if (! array_key_exists($sid, $inactive_vsites)) $inactive_vsites[$sid] = spaces_load('og', $sid, FALSE);
     $space = $inactive_vsites[$sid];
   }
 
@@ -837,28 +836,28 @@ function node_vsite_admin_link($type, $object){
     if ($item && $item['access']) {
       
       $links['node-edit'] = array(
-        'title' => t('Edit'), 
-        'href' => $path, 
+        'title' => t('Edit'),
+        'href' => $path,
         'attributes' => array(
-          'class' => 'icon-edit' 
-        ), 
+          'class' => 'icon-edit'
+        ),
         'query' => array(
-          'destination' => $_GET['q'] 
-        ) 
+          'destination' => $_GET['q']
+        )
       );
     }
     $path = "node/{$object->nid}/delete";
     $item = menu_get_item($path);
     if ($item && $item['access']) {
       $links['node-delete'] = array(
-        'title' => t('Delete'), 
-        'href' => "node/{$object->nid}/delete", 
+        'title' => t('Delete'),
+        'href' => "node/{$object->nid}/delete",
         'attributes' => array(
-          'class' => 'icon-delete' 
-        ), 
+          'class' => 'icon-delete'
+        ),
         'query' => array(
-          'destination' => $_GET['q'] 
-        ) 
+          'destination' => $_GET['q']
+        )
       );
     }
   }
@@ -966,46 +965,6 @@ function vsite_get_default_feature_view(){
   return vsite_set_default_feature_view();
 }
 
-/**
- * Evaluate a path and determine if it is config to lie only outside a vsite
- */
-function vsite_excluded_path($q){
-  static $a_exluded_paths;
-  static $a_map_q;
-
-  if (! strlen($q))
-    return false;
-
-  if (! isset($a_map_q))
-    $a_map_q = array();
-
-  if (! isset($a_exluded_paths)) {
-    $a_exluded_paths = array();
-    foreach ( module_implements('vsite_excluded_paths') as $module ) {
-      $function = $module . '_vsite_excluded_paths';
-      $a_paths = call_user_func($function);
-      $a_exluded_paths += is_array($a_paths) ? $a_paths : array();
-    }
-  }
-
-  if (! isset($a_map_q[$q])) {
-
-    list($ancestors, $placeholders) = menu_get_ancestors(array_slice(arg(NULL, $q), 0, MENU_MAX_PARTS));
-    if (! count(array_intersect($a_exluded_paths, $ancestors))) {
-      //If no ancestors match then there is no need to lookup the correct path in the db
-      $a_map_q[$q] = false;
-    }
-    else {
-      $a_map_q[$q] = db_result(db_query_range('SELECT path FROM {menu_router} WHERE path IN (' . implode(',', $placeholders) . ') ORDER BY fit DESC', $ancestors, 0, 1));
-    }
-  }
-
-  if (! $a_map_q[$q])
-    return false; //Can't load the path so it isn't excluded
-
-
-  return in_array($a_map_q[$q], $a_exluded_paths);
-}
 
 /**
  * Lookup the correct purl provider given a node to create a absolute deep link

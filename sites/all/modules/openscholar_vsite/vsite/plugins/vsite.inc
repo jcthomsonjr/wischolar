@@ -193,14 +193,24 @@ class vsite extends space_og {
 
     $more = array(
       'user',
-      'users/%',
+      'users/*',
       'private_site',
-      'help/%/%',
+      'help/*',
       'site/register',
       'welcome',
     );
 
     $excluded = array_merge($excluded, $more);
     return $excluded;
+  }
+  
+  /**
+   * Check to see if a path is 'excluded'
+   * @param string $q
+   */
+  public static function is_excluded_path($q){
+    $paths = implode("\n", self::excluded_paths());
+    
+    return drupal_match_path($q, $paths)?true:false;
   }
 }
