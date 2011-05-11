@@ -837,28 +837,28 @@ function node_vsite_admin_link($type, $object){
     if ($item && $item['access']) {
       
       $links['node-edit'] = array(
-        'title' => t('Edit'), 
-        'href' => $path, 
+        'title' => t('Edit'),
+        'href' => $path,
         'attributes' => array(
-          'class' => 'icon-edit' 
-        ), 
+          'class' => 'icon-edit'
+        ),
         'query' => array(
-          'destination' => $_GET['q'] 
-        ) 
+          'destination' => $_GET['q']
+        )
       );
     }
     $path = "node/{$object->nid}/delete";
     $item = menu_get_item($path);
     if ($item && $item['access']) {
       $links['node-delete'] = array(
-        'title' => t('Delete'), 
-        'href' => "node/{$object->nid}/delete", 
+        'title' => t('Delete'),
+        'href' => "node/{$object->nid}/delete",
         'attributes' => array(
-          'class' => 'icon-delete' 
-        ), 
+          'class' => 'icon-delete'
+        ),
         'query' => array(
-          'destination' => $_GET['q'] 
-        ) 
+          'destination' => $_GET['q']
+        )
       );
     }
   }
