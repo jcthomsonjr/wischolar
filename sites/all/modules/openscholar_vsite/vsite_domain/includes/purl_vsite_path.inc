@@ -45,22 +45,28 @@ if (!class_exists('purl_vsite_path')) {
     }
 
 	  public function rewrite(&$path, &$options, $element) {
-	      if(vsite_excluded_path($path)) return; //Do not alter if this is a link to a excluded path
+	  	
+	  	$plugin = ctools_get_plugins('spaces', 'plugins','vsite');
+      if($plugin) $class = ctools_plugin_get_class($plugin, 'handler');
+      //Do not alter excluded paths
+      if(isset($class) && call_user_func(array($class,'is_excluded_path'),$path)) return;
+	      
+	    if(array_key_exists('absolute',$options) && $options['absolute']){
 
-	      if(array_key_exists('absolute',$options) && $options['absolute']){
+	      if($element->id && $vsite = vsite_get_vsite($element->id)){
+          $vsite_domain = $vsite->controllers->variable->get('vsite_domain_name');
+        }
+          
+        if($vsite_domain){
+          $options['base_url'] = "http://".$vsite_domain;
+        }else{
+        	global $base_url;
+          $options['base_url'] = variable_get('purl_base_domain', $base_url);
+        }//Check for a group domain
 
-	      	if($element->id) $vsite = vsite_get_vsite($element->id);
-	      	$vsite_domain = $vsite->controllers->variable->get('vsite_domain_name');
-          if($vsite_domain){
-            $options['base_url'] = "http://".$vsite_domain;
-          }else{
-          	global $base_url;
-            $options['base_url'] = variable_get('purl_base_domain', $base_url);
-          }//Check for a group domain
+      }//If we are asking for the absolute url then return the correct base url for a path provider
 
-        }//If we are asking for the absolute url then return the correct base url for a path provider
-
-	      return parent::rewrite($path, $options, $element);
+	    return parent::rewrite($path, $options, $element);
 	  }
   }
 

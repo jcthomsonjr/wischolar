@@ -203,4 +203,14 @@ class vsite extends space_og {
     $excluded = array_merge($excluded, $more);
     return $excluded;
   }
+  
+  /**
+   * Check to see if a path is 'excluded'
+   * @param string $q
+   */
+  public static function is_excluded_path($q){
+    $paths = implode("\n", self::excluded_paths());
+    
+    return drupal_match_path($q, $paths)?true:false;
+  }
 }

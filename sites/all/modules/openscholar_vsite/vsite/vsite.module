@@ -252,8 +252,7 @@ function vsite_get_vsite($sid = false){
     $space = spaces_get_space();
   }
   else {
-    if (! array_key_exists($sid, $inactive_vsites))
-      $inactive_vsites[$sid] = spaces_load('og', $sid, FALSE);
+    if (! array_key_exists($sid, $inactive_vsites)) $inactive_vsites[$sid] = spaces_load('og', $sid, FALSE);
     $space = $inactive_vsites[$sid];
   }
 
