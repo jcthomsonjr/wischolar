@@ -479,7 +479,7 @@ function _check_index() {
 		$series .= 'Maintainer-Name: ' . $maintainer_name . "\n";
 		$series .= 'Maintainer-Email: ' . $maintainer_email . "\n";
 		$series .= 'Type: ' . 'ReDIF-' . $redif_type . "\n";
-  		$series .= 'Handle: ' . 'RePEc:qss:' . $r['type'] . "\n";
+    $series .= 'Handle: ' . 'RePEc:' . $archive_code . ':' . $r['type'] . "\n";
   	
   		/*
   	 	* Other series options:
