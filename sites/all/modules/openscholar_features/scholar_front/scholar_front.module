@@ -14,7 +14,7 @@ function scholar_front_menu(){
     'access arguments' => array('access content'),
     'weight' => 0,
   );
-  
+
   $items['scholar_front/features'] = array(
     'type' => MENU_CALLBACK,
     'title' => '',
@@ -23,7 +23,7 @@ function scholar_front_menu(){
     'access arguments' => array('access content'),
     'weight' => 0,
   );
-  
+
   $items['scholar_front/flag'] = array(
     'type' => MENU_CALLBACK,
     'title' => '',
@@ -32,7 +32,7 @@ function scholar_front_menu(){
     'access arguments' => array('access content'),
     'weight' => 0,
   );
-  
+
   $items['features/scholar_front'] = array(
     'title' => 'Front Page Settings',
     'page callback' => 'drupal_get_form',
@@ -42,7 +42,7 @@ function scholar_front_menu(){
     'type' => MENU_CALLBACK,
     'file' => 'scholar_front.pages.inc',
   );
-  
+
   return $items;
 }
 
@@ -120,7 +120,7 @@ function scholar_front_nodeapi(&$node, $op, $a3, $a4){
       if ($node -> front == 1){
       	$vsite = vsite_get_vsite();
       	if(!$vsite) return;
-      	
+
       	$vsite->controllers->variable->set('site_frontpage','node/'.$node->nid);
         $link =  l('Control Panel Settings.','cp/features' );
         $msg_variables = array (
@@ -144,6 +144,11 @@ function scholar_front_preprocess_page(&$vars){
 	if(!variable_get('scholar_front_show_title',true) && drupal_is_front_page()){
 	  $vars['title'] = "";
 	}
+	if (drupal_is_front_page() && $new_title = variable_get('scholar_front_site_title', '')) {
+	  $vsite = vsite_get_vsite();
+	  drupal_set_title($vsite->group->title);
+	  $vsite->group->title = $new_title;
+	}
 }
 
 /**
@@ -152,7 +157,7 @@ function scholar_front_preprocess_page(&$vars){
  * Last chance to make changes before the reactions start
  */
 function scholar_front_context_page_condition() {
-	
+
 	$active_contexts = context_active_contexts();
 	$b_found_feature = context_isset('context','openscholar-feature-front');
 	foreach ($active_contexts as $key => $context){
@@ -162,7 +167,7 @@ function scholar_front_context_page_condition() {
 		}
 		$b_found_feature = true;
 	}
-	
+
 	context_set('context',$active_contexts);
 }
 
@@ -177,13 +182,13 @@ function scholar_front_form_alter(&$form, $form_state, $form_id) {
       ctools_add_css('dropdown');
       ctools_add_js('dependent');
       drupal_add_js("misc/autocomplete.js");
-      
+
 		  /*
 		   * remove home page settings and make them part of the front page features settings
 		   */
       unset($form['site_frontpage']); // we dont need settings here
       unset($form['site_frontpage_path']); //Remove reset to defaults button
-  
+
       /*
        * Do not allow users to disable front feature
        */

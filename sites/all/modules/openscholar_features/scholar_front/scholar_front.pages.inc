@@ -12,6 +12,13 @@ function scholar_front_settings($form_state) {
   ctools_include('dependent');
   ctools_include('form');
 
+  $form['scholar_front_site_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Site Title'),
+    '#description' => t('This title will appear in the title bar of your browser.'),
+    '#default_value' => variable_get('scholar_front_site_title', ''),
+  );
+
   $front_page = variable_get('site_frontpage', 'scholar_front/features');
   $spaces_features = variable_get('spaces_features',array());
 
