@@ -193,6 +193,13 @@ function scholar_presentations_strongarm() {
       'title' => 'Attach files to this presentation',
       'hidden' => 0,
     ),
+    'taxonomy' => array(
+      'region' => 'right',
+      'weight' => '-3',
+      'has_required' => FALSE,
+      'title' => 'Taxonomy',
+      'hidden' => 0,
+    ),
   );
 
   $export['nodeformscols_field_placements_presentation_default'] = $strongarm;

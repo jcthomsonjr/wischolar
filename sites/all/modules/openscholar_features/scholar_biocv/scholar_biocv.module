@@ -98,7 +98,7 @@ function scholar_biocv_bio(){
 	    }
     }//Add the cv edit links if you need to
 
-    $s_out .= theme('context_links', $a_links);
+    $s_out .= theme('links', $a_links);
   }
 
   //ADD CV Link if Req
@@ -149,7 +149,7 @@ function scholar_biocv_cv(){
       // an appropriate message and a link for the user to create their CV
       $a_links[] = array('custom' => true, 'title' => 'Add your CV', 'href' => "node/add/cv", 'query' => drupal_get_destination());
     }
-    $s_out .= theme('context_links', $a_links);
+    $s_out .= theme('links', $a_links);
   }
 
   if ($cv_node && !variable_get('scholar_biocv_use_pdf_as_cv', 0)){

@@ -198,52 +198,6 @@ function scholar_front_features(){
   return  _scholar_front_admin_frontpage() . $view->render();
 }
 
-/**
- * Menu callback for "home"
- * Get the vsite home page settings and act accordingly
- * @return the content to be rendered in the content area of the front page
- */
-function scholar_front_home(){
-
-  $vsite = vsite_get_vsite();
-  if ($vsite) {
-  	$result = _scholar_front_admin_frontpage();
-
-    $a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
-    switch ($a_front_settings['frontpage']) {
-      case 'bio' :
-//        $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
-//        if ($front_type['bio_title']){
-//          drupal_set_title(t('%title', array('%title' => $bio_node->title)));
-//        }
-//        $result .=  node_view($bio_node,false,true,true);
-//
-//        break;
-      case 'feature' :
-//      	vsite_include('vsiteapi');
-//        $node_options = $a_front_settings['node_options'];
-//        if (!$node_options){
-//          $node_options = vsite_content_types();
-//        }
-//
-//        // they may have selected a feature that some module decided not to display
-//        // or that feature is not public anymore.
-//        drupal_alter('vsite_content_types', $node_options);
-//
-//        $result .= scholar_front_home_feature($node_options);
-        break;
-      case 'html' :
-        $front_nid = $a_front_settings['front_nid'];
-        $result .= scholar_front_home_html($front_nid);
-        break;
-      case 'flag' :
-//        $result .= scholar_front_home_flag();
-//        break;
-    }
-
-    return $result;
-  }
-}
 
 
 /**
@@ -313,33 +267,6 @@ MESSAGE;
     }
 
     return $result;
-}
-
-/**
- * if front page is set to bio
- * @param $bio_nid the nid of the bio node
- */
-/*
-function scholar_front_home_bio($bio_nid){
-  $node = node_load($bio_nid);
-  // TODO "include title" option not implemented here
-  $result = node_view($node, $teaser = FALSE, $page = FALSE, $links = FALSE);
-  return $result;
-}
-*/
-
-
-/**
- * if front page is set to "html"
- * @param $front_nid the nid of the node
- */
-function scholar_front_home_html($front_nid){
-  $result = '';
-  $node = node_load($front_nid);
-  if (node_access('view', $node)){
-    $result = node_view($node, $teaser = FALSE, $page = TRUE, $links = TRUE);
-  }
-  return $result;
 }
 
 /**
