@@ -454,8 +454,8 @@ function vsite_search_luceneapi_luceneapi_query_alter($query, $module, $type = N
    */
   if (! og_is_group_member($vsite->group->nid, TRUE)) {
     $content_types = array();
-    if (!empty(variable_get('spaces_features',array()))) {
-      foreach (variable_get('spaces_features',array()) as $name => $status) {
+    if ($a_features = variable_get('spaces_features',array())) {
+      foreach ($a_features as $name => $status) {
         // 0 = disabled, 1 = private, 2 = public
         if ($status < 2) {
           $feature = features_get_features($name);
