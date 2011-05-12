@@ -19,7 +19,7 @@ function scholar_classes_link_alter(&$links, $node){
     $old['attributes']['class'] = 'context-button';
     
     $links['class_material_field_class'] = array(
-      'title' => theme('context_links', array(
+      'title' => theme('links', array(
         $old
       )),
       'html' => TRUE
