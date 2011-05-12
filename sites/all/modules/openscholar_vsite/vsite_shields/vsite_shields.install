@@ -34,6 +34,10 @@ function vsite_shields_requirements($phase) {
   return $requirements;
 }
 
+function vsite_shields_install() {
+  vsite_shields_update_6002();
+}
+
 function vsite_shields_update_6001(&$sandbox) {
 
   // search for values that point to old locations and update them.
