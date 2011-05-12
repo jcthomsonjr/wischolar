@@ -1,4 +1,4 @@
-body {
+html, body {
   background: #E5E5E4;
   color:#333;
   }
@@ -89,11 +89,6 @@ h2.title {
   padding-left: 0;
   }
 
-.header-main #header,
-.header-main-right #header {
-  margin-left: 189px;
-  }
-
 #sidebar-second {
   margin-right: -180px
   margin-top: 10px;
@@ -104,9 +99,6 @@ h2.title {
   margin-right: -210px;
   }
 
-body.sidebar-first #content-area .hg-container, body.header-left-main #header .hg-container {
-  padding-right: 0;
-  }
 
 #header .hg-container {
   padding-left: 190px;
@@ -195,10 +187,18 @@ body.sidebar-first #content-area .hg-container, body.header-left-main #header .h
   float:right;
   }
 
+#sidebar-first #scholar-shield {
+  margin: 0 0 0 auto;
+  }
+
 /* SIDEBARS */
 
 .sidebar {
   font-size: 1.1em;
+  }
+
+.header-main #sidebar-first {
+  margin-top: -87px;
   }
 
 #sidebar-first,
@@ -295,8 +295,16 @@ h2#comments-title {
   display:block;
   }
 
-/*Footer*/
+#footer p.copy {
+  padding: 0 60px;
+  }
 
-#footer {
-  padding: 0 180px;
+body.sidebar-first #footer p.copy,
+body.two-sidebars #footer p.copy {
+  padding-left: 220px;
+  }
+
+body.sidebar-second #footer p.copy,
+body.two-sidebars #footer p.copy {
+  padding-right: 220px;
   }
