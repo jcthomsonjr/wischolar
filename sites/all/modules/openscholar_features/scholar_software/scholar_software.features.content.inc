@@ -6,80 +6,6 @@
 function scholar_software_content_default_fields() {
   $fields = array();
 
-  // Exported field: field_oembed_video
-  $fields['scholar_software_project-field_oembed_video'] = array(
-    'field_name' => 'field_oembed_video',
-    'type_name' => 'scholar_software_project',
-    'display_settings' => array(
-      'weight' => '101',
-      'parent' => '',
-      'label' => array(
-        'format' => 'hidden',
-      ),
-      'teaser' => array(
-        'format' => 'hidden',
-        'exclude' => 1,
-      ),
-      'full' => array(
-        'format' => 'oembed_default',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'link',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'link',
-    'active' => '1',
-    'attributes' => array(
-      'target' => 'default',
-      'rel' => '',
-      'class' => '',
-      'title' => '',
-    ),
-    'display' => array(
-      'url_cutoff' => '80',
-    ),
-    'url' => 0,
-    'title' => 'none',
-    'title_value' => '',
-    'enable_tokens' => 0,
-    'validate_url' => 1,
-    'widget' => array(
-      'default_value' => array(
-        '0' => array(
-          'url' => '',
-        ),
-      ),
-      'default_value_php' => NULL,
-      'label' => 'Video Embed',
-      'weight' => '-8',
-      'description' => 'Copy a link to an online video to embed it into your site.',
-      'type' => 'link',
-      'module' => 'link',
-    ),
-  );
-
   // Exported field: field_scholar_software_logo
   $fields['scholar_software_project-field_scholar_software_logo'] = array(
     'field_name' => 'field_scholar_software_logo',
@@ -677,7 +603,6 @@ function scholar_software_content_default_fields() {
   t('Repository URL');
   t('Security release');
   t('Software key');
-  t('Video Embed');
 
   return $fields;
 }
