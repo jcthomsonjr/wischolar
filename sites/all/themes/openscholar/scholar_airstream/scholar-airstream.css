@@ -65,7 +65,6 @@ body.two-sidebars #footer p.copy {
   text-align: left;
   }
 
-
 /* HEADER ELEMENTS */
 
 #navbar {
@@ -164,21 +163,32 @@ body.navbar #sidebar-first {
 
 /* side bar specific */
 
-#sidebar-first li {
+#sidebar-first .block {
+  padding: 10px;
+  }
+
+#sidebar-first #block-vsite_menus-0 {
+  padding: 0 0 10px 0;
+  }
+
+#sidebar-first #block-vsite_menus-0 li {
   list-style: none;
   margin: 0 1px;
   }
 
-#sidebar-first a, #sidebar-first a:visited {
+#sidebar-first #block-vsite_menus-0 a,
+#sidebar-first #block-vsite_menus-0 a:visited {
     line-height:17px;
     padding:14px 9px;
     }
 
-#sidebar-first li a {
+#sidebar-first #block-vsite_menus-0 li a {
     border-bottom:1px solid #D8D6D6;
     }
 
-#sidebar-first h2, #sidebar-first h3, #sidebar-first p {
+#sidebar-first h2,
+#sidebar-first h3,
+#sidebar-first p {
     margin-left: 9px;
     margin-right: 9px;
     }
