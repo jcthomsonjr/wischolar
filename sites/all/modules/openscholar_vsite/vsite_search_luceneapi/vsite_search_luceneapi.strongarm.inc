@@ -83,13 +83,7 @@ function vsite_search_luceneapi_strongarm() {
   $strongarm->value = 1;
 
   $export['luceneapi_node:nodeaccess'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = '';
-  $strongarm->value = ;
 
-  $export[''] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
