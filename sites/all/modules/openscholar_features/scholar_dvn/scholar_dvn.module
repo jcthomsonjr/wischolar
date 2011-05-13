@@ -17,7 +17,7 @@ function scholar_dvn_menu(){
     'access arguments' => array('view','scholar_dvn'),
     'menu_name' => 'features',
   );
-  
+
  $items['features/scholar_dvn'] = array(
     'title' => 'Settings',
     'page callback' => 'drupal_get_form',
@@ -35,10 +35,10 @@ function scholar_dvn_data(){
   drupal_add_js(drupal_get_path('module', 'scholar_dvn') .'/scholar_dvn.js');
   $vsite = vsite_get_vsite();
   $dvn_alias = variable_get('scholar_dvn_dvn_alias', '');
-  
+
   if ($vsite && $dvn_alias) {
     // Show DVN in iframe
-    $path = "http://dvn.iq.harvard.edu/dvn/dv/" . $dvn_alias;
+    $path = $dvn_alias;
     if(strlen($_REQUEST['dvn_subpage'])) $path .= "/".ltrim($_REQUEST['dvn_subpage'],"/");
     return "<div id=\"feature-dataverse\"><iframe name=\"res\" scrolling=\"auto\" src =\"" . $path . "\"></iframe></div>";
   }
