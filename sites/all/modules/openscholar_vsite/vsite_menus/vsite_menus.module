@@ -202,7 +202,6 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
   //Are we on a node form?
   if (isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
 
-
   	$vsite = vsite_get_vsite();
   	//If we are not in a site or this is not a og content type do not continue
   	vsite_include('vsiteapi');
@@ -211,7 +210,6 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
     /**
      * Menu Form Settings
      */
-
   	unset($form['menu']); //Remove default menu handler
 
   	$form['vsite_menu'] = array(
@@ -318,8 +316,8 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
           }
         }
       }
-
   }
+  
 }
 
 

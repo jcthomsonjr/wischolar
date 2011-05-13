@@ -44,3 +44,26 @@ function iqss_scholar_update_6002(&$sandbox){
   
   return $res;
 }
+
+function iqss_scholar_update_6003(&$sandbox){
+  //Migrate "Site Creators" to "Manager
+  $manager_role = db_result(db_query("SELECT rid FROM {role} WHERE name LIKE 'manager' "));
+  
+  if(!$manager_role){
+    $res['#abort'] = array('success' => FALSE, 'query' => 'Manager role does not exist waiting on default role to be created.');
+    return $res;
+  }
+  
+  $sc_role = db_result(db_query("SELECT rid FROM {role} WHERE name LIKE 'scholar site creator' "));
+  
+  if(!$sc_role) return array();
+  
+  $res[] = array('success' => true, 'query' => 'Site creators migrated to managers.');
+  
+  db_query("UPDATE {users_roles} SET rid = %d WHERE rid = %d ",$manager_role,$sc_role);
+  
+  db_query('DELETE FROM {role} WHERE rid = %d', $sc_role);
+  db_query('DELETE FROM {permission} WHERE rid = %d', $sc_role);
+    
+  return $res;
+}

@@ -38,18 +38,22 @@ function vsite_menus_settings_form($form_state){
   //all that were avalible orig..
   $all_initial = $space->controllers->vsite_menu->get_multiple(array_keys($a_site_menus));
 
-  //Get the menu links for a menu (for this site)
-  //$menu_links = $space->controllers->vsite_menu->get( 'the_menu_key' );
   $menus = array();
-
-  //$form = vsite_menus_settings_build_form($menu_links);
+  $hidden_menus = array();
   foreach ($all_initial as $key => $link) {
     $path = $link['link_path'];
+    
     if (!$link['external']) {
       $menu = menu_get_item($path);
       if (!$menu['access']) continue;
+      
+      if($link['hidden'] && !array_key_exists($path,$hidden_menus)){
+      	$hidden_menus[$path] = $link;
+      	continue;
+      }//Hidden
     }
 
+    $hidden_menus[$path] = false;
     $frags = explode(':', $key, 2);
     if (count($frags) == 1) {
       // this link isn't in a menu already
@@ -70,6 +74,12 @@ function vsite_menus_settings_form($form_state){
         $menus[$frags[1]] = $link;
       }
     }
+  }
+  
+  $hidden_menus = array_diff($hidden_menus,array(false));
+  foreach ($hidden_menus as $path => $link) {
+  	$link['menu_name'] = 'none';
+  	$menus[$path] = $link;
   }
 
   foreach ($menus as $key => $link) {
@@ -235,9 +245,9 @@ function vsite_menus_settings_form_reset($form, &$form_state) {
   $space = vsite_get_vsite();
   if(!$space) return;
 
-//  foreach (array_keys(vsite_layout_get_pagetypes($space)) as $s_page_type) {
-//    $space->controllers->context->del('openscholar-feature-'.$s_page_type.":reaction:block:".$space->group->og_theme);
-//  }
+  foreach (array_keys(_vsite_menus_get_menus()) as $s_menu) {
+    $space->controllers->vsite_menu->del($s_menu);
+  }
 }
 
 function vsite_menus_settings_form_validate(&$form, &$form_state) {

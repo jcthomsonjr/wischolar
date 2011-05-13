@@ -71,6 +71,8 @@ function scholar_front_vsite_admin_link($type, $object){
   global $user;
   //check font page settings here, only execute if front page setting equals flag
   $vsite = vsite_get_vsite();
+  if(!$vsite) return array();
+  
   $a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
   if ($a_front_settings['frontpage'] !== 'flag' ||
       !($vsite -> access_admin()) ||
