@@ -226,22 +226,7 @@ function cp_menu(){
     if (! array_key_exists('access callback', $item))
       $items[$path]['access callback'] = 'cp_access_cp';
   }
-/*
-  $items["cp/allow_callback_override"] = array(
-    'page callback' => 'cp_is_confirm_overide_page',
-    'type' => MENU_CALLBACK,
-    'access callback' => 'cp_access_cp'
-  );
 
-  $items['cp/confirm_message/%'] = array(
-    'page callback' => 'cp_confirm_message_view',
-    'type' => MENU_CALLBACK,
-    'access callback' => 'cp_access_cp',
-    'page arguments' => array(
-      2
-    )
-  );
-*/
   return $items;
 }
 
@@ -330,8 +315,7 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     $spaces_features = variable_get('spaces_features', array());
 
     foreach ( array_keys($form['spaces_features']) as $f_name ) {
-      if ($f_name[0] == '#')
-        continue;
+      if ($f_name[0] == '#') continue;
 
       // is this feature customizable ?
       // by convenction feature settings form is at features/feature_name
@@ -361,11 +345,6 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     }
   }
 
-  /*
-  //Call Confirm Override
-  if (in_array($form_id, cp_get_confirm_form_overides()))
-    cp_confirm_override($form, $form_state, $form_id);
-*/
 }
 
 /**
