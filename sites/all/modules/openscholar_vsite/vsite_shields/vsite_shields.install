@@ -35,7 +35,8 @@ function vsite_shields_requirements($phase) {
 }
 
 function vsite_shields_install() {
-  vsite_shields_update_6002();
+  $temp = 5;
+  vsite_shields_update_6002($temp);
 }
 
 function vsite_shields_update_6001(&$sandbox) {
