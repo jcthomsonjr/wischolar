@@ -69,6 +69,9 @@ function vsite_shields_update_6002(&$sandbox) {
 
   $new_path = file_create_path().'/vsite_shields/';
   $files = file_scan_directory('sites/all/modules/openscholar_vsite', 'unsure.*');
+  if (count($files) == 0) {
+    return array(array('success' => true, 'query' => 'No shields found.'));
+  }
   $files = current($files);
   $old_path = str_replace($files->basename, '', $files->filename);
 
