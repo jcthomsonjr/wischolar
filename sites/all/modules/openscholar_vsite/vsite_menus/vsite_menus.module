@@ -318,55 +318,8 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
       }
   }
   
-  //When a feature is enabled force it's menu item to be enabled
-  if (arg(0) == 'cp' && $form_id == 'spaces_features_form') {
-  	if(!is_array($form['#submit'])){
-    	$form['#submit'] = array();
-    }
-
-    array_unshift($form['#submit'],'vsite_menu_reset_feeature_menus');
-  }
 }
 
-/**
- * Check for newly enabled features and turn thier menus back on
- * @param array $form
- * @param array $form_state
- */
-function vsite_menu_reset_feeature_menus($form, &$form_state){
-	$vsite = vsite_get_vsite();
-	if(!$vsite) return;
-	
-	$a_site_menus = variable_get('scholar_site_menus',array());
-	foreach ($a_site_menus as $s_menu => $s_name) {
-	  $a_site_menus[$s_menu] = $vsite->controllers->vsite_menu->get($s_menu,'space');
-	  
-	  if(!$a_site_menus[$s_menu]) unset($a_site_menus[$s_menu]);//Nothing stored for this menu
-	}
-	if(!count($a_site_menus)) return; //No overrides
-	
-	$link_map = features_get_component_map('menu_links');
-	$spaces_features = variable_get('spaces_features', array());
-	foreach ( $form_state['values']['spaces_features'] as $f_name => $n_enabled ) {
-      if ($f_name[0] == '#' || $spaces_features[$f_name] || !$n_enabled) continue; //already enabled?
-      
-      foreach ($link_map as $s_key => $a_features){
-		    if(!in_array($f_name,$a_features)) continue;
-		    list($s_def_menu, $s_path) = explode(':',$s_key,2);
-		    if(!array_key_exists($s_def_menu,$a_site_menus)) continue; //This Menu is not overridden
-		    
-		    foreach ($a_site_menus as $s_menu => $a_mi) {
-		    	if(array_key_exists("{$s_menu}:{$s_path}",$a_mi) && !$a_mi["{$s_menu}:{$s_path}"]['hidden']) continue(2);//Found the link
-		    }
-		    
-		    if(isset($a_site_menus[$s_def_menu][$s_key])){
-		    	//Just needs unhiding
-		    	$a_site_menus[$s_def_menu][$s_key]['hidden'] = 0;
-		    	$vsite->controllers->vsite_menu->set($s_def_menu,$a_site_menus[$s_def_menu]);
-		    }
-		  }//Each feature link
-	}//Each newly enabled feature
-}
 
 /**
  * Menu Rendering Functions
