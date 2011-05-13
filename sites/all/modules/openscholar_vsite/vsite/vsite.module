@@ -71,52 +71,6 @@ function vsite_menu(){
 }
 
 /**
- * Implementation of hook_strongarm()
- */
-/*
-function vsite_strongarm(){
-  $conf = array();
-
-
-
-  $node_types = node_get_types();
-  foreach ( $node_types as $type ) {
-
-    $conf['node_options_'. $type -> type] = array('status');
-
-    // itweak
-    $conf["itweak_upload_collapse_" . $type->type] = '0';
-    $conf["itweak_upload_node_display_" . $type->type] = '4';
-    $conf["itweak_upload_teaser_display_" . $type->type] = '3';
-    $conf["itweak_upload_teaser_images_" . $type->type] = '8';
-
-    $conf["itweak_upload_upload_preview_" . $type->type] = 1;
-
-  }
-
-  // This mirrors what spaces_og does, however strongarm is better
-  // than modifying the conf array in init, since boot runs before node_access
-  $map = features_get_component_map('node');
-  $features = spaces_features('og');
-  foreach ($map as $type => $feature) {
-    // If the feature apples to OG spaces, force the OG content type usage.
-    if (!empty($features[$feature])) $conf['og_content_type_usage_'. $type] = 'group_post_standard';
-  }
-
-
-  // formats
-  // Allowed HTML & default filter format settings
-  $format = db_result(db_query("SELECT format FROM {filter_formats} WHERE name = '%s'", 'Filtered HTML'));
-  if ($format) {
-    $conf["allowed_html_{$format}"] = '<div> <span> <br> <a> <em> <strong> <cite> <code> <strike> <ul> <ol> <li> <dl> <dt> <dd> <img> <blockquote> <p> <h1> <h2> <h3> <h4> <h5> <h6> <table> <caption> <thead> <th> <td> <tr> <sup> <sub>';
-    $conf['filter_default_format'] = $format;
-  }
-
-  return $conf;
-}
-*/
-
-/**
  * Includes different inc files
  */
 function vsite_include($inc_files){
