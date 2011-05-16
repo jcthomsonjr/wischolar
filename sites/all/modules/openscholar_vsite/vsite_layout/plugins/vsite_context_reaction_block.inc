@@ -18,6 +18,13 @@ class vsite_context_reaction_block extends context_reaction_block {
    * Override to alter block subject
    */
   protected function build_block($block, $reset = FALSE) {
-  	dpm($block);
+  	$block = parent::build_block($block,$reset);
+  	$subject_overrides = variable_get('block_subject_customizer',array());
+  	
+  	if(array_key_exists($block->bid,$subject_overrides)){
+  		$block->subject = $subject_overrides[$block->bid];
+  	}
+  	
+  	return $block;
   }
 }
