@@ -10,8 +10,10 @@ function scholar_blog_user_default_permissions() {
   $permissions['create blog content'] = array(
     'name' => 'create blog content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,7 +21,9 @@ function scholar_blog_user_default_permissions() {
   $permissions['delete own blog content'] = array(
     'name' => 'delete own blog content',
     'roles' => array(
-      '0' => 'scholar admin',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
     ),
   );
 
@@ -27,8 +31,10 @@ function scholar_blog_user_default_permissions() {
   $permissions['override blog promote to front page option'] = array(
     'name' => 'override blog promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -36,8 +42,10 @@ function scholar_blog_user_default_permissions() {
   $permissions['override blog published option'] = array(
     'name' => 'override blog published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -45,8 +53,10 @@ function scholar_blog_user_default_permissions() {
   $permissions['override blog revision option'] = array(
     'name' => 'override blog revision option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -54,8 +64,10 @@ function scholar_blog_user_default_permissions() {
   $permissions['override blog sticky option'] = array(
     'name' => 'override blog sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
