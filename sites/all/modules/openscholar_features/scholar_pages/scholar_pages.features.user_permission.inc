@@ -10,8 +10,10 @@ function scholar_pages_user_default_permissions() {
   $permissions['create page content'] = array(
     'name' => 'create page content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,8 +21,9 @@ function scholar_pages_user_default_permissions() {
   $permissions['delete own page content'] = array(
     'name' => 'delete own page content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'scholar admin',
+      '2' => 'scholar user',
     ),
   );
 
@@ -28,8 +31,10 @@ function scholar_pages_user_default_permissions() {
   $permissions['edit own page content'] = array(
     'name' => 'edit own page content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -37,8 +42,10 @@ function scholar_pages_user_default_permissions() {
   $permissions['override page promote to front page option'] = array(
     'name' => 'override page promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -46,8 +53,10 @@ function scholar_pages_user_default_permissions() {
   $permissions['override page published option'] = array(
     'name' => 'override page published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -55,8 +64,10 @@ function scholar_pages_user_default_permissions() {
   $permissions['override page revision option'] = array(
     'name' => 'override page revision option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -64,8 +75,10 @@ function scholar_pages_user_default_permissions() {
   $permissions['override page sticky option'] = array(
     'name' => 'override page sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
