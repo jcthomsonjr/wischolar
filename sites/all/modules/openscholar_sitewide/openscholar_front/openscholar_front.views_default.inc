@@ -247,7 +247,7 @@ function openscholar_front_views_default_views() {
   ));
   $handler = $view->new_display('block', 'Featured web sites', 'block_2');
   $handler->override_option('title', 'Featured');
-  $handler->override_option('items_per_page', 12);
+  $handler->override_option('items_per_page', 9);
   $handler->override_option('use_pager', '0');
   $handler->override_option('use_more', 1);
   $handler->override_option('use_more_always', 0);
