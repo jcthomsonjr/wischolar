@@ -10,8 +10,10 @@ function scholar_reader_user_default_permissions() {
   $permissions['create feed content'] = array(
     'name' => 'create feed content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,8 +21,10 @@ function scholar_reader_user_default_permissions() {
   $permissions['delete own feed content'] = array(
     'name' => 'delete own feed content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -28,8 +32,10 @@ function scholar_reader_user_default_permissions() {
   $permissions['edit own feed content'] = array(
     'name' => 'edit own feed content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -37,8 +43,10 @@ function scholar_reader_user_default_permissions() {
   $permissions['override feed promote to front page option'] = array(
     'name' => 'override feed promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -46,23 +54,29 @@ function scholar_reader_user_default_permissions() {
   $permissions['override feed published option'] = array(
     'name' => 'override feed published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
   // Exported permission: override feed revision option
   $permissions['override feed revision option'] = array(
     'name' => 'override feed revision option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+    ),
   );
 
   // Exported permission: override feed sticky option
   $permissions['override feed sticky option'] = array(
     'name' => 'override feed sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
