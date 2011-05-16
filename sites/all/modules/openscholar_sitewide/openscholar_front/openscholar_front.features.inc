@@ -25,6 +25,7 @@ function openscholar_front_flag_default_flags() {
     'global' => '1',
     'types' => array(
       '0' => 'vsite',
+      '1' => 'project',
     ),
     'flag_short' => 'feature',
     'flag_long' => 'make it featured web site',
