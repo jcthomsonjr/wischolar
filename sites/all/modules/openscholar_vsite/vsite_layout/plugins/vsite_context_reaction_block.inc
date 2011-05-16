@@ -14,4 +14,10 @@ class vsite_context_reaction_block extends context_reaction_block {
     return (parent::is_editable($reset) && user_access('vsite_edit_contex_blocks') && false);
   }
 
+  /**
+   * Override to alter block subject
+   */
+  protected function build_block($block, $reset = FALSE) {
+  	dpm($block);
+  }
 }
