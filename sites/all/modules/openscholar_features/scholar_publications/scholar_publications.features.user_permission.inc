@@ -10,10 +10,12 @@ function scholar_publications_user_default_permissions() {
   $permissions['access biblio content'] = array(
     'name' => 'access biblio content',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 
@@ -21,8 +23,10 @@ function scholar_publications_user_default_permissions() {
   $permissions['create biblio'] = array(
     'name' => 'create biblio',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -30,8 +34,10 @@ function scholar_publications_user_default_permissions() {
   $permissions['edit own biblio entries'] = array(
     'name' => 'edit own biblio entries',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -39,7 +45,9 @@ function scholar_publications_user_default_permissions() {
   $permissions['import from file'] = array(
     'name' => 'import from file',
     'roles' => array(
-      '0' => 'scholar admin',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
     ),
   );
 
@@ -47,8 +55,10 @@ function scholar_publications_user_default_permissions() {
   $permissions['override biblio promote to front page option'] = array(
     'name' => 'override biblio promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -56,8 +66,10 @@ function scholar_publications_user_default_permissions() {
   $permissions['override biblio published option'] = array(
     'name' => 'override biblio published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -65,8 +77,10 @@ function scholar_publications_user_default_permissions() {
   $permissions['override biblio revision option'] = array(
     'name' => 'override biblio revision option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -74,8 +88,10 @@ function scholar_publications_user_default_permissions() {
   $permissions['override biblio sticky option'] = array(
     'name' => 'override biblio sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -83,10 +99,12 @@ function scholar_publications_user_default_permissions() {
   $permissions['show download links'] = array(
     'name' => 'show download links',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 
@@ -94,10 +112,12 @@ function scholar_publications_user_default_permissions() {
   $permissions['show export links'] = array(
     'name' => 'show export links',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 
@@ -105,10 +125,12 @@ function scholar_publications_user_default_permissions() {
   $permissions['show filter tab'] = array(
     'name' => 'show filter tab',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 
@@ -116,10 +138,12 @@ function scholar_publications_user_default_permissions() {
   $permissions['show own download links'] = array(
     'name' => 'show own download links',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 
@@ -127,10 +151,12 @@ function scholar_publications_user_default_permissions() {
   $permissions['show sort links'] = array(
     'name' => 'show sort links',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 
@@ -138,8 +164,10 @@ function scholar_publications_user_default_permissions() {
   $permissions['submit repec widget'] = array(
     'name' => 'submit repec widget',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -147,10 +175,12 @@ function scholar_publications_user_default_permissions() {
   $permissions['view full text'] = array(
     'name' => 'view full text',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 
