@@ -10,10 +10,12 @@ function vsite_search_apachesolr_user_default_permissions() {
   $permissions['search content'] = array(
     'name' => 'search content',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 
@@ -21,10 +23,12 @@ function vsite_search_apachesolr_user_default_permissions() {
   $permissions['use advanced search'] = array(
     'name' => 'use advanced search',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
   );
 

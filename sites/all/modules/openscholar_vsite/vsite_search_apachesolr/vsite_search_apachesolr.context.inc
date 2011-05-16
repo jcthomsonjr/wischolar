@@ -138,7 +138,8 @@ function vsite_search_apachesolr_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Context for searches performed through Apache Solr');
+  t('Feature');
+  t('Search Pages');
 
   $export['openscholar-feature-search'] = $context;
   return $export;
