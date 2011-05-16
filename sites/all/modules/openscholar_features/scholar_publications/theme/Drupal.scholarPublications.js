@@ -4,6 +4,13 @@ Drupal.behaviors.scholarPublications = function() {
 	if($('div#biblio-authors-wrapper').length){
 		scholarPublicationsMonitorAuthors();
 	}
+	
+	$('fieldset legend a').live('mouseup', function() {
+		var td = Drupal.tableDrag.field_biblio_extra_values;
+		window.setTimeout(function () {
+			td.hideColumns(); 
+		}, 201);
+	});
 };
 
 scholarPublicationsMonitorAuthors  = function() {

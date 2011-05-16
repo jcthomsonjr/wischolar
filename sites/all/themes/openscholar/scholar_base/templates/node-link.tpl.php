@@ -5,7 +5,7 @@
     </div>
     <?php if (!$page): ?>
       <h3 class="title">
-        <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
+        <a href="<?php print $node -> field_link_href[0]['display_url']; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
       </h3>
     <?php endif; ?>
     <?php if ($unpublished): ?>
