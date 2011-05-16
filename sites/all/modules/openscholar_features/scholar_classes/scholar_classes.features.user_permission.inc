@@ -10,8 +10,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['create class content'] = array(
     'name' => 'create class content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,8 +21,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['create class_material content'] = array(
     'name' => 'create class_material content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -28,8 +32,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['delete own class content'] = array(
     'name' => 'delete own class content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -37,8 +43,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['delete own class_material content'] = array(
     'name' => 'delete own class_material content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -46,8 +54,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['edit own class content'] = array(
     'name' => 'edit own class content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -55,8 +65,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['edit own class_material content'] = array(
     'name' => 'edit own class_material content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -64,8 +76,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['override class promote to front page option'] = array(
     'name' => 'override class promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -73,8 +87,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['override class published option'] = array(
     'name' => 'override class published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -82,8 +98,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['override class revision option'] = array(
     'name' => 'override class revision option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -91,8 +109,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['override class sticky option'] = array(
     'name' => 'override class sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -100,8 +120,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['override class_material promote to front page option'] = array(
     'name' => 'override class_material promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -109,8 +131,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['override class_material published option'] = array(
     'name' => 'override class_material published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -118,8 +142,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['override class_material revision option'] = array(
     'name' => 'override class_material revision option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -127,8 +153,10 @@ function scholar_classes_user_default_permissions() {
   $permissions['override class_material sticky option'] = array(
     'name' => 'override class_material sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
