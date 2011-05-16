@@ -30,6 +30,30 @@ function scholar_biocv_filefield_paths_item_default_items() {
       'display' => 1,
     ),
   );
+  // Exported cv-field_cv_attach
+  $settings['cv-field_cv_attach'] = array(
+    'type' => 'cv',
+    'field' => 'field_cv_attach',
+    'filename' => array(
+      'value' => '[filefield-onlyname-original].[filefield-extension-original]',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+    ),
+    'filepath' => array(
+      'value' => '[space-og-path-raw]/files',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+    ),
+    'filealias' => array(
+      'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+      'display' => 1,
+    ),
+  );
   // Exported cv-field_cv_attached
   $settings['cv-field_cv_attached'] = array(
     'type' => 'cv',
