@@ -36,6 +36,32 @@ function scholar_profiles_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'content_extra_weights_person';
+  $strongarm->value = array(
+    'title' => '-5',
+    'body_field' => '6',
+    'revision_information' => '10',
+    'author' => '11',
+    'options' => '12',
+    'comment_settings' => '13',
+    'menu' => '9',
+    'taxonomy' => '-1',
+    'book' => '7',
+    'path' => '14',
+    'og_nodeapi' => '8',
+  );
+
+  $export['content_extra_weights_person'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_person_field_person_photo';
+  $strongarm->value = 0;
+
+  $export['ffp_person_field_person_photo'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_options_person';
   $strongarm->value = array(
     0 => 'status',

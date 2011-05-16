@@ -10,8 +10,10 @@ function scholar_profiles_user_default_permissions() {
   $permissions['create person content'] = array(
     'name' => 'create person content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,8 +21,10 @@ function scholar_profiles_user_default_permissions() {
   $permissions['delete own person content'] = array(
     'name' => 'delete own person content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -28,8 +32,10 @@ function scholar_profiles_user_default_permissions() {
   $permissions['edit own person content'] = array(
     'name' => 'edit own person content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -37,8 +43,10 @@ function scholar_profiles_user_default_permissions() {
   $permissions['override person promote to front page option'] = array(
     'name' => 'override person promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -46,8 +54,10 @@ function scholar_profiles_user_default_permissions() {
   $permissions['override person published option'] = array(
     'name' => 'override person published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -55,8 +65,10 @@ function scholar_profiles_user_default_permissions() {
   $permissions['override person sticky option'] = array(
     'name' => 'override person sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
