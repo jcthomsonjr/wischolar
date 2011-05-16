@@ -10,7 +10,9 @@ function vsite_users_user_default_permissions() {
   $permissions['create url aliases'] = array(
     'name' => 'create url aliases',
     'roles' => array(
-      '0' => 'scholar admin',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
     ),
   );
 
@@ -18,7 +20,9 @@ function vsite_users_user_default_permissions() {
   $permissions['create vsite_users_profile content'] = array(
     'name' => 'create vsite_users_profile content',
     'roles' => array(
-      '0' => 'scholar admin',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
     ),
   );
 
@@ -26,7 +30,9 @@ function vsite_users_user_default_permissions() {
   $permissions['delete own vsite_users_profile content'] = array(
     'name' => 'delete own vsite_users_profile content',
     'roles' => array(
-      '0' => 'scholar admin',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
     ),
   );
 
@@ -34,8 +40,10 @@ function vsite_users_user_default_permissions() {
   $permissions['edit own vsite_users_profile content'] = array(
     'name' => 'edit own vsite_users_profile content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
