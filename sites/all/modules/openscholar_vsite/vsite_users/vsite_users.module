@@ -210,52 +210,6 @@ function vsite_users_mail_alter(&$message) {
 }
 
 /**
- * Show the sites that a user belongs to
- *
- * @param $account user
- * @return
- */
-/*function vsite_users_show_groups($account) {
-  if (module_exists('spaces_og')) {
-    og_user('view',FALSE, $account);
-    return theme('user_profile', $account);
-  }
-}*/
-
-/**
- * hook strongarm()
- */
-function vsite_users_strongarm() {
-  $conf = array();
-  $conf['content_profile_use_vsite_users_profile'] = 1;
-  $conf['content_profile_vsite_users_profile'] = array(
-  'weight' => 0,
-  'user_display' => 'full',
-  'edit_link' => 0,
-  'edit_tab' => 'sub',
-  'add_link' => 0,
-  'registration_use' => 1,
-  'admin_user_create_use' => 1,
-  'registration_hide' => array(
-  'other'
-  )
-  );
-
-  $conf["show_preview_changes_vsite_users_profile"] = FALSE;
-  $conf["show_diff_inline_vsite_users_profile"] = FALSE;
-  $conf['ucreate_default_roles'] = vsite_users_ucreate_role();
-
-  // Comments
-  $conf['comment_vsite_users_profile'] = COMMENT_NODE_DISABLED;
-
-  // Automatic node title for profile nodes
-  $conf['ant_vsite_users_profile'] = 1;
-  $conf['ant_pattern_vsite_users_profile'] = '[vsite_users_first_name-raw] [vsite_users_last_name-raw]';
-  $conf['ant_php_vsite_users_profile'] = 0;
-
-  return $conf;
-}
-/**
  * Define default role for
  *
  * @param unknown_type $name
