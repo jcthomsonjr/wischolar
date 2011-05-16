@@ -10,8 +10,10 @@ function scholar_image_gallery_user_default_permissions() {
   $permissions['create gallery content'] = array(
     'name' => 'create gallery content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,8 +21,10 @@ function scholar_image_gallery_user_default_permissions() {
   $permissions['create image content'] = array(
     'name' => 'create image content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -28,8 +32,10 @@ function scholar_image_gallery_user_default_permissions() {
   $permissions['delete own gallery content'] = array(
     'name' => 'delete own gallery content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -37,8 +43,10 @@ function scholar_image_gallery_user_default_permissions() {
   $permissions['delete own image content'] = array(
     'name' => 'delete own image content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -46,8 +54,10 @@ function scholar_image_gallery_user_default_permissions() {
   $permissions['edit own gallery content'] = array(
     'name' => 'edit own gallery content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -55,8 +65,10 @@ function scholar_image_gallery_user_default_permissions() {
   $permissions['edit own image content'] = array(
     'name' => 'edit own image content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -64,8 +76,10 @@ function scholar_image_gallery_user_default_permissions() {
   $permissions['override gallery promote to front page option'] = array(
     'name' => 'override gallery promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -73,8 +87,10 @@ function scholar_image_gallery_user_default_permissions() {
   $permissions['override gallery sticky option'] = array(
     'name' => 'override gallery sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
