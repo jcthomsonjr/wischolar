@@ -1,10 +1,4 @@
 <?php
 
-/**
- * Implementation of hook_user_default_permissions().
- */
-function iqss_remote_source_user_default_permissions() {
-  module_load_include('inc', 'iqss_remote_source', 'iqss_remote_source.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_iqss_remote_source_user_default_permissions', $args);
-}
+// This file is deprecated and can be removed.
+// Please remove include_once('iqss_remote_source.features.inc') in iqss_remote_source.module as well.
