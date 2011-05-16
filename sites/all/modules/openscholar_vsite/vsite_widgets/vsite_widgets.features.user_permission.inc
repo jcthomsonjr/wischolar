@@ -14,6 +14,8 @@ function vsite_widgets_user_default_permissions() {
       '1' => 'authenticated user',
       '2' => 'scholar admin',
       '3' => 'scholar user',
+		  '4' => 'administrator',
+		  '5' => 'manager',
     ),
   );
 
