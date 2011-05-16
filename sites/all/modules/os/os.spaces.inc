@@ -22,12 +22,11 @@ function os_spaces_presets() {
         'scholar_classes' => 1,
         'scholar_pages' => 1,
         'scholar_image_gallery' => 0,
-        'scholar_announcements' => 0,
         'scholar_blog' => 0,
         'scholar_reader' => 0,
         'scholar_dvn' => 0,
         'scholar_links' => 0,
-        'scholar_software' => 0
+        'scholar_software' => 0,
       ),
       'spaces_og_selective' => 0,
       'spaces_og_register' => 1,
