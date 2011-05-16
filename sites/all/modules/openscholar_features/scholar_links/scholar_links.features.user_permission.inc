@@ -10,8 +10,10 @@ function scholar_links_user_default_permissions() {
   $permissions['create link content'] = array(
     'name' => 'create link content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,8 +21,10 @@ function scholar_links_user_default_permissions() {
   $permissions['delete own link content'] = array(
     'name' => 'delete own link content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -28,8 +32,10 @@ function scholar_links_user_default_permissions() {
   $permissions['edit own link content'] = array(
     'name' => 'edit own link content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -37,8 +43,10 @@ function scholar_links_user_default_permissions() {
   $permissions['override link promote to front page option'] = array(
     'name' => 'override link promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -46,23 +54,29 @@ function scholar_links_user_default_permissions() {
   $permissions['override link published option'] = array(
     'name' => 'override link published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
   // Exported permission: override link revision option
   $permissions['override link revision option'] = array(
     'name' => 'override link revision option',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+    ),
   );
 
   // Exported permission: override link sticky option
   $permissions['override link sticky option'] = array(
     'name' => 'override link sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
