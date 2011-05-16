@@ -43,6 +43,13 @@ function vsite_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_vsite_field_vsite_logo';
+  $strongarm->value = 0;
+
+  $export['ffp_vsite_field_vsite_logo'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'filter_default_format';
   $strongarm->value = '1';
 
