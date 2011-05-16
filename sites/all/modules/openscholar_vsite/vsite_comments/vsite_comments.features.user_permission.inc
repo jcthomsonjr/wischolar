@@ -10,8 +10,10 @@ function vsite_comments_user_default_permissions() {
   $permissions['access comments'] = array(
     'name' => 'access comments',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
     ),
   );
 
@@ -19,8 +21,10 @@ function vsite_comments_user_default_permissions() {
   $permissions['post comments'] = array(
     'name' => 'post comments',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
     ),
   );
 
@@ -28,7 +32,9 @@ function vsite_comments_user_default_permissions() {
   $permissions['post comments without approval'] = array(
     'name' => 'post comments without approval',
     'roles' => array(
-      '0' => 'authenticated user',
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'manager',
     ),
   );
 
