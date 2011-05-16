@@ -204,7 +204,7 @@ function scholar_presentations_content_default_fields() {
       'default_value_php' => NULL,
       'label' => 'Location',
       'weight' => '-2',
-      'description' => 'If applicable: Where was this presented?',
+      'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
     ),
