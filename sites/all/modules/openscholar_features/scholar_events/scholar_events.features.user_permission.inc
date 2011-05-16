@@ -10,8 +10,10 @@ function scholar_events_user_default_permissions() {
   $permissions['create event content'] = array(
     'name' => 'create event content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,8 +21,10 @@ function scholar_events_user_default_permissions() {
   $permissions['delete own event content'] = array(
     'name' => 'delete own event content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -28,8 +32,10 @@ function scholar_events_user_default_permissions() {
   $permissions['edit own event content'] = array(
     'name' => 'edit own event content',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -37,8 +43,10 @@ function scholar_events_user_default_permissions() {
   $permissions['override event promote to front page option'] = array(
     'name' => 'override event promote to front page option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -46,8 +54,10 @@ function scholar_events_user_default_permissions() {
   $permissions['override event published option'] = array(
     'name' => 'override event published option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -55,8 +65,10 @@ function scholar_events_user_default_permissions() {
   $permissions['override event revision option'] = array(
     'name' => 'override event revision option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -64,8 +76,10 @@ function scholar_events_user_default_permissions() {
   $permissions['override event sticky option'] = array(
     'name' => 'override event sticky option',
     'roles' => array(
-      '0' => 'scholar admin',
-      '1' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 

@@ -6,17 +6,13 @@
 function scholar_events_menu_default_menu_links() {
   $menu_links = array();
 
-  // Exported menu link: features:documents
+  // Exported menu link: features:calendar
   $menu_links['features:calendar'] = array(
     'menu_name' => 'features',
     'link_path' => 'calendar',
     'router_path' => 'calendar',
     'link_title' => 'Calendar',
-    'options' => array(
-      'attributes' => array(
-        'title' => 'Event Calendar',
-      ),
-    ),
+    'options' => array(),
     'module' => 'system',
     'hidden' => '0',
     'external' => '0',
