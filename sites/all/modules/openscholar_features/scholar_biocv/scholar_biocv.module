@@ -76,30 +76,9 @@ function scholar_biocv_bio(){
   if(!$vsite) return;
 
   // load the bio node for the owner of this vsite
-  $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
-  $cv_node = content_profile_load('cv', $vsite -> group -> uid, $lang = '');
+  $bio_node = content_profile_load('bio', $vsite->group->uid);
+  $cv_node = content_profile_load('cv', $vsite->group->uid);
   $s_out = "";
-
-  if($vsite->access_admin()){
-  	$a_links = array();
-    if ($bio_node){
-      $a_links[] = array('custom' => true, 'title' => 'Edit your Bio', 'href' => "node/{$bio_node->nid}/edit", 'query' => drupal_get_destination());
-    }else {
-      // an appropriate message and a link for the user to create their bio
-      $a_links[] = array('custom' => true, 'title' => 'Add your Bio', 'href' => "node/add/bio", 'query' => drupal_get_destination());
-    }
-
-    if(!scholar_biocv_submenu_access()){
-	    if ($cv_node){
-	      $a_links[] = array('custom' => true, 'title' => 'Edit your CV', 'href' => "node/{$cv_node->nid}/edit", 'query' => drupal_get_destination());
-	    }else {
-	      // an appropriate message and a link for the user to create their CV
-	      $a_links[] = array('custom' => true, 'title' => 'Add your CV', 'href' => "node/add/cv", 'query' => drupal_get_destination());
-	    }
-    }//Add the cv edit links if you need to
-
-    $s_out .= theme('links', $a_links);
-  }
 
   //ADD CV Link if Req
   if($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
