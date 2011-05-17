@@ -53,7 +53,7 @@ function vsite_create_links($privacy = NULL){
         'title' => t('!type', array(
             '!type' => $name
         )),
-        'href' => "node/add/$type_url_str" . $addition
+        'href' => "node/add/$type_url_str"
     );
   }
   return isset($links) ? $links : array();

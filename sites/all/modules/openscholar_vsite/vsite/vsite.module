@@ -761,11 +761,10 @@ function vsite_page_alter(&$vars) {
  * Retrieve the admin links for a given object.
  */
 function vsite_get_admin_links($type, $object){
-  $links = array();
-  //if (admin_is_enabled('admin inline')) {
+  
   $links = module_invoke_all('vsite_admin_link', $type, $object);
   drupal_alter('vsite_admin_link', $links, $type, $object);
-  //}
+  
   return $links;
 }
 

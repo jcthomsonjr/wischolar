@@ -10,16 +10,16 @@ function scholar_software_menu_alter(&$items) {
 	if(isset($items['node/add/scholar-software-release'])){
 		switch($items['node/add/scholar-software-release']['access callback']){
 			case "node_access":
-				$items['node/add/scholar-software-release']['access callback'] = "scholar_software_create_release";
+				$items['node/add/scholar-software-release']['access callback'] = "scholar_software_access_create_release";
 			break;
 			case "spaces_menu_access":
-				$items['node/add/scholar-software-release']['access arguments'][] = "scholar_software_create_release";
+				$items['node/add/scholar-software-release']['access arguments'][] = "scholar_software_access_create_release";
       break;
 		}
 	}//Use custom menu access to only show "add release" if a project exists on the site
 }
 
-function scholar_software_create_release(){
+function scholar_software_access_create_release(){
 	$view = views_get_view('scholar_software_releaseprojects');
 	$view->execute();
 	

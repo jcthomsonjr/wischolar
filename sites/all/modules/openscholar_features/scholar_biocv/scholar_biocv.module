@@ -41,6 +41,52 @@ function scholar_biocv_menu(){
 }
 
 /**
+ * Implementation of hook_menu_alter().
+ */
+function scholar_biocv_menu_alter(&$items) {
+  
+  //Change the bio link to only show if a bio has not been created
+  if(isset($items['node/add/bio'])){
+    switch($items['node/add/bio']['access callback']){
+      case "node_access":
+        $items['node/add/bio']['access callback'] = "scholar_biocv_access_create_bio";
+      break;
+      case "spaces_menu_access":
+        $items['node/add/bio']['access arguments'][] = "scholar_biocv_access_create_bio";
+      break;
+    }
+  }//Use custom menu access to only show "add bio" if a bio does not exist yet
+  
+  //Change the cv link to only show if a cv has not been created
+  if(isset($items['node/add/cv'])){
+    switch($items['node/add/cv']['access callback']){
+      case "node_access":
+        $items['node/add/cv']['access callback'] = "scholar_biocv_access_create_cv";
+      break;
+      case "spaces_menu_access":
+        $items['node/add/cv']['access arguments'][] = "scholar_biocv_access_create_cv";
+      break;
+    }
+  }//Use custom menu access to only show "add cv" if a cv does not exist yet
+}
+
+function scholar_biocv_access_create_bio(){
+  $vsite = vsite_get_vsite();
+  $bio_node = (!$vsite)? false:content_profile_load('bio', $vsite->group->uid);
+  
+  //Check for projects
+  return (!$bio_node && node_access('create',"bio"));
+}
+
+function scholar_biocv_access_create_cv(){
+  $vsite = vsite_get_vsite();
+  $cv_node = (!$vsite)? false:content_profile_load('cv', $vsite->group->uid);
+  
+  //Check for projects
+  return (!$cv_node && node_access('create',"cv"));
+}
+
+/**
  * CV/Bio Tab Access
  */
 function scholar_biocv_submenu_access(){
@@ -290,3 +336,31 @@ function scholar_biocv_menu_title(){
   return $s_title;
 }
 
+/**
+ * Implementation of hook_vsite_admin_link()
+ */
+function scholar_biocv_vsite_admin_link($type, $object){
+  $links = array();
+  $vsite = vsite_get_vsite();
+  if ($vsite && $type == 'node' && $object->type == 'bio' &&
+     ($cv_node = content_profile_load('cv', $vsite->group->uid))) {
+    
+    $path = "node/{$cv_node->nid}/edit";
+    $item = menu_get_item($path);
+    if ($item && $item['access']) {
+      
+      $links['node-edit-cv'] = array(
+        'title' => t('Edit CV'),
+        'href' => $path,
+        'attributes' => array(
+          'class' => 'icon-edit'
+        ),
+        'query' => array(
+          'destination' => $_GET['q']
+        )
+      );
+    }
+   
+  }
+  return $links;
+}
