@@ -1,5 +1,8 @@
 <div id="node-<?php print $node->nid; ?>" class="<?php print $node_classes; ?>">
   <div class="node-inner">
+    <div class="os-links">
+      <?php print $vsite_admin_links; ?>
+    </div>
     <?php if (!$page):?>
       <?php if ($node->field_person_website[0]['url']['value']) {
         $person_link = $node->field_person_website[0]['url'];
