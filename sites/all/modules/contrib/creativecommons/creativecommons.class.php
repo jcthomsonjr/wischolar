@@ -44,13 +44,13 @@ class creativecommons_license {
     $this->metadata = $metadata;
 
     // Fetch license information if uri present
-    if ($this->uri) {
+    if (strpos($this->uri, 'http:') !== FALSE) {
       $this->fetch();
     }
     // don't fetch a blank license
     else {
-      $this->name = t('None (All Rights Reserved)');
-      $this->type = '';
+      $this->name = t('All Rights Reserved');
+      $this->type = 'arr';
     }
 
     if (!is_array($this->metadata)) {
@@ -178,7 +178,7 @@ class creativecommons_license {
   function get_name($style = 'full') {
     if ($this->is_valid()) {
       // CCO
-      $prefix = ($this->type && $this->license_class != 'publicdomain') ? t('Creative Commons') .' ' : '';
+      $prefix = ($this->type != 'arr' && $this->license_class != 'publicdomain') ? t('Creative Commons') .' ' : '';
 
       switch ($style) {
         case 'full':
@@ -220,7 +220,7 @@ class creativecommons_license {
    */
   function get_image($style) {
 
-    if (empty($this->type)) {
+    if ($this->type == 'arr') {
       $this->type = 'all-rights-reserved';
     }
 
@@ -258,19 +258,19 @@ class creativecommons_license {
         if (!isset($px)) {
           $px = '32';
         }
-        
+
         //explode to add euro or yen icons
         foreach (explode('-', $this->type) as $filename) {
-          
+
           // NC options
           if ($filename == 'nc' && $nc) {
             $filename .= '-'. $nc;
           }
-          
+
           if($filename == 'rights') {
             $filename = $this->type;
           }
-          
+
           //quick fix for #957584... this entire function needs love
           if ($filename != 'all' && $filename != 'reserved') {
             $img[] = '<img src="'. $img_dir .'/icons/'. $filename .'.png" style="border-width: 0pt; width: '. $px .'px; height: '. $px .'px;" alt="'. $name[$filename] .'"/>';

@@ -577,8 +577,9 @@ function creativecommons_select_license_form($node, $key, $form_state_segment = 
     $desired_license = $account->cc;
   }
   // Case 3b: Otherwise, use site default
-  else {
-    $desired_license = creativecommons_get_default_license($jurisdiction);
+  elseif ( !($desired_license = creativecommons_get_default_license($jurisdiction)) ) {
+    // Case 4: If none of that exists, just use none;
+    $desired_license = '';
   }
 
 
@@ -716,9 +717,12 @@ function creativecommons_get_sample_license() {
  * @return license type (e.g. 'by-sa')
  */
 function creativecommons_get_license_type_from_uri($uri) {
-  $parts = explode('/', $uri);
+  if (strpos($uri, 'http:') !== FALSE) {
+    $parts = explode('/', $uri);
+    $uri = $parts[4];
+  }
 
-  return $parts[4];
+  return $uri;
 }
 
 
@@ -841,8 +845,11 @@ function creativecommons_get_licenses($options = NULL, $value_as_type = FALSE) {
   $licenses = array();
 
   // Unlicensed
+  $licenses[''] = 'No License';
+
+  // All Rights
   $blank_license = new creativecommons_license('');
-  $licenses[''] = $blank_license->get_name();
+  $licenses['arr'] = $blank_license->get_name();
 
   // License classes
   $licenses[t('Creative Commons')] = array();
@@ -1031,6 +1038,11 @@ function creativecommons_get_license_uri_from_available($license_type, $jurisdic
         if ($license_type == creativecommons_get_license_type_from_uri($uri)) {
           $license_uri = $uri;
         }
+      }
+    }
+    else {
+      if ($class && $license_type == creativecommons_get_license_type_from_uri($class)) {
+        $license_uri = $class;
       }
     }
   }
@@ -2065,9 +2077,12 @@ function creativecommons_save($node, $op) {
 
   // check that licensing is enabled for the content type and at least on license is enabled to
   // avoid errors on new installs
-  if (creativecommons_node_type_is_enabled($node->type) && creativecommons_licenses_enabled()) {
+  if ($cc_license_uri && creativecommons_node_type_is_enabled($node->type) && creativecommons_licenses_enabled()) {
     $cc = new creativecommons_license($cc_license_uri, $metadata);
     $cc->save($node->nid, $op);
+  }
+  else {
+    creativecommons_delete($node);
   }
 }
 
