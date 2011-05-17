@@ -39,7 +39,7 @@ function vsite_users_menu() {
     'access callback' => 'vsite_user_edit_access',
     'file path' => drupal_get_path('module', 'user'),
     'file' => 'user.pages.inc',
-    'weight' => 2,
+    'weight' => 50,
   );
 
   $items['cp/users/myaccount'] = array(
@@ -49,14 +49,15 @@ function vsite_users_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'file path' => drupal_get_path('module', 'user'),
     'file' => 'user.pages.inc',
+    'weight' => 10,
   );
 
   $items['cp/users/members'] = array(
     'title' => 'Manage Members',
     'page callback' => 'vsite_users_members',
     'file' => 'vsite_users.pages.inc',
-      'type' => MENU_LOCAL_TASK,
-    'weight' => 1, // should be the first one
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 20,
   );
 
   $items['cp/users/myaccount/edit'] = array(

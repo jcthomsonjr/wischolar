@@ -18,16 +18,7 @@ function vsite_support_menu() {
     'file' => 'contact.pages.inc',
     'file path' => drupal_get_path('module', 'contact'),
     'type' => MENU_NORMAL_ITEM,
-    'weight' => 5
-  );
-
-  $items['cp/support'] = array(
-    'title' => 'Support',
-    'page callback' => 'contact_site_page',
-    'file' => 'contact.pages.inc',
-    'file path' => drupal_get_path('module', 'contact'),
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 5
+    'weight' => 70,
   );
 
   if (module_exists('contact')) {
@@ -37,13 +28,14 @@ function vsite_support_menu() {
       'file' => 'contact.pages.inc',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'file path' => drupal_get_path('module', 'contact'),
-      'weight' => -1,
+      'weight' => 10,
     );
 
     $items['cp/support/help'] = array(
       'title' => 'Help',
       'page callback' => 'vsite_support_user_doc',
       'type' => MENU_LOCAL_TASK,
+      'weight' => 20,
     );
 
     $items['contact_owner'] = array(

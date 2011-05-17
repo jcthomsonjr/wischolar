@@ -22,27 +22,14 @@ function vsite_generic_settings_menu() {
   $items = array();
 
   $items['cp/settings/generic'] = array (
-    'title' => 'Settings',
+    'title' => 'Other Settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vsite_generic_settings_form'),
     'file' => 'vsite_generic_settings.page.inc',
     'access callback' => 'cp_access_cp',
     'type' => MENU_LOCAL_TASK,
+    'weight' => 40,
   );
 
   return $items;
 }
-
-/**
- * Implementation of hook_vsite_settings().
- */
-/*
-function vsite_generic_settings_vsite_settings() {
-  return array(
-    'generic' => array(
-      'function' => 'vsite_generic_settings_form',
-      'file' => drupal_get_path('module', 'vsite_generic_settings') . '/vsite_generic_settings.page.inc'
-    )
-  );
-}
-*/

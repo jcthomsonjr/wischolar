@@ -43,6 +43,7 @@ function vsite_layout_menu() {
     'access callback' => 'cp_access_cp',
     'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
     'file' => 'vsite_layout.admin.inc',
+    'weight' => 20,
   );
   
   $items['cp/appearance/layout'] = array(
@@ -53,6 +54,7 @@ function vsite_layout_menu() {
     'access callback' => 'cp_access_cp',
     'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
     'file' => 'vsite_layout.admin.inc',
+    'weight' => 10,
   );
 
   $items["cp/appearance/layout/region_widgets_js"] =

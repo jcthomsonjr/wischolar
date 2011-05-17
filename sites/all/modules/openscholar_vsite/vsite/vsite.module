@@ -61,7 +61,7 @@ function vsite_menu(){
     'file' => 'node.pages.inc',
     'file path' => drupal_get_path('module', 'node'),
     'page arguments' => array(3),
-    'weight' => 0,
+    'weight' => 30,
     'type' => MENU_LOCAL_TASK,
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
@@ -442,8 +442,8 @@ function vsite_form_alter(&$form, $form_state, $form_id){
   switch ($form_id) {
     case $scholar_content_type . '_node_form' :
       //Customize the "Site Information" form
-      if (arg(0) != 'cp')
-        break;
+      if (arg(0) != 'cp') break;
+      
       $form['buttons']['submit']['#value'] = t('Save settings');
       $form['#prefix'] = '<div id = "cp-settings-site">';
       $form['#suffix'] = '</div>';
@@ -477,11 +477,13 @@ function vsite_form_alter(&$form, $form_state, $form_id){
       _spaces_og_make_hidden($form['author']);
       _spaces_og_make_hidden($form['options']);
       unset($form['spaces_preset']['#theme']); //Remove theme
+      
+      //Since we stay on the form this will force a rebuild
+      $form['#redirect'] = $_GET['q'];
 
-
-      if (array_search('_spaces_og_group_node_form_submit', $form['#submit'])) {
-        unset($form['#submit'][array_search('_spaces_og_group_node_form_submit', $form['#submit'])]);
-      } //Don't need this submit form if they are not chaning purl or presets
+      if (array_search('spaces_og_form_group_submit', $form['buttons']['submit']['#submit'])) {
+        unset($form['buttons']['submit']['#submit'][array_search('spaces_og_form_group_submit', $form['buttons']['submit']['#submit'])]);
+      } //Don't need this submit, it just handles redirection
       break;
     default :
       if ($form['#id'] == 'node-form' && (arg(0) . '/' . arg(1) != 'admin/content')) {

@@ -14,6 +14,7 @@ function vsite_menus_menu() {
     'access callback' => 'cp_access_cp',
     'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
     'file' => 'vsite_menus.admin.inc',
+    'weight' => 30,
   );
 
   $items['cp/settings/menus'] = array(
@@ -25,6 +26,7 @@ function vsite_menus_menu() {
     'access callback' => 'cp_access_cp',
     'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
     'file' => 'vsite_menus.admin.inc',
+    'weight' => 10,
   );
 
   $items['cp/settings/menus/add/%ctools_js'] = array(

@@ -37,7 +37,7 @@ function vsite_news_menu() {
     'page callback' => 'vsite_news_activity',
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
-    'weight' => 3,
+    'weight' => 60,
   );
 
   $items['cp/news/activity'] = array(
@@ -48,33 +48,6 @@ function vsite_news_menu() {
     'weight' => 0,
   );
 
-  /*
-  $items['cp/news/feeds'] = array(
-    'title' => 'Latest feeds',
-    'page callback' => 'vsite_news_feeds',
-      'access callback' => 'cp_access_cp',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 3,
-  );
-  */
-
-  /*
-  $items['cp/news/following'] = array(
-    'title' => 'My Friends',
-    'page callback' => 'vsite_news_following',
-      'access callback' => 'cp_access_cp',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 1,
-  );
-
-  $items['cp/news/sites'] = array(
-    'title' => 'Tag Friends',
-    'page callback' => 'vsite_news_sites',
-      'access callback' => 'cp_access_cp',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 2,
-  );
-  */
   $items['cp/news/activity/privacy'] = array(
     'title' => "Activity Privacy Settings",
     'page callback' => 'drupal_get_form',
