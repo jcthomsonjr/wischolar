@@ -547,10 +547,14 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
 	  $s_output  .= "\n".'<div id="node-' . $node->nid . '" class="biblio-entry node node-teaser';
     if (!$node->status) $s_output .= ' node-unpublished';
     $s_output .='"><div class="node-inner">';
+    
+		//Add Vsite Admin links to entry
+	  $links = vsite_get_admin_links('node', $node);
+	  if ($links) {
+	    $s_output .= '<div class="os-links">'.theme('ctools_dropdown', "Admin", $links , false, 'vsite-admin').'</div>';
+	  }
   }
-
-  //$s_output .= '<div class="os-links">' . theme('ctools_dropdown', "Admin", vsite_get_admin_links('node', $node), false, 'vsite-admin') . '</div>';
-
+  
   if (count($node->field_biblio_image[0]) && array_key_exists('filepath',$node->field_biblio_image[0])) {
     $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover_thumb', $node->field_biblio_image[0]['filepath'],'','',NULL,FALSE), $node -> path, array('html' => TRUE)) . '</div>';
   }
