@@ -22,7 +22,7 @@ class vsite_context_reaction_block extends context_reaction_block {
   	$subject_overrides = variable_get('block_subject_customizer',array());
   	
   	if(array_key_exists($block->bid,$subject_overrides)){
-  		$block->subject = $subject_overrides[$block->bid];
+  		$block->subject = check_plain($subject_overrides[$block->bid]);
   	}
   	
   	return $block;
