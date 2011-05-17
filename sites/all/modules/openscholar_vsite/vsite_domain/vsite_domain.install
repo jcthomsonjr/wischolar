@@ -30,7 +30,8 @@ function vsite_domain_update_6001(&$sandbox) {
       db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', 'vsite_domain_name', '%s')", $row->type, $row->sid, serialize($value['vsite_domain']));
 
     }
-    $res[] = 'CP Settings Migrated.';
+    $res[] = array('success' => true,
+                   'query' => 'Vsite Domain Settings Migrated.');
   }
 
   return $res;

@@ -112,7 +112,7 @@ class vsite extends space_og {
    */
   function access_feature($op = 'view', $feature, $account = NULL) {
   	
-    if($feature == 'vsite' && user_access('access content')) return true;
+    if($feature == 'vsite' && $op == 'view' && user_access('access content')) return true;
 
     $access = parent::access_feature($op, $feature, $account);
     
