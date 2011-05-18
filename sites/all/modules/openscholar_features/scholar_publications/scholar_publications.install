@@ -157,3 +157,19 @@ function scholar_publications_update_6006(&$sandbox){
   return $res;
 
 }
+
+function scholar_publications_update_6007(&$sandbox){
+
+  $res = array();
+
+  if (module_exists('bkn')){
+    drupal_uninstall_module("bkn");
+    $res[] = array(
+      'success' => true,
+      'query' => 'Uninstalled BKN Module',
+    );
+  }
+
+  return $res;
+
+}
