@@ -94,14 +94,6 @@ function os_user_default_permissions() {
     ),
   );
 
-  // Exported permission: administer all signups
-  $permissions['administer all signups'] = array(
-    'name' => 'administer all signups',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
   // Exported permission: administer biblio
   $permissions['administer biblio'] = array(
     'name' => 'administer biblio',
@@ -352,16 +344,6 @@ function os_user_default_permissions() {
       '3' => 'manager',
       '4' => 'scholar admin',
       '5' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: create url aliases
-  $permissions['create url aliases'] = array(
-    'name' => 'create url aliases',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
     ),
   );
 
