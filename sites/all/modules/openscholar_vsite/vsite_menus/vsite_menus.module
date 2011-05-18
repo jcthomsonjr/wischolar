@@ -176,11 +176,11 @@ function vsite_menus_get_feature_menu_item($s_feature, $vsite = false){
   if(!$vsite && !($vsite = vsite_get_vsite())) return array();
 
   $link_map = features_get_component_map('menu_links');
-  
+
   $a_return = array();
   foreach ($link_map as $s_key => $a_features){
   	if(!in_array($s_feature,$a_features)) continue;
-  	
+
   	list($s_def_menu, $s_path) = explode(':',$s_key,2);
   	if($a_menu = vsite_menus_get_menu_item($s_path,$vsite)){
   		$a_return[] = $a_menu;
@@ -234,23 +234,27 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
     }
 
     $form['vsite_menu']['#item'] = $item;
+    // Generate a list of possible menus
+    $options = variable_get('scholar_site_menus', array());
+
+    $default = ($item['menu_name'] && !empty($item['link_title']))?$item['menu_name']:'none';
+    $form['vsite_menu']['menu_name'] = array(
+      '#type' => 'radios',
+      '#title' => t('Choose a Menu'),
+      '#default_value' => $default,
+      '#options' => $options + array('none' => 'Not in a Menu'),
+      '#description' => t("Select the menu where you would like this link to appear. Some menu's may not show on your page if they are not included in your ".l("Page Layout",'cp/appearance/layout',array('attributes' => array('target' => '_blank')))."."),
+      '#attributes' => array('class' => 'menu-title-select'),
+    );
 
     $form['vsite_menu']['link_title'] = array('#type' => 'textfield',
       '#title' => t('Link Title'),
       '#default_value' => $item['link_title'],
       '#description' => t("The exact wording of how you would like the link to appear in your menu. Leave blank if you do not wish to add this post to any menu."),
       '#required' => FALSE,
-    );
-    // Generate a list of possible menus
-    $options = variable_get('scholar_site_menus', FALSE);
-    $default = ($item['menu_name'])?$item['menu_name']:current(array_keys($options));
-    $form['vsite_menu']['menu_name'] = array(
-      '#type' => 'radios',
-      '#title' => t('Choose a Menu'),
-      '#default_value' => $default,
-      '#options' => $options,
-      '#description' => t("Select the menu where you would like this link to appear. Some menu's may not show on your page if they are not included in your ".l("Page Layout",'cp/appearance/layout',array('attributes' => array('target' => '_blank')))."."),
-      '#attributes' => array('class' => 'menu-title-select'),
+      '#process' => array('ctools_dependent_process'),
+      '#dependency' => array('radio:vsite_menu[menu_name]' => array_keys($options)),
+      '#element_validate' => array('vsite_menus_link_title_validate'),
     );
 
     $form['vsite_menu']['weight'] = array(
@@ -317,7 +321,13 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
         }
       }
   }
-  
+
+}
+
+function vsite_menus_link_title_validate($element, &$form_state) {
+  if ($form_state['values']['vsite_menu']['menu_name'] != 'none' && empty($form_state['values']['vsite_menu']['link_title'])) {
+    form_set_error('link_title', 'A link in a menu needs a title! Set the title or set the menu to Not in a Menu.');
+  }
 }
 
 
