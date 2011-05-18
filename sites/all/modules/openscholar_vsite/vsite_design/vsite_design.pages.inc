@@ -77,7 +77,8 @@ function vsite_design_theme_picker_form($form_state) {
     '#tree' => TRUE
   );
 
-  $form['#prefix'] = theme('vsite_design_theme_subnav', count($enabled));
+  $help ='<div style="float: right" id="#helpbutton">' . theme('advanced_help_topic', 'vsitehelp', 'Chosing-your-Overall-Theme') .'</div>';
+  $form['#prefix'] = theme('vsite_design_theme_subnav', count($enabled)) . $help;
 
   $form['#validate'][] = 'vsite_design_theme_picker_form_validate';
   $form['#submit'][] = 'vsite_design_theme_picker_form_submit';

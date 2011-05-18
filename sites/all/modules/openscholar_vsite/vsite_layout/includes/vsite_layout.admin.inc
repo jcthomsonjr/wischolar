@@ -254,7 +254,7 @@ function vsite_layout_settings_form($form_state){
     '#title' => t('Widget layout'),
     '#default_value' => $s_page_type,
     '#options' => $a_page_types,
-    '#description' => t('Customize layout for your front page or any specific section of your site. "Default settings" cover everything else.'),
+    '#description' => t('Customize layout for your front page or any specific section of your site. "Default settings" cover everything else.<br /><br />'),
     '#ahah' => array(
           'event' => 'go_ahah',
           'path' => 'cp/appearance/layout/region_widgets_js',
