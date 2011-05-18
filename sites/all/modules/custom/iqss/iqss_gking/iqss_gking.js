@@ -2,6 +2,8 @@
 Drupal.behaviors.iqss_gking = function() {
 
   iqss_gking_research_group_tabify();
+  
+  iqss_gking_taxonomy_alter_sort_links();
 
   $('.front #block-iqss_gking-areas_of_research .col dt span').hover(function() {
     //Rem 1 for Sticky
@@ -58,4 +60,10 @@ function iqss_gking_research_group_tabify(){
 
 	$("#content").tabs({ fx: { opacity: 'toggle' }, cache: true, load: function(event, ui) { Drupal.behaviors.CToolsDropdown(); } });
 
+}
+
+function iqss_gking_taxonomy_alter_sort_links(){
+	if(!$('body.page-taxonomy').length) return;
+	
+	$('a.term-admin-sort-link').click(function(){ window.scroll(0,0); })
 }
