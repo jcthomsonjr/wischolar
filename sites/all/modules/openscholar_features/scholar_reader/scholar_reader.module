@@ -88,6 +88,9 @@ function scholar_reader_form_alter(&$form, $form_state, $form_id) {
   // Content type form.
   if ($form_id == 'feed_node_form' && $form['type']['#value'] == 'feed') {
     $form['#validate'][] = 'scholar_reader_feed_validate';
+    
+    if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
+    $form['#vertical_tabs']['feeds'] = 0; //Disable vert. tabs
   }
 }
 

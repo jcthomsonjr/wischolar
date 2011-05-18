@@ -27,12 +27,14 @@ function vsite_content_types($privacy = array(1), $vsite = NULL){
     $features_types = features_get_component_map('node');
 
     $site_features = variable_get('spaces_features', array());
-    foreach ( $features_types as $type => $feature ) {
-      if(!count($feature)) continue;
-      $feature = reset($feature);
-      if (isset($site_features[$feature]) && in_array(( int ) $site_features[$feature], $privacy)) {
-        $result[$type] = $all_types[$type];
-      }
+    foreach ( $features_types as $type => $features ) {
+      if(!count($features)) continue;
+	    
+      foreach ($features as $feature){
+	      if (isset($site_features[$feature]) && in_array(( int ) $site_features[$feature], $privacy)) {
+	        $result[$type] = $all_types[$type];
+	      }
+      }//Since the component map can pickup disabled features search through each
     }
   }
   return $result;
