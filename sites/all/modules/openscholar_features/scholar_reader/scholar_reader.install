@@ -75,3 +75,22 @@ function scholar_reader_update_6001(&$sandbox){
   return $res;
 
 }
+
+function scholar_reader_update_6002(&$sandbox){
+	
+	if (drupal_get_installed_schema_version("feeds") < 6010) {
+		return array("#abort" => array('success' => FALSE, 'query' => 'Waiting on the feeds module to run updates, please run update again.'));
+	}
+	
+	if (module_exists('feeds_news')) drupal_uninstall_module("feeds_news");
+	
+	if (module_exists('feeds_import')) drupal_uninstall_module("feeds_import");
+	if (module_exists('feeds_fast_news')) drupal_uninstall_module("feeds_fast_news");
+  
+	$res[] = array(
+    'success' => true,
+    'query' => 'Configured scholar_reader to work with the new version of Feeds',
+  );
+    
+    return $res;
+}
