@@ -223,7 +223,7 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
       '#tree' => TRUE,
       '#weight' => -2,
       '#attributes' => array('class' => 'menu-item-form'),
-  	  '#description' => "Add a link to this post in one of your site's menus.  First add a link title, and then specify the menu.",
+  	  '#description' => "Add a link to this post in one of your site's menus.  Specify a menu for the new link and then enter the link's title in the field that appears.",
     );
     $item = $form['#node']->vsite_menu;
 
