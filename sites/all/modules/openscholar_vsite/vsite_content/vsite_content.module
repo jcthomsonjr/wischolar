@@ -15,7 +15,7 @@ function vsite_content_menu() {
     'type' => MENU_LOCAL_TASK,
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
-    'weight' => 99,
+    'weight' => 30,
   );
   
   //Add local task for cp content
@@ -26,7 +26,7 @@ function vsite_content_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
-    'weight' => 110,
+    'weight' => 10,
   );
   
   return $items;

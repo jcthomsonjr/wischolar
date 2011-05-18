@@ -402,7 +402,7 @@ function vsite_comments_views_default_views() {
     'type' => 'tab',
     'title' => 'Comments',
     'description' => 'Comment management',
-    'weight' => '0',
+    'weight' => '20',
     'name' => 'cp',
   ));
   $handler = $view->new_display('block', 'Block', 'block');
