@@ -438,7 +438,7 @@ function vsite_content_views_default_views() {
     'type' => 'normal',
     'title' => 'Content',
     'description' => 'Content',
-    'weight' => '2',
+    'weight' => '40',
     'name' => 'cp',
   ));
   $handler->override_option('tab_options', array(
