@@ -5,7 +5,7 @@ if (Drupal.jsEnabled) {
 
     $(".item-theme-picker:first").addClass('active');
     $('div#prev,div#next,.theme_subnav li').cpSlidingContainer({
-        containerW: 600,
+        containerW: 576,
         mainListSelector:'ul.theme-picker',
         listItemClass: 'item-theme-picker',
         navClass:'theme_subnav'
