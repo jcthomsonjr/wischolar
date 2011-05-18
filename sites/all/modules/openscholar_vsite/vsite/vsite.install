@@ -102,7 +102,7 @@ function vsite_update_6005(&$sandbox) {
     $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
     return $res;
   }
-  
+
   if (db_table_exists('spaces_settings')) {
     $result = db_query("SELECT * FROM {spaces_settings} WHERE id = 'generic'");
     while ($row = db_fetch_object($result)) {
@@ -126,7 +126,7 @@ function vsite_update_6006(&$sandbox) {
   if (module_exists('strongarm')) {
     //this will revert any inadvertant strongarm values that have been saved in the database, this is
     //needed since the way strongarm works has changed
-  	
+
     $vars = strongarm_vars_load(true,true);
     foreach ($vars as $name => $variable) {
       $default = ctools_get_default_object('variable', $name);
@@ -135,7 +135,7 @@ function vsite_update_6006(&$sandbox) {
       }
     }
     strongarm_flush_caches();
-    
+
     $res[] = array(
       'success' => true,
       'query' => 'Strongarm Settings Migrated'
@@ -207,13 +207,13 @@ function vsite_update_6008(&$sandbox){
 function vsite_update_6009(&$sandbox){
 
   $res = array();
-  
+
   $result = db_query("SELECT name  FROM {variable} WHERE `name` LIKE 'itweak_upload_thumbnail_link%' AND value = 's:18:\"lightbox2slideshow\";'");
 
   while ($var = db_result($result)){
   	variable_set($var,'shadowboxgrouped');
   }
-  
+
   $res[] = array(
    'success' => true,
    'query' => 'Transitioned content types from lightbox to shadowbox',
@@ -230,14 +230,14 @@ function vsite_update_6009(&$sandbox){
 function vsite_update_6010(&$sandbox){
 
   $res = array();
-  
+
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
   $result = db_query("SELECT n.nid as nid  FROM {node} n INNER JOIN {url_alias} ua ON ua.src = CONCAT('node/',n.nid) WHERE n.type = '%s' ",$scholar_content_type);
 
   while ($nid = db_result($result)){
     db_query("DELETE FROM {url_alias} WHERE src = 'node/%s' ",$nid);
   }
-  
+
   $res[] = array(
    'success' => true,
    'query' => 'Removed aliases directly to og nodes',
@@ -279,7 +279,7 @@ function vsite_update_6012(&$sandbox){
   module_rebuild_cache();
 
   $modules = array( 'conditional_styles', 'nfcbiblio', 'confirm_popup', 'os_wysiwyg');
-  
+
   foreach ($modules as $mod) {
 	  if(!module_exists($mod)){
 	    include_once('includes/install.inc');
@@ -290,7 +290,7 @@ function vsite_update_6012(&$sandbox){
 	  'success' => true,
 		'query' => 'Installed modules: ' . implode(', ', $modules),
 	);
-  
+
   return $res;
 
 }
@@ -305,7 +305,7 @@ function vsite_update_6013(&$sandbox){
   module_rebuild_cache();
 
   $modules = array( 'creativecommons', 'oembedcore', 'oembed', 'oembedembedly',);
-  
+
   foreach ($modules as $mod) {
 	  if(!module_exists($mod)){
 	    include_once('includes/install.inc');
@@ -316,11 +316,11 @@ function vsite_update_6013(&$sandbox){
 	  'success' => true,
 		'query' => 'Installed modules: ' . implode(', ', $modules),
 	);
-  
+
   return $res;
 
 }
- 
+
 /*
  * hook_update_N
  * installs several modules.
@@ -330,8 +330,8 @@ function vsite_update_6014(&$sandbox){
   $res = array();
   module_rebuild_cache();
 
-  $modules = array('shorten', 'formcolumns', 'vsite_shields', ); 
-  
+  $modules = array('shorten', 'formcolumns', 'vsite_shields', );
+
   foreach ($modules as $mod) {
 	  if(!module_exists($mod)){
 	    include_once('includes/install.inc');
@@ -342,7 +342,33 @@ function vsite_update_6014(&$sandbox){
 	  'success' => true,
 		'query' => 'Installed modules: ' . implode(', ', $modules),
 	);
-  
+
+  return $res;
+
+}
+
+/*
+ * hook_update_N
+ * installs several modules.
+ */
+function vsite_update_6015(&$sandbox){
+
+  $res = array();
+  module_rebuild_cache();
+
+  $modules = array('vsite_cc');
+
+  foreach ($modules as $mod) {
+	  if(!module_exists($mod)){
+	    include_once('includes/install.inc');
+	    drupal_install_modules(array($mod));
+	  }
+  }
+	$res[] = array(
+	  'success' => true,
+		'query' => 'Installed modules: ' . implode(', ', $modules),
+	);
+
   return $res;
 
 }
