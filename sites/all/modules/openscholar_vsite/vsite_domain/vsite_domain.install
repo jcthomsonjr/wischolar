@@ -11,7 +11,7 @@ function vsite_domain_enable() {
 
 function vsite_domain_install() {
   //Set the default domain typically the one you are installing with, otherwise you will need to change this in the settings
-  variable_set('purl_base_domain', $_SERVER['HTTP_HOST']);
+  variable_set('purl_base_domain','http://'.str_replace('http://','',$_SERVER['HTTP_HOST']));
 }
 
 function vsite_domain_update_6001(&$sandbox) {

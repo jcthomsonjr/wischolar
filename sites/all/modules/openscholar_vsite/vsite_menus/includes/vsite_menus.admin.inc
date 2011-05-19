@@ -239,7 +239,7 @@ function vsite_menus_settings_form_validate(&$form, &$form_state) {
   		$form_state['values']['new_menu_url'] = drupal_get_normal_path(ltrim($form_state['values']['new_menu_url'],"/"));
   		
   		$item = menu_get_item($form_state['values']['new_menu_url']);
-  		if($item){
+  		if($item && $item['access']){
   			$form_state['values']['new_menu_router_path'] = $item['path'];
   		}
   	}
