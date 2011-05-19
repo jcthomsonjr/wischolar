@@ -174,7 +174,7 @@ function _confirm_popup_modal_settings() {
   static $init = false;
   if (!$init) {
     // TODO: refactor so it only loops through all the links in a page once.
-    drupal_add_js(drupal_get_path('module', 'confirm_popup'),'module');
+    drupal_add_js(drupal_get_path('module', 'confirm_popup').'/confirm_popup.js','module');
     $init = true;
   }
 }
