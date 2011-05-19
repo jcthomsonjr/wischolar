@@ -54,32 +54,22 @@ function vsite_menus_settings_form($form_state){
     }
 
     $hidden_menus[$path] = false;
-    $frags = explode(':', $key, 2);
-    if (count($frags) == 1) {
-      // this link isn't in a menu already
+    if (!isset($link['menu_name']) || !isset($a_site_menus[$link['menu_name']])) {
+      // this link isn't in a menu already, or it is not a site menu
       $link['menu_name'] = 'none';
-      $menus[$frags[0]] = $link;
+      $menus['none:'.$link['link_path']] = $link;
     }
     else {
       // this link is in a menu.
-      // if it's in one of the accepted menus, put it there
-      // otherwise, put it in none
-
-      if (isset($a_site_menus[$frags[0]])) {
-        $link['menu_name'] = $frags[0];
-        $menus[$frags[1]] = $link;
-      }
-      else {
-        $link['menu_name'] = 'none';
-        $menus[$frags[1]] = $link;
-      }
+      // and it's in one of the accepted menus
+      $menus[$key] = $link;
     }
   }
   
   $hidden_menus = array_diff($hidden_menus,array(false));
   foreach ($hidden_menus as $path => $link) {
   	$link['menu_name'] = 'none';
-  	$menus[$path] = $link;
+  	$menus['none:'.$link['link_path']] = $link;
   }
 
   foreach ($menus as $key => $link) {
@@ -110,6 +100,10 @@ function vsite_menus_settings_form($form_state){
       'region-old' => array(
         '#type' => 'hidden',
         '#value' => $link['menu_name'],
+      ),
+      'link_path' => array(
+        '#type' => 'value',
+        '#value' => $link['link_path'],
       ),
     );
   }
@@ -200,32 +194,6 @@ function vsite_menus_settings_form_after_build($form, &$form_state) {
   //CSS To be included with the form
   drupal_add_js(drupal_get_path('module', 'nodeformcols') . '/js/nodeformcols.js');
   drupal_add_css(drupal_get_path('module', 'vsite_menus') . '/theme/vsite_menus.css');
- /* not using it, but save it for later
-  * drupal_add_js('
-  	Drupal.behaviors.VsiteMenus = function() {
-  		$("#vsite-menus-settings-form fieldset").hide();
-  		$("a.vsite-menus-new-menu").click(function() {
-  			Drupal.CTools.Modal.show();
-  			$("#modal-title").html($("#vsite-menus-settings-form fieldset legend").html());
-  			$("#modal-content").html($("#vsite-menus-settings-form fieldset").html());
-
-  			$("#modal-content").append($("#edit-submit").clone().attr("id", "edit-submit-modal").attr("value", "Add New Link"));
-  			$("#edit-submit-modal").click(function() {
-  				$("#modal-content .form-text").each(function () {
-  					$("#vsite-menus-settings-form #"+$(this).attr("id")).val($(this).val());
-  				});
-  				$("#vsite-menus-settings-form #edit-new-menu-region").val($("#modal-content #edit-new-menu-region").val());
-  				$("#vsite-menus-settings-form").submit();
-  			});
-
-  			$("#modal-content").append("<input type=\"button\" id=\"edit-cancel\" class=\"form-button\" value=\"Cancel\">");
-  			$("#edit-cancel").click(function() {
-  				Drupal.CTools.Modal.dismiss();
-  			});
-  			Drupal.attachBehaviors();
-  			return false;
-  		});
-  	}', 'inline');*/
 
   $regions = _vsite_menus_get_menus();    // this line is why I needed to copy it
   foreach ($regions as $region => $title) {
@@ -252,18 +220,32 @@ function vsite_menus_settings_form_reset($form, &$form_state) {
 
 function vsite_menus_settings_form_validate(&$form, &$form_state) {
   if ($form_state['values']['new_menu_title'] XOR $form_state['values']['new_menu_url']) {
-    // if one or the other is set
+    // if only one is set
     form_set_error($form_state['values']['new_menu_title']?'new_menu_url':'new_menu_title', t('Missing URL or Title for new link!'));
   }
   elseif ($form_state['values']['new_menu_title'] && $form_state['values']['new_menu_url']) {
-    $faux_link = array(
-      'link_path' => $form_state['values']['new_menu_url'],
-      'link_title' => $form_state['values']['new_menu_title'],
-    );
-    if (!menu_valid_path($faux_link)) {
-      // the link isn't valid.
-      form_set_error('new_menu_url', t('The URL is not valid'));
-    }
+  	global $base_url;
+  	$domain = variable_get('vsite_domain_name',false);
+  	if(!$domain) $domain = str_replace("http://",'',variable_get('purl_base_domain', $base_url));
+  	
+  	$a_path_info = parse_url($form_state['values']['new_menu_url']);
+  	if($a_path_info['host'] == $domain){
+  		$form_state['values']['new_menu_url'] = $a_path_info['path'];
+  	}//Strip off the domain if this is a local path
+  	
+  	if(menu_path_is_external($form_state['values']['new_menu_url'])){
+  	  $form_state['values']['new_menu_router_path'] = $form_state['values']['new_menu_url'];
+  	}else{
+  		$form_state['values']['new_menu_url'] = drupal_get_normal_path(ltrim($form_state['values']['new_menu_url'],"/"));
+  		
+  		$item = menu_get_item($form_state['values']['new_menu_url']);
+  		if($item){
+  			$form_state['values']['new_menu_router_path'] = $item['path'];
+  		}
+  	}
+
+    // the link isn't valid.
+    if(!isset($form_state['values']['new_menu_router_path'])) form_set_error('new_menu_url', t('The URL is not valid'));
   }
 }
 
@@ -282,28 +264,27 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
 
     // set some vars for readability
     $region_old = $data['region-old'];
-    $menu_old_key = $region_old.':'.$key;
     $region = $data['region'];
-    $menu_key = $region.':'.$key;
+    $menu_key = $region.':'.$data['link_path'];
 
     // the underlying structure is like this:
     // $menus['features']['features:bio']
-    // it requires a bit of mess here
 
-    $link =& $menus[$region_old][$menu_old_key];
-
+    $link =& $menus[$region_old][$key];
+    
     if ($region_old != $region) {
       // the regions are different.
       // move the link into the new region
       $menus[$region][$menu_key] =& $link;
       // and remove it from the old
-      unset($menus[$region_old][$menu_old_key]);
+      unset($menus[$region_old][$key]);
     }
 
     $link['link_title'] = $data['name'];
     $link['menu_name'] = $data['region'];
     $link['weight'] = $data['weight'];
-
+    $link['key'] = $menu_key;
+ 
     if ($link['user_created'] && $region == 'none' || !isset($link['link_path'])) {
       // we're deleting the link
       unset($menus[$region][$menu_key]);
@@ -312,11 +293,13 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
   }
 
   if ($form_state['values']['new_menu_title'] && $form_state['values']['new_menu_url']) {
+  	
     // add a new menu
     $new_link = array(
       'menu_name' => $form_state['values']['new_menu_region'],
       'link_path' => $form_state['values']['new_menu_url'],
-      'router_path' => $form_state['values']['new_menu_url'],
+      'router_path' => $form_state['values']['new_menu_router_path'],
+      'key' => $form_state['values']['new_menu_region'].':'.$form_state['values']['new_menu_url'],
       'link_title' => check_plain($form_state['values']['new_menu_title']),
       'options' => array(),
       'module' => 'system',
@@ -324,12 +307,11 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
       'external' => menu_path_is_external($form_state['values']['new_menu_url'])?'1':'0',
       'has_children' => '0',
       'expanded' => '0',
-      'weight' => '0',
       'user_created' => TRUE,
     );
-
-    $new_menu_key = $new_link['menu_name'].':'.$new_link['link_path'];
-    $menus[$new_link['menu_name']][$new_menu_key] = $new_link;
+    $new_link['weight'] = count($menus[$new_link['menu_name']]) + 10;//Add the new link to the end of the list
+    
+    $menus[$new_link['menu_name']][$new_link['key']] = $new_link;
     drupal_set_message(t("New Link Added."), 'status', false);
   }
 
