@@ -555,8 +555,10 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
 	  }
   }
   
-  if (count($node->field_biblio_image[0]) && array_key_exists('filepath',$node->field_biblio_image[0])) {
-    $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover_thumb', $node->field_biblio_image[0]['filepath'],'','',NULL,FALSE), $node -> path, array('html' => TRUE)) . '</div>';
+  $book_images = filefield_get_node_files($node, 'field_biblio_image');
+  if (count($book_images)) {
+  	$book_image = reset($book_images);
+    $s_output .= '<div class="flL">' . l(theme('imagecache','book_cover_thumb', $book_image['filepath'],'','',NULL,FALSE), $node -> path, array('html' => TRUE)) . '</div>';
   }
 
   if (strlen($node->biblio_teaser_prefix)) {
