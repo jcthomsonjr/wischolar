@@ -134,7 +134,7 @@ function os_strongarm_alter(&$vars){
     $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
     $strongarm->api_version = 1;
     $strongarm->name = "itweak_upload_thumbnail_link_node_" . $type->type;
-    $strongarm->value = 'lightbox2slideshow';
+    $strongarm->value = 'shadowboxgrouped';
     $strongarm->export_module = "viste";
     $a_new_settings["itweak_upload_thumbnail_link_node_" . $type->type] = $strongarm;
     
@@ -142,7 +142,7 @@ function os_strongarm_alter(&$vars){
     $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
     $strongarm->api_version = 1;
     $strongarm->name = "itweak_upload_thumbnail_link_teaser_" . $type->type;
-    $strongarm->value = 'lightbox2slideshow';
+    $strongarm->value = 'shadowboxgrouped';
     $strongarm->export_module = "viste";
     $a_new_settings["itweak_upload_thumbnail_link_teaser_" . $type->type] = $strongarm;
     
