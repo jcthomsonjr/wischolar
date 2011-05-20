@@ -345,6 +345,9 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     }
   }
 
+  if (vsite_get_vsite() && isset($form['#node']) && $form_id == $form['#node']->type .'_node_form') {
+    drupal_add_js(drupal_get_path('module','cp')."/theme/Drupal.behaviors.cpNodeForm.js");
+  }//If we are in a vsite and on a node for apply cp node form javascript
 }
 
 /**
@@ -572,58 +575,6 @@ function cp_menu_link_alter(&$item, $menu){
   }
 }
 
-/**
- * Overides for the confirm form
- *
- *//*
-function cp_confirm_override(&$form, &$form_state, $form_id){
-  if (cp_is_confirm_overide_page()) {
-    $_POST['form_id'] = $form_id;
-    $form_state['submitted'] = TRUE;
-    unset($form['#token']);
-  } //Set the form values to fake a confirm.
-}*/
-
-/**
- * Return true if this page is a confirm overide page
- *
- * @param $page (current page if NULL)
- * @return array
- *//*
-function cp_is_confirm_overide_page($page = NULL){
-
-  if (! $_POST['js'] || $page) {
-    //Just check and return as usual
-    $a_router_item = menu_get_item($page);
-    return array_key_exists($a_router_item['path'], cp_get_confirm_form_overides());
-  }
-  else {
-    $a_return = array();
-    $vsite = vsite_get_vsite();
-    if (count($_POST['paths'])) {
-      foreach ( $_POST['paths'] as $path ) {
-
-        //Get the correct path and remove the site name from the front
-        if (strpos($path, 'http') !== 0)
-          $path = "http://hostname" . $path;
-        $a_path_parts = @parse_url($path);
-        if (is_array($a_path_parts)) {
-          $s_search_path = (strpos($a_path_parts['path'], '/' . $vsite->group->purl) == 0) ? substr($a_path_parts['path'], strlen($vsite->group->purl) + 2) : $a_path_parts['path'];
-
-          $a_router_item = menu_get_item($s_search_path);
-          $a_return[$a_path_parts['path']] = ($a_router_item && array_key_exists($a_router_item['path'], cp_get_confirm_form_overides()));
-        }
-      } //Check each path
-    }
-
-    //return a json object
-    print drupal_json(array(
-      'overideable_settings' => $a_return
-    ));
-    exit();
-  } //Was this called by javascript?
-}
-*/
 /**
  * Confirm that a message has been seen for a vsite
  */
