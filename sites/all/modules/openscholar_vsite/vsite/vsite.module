@@ -88,21 +88,6 @@ function vsite_include($inc_files){
 }
 
 /**
- * hook link_alter
- * Move the admin links (above) at the end of the node links
- */
-function vsite_link_alter(&$links, $node){
-  if (isset($links['vsite-admin'])) {
-    $old['vsite-admin'] = $links['vsite-admin'];
-    unset($links['vsite-admin']);
-    $links = array_merge($old, $links);
-  }
-
-  if (isset($links['node_read_more']))
-    unset($links['node_read_more']);
-}
-
-/**
  * Implementation of hook_theme().
  */
 function vsite_theme($cache, $type, $theme, $path){
