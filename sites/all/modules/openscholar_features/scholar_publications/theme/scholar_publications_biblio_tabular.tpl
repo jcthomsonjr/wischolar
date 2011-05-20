@@ -106,8 +106,10 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
     );
   }
   $output = '<div id="biblio-node">';
-   if (count($node->field_biblio_image[0])) {
-    $output .= '<div class="flL">' . theme('imagecache','book_cover', $node->field_biblio_image[0]['filepath']) . '</div>';
+  $book_images = filefield_get_node_files($node, 'field_biblio_image');
+   if (count($book_images)) {
+   	$book_image = reset($book_images);
+    $output .= '<div class="flL">' . theme('imagecache','book_cover', $book_image['filepath']) . '</div>';
    }
   $output .= filter_xss($node->biblio_coins, array('span'));
   $output .= $citation;
