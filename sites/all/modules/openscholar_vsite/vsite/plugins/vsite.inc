@@ -193,6 +193,7 @@ class vsite extends space_og {
 
     $more = array(
       'user',
+      'user/*',
       'users/*',
       'private_site',
       'help/*',
