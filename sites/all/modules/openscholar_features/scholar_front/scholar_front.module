@@ -198,3 +198,17 @@ function scholar_front_form_alter(&$form, $form_state, $form_id) {
     break;
   }
 }
+
+/**
+ * Add the context links for the front page
+ */
+function scholar_front_context_links_alter(&$links){
+  $front_context = context_get('context', 'openscholar-feature-front');
+  if ($front_context) {
+  	vsite_include('vsiteapi');
+    $items = vsite_create_links();
+    
+    //Add all links if we are on the front page
+    $links = array_merge($items, $links);
+  }
+}

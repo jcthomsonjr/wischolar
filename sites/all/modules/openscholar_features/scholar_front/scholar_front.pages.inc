@@ -31,6 +31,8 @@ function scholar_front_settings($form_state) {
 
   if (($bio_node = content_profile_load("bio", $vsite->group->uid)) && $spaces_features['scholar_biocv']){
     $options["node/".$bio_node->nid] = t('Your bio page');
+  }elseif ($spaces_features['scholar_biocv']){
+  	$options["create_bio"] = t('Your bio page');
   }
 
   $def_html_node = false;
@@ -93,6 +95,33 @@ function scholar_front_settings($form_state) {
     '#dependency' => array(
       'edit-site-frontpage' => array("node/".$bio_node->nid, "html", "path")),
   );
+  
+  $bio_create_link = l(t('Create'), "node/add/bio", array('query' => array('action' => 'setfront')));
+       
+  //If they have selected bio/node as feature
+  $form['scholar_front_create_bio'] = array(
+    '#prefix' => '<div id="edit-scholar-front-create-bio-wrapper">',  // needed by ctools
+    '#suffix' => '</div>',
+    '#type' => 'fieldset',
+    '#title' => "Create a Bio",
+    '#input' =>true,
+    '#process' => array('ctools_dependent_process'),
+    '#dependency' => array('edit-site-frontpage' => array("create_bio")),
+    '#collapsable' => false,
+  );
+  $form['scholar_front_create_bio']['link']['#value'] = "<p>You dont have a bio yet. $bio_create_link one now.</p>";
+  
+  $form['scholar_front_hand_pick_help'] = array(
+    '#prefix' => '<div id="edit-scholar-front-hand-pick-help-wrapper">',  // needed by ctools
+    '#suffix' => '</div>',
+    '#type' => 'fieldset',
+    '#title' => "Using: Hand Picked Content",
+    '#input' =>true,
+    '#process' => array('ctools_dependent_process'),
+    '#dependency' => array('edit-site-frontpage' => array("scholar_front/flag")),
+    '#collapsable' => false,
+  );
+  $form['scholar_front_hand_pick_help']['link']['#value'] = "<p>When you save or edit a post select \"Promote to front page\" to include it on the front of your site.</p>";
 
   $options = vsite_content_types();
   drupal_alter('vsite_content_types', $options);
@@ -267,10 +296,6 @@ function _scholar_front_admin_frontpage(){
       </div>
       {$result}
 MESSAGE;
-
-      vsite_include('vsiteapi');
-      $items = vsite_create_links();
-      $result = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links').$result;
     }
 
     return $result;

@@ -369,8 +369,14 @@ function vsite_preprocess_page(&$vars){
   //$vars['messages'] = $vars['messages'].kprint_r(context_active_contexts(), TRUE);
 
   //Add a div around the messages block
-  if (strlen($vars['messages']))
-    $vars['messages'] = "<div id= \"messages\">" . $vars['messages'] . "</div>";
+  if (strlen($vars['messages'])) $vars['messages'] = "<div id= \"messages\">" . $vars['messages'] . "</div>";
+  
+  if (($context_links = context_links()) && count($context_links) > 1 && context_get('context', 'vsite-section-public')) {
+    $vars['context_links'] = theme('ctools_dropdown', t('add new'), $context_links, FALSE, 'context-links');
+  }elseif(strlen($vars['context_links'])){
+  	$vars['context_links'] = '<div class="context-links">'.$vars['context_links'].'</div>';
+  }
+  
 }
 
 /**
