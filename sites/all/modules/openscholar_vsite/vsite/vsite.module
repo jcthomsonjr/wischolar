@@ -150,18 +150,18 @@ function _vsite_feed_content_types_filter(&$view){
   }
   
   $v = array(
-    'operator' => 'in', 
-    'value' => $options, 
-    'group' => '0', 
-    'exposed' => FALSE, 
+    'operator' => 'in',
+    'value' => $options,
+    'group' => '0',
+    'exposed' => FALSE,
     'expose' => array(
-      'operator' => FALSE, 
-      'label' => '' 
-    ), 
-    'id' => 'type', 
-    'table' => 'node', 
-    'field' => 'type', 
-    'relationship' => 'none' 
+      'operator' => FALSE,
+      'label' => ''
+    ),
+    'id' => 'type',
+    'table' => 'node',
+    'field' => 'type',
+    'relationship' => 'none'
   );
   $view->display_handler->set_option('title', $vsite->group->title);
   $view->display_handler->set_option('style_options', array('description' => $vsite->group->og_description));
@@ -331,18 +331,6 @@ function vsite_get_vsite_by_node($node){
 }
 
 /**
- * API function for testing wether we are on the front page of a vsite
- * TODO there are different ways of doing this
- * - as a full context "context_vsite_home" which has blocks etc
- * - set context in hook init and then get it here
- */
-function vsite_is_front(){
-  $vsite = vsite_get_vsite();
-  $active_menu = menu_get_item();
-  return ($vsite && $active_menu['path'] == 'home') ? TRUE : FALSE;
-}
-
-/**
  * Implementation of hook_preprocess_node()
  */
 function vsite_preprocess_node(&$vars){
@@ -383,7 +371,7 @@ function vsite_preprocess_page(&$vars){
   $vsite = vsite_get_vsite();
   if ($vsite) {
     $vsite_title = $vsite->group->title;
-    if (vsite_is_front()) {
+    if (drupal_is_front_page()) {
       $head_title = array(
         $vsite_title
       );
