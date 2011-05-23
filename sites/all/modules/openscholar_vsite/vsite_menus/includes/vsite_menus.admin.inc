@@ -22,6 +22,11 @@ function vsite_menus_settings_form($form_state){
   $space = vsite_get_vsite();
   if(!$space) return array();
 
+  $form['help_text'] = array(
+    '#type' => 'markup',
+    '#value' => '<div class="help-text">Drag links to order them and move them between menus.</div>',
+  );
+
   // just do have distinct id for each setting form
   $form['#prefix'] = '<div id = "cp-settings-menus">';
   $form['#suffix'] = '</div>';
@@ -42,11 +47,11 @@ function vsite_menus_settings_form($form_state){
   $hidden_menus = array();
   foreach ($all_initial as $key => $link) {
     $path = $link['link_path'];
-    
+
     if (!$link['external']) {
       $menu = menu_get_item($path);
       if (!$menu['access']) continue;
-      
+
       if($link['hidden'] && !array_key_exists($path,$hidden_menus)){
       	$hidden_menus[$path] = $link;
       	continue;
@@ -65,7 +70,7 @@ function vsite_menus_settings_form($form_state){
       $menus[$key] = $link;
     }
   }
-  
+
   $hidden_menus = array_diff($hidden_menus,array(false));
   foreach ($hidden_menus as $path => $link) {
   	$link['menu_name'] = 'none';
@@ -199,7 +204,7 @@ function vsite_menus_settings_form_after_build($form, &$form_state) {
   foreach ($regions as $region => $title) {
     if (is_array($form['conf'][$region])) {
       uasort($form['conf'][$region], "element_sort");
-      drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
+      drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region);
       drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
     }
   }
@@ -227,17 +232,17 @@ function vsite_menus_settings_form_validate(&$form, &$form_state) {
   	global $base_url;
   	$domain = variable_get('vsite_domain_name',false);
   	if(!$domain) $domain = str_replace("http://",'',variable_get('purl_base_domain', $base_url));
-  	
+
   	$a_path_info = parse_url($form_state['values']['new_menu_url']);
   	if($a_path_info['host'] == $domain){
   		$form_state['values']['new_menu_url'] = $a_path_info['path'];
   	}//Strip off the domain if this is a local path
-  	
+
   	if(menu_path_is_external($form_state['values']['new_menu_url'])){
   	  $form_state['values']['new_menu_router_path'] = $form_state['values']['new_menu_url'];
   	}else{
   		$form_state['values']['new_menu_url'] = drupal_get_normal_path(ltrim($form_state['values']['new_menu_url'],"/"));
-  		
+
   		$item = menu_get_item($form_state['values']['new_menu_url']);
   		if($item && $item['access']){
   			$form_state['values']['new_menu_router_path'] = $item['path'];
@@ -271,7 +276,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
     // $menus['features']['features:bio']
 
     $link =& $menus[$region_old][$key];
-    
+
     if ($region_old != $region) {
       // the regions are different.
       // move the link into the new region
@@ -284,7 +289,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
     $link['menu_name'] = $data['region'];
     $link['weight'] = $data['weight'];
     $link['key'] = $menu_key;
- 
+
     if ($link['user_created'] && $region == 'none' || !isset($link['link_path'])) {
       // we're deleting the link
       unset($menus[$region][$menu_key]);
@@ -293,7 +298,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
   }
 
   if ($form_state['values']['new_menu_title'] && $form_state['values']['new_menu_url']) {
-  	
+
     // add a new menu
     $new_link = array(
       'menu_name' => $form_state['values']['new_menu_region'],
@@ -310,7 +315,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
       'user_created' => TRUE,
     );
     $new_link['weight'] = count($menus[$new_link['menu_name']]) + 10;//Add the new link to the end of the list
-    
+
     $menus[$new_link['menu_name']][$new_link['key']] = $new_link;
     drupal_set_message(t("New Link Added."), 'status', false);
   }
