@@ -22,11 +22,6 @@ function vsite_menus_settings_form($form_state){
   $space = vsite_get_vsite();
   if(!$space) return array();
 
-  $form['help_text'] = array(
-    '#type' => 'markup',
-    '#value' => '<div class="help-text">Drag links to order them and move them between menus.</div>',
-  );
-
   ctools_include('ajax');
   ctools_include('modal');
 
@@ -37,6 +32,11 @@ function vsite_menus_settings_form($form_state){
     ), $title = NULL, $type = 'ul', $attributes = array(
       "class" => "context-links"
     )),
+  );
+
+  $form['help_text'] = array(
+    '#type' => 'markup',
+    '#value' => '<div class="help-text">Drag links to order them and move them between menus.</div>',
   );
 
   // just do have distinct id for each setting form
