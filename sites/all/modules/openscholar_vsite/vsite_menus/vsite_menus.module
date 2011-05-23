@@ -160,7 +160,7 @@ function vsite_menus_get_menu_item($path, $vsite = false){
 
 	$a_menu_link = array();
   foreach ($a_site_menu_links as $key => $link) {
-    if($link['link_path'] == $path){
+    if($link['link_path'] == $path && !$link['hidden']){
     	if(!$link['key']) $link['key'] = $key;
       $a_menu_link = $link;
       break;
