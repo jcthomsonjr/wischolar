@@ -22,6 +22,18 @@ function vsite_menus_settings_form($form_state){
   $space = vsite_get_vsite();
   if(!$space) return array();
 
+  ctools_include('ajax');
+  ctools_include('modal');
+
+  $form['new_menu_link_context'] = array(
+    '#type' => 'markup',
+    '#value' => theme('item_list', array(
+      ctools_modal_text_button('Add new Link', "cp/settings/menus/add/nojs", 'add a link', 'context-button')
+    ), $title = NULL, $type = 'ul', $attributes = array(
+      "class" => "context-links"
+    )),
+  );
+
   $form['help_text'] = array(
     '#type' => 'markup',
     '#value' => '<div class="help-text">Drag links to order them and move them between menus.</div>',
@@ -112,10 +124,6 @@ function vsite_menus_settings_form($form_state){
       ),
     );
   }
-  $form['new_menu_link'] = array(
-    '#type' => 'markup',
-    '#value' => l("Add New Link", "cp/settings/menus/add/nojs", array('attributes' => array('class' => 'vsite-menus-new-menu ctools-use-modal'))),
-  );
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -146,7 +154,10 @@ function vsite_menus_new_link_callback($js) {
 
      // get the ctools page now
      $output = ctools_modal_form_wrapper('vsite_menus_new_link_form', $form_state);
-     if (empty($output)) {
+     if ($form_state['values']['op'] == $form_state['values']['cancel']) {
+       $output[] = ctools_modal_command_dismiss();
+     }
+     elseif (empty($output)) {
        $output[] = ctools_ajax_command_reload();
      }
      ctools_ajax_render($output);
@@ -185,6 +196,10 @@ function vsite_menus_new_link_form(&$form_state) {
     '#type' => 'submit',
     '#value' => t('Save settings'),
   );
+  $form['actions']['cancel'] = array(
+    '#type' => 'submit',
+    '#value' => t('Cancel'),
+  );
 
   $form['#validate'][] = 'vsite_menus_settings_form_validate';
   $form['#submit'][] = 'vsite_menus_settings_form_submit';
@@ -204,7 +219,7 @@ function vsite_menus_settings_form_after_build($form, &$form_state) {
   foreach ($regions as $region => $title) {
     if (is_array($form['conf'][$region])) {
       uasort($form['conf'][$region], "element_sort");
-      drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region);
+      drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
       drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
     }
   }
@@ -259,7 +274,7 @@ function vsite_menus_settings_form_validate(&$form, &$form_state) {
  */
 function vsite_menus_settings_form_submit($form, &$form_state) {
   $space = vsite_get_vsite();
-  if(!$space) return;
+  if(!$space || $form_state['values']['op'] == $form_state['values']['cancel']) return;
 
   $menus = $space->controllers->vsite_menu->get();
 

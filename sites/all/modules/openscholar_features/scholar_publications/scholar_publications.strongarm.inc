@@ -12,6 +12,14 @@ function scholar_publications_strongarm() {
   $strongarm->value = 'publications';
 
   $export['biblio_base'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'biblio_contributors_numberofauthors';
+  $strongarm->value = 100;
+  $export['biblio_contributors_numberofauthors'] = $strongarm;
+  
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;

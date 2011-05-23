@@ -12,6 +12,18 @@ function vsite_taxonomy_form($form_state) {
   $vocabs = $vsite ? $vsite->get_vocabs() : array();
   require_once drupal_get_path('module','taxonomy').'/taxonomy.admin.inc';
 
+  ctools_include('ajax');
+  ctools_include('modal');
+
+  $form['new_menu_link_context'] = array(
+    '#type' => 'markup',
+    '#value' => theme('item_list', array(
+      l('Add New Vocabulary', 'vsite/taxonomy/nojs/add/vocabulary',  array('attributes' => array('class' => 'ctools-use-dialog context-button')))
+    ), $title = NULL, $type = 'ul', $attributes = array(
+      "class" => "context-links"
+    )),
+  );
+
 
   // let's do something crazy
   // I'm going to get the forms for each category in a vsite,
@@ -20,7 +32,6 @@ function vsite_taxonomy_form($form_state) {
   // submit handler.
   // each vocabulary is encapsulated in the form and in form_state[values]
 
-  $form = array();
   foreach ($vocabs as $vid => $v) {
 
     $form_id = 'taxonomy_overview_terms';
@@ -158,7 +169,8 @@ function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
  */
 function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
   $delete_mode = FALSE;
-  if ((isset($_POST['op']) && $_POST['op'] == t('Delete')) || isset($_POST['confirm'])) {
+  dpm($_POST);
+  if ((isset($_POST['op']) && $_POST['op'] == t('Delete')) || isset($_POST['confirm']) && $_POST['op'] == t('Delete')) {
     $delete_mode = TRUE;
     return vsite_taxonomy_delete_vocabulary($vocabulary->vid, $ajax);
   }
@@ -173,7 +185,13 @@ function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
       )
     );
 
-    $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
+    if ($_POST['op'] == t('Reset to alphabetical')) {
+      $form_state['args']['edit'] = $vocabulary->vid;
+      $output = dialog_form_wrapper('taxonomy_vocabulary_confirm_reset_alphabetical', $form_state);
+    }
+    else {
+      $output = dialog_form_wrapper('taxonomy_form_vocabulary', $form_state);
+    }
 
     if (empty($output)) {
       $output[] = dialog_command_display(t('Vocabulary settings changed!'), t('(Reloading page)'));
@@ -442,6 +460,13 @@ function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state
   if (!$vsite){
     return ;
   }
+  if ($form_state['args']) {
+    $form['reset_alphabetical'] = array(
+      '#type' => 'submit',
+      '#value' => t('Reset to alphabetical'),
+    //  '#submit' => array('taxonomy_overview_terms_submit'),
+    );
+  }
 
   //Passes gid as a value in the taxonomy add/edit form
   unset($form['settings']['og_vocab']);
@@ -456,6 +481,7 @@ function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state
   $form['content_types']['#collapsible'] = false;
   $form['settings']['#collapsible'] = false;
 
+
   // filter the content type based on the vsite
   vsite_include('vsiteapi');
   $vocab_types = vsite_content_types();
@@ -466,6 +492,26 @@ function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state
   // hide weight element
   unset($form['settings']['weight']);
 
-  $form['#submit'][] = 'x';
+  foreach ($form['#submit'] as &$submit) {
+    if ($submit == 'taxonomy_form_vocabulary_submit') {
+      $submit = 'vsite_taxonomy_form_taxonomy_form_vocabulary_submit';
+    }
+  }
+}
 
+function vsite_taxonomy_form_taxonomy_form_vocabulary_submit($form, &$form_state) {
+  dpm($form_state);
+  if ($form_state['values']['op'] == $form_state['values']['reset_alphabetical']) {
+
+    // Execute the reset action.
+    if ($form_state['values']['reset_alphabetical'] === TRUE) {
+      return taxonomy_vocabulary_confirm_reset_alphabetical_submit($form, $form_state);
+    }
+    // Rebuild the form to confirm the reset action.
+    $form_state['rebuild'] = TRUE;
+    $form_state['confirm_reset_alphabetical'] = TRUE;
+    return;
+  }
+
+  taxonomy_form_vocabulary_submit($form, $form_state);
 }

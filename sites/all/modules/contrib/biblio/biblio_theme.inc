@@ -442,7 +442,9 @@ function theme_biblio_format_authors($contributors, $options, $inline = false)
   if (empty($options['numberOfAuthorsTriggeringEtAl']))  $options['numberOfAuthorsTriggeringEtAl'] = $authorCount;
 
   if (empty($options['includeNumberOfAuthors']))  $options['includeNumberOfAuthors'] = $authorCount;
-
+  
+  $options['numberOfAuthorsTriggeringEtAl'] = variable_get('biblio_contributors_numberofauthors', $options['numberOfAuthorsTriggeringEtAl']);
+    
   foreach($contributors as $rank => $author)
   {
     if (empty($author['name'])) continue;
