@@ -67,7 +67,6 @@ function vsite_controllers_spaces_registry() {
 
 function vsite_controllers_views_pre_build(&$view) {
   $space = spaces_get_space();
-  //dpm($view);
   if ($space) {
     // space->get($view->name.':'.$view->display_handler->display->id)
     // apply settings to view->display_handler
