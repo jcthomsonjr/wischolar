@@ -219,7 +219,7 @@ function vsite_menus_settings_form_after_build($form, &$form_state) {
   foreach ($regions as $region => $title) {
     if (is_array($form['conf'][$region])) {
       uasort($form['conf'][$region], "element_sort");
-      drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region);
+      drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
       drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
     }
   }
