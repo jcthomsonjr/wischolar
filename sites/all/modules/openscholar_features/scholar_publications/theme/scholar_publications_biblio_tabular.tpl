@@ -106,13 +106,13 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
     );
   }
   $output = '<div id="biblio-node">';
+  $output .= filter_xss($node->biblio_coins, array('span'));
+  $output .= $citation;
   $book_images = filefield_get_node_files($node, 'field_biblio_image');
    if (count($book_images)) {
    	$book_image = reset($book_images);
     $output .= '<div class="flL">' . theme('imagecache','book_cover', $book_image['filepath']) . '</div>';
    }
-  $output .= filter_xss($node->biblio_coins, array('span'));
-  $output .= $citation;
   $output .= $author_text;
   if (count($rows)){
     foreach ($rows as $row){
