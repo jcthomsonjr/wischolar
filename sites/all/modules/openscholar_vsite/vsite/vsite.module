@@ -119,6 +119,56 @@ function vsite_theme($cache, $type, $theme, $path){
 }
 
 /**
+ * hook views_pre_build
+ */
+function vsite_views_pre_build(&$view){
+  // the vsite_feed view should only display node from
+  // public features
+  if ($view->name == 'vsite_feed') {
+    dpm($view);
+    _vsite_feed_content_types_filter($view);
+  }
+}
+
+/**
+ * adds a "type" filter to a given view
+ */
+function _vsite_feed_content_types_filter(&$view){
+  $vsite = vsite_get_vsite();
+  if (! $vsite) {
+    return;
+  }
+  vsite_include('vsiteapi');
+  $node_options = vsite_content_types();
+  
+  // add a filter for "node types" in the view
+  $options = array();
+  foreach ( $node_options as $type => $value ) {
+    if ($value) {
+      $options[$type] = $type; // that's how views wants it
+    }
+  }
+  
+  $v = array(
+    'operator' => 'in', 
+    'value' => $options, 
+    'group' => '0', 
+    'exposed' => FALSE, 
+    'expose' => array(
+      'operator' => FALSE, 
+      'label' => '' 
+    ), 
+    'id' => 'type', 
+    'table' => 'node', 
+    'field' => 'type', 
+    'relationship' => 'none' 
+  );
+  $view->display_handler->set_option('title', $vsite->group->title);
+  $view->display_handler->set_option('style_options', array('description' => $vsite->group->og_description));
+  $view->set_item('feed', 'filter', 'type', $v);
+}
+
+/**
  * Implementation of preprocess_views_view().
  */
 function vsite_preprocess_views_view(&$vars){
