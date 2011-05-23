@@ -136,7 +136,7 @@ function scholar_publications_update_6006(&$sandbox){
     $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
     return $res;
   }
-  
+
   $settings = array();
   $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "scholar_publications" ');
   while ($row = db_fetch_object($result)) {
@@ -172,4 +172,17 @@ function scholar_publications_update_6007(&$sandbox){
 
   return $res;
 
+}
+
+function scholar_publications_update_6008(&$sandbox) {
+  $res = array();
+
+  imagecache_preset_flush(array('presetname' => 'book_cover'));
+
+  $res[] = array(
+    'success' => true,
+    'query' => 'ImageCache cleared.',
+  );
+
+  return $res;
 }
