@@ -463,6 +463,7 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
   switch($form_id){
   	case 'taxonomy_form_vocabulary':
   		if($form['settings']['context']) $form['settings']['context']['#access'] = user_access('administer taxonomy'); //Hide from regular users
+  		if($form['settings']['orderable']) $form['settings']['orderable']['#access'] = user_access('administer taxonomy'); //Hide from regular users
 
   		$a_vocab_options = array(
         1 => t('Tags (Free tagged comma-separated list of categories/tags)'),
