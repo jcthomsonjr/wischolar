@@ -82,10 +82,6 @@ function vsite_taxonomy_form($form_state) {
     '#suffix' => '</div>',
     '#weight' => 1,
   );
-  $form['add_new_vocab'] = array(
-    '#type' => 'markup',
-    '#value' => '<div>'.l('Add New Vocabulary', 'vsite/taxonomy/nojs/add/vocabulary',  array('attributes' => array('class' => 'ctools-use-dialog context-button'))).'</div>',
-  );
 
   drupal_set_title(t('Taxonomy'));
 
