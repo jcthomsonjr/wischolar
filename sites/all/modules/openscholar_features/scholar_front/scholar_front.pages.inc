@@ -12,11 +12,9 @@ function scholar_front_settings($form_state) {
   ctools_include('dependent');
   ctools_include('form');
 
-  $form['scholar_front_site_title'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Site Title'),
-    '#description' => t('This title will appear in the title bar of your browser.'),
-    '#default_value' => variable_get('scholar_front_site_title', ''),
+  $form['frontpage'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Content on Front Page'),
   );
 
   $front_page = variable_get('site_frontpage', 'scholar_front/features');
@@ -50,7 +48,7 @@ function scholar_front_settings($form_state) {
   	$front_page = 'path';
   }
 
-  $form['site_frontpage'] = array(
+  $form['frontpage']['site_frontpage'] = array(
     '#type' => 'select',
     '#options' => $options,
     '#title' => t('What do you want in the main content area of your front page?'),
@@ -64,17 +62,17 @@ function scholar_front_settings($form_state) {
   }
 
   // Do they want to Select A Post
-  $form['scholar_front_frontpage_nid'] = vsite_node_autocomplete_element("Select a post");
-  $form['scholar_front_frontpage_nid']['#element_validate'] = array('scholar_front_settings_frontpage_nid_validate');
-  $form['scholar_front_frontpage_nid']['#description'] = t('Select the post your want to set as a front page or create a new one') .
+  $form['frontpage']['scholar_front_frontpage_nid'] = vsite_node_autocomplete_element("Select a post");
+  $form['frontpage']['scholar_front_frontpage_nid']['#element_validate'] = array('scholar_front_settings_frontpage_nid_validate');
+  $form['frontpage']['scholar_front_frontpage_nid']['#description'] = t('Select the post your want to set as a front page or create a new one') .
                                                          theme('ctools_dropdown', t('add new'), $items, FALSE, 'context-links');
-  $form['scholar_front_frontpage_nid']['#process'] = array('ctools_dependent_process');
-  $form['scholar_front_frontpage_nid']['#dependency'] = array('edit-site-frontpage' => array('html'));
+  $form['frontpage']['scholar_front_frontpage_nid']['#process'] = array('ctools_dependent_process');
+  $form['frontpage']['scholar_front_frontpage_nid']['#dependency'] = array('edit-site-frontpage' => array('html'));
 
-  if ($def_html_node) $form['scholar_front_frontpage_nid']['#default_value'] = $def_html_node->title . " [nid:{$def_html_node->nid}]";
+  if ($def_html_node) $form['frontpage']['scholar_front_frontpage_nid']['#default_value'] = $def_html_node->title . " [nid:{$def_html_node->nid}]";
 
   // Do they want to Select A Post
-  $form['scholar_front_frontpage_path'] = array(
+  $form['frontpage']['scholar_front_frontpage_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Enter a path'),
     '#maxlength' => 80,
@@ -82,14 +80,14 @@ function scholar_front_settings($form_state) {
     '#description' => t('Enter the path to the page that you would like to display as the homepage. Do not re-enter ('.$vsite->get_absolute_url().')'),
     '#default_value' => $s_html_path,
   );
-  $form['scholar_front_frontpage_path']['#process'] = array('ctools_dependent_process');
-  $form['scholar_front_frontpage_path']['#dependency'] = array('edit-site-frontpage' => array('path'));
+  $form['frontpage']['scholar_front_frontpage_path']['#process'] = array('ctools_dependent_process');
+  $form['frontpage']['scholar_front_frontpage_path']['#dependency'] = array('edit-site-frontpage' => array('path'));
 
   if ($def_html_node) $form['scholar_front_frontpage_nid']['#default_value'] = $def_html_node->title . " [nid:{$def_html_node->nid}]";
 
 
   //If they have selected bio/node as feature
-  $form['scholar_front_show_title'] = array(
+  $form['frontpage']['scholar_front_show_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Include title'),
     '#description' => t('Do you want to include the post/page title on the front page?'),
@@ -131,7 +129,7 @@ function scholar_front_settings($form_state) {
 
   $default_value = variable_get('scholar_front_feature_nodes',array_keys($options));
 
-  $form['scholar_front_feature_nodes'] = array(
+  $form['frontpage']['scholar_front_feature_nodes'] = array(
     '#prefix' => '<div id="edit-scholar-front-feature-nodes-wrapper">',  // needed by ctools
     '#suffix' => '</div>',
     '#type' => 'checkboxes',
@@ -144,6 +142,22 @@ function scholar_front_settings($form_state) {
       'ctools_dependent_process'
     ),
     '#dependency' => array('edit-site-frontpage' => array('scholar_front/features')),
+  );
+
+  if (!($new_title = variable_get('scholar_front_site_title', ''))) {
+    $vsite = vsite_get_vsite();
+    $new_title = $vsite->group->title;
+  }
+
+  $form['site_title'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Site Title Settings'),
+    'scholar_front_site_title' => array(
+      '#type' => 'textfield',
+      '#title' => t('Site Title'),
+      '#description' => t('This title will appear in the title bar of your browser.'),
+      '#default_value' => $new_title,
+    ),
   );
 
   return system_settings_form($form);
