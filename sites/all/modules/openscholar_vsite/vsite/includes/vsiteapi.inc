@@ -44,19 +44,16 @@ function vsite_content_types($privacy = array(1), $vsite = NULL){
 function vsite_create_links($privacy = NULL){
   if (!$privacy){
     $types = vsite_content_types(array(2, 1));
-  }
-  else {
+  }else {
     $types = vsite_content_types(array($privacy));
   }
   drupal_alter('vsite_content_types', $types);
   foreach ( $types as $type => $name ) {
-  	$type_url_str = str_replace('_', '-', $type);
-    $links[] = array(
-        'title' => t('!type', array(
-            '!type' => $name
-        )),
-        'href' => "node/add/$type_url_str"
-    );
+    $add_url = 'node/add/'. str_replace('_', '-', $type);
+    $item = menu_get_item($add_url);
+    if ($item && $item['access'] && strpos($_GET['q'], $add_url) !== 0) {
+      $links[$type] = array('title' => t('Add @type', array('@type' => $name)), 'href' => $add_url);
+    }
   }
   return isset($links) ? $links : array();
 }

@@ -2,9 +2,6 @@
 
 include_once ('vsite.features.inc');
 
-//The Vsite Object instanceof spaces
-include_once (drupal_get_path('module', 'vsite') . '/plugins/vsite_setting.inc');
-
 /**
  * Implementation of hook spaces_plugins
  */
@@ -150,18 +147,18 @@ function _vsite_feed_content_types_filter(&$view){
   }
   
   $v = array(
-    'operator' => 'in', 
-    'value' => $options, 
-    'group' => '0', 
-    'exposed' => FALSE, 
+    'operator' => 'in',
+    'value' => $options,
+    'group' => '0',
+    'exposed' => FALSE,
     'expose' => array(
-      'operator' => FALSE, 
-      'label' => '' 
-    ), 
-    'id' => 'type', 
-    'table' => 'node', 
-    'field' => 'type', 
-    'relationship' => 'none' 
+      'operator' => FALSE,
+      'label' => ''
+    ),
+    'id' => 'type',
+    'table' => 'node',
+    'field' => 'type',
+    'relationship' => 'none'
   );
   $view->display_handler->set_option('title', $vsite->group->title);
   $view->display_handler->set_option('style_options', array('description' => $vsite->group->og_description));
@@ -331,18 +328,6 @@ function vsite_get_vsite_by_node($node){
 }
 
 /**
- * API function for testing wether we are on the front page of a vsite
- * TODO there are different ways of doing this
- * - as a full context "context_vsite_home" which has blocks etc
- * - set context in hook init and then get it here
- */
-function vsite_is_front(){
-  $vsite = vsite_get_vsite();
-  $active_menu = menu_get_item();
-  return ($vsite && $active_menu['path'] == 'home') ? TRUE : FALSE;
-}
-
-/**
  * Implementation of hook_preprocess_node()
  */
 function vsite_preprocess_node(&$vars){
@@ -383,7 +368,7 @@ function vsite_preprocess_page(&$vars){
   $vsite = vsite_get_vsite();
   if ($vsite) {
     $vsite_title = $vsite->group->title;
-    if (vsite_is_front()) {
+    if (drupal_is_front_page()) {
       $head_title = array(
         $vsite_title
       );
@@ -419,8 +404,14 @@ function vsite_preprocess_page(&$vars){
   //$vars['messages'] = $vars['messages'].kprint_r(context_active_contexts(), TRUE);
 
   //Add a div around the messages block
-  if (strlen($vars['messages']))
-    $vars['messages'] = "<div id= \"messages\">" . $vars['messages'] . "</div>";
+  if (strlen($vars['messages'])) $vars['messages'] = "<div id= \"messages\">" . $vars['messages'] . "</div>";
+  
+  if (($context_links = context_links()) && count($context_links) > 1 && context_get('context', 'vsite-section-public')) {
+    $vars['context_links'] = theme('ctools_dropdown', t('add new'), $context_links, FALSE, 'context-links');
+  }elseif(strlen($vars['context_links'])){
+  	$vars['context_links'] = '<div class="context-links">'.$vars['context_links'].'</div>';
+  }
+  
 }
 
 /**

@@ -42,6 +42,14 @@ function scholar_front_menu(){
     'type' => MENU_CALLBACK,
     'file' => 'scholar_front.pages.inc',
   );
+  
+  $items['scholar_front_welcome'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => '',
+    'page callback' => 'scholar_front_welcome',
+    'file' => 'scholar_front.pages.inc',
+    'access arguments' => array('access content'),
+  );
 
   return $items;
 }
@@ -111,10 +119,9 @@ function scholar_front_nodeapi(&$node, $op, $a3, $a4){
   switch($op){
     case 'presave':
       // set new property in node object indicating to set as front page
-      if (isset($_GET['action'])){
-        if ($_GET['action'] === 'setfront'){
+      if ((isset($_GET['action']) && ($_GET['action'] === 'setfront')) ||
+          ($node->type == "bio" && variable_get('site_frontpage',false) == "scholar_front_welcome")){
           $node -> front  = 1;
-        }
       }
       break;
 
@@ -124,7 +131,7 @@ function scholar_front_nodeapi(&$node, $op, $a3, $a4){
       	if(!$vsite) return;
 
       	$vsite->controllers->variable->set('site_frontpage','node/'.$node->nid);
-        $link =  l('Control Panel Settings.','cp/features' );
+        $link =  l('Control Panel Settings.','cp/features',array("query" => array("open_feature_settings" => "scholar_front")) );
         $msg_variables = array (
         '@type' => node_get_types('name', $node),
         '%title' => $node -> title,
@@ -196,5 +203,32 @@ function scholar_front_form_alter(&$form, $form_state, $form_id) {
        */
       $form['spaces_features']['scholar_front']["#disabled"] = true;
     break;
+    case 'scholar_front_settings':
+    	$options = $form['site_frontpage']['#options'];
+    	if(count($options) && array_key_exists("create_bio",$options)){
+    		unset($options['create_bio']);
+	    	foreach ($form['buttons'] as $name => $element) {
+	    		$form['buttons'][$name]['#process'] = array('ctools_dependent_process');
+	    		$form['buttons'][$name]['#dependency'] = array('edit-site-frontpage' => array_keys($options));
+          $form['buttons'][$name]['#prefix'] = '<div id="edit-'.$name.'-wrapper" class="button-div-wrapper">';
+          $form['buttons'][$name]['#suffix'] = '</div>';
+	    	}
+    	}
+    	
+    break;
+  }
+}
+
+/**
+ * Add the context links for the front page
+ */
+function scholar_front_context_links_alter(&$links){
+  $front_context = context_get('context', 'openscholar-feature-front');
+  if ($front_context) {
+  	vsite_include('vsiteapi');
+    $items = vsite_create_links();
+    
+    //Add all links if we are on the front page
+    $links = array_merge($items, $links);
   }
 }

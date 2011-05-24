@@ -27,8 +27,13 @@ function scholar_front_settings($form_state) {
     'scholar_front/flag' => t('Hand-pick content as you go')
   );
 
+  $s_bio_option;
   if (($bio_node = content_profile_load("bio", $vsite->group->uid)) && $spaces_features['scholar_biocv']){
     $options["node/".$bio_node->nid] = t('Your bio page');
+    if($front_page == "scholar_front_welcome") $front_page = "node/".$bio_node->nid;
+  }elseif ($spaces_features['scholar_biocv']){
+  	$options["create_bio"] = t('Your bio page');
+  	if($front_page == "scholar_front_welcome") $front_page = "create_bio";
   }
 
   $def_html_node = false;
@@ -47,7 +52,7 @@ function scholar_front_settings($form_state) {
     '#type' => 'select',
     '#options' => $options,
     '#title' => t('What do you want in the main content area of your front page?'),
-    '#default_value' => isset($options[$front_page]) ? $front_page : 'scholar_front/features',
+    '#default_value' => isset($options[$front_page]) ? $front_page : $s_bio_option,
     '#element_validate' => array('scholar_front_settings_validate'),
   );
 
@@ -91,6 +96,33 @@ function scholar_front_settings($form_state) {
     '#dependency' => array(
       'edit-site-frontpage' => array("node/".$bio_node->nid, "html", "path")),
   );
+  
+  $bio_create_link = l(t('Create'), "node/add/bio", array('query' => array('action' => 'setfront')));
+       
+  //If they have selected bio/node as feature
+  $form['scholar_front_create_bio'] = array(
+    '#prefix' => '<div id="edit-scholar-front-create-bio-wrapper">',  // needed by ctools
+    '#suffix' => '</div>',
+    '#type' => 'fieldset',
+    '#title' => "Create a Bio",
+    '#input' =>true,
+    '#process' => array('ctools_dependent_process'),
+    '#dependency' => array('edit-site-frontpage' => array("create_bio")),
+    '#collapsable' => false,
+  );
+  $form['scholar_front_create_bio']['link']['#value'] = "<p>You dont have a bio yet. $bio_create_link one now.</p>";
+  
+  $form['scholar_front_hand_pick_help'] = array(
+    '#prefix' => '<div id="edit-scholar-front-hand-pick-help-wrapper">',  // needed by ctools
+    '#suffix' => '</div>',
+    '#type' => 'fieldset',
+    '#title' => "Using: Hand Picked Content",
+    '#input' =>true,
+    '#process' => array('ctools_dependent_process'),
+    '#dependency' => array('edit-site-frontpage' => array("scholar_front/flag")),
+    '#collapsable' => false,
+  );
+  $form['scholar_front_hand_pick_help']['link']['#value'] = "<p>When you save or edit a post select \"Promote to front page\" to include it on the front of your site.</p>";
 
   $options = vsite_content_types();
   drupal_alter('vsite_content_types', $options);
@@ -281,10 +313,6 @@ function _scholar_front_admin_frontpage(){
       </div>
       {$result}
 MESSAGE;
-
-      vsite_include('vsiteapi');
-      $items = vsite_create_links();
-      $result = theme('ctools_dropdown', t('Add new ...'), $items, FALSE, 'context-links').$result;
     }
 
     return $result;
@@ -305,4 +333,24 @@ function scholar_front_redirect_home(){
 	if(!drupal_is_front_page()){
 	  drupal_goto("<front>");
 	}
+}
+
+/**
+ * Default front page when a site is created
+ */
+function scholar_front_welcome(){
+	$vsite = vsite_get_vsite();
+	if(!$vsite || !$vsite->access_admin()) return "Coming Soon. This site is under construction.";
+	$spaces_features = variable_get('spaces_features',array());
+	
+	$bio_link = $spaces_features["scholar_biocv"]?l("Setup your bio now","node/add/bio")." or":"The bio feature is disabled";
+	$front_settings = l("change the display settings","cp/features",array("query" => array("open_feature_settings" => "scholar_front")));
+	$result = <<<MESSAGE
+        <div id="welcome_front_wrapper">
+          <h3>Welcome to your new site.</h3>
+          <p>Your sites front page is set to display your bio by default.  {$bio_link} {$front_settings} for the front of your site.</p>
+        </div>
+MESSAGE;
+
+    return _scholar_front_admin_frontpage().$result;
 }

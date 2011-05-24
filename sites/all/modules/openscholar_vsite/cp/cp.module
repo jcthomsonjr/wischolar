@@ -104,11 +104,6 @@ function cp_init(){
       'ui.draggable',
       'ui.resizable'
     ));
-   /* drupal_add_js(array(
-      'cp_confirm_overide_handler' => array(
-        "js" => 1
-      )
-    ), 'setting');*/
 
     $modal_styles = _cp_get_modal_styles();
     drupal_add_js($modal_styles, 'setting');
@@ -311,6 +306,10 @@ function cp_form_alter(&$form, &$form_state, $form_id){
     ctools_include('ajax');
     ctools_include('modal');
     ctools_modal_add_js();
+    
+    if(isset($_GET['open_feature_settings'])){
+    	drupal_add_js("$(document).ready(function() { $('.spaces-features a.modal_click_onload').click(); });",'inline');
+    }
 
     $spaces_features = variable_get('spaces_features', array());
 
@@ -325,7 +324,9 @@ function cp_form_alter(&$form, &$form_state, $form_id){
       // if the href of this items is just 'features' (i.e. parent), that path does not exist
       // and so no settings exists for this feature
       if ($item && $item['href'] != 'features' && $item['access'] && $is_enabled) {
-        $link = ctools_modal_text_button('customize', 'features/nojs/' . $f_name, 'customize ' . $f_name); //, 'ctools-modal-openscholar-style-default');
+      	$s_class = ($_GET['open_feature_settings'] && $_GET['open_feature_settings'] == $f_name)?"modal_click_onload":"";
+      	
+        $link = ctools_modal_text_button('customize', 'features/nojs/' . $f_name, 'customize ' . $f_name, $s_class); //, 'ctools-modal-openscholar-style-default');
         $form['settings'][$f_name] = array(
           '#type' => 'markup',
           '#value' => $link

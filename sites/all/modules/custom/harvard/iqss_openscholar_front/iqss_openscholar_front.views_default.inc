@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Helper to implementation of hook_views_default_views().
+ * Implementation of hook_views_default_views().
  */
-function _iqss_openscholar_front_views_default_views() {
+function iqss_openscholar_front_views_default_views() {
   $views = array();
 
   // Exported view: iqss_openscholar_front
@@ -219,6 +219,7 @@ function _iqss_openscholar_front_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('items_per_page', 9);
+  $handler->override_option('distinct', 1);
   $handler->override_option('style_plugin', 'list');
   $handler->override_option('style_options', array(
     'grouping' => '',
