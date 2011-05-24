@@ -3,10 +3,10 @@
  */
 
 Drupal.behaviors.confirm_popup = function () {
-  Drupal.settings.confirm_popup_links = eval(Drupal.settings.confirm_popup_links);
+  Drupal.settings.confirm_popup.links = eval(Drupal.settings.confirm_popup.links);
   var links = $("a");
-  var path = Drupal.settings.vsiteBasePath+"/";
-  $.each(Drupal.settings.confirm_popup_links, function (i, item) {
+  var path = Drupal.settings.confirm_popup.base_path;
+  $.each(Drupal.settings.confirm_popup.links, function (i, item) {
   	// for every path we check against
   	var frags = item.split("%");
   	var links_t = links;
@@ -17,8 +17,8 @@ Drupal.behaviors.confirm_popup = function () {
 
 	links_t.each(function (i, item) {
 	  // add in the necessary path bits and classes
-      item.href = item.href.replace(path, path+"confirm_popup/nojs/");
       if (item.className.indexOf("ctools-use-modal") == -1) {
+    	item.href = item.href.replace(path, path+"confirm_popup/nojs/");
         item.className += " ctools-use-modal ctools-modal-confirm-popup-modal";
 	  }
 	});
