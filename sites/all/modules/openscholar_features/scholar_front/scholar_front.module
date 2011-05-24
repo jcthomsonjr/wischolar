@@ -196,6 +196,19 @@ function scholar_front_form_alter(&$form, $form_state, $form_id) {
        */
       $form['spaces_features']['scholar_front']["#disabled"] = true;
     break;
+    case 'scholar_front_settings':
+    	$options = $form['site_frontpage']['#options'];
+    	if(count($options) && array_key_exists("create_bio",$options)){
+    		unset($options['create_bio']);
+	    	foreach ($form['buttons'] as $name => $element) {
+	    		$form['buttons'][$name]['#process'] = array('ctools_dependent_process');
+	    		$form['buttons'][$name]['#dependency'] = array('edit-site-frontpage' => array_keys($options));
+          $form['buttons'][$name]['#prefix'] = '<div id="edit-'.$name.'-wrapper" class="button-div-wrapper">';
+          $form['buttons'][$name]['#suffix'] = '</div>';
+	    	}
+    	}
+    	
+    break;
   }
 }
 
