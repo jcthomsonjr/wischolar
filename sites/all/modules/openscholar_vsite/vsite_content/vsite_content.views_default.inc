@@ -329,7 +329,7 @@ function vsite_content_views_default_views() {
   ));
   $handler->override_option('title', 'Content');
   $handler->override_option('empty_format', '1');
-  $handler->override_option('items_per_page', 15);
+  $handler->override_option('items_per_page', 25);
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'bulk');
   $handler->override_option('style_options', array(
