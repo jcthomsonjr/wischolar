@@ -5,7 +5,7 @@
 Drupal.behaviors.confirm_popup = function () {
   Drupal.settings.confirm_popup_links = eval(Drupal.settings.confirm_popup_links);
   var links = $("a");
-  var path = Drupal.settings.basePath+(Drupal.settings.og?Drupal.settings.og.group_context.title:'')+"/";
+  var path = Drupal.settings.vsiteBasePath+"/";
   $.each(Drupal.settings.confirm_popup_links, function (i, item) {
   	// for every path we check against
   	var frags = item.split("%");

@@ -159,6 +159,7 @@ function confirm_popup_submit($form, &$form_state) {
 }
 
 function _confirm_popup_modal_settings() {
+  $vsite = vsite_get_vsite();
   drupal_add_js(array(
     'confirm-popup-modal' => array(
       'modalSize' => array(
@@ -169,6 +170,7 @@ function _confirm_popup_modal_settings() {
       ),
     ),
     'confirm_popup_links' => drupal_to_js(_confirm_popup_get_confirm_paths()),
+    'vsiteBasePath' => $GLOBALS['base_path'].$vsite->group->purl,
   ), 'setting');
 
   static $init = false;
