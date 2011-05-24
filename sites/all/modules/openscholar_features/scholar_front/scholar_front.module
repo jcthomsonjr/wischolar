@@ -42,6 +42,14 @@ function scholar_front_menu(){
     'type' => MENU_CALLBACK,
     'file' => 'scholar_front.pages.inc',
   );
+  
+  $items['scholar_front_welcome'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => '',
+    'page callback' => 'scholar_front_welcome',
+    'file' => 'scholar_front.pages.inc',
+    'access arguments' => array('access content'),
+  );
 
   return $items;
 }
@@ -111,10 +119,9 @@ function scholar_front_nodeapi(&$node, $op, $a3, $a4){
   switch($op){
     case 'presave':
       // set new property in node object indicating to set as front page
-      if (isset($_GET['action'])){
-        if ($_GET['action'] === 'setfront'){
+      if ((isset($_GET['action']) && ($_GET['action'] === 'setfront')) ||
+          ($node->type == "bio" && variable_get('site_frontpage',false) == "scholar_front_welcome")){
           $node -> front  = 1;
-        }
       }
       break;
 
@@ -124,7 +131,7 @@ function scholar_front_nodeapi(&$node, $op, $a3, $a4){
       	if(!$vsite) return;
 
       	$vsite->controllers->variable->set('site_frontpage','node/'.$node->nid);
-        $link =  l('Control Panel Settings.','cp/features' );
+        $link =  l('Control Panel Settings.','cp/features',array("query" => array("open_feature_settings" => "scholar_front")) );
         $msg_variables = array (
         '@type' => node_get_types('name', $node),
         '%title' => $node -> title,

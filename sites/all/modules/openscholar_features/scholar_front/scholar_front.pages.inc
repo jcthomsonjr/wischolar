@@ -29,10 +29,13 @@ function scholar_front_settings($form_state) {
     'scholar_front/flag' => t('Hand-pick content as you go')
   );
 
+  $s_bio_option;
   if (($bio_node = content_profile_load("bio", $vsite->group->uid)) && $spaces_features['scholar_biocv']){
     $options["node/".$bio_node->nid] = t('Your bio page');
+    if($front_page == "scholar_front_welcome") $front_page = "node/".$bio_node->nid;
   }elseif ($spaces_features['scholar_biocv']){
   	$options["create_bio"] = t('Your bio page');
+  	if($front_page == "scholar_front_welcome") $front_page = "create_bio";
   }
 
   $def_html_node = false;
@@ -51,7 +54,7 @@ function scholar_front_settings($form_state) {
     '#type' => 'select',
     '#options' => $options,
     '#title' => t('What do you want in the main content area of your front page?'),
-    '#default_value' => isset($options[$front_page]) ? $front_page : 'scholar_front/features',
+    '#default_value' => isset($options[$front_page]) ? $front_page : $s_bio_option,
     '#element_validate' => array('scholar_front_settings_validate'),
   );
 
@@ -316,4 +319,24 @@ function scholar_front_redirect_home(){
 	if(!drupal_is_front_page()){
 	  drupal_goto("<front>");
 	}
+}
+
+/**
+ * Default front page when a site is created
+ */
+function scholar_front_welcome(){
+	$vsite = vsite_get_vsite();
+	if(!$vsite || !$vsite->access_admin()) return "Coming Soon. This site is under construction.";
+	$spaces_features = variable_get('spaces_features',array());
+	
+	$bio_link = $spaces_features["scholar_biocv"]?l("Setup your bio now","node/add/bio")." or":"The bio feature is disabled";
+	$front_settings = l("change the display settings","cp/features",array("query" => array("open_feature_settings" => "scholar_front")));
+	$result = <<<MESSAGE
+        <div id="welcome_front_wrapper">
+          <h3>Welcome to your new site.</h3>
+          <p>Your sites front page is set to display your bio by default.  {$bio_link} {$front_settings} for the front of your site.</p>
+        </div>
+MESSAGE;
+
+    return _scholar_front_admin_frontpage().$result;
 }
