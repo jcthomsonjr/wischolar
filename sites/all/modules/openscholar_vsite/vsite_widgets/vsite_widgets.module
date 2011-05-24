@@ -11,6 +11,7 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
     $blocks[1]['info'] = t('Scholar site search');
     $blocks[2]['info'] = t('ShareThis Button - Allows you to share posts using popular online services');
     $blocks[3]['info'] = t('Google Translate');
+    $blocks[4]['info'] = t('RSS feed');
     return $blocks;
   }
   elseif ($op == 'view') {
@@ -23,8 +24,26 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
       	return vsite_widgets_addthis();
       case 3:
       	return vsite_widget_googletranslate();
+      case 4:
+      	return vsite_widget_rss();
     }
   }
+}
+
+/**
+ * RSS block 
+ */
+function vsite_widget_rss(){
+  if (! $vsite = vsite_get_vsite()) {
+    return;
+  }
+  
+  if ($image = theme('image', 'misc/feed.png', t('Syndicate content'), 'RSS')) {
+    $block['content'] = l($image, 'feed', array('html' => TRUE, 'attributes' => array('class' => 'feed-icon')));
+  }
+  
+  return $block;
+
 }
 
 function vsite_widgets_search_widget(){
@@ -120,6 +139,16 @@ function vsite_widgets_vsite_widgets(){
       'region' => 'right',
       'status' => '0',
       'label' => 'Scholar search widget',
+      'type' => 'context_ui',
+    ),
+    
+   'vsite_widgets_4' => array(
+      'module' => 'vsite_widgets',
+      'delta' => '4',
+      'weight' => -5,
+      'region' => 'right',
+      'status' => '0',
+      'label' => 'RSS feed',
       'type' => 'context_ui',
     ),
 
