@@ -53,7 +53,7 @@ function scholar_front_update_6001(&$sandbox){
   }
   
   $type = variable_get('scholar_content_type', 'vsite');
-  $result = db_query('SELECT nid FROM {node} n LEFT JOIN {spaces_overrides} so ON so.id = n.nid AND so.type = "og" AND so.object_type LIKE "variable" AND so.object_id LIKE "site_frontpage"  WHERE n.type LIKE "%s" AND no.id IS NULL ',$type);
+  $result = db_query('SELECT nid FROM {node} n LEFT JOIN {spaces_overrides} so ON so.id = n.nid AND so.type = "og" AND so.object_type LIKE "variable" AND so.object_id LIKE "site_frontpage"  WHERE n.type LIKE "%s" AND so.id IS NULL ',$type);
   while ($nid = db_result($result)) {
   	db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('og', '%s', 'variable', 'site_frontpage', '%s')", $nid, serialize("scholar_front/features"));
   }
