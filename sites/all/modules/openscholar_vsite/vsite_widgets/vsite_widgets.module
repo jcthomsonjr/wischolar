@@ -11,7 +11,7 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
     $blocks[1]['info'] = t('Scholar site search');
     $blocks[2]['info'] = t('ShareThis Button - Allows you to share posts using popular online services');
     $blocks[3]['info'] = t('Google Translate');
-    $blocks[4]['info'] = t('RSS feed');
+    $blocks[6]['info'] = t('RSS feed');
     return $blocks;
   }
   elseif ($op == 'view') {
@@ -24,7 +24,7 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
       	return vsite_widgets_addthis();
       case 3:
       	return vsite_widget_googletranslate();
-      case 4:
+      case 6:
       	return vsite_widget_rss();
     }
   }
@@ -142,9 +142,9 @@ function vsite_widgets_vsite_widgets(){
       'type' => 'context_ui',
     ),
     
-   'vsite_widgets_4' => array(
+   'vsite_widgets_6' => array(
       'module' => 'vsite_widgets',
-      'delta' => '4',
+      'delta' => '6',
       'weight' => -5,
       'region' => 'right',
       'status' => '0',
