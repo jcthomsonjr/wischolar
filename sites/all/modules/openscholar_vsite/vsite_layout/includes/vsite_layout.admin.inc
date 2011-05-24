@@ -483,9 +483,13 @@ function vsite_layout_region_widgets( $page_type = 'none') {
 
   $context = context_load('openscholar-feature-'.$page_type);
 
+  $default_blocks = module_invoke_all('vsite_widgets');
+  foreach ($default_blocks as $s_key => $a_block) $default_blocks[$s_key]['region'] = false; //Get any new blocks that have been introduced, and include them in the top bar
+  
   $a_region_widgets = array();
   if($context && ($a_widgets = $context->reactions['block']['blocks'])){
-
+    $a_widgets = array_merge($default_blocks,$a_widgets);
+  	
     foreach ($a_widgets as $s_widget_key => $widget) {
       $widget = (array)$widget;
       if ($widget['region']) {
