@@ -43,6 +43,7 @@ function scholar_preprocess_page($vars){
 
   // vsite.module already set the basics
   // we just add a little info about personal web sites
+  /*
   $vsite = vsite_get_vsite();
   if ($vsite && vsite_is_front()) {
   	$head_title = $vars['head_title'];
@@ -50,7 +51,7 @@ function scholar_preprocess_page($vars){
 
     $head_title = implode(' | ', $head_title);
     $vars['head_title'] = $head_title;
-  }
+  }*/
 }
 /**
  * hook strongarm
