@@ -355,7 +355,12 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
   $form['advanced']['weight']['#type'] = 'value';
   $form['advanced']['weight']['#value'] = $form['advanced']['weight']['#default_value'];
 
-  if($form_state['clicked_button']['#value'] == t('Delete')) return;
+  if($form_state['clicked_button']['#value'] == t('Delete')){
+  	if($vsite && $form['actions']){
+  		$form['actions']['cancel']['#value'] = l("Cancel","cp/settings/taxonomy");
+  	}
+  	return;
+  }
 
   if($form_state['default_parent'] && !count($form['advanced']['parent']['#default_value'])){
     $form['advanced']['parent']['#default_value'] = $form_state['default_parent'];
