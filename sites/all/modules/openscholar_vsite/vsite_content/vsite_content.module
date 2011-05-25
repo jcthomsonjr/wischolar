@@ -112,11 +112,11 @@ function vsite_content_form_views_exposed_form_alter(&$form, $form_state, $form_
       return;
     }
     $active_menu = menu_get_item();
-    $path = $vsite -> purl . '/' . $active_menu['path'];
+    $path = url($active_menu['path']);
 
     $form['reset'] = array(
       '#type' => 'markup',
-      '#value' => '<input class="form-button" type="reset" value="Reset" onClick="javascript:window.location=\'/'. $path .'\';" />',
+      '#value' => '<input class="form-button" type="reset" value="Reset" onClick="javascript:window.location=\''. $path .'\';" />',
     );
   }
 }
