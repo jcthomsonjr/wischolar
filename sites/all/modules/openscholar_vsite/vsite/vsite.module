@@ -462,6 +462,7 @@ function vsite_form_alter(&$form, $form_state, $form_id){
     if(isset($form['buttons']['preview'])){
     	$form['buttons']['preview']['#access'] = user_access('vsite_node_form_preview');
     }
+    
   }
 
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
@@ -511,6 +512,29 @@ function vsite_form_alter(&$form, $form_state, $form_id){
         unset($form['buttons']['submit']['#submit'][array_search('spaces_og_form_group_submit', $form['buttons']['submit']['#submit'])]);
       } //Don't need this submit, it just handles redirection
       break;
+    case "upload_js":
+    	//Show the correct future path for newly created files
+		  if (($cached_form = form_get_cache($_POST['form_build_id'], $cached_form_state)) && isset($cached_form['#node']) || isset($cached_form['attachments'])){
+		  	if (module_exists('file_aliases') && module_exists('filefield_paths')) {
+		  		$result = db_fetch_object(db_query("SELECT * FROM {filefield_paths} WHERE type = '%s' AND field = '%s'", $cached_form['#node']->type, 'upload'));
+		  		$settings = array('filepath'=> unserialize($result->filepath), 'filename' => unserialize($result->filename));
+		  		
+		  		foreach (element_children($form['files']) as $fid) {
+			  		if (!empty($settings['filename']['value'])) {
+	            $file_name = filefield_paths_process_string($settings['filename']['value'], 'node', $cached_form['#node'], $settings['filename']);
+              $file_name = filefield_paths_process_string($file_name, 'field', array(0 => $file['field']), $settings['filename']);
+	          }
+	          else {
+	            $file_name = $file['field']['filename'];
+	          }
+	          
+	          $file_path = filefield_paths_process_string(file_directory_path() . '/' . $settings['filepath']['value'] . '/' . $file_name, 'node', $node, $settings['filepath']);
+            $file_path = filefield_paths_process_string($file_path, 'field', array(0 => $file['field']), $settings['filepath']);
+		  		}
+		  	}
+		  }
+    	
+    break;
     default :
       if ($form['#id'] == 'node-form' && (arg(0) . '/' . arg(1) != 'admin/content')) {
         // GROUP ENABLED CONTENT TYPES
@@ -603,8 +627,6 @@ function vsite_form_alter(&$form, $form_state, $form_id){
             $form['options']['vsite_make_featured']['#default_value'] = $flag->is_flagged($nid);
           }
         } //Overide the default promote functionality in favor of ours
-
-
       }
       break;
   }
@@ -632,7 +654,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
       $form = $teaser;
       //Notify a user that they changed thier title but that the path did not change
       if ($node->nid && $node->pathauto_perform_alias && module_exists('path') && module_exists('pathauto') && ($vsite = vsite_get_vsite())) {
-        if ($form['title']['#default_value'] != $form['title']['#value']) {
+        if (trim($form['title']['#default_value']) != trim($form['title']['#value'])) {
           $alias = url("node/" . $node->nid, array(
             'absolute' => true
           ));
@@ -728,12 +750,19 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
           }
         }
       }
-      break;
+    break;
     case 'delete' :
       // Deleting a vsite shall delete child nodes
       // See "og_node_delete_confirm_submit"
       break;
   }
+}
+
+/**
+ * Display the correct file alias for the file
+ */
+function viste_form_upload_js_alter(){
+	
 }
 
 /**

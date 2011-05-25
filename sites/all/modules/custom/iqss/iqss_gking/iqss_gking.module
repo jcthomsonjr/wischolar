@@ -737,7 +737,7 @@ function iqss_gking_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 			      }
 	  			}
 	  		}//Do not require Titles for Pages in this taxonomy (don't ask) ok it is because he uses this for blurbs on the taxonomy page
-	  		if(!$valid){
+	  		if(!$valid && !strlen($node->title)){
 	  			form_set_error('title',"Title is required for pages that are not in the Research Interests taxonomy");
 	  		}
   		}
