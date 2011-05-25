@@ -209,9 +209,9 @@ function bkn_menu_autocomplete($field, $string = '') {
     
     $results = bkn_call_service($string);
     
-    $matches["351642|Richard Brandon|http://google.com"] = 'Richard';
-    $matches["358888|RMix Master|http://dogpile.com"] = "Mickey";
-    $matches["3519933|Johnny Rocket|http://www.woot.com"] = 'Ferdi';
+    $matches["351642|Richard Brandon|http://richardbrandon.com"] = 'Richard Brandon';
+    $matches["358888|Ferdi Alimadhi|http://FerdiAlimadhi.com"] = "Ferdi Alimadhi";
+    $matches["3519933|Jim Pitman|http://www.stat.berkeley.edu/~pitman/"] = 'Jim Pitman';
     
     print drupal_to_js($matches);
     exit();
