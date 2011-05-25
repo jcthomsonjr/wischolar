@@ -299,7 +299,7 @@ select.form-select:focus {
   margin-right: 12px;
   }
 
-#edit-field-biblio-image-0-filefield-upload {
+#edit-field-biblio-image-0-filefield-upload, .vsite_content_bulk_update input.form-submit {
   float: none;
   }
 
@@ -465,6 +465,10 @@ form div.buttons {
   }
 
 /* CONTENT PAGES FILTERING AND UPDATING OPTIONS */
+  
+div.view-vsite-content fieldset.vsite_content_filter_box, div#views-bulk-operations-select fieldset.vsite_content_bulk_update {
+	margin-right: 0px;
+}
 
 .vsite_content_filter_box .fieldset-wrapper, #views-bulk-operations-select .fieldset-wrapper {
   margin-left: 0;
@@ -481,7 +485,6 @@ form div.buttons {
 
 .view-vsite-content .vsite_content_filter_box legend.collapse-processed, #views-bulk-operations-select legend.collapse-processed {
   background: #EAEBE9;
-  padding-right:5px;
   }
 
 .view-vsite-content fieldset.collapsed legend.collapse-processed, #views-bulk-operations-select fieldset.collapsed legend.collapse-processed {
