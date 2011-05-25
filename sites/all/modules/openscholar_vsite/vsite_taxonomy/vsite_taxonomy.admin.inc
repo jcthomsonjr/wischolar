@@ -406,7 +406,7 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
 }
 
 function vsite_taxonomy_form_term_name_validate($element, &$form_state) {
-  if ($form_state['args']['vocabulary']->tags && $form_state['values']['op'] != $form_state['values']['delete']) {
+  if (!$form_state['values']['tid'] && $form_state['args']['vocabulary']->tags && $form_state['values']['op'] != $form_state['values']['delete']) {
     if (db_result(db_query("SELECT COUNT(*) FROM {term_data} WHERE vid = %d AND name = '%s'", $form_state['args']['vocabulary']->vid, $form_state['values']['name']))) {
       form_set_error('name', t('May not have 2 terms with the same name in a free-tagging vocabulary.'));
     }
