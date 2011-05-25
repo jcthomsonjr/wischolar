@@ -2,6 +2,27 @@
 
 include_once('os_wysiwyg.features.inc');
 
+/*
+ * come back later if I have time
+ * do something about the fact that copying URLS from the address bar in Chrome
+ * causes an anchor tag to be copied.
+function os_wysiwyg_form_alter(&$vars) {
+  static $init = false;
+  if (!$init) {
+    drupal_add_js('
+    $(document).load(function () {
+      $("iframe").each(function (i) {
+
+      });
+    	window.addEventListener("paste", function (e) {
+    		console.log(e);
+    	});
+    });',
+    'inline');
+    $init = true;
+  }
+}*/
+
 function os_wysiwyg_install() {
   _os_wysiwyg_config();
 }

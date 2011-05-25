@@ -90,11 +90,14 @@ function vsite_menus_settings_form($form_state){
   }
 
   foreach ($menus as $key => $link) {
+    $link_path = $link['link_path'];
+    $url = url($link_path, array('absolute' => TRUE));
     $form['conf'][$link['menu_name']][str_replace('.', '__', $key)] = array(
       '#tree' => TRUE,
       '#weight' => $link['weight'],
       'name' => array(
         '#type' => 'textfield',
+        '#description' => l($url, $url),
         '#size' => 30,
         '#default_value' => !empty($link['link_title']) ? $link['link_title'] : ucwords(str_replace('_', ' ', $key)),
       ),
