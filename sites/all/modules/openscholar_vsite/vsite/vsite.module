@@ -516,19 +516,21 @@ function vsite_form_alter(&$form, $form_state, $form_id){
 		  if (($cached_form = form_get_cache($_POST['form_build_id'], $cached_form_state)) && isset($cached_form['#node']) || isset($cached_form['attachments'])){
 		  	if (module_exists('file_aliases') && module_exists('filefield_paths')) {
 		  		$result = db_fetch_object(db_query("SELECT * FROM {filefield_paths} WHERE type = '%s' AND field = '%s'", $cached_form['#node']->type, 'upload'));
-		  		$settings = array('filepath'=> unserialize($result->filepath), 'filename' => unserialize($result->filename));
+		  		$settings = array('filealias'=> unserialize($result->filealias));
 		  		
 		  		foreach (element_children($form['files']) as $fid) {
-			  		if (!empty($settings['filename']['value'])) {
-	            $file_name = filefield_paths_process_string($settings['filename']['value'], 'node', $cached_form['#node'], $settings['filename']);
-              $file_name = filefield_paths_process_string($file_name, 'field', array(0 => $file['field']), $settings['filename']);
-	          }
-	          else {
-	            $file_name = $file['field']['filename'];
-	          }
-	          
-	          $file_path = filefield_paths_process_string(file_directory_path() . '/' . $settings['filepath']['value'] . '/' . $file_name, 'node', $node, $settings['filepath']);
-            $file_path = filefield_paths_process_string($file_path, 'field', array(0 => $file['field']), $settings['filepath']);
+		  			$field = array('filename' => $form['files'][$fid]['filename']['#value'],'filepath' => $form['files'][$fid]['filepath']['#value'],'fid' => $fid);
+		  			
+			  		$file_alias = filefield_paths_process_string($settings['filealias']['value'], 'node', $cached_form['#node'], $settings['filealias']);
+            $file_alias = filefield_paths_process_string($file_alias, 'field', array(0 => $field), $settings['filealias']);
+            
+            if($file_alias){
+            	$vsite = vsite_get_vsite();
+            	if($vsite && $vsite->purl_provider != "spaces_og"){
+            		$file_alias = $vsite->group->purl."/".$file_alias;
+            	}
+            	$form['files'][$fid]['description']['#description'] = "<small>".url($file_alias,array('absolute' => true))."</small>";
+            }
 		  		}
 		  	}
 		  }
