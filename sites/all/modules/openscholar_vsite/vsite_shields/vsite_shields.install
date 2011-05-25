@@ -4,7 +4,7 @@ function vsite_shields_requirements($phase) {
 
   $requirements = array();
   if ($phase == 'runtime') {
-    $shields_dir = file_create_path().'/vsite_shields';
+    $shields_dir = file_create_path().'/vsite_shields/';
     if (!file_check_directory($shields_dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
       if (!is_dir($shields_dir)) {
         $requirements['shields_dir'] = array(
@@ -36,7 +36,7 @@ function vsite_shields_requirements($phase) {
 
 function vsite_shields_install() {
   $temp = 5;
-  vsite_shields_update_6002($temp);
+  //vsite_shields_update_6002($temp);
 }
 
 function vsite_shields_update_6001(&$sandbox) {
@@ -66,6 +66,10 @@ function vsite_shields_update_6001(&$sandbox) {
 
 function vsite_shields_update_6002(&$sandbox) {
   // copy over existing shields to new location
+
+  if ($req_error = vsite_shields_requirements('runtime')) {
+    return array(array('success' => FALSE, 'query' => $req_error['shields_dir']['description']));
+  }
 
   $new_path = file_create_path().'/vsite_shields/';
   $files = file_scan_directory('sites/all/modules/openscholar_vsite', 'unsure.*');
