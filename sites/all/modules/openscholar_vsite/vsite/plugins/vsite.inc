@@ -19,6 +19,9 @@ class vsite extends space_og {
    * Return the absolute URL to this vsite
    */
   public function get_absolute_url($path = ""){
+  	if(!$this->purl_provider){
+  		self::verify_purl();
+  	}
 
     return url($path, array( 'purl' => array( 'provider' => $this->purl_provider,'id' => $this->id), 'absolute' => true));
 
