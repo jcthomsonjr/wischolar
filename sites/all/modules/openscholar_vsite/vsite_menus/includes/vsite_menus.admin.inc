@@ -34,11 +34,6 @@ function vsite_menus_settings_form($form_state){
     )),
   );
 
-  $form['help_text'] = array(
-    '#type' => 'markup',
-    '#value' => '<div class="help-text">Drag links to order them and move them between menus.</div>',
-  );
-
   // just do have distinct id for each setting form
   $form['#prefix'] = '<div id = "cp-settings-menus">';
   $form['#suffix'] = '</div>';
@@ -138,6 +133,14 @@ function vsite_menus_settings_form($form_state){
     '#value' => t('Reset to defaults'),
     '#submit' => array('vsite_menus_settings_form_reset'),
   );
+  
+  /*
+  $form['help_text'] = array(
+    '#type' => 'markup',
+    '#value' => '<div class="help-text">Drag links to order them and move them between menus.</div>',
+  );
+  */
+  
 
   $form['#after_build'][] = 'vsite_menus_settings_form_after_build';
 
