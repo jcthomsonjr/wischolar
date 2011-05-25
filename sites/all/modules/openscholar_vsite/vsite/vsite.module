@@ -122,7 +122,6 @@ function vsite_views_pre_build(&$view){
   // the vsite_feed view should only display node from
   // public features
   if ($view->name == 'vsite_feed') {
-    dpm($view);
     _vsite_feed_content_types_filter($view);
   }
 }
