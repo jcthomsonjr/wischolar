@@ -89,7 +89,7 @@ function vsite_design_update_6001(&$sandbox){
   $settings = array();
   $result = db_query('SELECT * FROM {spaces_settings} WHERE id LIKE "theme" ');
   while ($row = db_fetch_object($result)) {
-    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_setting_theme', '%s')", $row->type, $row->sid, $row->value);
+    db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_design_maintheme', '%s')", $row->type, $row->sid, $row->value);
   }
   $res[] = array(
       'success' => true,
