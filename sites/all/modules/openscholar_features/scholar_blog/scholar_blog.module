@@ -43,6 +43,8 @@ function scholar_blog_link_alter(&$links, $node){
  */
 function _scholar_blog_rss_wgt(){
   
-  return array('content' => l("Subscribe to this blog Feed","blog/feed",array('attributes' => array('class' => 'feed-link'))));
-  
+  if ($image = theme('image', 'misc/feed.png', t('Syndicate content'), 'RSS')) {
+    $block['content'] = l($image . " Subscribe", 'blog/feed', array('html' => TRUE, 'attributes' => array('class' => 'feed-icon')));
+  }
+  return $block;
 }
