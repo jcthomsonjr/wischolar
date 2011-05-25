@@ -23,22 +23,6 @@ function os_wysiwyg_form_alter(&$vars) {
   }
 }*/
 
-function os_wysiwyg_preprocess_node(&$vars) {
-  static $inserted = false;
-  if ($inserted) return;
-  if (strpos($vars['content'], '<div class="oembed">') !== FALSE) {
-    drupal_add_js('
-    	$(document).ready(function() {
-    		$(".oembed iframe").each(function (i) {
-    			this.style.width = this.width+"px";
-    			this.style.height = this.height+"px";
-    		});
-    	});
-    ', 'inline');
-    $inserted = true;
-  }
-}
-
 function os_wysiwyg_install() {
   _os_wysiwyg_config();
 }
