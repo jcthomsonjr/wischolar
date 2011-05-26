@@ -56,9 +56,9 @@ function vsite_taxonomy_form($form_state) {
       '#title' => ucfirst($v->name),
       '#tree' => TRUE,
       '#theme' => 'taxonomy_overview_terms',
+      '#desciption' => 'taxonomy meta-data',
     );
     $form['buttons']['submit'] = $form_frag['submit'];
-    $form['buttons']['reset_alphabetical'] = $form_frag['reset_alphabetical'];
     unset($form_frag['submit'], $form_frag['reset_alphabetical']);
     $form_frag['add_new_term'] = array(
       '#type' => 'markup',
