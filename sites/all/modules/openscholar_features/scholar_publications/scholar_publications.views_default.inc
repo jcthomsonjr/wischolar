@@ -1758,6 +1758,13 @@ function scholar_publications_views_default_views() {
       ),
       'relationship' => 'none',
     ),
+    'created' => array(
+    	'order' => 'DESC',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+    ),
+    
   ));
   $handler->override_option('filters', array(
     'status' => array(
