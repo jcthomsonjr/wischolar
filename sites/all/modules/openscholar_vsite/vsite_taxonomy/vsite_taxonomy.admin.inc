@@ -76,7 +76,7 @@ function vsite_taxonomy_form($form_state) {
     $fieldset += $form_frag;
     $form[strtolower(str_replace(' ', '_', $v->name))] = $fieldset;
   }
-  $form['buttons'] += array(
+  $form['buttons'] = array(
     '#type' => 'markup',
     '#prefix' => '<div>',
     '#suffix' => '</div>',
