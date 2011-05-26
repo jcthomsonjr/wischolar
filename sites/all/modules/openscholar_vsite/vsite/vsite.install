@@ -330,7 +330,7 @@ function vsite_update_6014(&$sandbox){
   $res = array();
   module_rebuild_cache();
 
-  $modules = array('shorten', 'formcolumns', 'vsite_shields', );
+  $modules = array('shorten', 'formcolumns');
 
   foreach ($modules as $mod) {
 	  if(!module_exists($mod)){

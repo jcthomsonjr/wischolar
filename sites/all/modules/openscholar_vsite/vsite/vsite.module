@@ -277,8 +277,8 @@ function vsite_get_vsite_by_owner($uid = NULL){
     default :
       if (! empty($sites)) {
         foreach ( $sites as $site ) {
-          $space = spaces_load('og', $site);
-          if ($space && $space->type == 'og' && $space->group->type == $scholar_content_type) {
+          $space = vsite_get_vsite($site);
+          if ($space) {
             $spaces[] = $space;
           }
         }
