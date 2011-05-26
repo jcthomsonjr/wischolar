@@ -81,6 +81,7 @@ function scholar_presentations_content_default_fields() {
     ),
   );
 
+
   // Exported field: field_presentation_file
   $fields['presentation-field_presentation_file'] = array(
     'field_name' => 'field_presentation_file',
@@ -93,7 +94,7 @@ function scholar_presentations_content_default_fields() {
       ),
       'teaser' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
         'format' => 'default',
@@ -155,7 +156,7 @@ function scholar_presentations_content_default_fields() {
       ),
       'teaser' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
         'format' => 'default',
