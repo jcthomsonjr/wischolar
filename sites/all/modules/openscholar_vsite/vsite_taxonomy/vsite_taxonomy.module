@@ -476,6 +476,12 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
 	    $form['settings']['tags']['#description'] = '';
 	    $form['settings']['tags']['#title'] = 'Type';
   	break;
+  	case "taxonomy_vocabulary_confirm_reset_alphabetical":
+	    $vsite = vsite_get_vsite();
+	    if($vsite && $form['actions']){
+	      $form['actions']['cancel']['#value'] = l("Cancel","cp/settings/taxonomy");
+	    }
+    break;
   }
 
 }
