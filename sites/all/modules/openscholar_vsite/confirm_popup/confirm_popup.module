@@ -38,7 +38,7 @@ function confirm_popup_dialog_options(){
  * in the path, then adds the necessary classes for modal
  * functionality.
  */
-function confirm_popup_preprocess_page(&$variables) {
+function confirm_popup_init() {
 
 	ctools_include('ajax');
 	ctools_include('modal');

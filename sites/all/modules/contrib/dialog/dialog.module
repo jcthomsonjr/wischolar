@@ -35,7 +35,7 @@ function dialog_add_js() {
 
   // Add jquery_ui js and css.
   jquery_ui_add(array('ui.core', 'ui.resizable', 'ui.draggable', 'ui.dialog'));
-  drupal_add_css(JQUERY_UI_PATH .'/themes/base/ui.all.css');
+  //drupal_add_css(JQUERY_UI_PATH .'/themes/base/ui.all.css');
 
   // And finally, the dialog js.
   drupal_add_js(drupal_get_path('module', 'dialog') .'/dialog.js');
@@ -146,13 +146,13 @@ function dialog_form_render($form_state, $output) {
 /**
  * Generic dialog replacement for drupal_get_form().  Suitable for use as the
  * page callback in a menu item.
- * 
- * This function introduces a new form callback function to handle the 
+ *
+ * This function introduces a new form callback function to handle the
  * post-submit dialog commands, in the ajax context.  This function takes the
- * form of form_id_dialog_success.  If this function is found, it will be 
+ * form of form_id_dialog_success.  If this function is found, it will be
  * automatically called after a valid submission of the form has been detected.
- * If the function does not exist, a redirect will be issued based on the 
- * redirect value in the form_state array.  As the final fallback, if the 
+ * If the function does not exist, a redirect will be issued based on the
+ * redirect value in the form_state array.  As the final fallback, if the
  * redirect value is missing or empty, a client-side reload command is issued.
  *
  * @param $id
@@ -199,6 +199,6 @@ function dialog_get_form($form_id, $js) {
  * Process variables for dialog-content.tpl.php.
  */
 function template_preprocess_dialog_content(&$variables) {
-  $variables['help'] = theme('help');  
+  $variables['help'] = theme('help');
   $variables['messages'] = theme('status_messages');
 }

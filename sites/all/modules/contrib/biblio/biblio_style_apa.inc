@@ -55,7 +55,7 @@ function biblio_style_apa($node, $base = 'biblio', $inline = FALSE) {
       $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
     }
   }
-  if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.
+  //if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.
   if (!empty ($node->biblio_citekey)&&(variable_get('biblio_display_citation_key',0))) {
     $output .= '[' . check_plain($node->biblio_citekey) . '] ';
   }
