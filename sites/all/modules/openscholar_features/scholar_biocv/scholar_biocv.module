@@ -127,14 +127,14 @@ function scholar_biocv_bio(){
   $s_out = "";
 
   //ADD CV Link if Req
-  if ($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attached) && $cv_node->field_cv_attached[0]){
-  	$s_filefield_alias = 'filefield_paths/alias/' . $cv_node->field_cv_attached[0]['fid'];
+  if ($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
+  	$s_filefield_alias = 'filefield_paths/alias/' . $cv_node->field_cv_attach[0]['fid'];
   	$alias = drupal_get_path_alias($s_filefield_alias);
 
   	if($alias && $s_filefield_alias != $alias){
-  	  $s_file_path = str_replace($cv_node->field_cv_attached[0]['filepath'], $alias, file_create_url($cv_node->field_cv_attached[0]['filepath']));
+  	  $s_file_path = str_replace($cv_node->field_cv_attach[0]['filepath'], $alias, file_create_url($cv_node->field_cv_attach[0]['filepath']));
   	}else{
-  	 	$s_file_path = file_create_url($cv_node->field_cv_attached[0]['filepath']);
+  	 	$s_file_path = file_create_url($cv_node->field_cv_attach[0]['filepath']);
   	}
 
     $s_out .= t("<h3 class='cv-direct-download'>Full CV: ").l('PDF', $s_file_path)."</h3>";

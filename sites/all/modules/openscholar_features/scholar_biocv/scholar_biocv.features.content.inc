@@ -73,8 +73,8 @@ function scholar_biocv_content_default_fields() {
   );
 
   // Exported field: field_cv_attached
-  $fields['cv-field_cv_attached'] = array(
-    'field_name' => 'field_cv_attached',
+  $fields['cv-field_cv_attach'] = array(
+    'field_name' => 'field_cv_attach',
     'type_name' => 'cv',
     'display_settings' => array(
       'label' => array(
