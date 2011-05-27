@@ -17,7 +17,7 @@ Drupal.behaviors.confirm_popup = function () {
 
 	links_t.each(function (i, item) {
 	  // add in the necessary path bits and classes
-      if (item.className.indexOf("ctools-use-modal") == -1) {
+      if (item.className.indexOf("ctools-use-dialog") == -1) {
     	if(item.href.indexOf(Drupal.settings.confirm_popup.base_domain) != -1){
     	  item.href = item.href.replace(Drupal.settings.confirm_popup.base_domain+path, Drupal.settings.confirm_popup.base_domain+path+"confirm_popup/nojs/");
     	}else if(item.href.indexOf("http:") != -1){ 
@@ -27,11 +27,11 @@ Drupal.behaviors.confirm_popup = function () {
 	    	  item.href = item.href.replace(path, path+"confirm_popup/nojs/");
 	      }
     	}
-        item.className += " ctools-use-modal ctools-modal-confirm-popup-modal";
+        item.className += " ctools-use-dialog ctools-modal-confirm-popup-modal";
 	  }
 	});
   });
 
   // tell ctools to go. We don\'t know if ctools has already processed or not.
-  Drupal.behaviors.ZZCToolsModal();
+  Drupal.behaviors.Dialog();
 }
