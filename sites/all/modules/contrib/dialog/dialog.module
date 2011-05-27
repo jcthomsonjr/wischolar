@@ -35,7 +35,7 @@ function dialog_add_js() {
 
   // Add jquery_ui js and css.
   jquery_ui_add(array('ui.core', 'ui.resizable', 'ui.draggable', 'ui.dialog'));
-  //drupal_add_css(JQUERY_UI_PATH .'/themes/base/ui.all.css');
+  drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/jquery_ui/jquery.ui/themes/openscholar/ui.all.css');
 
   // And finally, the dialog js.
   drupal_add_js(drupal_get_path('module', 'dialog') .'/dialog.js');
