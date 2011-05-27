@@ -1,0 +1,232 @@
+<?php
+// $Id: bkn.module,v 1.0 2009/07/08 01:40:05 rwb Exp $
+
+/**
+ * Implementation of hook_menu().
+ *
+ * Here we define some built in links for the bkn module, links exposed are:
+ *
+ *
+ */
+function bkn_menu() {
+  $items = array(
+    'bkn/getContributors/js' => array(
+      'title'             => 'BKN Contributors Lookup',
+      'page callback'     => 'bkn_contributors_js',
+      'access arguments'  => array('access content'),
+      'type'              => MENU_CALLBACK,
+    ),
+    'admin/settings/bkn' => array(
+      'title'             => 'BKN Contributor Settings',
+      'description'       => 'Configure default behavior of the BKN module.',
+      'page callback'     => 'drupal_get_form',
+      'page arguments'    => array('bkn_admin_settings'),
+      'access arguments'  => array('administer biblio'),
+      'file'              => 'bkn.admin.inc',
+    )
+  );
+  
+  return $items;
+}
+
+
+function bkn_contributors_js(){
+  
+  $results = bkn_call_service($_REQUEST['name']);
+  
+  $matches = array();
+  
+  $matches[1341234] = array("Richard Brandon","http://google.com");
+  $matches[1441234] = array("Matthew Brandon","http://masters.com");
+  $matches[1366234] = array("John Smith","http://blinks.com");
+  
+  print drupal_to_js($matches);
+  exit();
+}
+
+/**
+ * implements hook_nodeapi
+ *
+ * @param stdclass $node
+ * @param string $op
+ */
+function bkn_nodeapi(& $node, $op, $a3, $a4) {
+  if ($node->type == 'biblio') {
+    switch ($op) {
+      
+      case 'insert':
+      case 'update':
+        if(!empty($node->biblio_contributors)){
+          $md5 = _loadMD5();
+          foreach ($node->biblio_contributors as $cat => $authors) {
+            foreach ($authors as $key => $author) {
+              if (empty ($author['cid']) && !empty ($md5))
+                $author['cid'] = array_search($author['md5'], $md5);
+              if (empty ($author['cid'])) {
+                //Somthing is wrong, biblio should have written the author by now
+                //Log Error
+                
+              } else {
+                $cid = $author['cid'];
+              }
+              
+              //Update the contributor_data so that it matches bkn
+              if($cid){
+                db_query("UPDATE {biblio_contributor_data}
+                          SET bkn_identifier = '%s', bkn_fullname = '%s', bkn_url = '%s'
+                          WHERE cid = %d ",
+                          $author['bkn_id'] , $author['bkn_name'] , $author['bkn_url'] ,$cid);
+                return true; // successfully saved all contributors
+              }
+            }
+          }
+        }
+      break;
+    }// switch on operation
+  }// only edit biblio saves
+}// end function bkn
+
+/**
+* Implementation of hook_form_validate().
+*/
+function bkn_form_validate($form, $form_state) {
+  // add the Drupal.ajaxUpdateContributor.js file
+  drupal_add_js(drupal_get_path('module', 'bkn').'/ajaxUpdateContributor.js', 'module', 'header', true);
+}
+
+/**
+* Implementation of hook_form_alter().
+*/
+function bkn_form_alter(&$form, $form_state, $form_id) {
+  if($form_id == "biblio_node_form"){
+  
+	  // add the Drupal.ajaxUpdateContributor.js file
+	  drupal_add_js(drupal_get_path('module', 'bkn').'/ajaxUpdateContributor.js', 'module', 'header', true);
+	  
+	  $form['#validate'][] = 'bkn_form_validate';
+	  
+	  $i = 1;
+	  while (array_key_exists('contributors'.$i.'_wrapper',$form)){
+	    $key = 'contributors'.$i.'_wrapper';
+	    
+	    foreach ($form[$key]['biblio_contributors'] as $fields_key => $a_fields) {
+	      
+	    	//Disable the Draggable theme it will mess us up
+	      if(array_key_exists('#theme',$a_fields)){
+	    	  $form[$key]['biblio_contributors'][$fields_key]['#theme'] = 'bkn_contributors';
+	    	}
+	      
+	    	foreach ($a_fields as $s_key => $a_field){
+	    		if(substr($s_key,0,1) == "#") continue;
+	    		
+	    		_bkn_alter_contributor($form[$key]['biblio_contributors'][$fields_key][$s_key]);
+	    	}
+	    }
+	    
+	    $i++;
+	  }
+	  
+	  /* register the behavior -----> Drupal.behaviors.bknGetContrbutors < --------- */
+	  $settings['bknGetContrbutors'] = array();
+	  drupal_add_js($settings, 'setting');
+  }elseif ($form_id == 'biblio_contributors_js'){
+    //Modify the contributors
+    _bkn_alter_contributor($form);
+  }
+  
+}
+
+function _bkn_alter_contributor(&$element){
+	$use_autocomplete = variable_get('bkn_allow_autocomplete',1);
+  $n_lookup_mode = variable_get('bkn_mode',2);
+  
+  //No autocomplete
+  if(!$use_autocomplete &&
+    array_key_exists('name',$element) &&
+    array_key_exists('#autocomplete_path',$element['name'])){
+                
+    unset($element['name']['#autocomplete_path']);
+  }
+          
+  $a_parents = $element['name']['#parents'];
+  array_pop($a_parents); //Get rid of the name
+          
+  if(array_key_exists('rank',$element)){
+    $element['rank']['#type'] = 'hidden';
+  }
+          
+  if($n_lookup_mode == 1 && !array_key_exists('check_bkn',$element)){
+    $element['check_bkn'] = array('#type' => 'checkbox', '#title' => 'Use bkn Database', '#parents' => array_merge($a_parents,array('check_bkn')), '#attributes' => array('class' => 'bknContributorCheck') );
+  }
+          
+  if(!array_key_exists('bkn_id',$element)){
+    $element['bkn_id'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_id')), '#default_value' => '');
+  }
+          
+  if(!array_key_exists('bkn_name',$element)){
+    $element['bkn_name'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_name')), '#default_value' => '');
+  }
+          
+  if(!array_key_exists('bkn_url',$element)){
+    $element['bkn_url'] = array('#type' => 'hidden', '#parents' => array_merge($a_parents,array('bkn_url')), '#default_value' => '');
+  }
+	
+}
+
+function bkn_theme($existing, $type, $theme, $path) {
+  return array(
+    'bkn_contributors' => array(
+        'file' => 'bkn_theme.inc',
+        'arguments' => array('form'),
+    ),
+  );
+}
+
+
+// implement hook_menu_alter() to use bkns return instead of
+// the biblio return
+function bkn_menu_alter(&$items) {
+   
+  //Hijack the callback for the biblio autocomplete and call this one first.
+  $items['biblio/autocomplete']['page callback'] = 'bkn_menu_autocomplete';
+  
+} // end bkn_menu_alter()
+
+
+
+/**
+ * Overide that looks up names from bkn
+ *
+ * @param string $field
+ * @param string $string
+ * @deprecated
+ */
+function bkn_menu_autocomplete($field, $string = '') {
+  $matches = array();
+  $use_bkn_autocomplete = (variable_get('bkn_mode',1) == 0);
+  
+  if ($use_bkn_autocomplete && $field == 'contributor') {
+    
+    $results = bkn_call_service($string);
+    
+    $matches["351642|Richard Brandon|http://richardbrandon.com"] = 'Richard Brandon';
+    $matches["358888|Ferdi Alimadhi|http://FerdiAlimadhi.com"] = "Ferdi Alimadhi";
+    $matches["3519933|Jim Pitman|http://www.stat.berkeley.edu/~pitman/"] = 'Jim Pitman';
+    
+    print drupal_to_js($matches);
+    exit();
+  }else{
+    call_user_func_array('biblio_autocomplete',array($field,$string));
+  }
+}
+
+/**
+ * Call the BKN Service to retrieve matching names
+ *
+ * @param string $s_search
+ * @return array
+ */
+function bkn_call_service($s_search){
+  return array();
+
+}

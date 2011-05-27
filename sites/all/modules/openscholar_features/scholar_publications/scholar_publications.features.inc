@@ -41,7 +41,7 @@ function scholar_publications_imagecache_default_presets() {
           'module' => 'imagecache',
           'action' => 'imagecache_scale',
           'data' => array(
-            'width' => '125',
+            'width' => '25',
             'height' => '100%',
             'upscale' => 0,
           ),

@@ -647,8 +647,7 @@ function _scholar_publications_modify_contributor(&$form){
   $author = db_fetch_array($db_result);
 
 	if(!$author){
-		//removed temporarially untill this can be tested without BKN
-		//_scholar_publications_add_owner_checkbox($form['contributors1_wrapper']['biblio_contributors']);
+		_scholar_publications_add_owner_checkbox($form['contributors1_wrapper']['biblio_contributors']);
 	}elseif(!$form['nid']['#value']){
 		$form['contributors1_wrapper']['biblio_contributors'][1][0]['name']['#default_value'] = $author['name'];
 		$form['contributors1_wrapper']['biblio_contributors'][1][0]['cid']['#default_value'] = $author['cid'];
