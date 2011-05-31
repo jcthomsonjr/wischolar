@@ -23,7 +23,7 @@ function vsite_taxonomy_form($form_state) {
       "class" => "context-links"
     )),
   );
-
+  $form['buttons'] = array();
 
   // let's do something crazy
   // I'm going to get the forms for each category in a vsite,

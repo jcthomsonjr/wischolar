@@ -127,7 +127,7 @@ function scholar_biocv_bio(){
   $s_out = "";
 
   //ADD CV Link if Req
-  if($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
+  if ($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
   	$s_filefield_alias = 'filefield_paths/alias/' . $cv_node->field_cv_attach[0]['fid'];
   	$alias = drupal_get_path_alias($s_filefield_alias);
 

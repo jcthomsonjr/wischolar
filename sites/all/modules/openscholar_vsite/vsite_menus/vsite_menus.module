@@ -152,7 +152,7 @@ function vsite_menus_preprocess_page(&$vars){
  * Return the vsite_menus menu item given a path
  * @param string $path
  */
-function vsite_menus_get_menu_item($path, $vsite = false){
+function vsite_menus_get_menu_item($path, $vsite = false, $include_hidden = false){
 	if(!$vsite && !($vsite = vsite_get_vsite())) return array();
 
 	$a_site_menus = array_keys(variable_get('scholar_site_menus',array()));
@@ -160,7 +160,7 @@ function vsite_menus_get_menu_item($path, $vsite = false){
 
 	$a_menu_link = array();
   foreach ($a_site_menu_links as $key => $link) {
-    if($link['link_path'] == $path && !$link['hidden']){
+    if($link['link_path'] == $path && (!$link['hidden'] || $include_hidden)){
     	if(!$link['key']) $link['key'] = $key;
       $a_menu_link = $link;
       break;

@@ -17,16 +17,33 @@ function confirm_popup_menu(){
 }
 
 /**
+ * common jquery ui .dialog() options
+ */
+function confirm_popup_dialog_options(){
+  return array(
+    'width' => '1000',
+    'position' => array(
+      'center',
+      'center'
+    ),
+    'show' => 'slide, {direction: "down"},1000',
+    'resizable' => FALSE,
+    'closeText' => 'Close',
+  );
+}
+
+/**
  * Implementation of hook_preprocess_page.
  * Scans the entire page for links with confirm_popup
  * in the path, then adds the necessary classes for modal
  * functionality.
  */
-function confirm_popup_preprocess_page(&$variables) {
+function confirm_popup_preprocess_page(&$vars) {
 
 	ctools_include('ajax');
 	ctools_include('modal');
 	ctools_modal_add_js();
+	dialog_add_js();
 	_confirm_popup_modal_settings();
 }
 
@@ -53,6 +70,7 @@ function confirm_popup_ajax_callback(){
         ctools_include('ajax');
         ctools_include('modal');
         ctools_modal_add_js();
+        dialog_add_js();
 
         // we're loading a form into a modal popup.
         if ($router_item['page_callback'] == 'drupal_get_form') {
@@ -68,7 +86,7 @@ function confirm_popup_ajax_callback(){
           );
 
           // get the ctools page now
-          $output = ctools_modal_form_wrapper($form_id, $form_state);
+          $output = dialog_form_wrapper($form_id, $form_state);
           if (empty($output)) {
             // empty $output signifies we're not rendering a form, so we'll use it as our $commands
             // array.
@@ -76,7 +94,7 @@ function confirm_popup_ajax_callback(){
           //  $message =  theme('status_messages');
           //  $output[] = ctools_modal_command_display(t('Message'), "<div>".$message."</div>");
             if ($form_state['values']['op'] == 'Cancel') {
-              $output[] = ctools_modal_command_dismiss();
+              $output[] = dialog_command_dismiss();
             }
             elseif (isset($form_state['values']['op'])) {
               // this could be anything, really.
@@ -87,7 +105,13 @@ function confirm_popup_ajax_callback(){
                 $output[] = ctools_ajax_command_reload();
               }
             }
-          }
+          }    else {
+      foreach ( $output as $i => $command ) {
+        if ($command['command'] == 'dialog_display') {
+          $output[$i]['options'] = confirm_popup_dialog_options();
+        }
+      }
+    }
         }
         else {
           // this isn't a form at all! Or it's some wierd form that doesn't use drupal_get_form the way we
@@ -129,11 +153,15 @@ function confirm_popup_form_alter(&$form, &$form_state, $form_id) {
       '#value' => drupal_set_title()."<br>",
       '#weight' => -1,
     );
+    
+    unset($form['actions']['cancel']);
 
+    /*
     $form['actions']['cancel'] = array(
       '#type' => 'submit',
       '#value' => 'Cancel',
     );
+    */
 
     $form['#popup_submit'] = $form['#submit'];
     $form['#submit'] = array('confirm_popup_submit');
@@ -175,14 +203,7 @@ function _confirm_popup_modal_settings() {
   }
   
   drupal_add_js(array(
-    'confirm-popup-modal' => array(
-      'modalSize' => array(
-        'type' => 'fixed',
-        'width' => 'auto',
-        'height' => 'auto',
-        'top' => 'auto',
-      ),
-    ),
+
     'confirm_popup' => array("links" => drupal_to_js(_confirm_popup_get_confirm_paths()),
                              "base_path" => $s_base_path,
                              "base_domain" => $s_base_domain),
