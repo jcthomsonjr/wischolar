@@ -94,9 +94,7 @@ function scholar_pages_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'node_options_page';
   $strongarm->value = array(
-    0 => 0,
-    1 => 1,
-    2 => 2,
+    0 => 'status',
   );
 
   $export['node_options_page'] = $strongarm;
