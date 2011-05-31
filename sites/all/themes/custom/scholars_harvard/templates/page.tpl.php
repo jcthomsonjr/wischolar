@@ -17,7 +17,7 @@
         </div>
       <div id="content-area">
         <div class="wrap">
-            <div class="hg-container">
+            <div class="hg-container clear-block">
           <div id="content-main" class="column">
             <?php if (!empty($content_top)): ?>
               <div id="content-top">
