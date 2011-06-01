@@ -96,7 +96,7 @@ function os_user($op, &$edit, &$account, $category = NULL){
  * Add dynamic strongarm variable defaults
  */
 function os_strongarm_alter(&$vars){
-  
+
   $a_new_settings = array();
   $node_types = node_get_types();
   foreach ( $node_types as $type ) {
@@ -106,7 +106,7 @@ function os_strongarm_alter(&$vars){
     $strongarm->api_version = 1;
     $strongarm->name = 'node_options_'. $type -> type;
     $strongarm->value = array('status');
-    $strongarm->export_module = "viste";
+    $strongarm->export_module = "vsite";
     $a_new_settings['node_options_'. $type -> type] = $strongarm;
 
     // itweak
@@ -114,50 +114,50 @@ function os_strongarm_alter(&$vars){
     $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
     $strongarm->api_version = 1;
     $strongarm->name = "itweak_upload_node_display_" . $type->type;
-    $strongarm->value = '4';
-    $strongarm->export_module = "viste";
+    $strongarm->value = '3';
+    $strongarm->export_module = "vsite";
     $a_new_settings["itweak_upload_node_display_" . $type->type] = $strongarm;
-    
+
     $strongarm = new stdClass;
     $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
     $strongarm->api_version = 1;
     $strongarm->name = "itweak_upload_teaser_display_" . $type->type;
     $strongarm->value = '3';
-    $strongarm->export_module = "viste";
+    $strongarm->export_module = "vsite";
     $a_new_settings["itweak_upload_teaser_display_" . $type->type] = $strongarm;
-    
+
     $strongarm = new stdClass;
     $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
     $strongarm->api_version = 1;
     $strongarm->name = "itweak_upload_teaser_images_" . $type->type;
     $strongarm->value = '8';
-    $strongarm->export_module = "viste";
+    $strongarm->export_module = "vsite";
     $a_new_settings["itweak_upload_teaser_images_" . $type->type] = $strongarm;
-    
+
     $strongarm = new stdClass;
     $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
     $strongarm->api_version = 1;
     $strongarm->name = "itweak_upload_thumbnail_link_node_" . $type->type;
     $strongarm->value = 'shadowboxgrouped';
-    $strongarm->export_module = "viste";
+    $strongarm->export_module = "vsite";
     $a_new_settings["itweak_upload_thumbnail_link_node_" . $type->type] = $strongarm;
-    
+
     $strongarm = new stdClass;
     $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
     $strongarm->api_version = 1;
     $strongarm->name = "itweak_upload_thumbnail_link_teaser_" . $type->type;
     $strongarm->value = 'shadowboxgrouped';
-    $strongarm->export_module = "viste";
+    $strongarm->export_module = "vsite";
     $a_new_settings["itweak_upload_thumbnail_link_teaser_" . $type->type] = $strongarm;
-    
+
     $strongarm = new stdClass;
     $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
     $strongarm->api_version = 1;
     $strongarm->name = "itweak_upload_upload_preview_" . $type->type;
     $strongarm->value = 1;
-    $strongarm->export_module = "viste";
+    $strongarm->export_module = "vsite";
     $a_new_settings["itweak_upload_upload_preview_" . $type->type] = $strongarm;
   }
-  
+
   $vars = array_merge($a_new_settings,$vars); //Existing values take precedence
 }
