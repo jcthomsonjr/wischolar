@@ -13,7 +13,6 @@ function scholar_biocv_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'manager',
       '2' => 'scholar admin',
-      '3' => 'scholar user',
     ),
   );
 
@@ -24,7 +23,6 @@ function scholar_biocv_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'manager',
       '2' => 'scholar admin',
-      '3' => 'scholar user',
     ),
   );
 
