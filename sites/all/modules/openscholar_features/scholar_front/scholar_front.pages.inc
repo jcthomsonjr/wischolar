@@ -212,7 +212,7 @@ function scholar_front_settings_frontpage_nid_validate($element, $form_state) {
 function scholar_front_features(){
 
 	vsite_include('vsiteapi');
-  $node_options = $a_front_settings['node_options'];
+  $node_options = variable_get('scholar_front_feature_nodes', false);
 
   if (!$node_options){
     $node_options = vsite_content_types();
