@@ -218,12 +218,14 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 
     }//If the publication type field has been set
 
-    $form['body_field']['format'] = $form['format'];
-    unset($form['format']);
+    if (isset($form['format'])) {
+      $form['body_field']['format'] = $form['format'];
+      unset($form['format']);
 
-    $t = $form['body_field']['teaser_include'];
-    unset($form['body_field']['teaser_include']);
-    $form['body_field']['teaser_include'] = $t;
+      $t = $form['body_field']['teaser_include'];
+      unset($form['body_field']['teaser_include']);
+      $form['body_field']['teaser_include'] = $t;
+    }
   }
 }
 
