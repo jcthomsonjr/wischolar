@@ -10,10 +10,12 @@ function os_wysiwyg_filter_default_formats() {
   $formats['Filtered HTML'] = array(
     'name' => 'Filtered HTML',
     'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'manager',
+      '4' => 'scholar admin',
+      '5' => 'scholar user',
     ),
     'filters' => array(
       '0' => array(
@@ -35,6 +37,11 @@ function os_wysiwyg_filter_default_formats() {
         'module' => 'filter',
         'delta' => '3',
         'weight' => '-6',
+      ),
+      '4' => array(
+        'module' => 'filter',
+        'delta' => '1',
+        'weight' => '10',
       ),
     ),
   );
