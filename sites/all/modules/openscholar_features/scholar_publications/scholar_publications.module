@@ -334,6 +334,9 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       $vsite = vsite_get_vsite();
       $gid = $vsite -> group -> nid;
       $node -> og_groups = array($gid);
+
+      $node->biblio_notes = check_markup($node->biblio_notes);
+      $node->biblio_abst_e = check_markup($node->biblio_abst_e);
     break;
     case 'update':
       drupal_set_message('publication node updated');
