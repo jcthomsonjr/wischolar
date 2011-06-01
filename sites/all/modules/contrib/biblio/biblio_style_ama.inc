@@ -67,7 +67,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
       if(!empty($authors)) {
         $output .= '<span class="biblio-authors">';
         $output .= $authors;
-        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        if (!empty($authors) && !preg_match("/\. *$/", $authors)) $output .= ".";
         $output .=  "</span>";
       }
 

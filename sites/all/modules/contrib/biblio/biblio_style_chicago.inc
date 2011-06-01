@@ -75,7 +75,7 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
       if(!empty($authors)) {
         $output .= '<span class="biblio-authors">';
         $output .= $authors;
-        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        if (!empty($authors) && !preg_match("/\. *$/", $authors)) $output .= ".";
         $output .= '</span>';
       }
 
@@ -112,7 +112,7 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
       }elseif (!empty($node->biblio_year)){      // year
         $output .= " (" . $node->biblio_year . ")";
       }
-      
+
       if (!empty($node->biblio_pages))      // pages
       {
         if (!empty($node->biblio_year) || !empty($node->biblio_volume) || !empty($node->biblio_issue) || !empty($node->biblio_alternate_title) || !empty($node->biblio_secondary_title)) // only add ": " if either year, volume, issue, abbrev_journal or publication isn't empty
@@ -171,7 +171,7 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
       if(!empty($authors)) {
         $output .= '<span class="biblio-authors">';
         $output .= $authors;
-        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        if (!empty($authors) && !preg_match("/\. *$/", $authors)) $output .= ".";
         $output .= '</span>';
       }
       if (!empty($node->title))      // title
@@ -304,7 +304,7 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
       {
         $output .= '<span class="biblio-authors">';
         $output .= $authors;
-        if (!preg_match("/\. *$/", $authors)) $output .= ".";
+        if (!empty($authors) && !preg_match("/\. *$/", $authors)) $output .= ".";
         $output .= '</span>';
       }
 
