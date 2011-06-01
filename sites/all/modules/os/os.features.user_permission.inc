@@ -219,7 +219,6 @@ function os_user_default_permissions() {
     'name' => 'administer organic groups',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'manager',
     ),
   );
 
@@ -276,7 +275,6 @@ function os_user_default_permissions() {
     'name' => 'administer spaces',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'manager',
     ),
   );
 
