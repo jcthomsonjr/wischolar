@@ -118,20 +118,6 @@ function scholar_reader_feed_validate($form, &$form_state) {
 }
 
 /**
- * hook default_contexts_alter
- */
-function scholar_reader_context_default_contexts_alter(&$contexts){
-
-  $vsite = vsite_get_vsite();
-  if(!$vsite || !($a_reader_settings = $vsite->controllers->variable->get('scholar_reader_twitter_username')) || !strlen($a_reader_settings)){
-    unset($contexts['openscholar-feature-front']->block['scholar_reader_my_twitter_feed']);
-    unset($contexts['vsite-section-public']->block['scholar_reader_my_twitter_feed']);
-  }//Is there a bio created for this site? If not unset the applicable block
-
-
-}
-
-/**
  * Define the scholar reader blocks with hook block
  */
 function scholar_reader_block($op = 'list', $delta = false, $edit = array()) {
