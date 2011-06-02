@@ -69,6 +69,14 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
          $data = _biblio_keyword_links($node->$row['name'], $base);
           break;
         case 'biblio_url' :
+          // biblio_url is already a link at this point. We need to get the URL so we can run l again.
+          $url = $node->$row['name'];
+          $url_start = strpos($url, '"') +1;
+          $url_end = strrpos($url, '"');
+          $url = substr($url, $url_start, $url_end - $url_start);
+          $data = l('Additional Resources', $url);
+          $row['title'] = '';
+          break;
         case 'biblio_doi' :
           // check_plain is not need on these since they have gone through
           // the l() function which does a check_plain
@@ -116,7 +124,9 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
   $output .= $author_text;
   if (count($rows)){
     foreach ($rows as $row){
-      $output .= "<h3>".$row[0]['data'].":</h3>".$row[1]['data'];
+      if ($row[0]['data'])
+        $output .= "<h3>".$row[0]['data'].":</h3>";
+      $output .= $row[1]['data'];
     }
   }
   $output .= '</div>';
