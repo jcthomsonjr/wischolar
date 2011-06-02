@@ -129,7 +129,7 @@ function cite_distribute_form_alter(&$form, $form_state, $form_id) {
 		
 		$form ['cite_distribute_selections'] ['intro'] = array ('#type' => 'item', '#title' => t ( 'Distribute this publication to the following academic repositories' ) );
 		
-		foreach ( cite_distribute_installed_mods () as $module ) {
+		foreach ( cite_distribute_installed_mods() as $module ) {
 			$existing_value = cite_distribute_check_disabled ( $module ['name'], $form ['nid'] ['#value'] );
 			$form ['cite_distribute_selections'] [$module ['name']] = array ('#type' => 'checkbox', '#disabled' => $existing_value, '#title' => t ( '@repos', array ('@repos' => $module ['repository'] ) ), '#default_value' => $existing_value );
 		}
@@ -389,7 +389,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 			//could send the output via preprocess hook to a template file
 			if ($module_info[0]['file'] === 'none') {
 				$ret = module_invoke($module, 'cite_distribute_push', $node, $module_node, $iteration);
-				$place_template = true; // or not if it didn't work
+				$place_template = $ret; // or not if it didn't work
 				
 			}
 

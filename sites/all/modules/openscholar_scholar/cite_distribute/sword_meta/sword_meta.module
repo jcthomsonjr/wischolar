@@ -105,14 +105,97 @@ function sword_meta_nodeapi(&$node, $op, $a3){
 * rendered to give google some metadata.
 */
 function sword_meta_cite_distribute_push($node, $module_mode, $iteration = NULL){
-	$url = "http://192.168.7.128";
+	$url = "http://bachman.hul.harvard.edu:9034/";
 	$user = "jsagotsky@iq.harvard.edu";
 	$pw = "password";
 	$obo = "Sexton Hardcastle";
+	
+	$service_url = $url . 'sword/servicedocument';
+	$deposit_url = $url . 'deposit/sword-user'; // ?!
 	
 	require_once(drupal_get_path('module', 'sword_meta') .	'/swordapp-php-library-1.0/swordappclient.php');
 	$sac = new SWORDAPPClient();
 	$sac_doc = $sac->servicedocument($url, $user, $pw, $obo);
 	
+	if ($sac_doc->sac_status == 401) {
+		watchdog('cite_distribute', 'Could not login on behalf of @obo, trying IQSS.', array('@obo'=>$obo), WATCHDOG_ERROR);
+	  $obo = "";  //SWORD server did not have a user on whose behalf we could deposit this.  Use our own user instead.
+		$sac_doc = $sac->servicedocument($url, $user, $pw, $obo);
+		
+		if ($sac_doc->sac_status == 401) {
+			watchdog("sword_meta", "Could not login to SWORD server");
+			//couldn't log in.  should also error.
+			return false;
+		}
+	}
+	
+	if ($sac_doc->sac_status != 200) {
+		return false;
+	}
+	
+	$file = _sword_meta_package_mets();
+	
+	if ($file) {
+		try {
+			$deposit = $sac->deposit($url, $user, $pw, $obo, $file);
+		} catch(Exception $e) {
+			drupal_set_message($e->getMessage, 'error');
+			return false;
+		}
+	// deposit(url, username, password, on-behalf-of-user, filename,
+    //               [format_namespace, package_type, noop, verbose]) 
+	}
+	
 	return $sac_doc;
+}
+
+/*
+ * Create a METS zip file for sword deposit
+ * returns path of file
+ */
+function _sword_meta_package_mets() {
+	require_once(drupal_get_path('module', 'sword_meta') .	'/swordapp-php-library-1.0/packager_mets_swap.php');
+	
+	$sac_rootin = '/tmp/';
+	$sac_dirin = 'sword_meta_mets';
+	$sac_rootout = '/tmp/';
+	$sac_fileout = 'mets_files.zip';
+	
+  $packager = new PackagerMetsSwap($sac_rootin, $sac_dirin, $sac_rootout, $sac_fileout);
+	
+	$metadata = array(
+		'Type' => 'http://purl.org/eprint/entityType/ScholarlyWork',
+	  'Title' => '',
+	  'Custodian' => '',
+	  'Title' => '',
+	  'Abstract' => '',
+	  'Creator' => array(),
+	  'Identifier' => '',
+	  'DateAvailable' => '',
+	  'StatusStatement' => '',
+	  'CopyrightHolder' => '',
+	  'Citation' => '',
+	  'File' => array(),
+	);
+	
+	foreach ($metadata as $name => $data) {
+		if (is_array($data)) {
+			$func = 'add' . $name;
+			foreach ($data as $delta) {
+				$packager->$func($data[$delta]);
+			}
+		} else {
+			$func = 'set' . $name;
+			$packager->$func($data);
+		}
+	}
+	
+	try {
+  	$packager->create();
+	} catch (Exception $e) {
+		drupal_set_message('sword_meta: ' . $e->getMessage(), 'error');
+		return false;	
+	}
+	
+	return $sac_rootout . '/' . $sac_fileout;
 }

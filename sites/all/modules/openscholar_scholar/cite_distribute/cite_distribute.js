@@ -9,6 +9,10 @@ Drupal.verticalTabs.cite_distribute_selections = function() {
   if ($('#edit-repec-meta').attr('checked')) {
     vals.push(Drupal.t('RePEc'));
   }
+  // this will eventually have to generalize over each sword repo...
+  if ($('#edit-sword-meta').attr('checked')) {
+	    vals.push(Drupal.t('SWORD'));
+	  }
   else {
     vals.push(Drupal.t(''));
   }
