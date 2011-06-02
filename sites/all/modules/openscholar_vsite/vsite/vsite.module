@@ -136,7 +136,7 @@ function _vsite_feed_content_types_filter(&$view){
   }
   vsite_include('vsiteapi');
   $node_options = vsite_content_types();
-  
+
   // add a filter for "node types" in the view
   $options = array();
   foreach ( $node_options as $type => $value ) {
@@ -144,7 +144,7 @@ function _vsite_feed_content_types_filter(&$view){
       $options[$type] = $type; // that's how views wants it
     }
   }
-  
+
   $v = array(
     'operator' => 'in',
     'value' => $options,
@@ -331,13 +331,13 @@ function vsite_get_vsite_by_node($node){
  */
 function vsite_preprocess_node(&$vars){
   $node = $vars['node'];
-  
+
   // node admin links (see hook_vsite_admin_link)
   $links = vsite_get_admin_links('node', $node);
   if ($links) {
     $vars['vsite_admin_links'] = theme('ctools_dropdown', "Admin", $links , false, 'vsite-admin');
   }
-  
+
   // we dont print "submitted" info unless the feature explicitely asks
   if (! variable_get('node_submitted_info_' . $node->type, FALSE)) {
     $vars['submitted'] = '';
@@ -404,13 +404,13 @@ function vsite_preprocess_page(&$vars){
 
   //Add a div around the messages block
   if (strlen($vars['messages'])) $vars['messages'] = "<div id= \"messages\">" . $vars['messages'] . "</div>";
-  
+
   if (($context_links = context_links()) && count($context_links) > 1 && context_get('context', 'vsite-section-public')) {
     $vars['context_links'] = theme('ctools_dropdown', t('add new'), $context_links, FALSE, 'context-links');
   }elseif(strlen($vars['context_links'])){
   	$vars['context_links'] = '<div class="context-links">'.$vars['context_links'].'</div>';
   }
-  
+
 }
 
 /**
@@ -430,7 +430,7 @@ function vsite_theme_registry_alter(&$theme_registry){
   }
   array_unshift($new_paths, $original_path);
   $theme_registry['node']['theme paths'] = array_merge($new_paths, $theme_registry['node']['theme paths']);
-  
+
   // Add a page preprocess function to the very top of the theme_page()
   // stack so that we can add page elements based on contexts *before* the page theming
   // is executed.
@@ -457,11 +457,11 @@ function vsite_form_alter(&$form, $form_state, $form_id){
         '#value' => 1
       );
     }
-    
+
     if(isset($form['buttons']['preview'])){
     	$form['buttons']['preview']['#access'] = user_access('vsite_node_form_preview');
     }
-    
+
   }
 
   $scholar_content_type = variable_get('scholar_content_type', 'vsite');
@@ -469,7 +469,7 @@ function vsite_form_alter(&$form, $form_state, $form_id){
     case $scholar_content_type . '_node_form' :
       //Customize the "Site Information" form
       if (arg(0) != 'cp') break;
-      
+
       $form['buttons']['submit']['#value'] = t('Save settings');
       $form['#prefix'] = '<div id = "cp-settings-site">';
       $form['#suffix'] = '</div>';
@@ -503,7 +503,7 @@ function vsite_form_alter(&$form, $form_state, $form_id){
       _spaces_og_make_hidden($form['author']);
       _spaces_og_make_hidden($form['options']);
       unset($form['spaces_preset']['#theme']); //Remove theme
-      
+
       //Since we stay on the form this will force a rebuild
       $form['#redirect'] = $_GET['q'];
 
@@ -517,13 +517,13 @@ function vsite_form_alter(&$form, $form_state, $form_id){
 		  	if (module_exists('file_aliases') && module_exists('filefield_paths')) {
 		  		$result = db_fetch_object(db_query("SELECT * FROM {filefield_paths} WHERE type = '%s' AND field = '%s'", $cached_form['#node']->type, 'upload'));
 		  		$settings = array('filealias'=> unserialize($result->filealias));
-		  		
+
 		  		foreach (element_children($form['files']) as $fid) {
 		  			$field = array('filename' => $form['files'][$fid]['filename']['#value'],'filepath' => $form['files'][$fid]['filepath']['#value'],'fid' => $fid);
-		  			
+
 			  		$file_alias = filefield_paths_process_string($settings['filealias']['value'], 'node', $cached_form['#node'], $settings['filealias']);
             $file_alias = filefield_paths_process_string($file_alias, 'field', array(0 => $field), $settings['filealias']);
-            
+
             if($file_alias){
             	$vsite = vsite_get_vsite();
             	if($vsite && $vsite->purl_provider != "spaces_og"){
@@ -534,7 +534,7 @@ function vsite_form_alter(&$form, $form_state, $form_id){
 		  		}
 		  	}
 		  }
-    	
+
     break;
     default :
       if ($form['#id'] == 'node-form' && (arg(0) . '/' . arg(1) != 'admin/content')) {
@@ -763,7 +763,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
  * Display the correct file alias for the file
  */
 function viste_form_upload_js_alter(){
-	
+
 }
 
 /**
@@ -803,7 +803,7 @@ function vsite_group_to_arg(){
  * any final context reactions to be triggered
  */
 function vsite_page_alter(&$vars) {
-  
+
   if (context_isset('context', 'vsite-section-public')) {
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/vsite-admin-links.css');
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite.js');
@@ -812,17 +812,17 @@ function vsite_page_alter(&$vars) {
   elseif (context_isset('context', 'vsite-section-cp')) {
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite-autoclose-status.js');
   }
-  
+
 }
 
 /**
  * Retrieve the admin links for a given object.
  */
 function vsite_get_admin_links($type, $object){
-  
+
   $links = module_invoke_all('vsite_admin_link', $type, $object);
   drupal_alter('vsite_admin_link', $links, $type, $object);
-  
+
   return $links;
 }
 
@@ -845,7 +845,7 @@ function node_vsite_admin_link($type, $object){
     $path = "node/{$object->nid}/edit";
     $item = menu_get_item($path);
     if ($item && $item['access']) {
-      
+
       $links['node-edit'] = array(
         'title' => t('Edit'),
         'href' => $path,
@@ -952,9 +952,9 @@ function vsite_context_page_reaction(){
 
   $feature_context = $a_active_contexts['openscholar-feature-' . $active_feature];
   if (! $feature_context) return;
-  
+
   $view_info = vsite_feature_default_view('scholar_'.$active_feature);
-  
+
   if(is_array($view_info)){
   	vsite_set_default_feature_view($view_info['view']);
   }
@@ -1024,14 +1024,14 @@ function vsite_token_values($type, $object = NULL, $options = array()) {
   }
   elseif ($type == 'taxonomy' && $object->vid && ($a_vocab_groups = og_vocab_get_group($object->vid))){
   	$space = spaces_load('og', current($a_vocab_groups));
-  	
+
   	if($space){
 	  	$tokens['space-og-path'] = check_plain($space->group->purl);
 	    $tokens['space-og-path-raw'] = $space->group->purl;
 	    return $tokens;
   	}
   }
-  
+
   return array(
     'space-og-path' => '',
     'space-og-path-raw' => '',
@@ -1057,7 +1057,7 @@ function vsite_feature_default_view($feature){
   //Use the default feature menu to get the default view
   foreach (features_get_component_map('menu_links') as $s_menu_key => $a_features) {
     if(!in_array( $feature, $a_features)) continue;
-    
+
     list($s_menu,$s_path) = explode(":",$s_menu_key,2);
     $default_feature_menu = ( object ) menu_get_item($s_path);
     if ($default_feature_menu->page_callback == 'views_page') {
@@ -1068,7 +1068,7 @@ function vsite_feature_default_view($feature){
 
   $feature_context = context_load('openscholar-feature-' . str_replace('scholar_','',$feature));
   if (!$feature_context) return false;
-  
+
   //if there is no default view set, lets try determine which one it is
   if (isset($feature_context->conditions['views']['values'])) {
     foreach ($feature_context->conditions['views']['values'] as $s_view_key) {
@@ -1082,7 +1082,7 @@ function vsite_feature_default_view($feature){
   if (isset($feature_context->conditions['path']['values'])) {
     foreach ($feature_context->conditions['path']['values'] as $path) {
       if(strpos($path,'~') !== false || strpos($path,'*') !== false) continue; //Exclude Wildcards
-      
+
       $default_feature_menu = ( object ) menu_get_item($path);
       if ($default_feature_menu->page_callback == 'views_page') {
       	if(!is_array($default_feature_menu->page_arguments)) $default_feature_menu->page_arguments = unserialize($default_feature_menu->page_arguments);
@@ -1094,3 +1094,34 @@ function vsite_feature_default_view($feature){
   return false;
 }
 
+function vsite_access_feature() {
+  $vsite = vsite_get_vsite();
+  if (!$vsite) return true;
+
+  $args = func_get_args();
+  if (is_array($args[4])) {
+    return call_user_func_array('spaces_access_feature_perms', $args);
+  }
+  else {
+    return call_user_func_array('spaces_access_feature', $args);
+  }
+}
+
+function vsite_views_plugins() {
+  return array(
+    'module' => 'vsite',
+    'access' => array(
+      'vsite_feature' => array(
+        'title' => t('Vsite feature'),
+        'help' => t('Access will be granted if the given feature is enabled in the current space, or if not in a space.'),
+        'handler' => 'vsite_plugin_access_spaces_feature',
+        'path' => drupal_get_path('module', 'vsite') .'/includes',
+        'parent' => 'spaces_feature',
+        'uses options' => TRUE,
+      ),
+    ),
+  );
+}
+
+function vsite_views_plugins_alter(&$data) {
+}
