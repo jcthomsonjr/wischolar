@@ -46,5 +46,36 @@ function os_wysiwyg_filter_default_formats() {
     ),
   );
 
+  // Exported format: Full HTML
+  $formats['Full HTML'] = array(
+    'name' => 'Full HTML',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+    ),
+    'filters' => array(
+      '0' => array(
+        'module' => 'oembed',
+        'delta' => '0',
+        'weight' => '-10',
+      ),
+      '1' => array(
+        'module' => 'filter',
+        'delta' => '2',
+        'weight' => '-9',
+      ),
+      '2' => array(
+        'module' => 'filter',
+        'delta' => '1',
+        'weight' => '-8',
+      ),
+      '3' => array(
+        'module' => 'filter',
+        'delta' => '3',
+        'weight' => '-7',
+      ),
+    ),
+  );
+
   return $formats;
 }

@@ -30,7 +30,7 @@ function os_wysiwyg_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'format';
-  $strongarm->value = '1';
+  $strongarm->value = '2';
 
   $export['format'] = $strongarm;
   $strongarm = new stdClass;
@@ -43,9 +43,23 @@ function os_wysiwyg_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'oembed_maxheight_2';
+  $strongarm->value = '';
+
+  $export['oembed_maxheight_2'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'oembed_maxwidth_1';
   $strongarm->value = '440';
 
   $export['oembed_maxwidth_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'oembed_maxwidth_2';
+  $strongarm->value = '440';
+
+  $export['oembed_maxwidth_2'] = $strongarm;
   return $export;
 }
