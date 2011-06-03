@@ -29,7 +29,7 @@ function scholar_publications_menu(){
   $items["publications"] = array(
     'title' => 'Publications',
     'page callback' => 'scholar_publications_overview',
-    'access callback' => 'vsite_access_feature',
+    'access callback' => 'spaces_access_feature',
     'access arguments' => array('view','scholar_publications'),
     'menu_name' => 'features',
   );
