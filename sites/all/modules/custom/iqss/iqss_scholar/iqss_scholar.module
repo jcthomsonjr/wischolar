@@ -109,21 +109,18 @@ function iqss_scholar_strongarm_alter(&$vars) {
 	    $vars['pinserver_app_name']->value = 'FAS_IQSS_SCHOLARSWEB_DEV'; //TODO this needs to be the application name issued by directory services
 	    $vars['pinserver_gpg_dir']->value = '/nfs/www/edu-harvard-iq-scholar-dev3/' . '.gnupg';
 	    $vars['error_level']->value = 1; //Log to screen and log;
-	    $vars['openscholar_reportverinfo']->value = 0;
 	  break;
 		case IQSS_LOCAL_DEV:
 			//PINSERVER Config Variables
       $vars['pinserver_app_name']->value = 'FAS_IQSS_SCHOLARSWEB_DEV';
       $vars['pinserver_gpg_dir']->value = '/tmp/' . '.gnupg';
       $vars['error_level']->value = 1; //Log to screen and log;
-      $vars['openscholar_reportverinfo']->value = 0;
 		break;
 		case IQSS_STAGING:
 			//PINSERVER Config Variables
       $vars['pinserver_app_name']->value = 'FAS_IQSS_SCHOLARSWEB_TEST';
       $vars['pinserver_gpg_dir']->value = '/nfs/www/edu-harvard-iq-scholar-test/' . '.gnupg';
       $vars['error_level']->value = 0; //Log in background only
-      $vars['openscholar_reportverinfo']->value = 0;
 	  break;
 		case IQSS_PRODUCTION:
 			//PINSERVER Config Variables
