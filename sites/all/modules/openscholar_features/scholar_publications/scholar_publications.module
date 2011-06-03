@@ -796,7 +796,7 @@ function _scholar_publications_get_plain_citation($node){
 	//add url to citation
 	if (function_exists('shorten_url') && variable_get('scholar_publications_shorten_citations', 0)) {
 		global $base_url;
-		$citation .= shorten_url($base_url . '/' . $node->path);
+		$citation .= ' ' . shorten_url($base_url . '/' . $node->path);
 	}
 
   $citation = strip_tags($citation);
