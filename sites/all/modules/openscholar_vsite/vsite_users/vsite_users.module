@@ -130,10 +130,10 @@ function vsite_users_show_groups_list($account) {
   $my_sites = array();
   $member_sites = array();
   foreach ( $account -> og_groups as $sid => $site) {
-    
+
   	//load the vsite
     $vsite = vsite_get_vsite($sid);
-    
+
   	switch ($site['is_admin']) {
       case "1":
         //check if user owns the site, if not then user might be a super user
@@ -433,6 +433,15 @@ function vsite_users_form_alter(&$form, $form_state, $form_id) {
         $form['mail_confirm']['#required'] =
         $form['name']['#required'] = FALSE;
       }
+
+      $form['cancel'] = array(
+        '#type' => 'button',
+        '#value' => t('Cancel'),
+        '#weight' => 101,
+        '#attributes' => array(
+          'onclick' => 'Drupal.CTools.Modal.dismiss(); return false;'
+        ),
+      );
 
     break;
 
