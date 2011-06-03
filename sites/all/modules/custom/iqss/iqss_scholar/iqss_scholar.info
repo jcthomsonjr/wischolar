@@ -1,4 +1,19 @@
 name = IQSS Settings
 description = "A module that overides some default scholar settings to taior them to IQSS, these are settings that would never be used by a entity outside IQSS"
 package = "OpenScholar IQSS"
-core = 6.x
+core = "6.x"
+
+dependencies[] = "strongarm"
+dependencies[] = "pinserver"
+features[ctools][] = "strongarm:strongarm:1"
+features[variable][] = "addthis_username" 
+features[variable][] = "pinserver_pin_url"
+features[variable][] = "pinserver_landing_path"
+features[variable][] = "pinserver_auth_str"
+features[variable][] = "pinserver_support_contact"
+features[variable][] = "pinserver_hash_huid"
+features[variable][] = "iqss_remote_source_node_types"
+features[variable][] = "iqss_remote_source_valid_ogs" 
+features[variable][] = "imageapi_jpeg_quality"
+features[variable][] = "mollom_public_key"
+features[variable][] = "mollom_private_key"

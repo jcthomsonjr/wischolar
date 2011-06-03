@@ -1,13 +1,15 @@
 <?php
 
+include_once('iqss_scholar.features.inc');
+
 function iqss_scholar_init() {
-  
+
   //Important since we use page-caching in production and have the vsite home pages as the logout desitnation
   if(user_is_logged_in() && !headers_sent()){
     //Change to no-store
     header("Cache-Control: no-store, no-cache, must-revalidate");
   }//Fixes issue where firefox caches logged-in page after logout
-  
+
 }
 
 /**
@@ -15,13 +17,13 @@ function iqss_scholar_init() {
  *
  * This should be used for IQSS only settings
  * @return array
- */
+ *
 function iqss_scholar_strongarm(){
   require_once drupal_get_path('module','iqss_scholar').'/iqss_scholar.defaults.inc';
 
-  $conf = array();
-  $conf = array_merge($conf,_iqss_scholar_config_variables());
-  $conf = array_merge($conf,_iqss_scholar_config_by_domain());
+  $vars = array();
+  $vars = array_merge($vars,_iqss_scholar_config_variables());
+  $vars = array_merge($vars,_iqss_scholar_config_by_domain());
 
   //if the Scholar Profile has been installed
   if (module_exists('cite_distribute')){
@@ -30,19 +32,19 @@ function iqss_scholar_strongarm(){
 
       switch($module['name']){
         case 'repec_meta':
-          $conf['repec_meta_inst_name'] = 'The Institute for Quantitative Social Science';
-          $conf['repec_meta_archive_code'] = 'qsh';
-          $conf['repec_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec/RePEc/qsh/';
-          $conf['repec_meta_provider_institution'] = 'RePEc:edi:cbrssus';
-          $conf['repec_meta_archive_url'] = 'http://repec.iq.harvard.edu/RePEc/qsh/';
-          $conf['repec_meta_provider_homepage'] = 'http://scholar.harvard.edu';
-          $conf['repec_meta_maintainer_name'] = 'Jon Sagotsky';
-          $conf['repec_meta_maintainer_email'] = 'jsagotsky@iq.harvard.edu';
+          $vars['repec_meta_inst_name'] = 'The Institute for Quantitative Social Science';
+          $vars['repec_meta_archive_code'] = 'qsh';
+          $vars['repec_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec/RePEc/qsh/';
+          $vars['repec_meta_provider_institution'] = 'RePEc:edi:cbrssus';
+          $vars['repec_meta_archive_url'] = 'http://repec.iq.harvard.edu/RePEc/qsh/';
+          $vars['repec_meta_provider_homepage'] = 'http://scholar.harvard.edu';
+          $vars['repec_meta_maintainer_name'] = 'Jon Sagotsky';
+          $vars['repec_meta_maintainer_email'] = 'jsagotsky@iq.harvard.edu';
 
           break;
         case 'cs_meta':
-          $conf['cs_meta_inst_name'] = 'The Institute for Quantitative Social Science';
-          $conf['cs_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec/cs';
+          $vars['cs_meta_inst_name'] = 'The Institute for Quantitative Social Science';
+          $vars['cs_meta_archive_path'] = '/nfs/www/edu-harvard-iq-repec/cs';
           break;
 
         case 'googlescholar_meta':
@@ -51,7 +53,7 @@ function iqss_scholar_strongarm(){
       }
     }
   }
-  return $conf;
+  return $vars;
 }
 
 /**
@@ -62,7 +64,7 @@ function iqss_scholar_mollom_form_info_alter(&$form_info, $form_id){
 
 	//Mollom only for logged out users
 	if(cp_access_cp()) $form_info['bypass access'][] = 'access content'; //adding a permission everyone has always
-	
+
   $form_info['mode'] = (in_array($form_id,$a_mollom_forms))? MOLLOM_MODE_CAPTCHA:MOLLOM_MODE_DISABLED;
 }
 
@@ -73,9 +75,9 @@ define(IQSS_PRODUCTION,3);
 define(IQSS_PROJECT_PRODUCTION,4);
 
 function isqq_scholar_current_location(){
-	
+
 	if($_SERVER['SCRIPT_FILENAME'] && strpos($_SERVER['SCRIPT_FILENAME'],'/nfs/www/edu-harvard-iq-projects') === 0) return IQSS_PROJECT_PRODUCTION;
-	
+
 	switch($_SERVER['HTTP_HOST']){
 		case 'projects.iq.harvard.edu':
       return IQSS_PROJECT_PRODUCTION;
@@ -88,7 +90,7 @@ function isqq_scholar_current_location(){
     case 'localhost':
       return IQSS_LOCAL_DEV;
 	}
-	
+
   switch($_SERVER['SERVER_ADDR']){
     case '127.0.0.1':
     case '::1':
@@ -97,4 +99,49 @@ function isqq_scholar_current_location(){
     default:
       return IQSS_PRODUCTION;
   }
+}
+
+function iqss_scholar_strongarm_alter(&$vars) {
+
+	switch (isqq_scholar_current_location()) {
+		case IQSS_DEV:
+	    //PINSERVER Config Variables
+	    $vars['pinserver_app_name']->value = 'FAS_IQSS_SCHOLARSWEB_DEV'; //TODO this needs to be the application name issued by directory services
+	    $vars['pinserver_gpg_dir']->value = '/nfs/www/edu-harvard-iq-scholar-dev3/' . '.gnupg';
+	    $vars['error_level']->value = 1; //Log to screen and log;
+	    $vars['openscholar_reportverinfo']->value = 0;
+	  break;
+		case IQSS_LOCAL_DEV:
+			//PINSERVER Config Variables
+      $vars['pinserver_app_name']->value = 'FAS_IQSS_SCHOLARSWEB_DEV';
+      $vars['pinserver_gpg_dir']->value = '/tmp/' . '.gnupg';
+      $vars['error_level']->value = 1; //Log to screen and log;
+      $vars['openscholar_reportverinfo']->value = 0;
+		break;
+		case IQSS_STAGING:
+			//PINSERVER Config Variables
+      $vars['pinserver_app_name']->value = 'FAS_IQSS_SCHOLARSWEB_TEST';
+      $vars['pinserver_gpg_dir']->value = '/nfs/www/edu-harvard-iq-scholar-test/' . '.gnupg';
+      $vars['error_level']->value = 0; //Log in background only
+      $vars['openscholar_reportverinfo']->value = 0;
+	  break;
+		case IQSS_PRODUCTION:
+			//PINSERVER Config Variables
+			$vars['pinserver_app_name']->value = 'FAS_IQSS_SCHOLARSWEB';
+			$vars['pinserver_gpg_dir']->value = '/nfs/www/edu-harvard-iq-scholar/' . '.gnupg';
+			$vars['error_level']->value = 0; //Log in background only
+			// mollom settings
+      $vars['mollom_private_key']->value = '32a73b2d09c7576f1a5d4ca73ca9dead';
+      $vars['mollom_public_key']->value = 'fa9e0e813449535e5fcf06d6dda0d0f3';
+	  break;
+		case IQSS_PROJECT_PRODUCTION:
+			$vars['pinserver_app_name']->value = 'FAS_IQSS_SCHOLARSWEB_PROJECTS';
+			$vars['pinserver_gpg_dir']->value = '/nfs/www/edu-harvard-iq-projects/' . '.gnupg';
+      $vars['error_level']->value = 0; //Log in background only
+		  // mollom settings
+		  $vars['mollom_private_key']->value = '89a61a5f00b4f996c0133e16dc9cb857';
+		  $vars['mollom_public_key']->value = '8429265e3d1b10dccc1a62ebf3eddb78';
+		break;
+	}
+	return $vars;
 }
