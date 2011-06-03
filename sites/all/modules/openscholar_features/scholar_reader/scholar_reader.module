@@ -88,7 +88,7 @@ function scholar_reader_form_alter(&$form, $form_state, $form_id) {
   // Content type form.
   if ($form_id == 'feed_node_form' && $form['type']['#value'] == 'feed') {
     $form['#validate'][] = 'scholar_reader_feed_validate';
-    
+
     if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['feeds'] = 0; //Disable vert. tabs
   }
@@ -148,6 +148,8 @@ function _scholar_reader_twitter_wgt(){
 	//Fix this? Probably a better way of getting the twitter id..
   $twitterid = str_replace("from:",'',$s_twitter);
 	$output = twitter_pull_render ($s_twitter);
-  $output .= '<div class="twitter-followme">' . l('Follow me on Twitter','http://twitter.com/' . $twitterid) .'</div>';
+	if (strpos($twitterid, '#') !== 0) {
+    $output .= '<div class="twitter-followme">' . l('Follow me on Twitter','http://twitter.com/' . $twitterid) .'</div>';
+	}
 	return array('subject' => "Twitter Updates",'content' => $output);
 }
