@@ -118,22 +118,23 @@ function sword_meta_cite_distribute_push($node, $module_mode, $iteration = NULL)
 	$sac_doc = $sac->servicedocument($service_url, $user, $pw, $obo);
 	
 	if ($sac_doc->sac_status == 401) {
-		watchdog('cite_distribute', 'Could not login on behalf of @obo, trying IQSS.', array('@obo'=>$obo), WATCHDOG_ERROR);
+		drupal_set_message('cite_distribute: Could not login on behalf of ' . $obo . ', trying IQSS.', 'warning');
 	  $obo = "";  //SWORD server did not have a user on whose behalf we could deposit this.  Use our own user instead.
 		$sac_doc = $sac->servicedocument($service_url, $user, $pw, $obo);
 		
 		if ($sac_doc->sac_status == 401) {
-			watchdog("sword_meta", "Could not login to SWORD server");
+			drupal_set_message("cite_distribute: Could not login to SWORD server", 'error');
 			//couldn't log in.  should also error.
 			return false;
 		}
 	}
 	
 	if ($sac_doc->sac_status != 200) {
+		drupal_set_message('Unable to connect to SWORD server', 'error');
 		return false;
 	}
 	
-	$file = _sword_meta_package_mets();
+	$file = _sword_meta_package_mets($node);
 	
 	if ($file) {
 		try {
@@ -153,7 +154,7 @@ function sword_meta_cite_distribute_push($node, $module_mode, $iteration = NULL)
  * Create a METS zip file for sword deposit
  * returns path of file
  */
-function _sword_meta_package_mets() {
+function _sword_meta_package_mets(&$node) {
 	require_once(drupal_get_path('module', 'sword_meta') .	'/swordapp-php-library-1.0/packager_mets_swap.php');
 	
 	$sac_rootin = '/tmp/';
@@ -165,18 +166,23 @@ function _sword_meta_package_mets() {
 	
 	$metadata = array(
 		'Type' => 'http://purl.org/eprint/entityType/ScholarlyWork',
-	  'Title' => '',
+	  'Title' => $node->title,
 	  'Custodian' => '',
-	  'Title' => '',
 	  'Abstract' => '',
-	  'Creator' => array(),
+	  'Creator' => array(),   //$node->biblio_contributors[1][*][firstname, lastname]
 	  'Identifier' => '',
 	  'DateAvailable' => '',
 	  'StatusStatement' => '',
 	  'CopyrightHolder' => '',
 	  'Citation' => '',
-	  'File' => array(),
+	  'File' => array(),      //$node->files[]
 	);
+	
+	foreach($node->biblio_contributors as $delta => $cont) {
+		foreach($node->biblio_contributors[$delta] as $contributor) {
+			$metadata['Creator'][] = $contributor['firstname'] . ' ' . $contributor['lastname'];
+		}
+	}
 	
 	foreach ($metadata as $name => $data) {
 		if (is_array($data)) {

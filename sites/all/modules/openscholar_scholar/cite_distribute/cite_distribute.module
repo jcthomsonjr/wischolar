@@ -406,7 +406,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 		case 'per_submission' :
 			//submodule is not using files
 			if ($module_info[0]['file'] == 'none') {
-				return cite_distribute_mode_controller ( $node = NULL, $module, $module_mode = 'api' );
+				return cite_distribute_mode_controller ( $node, $module, $module_mode = 'api' );
 			}
 			//this when a submodule uses one file and runs the api funtion
 			if ($module_info[0]['file'] == 'single') {
