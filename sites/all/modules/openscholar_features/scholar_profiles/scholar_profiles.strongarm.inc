@@ -215,6 +215,13 @@ function scholar_profiles_strongarm() {
       'collapsed' => 0,
       'hidden' => 0,
     ),
+    'taxonomy' => array(
+      'region' => 'right',
+      'weight' => '0',
+      'has_required' => FALSE,
+      'title' => NULL,
+      'hidden' => 0,
+    ),
     'attachments' => array(
       'region' => 'main',
       'weight' => '11',
