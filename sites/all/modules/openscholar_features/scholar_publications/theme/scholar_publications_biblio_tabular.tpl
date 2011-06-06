@@ -74,7 +74,7 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
           $url_start = strpos($url, '"') +1;
           $url_end = strrpos($url, '"');
           $url = substr($url, $url_start, $url_end - $url_start);
-          $data = l('Additional Resources', $url);
+          $data = l('Related External Link', $url);
           $row['title'] = '';
           break;
         case 'biblio_doi' :
