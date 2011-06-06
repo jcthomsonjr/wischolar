@@ -100,6 +100,34 @@ function iqss_scholar_strongarm() {
   $strongarm->value = error_reporting();
 
   $export['error_level'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'shorten_bitly_login';
+  $strongarm->value = 'jsagotsky';
+  $export['shorten_bitly_login'] = $strongarm;  
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'shorten_bitly_key';
+  $strongarm->value = 'R_d0b350e3f8353e73a7b20beabce4bbdd';
+  $export['shorten_bitly_key'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'shorten_service';
+  $strongarm->value = 'j.mp';
+  $export['shorten_service'] = $strongarm;  
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'shorten_service_backup';
+  $strongarm->value = 'tinyurl';
+  $export['shorten_service_backup'] = $strongarm;
 
   return $export;
 }

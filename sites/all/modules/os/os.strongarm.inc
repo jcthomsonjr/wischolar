@@ -33,8 +33,9 @@ function os_strongarm() {
   $strongarm->value = 'openscholar_default';
 
   $export['theme_default'] = $strongarm;
+  /*
   $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->disabled = FALSE; 
   $strongarm->api_version = 1;
   $strongarm->name = 'spaces_features';
   $strongarm->value = array(
@@ -49,6 +50,8 @@ function os_strongarm() {
     'scholar_software' => 1,
   );
 
+
   $export['spaces_features'] = $strongarm;
+  */
   return $export;
 }
