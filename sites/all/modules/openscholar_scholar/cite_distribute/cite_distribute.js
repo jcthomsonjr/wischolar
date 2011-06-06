@@ -13,9 +13,6 @@ Drupal.verticalTabs.cite_distribute_selections = function() {
   if ($('#edit-sword-meta').attr('checked')) {
 	    vals.push(Drupal.t('SWORD'));
 	  }
-  else {
-    vals.push(Drupal.t(''));
-  }
   if (vals.join(', ') == '') {
     return Drupal.t('None');
   }
