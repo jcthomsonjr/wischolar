@@ -38,11 +38,11 @@ class vsite extends space_og {
         purl_goto($_GET['q'], array('query' => drupal_query_string_encode($_GET, array('q')), 'purl' => array('provider' => $this->purl_provider, 'id' => $this->id)));
       }//Just like the check in spaces_purl_provider but with dynamic provider
     }
-    
+
     if (parent::activate()) {
       return TRUE;
     }
-    
+
     return FALSE;
   }
 
@@ -62,7 +62,7 @@ class vsite extends space_og {
           //We are loading a group node, instead redirect to this groups home page
           if (isset($object->nid) && (!$object->active || ($this->active && $this->id != $object->nid)) && $space = spaces_load('og', $object->nid)) {
           	$space->activate();
-          	
+
           	$current_url = url($_GET['q'], array('absolute' => TRUE, 'query' => drupal_query_string_encode($_GET, array('q'))));
           	if($current_url != rtrim($this->get_absolute_url(),"/")){
               purl_goto("<front>", array( 'purl' => array( 'provider' => $space->purl_provider,'id' => $space->id)));
@@ -114,11 +114,11 @@ class vsite extends space_og {
    * Override of access_feature().
    */
   function access_feature($op = 'view', $feature, $account = NULL) {
-  	
+
     if($feature == 'vsite' && $op == 'view' && user_access('access content')) return true;
 
     $access = parent::access_feature($op, $feature, $account);
-    
+
     //Check 'Private' Settings
     $features = variable_get('spaces_features', array());
     if($access && $features[$feature] > 1){
@@ -165,13 +165,13 @@ class vsite extends space_og {
         return TRUE;
       }
     }
-    
+
     //No provider is active, lookup from id so redirection works
     //Return false if we have reached here
     $valid_providers = array();
     $result = db_query("SELECT provider FROM {purl} WHERE id = %d ", $this->id);
     while ($provider = db_result($result)) $valid_providers[] = $provider;
-    
+
     if(in_array('vsite_domain',$valid_providers)){
     	//This site has a domain provider
     	$this->purl_provider = 'vsite_domain';
@@ -182,7 +182,19 @@ class vsite extends space_og {
 
     return FALSE;
   }
-  
+
+  /**
+   * Save all settings to the DB
+   */
+  public function save_all() {
+    foreach ($this->controllers as $c) {
+      $settings = $c->get('', 'space');
+      foreach ($settings as $id => $value) {
+        $c->set($id, $value);
+      }
+    }
+  }
+
   /**
    * Override of excluded_paths().
    * The parent exlcudes 'features' and 'features/*'
@@ -207,14 +219,14 @@ class vsite extends space_og {
     $excluded = array_merge($excluded, $more);
     return $excluded;
   }
-  
+
   /**
    * Check to see if a path is 'excluded'
    * @param string $q
    */
   public static function is_excluded_path($q){
     $paths = implode("\n", self::excluded_paths());
-    
+
     return drupal_match_path($q, $paths)?true:false;
   }
 }
