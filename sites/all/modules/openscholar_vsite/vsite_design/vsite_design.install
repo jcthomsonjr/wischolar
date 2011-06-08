@@ -156,6 +156,13 @@ function vsite_design_update_6003(&$sandbox) {
 
 function vsite_design_update_6004(&$sandbox) {
   db_query("UPDATE {spaces_overrides} SET object_id = 'default_theme' WHERE object_id = 'vsite_design_maintheme'");
+  $ogs = db_query("SELECT nid, og_theme FROM {og}");
+  while ($og = db_fetch_object($ogs)) {
+    db_query("UPDATE {spaces_overrides} SET value = '%s' WHERE object_id = 'default_theme' AND object_type = 'variable' AND id = %d", serialize($og->og_theme), $og->nid);
+    if (!db_affected_rows()) {
+      db_query("INSERT INTO {spaces_overrides} VALUES ('og', %d, 'variable', 'default_theme', '%s')", $og->nid, serialize($og->og_theme));
+    }
+  }
 
   $res[] = array(
     'success' => true,
