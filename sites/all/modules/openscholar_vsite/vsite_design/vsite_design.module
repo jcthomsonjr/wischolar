@@ -138,24 +138,25 @@ function vsite_design_imagecache_default_presets() {
  */
 function vsite_design_preprocess_page(&$vars){
   //Return if:
+  $theme = variable_get('default_theme', 'scholar_airstream');
   if (! ($vsite = vsite_get_vsite()) || //In a Vsite?
       context_isset('context','vsite-section-cp') || //We are in CP?
-      ! $vsite->group->og_theme || //Grop has a custom theme
-      ! ($themes = list_themes()) || ! array_key_exists($vsite->group->og_theme, $themes) || //The theme is valid
-      empty($themes[$vsite->group->og_theme]->stylesheets))
+      ! $theme || //Group has a custom theme
+      ! ($themes = list_themes()) || ! array_key_exists($theme, $themes) || //The theme is valid
+      empty($themes[$theme]->stylesheets))
         return; //The theme has styles associated
 
 
   // Add stylesheets used by this theme, without preprocessing
-  foreach ( $themes[$vsite->group->og_theme]->stylesheets as $media => $stylesheets ) {
+  foreach ( $themes[$theme]->stylesheets as $media => $stylesheets ) {
     foreach ( $stylesheets as $name => $stylesheet )
       drupal_add_css($stylesheet, 'theme', $media, false);
   }
 
   // load the css for the theme flavor
-  $flavor = variable_get('vsite_design_'.$vsite->group->og_theme.'_flavor', '');
+  $flavor = variable_get('vsite_design_'.$theme.'_flavor', '');
 
-  $theme_flavors = vsite_design_get_flavors($vsite->group->og_theme);
+  $theme_flavors = vsite_design_get_flavors($theme);
 	if ($flavor && isset($theme_flavors[$flavor])) {
 
 		if(!array_key_exists('css',$theme_flavors[$flavor])) {
@@ -186,11 +187,11 @@ function vsite_design_preprocess_page(&$vars){
  */
 function theme_vsite_design_theme_form($form) {
 
-	$output = drupal_render($form['vsite_design_maintheme']);
+	$output = drupal_render($form['default_theme']);
 
 	//UL List
 	$output .= '<ul class = "theme-picker">';
-	foreach ($form['vsite_design_maintheme']['#enabled_themes'] as $o_theme){
+	foreach ($form['default_theme']['#enabled_themes'] as $o_theme){
 		$s_sub_theme = '';
 		$a_info = array_merge((array)$o_theme->info, array('theme_name'=>$o_theme->name));
 
@@ -207,7 +208,7 @@ function theme_vsite_design_theme_form($form) {
 			}//Is a sub-flavor set?
 		}//Are there flavors to select from?
 
-		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['vsite_design_maintheme']['#default_value'])?'checked':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' .
+		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['default_theme']['#default_value'])?'checked':'').'" id="'.str_replace('_','-',$o_theme->name) .'">' .
 		             theme('vsite_design_theme_picker', $a_info ,$s_sub_theme) .
 		           '</li>';
 	}
