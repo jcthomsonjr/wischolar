@@ -42,7 +42,7 @@ function scholar_front_menu(){
     'type' => MENU_CALLBACK,
     'file' => 'scholar_front.pages.inc',
   );
-  
+
   $items['scholar_front_welcome'] = array(
     'type' => MENU_CALLBACK,
     'title' => '',
@@ -52,6 +52,19 @@ function scholar_front_menu(){
   );
 
   return $items;
+}
+
+function scholar_front_init() {
+  if ($_GET['q'] == variable_get('site_frontpage', 'welcome') && $_GET['q'] == variable_get('scholar_front_frontpage_path', 'welcome')) {
+    // this is likely to be an alias.
+    if ($real_path = drupal_lookup_path('source', $_GET['q'])) {
+      $_GET['q'] = $real_path;
+      drupal_init_path();
+    }
+    else {
+      // unset front page context
+    }
+  }
 }
 
 /**
@@ -80,7 +93,7 @@ function scholar_front_vsite_admin_link($type, $object){
   //check font page settings here, only execute if front page setting equals flag
   $vsite = vsite_get_vsite();
   if(!$vsite) return array();
-  
+
   $a_front_settings = $vsite->controllers->variable->get('vsite_setting_front');
   if ($a_front_settings['frontpage'] !== 'flag' ||
       !($vsite -> access_admin()) ||
@@ -214,7 +227,7 @@ function scholar_front_form_alter(&$form, $form_state, $form_id) {
           $form['buttons'][$name]['#suffix'] = '</div>';
 	    	}
     	}
-    	
+
     break;
   }
 }
@@ -227,7 +240,7 @@ function scholar_front_context_links_alter(&$links){
   if ($front_context) {
   	vsite_include('vsiteapi');
     $items = vsite_create_links();
-    
+
     //Add all links if we are on the front page
     $links = array_merge($items, $links);
   }

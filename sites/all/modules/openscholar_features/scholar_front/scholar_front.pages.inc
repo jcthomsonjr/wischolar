@@ -96,9 +96,9 @@ function scholar_front_settings($form_state) {
     '#dependency' => array(
       'edit-site-frontpage' => array("node/".$bio_node->nid, "html", "path")),
   );
-  
+
   $bio_create_link = l(t('Create'), "node/add/bio", array('query' => array('action' => 'setfront')));
-       
+
   //If they have selected bio/node as feature
   $form['scholar_front_create_bio'] = array(
     '#prefix' => '<div id="edit-scholar-front-create-bio-wrapper">',  // needed by ctools
@@ -111,7 +111,7 @@ function scholar_front_settings($form_state) {
     '#collapsable' => false,
   );
   $form['scholar_front_create_bio']['link']['#value'] = "<p>You dont have a bio yet. $bio_create_link one now.</p>";
-  
+
   $form['scholar_front_hand_pick_help'] = array(
     '#prefix' => '<div id="edit-scholar-front-hand-pick-help-wrapper">',  // needed by ctools
     '#suffix' => '</div>',
@@ -185,7 +185,7 @@ function scholar_front_settings_validate($element, &$form_state){
       case 'path' :
         if (!$form_state['values']['scholar_front_frontpage_path']) {
           form_set_error('frontpage', "You must enter a path to display.");
-        }elseif(!($menu_item = menu_get_item($form_state['values']['scholar_front_frontpage_path'])) || $form_state['values']['scholar_front_frontpage_path'] == 'welcome'){
+        }elseif(!(menu_get_item($form_state['values']['scholar_front_frontpage_path']) || drupal_lookup_path('source', $form_state['values']['scholar_front_frontpage_path'])) || $form_state['values']['scholar_front_frontpage_path'] == 'welcome'){
         	form_set_error('scholar_front_frontpage_path', "Unknown path, please make sure you did not include [{$vsite->get_absolute_url()}].");
         }else{
           $form_state['values']['site_frontpage'] = $form_state['values']['scholar_front_frontpage_path'];
@@ -212,7 +212,7 @@ function scholar_front_settings_frontpage_nid_validate($element, $form_state) {
 function scholar_front_features(){
 
 	vsite_include('vsiteapi');
-  $node_options = $a_front_settings['node_options'];
+  $node_options = variable_get('scholar_front_feature_nodes', false);
 
   if (!$node_options){
     $node_options = vsite_content_types();
@@ -342,7 +342,7 @@ function scholar_front_welcome(){
 	$vsite = vsite_get_vsite();
 	if(!$vsite || !$vsite->access_admin()) return "Coming Soon. This site is under construction.";
 	$spaces_features = variable_get('spaces_features',array());
-	
+
 	$bio_link = $spaces_features["scholar_biocv"]?l("Setup your bio now","node/add/bio")." or":"The bio feature is disabled";
 	$front_settings = l("change the display settings","cp/features",array("query" => array("open_feature_settings" => "scholar_front")));
 	$result = <<<MESSAGE

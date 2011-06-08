@@ -1,15 +1,13 @@
 <?php
-// $Id: node.tpl.php,v 1.4 2008/09/15 08:11:49 johnalbin Exp $
-
-/**
- * @file node.tpl.php
- */
+// this template is provided by scholar_profiles feature
 ?>
 
 
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>">
+<div id="node-<?php print $node->nid; ?>" class="<?php print $node_classes; ?>">
   <div class="node-inner">
-
+    <div class="os-links">
+      <?php print $vsite_admin_links; ?>
+    </div>
 
     <?php if (!$page): ?>
       <?php if ($node->field_person_photo[0]['filepath']): ?>

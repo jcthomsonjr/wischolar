@@ -297,6 +297,10 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
     // $menus['features']['features:bio']
 
     $link =& $menus[$region_old][$key];
+    
+    if(!$link){
+    	$link = vsite_menus_get_menu_item($data['link_path'],false,true);
+    }
 
     if ($region_old != $region) {
       // the regions are different.
@@ -310,6 +314,7 @@ function vsite_menus_settings_form_submit($form, &$form_state) {
     $link['menu_name'] = $data['region'];
     $link['weight'] = $data['weight'];
     $link['key'] = $menu_key;
+    $link['hidden'] = false;
 
     if ($link['user_created'] && $region == 'none' || !isset($link['link_path'])) {
       // we're deleting the link

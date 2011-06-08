@@ -218,6 +218,14 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
 
     }//If the publication type field has been set
 
+    if (isset($form['format'])) {
+      $form['body_field']['format'] = $form['format'];
+      unset($form['format']);
+
+      $t = $form['body_field']['teaser_include'];
+      unset($form['body_field']['teaser_include']);
+      $form['body_field']['teaser_include'] = $t;
+    }
   }
 }
 
@@ -328,6 +336,9 @@ function scholar_publications_nodeapi(&$node, $op, $teaser = NULL, $page = NULL)
       $vsite = vsite_get_vsite();
       $gid = $vsite -> group -> nid;
       $node -> og_groups = array($gid);
+
+      $node->biblio_notes = check_markup($node->biblio_notes);
+      $node->biblio_abst_e = check_markup($node->biblio_abst_e);
     break;
     case 'update':
       drupal_set_message('publication node updated');
@@ -547,14 +558,14 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
 	  $s_output  .= "\n".'<div id="node-' . $node->nid . '" class="biblio-entry node node-teaser';
     if (!$node->status) $s_output .= ' node-unpublished';
     $s_output .='"><div class="node-inner">';
-    
+
 		//Add Vsite Admin links to entry
 	  $links = vsite_get_admin_links('node', $node);
 	  if ($links) {
 	    $s_output .= '<div class="os-links">'.theme('ctools_dropdown', "Admin", $links , false, 'vsite-admin').'</div>';
 	  }
   }
-  
+
   $book_images = filefield_get_node_files($node, 'field_biblio_image');
   if (count($book_images)) {
   	$book_image = reset($book_images);
@@ -785,7 +796,7 @@ function _scholar_publications_get_plain_citation($node){
 	//add url to citation
 	if (function_exists('shorten_url') && variable_get('scholar_publications_shorten_citations', 0)) {
 		global $base_url;
-		$citation .= shorten_url($base_url . '/' . $node->path);
+		$citation .= ' ' . shorten_url($base_url . '/' . $node->path);
 	}
 
   $citation = strip_tags($citation);

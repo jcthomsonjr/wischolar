@@ -316,6 +316,9 @@ function scholar_publications_strongarm() {
   $strongarm->value = '[space-og-path]/publications/[title-raw]';
 
   $export['pathauto_node_biblio_pattern'] = $strongarm;
+  
+
+  
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;

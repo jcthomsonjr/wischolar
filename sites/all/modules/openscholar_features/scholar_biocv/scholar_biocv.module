@@ -127,7 +127,7 @@ function scholar_biocv_bio(){
   $s_out = "";
 
   //ADD CV Link if Req
-  if($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
+  if ($cv_node && variable_get('scholar_biocv_use_pdf_as_cv', 0) && count($cv_node->field_cv_attach) && $cv_node->field_cv_attach[0]){
   	$s_filefield_alias = 'filefield_paths/alias/' . $cv_node->field_cv_attach[0]['fid'];
   	$alias = drupal_get_path_alias($s_filefield_alias);
 
@@ -297,30 +297,16 @@ function scholar_biocv_vsite_widgets(){
  * @return unknown_type
  */
 function scholar_biocv_bio_blurb_content(){
-	$vsite = vsite_get_vsite();
+  $vsite = vsite_get_vsite();
   if(!$vsite) return array();
 
   $bio_node = content_profile_load('bio', $vsite -> group -> uid, $lang = '');
   if(!$bio_node) return array();
 
   $output = strlen($bio_node->field_hook_text[0]['value'])?$bio_node->field_hook_text[0]['value'] : node_teaser($bio_node->body, null,400) ;
-	$output .= l("more", $bio_node->path,array(attributes=>array('class'=>'more')));
+  $output .= l("more", $bio_node->path,array(attributes=>array('class'=>'more')));
 
-	return array('subject' => "Bio",'content' => $output);
-}
-
-/**
- * hook default_
- */
-function scholar_biocv_context_default_contexts_alter(&$contexts){
-
-	$vsite = vsite_get_vsite();
-  if(!$vsite || !content_profile_load('bio', $vsite->group->uid)){
-  	unset($contexts['scholar-feature-biocv']->block['scholar_biocv_bio_blurb']);
-  	unset($contexts['vsite-section-public']->block['scholar_biocv_bio_blurb']);
-  }//Is there a bio created for this site? If not unset the applicable block
-
-
+  return array('subject' => "Bio",'content' => $output);
 }
 
 /**

@@ -33,5 +33,25 @@ function os_strongarm() {
   $strongarm->value = 'openscholar_default';
 
   $export['theme_default'] = $strongarm;
+  /*
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; 
+  $strongarm->api_version = 1;
+  $strongarm->name = 'spaces_features';
+  $strongarm->value = array(
+    'scholar_announcements' => 1,
+    'scholar_publications' => 1,
+    'scholar_presentations' => 1,
+    'scholar_events' => 1,
+    'scholar_classes' => 1,
+    'scholar_image_gallery' => 1,
+    'scholar_blog' => 1,
+    'scholar_links' => 1,
+    'scholar_software' => 1,
+  );
+
+
+  $export['spaces_features'] = $strongarm;
+  */
   return $export;
 }

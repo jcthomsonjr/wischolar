@@ -53,11 +53,11 @@ function biblio_style_cse($node, $base = 'biblio', $inline = false) {
       $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
     }
   }
-  if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.
+  //if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.
   if (!empty ($node->biblio_citekey)&&(variable_get('biblio_display_citation_key',0))) {
     $output .= '[' . check_plain($node->biblio_citekey) . '] ';
   }
-  $output .= '<span class="biblio-authors">' . $authors . "</span>.&nbsp; \n";
+  $output .= '<span class="biblio-authors">' . ($authors?($authors.'.'):'') . "</span>&nbsp; \n";
   switch ($node->biblio_type) {
 
     default :
@@ -74,11 +74,12 @@ function biblio_style_cse($node, $base = 'biblio', $inline = false) {
       $output .= (!empty ($node->biblio_pages))           ? ':' . str_replace(" ", "", check_plain($node->biblio_pages)) . '.' : '';
       break; // generic
   }
-  /*  if ($node->biblio_date) $output .= ', '. check_plain($node->biblio_date);
-    if ($node->biblio_number) $output .= ', Number '. check_plain($node->biblio_number);
+  if ($node->biblio_date) $output .= ', '. check_plain($node->biblio_date);
+  if ($node->biblio_number) $output .= ', Number '. check_plain($node->biblio_number);
 
-    if ($node->biblio_place_published) $output .= ', '. check_plain($node->biblio_place_published);
-  */
+  if ($node->biblio_place_published) $output .= ', '. check_plain($node->biblio_place_published);
+  if ($node->biblio_publisher) $output .= ': '.check_plain($node->biblio_publisher);
+
   return filter_xss($output, biblio_get_allowed_tags());
 
 }

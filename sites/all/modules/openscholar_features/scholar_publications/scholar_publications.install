@@ -143,10 +143,42 @@ function scholar_publications_update_6006(&$sandbox){
     $value = unserialize($row->value);
 
     foreach ($value as $key => $data) {
-      if (strpos($key, 'biblio_') === FALSE && strpos($key, 'scholar_publications_') === FALSE && strpos($key, 'bkn_') === FALSE) {
-        $key = 'scholar_publications_'.$key;
-      }
-      db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', '%s', '%s')", $row->type, $row->sid, $key, serialize($data));
+      switch ($key){
+          case "style":
+            $varname = "biblio_style";
+          break;
+          case "sort":
+            $varname = "biblio_sort";
+          break;
+          case "sort_tabs":
+            $varname = "biblio_sort_tabs";
+          break;
+          case "order":
+            $varname = "biblio_order";
+          break;
+          case "export_links":
+            $varname = "biblio_export_links";
+          break;
+          case "google_link":
+            $varname = "biblio_google_link";
+          break;
+          case "no_publication_date":
+            $varname = "biblio_no_year_text";
+          break;
+          case "note_in_teaser":
+            $varname = "scholar_publication_note_in_teaser";
+          break;
+          case "link_title_url":
+            $varname = "biblio_link_title_url";
+          break;
+          case "author_links":
+            $varname = "biblio_author_links";
+          break;
+          case "rowsperpage":
+            $varname = $key;
+          break;
+        }
+        db_query("INSERT INTO {spaces_overrides} VALUES ('%s', '%s', 'variable', '%s', '%s')", $row->type, $row->sid, $varname, serialize($data));
     }
   }
   $res[] = array(
