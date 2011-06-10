@@ -291,7 +291,7 @@ function cite_distribute_widget_process($module, $nid) {
 	$update_val = cite_distribute_update_val ( $module_mode );
 	
 	//get formal repository name
-	$module_info = module_invoke ( $module, 'cite_distribute_register' );
+ 	$module_info = module_invoke ( $module, 'cite_distribute_register' );
 	$repository_name = $module_info[0]['repository'];
 	
 	//check to see if nid already exists in repec meta
@@ -323,6 +323,18 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 	
 	//check for optional 'api_values' key
 	$module_info = module_invoke ( $module, 'cite_distribute_register' );
+	
+	//module info is necessary, so we need to determine the actual module if its a sword sub mod
+	if (!$module_info) {
+		foreach(module_invoke_all('cite_distribute_register') as $mod) {
+			if ($mod['name'] == $module) {
+				$module_info = array($mod);
+				//also change module?
+				break;
+			}
+		}
+	}
+
 	
 	switch ($module_mode) {
 		
@@ -389,7 +401,11 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 			//at all.   Instead it lets the submodule deal with the data output, e.g., the submodule
 			//could send the output via preprocess hook to a template file
 			if ($module_info[0]['file'] === 'none') {
-				$ret = module_invoke($module, 'cite_distribute_push', $node);
+				if ($module_info[0]['module']) {
+					$submodule = $module;
+					$module = $module_info[0]['module'];
+				} 
+				$ret = module_invoke($module, 'cite_distribute_push', $node, $submodule);
 				$place_template = $ret; // or not if it didn't work
 				
 			}
