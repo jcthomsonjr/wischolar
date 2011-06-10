@@ -3,16 +3,12 @@ Drupal.verticalTabs = Drupal.verticalTabs || {};
 
 Drupal.verticalTabs.cite_distribute_selections = function() {
   var vals = [];
-  if ($('#edit-googlescholar-meta').attr('checked')) {
-    vals.push(Drupal.t('Google Scholar'));
-  }
-  if ($('#edit-repec-meta').attr('checked')) {
-    vals.push(Drupal.t('RePEc'));
-  }
-  // this will eventually have to generalize over each sword repo...
-  if ($('#edit-sword-meta').attr('checked')) {
-	    vals.push(Drupal.t('SWORD'));
-	  }
+  
+  /* Get checked options, add their label text to array */
+  $('fieldset.vertical-tabs-cite_distribute_selections input:checked')
+    .parent()
+    .each( function(){vals.push( $(this).text() )} )
+  
   if (vals.join(', ') == '') {
     return Drupal.t('None');
   }
