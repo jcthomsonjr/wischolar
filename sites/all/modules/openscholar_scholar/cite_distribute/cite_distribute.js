@@ -3,12 +3,15 @@ Drupal.verticalTabs = Drupal.verticalTabs || {};
 
 Drupal.verticalTabs.cite_distribute_selections = function() {
   var vals = [];
-  
-  /* Get checked options, add their label text to array */
-  $('fieldset.vertical-tabs-cite_distribute_selections input:checked')
-    .parent()
-    .each( function(){vals.push( $(this).text() )} )
-  
+  if ($('#edit-googlescholar-meta').attr('checked')) {
+    vals.push(Drupal.t('Google Scholar'));
+  }
+  if ($('#edit-repec-meta').attr('checked')) {
+    vals.push(Drupal.t('RePEc'));
+  }
+  else {
+    vals.push(Drupal.t(''));
+  }
   if (vals.join(', ') == '') {
     return Drupal.t('None');
   }

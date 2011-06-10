@@ -18,11 +18,10 @@ function vsite_layout_layout() {
   drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/cp-layout-map.css');
 
   $space = vsite_get_vsite();
-  $theme = variable_get('default_theme', 'scholar_airstream');
-  $a_info = drupal_parse_info_file(drupal_get_path('theme', $theme) . "/" . $theme . ".info");
+  $a_info = drupal_parse_info_file(drupal_get_path('theme', $space->group->og_theme) . "/" . $space->group->og_theme . ".info");
   if (is_array($a_info) && array_key_exists('scholar', $a_info) && array_key_exists('cp_layout_css', $a_info['scholar'])) {
     //cp_layout_css
-    drupal_add_css(drupal_get_path('theme', $theme) . "/" . $a_info['scholar']['cp_layout_css']);
+    drupal_add_css(drupal_get_path('theme', $space->group->og_theme) . "/" . $a_info['scholar']['cp_layout_css']);
   }//Apply CSS for custom theme Layouts
 
   $s_page_type = isset($_GET['page_type'])?$_GET['page_type']:'none';
@@ -313,7 +312,7 @@ function vsite_layout_settings_form_reset($form, &$form_state) {
   if(!$space) return;
 
   foreach (array_keys(vsite_layout_get_pagetypes($space)) as $s_page_type) {
-    $space->controllers->context->del('openscholar-feature-'.$s_page_type.":reaction:block:".variable_get('default_theme', 'scholar_airstream'));
+    $space->controllers->context->del('openscholar-feature-'.$s_page_type.":reaction:block:".$space->group->og_theme);
   }
 }
 
@@ -346,7 +345,7 @@ function vsite_layout_settings_form_submit($form, &$form_state) {
 
   uasort($a_avalible_blocks['blocks'], 'vsite_layout_sort_block_by_weight'); //Put them in the right order to simplify showing them in the cp
   if($s_page_type == 'none') vsite_layout_apply_changes_to_default($a_avalible_blocks);
-  $space->controllers->context->set('openscholar-feature-'.$s_page_type.":reaction:block:".variable_get('default_theme', 'scholar_airstream'), $a_avalible_blocks);
+  $space->controllers->context->set('openscholar-feature-'.$s_page_type.":reaction:block:".$space->group->og_theme, $a_avalible_blocks);
 
   if ($s_page_type && $s_page_type != 'none') {
     $form_state['redirect'] = array($_GET['q'], "page_type=" . $s_page_type);
@@ -470,7 +469,7 @@ function vsite_layout_apply_changes_to_default($a_new_setting){
     }//Crude Change weight
 
     uasort($a_new_page['blocks'], 'vsite_layout_sort_block_by_weight'); //Put them in the right order to simplify showing them in the cp
-    $space->controllers->context->set('openscholar-feature-'.$s_page_nm.":reaction:block:".variable_get('default_theme', 'scholar_airstream'), $a_new_page);
+    $space->controllers->context->set('openscholar-feature-'.$s_page_nm.":reaction:block:".$space->group->og_theme, $a_new_page);
   }
 }
 
@@ -486,11 +485,11 @@ function vsite_layout_region_widgets( $page_type = 'none') {
 
   $default_blocks = module_invoke_all('vsite_widgets');
   foreach ($default_blocks as $s_key => $a_block) $default_blocks[$s_key]['region'] = false; //Get any new blocks that have been introduced, and include them in the top bar
-
+  
   $a_region_widgets = array();
   if($context && ($a_widgets = $context->reactions['block']['blocks'])){
     $a_widgets = array_merge($default_blocks,$a_widgets);
-
+  	
     foreach ($a_widgets as $s_widget_key => $widget) {
       $widget = (array)$widget;
       if ($widget['region']) {

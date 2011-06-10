@@ -16,7 +16,7 @@ if (Drupal.jsEnabled) {
     	$(".item-theme-picker").removeClass('checked');
     	// add the class to this one
     	$(this).addClass('checked');
-    	$("#edit-default-theme-" + $(this).attr('id')).attr("checked", "checked").change();
+    	$("#edit-vsite-design-" + $(this).attr('id')).attr("checked", "checked").change();
     });
     
     $('#vsite-design-theme-picker-form').submit(function(event) {

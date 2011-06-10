@@ -68,27 +68,6 @@ function vsite_menu(){
 }
 
 /**
- * Implementation of hook_menu_alter().
- */
-function vsite_menu_alter(&$items) {
-  $router_items = array(
-    'node/%node/edit',
-  );
-  foreach (node_get_types('types', NULL, TRUE) as $type) {
-    $type_url_str = str_replace('_', '-', $type->type);
-    $router_items[] = 'node/add/'. $type_url_str;
-  }
-  foreach ($router_items as $path) {
-    if (isset($items[$path])) {
-      $arguments = isset($items[$path]['access arguments']) ? $items[$path]['access arguments'] : array();
-      $arguments[] = isset($items[$path]['access callback']) ? $items[$path]['access callback'] : NULL;
-      $items[$path]['access callback'] = 'vsite_node_menu_access';
-      $items[$path]['access arguments'] = $arguments;
-    }
-  }
-}
-
-/**
  * Includes different inc files
  */
 function vsite_include($inc_files){
@@ -1147,23 +1126,4 @@ function vsite_views_plugins() {
       ),
     ),
   );
-}
-
-/**
- * Vsite Node menu access callback. Allows vsite to restrict access
- * to nodes outside a space before it allows space types to manage access as
- * related to their space workflow inside a space. See hook_menu_alter() for how
- * menu access callbacks / arguments get passed.
- */
-function vsite_node_menu_access(){
-	// Run the standard spaces access check.
-  $args = func_get_args();
-  $access_callback = array_pop($args);
-  if (empty($access_callback) || call_user_func_array($access_callback, $args)) {
-    //Spaces permits access, now lets make sure we are in a site
-    $vsite = vsite_get_vsite();
-  	
-    return $vsite?TRUE:FALSE;
-  }
-  return FALSE;
 }

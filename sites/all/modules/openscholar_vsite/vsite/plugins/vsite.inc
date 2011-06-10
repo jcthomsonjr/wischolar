@@ -40,12 +40,6 @@ class vsite extends space_og {
     }
 
     if (parent::activate()) {
-      // spaces_og sets the theme from $node->og_theme in it's activate.
-      // we want to pull it from an overridden variable
-      global $custom_theme;
-      if ($new_theme = $this->controllers->variable->get('default_theme')) {
-        $custom_theme = $new_theme;
-      }
       return TRUE;
     }
 
