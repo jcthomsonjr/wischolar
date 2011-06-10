@@ -173,6 +173,7 @@ function cite_distribute_form_submit() {
  */
 function cite_distribute_nodeapi(&$node, $op) {
 	switch ($op) {
+	//	case 'update' :
 		case 'insert' :
 			if ($node->type == 'biblio') {
 				$submodules = cite_distribute_installed_mods ();
@@ -388,7 +389,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 			//at all.   Instead it lets the submodule deal with the data output, e.g., the submodule
 			//could send the output via preprocess hook to a template file
 			if ($module_info[0]['file'] === 'none') {
-				$ret = module_invoke($module, 'cite_distribute_push', $node, $module_node, $iteration);
+				$ret = module_invoke($module, 'cite_distribute_push', $node);
 				$place_template = $ret; // or not if it didn't work
 				
 			}
