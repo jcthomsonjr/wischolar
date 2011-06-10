@@ -121,8 +121,10 @@ function scholar_project_vsite_widgets(){
  */
 function _scholar_project_basicinfo_wdgt(){
   $scholar = vsite_get_vsite();
-
+  
   $block = array();
+  if(!$scholar) return $block;
+  
   $block['subject'] = t('');
   $block['content'] = l('Project Site (' . $scholar->group->purl . ')', $scholar->get_absolute_url());
 
