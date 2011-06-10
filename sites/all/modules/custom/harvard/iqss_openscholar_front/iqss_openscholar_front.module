@@ -52,28 +52,27 @@ function iqss_openscholar_front_theme(){
 /**
  * implementation of hook_context_default_contexts_alter
  */
-function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
+function iqss_openscholar_front_context_load_alter(&$context){
   // add some extra links (block) in the 'sitewide_front'
-  if (isset($contexts['openscholar-section-sitewide_front'])) {
+  if ($context->name == 'openscholar-section-sitewide_front') {
 
-    $contexts['openscholar-section-sitewide_front']->block['iqss_openscholar_front_top_links'] = array(
-      'module' => 'iqss_openscholar_front',
-      'delta' => 'top_links',
-      'weight' => 37,
-      'region' => 'header_main',
-      'status' => 0,
-      'label' => 'OpenScholar: Top links',
-      'type' => 'context_ui'
-    );
+//    $context->reactions['block']['blocks']['iqss_openscholar_front_top_links'] = array(
+//      'module' => 'iqss_openscholar_front',
+//      'delta' => 'top_links',
+//      'weight' => 37,
+//      'region' => 'header_main',
+//      'status' => 0,
+//      'label' => 'OpenScholar: Top links',
+//      'type' => 'context_ui'
+//    );
 
 	  //Remove the blocks that are moved to the content region
-	  unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_top_links']);
-	  unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_site_mission']);
+	  unset($context->reactions['block']['blocks']['openscholar_front_site_mission']);
 	  //Site Mission Statement
-	  unset($contexts['openscholar-section-sitewide_front']->block['openscholar_front_video_info']);
+	  unset($context->reactions['block']['blocks']['openscholar_front_video_info']);
 	  //Video
 
-	  $contexts['openscholar-section-sitewide_front']->block['iqss_openscholar_front_search'] = array(
+	  $context->reactions['block']['blocks']['iqss_openscholar_front_search'] = array(
 	    'module' => 'search',
 	    'delta' => 0,
 	    'weight' => 37,
@@ -85,9 +84,11 @@ function iqss_openscholar_front_context_default_contexts_alter(&$contexts){
 
   }
 
-  if (isset($contexts['openscholar-section-sitewide'])) {
-    //Remove the add site block from the iqss page, it is in the tpl
-    unset($contexts['openscholar-section-sitewide']->block['openscholar_front_top_links']);
+  if ($context->name == 'openscholar-section-sitewide' && count($context->reactions)) {
+  	if(isset($context->reactions['block']['blocks']['openscholar_front_top_links'])){
+  	  //Remove the add site block from the iqss page, it is in the tpl
+      unset($context->reactions['block']['blocks']['openscholar_front_top_links']);
+  	}
   }
 }
 
