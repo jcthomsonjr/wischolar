@@ -67,12 +67,13 @@ function iqss_openscholar_front_context_load_alter(&$context){
 //    );
 
 	  //Remove the blocks that are moved to the content region
-	  unset($context->reactions['block']['blocks']['openscholar_front_site_mission']);
+	  unset($context->reactions['block']['blocks']['openscholar_front-top_links']);
+	  unset($context->reactions['block']['blocks']['openscholar_front-site_mission']);
 	  //Site Mission Statement
-	  unset($context->reactions['block']['blocks']['openscholar_front_video_info']);
+	  unset($context->reactions['block']['blocks']['openscholar_front-video_info']);
 	  //Video
 
-	  $context->reactions['block']['blocks']['iqss_openscholar_front_search'] = array(
+	  $context->reactions['block']['blocks']['iqss_openscholar_front-search'] = array(
 	    'module' => 'search',
 	    'delta' => 0,
 	    'weight' => 37,
@@ -85,9 +86,9 @@ function iqss_openscholar_front_context_load_alter(&$context){
   }
 
   if ($context->name == 'openscholar-section-sitewide' && count($context->reactions)) {
-  	if(isset($context->reactions['block']['blocks']['openscholar_front_top_links'])){
+  	if(isset($context->reactions['block']['blocks']['openscholar_front-top_links'])){
   	  //Remove the add site block from the iqss page, it is in the tpl
-      unset($context->reactions['block']['blocks']['openscholar_front_top_links']);
+      unset($context->reactions['block']['blocks']['openscholar_front-top_links']);
   	}
   }
 }
