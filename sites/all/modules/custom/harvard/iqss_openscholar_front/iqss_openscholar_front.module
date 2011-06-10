@@ -56,15 +56,15 @@ function iqss_openscholar_front_context_load_alter(&$context){
   // add some extra links (block) in the 'sitewide_front'
   if ($context->name == 'openscholar-section-sitewide_front') {
 
-//    $context->reactions['block']['blocks']['iqss_openscholar_front_top_links'] = array(
-//      'module' => 'iqss_openscholar_front',
-//      'delta' => 'top_links',
-//      'weight' => 37,
-//      'region' => 'header_main',
-//      'status' => 0,
-//      'label' => 'OpenScholar: Top links',
-//      'type' => 'context_ui'
-//    );
+    $context->reactions['block']['blocks']['iqss_openscholar_front-top_links'] = array(
+      'module' => 'iqss_openscholar_front',
+      'delta' => 'top_links',
+      'weight' => 37,
+      'region' => 'header_main',
+      'status' => 0,
+      'label' => 'OpenScholar: Top links',
+      'type' => 'context_ui'
+    );
 
 	  //Remove the blocks that are moved to the content region
 	  unset($context->reactions['block']['blocks']['openscholar_front-top_links']);
