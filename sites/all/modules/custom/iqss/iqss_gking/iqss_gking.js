@@ -22,8 +22,13 @@ Drupal.behaviors.iqss_gking = function() {
   iqss_gking_areas_of_research_load_next();
 
   var timer_block_iqss_gking_areas_of_research = null;
-
-
+  
+  // ensure that changing tabs doesn't break the back button
+	$('.ui-tabs li:has(a[href])').live('mouseup', function(e) {
+		if (e.target.hash) {
+			window.location.hash = e.target.hash.replace('#', '');
+		}
+	});
 };
 
 function iqss_gking_areas_of_research_load_next(){
@@ -41,7 +46,8 @@ function iqss_gking_areas_of_research_load_next(){
 
     if($(this).parent('dt').hasClass('active')) found_active = true;
   });
-  next_el.hover();
+  if (next_el)
+	  next_el.hover();
 }
 
 function iqss_gking_research_group_tabify(){

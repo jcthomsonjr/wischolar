@@ -129,7 +129,7 @@ function cite_distribute_form_alter(&$form, $form_state, $form_id) {
 		
 		$form ['cite_distribute_selections'] ['intro'] = array ('#type' => 'item', '#title' => t ( 'Distribute this publication to the following academic repositories' ) );
 		
-		foreach ( cite_distribute_installed_mods () as $module ) {
+		foreach ( cite_distribute_installed_mods() as $module ) {
 			$existing_value = cite_distribute_check_disabled ( $module ['name'], $form ['nid'] ['#value'] );
 			$form ['cite_distribute_selections'] [$module ['name']] = array ('#type' => 'checkbox', '#disabled' => $existing_value, '#title' => t ( '@repos', array ('@repos' => $module ['repository'] ) ), '#default_value' => $existing_value );
 		}
@@ -173,6 +173,7 @@ function cite_distribute_form_submit() {
  */
 function cite_distribute_nodeapi(&$node, $op) {
 	switch ($op) {
+	//	case 'update' :
 		case 'insert' :
 			if ($node->type == 'biblio') {
 				$submodules = cite_distribute_installed_mods ();
@@ -290,7 +291,7 @@ function cite_distribute_widget_process($module, $nid) {
 	$update_val = cite_distribute_update_val ( $module_mode );
 	
 	//get formal repository name
-	$module_info = module_invoke ( $module, 'cite_distribute_register' );
+ 	$module_info = module_invoke ( $module, 'cite_distribute_register' );
 	$repository_name = $module_info[0]['repository'];
 	
 	//check to see if nid already exists in repec meta
@@ -322,6 +323,18 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 	
 	//check for optional 'api_values' key
 	$module_info = module_invoke ( $module, 'cite_distribute_register' );
+	
+	//module info is necessary, so we need to determine the actual module if its a sword sub mod
+	if (!$module_info) {
+		foreach(module_invoke_all('cite_distribute_register') as $mod) {
+			if ($mod['name'] == $module) {
+				$module_info = array($mod);
+				//also change module?
+				break;
+			}
+		}
+	}
+
 	
 	switch ($module_mode) {
 		
@@ -388,8 +401,12 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 			//at all.   Instead it lets the submodule deal with the data output, e.g., the submodule
 			//could send the output via preprocess hook to a template file
 			if ($module_info[0]['file'] === 'none') {
-				$ret = module_invoke($module, 'cite_distribute_push', $node, $module_node, $iteration);
-				$place_template = true; // or not if it didn't work
+				if ($module_info[0]['module']) {
+					$submodule = $module;
+					$module = $module_info[0]['module'];
+				} 
+				$ret = module_invoke($module, 'cite_distribute_push', $node, $submodule);
+				$place_template = $ret; // or not if it didn't work
 				
 			}
 
@@ -406,7 +423,7 @@ function cite_distribute_mode_controller($node = NULL, $module, $module_mode) {
 		case 'per_submission' :
 			//submodule is not using files
 			if ($module_info[0]['file'] == 'none') {
-				return cite_distribute_mode_controller ( $node = NULL, $module, $module_mode = 'api' );
+				return cite_distribute_mode_controller ( $node, $module, $module_mode = 'api' );
 			}
 			//this when a submodule uses one file and runs the api funtion
 			if ($module_info[0]['file'] == 'single') {
