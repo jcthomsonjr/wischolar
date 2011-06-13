@@ -685,7 +685,6 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
       }
       break;
     case 'presave' :
-
       // -- Take Care of the Issues present when pathauto and purl coexist --
       // To elaborate, since purl adds a prefix to the path to distinguish between vsite's we must manually
       // check to make sure that the url without the prefix does not match an existing path.
