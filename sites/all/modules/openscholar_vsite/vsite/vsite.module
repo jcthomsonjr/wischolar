@@ -1160,10 +1160,30 @@ function vsite_node_menu_access(){
   $args = func_get_args();
   $access_callback = array_pop($args);
   if (empty($access_callback) || call_user_func_array($access_callback, $args)) {
-    //Spaces permits access, now lets make sure we are in a site
+    
+    if (array_pop($args) == 'node_access' && $args[0] == 'create') {
+      $node_type = str_replace('-', '_', $args[1]);
+      if(og_is_group_type($node_type)) return true;
+    }//If this is a group type
+    
+  	//Spaces permits access, now lets make sure we are in a site
     $vsite = vsite_get_vsite();
   	
     return $vsite?TRUE:FALSE;
   }
   return FALSE;
+}
+
+/**
+ * Add vsite content type to default spaces_features
+ */
+function vsite_strongarm_alter(&$vars){
+	
+	if(isset($vars['spaces_features']) && is_object($vars['spaces_features'])){
+		$scholar_content_type = variable_get('scholar_content_type', false);
+		if($scholar_content_type && !isset($vars['spaces_features']->value[$scholar_content_type])){
+			$vars['spaces_features']->value[$scholar_content_type] = 1;
+		}
+	}//Allow access to og content type by default
+	
 }
