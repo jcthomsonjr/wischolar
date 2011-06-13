@@ -11,22 +11,19 @@ function sword_meta_cite_distribute_register(){
   //unlike other cite_distribute meta modules, sword meta can
   //contain several definitions of destinations.  look these up
   // and generate arrays.  
-  // TODO: make sure cite_distribute can take an array of array of options
-	
+  	
 	$module_info = array();
-	
-	$result = db_query("SELECT name FROM {sword_meta} WHERE active = 1");
-	while ($dest = db_fetch_object($result)) {
+
+	foreach(_sword_meta_submodule_info() as $dest) {
 		$module_info[] = array(
 			'name'					=> $dest->name,   //Name of module to process publication
-			'repository'		=> $dest->name,   //Display name of this sword destination
+			'repository'		=> $dest->title,   //Display name of this sword destination
 		  'module' 				=> 'sword_meta',           //indicates that sword_meta is responsible for providing hooks
 			'file'					=> 'none',
 			'dynamic_paths' => TRUE,
 		);
 		
 	}
-// should we do an invoke all here so theres a hook that can define a sword destination instead of always relying on the db?  strongarm isn't working for this group of settings, so another iqss module might make sense.
   return $module_info;
 }
 
@@ -185,7 +182,7 @@ function _sword_meta_package_mets(&$node, $dest) {
 	  'File' => array(),      //$node->files[] is hidden by itweak upload.  {upload} isn't updated yet.  cahnge weight or do something clever.
 														//before itweak breaks things.  after upload mayhaps?  currently they're both 0, but c is before u.
 	);
-	
+	//$citation = theme('biblio_style', $node, $base, $style);
 	foreach($node->biblio_contributors as $delta => $cont) {
 		foreach($node->biblio_contributors[$delta] as $contributor) {
 			$metadata['Creator'][] = $contributor['firstname'] . ' ' . $contributor['lastname'];
@@ -231,12 +228,17 @@ function _sword_meta_package_mets(&$node, $dest) {
 }
 
 /*
- * Gets sword destination info from database, returns it in an object.
+ * Gets sword destination info from database and hooks.  Returns array of object
+ * Optional submodule_name can specify a single submodule to return.
  */
-function _sword_meta_submodule_info($submodule_name) {
-	//need to check at creation that names are unique
-	$query = "SELECT * FROM {sword_meta} WHERE name = '%s' AND active = 1 LIMIT 1";
-	$result = db_query($query, $submodule_name);
-	return db_fetch_object($result);
+function _sword_meta_submodule_info($submodule_name = NULL) {
+		//need to check at creation that names are unique
+	if ($submodule_name) {
+		/* single named submodule */
+		return module_invoke($submodule_name, 'sword_submodule');
+	} else {
+		/* select all submodules */
+		return module_invoke_all('sword_submodule');
+	}
 }
 

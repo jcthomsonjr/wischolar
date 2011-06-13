@@ -1,0 +1,22 @@
+<?php 
+
+/*
+ * dash submodule
+ * provides sword destination to make deposits to harvard dash
+ */
+
+/* impelmentation of hook_sword_submodule */
+function dash_sword_submodule() {
+	$module = new stdClass();
+	$module->name = 			'dash';
+	$module->title = 			'DASH';
+	$module->location = 	'http://bachman.hul.harvard.edu:9034/';
+	$module->username = 	'jsagotsky@iq.harvard.edu';
+	$module->password =   'password';
+	$module->root_in  =   '/tmp/sword';
+	$module->subdir_in =  'dash';
+	$module->root_out =   '/tmp/sword';
+	$module->file_out =   'dash_files.zip';
+
+	return $module;
+}
