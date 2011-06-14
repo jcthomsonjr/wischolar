@@ -178,23 +178,32 @@ function _sword_meta_package_mets(&$node, $dest) {
 	  'DateAvailable' => '',
 	  'StatusStatement' => '',
 	  'CopyrightHolder' => '',
-	  'Citation' => '',
+	  'Citation' => '', 
 	  'File' => array(),      //$node->files[] is hidden by itweak upload.  {upload} isn't updated yet.  cahnge weight or do something clever.
 														//before itweak breaks things.  after upload mayhaps?  currently they're both 0, but c is before u.
 	);
 	//$citation = theme('biblio_style', $node, $base, $style);
+	
+	/* Creator metadata */
 	foreach($node->biblio_contributors as $delta => $cont) {
 		foreach($node->biblio_contributors[$delta] as $contributor) {
 			$metadata['Creator'][] = $contributor['firstname'] . ' ' . $contributor['lastname'];
 		}
 	}
 	
+	/* File metadata */
 	foreach($node->files as $file) {
     $metadata['File'][] = array( 
 		 'filepath'=>url($file->filepath),  //TODO does mets want location or should file be included in teh zip?
 		 'filemime'=>$file->filemime, 
 		);
 	}
+	
+	/* Citation metadata */
+	$citation = 	theme('biblio_style', $node, variable_get('biblio_base', 'biblio'), biblio_get_style());
+	$citation = strip_tags($citation);
+  $citation = preg_replace('/&nbsp;/', ' ', $citation);
+	$metadata['Citation'] = $citation;
 	
 	/* add metadata to mets xml */
 	foreach ($metadata as $name => $data) {
