@@ -33,6 +33,6 @@
       <div class="links links-inline">
         <?php print $links;?>
       </div>
-      <?php endif;?>
+    <?php endif;?>
   </div> <!-- /node-inner -->
 </div> <!-- /node -->
