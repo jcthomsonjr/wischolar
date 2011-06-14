@@ -210,7 +210,7 @@ function scholarregister_signup_form_submit($form, &$form_state) {
     global $base_url;
     $message = scholarregister_message($form, $domain);
     $commands [] = ctools_ajax_command_replace ( '#submit-suffix', $message );
-    $commands[] = ctools_ajax_command_attr('#edit-submit', 'disabled', true);
+    $commands[] = ctools_ajax_command_remove('#edit-submit');
   }
 
   //additional tasks and workflow if user with special access is creating site
