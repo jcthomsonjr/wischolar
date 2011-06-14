@@ -1179,7 +1179,11 @@ function vsite_node_menu_access(){
 function vsite_strongarm_alter(&$vars){
 	
 	if(isset($vars['spaces_features']) && is_object($vars['spaces_features'])){
-		$scholar_content_type = variable_get('scholar_content_type', false);
+		if(isset($vars['scholar_content_type'])){
+			$scholar_content_type = $vars['scholar_content_type']->value;
+		}
+		if(!$scholar_content_type) $scholar_content_type = variable_get('scholar_content_type', false);
+		
 		if($scholar_content_type && !isset($vars['spaces_features']->value[$scholar_content_type])){
 			$vars['spaces_features']->value[$scholar_content_type] = 1;
 		}
