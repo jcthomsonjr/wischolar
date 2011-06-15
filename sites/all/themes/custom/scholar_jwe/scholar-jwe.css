@@ -129,7 +129,7 @@ p.copy {
 #header-left,
 #sidebar-first {
   width: 216px;
-  right: 276px;
+  right: 256px;
   }
 
 #content-area .hg-container,
@@ -145,6 +145,7 @@ p.copy {
 
 #sidebar-second {
 	color:#555;
+  left: 21px;
   }
 
 #footer .wrap {
@@ -280,7 +281,6 @@ p.copy {
   width:599px;
   background: url(images/scholars_web_jwelogo.gif) no-repeat;
   text-indent: -999em;
-  margin-top:10px;
   }
 
 #header h1 a,
@@ -313,6 +313,8 @@ img {
 
 #content-main {
 	padding-bottom:50px;
+	padding-left: 20px;
+	padding-right: 20px;
 	}
 
 #header-right ul.menu {
@@ -324,6 +326,10 @@ img {
 	text-decoration:none;
 	color:#fff;
 	}
+	
+#sidebar-first {
+	left: auto;
+}
 
 #sidebar-first .block, #sidebar-second .block{
 	border:bottom:1px solid red;
@@ -486,7 +492,7 @@ body.sidebar-second #content-area .hg-container {
   position:relative;
   }
 
-.page-home #front-rotate {
+.front #front-rotate {
   width: 750px;
   height: 274px;
   position: absolute;
@@ -495,12 +501,17 @@ body.sidebar-second #content-area .hg-container {
   border-bottom: 1px solid #DB6600;
   }
 
-.page-home #content h3:first-child {
-  border-top:none;
+.front #content h3:first-child {
+  border-top: none;
+  margin-top: 0;
   }
 
-.page-home #sidebar-first,
-.page-home #content {
+.front #sidebar-first,
+.front #content {
   margin-top: 274px;
   padding-top: 0;
   }
+  
+.front #content-main .title {
+	display: none;
+}
