@@ -78,22 +78,6 @@ function os_user_default_permissions() {
     ),
   );
 
-  // Exported permission: administer activity
-  $permissions['administer activity'] = array(
-    'name' => 'administer activity',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
-  // Exported permission: administer addthis
-  $permissions['administer addthis'] = array(
-    'name' => 'administer addthis',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
   // Exported permission: administer biblio
   $permissions['administer biblio'] = array(
     'name' => 'administer biblio',
@@ -118,14 +102,6 @@ function os_user_default_permissions() {
     ),
   );
 
-  // Exported permission: administer comments
-  $permissions['administer comments'] = array(
-    'name' => 'administer comments',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
   // Exported permission: administer content types
   $permissions['administer content types'] = array(
     'name' => 'administer content types',
@@ -134,25 +110,9 @@ function os_user_default_permissions() {
     ),
   );
 
-  // Exported permission: administer creative commons
-  $permissions['administer creative commons'] = array(
-    'name' => 'administer creative commons',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
   // Exported permission: administer features
   $permissions['administer features'] = array(
     'name' => 'administer features',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
-  // Exported permission: administer feeds
-  $permissions['administer feeds'] = array(
-    'name' => 'administer feeds',
     'roles' => array(
       '0' => 'administrator',
     ),
@@ -230,14 +190,6 @@ function os_user_default_permissions() {
     ),
   );
 
-  // Exported permission: administer pinserver
-  $permissions['administer pinserver'] = array(
-    'name' => 'administer pinserver',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
   // Exported permission: administer search
   $permissions['administer search'] = array(
     'name' => 'administer search',
@@ -306,14 +258,6 @@ function os_user_default_permissions() {
   // Exported permission: administer views
   $permissions['administer views'] = array(
     'name' => 'administer views',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
-  // Exported permission: attach creative commons
-  $permissions['attach creative commons'] = array(
-    'name' => 'attach creative commons',
     'roles' => array(
       '0' => 'administrator',
     ),
@@ -427,14 +371,6 @@ function os_user_default_permissions() {
     ),
   );
 
-  // Exported permission: show format selection for comments
-  $permissions['show format selection for comments'] = array(
-    'name' => 'show format selection for comments',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
   // Exported permission: show format selection for nodes
   $permissions['show format selection for nodes'] = array(
     'name' => 'show format selection for nodes',
@@ -475,14 +411,6 @@ function os_user_default_permissions() {
       '1' => 'manager',
       '2' => 'scholar admin',
       '3' => 'scholar user',
-    ),
-  );
-
-  // Exported permission: use creative commons user defaults
-  $permissions['use creative commons user defaults'] = array(
-    'name' => 'use creative commons user defaults',
-    'roles' => array(
-      '0' => 'administrator',
     ),
   );
 

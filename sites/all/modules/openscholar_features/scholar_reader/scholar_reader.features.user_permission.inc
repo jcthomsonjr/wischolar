@@ -17,6 +17,14 @@ function scholar_reader_user_default_permissions() {
     ),
   );
 
+  // Exported permission: administer feeds
+  $permissions['administer feeds'] = array(
+    'name' => 'administer feeds',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: delete own feed content
   $permissions['delete own feed content'] = array(
     'name' => 'delete own feed content',
