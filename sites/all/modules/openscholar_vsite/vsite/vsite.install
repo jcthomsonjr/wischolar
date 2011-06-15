@@ -372,3 +372,29 @@ function vsite_update_6015(&$sandbox){
   return $res;
 
 }
+
+/*
+ * hook_update_N
+ * installs several modules.
+ */
+function vsite_update_6016(&$sandbox){
+
+  $res = array();
+  module_rebuild_cache();
+
+  $modules = array('itweak_filefield');
+
+  foreach ($modules as $mod) {
+	  if(!module_exists($mod)){
+	    include_once('includes/install.inc');
+	    drupal_install_modules(array($mod));
+	  }
+  }
+	$res[] = array(
+	  'success' => true,
+		'query' => 'Installed modules: ' . implode(', ', $modules),
+	);
+
+  return $res;
+
+}
