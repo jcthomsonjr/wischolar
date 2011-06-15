@@ -10,6 +10,14 @@ a, a:visited {
 h2, h3, h4 {
 	font-style:normal;
 	}
+	
+#page {
+	background: transparent url(images/container.png) repeat-y 0 0;
+}
+
+.sidebar-second #page {
+	background-position: -2040px 0;
+}
 
 body.header-main #header-main {
 	padding-top: 4px;
@@ -45,8 +53,19 @@ body.header-main #header-main {
 	height: 113px;
 	display: block;
 	}
+	
+#navbar {
+	border-top: 0;
+	border-bottom-color: rgb(209,112,51);
+	padding-left: 17px;
+}
+	
+#navbar .wrap {
+	background: transparent;
+}
 
 #navbar li {
+	padding-top: 2px;
 	padding-left: 1px;
 	border-right: 1px solid #BBBBBB;
 	}
@@ -62,6 +81,12 @@ body.header-main #header-main {
 	background: #C55B28;
 	color: #fff;
 	}
+	
+#sidebar-second {
+	background: transparent;
+	padding-left: 30px;
+	width: 170px;
+}
 
 #sidebar-second h3.title,
 #sidebar-first h3.title {
@@ -232,3 +257,12 @@ td.welcome {
 	color:#FFFFFF;
 	text-decoration:none;
 	}
+	
+.front #content-area .title {
+	display: none;
+}
+body.no-sidebars #header, 
+body.no-sidebars #content-area .hg-container, 
+body.sidebar-second #content-area .hg-container, 
+body.no-sidebars #footer {
+  padding-left: 21px;
