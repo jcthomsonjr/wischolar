@@ -131,7 +131,7 @@ function sword_meta_cite_distribute_push($node, $submodule_name){
 			return false;
 		}
 	}
-	//sac_href!
+
 	if ($sac_doc->sac_status != 200) {
 		drupal_set_message('Unable to connect to SWORD server', 'error');
 		return false;
@@ -140,11 +140,27 @@ function sword_meta_cite_distribute_push($node, $submodule_name){
 	$file = _sword_meta_package_mets($node, $dest);
 	
 	if ($file) {
+		$deposit_url = $dest->location; //if we can't set a new url, get back a good error report.
+		foreach($sac_doc->sac_workspaces as $ws) {
+			foreach($ws->sac_collections as $collection) {
+
+				$href = $collection->sac_href;
+				$xml = serialize($href);			//TODO figure out why simplexml methods aren't working.  Use that instead of regex.
+				$deposit_url = preg_replace('/.*"(http.*)".*/', '$1', $xml);
+			}
+		}
+		
 		try {
 			$deposit = $sac->deposit($deposit_url, $dest->username, $dest->password, $obo, $file);
 		} catch(Exception $e) {
 			drupal_set_message($e->getMessage, 'error');
 			return false;
+		}
+		
+		switch ($deposit->sac_status) {
+			default: 
+				drupal_set_message($deposit->sac_status);
+				break;
 		}
 	// deposit(url, username, password, on-behalf-of-user, filename,
     //               [format_namespace, package_type, noop, verbose]) 
