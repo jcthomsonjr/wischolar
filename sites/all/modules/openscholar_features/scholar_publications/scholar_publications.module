@@ -806,8 +806,7 @@ function _scholar_publications_get_plain_citation($node){
       $citation = preg_replace($re, ", </span>$coins", $citation);
     } 
 		
-		$path = (isset($node->path)) ? $node->path : 'node/' . $node->nid;
-		$citation .= ' copy at ' . shorten_url($base_url . '/' . $path);
+		$citation .= ' copy at ' . shorten_url(url('node/'.$node->nid, array('absolute'=>TRUE)));
 	}
 
   $citation = strip_tags($citation);
