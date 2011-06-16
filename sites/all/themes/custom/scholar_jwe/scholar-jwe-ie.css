@@ -1,6 +1,6 @@
-#sidebar-left {
+#sidebar-first {
   margin-left: expression(
-   document.all['content-main'].offsetWidth * -1 +
+   (document.all['content-main'].offsetWidth + document.all['sidebar-second'].offsetWidth) * -1 +
    parseFloat(document.all['content-main'].currentStyle.paddingLeft) +
    parseFloat(document.all['sidebar-first'].currentStyle.paddingLeft) +
    parseFloat(document.all['sidebar-first'].currentStyle.paddingRight)
