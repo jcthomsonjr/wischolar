@@ -100,7 +100,7 @@ function scholar_book_block($op = 'list', $delta = 0) {
   switch ($op) {
     case 'list':
       $blocks = array();
-      $blocks['booktoc'] = array('info' => t('Scholar: Book'));
+      $blocks['booktoc'] = array('info' => t('Scholar: Book Navigation'));
       return $blocks;
     case 'view':
       $function = "_scholar_book_block_{$delta}";
