@@ -36,62 +36,6 @@ function scholar_init(){
   }//Copy thier image to the site logo if they have not defined one
 }
 
-/**
- * implementation of hook_preprocess_page
- */
-function scholar_preprocess_page($vars){
-
-  // vsite.module already set the basics
-  // we just add a little info about personal web sites
-  /*
-  $vsite = vsite_get_vsite();
-  if ($vsite && drupal_is_front_page()) {
-  	$head_title = $vars['head_title'];
-    $head_title = array($head_title, "Personal web site of " . $head_title );
-
-    $head_title = implode(' | ', $head_title);
-    $vars['head_title'] = $head_title;
-  }*/
-}
-/**
- * hook strongarm
- */
-function scholar_strongarm(){
-  $conf = array();
-
-  // User settings
-  $conf['user_register'] = 0; // No registration is allowed; this is a closed group
-
-  // this helps to show user the appropriate name for features
-  // i.e. scholar_publications
-  $conf['openscholar_installation_mode'] = 'scholar';
-
-  // setting determines if a non admin user can create multiple sites
-  $conf['scholar_create_multiple_sites'] = 1;
-
-  // the default project site theme
-  $conf['openscholar_vsite_default_theme'] = 'scholar_airstream';
-
-  // list of themes, one will be randomly selected as default for new sites created
-  $conf['openscholar_selected_themes'] = array('scholar_airstream', 'scholar_redhead', 'scholar_cayley');
-
-  $conf['spaces_default_presets'] = array(
-    'og' => 'project'
-  );
-
-  $conf['spaces_disabled_presets'] = array(
-    'og' => array(
-      'private' => 1,
-      'controlled' => 1,
-      'public' => 1
-    )
-  );
-
-  // the default preset
-  $conf['scholar_default_preset'] = "scholar";
-  return $conf;
-}
-
 
 /**
  * Implementation of hook_form_alter()
