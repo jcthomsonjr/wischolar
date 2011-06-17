@@ -22,20 +22,13 @@ function os_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'spaces_preset_og';
-  $strongarm->value = 'scholar';
-
-  $export['spaces_preset_og'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'theme_default';
   $strongarm->value = 'openscholar_default';
 
   $export['theme_default'] = $strongarm;
   /*
   $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; 
+  $strongarm->disabled = FALSE;
   $strongarm->api_version = 1;
   $strongarm->name = 'spaces_features';
   $strongarm->value = array(

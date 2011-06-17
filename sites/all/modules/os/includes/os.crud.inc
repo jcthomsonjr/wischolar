@@ -23,7 +23,7 @@ function os_create_vsite($name, $domain, $preset){
       ),
       'spaces_preset_og' => $preset,
       'og_description' => "$domain's web site",
-      'theme' => 'scholar_airstream',  // @todo $preset -> theme_detault
+      //now set in nodeapi  'theme' => 'scholar_airstream',  // @todo $preset -> theme_detault
   );
   $vsite = os_create_node($domain, NULL, $properties);
   $vsite = spaces_load('og', $vsite->nid, true);

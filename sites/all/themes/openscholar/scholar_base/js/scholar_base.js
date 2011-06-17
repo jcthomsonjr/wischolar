@@ -8,7 +8,9 @@ $.fn.vAlign = function(offset) {
 };
 
 $(document).ready(function() {
-  $('#header #block-scholar-1').vAlign(10);
-  $('#header #block-scholar_project-1').vAlign(10);
-  $('#header #scholar-shield').vAlign(20);
+  if ($("#header .hg-container").children().length > 1) {
+    $('#header #block-scholar-1').vAlign(10);
+    $('#header #block-scholar_project-1').vAlign(10);
+    $('#header #scholar-shield').vAlign(20);
+  }
 });

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // $Id;
 
@@ -14,8 +14,8 @@ function sword_meta_requirements($phase) {
 		//check for SimpleXL, curl, zip
 		
 		$libs = array(
-		  'zip_read'=>'zip', 
-		  'curl_init'=>'CURL', 
+		  'zip_read'=>'zip',
+		  'curl_init'=>'CURL',
 		  'simplexml_load_file'=>'SimpleXML',
 		);
 		
@@ -40,103 +40,17 @@ function sword_meta_requirements($phase) {
 	return $reqs;
 }
 
-/*
- * sword db schema
- * 
- * name
- * url
- * user
- * pass
- * root_in
- * dir_in
- * root_out
- * file_out
- */
-/**
- * Implementation of hook_schema().
- */
-function sword_meta_schema() {
-/*	$schema['sword_meta'] = array(
-	  'description' => 'Table for storing sword destinations',
-		'fields' => array(
-			'id' => array(
-				'description' => 'Primary identifer sword_meta destinations',
-				'type' => 'serial',
-				'unsigned' => TRUE,
-				'not null' => TRUE,
-	    ),
-			'name' => array(
-				'description' => 'Display name for destination',
-				'type' => 'varchar',
-	      'length' => 255,
-				'not null' => TRUE,
-	    ),
-	    'location' => array(
-				'description' => 'URL of SWORD server',
-				'type' => 'varchar',
-	      'length' => 255,
-				'not null' => TRUE,
-	    ),
-	    'username' => array(
-				'description' => 'Username to log in to SWORD server',
-				'type' => 'varchar',
-	      'length' => 255,
-				'not null' => TRUE,
-	    ),
-	    'password' => array(
-				'description' => 'Password to log in to SWORD server (stored in plaintext!)',
-				'type' => 'varchar',
-	      'length' => 255,
-				'not null' => TRUE,
-	    ),
-	    'active' => array(
-				'description' => 'Display this SWORD destination to users?',
-				'type' => 'int',
-	      'size' => 'tiny',
-				'unsigned' => TRUE,
-				'not null' => TRUE,
-	    ),
-	    'root_in' => array(
-				'description' => 'Base directory for working files. (ie /tmp/sword_meta/)',
-				'type' => 'varchar',
-	      'length' => 255,
-				'not null' => TRUE,
-	    ),	    	    
-	    'subdir_in' => array(
-				'description' => 'Subdirectory for working files. (ie name of this destination)',
-				'type' => 'varchar',
-	      'length' => 255,
-	    ),
-	    'root_out' => array(
-				'description' => 'Base directory outgoing files.',
-				'type' => 'varchar',
-	      'length' => 255,
-				'not null' => TRUE,
-	    ),
-	    'file_out' => array(
-				'description' => 'Name of temporary SWORD file to transfer.',
-				'type' => 'varchar',
-	      'length' => 255,
-				'not null' => TRUE,
-	    ),	    
-	  ),
-	  'primary key' => array('id'),
-	);
-	
-	return $schema;*/
-}
-
 /**
  * Implementation of hook_install().
  */
 function sword_meta_install() {
-  drupal_install_schema('sword_meta');	
+	
 }
 
 /**
  * Implementation of hook_uninstall().
  */
 function sword_meta_uninstall() {
-	drupal_uninstall_schema('sword_meta');
+	
 }
 

@@ -6,6 +6,14 @@
 function vsite_widgets_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: administer addthis
+  $permissions['administer addthis'] = array(
+    'name' => 'administer addthis',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+  
   // Exported permission: view addthis
   $permissions['view addthis'] = array(
     'name' => 'view addthis',

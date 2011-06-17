@@ -2,67 +2,6 @@
 
 include_once('scholar_project.features.inc');
 
-/**
- * hook strongarm
- */
-function scholar_project_strongarm(){
-  $conf = array();
-
-  // User settings
-  $conf['user_register'] = 0; // No registration is allowed; this is a closed group
-
-  // this helps to show user the appropriate name for features
-  // i.e. project_news
-  $conf['openscholar_installation_mode'] = 'project';
-
-  // the content type which powers this kind of web site.
-  $conf['scholar_content_type'] = 'project';
-  $conf['og_content_type_usage_project'] = 'group';
-
-  // setting determines if a non admin user can create multiple sites
-  $conf['scholar_create_multiple_sites'] = 1;
-
-  // the default project site theme
-  $conf['openscholar_vsite_default_theme'] = 'scholar_cayley';
-
-  // list of themes, one will be randomly selected as default for new sites created
-  $conf['openscholar_selected_themes'] = array( 'scholar_bunchy', 'scholar_cayley', 'scholar_nortony');
-
-  $conf['spaces_default_presets'] = array(
-    'og' => 'project'
-  );
-
-  $conf['spaces_disabled_presets'] = array(
-    'og' => array(
-      'private' => 1,
-      'controlled' => 1,
-      'public' => 1
-    )
-  );
-
-
-  $conf['scholar_home_page_title'] = "IQSS Projects Access";
-
-  $conf['scholar_default_preset'] = "project";
-
-  // default theme
-  //$conf['theme_default'] = 'scholar_projects_front';
-
-  // site front page
-  //$conf['site_frontpage'] = 'scholar_projects_home';
-
-  // project node settings
-  $conf['upload_project'] = FALSE;
-
-  $conf["show_preview_changes_project"] = FALSE;
-  $conf["show_diff_inline_project"] = FALSE;
-
-  // Comments
-  $conf['comment_project'] = COMMENT_NODE_DISABLED;
-  return $conf;
-}
-
-
 function scholar_project_preprocess_page($vars){
   $vars['body_classes'] .= ' scholar-projects-distro';
 }
@@ -121,8 +60,10 @@ function scholar_project_vsite_widgets(){
  */
 function _scholar_project_basicinfo_wdgt(){
   $scholar = vsite_get_vsite();
-
+  
   $block = array();
+  if(!$scholar) return $block;
+  
   $block['subject'] = t('');
   $block['content'] = l('Project Site (' . $scholar->group->purl . ')', $scholar->get_absolute_url());
 

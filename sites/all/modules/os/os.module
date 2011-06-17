@@ -93,6 +93,24 @@ function os_user($op, &$edit, &$account, $category = NULL){
 }
 
 /**
+ * Submit our custom arranged flags
+ * @param $form_id string
+ * @param $form_values array
+ */
+function os_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
+  switch ($op) {
+    case 'presave' :
+      //Add default values for group type "vsite"
+      if($node->type && $node->type == variable_get('scholar_content_type', 'vsite')){
+        if(!isset($node->theme)){
+          $node->theme = 'scholar_airstream';
+        }
+      }//set any defaults that need setting for group types
+    break;
+  }
+}
+
+/**
  * Add dynamic strongarm variable defaults
  */
 function os_strongarm_alter(&$vars){

@@ -796,16 +796,17 @@ function _scholar_publications_get_plain_citation($node){
 	//add url to citation
 	if (function_exists('shorten_url') && variable_get('scholar_publications_shorten_citations', 0)) {
 		global $base_url;
-		
+
 		/* replace punctuation at end of citaiton with period.  biblio_coins follow end of citation and block an easy RE match, so we're appending them. */
-		$coins = filter_xss($node->biblio_coins, array('span'));
-		$re = '/' .  '[!-~] (<\/\w*>)?' . preg_quote($coins, '/') . '/';
+
+    $coins = filter_xss($node->biblio_coins, array('span'));
+    $re = '/' .  '[!-~] (<\/\w*>)?' . preg_quote($coins, '/') . '/';
+
+    if (preg_match( $re, $citation)) {
+      $citation = preg_replace($re, ", </span>$coins", $citation);
+    }
 		
-		if (preg_match( $re, $citation)) {
-			$citation = preg_replace($re, ", </span>$coins", $citation);
-		}
-		
-		$citation .= ' copy at ' . shorten_url($base_url . '/' . $node->path);
+		$citation .= ' copy at ' . shorten_url(url('node/'.$node->nid, array('absolute'=>TRUE)));
 	}
 
   $citation = strip_tags($citation);

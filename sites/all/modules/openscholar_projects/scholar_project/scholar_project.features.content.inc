@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Helper to implementation of hook_content_default_fields().
+ * Implementation of hook_content_default_fields().
  */
-function _scholar_project_content_default_fields() {
+function scholar_project_content_default_fields() {
   $fields = array();
 
   // Exported field: field_project_logo
-  $fields[] = array(
+  $fields['project-field_project_logo'] = array(
     'field_name' => 'field_project_logo',
     'type_name' => 'project',
     'display_settings' => array(
@@ -50,10 +50,6 @@ function _scholar_project_content_default_fields() {
     'list_default' => 1,
     'description_field' => '0',
     'widget' => array(
-      'collapsible' => '2',
-      'resolution' => '360x280',
-      'enforce_ratio' => 1,
-      'croparea' => '135x105',
       'file_extensions' => 'png gif jpg jpeg',
       'file_path' => '',
       'progress_indicator' => 'bar',
@@ -68,6 +64,10 @@ function _scholar_project_content_default_fields() {
       'title_type' => 'textfield',
       'default_image' => NULL,
       'use_default_image' => 0,
+      'collapsible' => '2',
+      'resolution' => '360x280',
+      'enforce_ratio' => 1,
+      'croparea' => '135x105',
       'label' => 'Logo',
       'weight' => '31',
       'description' => '',
@@ -77,9 +77,8 @@ function _scholar_project_content_default_fields() {
   );
 
   // Translatables
-  array(
-    t('Logo'),
-  );
+  // Included for use with string extractors like potx.
+  t('Logo');
 
   return $fields;
 }

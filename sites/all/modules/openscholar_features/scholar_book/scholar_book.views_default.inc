@@ -284,10 +284,12 @@ function scholar_book_views_default_views() {
   ));
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', '1');
+  $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
-    'inline' => array(),
-    'separator' => '',
-    'hide_empty' => 0,
+    'relationship' => 'none',
+    'build_mode' => 'teaser',
+    'links' => 1,
+    'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('title', 'Documents');

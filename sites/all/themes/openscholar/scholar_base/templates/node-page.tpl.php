@@ -29,7 +29,7 @@
       <div class="terms terms-inline"><?php print t(' in ') . $terms; ?></div>
       <?php endif; ?>
     <?php endif; ?>
-    <?php if ($$links): ?>
+    <?php if ($links): ?>
       <div class="links links-inline">
         <?php print $links;?>
       </div>

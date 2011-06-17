@@ -17,10 +17,10 @@ body.cp-toolbar-mini #top ul.links li,
 /* Fix for IE7 */
 #header-left {
   margin-left: expression(
-   document.all.header-main.offsetWidth * -1 +
-   parseFloat(document.all.header-main.currentStyle.paddingLeft) +
-   parseFloat(document.all.header-left.currentStyle.paddingLeft) +
-   parseFloat(document.all.header-left.currentStyle.paddingRight)
+   document.all['header-main'].offsetWidth * -1 +
+   parseFloat(document.all['header-main'].currentStyle.paddingLeft) +
+   parseFloat(document.all['header-left'].currentStyle.paddingLeft) +
+   parseFloat(document.all['header-left'].currentStyle.paddingRight)
    );
   }
 
@@ -28,10 +28,10 @@ body.cp-toolbar-mini #top ul.links li,
 #sidebar-first {
   left: 0;
   margin-left: expression(
-   document.all.content-main.offsetWidth * -1 +
-   parseFloat(document.all.content-main.currentStyle.paddingLeft) +
-   parseFloat(document.all.sidebar-first.currentStyle.paddingLeft) +
-   parseFloat(document.all.sidebar-first.currentStyle.paddingRight)
+   document.all['content-main'].offsetWidth * -1 +
+   parseFloat(document.all['content-main'].currentStyle.paddingLeft) +
+   parseFloat(document.all['sidebar-first'].currentStyle.paddingLeft) +
+   parseFloat(document.all['sidebar-first'].currentStyle.paddingRight)
    );
   }
 

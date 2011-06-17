@@ -45,7 +45,7 @@ class spaces_controller_vsite_context extends spaces_controller_context {
       foreach ($theme_block_overwrites as $s_key => $theme_overwrites) {
       	if(isset($this->values['space'][$s_key])){
       		//There are also standard settings, add the theme settings also
-      		$this->values['space'][$s_key]['blocks'] = aray_merge($this->values['space'][$s_key]['blocks'],$theme_overwrites['blocks']);
+      		$this->values['space'][$s_key]['blocks'] = array_merge($this->values['space'][$s_key]['blocks'],$theme_overwrites['blocks']);
       	}else{
       		//Only the theme settings are avalible, use them
       		$this->values['space'][$s_key] = $theme_overwrites;

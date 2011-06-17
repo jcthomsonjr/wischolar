@@ -100,7 +100,7 @@ function scholar_book_block($op = 'list', $delta = 0) {
   switch ($op) {
     case 'list':
       $blocks = array();
-      $blocks['booktoc'] = array('info' => t('Scholar: Book'));
+      $blocks['booktoc'] = array('info' => t('Scholar: Book Navigation'));
       return $blocks;
     case 'view':
       $function = "_scholar_book_block_{$delta}";
@@ -376,7 +376,7 @@ function scholar_book_vsite_widgets(){
  */
 function scholar_book_context_links_alter(&$links) {
   if (! empty ( $links ['book'] )) {
-    $links ['book']['title'] =  'Booklet';
+    $links ['book']['title'] =  'Add Booklet';
     if(arg(0) == 'documents'){
       $links ['book']['query'] =  drupal_get_destination();
     }

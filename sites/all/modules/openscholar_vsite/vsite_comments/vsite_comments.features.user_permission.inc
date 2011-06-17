@@ -17,6 +17,14 @@ function vsite_comments_user_default_permissions() {
     ),
   );
 
+  // Exported permission: administer comments
+  $permissions['administer comments'] = array(
+    'name' => 'administer comments',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: post comments
   $permissions['post comments'] = array(
     'name' => 'post comments',
@@ -35,6 +43,14 @@ function vsite_comments_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'authenticated user',
       '2' => 'manager',
+    ),
+  );
+
+  // Exported permission: show format selection for comments
+  $permissions['show format selection for comments'] = array(
+    'name' => 'show format selection for comments',
+    'roles' => array(
+      '0' => 'administrator',
     ),
   );
 

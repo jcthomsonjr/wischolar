@@ -134,30 +134,32 @@ function vsite_users_show_groups_list($account) {
   	//load the vsite
     $vsite = vsite_get_vsite($sid);
 
-  	switch ($site['is_admin']) {
-      case "1":
-        //check if user owns the site, if not then user might be a super user
-        if ($account-> uid == $site['uid']) {
-          $my_sites[] = array(
-          'name' => $site['title'],
-          'url' => $vsite->get_absolute_url(),
-          );
-        }
-        //user has full admin rights to web site but is not the owner
-        else{
-          $member_sites[] = array(
-          'name' => $site['title'],
-          'url' => $vsite->get_absolute_url(),
-          );
-        }
-        break;
-      case "0":
-        $member_sites[] = array(
-        'name' => $site['title'],
-        'url' => $vsite->get_absolute_url(),
-        );
-        break;
-    }
+    if($vsite){
+	  	switch ($site['is_admin']) {
+	      case "1":
+	        //check if user owns the site, if not then user might be a super user
+	        if ($account-> uid == $site['uid']) {
+	          $my_sites[] = array(
+	          'name' => $site['title'],
+	          'url' => $vsite->get_absolute_url(),
+	          );
+	        }
+	        //user has full admin rights to web site but is not the owner
+	        else{
+	          $member_sites[] = array(
+	          'name' => $site['title'],
+	          'url' => $vsite->get_absolute_url(),
+	          );
+	        }
+	        break;
+	      case "0":
+	        $member_sites[] = array(
+	        'name' => $site['title'],
+	        'url' => $vsite->get_absolute_url(),
+	        );
+	        break;
+	    }
+	  }
   }
   return theme('vsite_users_list_sites', $my_sites, $member_sites);
 }
