@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 //$id;
 
@@ -10,7 +10,7 @@
 function sword_meta_cite_distribute_register(){
   //unlike other cite_distribute meta modules, sword meta can
   //contain several definitions of destinations.  look these up
-  // and generate arrays.
+  // and generate arrays.  
   	
 	$module_info = array();
 
@@ -34,15 +34,15 @@ function sword_meta_menu() {
   $items = array();
    
   $items['admin/settings/cite_distribute/sword_meta/config'] = array(
-  'title' => t('SWORD Destinations'),
-  'type' => MENU_LOCAL_TASK ,
-  'page callback' => 'drupal_get_form',
-  'page arguments' => array('sword_meta_config'),
-  'file' => 'sword_meta.admin.inc',
-  'file path' =>  $path_inc = drupal_get_path('module', 'sword_meta'),
-  'weight' => 3,
-  'access callback' => user_access('administer cite distribute'),
-  );
+	  'title' => t('SWORD Destinations'),
+	  'type' => MENU_LOCAL_TASK ,
+	  'page callback' => 'drupal_get_form',
+	  'page arguments' => array('sword_meta_config'),
+	  'file' => 'sword_meta.admin.inc',
+	  'file path' =>  $path_inc = drupal_get_path('module', 'sword_meta'),	
+	  'weight' => 3,
+	  'access callback' => user_access('administer cite distribute'),
+	  );  
   
   /*
   $items['admin/settings/cite_distribute/sword_meta/config/defaults'] = array(
@@ -54,7 +54,7 @@ function sword_meta_menu() {
   'file path' =>  $path_inc = drupal_get_path('module', 'repec_meta'),
   'weight' => -9,
   'access callback' => user_access('administer cite distribute'),
-  );
+  ); 
   */
   /*
   $items['admin/settings/cite_distribute/repec_meta/config/fields'] = array(
@@ -94,28 +94,30 @@ function sword_meta_nodeapi(&$node, $op, $a3){
 					}
 				}
 				form_set_error('biblio_contributors', t('At least one author is required for SWORD distribtuion'));
-      }
-   	break;
+      } 
+   	break;   
   }
 }
 
 
 /**
 * Implementation of hook_cite_distribute_push()
-*
+* 
 * new hook.  this is for modules that have data to send somewhere instead of dropping it in a file
 * note that google scholar does not work this way.  it uses a theme hook to change how the page is
 * rendered to give google some metadata.
 */
-function sword_meta_cite_distribute_push($node, $module_mode, $iteration = NULL){
-	$url = "http://192.168.7.128";
-	$user = "jsagotsky@iq.harvard.edu";
-	$pw = "password";
-	$obo = "Sexton Hardcastle";
+function sword_meta_cite_distribute_push($node, $submodule_name){
+	
+	$dest = _sword_meta_submodule_info($submodule_name);
+	
+	$obo = ""; //should we try for node's owner?  Has behalf ever worked?
+	
+	$service_url = $dest->location . 'sword/servicedocument';
+	$deposit_url = $dest->location . 'deposit/sword-user'; // ?!
 	
 	require_once(drupal_get_path('module', 'sword_meta') .	'/swordapp-php-library-1.0/swordappclient.php');
 	$sac = new SWORDAPPClient();
-<<<<<<< HEAD
 	$sac_doc = $sac->servicedocument($service_url, $dest->username, $dest->password, $obo);
 	
 	if ($sac_doc->sac_status == 401) {
@@ -149,19 +151,19 @@ function sword_meta_cite_distribute_push($node, $module_mode, $iteration = NULL)
 		}
 		
 		try {
-			$deposit = $sac->deposit($deposit_url, $dest->username, $dest->password, $obo, $file);
+			$deposit = $sac->deposit($deposit_url, $dest->username, $dest->password, $obo, $file, '', 'application/zip');
 		} catch(Exception $e) {
-			drupal_set_message($e->getMessage, 'error');
+			drupal_set_message('Deposit error: ' . $e->getMessage, 'error');
 			return false;
 		}
 		
 		switch ($deposit->sac_status) {
-			default:
-				drupal_set_message($deposit->sac_status);
+			default: 
+				drupal_set_message($deposit->sac_statusmessage);//(string:79) Unacceptable content type in deposit request: application/x-www-form-urlencoded
 				break;
 		}
 	// deposit(url, username, password, on-behalf-of-user, filename,
-    //               [format_namespace, package_type, noop, verbose])
+    //               [format_namespace, package_type, noop, verbose]) 
 	}
 	
 	return $sac_doc;
@@ -178,7 +180,7 @@ function _sword_meta_package_mets(&$node, $dest) {
 	$root_dir = $dest->root_in . '/' . $dest->subdir_in;
 	if (!is_dir($root_dir)) {
 		mkdir($root_dir, 0770, TRUE) || drupal_set_message('sword_meta: could not create deposit directory ' . $root_dir, 'error');
-	}
+	}	
 	
   $packager = new PackagerMetsSwap($dest->root_in, $dest->subdir_in, $dest->root_out, $dest->file_out);
 	
@@ -192,7 +194,7 @@ function _sword_meta_package_mets(&$node, $dest) {
 	  'DateAvailable' => '',
 	  'StatusStatement' => '',
 	  'CopyrightHolder' => '',
-	  'Citation' => '',
+	  'Citation' => '', 
 	  'File' => array(),      //$node->files[] is hidden by itweak upload.  {upload} isn't updated yet.  cahnge weight or do something clever.
 														//before itweak breaks things.  after upload mayhaps?  currently they're both 0, but c is before u.
 	);
@@ -207,9 +209,9 @@ function _sword_meta_package_mets(&$node, $dest) {
 	
 	/* File metadata */
 	foreach($node->files as $file) {
-    $metadata['File'][] = array(
+    $metadata['File'][] = array( 
 		 'filepath'=>url($file->filepath),  //TODO does mets want location or should file be included in teh zip?
-		 'filemime'=>$file->filemime,
+		 'filemime'=>$file->filemime, 
 		);
 	}
 	
@@ -244,7 +246,7 @@ function _sword_meta_package_mets(&$node, $dest) {
   	$packager->create();
 	} catch (Exception $e) {
 		drupal_set_message('sword_meta: ' . $e->getMessage(), 'error');
-		return false;
+		return false;	
 	}
 	
 	return $dest->root_out . '/' . $dest->file_out;
@@ -265,9 +267,3 @@ function _sword_meta_submodule_info($submodule_name = NULL) {
 	}
 }
 
-=======
-	$sac_doc = $sac->servicedocument($url, $user, $pw, $obo);
-	
-	return $sac_doc;
-}
->>>>>>> remotes/origin/SCHOLAR-2-0-BETA11
