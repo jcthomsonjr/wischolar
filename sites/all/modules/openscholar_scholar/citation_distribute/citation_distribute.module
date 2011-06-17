@@ -1,0 +1,86 @@
+<?php 
+
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function citation_distribute_ctools_plugin_api($module, $api) {
+  if ($module == 'citation_distribute' && $api == 'plugins') {
+    return array('version' => 1);
+  }
+}
+
+/**
+ * implementation of hook_ctools_plugin_plugins()
+ */
+function citation_distribute_plugin_plugins() {
+	return array(
+		'use hooks' => TRUE,
+	);
+}
+	
+function citation_distribute_citation_distribute_plugins(){
+	$info = array();	
+	$path = drupal_get_path('module', 'citation_distribute');
+	$info['citation_distribute_service'] = array(
+		'handler' => array(
+			'class' => 'citation_distribute_service',
+			'file'  => 'citation_distribute_service.inc',
+			'path'  => $path,
+		)
+	);
+	return $info;
+}
+
+/**
+ * Implementation of hook_form_alter()
+ *
+ */
+function citation_distribute_form_alter(&$form, $form_state, $form_id) {
+	
+	//Add cite distribute options to biblio node creation page
+	if ($form_id == 'biblio_node_form') {
+		
+		$form['citation_distribute_selections'] = array(
+			'#type' => 'fieldset', 
+			'#title' => t('** Distribute to Academic Repositories'),
+			'#attached' => array(
+				'js' => array(drupal_get_path('module', 'citation_distribute' ) . '/citation_distribute.js') 
+			) 
+		);
+		
+		$form['citation_distribute_selections']['intro'] = array(
+		  '#type' => 'item', 
+		  '#title' => t('Distribute this publication to the following academic repositories') 
+		);
+		
+		ctools_include('plugins');
+		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+		
+		foreach( $plugins as $plugin ) {
+			//check if enabled?  no need to use citation_distribute_service class (except for proof of concept)
+			//use correct title property, once plugins are implemented
+			$form['citation_distribute_selections'][$plugin['name']] = array(
+				'#type'=>'checkbox',
+				'#disabled' => $existing_value,
+				'#title' => t('@repos', array('@repos' => $plugin['name'])),
+				'#default' => $existing_value,			
+		  );
+		}
+		
+		/*** how to get a list of available plugins from ctools?
+		 * 
+		foreach ( cite_distribute_installed_mods () as $module ) {
+			$existing_value = cite_distribute_check_disabled ( $module ['name'], $form ['nid'] ['#value'] );
+			$form ['cite_distribute_selections'] [$module ['name']] = array ('#type' => 'checkbox', '#disabled' => $existing_value, '#title' => t ( '@repos', array ('@repos' => $module ['repository'] ) ), '#default_value' => $existing_value );
+		}
+		*/
+		
+		$form['citation_distribute_selections']['nid'] = array(
+		  '#type' => 'hidden',
+		  '#value' => $form['nid']['#value'], 
+		);
+		
+		//add the cite distribute submit function
+		array_unshift ( $form ['#submit'], 'citation_distribute_form_submit' );
+	}
+}
