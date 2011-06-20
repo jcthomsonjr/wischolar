@@ -21,6 +21,7 @@ function citation_distribute_plugin_plugins() {
 function citation_distribute_citation_distribute_plugins(){
 	$info = array();	
 	$path = drupal_get_path('module', 'citation_distribute');
+
 	$info['citation_distribute_service'] = array(
 		'handler' => array(
 			'class' => 'citation_distribute_service',
@@ -28,12 +29,36 @@ function citation_distribute_citation_distribute_plugins(){
 			'path'  => $path,
 		)
 	);
+	
+	$info['service_sword'] = array(
+		'title' => 'SWORD',
+		'description' => 'SWORD destination',
+		'handler' => array(
+			'parent' => 'citation_distribute_service',
+			'class' => 'citation_distribute_service_sword',
+			'file' => 'citation_distribute_service_sword.inc',
+			'path' => $path . '/plugins',
+		)
+	);
+	
+	$info['sword_dash'] = array(
+		'title' => 'DASH',
+		'description' => 'Digital Access to Scholarship at Harvard',
+		'handler' => array(
+			'parent' => 'citation_distribute_service_sword',
+			'class' => 'citation_distribute_service_sword_dash',
+			'file' => 'citation_distribute_service_sword_dash.inc',
+			'path' => $path . '/plugins',
+		)
+	);
 	return $info;
 }
 
+
+
 /**
  * Implementation of hook_form_alter()
- *
+ * Adds list of available destinations to biblio node creation form
  */
 function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 	
@@ -59,21 +84,18 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		foreach( $plugins as $plugin ) {
 			//check if enabled?  no need to use citation_distribute_service class (except for proof of concept)
 			//use correct title property, once plugins are implemented
-			$form['citation_distribute_selections'][$plugin['name']] = array(
-				'#type'=>'checkbox',
-				'#disabled' => $existing_value,
-				'#title' => t('@repos', array('@repos' => $plugin['name'])),
-				'#default' => $existing_value,			
-		  );
+			
+			//could each plugin have a list command?  that would make multiple sword dests really easy
+			
+			if (isset($plugin['title'])) {
+				$form['citation_distribute_selections'][$plugin['name']] = array(
+					'#type'=>'checkbox',
+					'#disabled' => $existing_value,
+					'#title' => t('@repos', array('@repos' => $plugin['title'])),
+					'#default' => $existing_value,			
+			  );
+			}
 		}
-		
-		/*** how to get a list of available plugins from ctools?
-		 * 
-		foreach ( cite_distribute_installed_mods () as $module ) {
-			$existing_value = cite_distribute_check_disabled ( $module ['name'], $form ['nid'] ['#value'] );
-			$form ['cite_distribute_selections'] [$module ['name']] = array ('#type' => 'checkbox', '#disabled' => $existing_value, '#title' => t ( '@repos', array ('@repos' => $module ['repository'] ) ), '#default_value' => $existing_value );
-		}
-		*/
 		
 		$form['citation_distribute_selections']['nid'] = array(
 		  '#type' => 'hidden',
@@ -83,4 +105,106 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		//add the cite distribute submit function
 		array_unshift ( $form ['#submit'], 'citation_distribute_form_submit' );
 	}
+}
+
+/**
+ * Implementation of hook_nodeapi()
+ * Applies flag to node if it's being published to a CD repository
+ */
+function citation_distribute_nodeapi(&$node, $op) {
+	switch ($op) {
+		case 'insert':
+		case 'update':
+			if ($node->type == 'biblio') {
+				//$submodules = cite_distribute_installed_mods ();
+				
+				ctools_include('plugins');
+				$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+		
+				foreach( $plugins as $plugin ) {
+				//foreach ( $submodules as $info ) {
+					if (  isset($node->{$plugin['name']}) && $node->{$plugin['name']}==1  ) {
+						$modules[] = $plugin['name']; // this array is only used for the returned message
+
+						//set the flag
+						$flag = flag_get_flag($plugin['name']);
+						
+						//set the flag for this node
+						$flag->flag('flag', $node->nid);
+					}
+				}
+				if ($output = theme('citation_distribute_form_msg', $modules)) {
+					drupal_set_message(t($output)); //not necessarily!  Can we get output from flags?  
+				}
+			}
+			break;
+	}
+}
+
+/**
+ * Implementation of hook flag
+ * This gets called whenever a node recieves a flag.  If it gets a citation_distribute flag, process it.
+ */
+function citation_distribute_flag($event, $flag, $content_id, $account) {
+	
+	ctools_include('plugins');
+	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	
+	foreach ($plugins as $plugin) {
+		if ($flag->name == $plugin['name'] && $event == 'flag') {
+			//cite_distribute_widget_process ( $module ['name'], $content_id );
+			true;
+		}
+	}
+}
+
+/**
+ * Implementation of hook flag_default_flags
+ * creates flags for each installed submodule
+ * @return unknown
+ */
+function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
+	
+	ctools_include('plugins');
+	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	
+	foreach ($plugins as $plugin) {
+		$flags[] = array (
+		  'content_type' => 'node', 
+		  'name' => $plugin['name'], 
+		  'title' => $plugin['title'], 
+		  'global' => false, 
+		  'types' => array ('biblio' ), 
+		  // 'types' => isset($module['hide_flag']) ?  array() : array('biblio'), //TODO need to finish this
+			'flag_short' => $plugin['title'], 
+			'flag_long' => $plugin['title'], 
+			'flag_message' => '', 
+			'unflag_short' => 'Remove from ' . $plugin['title'],
+		  'unflag_long' => 'Remove from ' . $plugin['title'], 
+		  'unflag_message' => '', 
+		  'unflag_denied_text' => '', 
+		  'link_type' => 'normal', //normal, toggle, confirm
+			'roles' => array (
+				'flag' => array (0 => '2' ),
+			  'unflag' => array (0 => '2' ) 
+			), //hiding these on page, teaser, and edit node
+			'show_on_page' => false, 
+			'show_on_teaser' => false, 
+			'show_on_form' => false, 
+			'access_author' => '', 
+			'i18n' => 0, 
+			'status' => true, 
+			'locked' => array (
+			  'name' => 'name', 
+			  'show_on_page' => 'show_on_page', 
+			  'show_on_teaser' => 'show_on_teaser', 
+			  'show_on_form' => 'show_on_form', 
+			  'global' => 'global', 
+			  'link_type' => 'link_type', 
+			  'types' => 'types' 
+			), 
+			'api_version' => 2, 
+			'module' => 'citation_distribute' );
+	}
+	return $flags;
 }
