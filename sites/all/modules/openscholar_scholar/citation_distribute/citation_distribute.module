@@ -145,7 +145,7 @@ function citation_distribute_nodeapi(&$node, $op) {
  * Implementation of hook flag
  * This gets called whenever a node recieves a flag.  If it gets a citation_distribute flag, process it.
  */
-function citation_distribute_flag($event, $flag, $content_id, $account) {
+function citation_distribute_flag($event, $flag, $nid, $account) {
 	
 	ctools_include('plugins');
 	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
@@ -153,9 +153,46 @@ function citation_distribute_flag($event, $flag, $content_id, $account) {
 	foreach ($plugins as $plugin) {
 		if ($flag->name == $plugin['name'] && $event == 'flag') {
 			//cite_distribute_widget_process ( $module ['name'], $content_id );
-			true;
+			_citation_distribute_update_db($plugin['name'], $nid);
+			if (variable_get('citation_distribute_module_mode', '') == 'per_submission') {
+				_citation_distribute_distribute($nid, $plugin);
+			}
 		}
 	}
+}
+
+/* Distributes citations */
+function _citation_distribute_distribute($nid, $plugin) {
+	module_load_include('inc', $plugin['handler']['class'], 'plugins/');
+	$class = ctools_plugin_get_class($plugin, $plugin['handler']['class']);
+	$service = 0;//
+	$plugin; //can't load by name...  other props?
+}
+
+/* logs which nodes have been/need to be distributed */
+function _citation_distribute_update_db($name, $nid) {
+	global $user;
+	$node = node_load ( $nid );
+	$module_mode = variable_get ( 'citation_distribute_module_mode', '' );
+	
+	if ($module_mode == 'per_submission') {
+		$upd = 0;
+	} else {
+		$upd = 1;
+	}
+	
+	/* track whether node needs to be distributed at next cron pass */
+	if (db_result ( db_query ( "SELECT nid FROM {citation_distribute} WHERE nid = %d AND type = '%s'", $node->nid, $name ))) {
+		//update existing record
+		db_query ( "UPDATE {citation_distribute} SET uid = %d, nid = %d, type= '%s', tid = %d , upd = %d , modified = now()
+		  WHERE nid = %d and type = '%s'", 
+		  $user->uid, $node->nid, $name, $node->biblio_type, $upd, $node->nid, $name ); 
+	} else {
+		//create new record	  // node already exists in Drupal but never been added to cite_distribute table
+	  db_query ( "INSERT INTO {citation_distribute} (uid, nid, type, tid, upd, created) VALUES (%d, %d, '%s', %d, %d, now())",
+	    $user->uid, $node->nid, $name, $node->biblio_type, $upd );
+	}
+	
 }
 
 /**
