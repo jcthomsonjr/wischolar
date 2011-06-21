@@ -35,7 +35,7 @@ function vsite_layout_theme() {
  */
 function vsite_layout_menu() {
   $items = array();
-  
+
   $items['cp/appearance'] = array(
     'title' => "Appearance",
     'page callback' => 'vsite_layout_layout',
@@ -45,7 +45,7 @@ function vsite_layout_menu() {
     'file' => 'vsite_layout.admin.inc',
     'weight' => 20,
   );
-  
+
   $items['cp/appearance/layout'] = array(
     'title' => "Site Layout",
     'page callback' => 'vsite_layout_layout',
@@ -90,10 +90,10 @@ function vsite_layout_vsite_default_blocks_alter(&$a_widgets) {
     $space = vsite_get_vsite();
     if (!$space) return;
 
-    $s_path = drupal_get_path('theme', $space->group->og_theme);
+    $s_path = drupal_get_path('theme', variable_get('vsite_design_maintheme', 'scholar_airstream'));
     if (!$s_path) return;
 
-    $a_info = drupal_parse_info_file($s_path . "/" . $space->group->og_theme . ".info");
+    $a_info = drupal_parse_info_file($s_path . "/" . variable_get('vsite_design_maintheme', 'scholar_airstream') . ".info");
     $a_settings = (is_array($a_info) && array_key_exists('scholar', $a_info) && array_key_exists('widgets', $a_info['scholar']))?$a_info['scholar']['widgets']:array();
   }
 
@@ -112,9 +112,9 @@ function vsite_layout_vsite_default_blocks_alter(&$a_widgets) {
 function vsite_layout_sort_block_by_weight($a, $b) {
   $a = (array)$a;
   $b = (array)$b;
-  
+
   if ($a['weight'] == $b['weight']) return 0;
-  
+
   return ($a['weight'] < $b['weight']) ? -1 : 1;
 }
 
@@ -122,7 +122,7 @@ function vsite_layout_sort_block_by_weight($a, $b) {
  *
  */
 function vsite_layout_context_registry_alter(&$registry){
-	
+
 	//Use our own block context reaction
   if(isset($registry['reactions']['block'])){
     $registry['reactions']['block']['plugin'] = "vsite_context_reaction_block";
@@ -134,7 +134,7 @@ function vsite_layout_context_registry_alter(&$registry){
  */
 function vsite_layout_context_plugins() {
   $plugins = array();
- 
+
   //define the vsite controller for contexts
   $plugins['vsite_context_reaction_block'] = array(
     'handler' => array(
