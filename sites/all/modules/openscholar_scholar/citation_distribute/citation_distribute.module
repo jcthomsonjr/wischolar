@@ -42,6 +42,7 @@ function citation_distribute_citation_distribute_plugins(){
 	);
 	
 	$info['service_sword'] = array(
+		'type' => 'push',
 		'title' => 'SWORD',
 		'description' => 'SWORD destination',
 		'handler' => array(
@@ -53,6 +54,7 @@ function citation_distribute_citation_distribute_plugins(){
 	);
 	
 	$info['sword_dash'] = array(
+		'type' => 'push',
 		'title' => 'DASH',
 		'description' => 'Digital Access to Scholarship at Harvard',
 		'handler' => array(
@@ -62,6 +64,19 @@ function citation_distribute_citation_distribute_plugins(){
 			'path' => $path,
 		)
 	);
+	
+	$info['google'] = array(
+		'type' => 'metadata',
+		'title' => 'Google Scholar',
+		'description' => 'Google Scholar',
+		'handler' => array(
+			'parent' => 'citation_distribute_service',
+			'class' => 'citation_distribute_service_google',
+			'file' => 'citation_distribute_service_google.inc',
+			'path' => $path,		
+		)
+	);
+	
 	return $info;
 }
 
@@ -149,6 +164,9 @@ function citation_distribute_nodeapi(&$node, $op) {
 				}
 			}
 			break;
+		case 'delete':
+			//remove flags for deleted nodes
+			break;
 	}
 }
 
@@ -167,6 +185,34 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 			_citation_distribute_update_db($plugin['name'], $nid);
 			if (variable_get('citation_distribute_module_mode', '') == 'per_submission') {
 				_citation_distribute_distribute($nid, $plugin['name']);
+			}
+		}
+	}
+}
+
+/**
+* Implementation of module_preprocess_hook().
+* Allows metadata style plugins to add their data when the page is drawn.
+*/
+function citation_distribute_preprocess_page(&$variables) {
+	/* only display on a node page */
+	if (isset ($variables['node'])) {
+	  ctools_include('plugins');
+		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+		
+		/* check that each metadata plugin has been marked for this node.  add metadata for marked ones */
+		foreach($plugins as $plugin) {
+			if (isset($plugin['type']) && isset($plugin['name']) && $plugin['type'] == 'metadata') {
+				if (db_result(db_query("SELECT nid FROM {citation_distribute} WHERE type = '%s' AND nid = %d",$plugin['name'], (int)$variables['node']->nid))) {
+					//make class for this plugin				
+					//call render on map_metadata.  this hsould theme it.  
+					//how to insert it?  				
+						//do metadata plugins get another method?  maybe I need another abstract class to assert that.
+					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
+						$service = new $class();
+						$out = $service->render($service->map_metadata($variables['node']->nid));
+					}
+				} 
 			}
 		}
 	}

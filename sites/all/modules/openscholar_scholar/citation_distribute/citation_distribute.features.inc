@@ -112,5 +112,40 @@ function citation_distribute_flag_default_flags() {
     ),
     'api_version' => 2,
   );
+    // Exported flag: "google".
+  $flags['google'] = array(
+    'content_type' => 'node',
+    'title' => 'Google Scholar',
+    'global' => FALSE,
+    'types' => array(
+      '0' => 'biblio',
+    ),
+    'flag_short' => 'Google Scholar',
+    'flag_long' => 'Google Scholar',
+    'flag_message' => '',
+    'unflag_short' => 'Remove from Google Scholar',
+    'unflag_long' => 'Remove from Google Scholar',
+    'unflag_message' => '',
+    'unflag_denied_text' => '',
+    'link_type' => 'normal',
+    'roles' => array(
+      'flag' => array(
+        '0' => '2',
+      ),
+      'unflag' => array(
+        '0' => '2',
+      ),
+    ),
+    'show_on_page' => FALSE,
+    'show_on_teaser' => FALSE,
+    'show_on_form' => FALSE,
+    'access_author' => '',
+    'i18n' => 0,
+    'module' => 'citation_distribute',
+    'locked' => array(
+      '0' => 'name',
+    ),
+    'api_version' => 2,
+  );
   return $flags;
 }
