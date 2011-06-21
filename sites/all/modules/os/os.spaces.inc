@@ -34,6 +34,7 @@ function os_spaces_presets() {
       'spaces_og_private' => 0,
       'site_frontpage' => "scholar_front_welcome",
       'default_theme' => 'scholar_airstream',
+      'vsite_design_maintheme' => 'scholar_airstream',
     ),
   );
 
@@ -74,6 +75,7 @@ function os_spaces_presets() {
       'spaces_og_private' => 0,
       'site_frontpage' => "scholar_front/features",
       'default_theme' => 'scholar_airstream',
+      'vsite_design_maintheme' => 'scholar_airstream',
     ),
   );
 
