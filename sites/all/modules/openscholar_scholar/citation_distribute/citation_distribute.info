@@ -1,3 +1,8 @@
 name = Citation Distribute
 description = Framework allows plugins to define services for distributing biblio citations
 core = 6.x
+dependencies[] = "flag"
+features[flag][] = "citation_distribute_service"
+features[flag][] = "service_sword"
+features[flag][] = "sword_dash"
+package = "Features"
