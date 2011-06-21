@@ -180,7 +180,10 @@ function _citation_distribute_distribute($nid, $plugin_name) {
 	
 	if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
 		$service = new $class();
+		$service->save($nid, $plugin_name);
 	}
+	
+	
 	
 
 }
