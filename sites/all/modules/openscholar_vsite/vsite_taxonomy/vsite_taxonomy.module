@@ -200,9 +200,9 @@ function vsite_taxonomy_build_list_items(&$index, $tree, $s_term_theme = 'vsite_
     $term = $tree[$index];
     $count = vsite_taxonomy_term_count_nodes($term->tid,false,$a_filter_nodes);
 
-    if ($children = taxonomy_get_children($term->tid, $term->vid)) {
+    if ($tree[$index + 1]->depth > $current_depth) {
       $index ++;
-      if($b_show_empty || $count || count($children)) {
+      if($b_show_empty || $count || vsite_taxonomy_term_count_nodes($term->tid,true,$a_filter_nodes)) {
 	      $items[] = array(
 	        'data' => theme($s_term_theme, $term, $b_description, $b_show_admin_links, $s_term_feature, $b_feature_context),
 	        'children' => vsite_taxonomy_build_list_items($index, $tree, $s_term_theme, $b_description, $b_show_empty, $b_show_admin_links, $s_term_feature, $b_feature_context)
