@@ -81,7 +81,7 @@ function vsite_design_theme_picker_form($form_state) {
   $form['#prefix'] = theme('vsite_design_theme_subnav', count($enabled)) . $help;
 
   $form['#validate'][] = 'vsite_design_theme_picker_form_validate';
-  //$form['#submit'][] = 'vsite_design_theme_picker_form_submit';
+  $form['#submit'][] = 'vsite_design_theme_picker_form_submit';
 
   $form = system_settings_form($form);
 
@@ -99,11 +99,10 @@ function vsite_design_theme_picker_form_validate(&$form, &$form_state) {
   }
 }
 
-/* defunct
 function vsite_design_theme_picker_form_submit(&$form, &$form_state) {
   // save the theme selection into og_theme
 
   $space = spaces_get_space();
   $space->group->og_theme = $form_state['values']['vsite_design_maintheme'];
   og_update_group($space->group);
-} */
+}

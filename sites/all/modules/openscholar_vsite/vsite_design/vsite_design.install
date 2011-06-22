@@ -80,7 +80,7 @@ function vsite_design_update_6000(&$sandbox){
 function vsite_design_update_6001(&$sandbox){
 
   $res = array();
-
+  
   if(!db_table_exists('spaces_overrides')){
     $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
     return $res;
@@ -96,7 +96,7 @@ function vsite_design_update_6001(&$sandbox){
         db_query("INSERT INTO {spaces_overrides} (type, id, object_type, object_id, value) VALUES ('%s', '%s', 'variable', 'vsite_design_%s_flavor', '%s')", $row->type, $row->sid, $a_value['maintheme'], serialize($a_value['flavor']));
       }
   	}
-
+    
   }
   $res[] = array(
       'success' => true,
@@ -109,7 +109,7 @@ function vsite_design_update_6001(&$sandbox){
 
 function vsite_design_update_6002(&$sandbox) {
   $res = array();
-
+  
   if(!db_table_exists('spaces_overrides')){
     $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
     return $res;
@@ -134,12 +134,12 @@ function vsite_design_update_6002(&$sandbox) {
 }
 
 function vsite_design_update_6003(&$sandbox) {
-
+	
   if(!db_table_exists('spaces_overrides')){
     $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
     return $res;
   }
-
+  
   // shield settings were moved into vsite_shields
   db_query("UPDATE {variable} SET name = 'vsite_shields_shield' WHERE name = 'vsite_design_shield'");
   db_query("UPDATE {variable} SET name = 'vsite_shields_disable_shield' WHERE name = 'vsite_design_disable_shield'");

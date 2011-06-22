@@ -138,25 +138,24 @@ function vsite_design_imagecache_default_presets() {
  */
 function vsite_design_preprocess_page(&$vars){
   //Return if:
-  $theme = variable_get('vsite_design_maintheme', 'scholar_airstream');
   if (! ($vsite = vsite_get_vsite()) || //In a Vsite?
       context_isset('context','vsite-section-cp') || //We are in CP?
-      ! $theme || //Grop has a custom theme
-      ! ($themes = list_themes()) || ! array_key_exists($theme, $themes) || //The theme is valid
-      empty($themes[$theme]->stylesheets))
+      ! $vsite->group->og_theme || //Grop has a custom theme
+      ! ($themes = list_themes()) || ! array_key_exists($vsite->group->og_theme, $themes) || //The theme is valid
+      empty($themes[$vsite->group->og_theme]->stylesheets))
         return; //The theme has styles associated
 
 
   // Add stylesheets used by this theme, without preprocessing
-  foreach ( $themes[$theme]->stylesheets as $media => $stylesheets ) {
+  foreach ( $themes[$vsite->group->og_theme]->stylesheets as $media => $stylesheets ) {
     foreach ( $stylesheets as $name => $stylesheet )
       drupal_add_css($stylesheet, 'theme', $media, false);
   }
 
   // load the css for the theme flavor
-  $flavor = variable_get('vsite_design_'.$theme.'_flavor', '');
+  $flavor = variable_get('vsite_design_'.$vsite->group->og_theme.'_flavor', '');
 
-  $theme_flavors = vsite_design_get_flavors($theme);
+  $theme_flavors = vsite_design_get_flavors($vsite->group->og_theme);
 	if ($flavor && isset($theme_flavors[$flavor])) {
 
 		if(!array_key_exists('css',$theme_flavors[$flavor])) {

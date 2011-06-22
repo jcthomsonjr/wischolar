@@ -15,14 +15,13 @@ class spaces_controller_vsite_context extends spaces_controller_context {
    */
   protected function load_space_values($id = NULL) {
     if (!$this->loaded_all['space']) {
-
+      
     	//Allow block settings to be stored by theme
-    	$group = spaces_load($this->space_type, $this->space_id);
-    	$theme = $group->controllers->variable->get('vsite_design_maintheme');
-	    if (!empty($theme)) {
-		    $custom_theme_key = "reaction:block:".$theme;
+    	$group_node = node_load($this->space_id);
+	    if (!empty($group_node->og_theme)) {
+		    $custom_theme_key = "reaction:block:".$group_node->og_theme;
 		  }
-
+		  
     	$result = db_query("
         SELECT object_id AS id, value
         FROM {spaces_overrides}
@@ -30,18 +29,18 @@ class spaces_controller_vsite_context extends spaces_controller_context {
           AND id = '%s'
           AND object_type = '%s'",
         $this->space_type, $this->space_id, $this->controller);
-
+      
       $theme_block_overwrites = array();
       while ($row = db_fetch_object($result)) {
       	list($context, $key) = explode(':', $row->id,2);
       	if($custom_theme_key && $custom_theme_key == $key){
       		//Theme specific context block reactions will overwrite the standard block reactions
-      		$theme_block_overwrites[substr($row->id,0, -1 - strlen($theme))] = unserialize($row->value);
+      		$theme_block_overwrites[substr($row->id,0, -1 - strlen($group_node->og_theme))] = unserialize($row->value);
       	}
-
+      	
         $this->values['space'][$row->id] = unserialize($row->value);
       }
-
+      
       // Overwrite/Create block settings defaulting to theme block settings
       foreach ($theme_block_overwrites as $s_key => $theme_overwrites) {
       	if(isset($this->values['space'][$s_key])){
@@ -52,18 +51,18 @@ class spaces_controller_vsite_context extends spaces_controller_context {
       		$this->values['space'][$s_key] = $theme_overwrites;
       	}
       }
-
+      
       $this->loaded_all['space'] = TRUE;
     }
   }
-
+  
   /**
    * Override of load_preset_values()
    * That allows modifying the preset's block regions based on the current theme
    */
   protected function load_preset_values($id = NULL) {
   	parent::load_preset_values($id);
-
+  	
     if (is_array($this->values['preset'])) {
     	foreach ($this->values['preset'] as $object_id => $value) {
     		list($context, $action, $type, $theme) = explode(':', $object_id);
@@ -73,5 +72,5 @@ class spaces_controller_vsite_context extends spaces_controller_context {
     	}
     }//Allow the theme and others to alter the default block regions
   }
-
+  
 }

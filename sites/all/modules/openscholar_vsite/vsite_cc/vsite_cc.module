@@ -28,11 +28,11 @@ function vsite_cc_form_alter(&$form, &$form_state, $form_id) {
 function vsite_cc_block_enabled($name) {
   $vsite = vsite_get_vsite();
   if(!$vsite)  return false;
-
+  
   $contexts = $vsite->controllers->context->get();
 
   foreach ($contexts as $cont_name => $data) {
-    if (strpos($cont_name, 'block') !== FALSE && strpos($cont_name, variable_get('vsite_design_maintheme', 'scholar_airstream')) !== FALSE) {
+    if (strpos($cont_name, 'block') !== FALSE && strpos($cont_name, $vsite->group->og_theme) !== FALSE) {
       if ($data['blocks'][$name]['region'] != FALSE) {
         return true;
       }
