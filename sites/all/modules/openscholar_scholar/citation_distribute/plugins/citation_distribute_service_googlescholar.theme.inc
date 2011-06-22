@@ -11,7 +11,13 @@ function theme_googlescholar($metadata){
 	$output = "";
 	foreach($metadata as $key => $value) {
 		if ($value) {
-			$output .= '<meta name="' . $key . '" content="' . $value . '" />' . "\n";
+			if (is_array($value)) {
+				foreach($value as $subvalue) {
+					$output .= '<meta name="' . $key . '" content="' . $subvalue . '" />' . "\n";
+				}
+			} else {
+				$output .= '<meta name="' . $key . '" content="' . $value . '" />' . "\n";
+			}
 		}
 	}
   return $output;

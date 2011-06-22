@@ -202,15 +202,13 @@ function citation_distribute_preprocess_page(&$variables) {
 		foreach($plugins as $plugin) {
 			if (isset($plugin['type']) && isset($plugin['name']) && $plugin['type'] == 'metadata') {
 				if (db_result(db_query("SELECT nid FROM {citation_distribute} WHERE type = '%s' AND nid = %d",$plugin['name'], (int)$variables['node']->nid))) {
-					//make class for this plugin				
-					//call render on map_metadata.  this hsould theme it.  
-					//how to insert it?  				
-						//do metadata plugins get another method?  maybe I need another abstract class to assert that.
+
 					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
 						$service = new $class();
 						$out = $service->render($service->map_metadata($variables['node']->nid));
   					$variables['head'] .= $out;				
 					}
+
 				} 
 			}
 		}
