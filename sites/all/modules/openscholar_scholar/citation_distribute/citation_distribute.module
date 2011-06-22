@@ -63,14 +63,14 @@ function citation_distribute_citation_distribute_plugins(){
 		)
 	);
 	
-	$info['google'] = array(
+	$info['googlescholar'] = array(
 		'type' => 'metadata',
 		'title' => 'Google Scholar',
 		'description' => 'Google Scholar',
 		'handler' => array(
 			'parent' => 'citation_distribute_service',
-			'class' => 'citation_distribute_service_google',
-			'file' => 'citation_distribute_service_google.inc',
+			'class' => 'citation_distribute_service_googlescholar',
+			'file' => 'citation_distribute_service_googlescholar.inc',
 			'path' => $path,		
 		)
 	);
@@ -209,12 +209,57 @@ function citation_distribute_preprocess_page(&$variables) {
 					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
 						$service = new $class();
 						$out = $service->render($service->map_metadata($variables['node']->nid));
+  					$variables['head'] .= $out;				
 					}
 				} 
 			}
 		}
 	}
 }
+
+/*
+ * implementation of hook_theme
+ * Allows citation_distribute to pass theming of metadata plugins to those plugins
+ */
+function citation_distribute_theme($existing, $type, $theme, $path) {
+	$args_array = array('');
+
+	/* theme the output message that happens after any plugin is used */
+	$theme = array(
+		'citation_distribute_form_msg' => array(
+	 	  'arguments' => array('modules' => NULL),
+			'file' => 'citation_distribute.theme.inc',
+			'path' => drupal_get_path('module', 'citation_distribute'),
+	  ),
+	);
+	
+	/* metadata plugins also ahve the option to theme their output */
+	ctools_include('plugins');
+	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	foreach($plugins as $plugin) {
+		if ($plugin['type'] == 'metadata') {
+			$theme[$plugin['name']] = array(
+				'arguments' => $args_array,
+				'file' => $plugin['handler']['class'] . '.theme.inc',
+				'path' => $plugin['handler']['path'],
+			);
+		}
+	}
+	return $theme;
+}
+/**
+ * Implementation of hook_theme()
+
+function cite_distribute_theme() {
+	$path_inc = drupal_get_path ( 'module', 'cite_distribute' );
+	
+	return array (
+	'cite_distribute_form_msg' => array (
+	  'arguments' => array ('modules' => NULL ), 
+	  'file' => 'cite_distribute.theme.inc', 
+	  'path' => $path_inc ) );
+}
+*/
 
 /* Distributes citations */
 function _citation_distribute_distribute($nid, $plugin_name) {

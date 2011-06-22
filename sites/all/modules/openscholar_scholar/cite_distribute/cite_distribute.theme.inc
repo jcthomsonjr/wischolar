@@ -16,8 +16,9 @@ function theme_cite_distribute_form_msg($modules = NULL){
     $output = 'Submitted citatation' .  $s . ' to: ';
     foreach ($modules as $module){
       //getting information about the module
-      $info = module_invoke($module, 'cite_distribute_register');
-      $output_r .=  ' '. $info[0]['repository'] . ',';
+      //$info = module_invoke($module, 'cite_distribute_register');
+      //$output_r .=  ' '. $info[0]['repository'] . ',';
+      $output_r .= $module;
     }
     $output .= substr($output_r, 0, -1);
     return $output;
