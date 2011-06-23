@@ -108,15 +108,16 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		foreach( $plugins as $plugin ) {
 			//check if enabled?  no need to use citation_distribute_service class (except for proof of concept)
 			//use correct title property, once plugins are implemented
+			$published = db_result( db_query( "SELECT nid from {citation_distribute} WHERE type = '%s' AND nid = %d", 
+																				$plugin['name'], $form['nid']['#value'] ));
 			
-			//could each plugin have a list command?  that would make multiple sword dests really easy
-			
+			//$existing value comes from check disabled		
 			if (isset($plugin['title'])) {
 				$form['citation_distribute_selections'][$plugin['name']] = array(
 					'#type'=>'checkbox',
-					'#disabled' => $existing_value,
 					'#title' => t('@repos', array('@repos' => $plugin['title'])),
-					'#default' => $existing_value,			
+					'#default_value' => (bool)$published,	
+					'#disabled' => (bool)$published, //published items can't be unpublished.  should we try to support unpublish where possible?
 			  );
 			}
 		}
