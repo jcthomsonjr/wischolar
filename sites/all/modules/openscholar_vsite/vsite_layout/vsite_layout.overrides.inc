@@ -4,12 +4,12 @@
  * Implementation of hook_spaces_registry_alter().
  */
 function vsite_layout_spaces_registry_alter(&$registry) {
-  
+
   //Use our own context controller
   if(isset($registry['controllers']['context'])){
     $registry['controllers']['context']['plugin'] = "spaces_controller_vsite_context";
   }
-  
+
 }
 
 
@@ -19,7 +19,7 @@ function vsite_layout_spaces_registry_alter(&$registry) {
  */
 function vsite_layout_spaces_plugins() {
   $plugins = array();
- 
+
   //define the vsite controller for contexts
   $plugins['spaces_controller_vsite_context'] = array(
     'handler' => array(
@@ -39,21 +39,22 @@ function vsite_layout_spaces_plugins() {
  */
 function vsite_layout_spaces_presets_alter(&$presets) {
 	$space_preset = variable_get("spaces_preset_og", NULL);
-	
-	if($space_preset && isset($presets[$space_preset])){
-		if(!isset($presets[$space_preset]->value['context'])) $presets[$space_preset]->value['context'] = array();
-		
+
+	foreach ($presets as &$preset) {
+	  if ($preset->export_module == 'spaces_og') continue;
+		if(!isset($preset->value['context'])) $preset->value['context'] = array();
+
 		$contexts = context_load();
 		foreach ($contexts as $s_key => $context) {
 			if(strpos($s_key,"openscholar-feature-") !== 0) continue;
 			$blocks = isset($context->reactions['block']['blocks'])? $context->reactions['block']['blocks']:array();
 			vsite_layout_merge_default_blocks($blocks);
-			
+
 			if(is_array($blocks)){
-			  $presets[$space_preset]->value['context'][$s_key.":reaction:block"]['blocks'] = $blocks;
+			  $preset->value['context'][$s_key.":reaction:block"]['blocks'] = $blocks;
 			}
 		}
-		
+
 	}
 }
 
