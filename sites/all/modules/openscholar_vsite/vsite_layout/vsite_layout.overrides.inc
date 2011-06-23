@@ -38,9 +38,7 @@ function vsite_layout_spaces_plugins() {
  * This will add the default blocks to the feature contexts for the space preset
  */
 function vsite_layout_spaces_presets_alter(&$presets) {
-	$space_preset = variable_get("spaces_preset_og", NULL);
-
-	foreach ($presets as &$preset) {
+  foreach ($presets as &$preset) {
 	  if ($preset->export_module == 'spaces_og' || $preset->space_type != 'og') continue;
 		if(!isset($preset->value['context'])) $preset->value['context'] = array();
 
