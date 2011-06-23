@@ -41,7 +41,7 @@ function vsite_layout_spaces_presets_alter(&$presets) {
 	$space_preset = variable_get("spaces_preset_og", NULL);
 
 	foreach ($presets as &$preset) {
-	  if ($preset->export_module == 'spaces_og') continue;
+	  if ($preset->export_module == 'spaces_og' || $preset->space_type != 'og') continue;
 		if(!isset($preset->value['context'])) $preset->value['context'] = array();
 
 		$contexts = context_load();
