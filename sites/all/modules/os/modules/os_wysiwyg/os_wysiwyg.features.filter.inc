@@ -24,24 +24,29 @@ function os_wysiwyg_filter_default_formats() {
         'weight' => '-10',
       ),
       '1' => array(
+        'module' => 'embedfilter',
+        'delta' => '0',
+        'weight' => '-9',
+      ),
+      '2' => array(
         'module' => 'oembed',
         'delta' => '0',
         'weight' => '-8',
       ),
-      '2' => array(
+      '3' => array(
         'module' => 'filter',
         'delta' => '2',
         'weight' => '-7',
       ),
-      '3' => array(
+      '4' => array(
         'module' => 'filter',
         'delta' => '3',
         'weight' => '-6',
       ),
-      '4' => array(
+      '5' => array(
         'module' => 'filter',
         'delta' => '1',
-        'weight' => '10',
+        'weight' => '-5',
       ),
     ),
   );
