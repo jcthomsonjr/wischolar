@@ -1,7 +1,5 @@
 <?php 
 
-include_once('citation_distribute.features.inc');
-
 /**
  * Implementation of hook_ctools_plugin_api().
  */
@@ -42,6 +40,7 @@ function citation_distribute_citation_distribute_plugins(){
 	);
 	
 	$info['service_sword'] = array(
+		'type' => 'push',
 		'title' => 'SWORD',
 		'description' => 'SWORD destination',
 		'handler' => array(
@@ -53,6 +52,7 @@ function citation_distribute_citation_distribute_plugins(){
 	);
 	
 	$info['sword_dash'] = array(
+		'type' => 'push',
 		'title' => 'DASH',
 		'description' => 'Digital Access to Scholarship at Harvard',
 		'handler' => array(
@@ -62,6 +62,19 @@ function citation_distribute_citation_distribute_plugins(){
 			'path' => $path,
 		)
 	);
+	
+	$info['googlescholar'] = array(
+		'type' => 'metadata',
+		'title' => 'Google Scholar',
+		'description' => 'Google Scholar',
+		'handler' => array(
+			'parent' => 'citation_distribute_service',
+			'class' => 'citation_distribute_service_googlescholar',
+			'file' => 'citation_distribute_service_googlescholar.inc',
+			'path' => $path,		
+		)
+	);
+	
 	return $info;
 }
 
@@ -95,15 +108,16 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		foreach( $plugins as $plugin ) {
 			//check if enabled?  no need to use citation_distribute_service class (except for proof of concept)
 			//use correct title property, once plugins are implemented
+			$published = db_result( db_query( "SELECT nid from {citation_distribute} WHERE type = '%s' AND nid = %d", 
+																				$plugin['name'], $form['nid']['#value'] ));
 			
-			//could each plugin have a list command?  that would make multiple sword dests really easy
-			
+			//$existing value comes from check disabled		
 			if (isset($plugin['title'])) {
 				$form['citation_distribute_selections'][$plugin['name']] = array(
 					'#type'=>'checkbox',
-					'#disabled' => $existing_value,
 					'#title' => t('@repos', array('@repos' => $plugin['title'])),
-					'#default' => $existing_value,			
+					'#default_value' => (bool)$published,	
+					'#disabled' => (bool)$published, //published items can't be unpublished.  should we try to support unpublish where possible?
 			  );
 			}
 		}
@@ -149,6 +163,9 @@ function citation_distribute_nodeapi(&$node, $op) {
 				}
 			}
 			break;
+		case 'delete':
+			//remove flags for deleted nodes
+			break;
 	}
 }
 
@@ -171,6 +188,77 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 		}
 	}
 }
+
+/**
+* Implementation of module_preprocess_hook().
+* Allows metadata style plugins to add their data when the page is drawn.
+*/
+function citation_distribute_preprocess_page(&$variables) {
+	/* only display on a node page */
+	if (isset ($variables['node'])) {
+	  ctools_include('plugins');
+		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+		
+		/* check that each metadata plugin has been marked for this node.  add metadata for marked ones */
+		foreach($plugins as $plugin) {
+			if (isset($plugin['type']) && isset($plugin['name']) && $plugin['type'] == 'metadata') {
+				if (db_result(db_query("SELECT nid FROM {citation_distribute} WHERE type = '%s' AND nid = %d",$plugin['name'], (int)$variables['node']->nid))) {
+
+					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
+						$service = new $class();
+						$out = $service->render($service->map_metadata($variables['node']->nid));
+  					$variables['head'] .= $out;				
+					}
+
+				} 
+			}
+		}
+	}
+}
+
+/*
+ * implementation of hook_theme
+ * Allows citation_distribute to pass theming of metadata plugins to those plugins
+ */
+function citation_distribute_theme($existing, $type, $theme, $path) {
+	$args_array = array('');
+
+	/* theme the output message that happens after any plugin is used */
+	$theme = array(
+		'citation_distribute_form_msg' => array(
+	 	  'arguments' => array('modules' => NULL),
+			'file' => 'citation_distribute.theme.inc',
+			'path' => drupal_get_path('module', 'citation_distribute'),
+	  ),
+	);
+	
+	/* metadata plugins also ahve the option to theme their output */
+	ctools_include('plugins');
+	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	foreach($plugins as $plugin) {
+		if ($plugin['type'] == 'metadata') {
+			$theme[$plugin['name']] = array(
+				'arguments' => $args_array,
+				'file' => $plugin['handler']['class'] . '.theme.inc',
+				'path' => $plugin['handler']['path'],
+			);
+		}
+	}
+	return $theme;
+}
+/**
+ * Implementation of hook_theme()
+
+function cite_distribute_theme() {
+	$path_inc = drupal_get_path ( 'module', 'cite_distribute' );
+	
+	return array (
+	'cite_distribute_form_msg' => array (
+	  'arguments' => array ('modules' => NULL ), 
+	  'file' => 'cite_distribute.theme.inc', 
+	  'path' => $path_inc ) );
+}
+*/
 
 /* Distributes citations */
 function _citation_distribute_distribute($nid, $plugin_name) {
@@ -219,11 +307,7 @@ function _citation_distribute_update_db($name, $nid) {
  * creates flags for each installed submodule
  * @return unknown
  */
-/*
- * flags have been moved to a feature.  can they still be dynamically generated?  it seems obnoxious to have to
- * export a feature each time a plugin is added.  the .features.inc file ought to be generated by looping over
- * ctools_get_plugins.  how would the .info file be updated though?
- * 
+
 function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 	
 	ctools_include('plugins');
@@ -269,4 +353,3 @@ function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 	}
 	return $flags;
 }
-*/

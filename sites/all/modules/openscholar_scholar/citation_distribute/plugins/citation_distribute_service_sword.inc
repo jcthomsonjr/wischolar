@@ -5,6 +5,8 @@
  * Class for sword plugin
  */
 
+//should there be a getlink function that can link a page to the corresponding dash article?
+
 abstract class citation_distribute_service_sword extends citation_distribute_service {
   public function __construct() {
   	parent::__construct();
