@@ -394,7 +394,9 @@ function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 	return $flags;
 }
 
-function citation_distribute_test($a, $b) { 
+function citation_distribute_test($nids, $plugin, $action) { 
+	//TODO
+	//fill this in and rename function when node_operations work
 	return true; 
 }
 /*
@@ -416,7 +418,7 @@ function citation_distribute_node_operations() {
 			$operations['citation_distribute_un_' . $plugin['name']] = array(
 				'label' => 'Revoke from ' . $plugin['title'],
 				'callback' => 'citation_distribute_test',
-				'callback arguments' => array($plugin['name'], 'un'),				 
+				'callback arguments' => array($plugin['name'], 'function($a,$b) {return 1;}' ),				 
 			);
 		}
 	}
@@ -425,20 +427,18 @@ function citation_distribute_node_operations() {
 }
 
 /**
- * hook views_pre_build
+ * hook views_pre_render
  * marks node operations (above) for inclusion in bulk update operations
  */
-function citation_distribute_views_pre_build(&$view){
+function citation_distribute_views_pre_render(&$view) {
 	if ($view->name == 'vsite_content') {
-		$ops = $view->display['default']->display_options['style_options']['selected_operations'];
 		$style = $view->display['default']->display_options['style_options'];
-		
-		/* would it be quicker to rebuild all the names and loop over those? citation_distribute_node_operations() */
-		foreach( preg_grep('/^citation_distribute_.*/', array_keys($ops)) as $operation) {
-			$ops[$operation] = $operation;
+		foreach($view->style_plugin->all_operations as $op => $def) {
+			if (array_shift(split(':', $op)) == 'citation_distribute_test') {
+				$style['selected_operations'][$op] = $op;
+			}
 		}
-				
-		$style['selected_operations'] = $ops;
 		$view->display_handler->set_option('style_options', $style);
 	}
 }
+
