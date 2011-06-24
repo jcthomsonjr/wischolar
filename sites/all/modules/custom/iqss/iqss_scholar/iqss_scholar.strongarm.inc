@@ -20,7 +20,7 @@ function iqss_scholar_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'pinserver_landing_path';
-  $strongarm->value = 'site/reguster';
+  $strongarm->value = 'site/register';
 
   $export['pinserver_landing_path'] = $strongarm;
   $strongarm = new stdClass;
@@ -106,7 +106,7 @@ function iqss_scholar_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'shorten_bitly_login';
   $strongarm->value = 'openscholar';
-  $export['shorten_bitly_login'] = $strongarm;  
+  $export['shorten_bitly_login'] = $strongarm;
   
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -120,7 +120,7 @@ function iqss_scholar_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'shorten_service';
   $strongarm->value = 'j.mp';
-  $export['shorten_service'] = $strongarm;  
+  $export['shorten_service'] = $strongarm;
   
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

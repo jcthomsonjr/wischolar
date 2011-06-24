@@ -340,7 +340,7 @@ function scholar_front_redirect_home(){
  */
 function scholar_front_welcome(){
 	$vsite = vsite_get_vsite();
-	if(!$vsite || !$vsite->access_admin()) return "Coming Soon. This site is under construction.";
+	if(!$vsite || !$vsite->access_admin()) return "";
 	$spaces_features = variable_get('spaces_features',array());
 
 	$bio_link = $spaces_features["scholar_biocv"]?l("Setup your bio now","node/add/bio")." or":"The bio feature is disabled";
