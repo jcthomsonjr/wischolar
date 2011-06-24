@@ -603,7 +603,7 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   // add links to attached files (if any) unless we have an image, then it would be crowded
   if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
 
-  if( in_array($node->biblio_type, array(113,100,102,1001)) && strlen($node->biblio_url)){
+  if( in_array($node->biblio_type, array(113,100,102,106,1001)) && strlen($node->biblio_url)){
     $s_output .= '<span class="teaser-extra">'. l(variable_get('scholar_publications_external_link_name', "Website"), $node->biblio_url).'</span>';
   }//This is a software,data, article, book biblio entry, and it has a External URL
 
@@ -804,8 +804,8 @@ function _scholar_publications_get_plain_citation($node){
 
     if (preg_match( $re, $citation)) {
       $citation = preg_replace($re, ", </span>$coins", $citation);
-    } 
-		
+    }
+
 		$citation .= ' copy at ' . shorten_url(url('node/'.$node->nid, array('absolute'=>TRUE)));
 	}
 
