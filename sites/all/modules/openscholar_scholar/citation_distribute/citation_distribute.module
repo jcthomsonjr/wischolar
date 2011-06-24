@@ -426,6 +426,28 @@ function citation_distribute_node_operations() {
 	return $operations;
 }
 
+//just checking if action_info has an easier way to get into the bulk ops menu
+function citation_distribute_action_info() {
+	return array(
+		'citation_distribute_test' => array( //this must be a function that executes when action is run.  how to get around this...
+			'description' => 'trying actions again',
+			'type' => 'node',
+			'configurable' => FALSE,
+			'hooks' => array(
+				'any' => TRUE,
+		  	'nodeapi' => array('update'),
+		  ),
+		),
+	);
+}
+
+//and views_alter
+/*
+function citation_distribute_views_default_views_alter(&$views) {
+	
+	$views->vsite_content['display']['default']['display_options']['style_options']['selected_operations']['cite_dist_test'] = 'cite_dist_test';
+}*/
+
 /**
  * hook views_pre_render
  * marks node operations (above) for inclusion in bulk update operations
@@ -439,6 +461,12 @@ function citation_distribute_views_pre_render(&$view) {
 			}
 		}
 		$view->display_handler->set_option('style_options', $style);
+		$view->display_handler->override_option('style_options', $style);
+	  $view->display['default']->handler->set_option('style_options', $style);
+	  $view->display['default']->handler->override_option('style_options', $style); 
+		//$view->display_handler->default_display->options['style_options'] = $style;
+		//$view->display_handler->options['style_options'] = $style;
+		
 	}
 }
 
