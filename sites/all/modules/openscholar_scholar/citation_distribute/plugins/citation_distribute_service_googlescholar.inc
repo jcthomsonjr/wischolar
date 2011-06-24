@@ -31,10 +31,7 @@ class citation_distribute_service_googlescholar extends citation_distribute_serv
   	function _googlescholar_date($year, $date) {
 
   		if ($date) {
-  			//OS specifies mm/yyyy format.  let's hope our users used it.  if not we may need a date lib to sort out what format they did use. 
-  			//since no day is listed in specification, assume the first of the month.
-  			$array = explode('/', $date);
-  			return $array[1] . '/' . $array[0] . '/' . '01'; 
+					return date('Y/m/d', strtotime($date));
   		}
   		
   		if ($year) {
@@ -51,17 +48,13 @@ class citation_distribute_service_googlescholar extends citation_distribute_serv
       'citation_year'                 => $node->biblio_year,
       'citation_volume'               => $node->biblio_volume,
       'citation_issue'                => $node->biblio_issue,
-      'citation_firstpage'            => $node->biblio_section,
-      'citation_lastpage'             => $node->biblio_section,
       'citation_issn'                 => $node->biblio_issn,
       'citation_isbn'                 => $node->biblio_isbn,
       'citation_language'             => $node->biblio_language,
       'citation_abstract'             => $node->biblio_abstract,
       'citation_abstract_html_url'    => $node->biblio_url,
-      'citation_pmid'                 => $node->biblio_url,//that can't be right
     
     	'citation_keywords'							=> implode(';', $node->biblio_keywords),
-      'citation_pdf_url'              => check_plain($node->biblio_url),
     	'citation_author'								=> _googlescholar_list_authors($node->biblio_contributors[1]),
     	'citation_publication_date'			=> _googlescholar_date((int)$node->biblio_year, $node->biblio_date),
     );
