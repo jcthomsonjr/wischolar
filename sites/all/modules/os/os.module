@@ -104,6 +104,7 @@ function os_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
       if($node->type && $node->type == variable_get('scholar_content_type', 'vsite')){
         if(!isset($node->theme)){
           $node->theme = 'scholar_airstream';
+          $node->og_theme = 'scholar_airstream';
         }
       }//set any defaults that need setting for group types
     break;

@@ -69,11 +69,15 @@ function vsite_design_theme_picker_form($form_state) {
     $options[$info['theme_name']] = $info['theme_name'];
   }
 
+  $theme = variable_get('vsite_design_maintheme', 'scholar_airstream');
+  if ($vsite = vsite_get_vsite()) {
+    $theme = $vsite->group->og_theme;
+  }
   $form['vsite_design_maintheme'] = array(
     '#enabled_themes' => $enabled,
     '#type' => 'radios',
     '#options' => $options,
-    '#default_value' => variable_get('vsite_design_maintheme', 'scholar_airstream'),
+    '#default_value' => $vsite->group->og_theme,
     '#tree' => TRUE
   );
 
