@@ -42,6 +42,9 @@ function vsite_widgets_update_6001(&$sandbox) {
     "vsite_widgets_1" => "vsite_widgets-1",
     "scholar_project_0" => "scholar_project-0",
     "scholar_project_1" => "scholar_project-1",
+    "vsite_menus_0" => "vsite_menus-0",
+    "vsite_menus_1" => "vsite_menus-1",
+    "scholar_reader_my_twitter_feed" => "scholar_reader-my_twitter_feed",
   );
   
   // Multi-part update.
@@ -65,7 +68,7 @@ function vsite_widgets_update_6001(&$sandbox) {
       	}
       }
 
-      db_query("UPDATE {spaces_overrides} SET value = '%s' WHERE type LIKE '%s' AND id = %d AND object_type LIKE 'context' AND object_id LIKE '%s')",serialize($value), $row->type, $row->id, $row->object_id);
+      db_query("UPDATE {spaces_overrides} SET value = '%s' WHERE type LIKE '%s' AND id = %d AND object_type LIKE 'context' AND object_id LIKE '%s' ",serialize($value), $row->type, $row->id, $row->object_id);
   }
   
   if($_SESSION['vsite_widgets_update_6001'] >= $_SESSION['vsite_widgets_update_6001_max']){
