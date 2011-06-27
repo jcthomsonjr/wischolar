@@ -38,7 +38,7 @@ function scholar_reader_context_default_contexts() {
     'menu' => 'reader',
     'block' => array(
       'blocks' => array(
-        'vsite_widgets-2' => array(
+        'vsite_widgets-4' => array(
           'module' => 'vsite_widgets',
           'delta' => '2',
           'weight' => 20,
