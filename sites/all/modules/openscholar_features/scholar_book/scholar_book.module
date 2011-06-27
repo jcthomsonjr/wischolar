@@ -359,13 +359,13 @@ function _scholar_book_options_filter(&$form){
  */
 function scholar_book_vsite_widgets(){
   $items = array();
-  $items['views_scholar_book-block_1'] = array(
+  $items['views-scholar_book-block_1'] = array(
       'module' => 'views',
       'delta' => 'scholar_books-block_1',
       'weight' => 21,
       'region' => false,
       'status' => '0',
-      'label' => 'Documents',
+      'label' => 'Recent Documents',
       'type' => 'context_ui',
       );
   return $items;

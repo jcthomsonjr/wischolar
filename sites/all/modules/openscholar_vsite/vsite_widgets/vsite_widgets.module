@@ -31,7 +31,7 @@ function vsite_widgets_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 /**
- * RSS block 
+ * RSS block
  */
 function vsite_widget_rss(){
   if (! $vsite = vsite_get_vsite()) {
@@ -121,7 +121,7 @@ function vsite_widgets_vsite_widgets(){
 
 	return array(
 
-    'vsite_widgets_2' => array(
+    'vsite_widgets-2' => array(
       'module' => 'vsite_widgets',
       'delta' => '0',
       'weight' => 20,
@@ -132,7 +132,7 @@ function vsite_widgets_vsite_widgets(){
 	    'access callback' => 'vsite_widgets_shield_access'
     ),
 
-   'vsite_widgets_3' => array(
+   'vsite_widgets-3' => array(
       'module' => 'vsite_widgets',
       'delta' => '1',
       'weight' => -5,
@@ -143,10 +143,10 @@ function vsite_widgets_vsite_widgets(){
     ),
     
     
-    // vsite_widgets_4 is taken 
+    // vsite_widgets_4 is taken
     
     
-    'vsite_widgets_5' => array(
+    'vsite_widgets-5' => array(
       'module' => 'vsite_widgets',
       'delta' => '3',
       'weight' => 40,
@@ -156,7 +156,7 @@ function vsite_widgets_vsite_widgets(){
       'type' => 'context_ui',
     ),
     
-   'vsite_widgets_6' => array(
+   'vsite_widgets-6' => array(
       'module' => 'vsite_widgets',
       'delta' => '6',
       'weight' => -5,
@@ -167,7 +167,7 @@ function vsite_widgets_vsite_widgets(){
     ),
 
     // Featured posts
-    'views_vsite_featuredposts-block_1' => array(
+    'views-vsite_featuredposts-block_1' => array(
       'module' => 'views',
       'delta' => 'vsite_featuredposts-block_1',
       'weight' => 0,

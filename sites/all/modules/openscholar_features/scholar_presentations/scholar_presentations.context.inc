@@ -62,7 +62,7 @@ function scholar_presentations_context_default_contexts() {
           'weight' => 40,
           'region' => 'right',
           'status' => '0',
-          'label' => 'ShareThis Button - Allows you to share posts using popular online services',
+          'label' => 'AddThis Button - Share posts using popular services',
           'type' => 'context_ui',
         ),
       ),

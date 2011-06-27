@@ -62,7 +62,7 @@ function scholar_announcements_context_default_contexts() {
           'weight' => 50,
           'region' => 'right',
           'status' => '0',
-          'label' => 'AddThis button',
+          'label' => 'AddThis Button - Share posts using popular services',
           'type' => 'context_ui',
         ),
       ),
