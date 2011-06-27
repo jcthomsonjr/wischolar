@@ -46,7 +46,7 @@ function scholar_links_context_default_contexts() {
           'label' => 'Scholar site categories',
           'type' => 'context_ui',
         ),
-        'vsite_widgets-2' => array(
+        'vsite_widgets-4' => array(
           'module' => 'vsite_widgets',
           'delta' => '2',
           'weight' => 50,

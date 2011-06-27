@@ -49,7 +49,7 @@ function scholar_events_context_default_contexts() {
           'label' => 'Categories - A widget used to quickly filter categorized content',
           'type' => 'context_ui',
         ),
-        'vsite_widgets-2' => array(
+        'vsite_widgets-4' => array(
           'module' => 'vsite_widgets',
           'delta' => '2',
           'weight' => 21,
