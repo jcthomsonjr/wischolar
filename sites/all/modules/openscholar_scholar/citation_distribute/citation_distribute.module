@@ -418,7 +418,7 @@ function citation_distribute_node_operations() {
 			$operations['citation_distribute_un_' . $plugin['name']] = array(
 				'label' => 'Revoke from ' . $plugin['title'],
 				'callback' => 'citation_distribute_test',
-				'callback arguments' => array($plugin['name'], 'function($a,$b) {return 1;}' ),				 
+				'callback arguments' => array($plugin['name'], 'un' ),				 
 			);
 		}
 	}
@@ -430,7 +430,7 @@ function citation_distribute_node_operations() {
 function citation_distribute_action_info() {
 	return array(
 		'citation_distribute_test' => array( //this must be a function that executes when action is run.  how to get around this...
-			'description' => 'trying actions again',
+			'description' => 'Send: citation disitrbute action_info()',
 			'type' => 'node',
 			'configurable' => FALSE,
 			'hooks' => array(
@@ -454,19 +454,24 @@ function citation_distribute_views_default_views_alter(&$views) {
  */
 function citation_distribute_views_pre_render(&$view) {
 	if ($view->name == 'vsite_content') {
-		$style = $view->display['default']->display_options['style_options'];
+//		$style =  $view->display['default']->display_options['style_options'];
+		$plugin = $view->style_plugin->options;
 		foreach($view->style_plugin->all_operations as $op => $def) {
 			if (array_shift(split(':', $op)) == 'citation_distribute_test') {
-				$style['selected_operations'][$op] = $op;
+//				$style['selected_operations'][$op] = $op;
+				$plugin['selected_operations'][$op] = $op;
 			}
 		}
-		$view->display_handler->set_option('style_options', $style);
-		$view->display_handler->override_option('style_options', $style);
-	  $view->display['default']->handler->set_option('style_options', $style);
-	  $view->display['default']->handler->override_option('style_options', $style); 
-		//$view->display_handler->default_display->options['style_options'] = $style;
-		//$view->display_handler->options['style_options'] = $style;
+//		$view->display_handler->override_option('style_options', $style);
+//	  $view->display['default']->handler->override_option('style_options', $style);
+//   $view->style_options = $style;
+//	  $view->display_handler->default_display->override_option('style_options', $style);
 		
+		
+	  $view->style_plugin->options = $plugin;
+
 	}
 }
+
+
 
