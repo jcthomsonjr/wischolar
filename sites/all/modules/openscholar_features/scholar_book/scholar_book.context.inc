@@ -44,7 +44,7 @@ function scholar_book_context_default_contexts() {
           'weight' => 20,
           'region' => 'right',
           'status' => '0',
-          'label' => 'Scholar: Book',
+          'label' => 'Scholar: Book TOC',
           'type' => 'context_ui',
         ),
         'vsite_widgets-2' => array(
