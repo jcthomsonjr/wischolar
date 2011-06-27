@@ -273,12 +273,22 @@ function scholar_publications_overview(){
   $page_title = (is_array($vsite->customizer['menu']) && isset($vsite->customizer['menu']['publications'])) ? $vsite->customizer['menu']['publications'] : "Publications";
   variable_set('biblio_base_title', $page_title);
 
-  $a_args = func_get_args();
-  $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
-
   if(isset($_REQUEST['format'])){
   	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
   	return biblio_export($_REQUEST['format']);
+  }
+
+  $a_args = func_get_args();
+  foreach ($a_args as $k => $arg) {
+    if ($arg == 'type') {
+      $type = $a_args[$k+1];
+      $type = ucwords(str_replace('_', ' ', $type));
+      $a_args[$k+1] = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s'", $type));
+    }
+  }
+  $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
+  if (isset($type)) {
+    drupal_set_title($type);
   }
 
   global $pager_total_items;
@@ -805,7 +815,7 @@ function _scholar_publications_get_plain_citation($node){
     if (preg_match( $re, $citation)) {
       $citation = preg_replace($re, ", </span>$coins", $citation);
     }
-    
+
 		$citation .= ' copy at ' . shorten_url(url('node/'.$node->nid, array('absolute'=>TRUE)));
 	}
 
