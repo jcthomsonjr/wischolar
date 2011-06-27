@@ -1,0 +1,82 @@
+<?php
+
+function vsite_widgets_update_6001(&$sandbox) {
+  $res = array();
+  
+  //Make sure all the widgets have the same name, match new features standard
+
+  if(!db_table_exists('spaces_overrides')){
+    $res['#abort'] = array('success' => FALSE, 'query' => 'Spaces Overrdide table does not exist, aborting till spaces updates are run.');
+    return $res;
+  }
+  
+  $a_changes = array(
+    "views_scholar_announcements-block_1" => "views-scholar_announcements-block_1",
+    "views_scholar_book-block_1" => "views-scholar_book-block_1",
+    "views_scholar_events_upcoming-block_1" => "views-scholar_events_upcoming-block_1",
+    "vsite_widgets_2" => "vsite_widgets-2",
+    "vsite_taxonomy_0" => "vsite_taxonomy-0",
+    "vsite_widgets_3" => "vsite_widgets-3",
+    "vsite_widgets_5" => "vsite_widgets-5",
+    "vsite_widgets_6" => "vsite_widgets-6",
+    "views_vsite_featuredposts-block_1" => "views-vsite_featuredposts-block_1",
+    "scholar_events_mini" => "scholar_events-mini",
+    "views_scholar_image_gallery-block_1" => "views-scholar_image_gallery-block_1",
+    "views_scholar_presentations-block_1" => "views-scholar_presentations-block_1",
+    "views_scholar_publications-block_1" => "views-scholar_publications-block_1",
+    "scholar_publications_co_authors" => "scholar_publications-co_authors",
+    "views_publication_years-block_1" => "views-publication_years-block_1",
+    "views_publication_types-block_1" => "views-publication_types-block_1",
+    "views_publication_contributors-block_1" => "views-publication_contributors-block_1",
+    "scholar_software_releases-block_3" => "views-scholar_software_releases-block_3",
+    "views_scholar_software_releases-block_1" => "views-scholar_software_releases-block_1",
+    "vsite_cc_widget" => "vsite_cc-node_license",
+    "views_scholar_blog-block_1" => "views-scholar_blog-block_1",
+    "views_scholar_blog_comments-block_1" => "views-scholar_blog_comments-block_1",
+    "scholar_blog_rss" => "scholar_blog-rss",
+    "scholar_book_booktoc" => "scholar_book-booktoc",
+    "views_scholar_reader-block_1" => "views-scholar_reader-block_1",
+    "views_scholar_reader-block_2" => "views-scholar_reader-block_2",
+    "vsite_taxonomy_filter_feature" => "vsite_taxonomy-filter_feature",
+    "vsite_widgets_0" => "vsite_widgets-0",
+    "vsite_widgets_1" => "vsite_widgets-1",
+    "scholar_project_0" => "scholar_project-0",
+    "scholar_project_1" => "scholar_project-1",
+  );
+  
+  // Multi-part update.
+  if (!isset($_SESSION['vsite_widgets_update_6001'])) {
+    // initialize our variables
+    $_SESSION['vsite_widgets_update_6001'] = 0;
+    $_SESSION['vsite_widgets_update_6001_max'] = db_result(db_query("SELECT COUNT(*) FROM {spaces_overrides} WHERE object_type = 'context' "));
+  }
+  
+  $result = db_query("SELECT * FROM {spaces_overrides} WHERE object_type = 'context' ORDER BY id ASC LIMIT %d,100 ",$_SESSION['vsite_widgets_update_6001']);
+  $_SESSION['vsite_widgets_update_6001'] += 100;
+  
+  while ($row = db_fetch_object($result)) {
+      $value = unserialize($row->value);
+      
+      foreach ($a_changes as $old => $new) {
+      	if (array_key_exists($old,$value['blocks'])) {
+      		$block = $value['blocks'][$old];
+      		unset($value['blocks'][$old]);
+      		$value['blocks'][$new] = $block;
+      	}
+      }
+
+      db_query("UPDATE {spaces_overrides} SET value = '%s' WHERE type LIKE '%s' AND id = %d AND object_type LIKE 'context' AND object_id LIKE '%s')",serialize($value), $row->type, $row->id, $row->object_id);
+  }
+  
+  if($_SESSION['vsite_widgets_update_6001'] >= $_SESSION['vsite_widgets_update_6001_max']){
+	  $res[] = array(
+	    'success' => true,
+	    'query' => 'Vsite Widgets settings migrated.'
+	  );
+  }else{
+  	// Report how much is left to complete.
+  	$res['#finished'] = $_SESSION['vsite_widgets_update_6001'] / $_SESSION['vsite_widgets_update_6001_max'];
+  }
+  
+  return $res;
+}
