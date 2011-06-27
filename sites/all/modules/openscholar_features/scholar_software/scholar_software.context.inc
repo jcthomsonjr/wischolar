@@ -54,7 +54,7 @@ function scholar_software_context_default_contexts() {
           'weight' => 50,
           'region' => 'right',
           'status' => '0',
-          'label' => 'AddThis button',
+          'label' => 'AddThis Button - Share posts using popular services',
           'type' => 'context_ui',
         ),
         'views-scholar_software_releases-block_3' => array(
