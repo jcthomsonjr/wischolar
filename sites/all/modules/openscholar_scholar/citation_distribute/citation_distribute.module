@@ -102,10 +102,7 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		  '#title' => t('Distribute this publication to the following academic repositories') 
 		);
 		
-		ctools_include('plugins');
-		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-		
-		foreach( $plugins as $plugin ) {
+		foreach( _plugins() as $plugin ) {
 			//check if enabled?  no need to use citation_distribute_service class (except for proof of concept)
 			//use correct title property, once plugins are implemented
 			$published = db_result( db_query( "SELECT nid from {citation_distribute} WHERE type = '%s' AND nid = %d", 
@@ -144,11 +141,8 @@ function citation_distribute_nodeapi(&$node, $op) {
 		case 'update':
 			if ($node->type == 'biblio') {
 				//$submodules = cite_distribute_installed_mods ();
-				
-				ctools_include('plugins');
-				$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-		
-				foreach( $plugins as $plugin ) {
+						
+				foreach( _plugins() as $plugin ) {
 				//foreach ( $submodules as $info ) {
 					if (  isset($node->{$plugin['name']}) && $node->{$plugin['name']}==1  ) {
 						$modules[] = $plugin['name']; // this array is only used for the returned message
@@ -168,9 +162,7 @@ function citation_distribute_nodeapi(&$node, $op) {
 
 		case 'delete':
 			//clean up flags from deleted nodes
-			ctools_include('plugins');
-			$plugins = ctools_get_plugins('citation_distribute', 'plugins');	
-			foreach( $plugins as $plugin ) {
+			foreach( _plugins() as $plugin ) {
 				$flag = flag_get_flag($plugin['name']);
 				$flag -> flag('unflag', (int)$node -> nid);
 			}
@@ -183,11 +175,8 @@ function citation_distribute_nodeapi(&$node, $op) {
  * This gets called whenever a node recieves a flag.  If it gets a citation_distribute flag, process it.
  */
 function citation_distribute_flag($event, $flag, $nid, $account) {
-	
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-	
-	foreach ($plugins as $plugin) {
+		
+	foreach (_plugins() as $plugin) {
 		if ($flag->name == $plugin['name']) {
 			switch($event) {
 				
@@ -216,11 +205,9 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 function citation_distribute_preprocess_page(&$variables) {
 	/* only display on a node page */
 	if (isset ($variables['node'])) {
-	  ctools_include('plugins');
-		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-		
+				
 		/* check that each metadata plugin has been marked for this node.  add metadata for marked ones */
-		foreach($plugins as $plugin) {
+		foreach(_plugins() as $plugin) {
 			if (isset($plugin['type']) && isset($plugin['name']) && $plugin['type'] == 'metadata') {
 				if (db_result(db_query("SELECT nid FROM {citation_distribute} WHERE type = '%s' AND nid = %d",$plugin['name'], (int)$variables['node']->nid))) {
 
@@ -253,9 +240,7 @@ function citation_distribute_theme($existing, $type, $theme, $path) {
 	);
 	
 	/* metadata plugins also ahve the option to theme their output */
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-	foreach($plugins as $plugin) {
+	foreach(_plugins() as $plugin) {
 		if ($plugin['type'] == 'metadata') {
 			$theme[$plugin['name']] = array(
 				'arguments' => $args_array,
@@ -270,18 +255,13 @@ function citation_distribute_theme($existing, $type, $theme, $path) {
 
 /* Distributes citations */
 function _citation_distribute_distribute($nid, $plugin_name) {
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	$plugins = _plugins();
 	$plugin = $plugins[$plugin_name];
 	
 	if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
 		$service = new $class();
 		$service->save($nid, $plugin_name);
 	}
-	
-	
-	
-
 }
 
 /* logs which nodes have been/need to be distributed */
@@ -322,11 +302,8 @@ function _citation_distribute_removefrom_db($name, $nid) {
  * @return unknown
  */
 function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
-	
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-	
-	foreach ($plugins as $plugin) {
+		
+	foreach (_plugins() as $plugin) {
 		if ($plugin['title']) {
 			$flags[] = array (
 			  'content_type' => 'node', 
@@ -370,14 +347,14 @@ function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 	return $flags;
 }
 
+
 /**
  * hook views_pre_render
  * marks node operations (above) for inclusion in bulk update operations
  */
 function citation_distribute_views_pre_render(&$view) {
 	if (in_array('biblio', $view->args)) {
-		ctools_include('plugins');
-		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+		$plugins = _plugins ();
 		
 		if ($view->name == 'vsite_content') {
 			$plugin = $view->style_plugin->options;
@@ -395,4 +372,32 @@ function citation_distribute_views_pre_render(&$view) {
 }
 
 
+/**
+ * _plugins().  Shortcut for getting list of citation_distribute plugins
+ */
+function _plugins() {
+	ctools_include('plugins');
+	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	return $plugins;
+}
+/* 
+ * hook_cron
+ * In batch mode, process pending updates during cron jobs
+ * nodes have already been flagged, but not distributed yet
+ * for metadata nodes, this is meaningless, but updates their db status
+ */
+function citation_distribute_cron() {
+	//in needs 'a','b','c'.  maybe implode can't handle it...  at least we can check titles
+	$plugins = implode(  ',', array_keys(_plugins())  );
+	$query = "SELECT nid,type FROM {citation_distribute} WHERE upd=1 AND type IN (  %s  ) LIMIT %d ";
+	$result = db_query($query, variable_get('citation_distribute_cron_limit', 10), $plugins);   //include admin page for this 
+	
+	while($res = db_fetch_object($result)) {
+		if (in_array($res->type, array_keys($plugins))) {  //only attempt plugins we have.  old plugins could leave entries in db, but be unprocable.
+			//however, if that happens they might block cron if they're hold the first 10 spots.  need this in query instead
+			_citation_distribute_distribute($res->nid, $res->type);
+			db_query ( "UPDATE {citation_distribute} SET upd = 1 , modified = now() WHERE nid = %d and type = '%s'", $res->nid, $res->type ); 
+		}
+	}
+}
 
