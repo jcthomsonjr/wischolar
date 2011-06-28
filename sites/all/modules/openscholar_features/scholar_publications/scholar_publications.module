@@ -280,15 +280,22 @@ function scholar_publications_overview(){
 
   $a_args = func_get_args();
   foreach ($a_args as $k => $arg) {
-    if ($arg == 'type') {
+    if ($arg == 'type' && !empty($a_args[$k+1])) {
+      // why not use variable_set? cause this change isnt permanent.
+      global $conf;
+      unset($conf['biblio_sort_tabs']['type']);
+
       $type = $a_args[$k+1];
       $type = ucwords(str_replace('_', ' ', $type));
-      $a_args[$k+1] = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s'", $type));
+      $type_id = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s'", $type));
+      if ($type_id) {
+        $a_args[$k+1] = $type_id;
+      }
     }
   }
   $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
   if (isset($type)) {
-    drupal_set_title($type);
+    drupal_set_title(check_plain($type));
   }
 
   global $pager_total_items;
@@ -993,6 +1000,13 @@ function scholar_publications_export($format = "tagged", $nid = null, $popup = f
     return $output;
 	}
 }
+
+function scholar_publications_preprocess_page(&$vars) {
+  if (strpos($_GET['q'], 'type') !== FALSE) {
+    $vars['title'] = drupal_get_title();
+  }
+}
+
 /**
  * hook views_pre_view
  */
