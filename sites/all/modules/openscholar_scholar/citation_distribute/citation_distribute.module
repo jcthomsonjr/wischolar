@@ -41,7 +41,6 @@ function citation_distribute_citation_distribute_plugins(){
 	
 	$info['service_sword'] = array(
 		'type' => 'push',
-//		'title' => 'SWORD', /*only services with titles are presented to the end user */
 		'description' => 'SWORD destination',
 		'handler' => array(
 			'parent' => 'citation_distribute_service',
@@ -131,44 +130,6 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		//add the cite distribute submit function
 		array_unshift ( $form ['#submit'], 'citation_distribute_form_submit' );
 		break;
-		
-		
-	case 'views_bulk_operations_form__1':
-		/* Add plugins as options for bulk updates in cp/content */
-		$repos = array();
-		ctools_include('plugins');
-		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-		foreach( $plugins as $plugin ) {
-			if (isset($plugins['title'])){
-				$repos[] = $plugins['title'];
-			}
-		}
-		
-		/* remove citation_distribute options if we're not looking at biblio content */
-		/*if ( !(arg(0)=='cp' && arg(1)=='content' && arg(2)=='biblio') && !empty($form['select']['operation']['#options']) ) {
-		  foreach ($form['select']['operation']['#options'] as $key => $op) {
-		    //if (in_array())
-		    //why not foreach $repos instead?
-		  }			
-		}*/
-		/* include 'Distribute to' in label for each service 
-		if (arg(0) == 'cp' && arg(1) == 'content' && arg(2) == 'biblio') {
-			if (is_array ($form['select']['operation']['#options'] )) {
-				foreach ($form['select']['operation']['#options'] as $key => $operation ) {
-					if (in_array ($operation, $repos))
-						$form['select']['operation']['#options'][$key] = 'Distribute to ' . $operation;
-				}
-			}
-		} else {
-			//remove cite distribute bulk ops flags form the drop down list
-			if (! empty( $form['select']['operation']['#options'] )) {
-				foreach ( $form['select']['operation']['#options'] as $key => $operation ) {
-					if (in_array( $operation, $repos ))
-						unset ( $form['select']['operation']['#options'][$key] );
-				}
-			}
-		}*/
-		break;
 	}
 }
 
@@ -178,6 +139,7 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
  */
 function citation_distribute_nodeapi(&$node, $op) {
 	switch ($op) {
+		
 		case 'insert':
 		case 'update':
 			if ($node->type == 'biblio') {
@@ -203,8 +165,15 @@ function citation_distribute_nodeapi(&$node, $op) {
 				}
 			}
 			break;
+
 		case 'delete':
-			//remove flags for deleted nodes
+			//clean up flags from deleted nodes
+			ctools_include('plugins');
+			$plugins = ctools_get_plugins('citation_distribute', 'plugins');	
+			foreach( $plugins as $plugin ) {
+				$flag = flag_get_flag($plugin['name']);
+				$flag -> flag('unflag', (int)$node -> nid);
+			}
 			break;
 	}
 }
@@ -406,20 +375,22 @@ function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
  * marks node operations (above) for inclusion in bulk update operations
  */
 function citation_distribute_views_pre_render(&$view) {
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-	
-	if ($view->name == 'vsite_content') {
-		$plugin = $view->style_plugin->options;
-		foreach($view->style_plugin->all_operations as $op => $def) {
-			$flag_function = $def['callback arguments'][1];
-			
-			//add flags that use a CD plugin as a callback and that CD plugin has a title
-			if ( isset($plugins[$flag_function]['title'])) {
-				$plugin['selected_operations'][$op] = $op;
+	if (in_array('biblio', $view->args)) {
+		ctools_include('plugins');
+		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+		
+		if ($view->name == 'vsite_content') {
+			$plugin = $view->style_plugin->options;
+			foreach($view->style_plugin->all_operations as $op => $def) {
+				$flag_function = $def['callback arguments'][1];
+				
+				//add flags that use a CD plugin as a callback and that CD plugin has a title
+				if ( isset($plugins[$flag_function]['title'])) {
+					$plugin['selected_operations'][$op] = $op;
+				}
 			}
+		  $view->style_plugin->options = $plugin;
 		}
-	  $view->style_plugin->options = $plugin;
 	}
 }
 
