@@ -122,10 +122,8 @@ function _itweak_upload_file_create_url($file) {
     $href = _private_upload_create_url($file);
   } else {
   	
-  	$alias = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'",'filefield_paths/alias/' . $file -> fid));
+  	$alias = module_exists('filefield_paths')?db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'",'filefield_paths/alias/' . $file -> fid)): false;
     $href = ($alias) ?  $alias : file_create_url($file->filepath);
-//
-//    $href = file_create_url($file->filepath);
   }
   return $href;
 }
