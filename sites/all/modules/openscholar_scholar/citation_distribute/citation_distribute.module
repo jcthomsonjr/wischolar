@@ -286,19 +286,7 @@ function citation_distribute_theme($existing, $type, $theme, $path) {
 	}
 	return $theme;
 }
-/**
- * Implementation of hook_theme()
 
-function cite_distribute_theme() {
-	$path_inc = drupal_get_path ( 'module', 'cite_distribute' );
-	
-	return array (
-	'cite_distribute_form_msg' => array (
-	  'arguments' => array ('modules' => NULL ), 
-	  'file' => 'cite_distribute.theme.inc', 
-	  'path' => $path_inc ) );
-}
-*/
 
 /* Distributes citations */
 function _citation_distribute_distribute($nid, $plugin_name) {
@@ -347,7 +335,6 @@ function _citation_distribute_update_db($name, $nid) {
  * creates flags for each installed submodule
  * @return unknown
  */
-
 function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 	
 	ctools_include('plugins');
@@ -356,15 +343,15 @@ function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 	foreach ($plugins as $plugin) {
 		$flags[] = array (
 		  'content_type' => 'node', 
-		  'name' => $plugin['name'], 
-		  'title' => $plugin['title'], 
+		  'name' => 'name: ' .$plugin['name'], 
+		  'title' => 'title:' . $plugin['title'], 
 		  'global' => false, 
 		  'types' => array ('biblio' ), 
 			'flag_short' => $plugin['title'], 
 			'flag_long' => $plugin['title'], 
 			'flag_message' => '', 
-			'unflag_short' => 'Remove from ' . $plugin['title'],
-		  'unflag_long' => 'Remove from ' . $plugin['title'], 
+			'unflag_short' => 'CD Remove from ' . $plugin['title'],
+		  'unflag_long' => 'CD Remove from ' . $plugin['title'], 
 		  'unflag_message' => '', 
 		  'unflag_denied_text' => '', 
 		  'link_type' => 'normal', //normal, toggle, confirm
@@ -394,82 +381,25 @@ function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 	return $flags;
 }
 
-function citation_distribute_test($nids, $plugin, $action) { 
-	//TODO
-	//fill this in and rename function when node_operations work
-	return true; 
-}
-/*
- * impelmentation of hook_node_operations
- * Adds citation_distribute services to dropdown in admin/content/type
- */
-function citation_distribute_node_operations() {
-	$operations = array();
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-	
-	foreach ($plugins as $plugin) {	
-		if (isset($plugin['title'])) {
-			$operations['citation_distribute_'.$plugin['name']] = array(
-				'label' => 'Send to: '. $plugin['title'],
-				'callback' => 'citation_distribute_test',
-				'callback arguments' => array($plugin['name'], 'send'),
-			);
-			$operations['citation_distribute_un_' . $plugin['name']] = array(
-				'label' => 'Revoke from ' . $plugin['title'],
-				'callback' => 'citation_distribute_test',
-				'callback arguments' => array($plugin['name'], 'un' ),				 
-			);
-		}
-	}
-
-	return $operations;
-}
-
-//just checking if action_info has an easier way to get into the bulk ops menu
-function citation_distribute_action_info() {
-	return array(
-		'citation_distribute_test' => array( //this must be a function that executes when action is run.  how to get around this...
-			'description' => 'Send: citation disitrbute action_info()',
-			'type' => 'node',
-			'configurable' => FALSE,
-			'hooks' => array(
-				'any' => TRUE,
-		  	'nodeapi' => array('update'),
-		  ),
-		),
-	);
-}
-
-//and views_alter
-/*
-function citation_distribute_views_default_views_alter(&$views) {
-	
-	$views->vsite_content['display']['default']['display_options']['style_options']['selected_operations']['cite_dist_test'] = 'cite_dist_test';
-}*/
-
 /**
  * hook views_pre_render
  * marks node operations (above) for inclusion in bulk update operations
  */
 function citation_distribute_views_pre_render(&$view) {
+	ctools_include('plugins');
+	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	
 	if ($view->name == 'vsite_content') {
-//		$style =  $view->display['default']->display_options['style_options'];
 		$plugin = $view->style_plugin->options;
 		foreach($view->style_plugin->all_operations as $op => $def) {
-			if (array_shift(split(':', $op)) == 'citation_distribute_test') {
-//				$style['selected_operations'][$op] = $op;
+			$flag_function = $def['callback arguments'][1];
+			
+			//add flags that use a CD plugin as a callback and that CD plugin has a title
+			if ( in_array($flag_function,array_keys($plugins)) && $plugins[$flag_function]['title']) {
 				$plugin['selected_operations'][$op] = $op;
 			}
 		}
-//		$view->display_handler->override_option('style_options', $style);
-//	  $view->display['default']->handler->override_option('style_options', $style);
-//   $view->style_options = $style;
-//	  $view->display_handler->default_display->override_option('style_options', $style);
-		
-		
 	  $view->style_plugin->options = $plugin;
-
 	}
 }
 
