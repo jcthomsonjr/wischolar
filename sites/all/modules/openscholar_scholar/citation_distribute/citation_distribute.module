@@ -191,7 +191,7 @@ function citation_distribute_nodeapi(&$node, $op) {
 					if (  isset($node->{$plugin['name']}) && $node->{$plugin['name']}==1  ) {
 						$modules[] = $plugin['name']; // this array is only used for the returned message
 
-						//set the flag
+						//get the flag for this plugin
 						$flag = flag_get_flag($plugin['name']);
 						
 						//set the flag for this node
@@ -219,11 +219,22 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
 	
 	foreach ($plugins as $plugin) {
-		if ($flag->name == $plugin['name'] && $event == 'flag') {
-			//cite_distribute_widget_process ( $module ['name'], $content_id );
-			_citation_distribute_update_db($plugin['name'], $nid);
-			if (variable_get('citation_distribute_module_mode', '') == 'per_submission') {
-				_citation_distribute_distribute($nid, $plugin['name']);
+		if ($flag->name == $plugin['name']) {
+			switch($event) {
+				
+				case 'flag':
+					//cite_distribute_widget_process ( $module ['name'], $content_id );
+					_citation_distribute_update_db($plugin['name'], $nid);
+					if (variable_get('citation_distribute_module_mode', '') == 'per_submission') { // for other cases, we'll have to make a cron job?  maybe an api call to push?
+						_citation_distribute_distribute($nid, $plugin['name']);
+					}
+					break;
+					
+				case 'unflag':
+					_citation_distribute_removefrom_db($plugin['name'], $nid);
+					//check if service has a recall/delete option
+					//easy for repec.  maybe possible for sword.  unlisting works fine for google
+					break;
 			}
 		}
 	}
@@ -330,9 +341,15 @@ function _citation_distribute_update_db($name, $nid) {
 	
 }
 
+/* removes nodes which are no longer listed */
+function _citation_distribute_removefrom_db($name, $nid) {
+	db_query('DELETE FROM {citation_distribute} WHERE type = "%s" AND nid = %d', $name, $nid);
+}
+
 /**
  * Implementation of hook flag_default_flags
- * creates flags for each installed submodule
+ * creates flags for each installed plugin with a title.
+ * plugins without titles are abstract and don't need to be listed.  
  * @return unknown
  */
 function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
@@ -341,42 +358,45 @@ function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
 	
 	foreach ($plugins as $plugin) {
-		$flags[] = array (
-		  'content_type' => 'node', 
-		  'name' => 'name: ' .$plugin['name'], 
-		  'title' => 'title:' . $plugin['title'], 
-		  'global' => false, 
-		  'types' => array ('biblio' ), 
-			'flag_short' => $plugin['title'], 
-			'flag_long' => $plugin['title'], 
-			'flag_message' => '', 
-			'unflag_short' => 'CD Remove from ' . $plugin['title'],
-		  'unflag_long' => 'CD Remove from ' . $plugin['title'], 
-		  'unflag_message' => '', 
-		  'unflag_denied_text' => '', 
-		  'link_type' => 'normal', //normal, toggle, confirm
-			'roles' => array (
-				'flag' => array (0 => '2' ),
-			  'unflag' => array (0 => '2' ) 
-			), //hiding these on page, teaser, and edit node
-			'show_on_page' => false, 
-			'show_on_teaser' => false, 
-			'show_on_form' => false, 
-			'access_author' => '', 
-			'i18n' => 0, 
-			'status' => true, 
-			'locked' => array (
-			  'name' => 'name', 
-			  'show_on_page' => 'show_on_page', 
-			  'show_on_teaser' => 'show_on_teaser', 
-			  'show_on_form' => 'show_on_form', 
-			  'global' => 'global', 
-			  'link_type' => 'link_type', 
-			  'types' => 'types' 
-			), 
-			'api_version' => 2, 
-			'module' => 'citation_distribute' 
-		);
+		if ($plugin['title']) {
+			$flags[] = array (
+			  'content_type' => 'node', 
+			  'name' => $plugin['name'], 
+			  'title' => 'title:' . $plugin['title'], 
+			  'global' => false, 
+			  'types' => array ('biblio' ), 
+				'flag_short' => 'Send to ' . $plugin['title'], 
+				'flag_long' => 'Send to ' . $plugin['title'] . ' repository', 
+				'flag_message' => '', 
+				'unflag_short' => 'Remove from ' . $plugin['title'],
+			  'unflag_long' => 'Remove from ' . $plugin['title'] . ' repository', 
+			  'unflag_message' => '', 
+			  'unflag_denied_text' => '', 
+			  'link_type' => 'normal', //normal, toggle, confirm
+				'roles' => array (
+					'flag' => array (0 => '2' ),
+				  'unflag' => array (0 => '2' ) 
+				), //hiding these on page, teaser, and edit node
+				'show_on_page' => false, 
+				'show_on_teaser' => false, 
+				'show_on_form' => false, 
+				'access_author' => '',  //own or others.  should admin be allowed to flag?
+				'i18n' => 0, 
+				'status' => true, 
+				//locked flags properties do not show on config page and are only configurable here.
+				'locked' => array (
+				  'name' => 'name', 
+				  'show_on_page' => 'show_on_page', 
+				  'show_on_teaser' => 'show_on_teaser', 
+				  'show_on_form' => 'show_on_form', 
+				  'global' => 'global', 
+				  'link_type' => 'link_type', 
+				  'types' => 'types' 
+				), 
+				'api_version' => 2, 
+				'module' => 'citation_distribute' 
+			);
+		}
 	}
 	return $flags;
 }
@@ -395,7 +415,7 @@ function citation_distribute_views_pre_render(&$view) {
 			$flag_function = $def['callback arguments'][1];
 			
 			//add flags that use a CD plugin as a callback and that CD plugin has a title
-			if ( in_array($flag_function,array_keys($plugins)) && $plugins[$flag_function]['title']) {
+			if ( isset($plugins[$flag_function]['title'])) {
 				$plugin['selected_operations'][$op] = $op;
 			}
 		}
