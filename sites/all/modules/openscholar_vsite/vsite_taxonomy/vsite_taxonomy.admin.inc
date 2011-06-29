@@ -165,7 +165,7 @@ function vsite_taxonomy_form_add_vocabulary($ajax = FALSE){
  */
 function vsite_taxonomy_form_edit_vocabulary($vocabulary, $ajax = FALSE){
   $delete_mode = FALSE;
-  
+
   if ((isset($_POST['op']) && $_POST['op'] == t('Delete')) || isset($_POST['confirm']) && $_POST['op'] == t('Delete')) {
     $delete_mode = TRUE;
     return vsite_taxonomy_delete_vocabulary($vocabulary->vid, $ajax);
@@ -501,7 +501,6 @@ function vsite_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$form_state
 }
 
 function vsite_taxonomy_form_taxonomy_form_vocabulary_submit($form, &$form_state) {
-  dpm($form_state);
   if ($form_state['values']['op'] == $form_state['values']['reset_alphabetical']) {
 
     // Execute the reset action.

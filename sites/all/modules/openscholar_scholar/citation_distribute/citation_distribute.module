@@ -41,7 +41,6 @@ function citation_distribute_citation_distribute_plugins(){
 	
 	$info['service_sword'] = array(
 		'type' => 'push',
-		'title' => 'SWORD',
 		'description' => 'SWORD destination',
 		'handler' => array(
 			'parent' => 'citation_distribute_service',
@@ -86,8 +85,9 @@ function citation_distribute_citation_distribute_plugins(){
  */
 function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 	
-	//Add cite distribute options to biblio node creation page
-	if ($form_id == 'biblio_node_form') {
+	switch($form_id) {
+	case 'biblio_node_form': 
+		/*Add cite distribute options to biblio node creation page*/
 		
 		$form['citation_distribute_selections'] = array(
 			'#type' => 'fieldset', 
@@ -102,10 +102,7 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		  '#title' => t('Distribute this publication to the following academic repositories') 
 		);
 		
-		ctools_include('plugins');
-		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-		
-		foreach( $plugins as $plugin ) {
+		foreach( _plugins() as $plugin ) {
 			//check if enabled?  no need to use citation_distribute_service class (except for proof of concept)
 			//use correct title property, once plugins are implemented
 			$published = db_result( db_query( "SELECT nid from {citation_distribute} WHERE type = '%s' AND nid = %d", 
@@ -129,6 +126,7 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		
 		//add the cite distribute submit function
 		array_unshift ( $form ['#submit'], 'citation_distribute_form_submit' );
+		break;
 	}
 }
 
@@ -138,20 +136,18 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
  */
 function citation_distribute_nodeapi(&$node, $op) {
 	switch ($op) {
+		
 		case 'insert':
 		case 'update':
 			if ($node->type == 'biblio') {
 				//$submodules = cite_distribute_installed_mods ();
-				
-				ctools_include('plugins');
-				$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-		
-				foreach( $plugins as $plugin ) {
+						
+				foreach( _plugins() as $plugin ) {
 				//foreach ( $submodules as $info ) {
 					if (  isset($node->{$plugin['name']}) && $node->{$plugin['name']}==1  ) {
 						$modules[] = $plugin['name']; // this array is only used for the returned message
 
-						//set the flag
+						//get the flag for this plugin
 						$flag = flag_get_flag($plugin['name']);
 						
 						//set the flag for this node
@@ -163,8 +159,13 @@ function citation_distribute_nodeapi(&$node, $op) {
 				}
 			}
 			break;
+
 		case 'delete':
-			//remove flags for deleted nodes
+			//clean up flags from deleted nodes
+			foreach( _plugins() as $plugin ) {
+				$flag = flag_get_flag($plugin['name']);
+				$flag -> flag('unflag', (int)$node -> nid);
+			}
 			break;
 	}
 }
@@ -174,16 +175,24 @@ function citation_distribute_nodeapi(&$node, $op) {
  * This gets called whenever a node recieves a flag.  If it gets a citation_distribute flag, process it.
  */
 function citation_distribute_flag($event, $flag, $nid, $account) {
-	
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-	
-	foreach ($plugins as $plugin) {
-		if ($flag->name == $plugin['name'] && $event == 'flag') {
-			//cite_distribute_widget_process ( $module ['name'], $content_id );
-			_citation_distribute_update_db($plugin['name'], $nid);
-			if (variable_get('citation_distribute_module_mode', '') == 'per_submission') {
-				_citation_distribute_distribute($nid, $plugin['name']);
+		
+	foreach (_plugins() as $plugin) {
+		if ($flag->name == $plugin['name']) {
+			switch($event) {
+				
+				case 'flag':
+					//cite_distribute_widget_process ( $module ['name'], $content_id );
+					_citation_distribute_update_db($plugin['name'], $nid);
+					if (variable_get('citation_distribute_module_mode', '') == 'per_submission') { // for other cases, we'll have to make a cron job?  maybe an api call to push?
+						_citation_distribute_distribute($nid, $plugin['name']);
+					}
+					break;
+					
+				case 'unflag':
+					_citation_distribute_removefrom_db($plugin['name'], $nid);
+					//check if service has a recall/delete option
+					//easy for repec.  maybe possible for sword.  unlisting works fine for google
+					break;
 			}
 		}
 	}
@@ -196,11 +205,9 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 function citation_distribute_preprocess_page(&$variables) {
 	/* only display on a node page */
 	if (isset ($variables['node'])) {
-	  ctools_include('plugins');
-		$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-		
+				
 		/* check that each metadata plugin has been marked for this node.  add metadata for marked ones */
-		foreach($plugins as $plugin) {
+		foreach(_plugins() as $plugin) {
 			if (isset($plugin['type']) && isset($plugin['name']) && $plugin['type'] == 'metadata') {
 				if (db_result(db_query("SELECT nid FROM {citation_distribute} WHERE type = '%s' AND nid = %d",$plugin['name'], (int)$variables['node']->nid))) {
 
@@ -233,9 +240,7 @@ function citation_distribute_theme($existing, $type, $theme, $path) {
 	);
 	
 	/* metadata plugins also ahve the option to theme their output */
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-	foreach($plugins as $plugin) {
+	foreach(_plugins() as $plugin) {
 		if ($plugin['type'] == 'metadata') {
 			$theme[$plugin['name']] = array(
 				'arguments' => $args_array,
@@ -246,34 +251,17 @@ function citation_distribute_theme($existing, $type, $theme, $path) {
 	}
 	return $theme;
 }
-/**
- * Implementation of hook_theme()
 
-function cite_distribute_theme() {
-	$path_inc = drupal_get_path ( 'module', 'cite_distribute' );
-	
-	return array (
-	'cite_distribute_form_msg' => array (
-	  'arguments' => array ('modules' => NULL ), 
-	  'file' => 'cite_distribute.theme.inc', 
-	  'path' => $path_inc ) );
-}
-*/
 
 /* Distributes citations */
 function _citation_distribute_distribute($nid, $plugin_name) {
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	$plugins = _plugins();
 	$plugin = $plugins[$plugin_name];
 	
 	if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
 		$service = new $class();
 		$service->save($nid, $plugin_name);
 	}
-	
-	
-	
-
 }
 
 /* logs which nodes have been/need to be distributed */
@@ -302,54 +290,114 @@ function _citation_distribute_update_db($name, $nid) {
 	
 }
 
+/* removes nodes which are no longer listed */
+function _citation_distribute_removefrom_db($name, $nid) {
+	db_query('DELETE FROM {citation_distribute} WHERE type = "%s" AND nid = %d', $name, $nid);
+}
+
 /**
  * Implementation of hook flag_default_flags
- * creates flags for each installed submodule
+ * creates flags for each installed plugin with a title.
+ * plugins without titles are abstract and don't need to be listed.  
  * @return unknown
  */
-
 function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
-	
-	ctools_include('plugins');
-	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
-	
-	foreach ($plugins as $plugin) {
-		$flags[] = array (
-		  'content_type' => 'node', 
-		  'name' => $plugin['name'], 
-		  'title' => $plugin['title'], 
-		  'global' => false, 
-		  'types' => array ('biblio' ), 
-			'flag_short' => $plugin['title'], 
-			'flag_long' => $plugin['title'], 
-			'flag_message' => '', 
-			'unflag_short' => 'Remove from ' . $plugin['title'],
-		  'unflag_long' => 'Remove from ' . $plugin['title'], 
-		  'unflag_message' => '', 
-		  'unflag_denied_text' => '', 
-		  'link_type' => 'normal', //normal, toggle, confirm
-			'roles' => array (
-				'flag' => array (0 => '2' ),
-			  'unflag' => array (0 => '2' ) 
-			), //hiding these on page, teaser, and edit node
-			'show_on_page' => false, 
-			'show_on_teaser' => false, 
-			'show_on_form' => false, 
-			'access_author' => '', 
-			'i18n' => 0, 
-			'status' => true, 
-			'locked' => array (
-			  'name' => 'name', 
-			  'show_on_page' => 'show_on_page', 
-			  'show_on_teaser' => 'show_on_teaser', 
-			  'show_on_form' => 'show_on_form', 
-			  'global' => 'global', 
-			  'link_type' => 'link_type', 
-			  'types' => 'types' 
-			), 
-			'api_version' => 2, 
-			'module' => 'citation_distribute' 
-		);
+		
+	foreach (_plugins() as $plugin) {
+		if ($plugin['title']) {
+			$flags[] = array (
+			  'content_type' => 'node', 
+			  'name' => $plugin['name'], 
+			  'title' => 'title:' . $plugin['title'], 
+			  'global' => false, 
+			  'types' => array ('biblio' ), 
+				'flag_short' => 'Send to ' . $plugin['title'], 
+				'flag_long' => 'Send to ' . $plugin['title'] . ' repository', 
+				'flag_message' => '', 
+				'unflag_short' => 'Remove from ' . $plugin['title'],
+			  'unflag_long' => 'Remove from ' . $plugin['title'] . ' repository', 
+			  'unflag_message' => '', 
+			  'unflag_denied_text' => '', 
+			  'link_type' => 'normal', //normal, toggle, confirm
+				'roles' => array (
+					'flag' => array (0 => '2' ),
+				  'unflag' => array (0 => '2' ) 
+				), //hiding these on page, teaser, and edit node
+				'show_on_page' => false, 
+				'show_on_teaser' => false, 
+				'show_on_form' => false, 
+				'access_author' => '',  //own or others.  should admin be allowed to flag?
+				'i18n' => 0, 
+				'status' => true, 
+				//locked flags properties do not show on config page and are only configurable here.
+				'locked' => array (
+				  'name' => 'name', 
+				  'show_on_page' => 'show_on_page', 
+				  'show_on_teaser' => 'show_on_teaser', 
+				  'show_on_form' => 'show_on_form', 
+				  'global' => 'global', 
+				  'link_type' => 'link_type', 
+				  'types' => 'types' 
+				), 
+				'api_version' => 2, 
+				'module' => 'citation_distribute' 
+			);
+		}
 	}
 	return $flags;
 }
+
+
+/**
+ * hook views_pre_render
+ * marks node operations (above) for inclusion in bulk update operations
+ */
+function citation_distribute_views_pre_render(&$view) {
+	if (in_array('biblio', $view->args)) {
+		$plugins = _plugins ();
+		
+		if ($view->name == 'vsite_content') {
+			$plugin = $view->style_plugin->options;
+			foreach($view->style_plugin->all_operations as $op => $def) {
+				$flag_function = $def['callback arguments'][1];
+				
+				//add flags that use a CD plugin as a callback and that CD plugin has a title
+				if ( isset($plugins[$flag_function]['title'])) {
+					$plugin['selected_operations'][$op] = $op;
+				}
+			}
+		  $view->style_plugin->options = $plugin;
+		}
+	}
+}
+
+
+/**
+ * _plugins().  Shortcut for getting list of citation_distribute plugins
+ */
+function _plugins() {
+	ctools_include('plugins');
+	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
+	return $plugins;
+}
+/* 
+ * hook_cron
+ * In batch mode, process pending updates during cron jobs
+ * nodes have already been flagged, but not distributed yet
+ * for metadata nodes, this is meaningless, but updates their db status
+ */
+function citation_distribute_cron() {
+	//in needs 'a','b','c'.  maybe implode can't handle it...  at least we can check titles
+	$plugins = implode(  ',', array_keys(_plugins())  );
+	$query = "SELECT nid,type FROM {citation_distribute} WHERE upd=1 AND type IN (  %s  ) LIMIT %d ";
+	$result = db_query($query, variable_get('citation_distribute_cron_limit', 10), $plugins);   //include admin page for this 
+	
+	while($res = db_fetch_object($result)) {
+		if (in_array($res->type, array_keys($plugins))) {  //only attempt plugins we have.  old plugins could leave entries in db, but be unprocable.
+			//however, if that happens they might block cron if they're hold the first 10 spots.  need this in query instead
+			_citation_distribute_distribute($res->nid, $res->type);
+			db_query ( "UPDATE {citation_distribute} SET upd = 1 , modified = now() WHERE nid = %d and type = '%s'", $res->nid, $res->type ); 
+		}
+	}
+}
+

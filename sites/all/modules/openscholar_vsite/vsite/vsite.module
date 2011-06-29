@@ -1160,14 +1160,19 @@ function vsite_node_menu_access(){
   $access_callback = array_pop($args);
   if (empty($access_callback) || call_user_func_array($access_callback, $args)) {
     
-    if (array_pop($args) == 'node_access' && $args[0] == 'create') {
+    $access_param = array_pop($args);
+    if ($access_param == 'node_access' && $args[0] == 'create') {
       $node_type = str_replace('-', '_', $args[1]);
-      if(og_is_group_type($node_type)) return true;
-    }//If this is a group type
+    }elseif ($access_callback == "og_menu_access_node_edit" && is_object($access_param) && $access_param->type){
+      $node_type = $access_param->type;
+    }
     
-  	//Spaces permits access, now lets make sure we are in a site
+    //If this is a group type
+    if($node_type && og_is_group_type($node_type)) return true;
+    
+    //Spaces permits access, now lets make sure we are in a site
     $vsite = vsite_get_vsite();
-  	
+    
     return $vsite?TRUE:FALSE;
   }
   return FALSE;

@@ -273,12 +273,29 @@ function scholar_publications_overview(){
   $page_title = (is_array($vsite->customizer['menu']) && isset($vsite->customizer['menu']['publications'])) ? $vsite->customizer['menu']['publications'] : "Publications";
   variable_set('biblio_base_title', $page_title);
 
-  $a_args = func_get_args();
-  $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
-
   if(isset($_REQUEST['format'])){
   	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
   	return biblio_export($_REQUEST['format']);
+  }
+
+  $a_args = func_get_args();
+  foreach ($a_args as $k => $arg) {
+    if ($arg == 'type' && !empty($a_args[$k+1])) {
+      // why not use variable_set? cause this change isnt permanent.
+      global $conf;
+      unset($conf['biblio_sort_tabs']['type']);
+
+      $type = $a_args[$k+1];
+      $type = ucwords(str_replace('_', ' ', $type));
+      $type_id = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s'", $type));
+      if ($type_id) {
+        $a_args[$k+1] = $type_id;
+      }
+    }
+  }
+  $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
+  if (isset($type)) {
+    drupal_set_title(check_plain($type));
   }
 
   global $pager_total_items;
@@ -394,7 +411,7 @@ function scholar_publications_block($op = 'list', $delta = false, $edit = array(
  */
 function scholar_publications_vsite_widgets(){
   $items = array();
-  $items['views_scholar_publications-block_1'] = array(
+  $items['views-scholar_publications-block_1'] = array(
     'module' => 'views',
     'delta' => 'scholar_publications-block_1',
     'weight' => 20,
@@ -404,7 +421,7 @@ function scholar_publications_vsite_widgets(){
     'type' => 'context_ui',
   );
 
-  $items['scholar_publications_co_authors'] = array(
+  $items['scholar_publications-co_authors'] = array(
     'module' => 'scholar_publications',
     'delta' => 'co_authors',
     'weight' => 20,
@@ -415,7 +432,7 @@ function scholar_publications_vsite_widgets(){
   );
 
   // Publication Types
-  $items['views_publication_types-block_1'] = array(
+  $items['views-publication_types-block_1'] = array(
     'module' => 'views',
     'delta' => 'publication_types-block_1',
     'weight' => 10,
@@ -426,7 +443,7 @@ function scholar_publications_vsite_widgets(){
   );
 
   // Publication Years
-  $items['views_publication_years-block_1'] = array(
+  $items['views-publication_years-block_1'] = array(
     'module' => 'views',
     'delta' => 'publication_years-block_1',
     'weight' => 11,
@@ -437,7 +454,7 @@ function scholar_publications_vsite_widgets(){
   );
 
   // Publication Contributors
-  $items['views_publication_contributors-block_1'] = array(
+  $items['views-publication_contributors-block_1'] = array(
     'module' => 'views',
     'delta' => 'publication_contributors-block_1',
     'weight' => 11,
@@ -603,7 +620,7 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   // add links to attached files (if any) unless we have an image, then it would be crowded
   if (biblio_access('download', $node)) $s_output .= theme('biblio_download_links',$node);
 
-  if( in_array($node->biblio_type, array(113,100,102,1001)) && strlen($node->biblio_url)){
+  if( in_array($node->biblio_type, array(113,100,102,106,1001)) && strlen($node->biblio_url)){
     $s_output .= '<span class="teaser-extra">'. l(variable_get('scholar_publications_external_link_name', "Website"), $node->biblio_url).'</span>';
   }//This is a software,data, article, book biblio entry, and it has a External URL
 
@@ -805,7 +822,7 @@ function _scholar_publications_get_plain_citation($node){
     if (preg_match( $re, $citation)) {
       $citation = preg_replace($re, ", </span>$coins", $citation);
     }
-		
+
 		$citation .= ' copy at ' . shorten_url(url('node/'.$node->nid, array('absolute'=>TRUE)));
 	}
 
@@ -983,6 +1000,13 @@ function scholar_publications_export($format = "tagged", $nid = null, $popup = f
     return $output;
 	}
 }
+
+function scholar_publications_preprocess_page(&$vars) {
+  if (strpos($_GET['q'], 'type') !== FALSE) {
+    $vars['title'] = drupal_get_title();
+  }
+}
+
 /**
  * hook views_pre_view
  */

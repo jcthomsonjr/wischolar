@@ -47,13 +47,13 @@ function scholar_blog_context_default_contexts() {
           'label' => 'Categories - Filter categorized content',
           'type' => 'context_ui',
         ),
-        'vsite_widgets-2' => array(
+        'vsite_widgets-4' => array(
           'module' => 'vsite_widgets',
           'delta' => '2',
           'weight' => 38,
           'region' => 'right',
           'status' => '0',
-          'label' => 'ShareThis Button - Allows you to share posts using popular online services',
+          'label' => 'AddThis Button - Share posts using popular services',
           'type' => 'context_ui',
         ),
         'views-scholar_blog-block_1' => array(
