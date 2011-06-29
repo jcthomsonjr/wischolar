@@ -1,0 +1,13 @@
+; $Id: scholar_cleanblue.info,v 1.12 2008/09/21 22:43:32 dcabral Exp $
+name        = OpenScholar: "Clean Blue"
+description = Clean theme with blue and grey colors.
+
+screenshot = screenshot.png
+core       = 6.x
+base theme = scholar_base
+stylesheets[all][]   = scholar-cleanblue.css
+conditional-stylesheets[if lt IE 9][all][] = scholar-cleanblue-ie.css
+
+scholar[widgets][vsite_widgets_0] = false
+scholar[theme_type]   = "scholar"
+scholar[theme_access] = "public"
