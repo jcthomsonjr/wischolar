@@ -885,6 +885,48 @@ function scholar_publications_views_default_views() {
       'validate_argument_php' => '',
     ),
   ));
+  $handler->override_option('cache', array(
+    'type' => 'os_views_content_cache',
+    'keys' => array(
+      'comment' => array(
+        'changed' => 0,
+      ),
+      'node' => array(
+        'biblio' => 'biblio',
+        'announcement' => 0,
+        'blog' => 0,
+        'book' => 0,
+        'class' => 0,
+        'class_material' => 0,
+        'event' => 0,
+        'feed_fast' => 0,
+        'feed' => 0,
+        'feed_item' => 0,
+        'gallery' => 0,
+        'image' => 0,
+        'link' => 0,
+        'page' => 0,
+        'person' => 0,
+        'presentation' => 0,
+        'profile' => 0,
+        'vsite' => 0,
+        'sitewide_page' => 0,
+        'scholar_software_project' => 0,
+        'scholar_software_release' => 0,
+        'vsite_users_profile' => 0,
+        'bio' => 0,
+        'cv' => 0,
+      ),
+      'og' => array(
+        'current' => 'current',
+        'user' => 0,
+      ),
+    ),
+    'results_min_lifespan' => '-1',
+    'results_max_lifespan' => '-1',
+    'output_min_lifespan' => '3600',
+    'output_max_lifespan' => '3600',
+  ));
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
     'relationship' => 'none',
@@ -1759,12 +1801,11 @@ function scholar_publications_views_default_views() {
       'relationship' => 'none',
     ),
     'created' => array(
-    	'order' => 'DESC',
+      'order' => 'DESC',
       'id' => 'created',
       'table' => 'node',
       'field' => 'created',
     ),
-    
   ));
   $handler->override_option('filters', array(
     'status' => array(
