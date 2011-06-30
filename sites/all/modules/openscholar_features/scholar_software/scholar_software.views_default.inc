@@ -131,7 +131,46 @@ function scholar_software_views_default_views() {
     'perm' => 'access content',
   ));
   $handler->override_option('cache', array(
-    'type' => 'none',
+    'type' => 'os_views_content_cache',
+    'keys' => array(
+      'comment' => array(
+        'changed' => 0,
+      ),
+      'node' => array(
+        'scholar_software_project' => 'scholar_software_project',
+        'announcement' => 0,
+        'blog' => 0,
+        'book' => 0,
+        'class' => 0,
+        'class_material' => 0,
+        'event' => 0,
+        'feed_fast' => 0,
+        'feed' => 0,
+        'feed_item' => 0,
+        'gallery' => 0,
+        'image' => 0,
+        'link' => 0,
+        'page' => 0,
+        'person' => 0,
+        'presentation' => 0,
+        'profile' => 0,
+        'biblio' => 0,
+        'vsite' => 0,
+        'sitewide_page' => 0,
+        'scholar_software_release' => 0,
+        'vsite_users_profile' => 0,
+        'bio' => 0,
+        'cv' => 0,
+      ),
+      'og' => array(
+        'current' => 'current',
+        'user' => 0,
+      ),
+    ),
+    'results_min_lifespan' => '-1',
+    'results_max_lifespan' => '-1',
+    'output_min_lifespan' => '-1',
+    'output_max_lifespan' => '3600',
   ));
   $handler->override_option('title', 'Software');
   $handler->override_option('empty', 'There are currently no projects available.');
@@ -588,7 +627,46 @@ function scholar_software_views_default_views() {
     'perm' => 'access content',
   ));
   $handler->override_option('cache', array(
-    'type' => 'none',
+    'type' => 'os_views_content_cache',
+    'keys' => array(
+      'comment' => array(
+        'changed' => 0,
+      ),
+      'node' => array(
+        'scholar_software_project' => 'scholar_software_project',
+        'scholar_software_release' => 'scholar_software_release',
+        'announcement' => 0,
+        'blog' => 0,
+        'book' => 0,
+        'class' => 0,
+        'class_material' => 0,
+        'event' => 0,
+        'feed_fast' => 0,
+        'feed' => 0,
+        'feed_item' => 0,
+        'gallery' => 0,
+        'image' => 0,
+        'link' => 0,
+        'page' => 0,
+        'person' => 0,
+        'presentation' => 0,
+        'profile' => 0,
+        'biblio' => 0,
+        'vsite' => 0,
+        'sitewide_page' => 0,
+        'vsite_users_profile' => 0,
+        'bio' => 0,
+        'cv' => 0,
+      ),
+      'og' => array(
+        'current' => 'current',
+        'user' => 0,
+      ),
+    ),
+    'results_min_lifespan' => '-1',
+    'results_max_lifespan' => '-1',
+    'output_min_lifespan' => '-1',
+    'output_max_lifespan' => '3600',
   ));
   $handler->override_option('footer_format', '3');
   $handler->override_option('footer_empty', 0);
