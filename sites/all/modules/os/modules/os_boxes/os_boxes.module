@@ -1,0 +1,103 @@
+<?php
+
+
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function os_boxes_ctools_plugin_api($module, $api) {
+  if ($module == 'boxes' && $api == 'plugins') {
+    return array('version' => 1);
+  }
+}
+
+/**
+ * Implementation of hook_boxes_plugins().
+ */
+function os_boxes_boxes_plugins() {
+  $info = array();
+  $info['os_boxes_default'] = array(
+    'handler' => array(
+      'class' => 'os_boxes_default',
+      'file' => 'os_boxes_default.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'box',
+    ),
+  );
+  $info['os_boxes_simple'] = array(
+    'title' => 'Text',
+    'description' => 'Simple custom text',
+    'tags' => array('Basic'),  
+    'handler' => array(
+      'parent' => 'box',
+      'class' => 'boxes_simple',
+      'file' => 'boxes_simple.inc',
+      'path' => drupal_get_path('module', 'boxes') .'/plugins',
+    ),
+  );
+  $info['os_boxes_list'] = array(
+    'title' => 'Listing',  // i.e. view
+    'description' => 'List of posts',
+    'tags' => array('Content'),  
+    'handler' => array(
+      'class' => 'os_boxes_list',
+      'file' => 'os_boxes_list.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+  
+  $info['os_boxes_feedreader'] = array(
+    'title' => 'Feed Reader',  // i.e. view
+    'description' => 'List of feed items',
+    'tags' => array('Content'),  
+    'handler' => array(
+      'class' => 'os_boxes_feedreader',
+      'file' => 'os_boxes_feedreader.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+  
+  $info['os_boxes_rss'] = array(
+    'title' => 'RSS feed',  // i.e. view
+    'description' => 'RSS feed ??',
+    'tags' => array('Social'),  
+    'handler' => array(
+      'class' => 'os_boxes_feedreader',
+      'file' => 'os_boxes_feedreader.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+  
+  $info['os_boxes_cclicense'] = array(
+    'title' => 'CC License',  // i.e. view
+    'description' => 'Displays CC license widget',
+    'tags' => array('Other'),  
+    'handler' => array(
+      'class' => 'os_boxes_cclicense',
+      'file' => 'os_boxes_cclicense.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+  
+  $info['os_boxes_oembed'] = array(
+    'title' => 'Media Embed',  // i.e. view
+    'description' => 'Embed Media',
+    'tags' => array('Media', 'Social'),  
+    'handler' => array(
+      'class' => 'os_boxes_oembed',
+      'file' => 'os_boxes_oembed.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+
+  return $info;
+}
+
+function os_boxes_boxes_load_alter(&$box, $delta) {
+  //dpm($box);
+  //dpm($delta);
+}
