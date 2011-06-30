@@ -287,15 +287,15 @@ function scholar_publications_overview(){
 
       $type = $a_args[$k+1];
       $type = ucwords(str_replace('_', ' ', $type));
-      $type_id = db_result(db_query("SELECT tid FROM {biblio_types} WHERE name = '%s'", $type));
-      if ($type_id) {
-        $a_args[$k+1] = $type_id;
+      $type_data = db_fetch_array(db_query("SELECT tid, name FROM {biblio_types} WHERE name = '%s' OR tid = %d", $type, $type));
+      if ($type_data['tid']) {
+        $a_args[$k+1] = $type_data['tid'];
       }
     }
   }
   $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
-  if (isset($type)) {
-    drupal_set_title(check_plain($type));
+  if (isset($type_data)) {
+    drupal_set_title(check_plain($type_data['name']));
   }
 
   global $pager_total_items;
