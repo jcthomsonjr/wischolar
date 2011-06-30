@@ -270,7 +270,7 @@ function vsite_views_default_views() {
     ),
     'results_min_lifespan' => '-1',
     'results_max_lifespan' => '-1',
-    'output_min_lifespan' => '3600',
+    'output_min_lifespan' => '-1',
     'output_max_lifespan' => '3600',
   ));
   $handler->override_option('items_per_page', 15);

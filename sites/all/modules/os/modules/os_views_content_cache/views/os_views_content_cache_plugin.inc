@@ -7,9 +7,9 @@
 class os_views_content_cache_plugin extends views_content_cache_plugin_cache {
   
 	function option_defaults(&$options) {
-    $options['results_min_lifespan'] = 0; //Forever
+    $options['results_min_lifespan'] = 0; //Clear Anytime
     $options['results_max_lifespan'] = 0; //Forever
-    $options['output_min_lifespan'] = 3600; //One Hour
+    $options['output_min_lifespan'] = 0; //Clear Anytime
     $options['output_max_lifespan'] = 3600; //One Hour
     $options['keys'] = array();
   }
