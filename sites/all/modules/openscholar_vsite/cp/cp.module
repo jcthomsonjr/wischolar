@@ -75,7 +75,7 @@ function cp_init(){
    * If so go ahead and run the context node conditions for the cp theme
    */
   $menu = menu_get_item();
-  if($menu['path'] == 'node/%/edit'){
+  if($menu['path'] == 'node/%/edit' && is_array($menu['page_arguments'])){
     context_node_condition($menu['page_arguments'][0], 'form');
   }elseif ($menu['page_callback'] == "node_add"){
   	$tmp_node = (object) array("type" => str_replace("-","_",$menu['page_arguments'][0]));
