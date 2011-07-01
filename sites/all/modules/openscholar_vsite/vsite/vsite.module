@@ -1158,6 +1158,11 @@ function vsite_node_menu_access(){
 	// Run the standard spaces access check.
   $args = func_get_args();
   $access_callback = array_pop($args);
+  
+//  if($access_callback == "og_menu_access_node_edit" && is_object($args[0])){
+//  	$args[0]->status = 1;
+//  }//We want to treat access published and unpublished nodes the same when editing them
+//
   if (empty($access_callback) || call_user_func_array($access_callback, $args)) {
     
     $access_param = array_pop($args);

@@ -4,6 +4,9 @@
  * Cache blocks based on content changes
  */
 class os_content_cache_context_reaction_block extends vsite_context_reaction_block {
+	
+	protected static $cache_default_min_lifespan = -1;
+	protected static $cache_default_max_lifespan = 3600; //One Hour
 
   /**
    * Build a block's content. Largely taken from block_list().
@@ -13,14 +16,14 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
     // only if the request method is 'GET'.
     static $cacheable;
     if (!isset($cacheable) || $reset) {
-      $cacheable = $_SERVER['REQUEST_METHOD'] == 'GET' && $block->cache == BLOCK_CACHE_CONTENT_CACHE;
+      $cacheable = $_SERVER['REQUEST_METHOD'] == 'GET' && ($cache_config = $this->get_cache_config($block));
     }
 
     if (!isset($block->content)) {
       $block->content = '';
       // Try fetching the block from cache.
       if ($cacheable && ($cid = $this->get_cache_id())) {
-      	$cutoff = $this->cache_expire($block);
+      	$cutoff = $this->cache_expire($cache_config);
         if ($cache = cache_get($cid, 'cache_block') && (!$cutoff || $cache->created > $cutoff)) {
           $array = $cache->data;
         }
@@ -80,12 +83,12 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
   	return implode(':', $cid_parts);
   }
   
-  protected function cache_expire($block){
+  protected function cache_expire($cache_config){
   	$cutoff = 0;
 
     // Retrieve the latest update time matching the settings on this View.
     $cid = array();
-    foreach ($block->cache_keys as $key_id => $key_values) {
+    foreach ($cache_config['keys'] as $key_id => $key_values) {
       if ($plugin = views_content_cache_get_plugin($key_id)) {
         $cid[$key_id] = $plugin->view_key($key_values);
       }
@@ -95,15 +98,13 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
     }
 
     // If there's a minimum lifetime, enforce it:
-    if ((isset($this->cache_min_lifespan) && $min_lifespan = $this->cache_min_lifespan) ||
-        (!isset($this->cache_min_lifespan) && $min_lifespan = variable_get('os_blocks_min_cache',0))) {
+    if ($cache_config['min_lifespan'] && $cache_config['min_lifespan'] != -1) {
       $min_lifespan = time() - $min_lifespan;
       $cutoff = min($min_lifespan, $cutoff);
     }
 
     // Only enforce a maximum lifetime if it's been specifically selected:
-    if ((isset($this->cache_max_lifespan) && $max_lifespan = $this->cache_max_lifespan) ||
-        (!isset($this->cache_min_lifespan) && $max_lifespan = variable_get('os_blocks_max_cache',3600))) {
+    if ($cache_config['max_lifespan']) {
       if ($max_lifespan != -1) {
         $max_lifespan = time() - $max_lifespan;
         $cutoff = max($max_lifespan, $cutoff);
@@ -111,5 +112,28 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
     }
     
     return $cutoff;
+  }
+  
+  protected function get_cache_config($block){
+  	
+  	switch ($block->module){
+  		case "boxes":
+  			//Handle Boxes Cache
+  	  break;
+  		default:
+  			$vsite_widgets = module_invoke_all('vsite_widgets');
+  			if(array_key_exists($block->module."-".$block->delta ,$vsite_widgets)){
+  				$block_info = (object) $vsite_widgets[$block->module."-".$block->delta];
+  			}
+  			
+  	    if($block_info->cache == BLOCK_CACHE_CONTENT_CACHE && isset($block_info->cache_keys)){
+  	    	$a_config = array('keys' => $block_info->cache_keys);
+  	    	$a_config['min_lifespan'] = isset($block_info->cache_min_lifespan)?intval($block_info->cache_min_lifespan):$this->cache_default_min_lifespan;
+  	    	$a_config['max_lifespan'] = isset($block_info->cache_max_lifespan)?intval($block_info->cache_max_lifespan):$this->cache_default_max_lifespan;
+  	    }
+  		break;
+  	}
+  	
+  	return false;
   }
 }

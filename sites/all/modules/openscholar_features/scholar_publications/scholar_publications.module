@@ -416,9 +416,12 @@ function scholar_publications_vsite_widgets(){
     'delta' => 'scholar_publications-block_1',
     'weight' => 20,
     'region' => false,
-    'status' => '0',
     'label' => 'Recent publications',
-    'type' => 'context_ui',
+    'cache' => BLOCK_CACHE_CONTENT_CACHE,
+    'cache_keys' => array(
+      'node' => array('biblio' => 'biblio'),
+      'og' => array('current' => 'current'),
+    ),
   );
 
   $items['scholar_publications-co_authors'] = array(
