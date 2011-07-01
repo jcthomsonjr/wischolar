@@ -5,8 +5,8 @@
  */
 class os_content_cache_context_reaction_block extends vsite_context_reaction_block {
 	
-	protected static $cache_default_min_lifespan = -1;
-	protected static $cache_default_max_lifespan = 3600; //One Hour
+	protected $cache_default_min_lifespan = -1;
+	protected $cache_default_max_lifespan = 3600; //One Hour
 
   /**
    * Build a block's content. Largely taken from block_list().
@@ -14,15 +14,12 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
   protected function build_block($block, $reset = FALSE) {
     // We preserve the submission of forms in blocks, by fetching from cache
     // only if the request method is 'GET'.
-    static $cacheable;
-    if (!isset($cacheable) || $reset) {
-      $cacheable = $_SERVER['REQUEST_METHOD'] == 'GET' && ($cache_config = $this->get_cache_config($block));
-    }
-
+    $cacheable = $_SERVER['REQUEST_METHOD'] == 'GET' && ($cache_config = $this->get_cache_config($block));
+    
     if (!isset($block->content)) {
       $block->content = '';
       // Try fetching the block from cache.
-      if ($cacheable && ($cid = $this->get_cache_id())) {
+      if ($cacheable && ($cid = $this->get_cache_id($block))) {
       	$cutoff = $this->cache_expire($cache_config);
         if ($cache = cache_get($cid, 'cache_block') && (!$cutoff || $cache->created > $cutoff)) {
           $array = $cache->data;
@@ -99,14 +96,14 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
 
     // If there's a minimum lifetime, enforce it:
     if ($cache_config['min_lifespan'] && $cache_config['min_lifespan'] != -1) {
-      $min_lifespan = time() - $min_lifespan;
+      $min_lifespan = time() - $cache_config['min_lifespan'];
       $cutoff = min($min_lifespan, $cutoff);
     }
 
     // Only enforce a maximum lifetime if it's been specifically selected:
     if ($cache_config['max_lifespan']) {
-      if ($max_lifespan != -1) {
-        $max_lifespan = time() - $max_lifespan;
+      if ($cache_config['max_lifespan'] != -1) {
+        $max_lifespan = time() - $cache_config['max_lifespan'];
         $cutoff = max($max_lifespan, $cutoff);
       }
     }
@@ -121,15 +118,18 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
   			//Handle Boxes Cache
   	  break;
   		default:
-  			$vsite_widgets = module_invoke_all('vsite_widgets');
-  			if(array_key_exists($block->module."-".$block->delta ,$vsite_widgets)){
-  				$block_info = (object) $vsite_widgets[$block->module."-".$block->delta];
-  			}
+  			static $vsite_widgets;
+  			if(!isset($vsite_widgets)) $vsite_widgets = module_invoke_all('vsite_widgets');
+  			
+  			$bid = isset($block->bid)? $block->bid:$block->module."-".$block->delta;
+  			$block_info = (object) ((array_key_exists($bid ,$vsite_widgets))? $vsite_widgets[$bid]:array());
   			
   	    if($block_info->cache == BLOCK_CACHE_CONTENT_CACHE && isset($block_info->cache_keys)){
   	    	$a_config = array('keys' => $block_info->cache_keys);
   	    	$a_config['min_lifespan'] = isset($block_info->cache_min_lifespan)?intval($block_info->cache_min_lifespan):$this->cache_default_min_lifespan;
   	    	$a_config['max_lifespan'] = isset($block_info->cache_max_lifespan)?intval($block_info->cache_max_lifespan):$this->cache_default_max_lifespan;
+  	    	
+  	    	return $a_config;
   	    }
   		break;
   	}

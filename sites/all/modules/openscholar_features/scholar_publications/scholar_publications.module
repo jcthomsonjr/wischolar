@@ -429,9 +429,12 @@ function scholar_publications_vsite_widgets(){
     'delta' => 'co_authors',
     'weight' => 20,
     'region' => false,
-    'status' => '0',
     'label' => 'Co-Authors List',
-    'type' => 'context_ui',
+    'cache' => BLOCK_CACHE_CONTENT_CACHE,
+    'cache_keys' => array(
+      'node' => array('biblio' => 'biblio'),
+      'og' => array('current' => 'current'),
+    ),
   );
 
   // Publication Types
@@ -440,9 +443,12 @@ function scholar_publications_vsite_widgets(){
     'delta' => 'publication_types-block_1',
     'weight' => 10,
     'region' => false,
-    'status' => '0',
     'label' => 'Publications By Type',
-    'type' => 'context_ui',
+    'cache' => BLOCK_CACHE_CONTENT_CACHE,
+    'cache_keys' => array(
+      'node' => array('biblio' => 'biblio'),
+      'og' => array('current' => 'current'),
+    ),
   );
 
   // Publication Years
@@ -450,10 +456,12 @@ function scholar_publications_vsite_widgets(){
     'module' => 'views',
     'delta' => 'publication_years-block_1',
     'weight' => 11,
-    'region' => false,
-    'status' => '0',
     'label' => 'Publications By Year',
-    'type' => 'context_ui',
+    'cache' => BLOCK_CACHE_CONTENT_CACHE,
+    'cache_keys' => array(
+      'node' => array('biblio' => 'biblio'),
+      'og' => array('current' => 'current'),
+    ),
   );
 
   // Publication Contributors
@@ -462,9 +470,12 @@ function scholar_publications_vsite_widgets(){
     'delta' => 'publication_contributors-block_1',
     'weight' => 11,
     'region' => false,
-    'status' => '0',
     'label' => 'Publications By Co-Author',
-    'type' => 'context_ui',
+    'cache' => BLOCK_CACHE_CONTENT_CACHE,
+    'cache_keys' => array(
+      'node' => array('biblio' => 'biblio'),
+      'og' => array('current' => 'current'),
+    ),
   );
   return $items;
 }
