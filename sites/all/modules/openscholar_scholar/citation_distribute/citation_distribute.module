@@ -98,6 +98,18 @@ function citation_distribute_citation_distribute_plugins(){
 		)
 	);
 	
+	$info['service_repec'] = array(
+		'type' => 'file',
+		'title' => 'RePEc',
+		'description' => 'RePEc',
+		'handler' => array(
+			'parent' => 'citation_distribute_service',
+			'class'  => 'citation_distribute_service_repec',
+			'file'   => 'citation_distribute_service_repec.inc',
+			'path' 	 => $path,
+		),
+	);
+	
 	return $info;
 }
 
@@ -160,7 +172,7 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
  * Implementation of hook_nodeapi()
  * Applies flag to node if it's being published to a CD repository
  */
-function citation_distribute_nodeapi(&$node, $op) {
+function citation_distribute_nodeapi(&$node, $op, $a3) {
 	switch ($op) {
 		
 		case 'insert':
@@ -185,6 +197,11 @@ function citation_distribute_nodeapi(&$node, $op) {
 				}
 			}
 			break;
+
+		case 'validate':
+			//repec and dash need to validate.  here or in validate hook?
+			break;
+			
 
 		case 'delete':
 			//clean up flags from deleted nodes
