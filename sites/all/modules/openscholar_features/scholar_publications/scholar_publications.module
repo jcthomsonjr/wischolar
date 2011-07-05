@@ -241,7 +241,7 @@ function scholar_publications_move_extras($form, &$form_state){
     return $form;
   }
 
-  $a_publication_extras = array('attachments','biblio_notes','biblio_abst_e_field','biblio_abst_e','body_field','biblio_url', 'field_biblio_image','field_biblio_extra');
+  $a_publication_extras = array('attachments','body_field','biblio_notes','biblio_abst_e_field','biblio_abst_e','biblio_url', 'field_biblio_image','field_biblio_extra');
 
   //Pub url in the main section for some biblio types
   if($form['#id'] == 'biblio_node_form' && in_array($form['biblio_type']['#default_value'], array(125, 113, 107))) unset($a_publication_extras[array_search('biblio_url',$a_publication_extras)]);
@@ -251,6 +251,7 @@ function scholar_publications_move_extras($form, &$form_state){
     if(array_key_exists($extra_field,$form)){
       $form['extra_fields_group'][$extra_field] = $form[$extra_field];
       $form['extra_fields_group'][$extra_field]['#weight'] = $n_count;
+      $form['extra_fields_group'][$extra_field]['#collapsed'] = false;
       unset($form[$extra_field]);
     }
   }
