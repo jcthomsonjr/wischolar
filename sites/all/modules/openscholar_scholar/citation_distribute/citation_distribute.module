@@ -1,5 +1,7 @@
 <?php 
 
+define('_CRON_LIMIT', 25);
+
 /**
  * Implementation of hook_ctools_plugin_api().
  */
@@ -387,16 +389,23 @@ function _plugins() {
  * for metadata nodes, this is meaningless, but updates their db status
  */
 function citation_distribute_cron() {
-	//in needs 'a','b','c'.  maybe implode can't handle it...  at least we can check titles
-	$plugins = implode(  ',', array_keys(_plugins())  );
-	$query = "SELECT nid,type FROM {citation_distribute} WHERE upd=1 AND type IN (  %s  ) LIMIT %d ";
-	$result = db_query($query, variable_get('citation_distribute_cron_limit', 10), $plugins);   //include admin page for this 
+	$plugins = _plugins();
 	
+	//filter out plugins with no title.  these are abstract plugins that won't have push methods
+	function has_title($p) {return (isset($p['title']) && count($p['title']) > 0); }
+	$plugins = array_filter($plugins, 'has_title');
+	
+	//wrap each str in quotes so we can implode them and pass them to mysql IN.
+	function enquote($s) {return '\'' . $s . '\'';}
+	$quoted = array_map( 'enquote', array_keys($plugins) );
+ 
+	$query = 'SELECT nid,type FROM {citation_distribute} WHERE upd=1 AND type IN ( ' . implode(',', $quoted) . ' ) LIMIT %d ';
+	$result = db_query($query, variable_get('citation_distribute_cron_limit', _CRON_LIMIT));   //include admin page for this 
+
 	while($res = db_fetch_object($result)) {
-		if (in_array($res->type, array_keys($plugins))) {  //only attempt plugins we have.  old plugins could leave entries in db, but be unprocable.
-			//however, if that happens they might block cron if they're hold the first 10 spots.  need this in query instead
+		if (in_array($res->type, array_keys($plugins))) {  //only attempt plugins we have.  old plugins could leave entries in db, but be unprocessableable.
 			_citation_distribute_distribute($res->nid, $res->type);
-			db_query ( "UPDATE {citation_distribute} SET upd = 1 , modified = now() WHERE nid = %d and type = '%s'", $res->nid, $res->type ); 
+			db_query ( "UPDATE {citation_distribute} SET upd = 0 , modified = now() WHERE nid = %d and type = '%s'", $res->nid, $res->type ); 
 		}
 	}
 }
