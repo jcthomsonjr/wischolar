@@ -10,6 +10,9 @@
 abstract class citation_distribute_service_sword extends citation_distribute_service {
 	public $packaging = 'http://purl.org/net/sword-types/METSDSpaceSIP';
 	
+	/**
+	 * Consctructor
+	 */
   public function __construct() {
   	parent::__construct();
   	
@@ -69,7 +72,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		try {
   		$packager->create();
 		} catch (Exception $e) {
-			drupal_set_message('sword_meta: ' . $e->getMessage(), 'error');
+			drupal_set_message('service_sword: ' . $e->getMessage(), 'error');
 		return false;	
 	}
 	

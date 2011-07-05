@@ -91,6 +91,14 @@ function citation_distribute_install(){
 function citation_distribute_uninstall(){
   //remove citation_distribute table
   drupal_uninstall_schema('citation_distribute');
-  //remove module mode system variable
-  variable_del('citation_distribute_module_mode');
+  
+  //remove autoflag variables
+  foreach( _plugins() as $plugin ) {																	
+		variable_del('citation_distribute_' . $plugin['name'] . '_auto_flag', false);
+  }
+  
+  //remove system variables
+  foreach( array('module_mode', 'cron_limit') as $var) {
+	  variable_del('citation_distribute_' . $var);
+  }
 }
