@@ -126,13 +126,15 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		  '#title' => t('Distribute this publication to the following academic repositories') 
 		);
 		
+		// List all plugins with a title
 		foreach( _plugins() as $plugin ) {
-			//check if enabled?  no need to use citation_distribute_service class (except for proof of concept)
-			//use correct title property, once plugins are implemented
 			$published = db_result( db_query( "SELECT nid from {citation_distribute} WHERE type = '%s' AND nid = %d", 
 																				$plugin['name'], $form['nid']['#value'] ));
-			
-			//$existing value comes from check disabled		
+																				
+			//Automatically mark distribution of plugins with autoflag enabled
+			$autoflag = variable_get('citation_distribute_' . $plugin['name'] . '_auto_flag', false);
+			$published = ($published || $autoflag);
+					
 			if (isset($plugin['title'])) {
 				$form['citation_distribute_selections'][$plugin['name']] = array(
 					'#type'=>'checkbox',
