@@ -18,6 +18,13 @@ function citation_distribute_menu() {
 }
 
 /**
+ * Implementation of hook_perm()
+ */
+function citation_distribute_perm() {
+	return array ('administer citation distribute' );
+}
+
+/**
  * Implementation of hook_ctools_plugin_api().
  */
 function citation_distribute_ctools_plugin_api($module, $api) {

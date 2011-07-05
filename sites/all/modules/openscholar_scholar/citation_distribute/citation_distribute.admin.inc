@@ -23,13 +23,28 @@ function citation_distribute_admin() {
 	      <br><strong>Per Submission mode (Recommended) </strong> will update or create a meta file whenever content submitted or updated.')
    );
    
-   /*
-   $form['citation_distribute']['citation_distribute_cron_limit'] = array(
-     '#type' => '',
-     not required.
-     only show up during batch mode.  use ahah to reveal this setting?
-   );
-   */
    
-   return $form;
+   $form['citation_distribute']['citation_distribute_cron_limit'] = array(
+     '#type' => 'textfield',
+   	 '#title' => 'Batch Size Limit',
+   	 '#description' => t('(Batch mode only) Limit how many publications can be submitted per cron run.'),
+   	 '#required' => FALSE,
+   	 '#default_value' => variable_get('citation_distribute_cron_limit', _CRON_LIMIT),
+     //only show up during batch mode.  use ahah to reveal this setting?
+   );
+   
+   
+   return system_settings_form($form);
 }
+
+/**
+ * implementation of form_validate
+ */
+function citation_distribute_admin_validate($form, &$form_state) {
+	if ((int)$form_state['values']['citation_distribute_cron_limit'] > 0) {
+		return;		
+	} else {
+		form_set_error('', t('Batch size limit must be a positive integer.'));
+	}
+}
+ 

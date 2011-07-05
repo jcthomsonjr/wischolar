@@ -148,7 +148,10 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		}
 
 		/* DEBUG: check the deposit status */
-		drupal_set_message($deposit->sac_statusmessage);//(string:79) Unacceptable content type in deposit request: application/x-www-form-urlencoded
+//		drupal_set_message($deposit->sac_statusmessage);//(string:79) Unacceptable content type in deposit request: application/x-www-form-urlencoded
+
+		if ($deposit->sac_status != 200) { dsm($deposit); } //TODO: make some less dev-ey error messages
+		
 		return true;
 	}
 	
