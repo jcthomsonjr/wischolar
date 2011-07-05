@@ -3,6 +3,21 @@
 define('_CRON_LIMIT', 25);
 
 /**
+ * Implementation of hook_menu
+ */
+function citation_distribute_menu() {
+	$items = array();
+	$items ['admin/settings/citation_distribute'] = array(
+		'title' => t ( 'Citation Distribute' ), 
+		'page callback' => 'drupal_get_form', 
+		'page arguments' => array ('citation_distribute_admin' ), 
+		'file' => 'citation_distribute.admin.inc', 
+		'access arguments' => array ('administer citation distribute' ) 
+	);
+	return $items;
+}
+
+/**
  * Implementation of hook_ctools_plugin_api().
  */
 function citation_distribute_ctools_plugin_api($module, $api) {
