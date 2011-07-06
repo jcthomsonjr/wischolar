@@ -38,14 +38,24 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 	 */
 	public function render($metadata) {
 		/* ensure we have a working directory or at least print some errors if we don't */
-		$root_dir = $this->root_in . '/' . $this->subdir_in;
+		$root_dir = $this->root_in . '/' . $this->subdir_in; //this should really be a new dir.  mktemp mayhaps
 		if (!is_dir($root_dir)) {
 			mkdir($root_dir, 0770, TRUE) || drupal_set_message('sword_meta: could not create deposit directory ' . $root_dir, 'error');
 		}
 			
 		/* include sword lib */
-		require_once(drupal_get_path('module', 'sword_meta') .	'/swordapp-php-library-1.0/packager_mets_swap.php');
+		require_once(drupal_get_path('module', 'citation_distribute') .	'/plugins/swordapp-php-library-1.0/packager_mets_swap.php');
 		$packager = new PackagerMetsSwap($this->root_in, $this->subdir_in, $this->root_out, $this->file_out);
+		
+		/* copy files from drupal to tmp dir */
+		$full_dir = dirname(__FILE__) . '/';
+		$mod_dir  = drupal_get_path('module', 'citation_distribute') . '/plugins';
+		$drupal_root = substr($full_dir, 0, -1*(1 + strlen($mod_dir)));
+		foreach ($metadata['File'] as $delta => $file) {
+			$filename = array_pop( explode('/', $file['filepath']) );
+			$cp = copy($drupal_root . $file['filepath'], $root_dir . '/'. $filename);
+			$metadata['File'][$delta]['filepath'] = $filename ;
+		}
 		
 		/* add metadata to mets xml */
 		foreach ($metadata as $name => $data) {
@@ -113,7 +123,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		/* Add each file as well */
 		foreach($node->files as $file) {
 	    $metadata['File'][] = array( 
-			 'filepath'=>url($file->filepath),  //TODO does mets want location or should file be included in teh zip?
+			 'filepath'=>$file->filepath,  //TODO does mets want location or should file be included in teh zip?
 			 'filemime'=>$file->filemime, 
 			);
 		}
@@ -156,7 +166,8 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		try {
 			$deposit = $sac->deposit($deposit_url, $this->username, $this->password, $this->obo, $file, $this->packaging, 'application/zip');
 		} catch(Exception $e) {
-			drupal_set_message('Deposit error: ' . $e->getMessage, 'error');
+			drupal_set_message('Deposit error: ' . $deposit . $e, 'error');
+			dsm($deposit);
 			return false;
 		}
 

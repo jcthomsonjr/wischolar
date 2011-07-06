@@ -152,7 +152,7 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 					'#type'=>'checkbox',
 					'#title' => t('@repos', array('@repos' => $plugin['title'])),
 					'#default_value' => (bool)$published,	
-					'#disabled' => (bool)$published, //published items can't be unpublished.  should we try to support unpublish where possible?
+					'#disabled' => false, //(bool)$published, //published items can't be unpublished.  should we try to support unpublish where possible?
 			  );
 			}
 		}
@@ -177,29 +177,18 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 	
 		switch ($op) {
 			
-			case 'presave':
-				//do unuploaded files show up in here yet?
-				//  updating a node: $node->files
-				//  new node: same
-				
-			break;
-				
-			
 			case 'insert':
 			case 'update':
-				//$submodules = cite_distribute_installed_mods ();
 				$returns = array();
 						
 				foreach( _plugins() as $plugin ) {
-				//foreach ( $submodules as $info ) {
-					if (  isset($node->{$plugin['name']}) && $node->{$plugin['name']}==1  ) {
-						$modules[] = $plugin['name']; // this array is only used for the returned message
-
-						//get the flag for this plugin
+					if (isset($node->{$plugin['name']})) {
 						$flag = flag_get_flag($plugin['name']);
-						
-						//set the flag for this node
-						$returns[$plugin->name] = $flag->flag('flag', $node->nid);
+						if ( $node->{$plugin['name']} ) {
+							$flag->flag('flag', $node->nid); //flag returns if the node was flagged.  my output never gets returned.
+						} else {
+							$flag->flag('unflag', $node->nid); //remove old flags 
+						}
 					}
 				}
 				if ($output = theme('citation_distribute_form_msg', $modules)) {
@@ -213,7 +202,6 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 				foreach (_plugins() as $plugin) {
 					if ( isset($node->$plugin['name']) && $node->$plugin['name'] )  {
 						if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
-							$service = new $class();
 							//validate!
 							if (method_exists($service, 'validate')) {
 								$error = $service->validate($a3);
@@ -229,7 +217,7 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 				//clean up flags from deleted nodes
 				foreach( _plugins() as $plugin ) {
 					$flag = flag_get_flag($plugin['name']);
-					$flag -> flag('unflag', (int)$node -> nid);
+					$flag->flag('unflag', (int)$node -> nid);
 				}
 			break;
 		}
@@ -247,10 +235,10 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 			switch($event) {
 				
 				case 'flag':
-					//cite_distribute_widget_process ( $module ['name'], $content_id );
-					_citation_distribute_update_db($plugin['name'], $nid);
+					_citation_distribute_update_db($plugin['name'], $nid); //another arg for status?
 					if (variable_get('citation_distribute_module_mode', '') == 'per_submission') { // for other cases, we'll have to make a cron job?  maybe an api call to push?
-						_citation_distribute_distribute($nid, $plugin['name']);
+						$dist_err = _citation_distribute_distribute($nid, $plugin['name']);
+						//if dist_err, un update?
 					}
 					break;
 					
@@ -326,8 +314,11 @@ function _citation_distribute_distribute($nid, $plugin_name) {
 	
 	if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
 		$service = new $class();
-		$service->save($nid, $plugin_name);
+		$out = $service->save($nid, $plugin_name);
 	}
+	//watchdog or log here.  $out gets lost when it hits flag
+	
+	return $out;
 }
 
 /* logs which nodes have been/need to be distributed */
@@ -468,7 +459,7 @@ function citation_distribute_cron() {
 
 	while($res = db_fetch_object($result)) {
 		if (in_array($res->type, array_keys($plugins))) {  //only attempt plugins we have.  old plugins could leave entries in db, but be unprocessableable.
-			_citation_distribute_distribute($res->nid, $res->type);
+			$dist_err = _citation_distribute_distribute($res->nid, $res->type); //where to dump errors?  maybe error determines upd?
 			db_query ( "UPDATE {citation_distribute} SET upd = 0 , modified = now() WHERE nid = %d and type = '%s'", $res->nid, $res->type ); 
 		}
 	}
