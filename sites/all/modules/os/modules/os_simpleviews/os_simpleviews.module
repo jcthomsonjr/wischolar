@@ -18,7 +18,7 @@
 function os_simpleviews_default_data(){
   return array(
     'filter' => 'all nodes',  // @todo get the current context and the node type(s) associated with it, make that the default
-    'style' => 'teasers', 
+    'style' => 'titles', 
     'sort' => 'newest', 
     'argument' => '' 
   );
@@ -109,7 +109,7 @@ function os_simpleviews_get_edit_form($simpleview = array()){
 function os_simpleviews_boxes_plugins(){
   $info = array();
   
-  $info['os_simpleviews_boxes_listing'] = array(
+  $info['listing'] = array(
     'title' => 'Listing',  // i.e. view
     'description' => 'List of posts', 
     'tags' => array(

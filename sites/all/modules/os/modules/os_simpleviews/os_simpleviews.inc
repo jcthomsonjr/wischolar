@@ -24,7 +24,8 @@
  */
 function _os_simpleviews_build_view($simpleview = array()) {
   $simpleview += os_simpleviews_default_data();
-  
+
+  views_include('view');
   // Now we'll set up the basic starting structure.
   $view = new view;
   $view->name = 'os_simpleview';
@@ -40,6 +41,7 @@ function _os_simpleviews_build_view($simpleview = array()) {
 
   $handler->override_option('use_pager', '1'); //@todo make it configurable
   
+  // the row style based on the style selected by the user (e.g. teaser, fields)
   _os_simpleviews_set_row_style($handler, $simpleview);
   
   _os_simpleviews_add_filter($handler, $simpleview);
@@ -264,6 +266,7 @@ function _os_simpleviews_add_sort(&$handler, $simpleview) {
 function _os_simpleviews_add_argument(&$handler, $simpleview) {
   $argument = $simpleview['argument'];
 
+  dpm($argument);
   if ($argument == 'author') {
     $handler->override_option('arguments', array(
       'uid' => array(
