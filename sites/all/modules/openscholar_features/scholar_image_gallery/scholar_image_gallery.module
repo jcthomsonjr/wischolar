@@ -43,9 +43,12 @@ function scholar_image_gallery_vsite_widgets(){
     'delta' => 'scholar_image_gallery-block_1',
     'weight' => 20,
     'region' => false,
-    'status' => '0',
     'label' => 'Recent images',
-    'type' => 'context_ui',
+    'cache' => BLOCK_CACHE_CONTENT_CACHE,
+    'cache_keys' => array(
+      'node' => array('gallery' => 'gallery', 'image' => 'image'),
+      'og' => array('current' => 'current'),
+    ),
   );
   return $items;
 }

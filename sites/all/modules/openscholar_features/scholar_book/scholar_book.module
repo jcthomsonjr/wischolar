@@ -364,10 +364,13 @@ function scholar_book_vsite_widgets(){
       'delta' => 'scholar_books-block_1',
       'weight' => 21,
       'region' => false,
-      'status' => '0',
       'label' => 'Recent Documents',
-      'type' => 'context_ui',
-      );
+		  'cache' => BLOCK_CACHE_CONTENT_CACHE,
+		  'cache_keys' => array(
+		    'node' => array('book' => 'book'),
+		    'og' => array('current' => 'current'),
+		  ),
+    );
   return $items;
 }
 

@@ -284,9 +284,12 @@ function scholar_biocv_vsite_widgets(){
         'delta' => 'bio_blurb',
         'weight' => 20,
         'region' => false,
-        'status' => '0',
         'label' => 'Bio Blurb',
-        'type' => 'context_ui',
+        'cache' => BLOCK_CACHE_CONTENT_CACHE,
+		    'cache_keys' => array(
+		      'node' => array('bio' => 'bio'),
+		      'og' => array('current' => 'current'),
+		    ),
       );
 
   return $items;

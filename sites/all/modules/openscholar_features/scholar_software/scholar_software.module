@@ -439,9 +439,12 @@ function scholar_software_vsite_widgets(){
         'delta' => 'scholar_software_releases-block_3',
         'weight' => 20,
         'region' => false,
-        'status' => '0',
         'label' => 'Recent Software Releases',
-        'type' => 'context_ui',
+        'cache' => BLOCK_CACHE_CONTENT_CACHE,
+        'cache_keys' => array(
+          'node' => array('scholar_software_project' => 'scholar_software_project', 'scholar_software_release' => 'scholar_software_release'),
+          'og' => array('current' => 'current'),
+        ),
       );
   return $items;
 }

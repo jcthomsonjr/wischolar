@@ -19,9 +19,12 @@ function scholar_presentations_vsite_widgets(){
         'delta' => 'scholar_presentations-block_1',
         'weight' => 10,
         'region' => false,
-        'status' => '0',
         'label' => 'Recent Presentations',
-        'type' => 'context_ui',
+        'cache' => BLOCK_CACHE_CONTENT_CACHE,
+		    'cache_keys' => array(
+		      'node' => array('presentation' => 'presentation'),
+		      'og' => array('current' => 'current'),
+		    ),
       );
 
       return $items;

@@ -59,10 +59,13 @@ function scholar_events_vsite_widgets(){
       'delta' => 'mini',
       'weight' => 20,
       'region' => false,
-      'status' => '0',
       'label' => 'Mini calendar',
-      'type' => 'context_ui',
-      );
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+        'node' => array('event' => 'event'),
+        'og' => array('current' => 'current'),
+      ),
+    );
       
 
       
@@ -74,7 +77,12 @@ function scholar_events_vsite_widgets(){
       'status' => '0',
       'label' => 'Upcoming events',
       'type' => 'context_ui',
-      );
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+        'node' => array('event' => 'event'),
+        'og' => array('current' => 'current'),
+      ),
+    );
   return $items;
 }
 

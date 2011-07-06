@@ -42,9 +42,12 @@ function scholar_reader_vsite_widgets(){
         'delta' => 'scholar_reader-block_1',
         'weight' => 20,
         'region' => false,
-        'status' => '0',
         'label' => 'List of Feeds',
-        'type' => 'context_ui',
+        'cache' => BLOCK_CACHE_CONTENT_CACHE,
+        'cache_keys' => array(
+          'node' => array('feed' => 'feed'),
+          'og' => array('current' => 'current'),
+        ),
       );
 
   $items['views-scholar_reader-block_2'] = array(
