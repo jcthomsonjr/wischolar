@@ -16,9 +16,18 @@ class citation_distribute_service_sword_dash extends citation_distribute_service
 	public $file_out =  'dash_files.zip';
 	public $obo  	   =  '';
 	
+	public function validate($a3) {
+		if (count($a3['#post']['files']) > 0) { // or body-> full text?
+			return;
+		} else {
+			return $this->title . ' requires the full text document be attached.';
+		} 
+		
+	}
 	// DASH has no interest in metadata only submissions.  Other sword repos may feel otherwise.
+	// $node->body is where biblio keeps full text of articles.  maybe that could be saved...
 	// service_sword should check
-	public $document_required = true;
+	//public $document_required = true;
 	
 	/******************* 
 	 * r. engel's list of minimum data:

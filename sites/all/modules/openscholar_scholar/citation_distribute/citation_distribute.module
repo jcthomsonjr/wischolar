@@ -173,12 +173,22 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
  * Applies flag to node if it's being published to a CD repository
  */
 function citation_distribute_nodeapi(&$node, $op, $a3) {
-	switch ($op) {
-		
-		case 'insert':
-		case 'update':
-			if ($node->type == 'biblio') {
+	if ($node->type == 'biblio') {
+	
+		switch ($op) {
+			
+			case 'presave':
+				//do unuploaded files show up in here yet?
+				//  updating a node: $node->files
+				//  new node: same
+				
+			break;
+				
+			
+			case 'insert':
+			case 'update':
 				//$submodules = cite_distribute_installed_mods ();
+				$returns = array();
 						
 				foreach( _plugins() as $plugin ) {
 				//foreach ( $submodules as $info ) {
@@ -189,27 +199,40 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 						$flag = flag_get_flag($plugin['name']);
 						
 						//set the flag for this node
-						$flag->flag('flag', $node->nid);
+						$returns[$plugin->name] = $flag->flag('flag', $node->nid);
 					}
 				}
 				if ($output = theme('citation_distribute_form_msg', $modules)) {
-					drupal_set_message(t($output)); //not necessarily!  Can we get output from flags?  
-				}
-			}
+					drupal_set_message(t($output)); //not necessarily!  Can we get output from flags?  hook_flag COULD return something from each calss...
+					//check returns[] values.  maybe unset some upds?
+				}			
 			break;
 
-		case 'validate':
-			//repec and dash need to validate.  here or in validate hook?
+			case 'validate':			
+				//repec and dash need to validate.  here or in validate hook?
+				foreach (_plugins() as $plugin) {
+					if ( isset($node->$plugin['name']) && $node->$plugin['name'] )  {
+						if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
+							$service = new $class();
+							//validate!
+							if (method_exists($service, 'validate')) {
+								$error = $service->validate($a3);
+								($error) && form_set_error('', $error);
+							}
+						}
+					}
+				}
 			break;
 			
 
-		case 'delete':
-			//clean up flags from deleted nodes
-			foreach( _plugins() as $plugin ) {
-				$flag = flag_get_flag($plugin['name']);
-				$flag -> flag('unflag', (int)$node -> nid);
-			}
+			case 'delete':
+				//clean up flags from deleted nodes
+				foreach( _plugins() as $plugin ) {
+					$flag = flag_get_flag($plugin['name']);
+					$flag -> flag('unflag', (int)$node -> nid);
+				}
 			break;
+		}
 	}
 }
 

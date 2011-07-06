@@ -103,10 +103,12 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		}
 		
 		/* Do we have/need files? */
+		/*
 		if (count($nod->files) == 0 && $this->document_required) {
 			drupal_set_message('Error: ' . $this->title . ' requires a document with each submission.  Please attach a PDF copy of the document you\'re trying to submit.', 'error');
 			return false;
 		}
+		*/
 		
 		/* Add each file as well */
 		foreach($node->files as $file) {
