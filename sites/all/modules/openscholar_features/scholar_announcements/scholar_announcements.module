@@ -21,9 +21,12 @@ function scholar_announcements_vsite_widgets(){
         'delta' => 'scholar_announcements-block_1',
         'weight' => -21,
         'region' => false,
-        'status' => '0',
         'label' => 'Latest Announcements',
-        'type' => 'context_ui',
+        'cache' => BLOCK_CACHE_CONTENT_CACHE,
+        'cache_keys' => array(
+          'node' => array('announcement' => 'announcement'),
+          'og' => array('current' => 'current'),
+        ),
       );
   return $items;
 }
