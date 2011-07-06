@@ -12,7 +12,7 @@ class os_simpleviews_boxes_listing extends os_boxes_default {
    * Implementation of boxes_content::options_defaults().
    */
   public function options_defaults() {
-    $options = simpleviews_get_edit_form();
+    $options = os_simpleviews_default_data();
     $options += parent::options_defaults();
 
 
