@@ -202,6 +202,7 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 				foreach (_plugins() as $plugin) {
 					if ( isset($node->$plugin['name']) && $node->$plugin['name'] )  {
 						if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
+							$service - new $class();
 							//validate!
 							if (method_exists($service, 'validate')) {
 								$error = $service->validate($a3);
