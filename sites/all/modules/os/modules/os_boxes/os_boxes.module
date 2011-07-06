@@ -34,17 +34,6 @@ function os_boxes_boxes_plugins() {
       'path' => drupal_get_path('module', 'boxes') .'/plugins',
     ),
   );
-  $info['os_boxes_list'] = array(
-    'title' => 'Listing',  // i.e. view
-    'description' => 'List of posts',
-    'tags' => array('Content'),  
-    'handler' => array(
-      'class' => 'os_boxes_list',
-      'file' => 'os_boxes_list.inc',
-      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
-      'parent' => 'os_boxes_default',
-    ),
-  );
   
   $info['os_boxes_feedreader'] = array(
     'title' => 'Feed Reader',  // i.e. view
