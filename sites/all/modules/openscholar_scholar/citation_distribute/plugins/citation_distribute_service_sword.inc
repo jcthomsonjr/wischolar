@@ -8,6 +8,11 @@
 //should there be a getlink function that can link a page to the corresponding dash article?
 
 abstract class citation_distribute_service_sword extends citation_distribute_service {
+	public $packaging = 'http://purl.org/net/sword-types/METSDSpaceSIP';
+	
+	/**
+	 * Consctructor
+	 */
   public function __construct() {
   	parent::__construct();
   	
@@ -67,7 +72,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		try {
   		$packager->create();
 		} catch (Exception $e) {
-			drupal_set_message('sword_meta: ' . $e->getMessage(), 'error');
+			drupal_set_message('service_sword: ' . $e->getMessage(), 'error');
 		return false;	
 	}
 	
@@ -95,6 +100,12 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 			foreach($node->biblio_contributors[$delta] as $contributor) {
 				$metadata['Creator'][] = $contributor['firstname'] . ' ' . $contributor['lastname'];
 			}
+		}
+		
+		/* Do we have/need files? */
+		if (count($nod->files) == 0 && $this->document_required) {
+			drupal_set_message('Error: ' . $this->title . ' requires a document with each submission.  Please attach a PDF copy of the document you\'re trying to submit.', 'error');
+			return false;
 		}
 		
 		/* Add each file as well */
@@ -141,14 +152,20 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		
 		/* attempt a deposit */
 		try {
-			$deposit = $sac->deposit($deposit_url, $this->username, $this->password, $this->obo, $file, '', 'application/zip');
+			$deposit = $sac->deposit($deposit_url, $this->username, $this->password, $this->obo, $file, $this->packaging, 'application/zip');
 		} catch(Exception $e) {
 			drupal_set_message('Deposit error: ' . $e->getMessage, 'error');
 			return false;
 		}
 
 		/* DEBUG: check the deposit status */
-		drupal_set_message($deposit->sac_statusmessage);//(string:79) Unacceptable content type in deposit request: application/x-www-form-urlencoded
+//		drupal_set_message($deposit->sac_statusmessage);//(string:79) Unacceptable content type in deposit request: application/x-www-form-urlencoded
+
+		if ($deposit->sac_status < 200 || $deposit->sac_status >= 300) { 
+			dsm($deposit); 
+			return false;
+		} //TODO: make some less dev-ey error messages
+		
 		return true;
 	}
 	

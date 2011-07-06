@@ -4,7 +4,6 @@ html, body {
 
   }
 
- div {clear:right;}
 
 #page {
   max-width: 1260px;
@@ -93,7 +92,7 @@ h2.title {
   }
 
 #sidebar-second {
-  margin-right: -180px
+  margin-right: -180px;
   margin-top: 10px;
   }
 
@@ -125,6 +124,14 @@ h2.title {
   border-radius: 3px;
   border: 1px solid #E5E5E4;
   }
+  
+#content-main .node:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
 
 /* HEADER ELEMENTS */
 
@@ -272,6 +279,7 @@ body.section-node-add #content,
 
 #content-main .node {
   border-bottom: 1px solid #e5e5e4;
+
   }
 
 #content h2.title,

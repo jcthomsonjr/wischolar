@@ -55,6 +55,14 @@ function biblio_style_apa($node, $base = 'biblio', $inline = FALSE) {
       $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
     }
   }
+  if (empty($authors) && count($node->biblio_contributors[2])) {// if we still have nothing, use editors
+    foreach ($node->biblio_contributors[2] as $rank => $author) {
+      $authors .= (empty($authors)) ? '' : ', ';
+      $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
+    }
+    $authors .= ' (Eds.).';
+    $editors_as_authors = true;
+  }
   //if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.
   if (!empty ($node->biblio_citekey)&&(variable_get('biblio_display_citation_key',0))) {
     $output .= '[' . check_plain($node->biblio_citekey) . '] ';
@@ -79,7 +87,7 @@ function biblio_style_apa($node, $base = 'biblio', $inline = FALSE) {
       $url = biblio_get_title_url_info($node, $base, $inline);
       $output .= l($node->title, $url['link'], $url['options']);
       $output .= ". </span> \n";
-      $output .= !empty ($node->biblio_contributors[2]) ? '(' . theme('biblio_authors', $node->biblio_contributors[2], 'apa', 2, $inline) . ', Ed.).' : "";
+      $output .= (!empty ($node->biblio_contributors[2]) && !$editors_as_authors) ? '(' . theme('biblio_authors', $node->biblio_contributors[2], 'apa', 2, $inline) . ', Ed.).' : "";
       $output .= ($node->biblio_secondary_title) ? '<u>' . check_plain($node->biblio_secondary_title) . '. ' : '<u>';
       $output .= ($node->biblio_volume) ? check_plain($node->biblio_volume) . ($node->biblio_issue ? '</u>(' . check_plain($node->biblio_issue) . '),&nbsp;' : ',</u> ') : '</u> ';
       //  $output .= ($node->biblio_issue) ? '('. check_plain($node->biblio_issue).')' :'';
