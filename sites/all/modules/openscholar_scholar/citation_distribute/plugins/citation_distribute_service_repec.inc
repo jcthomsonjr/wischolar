@@ -10,11 +10,12 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	public $title = 'RePEc';
 	public $inst_name = 'Jons repec test';
 	public $archive_code = 'qsh';
-	public $maintainer_name = 'Jon Sagotsky';
+	public $maintainer_name = 'Jon Sagotsky';	
 	public $maintainer_email = 'jsagotsky@iq.harvard.edu';
 	public $archive_path = '/tmp/citation_distribute/repec';
 	public $archive_url = 'http://repec.iq.harvard.edu';
 	public $provider_institution = 'RePEc:edi:cbrssus';  
+	public $provider_homepage = 'http://scholar.harvard.edu';
 	
 	//repec also needs to deal with index files
 	
@@ -291,8 +292,10 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		$type = $this->_map_biblio_type($bib_type);
 		$path = $this->archive_path . '/' . $this->archive_code . '/' . $type . '/';
 		
-		//create the path if necessary
-		(is_dir($path)) || mkdir($path, 0775, TRUE);
+		//create the path if necessary.  otherwise fail.  mkdir goes to logs, but users get generic failure message
+		if (!(is_dir($path)) || mkdir($path, 0775, TRUE)) {
+			return false;
+		}
 		
 		//name the file
 		$file = $type . '_' . $nid . '.rdf';
@@ -304,6 +307,56 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	
 	/* writes or checks on repec index file */
 	public function _index() {
-		return true;
+		//series file first
+		$series_name = array(
+			'sftwre' => 'Software',
+			'journl' => 'Journal Article',
+			'bookch' => 'Book Chapter',
+			'booktm' => 'Book',
+			'wpaper' => 'Working Paper',
+		);
+		
+		//only create a listing for series that have their own folder
+		//note that this means index should be run AFTER adding new rdfs.
+		$path = $this->archive_path . '/' . $this->archive_code . '/';
+		$all_series = array_intersect(scandir($path), array_keys($series_name));
+		
+		//generate series listing
+		$seri = '';
+		foreach ($all_series as $series) {
+			$sn = $series_name[$series];
+			
+			$seri .= 'Template-type: ReDIF-Series 1.0' . "\n";
+			$seri .= 'Name: ' . $this->inst_name . ' ' . $sn . ' Series' . "\n";
+			$seri .= 'Provider-Name: '. $this->inst_name . "\n";
+			$seri .= 'Provider-Homepage: ' . $this->provider_homepage . "\n";
+			$seri .= 'Provider-Institution:  ' . $this->provider_institution . "\n";
+			$seri .= 'Maintainer-Name: ' . $this->maintainer_name . "\n";
+			$seri .= 'Maintainer-Email: ' . $this->maintainer_email . "\n";
+			$seri .= 'Type: ReDIF-' . array_pop(explode(' ', $sn)) . "\n";    //only takes last word of series name...
+			$seri .= 'Handle: RePEc:' . $this->archive_code . ':' . $series . "\n";
+			$seri .= "\n";
+		}
+		
+		//write to series file
+		$file = $this->archive_code . 'seri.rdf';
+		$filename = $path . '/' . $file;
+		$series_out = file_put_contents($filename, $seri);
+		
+		//now for the arch file
+		$arch  = 'Template-type: ReDIF-Archive 1.0' . "\n";
+		$arch .= 'Handle: RePEc:' . $this->archive_code . "\n";
+		$arch .= 'Name: ' . $this->inst_name . "\n";
+		$arch .= 'Maintainer-Email: ' . $this->maintainer_email . "\n";
+		$arch .= 'Description: ' . $this->inst_name . "\n";
+		$arch .= 'URL: ' . $this->archive_url . "\n";
+		
+		//write
+		$file = $this->archive_code . 'arch.rdf';
+		$filename = $path . '/' . $file;
+		$arch_out = file_put_contents($filename, $arch);
+
+		//and done
+		return ($series_out && $arch_out);
 	}
 }
