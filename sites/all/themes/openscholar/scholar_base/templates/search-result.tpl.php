@@ -60,10 +60,12 @@
     if($web_site){
       print $web_site . ', ';
       }
-    print $info_split['type'] . ' - ' . $info_split['date'];
-    ?>
+    print $info_split['type'].' - Last Updated: '.$info_split['date']; ?>
 </dd>
 <dd class="snippet">
+  <?php if ($result['node']->type == 'event') : ?>
+  	Starts: <?php print date('F j, Y', strtotime($result['node']->field_date[0]['value'])); ?>
+  <?php endif; ?>
   <?php if ($snippet) : ?>
     <p class="search-snippet"><?php print $snippet; ?></p>
   <?php endif; ?>
