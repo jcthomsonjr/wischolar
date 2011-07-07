@@ -728,15 +728,10 @@ function _scholar_publications_add_owner_checkbox(&$form_element){
  * @return string
  */
 function _scholar_publications_pub_by_type_wgt(){
-	jquery_ui_add(array('ui.tabs'));
-	$vsite = vsite_get_vsite();
-
 	$view = views_get_view('publication_types');
   $view->execute('block_1');
   usort($view->result,"_scholar_publications_sort_type_by_numpubs");
   $types = array_slice($view->result,0,4);
-
-	$vsite = vsite_get_vsite();
 
 	$output = ""; $i = 0; $tabs = "<h3 class=\"title\">Recent Publications</h3><ul>";
 	foreach ($types as $type) {
