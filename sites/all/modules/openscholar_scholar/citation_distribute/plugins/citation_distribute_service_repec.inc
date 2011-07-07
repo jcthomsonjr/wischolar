@@ -7,6 +7,8 @@
 
 class citation_distribute_service_repec extends citation_distribute_service {
 	
+	public $title = 'RePEc';
+	
 	//repec also needs to deal with index files
 	
 	/**
@@ -132,7 +134,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	}
 	
 	/* Given a biblio type, return a repec label for it */
-	private function _map_biblio_type($type) {
+	public function _map_biblio_type($type) {
 		$types = array(
 			'booktm' => array('Book'),
 			'bookch' => array('Book Chapter'),
@@ -149,5 +151,28 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		
 		return false;
 	}
-}
 
+	/* validate  */
+	public function validate($a3) {
+		/* ensures that we have all required metadata and a working paper */
+		$tid = $a3['biblio_type']['#value'];
+		$type = db_result(db_query('SELECT name FROM {biblio_types} WHERE tid = %d ', $tid));
+		if ($this->_map_biblio_type($type) != 'wpaper') {
+			form_set_error('biblio_type', 'The Publication Type of submissions to ' . $this->title . ' must be working paper.');
+		}
+		
+		/* repec needs at least one author */
+		$has_author = false;
+		foreach ($a3['#post']['biblio_contributors'] as $bc) {
+			foreach ($bc as $author) {
+				if ( isset($author['name']) && strlen($author['name'])>0 ) {
+					$has_author = true;
+					break;
+				}
+			}
+		}
+		if (!$has_author) {
+			form_set_error('biblio_contributors', 'At least one author is required for ' . $this->title . ' distribtuion');
+		}
+	}
+}
