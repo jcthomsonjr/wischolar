@@ -12,7 +12,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	public $archive_code = 'qsh';
 	public $maintainer_name = 'Jon Sagotsky';
 	public $maintainer_email = 'jsagotsky@iq.harvard.edu';
-	public $archive_path = '/tmp/cite_distribute/repec';
+	public $archive_path = '/tmp/citation_distribute/repec';
 	public $archive_url = 'http://repec.iq.harvard.edu';
 	public $provider_institution = 'RePEc:edi:cbrssus';  
 	
@@ -24,9 +24,11 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	public function save($nid, $plugin){
 		$metadata = $this->map_metadata($nid);
 		$out = $this->render($metadata);
-		$this->save($nid, $plugin);
-		
+		$rdf_file = $this->_write($out, $nid); 		
 		//don't forget index files!
+		
+		$index_file = $this->_index();
+		return ($rdf_file && $index_file);
 	}
 	
 	/**
@@ -77,6 +79,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 						break;
 						
 						case 'biblio_keywords':
+							$out[$repec] = $node->{$biblio};
 						break;
 					}
 	  		}
@@ -91,15 +94,23 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	 * Themes data into format appropriate for this service
 	 */
 	public function render($metadata){
-		//save metadata to file
+		//Copy from array to string of 'key: value' format
 		$out = '';
 		foreach ($metadata as $key => $value) {
 			if (is_string($value)) {
-				$out .= $key . ': ' . strip_tags($value) . '\n';
+				$out .= $key . ': ' . trim(strip_tags($value)) . "\n";
 			} elseif (is_array($value)) {
 				foreach ($value as $subvalue) {
-					$out .= $key . ': ' . strip_tags($subvalue) . '\n';
+					$out .= $key . ': ' . trim(strip_tags($subvalue)) . "\n";
 				}
+			}
+		}
+		
+		//Publications published by someone else need the publication-status field
+		foreach (array('Publisher', 'Journal', 'Provider-Name') as $external_pub) {
+			if (isset($metadata[$external_pub])) {
+				$out .=  'Publication-Status: Published in ' . $metadata[$external_pub];
+				break;
 			}
 		}
 				
@@ -270,5 +281,29 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		if (!$has_author) {
 			form_set_error('biblio_contributors', 'At least one author is required for ' . $this->title . ' distribtuion');
 		}
+	}
+	
+	/* _write() saves rdf metadata to disk */
+	public function _write($data, $nid) {
+		//get the archive path
+		$node = node_load($nid);
+		$bib_type = db_result(db_query('SELECT name FROM {biblio_types} WHERE tid = %d ', $node->biblio_type));
+		$type = $this->_map_biblio_type($bib_type);
+		$path = $this->archive_path . '/' . $this->archive_code . '/' . $type . '/';
+		
+		//create the path if necessary
+		(is_dir($path)) || mkdir($path, 0775, TRUE);
+		
+		//name the file
+		$file = $type . '_' . $nid . '.rdf';
+		$filename = $path . '/' . $file;
+		
+		//write it and return the status
+		return file_put_contents($filename, $data);
+	}
+	
+	/* writes or checks on repec index file */
+	public function _index() {
+		return true;
 	}
 }

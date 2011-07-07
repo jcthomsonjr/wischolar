@@ -315,7 +315,11 @@ function _citation_distribute_distribute($nid, $plugin_name) {
 		$service = new $class();
 		$out = $service->save($nid, $plugin_name);
 	}
-	//watchdog or log here.  $out gets lost when it hits flag
+	
+	//Failed to send.  Tell user (also write logs for admins and change upd in db?)
+	if (!$out) {
+		drupal_set_message('Error sending document to ' . $plugin_name, 'error');
+	}
 	
 	return $out;
 }
