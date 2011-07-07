@@ -178,9 +178,7 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 		switch ($op) {
 			
 			case 'insert':
-			case 'update':
-				$returns = array();
-						
+			case 'update':					
 				foreach( _plugins() as $plugin ) {
 					if (isset($node->{$plugin['name']})) {
 						$flag = flag_get_flag($plugin['name']);
@@ -244,7 +242,7 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 					break;
 					
 				case 'unflag':
-					_citation_distribute_removefrom_db($plugin['name'], $nid);
+					_citation_distribute_removefrom_db($plugin['name'], $nid); //should mark as removed.  autoflag shouldn't override a flag that has been removed already.
 					//check if service has a recall/delete option
 					//easy for repec.  maybe possible for sword.  unlisting works fine for google
 					break;
