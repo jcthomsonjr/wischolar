@@ -27,7 +27,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 	 */
 	public function save($nid, $plugin) {
 		$metadata = $this->map_metadata($nid);
-		$out = $this->render($metadata);
+		$out = $this->render($metadata, $nid);
 		$saved = $this->_push($out);
 		
 		return $saved;
@@ -37,10 +37,12 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 	 * Implementation of citation_distribute_service::render()
 	 */
 	public function render($metadata) {
+		$nid = func_get_arg(1);
+		
 		/* ensure we have a working directory or at least print some errors if we don't */
-		$root_dir = $this->root_in . '/' . $this->subdir_in; //this should really be a new dir.  mktemp mayhaps
+		$root_dir = $this->root_in . '/' . $this->subdir_in . '/' . $nid;
 		if (!is_dir($root_dir)) {
-			mkdir($root_dir, 0770, TRUE) || drupal_set_message('sword_meta: could not create deposit directory ' . $root_dir, 'error');
+			mkdir($root_dir, 0770, TRUE) || drupal_set_message('citation_distribute: could not create deposit directory ' . $root_dir, 'error');
 		}
 			
 		/* include sword lib */
@@ -112,14 +114,6 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 			}
 		}
 		
-		/* Do we have/need files? */
-		/*
-		if (count($nod->files) == 0 && $this->document_required) {
-			drupal_set_message('Error: ' . $this->title . ' requires a document with each submission.  Please attach a PDF copy of the document you\'re trying to submit.', 'error');
-			return false;
-		}
-		*/
-		
 		/* Add each file as well */
 		foreach($node->files as $file) {
 	    $metadata['File'][] = array( 
@@ -139,7 +133,6 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 	  'DateAvailable' => '',
 	  'StatusStatement' => '',
 	  'CopyrightHolder' => '',
-	  'Citation' => '',
 	  */ 
 		
 		return $metadata;
@@ -195,7 +188,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 				$sac_doc = $sac->servicedocument($service_url, $dest->username, $dest->password, '');
 				//only break if we're still unauthorized.  otherwise check other cases
 				if ($sac_doc->sac_status == 401) {
-					drupal_set_error('Couldn\'t log in to SWORD server.', 'error');
+					drupal_set_message('Couldn\'t log in to SWORD server.', 'error');
 					return false;
 				}
 			case 200:
@@ -203,7 +196,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 				break;
 			default:
 				//other, nonspecific error
-				drupal_set_error('Error connecting to sword server', 'error');
+				drupal_set_message('Error connecting to sword server', 'error');
 				return false;
 		}
 		
