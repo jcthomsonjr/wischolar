@@ -18,15 +18,18 @@ Drupal.behaviors.confirm_popup = function () {
 	links_t.each(function (i, item) {
 	  // add in the necessary path bits and classes
       if (item.className.indexOf("ctools-use-dialog") == -1) {
-    	if(item.href.indexOf(Drupal.settings.confirm_popup.base_domain) != -1){
-    	  item.href = item.href.replace(Drupal.settings.confirm_popup.base_domain+path, Drupal.settings.confirm_popup.base_domain+path+"confirm_popup/nojs/");
-    	}else if(item.href.indexOf("http:") != -1){ 
-	      if(path == "/"){
+    	if (item.href.indexOf(Drupal.settings.confirm_popup.base_domain) != -1){
+    	  var base_path = Drupal.settings.confirm_popup.base_domain+'/'+path;
+    	  item.href = item.href.replace(base_path, base_path+"confirm_popup/nojs/");
+    	}
+    	else if (item.href.indexOf("http:") != -1) { 
+	      if (path == "/") {
 	        item.href = "confirm_popup/nojs/"+item.href;
-	      }else{
-	    	  item.href = item.href.replace(path, path+"confirm_popup/nojs/");
 	      }
     	}
+    	else {
+    	  item.href = item.href.replace(path, path+"confirm_popup/nojs/");
+        }
         item.className += " ctools-use-dialog ctools-modal-confirm-popup-modal";
 	  }
 	});

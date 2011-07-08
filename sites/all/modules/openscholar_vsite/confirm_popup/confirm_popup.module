@@ -190,7 +190,7 @@ function confirm_popup_submit($form, &$form_state) {
 function _confirm_popup_modal_settings() {
   $vsite = vsite_get_vsite();
 
-  $s_base_path = $GLOBALS['base_path'];
+  $s_base_path = '';//$GLOBALS['base_path'];
   if($vsite->purl_provider == "spaces_og"){
     $s_base_path .= $vsite->group->purl."/";
   }
