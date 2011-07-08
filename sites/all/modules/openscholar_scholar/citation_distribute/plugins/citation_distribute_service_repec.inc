@@ -23,12 +23,15 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	 * Distributes a node to chosen service(s)
 	 */
 	public function save($nid, $plugin){
+		//rdf file for this node
 		$metadata = $this->map_metadata($nid);
 		$out = $this->render($metadata);
 		$rdf_file = $this->_write($out, $nid); 		
-		//don't forget index files!
 		
+		//index listing all nodes
 		$index_file = $this->_index();
+		
+		//were index and rdf both successful
 		return ($rdf_file && $index_file);
 	}
 	
@@ -82,7 +85,20 @@ class citation_distribute_service_repec extends citation_distribute_service {
 						case 'biblio_keywords':
 							$out[$repec] = $node->{$biblio};
 						break;
+						
+
 					}
+	  		}
+	  	} else {
+	  		//$node->{$biblio} is not set.  this must be another exception
+	  		switch ($biblio) {
+  				//manipulate a string value before including it:
+					case '{biblio_date}':
+						$date = ($node->biblio_date) ? $node->biblio_date :  $node->biblio_year;
+						//strtotime interprets '1957' as an hour not a year.  prepend 4 digit dates with a month and day.  bib_date is sometimes YYYY too, so we're doing this everywhere.
+						$date = preg_replace( '/^(\d\d\d\d)$/', '01-01-$1', $date);
+						$out[$repec] = date('Y-m', strtotime($date)); //yyyy-mm					
+					break;
 	  		}
 	  	}
 	  }
@@ -223,7 +239,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 				'biblio_abst_e' => 'Abstract',
 				'biblio_keywords' => 'Keywords',
 				'biblio_pages' => 'Length',
-				'biblio_date' => 'Creation-Date',
+				'{biblio_date}' => 'Creation-Date',  //format the date before including it.
 				'' => 'Revision-Date',
 				'' => 'Publication-Status',
 				'' => 'Number',
@@ -284,6 +300,11 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		}
 	}
 	
+	/* remove() when a node is unflagged, delete its rdf file */
+	public function remove($nid) {
+		
+	}
+	
 	/* _write() saves rdf metadata to disk */
 	public function _write($data, $nid) {
 		//get the archive path
@@ -305,7 +326,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		return file_put_contents($filename, $data);
 	}
 	
-	/* writes or checks on repec index file */
+	/* writes repec index file */
 	public function _index() {
 		//series file first
 		$series_name = array(
