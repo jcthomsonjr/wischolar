@@ -86,7 +86,6 @@ class citation_distribute_service_repec extends citation_distribute_service {
 							$out[$repec] = $node->{$biblio};
 						break;
 						
-
 					}
 	  		}
 	  	} else {
@@ -302,27 +301,46 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	
 	/* remove() when a node is unflagged, delete its rdf file */
 	public function remove($nid) {
-		
+		$file = $this->_repec_path() . $this->_nid_to_type($nid) . '/' . $this->_file_name($nid);
+		return unlink($file);
+	}
+	
+	/*
+	 * _repec_path()
+	 * shortcut function for generating path to repec archive
+	 */
+	public function _repec_path() {
+		return $this->archive_path . '/' . $this->archive_code . '/';
+	}
+	
+	/*
+	 * _nid_to_type($nid)
+	 * shortcut function for deriving a repec type from a nid
+	 */
+	public function _nid_to_type($nid) {
+		$query =  'SELECT type.name FROM {biblio} bib INNER JOIN {biblio_types} type ON bib.biblio_type = type.tid WHERE nid = %d ';
+		$bib_type = db_result(db_query($query, $nid));
+		return $this->_map_biblio_type($bib_type);		
+	}
+	
+	/*
+	 * _file_name($nid)
+	 * shortcut function for getting a file name from a nid
+	 */
+	public function _file_name($nid) {
+		return $this->_nid_to_type($nid) . '_' . $nid . '.rdf';
 	}
 	
 	/* _write() saves rdf metadata to disk */
 	public function _write($data, $nid) {
-		//get the archive path
-		$node = node_load($nid);
-		$bib_type = db_result(db_query('SELECT name FROM {biblio_types} WHERE tid = %d ', $node->biblio_type));
-		$type = $this->_map_biblio_type($bib_type);
-		$path = $this->archive_path . '/' . $this->archive_code . '/' . $type . '/';
+		$path = $this->_repec_path() . $this->_nid_to_type($nid) . '/';
 		
 		//create the path if necessary.  otherwise fail.  mkdir goes to logs, but users get generic failure message
 		if (!(is_dir($path)) || mkdir($path, 0775, TRUE)) {
 			return false;
 		}
 		
-		//name the file
-		$file = $type . '_' . $nid . '.rdf';
-		$filename = $path . '/' . $file;
-		
-		//write it and return the status
+		$filename = $path . $this->_file_name($nid);
 		return file_put_contents($filename, $data);
 	}
 	
@@ -339,7 +357,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		
 		//only create a listing for series that have their own folder
 		//note that this means index should be run AFTER adding new rdfs.
-		$path = $this->archive_path . '/' . $this->archive_code . '/';
+		$path = $this->_repec_path();
 		$all_series = array_intersect(scandir($path), array_keys($series_name));
 		
 		//generate series listing
