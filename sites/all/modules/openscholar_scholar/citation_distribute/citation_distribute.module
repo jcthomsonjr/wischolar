@@ -243,8 +243,15 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 					
 				case 'unflag':
 					_citation_distribute_removefrom_db($plugin['name'], $nid); //should mark as removed.  autoflag shouldn't override a flag that has been removed already.
-					//check if service has a recall/delete option
-					//easy for repec.  maybe possible for sword.  unlisting works fine for google
+//should this depend on per submission??
+					//run plugin->remove() function if available
+					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
+						$service = new $class();
+						if (method_exists($service, 'remove')) {
+							$removed = $service->remove($nid);
+							($removed) && drupal_set_message('Publication has been removed from ' . $plugin['name']);
+						}
+					}
 					break;
 			}
 		}
