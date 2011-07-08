@@ -8,13 +8,6 @@ function os_wysiwyg_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'allowed_html_1';
-  $strongarm->value = '<div> <span> <br> <a> <em> <strong> <cite> <code> <strike> <ul> <ol> <li> <dl> <dt> <dd> <img> <blockquote> <p> <h1> <h2> <h3> <h4> <h5> <h6> <table> <caption> <thead> <th> <td> <tr> <sup> <sub> <object> <embed> <script>';
-
-  $export['allowed_html_1'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'embedfilter_filtertip';
   $strongarm->value = 'You can use &lt;object>, &lt;embed> and &lt;script> tags from the following sites to add media to your posts. You must disable the rich text editor for this to work.';
 
@@ -66,7 +59,7 @@ mtvnservices.com';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'format';
-  $strongarm->value = '2';
+  $strongarm->value = '1';
 
   $export['format'] = $strongarm;
   $strongarm = new stdClass;
@@ -97,5 +90,76 @@ mtvnservices.com';
   $strongarm->value = '440';
 
   $export['oembed_maxwidth_2'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_valid_elements_parsed_1';
+  $strongarm->value = array(
+    'a' => array(
+      'href' => array(
+        'required' => TRUE,
+      ),
+      'target' => array(
+        'values' => array(
+          0 => '_blank',
+        ),
+      ),
+      'title' => array(),
+    ),
+    'blockquote' => array(),
+    'br' => array(),
+    'cite' => array(),
+    'code' => array(),
+    'dd' => array(),
+    'div' => array(
+      'align' => array(
+        'values' => array(
+          0 => 'center',
+          1 => 'justify',
+          2 => 'left',
+          3 => 'right',
+        ),
+      ),
+    ),
+    'dl' => array(),
+    'dt' => array(),
+    'em' => array(),
+    'embed' => array(),
+    'img' => array(
+      'src' => array(
+        'required' => TRUE,
+      ),
+    ),
+    'li' => array(),
+    'object' => array(),
+    'ol' => array(),
+    'p' => array(
+      'align' => array(
+        'values' => array(
+          0 => 'center',
+          1 => 'justify',
+          2 => 'left',
+          3 => 'right',
+        ),
+      ),
+    ),
+    'param' => array(),
+    'script' => array(),
+    'span' => array(),
+    'strong' => array(),
+    'ul' => array(),
+  );
+
+  $export['wysiwyg_filter_valid_elements_parsed_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_valid_elements_raw_1';
+  $strongarm->value = 'a[!href|target<_blank|title],
+div[align<center?justify?left?right],
+p[align<center?justify?left?right],
+br,span,em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed,object,param,script';
+
+  $export['wysiwyg_filter_valid_elements_raw_1'] = $strongarm;
   return $export;
 }
