@@ -115,6 +115,14 @@ function shorten_admin($form_state) {
     '#size' => 11,
     '#default_value' => variable_get('shorten_cache_duration', 1814400),
   );
+  $form['shorten_cache_fail_duration'] = array(
+  	'#type' => 'textfield',
+  	'#field_prefix' => t('On failure, cache full URLs for') . ' ',
+  	'#field_suffix' => ' ' . t('seconds'),
+  	'#description' => t('When a shortener service is unavilable, the full URL will be cached temporarily to prevent more requests from overloading the server.  How long should these URLs be cached?  (Default is 30 minutes)'),
+  	'#size' => 11,
+  	'#default_value' => variable_get('shorten_cache_fail_duration', 1800),
+  );
   unset($services['none']);
   $form['shorten_invisible_services'] = array(
     '#type' => 'checkboxes',
