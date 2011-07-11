@@ -154,6 +154,7 @@ projects[schema][version] = "1.7"
 
 projects[shorten][subdir] = "contrib"
 projects[shorten][version] = "1.11"
+projects[shorten][patch][] = "http://drupal.org/files/issues/full_url_cache_duration-1215550-1.patch"
 
 projects[stringoverrides][subdir] = "contrib"
 projects[stringoverrides][version] = "1.8"

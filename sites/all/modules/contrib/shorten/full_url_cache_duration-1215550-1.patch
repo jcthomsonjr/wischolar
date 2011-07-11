@@ -1,0 +1,41 @@
+diff --git a/shorten.admin.inc b/shorten.admin.inc
+index 4790d52..9b4fb44 100644
+--- a/shorten.admin.inc
++++ b/shorten.admin.inc
+@@ -115,6 +115,14 @@ function shorten_admin($form_state) {
+     '#size' => 11,
+     '#default_value' => variable_get('shorten_cache_duration', 1814400),
+   );
++  $form['shorten_cache_fail_duration'] = array(
++  	'#type' => 'textfield',
++  	'#field_prefix' => t('On failure, cache full URLs for') . ' ',
++  	'#field_suffix' => ' ' . t('seconds'),
++  	'#description' => t('When a shortener service is unavilable, the full URL will be cached temporarily to prevent more requests from overloading the server.  How long should these URLs be cached?  (Default is 30 minutes)'),
++  	'#size' => 11,
++  	'#default_value' => variable_get('shorten_cache_fail_duration', 1800),
++  );
+   unset($services['none']);
+   $form['shorten_invisible_services'] = array(
+     '#type' => 'checkboxes',
+diff --git a/shorten.module b/shorten.module
+index 965a21d..588440d 100644
+--- a/shorten.module
++++ b/shorten.module
+@@ -129,7 +129,7 @@ function shorten_url($original = '', $service = '') {
+     $service = variable_get('shorten_service', 'is.gd');
+   }
+   $cached = cache_get($original, 'cache_shorten');
+-  if (!empty($cached->data)) {
++  if (!empty($cached->data) && (time() < $cached->expire)) {
+     return $cached->data;
+   }
+   $services = module_invoke_all('shorten_service');
+@@ -166,7 +166,7 @@ function shorten_url($original = '', $service = '') {
+   $cache_duration = variable_get('shorten_cache_duration', 1814400);
+   //Only cache failed retrievals for 30 minutes.
+   if ($url == $original) {
+-    $expire = time() + 1800;
++    $expire = time() + variable_get('shorten_cache_fail_duration', 1800);
+   }
+   elseif (is_numeric($cache_duration)) {
+     $expire = time() + $cache_duration;

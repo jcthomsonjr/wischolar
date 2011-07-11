@@ -181,6 +181,13 @@ function iqss_scholar_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'shorten_cache_fail_duration';
+  $strongarm->value = '300';
+  $export['shorten_cache_fail_duration'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'shorten_service';
   $strongarm->value = 'j.mp';
   $export['shorten_service'] = $strongarm;
