@@ -7,15 +7,26 @@
 
 class citation_distribute_service_repec extends citation_distribute_service {
 	
-	public $title = 'RePEc';
-	public $inst_name = 'Jons repec test';
-	public $archive_code = 'qsh';
-	public $maintainer_name = 'Jon Sagotsky';	
-	public $maintainer_email = 'jsagotsky@iq.harvard.edu';
-	public $archive_path = '/tmp/citation_distribute/repec';
-	public $archive_url = 'http://repec.iq.harvard.edu/RePEc/qsh';
-	public $provider_institution = 'RePEc:edi:cbrssus';  
-	public $provider_homepage = 'http://scholar.harvard.edu';
+	public $title , $inst_name , $archive_code , $maintainer_name , $maintainer_email , $archive_path , $archive_url , $provider_institution , $provider_homepage;
+	
+	/**
+	 * Constructor
+	 * member variables are in flux for a little while until a control panel is created.  
+	 * for now, we can still refer to them with $this, but they are coming from system vars.
+	 */
+  public function __construct() {
+  	parent::__construct();
+  	
+  	$this->title = variable_get('citation_distribute_service_repec_title', '');
+  	$this->inst_name = variable_get('citation_distribute_service_repec_inst_name', '');
+  	$this->archive_code = variable_get('citation_distribute_service_repec_archive_code', '');
+  	$this->maintainer_name = variable_get('citation_distribute_service_repec_maintainer_name', '');
+  	$this->maintainer_email = variable_get('citation_distribute_service_repec_maintainer_email', '');
+  	$this->archive_path = variable_get('citation_distribute_service_repec_archive_path', '');
+  	$this->archive_url = variable_get('citation_distribute_service_repec_archive_url', '');
+  	$this->provider_institution = variable_get('citation_distribute_service_repec_provider_institution', '');
+  	$this->provider_homepage = variable_get('citation_distribute_service_repec_provider_homepage', '');
+  }
 		
 	/**
 	 * Distributes a node to chosen service(s)
@@ -288,7 +299,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		$path = $this->_repec_path() . $this->_nid_to_type($nid) . '/';
 		
 		//create the path if necessary.  otherwise fail.  mkdir goes to logs, but users get generic failure message
-		if (!(is_dir($path)) || mkdir($path, 0775, TRUE)) {
+		if (!( is_dir($path) || mkdir($path, 0775, TRUE) )) {
 			return false;
 		}
 		
