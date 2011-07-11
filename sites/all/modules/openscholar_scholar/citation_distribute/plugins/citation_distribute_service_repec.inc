@@ -13,12 +13,10 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	public $maintainer_name = 'Jon Sagotsky';	
 	public $maintainer_email = 'jsagotsky@iq.harvard.edu';
 	public $archive_path = '/tmp/citation_distribute/repec';
-	public $archive_url = 'http://repec.iq.harvard.edu';
+	public $archive_url = 'http://repec.iq.harvard.edu/RePEc/qsh';
 	public $provider_institution = 'RePEc:edi:cbrssus';  
 	public $provider_homepage = 'http://scholar.harvard.edu';
-	
-	//repec also needs to deal with index files
-	
+		
 	/**
 	 * Distributes a node to chosen service(s)
 	 */
@@ -40,10 +38,9 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	 */
 	public function map_metadata($nid){
 		$node = node_load($nid);
-		$bib_type = db_result(db_query('SELECT name FROM {biblio_types} WHERE tid = %d ', $node->biblio_type));
-		$type = $this->_map_biblio_type($bib_type);
+		$type = $this->_nid_to_type($nid);
 	  $out = array();
-		$out['Handle'] = 'RePEc:' . $this->archive_code . ':' . $this->_get_template_type($type) . ':' .  $nid; 
+		$out['Handle'] = 'RePEc:' . $this->archive_code . ':' . $type . ':' .  $nid; 
 	   
 		//get node's URL
   	$path = 'node/'. $nid;  //using $node->nid notation here because pathauto changes URL when title changes		
@@ -53,7 +50,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	  }
 	  elseif(module_exists('vsite') && (count($node->og_groups) > 1)){
 	    //this should not happen
-	    error_log("Alert: repec_meta has detected that node {$node->nid} belongs to multiple groups");
+	    error_log("Alert: citation_distribute_service_repec has detected that node {$node->nid} belongs to multiple groups");
 	    $vsite = vsite_get_vsite();    
 	    $file_url = ( $vsite ) ? $vsite->get_absolute_url() . $path : '';
 	  }
@@ -157,46 +154,28 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		$map = array(
 			'booktm' => array(
 				'biblio_contributors' => 'Editor-Name',
-				'' => 'Editor-Email',
-				'' => 'Editor-Workplace-Name',
 				'title' => 'Title',
 				'biblio_publisher' => 'Provider-Name',
 				'biblio_abst_e' => 'Abstract',
 				'biblio_keywords' => 'Keywords',
-				'' => 'HasChapter',
 				'biblio_volume' => 'Volume',
 				'biblio_edition' => 'Edition',
 				'biblio_year' => 'Year',
-				'' => 'Month',
-				'' => 'Classification-JEL',
-				'' => 'File-URL',
-				'' => 'File-Format',
-				'' => 'Handle',
 			),
 			'bookch' => array(
 				'biblio_contributors' => 'Author-Name',
-				'' => 'Author-Email',
-				'' => 'Author-Workplace-Name',
-				'title' => 'Title',
+  			'title' => 'Title',
 				'biblio_abst_e' => 'Abstract',
 				'biblio_keywords' => 'Keywords',
-				'' => 'In-Book',
 				'biblio_pages' => 'Pages',
 				'biblio_volume' => 'Volume',
 				'biblio_section' => 'Chapter',
 				'biblio_edition' => 'Edition',
 				'biblio_year' => 'Year',
-				'' => 'Month',
-				'' => 'Classification-JEL',
-				'' => 'File-URL',
-				'' => 'File-Format',
-				'' => 'Handle',
 				'biblio_publisher' => 'Publisher',
 			),
 			'journl' => array(
 				'biblio_contributors' => 'Author-Name',
-				'' => 'Author-Email',
-				'' => 'Author-Workplace-Name',
 				'title' => 'Title',
 				'biblio_abst_e' => 'Abstract',
 				'biblio_keywords' => 'Keywords',
@@ -205,48 +184,21 @@ class citation_distribute_service_repec extends citation_distribute_service {
 				'biblio_volume' => 'Volume',
 				'biblio_issue' => 'Issue',
 				'biblio_year' => 'Year',
-				'' => 'Month',
-				'' => 'Classification-JEL',
-				'' => 'File-URL',
-				'' => 'File-Format',
-				'' => 'Handle',
 			),
 			'sftwre' => array(
 				'biblio_contributors' => 'Author-Name',
-				'' => 'Author-WorkPlace-Name',
-				'' => 'Author-Email',
 				'title' => 'Title',
-				'' => 'Programming-Language',
 				'biblio_tertiary_title' => 'Series',
-				'' => 'Creation-Date',
 				'biblio_pages' => 'Length',
-				'' => 'Number',
-				'' => 'Classification-JEL',
-				'' => 'File-URL',
-				'' => 'File-Format',
-				'' => 'File-Function',
-				'' => 'Handle',
 				'biblio_publisher' => 'Publisher',
 			),
 			'wpaper' => array(
-				'biblio_contributors' => 'Author-Name',
-				'' => 'Author-X-Name-First',
-				'' => 'Author-X-Name-Last',
-				'' => 'Author-Email',
-				'' => 'Author-Workplace-Name',
-				'title' => 'Title',
+				'biblio_contributors' => 'Author-Name',  //mandatory
+				'title' => 'Title',											//mandatory
 				'biblio_abst_e' => 'Abstract',
 				'biblio_keywords' => 'Keywords',
 				'biblio_pages' => 'Length',
 				'{biblio_date}' => 'Creation-Date',  //format the date before including it.
-				'' => 'Revision-Date',
-				'' => 'Publication-Status',
-				'' => 'Number',
-				'' => 'Classification-JEL',
-				'' => 'File-URL',
-				'' => 'File-Format',
-				'' => 'File-Function',
-				'' => 'Handle',
 				'biblio_publisher' => 'Publisher',
 			),
 		);
@@ -366,7 +318,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 			$sn = $series_name[$series];
 			
 			$seri .= 'Template-type: ReDIF-Series 1.0' . "\n";
-			$seri .= 'Name: ' . $this->inst_name . ' ' . $sn . ' Series' . "\n";
+			$seri .= 'Name: ' . $sn . "\n";
 			$seri .= 'Provider-Name: '. $this->inst_name . "\n";
 			$seri .= 'Provider-Homepage: ' . $this->provider_homepage . "\n";
 			$seri .= 'Provider-Institution:  ' . $this->provider_institution . "\n";

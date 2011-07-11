@@ -16,11 +16,16 @@ class citation_distribute_service_sword_dash extends citation_distribute_service
 	public $file_out =  'dash_files.zip';
 	public $obo  	   =  '';
 	
+	//variable or function for determining school.
+	
 	public function validate($a3) {
 		if (count($a3['#post']['files']) > 0) { // or body-> full text?
 			return;
 		} else {
 			return $this->title . ' requires the full text document be attached.';
+			
+			//TODO: check if a user has set his affiliation.  if not, send them to where that setting can be adjusted.
+			//TODO: add a harvard affiliation setting.  can plugins modify admin pages I wonder?
 		} 
 		
 	}
