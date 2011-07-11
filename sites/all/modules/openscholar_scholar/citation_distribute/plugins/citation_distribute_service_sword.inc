@@ -148,6 +148,8 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		 * or collections leading to multiple urls (maybe we can specify a default?  or maybe a user's taxonomy could
 		 * be treated as a new collection)*/
 		foreach($sac_doc->sac_workspaces as $ws) {
+			//TODO: workspace and collection are determined by school.  get that from a user setting or from their email domain.
+			//Also, the above setting should come from a dash plugin setting, rather than be hardcoded into sword.
 			foreach($ws->sac_collections as $collection) {
 	  		$href = $collection->sac_href;
   	  	$xml = serialize($href);			//TODO figure out why simplexml methods aren't working.  Use that instead of regex.

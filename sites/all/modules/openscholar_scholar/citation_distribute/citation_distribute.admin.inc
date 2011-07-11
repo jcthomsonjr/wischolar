@@ -33,6 +33,25 @@ function citation_distribute_admin() {
      //only show up during batch mode.  use ahah to reveal this setting?
    );
    
+   //list all our plugins, include autoflag checkboxes
+   $form['citation_distribute']['autoflag'] = array(
+	  '#type' => 'fieldset',
+	  '#title' => t('Automatic Node Flagging'),
+   	'#description' => 'Publication nodes should automatically select the following services for distribution:<br /><br />',
+	  '#collapsible' => FALSE,
+	  '#collapsed' => FALSE,
+	 );
+	 
+   foreach (_plugins() as $plugin) {
+     if (isset($plugin['title'])) {
+	     $name = $plugin['handler']['class'];	  
+	     $form['citation_distribute']['autoflag'][$name . '_auto_flag'] = array(
+	       '#type' => 'checkbox',
+	       '#default_value' => variable_get($name . '_auto_flag', false),
+	       '#title' => $plugin['title'] . '  (' . $name . ')',
+	     );
+     }
+   }
    
    return system_settings_form($form);
 }

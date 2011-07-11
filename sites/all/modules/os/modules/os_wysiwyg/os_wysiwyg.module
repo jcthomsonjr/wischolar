@@ -23,15 +23,6 @@ function os_wysiwyg_form_alter(&$vars) {
   }
 }*/
 
-function os_wysiwyg_wysiwyg_fields_add_js($type) {
-  switch ($type) {
-    case 'node_form':
-      if (file_exists($js = drupal_get_path('module', 'os_wysiwyg') . "/theme/os_wysiwyg.js")) {
-        drupal_add_js($js);
-      }
-  }
-}
-
 function os_wysiwyg_install() {
   _os_wysiwyg_config();
 }

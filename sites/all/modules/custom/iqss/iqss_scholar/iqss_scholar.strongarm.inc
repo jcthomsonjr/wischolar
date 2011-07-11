@@ -7,8 +7,71 @@ function iqss_scholar_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'addthis_username';
   $strongarm->value = 'iqsssscholar';
-
   $export['addthis_username'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_title';
+  $strongarm->value = 'RePEc';
+  $export['citation_distribute_service_repec_title'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_inst_name';
+  $strongarm->value = 'Harvard University OpenScholar';
+  $export['citation_distribute_service_repec_inst_name'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_archive_code';
+  $strongarm->value = 'qsh';
+  $export['citation_distribute_service_repec_archive_code'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_maintainer_name';
+  $strongarm->value = 'Jon Sagotsky';
+  $export['citation_distribute_service_repec_maintainer_name'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_maintainer_email';
+  $strongarm->value = 'jsagotsky@iq.harvard.edu';
+  $export['citation_distribute_service_repec_maintainer_email'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_archive_path';
+  $strongarm->value = '/nfs/www/edu-harvard-iq-repec/RePEc';
+  $export['citation_distribute_service_repec_archive_path'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_archive_url';
+  $strongarm->value = 'http://repec.iq.harvard.edu/RePEc/qsh';
+  $export['citation_distribute_service_repec_archive_url'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_provider_institution';
+  $strongarm->value = 'RePEc:edi:cbrssus';
+  $export['citation_distribute_service_repec_provider_institution'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_repec_provider_homepage';
+  $strongarm->value = 'http://scholar.harvard.edu';
+  $export['citation_distribute_service_repec_provider_homepage'] = $strongarm;
+
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;

@@ -19,7 +19,7 @@ function os_wysiwyg_filter_default_formats() {
     ),
     'filters' => array(
       '0' => array(
-        'module' => 'filter',
+        'module' => 'wysiwyg_filter',
         'delta' => '0',
         'weight' => '-10',
       ),
@@ -47,6 +47,11 @@ function os_wysiwyg_filter_default_formats() {
         'module' => 'filter',
         'delta' => '1',
         'weight' => '-5',
+      ),
+      '6' => array(
+        'module' => 'wysiwyg_fields',
+        'delta' => '0',
+        'weight' => '-4',
       ),
     ),
   );
@@ -78,6 +83,11 @@ function os_wysiwyg_filter_default_formats() {
         'module' => 'filter',
         'delta' => '3',
         'weight' => '-7',
+      ),
+      '4' => array(
+        'module' => 'wysiwyg_fields',
+        'delta' => '0',
+        'weight' => '10',
       ),
     ),
   );

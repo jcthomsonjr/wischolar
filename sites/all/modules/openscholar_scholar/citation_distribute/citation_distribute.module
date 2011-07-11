@@ -179,19 +179,20 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 			
 			case 'insert':
 			case 'update':					
+				$distributed = array();
 				foreach( _plugins() as $plugin ) {
 					if (isset($node->{$plugin['name']})) {
 						$flag = flag_get_flag($plugin['name']);
 						if ( $node->{$plugin['name']} ) {
 							$flag->flag('flag', $node->nid); //flag returns if the node was flagged.  my output never gets returned.
+							$distributed[] = $plugin['name'];
 						} else {
 							$flag->flag('unflag', $node->nid); //remove old flags 
 						}
 					}
 				}
-				if ($output = theme('citation_distribute_form_msg', $modules)) {
+				if ($output = theme('citation_distribute_form_msg', $distributed)) {
 					drupal_set_message(t($output)); //not necessarily!  Can we get output from flags?  hook_flag COULD return something from each calss...
-					//check returns[] values.  maybe unset some upds?
 				}			
 			break;
 
@@ -249,7 +250,7 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 						$service = new $class();
 						if (method_exists($service, 'remove')) {
 							$removed = $service->remove($nid);
-							($removed) && drupal_set_message('Publication has been removed from ' . $plugin['name']);
+							($removed) && drupal_set_message('Publication has been removed from ' . $plugin['title']);
 						}
 					}
 					break;
@@ -325,7 +326,7 @@ function _citation_distribute_distribute($nid, $plugin_name) {
 	
 	//Failed to send.  Tell user (also write logs for admins and change upd in db?)
 	if (!$out) {
-		drupal_set_message('Error sending document to ' . $plugin_name, 'error');
+		drupal_set_message('Error sending document to ' . $plugin['title'], 'error');
 	}
 	
 	return $out;
