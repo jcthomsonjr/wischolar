@@ -47,7 +47,7 @@ function scholar_events_content_default_fields() {
     'widget' => array(
       'default_value' => 'now',
       'default_value_code' => '',
-      'default_value2' => 'same',
+      'default_value2' => 'blank',
       'default_value_code2' => '',
       'input_format' => 'm/d/Y - g:ia',
       'input_format_custom' => '',
