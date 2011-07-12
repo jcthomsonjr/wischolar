@@ -1,13 +1,13 @@
-<?php 
+<?php
 
 /**
  * implementation of hook_menu()
  */
 function pathauto_ajax_menu() {
-	$items['pathauto_ajax/alias_js'] = array(
-		'page callback' => 'pathauto_ajax_alias_js',
-		'type' => 'MENU_CALLBACK',
-		'access arguments' => array('access content'),
+	$items['pathauto_ajax/alias_js'] = array (
+		'page callback' => 'pathauto_ajax_alias_js', 
+		'type' => 'MENU_CALLBACK', 
+		'access arguments' => array('access content' ) 
 	);
 	return $items;
 }
@@ -16,27 +16,47 @@ function pathauto_ajax_menu() {
  * implementation of hook_form_alter()
  */
 function pathauto_ajax_form_alter(&$form, $form_state, $form_id) {
-
-  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] .'_node_form' == $form_id && isset($form['path']['pathauto_perform_alias'])) {
-  	drupal_add_js(drupal_get_path('module', 'pathauto_ajax') . '/pathauto_ajax.js');
-  }
-  	/*
-  	//attach ahah event.  currently targets checkbox.
-		$form['path']['pathauto_perform_alias']['#ahah'] = array(
-			'event' => 'click',
-			'wrapper' => 'edit-path',
-			'effect' => 'fade',
-			'path' => 'pathauto_ajax/alias_js',
-			'method' => 'replace',
-		);
-	}*/
-	
-	//		dsm($form['path']);
+	if (isset( $form['type'] ) && isset( $form['#node'] ) && $form['type']['#value'] . '_node_form' == $form_id && isset( $form['path']['pathauto_perform_alias'] )) {
+		drupal_add_js( drupal_get_path( 'module', 'pathauto_ajax' ) . '/pathauto_ajax.js' );
+	}
 }
 
 function pathauto_ajax_alias_js() {
+	$type = $_GET['type'];
+		
+	//get pattern for this node type
+	$pattern = trim( variable_get( 'pathauto_node_' . $type . '_pattern', FALSE ));
+	if (empty( $pattern )) {
+		$pattern = trim( variable_get( 'pathauto_node_pattern', FALSE ) );
+	}
 	
-	//see http://drupal.org/node/331941 for filling this out further
-	$output = 'helloworld';
-	drupal_json(array('status' => TRUE, 'data' => $output));
+	// Only do work if there's a pattern
+	if (FALSE && $pattern) {
+		/*
+		require_once(drupal_get_path('module', 'pathauto') . '/pathauto.inc');
+		$node = null;
+		$placeholders = pathauto_get_placeholders( 'node', $node );
+		//$src = "node/$node->nid";
+	//	$placeholders = null;
+		$src = null;
+		$nid = null;
+		$language = null;
+		$path = pathauto_create_alias( 'node', 'return', $placeholders, $src, $nid, $type, $language );
+		*/	
+	} else {
+		$path = $pattern;
+	}
+	
+	//attempt some naive replacements if we can't get placeholders working
+	foreach(array( 'space_og_path', 'title_raw') as $key) {
+		if (isset($_GET[$key])) {
+			$match = '[' . str_replace('_', '-', $key) . ']';
+			$path = str_replace( $match, $_GET[$key], $path );
+		}	
+	}
+	//clear out spaces that may have been in title
+	$path = str_replace(' ', '-', $path);
+	
+	//send back to jQuery
+	drupal_json( array('status' => TRUE, 'data' => $path ) );
 }
