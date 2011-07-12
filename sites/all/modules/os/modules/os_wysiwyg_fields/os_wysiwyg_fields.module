@@ -23,7 +23,7 @@ function os_wysiwyg_fields_field_formatter_info() {
 
 function os_wysiwyg_fields_theme() {
   return array(
-    'os_wsyiwyg_fields_formatter_os_file_description' => array (
+    'os_wysiwyg_fields_formatter_os_file_description' => array (
       'arguments' => array(
         'element' => null,
       )
@@ -31,8 +31,29 @@ function os_wysiwyg_fields_theme() {
   );
 }
 
-function theme_os_wsyiwyg_fields_formatter_os_file_description($element) {
-  return '';
+function theme_os_wysiwyg_fields_formatter_os_file_description($element) {
+  $item = $element['#item'];
+  return '<a href="'.$item['filepath'].'">'.$item['data']['description'].'</a>';
+}
+
+function os_wysiwyg_fields_insert_styles() {
+  return array(
+    'os_file_description' => array(
+      'label' => t('File Description'),
+      'weight' => -10,
+    ),
+  );
+}
+
+function os_wysiwyg_fields_insert_content($item, $style, $widget) {
+  $item['data']['description'] = $item['data']['description'] == '' ? '__description__' : $item['data']['description'];
+
+  $element = array(
+    '#formatter' => $style['name'],
+    '#item' => $item,
+  );
+
+  return theme('os_wysiwyg_fields_formatter_' . $element['#formatter'], $element);
 }
 
 /*
