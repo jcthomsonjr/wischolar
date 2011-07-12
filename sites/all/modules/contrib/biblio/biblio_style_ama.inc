@@ -56,6 +56,16 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
   //if (empty($authors)) $authors = theme('biblio_authors', $node->biblio_contributors[5], 'mla', 5, $inline);  // if no authors substitute corp author if available
   //if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.
   //$output .= '<span class="biblio-authors">' . $authors . "</span>.&nbsp; \n";
+
+  if (empty($authors) && count($node->biblio_contributors[2])) {// if we still have nothing, use editors
+    foreach ($node->biblio_contributors[2] as $rank => $author) {
+      $authors .= (empty($authors)) ? '' : ', ';
+      $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
+    }
+    $authors .= ' (Eds.).';
+    $editors_as_authors = true;
+  }
+
   if (!empty ($node->biblio_citekey)&&(variable_get('biblio_display_citation_key',0))) {
     $output .= '[' . check_plain($node->biblio_citekey) . '] ';
   }
@@ -198,7 +208,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
       }
 
 
-      if (!empty($node->biblio_contributors[2]))      // editor
+      if (!empty($node->biblio_contributors[2]) && !$editors_as_authors)      // editor
       {
         $editor_options = array(
           'BetweenAuthorsDelimStandard'       => ', ',
@@ -382,7 +392,7 @@ function biblio_style_ama($node, $base = 'biblio', $inline = false) {
         }
       }
 
-      if (count($node->biblio_contributors[2]))      // editor (if different from author, see note above regarding the check for ' (ed)' or ' (eds)')
+      if (count($node->biblio_contributors[2]) && !$editors_as_authors)      // editor (if different from author, see note above regarding the check for ' (ed)' or ' (eds)')
       {
 
         $editor_options = array(

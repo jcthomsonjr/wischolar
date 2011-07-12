@@ -63,6 +63,14 @@ function biblio_style_vancouver($node, $base = 'biblio', $inline = false) {
                                "endash" => '-');
   $author_options = biblio_style_vancouver_author_options();
   $authors = theme('biblio_format_authors', $node->biblio_contributors[1], $author_options, $inline);
+  if (empty($authors) && count($node->biblio_contributors[2])) {// if we still have nothing, use editors
+    foreach ($node->biblio_contributors[2] as $rank => $author) {
+      $authors .= (empty($authors)) ? '' : ', ';
+      $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
+    }
+    $authors .= ', editors.';
+    $editors_as_authors = true;
+  }
   //$editors = theme('biblio_format_authors', $node->biblio_contributors[2], $author_options, $inline);
   //if (empty($authors)) $authors = theme('biblio_authors', $node->biblio_contributors[5], 'mla', 5, $inline);  // if no authors substitute corp author if available
   //if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.

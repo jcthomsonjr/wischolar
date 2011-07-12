@@ -25,7 +25,7 @@ function biblio_style_ieee_author_options() {
     'initialsBeforeAuthorFirstAuthor' =>  FALSE,     //10
     'initialsBeforeAuthorStandard'    =>  TRUE,      //11
     'shortenGivenNames'               =>  TRUE,      //12
-    'numberOfAuthorsTriggeringEtAl'   =>  10,        //13
+    'numberOfAuthorsTriggeringEtAl'   =>  3,        //13
     'includeNumberOfAuthors'          =>  10,        //14
     'customStringAfterFirstAuthors'   =>  ', et al.',//15
     'encodeHTML'                      =>  true

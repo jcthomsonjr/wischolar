@@ -60,6 +60,14 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
   // $authors = theme('biblio_authors', $node->biblio_contributors[1], 'mla', 1, $inline);
 
   $authors = theme('biblio_format_authors', $node->biblio_contributors[1], $author_options, $inline);
+  if (empty($authors) && count($node->biblio_contributors[2])) {// if we still have nothing, use editors
+    foreach ($node->biblio_contributors[2] as $rank => $author) {
+      $authors .= (empty($authors)) ? '' : ', ';
+      $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
+    }
+    $authors .= ' (Eds.).';
+    $editors_as_authors = true;
+  }
   //$editors = theme('biblio_format_authors', $node->biblio_contributors[2], $author_options, $inline);
   //if (empty($authors)) $authors = theme('biblio_authors', $node->biblio_contributors[5], 'mla', 5, $inline);  // if no authors substitute corp author if available
   //if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.
@@ -196,7 +204,7 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
       // From here on we'll assume that at least either the 'author' or the 'title' field did contain some contents
       // if this is not the case, the output string will begin with a space. However, any preceding/trailing whitespace will be removed at the cleanup stage (see below)
 
-      if (!empty($node->biblio_contributors[2]))      // editor
+      if (!empty($node->biblio_contributors[2]) && !$editors_as_authors)      // editor
       {
         $editor_options = array(
           'BetweenAuthorsDelimStandard'     => ', ',
@@ -333,7 +341,7 @@ function biblio_style_chicago($node, $base = 'biblio', $inline = false) {
       if (!empty($publication))      // publication
       $output .= " In <i>$publication</i>";
 
-      if (count($node->biblio_contributors[2]))      // editor (if different from author, see note above regarding the check for ' (ed)' or ' (eds)')
+      if (count($node->biblio_contributors[2]) && !$editors_as_authors)      // editor (if different from author, see note above regarding the check for ' (ed)' or ' (eds)')
       {
 
         $editor_options = array(
