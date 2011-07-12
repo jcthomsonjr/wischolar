@@ -105,6 +105,316 @@ mtvnservices.com';
         ),
       ),
       'title' => array(),
+      'id' => array(),
+      'class' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'b' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'blockquote' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'br' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'cite' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'code' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'dd' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'div' => array(
+      'align' => array(
+        'values' => array(
+          0 => 'center',
+          1 => 'justify',
+          2 => 'left',
+          3 => 'right',
+        ),
+      ),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'dl' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'dt' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'em' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'embed' => array(
+      '*' => array(),
+    ),
+    'i' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'img' => array(
+      'src' => array(
+        'required' => TRUE,
+      ),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'li' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'object' => array(
+      '*' => array(),
+    ),
+    'ol' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'p' => array(
+      'align' => array(
+        'values' => array(
+          0 => 'center',
+          1 => 'justify',
+          2 => 'left',
+          3 => 'right',
+        ),
+      ),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'param' => array(
+      '*' => array(),
+    ),
+    'script' => array(
+      'src' => array(),
+      'type' => array(),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'span' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'strike' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'strong' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'u' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+    'ul' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+    ),
+  );
+
+  $export['wysiwyg_filter_valid_elements_parsed_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_valid_elements_parsed_6';
+  $strongarm->value = array(
+    'a' => array(
+      'href' => array(
+        'required' => TRUE,
+      ),
+      'target' => array(
+        'values' => array(
+          0 => '_blank',
+        ),
+      ),
+      'title' => array(),
     ),
     'blockquote' => array(),
     'br' => array(),
@@ -124,14 +434,18 @@ mtvnservices.com';
     'dl' => array(),
     'dt' => array(),
     'em' => array(),
-    'embed' => array(),
+    'embed' => array(
+      '*' => array(),
+    ),
     'img' => array(
       'src' => array(
         'required' => TRUE,
       ),
     ),
     'li' => array(),
-    'object' => array(),
+    'object' => array(
+      '*' => array(),
+    ),
     'ol' => array(),
     'p' => array(
       'align' => array(
@@ -143,23 +457,40 @@ mtvnservices.com';
         ),
       ),
     ),
-    'param' => array(),
-    'script' => array(),
+    'param' => array(
+      '*' => array(),
+    ),
+    'script' => array(
+      'src' => array(),
+      'type' => array(),
+    ),
     'span' => array(),
     'strong' => array(),
     'ul' => array(),
   );
 
-  $export['wysiwyg_filter_valid_elements_parsed_1'] = $strongarm;
+  $export['wysiwyg_filter_valid_elements_parsed_6'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_valid_elements_raw_1';
+  $strongarm->value = '@[id|class|title|dir<ltr?rtl|lang],
+a[!href|target<_blank|title],
+div[align<center?justify?left?right],
+p[align<center?justify?left?right],
+br,span,em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed[*],object[*],param[*],script[src|type],
+strong/b,em/i,strike,u';
+
+  $export['wysiwyg_filter_valid_elements_raw_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_valid_elements_raw_6';
   $strongarm->value = 'a[!href|target<_blank|title],
 div[align<center?justify?left?right],
 p[align<center?justify?left?right],
-br,span,em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed,object,param,script';
+br,span,em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed[*],object[*],param[*],script[src|type]';
 
-  $export['wysiwyg_filter_valid_elements_raw_1'] = $strongarm;
+  $export['wysiwyg_filter_valid_elements_raw_6'] = $strongarm;
   return $export;
 }
