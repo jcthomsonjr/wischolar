@@ -827,10 +827,8 @@ function vsite_page_alter(&$vars) {
   if (context_isset('context', 'vsite-section-public')) {
     drupal_add_css(drupal_get_path('module', 'vsite') . '/theme/vsite-admin-links.css');
     drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite.js');
-    drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite-autoclose-status.js');
   }
   elseif (context_isset('context', 'vsite-section-cp')) {
-    drupal_add_js(drupal_get_path('module', 'vsite') . '/theme/vsite-autoclose-status.js');
   }
 
 }
@@ -1158,26 +1156,26 @@ function vsite_node_menu_access(){
 	// Run the standard spaces access check.
   $args = func_get_args();
   $access_callback = array_pop($args);
-  
+
 //  if($access_callback == "og_menu_access_node_edit" && is_object($args[0])){
 //  	$args[0]->status = 1;
 //  }//We want to treat access published and unpublished nodes the same when editing them
 //
   if (empty($access_callback) || call_user_func_array($access_callback, $args)) {
-    
+
     $access_param = array_pop($args);
     if ($access_param == 'node_access' && $args[0] == 'create') {
       $node_type = str_replace('-', '_', $args[1]);
     }elseif ($access_callback == "og_menu_access_node_edit" && is_object($access_param) && $access_param->type){
       $node_type = $access_param->type;
     }
-    
+
     //If this is a group type
     if($node_type && og_is_group_type($node_type)) return true;
-    
+
     //Spaces permits access, now lets make sure we are in a site
     $vsite = vsite_get_vsite();
-    
+
     return $vsite?TRUE:FALSE;
   }
   return FALSE;
@@ -1187,16 +1185,16 @@ function vsite_node_menu_access(){
  * Add vsite content type to default spaces_features
  */
 function vsite_strongarm_alter(&$vars){
-	
+
 	if(isset($vars['spaces_features']) && is_object($vars['spaces_features'])){
 		if(isset($vars['scholar_content_type'])){
 			$scholar_content_type = $vars['scholar_content_type']->value;
 		}
 		if(!$scholar_content_type) $scholar_content_type = variable_get('scholar_content_type', false);
-		
+
 		if($scholar_content_type && !isset($vars['spaces_features']->value[$scholar_content_type])){
 			$vars['spaces_features']->value[$scholar_content_type] = 1;
 		}
 	}//Allow access to og content type by default
-	
+
 }
