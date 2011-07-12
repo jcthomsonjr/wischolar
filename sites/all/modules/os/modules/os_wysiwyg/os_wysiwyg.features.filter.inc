@@ -92,5 +92,93 @@ function os_wysiwyg_filter_default_formats() {
     ),
   );
 
+  // Exported format: Minimal WYSIWYG
+  $formats['Minimal WYSIWYG'] = array(
+    'name' => 'Minimal WYSIWYG',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'manager',
+      '3' => 'scholar admin',
+      '4' => 'scholar user',
+    ),
+    'filters' => array(
+      '0' => array(
+        'module' => 'wysiwyg_filter',
+        'delta' => '0',
+        'weight' => '-10',
+      ),
+      '1' => array(
+        'module' => 'filter',
+        'delta' => '2',
+        'weight' => '-7',
+      ),
+      '2' => array(
+        'module' => 'filter',
+        'delta' => '3',
+        'weight' => '-6',
+      ),
+      '3' => array(
+        'module' => 'filter',
+        'delta' => '1',
+        'weight' => '-5',
+      ),
+      '4' => array(
+        'module' => 'wysiwyg_fields',
+        'delta' => '0',
+        'weight' => '-4',
+      ),
+    ),
+  );
+
+  // Exported format: Full WYSIWYG
+  $formats['Full WYSIWYG'] = array(
+    'name' => 'Full WYSIWYG',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'manager',
+      '3' => 'scholar admin',
+      '4' => 'scholar user',
+    ),
+    'filters' => array(
+      '0' => array(
+        'module' => 'wysiwyg_filter',
+        'delta' => '0',
+        'weight' => '-10',
+      ),
+      '1' => array(
+        'module' => 'embedfilter',
+        'delta' => '0',
+        'weight' => '-9',
+      ),
+      '2' => array(
+        'module' => 'oembed',
+        'delta' => '0',
+        'weight' => '-8',
+      ),
+      '3' => array(
+        'module' => 'filter',
+        'delta' => '2',
+        'weight' => '-7',
+      ),
+      '4' => array(
+        'module' => 'filter',
+        'delta' => '3',
+        'weight' => '-6',
+      ),
+      '5' => array(
+        'module' => 'filter',
+        'delta' => '1',
+        'weight' => '-5',
+      ),
+      '6' => array(
+        'module' => 'wysiwyg_fields',
+        'delta' => '0',
+        'weight' => '-4',
+      ),
+    ),
+  );
+
   return $formats;
 }
