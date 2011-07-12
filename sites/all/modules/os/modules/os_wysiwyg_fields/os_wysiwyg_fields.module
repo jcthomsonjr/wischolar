@@ -1,10 +1,47 @@
 <?php
 
+include_once('os_wysiwyg_fields.features.inc');
+
 function os_wysiwyg_fields_wysiwyg_fields_add_js($type) {
   switch ($type) {
     case 'node_form':
-      if (file_exists($js = drupal_get_path('module', 'os_wysiwyg') . "/theme/os_wysiwyg_fields.js")) {
+      if (file_exists($js = drupal_get_path('module', 'os_wysiwyg_fields') . "/theme/os_wysiwyg_fields.js")) {
         drupal_add_js($js);
       }
   }
 }
+
+function os_wysiwyg_fields_field_formatter_info() {
+  return array(
+    'os_file_description' => array(
+      'label' => t('OS: File Description'),
+      'field types' => array('filefield'),
+      'description' => t('Display File Description as Link to File'),
+    ),
+  );
+}
+
+function os_wysiwyg_fields_theme() {
+  return array(
+    'os_wsyiwyg_fields_formatter_os_file_description' => array (
+      'arguments' => array(
+        'element' => null,
+      )
+    )
+  );
+}
+
+function theme_os_wsyiwyg_fields_formatter_os_file_description($element) {
+  return '';
+}
+
+/*
+ * $item = $element['#item'];
+dpm($item);
+if (strpos($item['#filemime'], 'image') !== FALSE) {
+return str_replace('__alt__', $item['data']['description'], $item['insert_template']['auto']);
+}
+else {
+return '<a href="' . $item['filepath'] . '">' . $item['data']['description'] . '</a>';
+}
+ */

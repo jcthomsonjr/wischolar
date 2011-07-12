@@ -326,7 +326,7 @@ function _citation_distribute_distribute($nid, $plugin_name) {
 	
 	//Failed to send.  Tell user (also write logs for admins and change upd in db?)
 	if (!$out) {
-		drupal_set_message('Error sending document to ' . $plugin_name, 'error');
+		drupal_set_message('Error sending document to ' . $plugin['title'], 'error');
 	}
 	
 	return $out;

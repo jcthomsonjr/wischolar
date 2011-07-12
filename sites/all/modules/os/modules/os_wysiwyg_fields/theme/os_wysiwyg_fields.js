@@ -11,7 +11,7 @@
 		
 		// remove the Insert button added by wysiwyg_fields.
 		// The button provided by Insert is more useful.
-		$('.ui-dialog-buttonpane').remove();
+		$('.ui-dialog-buttonpane').not('#wysiwyg_fields-field_os_inline_oembed-dialog .ui-dialog-buttonpane').remove();
 		
 		// Show the table
 		$('#' + id.replace('_', '-', 'g') + '-items, #wysiwyg_fields-' + id + '-wrapper table').show();
