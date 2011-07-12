@@ -55,14 +55,3 @@ function os_wysiwyg_fields_insert_content($item, $style, $widget) {
 
   return theme('os_wysiwyg_fields_formatter_' . $element['#formatter'], $element);
 }
-
-/*
- * $item = $element['#item'];
-dpm($item);
-if (strpos($item['#filemime'], 'image') !== FALSE) {
-return str_replace('__alt__', $item['data']['description'], $item['insert_template']['auto']);
-}
-else {
-return '<a href="' . $item['filepath'] . '">' . $item['data']['description'] . '</a>';
-}
- */

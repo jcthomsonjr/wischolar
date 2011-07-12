@@ -67,7 +67,7 @@ function os_wysiwyg_fields_content_default_fields() {
       'wysiwyg_fields_hide' => 1,
       'wysiwyg_fields_delete' => 1,
       'filefield_sources' => array(
-        'remote' => 0,
+        'remote' => 'remote',
         'reference' => 0,
         'attach' => 0,
       ),
@@ -77,8 +77,9 @@ function os_wysiwyg_fields_content_default_fields() {
       'filefield_source_autocomplete' => '0',
       'insert' => 1,
       'insert_styles' => array(
-        'link' => 'link',
+        'os_file_description' => 'os_file_description',
         'auto' => 0,
+        'link' => 0,
         'image' => 0,
         'imagecache_AttachmentThumbnail' => 0,
         'imagecache_book_cover' => 0,
@@ -99,10 +100,10 @@ function os_wysiwyg_fields_content_default_fields() {
         'imagecache_vsite_design_square_logo' => 0,
         'imagecache_vsite_shields_default_shield' => 0,
       ),
-      'insert_default' => 'auto',
+      'insert_default' => 'os_file_description',
       'insert_class' => '',
       'insert_width' => '',
-      'label' => 'Inline FIles',
+      'label' => 'Inline Files',
       'weight' => '12',
       'description' => '',
       'type' => 'filefield_widget',
@@ -174,17 +175,18 @@ function os_wysiwyg_fields_content_default_fields() {
       'use_default_image' => 0,
       'insert' => 1,
       'insert_styles' => array(
+        'image' => 'image',
+        'imagecache_image_s' => 'imagecache_image_s',
         'imagecache_inline_default' => 'imagecache_inline_default',
+        'imagecache_inline_larger' => 'imagecache_inline_larger',
         'auto' => 0,
         'link' => 0,
-        'image' => 0,
+        'os_file_description' => 0,
         'imagecache_AttachmentThumbnail' => 0,
         'imagecache_book_cover' => 0,
         'imagecache_book_cover_thumb' => 0,
         'imagecache_gallery_small_thumb' => 0,
         'imagecache_gallery_thumb' => 0,
-        'imagecache_image_s' => 0,
-        'imagecache_inline_larger' => 0,
         'imagecache_openscholar_front_logo' => 0,
         'imagecache_presentation_thumb' => 0,
         'imagecache_square_35_35' => 0,
@@ -313,7 +315,7 @@ function os_wysiwyg_fields_content_default_fields() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Inline FIles');
+  t('Inline Files');
   t('Inline Image');
   t('Inline oEmbed');
 
