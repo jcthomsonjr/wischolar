@@ -286,7 +286,7 @@ function scholar_publications_get_cache($cache_key){
       $cid[$key_id] = $plugin->view_key($key_values);
     }
   }
-  if (!empty($cid) && $timestamp = views_content_cache_update_get($cid)) {
+  if (!empty($cid) && ($timestamp = views_content_cache_update_get($cid))) {
     $cutoff = $timestamp;
   }
     

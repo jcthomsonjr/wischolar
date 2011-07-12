@@ -53,6 +53,14 @@ function biblio_style_cse($node, $base = 'biblio', $inline = false) {
       $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
     }
   }
+  if (empty($authors) && count($node->biblio_contributors[2])) {// if we still have nothing, use editors
+    foreach ($node->biblio_contributors[2] as $rank => $author) {
+      $authors .= (empty($authors)) ? '' : ', ';
+      $authors .= (variable_get('biblio_author_links', 1)) ?  theme('biblio_author_link', $author) : $author['name'];
+    }
+    $authors .= ' (Eds.)';
+    $editors_as_authors = true;
+  }
   //if (empty($authors)) $authors = '[' . t('Anonymous') . ']';  // use anonymous if we still have nothing.
   if (!empty ($node->biblio_citekey)&&(variable_get('biblio_display_citation_key',0))) {
     $output .= '[' . check_plain($node->biblio_citekey) . '] ';
@@ -67,14 +75,15 @@ function biblio_style_cse($node, $base = 'biblio', $inline = false) {
       $output .= '<span class="biblio-title">';
       $url = biblio_get_title_url_info($node, $base, $inline);
       $output .= l($node->title, $url['link'], $url['options']);
+      if ($node->biblio_date) $output .= ', '. check_plain($node->biblio_date);
       $output .= (strpos($node->title, '?'))? " </span>" : ". </span>";  // if the title ends in a question mark, don't put a period after it.
       $output .= (!empty ($node->biblio_secondary_title)) ? check_plain($node->biblio_secondary_title) . '. ' : '';
       $output .= (!empty ($node->biblio_volume))          ? check_plain($node->biblio_volume) : '';
       $output .= (!empty ($node->biblio_issue))           ? '(' . check_plain($node->biblio_issue) . ')' : '';
+      $output .= (!empty ($node->biblio_contributors[2]) && !$editors_as_authors) ? '(' . theme('biblio_authors', $node->biblio_contributors[2], 'apa', 2, $inline) . ', Ed.).' : "";
       $output .= (!empty ($node->biblio_pages))           ? ':' . str_replace(" ", "", check_plain($node->biblio_pages)) . '.' : '';
       break; // generic
   }
-  if ($node->biblio_date) $output .= ', '. check_plain($node->biblio_date);
   if ($node->biblio_number) $output .= ', Number '. check_plain($node->biblio_number);
 
   if ($node->biblio_place_published) $output .= ', '. check_plain($node->biblio_place_published);

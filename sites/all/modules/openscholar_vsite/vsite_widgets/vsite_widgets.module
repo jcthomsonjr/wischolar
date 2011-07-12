@@ -59,7 +59,7 @@ function vsite_widgets_search_widget(){
  * @return array
  */
 function vsite_widgets_addthis(){
-  if (! module_exists('addthis') || ! user_access('view addthis')) {
+  if (! module_exists('addthis')) {
     return;
   }
 
