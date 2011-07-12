@@ -11,19 +11,19 @@ function os_wysiwyg_fields_wysiwyg_fields_add_js($type) {
   }
 }
 
-function os_wsyiwyg_fields_field_formatter_info() {
+function os_wysiwyg_fields_field_formatter_info() {
   return array(
-    'os_image_and_files' => array(
-      'label' => t('OS: Inline Images and Files'),
+    'os_file_description' => array(
+      'label' => t('OS: File Description'),
       'field types' => array('filefield'),
-      'description' => t('Display Image or File Description'),
+      'description' => t('Display File Description as Link to File'),
     ),
   );
 }
 
-function os_wysiwyg_theme() {
+function os_wysiwyg_fields_theme() {
   return array(
-    'os_wsyiwyg_fields_formatter_os_image_and_files' => array (
+    'os_wsyiwyg_fields_formatter_os_file_description' => array (
       'arguments' => array(
         'element' => null,
       )
@@ -31,7 +31,7 @@ function os_wysiwyg_theme() {
   );
 }
 
-function os_wsyiwyg_fields_formatter_os_image_and_files($element) {
+function theme_os_wsyiwyg_fields_formatter_os_file_description($element) {
   return '';
 }
 
