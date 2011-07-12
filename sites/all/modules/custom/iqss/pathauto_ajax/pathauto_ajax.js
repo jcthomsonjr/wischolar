@@ -4,6 +4,7 @@
  * retrieves path of new node from drupal, inserts it into pathauto form
  */
 
+/* attach a click even to the path tab */
 $(document).ready( function() {
 	$('a.vertical-tabs-list-path').click(function(){
 		if ($('#edit-path').attr('value') == '') {
@@ -12,6 +13,11 @@ $(document).ready( function() {
 	});
 });
 
+/**
+ *  ajax call back to drupal
+ * pass it some information from the current page, since that can't be loaded from the node yet
+ * on success, replace the path with the results
+ */
 function make_alias() {
 	data = {};
 	data.type =  document.URL.split('/').pop().split('?').shift();
