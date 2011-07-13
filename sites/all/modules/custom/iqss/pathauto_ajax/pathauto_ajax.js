@@ -24,7 +24,7 @@ function make_alias() {
 	
 	href = 'http://' + document.location.host + '/pathauto_ajax/alias_js';
 	$.getJSON(href, data, function(json) {
-		if (json.status) {
+		if (json.status && json.data.length>0) {
 			$('#edit-path').attr('value', json.data);			
 		}
 	})

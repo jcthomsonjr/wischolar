@@ -2,6 +2,7 @@
 
 /**
  * implementation of hook_menu()
+ * provides a page for ajax to call so we can retrieve info from drupal
  */
 function pathauto_ajax_menu() {
 	$items['pathauto_ajax/alias_js'] = array (
@@ -14,63 +15,56 @@ function pathauto_ajax_menu() {
 
 /**
  * implementation of hook_form_alter()
+ * attaches javascript to node edit forms
  */
 function pathauto_ajax_form_alter(&$form, $form_state, $form_id) {
 	if (isset( $form['type'] ) && isset( $form['#node'] ) && $form['type']['#value'] . '_node_form' == $form_id && isset( $form['path']['pathauto_perform_alias'] )) {
 		drupal_add_js( drupal_get_path( 'module', 'pathauto_ajax' ) . '/pathauto_ajax.js' );
-/*		$form['path']['path']['#ahah'] = array(
-			'event' => 'click',
-			'wrapper' => 'wrapper-edit-path',
-			'effect' => 'fade',
-			'path' => 'pathauto_ajax/alias_js',
-		);*/
 	}
 }
 
+/**
+ * @function pathauto_ajax_alias_js()
+ * 
+ * .js file calls this function to get info back from drupal
+ * gets the pattern for formatting urls for this node type, tries to apply it
+ * returns expected url.
+ */
 function pathauto_ajax_alias_js() {
-  
-	if (isset($_GET['URL'])) {
-		$type = array_shift(explode('?', $_GET['URL'])); //remove URL after the "?"
-		$type = array_pop(explode('/', $type));          //only keep last section of path.  that's the type
-	}
-	
+ 	
 	//get pattern for this node type
-	$pattern = trim( variable_get( 'pathauto_node_' . $type . '_pattern', FALSE ));
+	$pattern = trim( variable_get( 'pathauto_node_' . $_GET['type'] . '_pattern', FALSE ));
 	if (empty( $pattern )) {
 		$pattern = trim( variable_get( 'pathauto_node_pattern', FALSE ) );
 	}
-	
-	$replaceable_patterns = array('[space-og-path][type][title]',);
-	if (in_array($pattern, $replaceable_patterns)) {
-		//only replace known good token patterns.
 
-	
-	}
-	
-	$path = $pattern;
-	// Only do work if there's a pattern
-/*	if ($pattern) {
-		require_once(drupal_get_path('module', 'pathauto') . '/pathauto.inc');
-		$placeholders = pathauto_get_placeholders( 'node', $node ); //placeholders do NOT fetch title-raw and spaces-og-path
-		$src = "node/$node[nid]";
-		$path = pathauto_create_alias( 'node', 'return', $placeholders, $src, $node['nid'], $type, null);
+	//only replace known good token patterns.
+	$replaceable_patterns = array('[space-og-path]/publications/[title-raw]',);
+	if (in_array($pattern, $replaceable_patterns)) {
+
+		//prepare arrays for replacing
+		$search = array();
+		$replace = array();
+		foreach(array( 'space-og-path', 'title_raw') as $key) {
+			if (isset($_GET[$key])) {
+				$search[] = '[' . str_replace('_', '-', $key) . ']';
+				$replace[] = $_GET[$key];
+			}	
+		}
+		
+		//replace tokens
+		$path = str_replace($search, $replace, $pattern);
+		
+		//clear out spaces that may have been in title
+		$path = str_replace(' ', '-', $path);
+		
+		//send back to jQuery
+		drupal_json( array('status' => TRUE, 'data' => $path ) );
+		
 	} else {
-		$path = $pattern;
+		//don't know how to replace tokens in this pattern  
+		drupal_json( array('status' => TRUE, 'data' => '', 'error' => 'pathauto_ajax has no token replacement set up for this pathauto pattern'));
 	}
-*/	
-	//attempt some naive replacements if we can't get placeholders working
-	foreach(array( 'space_og_path', 'title_raw') as $key) {
-		if (isset($_GET[$key])) {
-			$match = '[' . str_replace('_', '-', $key) . ']';
-			$path = str_replace( $match, $_GET[$key], $path );
-		}	
-	}
-	//clear out spaces that may have been in title
-	$path = str_replace(' ', '-', $path);
-	
-	
-	//send back to jQuery
-	drupal_json( array('status' => TRUE, 'data' => $path ) );
 }
 
 /**
@@ -78,10 +72,10 @@ function pathauto_ajax_alias_js() {
  * adds tokenizable variables to page's javascript, so pathauto_ajax.js can use them.
  */
 function pathauto_ajax_preprocess_page(&$variables) {
-	if ($g = og_get_group_context() && in_array('page-node-add', $variables['template_files']) ) {
+	if (($g = og_get_group_context()) && in_array('page-node-add', $variables['template_files']) ) {
 		
-		$type_template = array_search('page-node-add-',$variables['template_files']); 
-		$type = str_replace( 'page-node-add-', '', $variables['template_files'][$type_template] ); 
+		$type_template = array_pop( preg_grep('/page-node-add-\w+/',$variables['template_files']) ); 
+		$type = str_replace( 'page-node-add-', '', $type_template ); 
 
 		$data = array('pathauto_ajax' => array(
 			'space-og-path' => $g->name,
