@@ -31,13 +31,15 @@ function pathauto_ajax_form_alter(&$form, $form_state, $form_id) {
  * returns expected url.
  */
 function pathauto_ajax_alias_js() {
- 	
 	//get pattern for this node type
 	$pattern = trim( variable_get( 'pathauto_node_' . $_GET['type'] . '_pattern', FALSE ));
 	if (empty( $pattern )) {
 		$pattern = trim( variable_get( 'pathauto_node_pattern', FALSE ) );
 	}
 
+	//characters that aren't in drupal urls will be stripped
+	$strip = array('/', ':');
+	
 	//only replace known good token patterns.
 	//ignoring types: images, dataverse, software release (has no title elem), //person (no title)
 	$replaceable_patterns = array();
@@ -53,25 +55,31 @@ function pathauto_ajax_alias_js() {
 		$replace = array();
 		foreach(array( 'space-og-path', 'title_raw', 'yyyy', 'mm') as $key) {
 			if (isset($_GET[$key])) {
-				$search[] = '[' . str_replace('_', '-', $key) . ']';
-				$replace[] = $_GET[$key];
+				$search[] = '['.str_replace('_', '-', $key).']';
+				$replace[] = str_replace(  $strip, array(),  $_GET[$key]  );
 			}	
 		}
 		
 		//replace tokens
 		$path = str_replace($search, $replace, $pattern);
 		
-		//clear out spaces that may have been in title
-		$path = str_replace(' ', '-', $path);
-		//special characters to map:
-		$special = array(':' => '');
+		//clear out whitespace that may have been in title
+		$path = preg_replace('/\s+/', '-', $path);
+		
+		
+		//what about a duplicate page name?
 		
 		//send back to jQuery
 		drupal_json( array('status' => TRUE, 'data' => $path ) );
 		
 	} else {
 		//don't know how to replace tokens in this pattern  
-		drupal_json( array('status' => TRUE, 'data' => '', 'error' => 'pathauto_ajax has no token replacement set up for this pathauto pattern'));
+		drupal_json( array(
+			'status' => TRUE, 
+			'data' => '', 
+			'error' => 'pathauto_ajax has no token replacement set up for this pathauto pattern',
+			'pattern' => $pattern,
+		));
 	}
 }
 
