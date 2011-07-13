@@ -139,15 +139,15 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		);
 		
 		// List all plugins with a title
-		foreach( _plugins() as $plugin ) {
-			$published = db_result( db_query( "SELECT nid from {citation_distribute} WHERE type = '%s' AND nid = %d", 
+		foreach( _plugins() as $plugin ) {				
+			if (isset($plugin['title'])) {
+				$published = db_result( db_query( "SELECT nid from {citation_distribute} WHERE type = '%s' AND nid = %d", 
 																				$plugin['name'], $form['nid']['#value'] ));
 																				
-			//Automatically mark distribution of plugins with autoflag enabled
-			$autoflag = variable_get('citation_distribute_' . $plugin['name'] . '_auto_flag', false);
-			$published = ($published || $autoflag);
-					
-			if (isset($plugin['title'])) {
+				//Automatically mark distribution of plugins with autoflag enabled
+				$autoflag = variable_get($plugin['handler']['class'] . '_auto_flag', false);
+				$published = ($published || $autoflag);
+				
 				$form['citation_distribute_selections'][$plugin['name']] = array(
 					'#type'=>'checkbox',
 					'#title' => t('@repos', array('@repos' => $plugin['title'])),
@@ -252,6 +252,10 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 							$removed = $service->remove($nid);
 							($removed) && drupal_set_message('Publication has been removed from ' . $plugin['title']);
 						}
+					} else {
+						//set a message even for services that don't have a removal method
+						drupal_set_message('Publication has been removed from ' . $plugin['title']);
+
 					}
 					break;
 			}
