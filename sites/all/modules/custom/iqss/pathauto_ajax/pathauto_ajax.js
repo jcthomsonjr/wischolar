@@ -4,16 +4,14 @@
  * retrieves path of new node from drupal, inserts it into pathauto form
  */
 
-/* attach a click even to the path tab */
-$(document).ready( function() {
-	//$('a.vertical-tabs-list-path').click(function(){
-	$('#edit-title').live( 'click', (function() {  //focusout isn't supported yet.  jq 1.4.1
+/* $().focusout is unavailable to live() in jQuery 1.2.6, so use behaviors for event binding instead. */
+Drupal.behaviors.pathauto_ajax = function(context, settings) {
+	$('#edit-title').bind('blur', function() {
 		if ( $('#edit-title').attr('value') != '') {
-			alert('its alive');
 			make_alias();
 		}
-	}));
-});
+	});
+};
 
 /**
  *  ajax call back to drupal
@@ -22,13 +20,6 @@ $(document).ready( function() {
  */
 function make_alias() {
 	data = Drupal.settings.pathauto_ajax;
-//	data.type =  document.URL.split('/').pop().split('?').shift();
-	//data.URL = document.URL;
-	//data.space_og_path = document.URL.split('/')[3];
-	//data.get = window.location.search;
-	
-	//data.space_og_path = Drupal.settings.og.group_context.title;
-
 	data.title_raw = $('#edit-title').attr('value');
 	
 	href = 'http://' + document.location.host + '/pathauto_ajax/alias_js';
