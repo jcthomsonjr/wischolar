@@ -39,9 +39,9 @@ function pathauto_ajax_alias_js() {
 	}
 
 	//only replace known good token patterns.
-	//ignoring types: images
+	//ignoring types: images, dataverse, software release (has no title elem), //person (no title)
 	$replaceable_patterns = array();
-	foreach(array('publications', 'announcements', 'classes', 'galleries') as $type) {
+	foreach(array('publications', 'announcements', 'classes', 'galleries', 'feeds', 'links', 'scholar-software-project', 'event', 'book', 'presentations') as $type) {
 		$replaceable_patterns[] = '[space-og-path]/'.$type.'/[title-raw]';
 	};
 	$replaceable_patterns[] = 'content/[title-raw]';
@@ -51,7 +51,7 @@ function pathauto_ajax_alias_js() {
 		//prepare arrays for replacing
 		$search = array();
 		$replace = array();
-		foreach(array( 'space-og-path', 'title_raw') as $key) {
+		foreach(array( 'space-og-path', 'title_raw', 'yyyy', 'mm') as $key) {
 			if (isset($_GET[$key])) {
 				$search[] = '[' . str_replace('_', '-', $key) . ']';
 				$replace[] = $_GET[$key];
@@ -63,6 +63,8 @@ function pathauto_ajax_alias_js() {
 		
 		//clear out spaces that may have been in title
 		$path = str_replace(' ', '-', $path);
+		//special characters to map:
+		$special = array(':' => '');
 		
 		//send back to jQuery
 		drupal_json( array('status' => TRUE, 'data' => $path ) );
