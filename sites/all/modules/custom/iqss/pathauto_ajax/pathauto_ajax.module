@@ -39,9 +39,15 @@ function pathauto_ajax_alias_js() {
 	}
 
 	//only replace known good token patterns.
-	$replaceable_patterns = array('[space-og-path]/publications/[title-raw]',);
+	//ignoring types: images
+	$replaceable_patterns = array();
+	foreach(array('publications', 'announcements', 'classes', 'galleries') as $type) {
+		$replaceable_patterns[] = '[space-og-path]/'.$type.'/[title-raw]';
+	};
+	$replaceable_patterns[] = 'content/[title-raw]';
+	$replaceable_patterns[] = '[space-og-path]/blog/[yyyy]/[mm]/[title-raw]';
+	
 	if (in_array($pattern, $replaceable_patterns)) {
-
 		//prepare arrays for replacing
 		$search = array();
 		$replace = array();

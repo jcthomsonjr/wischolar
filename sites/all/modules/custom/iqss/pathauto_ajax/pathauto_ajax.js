@@ -20,7 +20,7 @@ Drupal.behaviors.pathauto_ajax = function(context, settings) {
  */
 function make_alias() {
 	data = Drupal.settings.pathauto_ajax;
-	data.title_raw = $('#edit-title').attr('value');
+	data.title_raw = $.trim( $('#edit-title').attr('value') );
 	
 	href = 'http://' + document.location.host + '/pathauto_ajax/alias_js';
 	$.getJSON(href, data, function(json) {
