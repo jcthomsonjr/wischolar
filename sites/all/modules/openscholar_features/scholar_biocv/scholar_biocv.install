@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Implementaton of hook_enable().
+ */
+function scholar_biocv_enable() {
+  // Weight of biocv needs to be lower than content profiles so it can control profile uid's
+  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'content_profile'"));
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'scholar_biocv'", ($weight - 1));
+  
+}
+
 function scholar_biocv_update_6001(&$sandbox){
 
   $res = array();
@@ -21,6 +31,23 @@ function scholar_biocv_update_6001(&$sandbox){
     'query' => 'Migrated the Bio/CV Settings'
   );
 
+  return $res;
+
+}
+
+function scholar_biocv_update_6002(&$sandbox){
+
+  $res = array();
+  
+  // Weight of biocv needs to be lower than content profiles so it can control profile uid's
+  $weight = db_result(db_query("SELECT weight FROM {system} WHERE type = 'module' AND name = 'content_profile'"));
+  db_query("UPDATE {system} SET weight = %d WHERE name = 'scholar_biocv'", ($weight - 1));
+
+  $res[] = array(
+    'success' => true,
+    'query' => 'Updated Bio/CV Weight'
+  );
+  
   return $res;
 
 }

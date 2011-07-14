@@ -353,3 +353,17 @@ function scholar_biocv_vsite_admin_link($type, $object){
   }
   return $links;
 }
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function scholar_biocv_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  //Is this a bio or cv node?
+	if(!in_array($node->type,array('cv','bio'))) return;
+	
+	$vsite = vsite_get_vsite();
+  if ($op == 'prepare' && !isset($node->nid) && isset($node->uid) && $vsite) {
+    // This is a new node in a vsite, make sure it is owned by the site owner
+    $node->uid = $vsite->group->uid;
+  }
+}
