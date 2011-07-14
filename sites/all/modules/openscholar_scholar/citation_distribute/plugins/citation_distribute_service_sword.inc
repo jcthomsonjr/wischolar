@@ -10,6 +10,12 @@
 abstract class citation_distribute_service_sword extends citation_distribute_service {
 	public $packaging = 'http://purl.org/net/sword-types/METSDSpaceSIP';
 	
+	/*
+	 * get_collection()
+	 * given a workspace, choose the correct collection to use
+	 */
+	abstract public function get_deposit_url($workspaces, $nid);
+	
 	/**
 	 * Consctructor
 	 */
@@ -28,7 +34,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 	public function save($nid, $plugin) {
 		$metadata = $this->map_metadata($nid);
 		$out = $this->render($metadata, $nid);
-		$saved = $this->_push($out);
+		$saved = $this->_push($out, $nid);
 		
 		return $saved;
 	}
@@ -139,33 +145,27 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 	}
 	
 	/* send data to sword service */
-	private function _push($file) {
+	private function _push($file, $nid) {
 		require_once(drupal_get_path('module', 'citation_distribute') .	'/plugins/swordapp-php-library-1.0/swordappclient.php');
 		$sac = new SWORDAPPClient();
 		$sac_doc = $this->_get_service_doc($sac);
-		
-		/* get deposit url.  unsure if there are any conditions that could result in multiple workspaces 
-		 * or collections leading to multiple urls (maybe we can specify a default?  or maybe a user's taxonomy could
-		 * be treated as a new collection)*/
-		foreach($sac_doc->sac_workspaces as $ws) {
-			//TODO: workspace and collection are determined by school.  get that from a user setting or from their email domain.
-			//Also, the above setting should come from a dash plugin setting, rather than be hardcoded into sword.
-			foreach($ws->sac_collections as $collection) {
-	  		$href = $collection->sac_href;
-  	  	$xml = serialize($href);			//TODO figure out why simplexml methods aren't working.  Use that instead of regex.
-  			$deposit_url = preg_replace('/.*"(http.*)".*/', '$1', $xml);
-			}
-		}
+		$deposit_url = $this->get_deposit_url($sac_doc->sac_workspaces, $nid);
 		
 		/* attempt a deposit */
-		try {
-			$deposit = $sac->deposit($deposit_url, $this->username, $this->password, $this->obo, $file, $this->packaging, 'application/zip');
-		} catch(Exception $e) {
-			drupal_set_message('Deposit error: ' . $deposit . $e, 'error');
-			dsm($deposit);
+		if ($deposit_url) {
+			try {
+				$deposit = $sac->deposit($deposit_url, $this->username, $this->password, $this->obo, $file, $this->packaging, 'application/zip');
+			} catch(Exception $e) {
+				drupal_set_message('Deposit error: ' . $deposit . $e, 'error');
+				dsm($deposit);
+				return false;
+			}
+		} else {
+			drupal_set_message('Unable to submit document to ' . $this->name . '.  No collection available for deposit.', 'error');
 			return false;
 		}
-
+		
+		
 		/* DEBUG: check the deposit status */
 //		drupal_set_message($deposit->sac_statusmessage);//(string:79) Unacceptable content type in deposit request: application/x-www-form-urlencoded
 

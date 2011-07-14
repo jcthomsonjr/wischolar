@@ -19,10 +19,15 @@ Drupal.behaviors.pathauto_ajax = function(context, settings) {
  * on success, replace the path with the results
  */
 function make_alias() {
-	data = Drupal.settings.pathauto_ajax;
+	var data = Drupal.settings.pathauto_ajax;
 	data.title_raw = $.trim( $('#edit-title').attr('value') );
 	
-	href = 'http://' + document.location.host + '/pathauto_ajax/alias_js';
+	var now = new Date();
+	data.yyyy = now.getFullYear();
+	data.mm = "" + (now.getMonth() + 1);
+	if (data.mm.length == 1) data.mm = "0" + data.mm.toString();
+	
+	var href = 'http://' + document.location.host + '/pathauto_ajax/alias_js';
 	$.getJSON(href, data, function(json) {
 		if (json.status && json.data.length>0) {
 			$('#edit-path').attr('value', json.data);			

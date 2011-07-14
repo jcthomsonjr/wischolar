@@ -29,6 +29,41 @@ class citation_distribute_service_sword_dash extends citation_distribute_service
 		} 
 		
 	}
+
+  /* 
+	 * get_deposit_url($workspace)
+	 * returns deposit url
+	 * given workspaces/collections, try to figure out the correct collection.
+	 */
+	public function get_deposit_url($workspaces, $nid) {
+		//get email address
+		$query = 'SELECT u.mail FROM {node} n INNER JOIN {users} u ON n.uid=u.uid WHERE n.nid = "%d" LIMIT 1';
+		$email = db_result(db_query($query, $nid));
+		
+		//get department of email domain
+		$department = $this->department_domains[ array_pop(explode('@', $email)) ];
+		if (!$department) {
+			//maybe check for any harvard style domain before defaulting...
+			$department = $this->department_domains['harvard.edu'];
+		}
+		
+		//
+		foreach ($workspaces as $workspace) {
+			foreach ($workspace->sac_collections as $collection) {
+				if ($collection->sac_colltitle == $department) {
+					//yes this is a simplexmlelement.  yes curl and/or sword can read it
+					$deposit_url = $collection->sac_href;
+				}
+			}
+		}
+		
+		if (isset($deposit_url)) {
+			return $deposit_url;
+		} else {
+			return false;
+		}
+	}
+
 	// DASH has no interest in metadata only submissions.  Other sword repos may feel otherwise.
 	// $node->body is where biblio keeps full text of articles.  maybe that could be saved...
 	// service_sword should check
@@ -44,5 +79,67 @@ class citation_distribute_service_sword_dash extends citation_distribute_service
 	 * authors, title, journal/proceedings/etc, year
 	 * ****************/
 	
+	/* mapping of email domains to harvard departments by collection name */
+	public $department_domains = array(
+		'fas.harvard.edu' => 'FAS Scholarly Articles',
+		'harvard.edu' =>  'FAS Scholarly Articles',
+		'iq.harvard.edu' =>  'FAS Scholarly Articles',
+		'lists.iq.harvard.edu' =>  'FAS Scholarly Articles',
+		'hmdc.harvard.edu' =>  'FAS Scholarly Articles',
+		
+		'hsps.harvard.edu' => 'HSPH Scholarly Articles',	
+		
+		'hms.harvard.edu' => 'HMS Scholarly Articles',
+		
+		'law.harvard.edu' => 'HLS Scholarly Articles',
+		'mail.law.harvard.edu' => 'HLS Scholarly Articles',
+		'llm11.law.harvard.edu' => 'HLS Scholarly Articles',
+		'jd13.law.harvard.edu' => 'HLS Scholarly Articles',
 	
+		'hds.harvard.edu' => 'HDS Scholarly Articles',
+		
+		'gse.harvard.edu' => 'GSE Scholarly Articles',
+	
+		'gsd.harvard.edu' => 'GSD Scholarly Articles',
+	);
+	/* unknown domains:
+	 * wjh
+	 * post
+	 * gov
+	 * seas
+	 * mail
+	 * wcfia
+	 * hks
+	 * rwj
+	 * mcb
+	 * law
+	 * hksphd
+	 * harvardd.edu do we do typo correction?  (see also: fass.)
+	 * schepens
+	 * math
+	 * ksg
+	 * jbcc
+	 * hulmail 
+	 * hbsp
+	 * eecs
+	 * college
+	 * chemistry
+	 * cga
+	 * bwh
+	 * bidmc
+	 * mgh
+	 * oeb
+	 * cfa
+	 * 
+	 * other schools/colleections:
+	 * 
+'Harvard Business School'
+'Harvard Central Administration'
+
+
+
+
+'John F. Kennedy School of Government'
+
+	 */
 }

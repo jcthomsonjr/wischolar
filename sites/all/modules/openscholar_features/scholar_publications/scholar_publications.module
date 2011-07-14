@@ -226,6 +226,10 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
       unset($form['body_field']['teaser_include']);
       $form['body_field']['teaser_include'] = $t;
     }
+    
+    //Remove the sticky option.  Our view ignores it, so we shouldn't mislead users.
+    unset( $form['options']['sticky'] );
+      
   }
 }
 
