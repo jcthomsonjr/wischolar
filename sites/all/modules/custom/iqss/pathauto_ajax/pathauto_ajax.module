@@ -39,38 +39,20 @@ function pathauto_ajax_alias_js() {
     $pattern = trim(variable_get('pathauto_node_pattern', FALSE));
   }
   
-  //build list of patterns we're willing to replace
-  //ignoring types: images, dataverse, software release (has no title elem), //person (no title)
-  $replaceable_patterns = array();
-  foreach (array('publications', 'announcements', 'classes', 'galleries', 'feeds', 'links', 'scholar-software-project', 'event', 'book', 'presentations' ) as $type) {
-    $replaceable_patterns[] = '[space-og-path]/' . $type . '/[title-raw]';
-  }
-  $replaceable_patterns[] = 'content/[title-raw]';
-  $replaceable_patterns[] = '[space-og-path]/blog/[yyyy]/[mm]/[title-raw]';
-  
   //if applicable, process this pattern for tokens
-  if (in_array($pattern, $replaceable_patterns)) {
+  if (isset($pattern) && strlen($pattern) > 0 ) {
     require_once(drupal_get_path('module', 'pathauto') . '/pathauto.inc');
       
     $node = array(
       'title' => $_GET['title'],
       'type' => $_GET['type'],
+      'spaces_og' => array('gid' => $_GET['gid']),
     );
-    switch ($_GET['purl_provider']) {
-      case 'spaces_og':
-        $node['spaces_og'] = array('gid' => $_GET['gid']); 
-        break;
-        
-      case 'og_groups':
-        //is this case relevant?
-        break;
-    }
     
     //let pathauto apply tokens to path given our fake node
     $node = (object)$node;
     $placeholders = pathauto_get_placeholders('node', $node);
     $path = pathauto_create_alias('node', 'return', $placeholders, null, null, $node->type, null);
-    
   }
 
   if (isset($path) && strlen($path) > 0 ) {
@@ -94,9 +76,7 @@ function pathauto_ajax_preprocess_page(&$variables) {
   if (arg(0) == 'node' && arg(1) == 'add' && arg(2)) {
     $vsite=vsite_get_vsite();
     $data = array( 'pathauto_ajax' => array(        
-        //'space-og-path' => $vsite->group->purl,
         'type' => arg(2), 
-        'purl_provider' => $vsite->purl_provider,
         'gid' => $vsite->id,
     ));
        
