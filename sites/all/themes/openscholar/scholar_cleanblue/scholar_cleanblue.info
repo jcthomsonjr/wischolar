@@ -6,7 +6,9 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-cleanblue.css
-conditional-stylesheets[if lt IE 9][all][] = scholar-cleanblue-ie.css
+
+conditional-stylesheets[if lte IE 7][all][]   = scholar-cleanblue-ie7.css
+conditional-stylesheets[if IE][all][]         = scholar-cleanblue-ie.css
 
 scholar[theme_type]   = "scholar"
 scholar[theme_access] = "public"
