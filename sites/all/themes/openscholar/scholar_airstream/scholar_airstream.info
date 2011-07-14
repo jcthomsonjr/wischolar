@@ -8,6 +8,7 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-airstream.css
+conditional-stylesheets[if lte IE 7][all][] = scholar-airstream-ie.css
 
 scholar[widgets][vsite_widgets-3] = left
 scholar[widgets][vsite_menus-0] = left
