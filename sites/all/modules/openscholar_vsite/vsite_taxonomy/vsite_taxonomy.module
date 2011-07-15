@@ -438,50 +438,56 @@ function vsite_taxonomy_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
  * Renames the vocabs label in the input form
  */
 function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
-
+  
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
     $vsite = vsite_get_vsite();
-    if ($vsite){
+    if ($vsite) {
       $v = $vsite->get_vocabs($form['#node']->type);
-      if(!is_array($v)) $v = array();
-
-      foreach (element_children($form['taxonomy']) as $s_child) {
-      	if($s_child == 'tags' && count($form['taxonomy']['tags'])){
-      	  $form['taxonomy']['tags'] = array_intersect_key($form['taxonomy']['tags'],$v);
-      	}elseif (!array_key_exists($s_child,$v)){
-      	  unset($form['taxonomy'][$s_child]);
-      	}
+      if (! empty($v)) {
+        if (! is_array($v))
+          $v = array();
+        
+        foreach ( element_children($form['taxonomy']) as $s_child ) {
+          if ($s_child == 'tags' && count($form['taxonomy']['tags'])) {
+            $form['taxonomy']['tags'] = array_intersect_key($form['taxonomy']['tags'], $v);
+          }
+          elseif (! array_key_exists($s_child, $v)) {
+            unset($form['taxonomy'][$s_child]);
+          }
+        }
       }
     }
-
-    if(!$form['#vertical_tabs']) $form['#vertical_tabs'] = array();
+    
+    if (! $form['#vertical_tabs'])
+      $form['#vertical_tabs'] = array();
     $form['#vertical_tabs']['taxonomy'] = 0; //Disable vert. tabs
   }
+  
+  switch ($form_id) {
+    case 'taxonomy_form_vocabulary' :
+      if ($form['settings']['context'])
+        $form['settings']['context']['#access'] = user_access('administer taxonomy'); //Hide from regular users
+      if ($form['settings']['orderable'])
+        $form['settings']['orderable']['#access'] = user_access('administer taxonomy'); //Hide from regular users
+      
 
-
-
-  switch($form_id){
-  	case 'taxonomy_form_vocabulary':
-  		if($form['settings']['context']) $form['settings']['context']['#access'] = user_access('administer taxonomy'); //Hide from regular users
-  		if($form['settings']['orderable']) $form['settings']['orderable']['#access'] = user_access('administer taxonomy'); //Hide from regular users
-
-  		$a_vocab_options = array(
-        1 => t('Tags (Free tagged comma-separated list of categories/tags)'),
-        0 => t('Predefined/Managed Taxonomy'),
+      $a_vocab_options = array(
+        1 => t('Tags (Free tagged comma-separated list of categories/tags)'), 
+        0 => t('Predefined/Managed Taxonomy') 
       );
-
-	  	//Change view to make creating new vocabs easier
-		  $form['settings']['tags']['#type'] = 'select';
-	    $form['settings']['tags']['#options'] = $a_vocab_options;
-	    $form['settings']['tags']['#description'] = '';
-	    $form['settings']['tags']['#title'] = 'Type';
-  	break;
-  	case "taxonomy_vocabulary_confirm_reset_alphabetical":
-	    $vsite = vsite_get_vsite();
-	    if($vsite && $form['actions']){
-	      $form['actions']['cancel']['#value'] = l("Cancel","cp/settings/taxonomy");
-	    }
-    break;
+      
+      //Change view to make creating new vocabs easier
+      $form['settings']['tags']['#type'] = 'select';
+      $form['settings']['tags']['#options'] = $a_vocab_options;
+      $form['settings']['tags']['#description'] = '';
+      $form['settings']['tags']['#title'] = 'Type';
+      break;
+    case "taxonomy_vocabulary_confirm_reset_alphabetical" :
+      $vsite = vsite_get_vsite();
+      if ($vsite && $form['actions']) {
+        $form['actions']['cancel']['#value'] = l("Cancel", "cp/settings/taxonomy");
+      }
+      break;
   }
 
 }
