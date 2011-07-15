@@ -51,6 +51,8 @@ function pathauto_ajax_alias_js() {
     
     //let pathauto apply tokens to path given our fake node
     $node = (object)$node;
+    require_once( drupal_get_path('module', 'node') . '/node.pages.inc');
+    node_object_prepare($node);
     $placeholders = pathauto_get_placeholders('node', $node);
     $path = pathauto_create_alias('node', 'return', $placeholders, null, null, $node->type, null);
   }
