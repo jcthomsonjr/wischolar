@@ -79,7 +79,7 @@ function os_set_login_destination($account){
        return;
 
   // site owners
-  if ($vsites = vsite_get_vsite_by_owner($account->uid)) {
+  if (($vsites = vsite_get_vsite_by_owner($account->uid)) || count($account->og_groups)) {
     if (count($vsites) == 1) {
 	    //since there is only one element in the array the vsite object is $vsite_arr[0]
 	    $vsite = $vsites[0];
@@ -105,7 +105,7 @@ function os_set_login_destination($account){
 	      ));
 	    }
     }
-    elseif (count($vsites) > 1) {
+    elseif (count($vsites) > 1 || count($account->og_groups) >= 1) {
       //asssumes user is owner of multiple vsites
       $_REQUEST['destination'] = 'user';
       return;
