@@ -6,6 +6,7 @@ base theme = scholar_base
 
 ;------ styles ------
 stylesheets[all][]   = scholar-eloquent.css
+conditional-stylesheets[if lte IE 7][all][] = scholar-eloquent-ie.css
 
 ;------ openscholar settings------
 plugins[vsite_design][flavor] = flavors

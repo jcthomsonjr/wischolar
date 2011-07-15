@@ -6,6 +6,7 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-nortony.css
+conditional-stylesheets[if lte IE 7][all][] = scholar-nortony-ie.css
 
 scholar[widgets][vsite_widgets-0] = false
 scholar[theme_type]   = "scholar"
