@@ -74,16 +74,26 @@ function scholar_biocv_access_create_bio(){
   $vsite = vsite_get_vsite();
   $bio_node = (!$vsite)? false:content_profile_load('bio', $vsite->group->uid);
   
+  $map = features_get_component_map('node');
+  
+  $feature = !empty($map['bio']) ? reset($map['bio']) : NULL;
+  $feature_access = (!$feature || spaces_access_feature('create', $feature));
+      
   //Check for projects
-  return (!$bio_node && node_access('create',"bio"));
+  return (!$bio_node && $feature_access && node_access('create',"bio"));
 }
 
 function scholar_biocv_access_create_cv(){
   $vsite = vsite_get_vsite();
   $cv_node = (!$vsite)? false:content_profile_load('cv', $vsite->group->uid);
   
+  $map = features_get_component_map('node');
+  
+  $feature = !empty($map['cv']) ? reset($map['cv']) : NULL;
+  $feature_access = (!$feature || spaces_access_feature('create', $feature));
+  
   //Check for projects
-  return (!$cv_node && node_access('create',"cv"));
+  return (!$cv_node && $feature_access && node_access('create',"cv"));
 }
 
 /**
