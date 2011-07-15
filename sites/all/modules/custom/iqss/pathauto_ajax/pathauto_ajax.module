@@ -41,7 +41,7 @@ function pathauto_ajax_alias_js() {
   
   //if applicable, process this pattern for tokens
   if (isset($pattern) && strlen($pattern) > 0 ) {
-    require_once(drupal_get_path('module', 'pathauto') . '/pathauto.inc');
+    //require_once(drupal_get_path('module', 'pathauto') . '/pathauto.inc');
       
     $node = array(
       'title' => $_GET['title'],
@@ -51,8 +51,11 @@ function pathauto_ajax_alias_js() {
     
     //let pathauto apply tokens to path given our fake node
     $node = (object)$node;
-    require_once( drupal_get_path('module', 'node') . '/node.pages.inc');
+    //require_once( drupal_get_path('module', 'node') . '/node.pages.inc');
+    module_load_include('inc', 'node', 'node.pages');
     node_object_prepare($node);
+
+    module_load_include('inc', 'pathauto');
     $placeholders = pathauto_get_placeholders('node', $node);
     $path = pathauto_create_alias('node', 'return', $placeholders, null, null, $node->type, null);
   }
