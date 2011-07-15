@@ -62,8 +62,12 @@ function vsite_content_files() {
 
 function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_state, $form_id = 'views_bulk_operations_form__1') {
   //Add collapsible JS
+  
+  $url = ltrim(  url($_GET['q']),'/'  );
+  $url = str_replace( BASE_URL.'/', '', $url);
+  
   drupal_add_js('misc/collapse.js');
-  drupal_add_js(array('vsite_content' => array('url' => ltrim(url($_GET['q']),'/'))), 'setting');
+  drupal_add_js(array( 'vsite_content' => array('url' => $url) ), 'setting');
   drupal_add_js(drupal_get_path('module', 'vsite_content') . '/vsite_content.js');
   if ($form['#id'] == 'views-bulk-operations-form--1') {
    $form['select']['#title'] = 'Update options';
