@@ -60,6 +60,20 @@ function _osh_departments_block_dept_banner(){
 }
 
 /**
+ * hook preprocess page
+ */
+function osh_departments_preprocess_page(&$vars){
+  
+  if ($dep = array_shift(os_departments_get_department_context())) {
+    drupal_add_css(drupal_get_path('module', 'osh_departments') . '/css/' . $dep . '.css');
+    // add department specific css file
+    
+    // add department specific body class
+    $vars['body_classes'] .= ' department-' . $dep;
+  }
+}
+
+/**
  * Implements hook_context_load_alter
  */
 function osh_departments_context_load_alter(&$context) {
