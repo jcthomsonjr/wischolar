@@ -30,9 +30,46 @@ Drupal.behaviors.scholarlayout = function() {
 
     }
     scholarlayout_add_removal_hooks();
-    vsite_layout_setScrollArrows();
+   // vsite_layout_setScrollArrows();
     vsite_layout_setExceptionScroller();
-    vsite_layout_setWidgetAutoWidth();
+   // vsite_layout_setWidgetAutoWidth();
+    
+    /** jons developmental section.  work in progress.
+     * 
+     * instead of shaun's approach, I'm stretching the width of the widget container, but putting
+     * that in a 100% width container.  now I can use the browser's own scrolling features instead
+     * of something hacked together.
+     *  
+     **/
+    //$('dl#scholarlayout-top-widgets').parent().css('overflow-x', 'scroll');
+    $('dl#scholarlayout-top-widgets').parent().width('100%');
+    $('dl#scholarlayout-top-widgets').wrap('<div id="widget-wrapper"></div>');
+    $('#widget-wrapper').css('overflow-x', 'hidden');
+    
+    //31px of css padding?  shoudl generate from code
+    var widget_width = 31 + $('dl#scholarlayout-top-widgets>dd:first').width();
+    
+    //1 extra widget's worth of padding, so you can scroll past the last widget and see that it's the end
+    var widget_count = 1 +  $('dl#scholarlayout-top-widgets>dd:not(.disabled)').length;
+    
+    //shaun was correct to recalibrate width periodically.  each time a dd pops, bar gets a new width.
+    $('dl#scholarlayout-top-widgets').width( widget_width*widget_count);
+    var speed = '350'; //ms.  jq.fast is 200 and jq.slow is 600
+    
+    $('div.widget-prev').click(function() {
+      var sc = $('#widget-wrapper').scrollLeft() - widget_width;
+      sc -= sc % widget_width; //snap to edge of widget
+      $('#widget-wrapper').animate({ scrollLeft:sc },speed)
+    });
+    
+    $('div.widget-next').click(function() {
+      var sc = $('#widget-wrapper').scrollLeft() + widget_width;
+      sc -= sc % widget_width; //snap to edge of widget
+      $('#widget-wrapper').animate({ scrollLeft:sc },speed)
+    });
+    
+    //jsut for dev's sake, show borders around each widget so we can line them up better
+    $('dl#scholarlayout-top-widgets dd').css({borderRight:'1px white dotted'});
 };
 
 function scholarlayout_add_removal_hooks(){
@@ -119,6 +156,7 @@ function animatePoof() {
     setTimeout("$('.poof').remove()", frames * frameRate);
 }
 
+/*
 function vsite_layout_setScrollArrows(){
 	var nContainerWidth = $('#scholarlayout-top-widgets').width();
 	var nWidgetWidth = $('#scholarlayout-top-widgets dd:first').width();
@@ -158,7 +196,7 @@ function vsite_layout_setScrollArrows(){
 	  $('div.widget-next').mouseup(function() { keep_scroling_next = false; });
 	}
 }
-
+*/
 //Horizontal Sliding Exceptions
 function vsite_layout_setExceptionScroller(){
 	  
