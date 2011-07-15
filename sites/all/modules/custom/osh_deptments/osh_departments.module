@@ -3,7 +3,7 @@
 define('OSH_DEPARTMENTS_NAME', 'Affiliation / Department' );
 
 function osh_departments_init(){
-  dpm(os_departments_get_department_context());
+  //dpm(os_departments_get_department_context());
 }
 
 /**
@@ -32,10 +32,7 @@ function osh_departments_block($op = 'list', $delta = 0) {
       );
       return $info;
     case 'view':
-      $function = "_osh_departments_block_{$delta}";
-      if (function_exists($function)) {
-        return call_user_func($function);
-      }
+      return _osh_departments_block_dept_banner();
       break;
   }
 }
@@ -45,22 +42,33 @@ function osh_departments_block($op = 'list', $delta = 0) {
  */
 function _osh_departments_block_dept_banner(){
   $block = array();
-  
+  module_load_include('inc', 'osh_departments', 'osh_departments.block');
   
   $block['subject'] = t('');
-  $block['content'] = 'some content';
+  
+  $deps = os_departments_get_department_context();
+  $dep = array_shift($deps);
+  
+  $function = "_osh_departments_block_{$dep}_banner_view";
+  if (function_exists($function)) {
+    $block['content'] = call_user_func($function);
+  }
+  
+
+  
+  return $block;
 }
 
 /**
  * Implements hook_context_load_alter
  */
 function osh_departments_context_load_alter(&$context) {
-  if (isset($context->reactions['block'])) {
-    $context->reactions['block']['blocks']['dept_banner'] = array(
+  if ($context->name === 'vsite-section-public' && isset($context->reactions['block'])) {
+    $context->reactions['block']['blocks']['osh_departments-dept_banner'] = array(
       'module' => 'osh_departments',
       'delta' => 'dept_banner',
       'region' => 'header_top',
-      'weight' => '2',
+      'weight' => '0',
     );
   }
 }
@@ -84,12 +92,12 @@ function os_departments_get_department_context(){
 
       if(array_key_exists($dep['name'], $terms)){
         
-        $ret[] = $key;
+        array_push($ret,$key);
       }
     }
     
   }
-  //dpm(current($ret));
+
   return $ret;
 }
 
