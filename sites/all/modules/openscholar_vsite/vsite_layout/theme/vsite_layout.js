@@ -71,12 +71,6 @@ Drupal.behaviors.scholarlayout = function() {
     s -= s % widget_width; // snap to edge of widget
     $('#widget-wrapper').animate({ scrollLeft:s}, speed)
   });
-
-  // jsut for dev's sake, show borders around each widget so we can line them up
-  // better
-  $('dl#scholarlayout-top-widgets dd').css({
-    borderRight : '1px white dotted'
-  });
 };
 
 function scholarlayout_add_removal_hooks() {
