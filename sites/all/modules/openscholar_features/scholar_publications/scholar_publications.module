@@ -280,7 +280,7 @@ function scholar_publications_get_cache($cache_key){
   $cutoff = 0;
   $cache_params = array(
     'node' => array('biblio' => 'biblio'),
-    'og' => array('current' => 'current'),
+    'os_og' => array('current' => 'current'),
   );
   
   // Retrieve the latest update time matching the settings on this View.
@@ -517,7 +517,7 @@ function scholar_publications_vsite_widgets(){
     'cache' => BLOCK_CACHE_CONTENT_CACHE,
     'cache_keys' => array(
       'node' => array('biblio' => 'biblio'),
-      'og' => array('current' => 'current'),
+      'os_og' => array('current' => 'current'),
     ),
   );
 
@@ -530,7 +530,7 @@ function scholar_publications_vsite_widgets(){
     'cache' => BLOCK_CACHE_CONTENT_CACHE,
     'cache_keys' => array(
       'node' => array('biblio' => 'biblio'),
-      'og' => array('current' => 'current'),
+      'os_og' => array('current' => 'current'),
     ),
   );
 
@@ -544,7 +544,8 @@ function scholar_publications_vsite_widgets(){
     'cache' => BLOCK_CACHE_CONTENT_CACHE,
     'cache_keys' => array(
       'node' => array('biblio' => 'biblio'),
-      'og' => array('current' => 'current'),
+      'os_og' => array('current' => 'current'),
+      'vsite_config' => array('scholar_publications_settings' => 'scholar_publications_settings'),
     ),
   );
 
@@ -557,7 +558,7 @@ function scholar_publications_vsite_widgets(){
     'cache' => BLOCK_CACHE_CONTENT_CACHE,
     'cache_keys' => array(
       'node' => array('biblio' => 'biblio'),
-      'og' => array('current' => 'current'),
+      'os_og' => array('current' => 'current'),
     ),
   );
 
@@ -571,7 +572,7 @@ function scholar_publications_vsite_widgets(){
     'cache' => BLOCK_CACHE_CONTENT_CACHE,
     'cache_keys' => array(
       'node' => array('biblio' => 'biblio'),
-      'og' => array('current' => 'current'),
+      'os_og' => array('current' => 'current'),
     ),
   );
   return $items;

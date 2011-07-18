@@ -243,7 +243,7 @@ function scholar_blog_views_default_views() {
         'bio' => 0,
         'cv' => 0,
       ),
-      'og' => array(
+      'os_og' => array(
         'current' => 'current',
         'user' => 0,
       ),
