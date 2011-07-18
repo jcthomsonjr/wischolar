@@ -8,9 +8,12 @@ function pathauto_extra_menu() {
   $items['pathauto_extra/alias_js'] = array(
     'page callback' => 'pathauto_extra_alias_js', 
     'type' => 'MENU_CALLBACK', 
-    'access arguments' => array(
-      'access content' 
-    ) 
+    'access arguments' => array('access content'), 
+  );
+  $items['pathauto_extra/validate_js'] = array(
+    'page callback' => 'pathauto_extra_validate_js', 
+    'type' => 'MENU_CALLBACK', 
+    'access arguments' => array('access content'),  
   );
   return $items;
 }
@@ -20,7 +23,7 @@ function pathauto_extra_menu() {
  * attaches javascript to node edit forms
  */
 function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
-  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id && isset($form['path']['pathauto_perform_alias'])) {
+  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id ) {
     drupal_add_js(drupal_get_path('module', 'pathauto_extra') . '/pathauto_extra.js');
   }
 }
@@ -30,7 +33,7 @@ function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
  * 
  * .js file calls this function to get info back from drupal
  * gets the pattern for formatting urls for this node type, tries to apply it
- * returns expected url.
+ * returns expected url alias.
  */
 function pathauto_extra_alias_js() {
   //get pattern for this node type
@@ -69,6 +72,33 @@ function pathauto_extra_alias_js() {
 			'pattern' => $pattern,
     ));
 	}
+}
+
+/**
+ * @function pathauto_extra_validate_js()
+ *
+ * checks if a user supplied URL alias is valid.
+ */
+function pathauto_extra_validate_js() {
+  $path = $_GET['path'];
+  $errors = array();
+  
+  //begins with slash
+  if (strpos($path, '/') === 0) {
+    $errors[] = 'URL can not begin with a forward slash.';
+  }
+  
+  //existing url
+  $spaces_name = db_result(db_query('SELECT value FROM {purl} WHERE id = %s', $_GET['gid']));  
+  $db = db_result(db_query('SELECT pid FROM {url_alias} WHERE dst = "%s/%s"', $spaces_name, $path));
+  if ($db) {
+    $errors[] = 'This URL is already in use.';
+  }
+  
+  //return to json
+  drupal_json( array(
+    'errors' => $errors,
+  ));
 }
 
 /**

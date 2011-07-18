@@ -10,6 +10,7 @@
  */
 
 Drupal.behaviors.pathauto_extra = function(context, settings) {
+  //On each title edit, suggest a new path alias
 	$('#edit-title').bind('blur', function() {
 		if ($('#edit-title').attr('value') != '') {
 			
@@ -26,6 +27,24 @@ Drupal.behaviors.pathauto_extra = function(context, settings) {
 		  })
 		  
 		}
+	});
+	
+	//When a path alias is manually supplied, check its validity
+	$('#edit-path').bind('blur', function() {
+	  if ($('#edit-path').attr('value') != '' && !$('#edit-pathauto-perform-alias').attr('checked')) {
+
+	    var href = 'http://' + document.location.host + '/pathauto_extra/validate_js';
+	    var data = Drupal.settings.pathauto_extra;
+      data.path = $('#edit-path').attr('value');
+
+      $.getJSON(href, data, function(json) {
+	      if (json.errors.length > 0) {
+	        var txt = "The URL you specified has the following errors: \n\n";
+	        for (i in json.errors) txt += json.errors[i] + "\n";
+	        alert(txt);
+	      }
+	    });
+	  }
 	});
 };
 
