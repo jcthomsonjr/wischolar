@@ -1,9 +1,22 @@
 <?php
 
-function osh_departments_update_6002(&$sandbox){
-  
+function osh_departments_install(){
+  _osh_departments_config_econ();
+}
+
+function osh_departments_update_6001(&$sandbox){
   $res = array();
 
+  _osh_departments_config_econ();
+  $res[] = array(
+    'success' => true,
+    'query' => 'Configured Harvard Department taxonomy ',
+  );
+    
+  return $res;
+}
+
+function _osh_departments_config_econ(){
   os_include('os.taxonomy');
   
   $vid = os_taxonomy_get_vid(OSH_DEPARTMENTS_VOCAB_NAME);
@@ -35,14 +48,6 @@ function osh_departments_update_6002(&$sandbox){
   foreach($deps as $d){
     os_taxonomy_add_term($vid, $d);
   }
-
-  $res[] = array(
-    'success' => true,
-    'query' => 'Configured Harvard Department taxonomy ',
-  );
-    
-  return $res;
-  
 }
 
 /**
