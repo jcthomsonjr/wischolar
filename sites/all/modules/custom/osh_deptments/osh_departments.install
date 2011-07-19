@@ -29,7 +29,6 @@ function _osh_departments_config_econ(){
     //sanity check if node exists
     $sql = "SELECT nid FROM {node} WHERE nid=$e_nid";
     if (db_result(db_query($sql))){
-      drupal_set_message($e_nid);
       os_taxonomy_assign_nid_tid($e_nid, $e_tid);
     }
   }
