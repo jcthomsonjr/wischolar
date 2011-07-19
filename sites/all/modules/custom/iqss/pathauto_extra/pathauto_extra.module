@@ -5,13 +5,23 @@
  * provides a page for ajax to call so we can retrieve info from drupal
  */
 function pathauto_extra_menu() {
-  $items['pathauto_extra/alias_js'] = array(
-    'page callback' => 'pathauto_extra_alias_js', 
+  $items['pathauto_extra/alias_js/%/%'] = array(
+    'page callback' => 'pathauto_extra_alias_js',
+  	'page arguments' => array(2,3),   
     'type' => 'MENU_CALLBACK', 
     'access arguments' => array('access content'), 
   );
-  $items['pathauto_extra/validate_js'] = array(
-    'page callback' => 'pathauto_extra_validate_js', 
+  $items['pathauto_extra/validate_js/%/%'] = array(
+    'page callback' => 'pathauto_extra_validate_js',
+  	'page arguments' => array(2,3), 
+    'type' => 'MENU_CALLBACK', 
+    'access arguments' => array('access content'),  
+  );
+  
+  //test entry.
+    $items['pathauto_extra/ctools_ajax/%/%'] = array(
+    'page callback' => 'pathauto_extra_ctools_ajax', 
+    'page arguments' => array(2,3),
     'type' => 'MENU_CALLBACK', 
     'access arguments' => array('access content'),  
   );
@@ -24,20 +34,27 @@ function pathauto_extra_menu() {
  */
 function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id ) {
-    drupal_add_js(drupal_get_path('module', 'pathauto_extra') . '/pathauto_extra.js');
+    ctools_include('ajax');
+    ctools_add_js('ajax-responder');
+    
+    $vsite=vsite_get_vsite();   
+    $gid = $vsite->id;
+    $type = arg(2); 
+    
+    ctools_ajax_associate_url_to_element($form, $form['title'], url('pathauto_extra/alias_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');
+    ctools_ajax_associate_url_to_element($form, $form['path']['path'], url('pathauto_extra/validate_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');
   }
 }
 
 /**
  * @function pathauto_extra_alias_js()
  * 
- * .js file calls this function to get info back from drupal
  * gets the pattern for formatting urls for this node type, tries to apply it
  * returns expected url alias.
  */
-function pathauto_extra_alias_js() {
+function pathauto_extra_alias_js($gid, $type) {
   //get pattern for this node type
-  $pattern = trim(variable_get('pathauto_node_' . $_GET['type'] . '_pattern', FALSE));
+  $pattern = trim(variable_get('pathauto_node_' . $type . '_pattern', FALSE));
   if (empty($pattern)) {
     $pattern = trim(variable_get('pathauto_node_pattern', FALSE));
   }
@@ -46,9 +63,9 @@ function pathauto_extra_alias_js() {
   if (isset($pattern) && strlen($pattern) > 0 ) {
     //Fake a simple node object to pass to path auto
     $node = array(
-      'title' => $_GET['title'],
-      'type' => $_GET['type'],
-      'spaces_og' => array('gid' => $_GET['gid']),
+      'title' => $_POST['ctools_changed'],
+      'type' => $type,
+      'spaces_og' => array('gid' => $gid),
     );
     
     $node = (object)$node;
@@ -61,17 +78,7 @@ function pathauto_extra_alias_js() {
     $path = pathauto_create_alias('node', 'return', $placeholders, null, null, $node->type, null);
   }
 
-  if (isset($path) && strlen($path) > 0 ) {
-    drupal_json( array('status' => TRUE, 'data' => $path ) );
-	} else {
-		//don't know how to replace tokens in this pattern  
-		drupal_json( array(
-			'status' => TRUE, 
-			'data' => '', 
-			'error' => 'pathauto_extra has no token replacement set up for this pathauto pattern',
-			'pattern' => $pattern,
-    ));
-	}
+  pathauto_extra_ctools_value('#edit-path', $path);
 }
 
 /**
@@ -79,8 +86,8 @@ function pathauto_extra_alias_js() {
  *
  * checks if a user supplied URL alias is valid.
  */
-function pathauto_extra_validate_js() {
-  $path = $_GET['path'];
+function pathauto_extra_validate_js($gid, $type) {
+  $path = $_POST['ctools_changed'];
   $errors = array();
   
   //begins with slash
@@ -102,19 +109,33 @@ function pathauto_extra_validate_js() {
 }
 
 /**
- * implementation of hook_preproces_page
- * adds tokenizable variables to page's javascript, so pathauto_extra.js can use them.
+ * wrapper function for executing ajax commands
+ * @param $id  the html selector (id)
+ * @param $message the message to insert on the div with id=$id
+ * @param $class  the class to apply to the div
  */
-function pathauto_extra_preprocess_page(&$variables) {
-  if (arg(0) == 'node' && arg(1) == 'add' && arg(2)) {
-    $vsite=vsite_get_vsite();
-    $data = array( 'pathauto_extra' => array(        
-        'type' => arg(2), 
-        'gid' => $vsite->id,
-    ));
-       
-    drupal_add_js($data, 'setting');
-  }
+function pathauto_extra_ctools_message($id, $message, $class = 'error'){
+  ctools_include( 'ajax');
+  ctools_add_js('ajax-responder');
+  
+  $commands = array();
+  $commands[] = ctools_ajax_command_html($id, $message);
+  $commands[] = ctools_ajax_command_attr($id, 'class', $class);
+  
+  ctools_ajax_render($commands);
 }
 
+/**
+ * warpper function for ajax commands
+ * changes value attribute of #$id
+ */
+function pathauto_extra_ctools_value($id, $value) {
+  ctools_include( 'ajax');
+  ctools_add_js('ajax-responder');
+  
+  $commands = array();
+  $commands[] = ctools_ajax_command_attr($id, 'value', $value);
+  
+  ctools_ajax_render($commands);  
+}
 
