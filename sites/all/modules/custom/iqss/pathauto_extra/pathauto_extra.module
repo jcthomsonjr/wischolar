@@ -42,7 +42,15 @@ function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
     $type = arg(2); 
     
     ctools_ajax_associate_url_to_element($form, $form['title'], url('pathauto_extra/alias_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');
+
+    $form['path']['path']['#id'] = 'edit-path'; //force the id or else ctools invents one that pathauto can't use.
+    $form['path']['path']['#attributes']['class'] = 'ctools-use-ajax-onchange'; //ctools won't add classes to a form element with an id, so do it manually  
     ctools_ajax_associate_url_to_element($form, $form['path']['path'], url('pathauto_extra/validate_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');
+    //instead of a form change, maybe we can watch the vtab change?
+    //#id edit-path.  pathauto works, ctools doesn't. (best so far)
+    //#id #edit-path.  nothing works.
+    //id #?edit-path.  nothing works.
+    
   }
 }
 
