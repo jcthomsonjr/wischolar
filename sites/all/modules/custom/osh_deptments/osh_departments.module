@@ -1,6 +1,6 @@
 <?php
 
-define('OSH_DEPARTMENTS_NAME', 'Affiliation / Department' );
+define('OSH_DEPARTMENTS_VOCAB_NAME', 'Affiliation / Department' );
 
 function osh_departments_init(){
   //dpm(os_departments_get_department_context());
@@ -95,7 +95,7 @@ function os_departments_get_department_context(){
   $vsite = vsite_get_vsite();
   if ($vsite){  //@todo only in public view of the viste actually
     $node = $vsite -> group;
-    $vocab = os_departments_get_vocabulary_by_name(OSH_DEPARTMENTS_NAME);
+    $vocab = os_departments_get_vocabulary_by_name(OSH_DEPARTMENTS_VOCAB_NAME);
     $vid = $vocab -> vid;
     
     $terms = taxonomy_node_get_terms_by_vocabulary($node, $vid, 'name');
