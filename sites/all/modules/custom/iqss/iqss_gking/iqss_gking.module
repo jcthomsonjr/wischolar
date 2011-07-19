@@ -790,6 +790,11 @@ function iqss_gking_vsite_widgets(){
         'region' => false,
         'status' => '0',
         'label' => 'Areas of Research',
+        'cache' => BLOCK_CACHE_CONTENT_CACHE,
+        'cache_keys' => array(
+          'vsite_config' => array('taxonomy_form_term' => 'taxonomy_form_term', 'vsite_taxonomy_form' => 'vsite_taxonomy_form'),
+          'os_og' => array('current' => 'current'),
+        ),
       );
 
   return $items;

@@ -65,9 +65,13 @@ function scholar_reader_vsite_widgets(){
         'delta' => 'my_twitter_feed',
         'weight' => 20,
         'region' => false,
-        'status' => '0',
         'label' => 'Twitter Feed',
-        'type' => 'context_ui',
+        'cache' => BLOCK_CACHE_CONTENT_CACHE,
+        'cache_keys' => array(
+          'vsite_config' => array('scholar_reader_settings' => 'scholar_reader_settings'),
+          'os_og' => array('current' => 'current'),
+        ),
+        'cache_max_lifespan' => 900, //cache 15 minutes
       );
 
   return $items;

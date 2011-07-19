@@ -95,8 +95,8 @@ function os_departments_get_department_context(){
   $vsite = vsite_get_vsite();
   if ($vsite){  //@todo only in public view of the viste actually
     $node = $vsite -> group;
-    $vocab = os_departments_get_vocabulary_by_name(OSH_DEPARTMENTS_VOCAB_NAME);
-    $vid = $vocab -> vid;
+    os_include('os.taxonomy');
+    $vid = os_taxonomy_get_vid(OSH_DEPARTMENTS_VOCAB_NAME);
     
     $terms = taxonomy_node_get_terms_by_vocabulary($node, $vid, 'name');
 
@@ -126,25 +126,4 @@ function os_departments_get_department_key_by_name($name){
   }
   
   return $ret;
-}
-
-
-/**
- * This function will return a vocabulary object which matches the
- * given name. Will return null if no such vocabulary exists.
- *
- * @param String $vocabulary_name
- *   This is the name of the section which is required
- * @return Object
- *   This is the vocabulary object with the name
- *   or null if no such vocabulary exists
- */
-function os_departments_get_vocabulary_by_name($vocabulary_name) {
-  $vocabs = taxonomy_get_vocabularies(NULL);
-  foreach ($vocabs as $vocab_object) {
-    if ($vocab_object->name == $vocabulary_name) {
-      return $vocab_object;
-    }
-  }
-  return NULL;
 }
