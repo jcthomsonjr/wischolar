@@ -53,7 +53,8 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 			
 		/* include sword lib */
 		require_once(drupal_get_path('module', 'citation_distribute') .	'/plugins/swordapp-php-library-1.0/packager_mets_swap.php');
-		$packager = new PackagerMetsSwap($this->root_in, $this->subdir_in, $this->root_out, $this->file_out);
+		$zipfile = $nid . ':' . $this->name . '-' . $this->file_out;
+		$packager = new PackagerMetsSwap($this->root_in, $this->subdir_in, $this->root_out, $zipfile);
 		
 		/* copy files from drupal to tmp dir */
 		$full_dir = dirname(__FILE__) . '/';
@@ -81,7 +82,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 				//set scalars if they have content
 				if (strlen($data) > 0) {
 	  			$func = 'set' . $name;
-		  		$packager->$func($data);
+		  		$packager->$func(strip_tags($data));
 				}
 			}
 		}
@@ -95,7 +96,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 	}
 	
 	/* returns path to saved file */
-	return $this->root_out . '/' . $this->file_out;
+	return $this->root_out . '/' . $zipfile;
 		
 	}
 	
