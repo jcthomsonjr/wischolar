@@ -122,9 +122,8 @@ function pathauto_extra_validate_js($gid, $type) {
   if (count($errors) > 0) {
     $err = 'The URL alias you selected has the following error(s):' . "\n\n" . implode("\n", $errors);
     $cmds[] = ctools_ajax_command_error($err);
-  } else {
-    //return ok?
-  }
+  } 
+  
   ctools_ajax_render($cmds);
 }
 
