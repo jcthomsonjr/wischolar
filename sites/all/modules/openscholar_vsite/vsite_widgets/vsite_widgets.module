@@ -126,10 +126,13 @@ function vsite_widgets_vsite_widgets(){
       'delta' => '0',
       'weight' => 20,
       'region' => 'header_right',
-      'status' => '0',
       'label' => 'Scholar site shield',
-      'type' => 'context_ui',
-	    'access callback' => 'vsite_widgets_shield_access'
+	    'access callback' => 'vsite_widgets_shield_access',
+	    'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+        'vsite_config' => array('vsite_generic_settings_form' => 'vsite_generic_settings_form'),
+        'os_og' => array('current' => 'current'),
+      ),
     ),
 
    'vsite_widgets-3' => array(
@@ -137,9 +140,7 @@ function vsite_widgets_vsite_widgets(){
       'delta' => '1',
       'weight' => -5,
       'region' => 'right',
-      'status' => '0',
       'label' => 'Scholar search widget',
-      'type' => 'context_ui',
     ),
     
     'vsite_widgets-4' => array(
@@ -147,9 +148,7 @@ function vsite_widgets_vsite_widgets(){
       'delta' => '2',
       'weight' => 300,
       'region' => false,
-      'status' => '0',
       'label' => 'AddThis Button - Share posts using popular services',
-      'type' => 'context_ui',
     ),
     
     'vsite_widgets-5' => array(
@@ -157,9 +156,7 @@ function vsite_widgets_vsite_widgets(){
       'delta' => '3',
       'weight' => 40,
       'region' => false,
-      'status' => '0',
       'label' => 'Google Translate',
-      'type' => 'context_ui',
     ),
     
    'vsite_widgets-6' => array(
@@ -167,9 +164,11 @@ function vsite_widgets_vsite_widgets(){
       'delta' => '6',
       'weight' => -5,
       'region' => false,
-      'status' => '0',
       'label' => 'RSS feed',
-      'type' => 'context_ui',
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+        'os_og' => array('current' => 'current'),
+      ),
     ),
 
     // Featured posts
@@ -178,9 +177,11 @@ function vsite_widgets_vsite_widgets(){
       'delta' => 'vsite_featuredposts-block_1',
       'weight' => 0,
       'region' => false,
-      'status' => '0',
       'label' => 'Featured posts',
-      'type' => 'context_ui',
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+        'os_og' => array('current' => 'current'),
+      ),
     ),
   );
 

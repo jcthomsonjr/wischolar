@@ -21,8 +21,9 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
       // Try fetching the block from cache.
       if ($cacheable && ($cid = $this->get_cache_id($block))) {
       	$cutoff = $this->cache_expire($cache_config);
-        if ($cache = cache_get($cid, 'cache_block') && (!$cutoff || $cache->created > $cutoff)) {
-          $array = $cache->data;
+        if (($cache = cache_get($cid, 'cache_block')) && (!$cutoff || $cache->created > $cutoff)) {
+          //$cache->data['content'] = "{{CACHED}}".$cache->data['content'];
+        	$array = $cache->data;
         }
         else {
           $array = module_invoke($block->module, 'block', 'view', $block->delta);

@@ -27,9 +27,9 @@ function _osh_departments_config_econ(){
   
   foreach($e_nids as $e_nid){
     //sanity check if node exists
-    $sql = "SELECT nid FROM {node} WHERE nid=$e_nid";
-    if (db_result(db_query($sql))){
-      os_taxonomy_assign_nid_tid($e_nid, $e_tid);
+    $sql = "SELECT nid,vid FROM {node} WHERE nid = {$e_nid}";
+    if (($a_result = db_fetch_array(db_query($sql)))){
+      os_taxonomy_assign_nid_tid($a_result['nid'], $e_tid, $a_result['vid']);
     }
   }
   
@@ -69,7 +69,7 @@ function _os_taxonomy_econ_nids(){
     15272, //weitzman
     16013, //jstock
     13903, //melitz
-    13868, //glewis 
+    13868, //glewis
     13327, //mkremer
     13326, //Kenneth Rogoff
     11866, // Dale Jorgenson

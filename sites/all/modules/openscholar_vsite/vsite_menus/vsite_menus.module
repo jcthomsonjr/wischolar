@@ -380,6 +380,11 @@ function vsite_menus_vsite_widgets() {
       'weight' => 20,
       'region' => 'navbar',
       'label' => 'Primary menu',
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+	      'vsite_config' => array('vsite_menus_settings_form' => 'vsite_menus_settings_form'),
+	      'os_og' => array('current' => 'current'),
+	    ),
     ),
     'vsite_menus-1' => array(
       'module' => 'vsite_menus',
@@ -387,6 +392,11 @@ function vsite_menus_vsite_widgets() {
       'weight' => 20,
       'region' => 'left',
       'label' => 'Secondary menu',
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+        'vsite_config' => array('vsite_menus_settings_form' => 'vsite_menus_settings_form'),
+        'os_og' => array('current' => 'current'),
+      ),
     ),
   );
 }
