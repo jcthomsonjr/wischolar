@@ -4,13 +4,16 @@
  * implementation of hook_menu()
  * provides a page for ajax to call so we can retrieve info from drupal
  */
-function pathauto_ajax_menu() {
-  $items['pathauto_ajax/alias_js'] = array(
-    'page callback' => 'pathauto_ajax_alias_js', 
+function pathauto_extra_menu() {
+  $items['pathauto_extra/alias_js'] = array(
+    'page callback' => 'pathauto_extra_alias_js', 
     'type' => 'MENU_CALLBACK', 
-    'access arguments' => array(
-      'access content' 
-    ) 
+    'access arguments' => array('access content'), 
+  );
+  $items['pathauto_extra/validate_js'] = array(
+    'page callback' => 'pathauto_extra_validate_js', 
+    'type' => 'MENU_CALLBACK', 
+    'access arguments' => array('access content'),  
   );
   return $items;
 }
@@ -19,20 +22,20 @@ function pathauto_ajax_menu() {
  * implementation of hook_form_alter()
  * attaches javascript to node edit forms
  */
-function pathauto_ajax_form_alter(&$form, $form_state, $form_id) {
-  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id && isset($form['path']['pathauto_perform_alias'])) {
-    drupal_add_js(drupal_get_path('module', 'pathauto_ajax') . '/pathauto_ajax.js');
+function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
+  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id ) {
+    drupal_add_js(drupal_get_path('module', 'pathauto_extra') . '/pathauto_extra.js');
   }
 }
 
 /**
- * @function pathauto_ajax_alias_js()
+ * @function pathauto_extra_alias_js()
  * 
  * .js file calls this function to get info back from drupal
  * gets the pattern for formatting urls for this node type, tries to apply it
- * returns expected url.
+ * returns expected url alias.
  */
-function pathauto_ajax_alias_js() {
+function pathauto_extra_alias_js() {
   //get pattern for this node type
   $pattern = trim(variable_get('pathauto_node_' . $_GET['type'] . '_pattern', FALSE));
   if (empty($pattern)) {
@@ -65,20 +68,47 @@ function pathauto_ajax_alias_js() {
 		drupal_json( array(
 			'status' => TRUE, 
 			'data' => '', 
-			'error' => 'pathauto_ajax has no token replacement set up for this pathauto pattern',
+			'error' => 'pathauto_extra has no token replacement set up for this pathauto pattern',
 			'pattern' => $pattern,
     ));
 	}
 }
 
 /**
- * implementation of hook_preproces_page
- * adds tokenizable variables to page's javascript, so pathauto_ajax.js can use them.
+ * @function pathauto_extra_validate_js()
+ *
+ * checks if a user supplied URL alias is valid.
  */
-function pathauto_ajax_preprocess_page(&$variables) {
+function pathauto_extra_validate_js() {
+  $path = $_GET['path'];
+  $errors = array();
+  
+  //begins with slash
+  if (strpos($path, '/') === 0) {
+    $errors[] = 'URL can not begin with a forward slash.';
+  }
+  
+  //existing url
+  $spaces_name = db_result(db_query('SELECT value FROM {purl} WHERE id = %s', $_GET['gid']));  
+  $db = db_result(db_query('SELECT pid FROM {url_alias} WHERE dst = "%s/%s"', $spaces_name, $path));
+  if ($db) {
+    $errors[] = 'This URL is already in use.';
+  }
+  
+  //return to json
+  drupal_json( array(
+    'errors' => $errors,
+  ));
+}
+
+/**
+ * implementation of hook_preproces_page
+ * adds tokenizable variables to page's javascript, so pathauto_extra.js can use them.
+ */
+function pathauto_extra_preprocess_page(&$variables) {
   if (arg(0) == 'node' && arg(1) == 'add' && arg(2)) {
     $vsite=vsite_get_vsite();
-    $data = array( 'pathauto_ajax' => array(        
+    $data = array( 'pathauto_extra' => array(        
         'type' => arg(2), 
         'gid' => $vsite->id,
     ));

@@ -162,7 +162,7 @@ function scholar_software_views_default_views() {
         'bio' => 0,
         'cv' => 0,
       ),
-      'og' => array(
+      'os_og' => array(
         'current' => 'current',
         'user' => 0,
       ),
@@ -658,7 +658,7 @@ function scholar_software_views_default_views() {
         'bio' => 0,
         'cv' => 0,
       ),
-      'og' => array(
+      'os_og' => array(
         'current' => 'current',
         'user' => 0,
       ),
