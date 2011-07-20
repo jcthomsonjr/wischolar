@@ -5,7 +5,7 @@
  */
 function vsite_news_user_default_permissions() {
   $permissions = array();
-  
+
   // Exported permission: administer activity
   $permissions['administer activity'] = array(
     'name' => 'administer activity',

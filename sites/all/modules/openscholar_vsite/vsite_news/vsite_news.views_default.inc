@@ -342,6 +342,11 @@ function vsite_news_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '1700',
+    'output_lifespan' => '1700',
+  ));
   $handler->override_option('title', 'Recent Activity');
   $handler->override_option('empty', 'Your package does not have any activity to show.');
   $handler->override_option('empty_format', '1');
@@ -392,7 +397,6 @@ function vsite_news_views_default_views() {
     'weight' => 0,
     'name' => 'navigation',
   ));
-  
 
   $views[$view->name] = $view;
 

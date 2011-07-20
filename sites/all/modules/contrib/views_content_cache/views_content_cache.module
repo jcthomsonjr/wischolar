@@ -200,16 +200,21 @@ function views_content_cache_id_generate($object, $object_type) {
   $cids = array(array());
   foreach (views_content_cache_get_plugin() as $key_id => $plugin) {
     $key_values = $plugin->content_key($object, $object_type);
+    if (!empty($key_values)) {
+
+    // Ensure that we have an array to work with.
     $key_values = is_array($key_values) ? $key_values : array($key_values);
+
     // If the content key is multivalue create an additional cid per value.
-    $processed = array();
-    foreach ($key_values as $key_value) {
-      foreach ($cids as $cid) {
-        $cid[$key_id] = $key_value;
-        $processed[] = $cid;
+      $processed = array();
+      foreach ($key_values as $key_value) {
+        foreach ($cids as $cid) {
+          $cid[$key_id] = $key_value;
+          $processed[] = $cid;
+        }
       }
+      $cids = $processed;
     }
-    $cids = $processed;
   }
   return $cids;
 }

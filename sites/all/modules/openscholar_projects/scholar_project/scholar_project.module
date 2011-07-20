@@ -37,18 +37,24 @@ function scholar_project_vsite_widgets(){
       'delta' => '0',
       'weight' => 20,
       'region' => 'header_left',
-      'status' => '0',
       'label' => 'Project Site Logo',
-      'type' => 'context_ui',
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+        'node' => array(variable_get('scholar_content_type', 'vsite') => variable_get('scholar_content_type', 'vsite')),
+        'os_og' => array('current' => 'current'),
+      ),
     ),
     'scholar_project-1' => array(
       'module' => 'scholar_project',
       'delta' => '1',
       'weight' => 20,
       'region' => 'header_main',
-      'status' => '0',
       'label' => 'Project site info',
-      'type' => 'context_ui',
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
+      'cache_keys' => array(
+        'node' => array(variable_get('scholar_content_type', 'vsite') => variable_get('scholar_content_type', 'vsite')),
+        'os_og' => array('current' => 'current'),
+      ),
     ),
   );
 
