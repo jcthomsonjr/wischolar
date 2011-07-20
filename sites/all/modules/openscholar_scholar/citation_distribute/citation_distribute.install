@@ -10,14 +10,7 @@ function citation_distribute_schema() {
   $schema['citation_distribute'] = array(
     'description' => t('Manages status for various submoule template types'),
     'fields' => array(
-      'uid' => array(
-        'description' => t('Drupal user ID'),
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'default' => 0,
-      ),
-
+  
       'nid' => array(
         'description' => t("Drupal node ID"),
         'type' => 'int',
@@ -26,50 +19,44 @@ function citation_distribute_schema() {
         'default' => 0,
       ),
 
-      'type' => array(
+      'plugin' => array(
         'description' => t("Contains the name of the submodule to identify the type of template"),
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
       ),
-
-      'tid' => array(
-        'description' => t("Template ID"),
-        'type' => 'int',
+      
+      'noauto' => array(
+        'description' => t('Do not autoflag this plugin/node pair.'),
+      	'type' => 'int',  
+        'size' => 'tiny',
         'not null' => TRUE,
         'unsigned' => TRUE,
         'default' => 0,
       ),
 
-      'upd' => array(
-        'description' => t("Marks whether template file or entry needs to be recreated next time API function is run."),
-        'type' => 'int',
-        'size' => 'tiny',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'default' => 0,
-      ), 
-
-      'remove' => array(
+      'batch_remove' => array(
         'description' => t("Marks whether template file or entry needs to be DELETED next time API function is run."),
         'type' => 'int',
         'size' => 'tiny',
         'not null' => TRUE,
         'unsigned' => TRUE,
         'default' => 0,
-      ), 
-
-      'created' => array(
-        'description' => t("The time when template was first marked for update"),
-        'type' => 'datetime',
       ),
+      
+      'batch_update' => array(
+        'description' => t("Marks whether template file or entry needs to be recreated next time API function is run."),
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),  
 
-      'modified' => array(
-        'description' => t("The time when template was LAST marked for update"),
-        'type' => 'datetime',
-      ),
     ),
+    'primary key' => array('nid','plugin'),
+    'unique key' => array('nid_plug' => array('nid', 'plugin')),
   );
   return $schema;
 }
