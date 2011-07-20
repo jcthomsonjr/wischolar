@@ -11,20 +11,6 @@ function pathauto_extra_menu() {
     'type' => 'MENU_CALLBACK', 
     'access arguments' => array('access content'), 
   );
-  $items['pathauto_extra/validate_js/%/%'] = array(
-    'page callback' => 'pathauto_extra_validate_js',
-  	'page arguments' => array(2,3), 
-    'type' => 'MENU_CALLBACK', 
-    'access arguments' => array('access content'),  
-  );
-  
-  //test entry.
-    $items['pathauto_extra/ctools_ajax/%/%'] = array(
-    'page callback' => 'pathauto_extra_ctools_ajax', 
-    'page arguments' => array(2,3),
-    'type' => 'MENU_CALLBACK', 
-    'access arguments' => array('access content'),  
-  );
   return $items;
 }
 
@@ -40,14 +26,8 @@ function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
     $vsite=vsite_get_vsite();   
     $gid = $vsite->id;
     $type = arg(2); 
-    
-
-    $form['path']['path']['#id'] = 'edit-path'; //force the id or else ctools invents one that pathauto can't use.
-    $form['path']['path']['#attributes']['class'] = 'ctools-use-ajax-onchange'; //ctools won't add classes to a form element with an id, so do it manually  
-    ctools_ajax_associate_url_to_element($form, $form['path']['path'], url('pathauto_extra/validate_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');    
+      
     ctools_ajax_associate_url_to_element($form, $form['title'], url('pathauto_extra/alias_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');
-    
-    drupal_add_js(drupal_get_path('module', 'pathauto_extra') . '/pathauto_extra.js');
   }
 }
 
@@ -61,7 +41,6 @@ function pathauto_extra_alias_js($gid, $type) {
   $path = _pathauto_extra_make_path($gid, $type, $_POST['ctools_changed']);
   pathauto_extra_ctools_value('#edit-path', $path);
 }
-
 
 /**
  * Enter description here ...
@@ -94,49 +73,9 @@ function _pathauto_extra_make_path($gid, $type, $title) {
   }
   return $path;
 }
-/**
- * @function pathauto_extra_validate_js()
- *
- * checks if a user supplied URL alias is valid.
- */
-function pathauto_extra_validate_js($gid, $type) {
-  $path = $_POST['ctools_changed'];
-  $errors = array();
-  
-  //begins with slash
-  if (strpos($path, '/') === 0) {
-    $errors[] = 'URL cannot begin with a forward slash.';
-  }
-  
-  //existing url  
-  $autopath = _pathauto_extra_make_path($gid, $type, $path);
-  if (preg_match('/.*-\d+/', $autopath)) {
-    //autopath ends with -numbers.  likely a duplicate.
-    $errors[] = 'This URL is already in use.';
-  }
-  
-  //return to json
-  ctools_include( 'ajax');
-  ctools_add_js('ajax-responder');
-  $cmds = array();
-  if (count($errors) > 0) {
-    $err = 'The URL alias you selected has the following error(s):' . "\n\n" . implode("\n", $errors);
-    $cmds[] = ctools_ajax_command_error($err);
-    $cmds[] = ctools_ajax_command_css('#edit-path', array('borderColor' => 'red'));
-  } else {
-    $cmds[] = ctools_ajax_command_css('#edit-path', array('borderColor' => 'silver'));
-  }
-  
-  //coudl we add jquery ajax hooks?  on ajax call set:
-  //  $('#edit-submit').attr('disabled', 'true').attr('style', 'color:gray !important')
-  // and on returns (if no outstanding calls...
-  //  $('#edit-submit').attr('disabled', 'false').attr('style', 'color:black')
-  
-  ctools_ajax_render($cmds);
-}
 
 /**
- * warpper function for ajax commands
+ * wrapper function for ajax commands
  * changes value attribute of #$id
  */
 function pathauto_extra_ctools_value($id, $value) {
@@ -149,3 +88,24 @@ function pathauto_extra_ctools_value($id, $value) {
   ctools_ajax_render($commands);  
 }
 
+/**
+ * implementation of hook_nodeapi	
+ * checks that path alias from user is valid
+ * we can't do this in ajax because the last thing users do is edit the path before clicking submit.  leads to unfinished ajax errors.
+ */
+function pathauto_extra_nodeapi(&$node, $op, &$form) {
+  if ($op == 'validate' && !$form['path']['pathauto_perform_alias']['#value']) {
+    $path = $form['path']['path']['#value'];
+    $errors = array();
+  
+    //begins with slash
+    if (strpos($path, '/') === 0) {
+      $errors[] = 'URL path cannot begin with a forward slash.';
+    }
+    
+    //return all errors
+    if (count($errors) > 0) {
+      form_set_error('path', implode(" ", $errors));
+    }
+  }
+}
