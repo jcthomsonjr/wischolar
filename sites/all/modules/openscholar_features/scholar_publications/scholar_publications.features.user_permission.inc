@@ -121,18 +121,10 @@ function scholar_publications_user_default_permissions() {
     ),
   );
 
-
   // Exported permission: show filter tab
   $permissions['show filter tab'] = array(
     'name' => 'show filter tab',
-    'roles' => array(
-     /* '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'manager',
-      '4' => 'scholar admin',
-      '5' => 'scholar user',
-    */),
+    'roles' => array(),
   );
 
   // Exported permission: show own download links

@@ -927,6 +927,7 @@ function scholar_publications_views_default_views() {
     'output_min_lifespan' => '-1',
     'output_max_lifespan' => '3600',
   ));
+  $handler->override_option('items_per_page', 25);
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
     'relationship' => 'none',
