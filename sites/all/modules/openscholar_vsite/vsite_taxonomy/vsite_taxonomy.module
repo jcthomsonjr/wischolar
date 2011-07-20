@@ -472,8 +472,8 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
       
 
       $a_vocab_options = array(
-        1 => t('Tags (Free tagged comma-separated list of categories/tags)'), 
-        0 => t('Predefined/Managed Taxonomy') 
+        1 => t('Tags (Free tagged comma-separated list of categories/tags)'),
+        0 => t('Predefined/Managed Taxonomy')
       );
       
       //Change view to make creating new vocabs easier
@@ -768,7 +768,18 @@ function vsite_taxonomy_term_by_feature($term, $s_feature){
   }else{
     $view->display_handler->default_display->options['filters']['tid'] = $a_tid_filter;
   }
+  
+  $current_page = menu_get_item();
+  
+  //Pass on any additional arguments to the view
+  $arguments = explode('/',trim(str_replace($current_page['href'],"",$_GET['q'])," /"));
+  if (count($arguments)) {
+    $view->set_arguments($arguments);
+  }
 
+  $current_page = menu_get_item();
+  $view->display_handler->options['path'] = $current_page['href'];
+  
   // pager
   $view->pager['use_pager'] = 1;
 
