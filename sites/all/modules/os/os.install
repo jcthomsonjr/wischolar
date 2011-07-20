@@ -10,3 +10,29 @@ function os_install(){
     db_query("ALTER TABLE {node} ADD KEY type_node (type, nid)");
   }
 }
+
+/*
+ * hook_update_N
+ * installs 'views_content_cache','os_views_content_cache','os_blocks_content_cache'.
+ */
+function os_update_6001(&$sandbox){
+
+  $res = array();
+  module_rebuild_cache();
+
+  $modules = array('views_content_cache','os_views_content_cache','os_blocks_content_cache');
+
+  foreach ($modules as $mod) {
+    if(!module_exists($mod)){
+      include_once('includes/install.inc');
+      drupal_install_modules(array($mod));
+    }
+  }
+  $res[] = array(
+    'success' => true,
+    'query' => 'Installed modules: ' . implode(', ', $modules),
+  );
+
+  return $res;
+
+}
