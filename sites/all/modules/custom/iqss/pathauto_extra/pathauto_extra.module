@@ -27,7 +27,9 @@ function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
     $gid = $vsite->id;
     $type = arg(2); 
       
-    ctools_ajax_associate_url_to_element($form, $form['title'], url('pathauto_extra/alias_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');
+    ctools_ajax_associate_url_to_element($form, $form['title'], url('pathauto_extra/alias_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange'); 
+    
+    drupal_add_js(drupal_get_path('module', 'pathauto_extra') . '/pathauto_extra.js');
   }
 }
 
@@ -88,24 +90,3 @@ function pathauto_extra_ctools_value($id, $value) {
   ctools_ajax_render($commands);  
 }
 
-/**
- * implementation of hook_nodeapi	
- * checks that path alias from user is valid
- * we can't do this in ajax because the last thing users do is edit the path before clicking submit.  leads to unfinished ajax errors.
- */
-function pathauto_extra_nodeapi(&$node, $op, &$form) {
-  if ($op == 'validate' && !$form['path']['pathauto_perform_alias']['#value']) {
-    $path = $form['path']['path']['#value'];
-    $errors = array();
-  
-    //begins with slash
-    if (strpos($path, '/') === 0) {
-      $errors[] = 'URL path cannot begin with a forward slash.';
-    }
-    
-    //return all errors
-    if (count($errors) > 0) {
-      form_set_error('path', implode(" ", $errors));
-    }
-  }
-}
