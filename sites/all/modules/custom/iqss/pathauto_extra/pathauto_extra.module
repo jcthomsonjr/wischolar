@@ -41,11 +41,13 @@ function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
     $gid = $vsite->id;
     $type = arg(2); 
     
-    ctools_ajax_associate_url_to_element($form, $form['title'], url('pathauto_extra/alias_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');
 
     $form['path']['path']['#id'] = 'edit-path'; //force the id or else ctools invents one that pathauto can't use.
     $form['path']['path']['#attributes']['class'] = 'ctools-use-ajax-onchange'; //ctools won't add classes to a form element with an id, so do it manually  
     ctools_ajax_associate_url_to_element($form, $form['path']['path'], url('pathauto_extra/validate_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');    
+    ctools_ajax_associate_url_to_element($form, $form['title'], url('pathauto_extra/alias_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange');
+    
+    drupal_add_js(drupal_get_path('module', 'pathauto_extra') . '/pathauto_extra.js');
   }
 }
 
@@ -103,15 +105,13 @@ function pathauto_extra_validate_js($gid, $type) {
   
   //begins with slash
   if (strpos($path, '/') === 0) {
-    $errors[] = 'URL can not begin with a forward slash.';
+    $errors[] = 'URL cannot begin with a forward slash.';
   }
   
   //existing url  
-  $autopath = _pathauto_extra_make_path($gid, $type, $_POST['ctools_changed']);
-  $autopath_last = array_pop(explode('/', $autopath));
-  $path_last = array_pop(explode('/', $path));
-  if ($autopath_last != $path_last) {
-    //last field of autopath doens't match supplied.  must have had -0 or something appended.
+  $autopath = _pathauto_extra_make_path($gid, $type, $path);
+  if (preg_match('/.*-\d+/', $autopath)) {
+    //autopath ends with -numbers.  likely a duplicate.
     $errors[] = 'This URL is already in use.';
   }
   
@@ -122,7 +122,15 @@ function pathauto_extra_validate_js($gid, $type) {
   if (count($errors) > 0) {
     $err = 'The URL alias you selected has the following error(s):' . "\n\n" . implode("\n", $errors);
     $cmds[] = ctools_ajax_command_error($err);
-  } 
+    $cmds[] = ctools_ajax_command_css('#edit-path', array('borderColor' => 'red'));
+  } else {
+    $cmds[] = ctools_ajax_command_css('#edit-path', array('borderColor' => 'silver'));
+  }
+  
+  //coudl we add jquery ajax hooks?  on ajax call set:
+  //  $('#edit-submit').attr('disabled', 'true').attr('style', 'color:gray !important')
+  // and on returns (if no outstanding calls...
+  //  $('#edit-submit').attr('disabled', 'false').attr('style', 'color:black')
   
   ctools_ajax_render($cmds);
 }
