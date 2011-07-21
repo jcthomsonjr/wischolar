@@ -18,9 +18,9 @@ function citation_distribute_admin() {
 	  '#options' => array('api'=> 'API Mode', 'batch' => 'Batch Process Mode', 'per_submission' => 'Per Submission Mode'),
 	  '#required' => TRUE,
 	  '#default_value' => variable_get('citation_distribute_module_mode','per_submission'),
-	  '#description' => t('<strong>API mode</strong> does nothing by default, but lets the developer decide when to call the module\'s functions.
+	  '#description' => t('<strong>API mode</strong> does nothing by default, but allows developers to call Citation Distribute manually.
 	      <br><strong>Batch mode</strong> is intended to be run by cron will update all meta files at once in a batch process. 
-	      <br><strong>Per Submission mode (Recommended) </strong> will update or create a meta file whenever content submitted or updated.')
+	      <br><strong>Per Submission mode</strong> (<em>default</em>) will update or create a meta file whenever content submitted or updated.')
    );
    
    

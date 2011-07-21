@@ -180,18 +180,19 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 			case 'insert':
 			case 'update':					
 				$distributed = array();
+				
 				foreach( _plugins() as $plugin ) {
 					if (isset($node->{$plugin['name']})) {
 						$flag = flag_get_flag($plugin['name']);
+
 						if ( $node->{$plugin['name']} ) {
 							$flag->flag('flag', $node->nid); //flag returns if the node was flagged.  my output never gets returned.
 							$distributed[] = $plugin['name'];
 						} else {
-							$flag->flag('unflag', $node->nid); //remove old flags 
-							//if user has unselected an autoflag, mark noauto 
-							if (variable_get($plugin['handler']['class'] . '_auto_flag', false)) {
+							if (variable_get($plugin['handler']['class'] . '_auto_flag', false)) { //if user has unselected an autoflag, mark noauto.  
                 _citation_distribute_unlist_db($plugin['name'], $node->nid);
 							}
+							$flag->flag('unflag', $node->nid); //remove old flags 				
 							
 						}
 					}
@@ -223,6 +224,7 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 				foreach( _plugins() as $plugin ) {
 					$flag = flag_get_flag($plugin['name']);
 					$flag->flag('unflag', (int)$node -> nid);
+   			  _citation_distribute_removefrom_db($plugin['name'], (int)$node->nid); //node is gone, remove its entry
 				}
 			break;
 		}
@@ -234,35 +236,36 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
  * This gets called whenever a node recieves a flag.  If it gets a citation_distribute flag, process it.
  */
 function citation_distribute_flag($event, $flag, $nid, $account) {
+  $dist_mode = variable_get('citation_distribute_module_mode', '');
 		
 	foreach (_plugins() as $plugin) {
 		if ($flag->name == $plugin['name']) {
 			switch($event) {
 				
 				case 'flag':
-					_citation_distribute_update_db($plugin['name'], $nid); //another arg for status?
-					if (variable_get('citation_distribute_module_mode', '') == 'per_submission') { // for other cases, we'll have to make a cron job?  maybe an api call to push?
-						$dist_err = _citation_distribute_distribute($nid, $plugin['name']);
-						//if dist_err, un update?
+					if ($dist_mode == 'per_submission') { 
+						$dist = _citation_distribute_distribute($nid, $plugin['name']);
+					} else {
+					  $batch_cmd = 'distribute'; 					  //assume batch mode
 					}
+					_citation_distribute_update_db($plugin['name'], $nid, $batch_cmd); 
 					break;
 					
 				case 'unflag':
-					//_citation_distribute_removefrom_db($plugin['name'], $nid); //should mark as removed.  autoflag shouldn't override a flag that has been removed already.
-					_citation_distribute_unlist_db($plugin['name'], $nid); //unlist, don't delete
-//should this depend on per submission??
-					//run plugin->remove() function if available
-					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
-						$service = new $class();
-						if (method_exists($service, 'remove')) {
-							$removed = $service->remove($nid);
-							($removed) && drupal_set_message('Publication has been removed from ' . $plugin['title']);
-						}
-					} else {
-						//set a message even for services that don't have a removal method
-						drupal_set_message('Publication has been removed from ' . $plugin['title']);
+				  if ($dist_mode == 'per_submission') {
+            //try to remove now.
+  				  if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
+  						$service = new $class();
+  						if (method_exists($service, 'remove')) {
+  							$removed = $service->remove($nid);
+  						}
+  					}
+				  } else {
+            $batch_cmd = 'remove'; //schedule a removal at next cron run
+				  }
 
-					}
+				  _citation_distribute_unlist_db($plugin['name'], $nid, $batch_cmd); //unlist, don't delete
+				  drupal_set_message('Publication has been removed from ' . $plugin['title']);
 					break;
 			}
 		}
@@ -280,8 +283,9 @@ function citation_distribute_preprocess_page(&$variables) {
 		/* check that each metadata plugin has been marked for this node.  add metadata for marked ones */
 		foreach(_plugins() as $plugin) {
 			if (isset($plugin['type']) && isset($plugin['name']) && $plugin['type'] == 'metadata') {
-				if (db_result(db_query("SELECT nid FROM {citation_distribute} WHERE plugin = '%s' AND nid = %d",$plugin['name'], (int)$variables['node']->nid))) {
-
+				$query = "SELECT nid FROM {citation_distribute} WHERE plugin = '%s' AND nid = %d AND noauto != 1";
+				
+				if (db_result(db_query($query,$plugin['name'], (int)$variables['node']->nid))) {
 					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
 						$service = new $class();
 						$out = $service->render($service->map_metadata($variables['node']->nid));
@@ -343,39 +347,18 @@ function _citation_distribute_distribute($nid, $plugin_name) {
 }
 
 /* logs which nodes have been/need to be distributed */
-function _citation_distribute_update_db($plugin, $nid) {	
+function _citation_distribute_update_db($plugin, $nid, $batch_command = '') {	
 	$module_mode = variable_get('citation_distribute_module_mode', '' );
-	$nid = (int)$nid;
-	
-	if ($module_mode == 'per_submission') {
-		$upd = 0;
-	} else {
-		$upd = 1;
-	}
+	$nid = (int)$nid;  
 	
 	//insert or update row for this plugin/nid
 	if (db_result(db_query( 'SELECT nid FROM {citation_distribute} WHERE nid = %d AND plugin = "%s"', $nid, $plugin))) {
-	  $query = 'UPDATE {citation_distribute} SET batch_update = %d, noauto = 0 WHERE nid = %d AND plugin = "%s"';
-	  $result = db_query($query, $upd, $nid, $plugin);  
+	  $query = 'UPDATE {citation_distribute} SET batch_command = "%s", noauto = 0 WHERE nid = %d AND plugin = "%s"';
+	  $result = db_query($query, $batch_command, $nid, $plugin);  
 	} else {
-	  $query = 'INSERT INTO {citation_distribute} (nid, plugin, batch_update) VALUES (%d, "%s", %d)';
-	  $result = db_query($query, $nid, $plugin, $upd);  
+	  $query = 'INSERT INTO {citation_distribute} (nid, plugin, batch_command, noauto) VALUES (%d, "%s", "%s", 0)';
+	  $result = db_query($query, $nid, $plugin, $batch_command);  
 	}
-	
-  
-	
-	/* track whether node needs to be distributed at next cron pass */
-/*	if (db_result ( db_query ( "SELECT nid FROM {citation_distribute} WHERE nid = %d AND type = '%s'", $node->nid, $name ))) {
-		//update existing record
-		db_query ( "UPDATE {citation_distribute} SET uid = %d, nid = %d, type= '%s', tid = %d , upd = %d , modified = now()
-		  WHERE nid = %d and type = '%s'", 
-		  $user->uid, $node->nid, $name, $node->biblio_type, $upd, $node->nid, $name ); 
-	} else {
-		//create new record	  // node already exists in Drupal but never been added to cite_distribute table
-	  db_query ( "INSERT INTO {citation_distribute} (uid, nid, type, tid, upd, created) VALUES (%d, %d, '%s', %d, %d, now())",
-	    $user->uid, $node->nid, $name, $node->biblio_type, $upd );
-	}
-	*/
 }
 
 /* removes nodes which are no longer listed */
@@ -385,14 +368,15 @@ function _citation_distribute_removefrom_db($plugin, $nid) {
 }
 
 /* unlist nodes from plugins in DB.  now they'll be immune to autoflag */
-function _citation_distribute_unlist_db($plugin, $nid) {
+function _citation_distribute_unlist_db($plugin, $nid, $batch_command = '') {
   $nid = (int)$nid;
+  
   if (db_result(db_query( 'SELECT nid FROM {citation_distribute} WHERE nid = %d AND plugin = "%s"', $nid, $plugin))) {
-    $query = "UPDATE {citation_distribute} SET  noauto = 1, batch_update = 0 WHERE plugin = '%s' AND nid = %d "; 
+    $query = "UPDATE {citation_distribute} SET  noauto = 1, batch_command = '%s' WHERE plugin = '%s' AND nid = %d "; 
   } else {
-    $query = "INSERT INTO {citation_distribute} (plugin, nid, noauto) VALUES ('%s', %d, 1)";
+    $query = "INSERT INTO {citation_distribute} (batch_command, plugin, nid, noauto) VALUES ('%s', '%s', %d, 1)";
   } 		          
-  $result = db_query($query, $plugin, $nid ); 
+  $result = db_query($query, $batch_command, $plugin, $nid ); 
 }
 
 /**

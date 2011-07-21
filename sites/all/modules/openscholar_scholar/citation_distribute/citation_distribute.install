@@ -36,24 +36,14 @@ function citation_distribute_schema() {
         'default' => 0,
       ),
 
-      'batch_remove' => array(
-        'description' => t("Marks whether template file or entry needs to be DELETED next time API function is run."),
-        'type' => 'int',
-        'size' => 'tiny',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'default' => 0,
+      'batch_command' => array(
+        'description' => t('Command to run when this node is next processed by cron'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => '',
       ),
       
-      'batch_update' => array(
-        'description' => t("Marks whether template file or entry needs to be recreated next time API function is run."),
-        'type' => 'int',
-        'size' => 'tiny',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'default' => 0,
-      ),  
-
     ),
     'primary key' => array('nid','plugin'),
     'unique key' => array('nid_plug' => array('nid', 'plugin')),
