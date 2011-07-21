@@ -100,6 +100,9 @@ function scholarlayout_add_removal_hooks() {
 var scholarlayout_change_bound = false;
 
 function scholarlayout_afterdrag(event, ui) {
+	var item = $(this);
+	//console.log(item);
+	console.log(ui.item.attr('id'));
   var regions = $("#scholarlayout-container > .scholarlayout-widgets-list");
   $.each(regions, function(i, region) {
     var items = $("#" + region.id + " > .scholarlayout-item");
@@ -111,6 +114,7 @@ function scholarlayout_afterdrag(event, ui) {
       ids += value.id;
     });
     $('#edit-' + region.id).val(ids);
+    console.log(ids);
   });
 
   // Reset top box after widgets have been moved

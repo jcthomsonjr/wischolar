@@ -86,6 +86,128 @@ function os_boxes_boxes_plugins() {
   return $info;
 }
 
+/**
+ * hook vsite_sidgets
+ */
+function os_boxes_vsite_widgets(){
+  $items = array();
+  ctools_include('plugins');
+  $plugins = ctools_get_plugins('boxes', 'plugins');
+  //dpm($plugins);
+  foreach ( $plugins as $key => $info ) {
+    if (isset($info['title'])) {
+      
+      $items["boxes_add__$key"] = array(
+        'module' => $info['module'], 
+        'delta' => "boxes_add__$key", 
+        'weight' => 20, 
+        'region' => false, 
+        'label' => $info['title'] 
+      );
+    
+    }
+  }
+  
+    $items['boxes-og-3-5e481b5d'] = array(
+      'module' => 'boxes',
+      'delta' => 'og-3-5e481b5d',
+      'weight' => -5,
+      'region' => 'right',
+      'label' => 'XXXXXXXX',
+    );
+  return $items;
+}
+
+
+/**
+ * Implementation of hook_menu().
+ */
+function os_boxes_menu() {
+  $items = array();
+  ctools_include('plugins');
+  $plugins = ctools_get_plugins('boxes', 'plugins');
+    $path = drupal_get_path('module', 'boxes');
+  foreach ($plugins as $key => $info) {
+    if (isset($info['title'])) {
+      $items['cp/osboxes/%ctools_js/'. $key] = array(
+        'title' => 'Add '. strtolower($info['title']),
+        'page callback' => 'os_boxes_box_modal',
+        'page arguments' => array( 2,3),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+
+        //'file' => 'boxes.admin.inc',
+        //'file path' => $path
+      );
+    }
+  }
+  
+  $items['osboxestest'] = array(
+    'title' => 'somettite',
+    'page callback' => 'os_boxes_test',
+    'access callback' => TRUE
+  
+  );
+  return $items;
+}
+
+function os_boxes_test(){
+  //dpm(vsite_get_vsite());
+  ctools_include('ajax');
+  ctools_include('modal');
+
+  ctools_modal_add_js();
+
+  $output = ctools_modal_text_button('simplebox', 'cp/osboxes/nojs/simple', 'simplebox', 'context-button');
+  
+  return $output;
+}
+
+/**
+ * A modal login callback.
+ */
+function os_boxes_box_modal($js = NULL, $delta){
+  module_load_include('inc', 'boxes', 'boxes.admin');
+  module_load_include('inc', 'boxes', 'plugins/boxes_box');
+  
+  // Fall back if $js is not set.
+  if (! $js) {
+    return drupal_get_form('boxes_add_form', $delta);
+  }
+  
+  ctools_include('modal');
+  ctools_include('ajax');
+  ctools_include('form');
+  $plugin_key = str_replace('boxes_add__', '', $delta);
+  $identifier = (module_exists('spaces') && $space = spaces_get_space()) ? "{$space->type}-{$space->id}" : 'box';
+  $hash = boxes_create_hash($identifier);
+  $delta = $identifier . "-" . $hash;
+  $box = boxes_factory($plugin_key, array(
+    'delta' => $delta 
+  ));
+  $form_state = array(
+    'box' => $box, 
+    'plugin_key' => $plugin_key, 
+    'custom_action' => TRUE, 
+    'ajax' => 'TRUE', 
+    'no_redirect' => TRUE 
+  );
+  $form = ctools_build_form('boxes_box_form', $form_state);
+ // dpm($form);
+  
+  $output = ctools_modal_form_render($form_state, $form);
+  
+  if (empty($output)) {
+    // empty $output signifies success, so we'll use it as our $commands
+    // array.
+    $output = array();
+    $inplace = ctools_ajax_text_button(t('remain here'), 'ctools_ajax_sample/nojs/login/inplace', t('Go to your account'));
+    $account = ctools_ajax_text_button(t('your account'), 'ctools_ajax_sample/nojs/login/user', t('Go to your account'));
+    $output[] = ctools_modal_command_display(t('Login Success'), '<div class="modal-message">Login successful. You can now choose whether to ' . 'inplace' . ', or go to ' . 'account' . '.</div>');
+  }
+  ctools_ajax_render($output);
+}
+
 function os_boxes_boxes_load_alter(&$box, $delta) {
   //dpm($box);
   //dpm($delta);
