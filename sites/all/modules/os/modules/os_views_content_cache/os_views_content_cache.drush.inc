@@ -37,6 +37,6 @@ function drush_os_views_content_cache_os_clearcache($arg = 'all') {
 	}
 	
   if(in_array($arg,array('all','block'))){
-    cache_clear_all('*','cache_views_data',TRUE);
+    cache_clear_all('*','cache_block',TRUE);
   }
 }

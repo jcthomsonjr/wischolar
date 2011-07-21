@@ -48,8 +48,10 @@ class os_views_content_cache_plugin extends views_content_cache_plugin_cache {
       //Include the Current Site in the Key if there is one:
       $vsite = vsite_get_vsite();
       $s_site = ($vsite && $vsite->group->purl)? $vsite->group->purl.":":"";
+      $execute_key = md5(serialize($key_data));
       
-      $this->_results_key = $s_site . $this->view->name . ':' . $this->display->id . ':results:' . md5(serialize($key_data));
+      $this->view->_os_results_key = $execute_key;
+      $this->_results_key = $s_site . $this->view->name . ':' . $this->display->id . ':results:' . $execute_key;
     }
 
     return $this->_results_key;
@@ -62,6 +64,7 @@ class os_views_content_cache_plugin extends views_content_cache_plugin_cache {
     	
       $key_data = array(
         'result' => $this->view->result,
+        'result_key' => $this->view->_os_results_key, //In case the results are same but the params change the look
         'roles' => array_keys($user->roles),
         'super-user' => $user->uid == 1, // special caching for super user.
         'theme' => $GLOBALS['theme'],
