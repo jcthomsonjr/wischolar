@@ -480,14 +480,40 @@ function citation_distribute_cron() {
 	//wrap each str in quotes so we can implode them and pass them to mysql IN.
 	function enquote($s) {return '\'' . $s . '\'';}
 	$quoted = array_map( 'enquote', array_keys($plugins) );
+	
+	$commands = array('distribute', 'remove');
+	$commands = array_map('enquote', $commands);
  
-	$query = 'SELECT nid,type FROM {citation_distribute} WHERE batch_update=1 AND plugin IN ( ' . implode(',', $quoted) . ' ) LIMIT %d ';
-	$result = db_query($query, variable_get('citation_distribute_cron_limit', _CRON_LIMIT));   //include admin page for this 
+	$query = 'SELECT nid,plugin,batch_command FROM {citation_distribute} WHERE batch_command IN ( '.implode(',',$commands).' ) AND plugin IN ( ' . implode(',', $quoted) . ' ) LIMIT %d ';
+	$result = db_query($query, variable_get('citation_distribute_cron_limit', _CRON_LIMIT));  
 
 	while($res = db_fetch_object($result)) {
-		if (in_array($res->type, array_keys($plugins))) {  //only attempt plugins we have.  old plugins could leave entries in db, but be unprocessableable.
-			$dist_err = _citation_distribute_distribute($res->nid, $res->type); //where to dump errors?  maybe error determines upd?
-			db_query ( "UPDATE {citation_distribute} SET batch_update = 0 WHERE nid = %d and plugin = '%s'", $res->nid, $res->type ); 
+		if (in_array($res->plugin, array_keys($plugins))) {  //only attempt plugins we have.  old plugins could leave entries in db, but be unprocessableable.
+		  switch ($res->batch_command) {
+		    
+		    case 'distribute':
+		      $dist = _citation_distribute_distribute($res->nid, $res->plugin); //where to dump errors?  
+		      _citation_distribute_update_db($res->plugin, $res->nid); 
+		      break;
+		      
+		    case 'remove':
+		      if ($class = ctools_plugin_get_class($plugins[$res->plugin], 'handler', TRUE)) { //ctools breaks herer
+  				  $service = new $class();
+  					if (method_exists($service, 'remove')) {
+  				  	$removed = $service->remove($res->nid);
+  					}
+  				}
+				  _citation_distribute_unlist_db($res->plugin, $res->nid); 				  
+		      break;
+		      
+		    default:
+		      $query = NULL; //don't run a query on a command that isn't implemented.
+		      break;
+		    
+		      
+		  }
+
+			//db_query ( "UPDATE {citation_distribute} SET batch_update = 0 WHERE nid = %d and plugin = '%s'", $res->nid, $res->type ); 
 		}
 	}
 }
