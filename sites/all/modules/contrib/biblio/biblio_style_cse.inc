@@ -80,7 +80,7 @@ function biblio_style_cse($node, $base = 'biblio', $inline = false) {
       $output .= (!empty ($node->biblio_secondary_title)) ? check_plain($node->biblio_secondary_title) . '. ' : '';
       $output .= (!empty ($node->biblio_volume))          ? check_plain($node->biblio_volume) : '';
       $output .= (!empty ($node->biblio_issue))           ? '(' . check_plain($node->biblio_issue) . ')' : '';
-      $output .= (!empty ($node->biblio_contributors[2]) && !$editors_as_authors) ? '(' . theme('biblio_authors', $node->biblio_contributors[2], 'apa', 2, $inline) . ', Ed.).' : "";
+      $output .= (!empty ($node->biblio_contributors[2]) && !$editors_as_authors) ? '(' . theme('biblio_authors', $node->biblio_contributors[2], 'cse', 2, $inline) . ', Ed.).' : "";
       $output .= (!empty ($node->biblio_pages))           ? ':' . str_replace(" ", "", check_plain($node->biblio_pages)) . '.' : '';
       break; // generic
   }

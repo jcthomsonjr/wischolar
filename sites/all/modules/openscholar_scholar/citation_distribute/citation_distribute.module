@@ -127,7 +127,7 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		
 		$form['citation_distribute_selections'] = array(
 			'#type' => 'fieldset', 
-			'#title' => t('** Distribute to Academic Repositories'),
+			'#title' => t('Distribute to Academic Repositories'),
 			'#attached' => array(
 				'js' => array(drupal_get_path('module', 'citation_distribute' ) . '/citation_distribute.js') 
 			) 
@@ -141,17 +141,17 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 		// List all plugins with a title
 		foreach( _plugins() as $plugin ) {				
 			if (isset($plugin['title'])) {
-				$published = db_result( db_query( "SELECT nid from {citation_distribute} WHERE type = '%s' AND nid = %d", 
-																				$plugin['name'], $form['nid']['#value'] ));
+				$status = db_fetch_object( db_query( "SELECT nid,noauto from {citation_distribute} WHERE plugin = '%s' AND nid = %d ", 
+																  	$plugin['name'], $form['nid']['#value'] ));
 																				
 				//Automatically mark distribution of plugins with autoflag enabled
 				$autoflag = variable_get($plugin['handler']['class'] . '_auto_flag', false);
-				$published = ($published || $autoflag);
+				$auto = (($autoflag || $status->nid) && !$status->noauto ) ; //noauto only true for published nodes, removed from CD autoflag.
 				
 				$form['citation_distribute_selections'][$plugin['name']] = array(
 					'#type'=>'checkbox',
 					'#title' => t('@repos', array('@repos' => $plugin['title'])),
-					'#default_value' => (bool)$published,	
+					'#default_value' => (bool)$auto,	
 					'#disabled' => false, //(bool)$published, //published items can't be unpublished.  should we try to support unpublish where possible?
 			  );
 			}
@@ -188,6 +188,11 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 							$distributed[] = $plugin['name'];
 						} else {
 							$flag->flag('unflag', $node->nid); //remove old flags 
+							//if user has unselected an autoflag, mark noauto 
+							if (variable_get($plugin['handler']['class'] . '_auto_flag', false)) {
+                _citation_distribute_unlist_db($plugin['name'], $node->nid);
+							}
+							
 						}
 					}
 				}
@@ -243,7 +248,8 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 					break;
 					
 				case 'unflag':
-					_citation_distribute_removefrom_db($plugin['name'], $nid); //should mark as removed.  autoflag shouldn't override a flag that has been removed already.
+					//_citation_distribute_removefrom_db($plugin['name'], $nid); //should mark as removed.  autoflag shouldn't override a flag that has been removed already.
+					_citation_distribute_unlist_db($plugin['name'], $nid); //unlist, don't delete
 //should this depend on per submission??
 					//run plugin->remove() function if available
 					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
@@ -274,7 +280,7 @@ function citation_distribute_preprocess_page(&$variables) {
 		/* check that each metadata plugin has been marked for this node.  add metadata for marked ones */
 		foreach(_plugins() as $plugin) {
 			if (isset($plugin['type']) && isset($plugin['name']) && $plugin['type'] == 'metadata') {
-				if (db_result(db_query("SELECT nid FROM {citation_distribute} WHERE type = '%s' AND nid = %d",$plugin['name'], (int)$variables['node']->nid))) {
+				if (db_result(db_query("SELECT nid FROM {citation_distribute} WHERE plugin = '%s' AND nid = %d",$plugin['name'], (int)$variables['node']->nid))) {
 
 					if ($class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
 						$service = new $class();
@@ -337,10 +343,9 @@ function _citation_distribute_distribute($nid, $plugin_name) {
 }
 
 /* logs which nodes have been/need to be distributed */
-function _citation_distribute_update_db($name, $nid) {
-	global $user;
-	$node = node_load ( $nid );
-	$module_mode = variable_get ( 'citation_distribute_module_mode', '' );
+function _citation_distribute_update_db($plugin, $nid) {	
+	$module_mode = variable_get('citation_distribute_module_mode', '' );
+	$nid = (int)$nid;
 	
 	if ($module_mode == 'per_submission') {
 		$upd = 0;
@@ -348,8 +353,19 @@ function _citation_distribute_update_db($name, $nid) {
 		$upd = 1;
 	}
 	
+	//insert or update row for this plugin/nid
+	if (db_result(db_query( 'SELECT nid FROM {citation_distribute} WHERE nid = %d AND plugin = "%s"', $nid, $plugin))) {
+	  $query = 'UPDATE {citation_distribute} SET batch_update = %d, noauto = 0 WHERE nid = %d AND plugin = "%s"';
+	  $result = db_query($query, $upd, $nid, $plugin);  
+	} else {
+	  $query = 'INSERT INTO {citation_distribute} (nid, plugin, batch_update) VALUES (%d, "%s", %d)';
+	  $result = db_query($query, $nid, $plugin, $upd);  
+	}
+	
+  
+	
 	/* track whether node needs to be distributed at next cron pass */
-	if (db_result ( db_query ( "SELECT nid FROM {citation_distribute} WHERE nid = %d AND type = '%s'", $node->nid, $name ))) {
+/*	if (db_result ( db_query ( "SELECT nid FROM {citation_distribute} WHERE nid = %d AND type = '%s'", $node->nid, $name ))) {
 		//update existing record
 		db_query ( "UPDATE {citation_distribute} SET uid = %d, nid = %d, type= '%s', tid = %d , upd = %d , modified = now()
 		  WHERE nid = %d and type = '%s'", 
@@ -359,12 +375,24 @@ function _citation_distribute_update_db($name, $nid) {
 	  db_query ( "INSERT INTO {citation_distribute} (uid, nid, type, tid, upd, created) VALUES (%d, %d, '%s', %d, %d, now())",
 	    $user->uid, $node->nid, $name, $node->biblio_type, $upd );
 	}
-	
+	*/
 }
 
 /* removes nodes which are no longer listed */
-function _citation_distribute_removefrom_db($name, $nid) {
-	db_query('DELETE FROM {citation_distribute} WHERE type = "%s" AND nid = %d', $name, $nid);
+function _citation_distribute_removefrom_db($plugin, $nid) {
+	$query = 'DELETE FROM {citation_distribute} WHERE plugin = "%s" AND nid = %d';
+	$result = db_query($query, $plugin, $nid);
+}
+
+/* unlist nodes from plugins in DB.  now they'll be immune to autoflag */
+function _citation_distribute_unlist_db($plugin, $nid) {
+  $nid = (int)$nid;
+  if (db_result(db_query( 'SELECT nid FROM {citation_distribute} WHERE nid = %d AND plugin = "%s"', $nid, $plugin))) {
+    $query = "UPDATE {citation_distribute} SET  noauto = 1, batch_update = 0 WHERE plugin = '%s' AND nid = %d "; 
+  } else {
+    $query = "INSERT INTO {citation_distribute} (plugin, nid, noauto) VALUES ('%s', %d, 1)";
+  } 		          
+  $result = db_query($query, $plugin, $nid ); 
 }
 
 /**
@@ -469,13 +497,13 @@ function citation_distribute_cron() {
 	function enquote($s) {return '\'' . $s . '\'';}
 	$quoted = array_map( 'enquote', array_keys($plugins) );
  
-	$query = 'SELECT nid,type FROM {citation_distribute} WHERE upd=1 AND type IN ( ' . implode(',', $quoted) . ' ) LIMIT %d ';
+	$query = 'SELECT nid,type FROM {citation_distribute} WHERE batch_update=1 AND plugin IN ( ' . implode(',', $quoted) . ' ) LIMIT %d ';
 	$result = db_query($query, variable_get('citation_distribute_cron_limit', _CRON_LIMIT));   //include admin page for this 
 
 	while($res = db_fetch_object($result)) {
 		if (in_array($res->type, array_keys($plugins))) {  //only attempt plugins we have.  old plugins could leave entries in db, but be unprocessableable.
 			$dist_err = _citation_distribute_distribute($res->nid, $res->type); //where to dump errors?  maybe error determines upd?
-			db_query ( "UPDATE {citation_distribute} SET upd = 0 , modified = now() WHERE nid = %d and type = '%s'", $res->nid, $res->type ); 
+			db_query ( "UPDATE {citation_distribute} SET batch_update = 0 WHERE nid = %d and plugin = '%s'", $res->nid, $res->type ); 
 		}
 	}
 }
