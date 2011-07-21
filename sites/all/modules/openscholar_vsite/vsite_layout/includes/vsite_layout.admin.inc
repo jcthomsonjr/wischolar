@@ -37,7 +37,7 @@ function vsite_layout_layout() {
   $top = theme('vsite_layout_layout_widgets', $wgts, 'scholarlayout-top-widgets', 'scholarlayout-widgets-list');
 
   //Print the Form
-  $form = call_user_func_array('drupal_get_form', array('vsite_layout_settings_form'));
+  $form = drupal_get_form('vsite_layout_settings_form');
 
   return $top . $form;
 }
@@ -236,6 +236,7 @@ function vsite_layout_settings_form($form_state){
   $regions = array_keys(system_region_list('scholar_base'));
 
   $a_setting = $space->controllers->context->get('openscholar-feature-'.$s_page_type.":reaction:block");
+  dpm($a_setting);
   $a_blocks = (isset($a_setting['blocks']))? $a_setting['blocks']:array();
 
   foreach ($regions as $region) {

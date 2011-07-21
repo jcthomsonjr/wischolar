@@ -21,7 +21,7 @@ class spaces_controller_vsite_context extends spaces_controller_context {
 	    if (!empty($group_node->og_theme)) {
 		    $custom_theme_key = "reaction:block:".$group_node->og_theme;
 		  }
-		  
+		  dpm($this -> controller);
     	$result = db_query("
         SELECT object_id AS id, value
         FROM {spaces_overrides}
@@ -29,7 +29,6 @@ class spaces_controller_vsite_context extends spaces_controller_context {
           AND id = '%s'
           AND object_type = '%s'",
         $this->space_type, $this->space_id, $this->controller);
-      
       $theme_block_overwrites = array();
       while ($row = db_fetch_object($result)) {
       	list($context, $key) = explode(':', $row->id,2);
@@ -51,6 +50,8 @@ class spaces_controller_vsite_context extends spaces_controller_context {
       		$this->values['space'][$s_key] = $theme_overwrites;
       	}
       }
+      
+      dpm($this -> values);
       
       $this->loaded_all['space'] = TRUE;
     }
