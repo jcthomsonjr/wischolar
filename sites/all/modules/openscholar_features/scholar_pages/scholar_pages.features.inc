@@ -32,3 +32,12 @@ function scholar_pages_node_info() {
   );
   return $items;
 }
+
+/**
+ * Implementation of hook_wysiwyg_fields_icons().
+ */
+function scholar_pages_wysiwyg_fields_icons() {
+  return array(
+    drupal_get_path('module', 'scholar_pages') . '/images/wysiwyg_fields',
+  );
+}
