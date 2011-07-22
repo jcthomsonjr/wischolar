@@ -1,6 +1,6 @@
 <?php
 
-// $Id: citation_distribute.install,v 1.2 2009/06/09 21:04:34 jweiner Exp $
+// $Id;$
 
 /**
  * Implementation of hook_schema().
@@ -51,9 +51,16 @@ function citation_distribute_schema() {
   return $schema;
 }
 
+/**
+ * Implementation of hook_install()
+ * 
+ * Installs citation_distribute table and presets.  
+ * If cite_distribute is installed, copies out its data. 
+ */
 function citation_distribute_install(){
   //install citation_distribute table
   drupal_install_schema('citation_distribute');
+  
   //set default module mode
   variable_set('citation_distribute_module_mode','per_submission');
 
@@ -64,11 +71,15 @@ function citation_distribute_install(){
     drupal_set_message(t($msg));
   }
   
+  //copy data from previous incarnation of this module
   if (module_exists('cite_distribute')) {
     _citation_distribute_import_old();
   }
 }
 
+/**
+ * Implementation of hook_uninstall()
+ */
 function citation_distribute_uninstall(){
   //remove citation_distribute table
   drupal_uninstall_schema('citation_distribute');

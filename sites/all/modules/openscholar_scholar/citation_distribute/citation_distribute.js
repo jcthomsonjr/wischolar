@@ -1,3 +1,9 @@
+/**
+ * @file
+ * 
+ * When citation_distribute options change, this script updates the vertical tab to display new settings.
+ */
+
 // The following line will prevent a JavaScript error if this file is included and vertical tabs are disabled.
 Drupal.verticalTabs = Drupal.verticalTabs || {};
 

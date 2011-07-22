@@ -1,9 +1,18 @@
 <?php 
 
+/**
+ * @file
+ * 
+ * citation_distribute allows users to push biblio nodes to myriad repositories
+ */
+
+/**
+ * Cron limit defines how many nodes can be pushed in any one cron run during batch mode
+ */
 define('_CRON_LIMIT', 25);
 
 /**
- * Implementation of hook_menu
+ * Implementation of hook_menu() defines admin page
  */
 function citation_distribute_menu() {
 	$items = array();
@@ -43,14 +52,18 @@ function citation_distribute_ctools_plugin_directory($module, $plugin) {
 }
 
 /**
- * implementation of hook_ctools_plugin_plugins()
+ * Implementation of hook_ctools_plugin_plugins()
  */
 function citation_distribute_ctools_plugin_plugins() {
 	return array(
 		'use hooks' => TRUE,
 	);
 }
-	
+
+/**
+ * Implementation of hook_citation_distribute_plugins
+ * Provides definition for each of citation_distribute's plugins.
+ */
 function citation_distribute_citation_distribute_plugins(){
 	$info = array();	
 	$path = drupal_get_path('module', 'citation_distribute') . '/plugins/';
@@ -232,7 +245,7 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 }
 
 /**
- * Implementation of hook flag
+ * Implementation of hook_flag()
  * This gets called whenever a node recieves a flag.  If it gets a citation_distribute flag, process it.
  */
 function citation_distribute_flag($event, $flag, $nid, $account) {
@@ -274,7 +287,7 @@ function citation_distribute_flag($event, $flag, $nid, $account) {
 
 /**
 * Implementation of module_preprocess_hook().
-* Allows metadata style plugins to add their data when the page is drawn.
+* Metadata style plugins to add their data when the page is drawn.
 */
 function citation_distribute_preprocess_page(&$variables) {
 	/* only display on a node page */
@@ -298,9 +311,9 @@ function citation_distribute_preprocess_page(&$variables) {
 	}
 }
 
-/*
- * implementation of hook_theme
- * Allows citation_distribute to pass theming of metadata plugins to those plugins
+/**
+ * Implementation of hook_theme()
+ * passes theming of metadata plugins to each of those plugins
  */
 function citation_distribute_theme($existing, $type, $theme, $path) {
 	$args_array = array('');
@@ -328,7 +341,16 @@ function citation_distribute_theme($existing, $type, $theme, $path) {
 }
 
 
-/* Distributes citations */
+/**
+ * _citation_distribute_distribute()
+ * 
+ * Pushes node data to repository
+ * 
+ * @param int $nid
+ * 	 node->nid to be distributed
+ * @param string $plugin_name
+ *   name of plugin to distribute to
+ */
 function _citation_distribute_distribute($nid, $plugin_name) {
 	$plugins = _plugins();
 	$plugin = $plugins[$plugin_name];
@@ -346,7 +368,17 @@ function _citation_distribute_distribute($nid, $plugin_name) {
 	return $out;
 }
 
-/* logs which nodes have been/need to be distributed */
+/**
+ * Sets table row for nid/plugin to indicate that node is distributed.  Optionally takes 
+ * batch command, to run during next cron
+ * 
+ * @param string $plugin
+ * 		name of plugin to send data to
+ * @param int $nid
+ * 		biblio node to publish
+ * @param string $batch_command
+ *  	(optional) Command to be run during next cron job.  See citation_distribute_cron for available commands
+ */
 function _citation_distribute_update_db($plugin, $nid, $batch_command = '') {	
 	$module_mode = variable_get('citation_distribute_module_mode', '' );
 	$nid = (int)$nid;  
@@ -361,13 +393,30 @@ function _citation_distribute_update_db($plugin, $nid, $batch_command = '') {
 	}
 }
 
-/* removes nodes which are no longer listed */
+/**
+ * 
+ * Deletes row from CD table when a node is deleted entirely.
+ * @param string $plugin
+ * 		name of plugin to send data to
+ * @param int $nid
+ * 		biblio node to publish
+ */
 function _citation_distribute_removefrom_db($plugin, $nid) {
 	$query = 'DELETE FROM {citation_distribute} WHERE plugin = "%s" AND nid = %d';
 	$result = db_query($query, $plugin, $nid);
 }
 
-/* unlist nodes from plugins in DB.  now they'll be immune to autoflag */
+/**
+ * Marks that a node is not published to given repository.  Necessary to prevent autoflag from always flagging
+ * unselected nodes.
+ *   
+ * @param string $plugin
+ * 		name of plugin to send data to
+ * @param int $nid
+ * 		biblio node to publish
+ * @param string $batch_command
+ *  	(optional) Command to be run during next cron job.  See citation_distribute_cron for available commands
+ */
 function _citation_distribute_unlist_db($plugin, $nid, $batch_command = '') {
   $nid = (int)$nid;
   
@@ -383,7 +432,8 @@ function _citation_distribute_unlist_db($plugin, $nid, $batch_command = '') {
  * Implementation of hook flag_default_flags
  * creates flags for each installed plugin with a title.
  * plugins without titles are abstract and don't need to be listed.  
- * @return unknown
+ * @return 
+ *   Array of flag definition objects.
  */
 function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 		
@@ -433,7 +483,8 @@ function citation_distribute_flag_default_flags($flags = array(), $i = 0) {
 
 
 /**
- * hook views_pre_render
+ * Implementation of hook_views_pre_render
+ * 
  * marks node operations (above) for inclusion in bulk update operations
  */
 function citation_distribute_views_pre_render(&$view) {
@@ -457,15 +508,19 @@ function citation_distribute_views_pre_render(&$view) {
 
 
 /**
- * _plugins().  Shortcut for getting list of citation_distribute plugins
+ * Shortcut for getting list of citation_distribute plugins
+ * 
+ * @return
+ *   List of all citation_distribute plugins
  */
 function _plugins() {
 	ctools_include('plugins');
 	$plugins = ctools_get_plugins('citation_distribute', 'plugins');
 	return $plugins;
 }
-/* 
- * hook_cron
+/**
+ * Implementation of hook_cron()
+ * 
  * In batch mode, process pending updates during cron jobs
  * nodes have already been flagged, but not distributed yet
  * for metadata nodes, this is meaningless, but updates their db status
@@ -481,6 +536,7 @@ function citation_distribute_cron() {
 	function enquote($s) {return '\'' . $s . '\'';}
 	$quoted = array_map( 'enquote', array_keys($plugins) );
 	
+	//List of commands we can run.  Enquote them for Mysql.IN() as well.
 	$commands = array('distribute', 'remove');
 	$commands = array_map('enquote', $commands);
  
@@ -513,7 +569,6 @@ function citation_distribute_cron() {
 		      
 		  }
 
-			//db_query ( "UPDATE {citation_distribute} SET batch_update = 0 WHERE nid = %d and plugin = '%s'", $res->nid, $res->type ); 
 		}
 	}
 }

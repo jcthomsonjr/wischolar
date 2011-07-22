@@ -1,6 +1,6 @@
 <?php 
 
-/*
+/**
  * @file
  * google scholar class provides publication methods to theme biblio nodes with google metadata
  */

@@ -4,8 +4,10 @@
  * Themable function to generate message after user submits
  *  cite_distribute widget selections
  *
- * @param unknown_type $modules
+ * @param array $metadata
+ *  	associative array of GS metadata
  * @return unknown
+ *   HTML string of that metadata
  */
 function theme_googlescholar($metadata){
 	$output = "";

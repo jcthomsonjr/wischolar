@@ -1,7 +1,10 @@
 <?php
 
-/*
+/**
  * Implementation of cite_distribute_admin()
+ * 
+ * @return array
+ *   returns system setting form
  */
 function citation_distribute_admin() {
 	$form = array();
@@ -10,8 +13,9 @@ function citation_distribute_admin() {
 	  '#title' => t('Configure Citation Distribute'),
 	  '#collapsible' => FALSE,
 	  '#collapsed' => FALSE,
-	 );
+	);
 
+	//module mode 
   $form['citation_distribute']['citation_distribute_module_mode'] = array(
 	  '#type' => 'select',
 	  '#title' => t('Select the mode for this module'),
@@ -23,14 +27,13 @@ function citation_distribute_admin() {
 	      <br><strong>Per Submission mode</strong> (<em>default</em>) will update or create a meta file whenever content submitted or updated.')
    );
    
-   
+   //cron limit
    $form['citation_distribute']['citation_distribute_cron_limit'] = array(
      '#type' => 'textfield',
    	 '#title' => 'Batch Size Limit',
    	 '#description' => t('(Batch mode only) Limit how many publications can be submitted per cron run.'),
    	 '#required' => FALSE,
    	 '#default_value' => variable_get('citation_distribute_cron_limit', _CRON_LIMIT),
-     //only show up during batch mode.  use ahah to reveal this setting?
    );
    
    //list all our plugins, include autoflag checkboxes
@@ -58,6 +61,8 @@ function citation_distribute_admin() {
 
 /**
  * implementation of form_validate
+ * 
+ * Ensures that cron limit is a positive integer
  */
 function citation_distribute_admin_validate($form, &$form_state) {
 	if ((int)$form_state['values']['citation_distribute_cron_limit'] > 0) {
