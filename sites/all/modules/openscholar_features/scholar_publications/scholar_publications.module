@@ -226,10 +226,10 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
       unset($form['body_field']['teaser_include']);
       $form['body_field']['teaser_include'] = $t;
     }
-    
+
     //Remove the sticky option.  Our view ignores it, so we shouldn't mislead users.
     unset( $form['options']['sticky'] );
-      
+
   }
 }
 
@@ -276,13 +276,13 @@ function scholar_publications_hide_form_value(&$element){
  */
 function scholar_publications_get_cache($cache_key){
 	if(!module_exists('views_content_cache')) return;
-	
+
   $cutoff = 0;
   $cache_params = array(
     'node' => array('biblio' => 'biblio'),
     'os_og' => array('current' => 'current'),
   );
-  
+
   // Retrieve the latest update time matching the settings on this View.
   $cid = array();
   foreach ($cache_params as $key_id => $key_values) {
@@ -293,7 +293,7 @@ function scholar_publications_get_cache($cache_key){
   if (!empty($cid) && ($timestamp = views_content_cache_update_get($cid))) {
     $cutoff = $timestamp;
   }
-    
+
   // enforce a maximum lifetime
   if ($n_max = variable_get('scholar_publications_cache_max_lifespan',3600)) {
     if ($n_max != -1) {
@@ -301,11 +301,11 @@ function scholar_publications_get_cache($cache_key){
       $cutoff = max($max_lifespan, $cutoff);
     }
   }
-    
+
   if (($cache = cache_get($cache_key, 'cache_views_data')) && (!$cutoff || $cache->created > $cutoff)) {
     return $cache->data;
   }
-  
+
   return false;
 }
 
@@ -314,7 +314,7 @@ function scholar_publications_get_cache($cache_key){
  */
 function scholar_publications_overview_get_cache_key($arguments){
 	if($_SERVER['REQUEST_METHOD'] != 'GET') return false;
-	
+
   //Match biblio's bizare argument mumbo-jumbo
 	foreach ($_GET as $key => $value) {
     if ($key != 'q') {
@@ -328,22 +328,22 @@ function scholar_publications_overview_get_cache_key($arguments){
   }//Don't cache if biblio has it's specal search to execute (rare)
 
   global $theme, $user;
-    
+
   $cid_parts = array();
-    
+
   $vsite = vsite_get_vsite();
   $cid_parts[] = (isset($vsite->group->purl))? $vsite->group->purl:"";
   $cid_parts[] = $theme;
   $cid_parts[] = ($user->uid == 1)?1:0; // special caching for super user.
-  
+
   //Biblio Arguments
   $cid_parts[] = md5(serialize($arguments));
-  
+
   if (module_exists('locale')) {
     global $language;
     $cid_parts[] = $language->language;
   }
-    
+
   return "scholar_publication:results:".implode(':', $cid_parts);
 }
 
@@ -352,13 +352,13 @@ function scholar_publications_overview_get_cache_key($arguments){
  */
 function scholar_publications_overview(){
 	$vsite = vsite_get_vsite();
-  
+
   //page title = the name of the menu they have in settings or "Publications"
   $page_title = (is_array($vsite->customizer['menu']) && isset($vsite->customizer['menu']['publications'])) ? $vsite->customizer['menu']['publications'] : "Publications";
   variable_set('biblio_base_title', $page_title);
 
   module_load_include('inc', 'biblio', 'biblio.pages');
-  
+
   if(isset($_REQUEST['format'])){
   	require_once(drupal_get_path('module','biblio').'/biblio.import.export.inc');
   	return biblio_export($_REQUEST['format']);
@@ -379,16 +379,16 @@ function scholar_publications_overview(){
       }
     }
   }
-  
+
   if (isset($type_data)) drupal_set_title(check_plain($type_data['name']));
-  
+
   if(($cache_key = scholar_publications_overview_get_cache_key($a_args))
   && ($s_cached = scholar_publications_get_cache($cache_key))){
   	return $s_cached;
   }
-  
+
   $s_bib_out =  call_user_func_array('biblio_db_search',$a_args);
-  
+
   global $pager_total_items;
   if(!is_array($pager_total_items) || $pager_total_items[0] <= 0){
 
@@ -401,7 +401,7 @@ function scholar_publications_overview(){
 	      $nodetype = current($context->node);
 	    }
 	  }
-	  
+
 	  $s_bib_out = vsite_empty_view_message($nodetype,$vsite);
   }
 
@@ -409,7 +409,7 @@ function scholar_publications_overview(){
   	//Permanant Cache, we will clear this manually
     cache_set($cache_key, $s_bib_out, 'cache_views_data', CACHE_PERMANENT);
   }
-  
+
   return $s_bib_out;
 }
 
@@ -573,6 +573,21 @@ function scholar_publications_vsite_widgets(){
     'cache_keys' => array(
       'node' => array('biblio' => 'biblio'),
       'os_og' => array('current' => 'current'),
+    ),
+  );
+
+  // Publication Types
+  $items['scholar_publications-pub_by_type'] = array(
+    'module' => 'scholar_publications',
+    'delta' => 'pub_by_type',
+    'weight' => 10,
+    'region' => false,
+    'label' => 'Publications By Type (BETA)',
+    'cache' => BLOCK_CACHE_CONTENT_CACHE,
+    'cache_keys' => array(
+      'node' => array('biblio' => 'biblio'),
+      'os_og' => array('current' => 'current'),
+      'vsite_config' => array('scholar_publications_settings' => 'scholar_publications_settings'),
     ),
   );
   return $items;
@@ -825,6 +840,32 @@ function _scholar_publications_add_owner_checkbox(&$form_element){
  * @return string
  */
 function _scholar_publications_pub_by_type_wgt(){
+
+  $s = "SELECT COUNT(n.nid) AS num, tid, name FROM {biblio} n JOIN {biblio_types} ON (biblio_type = tid) GROUP BY biblio_type";
+  $res = db_query(db_rewrite_sql($s));
+
+  $i = 0;
+  $plurals = array(
+  	'Software',
+  	'Data',
+  	'Conference Proceedings',
+  	'Thesis',
+  	'Unpublished',
+  	'Miscellaneous',
+  	'Audiovisual',
+  	'Artwork'
+  );
+  $content = array();
+  while ($row = db_fetch_array($res)) {
+    if (!in_array($row['name'], $plurals)) $row['name'] .= "s"; //FIX THE PLURAL
+
+    $content[] = '<li>'.l($row['name'],"publications/type/".$row['tid']).' ('.$row['num'].')</li>';
+  }
+
+  if (count($content)) {
+    $output = '<ul>'.implode('', $content).'</ul>';
+  }
+  /*
 	$view = views_get_view('publication_types');
   $view->execute('block_1');
   usort($view->result,"_scholar_publications_sort_type_by_numpubs");
@@ -850,10 +891,10 @@ function _scholar_publications_pub_by_type_wgt(){
 	  $output .= "</div>";
 	  $i++;
 	}
-	$tabs .= "</ul>";
+	$tabs .= "</ul>";*/
 	if(!$output) return array();
 
-	$output = "<div id='pub_type_tabs'>".$tabs.$output."</div>";
+	$output = "<div id='pub_type_tabs'>".$output."</div>";
 
   return array('subject' => "Recent Writings",'content' => $output);
 }
