@@ -518,27 +518,3 @@ function citation_distribute_cron() {
 	}
 }
 
-/**
- * implementation of hook_enable
- * copies info from cite_distribute, if that table is still active.
- * takes place during mod enabling, so table should exist.
- */
-function citation_distribute_enable() {
-  $types = array('googlescholar_meta' => 'googlescholar', 'repec_meta' => 'service_repec');
-  
-  //upd and remove are always 0 in our table, so don't worry about them too hard.
-  //ignore remove.  items scheduled for remove shouldn't be recopied.
-  $query = 'SELECT nid,type,upd FROM {cite_distribute} WHERE remove != 0 ';
-  $result = db_query($query);
-
-  if ($result) {
-    $insert = 'INSERT INTO {citation_distribute} (nid, plugin, noauto) VALUES ';
-    while ($r = db_fetch_object($result)) {
-      $insert .= '(' . $r->nid . ', \'' . $types[$r->type] . '\', 0),';
-    }
-    
-    $i = db_query($insert);
-  }
-
-}
-

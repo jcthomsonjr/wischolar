@@ -63,6 +63,10 @@ function citation_distribute_install(){
   if (!empty($msg)) {
     drupal_set_message(t($msg));
   }
+  
+  if (module_exists('cite_distribute')) {
+    _citation_distribute_import_old();
+  }
 }
 
 function citation_distribute_uninstall(){
@@ -78,4 +82,32 @@ function citation_distribute_uninstall(){
   foreach( array('module_mode', 'cron_limit') as $var) {
 	  variable_del('citation_distribute_' . $var);
   }
+}
+
+
+/**
+ * copies info from cite_distribute, if that table is still active.
+ * hook_enable was the wrong timing, so do this during installation after drupal_install_schema.
+ */
+function _citation_distribute_import_old() {
+  $types = array('googlescholar_meta' => 'googlescholar', 'repec_meta' => 'service_repec');
+  
+  //upd and remove are always 0 in our table, so don't worry about them too hard.
+  //ignore remove.  items scheduled for remove shouldn't be recopied.
+  $query = 'SELECT nid,type,upd,remove FROM {cite_distribute} ';
+  $result = db_query($query);
+
+  if ($result) {
+    $insert = array();
+    while ($r = db_fetch_object($result)) {
+      $cmd = '';
+      ($r->upd) && $cmd = 'update';
+      ($r->remove) && $cmd = 'remove';
+      $insert[] = '(' . $r->nid . ', \'' . $types[$r->type] . '\', 0, \'' . $cmd . '\')';
+    }
+    
+    $i = db_query('INSERT INTO {citation_distribute} (nid, plugin, noauto, batch_command) VALUES ' . implode(',', $insert));
+    $err = mysql_error();
+  }
+
 }
