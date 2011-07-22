@@ -17,4 +17,19 @@ $(document).ready(function() {
   $('#edit-path').focus(function() {
     $('#path-slash-warning').remove();
   });
+  
+  //add listener to URL path settings.  fetch new path via ajax
+  $('a.vertical-tabs-list-path').click(function(){
+    var href = href = 'http://' + document.location.host + '/pathauto_extra/alias_js';
+    var data = Drupal.settings.pathauto_extra;
+    data.title = $.trim($('#edit-title').attr('value'));
+    
+    if (  data.title.length > 0 && $('#edit-pathauto-perform-alias').attr('checked')  ) {
+      $.getJSON(href, data, function(json) {
+        if (json.status) {
+          $('#edit-path').attr('value', json.data);
+        }
+      });
+    }
+  });
 });

@@ -5,9 +5,8 @@
  * provides a page for ajax to call so we can retrieve info from drupal
  */
 function pathauto_extra_menu() {
-  $items['pathauto_extra/alias_js/%/%'] = array(
+  $items['pathauto_extra/alias_js'] = array(
     'page callback' => 'pathauto_extra_alias_js',
-  	'page arguments' => array(2,3),   
     'type' => 'MENU_CALLBACK', 
     'access arguments' => array('access content'), 
   );
@@ -20,15 +19,6 @@ function pathauto_extra_menu() {
  */
 function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id ) {
-    ctools_include('ajax');
-    ctools_add_js('ajax-responder');
-    
-    $vsite=vsite_get_vsite();   
-    $gid = $vsite->id;
-    $type = arg(2); 
-      
-    ctools_ajax_associate_url_to_element($form, $form['title'], url('pathauto_extra/alias_js/'.$gid.'/'.$type), 'ctools-use-ajax-onchange'); 
-    
     drupal_add_js(drupal_get_path('module', 'pathauto_extra') . '/pathauto_extra.js');
   }
 }
@@ -39,9 +29,15 @@ function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
  * gets the pattern for formatting urls for this node type, tries to apply it
  * returns expected url alias.
  */
-function pathauto_extra_alias_js($gid, $type) {
-  $path = _pathauto_extra_make_path($gid, $type, $_POST['ctools_changed']);
-  pathauto_extra_ctools_value('#edit-path', $path);
+function pathauto_extra_alias_js() {
+  $path = _pathauto_extra_make_path($_GET['gid'], $_GET['$type'], $_GET['title']);
+  if ($path) {
+    $json = array('status' => TRUE, 'data' => $path);
+  } else {
+    $json = array('status' => FALSE, 'data' => null);
+  }
+    
+  drupal_json($json);
 }
 
 /**
@@ -77,16 +73,17 @@ function _pathauto_extra_make_path($gid, $type, $title) {
 }
 
 /**
- * wrapper function for ajax commands
- * changes value attribute of #$id
- */
-function pathauto_extra_ctools_value($id, $value) {
-  ctools_include( 'ajax');
-  ctools_add_js('ajax-responder');
-  
-  $commands = array();
-  $commands[] = ctools_ajax_command_attr($id, 'value', $value);
-  
-  ctools_ajax_render($commands);  
+* implementation of hook_preproces_page
+* adds tokenizable variables to page's javascript, so pathauto_ajax.js can use them.
+*/
+function pathauto_extra_preprocess_page(&$variables) {
+  if (arg(0) == 'node' && arg(1) == 'add' && arg(2)) {
+    $vsite=vsite_get_vsite();
+    $data = array( 'pathauto_extra' => array(
+        'type' => arg(2),
+        'gid' => $vsite->id,
+    ));
+       
+    drupal_add_js($data, 'setting');
+  }
 }
-
