@@ -13,14 +13,14 @@ function os_install(){
 
 /*
  * hook_update_N
- * installs 'views_content_cache','os_views_content_cache','os_blocks_content_cache'.
+ * installs 'views_content_cache','os_views_content_cache','os_blocks_content_cache','os_wysiwyg_fields'.
  */
 function os_update_6001(&$sandbox){
 
   $res = array();
   module_rebuild_cache();
 
-  $modules = array('views_content_cache','os_views_content_cache','os_blocks_content_cache');
+  $modules = array('views_content_cache','os_views_content_cache','os_blocks_content_cache','os_wysiwyg_fields');
 
   foreach ($modules as $mod) {
     if(!module_exists($mod)){
