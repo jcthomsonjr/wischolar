@@ -160,5 +160,49 @@ function scholar_classes_user_default_permissions() {
     ),
   );
 
+    // Exported permission: override class_material authored on option
+  $permissions['override class_material authored by option'] = array(
+    'name' => 'override class_material authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override class_material authored on option
+  $permissions['override class_material authored on option'] = array(
+    'name' => 'override class_material authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override class authored on option
+  $permissions['override class authored by option'] = array(
+    'name' => 'override class authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override class authored on option
+  $permissions['override class authored on option'] = array(
+    'name' => 'override class authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
   return $permissions;
 }

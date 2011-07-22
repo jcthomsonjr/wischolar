@@ -88,5 +88,27 @@ function scholar_reader_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override feed authored on option
+  $permissions['override feed authored by option'] = array(
+    'name' => 'override feed authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override feed authored on option
+  $permissions['override feed authored on option'] = array(
+    'name' => 'override feed authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
   return $permissions;
 }
