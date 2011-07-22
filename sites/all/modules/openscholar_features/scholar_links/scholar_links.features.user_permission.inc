@@ -79,6 +79,28 @@ function scholar_links_user_default_permissions() {
       '3' => 'scholar user',
     ),
   );
+  
+      // Exported permission: override link authored on option
+  $permissions['override link authored by option'] = array(
+    'name' => 'override link authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override link authored on option
+  $permissions['override link authored on option'] = array(
+    'name' => 'override link authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
 
   return $permissions;
 }

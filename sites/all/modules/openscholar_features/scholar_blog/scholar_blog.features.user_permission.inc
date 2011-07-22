@@ -70,6 +70,29 @@ function scholar_blog_user_default_permissions() {
       '3' => 'scholar user',
     ),
   );
+  
+    
+  // Exported permission: override blog authored on option
+  $permissions['override blog authored by option'] = array(
+    'name' => 'override blog authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override blog authored on option
+  $permissions['override blog authored on option'] = array(
+    'name' => 'override blog authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
 
   return $permissions;
 }

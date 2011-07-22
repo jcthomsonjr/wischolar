@@ -121,6 +121,50 @@ function scholar_software_user_default_permissions() {
       '0' => 'administrator',
     ),
   );
+  
+  // Exported permission: override scholar_software_release authored on option
+  $permissions['override scholar_software_release authored by option'] = array(
+    'name' => 'override scholar_software_release authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override scholar_software_release authored on option
+  $permissions['override scholar_software_release authored on option'] = array(
+    'name' => 'override scholar_software_release authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override scholar_software_project authored on option
+  $permissions['override scholar_software_project authored by option'] = array(
+    'name' => 'override scholar_software_project authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override scholar_software_project authored on option
+  $permissions['override scholar_software_project authored on option'] = array(
+    'name' => 'override scholar_software_project authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
 
   return $permissions;
 }

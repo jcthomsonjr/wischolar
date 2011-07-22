@@ -236,7 +236,6 @@ function vsite_layout_settings_form($form_state){
   $regions = array_keys(system_region_list('scholar_base'));
 
   $a_setting = $space->controllers->context->get('openscholar-feature-'.$s_page_type.":reaction:block");
-  dpm($a_setting);
   $a_blocks = (isset($a_setting['blocks']))? $a_setting['blocks']:array();
 
   foreach ($regions as $region) {

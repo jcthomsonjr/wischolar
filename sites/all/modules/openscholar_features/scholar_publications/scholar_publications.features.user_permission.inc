@@ -176,6 +176,28 @@ function scholar_publications_user_default_permissions() {
       '5' => 'scholar user',
     ),
   );
+  
+  // Exported permission: override biblio authored on option
+  $permissions['override biblio authored by option'] = array(
+    'name' => 'override biblio authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override biblio authored on option
+  $permissions['override biblio authored on option'] = array(
+    'name' => 'override biblio authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
 
   return $permissions;
 }

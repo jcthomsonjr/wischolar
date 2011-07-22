@@ -72,5 +72,27 @@ function scholar_profiles_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override person authored on option
+  $permissions['override person authored by option'] = array(
+    'name' => 'override person authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
+  // Exported permission: override person authored on option
+  $permissions['override person authored on option'] = array(
+    'name' => 'override person authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+  
   return $permissions;
 }
