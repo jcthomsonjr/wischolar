@@ -43,3 +43,12 @@ function scholar_biocv_node_info() {
   );
   return $items;
 }
+
+/**
+ * Implementation of hook_wysiwyg_fields_icons().
+ */
+function scholar_biocv_wysiwyg_fields_icons() {
+  return array(
+    drupal_get_path('module', 'scholar_biocv') . '/images/wysiwyg_fields',
+  );
+}
