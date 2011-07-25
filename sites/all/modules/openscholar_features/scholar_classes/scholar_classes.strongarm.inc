@@ -9,28 +9,28 @@ function scholar_classes_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_anonymous_class';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_anonymous_class'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_anonymous_class_material';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_anonymous_class_material'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_class';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_class'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_class_material';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_class_material'] = $strongarm;
   $strongarm = new stdClass;
@@ -131,6 +131,42 @@ function scholar_classes_strongarm() {
   $strongarm->value = '1';
 
   $export['comment_subject_field_class_material'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'content_extra_weights_class';
+  $strongarm->value = array(
+    'title' => '-5',
+    'body_field' => '0',
+    'revision_information' => '20',
+    'author' => '20',
+    'options' => '25',
+    'comment_settings' => '30',
+    'menu' => '-2',
+    'taxonomy' => '-3',
+    'book' => '10',
+    'path' => '30',
+    'attachments' => '30',
+    'creativecommons' => '100',
+    'og_nodeapi' => '0',
+    'scholar_classes_node_content_1' => '10',
+  );
+
+  $export['content_extra_weights_class'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_class_field_os_inline_image';
+  $strongarm->value = 0;
+
+  $export['ffp_class_field_os_inline_image'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_class_material_upload';
+  $strongarm->value = 0;
+
+  $export['ffp_class_material_upload'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -418,42 +454,42 @@ function scholar_classes_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_diff_inline_class';
-  $strongarm->value = TRUE;
+  $strongarm->value = 1;
 
   $export['show_diff_inline_class'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_diff_inline_class_material';
-  $strongarm->value = TRUE;
+  $strongarm->value = 1;
 
   $export['show_diff_inline_class_material'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_preview_changes_class';
-  $strongarm->value = FALSE;
+  $strongarm->value = 0;
 
   $export['show_preview_changes_class'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_preview_changes_class_material';
-  $strongarm->value = FALSE;
+  $strongarm->value = 0;
 
   $export['show_preview_changes_class_material'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'upload_class';
-  $strongarm->value = TRUE;
+  $strongarm->value = '1';
 
   $export['upload_class'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'upload_class_material';
-  $strongarm->value = TRUE;
+  $strongarm->value = '1';
 
   $export['upload_class_material'] = $strongarm;
   return $export;
