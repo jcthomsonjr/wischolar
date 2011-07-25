@@ -8,17 +8,129 @@ function scholar_biocv_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'comment_anonymous_bio';
+  $strongarm->value = '0';
+
+  $export['comment_anonymous_bio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_anonymous_cv';
+  $strongarm->value = '0';
+
+  $export['comment_anonymous_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_bio';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_bio'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'comment_controls_bio';
+  $strongarm->value = '3';
+
+  $export['comment_controls_bio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_controls_cv';
+  $strongarm->value = '3';
+
+  $export['comment_controls_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_cv';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_mode_bio';
+  $strongarm->value = '4';
+
+  $export['comment_default_mode_bio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_mode_cv';
+  $strongarm->value = '4';
+
+  $export['comment_default_mode_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_order_bio';
+  $strongarm->value = '1';
+
+  $export['comment_default_order_bio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_order_cv';
+  $strongarm->value = '1';
+
+  $export['comment_default_order_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_per_page_bio';
+  $strongarm->value = '50';
+
+  $export['comment_default_per_page_bio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_per_page_cv';
+  $strongarm->value = '50';
+
+  $export['comment_default_per_page_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_form_location_bio';
+  $strongarm->value = '0';
+
+  $export['comment_form_location_bio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_form_location_cv';
+  $strongarm->value = '0';
+
+  $export['comment_form_location_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_preview_bio';
+  $strongarm->value = '1';
+
+  $export['comment_preview_bio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_preview_cv';
+  $strongarm->value = '1';
+
+  $export['comment_preview_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_subject_field_bio';
+  $strongarm->value = '1';
+
+  $export['comment_subject_field_bio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_subject_field_cv';
+  $strongarm->value = '1';
+
+  $export['comment_subject_field_cv'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -35,6 +147,7 @@ function scholar_biocv_strongarm() {
     'book' => '1',
     'path' => '6',
     'attachments' => '5',
+    'creativecommons' => '100',
     'og_nodeapi' => '0',
   );
 
@@ -108,6 +221,13 @@ function scholar_biocv_strongarm() {
   $strongarm->value = 1;
 
   $export['content_profile_use_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_cv_upload';
+  $strongarm->value = 0;
+
+  $export['ffp_cv_upload'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -378,35 +498,35 @@ function scholar_biocv_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_diff_inline_bio';
-  $strongarm->value = TRUE;
+  $strongarm->value = 1;
 
   $export['show_diff_inline_bio'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_diff_inline_cv';
-  $strongarm->value = TRUE;
+  $strongarm->value = 1;
 
   $export['show_diff_inline_cv'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_preview_changes_bio';
-  $strongarm->value = TRUE;
+  $strongarm->value = 1;
 
   $export['show_preview_changes_bio'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_preview_changes_cv';
-  $strongarm->value = TRUE;
+  $strongarm->value = 1;
 
   $export['show_preview_changes_cv'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'upload_bio';
-  $strongarm->value = TRUE;
+  $strongarm->value = '1';
 
   $export['upload_bio'] = $strongarm;
   $strongarm = new stdClass;
