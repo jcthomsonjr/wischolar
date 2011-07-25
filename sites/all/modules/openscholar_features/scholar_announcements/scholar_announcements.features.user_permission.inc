@@ -34,6 +34,28 @@ function scholar_announcements_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override announcement authored by option
+  $permissions['override announcement authored by option'] = array(
+    'name' => 'override announcement authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override announcement authored on option
+  $permissions['override announcement authored on option'] = array(
+    'name' => 'override announcement authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override announcement promote to front page option
   $permissions['override announcement promote to front page option'] = array(
     'name' => 'override announcement promote to front page option',
@@ -63,28 +85,6 @@ function scholar_announcements_user_default_permissions() {
     'name' => 'override announcement sticky option',
     'roles' => array(
       '0' => 'administrator',
-    ),
-  );
-  
-  // Exported permission: override announcement authored on option
-  $permissions['override announcement authored by option'] = array(
-    'name' => 'override announcement authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override announcement authored on option
-  $permissions['override announcement authored on option'] = array(
-    'name' => 'override announcement authored on option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
     ),
   );
 
