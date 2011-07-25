@@ -6,30 +6,6 @@
 function scholar_biocv_filefield_paths_item_default_items() {
   $settings = array();
 
-  // Exported bio-field_os_inline_image
-  $settings['bio-field_os_inline_image'] = array(
-    'type' => 'bio',
-    'field' => 'field_os_inline_image',
-    'filename' => array(
-      'value' => '[filefield-onlyname-original].[filefield-extension-original]',
-      'tolower' => 0,
-      'pathauto' => 0,
-      'transliterate' => 0,
-    ),
-    'filepath' => array(
-      'value' => '',
-      'tolower' => 0,
-      'pathauto' => 0,
-      'transliterate' => 0,
-    ),
-    'filealias' => array(
-      'value' => 'sites/localhost.scholar/files/[filefield-onlyname-original].[filefield-extension-original]',
-      'tolower' => 0,
-      'pathauto' => 0,
-      'transliterate' => 0,
-      'display' => 0,
-    ),
-  );
   // Exported bio-upload
   $settings['bio-upload'] = array(
     'type' => 'bio',
