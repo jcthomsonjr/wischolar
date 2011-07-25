@@ -61,6 +61,28 @@ function scholar_book_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override book authored by option
+  $permissions['override book authored by option'] = array(
+    'name' => 'override book authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override book authored on option
+  $permissions['override book authored on option'] = array(
+    'name' => 'override book authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override book promote to front page option
   $permissions['override book promote to front page option'] = array(
     'name' => 'override book promote to front page option',
@@ -97,29 +119,6 @@ function scholar_book_user_default_permissions() {
   // Exported permission: override book sticky option
   $permissions['override book sticky option'] = array(
     'name' => 'override book sticky option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-      
-  // Exported permission: override book authored on option
-  $permissions['override book authored by option'] = array(
-    'name' => 'override book authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override book authored on option
-  $permissions['override book authored on option'] = array(
-    'name' => 'override book authored on option',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'manager',
