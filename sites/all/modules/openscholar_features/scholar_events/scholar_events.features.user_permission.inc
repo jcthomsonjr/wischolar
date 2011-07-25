@@ -39,6 +39,28 @@ function scholar_events_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override event authored by option
+  $permissions['override event authored by option'] = array(
+    'name' => 'override event authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override event authored on option
+  $permissions['override event authored on option'] = array(
+    'name' => 'override event authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override event promote to front page option
   $permissions['override event promote to front page option'] = array(
     'name' => 'override event promote to front page option',
@@ -75,28 +97,6 @@ function scholar_events_user_default_permissions() {
   // Exported permission: override event sticky option
   $permissions['override event sticky option'] = array(
     'name' => 'override event sticky option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override event authored on option
-  $permissions['override event authored by option'] = array(
-    'name' => 'override event authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override event authored on option
-  $permissions['override event authored on option'] = array(
-    'name' => 'override event authored on option',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'manager',
