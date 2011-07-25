@@ -232,7 +232,7 @@ function scholar_publications_update_6009(&$sandbox) {
       $r['value']['blocks']['scholar_publications-pub_by_type'] = $widgets['scholar_publications-pub_by_type'];
       $r['value']['blocks']['scholar_publications-pub_by_type']['region'] = $old_block['region'];
       $r['value']['blocks']['scholar_publications-pub_by_type']['weight'] = $old_block['weight'];
-      $old_block['region'] = false;
+      unset($r['value']['blocks']['views-publication_types-block_1']);
       db_query("UPDATE {spaces_overrides} SET value = '%s' WHERE id = %d AND object_id = '%s' AND object_type = 'context'",
               serialize($r['value']), $r['id'], $r['object_id']);
     }
