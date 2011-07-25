@@ -117,8 +117,10 @@ function _citation_distribute_import_old() {
       $insert[] = '(' . $r->nid . ', \'' . $types[$r->type] . '\', 0, \'' . $cmd . '\')';
     }
     
-    $i = db_query('INSERT INTO {citation_distribute} (nid, plugin, noauto, batch_command) VALUES ' . implode(',', $insert));
-    $err = mysql_error();
+    if (count($insert) > 0) {
+      $i = db_query('INSERT INTO {citation_distribute} (nid, plugin, noauto, batch_command) VALUES ' . implode(',', $insert));
+      $err = mysql_error();
+    }
   }
 
 }

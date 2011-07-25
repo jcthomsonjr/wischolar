@@ -41,3 +41,12 @@ function scholar_announcements_views_api() {
     'api' => '2',
   );
 }
+
+/**
+ * Implementation of hook_wysiwyg_fields_icons().
+ */
+function scholar_announcements_wysiwyg_fields_icons() {
+  return array(
+    drupal_get_path('module', 'scholar_announcements') . '/images/wysiwyg_fields',
+  );
+}

@@ -18,11 +18,25 @@ class citation_distribute_service_sword_dash extends citation_distribute_service
 	
 	//variable or function for determining school.
 	
+	// optional validate function
+	// note that this take's nodeapi's $a3 arg (which is the $form during validation)
+	// OR it can take a nid, depending on when the validation takes place.
 	public function validate($a3) {
-		if (count($a3['#post']['files']) > 0) { // or body-> full text?
-			return;
+	  
+	  if (is_array($a3)) {
+	    $files = $a3['#post']['files'];
+	  } elseif (is_int($a3) && $node = node_load($a3)) {
+	    $files = $node->files;
+	  } else {
+	    //not sure what a3 is anymore, so bail.
+	    return FALSE;
+	  }
+	  
+		if (count($files) > 0) { // or body-> full text?
+			return TRUE;
 		} else {
-			return $this->title . ' requires the full text document be attached.';
+			form_set_error('files', $this->title . ' requires the full text document be attached.');
+			return FALSE;
 			
 			//TODO: check if a user has set his affiliation.  if not, send them to where that setting can be adjusted.
 			//TODO: add a harvard affiliation setting.  can plugins modify admin pages I wonder?

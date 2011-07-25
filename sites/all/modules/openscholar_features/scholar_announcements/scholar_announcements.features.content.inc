@@ -3,79 +3,118 @@
 /**
  * Implementation of hook_content_default_fields().
  */
-function scholar_biocv_content_default_fields() {
+function scholar_announcements_content_default_fields() {
   $fields = array();
 
-  // Exported field: field_hook_text
-  $fields['bio-field_hook_text'] = array(
-    'field_name' => 'field_hook_text',
-    'type_name' => 'bio',
+  // Exported field: field_os_inline_files
+  $fields['announcement-field_os_inline_files'] = array(
+    'field_name' => 'field_os_inline_files',
+    'type_name' => 'announcement',
     'display_settings' => array(
       'label' => array(
-        '0' => 'hidden',
+        'format' => 'above',
         'exclude' => 0,
       ),
       '5' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       'teaser' => array(
-        'format' => 'default',
-        'exclude' => 1,
+        'format' => 'hidden',
+        'exclude' => 0,
       ),
       'full' => array(
-        'format' => 'default',
-        'exclude' => 1,
+        'format' => 'hidden',
+        'exclude' => 0,
       ),
       '4' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       '2' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       '3' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
       'token' => array(
-        'format' => 'default',
+        'format' => 'hidden',
         'exclude' => 0,
       ),
     ),
     'widget_active' => '1',
-    'type' => 'text',
+    'type' => 'filefield',
     'required' => '0',
-    'multiple' => '0',
-    'module' => 'text',
+    'multiple' => '1',
+    'module' => 'filefield',
     'active' => '1',
-    'text_processing' => '0',
-    'max_length' => '',
-    'allowed_values' => '',
-    'allowed_values_php' => '',
+    'list_field' => '0',
+    'list_default' => 1,
+    'description_field' => '1',
     'widget' => array(
-      'rows' => '4',
-      'size' => 60,
-      'default_value' => array(
-        '0' => array(
-          'value' => '',
-          '_error_element' => 'default_value_widget][field_hook_text][0][value',
-        ),
+      'file_extensions' => '',
+      'file_path' => '',
+      'progress_indicator' => 'bar',
+      'max_filesize_per_file' => '',
+      'max_filesize_per_node' => '',
+      'wysiwyg_fields_status' => 1,
+      'wysiwyg_fields_icon' => '32c1419a9092fb94fcc30f95d7a66fb4',
+      'wysiwyg_fields_formatters' => array(
+        'default' => 'default',
       ),
-      'default_value_php' => NULL,
-      'label' => 'Short Blurb',
-      'weight' => '-4',
-      'description' => 'Text here will display in the "Bio Blurb" widget which serves as a short abstract of your more complete bio.',
-      'type' => 'text_textarea',
-      'module' => 'text',
+      'wysiwyg_fields_hide' => 1,
+      'wysiwyg_fields_delete' => 1,
+      'filefield_sources' => array(
+        'remote' => 'remote',
+        'reference' => 0,
+        'attach' => 0,
+      ),
+      'filefield_source_attach_path' => 'file_attach',
+      'filefield_source_attach_absolute' => '0',
+      'filefield_source_attach_mode' => 'move',
+      'filefield_source_autocomplete' => '0',
+      'insert' => 1,
+      'insert_styles' => array(
+        'os_file_description' => 'os_file_description',
+        'auto' => 0,
+        'link' => 0,
+        'image' => 0,
+        'imagecache_AttachmentThumbnail' => 0,
+        'imagecache_book_cover' => 0,
+        'imagecache_book_cover_thumb' => 0,
+        'imagecache_gallery_small_thumb' => 0,
+        'imagecache_gallery_thumb' => 0,
+        'imagecache_image_s' => 0,
+        'imagecache_inline_default' => 0,
+        'imagecache_inline_larger' => 0,
+        'imagecache_openscholar_front_logo' => 0,
+        'imagecache_presentation_thumb' => 0,
+        'imagecache_square_35_35' => 0,
+        'imagecache_square_50_50' => 0,
+        'imagecache_thumb' => 0,
+        'imagecache_vsite_design_default_logo' => 0,
+        'imagecache_vsite_design_landscape_logo' => 0,
+        'imagecache_vsite_design_portrait_logo' => 0,
+        'imagecache_vsite_design_square_logo' => 0,
+        'imagecache_vsite_shields_default_shield' => 0,
+      ),
+      'insert_default' => 'os_file_description',
+      'insert_class' => '',
+      'insert_width' => '',
+      'label' => 'Inline Files',
+      'weight' => '12',
+      'description' => '',
+      'type' => 'filefield_widget',
+      'module' => 'filefield',
     ),
   );
 
   // Exported field: field_os_inline_image
-  $fields['bio-field_os_inline_image'] = array(
+  $fields['announcement-field_os_inline_image'] = array(
     'field_name' => 'field_os_inline_image',
-    'type_name' => 'bio',
+    'type_name' => 'announcement',
     'display_settings' => array(
       'label' => array(
         'format' => 'above',
@@ -179,7 +218,7 @@ function scholar_biocv_content_default_fields() {
       'filefield_source_attach_mode' => 'move',
       'filefield_source_autocomplete' => '1',
       'label' => 'Inline Image',
-      'weight' => '102',
+      'weight' => '10',
       'description' => '',
       'type' => 'imagefield_widget',
       'module' => 'imagefield',
@@ -187,9 +226,9 @@ function scholar_biocv_content_default_fields() {
   );
 
   // Exported field: field_os_inline_oembed
-  $fields['bio-field_os_inline_oembed'] = array(
+  $fields['announcement-field_os_inline_oembed'] = array(
     'field_name' => 'field_os_inline_oembed',
-    'type_name' => 'bio',
+    'type_name' => 'announcement',
     'display_settings' => array(
       'label' => array(
         'format' => 'above',
@@ -267,181 +306,18 @@ function scholar_biocv_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Inline oEmbed',
-      'weight' => '104',
+      'weight' => '14',
       'description' => '',
       'type' => 'link',
       'module' => 'link',
     ),
   );
 
-  // Exported field: field_cv_attach
-  $fields['cv-field_cv_attach'] = array(
-    'field_name' => 'field_cv_attach',
-    'type_name' => 'cv',
-    'display_settings' => array(
-      'label' => array(
-        'format' => 'above',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'filefield',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'filefield',
-    'active' => '1',
-    'list_field' => '0',
-    'list_default' => 1,
-    'description_field' => '0',
-    'widget' => array(
-      'file_extensions' => 'pdf',
-      'file_path' => '',
-      'progress_indicator' => 'bar',
-      'max_filesize_per_file' => '',
-      'max_filesize_per_node' => '',
-      'wysiwyg_fields_status' => NULL,
-      'wysiwyg_fields_icon' => NULL,
-      'wysiwyg_fields_formatters' => NULL,
-      'wysiwyg_fields_hide' => NULL,
-      'wysiwyg_fields_delete' => NULL,
-      'filefield_sources' => NULL,
-      'filefield_source_attach_path' => NULL,
-      'filefield_source_attach_absolute' => NULL,
-      'filefield_source_attach_mode' => NULL,
-      'filefield_source_autocomplete' => NULL,
-      'insert' => NULL,
-      'insert_styles' => NULL,
-      'insert_default' => NULL,
-      'insert_class' => NULL,
-      'insert_width' => NULL,
-      'label' => 'PDF Upload',
-      'weight' => '-4',
-      'description' => '',
-      'type' => 'filefield_widget',
-      'module' => 'filefield',
-    ),
-  );
-
-  // Exported field: field_cv_attached
-  $fields['cv-field_cv_attached'] = array(
-    'field_name' => 'field_cv_attached',
-    'type_name' => 'cv',
-    'display_settings' => array(
-      'label' => array(
-        'format' => 'above',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'filefield',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'filefield',
-    'active' => '1',
-    'list_field' => '0',
-    'list_default' => 1,
-    'description_field' => '0',
-    'widget' => array(
-      'file_extensions' => 'pdf',
-      'file_path' => '',
-      'progress_indicator' => 'bar',
-      'max_filesize_per_file' => '',
-      'max_filesize_per_node' => '',
-      'insert' => 0,
-      'insert_styles' => array(
-        'auto' => 0,
-        'link' => 0,
-        'image' => 0,
-        'imagecache_AttachmentThumbnail' => 0,
-        'imagecache_book_cover' => 0,
-        'imagecache_gallery_small_thumb' => 0,
-        'imagecache_gallery_thumb' => 0,
-        'imagecache_image_s' => 0,
-        'imagecache_inline_default' => 0,
-        'imagecache_inline_larger' => 0,
-        'imagecache_openscholar_front_logo' => 0,
-        'imagecache_presentation_thumb' => 0,
-        'imagecache_square_35_35' => 0,
-        'imagecache_square_50_50' => 0,
-        'imagecache_thumb' => 0,
-        'imagecache_vsite_design_default_logo' => 0,
-        'imagecache_vsite_design_landscape_logo' => 0,
-        'imagecache_vsite_design_portrait_logo' => 0,
-        'imagecache_vsite_design_square_logo' => 0,
-      ),
-      'insert_default' => 'auto',
-      'insert_class' => '',
-      'insert_width' => '',
-      'label' => 'PDF Upload',
-      'weight' => '-4',
-      'description' => '',
-      'type' => 'filefield_widget',
-      'module' => 'filefield',
-    ),
-  );
-
   // Translatables
   // Included for use with string extractors like potx.
+  t('Inline Files');
   t('Inline Image');
   t('Inline oEmbed');
-  t('PDF Upload');
-  t('Short Blurb');
 
   return $fields;
 }

@@ -32,6 +32,11 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	 * Distributes a node to chosen service(s)
 	 */
 	public function save($nid, $plugin){
+	  //doublecheck the validation for this nid.
+	  if (!$this->validate((int)$nid)) {
+	    return false;
+	  }
+	  
 		//rdf file for this node
 		$metadata = $this->map_metadata($nid);
 		$out = $this->render($metadata);
@@ -238,18 +243,44 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		}		
 	}
 
-	/* validate  */
+	/**
+	 *  validate
+	 *  
+	 *	repec only takes working papers from us, so don't send any
+	 *	repec requires authors
+	 *
+	 *  validate has two modes.  it can check nodeapi's a3 form argument.  or it can check a nid.
+	 *  
+	 *  @return boolean
+	 *  	success bool.  only relevant for nid mode  
+	 **/
 	public function validate($a3) {
-		/* ensures that we have all required metadata and a working paper */
-		$tid = $a3['biblio_type']['#value'];
+	  $return = TRUE;
+	  
+	  //get the vars we're checking by any means
+	  if (is_array($a3)) {
+	    $tid = $a3['biblio_type']['#value'];
+	    $contributors = $a3['#post']['biblio_contributors'];	      
+	  } elseif (is_int($a3)) {
+	    //not really $a3 anymore, just a nid
+	    if ($node = node_load($a3)) {
+	      $tid = $node-> biblio_type;
+	      $contributors = $node->biblio_contributors;
+	    } else {
+	      return FALSE;
+	    }
+	  }
+		
+	  /* ensure we're submitting a working paper */
 		$type = db_result(db_query('SELECT name FROM {biblio_types} WHERE tid = %d ', $tid));
 		if ($this->_map_biblio_type($type) != 'wpaper') {
 			form_set_error('biblio_type', 'The Publication Type of submissions to ' . $this->title . ' must be working paper.');
+			$return = false;
 		}
 		
 		/* repec needs at least one author */
 		$has_author = false;
-		foreach ($a3['#post']['biblio_contributors'] as $bc) {
+		foreach ($contributors as $bc) {
 			foreach ($bc as $author) {
 				if ( isset($author['name']) && strlen($author['name'])>0 ) {
 					$has_author = true;
@@ -258,8 +289,11 @@ class citation_distribute_service_repec extends citation_distribute_service {
 			}
 		}
 		if (!$has_author) {
-			form_set_error('biblio_contributors', 'At least one author is required for ' . $this->title . ' distribtuion');
+			form_set_error('biblio_contributors', 'At least one author is required for ' . $this->title . ' distribution');
+			$return = false;
 		}
+		
+		return $return;
 	}
 	
 	/* remove() when a node is unflagged, delete its rdf file */

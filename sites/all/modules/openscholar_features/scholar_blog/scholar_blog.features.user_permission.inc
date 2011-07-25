@@ -27,6 +27,28 @@ function scholar_blog_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override blog authored by option
+  $permissions['override blog authored by option'] = array(
+    'name' => 'override blog authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override blog authored on option
+  $permissions['override blog authored on option'] = array(
+    'name' => 'override blog authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override blog promote to front page option
   $permissions['override blog promote to front page option'] = array(
     'name' => 'override blog promote to front page option',
@@ -63,29 +85,6 @@ function scholar_blog_user_default_permissions() {
   // Exported permission: override blog sticky option
   $permissions['override blog sticky option'] = array(
     'name' => 'override blog sticky option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-    
-  // Exported permission: override blog authored on option
-  $permissions['override blog authored by option'] = array(
-    'name' => 'override blog authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override blog authored on option
-  $permissions['override blog authored on option'] = array(
-    'name' => 'override blog authored on option',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'manager',
