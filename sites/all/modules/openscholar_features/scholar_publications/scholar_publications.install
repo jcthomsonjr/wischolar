@@ -218,3 +218,27 @@ function scholar_publications_update_6008(&$sandbox) {
 
   return $res;
 }
+
+function scholar_publications_update_6009(&$sandbox) {
+  // run through context overrides and replace the views block with our new one
+  $res = array();
+
+  $q = db_query("SELECT id, object_id, value FROM {spaces_overrides} WHERE type = 'og' AND object_type = 'context'");
+  while ($r = db_fetch_array($q)) {
+    $r['value'] = unserialize($r['value']);
+    $old_block = &$r['value']['blocks']['views-publication_types-block_1'];
+    if ($old_block['region']) {
+      $widgets = scholar_publications_vsite_widgets();
+      $r['value']['blocks']['scholar_publications-pub_by_type'] = $widgets['scholar_publications-pub_by_type'];
+      $r['value']['blocks']['scholar_publications-pub_by_type']['region'] = $old_block['region'];
+      $r['value']['blocks']['scholar_publications-pub_by_type']['weight'] = $old_block['weight'];
+      unset($r['value']['blocks']['views-publication_types-block_1']);
+      db_query("UPDATE {spaces_overrides} SET value = '%s' WHERE id = %d AND object_id = '%s' AND object_type = 'context'",
+              serialize($r['value']), $r['id'], $r['object_id']);
+    }
+  }
+
+  $res[] = array('success' => true, 'query' => 'Now using new Publication Types block.');
+
+  return $res;
+}
