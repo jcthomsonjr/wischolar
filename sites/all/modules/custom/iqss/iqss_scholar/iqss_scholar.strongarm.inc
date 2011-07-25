@@ -75,6 +75,13 @@ function iqss_scholar_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'citation_distribute_service_googlescholar_auto_flag';
+  $strongarm->value = TRUE;
+  $export['citation_distribute_service_googlescholar_auto_flag'] = $strongarm;
+  
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'pinserver_pin_url';
   $strongarm->value = 'https://www.pin1.harvard.edu/pin/authenticate';
 
