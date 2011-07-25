@@ -72,6 +72,28 @@ function scholar_image_gallery_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override gallery authored by option
+  $permissions['override gallery authored by option'] = array(
+    'name' => 'override gallery authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override gallery authored on option
+  $permissions['override gallery authored on option'] = array(
+    'name' => 'override gallery authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override gallery promote to front page option
   $permissions['override gallery promote to front page option'] = array(
     'name' => 'override gallery promote to front page option',
@@ -93,30 +115,8 @@ function scholar_image_gallery_user_default_permissions() {
       '3' => 'scholar user',
     ),
   );
-  
-    // Exported permission: override gallery authored on option
-  $permissions['override gallery authored by option'] = array(
-    'name' => 'override gallery authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override gallery authored on option
-  $permissions['override gallery authored on option'] = array(
-    'name' => 'override gallery authored on option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-    // Exported permission: override image authored on option
+
+  // Exported permission: override image authored by option
   $permissions['override image authored by option'] = array(
     'name' => 'override image authored by option',
     'roles' => array(
@@ -126,7 +126,7 @@ function scholar_image_gallery_user_default_permissions() {
       '3' => 'scholar user',
     ),
   );
-  
+
   // Exported permission: override image authored on option
   $permissions['override image authored on option'] = array(
     'name' => 'override image authored on option',
