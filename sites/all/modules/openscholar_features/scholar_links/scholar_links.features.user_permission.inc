@@ -80,7 +80,7 @@ function scholar_links_user_default_permissions() {
     ),
   );
   
-      // Exported permission: override link authored on option
+  // Exported permission: override link authored on option
   $permissions['override link authored by option'] = array(
     'name' => 'override link authored by option',
     'roles' => array(
