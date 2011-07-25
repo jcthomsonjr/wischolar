@@ -31,7 +31,12 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 	/*
 	 * Implementation of citation_distribute_service::save()
 	 */
-	public function save($nid, $plugin) {
+	public function save($nid, $plugin) {  
+		//doublecheck the validation for this nid.
+	  if (!$this->validate((int)$nid)) {
+	    return false;
+	  }
+	  
 		$metadata = $this->map_metadata($nid);
 		$out = $this->render($metadata, $nid);
 		$saved = $this->_push($out, $nid);
