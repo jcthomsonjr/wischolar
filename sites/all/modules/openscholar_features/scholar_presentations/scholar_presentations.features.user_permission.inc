@@ -39,6 +39,28 @@ function scholar_presentations_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override presentation authored by option
+  $permissions['override presentation authored by option'] = array(
+    'name' => 'override presentation authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override presentation authored on option
+  $permissions['override presentation authored on option'] = array(
+    'name' => 'override presentation authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override presentation promote to front page option
   $permissions['override presentation promote to front page option'] = array(
     'name' => 'override presentation promote to front page option',
@@ -75,28 +97,6 @@ function scholar_presentations_user_default_permissions() {
   // Exported permission: override presentation sticky option
   $permissions['override presentation sticky option'] = array(
     'name' => 'override presentation sticky option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override presentation authored on option
-  $permissions['override presentation authored by option'] = array(
-    'name' => 'override presentation authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override presentation authored on option
-  $permissions['override presentation authored on option'] = array(
-    'name' => 'override presentation authored on option',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'manager',
