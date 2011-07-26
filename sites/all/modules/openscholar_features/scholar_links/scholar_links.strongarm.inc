@@ -8,8 +8,19 @@ function scholar_links_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'better_formats_allowed_link';
+  $strongarm->value = array(
+    0 => 2,
+    1 => 3,
+    2 => 5,
+  );
+
+  $export['better_formats_allowed_link'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_anonymous_link';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_anonymous_link'] = $strongarm;
   $strongarm = new stdClass;
@@ -51,7 +62,7 @@ function scholar_links_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_link';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_link'] = $strongarm;
   $strongarm = new stdClass;
@@ -68,6 +79,13 @@ function scholar_links_strongarm() {
   $strongarm->value = '1';
 
   $export['comment_subject_field_link'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_link_upload';
+  $strongarm->value = 0;
+
+  $export['ffp_link_upload'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -206,14 +224,14 @@ function scholar_links_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_preview_changes_link';
-  $strongarm->value = FALSE;
+  $strongarm->value = 0;
 
   $export['show_preview_changes_link'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'upload_link';
-  $strongarm->value = TRUE;
+  $strongarm->value = '1';
 
   $export['upload_link'] = $strongarm;
   return $export;

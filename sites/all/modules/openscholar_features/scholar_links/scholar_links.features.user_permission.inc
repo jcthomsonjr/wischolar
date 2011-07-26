@@ -39,6 +39,28 @@ function scholar_links_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override link authored by option
+  $permissions['override link authored by option'] = array(
+    'name' => 'override link authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override link authored on option
+  $permissions['override link authored on option'] = array(
+    'name' => 'override link authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override link promote to front page option
   $permissions['override link promote to front page option'] = array(
     'name' => 'override link promote to front page option',
@@ -72,28 +94,6 @@ function scholar_links_user_default_permissions() {
   // Exported permission: override link sticky option
   $permissions['override link sticky option'] = array(
     'name' => 'override link sticky option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override link authored on option
-  $permissions['override link authored by option'] = array(
-    'name' => 'override link authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override link authored on option
-  $permissions['override link authored on option'] = array(
-    'name' => 'override link authored on option',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'manager',
