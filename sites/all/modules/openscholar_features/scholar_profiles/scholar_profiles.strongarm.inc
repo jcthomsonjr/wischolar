@@ -29,6 +29,17 @@ function scholar_profiles_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'better_formats_allowed_profile';
+  $strongarm->value = array(
+    0 => 1,
+    1 => 2,
+    2 => 3,
+  );
+
+  $export['better_formats_allowed_profile'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_person';
   $strongarm->value = 0;
 
@@ -48,10 +59,18 @@ function scholar_profiles_strongarm() {
     'taxonomy' => '-1',
     'book' => '7',
     'path' => '14',
+    'creativecommons' => '100',
     'og_nodeapi' => '8',
   );
 
   $export['content_extra_weights_person'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_person_field_os_inline_image';
+  $strongarm->value = 0;
+
+  $export['ffp_person_field_os_inline_image'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
