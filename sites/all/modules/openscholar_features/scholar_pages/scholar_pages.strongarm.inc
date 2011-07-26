@@ -8,8 +8,19 @@ function scholar_pages_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'better_formats_allowed_page';
+  $strongarm->value = array(
+    0 => 2,
+    1 => 3,
+    2 => 6,
+  );
+
+  $export['better_formats_allowed_page'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_anonymous_page';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_anonymous_page'] = $strongarm;
   $strongarm = new stdClass;
@@ -51,7 +62,7 @@ function scholar_pages_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_page';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_page'] = $strongarm;
   $strongarm = new stdClass;
@@ -96,6 +107,13 @@ function scholar_pages_strongarm() {
   $strongarm->value = 0;
 
   $export['ffp_page_field_os_inline_image'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_page_upload';
+  $strongarm->value = 0;
+
+  $export['ffp_page_upload'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -234,7 +252,7 @@ function scholar_pages_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'upload_page';
-  $strongarm->value = TRUE;
+  $strongarm->value = '1';
 
   $export['upload_page'] = $strongarm;
   return $export;

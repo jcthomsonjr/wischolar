@@ -38,6 +38,28 @@ function scholar_pages_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override page authored by option
+  $permissions['override page authored by option'] = array(
+    'name' => 'override page authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override page authored on option
+  $permissions['override page authored on option'] = array(
+    'name' => 'override page authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override page promote to front page option
   $permissions['override page promote to front page option'] = array(
     'name' => 'override page promote to front page option',
@@ -63,28 +85,6 @@ function scholar_pages_user_default_permissions() {
   // Exported permission: override page revision option
   $permissions['override page revision option'] = array(
     'name' => 'override page revision option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override page authored on option
-  $permissions['override page authored by option'] = array(
-    'name' => 'override page authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override page authored on option
-  $permissions['override page authored on option'] = array(
-    'name' => 'override page authored on option',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'manager',
