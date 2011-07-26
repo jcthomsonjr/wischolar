@@ -8,18 +8,28 @@ function scholar_publications_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'better_formats_allowed_biblio';
+  $strongarm->value = array(
+    0 => 1,
+    1 => 2,
+    2 => 3,
+  );
+
+  $export['better_formats_allowed_biblio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'biblio_base';
   $strongarm->value = 'publications';
 
   $export['biblio_base'] = $strongarm;
-  
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'biblio_contributors_numberofauthors';
   $strongarm->value = 100;
+
   $export['biblio_contributors_numberofauthors'] = $strongarm;
-  
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -36,14 +46,14 @@ function scholar_publications_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_anonymous_biblio';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_anonymous_biblio'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'comment_biblio';
-  $strongarm->value = 0;
+  $strongarm->value = '0';
 
   $export['comment_biblio'] = $strongarm;
   $strongarm = new stdClass;
@@ -95,6 +105,41 @@ function scholar_publications_strongarm() {
   $strongarm->value = '1';
 
   $export['comment_subject_field_biblio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'content_extra_weights_biblio';
+  $strongarm->value = array(
+    'title' => '-5',
+    'body_field' => '0',
+    'revision_information' => '20',
+    'author' => '20',
+    'options' => '25',
+    'comment_settings' => '30',
+    'menu' => '-2',
+    'taxonomy' => '-3',
+    'book' => '10',
+    'path' => '30',
+    'attachments' => '30',
+    'creativecommons' => '100',
+    'og_nodeapi' => '0',
+  );
+
+  $export['content_extra_weights_biblio'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_biblio_field_os_inline_image';
+  $strongarm->value = 0;
+
+  $export['ffp_biblio_field_os_inline_image'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_biblio_upload';
+  $strongarm->value = 0;
+
+  $export['ffp_biblio_upload'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -316,28 +361,25 @@ function scholar_publications_strongarm() {
   $strongarm->value = '[space-og-path]/publications/[title-raw]';
 
   $export['pathauto_node_biblio_pattern'] = $strongarm;
-  
-
-  
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_diff_inline_biblio';
-  $strongarm->value = FALSE;
+  $strongarm->value = 0;
 
   $export['show_diff_inline_biblio'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'show_preview_changes_biblio';
-  $strongarm->value = FALSE;
+  $strongarm->value = 0;
 
   $export['show_preview_changes_biblio'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'upload_biblio';
-  $strongarm->value = TRUE;
+  $strongarm->value = '1';
 
   $export['upload_biblio'] = $strongarm;
   return $export;

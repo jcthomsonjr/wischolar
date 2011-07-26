@@ -46,7 +46,7 @@ function scholar_publications_imagecache_default_presets() {
             'upscale' => 0,
           ),
         ),
-      )
+      ),
     ),
   );
   return $items;
@@ -58,5 +58,14 @@ function scholar_publications_imagecache_default_presets() {
 function scholar_publications_views_api() {
   return array(
     'api' => '2',
+  );
+}
+
+/**
+ * Implementation of hook_wysiwyg_fields_icons().
+ */
+function scholar_publications_wysiwyg_fields_icons() {
+  return array(
+    drupal_get_path('module', 'scholar_publications') . '/images/wysiwyg_fields',
   );
 }

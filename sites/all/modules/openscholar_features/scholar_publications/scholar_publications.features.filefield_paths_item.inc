@@ -24,6 +24,54 @@ function scholar_publications_filefield_paths_item_default_items() {
     ),
     'filealias' => FALSE,
   );
+  // Exported biblio-field_os_inline_files
+  $settings['biblio-field_os_inline_files'] = array(
+    'type' => 'biblio',
+    'field' => 'field_os_inline_files',
+    'filename' => array(
+      'value' => '[filefield-onlyname-original].[filefield-extension-original]',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+    ),
+    'filepath' => array(
+      'value' => '',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+    ),
+    'filealias' => array(
+      'value' => 'sites/localhost.scholar/files/[filefield-onlyname-original].[filefield-extension-original]',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+      'display' => 0,
+    ),
+  );
+  // Exported biblio-field_os_inline_image
+  $settings['biblio-field_os_inline_image'] = array(
+    'type' => 'biblio',
+    'field' => 'field_os_inline_image',
+    'filename' => array(
+      'value' => '[filefield-onlyname-original].[filefield-extension-original]',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+    ),
+    'filepath' => array(
+      'value' => '',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+    ),
+    'filealias' => array(
+      'value' => 'sites/localhost.scholar/files/[filefield-onlyname-original].[filefield-extension-original]',
+      'tolower' => 0,
+      'pathauto' => 0,
+      'transliterate' => 0,
+      'display' => 0,
+    ),
+  );
   // Exported biblio-upload
   $settings['biblio-upload'] = array(
     'type' => 'biblio',

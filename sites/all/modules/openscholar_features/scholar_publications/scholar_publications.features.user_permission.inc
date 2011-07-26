@@ -51,6 +51,28 @@ function scholar_publications_user_default_permissions() {
     ),
   );
 
+  // Exported permission: override biblio authored by option
+  $permissions['override biblio authored by option'] = array(
+    'name' => 'override biblio authored by option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
+  // Exported permission: override biblio authored on option
+  $permissions['override biblio authored on option'] = array(
+    'name' => 'override biblio authored on option',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
+    ),
+  );
+
   // Exported permission: override biblio promote to front page option
   $permissions['override biblio promote to front page option'] = array(
     'name' => 'override biblio promote to front page option',
@@ -174,28 +196,6 @@ function scholar_publications_user_default_permissions() {
       '3' => 'manager',
       '4' => 'scholar admin',
       '5' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override biblio authored on option
-  $permissions['override biblio authored by option'] = array(
-    'name' => 'override biblio authored by option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-  
-  // Exported permission: override biblio authored on option
-  $permissions['override biblio authored on option'] = array(
-    'name' => 'override biblio authored on option',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
     ),
   );
 
