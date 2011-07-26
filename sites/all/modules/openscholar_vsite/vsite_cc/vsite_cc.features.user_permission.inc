@@ -11,6 +11,9 @@ function vsite_cc_user_default_permissions() {
     'name' => 'use creative commons user defaults',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -19,6 +22,9 @@ function vsite_cc_user_default_permissions() {
     'name' => 'administer creative commons',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
@@ -27,6 +33,9 @@ function vsite_cc_user_default_permissions() {
     'name' => 'attach creative commons',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'manager',
+      '2' => 'scholar admin',
+      '3' => 'scholar user',
     ),
   );
 
