@@ -152,7 +152,8 @@ function vsite_taxonomy_menu() {
     'title' => 'Taxonomy term',
     'page callback' => 'vsite_taxonomy_term_page',
     'page arguments' => array(2,'all',3),
-    'access arguments' => array('access content'),
+    'access callback' => 'vsite_taxonomy_access_term',
+    'access arguments' => array(2,'access content'),
     'type' => MENU_CALLBACK,
   );
 
@@ -163,7 +164,8 @@ function vsite_taxonomy_menu() {
   	  $items[$s_path] = array(
 		    'page callback' => 'vsite_taxonomy_term_page',
 		    'page arguments' => array(2,'all',$s_feature,true),
-		    'access arguments' => array('access content'),
+		    'access callback' => 'vsite_taxonomy_access_term',
+        'access arguments' => array(2,'access content'),
 		    'type' => MENU_CALLBACK,
 		  );
   	}
@@ -178,6 +180,28 @@ function vsite_taxonomy_menu() {
  */
 function vsite_taxonomy_menu_alter(&$items) {
   $items['taxonomy/term/%']['page callback'] = 'vsite_taxonomy_term_page';
+  $items['taxonomy/term/%']['access callback'] = 'vsite_taxonomy_access_term';
+  $items['taxonomy/term/%']['access arguments'] = array(2,'access content');
+}
+
+/**
+ * Check that a term is a member of the current site
+ *
+ * @param string $term
+ * @param access_string $string
+ */
+function vsite_taxonomy_access_term($term,$string){
+	
+	$vsite = vsite_get_vsite();
+	
+	if($vsite){
+		$terms = taxonomy_terms_parse_string($term);
+	  $tid = is_array($terms['tids'])?current($terms['tids']):false;
+	  
+	  $term = taxonomy_get_term($tid);
+	}
+  
+	return user_access($string) && (!$term || array_key_exists($term->vid,$vsite->group->og_vocabularies));
 }
 
 /**

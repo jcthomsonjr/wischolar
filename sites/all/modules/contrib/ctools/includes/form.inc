@@ -158,7 +158,7 @@ function ctools_build_form($form_id, &$form_state) {
     unset($form['form_build_id']);
     unset($form['form_token']);
   }
-  dpm($form);
+  //dpm($form);
   return drupal_render_form($form_id, $form);
 }
 
