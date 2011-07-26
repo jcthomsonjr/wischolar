@@ -187,6 +187,9 @@ projects[views_attach][version] = "2.2"
 projects[views_bulk_operations][subdir] = "contrib"
 projects[views_bulk_operations][version] = "1.10"
 
+projects[views_content_cache][subdir] = "contrib"
+projects[views_content_cache][version] = "2.2"
+
 projects[wysiwyg][subdir]="contrib"
 projects[wysiwyg][version]= "2.2"
 
