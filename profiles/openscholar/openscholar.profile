@@ -150,9 +150,7 @@ function _openscholar_scholar_modules() {
     'cp',
     'confirm_popup',
     'bkn',
-    'cite_distribute',
-    'repec_meta',
-    'googlescholar_meta',
+    'citation_distribute',
 
     //Performance
     'os_views_content_cache',
