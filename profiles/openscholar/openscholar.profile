@@ -97,6 +97,7 @@ function _openscholar_core_modules() {
     'activity',
     'imagecache_ui',
     'pathauto',
+    'pathauto_extra',
     'file_aliases',
     'better_formats',
     'nodeformcols',
