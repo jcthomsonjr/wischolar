@@ -13,14 +13,17 @@ function os_install(){
 
 /*
  * hook_update_N
- * installs 'views_content_cache','os_views_content_cache','os_blocks_content_cache','os_wysiwyg_fields'.
+ * installs 'views_content_cache','os_views_content_cache','os_blocks_content_cache','os_wysiwyg_fields', 'citation_dsitribute'.
+ * removes 'cite_distribute'
+ * 
+ * update hook for beta11 -> beta12
  */
 function os_update_6001(&$sandbox){
 
   $res = array();
   module_rebuild_cache();
 
-  $modules = array('views_content_cache','os_views_content_cache','os_blocks_content_cache','os_wysiwyg_fields');
+  $modules = array('views_content_cache','os_views_content_cache','os_blocks_content_cache','os_wysiwyg_fields', 'citation_distribute');
 
   foreach ($modules as $mod) {
     if(!module_exists($mod)){
@@ -28,11 +31,24 @@ function os_update_6001(&$sandbox){
       drupal_install_modules(array($mod));
     }
   }
+  
   $res[] = array(
     'success' => true,
     'query' => 'Installed modules: ' . implode(', ', $modules),
   );
 
+  //remove cite_distribute and its plugins
+  $remove = array('cs_meta', 'googlescholar_meta', 'repec_meta', 'sword_meta', 'cite_distribute');
+  $remove = array_filter($remove, 'module_exists');
+  foreach ($remove as $module) {
+    module_disable(array($module), TRUE);
+    drupal_uninstall_module($module);
+  }
+  
+  if (count($remove) > 0) {
+    $res[0]['query'] .= '.  Uninstalled modules: ' . implode(', ', $remove);
+  }
+  
   return $res;
 
 }

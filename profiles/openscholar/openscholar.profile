@@ -115,7 +115,7 @@ function _openscholar_core_modules() {
     'crayon',
     'conditional_styles',
     'prepopulate',
-
+    'views_content_cache',
   );
 
   return $contrib_modules;
@@ -150,10 +150,11 @@ function _openscholar_scholar_modules() {
     'cp',
     'confirm_popup',
     'bkn',
-    'cite_distribute',
-    'repec_meta',
-    'googlescholar_meta',
+    'citation_distribute',
 
+    //Performance
+    'os_views_content_cache',
+    'os_blocks_content_cache',
 
     //Install-Wide Pages
     'scholarregister',
