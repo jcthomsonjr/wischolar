@@ -27,6 +27,10 @@ function os_wysiwyg_install() {
   _os_wysiwyg_config();
 }*/
 
+function os_wysiwyg_preprocess_oembed(&$vars) {
+  dpm($vars);
+}
+
 
 /**
  * wysiwyg configurations
