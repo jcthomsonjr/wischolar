@@ -198,10 +198,10 @@ function vsite_taxonomy_access_term($term,$string){
 		$terms = taxonomy_terms_parse_string($term);
 	  $tid = is_array($terms['tids'])?current($terms['tids']):false;
 	  
-	  $term = taxonomy_get_term($tid);
+	  $o_term = taxonomy_get_term($tid);
 	}
   
-	return user_access($string) && (!$term || array_key_exists($term->vid,$vsite->group->og_vocabularies));
+	return user_access($string) && (!$o_term || array_key_exists($o_term->vid,$vsite->group->og_vocabularies));
 }
 
 /**
