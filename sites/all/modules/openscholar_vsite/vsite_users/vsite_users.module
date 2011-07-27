@@ -604,3 +604,11 @@ function vsite_users_vsite_generic_settings() {
   return $a_settings;
 }
 
+function vsite_users_form_og_remove_admin_confirm_alter(&$form, &$form_state) {
+  $form['#submit'][] = 'vsite_users_og_remove_admin_confirm_submit';
+  //$form_state['redirect_old'] = $_GET['destination'];
+}
+
+function vsite_users_og_remove_admin_confirm_submit($form, &$form_state) {
+  $form_state['redirect'] = $_GET['destination'];
+}

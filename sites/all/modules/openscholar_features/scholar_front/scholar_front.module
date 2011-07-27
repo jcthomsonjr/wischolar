@@ -131,9 +131,12 @@ function scholar_front_vsite_admin_link($type, $object){
 function scholar_front_nodeapi(&$node, $op, $a3, $a4){
   switch($op){
     case 'presave':
+    	$vsite = vsite_get_vsite();
+      if(!$vsite) return;
+        
       // set new property in node object indicating to set as front page
       if ((isset($_GET['action']) && ($_GET['action'] === 'setfront')) ||
-          ($node->type == "bio" && variable_get('site_frontpage',false) == "scholar_front_welcome")){
+          ($node->uid == $vsite->group->uid && $node->type == "bio" && variable_get('site_frontpage',false) == "scholar_front_welcome")){
           $node -> front  = 1;
       }
       break;
