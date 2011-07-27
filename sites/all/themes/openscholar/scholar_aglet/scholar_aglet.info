@@ -7,7 +7,9 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = scholar-aglet.css
-conditional-stylesheets[if lte IE 7][all][]  = scholar-aglet-ie.css
+conditional-stylesheets[if lte IE 8][all][] = scholar-aglet-ie.css
+conditional-stylesheets[if lte IE 7][all][] = scholar-aglet-ie7.css
+
 
 scholar[widgets][vsite_widgets-0] = false
 scholar[theme_type]   = "scholar"
