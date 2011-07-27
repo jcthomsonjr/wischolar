@@ -7,13 +7,13 @@ $(document).ready(function() {
     
     //strip leading slash
     if (path.indexOf('/') == 0) {
-      path = path.substr(1);
+      path = path.replace(/^\/+/, '');
       pathauto_extra_warning('URL Path alias cannot begin with a slash.');
     }
     
     //strip trailing slash
     if (path.substr(-1) == '/') {
-      path = path.substr(0, path.length-1);
+      path = path.replace(/\/+$/, '');
       pathauto_extra_warning('URL Path alias cannot end with a slash.');
     }
     
