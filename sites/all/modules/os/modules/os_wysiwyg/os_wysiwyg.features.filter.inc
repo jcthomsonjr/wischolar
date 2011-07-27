@@ -24,31 +24,26 @@ function os_wysiwyg_filter_default_formats() {
         'weight' => '-10',
       ),
       '1' => array(
-        'module' => 'embedfilter',
-        'delta' => '0',
-        'weight' => '-9',
-      ),
-      '2' => array(
         'module' => 'oembed',
         'delta' => '0',
         'weight' => '-8',
       ),
-      '3' => array(
+      '2' => array(
         'module' => 'filter',
         'delta' => '2',
         'weight' => '-7',
       ),
-      '4' => array(
+      '3' => array(
         'module' => 'filter',
         'delta' => '3',
         'weight' => '-6',
       ),
-      '5' => array(
+      '4' => array(
         'module' => 'filter',
         'delta' => '1',
         'weight' => '-5',
       ),
-      '6' => array(
+      '5' => array(
         'module' => 'wysiwyg_fields',
         'delta' => '0',
         'weight' => '-4',
@@ -148,31 +143,26 @@ function os_wysiwyg_filter_default_formats() {
         'weight' => '-10',
       ),
       '1' => array(
-        'module' => 'embedfilter',
-        'delta' => '0',
-        'weight' => '-9',
-      ),
-      '2' => array(
         'module' => 'oembed',
         'delta' => '0',
         'weight' => '-8',
       ),
-      '3' => array(
+      '2' => array(
         'module' => 'filter',
         'delta' => '2',
         'weight' => '-7',
       ),
-      '4' => array(
+      '3' => array(
         'module' => 'filter',
         'delta' => '3',
         'weight' => '-6',
       ),
-      '5' => array(
+      '4' => array(
         'module' => 'filter',
         'delta' => '1',
         'weight' => '-5',
       ),
-      '6' => array(
+      '5' => array(
         'module' => 'wysiwyg_fields',
         'delta' => '0',
         'weight' => '-4',
