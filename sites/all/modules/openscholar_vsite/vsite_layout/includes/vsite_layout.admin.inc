@@ -489,7 +489,8 @@ function vsite_layout_region_widgets( $page_type = 'none') {
   $a_region_widgets = array();
   if($context && ($a_widgets = $context->reactions['block']['blocks'])){
     $a_widgets = array_merge($default_blocks,$a_widgets);
-  	
+  	uasort($a_widgets, 'vsite_layout_sort_block_by_weight'); //Put them in the right order to simplify showing them in the cp
+    
     foreach ($a_widgets as $s_widget_key => $widget) {
       $widget = (array)$widget;
       if ($widget['region']) {
