@@ -260,6 +260,7 @@ function wysiwyg_fields_form_alter_after_build($form_element, &$form_state) {
         // Add javascript.
         jquery_ui_add(array('ui.core', 'ui.dialog'));
         drupal_add_js(drupal_get_path('module', 'wysiwyg_fields') . '/scripts/wysiwyg_fields.js');
+        drupal_add_js(drupal_get_path('module', 'wysiwyg_fields') . "/plugins/wysiwyg_fields_{$field['field_name']}/wysiwyg_fields_{$field['field_name']}.js", 'module', 'header', FALSE, TRUE, FALSE);
         module_invoke_all('wysiwyg_fields_add_js', 'node_form');
 
         // Add Style sheets.

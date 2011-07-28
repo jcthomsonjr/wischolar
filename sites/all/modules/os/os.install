@@ -23,7 +23,7 @@ function os_update_6001(&$sandbox){
   $res = array();
   module_rebuild_cache();
 
-  $modules = array('views_content_cache','os_views_content_cache','os_blocks_content_cache','os_wysiwyg_fields', 'citation_distribute');
+  $modules = array('views_content_cache','os_views_content_cache','os_blocks_content_cache','os_wysiwyg_fields', 'citation_distribute', 'pathauto_extra');
 
   foreach ($modules as $mod) {
     if(!module_exists($mod)){
@@ -52,3 +52,4 @@ function os_update_6001(&$sandbox){
   return $res;
 
 }
+

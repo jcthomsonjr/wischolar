@@ -352,6 +352,8 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
     unset($form['advanced'][$element]);
   }
 
+  $form['identification']['description']['#description'] = t('A description of the term. To be displayed on taxonomy/term pages and RSS feeds. You may use HTML tags to add links, standard formatting elements such as bold and underline, as well as headers, lists, images and tables.');
+
   $form['advanced']['weight']['#type'] = 'value';
   $form['advanced']['weight']['#value'] = $form['advanced']['weight']['#default_value'];
 

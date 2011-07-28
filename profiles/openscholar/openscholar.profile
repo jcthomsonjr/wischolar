@@ -97,6 +97,7 @@ function _openscholar_core_modules() {
     'activity',
     'imagecache_ui',
     'pathauto',
+    'pathauto_extra',
     'file_aliases',
     'better_formats',
     'nodeformcols',
@@ -176,6 +177,7 @@ function _openscholar_scholar_modules() {
     'scholar_front',
     'scholar_profiles',
     'os_wysiwyg',
+    'os_wysiwyg_fields',
   );
 }
 
