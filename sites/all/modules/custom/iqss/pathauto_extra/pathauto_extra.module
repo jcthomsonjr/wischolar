@@ -18,7 +18,9 @@ function pathauto_extra_menu() {
  * attaches javascript to node edit forms
  */
 function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
-  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id ) {
+  if (( isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id ) ||     //node/add or node/edit
+    ( isset($form_state['post']['form_id']) && $form_state['post']['form_id'] == arg(2) . '_node_form' )) {          //back to form for validation
+      
     drupal_add_js(drupal_get_path('module', 'pathauto_extra') . '/pathauto_extra.js');
   }
 }
@@ -30,7 +32,7 @@ function pathauto_extra_form_alter(&$form, $form_state, $form_id) {
  * returns expected url alias.
  */
 function pathauto_extra_alias_js() {
-  $path = _pathauto_extra_make_path($_GET['gid'], $_GET['$type'], $_GET['title']);
+  $path = _pathauto_extra_make_path($_GET['gid'], $_GET['type'], $_GET['title']);
   if ($path) {
     $json = array('status' => TRUE, 'data' => $path);
   } else {
