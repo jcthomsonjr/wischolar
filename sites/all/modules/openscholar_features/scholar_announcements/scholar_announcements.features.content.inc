@@ -3,218 +3,13 @@
 /**
  * Implementation of hook_content_default_fields().
  */
-function scholar_classes_content_default_fields() {
+function scholar_announcements_content_default_fields() {
   $fields = array();
 
-  // Exported field: field_class_link
-  $fields['class-field_class_link'] = array(
-    'field_name' => 'field_class_link',
-    'type_name' => 'class',
-    'display_settings' => array(
-      'weight' => '-2',
-      'parent' => '',
-      'label' => array(
-        'format' => 'hidden',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'link',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'link',
-    'active' => '1',
-    'attributes' => array(
-      'target' => 'default',
-      'rel' => '',
-      'class' => '',
-    ),
-    'display' => array(
-      'url_cutoff' => '80',
-    ),
-    'url' => 0,
-    'title' => 'optional',
-    'title_value' => '',
-    'enable_tokens' => 0,
-    'validate_url' => '',
-    'widget' => array(
-      'default_value' => array(
-        '0' => array(
-          'title' => '',
-          'url' => '',
-        ),
-      ),
-      'default_value_php' => NULL,
-      'label' => 'Link',
-      'weight' => '-2',
-      'description' => 'External link for this class',
-      'type' => 'link',
-      'module' => 'link',
-    ),
-  );
-
-  // Exported field: field_class_semester
-  $fields['class-field_class_semester'] = array(
-    'field_name' => 'field_class_semester',
-    'type_name' => 'class',
-    'display_settings' => array(
-      'weight' => '-4',
-      'parent' => '',
-      'label' => array(
-        'format' => 'inline',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'text',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'text',
-    'active' => '1',
-    'text_processing' => '0',
-    'max_length' => '',
-    'allowed_values' => 'Fall
-Spring
-Summer',
-    'allowed_values_php' => '',
-    'widget' => array(
-      'default_value' => array(
-        '0' => array(
-          'value' => '',
-        ),
-      ),
-      'default_value_php' => NULL,
-      'label' => 'Semester',
-      'weight' => '-4',
-      'description' => '',
-      'type' => 'optionwidgets_buttons',
-      'module' => 'optionwidgets',
-    ),
-  );
-
-  // Exported field: field_class_year
-  $fields['class-field_class_year'] = array(
-    'field_name' => 'field_class_year',
-    'type_name' => 'class',
-    'display_settings' => array(
-      'weight' => '-3',
-      'parent' => '',
-      'label' => array(
-        'format' => 'inline',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'date',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'date',
-    'active' => '1',
-    'granularity' => array(
-      'year' => 'year',
-    ),
-    'timezone_db' => '',
-    'tz_handling' => 'none',
-    'todate' => '',
-    'repeat' => 0,
-    'repeat_collapsed' => '',
-    'default_format' => 'medium',
-    'widget' => array(
-      'default_value' => 'now',
-      'default_value_code' => '',
-      'default_value2' => 'same',
-      'default_value_code2' => '',
-      'input_format' => 'm/d/Y - H:i:s',
-      'input_format_custom' => '',
-      'increment' => 1,
-      'text_parts' => array(),
-      'year_range' => '-3:+3',
-      'label_position' => 'above',
-      'label' => 'Offered',
-      'weight' => '-3',
-      'description' => '',
-      'type' => 'date_text',
-      'module' => 'date',
-    ),
-  );
-
   // Exported field: field_os_inline_files
-  $fields['class-field_os_inline_files'] = array(
+  $fields['announcement-field_os_inline_files'] = array(
     'field_name' => 'field_os_inline_files',
-    'type_name' => 'class',
+    'type_name' => 'announcement',
     'display_settings' => array(
       'label' => array(
         'format' => 'above',
@@ -309,17 +104,17 @@ Summer',
       'insert_class' => '',
       'insert_width' => '',
       'label' => 'Inline Files',
-      'weight' => '102',
-      'description' => 'Upload a file and enter a description. Your file will be linked with the description as it\'s text.',
+      'weight' => '12',
+      'description' => '',
       'type' => 'filefield_widget',
       'module' => 'filefield',
     ),
   );
 
   // Exported field: field_os_inline_image
-  $fields['class-field_os_inline_image'] = array(
+  $fields['announcement-field_os_inline_image'] = array(
     'field_name' => 'field_os_inline_image',
-    'type_name' => 'class',
+    'type_name' => 'announcement',
     'display_settings' => array(
       'label' => array(
         'format' => 'above',
@@ -364,7 +159,7 @@ Summer',
     'list_default' => 1,
     'description_field' => '0',
     'widget' => array(
-      'file_extensions' => '',
+      'file_extensions' => 'jpg jpeg png gif',
       'file_path' => '',
       'progress_indicator' => 'bar',
       'max_filesize_per_file' => '',
@@ -423,7 +218,7 @@ Summer',
       'filefield_source_attach_mode' => 'move',
       'filefield_source_autocomplete' => '1',
       'label' => 'Inline Image',
-      'weight' => '104',
+      'weight' => '10',
       'description' => '',
       'type' => 'imagefield_widget',
       'module' => 'imagefield',
@@ -431,9 +226,9 @@ Summer',
   );
 
   // Exported field: field_os_inline_oembed
-  $fields['class-field_os_inline_oembed'] = array(
+  $fields['announcement-field_os_inline_oembed'] = array(
     'field_name' => 'field_os_inline_oembed',
-    'type_name' => 'class',
+    'type_name' => 'announcement',
     'display_settings' => array(
       'label' => array(
         'format' => 'above',
@@ -511,105 +306,18 @@ Summer',
       ),
       'default_value_php' => NULL,
       'label' => 'Inline Media',
-      'weight' => '106',
-      'description' => '',
+      'weight' => '14',
+      'description' => 'Upload a file and enter a description. Your file will be linked with the description as it\'s text.',
       'type' => 'link',
       'module' => 'link',
     ),
   );
 
-  // Exported field: field_class
-  $fields['class_material-field_class'] = array(
-    'field_name' => 'field_class',
-    'type_name' => 'class_material',
-    'display_settings' => array(
-      'label' => array(
-        'format' => 'above',
-        'exclude' => 0,
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'nodereference',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'nodereference',
-    'active' => '1',
-    'referenceable_types' => array(
-      'class' => 'class',
-      'announcement' => 0,
-      'blog' => 0,
-      'book' => 0,
-      'class_material' => 0,
-      'event' => 0,
-      'feed' => 0,
-      'gallery' => 0,
-      'image' => 0,
-      'link' => 0,
-      'page' => 0,
-      'person' => 0,
-      'profile' => 0,
-      'biblio' => 0,
-      'vsite' => 0,
-      'sitewide_page' => 0,
-      'scholar_software_project' => 0,
-      'scholar_software_release' => 0,
-      'vsite_users_profile' => 0,
-      'bio' => 0,
-      'cv' => 0,
-    ),
-    'advanced_view' => '--',
-    'advanced_view_args' => '',
-    'widget' => array(
-      'node_link' => array(
-        'teaser' => 0,
-        'full' => 1,
-        'title' => 'class material',
-        'hover_title' => 'Add a post related to this class',
-        'destination' => 'node',
-      ),
-      'fallback' => 'leave_blank',
-      'edit_fallback' => 0,
-      'label' => 'Class',
-      'weight' => '31',
-      'description' => '',
-      'type' => 'nodereference_url',
-      'module' => 'nodereference_url',
-    ),
-  );
-
   // Translatables
   // Included for use with string extractors like potx.
-  t('Class');
   t('Inline Files');
   t('Inline Image');
   t('Inline Media');
-  t('Link');
-  t('Offered');
-  t('Semester');
 
   return $fields;
 }

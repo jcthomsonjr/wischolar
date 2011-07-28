@@ -238,7 +238,7 @@ function scholar_publications_content_default_fields() {
       'insert_width' => '',
       'label' => 'Inline Files',
       'weight' => '102',
-      'description' => '',
+      'description' => 'Upload a file and enter a description. Your file will be linked with the description as it\'s text.',
       'type' => 'filefield_widget',
       'module' => 'filefield',
     ),
@@ -438,7 +438,7 @@ function scholar_publications_content_default_fields() {
         ),
       ),
       'default_value_php' => NULL,
-      'label' => 'Inline oEmbed',
+      'label' => 'Inline Media',
       'weight' => '106',
       'description' => '',
       'type' => 'link',
@@ -452,7 +452,7 @@ function scholar_publications_content_default_fields() {
   t('Extra Fields');
   t('Inline Files');
   t('Inline Image');
-  t('Inline oEmbed');
+  t('Inline Media');
 
   return $fields;
 }

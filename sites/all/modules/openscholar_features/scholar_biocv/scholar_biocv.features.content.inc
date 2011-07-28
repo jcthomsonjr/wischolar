@@ -266,7 +266,7 @@ function scholar_biocv_content_default_fields() {
         ),
       ),
       'default_value_php' => NULL,
-      'label' => 'Inline oEmbed',
+      'label' => 'Inline Media',
       'weight' => '104',
       'description' => '',
       'type' => 'link',
@@ -439,7 +439,7 @@ function scholar_biocv_content_default_fields() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Inline Image');
-  t('Inline oEmbed');
+  t('Inline Media');
   t('PDF Upload');
   t('Short Blurb');
 
