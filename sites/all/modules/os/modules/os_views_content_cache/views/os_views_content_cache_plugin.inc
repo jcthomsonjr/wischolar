@@ -6,6 +6,9 @@
  */
 class os_views_content_cache_plugin extends views_content_cache_plugin_cache {
   
+	//Set the max amount if time we let expired data hang out in the cache
+	protected $max_output_lifetime = 86400; //1 day
+	
 	function option_defaults(&$options) {
     $options['results_min_lifespan'] = 0; //Clear Anytime
     $options['results_max_lifespan'] = 0; //Forever
@@ -79,5 +82,23 @@ class os_views_content_cache_plugin extends views_content_cache_plugin_cache {
     }
 
     return $this->_output_key;
+  }
+  
+  /**
+   * Override of saving data to the cache.
+   *
+   * Since the output key is based on the result set, we should set a logical expire time here
+   */
+  function cache_set($type) {
+    switch ($type) {
+      case 'output':
+        $this->gather_headers();
+        $this->storage['output'] = $this->view->display_handler->output;
+        cache_set($this->get_output_key(), $this->storage, $this->table, (time() + $this->max_output_lifetime));
+      break;
+      default:
+      	parent::cache_set($type);
+      break;
+    }
   }
 }
