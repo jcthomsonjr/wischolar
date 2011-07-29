@@ -63,8 +63,8 @@ function _osh_departments_block_dept_banner(){
  * hook preprocess page
  */
 function osh_departments_preprocess_page(&$vars){
-  
-  if ($dep = array_shift(os_departments_get_department_context())) {
+  $deps = os_departments_get_department_context();
+  if ($dep = array_shift($deps)) {
     drupal_add_css(drupal_get_path('module', 'osh_departments') . '/css/' . $dep . '.css');
     // add department specific css file
     

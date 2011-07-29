@@ -675,7 +675,7 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
     case 'validate' :
       $form = $teaser;
       //Notify a user that they changed thier title but that the path did not change
-      if ($node->nid && $node->pathauto_perform_alias && module_exists('path') && module_exists('pathauto') && ($vsite = vsite_get_vsite())) {
+      if ($node->nid && $node->pathauto_perform_alias && module_exists('path') && module_exists('pathauto') && ($vsite = vsite_get_vsite()) && $vsite->id != $node->nid) {
         if (isset($form['title']['#default_value']) && trim($form['title']['#default_value']) != trim($form['title']['#value'])) {
           $alias = url("node/" . $node->nid, array(
             'absolute' => true
