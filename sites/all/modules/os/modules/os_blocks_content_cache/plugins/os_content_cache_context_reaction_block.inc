@@ -81,7 +81,7 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
     foreach ($additional_granularity as $key) {
     	switch ($key){
     		case 'page':
-    		  $cid_parts[] = $key.$_GET['q'];
+    		  $cid_parts[] = $key."|".$_GET['q'];
     		break;
     	}
     }
