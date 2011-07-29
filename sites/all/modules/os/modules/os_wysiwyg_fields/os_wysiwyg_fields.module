@@ -33,7 +33,7 @@ function os_wysiwyg_fields_theme() {
 
 function theme_os_wysiwyg_fields_formatter_os_file_description($element) {
   $item = $element['#item'];
-  return '<a href="'.$item['filepath'].'">'.$item['data']['description'].'</a>';
+  return '<a href="'.$GLOBALS['base_path'].$item['filepath'].'">'.$item['data']['description'].'</a>';
 }
 
 function os_wysiwyg_fields_insert_styles() {
