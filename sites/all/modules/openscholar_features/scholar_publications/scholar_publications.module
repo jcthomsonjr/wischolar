@@ -582,12 +582,11 @@ function scholar_publications_vsite_widgets(){
     'delta' => 'pub_by_type',
     'weight' => 10,
     'region' => false,
-    'label' => 'Publications By Type (BETA)',
+    'label' => 'Publications By Type',
     'cache' => BLOCK_CACHE_CONTENT_CACHE,
     'cache_keys' => array(
       'node' => array('biblio' => 'biblio'),
       'os_og' => array('current' => 'current'),
-      'vsite_config' => array('scholar_publications_settings' => 'scholar_publications_settings'),
     ),
   );
   return $items;
