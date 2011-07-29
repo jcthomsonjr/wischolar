@@ -19,7 +19,7 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
     if (!isset($block->content)) {
       $block->content = '';
       // Try fetching the block from cache.
-      if ($cacheable && ($cid = $this->get_cache_id($block))) {
+      if ($cacheable && ($cid = $this->get_cache_id($block, $cache_config['granularity']))) {
       	$cutoff = $this->cache_expire($cache_config);
         if (($cache = cache_get($cid, 'cache_block')) && (!$cutoff || $cache->created > $cutoff)) {
           //$cache->data['content'] = "{{CACHED}}".$cache->data['content'];
@@ -27,8 +27,8 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
         }
         else {
           $array = module_invoke($block->module, 'block', 'view', $block->delta);
-          //Permanant Cache, we will clear this manually
-          cache_set($cid, $array, 'cache_block', CACHE_PERMANENT);
+          $garbage_collection = (intval($cache_config['max_lifespan']) > 2)?$cache_config['max_lifespan']:86400; //Kep in cache max of one day
+          cache_set($cid, $array, 'cache_block', time() + $garbage_collection);
         }
       }
       // Otherwise build block.
@@ -59,7 +59,7 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
     return $block;
   }
   
-  protected function get_cache_id($block){
+  protected function get_cache_id($block, $additional_granularity = array()){
   	global $theme, $base_root, $user;
   	
     $cid_parts = array();
@@ -76,6 +76,14 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
     if (module_exists('locale')) {
       global $language;
       $cid_parts[] = $language->language;
+    }
+    
+    foreach ($additional_granularity as $key) {
+    	switch ($key){
+    		case 'page':
+    		  $cid_parts[] = $key.$_GET['q'];
+    		break;
+    	}
     }
     
   	return implode(':', $cid_parts);
@@ -129,7 +137,7 @@ class os_content_cache_context_reaction_block extends vsite_context_reaction_blo
   	    	$a_config = array('keys' => $block_info->cache_keys);
   	    	$a_config['min_lifespan'] = isset($block_info->cache_min_lifespan)?intval($block_info->cache_min_lifespan):$this->cache_default_min_lifespan;
   	    	$a_config['max_lifespan'] = isset($block_info->cache_max_lifespan)?intval($block_info->cache_max_lifespan):$this->cache_default_max_lifespan;
-  	    	
+  	    	$a_config['granularity'] = isset($block_info->cache_granularity)?$block_info->cache_granularity:array();
   	    	return $a_config;
   	    }
   		break;

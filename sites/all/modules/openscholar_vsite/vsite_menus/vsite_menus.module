@@ -384,6 +384,7 @@ function vsite_menus_vsite_widgets() {
       'cache_keys' => array(
 	      'os_og' => array('current' => 'current'),
 	    ),
+	    'cache_granularity' => array('page'), //Cache for each page so active links work
     ),
     'vsite_menus-1' => array(
       'module' => 'vsite_menus',
@@ -395,6 +396,7 @@ function vsite_menus_vsite_widgets() {
       'cache_keys' => array(
         'os_og' => array('current' => 'current'),
       ),
+      'cache_granularity' => array('page'), //Cache for each page so active links work
     ),
   );
 }
