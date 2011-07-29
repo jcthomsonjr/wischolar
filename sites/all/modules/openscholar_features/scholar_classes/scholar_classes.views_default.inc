@@ -204,10 +204,10 @@ function scholar_classes_views_default_views() {
       ),
       'node' => array(
         'class' => 'class',
+        'class_material' => 'class_material',
         'announcement' => 0,
         'blog' => 0,
         'book' => 0,
-        'class_material' => 0,
         'event' => 0,
         'feed_fast' => 0,
         'feed' => 0,
