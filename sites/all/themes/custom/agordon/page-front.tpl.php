@@ -5,6 +5,11 @@
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
+     <script type="text/javascript">
+    $(document).ready(function(){
+      $("#pub_type_tabs").tabs({ fx: { opacity: 'toggle' } });
+        });
+  </script>
 </head>
 <body class="<?php print $body_classes; ?>">
 
@@ -18,6 +23,7 @@
     <div id="page-wrapper">
      <?php print $help; ?>
     <?php print $messages; ?>
+    
 <div id="header"> </div><!-- /header -->
 
       <?php if (!empty($navbar)): ?>
@@ -27,7 +33,8 @@
         </div><!--/wrap-->
       </div><!-- /navbar -->
       <?php endif; ?>
-      
+    
+                <?php print $context_links;?>
       <div id="footer">
         <div class="wrap clearfix">
           <?php if ($footer) : ?>
