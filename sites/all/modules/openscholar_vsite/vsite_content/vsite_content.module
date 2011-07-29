@@ -62,9 +62,10 @@ function vsite_content_files() {
 
 function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_state, $form_id = 'views_bulk_operations_form__1') {
   //Add collapsible JS
+  global $base_url;
   
   $url = ltrim(  url($_GET['q']),'/'  );
-  $url = str_replace( BASE_URL.'/', '', $url);
+  $url = str_replace( $base_url.'/', '', $url);
   
   drupal_add_js('misc/collapse.js');
   drupal_add_js(array( 'vsite_content' => array('url' => $url) ), 'setting');
