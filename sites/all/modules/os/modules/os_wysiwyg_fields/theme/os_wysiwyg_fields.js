@@ -31,4 +31,28 @@
 		dialogShowDefaultUpdate.call(Drupal.wysiwygFields, id);
 		cleanUp(id);
 	}
+	
+	var hasrun = false;
+	Drupal.behaviors.adjustWysiwygSettings = function () {
+		if (hasrun) return;
+		hasrun = true;
+		var settings = Drupal.settings.wysiwyg.configs.tinymce;
+		
+		if (typeof settings.format1 == 'object')
+			settings = settings.format1;
+		else if (typeof settings.format6 == 'object')
+			settings = settings.format6;
+		else return;
+		
+		var eve = settings.extended_valid_elements.split(',');
+		jQuery.each(eve, function(i, item) {
+			if (item.indexOf('span') != -1) {
+				var t = item;
+				t = t.replace('span[', '').replace(']','').split('|');
+				t.push('id');
+				eve[i] = 'span['+t.join('|')+']';
+			}
+		});
+		settings.extended_valid_elements = eve.join(',');
+	};
 })(jQuery);
