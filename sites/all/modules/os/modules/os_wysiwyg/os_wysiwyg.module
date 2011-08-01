@@ -27,10 +27,28 @@ function os_wysiwyg_install() {
   _os_wysiwyg_config();
 }*/
 
-function os_wysiwyg_preprocess_oembed(&$vars) {
-  dpm($vars);
-}
+function os_wysiwyg_init() {
+  // keep variable that contains all the types we've dealt with
+  // if there's a new type, update better_formats_defaults with this info
 
+  // it needs to be in init instead of install because fresh installs don't have strongarm vars available
+  $types = variable_get('os_wysiwyg_better_formats_defaults_added', array());
+  if (empty($types)) {
+    $types = array_fill_keys(array_keys(content_types()), 1);
+    module_load_install('os_wysiwyg');
+    _os_wysiwyg_set_default_formats();
+    variable_set('os_wysiwyg_better_formats_defaults_added', $types);
+    return;
+  }
+
+  $missing = array_diff_key(content_types(), $types);
+  if (!empty($missing)) {
+    module_load_install('os_wysiwyg');
+    _os_wysiwyg_set_default_formats($missing);
+    $types = array_merge($types, array_fill_keys(array_keys($missing), 1));
+    variable_set('os_wysiwyg_better_formats_defaults_added', $types);
+  }
+}
 
 /**
  * wysiwyg configurations
