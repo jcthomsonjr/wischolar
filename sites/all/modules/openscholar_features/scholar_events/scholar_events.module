@@ -60,11 +60,7 @@ function scholar_events_vsite_widgets(){
       'weight' => 20,
       'region' => false,
       'label' => 'Mini calendar',
-      'cache' => BLOCK_CACHE_CONTENT_CACHE,
-      'cache_keys' => array(
-        'node' => array('event' => 'event'),
-        'os_og' => array('current' => 'current'),
-      ),
+      //This is not cached because the content changes based on the node you are viewing
     );
       
 
