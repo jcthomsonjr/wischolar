@@ -380,11 +380,6 @@ function vsite_menus_vsite_widgets() {
       'weight' => 20,
       'region' => 'navbar',
       'label' => 'Primary menu',
-      'cache' => BLOCK_CACHE_CONTENT_CACHE,
-      'cache_keys' => array(
-	      'os_og' => array('current' => 'current'),
-	    ),
-	    'cache_granularity' => array('page'), //Cache for each page so active links work
     ),
     'vsite_menus-1' => array(
       'module' => 'vsite_menus',
@@ -392,11 +387,6 @@ function vsite_menus_vsite_widgets() {
       'weight' => 20,
       'region' => 'left',
       'label' => 'Secondary menu',
-      'cache' => BLOCK_CACHE_CONTENT_CACHE,
-      'cache_keys' => array(
-        'os_og' => array('current' => 'current'),
-      ),
-      'cache_granularity' => array('page'), //Cache for each page so active links work
     ),
   );
 }
@@ -413,30 +403,37 @@ function vsite_menus_get_menu_tree($s_menu){
   static $menu_output = array();
 
   if (!isset($menu_output[$s_menu])) {
-    //Get Menu for this site
-    $menu_links = $space->controllers->vsite_menu->get($s_menu);
-
-    //Tmp MLID used for array keys when using menu's node access functions
-    $n_tmp_mlid = 1;
-
-    //Apply tmp mlid and menu_router information to links
-    foreach ($menu_links as $key => $ml){
-    	$ml['options'] = (isset($ml['options']))?serialize($ml['options']):serialize(array());
-
-    	if (menu_path_is_external($ml['link_path']) || !is_array($router_info = menu_get_item($ml['router_path']))) {
-        // Custom/External Links will not have an entry in the router table
-    		$router_info = array();
-      }
-
-      $menu_links[$key] = array('link' => array_merge($router_info,$ml,array('mlid' => $n_tmp_mlid++)), 'below' => false);
-    }
-
-    //Gather Node access info
-    $node_links = array();
-    menu_tree_collect_node_links($menu_links,$node_links);
-
-    //Check Node and menu access
-    menu_tree_check_access($menu_links, $node_links);
+  	
+  	if(!($menu_links = vsite_menus_get_menu_cache($s_menu))){
+  	
+	    //Get Menu for this site
+	    $menu_links = $space->controllers->vsite_menu->get($s_menu);
+	
+	    //Tmp MLID used for array keys when using menu's node access functions
+	    $n_tmp_mlid = 1;
+	
+	    //Apply tmp mlid and menu_router information to links
+	    foreach ($menu_links as $key => $ml){
+	    	$ml['options'] = (isset($ml['options']))?serialize($ml['options']):serialize(array());
+	
+	    	if (menu_path_is_external($ml['link_path']) || !is_array($router_info = menu_get_item($ml['router_path']))) {
+	        // Custom/External Links will not have an entry in the router table
+	    		$router_info = array();
+	      }
+	
+	      $menu_links[$key] = array('link' => array_merge($router_info,$ml,array('mlid' => $n_tmp_mlid++)), 'below' => false);
+	    }
+	
+	    //Gather Node access info
+	    $node_links = array();
+	    menu_tree_collect_node_links($menu_links,$node_links);
+	
+	    //Check Node and menu access
+	    menu_tree_check_access($menu_links, $node_links);
+	    
+	    $cache_key = vsite_menu_get_cache_key($s_menu);
+      cache_set($cache_key, $menu_links, 'cache_block', time() + 86400);
+  	}
 
     //Render the Menu
     $menu_output[$s_menu] = menu_tree_output($menu_links);
@@ -445,7 +442,70 @@ function vsite_menus_get_menu_tree($s_menu){
 
 }
 
+/**
+ * Handles the caching for the main publications page which is not a view
+ */
+function vsite_menus_get_menu_cache($s_menu){
+  if(!module_exists('views_content_cache')) return;
 
+  $cutoff = 0;
+  $cache_params = array(
+    'os_og' => array('current' => 'current'),
+  );
+
+  // Retrieve the latest update time matching the settings on this View.
+  $cid = array();
+  foreach ($cache_params as $key_id => $key_values) {
+    if ($plugin = views_content_cache_get_plugin($key_id)) {
+      $cid[$key_id] = $plugin->view_key($key_values);
+    }
+  }
+  if (!empty($cid) && ($timestamp = views_content_cache_update_get($cid))) {
+    $cutoff = $timestamp;
+  }
+
+  // enforce a maximum lifetime
+  if ($n_max = variable_get('vsite_menu_cache_max_lifespan',3600)) {
+    if ($n_max != -1) {
+      $max_lifespan = time() - $n_max;
+      $cutoff = max($max_lifespan, $cutoff);
+    }
+  }
+  
+  $cache_key = vsite_menu_get_cache_key($s_menu);
+  if (($cache = cache_get($cache_key, 'cache_block')) && (!$cutoff || $cache->created > $cutoff)) {
+    return $cache->data;
+  }
+
+  return false;
+}
+
+/**
+ * Returns the cache key for the menu
+ */
+function vsite_menu_get_cache_key($s_menu){
+  if($_SERVER['REQUEST_METHOD'] != 'GET') return false;
+
+  global $theme, $user;
+
+  $cid_parts = array();
+
+  $vsite = vsite_get_vsite();
+  $cid_parts[] = (isset($vsite->group->purl))? $vsite->group->purl:"";
+  $cid_parts[] = "vsite_menu";
+  $cid_parts[] = "results";
+  $cid_parts[] = $theme;
+  $cid_parts[] = ($user->uid == 1)?1:0; // special caching for super user.
+
+  $cid_parts[] = $s_menu;
+
+  if (module_exists('locale')) {
+    global $language;
+    $cid_parts[] = $language->language;
+  }
+
+  return implode(':', $cid_parts);
+}
 
 /**
  * Controller Plugin Hooks

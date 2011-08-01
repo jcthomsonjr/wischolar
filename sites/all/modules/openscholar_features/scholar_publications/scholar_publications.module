@@ -188,6 +188,9 @@ function scholar_publications_form_alter(&$form, $form_state, $form_id){
       unset($form['biblio_abst_e_field']);
     }//remove fieldset
 
+    $form['biblio_abst_e']['#description'] .= t(' You may use HTML tags to add links, standard formatting elements such as bold and underline, as well as headers, lists, images and tables.');
+    $form['biblio_notes']['#description'] .= t(' You may use HTML tags to add links, standard formatting elements such as bold and underline, as well as headers, lists, images and tables.');
+
     if(is_array($form['taxonomy']) && array_key_exists('copy_to_biblio',$form['taxonomy'])){
       $form['taxonomy']['copy_to_biblio']['#type'] = 'value';
     }

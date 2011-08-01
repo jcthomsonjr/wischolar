@@ -52,7 +52,8 @@ function os_views_content_cache_form_alter(&$form, $form_state, $form_id){
 }
 
 function os_views_content_cache_form_submission($form, &$form_state){
-	views_content_cache_update_set($form_state['values']['form_id'], 'form_id');
+	$form_id = isset($form_state['values']['form_id'])?$form_state['values']['form_id']:$form['form_id']['#value'];
+	views_content_cache_update_set($form_id, 'form_id');
 }
 
 /**
@@ -70,6 +71,7 @@ function os_views_content_cache_vsite_config_forms(){
     'taxonomy_form_term' => "Add/Edit Taxonomy Term",
     'vsite_generic_settings_form' => "Generic Settings",
     'vsite_design_theme_picker_form' => "Theme Setting",
+    'spaces_features_form' => 'Spaces Features',
   );
     
   $features = spaces_features( 'og' );
