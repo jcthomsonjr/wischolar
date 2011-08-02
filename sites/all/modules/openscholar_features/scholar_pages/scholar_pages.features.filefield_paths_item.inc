@@ -17,17 +17,17 @@ function scholar_pages_filefield_paths_item_default_items() {
       'transliterate' => 0,
     ),
     'filepath' => array(
-      'value' => '',
+      'value' => '[space-og-path-raw]/files',
       'tolower' => 0,
       'pathauto' => 0,
       'transliterate' => 0,
     ),
     'filealias' => array(
-      'value' => 'sites/localhost.scholar/files/[filefield-onlyname-original].[filefield-extension-original]',
+      'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]',
       'tolower' => 0,
       'pathauto' => 0,
       'transliterate' => 0,
-      'display' => 0,
+      'display' => 1,
     ),
   );
   // Exported page-field_os_inline_image
@@ -41,17 +41,17 @@ function scholar_pages_filefield_paths_item_default_items() {
       'transliterate' => 0,
     ),
     'filepath' => array(
-      'value' => '',
+      'value' => '[space-og-path-raw]/files',
       'tolower' => 0,
       'pathauto' => 0,
       'transliterate' => 0,
     ),
     'filealias' => array(
-      'value' => 'sites/localhost.scholar/files/[filefield-onlyname-original].[filefield-extension-original]',
+      'value' => '[space-og-path-raw]/files/[filefield-onlyname-original].[filefield-extension-original]',
       'tolower' => 0,
       'pathauto' => 0,
       'transliterate' => 0,
-      'display' => 0,
+      'display' => 1,
     ),
   );
   // Exported page-upload
