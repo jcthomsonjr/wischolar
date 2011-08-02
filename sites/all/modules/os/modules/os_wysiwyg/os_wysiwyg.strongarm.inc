@@ -66,7 +66,7 @@ mtvnservices.com';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'format';
-  $strongarm->value = '1';
+  $strongarm->value = '6';
 
   $export['format'] = $strongarm;
   $strongarm = new stdClass;
@@ -86,6 +86,13 @@ mtvnservices.com';
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'oembed_maxheight_6';
+  $strongarm->value = '';
+
+  $export['oembed_maxheight_6'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'oembed_maxwidth_1';
   $strongarm->value = '440';
 
@@ -100,14 +107,21 @@ mtvnservices.com';
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'oembed_maxwidth_6';
+  $strongarm->value = '440';
+
+  $export['oembed_maxwidth_6'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_styles_box_1';
   $strongarm->value = array(
+    'margin-right' => 'margin-right',
+    'margin-left' => 'margin-left',
     'padding-left' => 'padding-left',
     'margin' => 0,
     'margin-top' => 0,
-    'margin-right' => 0,
     'margin-bottom' => 0,
-    'margin-left' => 0,
     'padding' => 0,
     'padding-top' => 0,
     'padding-right' => 0,
@@ -138,12 +152,12 @@ mtvnservices.com';
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_styles_box_6';
   $strongarm->value = array(
+    'margin-right' => 'margin-right',
+    'margin-left' => 'margin-left',
     'padding-left' => 'padding-left',
     'margin' => 0,
     'margin-top' => 0,
-    'margin-right' => 0,
     'margin-bottom' => 0,
-    'margin-left' => 0,
     'padding' => 0,
     'padding-top' => 0,
     'padding-right' => 0,
@@ -244,6 +258,45 @@ mtvnservices.com';
   );
 
   $export['wysiwyg_filter_styles_font_6'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_layout_1';
+  $strongarm->value = array(
+    'display' => 'display',
+    'float' => 'float',
+    'clear' => 0,
+    'position' => 0,
+    'visibility' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_layout_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_layout_5';
+  $strongarm->value = array(
+    'clear' => 0,
+    'display' => 0,
+    'float' => 0,
+    'position' => 0,
+    'visibility' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_layout_5'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_layout_6';
+  $strongarm->value = array(
+    'display' => 'display',
+    'float' => 'float',
+    'clear' => 0,
+    'position' => 0,
+    'visibility' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_layout_6'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
