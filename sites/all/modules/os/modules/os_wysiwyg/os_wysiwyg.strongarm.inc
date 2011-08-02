@@ -66,7 +66,7 @@ mtvnservices.com';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'format';
-  $strongarm->value = '5';
+  $strongarm->value = '6';
 
   $export['format'] = $strongarm;
   $strongarm = new stdClass;
@@ -97,6 +97,204 @@ mtvnservices.com';
   $strongarm->value = '440';
 
   $export['oembed_maxwidth_2'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_box_1';
+  $strongarm->value = array(
+    'padding-left' => 'padding-left',
+    'margin' => 0,
+    'margin-top' => 0,
+    'margin-right' => 0,
+    'margin-bottom' => 0,
+    'margin-left' => 0,
+    'padding' => 0,
+    'padding-top' => 0,
+    'padding-right' => 0,
+    'padding-bottom' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_box_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_box_5';
+  $strongarm->value = array(
+    'padding-left' => 'padding-left',
+    'margin' => 0,
+    'margin-top' => 0,
+    'margin-right' => 0,
+    'margin-bottom' => 0,
+    'margin-left' => 0,
+    'padding' => 0,
+    'padding-top' => 0,
+    'padding-right' => 0,
+    'padding-bottom' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_box_5'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_box_6';
+  $strongarm->value = array(
+    'margin' => 0,
+    'margin-top' => 0,
+    'margin-right' => 0,
+    'margin-bottom' => 0,
+    'margin-left' => 0,
+    'padding' => 0,
+    'padding-top' => 0,
+    'padding-right' => 0,
+    'padding-bottom' => 0,
+    'padding-left' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_box_6'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_dimension_1';
+  $strongarm->value = array(
+    'width' => 'width',
+    'height' => 0,
+    'line-height' => 0,
+    'max-height' => 0,
+    'max-width' => 0,
+    'min-height' => 0,
+    'min-width' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_dimension_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_dimension_5';
+  $strongarm->value = array(
+    'width' => 'width',
+    'height' => 0,
+    'line-height' => 0,
+    'max-height' => 0,
+    'max-width' => 0,
+    'min-height' => 0,
+    'min-width' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_dimension_5'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_dimension_6';
+  $strongarm->value = array(
+    'width' => 'width',
+    'height' => 0,
+    'line-height' => 0,
+    'max-height' => 0,
+    'max-width' => 0,
+    'min-height' => 0,
+    'min-width' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_dimension_6'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_font_1';
+  $strongarm->value = array(
+    'font' => 'font',
+    'font-family' => 'font-family',
+    'font-size' => 'font-size',
+    'font-size-adjust' => 0,
+    'font-stretch' => 0,
+    'font-style' => 0,
+    'font-variant' => 0,
+    'font-weight' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_font_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_font_5';
+  $strongarm->value = array(
+    'font' => 'font',
+    'font-family' => 'font-family',
+    'font-size' => 'font-size',
+    'font-weight' => 'font-weight',
+    'font-size-adjust' => 0,
+    'font-stretch' => 0,
+    'font-style' => 0,
+    'font-variant' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_font_5'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_font_6';
+  $strongarm->value = array(
+    'font' => 'font',
+    'font-family' => 'font-family',
+    'font-size' => 'font-size',
+    'font-style' => 'font-style',
+    'font-size-adjust' => 0,
+    'font-stretch' => 0,
+    'font-variant' => 0,
+    'font-weight' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_font_6'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_text_1';
+  $strongarm->value = array(
+    'text-align' => 'text-align',
+    'text-decoration' => 'text-decoration',
+    'text-indent' => 'text-indent',
+    'text-transform' => 0,
+    'letter-spacing' => 0,
+    'word-spacing' => 0,
+    'white-space' => 0,
+    'direction' => 0,
+    'unicode-bidi' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_text_1'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_text_5';
+  $strongarm->value = array(
+    'text-align' => 'text-align',
+    'text-decoration' => 'text-decoration',
+    'text-indent' => 'text-indent',
+    'text-transform' => 0,
+    'letter-spacing' => 0,
+    'word-spacing' => 0,
+    'white-space' => 0,
+    'direction' => 0,
+    'unicode-bidi' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_text_5'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'wysiwyg_filter_styles_text_6';
+  $strongarm->value = array(
+    'text-align' => 'text-align',
+    'text-decoration' => 'text-decoration',
+    'text-indent' => 0,
+    'text-transform' => 0,
+    'letter-spacing' => 0,
+    'word-spacing' => 0,
+    'white-space' => 0,
+    'direction' => 0,
+    'unicode-bidi' => 0,
+  );
+
+  $export['wysiwyg_filter_styles_text_6'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -360,6 +558,7 @@ mtvnservices.com';
     ),
     'span' => array(
       'id' => array(),
+      'style' => array(),
       'class' => array(),
       'title' => array(),
       'dir' => array(
@@ -542,7 +741,10 @@ mtvnservices.com';
       ),
       'style' => array(),
     ),
-    'span' => array(),
+    'span' => array(
+      'id' => array(),
+      'style' => array(),
+    ),
     'strong' => array(),
     'ul' => array(),
   );
@@ -564,6 +766,7 @@ mtvnservices.com';
       ),
       'title' => array(),
     ),
+    'address' => array(),
     'blockquote' => array(),
     'br' => array(),
     'caption' => array(),
@@ -587,6 +790,11 @@ mtvnservices.com';
     'embed' => array(
       '*' => array(),
     ),
+    'h2' => array(),
+    'h3' => array(),
+    'h4' => array(),
+    'h5' => array(),
+    'h6' => array(),
     'img' => array(
       'src' => array(
         'required' => TRUE,
@@ -611,12 +819,14 @@ mtvnservices.com';
     'param' => array(
       '*' => array(),
     ),
+    'pre' => array(),
     'script' => array(
       'src' => array(),
       'type' => array(),
     ),
     'span' => array(
       'id' => array(),
+      'style' => array(),
     ),
     'strong' => array(),
     'sub' => array(),
@@ -651,7 +861,7 @@ mtvnservices.com';
 a[!href|target<_blank|title],
 div[align<center?justify?left?right|style],
 p[align<center?justify?left?right|style],
-br,span[id],cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed[*],object[*],param[*],script[src|type],
+br,span[id|style],cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed[*],object[*],param[*],script[src|type],
 sup,sub,
 table[style|border|align<center?left?right|cellpadding|cellspacing],tr,td[colspan|rowspan],caption,
 strong/b,em/i,strike,u';
@@ -664,7 +874,7 @@ strong/b,em/i,strike,u';
   $strongarm->value = 'a[!href|target<_blank|title],
 div[align<center?justify?left?right|style],
 p[align<center?justify?left?right|style],
-br,span,em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd';
+br,span[id|style],em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd';
 
   $export['wysiwyg_filter_valid_elements_raw_5'] = $strongarm;
   $strongarm = new stdClass;
@@ -674,9 +884,10 @@ br,span,em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd';
   $strongarm->value = 'a[!href|target<_blank|title],
 div[align<center?justify?left?right|style],
 p[align<center?justify?left?right|style],
-br,span[id],em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed[*],object[*],param[*],script[src|type],
+br,span[id|style],em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed[*],object[*],param[*],script[src|type],
 sup,sub,
-table[style|border|align<center?left?right|cellpadding|cellspacing],tr,td[colspan|rowspan],caption';
+table[style|border|align<center?left?right|cellpadding|cellspacing],tr,td[colspan|rowspan],caption,
+address,h2,h3,h4,h5,h6,pre';
 
   $export['wysiwyg_filter_valid_elements_raw_6'] = $strongarm;
   $strongarm = new stdClass;
