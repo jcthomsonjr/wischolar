@@ -57,7 +57,7 @@ function scholar_blog_content_default_fields() {
       'file_extensions' => '',
       'file_path' => '',
       'progress_indicator' => 'bar',
-      'max_filesize_per_file' => '',
+      'max_filesize_per_file' => '128M',
       'max_filesize_per_node' => '',
       'wysiwyg_fields_status' => 1,
       'wysiwyg_fields_icon' => '32c1419a9092fb94fcc30f95d7a66fb4',
@@ -162,7 +162,7 @@ function scholar_blog_content_default_fields() {
       'file_extensions' => '',
       'file_path' => '',
       'progress_indicator' => 'bar',
-      'max_filesize_per_file' => '',
+      'max_filesize_per_file' => '128M',
       'max_filesize_per_node' => '',
       'max_resolution' => '0',
       'min_resolution' => '0',
@@ -279,7 +279,7 @@ function scholar_blog_content_default_fields() {
       'url_cutoff' => '80',
     ),
     'url' => 0,
-    'title' => 'optional',
+    'title' => 'none',
     'title_value' => '',
     'enable_tokens' => 0,
     'validate_url' => 1,
@@ -294,7 +294,6 @@ function scholar_blog_content_default_fields() {
       'default_value' => array(
         '0' => array(
           'url' => '',
-          'title' => '',
           'wysiwyg_fields_formatters' => 'oembedfield_formatter_oembed_default',
           'wysiwyg_fields' => array(
             'wysiwyg_fields_delta' => 0,
@@ -307,7 +306,7 @@ function scholar_blog_content_default_fields() {
       'default_value_php' => NULL,
       'label' => 'Inline Media',
       'weight' => '106',
-      'description' => '',
+      'description' => 'Enter the URL of a video or other shareable resource and it will be embedded in the page.',
       'type' => 'link',
       'module' => 'link',
     ),
