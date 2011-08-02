@@ -251,11 +251,12 @@ function vsite_menus_settings_form_validate(&$form, &$form_state) {
   }
   elseif ($form_state['values']['new_menu_title'] && $form_state['values']['new_menu_url']) {
   	global $base_url;
-  	$domain = variable_get('vsite_domain_name',false);
-  	if(!$domain) $domain = str_replace("http://",'',variable_get('purl_base_domain', $base_url));
-
-  	$a_path_info = parse_url($form_state['values']['new_menu_url']);
-  	if($a_path_info['host'] == $domain){
+  	
+  	$vsite = vsite_get_vsite();
+  	$site_base = $vsite->get_absolute_url();
+  	
+  	if(strpos($form_state['values']['new_menu_url'],$site_base) === 0){
+  		$a_path_info = parse_url($form_state['values']['new_menu_url']);
   		$form_state['values']['new_menu_url'] = $a_path_info['path'];
   	}//Strip off the domain if this is a local path
 
