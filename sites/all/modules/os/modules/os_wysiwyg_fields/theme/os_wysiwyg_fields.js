@@ -32,10 +32,7 @@
 		cleanUp(id);
 	}
 	
-	var hasrun = false;
 	Drupal.behaviors.adjustWysiwygSettings = function () {
-		if (hasrun) return;
-		hasrun = true;
 		var settings = Drupal.settings.wysiwyg.configs.tinymce;
 		
 		if (typeof settings.format1 == 'object')
@@ -46,7 +43,7 @@
 		
 		var eve = settings.extended_valid_elements.split(',');
 		jQuery.each(eve, function(i, item) {
-			if (item.indexOf('span') != -1) {
+			if (item.indexOf('span') != -1 && item.indexOf('id') == -1) {
 				var t = item;
 				t = t.replace('span[', '').replace(']','').split('|');
 				t.push('id');
@@ -54,5 +51,9 @@
 			}
 		});
 		settings.extended_valid_elements = eve.join(',');
+		
+		Drupal.wysiwyg.plugins.wysiwyg_fields_field_os_inline_oembed.detach = function (content, settings, instanceId) {
+			return Drupal.wysiwygFields.wysiwygDetach('zzzzz_do_not_find_me', content, settings, instanceId);
+		};
 	};
 })(jQuery);

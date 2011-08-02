@@ -5,6 +5,7 @@ screenshot = screenshot.png
 core       = 6.x
 base theme = scholar_base
 stylesheets[all][]   = spinker.css
+conditional-stylesheets[if lte IE 7][all][]   = spinker-ie.css
 scripts[] = spinker.js
 
 scholar[widgets][vsite_widgets-0] = false
