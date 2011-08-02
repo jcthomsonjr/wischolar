@@ -66,7 +66,7 @@ mtvnservices.com';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'format';
-  $strongarm->value = '6';
+  $strongarm->value = '1';
 
   $export['format'] = $strongarm;
   $strongarm = new stdClass;
@@ -138,6 +138,7 @@ mtvnservices.com';
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_styles_box_6';
   $strongarm->value = array(
+    'padding-left' => 'padding-left',
     'margin' => 0,
     'margin-top' => 0,
     'margin-right' => 0,
@@ -147,7 +148,6 @@ mtvnservices.com';
     'padding-top' => 0,
     'padding-right' => 0,
     'padding-bottom' => 0,
-    'padding-left' => 0,
   );
 
   $export['wysiwyg_filter_styles_box_6'] = $strongarm;
@@ -156,8 +156,8 @@ mtvnservices.com';
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_styles_dimension_1';
   $strongarm->value = array(
+    'height' => 'height',
     'width' => 'width',
-    'height' => 0,
     'line-height' => 0,
     'max-height' => 0,
     'max-width' => 0,
@@ -186,8 +186,8 @@ mtvnservices.com';
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_styles_dimension_6';
   $strongarm->value = array(
+    'height' => 'height',
     'width' => 'width',
-    'height' => 0,
     'line-height' => 0,
     'max-height' => 0,
     'max-width' => 0,
@@ -319,6 +319,20 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
+    ),
+    'address' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
     ),
     'b' => array(
       'id' => array(),
@@ -331,6 +345,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'blockquote' => array(
       'id' => array(),
@@ -343,6 +358,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'br' => array(
       'id' => array(),
@@ -355,6 +371,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'caption' => array(
       'id' => array(),
@@ -367,6 +384,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'cite' => array(
       'id' => array(),
@@ -379,6 +397,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'code' => array(
       'id' => array(),
@@ -391,6 +410,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'dd' => array(
       'id' => array(),
@@ -403,6 +423,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'div' => array(
       'align' => array(
@@ -436,6 +457,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'dt' => array(
       'id' => array(),
@@ -448,6 +470,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'em' => array(
       'id' => array(),
@@ -460,9 +483,75 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'embed' => array(
       '*' => array(),
+    ),
+    'h2' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'h3' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'h4' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'h5' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'h6' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
     ),
     'i' => array(
       'id' => array(),
@@ -475,6 +564,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'img' => array(
       'src' => array(
@@ -490,6 +580,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'li' => array(
       'id' => array(),
@@ -502,6 +593,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'object' => array(
       '*' => array(),
@@ -517,6 +609,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'p' => array(
       'align' => array(
@@ -542,6 +635,19 @@ mtvnservices.com';
     'param' => array(
       '*' => array(),
     ),
+    'prestrong' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
     'script' => array(
       'src' => array(),
       'type' => array(),
@@ -555,6 +661,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'span' => array(
       'id' => array(),
@@ -580,18 +687,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
-    ),
-    'strong' => array(
-      'id' => array(),
-      'class' => array(),
-      'title' => array(),
-      'dir' => array(
-        'values' => array(
-          0 => 'ltr',
-          1 => 'rtl',
-        ),
-      ),
-      'lang' => array(),
+      'style' => array(),
     ),
     'sub' => array(
       'id' => array(),
@@ -604,6 +700,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'sup' => array(
       'id' => array(),
@@ -616,6 +713,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'table' => array(
       'style' => array(),
@@ -643,6 +741,15 @@ mtvnservices.com';
     'td' => array(
       'colspan' => array(),
       'rowspan' => array(),
+      'align' => array(
+        'values' => array(
+          0 => 'center',
+          1 => 'justify',
+          2 => 'left',
+          3 => 'right',
+        ),
+      ),
+      'valign' => array(),
       'id' => array(),
       'class' => array(),
       'title' => array(),
@@ -653,8 +760,18 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'tr' => array(
+      'align' => array(
+        'values' => array(
+          0 => 'center',
+          1 => 'justify',
+          2 => 'left',
+          3 => 'right',
+        ),
+      ),
+      'valign' => array(),
       'id' => array(),
       'class' => array(),
       'title' => array(),
@@ -665,6 +782,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'u' => array(
       'id' => array(),
@@ -677,6 +795,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
     'ul' => array(
       'id' => array(),
@@ -689,6 +808,7 @@ mtvnservices.com';
         ),
       ),
       'lang' => array(),
+      'style' => array(),
     ),
   );
 
@@ -765,14 +885,108 @@ mtvnservices.com';
         ),
       ),
       'title' => array(),
+      'id' => array(),
+      'class' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
     ),
-    'address' => array(),
-    'blockquote' => array(),
-    'br' => array(),
-    'caption' => array(),
-    'cite' => array(),
-    'code' => array(),
-    'dd' => array(),
+    'address' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'blockquote' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'br' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'caption' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'cite' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'code' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'dd' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
     'div' => array(
       'align' => array(
         'values' => array(
@@ -783,28 +997,169 @@ mtvnservices.com';
         ),
       ),
       'style' => array(),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
     ),
-    'dl' => array(),
-    'dt' => array(),
-    'em' => array(),
+    'dl' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'dt' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'em' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
     'embed' => array(
       '*' => array(),
     ),
-    'h2' => array(),
-    'h3' => array(),
-    'h4' => array(),
-    'h5' => array(),
-    'h6' => array(),
+    'h2' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'h3' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'h4' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'h5' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'h6' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
     'img' => array(
       'src' => array(
         'required' => TRUE,
       ),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
     ),
-    'li' => array(),
+    'li' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
     'object' => array(
       '*' => array(),
     ),
-    'ol' => array(),
+    'ol' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
     'p' => array(
       'align' => array(
         'values' => array(
@@ -815,22 +1170,100 @@ mtvnservices.com';
         ),
       ),
       'style' => array(),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
     ),
     'param' => array(
       '*' => array(),
     ),
-    'pre' => array(),
+    'pre' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
     'script' => array(
       'src' => array(),
       'type' => array(),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
     ),
     'span' => array(
       'id' => array(),
       'style' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
     ),
-    'strong' => array(),
-    'sub' => array(),
-    'sup' => array(),
+    'strong' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'sub' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'sup' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
     'table' => array(
       'style' => array(),
       'border' => array(),
@@ -843,13 +1276,76 @@ mtvnservices.com';
       ),
       'cellpadding' => array(),
       'cellspacing' => array(),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
     ),
     'td' => array(
       'colspan' => array(),
       'rowspan' => array(),
+      'align' => array(
+        'values' => array(
+          0 => 'center',
+          1 => 'justify',
+          2 => 'left',
+          3 => 'right',
+        ),
+      ),
+      'valign' => array(),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
     ),
-    'tr' => array(),
-    'ul' => array(),
+    'tr' => array(
+      'align' => array(
+        'values' => array(
+          0 => 'center',
+          1 => 'justify',
+          2 => 'left',
+          3 => 'right',
+        ),
+      ),
+      'valign' => array(),
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
+    'ul' => array(
+      'id' => array(),
+      'class' => array(),
+      'title' => array(),
+      'dir' => array(
+        'values' => array(
+          0 => 'ltr',
+          1 => 'rtl',
+        ),
+      ),
+      'lang' => array(),
+      'style' => array(),
+    ),
   );
 
   $export['wysiwyg_filter_valid_elements_parsed_6'] = $strongarm;
@@ -857,13 +1353,17 @@ mtvnservices.com';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_valid_elements_raw_1';
-  $strongarm->value = '@[id|class|title|dir<ltr?rtl|lang],
+  $strongarm->value = '@[id|class|title|dir<ltr?rtl|lang|style],
 a[!href|target<_blank|title],
 div[align<center?justify?left?right|style],
 p[align<center?justify?left?right|style],
 br,span[id|style],cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed[*],object[*],param[*],script[src|type],
-sup,sub,
-table[style|border|align<center?left?right|cellpadding|cellspacing],tr,td[colspan|rowspan],caption,
+sup,sub,blockquote,
+table[style|border|align<center?left?right|cellpadding|cellspacing],
+tr[align<center?justify?left?right|valign],
+td[colspan|rowspan|align<center?justify?left?right|valign],
+caption,
+address,h2,h3,h4,h5,h6,pre
 strong/b,em/i,strike,u';
 
   $export['wysiwyg_filter_valid_elements_raw_1'] = $strongarm;
@@ -881,12 +1381,16 @@ br,span[id|style],em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_valid_elements_raw_6';
-  $strongarm->value = 'a[!href|target<_blank|title],
+  $strongarm->value = '@[id|class|title|dir<ltr?rtl|lang|style],
+a[!href|target<_blank|title],
 div[align<center?justify?left?right|style],
 p[align<center?justify?left?right|style],
 br,span[id|style],em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd,img[!src],embed[*],object[*],param[*],script[src|type],
-sup,sub,
-table[style|border|align<center?left?right|cellpadding|cellspacing],tr,td[colspan|rowspan],caption,
+sup,sub,blockquote,
+table[style|border|align<center?left?right|cellpadding|cellspacing],
+tr[align<center?justify?left?right|valign],
+td[colspan|rowspan|align<center?justify?left?right|valign],
+caption,
 address,h2,h3,h4,h5,h6,pre';
 
   $export['wysiwyg_filter_valid_elements_raw_6'] = $strongarm;
