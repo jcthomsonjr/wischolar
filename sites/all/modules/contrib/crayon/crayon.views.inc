@@ -1,5 +1,4 @@
 <?php
-// $Id: crayon.views.inc,v 1.1.2.1 2010/08/19 14:49:36 yhahn Exp $
 
 /**
  * Implementation of hook_views_handlers().

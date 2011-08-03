@@ -1,5 +1,4 @@
 <?php
-// $Id: crayon.theme.inc,v 1.1 2010/08/10 16:15:27 yhahn Exp $
 
 /**
  * Preprocessor for theme('crayon_popup').

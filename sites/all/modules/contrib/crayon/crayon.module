@@ -47,7 +47,7 @@ function crayon_is_color($value) {
 /**
  * Use mod math to generate a palette index.
  */
-function crayon_generate_index($id, $palette_size = 16) {
+function crayon_generate_index($id, $palette_size = 42) {
   static $crayon = array();
   static $strings = array();
 
@@ -66,7 +66,7 @@ function crayon_generate_index($id, $palette_size = 16) {
     // Try 5 times to avoid color collision.
     $try = 0;
     while (in_array($modulo, $crayon, TRUE) && $try < 5) {
-      $modulo = ($modulo + 1) % 16;
+      $modulo = ($modulo + 1) % 42;
       $try++;
     }
     $crayon[$id] = $modulo;
