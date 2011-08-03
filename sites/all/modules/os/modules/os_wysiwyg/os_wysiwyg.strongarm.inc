@@ -66,7 +66,7 @@ mtvnservices.com';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'format';
-  $strongarm->value = '6';
+  $strongarm->value = '5';
 
   $export['format'] = $strongarm;
   $strongarm = new stdClass;
@@ -134,12 +134,12 @@ mtvnservices.com';
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_styles_box_5';
   $strongarm->value = array(
+    'margin-right' => 'margin-right',
+    'margin-left' => 'margin-left',
     'padding-left' => 'padding-left',
     'margin' => 0,
     'margin-top' => 0,
-    'margin-right' => 0,
     'margin-bottom' => 0,
-    'margin-left' => 0,
     'padding' => 0,
     'padding-top' => 0,
     'padding-right' => 0,
@@ -185,8 +185,8 @@ mtvnservices.com';
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_styles_dimension_5';
   $strongarm->value = array(
+    'height' => 'height',
     'width' => 'width',
-    'height' => 0,
     'line-height' => 0,
     'max-height' => 0,
     'max-width' => 0,
@@ -276,9 +276,9 @@ mtvnservices.com';
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_styles_layout_5';
   $strongarm->value = array(
+    'display' => 'display',
+    'float' => 'float',
     'clear' => 0,
-    'display' => 0,
-    'float' => 0,
     'position' => 0,
     'visibility' => 0,
   );
@@ -881,12 +881,46 @@ mtvnservices.com';
         ),
       ),
       'title' => array(),
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
     ),
-    'blockquote' => array(),
-    'br' => array(),
-    'cite' => array(),
-    'code' => array(),
-    'dd' => array(),
+    'b' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'blockquote' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'br' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'cite' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'code' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'dd' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
     'div' => array(
       'align' => array(
         'values' => array(
@@ -897,12 +931,57 @@ mtvnservices.com';
         ),
       ),
       'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
     ),
-    'dl' => array(),
-    'dt' => array(),
-    'em' => array(),
-    'li' => array(),
-    'ol' => array(),
+    'dl' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'dt' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'em' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'embed' => array(
+      '*' => array(),
+    ),
+    'i' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'li' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'object' => array(
+      'width' => array(),
+      'height' => array(),
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'ol' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
     'p' => array(
       'align' => array(
         'values' => array(
@@ -913,13 +992,36 @@ mtvnservices.com';
         ),
       ),
       'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'param' => array(
+      'name' => array(),
+      'value' => array(),
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
     ),
     'span' => array(
       'id' => array(),
       'style' => array(),
+      'class' => array(),
+      'title' => array(),
     ),
-    'strong' => array(),
-    'ul' => array(),
+    'strong' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
+    'ul' => array(
+      'style' => array(),
+      'class' => array(),
+      'id' => array(),
+      'title' => array(),
+    ),
   );
 
   $export['wysiwyg_filter_valid_elements_parsed_5'] = $strongarm;
@@ -1424,10 +1526,12 @@ strong/b,em/i,strike,u';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_valid_elements_raw_5';
-  $strongarm->value = 'a[!href|target<_blank|title],
+  $strongarm->value = '@[style|class|id|title],
+a[!href|target<_blank|title],
 div[align<center?justify?left?right|style],
 p[align<center?justify?left?right|style],
-br,span[id|style],em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd';
+br,span[id|style],em/i,strong/b,cite,code,blockquote,ul,ol,li,dl,dt,dd,
+object[width|height],param[name|value],embed[*]';
 
   $export['wysiwyg_filter_valid_elements_raw_5'] = $strongarm;
   $strongarm = new stdClass;
@@ -1460,7 +1564,9 @@ address,h2,h3,h4,h5,h6,pre';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'wysiwyg_filter_valid_ids_5';
-  $strongarm->value = array();
+  $strongarm->value = array(
+    0 => 'os-*',
+  );
 
   $export['wysiwyg_filter_valid_ids_5'] = $strongarm;
   $strongarm = new stdClass;
