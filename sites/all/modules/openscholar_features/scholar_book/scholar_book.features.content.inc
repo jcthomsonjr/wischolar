@@ -3,13 +3,13 @@
 /**
  * Implementation of hook_content_default_fields().
  */
-function scholar_announcements_content_default_fields() {
+function scholar_book_content_default_fields() {
   $fields = array();
 
   // Exported field: field_os_inline_files
-  $fields['announcement-field_os_inline_files'] = array(
+  $fields['book-field_os_inline_files'] = array(
     'field_name' => 'field_os_inline_files',
-    'type_name' => 'announcement',
+    'type_name' => 'book',
     'display_settings' => array(
       'label' => array(
         'format' => 'above',
@@ -104,17 +104,17 @@ function scholar_announcements_content_default_fields() {
       'insert_class' => '',
       'insert_width' => '',
       'label' => 'Inline Files',
-      'weight' => '12',
-      'description' => '',
+      'weight' => '102',
+      'description' => 'Upload a file and enter a description. Your file will be linked with the description as it\'s text.',
       'type' => 'filefield_widget',
       'module' => 'filefield',
     ),
   );
 
   // Exported field: field_os_inline_image
-  $fields['announcement-field_os_inline_image'] = array(
+  $fields['book-field_os_inline_image'] = array(
     'field_name' => 'field_os_inline_image',
-    'type_name' => 'announcement',
+    'type_name' => 'book',
     'display_settings' => array(
       'label' => array(
         'format' => 'above',
@@ -218,7 +218,7 @@ function scholar_announcements_content_default_fields() {
       'filefield_source_attach_mode' => 'move',
       'filefield_source_autocomplete' => '1',
       'label' => 'Inline Image',
-      'weight' => '10',
+      'weight' => '104',
       'description' => '',
       'type' => 'imagefield_widget',
       'module' => 'imagefield',
@@ -226,9 +226,9 @@ function scholar_announcements_content_default_fields() {
   );
 
   // Exported field: field_os_inline_oembed
-  $fields['announcement-field_os_inline_oembed'] = array(
+  $fields['book-field_os_inline_oembed'] = array(
     'field_name' => 'field_os_inline_oembed',
-    'type_name' => 'announcement',
+    'type_name' => 'book',
     'display_settings' => array(
       'label' => array(
         'format' => 'above',
@@ -305,7 +305,7 @@ function scholar_announcements_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Inline Media',
-      'weight' => '14',
+      'weight' => '106',
       'description' => 'Enter the URL of a video or other shareable resource and it will be embedded in the page.',
       'type' => 'link',
       'module' => 'link',

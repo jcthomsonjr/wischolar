@@ -202,6 +202,13 @@ function scholar_software_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_scholar_software_release_field_os_inline_files';
+  $strongarm->value = 0;
+
+  $export['ffp_scholar_software_release_field_os_inline_files'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'ffp_scholar_software_release_field_os_inline_image';
   $strongarm->value = 0;
 

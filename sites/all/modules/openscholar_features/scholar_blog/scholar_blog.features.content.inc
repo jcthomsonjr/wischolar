@@ -287,7 +287,7 @@ function scholar_blog_content_default_fields() {
       'wysiwyg_fields_status' => 1,
       'wysiwyg_fields_icon' => 'bd515d035a09ee9d2f923e7a9ee8dd9e',
       'wysiwyg_fields_formatters' => array(
-        'oembed_default' => 'oembed_default',
+        'oembed_default_default' => 'oembed_default_default',
       ),
       'wysiwyg_fields_hide' => 1,
       'wysiwyg_fields_delete' => 1,

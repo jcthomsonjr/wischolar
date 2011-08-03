@@ -189,6 +189,7 @@ function scholar_biocv_strongarm() {
     'taxonomy' => '-3',
     'book' => '1',
     'path' => '5',
+    'creativecommons' => '100',
     'og_nodeapi' => '0',
   );
 
@@ -243,6 +244,13 @@ function scholar_biocv_strongarm() {
   $strongarm->value = 1;
 
   $export['content_profile_use_cv'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ffp_cv_field_os_inline_image';
+  $strongarm->value = 0;
+
+  $export['ffp_cv_field_os_inline_image'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
