@@ -306,7 +306,7 @@ function scholar_pages_content_default_fields() {
       'default_value_php' => NULL,
       'label' => 'Inline Media',
       'weight' => '14',
-      'description' => 'Enter the URL of a video or other shareable resource and it will be embedded in the page. If the video doesn\'t appear after saving, refresh the page.',
+      'description' => 'Enter the URL of a video or other shareable resource and it will be embedded in the page. For a list of shareable resource providers, visit <a href="http://embed.ly/providers">http://embed.ly/providers</a>. If the video doesn\'t appear after saving, refresh the page.',
       'type' => 'link',
       'module' => 'link',
     ),
