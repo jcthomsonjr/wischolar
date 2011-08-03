@@ -104,15 +104,17 @@ function vsite_menus_nodeapi(&$node, $op) {
         	  }//Delete this link from the old menu?
         	}
 
-          $item['link_title'] = trim($item['link_title']);
+        	$item['link_title'] = trim($item['link_title']);
           $item['link_path'] = "node/$node->nid";
           $item['options']['attributes']['title'] = trim($node->title);
           $item['key'] = $item['menu_name'].":".$item['link_path'];
-          $item = $item + array('router_path' => 'node/%', 'module' => 'vsite_menu', 'weight' => 0, 'user_created' => 1);
+          
+          $a_existing_menu = $vsite->controllers->vsite_menu->get( $item['menu_name'] );
+          $a_defaults = array_key_exists($item['key'],$a_existing_menu)? $a_existing_menu[$item['key']]: array('router_path' => 'node/%', 'module' => 'vsite_menu', 'weight' => 0, 'user_created' => 1);
+          $item = $item + $a_defaults;
 
           // Add/Update the menu link
-          $a_menu = $vsite->controllers->vsite_menu->get( $item['menu_name'] );
-          $vsite->controllers->vsite_menu->set( $item['menu_name'], array_merge($a_menu,array($item['menu_name'].":".$item['link_path'] => $item)));
+          $vsite->controllers->vsite_menu->set( $item['menu_name'], array_merge($a_existing_menu,array($item['key'] => $item)));
         }
       }
       break;

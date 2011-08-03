@@ -54,6 +54,7 @@ function _os_wysiwyg_set_default_formats($types = array()) {
   $vars = strongarm_vars_load();
 
   $strip = array(2, 3);
+  $select = "SELECT COUNT(format) FROM {better_formats_defaults} WHERE type = 'node/%s' AND rid = 2";
   $update = "UPDATE {better_formats_defaults} SET format = %d WHERE type = 'node/%s' AND rid = 2";
   $insert = "INSERT INTO {better_formats_defaults} VALUES (2, 'node/%s', %d, 2, 25)";
   foreach ($types as $type => $data) {
@@ -64,8 +65,11 @@ function _os_wysiwyg_set_default_formats($types = array()) {
     if (!is_array($allowed)) $allowed = array(1);
     $default = current(array_diff($allowed, $strip));
 
-    db_query($update, $default, $type);
-    if (!db_affected_rows()) {
+    $old_format = db_result(db_query($select, $type));
+    if ($old_format) {
+      db_query($update, $default, $type);
+    }
+    else {
       db_query($insert, $type, $default);
     }
   }

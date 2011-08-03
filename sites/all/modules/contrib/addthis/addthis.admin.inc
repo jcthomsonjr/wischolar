@@ -1,5 +1,4 @@
 <?php
-// $Id: addthis.admin.inc,v 1.1.2.10.2.7 2011/01/31 03:39:07 lesmana Exp $
 
 /**
  * @file
@@ -61,7 +60,7 @@ function addthis_config_form(&$form_state) {
   
   // Settings for the addthis_config javascript object.
   // See http://addthis.com/help/menu-api#configuration-ui for details.
-  $addthis_config = variable_get('addthis_config', array('ui_use_css' => TRUE));
+  $addthis_config = variable_get('addthis_config', array('ui_use_css' => TRUE, 'data_use_cookies' => TRUE,));
   $form['addthis_config'] = array(
     '#type'  => 'fieldset',
     '#collapsible' => TRUE,
@@ -163,18 +162,18 @@ function addthis_config_form(&$form_state) {
     '#type' => 'markup',
     '#value' => '<h3>' . t('Tracking Settings') . '</h3>',
   );
+  $form['addthis_config']['pubid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('AddThis Profile ID'),
+    '#description' => t('To obtain a Profile ID, register for an account at !url. This is only necessary if you enable tracking.', array('!url' => l('AddThis.com', 'http://addthis.com'))),
+    '#default_value' => $addthis_config['pubid'],
+  );
   $form['addthis_config']['data_track_clickback'] = array(
     '#type' => 'checkbox',
     '#title' => t('Allow AddThis to track incoming traffic from shares'),
     '#description' => t('If checked, AddThis will collect data on how many people come back to your content via links shared with AddThis.'),
     '#return_value' => TRUE,
     '#default_value' => $addthis_config['data_track_clickback'],
-  );
-  $form['addthis_config']['username'] = array(
-    '#type' => 'textfield',
-    '#title' => t('AddThis username'),
-    '#description' => t('If you are using AddThis Analytics, enter the username of the AddThis account where you are collecting AddThis click data.'),
-    '#default_value' => $addthis_config['username'],
   );
   $form['addthis_config']['data_ga_tracker'] = array(
     '#type' => 'checkbox',
@@ -201,6 +200,13 @@ function addthis_config_form(&$form_state) {
     '#return_value' => TRUE,
     '#default_value' => variable_get('addthis_cache_js', 0),
     '#tree' => FALSE,
+  );
+  $form['addthis_config']['data_use_cookies'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow AddThis to use cookies'),
+    '#description' => t('Disabling this option may help resolve issues with Varnish caching.'),
+    '#return_value' => TRUE,
+    '#default_value' => $addthis_config['data_use_cookies'],
   );
 
   /**
@@ -355,6 +361,7 @@ function _addthis_customize_form_row($def = array()) {
     '#title' => t('HTML attributes'),
     '#description' => t('Custom attributes to insert into the toolbox item element. Example: <strong>tw:via="mytwittername"</strong>'),
     '#default_value' => $def['attributes'],
+    '#maxlength' => 1024,
   );
   $branch['title'] = array(
     '#type' => 'textfield',

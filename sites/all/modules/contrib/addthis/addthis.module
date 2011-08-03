@@ -1,5 +1,4 @@
 <?php
-// $Id: addthis.module,v 1.13.2.23.2.12 2011/01/31 03:39:07 lesmana Exp $
 
 /**
  * @file
@@ -99,6 +98,7 @@ function addthis_block($op = 'list', $delta = 0) {
   switch ($op) {
     case 'list':
       $blocks[0]['info'] = t('AddThis widget');
+      $blocks[0]['cache'] = BLOCK_NO_CACHE;
       return $blocks;
     case 'view':
       $addthis_widget_type = variable_get('addthis_widget_type', 'addthis_button');
@@ -245,6 +245,13 @@ function addthis_addthis_toolbox_services() {
     'more' => array(
       'class' => 'addthis_button_expanded',
     ),
+    'share_compact' => array(
+      'class' => 'addthis_button_compact',
+      'title' => t('Share'),
+    ),
+    'compact' => array(
+      'class' => 'addthis_button_compact',
+    ),
     'counter' => array(
       'class' => 'addthis_counter',
     ),
@@ -296,7 +303,13 @@ function addthis_add_default_js() {
   }
   
   // Get the base configuration settings array.
-  $config = variable_get('addthis_config', array());
+  $config = variable_get('addthis_config', array('ui_use_css' => TRUE, 'data_use_cookies' => TRUE,));
+  
+  // If no pubid is given, use an anonymous pubid provided by AddThis.
+  // The "email" service code doesn't work if this is not set to something.
+  if (empty($config['pubid'])) {
+    $config['pubid'] = 'xa-4e2cfd1147868c4e';
+  }
 
   // Determine the current language context and add it to $settings.
   global $language;
@@ -304,6 +317,10 @@ function addthis_add_default_js() {
   
   // AddThis seems to be fairly strict about variable typing.
   $config['ui_use_css'] = (bool) $config['ui_use_css'];
+  $config['data_use_cookies'] = (bool) $config['data_use_cookies'];
+  
+  // Not sure if this is still necessary.
+  $config['data_use_flash'] = $config['data_use_cookies'];
 
   // Get any configured share templates.
   $share = array();

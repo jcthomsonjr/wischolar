@@ -32,9 +32,16 @@ function oembedcore_schema() {
 function _oembedcore_preset_schema_1() {
   return array(
     'export' => array(
+      'key'                   => 'name',
       'identifier'            => 'preset',
       'export callback'       => 'oembedcore_preset_export',
       'list callback'         => 'oembedcore_preset_list',
+      'api' => array(
+        'owner' => 'oembedcore',
+        'api' => 'oemedcore_presets',
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
     ),
     'fields' => array(
       'pid' => array(

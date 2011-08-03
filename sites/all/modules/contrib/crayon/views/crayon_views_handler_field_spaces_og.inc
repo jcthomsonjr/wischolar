@@ -1,6 +1,4 @@
 <?php
-// $Id: crayon_views_handler_field_spaces_og.inc,v 1.1 2010/08/10 16:16:21 yhahn Exp $
-if(!class_exists('spaces_og_handler_field_og_group_nids')) return;
 
 class crayon_views_handler_field_spaces_og extends spaces_og_handler_field_og_group_nids {
   /**

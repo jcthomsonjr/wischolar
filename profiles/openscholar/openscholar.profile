@@ -66,7 +66,7 @@ function _openscholar_core_modules() {
     // cck
     'content', 'content_copy', 'fieldgroup', 'filefield', 'filefield_paths',
     'link', 'number', 'text', 'optionwidgets', 'nodereference', 'nodereference_url',
-    'dyntextfield',  'imagefield',
+    'dyntextfield',  'imagefield', 'filefield_sources',
 
     // flag
     'flag',
@@ -75,8 +75,8 @@ function _openscholar_core_modules() {
     'date', 'date_popup', 'litecal',
 
     //js, jquery
-    'jquery_update', 'jquery_ui', 'shadowbox', 'vertical_tabs', 'itweak_upload', 'itweak_filedfield',
-    'dialog', 'imagefield_crop', 'insert',
+    'jquery_update', 'jquery_ui', 'shadowbox', 'vertical_tabs', 'itweak_upload', 'itweak_filefield',
+    'dialog', 'imagefield_crop', 'insert', 'filefield_sources',
 
     //views
     'views_attach', 'views_bulk_operations', 'views_export', 'views_ui',
