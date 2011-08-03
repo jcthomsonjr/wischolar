@@ -62,7 +62,7 @@ function extlinkAttach(context) {
   if (Drupal.settings.extlink.extClass) {
     // Apply the "ext" class to all links not containing images.
     if (parseFloat($().jquery) < 1.2) {
-      $(external_links).not('[img]').addClass(Drupal.settings.extlink.extClass).each(function() { if ($(this).css('display') == 'inline') $(this).after('<span title="Opens link in new browser window" class=' + Drupal.settings.extlink.extClass + '></span>'); });
+      $(external_links).not('[img]').addClass(Drupal.settings.extlink.extClass).each(function() { if ($(this).css('display') == 'inline') $(this).after('<span class=' + Drupal.settings.extlink.extClass + '></span>'); });
     }
     else {
       $(external_links).not($(external_links).find('img').parents('a')).addClass(Drupal.settings.extlink.extClass).each(function() { if ($(this).css('display') == 'inline') $(this).after('<span title="Opens link in new browser window" class=' + Drupal.settings.extlink.extClass + '></span>'); });
