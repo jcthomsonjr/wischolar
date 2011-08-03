@@ -75,7 +75,7 @@ function _openscholar_core_modules() {
     'date', 'date_popup', 'litecal',
 
     //js, jquery
-    'jquery_update', 'jquery_ui', 'shadowbox', 'vertical_tabs', 'itweak_upload', 'itweak_filedfield',
+    'jquery_update', 'jquery_ui', 'shadowbox', 'vertical_tabs', 'itweak_upload', 'itweak_filefield',
     'dialog', 'imagefield_crop', 'insert',
 
     //views
