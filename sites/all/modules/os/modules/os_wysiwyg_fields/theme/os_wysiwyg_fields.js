@@ -15,6 +15,9 @@
 		
 		// Show the table
 		$('#' + id.replace('_', '-', 'g') + '-items, #wysiwyg_fields-' + id + '-wrapper table').show();
+		
+		var moved = $('.wysiwyg_fields-field:not(table .wysiwyg_fields-field)');
+		$('#'+moved.attr('id')+'-placeholder').before(moved);
 	}
 	
 	// store the current functions
@@ -73,7 +76,7 @@
 				if (!btn) return;
 				btn.parentNode.removeChild(btn);
 				
-				$('input[value="Remove"]').before(btn);
+				$('input[value="Remove"]', this).before(btn);
 			});
 		}
 		hasRun = true;
