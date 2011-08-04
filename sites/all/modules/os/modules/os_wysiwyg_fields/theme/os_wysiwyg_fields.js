@@ -32,13 +32,20 @@
 		cleanUp(id);
 	}
 	
+	var hasRun = false;
 	Drupal.behaviors.adjustWysiwygSettings = function () {
+		
+		// set extended valid settings to include id for spans
+		// prevents error with inserted items ending up in helper elements that are removed later
+		// run this every time incase an ahah call replaces it
 		var settings = Drupal.settings.wysiwyg.configs.tinymce;
 		
 		if (typeof settings.format1 == 'object')
 			settings = settings.format1;
 		else if (typeof settings.format6 == 'object')
 			settings = settings.format6;
+		else if (typeof settings.format5 == 'object') 
+			settings = settings.format5;
 		else return;
 		
 		var eve = settings.extended_valid_elements.split(',');
@@ -52,8 +59,23 @@
 		});
 		settings.extended_valid_elements = eve.join(',');
 		
-		Drupal.wysiwyg.plugins.wysiwyg_fields_field_os_inline_oembed.detach = function (content, settings, instanceId) {
-			return Drupal.wysiwygFields.wysiwygDetach('zzzzz_do_not_find_me', content, settings, instanceId);
-		};
+		if (!hasRun) {
+			// prevent wysiwyg_fields from stripping out the oembed code and replacing it with empty token
+			Drupal.wysiwyg.plugins.wysiwyg_fields_field_os_inline_oembed.detach = function (content, settings, instanceId) {
+				return Drupal.wysiwygFields.wysiwygDetach('zzzzz_do_not_find_me', content, settings, instanceId);
+			};
+		}
+		
+		// pull the Insert button out of a div and next to remove
+		if (hasRun) {
+			$('.widget-edit:visible').each(function (item) {
+				var btn = this.getElementsByClassName('insert-button')[0];
+				if (!btn) return;
+				btn.parentNode.removeChild(btn);
+				
+				$('input[value="Remove"]').before(btn);
+			});
+		}
+		hasRun = true;
 	};
 })(jQuery);
