@@ -65,7 +65,7 @@ function scholar_announcements_content_default_fields() {
         'default' => 'default',
       ),
       'wysiwyg_fields_hide' => 1,
-      'wysiwyg_fields_delete' => 1,
+      'wysiwyg_fields_delete' => 0,
       'filefield_sources' => array(
         'remote' => 'remote',
         'reference' => 0,
@@ -207,7 +207,7 @@ function scholar_announcements_content_default_fields() {
         'default' => 'default',
       ),
       'wysiwyg_fields_hide' => 1,
-      'wysiwyg_fields_delete' => 1,
+      'wysiwyg_fields_delete' => 0,
       'filefield_sources' => array(
         'remote' => 'remote',
         'reference' => 'reference',
@@ -290,7 +290,7 @@ function scholar_announcements_content_default_fields() {
         'oembed_default_default' => 'oembed_default_default',
       ),
       'wysiwyg_fields_hide' => 1,
-      'wysiwyg_fields_delete' => 1,
+      'wysiwyg_fields_delete' => 0,
       'default_value' => array(
         '0' => array(
           'url' => '',

@@ -102,7 +102,7 @@ function scholar_profiles_content_default_fields() {
         'default' => 'default',
       ),
       'wysiwyg_fields_hide' => 1,
-      'wysiwyg_fields_delete' => 1,
+      'wysiwyg_fields_delete' => 0,
       'filefield_sources' => array(
         'remote' => 'remote',
         'reference' => 'reference',

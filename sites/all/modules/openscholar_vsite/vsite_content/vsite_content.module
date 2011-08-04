@@ -55,7 +55,7 @@ function vsite_content_elements() {
  * This improves the functionality for the user but if the path depends on node dependent variables then there could be problems
  */
 function vsite_content_filefield_process($element, $edit, &$form_state, $form){
-	
+
 	$node = clone($form['#node']);
 	$orig_path = $element['#value']['filepath'];
 	//Add this field to the node so we can get the settings
@@ -74,7 +74,7 @@ function vsite_content_filefield_process($element, $edit, &$form_state, $form){
     unset($element['#value']['view']);
     
     //Adjust the preview
-    if(isset($element['preview']['#value'])){
+    if(isset($element['preview']['#value']) && $element['#value']['filepath'] != $orig_path){
       $element['preview']['#value'] = str_replace($orig_path,$element['#value']['filepath'],$element['preview']['#value']);
     }
 	}
