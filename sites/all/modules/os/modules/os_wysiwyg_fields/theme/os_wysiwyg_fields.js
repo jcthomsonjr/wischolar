@@ -16,7 +16,8 @@
 		// Show the table
 		$('#' + id.replace('_', '-', 'g') + '-items, #wysiwyg_fields-' + id + '-wrapper table').show();
 		
-		$('#edit-' + id.replace('_', '-', 'g') + '-' + delta + '-wysiwyg-fields-ahah-wrapper').appendTo()
+		var moved = $('.wysiwyg_fields-field:not(table .wysiwyg_fields-field)');
+		$('#'+moved.attr('id')+'-placeholder').before(moved);
 	}
 	
 	// store the current functions
