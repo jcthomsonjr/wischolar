@@ -15,6 +15,8 @@
 		
 		// Show the table
 		$('#' + id.replace('_', '-', 'g') + '-items, #wysiwyg_fields-' + id + '-wrapper table').show();
+		
+		$('#edit-' + id.replace('_', '-', 'g') + '-' + delta + '-wysiwyg-fields-ahah-wrapper').appendTo()
 	}
 	
 	// store the current functions
@@ -73,7 +75,7 @@
 				if (!btn) return;
 				btn.parentNode.removeChild(btn);
 				
-				$('input[value="Remove"]').before(btn);
+				$('input[value="Remove"]', this).before(btn);
 			});
 		}
 		hasRun = true;
