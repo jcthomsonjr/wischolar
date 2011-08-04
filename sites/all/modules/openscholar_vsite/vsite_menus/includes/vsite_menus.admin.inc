@@ -54,6 +54,10 @@ function vsite_menus_settings_form($form_state){
   $hidden_menus = array();
   foreach ($all_initial as $key => $link) {
     $path = $link['link_path'];
+    list($initial_menu,$initial_path) = split(":",$key,2);
+    if($initial_menu && $link['menu_name'] != $initial_menu){
+    	$link['menu_name'] = $initial_menu;
+    }//Sanity Check
 
     if (!$link['external']) {
       $menu = menu_get_item($path);
