@@ -58,7 +58,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 			
 		/* include sword lib */
 		require_once(drupal_get_path('module', 'citation_distribute') .	'/plugins/swordapp-php-library-1.0/packager_mets_swap.php');
-		$zipfile = $nid . ':' . $this->name . '-' . $this->file_out;
+		$zipfile = $nid . '_' . $this->name . '-' . $this->file_out;
 		$packager = new PackagerMetsSwap($this->root_in, $this->subdir_in, $this->root_out, $zipfile);
 		
 		/* copy files from drupal to tmp dir */
@@ -68,7 +68,7 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 		foreach ($metadata['File'] as $delta => $file) {
 			$filename = array_pop( explode('/', $file['filepath']) );
 			$cp = copy($drupal_root . $file['filepath'], $root_dir . '/'. $filename);
-			$metadata['File'][$delta]['filepath'] = $filename ;
+			$metadata['File'][$delta]['filepath'] = $nid . '/' . $filename ;
 		}
 		
 		/* add metadata to mets xml */
@@ -163,7 +163,6 @@ abstract class citation_distribute_service_sword extends citation_distribute_ser
 				$deposit = $sac->deposit($deposit_url, $this->username, $this->password, $this->obo, $file, $this->packaging, 'application/zip');
 			} catch(Exception $e) {
 				drupal_set_message('Deposit error: ' . $deposit . $e, 'error');
-				dsm($deposit);
 				return false;
 			}
 		} else {
