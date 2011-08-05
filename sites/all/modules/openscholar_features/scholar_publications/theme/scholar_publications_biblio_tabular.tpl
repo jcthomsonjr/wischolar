@@ -107,12 +107,6 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
     $author_text .= check_plain($node->biblio_year) . ".&nbsp;&nbsp;";
   }
 
-  if (strlen(trim($node->body)) && user_access('view full text')) {
-    $rows[] = array(
-        //array('data' => t('Full Text'),  'valign' => 'top'),
-        array('data' =>  check_markup($node->body, $node->format, FALSE))
-    );
-  }
   $output = '<div id="biblio-node">';
   $output .= filter_xss($node->biblio_coins, array('span'));
   $output .= $citation;
@@ -129,6 +123,11 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
       $output .= $row[1]['data'];
     }
   }
+  
+  if (strlen(trim($node->body)) && user_access('view full text')) {
+  	$output .= check_markup($node->body, $node->format, FALSE);
+  }
+  
   $output .= '</div>';
   return $output;
 }
