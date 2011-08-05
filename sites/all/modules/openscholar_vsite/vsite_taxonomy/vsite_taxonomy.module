@@ -200,8 +200,8 @@ function vsite_taxonomy_access_term($term,$string){
 	  
 	  $o_term = taxonomy_get_term($tid);
 	}
-  
-	return user_access($string) && ($o_term && array_key_exists($o_term->vid,$vsite->group->og_vocabularies));
+	
+	return user_access($string) && (!$vsite || ($o_term && array_key_exists($o_term->vid,$vsite->group->og_vocabularies)));
 }
 
 /**
