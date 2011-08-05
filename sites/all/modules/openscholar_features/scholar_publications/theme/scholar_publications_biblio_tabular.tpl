@@ -109,7 +109,7 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
 
   if (strlen(trim($node->body)) && user_access('view full text')) {
     $rows[] = array(
-        array('data' => t('Full Text'),  'valign' => 'top'),
+        //array('data' => t('Full Text'),  'valign' => 'top'),
         array('data' =>  check_markup($node->body, $node->format, FALSE))
     );
   }
