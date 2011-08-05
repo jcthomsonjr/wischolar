@@ -418,7 +418,7 @@ function vsite_menus_get_menu_tree($s_menu){
 	    foreach ($menu_links as $key => $ml){
 	    	$ml['options'] = (isset($ml['options']))?serialize($ml['options']):serialize(array());
 	
-	    	if (menu_path_is_external($ml['link_path']) || !is_array($router_info = menu_get_item($ml['router_path']))) {
+	    	if (menu_path_is_external($ml['link_path']) || !is_array($router_info = menu_get_item($ml['link_path']))) {
 	        // Custom/External Links will not have an entry in the router table
 	    		$router_info = array();
 	      }
