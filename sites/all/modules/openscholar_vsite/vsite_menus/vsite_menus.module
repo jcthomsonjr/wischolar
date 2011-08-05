@@ -422,6 +422,9 @@ function vsite_menus_get_menu_tree($s_menu){
 	        // Custom/External Links will not have an entry in the router table
 	    		$router_info = array();
 	      }
+	      
+	      //Let users configure thier own title (if they have one set run it through translate)
+	      if(isset($ml['link_title'])) $ml['title_callback'] = 't';
 	
 	      $menu_links[$key] = array('link' => array_merge($router_info,$ml,array('mlid' => $n_tmp_mlid++)), 'below' => false);
 	    }
