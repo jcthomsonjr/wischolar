@@ -129,7 +129,7 @@ function iqss_openscholar_front_views_default_views() {
       'empty_zero' => 0,
       'link_to_node' => 1,
       'spaces' => array(
-        'frontpage' => 1,
+        'frontpage' => 0,
         'type' => 'spaces_og',
       ),
       'exclude' => 0,
