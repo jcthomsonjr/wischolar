@@ -55,7 +55,8 @@ function vsite_content_elements() {
  * This improves the functionality for the user but if the path depends on node dependent variables then there could be problems
  */
 function vsite_content_filefield_process($element, $edit, &$form_state, $form){
-
+  if(!$element['#value']['fid']) return $element;
+	
 	$node = clone($form['#node']);
 	$orig_path = $element['#value']['filepath'];
 	//Add this field to the node so we can get the settings

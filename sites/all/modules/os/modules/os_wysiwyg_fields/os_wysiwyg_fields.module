@@ -2,6 +2,34 @@
 
 include_once('os_wysiwyg_fields.features.inc');
 
+function os_wysiwyg_fields_menu() {
+  $menu = array();
+  $menu['admin/build/oembed/embedly'] = array(
+    'type' => MENU_NORMAL_ITEM,
+    'title' => t('Embedly API Key'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_wysiwyg_fields_api_key_form'),
+    'access arguments' => array('administer site configuration'),
+  );
+
+  return $menu;
+}
+
+function os_wysiwyg_fields_api_key_form() {
+  $form = array();
+  $form['help_text'] = array(
+    '#type' => 'markup',
+    '#value' => '<p>'.t('Without an embed.ly api key, you will be restricted to 50 embedded videos through their service a day, and have access to a limited set of their providers. To increase that limit, get an API key from embed.ly and enter it here.').'</p>',
+  );
+  $form['os_wysiwyg_fields_api_key'] = array(
+    '#title' => t('API Key'),
+    '#type' => 'textfield',
+    '#default_value' => variable_get('os_wysiwyg_fields_api_key', ''),
+  );
+
+  return system_settings_form($form);
+}
+
 function os_wysiwyg_fields_wysiwyg_fields_add_js($type) {
   switch ($type) {
     case 'node_form':
@@ -86,6 +114,46 @@ function os_wysiwyg_fields_inline_field_prerender($elements) {
   return $elements;
 }
 
-function os_wysiwyg_fields_preprocess_oembed(&$vars) {
+function os_wysiwyg_fields_oembedprovider_alter(&$providers) {
+  // add callback so we can add the API key to the query
 
+  $providers_full = oembedcore_provider_load_all();
+  foreach ($providers_full as $p) {
+    if (!$p->disabled && strpos($p->name, 'oembedembedly') !== FALSE) {
+      $schemes = explode("\n", $p->scheme);
+      foreach ($schemes as $scheme) {
+        $host = _oembedcore_get_host($scheme);
+        if (!is_array($providers[$host])) continue;
+        foreach ($providers[$host] as &$pattern) {
+          $pattern['callback'] = 'os_wysiwyg_fields_oembed_provider_callback';
+        }
+      }
+    }
+  }
+}
+
+function os_wysiwyg_fields_oembed_provider_callback($provider, $url, $matches, $attributes) {
+  if ($api_key = variable_get('os_wysiwyg_fields_api_key', '')) {
+    $attributes['key'] = $api_key;
+  }
+
+  unset($provider['callback']);
+  $embed = oembedcore_oembed_fetch($provider, $url, $matches, $attributes);
+
+  // do things to it
+  $html = new SimpleXMLElement($embed->html);
+  if ($html->getName() == 'object') {
+    $param = $html->addChild('param');
+    $param->addAttribute('name', 'wmode');
+    $param->addAttribute('value', 'transparent');
+    foreach ($html->children() as $child) {
+      if ($child->getName() == 'embed') {
+        $child->addAttribute('wmode', 'transparent');
+      }
+    }
+
+    $embed->html = str_replace('<?xml version="1.0"?>', '', $html->asXML());
+  }
+
+  return $embed;
 }
