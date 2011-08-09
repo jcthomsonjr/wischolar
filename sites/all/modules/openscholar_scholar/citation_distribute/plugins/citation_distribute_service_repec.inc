@@ -399,7 +399,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 
 	//admin form
 	//if present, this form will be used as an admin menu for CD:repec
-  public function admin_form($a) {
+  public function admin_form() {
   	$form = array();
     $form['repec'] = array(
   	  '#type' => 'fieldset',
