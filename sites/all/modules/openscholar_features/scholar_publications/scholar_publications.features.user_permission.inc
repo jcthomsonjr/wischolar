@@ -175,17 +175,6 @@ function scholar_publications_user_default_permissions() {
     ),
   );
 
-  // Exported permission: submit repec widget
-  $permissions['submit repec widget'] = array(
-    'name' => 'submit repec widget',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'manager',
-      '2' => 'scholar admin',
-      '3' => 'scholar user',
-    ),
-  );
-
   // Exported permission: view full text
   $permissions['view full text'] = array(
     'name' => 'view full text',

@@ -1812,7 +1812,7 @@ function creativecommons_block($op='list', $delta=0, $edit = array()) {
         'cache' => BLOCK_CACHE_PER_PAGE,
         'weight' => -1,
         'enabled' => 1,   // default make it enabled
-        'region' => 'content',
+        'region' => false,
         'theme' => 'garland',
       );
 
@@ -1820,7 +1820,7 @@ function creativecommons_block($op='list', $delta=0, $edit = array()) {
         'info' => t('Creative Commons Site License'),
         'weight' => -10,
         'enabled' => 1,   // default make it enabled
-        'region' => 'footer',
+        'region' => false,
         'theme' => 'garland',
       );
 
