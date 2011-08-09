@@ -17,12 +17,31 @@ define('_CRON_LIMIT', 25);
 function citation_distribute_menu() {
 	$items = array();
 	$items ['admin/settings/citation_distribute'] = array(
-		'title' => t ( 'Citation Distribute' ), 
+		'title' => t( 'Citation Distribute' ), 
 		'page callback' => 'drupal_get_form', 
-		'page arguments' => array ('citation_distribute_admin' ), 
+		'page arguments' => array('citation_distribute_admin' ), 
 		'file' => 'citation_distribute.admin.inc', 
-		'access arguments' => array ('administer citation distribute' ) 
+		'access arguments' => array('administer citation distribute' ) 
 	);
+	
+	/* add a menu link for each plugin that implements admin_menu() */
+	foreach (_plugins() as $plugin) {
+	  if ($plugin['title'] && $class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
+  		$service = new $class();
+  		
+  		if (method_exists($service, 'admin_form')) {
+  			$items['admin/settings/citation_distribute/'.$plugin['name']] = array(
+  			  'title' => t('Configure ' . $plugin['title']),
+  			  //'page callback' => 'citation_distribute_plugin_admin',
+  			  //'page arguments' => array('plugin' => $plugin['name']),
+  			  'page callback' => 'drupal_get_form',
+  			  'page arguments' => array('citation_distribute_plugin_admin', $plugin['name']),
+  				'file' => 'citation_distribute.admin.inc', 
+  			  'access arguments' => array('administer citation distribute'),
+  			);
+  		}
+	  }	  
+	}
 	return $items;
 }
 
