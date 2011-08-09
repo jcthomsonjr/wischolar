@@ -17,15 +17,15 @@ class citation_distribute_service_repec extends citation_distribute_service {
   public function __construct() {
   	parent::__construct();
   	
-  	$this->title = variable_get('citation_distribute_service_repec_title', '');
-  	$this->inst_name = variable_get('citation_distribute_service_repec_inst_name', '');
-  	$this->archive_code = variable_get('citation_distribute_service_repec_archive_code', '');
-  	$this->maintainer_name = variable_get('citation_distribute_service_repec_maintainer_name', '');
-  	$this->maintainer_email = variable_get('citation_distribute_service_repec_maintainer_email', '');
-  	$this->archive_path = variable_get('citation_distribute_service_repec_archive_path', '');
-  	$this->archive_url = variable_get('citation_distribute_service_repec_archive_url', '');
-  	$this->provider_institution = variable_get('citation_distribute_service_repec_provider_institution', '');
-  	$this->provider_homepage = variable_get('citation_distribute_service_repec_provider_homepage', '');
+  	$this->title = variable_get('citation_distribute_service_citation_distribute_service_repec_title', '');
+  	$this->inst_name = variable_get('citation_distribute_service_citation_distribute_service_repec_inst_name', '');
+  	$this->archive_code = variable_get('citation_distribute_service_citation_distribute_service_repec_archive_code', '');
+  	$this->maintainer_name = variable_get('citation_distribute_service_citation_distribute_service_repec_maintainer_name', '');
+  	$this->maintainer_email = variable_get('citation_distribute_service_citation_distribute_service_repec_maintainer_email', '');
+  	$this->archive_path = variable_get('citation_distribute_service_citation_distribute_service_repec_archive_path', '');
+  	$this->archive_url = variable_get('citation_distribute_service_citation_distribute_service_repec_archive_url', '');
+  	$this->provider_institution = variable_get('citation_distribute_service_citation_distribute_service_repec_provider_institution', '');
+  	$this->provider_homepage = variable_get('citation_distribute_service_citation_distribute_service_repec_provider_homepage', '');
   }
 		
 	/**
@@ -227,7 +227,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	}
 	
 	/* gets Template-Type for this repec type */
-	public function _get_template_type($repec_type) {
+	public function _get_template_type($citation_distribute_service_repec_type) {
 		$types = array(
 			'wpaper' => 'ReDIF-Paper 1.0',
 			'sftwre' => 'ReDIF-Software 1.0',
@@ -236,8 +236,8 @@ class citation_distribute_service_repec extends citation_distribute_service {
 			'booktm' => 'ReDIF-Book 1.0' ,
 		);
 			
-		if (isset($types[$repec_type])) {
-			return $types[$repec_type];
+		if (isset($types[$citation_distribute_service_repec_type])) {
+			return $types[$citation_distribute_service_repec_type];
 		} else {
 			return false;
 		}		
@@ -298,15 +298,15 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	
 	/* remove() when a node is unflagged, delete its rdf file */
 	public function remove($nid) {
-		$file = $this->_repec_path() . $this->_nid_to_type($nid) . '/' . $this->_file_name($nid);
+		$file = $this->_citation_distribute_service_repec_path() . $this->_nid_to_type($nid) . '/' . $this->_file_name($nid);
 		return unlink($file);
 	}
 	
 	/*
-	 * _repec_path()
+	 * _citation_distribute_service_repec_path()
 	 * shortcut function for generating path to repec archive
 	 */
-	public function _repec_path() {
+	public function _citation_distribute_service_repec_path() {
 		return $this->archive_path . '/' . $this->archive_code . '/';
 	}
 	
@@ -330,7 +330,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	
 	/* _write() saves rdf metadata to disk */
 	public function _write($data, $nid) {
-		$path = $this->_repec_path() . $this->_nid_to_type($nid) . '/';
+		$path = $this->_citation_distribute_service_repec_path() . $this->_nid_to_type($nid) . '/';
 		
 		//create the path if necessary.  otherwise fail.  mkdir goes to logs, but users get generic failure message
 		if (!( is_dir($path) || mkdir($path, 0775, TRUE) )) {
@@ -354,7 +354,7 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		
 		//only create a listing for series that have their own folder
 		//note that this means index should be run AFTER adding new rdfs.
-		$path = $this->_repec_path();
+		$path = $this->_citation_distribute_service_repec_path();
 		$all_series = array_intersect(scandir($path), array_keys($series_name));
 		
 		//generate series listing
@@ -397,9 +397,9 @@ class citation_distribute_service_repec extends citation_distribute_service {
 	}
 
 
-	//admin menu
+	//admin form
 	//if present, this form will be used as an admin menu for CD:repec
-  public function admin_menu(&$weight, $page_arguments, $base) {
+  public function admin_form($a) {
   	$form = array();
     $form['repec'] = array(
   	  '#type' => 'fieldset',
@@ -408,6 +408,80 @@ class citation_distribute_service_repec extends citation_distribute_service {
   	  '#collapsed' => FALSE,
   	);
   	
+  $form['repec'] = array( 
+      '#type' => 'fieldset', 
+      '#title' => t('Enter RePEc Information'),
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE, 
+      ); 
+  
+  $form['repec']['citation_distribute_service_repec_inst_name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Institution Name'),
+      '#default_value' => variable_get('citation_distribute_service_repec_inst_name',''),
+      '#description' => t('Enter your institution\'s Name'),
+      );
+      
+  
+  $form['repec']['citation_distribute_service_repec_archive_code'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Archive Code'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('citation_distribute_service_repec_archive_code',''),
+      '#description' => t('Enter your institution\'s 3 letter archive code' )
+       
+  	);
+  	
+  $form['repec']['citation_distribute_service_repec_provider_institution'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Provider Institution Code'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('citation_distribute_service_repec_provider_institution',''),
+      '#description' => t('Enter your institution\'s provider code.  e.g. RePEc:edi:adsflkj' )
+       
+  	);
+  $form['repec']['citation_distribute_service_repec_archive_path'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Archive Root Path'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('citation_distribute_service_repec_archive_path',''),
+      '#description' => t('Enter the absolute path to the root of the RePEc archive. Do not include the RePEc directory.
+       <br> For example: /nfs/test/archive' )
+       
+  	);
+ 
+  $form['repec']['citation_distribute_service_repec_archive_url'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Archive URL'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('citation_distribute_service_repec_archive_url',''),
+      '#description' => t("Enter your institution's archive base URL. 
+      Do not include any directories in the URL. <br> For example: http://test.repec.com" )  
+  	);	
+
+  	$form['repec']['citation_distribute_service_repec_maintainer_email'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Maintainer\'s Email Address'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('citation_distribute_service_repec_maintainer_email',''),
+      '#description' => t("Email address for contacting the maintainer of this archive." )  
+  	);  			
+
+  	$form['repec']['citation_distribute_service_repec_maintainer_name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Maintainer\'s Name'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('citation_distribute_service_repec_maintainer_name',''),
+      '#description' => t("Name of the maintainer of this RePEc archive." )  
+  	);
+
+  	$form['repec']['citation_distribute_service_repec_provider_homepage'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Provider\'s Homepage'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('citation_distribute_service_repec_provider_homepage',''),
+      '#description' => t("Homepage for this archive." )  
+  	);  
   	return $form;	
   }
 }

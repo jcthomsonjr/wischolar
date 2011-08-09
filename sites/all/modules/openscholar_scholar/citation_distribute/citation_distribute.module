@@ -29,11 +29,13 @@ function citation_distribute_menu() {
 	  if ($plugin['title'] && $class = ctools_plugin_get_class($plugin, 'handler', TRUE)) {
   		$service = new $class();
   		
-  		if (method_exists($service, 'admin_menu')) {
+  		if (method_exists($service, 'admin_form')) {
   			$items['admin/settings/citation_distribute/'.$plugin['name']] = array(
   			  'title' => t('Configure ' . $plugin['title']),
+  			  //'page callback' => 'citation_distribute_plugin_admin',
+  			  //'page arguments' => array('plugin' => $plugin['name']),
   			  'page callback' => 'drupal_get_form',
-  			  'page arguments' => array('citation_distribute_plugin_admin',1,2,3),
+  			  'page arguments' => array('citation_distribute_plugin_admin', $plugin['name']),
   				'file' => 'citation_distribute.admin.inc', 
   			  'access arguments' => array('administer citation distribute'),
   			);

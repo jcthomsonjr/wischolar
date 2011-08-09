@@ -75,10 +75,17 @@ function citation_distribute_admin_validate($form, &$form_state) {
 /* 
  * Fetches and returns admin form from a plugin.
  */
-function citation_distribute_plugin_admin() {
-  $p = arg(4);
-
+function citation_distribute_plugin_admin($args, $plugin) {
+  $plugins = _plugins();
+ 
+	if ($class = ctools_plugin_get_class($plugins[$plugin], 'handler', TRUE)) {
+		if ($service = new $class()) {							
+		  if (method_exists($service, 'admin_form')) {
+				$form = $service->admin_form();
+        return system_settings_form($form);
+		  }
+		}
+	}
   
-  return $plugin;
 }
  
