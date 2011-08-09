@@ -282,9 +282,8 @@ function scholar_publications_get_cache($cache_key){
 
   $cutoff = 0;
   $cache_params = array(
-    'node' => array('biblio' => 'biblio'),
     'os_og' => array('current' => 'current'),
-  );
+  );//Clear when node is saved or settings changed (since order is a biblio setting)
 
   // Retrieve the latest update time matching the settings on this View.
   $cid = array();

@@ -1,0 +1,16 @@
+; $Id: scholar_departments.info,v 1.12 2008/09/21 22:43:32 dcabral Exp $
+name        = OpenScholar: "Department Theme"
+description = Clean theme for individual department use.
+
+screenshot = screenshot.png
+core       = 6.x
+base theme = scholar_base
+stylesheets[all][]   = scholar-departments.css
+
+conditional-stylesheets[if lte IE 7][all][]   = scholar-departments-ie7.css
+conditional-stylesheets[if IE][all][]          = scholar-departments-ie.css
+
+scholar[widgets][vsite_widgets-3] = header_right
+scholar[widgets][vsite_widgets-0] = false
+scholar[theme_type]   = "scholar"
+scholar[theme_access] = "private"

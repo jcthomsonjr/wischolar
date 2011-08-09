@@ -240,8 +240,7 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 							$service = new $class();
 							//validate!
 							if (method_exists($service, 'validate')) {
-								$error = $service->validate($a3);
-								($error) && form_set_error('', $error);
+								$valid = $service->validate($a3);
 							}
 						}
 					}
@@ -252,9 +251,10 @@ function citation_distribute_nodeapi(&$node, $op, $a3) {
 			case 'delete':
 				//clean up flags from deleted nodes
 				foreach( _plugins() as $plugin ) {
-					$flag = flag_get_flag($plugin['name']);
-					$flag->flag('unflag', (int)$node -> nid);
-   			  _citation_distribute_removefrom_db($plugin['name'], (int)$node->nid); //node is gone, remove its entry
+					if ( $flag = flag_get_flag($plugin['name']) ){
+  					$flag->flag('unflag', (int)$node -> nid);
+     			  _citation_distribute_removefrom_db($plugin['name'], (int)$node->nid); //node is gone, remove its entry
+					}
 				}
 			break;
 		}

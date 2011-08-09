@@ -796,7 +796,8 @@ function vsite_taxonomy_term_by_feature($term, $s_feature){
   $current_page = menu_get_item();
   
   //Pass on any additional arguments to the view
-  $arguments = explode('/',trim(str_replace($current_page['href'],"",$_GET['q'])," /"));
+  $s_args = trim(str_replace($current_page['href'],"",$_GET['q'])," /");
+  if(strlen($s_args)) $arguments = explode('/',$s_args);
   if (count($arguments)) {
     $view->set_arguments($arguments);
   }

@@ -74,7 +74,7 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
           $url_start = strpos($url, '"') +1;
           $url_end = strrpos($url, '"');
           $url = substr($url, $url_start, $url_end - $url_start);
-          $data = l('Related External Link', $url);
+          $data = '<p>' . l('Related External Link', $url) . '</p>';
           $row['title'] = '';
           break;
         case 'biblio_doi' :
@@ -107,12 +107,6 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
     $author_text .= check_plain($node->biblio_year) . ".&nbsp;&nbsp;";
   }
 
-  if (strlen(trim($node->body)) && user_access('view full text')) {
-    $rows[] = array(
-        array('data' => t('Full Text'),  'valign' => 'top'),
-        array('data' =>  check_markup($node->body, $node->format, FALSE))
-    );
-  }
   $output = '<div id="biblio-node">';
   $output .= filter_xss($node->biblio_coins, array('span'));
   $output .= $citation;
@@ -129,6 +123,11 @@ function theme_scholar_publications_biblio_tabular($node, $base = 'biblio', $tea
       $output .= $row[1]['data'];
     }
   }
+  
+  if (strlen(trim($node->body)) && user_access('view full text')) {
+  	$output .= check_markup($node->body, $node->format, FALSE);
+  }
+  
   $output .= '</div>';
   return $output;
 }
