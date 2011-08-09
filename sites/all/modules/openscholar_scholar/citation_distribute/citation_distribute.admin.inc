@@ -71,4 +71,14 @@ function citation_distribute_admin_validate($form, &$form_state) {
 		form_set_error('', t('Batch size limit must be a positive integer.'));
 	}
 }
+
+/* 
+ * Fetches and returns admin form from a plugin.
+ */
+function citation_distribute_plugin_admin() {
+  $p = arg(4);
+
+  
+  return $plugin;
+}
  

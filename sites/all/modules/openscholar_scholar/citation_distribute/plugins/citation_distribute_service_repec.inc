@@ -395,4 +395,20 @@ class citation_distribute_service_repec extends citation_distribute_service {
 		//and done
 		return ($series_out && $arch_out);
 	}
+
+
+	//admin menu
+	//if present, this form will be used as an admin menu for CD:repec
+  public function admin_menu(&$weight, $page_arguments, $base) {
+  	$form = array();
+    $form['repec'] = array(
+  	  '#type' => 'fieldset',
+  	  '#title' => t('Configure RePEc'),
+  	  '#collapsible' => FALSE,
+  	  '#collapsed' => FALSE,
+  	);
+  	
+  	return $form;	
+  }
 }
+
