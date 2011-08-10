@@ -43,7 +43,7 @@ function scholar_dvn_data(){
     return "<div id=\"feature-dataverse\"><iframe name=\"res\" scrolling=\"auto\" src =\"" . $path . "\"></iframe></div>";
   }
   elseif ($vsite && $vsite->access_admin()) {
-    $l1 = l('feature', "cp/features");
+    $l1 = l('feature', "cp/build/features");
     $l2 = l('http://dvn.iq.harvard.edu', 'http://dvn.iq.harvard.edu', array('absolute' => TRUE));
     $result = "<p>No dataverse alias was found. Please set up your dataverse alias in your \"scholar dvn\" " . $l1 . " settings </p>";
     $result .= "<p> If you don't have a dataverse, go to " .$l2.  " to create your own dataverse to upload your data </p>";

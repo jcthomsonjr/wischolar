@@ -183,8 +183,8 @@ function cp_views_api(){
 }
 
 function cp_menu_alter(&$items){
-   $items["cp/features/overrides"] =  $items["node/%node/features/overrides"];
-   $items["cp/features/overrides"]['type'] = MENU_CALLBACK;
+   $items["cp/build/features/overrides"] =  $items["node/%node/features/overrides"];
+   $items["cp/build/features/overrides"]['type'] = MENU_CALLBACK;
 }
 /**
  * Implementation of hook_menu()
@@ -194,13 +194,25 @@ function cp_menu(){
   $spaces_path = drupal_get_path('module', 'spaces');
 
   $items = array();
+  
+  $items["cp/build"] = array(
+    'title' => 'Site building',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array(
+      'spaces_features_form'
+    ),
+    'file' => 'spaces.admin.inc',
+    'file path' => $spaces_path,
+    'weight' => 10
+  );
 
-  $items["cp/features"] = array(
+  $items["cp/build/features"] = array(
     'title' => 'Features',
     'page callback' => 'drupal_get_form',
     'page arguments' => array(
       'spaces_features_form'
     ),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
     'file' => 'spaces.admin.inc',
     'file path' => $spaces_path,
     'weight' => 10
@@ -337,7 +349,7 @@ function cp_form_alter(&$form, &$form_state, $form_id){
 
     // just  quick way for admins to see overrides
     if (spaces_access_admin_perms(array('administer spaces' ))) {
-      $link = l(t('Overrides'), 'cp/features/overrides');
+      $link = l(t('Overrides'), 'cp/build/features/overrides');
       $form['buttons']['overrides'] = array(
         '#type' => 'markup',
         '#value' => $link,
@@ -402,7 +414,7 @@ function cp_preprocess_page(&$vars){
       $user_links = array();
       $user_links[] = array(
         'title' => 'Control Panel',
-        'href' => 'cp/features'
+        'href' => 'cp/build/features'
       );
       $user_links[] = array(
         'title' => t('Hello <strong>!username</strong>', array(
@@ -684,7 +696,7 @@ function cp_customize_features_list(){
   foreach ( $features as $feature ) {
     $links[$feature->name] = array(
       'title' => $feature->info['name'],
-      'href' => 'cp/features/' . $feature->name,
+      'href' => 'cp/build/features/' . $feature->name,
       'attributes' => array(
         'class' => 'ctools-use-modal'
       )

@@ -28,7 +28,7 @@ function vsite_menus_settings_form($form_state){
   $form['new_menu_link_context'] = array(
     '#type' => 'markup',
     '#value' => theme('item_list', array(
-      ctools_modal_text_button('Add new Link', "cp/settings/menus/add/nojs", 'add a link', 'context-button')
+      ctools_modal_text_button('Add new Link', "cp/build/menus/add/nojs", 'add a link', 'context-button')
     ), $title = NULL, $type = 'ul', $attributes = array(
       "class" => "context-links"
     )),

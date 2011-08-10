@@ -2,11 +2,11 @@
 function vsitehelp_help($path) {
   switch ($path) {
     //features
-    case 'cp/features':
+    case 'cp/build/features':
       return theme('advanced_help_topic', 'vsitehelp', 'Features');
 
     //appearance
-    case 'cp/appearance/layout':
+    case 'cp/build/layout':
       return theme('advanced_help_topic', 'vsitehelp', 'Site-Layout');
 
     case 'cp/appearance/theme':
@@ -16,10 +16,10 @@ function vsitehelp_help($path) {
     case 'cp/settings':
       return theme('advanced_help_topic', 'vsitehelp', 'Menus');
 
-    case 'cp/settings/menus':
+    case 'cp/build/menus':
       return theme('advanced_help_topic', 'vsitehelp', 'Menus');
       
-    case 'cp/settings/taxonomy':
+    case 'cp/build/taxonomy':
       return theme('advanced_help_topic', 'vsitehelp', 'Categorizing-Your-Content---Taxonomy');
 
     case 'cp/settings/site_info/%':

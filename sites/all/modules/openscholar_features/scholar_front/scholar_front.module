@@ -147,7 +147,7 @@ function scholar_front_nodeapi(&$node, $op, $a3, $a4){
       	if(!$vsite) return;
 
       	$vsite->controllers->variable->set('site_frontpage','node/'.$node->nid);
-        $link =  l('Control Panel Settings.','cp/features',array("query" => array("open_feature_settings" => "scholar_front")) );
+        $link =  l('Control Panel Settings.','cp/build/features',array("query" => array("open_feature_settings" => "scholar_front")) );
         $msg_variables = array (
         '@type' => node_get_types('name', $node),
         '%title' => $node -> title,

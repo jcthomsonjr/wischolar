@@ -76,7 +76,7 @@ function vsite_taxonomy_determine_access($perm){
 function vsite_taxonomy_menu() {
   $items = array ();
 
-  $items ['cp/settings/taxonomy'] = array (
+  $items ['cp/build/taxonomy'] = array (
     'title' => 'Taxonomy',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vsite_taxonomy_form'),
@@ -509,7 +509,7 @@ function vsite_taxonomy_form_alter(&$form, $form_state, $form_id){
     case "taxonomy_vocabulary_confirm_reset_alphabetical" :
       $vsite = vsite_get_vsite();
       if ($vsite && $form['actions']) {
-        $form['actions']['cancel']['#value'] = l("Cancel", "cp/settings/taxonomy");
+        $form['actions']['cancel']['#value'] = l("Cancel", "cp/build/taxonomy");
       }
       break;
   }

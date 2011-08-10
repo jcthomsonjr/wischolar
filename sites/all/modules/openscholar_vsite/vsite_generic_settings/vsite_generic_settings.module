@@ -20,6 +20,17 @@ function vsite_generic_settings_init() {
 
 function vsite_generic_settings_menu() {
   $items = array();
+ 
+  $items['cp/settings'] = array(
+    'title' => "Settings",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_generic_settings_form'),
+    'file' => 'vsite_generic_settings.page.inc',
+    'access callback' => 'cp_access_cp',
+    'menu_name' => 'cp',
+    'weight' => 30,
+
+  );
 
   $items['cp/settings/generic'] = array (
     'title' => 'Other Settings',
@@ -27,8 +38,8 @@ function vsite_generic_settings_menu() {
     'page arguments' => array('vsite_generic_settings_form'),
     'file' => 'vsite_generic_settings.page.inc',
     'access callback' => 'cp_access_cp',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 40,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 10,
   );
 
   return $items;

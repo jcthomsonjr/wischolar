@@ -35,21 +35,11 @@ function vsite_layout_theme() {
  */
 function vsite_layout_menu() {
   $items = array();
-  
-  $items['cp/appearance'] = array(
-    'title' => "Appearance",
+
+  $items['cp/build/layout'] = array(
+    'title' => "Layout",
     'page callback' => 'vsite_layout_layout',
-    'menu_name' => 'cp',
-    'access callback' => 'cp_access_cp',
-    'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
-    'file' => 'vsite_layout.admin.inc',
-    'weight' => 20,
-  );
-  
-  $items['cp/appearance/layout'] = array(
-    'title' => "Site Layout",
-    'page callback' => 'vsite_layout_layout',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK,
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
     'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
@@ -57,16 +47,16 @@ function vsite_layout_menu() {
     'weight' => 10,
   );
 
-  $items["cp/appearance/layout/region_widgets_js"] =
-  $items["cp/appearance/region_widgets_js"] = array(
+  $items["cp/build/layout/region_widgets_js"] =
+  $items["cp/build/region_widgets_js"] = array(
     'page callback' => 'vsite_layout_region_widgets_callback',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
     'file path' => drupal_get_path('module', 'vsite_layout') . '/includes',
     'file' => 'vsite_layout.admin.inc',
   );
-  $items["cp/appearance/layout/top_widgets_js"] =
-  $items["cp/appearance/top_widgets_js"] = array(
+  $items["cp/build/layout/top_widgets_js"] =
+  $items["cp/build/top_widgets_js"] = array(
     'page callback' => 'vsite_layout_top_widgets_callback',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,

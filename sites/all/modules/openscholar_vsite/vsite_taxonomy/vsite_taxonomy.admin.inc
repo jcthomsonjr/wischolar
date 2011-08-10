@@ -359,7 +359,7 @@ function vsite_taxonomy_form_taxonomy_form_term_alter(&$form, &$form_state) {
 
   if($form_state['clicked_button']['#value'] == t('Delete')){
   	if($vsite && $form['actions']){
-  		$form['actions']['cancel']['#value'] = l("Cancel","cp/settings/taxonomy");
+  		$form['actions']['cancel']['#value'] = l("Cancel","cp/build/taxonomy");
   	}
   	return;
   }

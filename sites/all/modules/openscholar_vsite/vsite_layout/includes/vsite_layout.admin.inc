@@ -257,7 +257,7 @@ function vsite_layout_settings_form($form_state){
     '#description' => t('Customize layout for your front page or any specific section of your site. "Default settings" cover everything else.<br /><br />'),
     '#ahah' => array(
           'event' => 'go_ahah',
-          'path' => 'cp/appearance/layout/region_widgets_js',
+          'path' => 'cp/build/layout/region_widgets_js',
           'wrapper' => 'scholarlayout-container',
           'progress' => array('type' => 'throbber', 'message' => t('Loading Page...')),
           'effect' => 'fade',
@@ -270,7 +270,7 @@ function vsite_layout_settings_form($form_state){
     '#value' => $s_page_type,
     '#ahah' => array(
           'event' => 'go_ahah',
-          'path' => 'cp/appearance/layout/top_widgets_js',
+          'path' => 'cp/build/layout/top_widgets_js',
           'wrapper' => 'scholarlayout-top-widgets',
           'effect' => 'fade',
           'progress' => array('type' => 'none'),

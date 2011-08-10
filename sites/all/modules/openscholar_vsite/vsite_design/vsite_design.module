@@ -7,6 +7,17 @@ include_once('vsite_design.features.inc');
  */
 function vsite_design_menu(){
   $items = array();
+  
+  $items['cp/appearance'] = array(
+    'title' => "Appearance",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_design_theme_picker_form'),
+    'menu_name' => 'cp',
+    'file' => 'vsite_design.pages.inc',
+    'access callback' => 'cp_access_cp',
+    'weight' => 20,
+  );
+  
   $items['cp/appearance/theme'] = array(
     'title' => t('Theme'),
     'page callback' => 'drupal_get_form',
@@ -14,7 +25,7 @@ function vsite_design_menu(){
     'menu_name' => 'cp',
     'file' => 'vsite_design.pages.inc',
     'access callback' => 'cp_access_cp',
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 20,
   );
 

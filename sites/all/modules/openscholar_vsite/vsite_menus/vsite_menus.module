@@ -6,22 +6,11 @@
 function vsite_menus_menu() {
   $items = array();
 
-  $items['cp/settings'] = array(
-    'title' => "Settings",
+  $items['cp/build/menus'] = array(
+    'title' => "Menus",
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vsite_menus_settings_form'),
-    'menu_name' => 'cp',
-    'access callback' => 'cp_access_cp',
-    'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
-    'file' => 'vsite_menus.admin.inc',
-    'weight' => 30,
-  );
-
-  $items['cp/settings/menus'] = array(
-    'title' => "Site Menus",
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('vsite_menus_settings_form'),
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK,
     'menu_name' => 'cp',
     'access callback' => 'cp_access_cp',
     'file path' => drupal_get_path('module', 'vsite_menus') . '/includes',
@@ -29,7 +18,7 @@ function vsite_menus_menu() {
     'weight' => 10,
   );
 
-  $items['cp/settings/menus/add/%ctools_js'] = array(
+  $items['cp/build/menus/add/%ctools_js'] = array(
     'title' => "New Menu Link",
     'page callback' => 'vsite_menus_new_link_callback',
     'page arguments' => array(4),
@@ -247,7 +236,7 @@ function vsite_menus_form_alter(&$form, $form_state, $form_id) {
       '#title' => t('Choose a Menu'),
       '#default_value' => $default,
       '#options' => $options + array('none' => 'Not in a Menu'),
-      '#description' => t("Select the menu where you would like this link to appear. Some menu's may not show on your page if they are not included in your ".l("Page Layout",'cp/appearance/layout',array('attributes' => array('target' => '_blank')))."."),
+      '#description' => t("Select the menu where you would like this link to appear. Some menu's may not show on your page if they are not included in your ".l("Page Layout",'cp/build/layout',array('attributes' => array('target' => '_blank')))."."),
       '#attributes' => array('class' => 'menu-title-select'),
     );
 
