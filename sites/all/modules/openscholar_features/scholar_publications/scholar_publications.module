@@ -758,6 +758,8 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
     $s_output .= $node->content['teaser']['#suffix'];
   }//honor drupal suffix
 
+  $s_output .= theme('contextual', contextual_get_links('node', $node));
+
   $links = module_invoke_all('link', 'node', $node, '');
   drupal_alter('link', $links, $node);
   $s_output .= '<div class="links links-inline">' . theme('links', $links) . '</div>';
