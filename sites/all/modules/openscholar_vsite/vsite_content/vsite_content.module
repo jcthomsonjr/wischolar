@@ -40,51 +40,6 @@ function vsite_content_menu_alter(&$items){
   $items['node/%node/edit']['type'] = MENU_CALLBACK;
 }
 
-/**
- * Implements hook_elements().
- */
-function vsite_content_elements() {
-	//Add process function to filefield elements
-  $elements['filefield_widget']['#process'] = array('vsite_content_filefield_process');
-  return $elements;
-}
-
-/**
- * Add extra processing to filefield upload, to handle ff_paths and aliases
- *
- * This improves the functionality for the user but if the path depends on node dependent variables then there could be problems
- */
-function vsite_content_filefield_process($element, $edit, &$form_state, $form){
-  if(!$element['#value']['fid']) return $element;
-	
-	$node = clone($form['#node']);
-	$orig_path = $element['#value']['filepath'];
-	//Add this field to the node so we can get the settings
-	list($parent,$delta) = $element['#parents'];
-	if($parent){
-		$el_file = $element['#value'];
-		
-		//Flag for processing, normally done in node preprocess
-		if($el_file['status'] == 0) $el_file['data']['process'] = true;
-		$node->$parent = array($delta => $el_file);
-		
-		filefield_paths_node_update($node);
-   
-    $element['#value'] = $node->{$parent}[$delta];
-    //Not needed
-    unset($element['#value']['view']);
-    
-    //Adjust the preview
-    if(isset($element['preview']['#value']) && $element['#value']['filepath'] != $orig_path){
-      $element['preview']['#value'] = str_replace($orig_path,$element['#value']['filepath'],$element['preview']['#value']);
-    }
-	}
-	
-  return $element;
-}
-
-
-
 
 /**
  * callback function for cp/content/files
@@ -97,12 +52,6 @@ function vsite_content_files() {
 
   return views_page($view_name, $display);
 }
-
-/**
- * Hook form_alter
- * Change the title of the vbo select element
- */
-
 
 function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_state, $form_id = 'views_bulk_operations_form__1') {
   //Add collapsible JS
@@ -118,8 +67,6 @@ function vsite_content_form_views_bulk_operations_form__1_alter(&$form, $form_st
    $form['select']['#title'] = 'Update options';
   }
 }
-
-
 
 /**
  * hook form_alter
@@ -208,50 +155,3 @@ function vsite_content_form_alter(&$form, $form_state, $form_id) {
   }
 }
 
-
-
-/**
- * Implements hook_filefield_paths_process_file().
- */
-function vsite_content_filefield_paths_process_file($new, $file, $settings, $node, $update) {
-  if ($new) {
-    $orig_alias = filefield_paths_process_string($settings['filealias']['value'], 'node', $node, $settings['filealias']);
-    $orig_alias = filefield_paths_process_string($orig_alias, 'field', array(0 => $file['field']), $settings['filealias']);
-
-    $path = 'filefield_paths/alias/' . $file['field']['fid'];
-    $alias = drupal_get_path_alias($path);
-
-    // Path has a different alias
-    if ($alias != $orig_alias) {
-      $old_file_path = drupal_lookup_path('source', $orig_alias);
-      if(strpos($old_file_path,'filefield_paths/alias/') === 0){
-        $n_old_fid = intval(substr($old_file_path,22));
-        $n_old_pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE dst = '%s' LIMIT 1", $orig_alias));
-
-        if(!field_file_load($n_old_fid)){
-          //The file alias is orphaned and we should delete it
-          path_set_alias(NULL,$alias); //Delete unused alias
-          path_set_alias($path,$orig_alias,$n_old_pid); //Reassign old alias
-
-        }else{
-	        //If the file exists and is part of the same node then rename the alias
-	        $field_info = content_types($node->type);
-	        if($file['module'] == 'upload'){
-	          //Upload Node
-	          $n_nid = db_result(@db_query("SELECT nid FROM {upload} WHERE fid = %d ",$n_old_fid));
-	        }elseif($file['field']['field']['field_name']){
-	          //CCK Node
-	          $n_nid = db_result(@db_query("SELECT nid FROM {".current($field_info['tables'])."} WHERE ".$file['field']['field']['field_name']."_fid = %d ",$n_old_fid));
-	        }
-
-	        if($n_nid == $node->nid){
-	          //Switch the two paths
-	          $n_new_pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE dst = '%s' LIMIT 1", $alias));
-	          path_set_alias($path,$orig_alias,$n_old_pid); //Reassign old alias
-	          path_set_alias($old_file_path,$alias,$n_new_pid); //Reassign new alias
-	        }
-        }
-      }
-    }
-  }
-}
