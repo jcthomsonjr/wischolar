@@ -19,5 +19,7 @@
   <?php echo $screenshot?>
   <div class="theme-info">
     <h3><?php echo $info['name'] ?></h3><?php echo $sub_theme ?>
-	  <p> <?php echo $info['description'] ?></p>
+
+<?php //echo $info['description'] ?>
+
 	</div>
