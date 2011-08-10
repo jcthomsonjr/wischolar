@@ -16,6 +16,7 @@ define('_CRON_LIMIT', 25);
  */
 function citation_distribute_menu() {
 	$items = array();
+	/* main admin menu for this module */
 	$items ['admin/settings/citation_distribute'] = array(
 		'title' => t( 'Citation Distribute' ), 
 		'page callback' => 'drupal_get_form', 
@@ -32,8 +33,6 @@ function citation_distribute_menu() {
   		if (method_exists($service, 'admin_form')) {
   			$items['admin/settings/citation_distribute/'.$plugin['name']] = array(
   			  'title' => t('Configure ' . $plugin['title']),
-  			  //'page callback' => 'citation_distribute_plugin_admin',
-  			  //'page arguments' => array('plugin' => $plugin['name']),
   			  'page callback' => 'drupal_get_form',
   			  'page arguments' => array('citation_distribute_plugin_admin', $plugin['name']),
   				'file' => 'citation_distribute.admin.inc', 
