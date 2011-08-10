@@ -13,7 +13,7 @@
 
   $screenshot = t('no screenshoot available');
   if (file_exists($info['screenshot'])) {
-    $screenshot = theme('image', $info['screenshot'], t('Screenshot for %theme theme', array('%theme' => $info['name'])), '', array('class' => 'screenshot', 'id' => 'screenshot_' . $info['theme_name'], 'width' => 300, 'height' => 300,), FALSE);
+    $screenshot = theme('image', $info['screenshot'], t('Screenshot for %theme theme', array('%theme' => $info['name'])), '', array('class' => 'screenshot', 'id' => 'screenshot_' . $info['theme_name']), FALSE);
   }
 ?>
   <?php echo $screenshot?>
