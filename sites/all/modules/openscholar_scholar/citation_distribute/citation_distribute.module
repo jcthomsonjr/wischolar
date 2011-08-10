@@ -108,7 +108,7 @@ function citation_distribute_citation_distribute_plugins(){
 	$info['sword_dash'] = array(
 		'type' => 'push',
 		'title' => 'DASH',
-		'description' => 'Digital Access to Scholarship at Harvard',
+		'description' => 'Harvard\'s open access repository',
 		'handler' => array(
 			'parent' => 'service_sword',
 			'class' => 'citation_distribute_service_sword_dash',
@@ -120,7 +120,7 @@ function citation_distribute_citation_distribute_plugins(){
 	$info['googlescholar'] = array(
 		'type' => 'metadata',
 		'title' => 'Google Scholar',
-		'description' => 'Google Scholar',
+		'description' => 'Google\'s searchable index of citations',
 		'handler' => array(
 			'parent' => 'citation_distribute_service',
 			'class' => 'citation_distribute_service_googlescholar',
@@ -132,7 +132,7 @@ function citation_distribute_citation_distribute_plugins(){
 	$info['service_repec'] = array(
 		'type' => 'file',
 		'title' => 'RePEc',
-		'description' => 'RePEc',
+		'description' => 'Research Papers in Economics',
 		'handler' => array(
 			'parent' => 'citation_distribute_service',
 			'class'  => 'citation_distribute_service_repec',
@@ -182,6 +182,7 @@ function citation_distribute_form_alter(&$form, $form_state, $form_id) {
 				$form['citation_distribute_selections'][$plugin['name']] = array(
 					'#type'=>'checkbox',
 					'#title' => t('@repos', array('@repos' => $plugin['title'])),
+					'#description' => t('@desc', array('@desc' => $plugin['description'])),
 					'#default_value' => (bool)$auto,	
 					'#disabled' => false, //(bool)$published, //published items can't be unpublished.  should we try to support unpublish where possible?
 			  );
