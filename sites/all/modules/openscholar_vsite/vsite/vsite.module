@@ -472,6 +472,9 @@ function vsite_theme_registry_alter(&$theme_registry){
 }
 
 function vsite_contextual_links($links) {
+  // don't display any admin links if we're in the cp
+  if (context_isset('context', 'vsite-section-cp'))
+    return '';
   return theme('ctools_dropdown', "Admin", $links, false, 'vsite-admin contextual');
 }
 
