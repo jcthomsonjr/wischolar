@@ -463,6 +463,16 @@ function vsite_theme_registry_alter(&$theme_registry){
     	array_unshift($theme_registry['page']['preprocess functions'], 'context_page_alter');
     }
   }
+
+  // contextual
+  $theme_registry['contextual'] = array(
+    'arguments' => array('links' => array()),
+    'function' => 'vsite_contextual_links',
+  );
+}
+
+function vsite_contextual_links($links) {
+  return theme('ctools_dropdown', "Admin", $links, false, 'vsite-admin contextual');
 }
 
 /**
