@@ -898,32 +898,6 @@ function vsite_vsite_generic_settings(){
     )
   );
 
-  $a_settings['vsite_activity_insert'] = array(
-    'form' => array(
-      '#type' => 'radios',
-      '#title' => "Should an activity be recorded when you create a post?",
-      '#options' => array(1 => t('Record an activity message'), 0 => t('Do not record')),
-      '#default_value' => variable_get('vsite_activity_insert',1),
-    ),
-  );
-  $a_settings['vsite_activity_update'] = array(
-    'form' => array(
-      '#type' => 'radios',
-      '#title' => "Should an activity be recorded when you update a post?",
-      '#options' => array(1 => t('Record an activity message'), 0 => t('Do not record')),
-      '#default_value' => variable_get('vsite_activity_update',1),
-    ),
-  );
-
-  if (variable_get('vsite_private', 0)){
-       $a_settings['info'] = array(
-         'form' => array(
-           '#type' => 'item',
-           '#description' => "Note: Your site is private and activity messages will not be recorded untill your site becomes public.",
-         ),
-       );
-  }
-
   return $a_settings;
 }
 
