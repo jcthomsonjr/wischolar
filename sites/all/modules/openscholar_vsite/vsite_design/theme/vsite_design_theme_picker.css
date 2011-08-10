@@ -13,9 +13,10 @@
   }
 
 ul.theme-picker {
-  width: 2000em;
+  width: 80%;
   clear: both;
   padding:4px 0;
+	margin: 0 auto;
   }
 
 li.item-theme-picker  {
@@ -23,13 +24,18 @@ li.item-theme-picker  {
   margin: 3px 13px;
   display: inline-block;
 	vertical-align: top;
-  width: 550px;
-  height: 550px;
+  width: 300px;
+  height: 300px;
   position:relative;
   -moz-box-shadow: 0 0 20px #888;
   -webkit-box-shadow: 0 0 20px #888;
   box-shadow: 0 0 20px #888;
   color:#fff;
+  }
+
+ul.theme-picker img.screenshot {
+  width: 300px;
+  height: 300px;  
   }
 
 ul.theme-picker li.checked {
@@ -44,8 +50,8 @@ ul.theme-picker li .theme-info {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 10px 30px;
-  min-height: 65px;
+  padding: 10px 12px;
+ height: 15px;
   }
 
 ul.theme-picker li.checked .theme-info {
@@ -67,7 +73,6 @@ ul.theme-picker li.checked .theme-info {
 .theme-picker h3,
 ul.theme-picker li p,
 .item-theme-picker .form-item {
-  margin-top: 3px;
   font-size: 12px;
   line-height: 16px;
   margin-bottom: 0;
@@ -76,7 +81,7 @@ ul.theme-picker li p,
 .theme-picker h3,
 ul.theme-picker li p {
   float:left;
-  width: 55%;
+
   }
 
 .section-cp .item-theme-picker .form-item {

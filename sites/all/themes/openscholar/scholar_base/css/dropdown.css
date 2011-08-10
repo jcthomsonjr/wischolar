@@ -237,3 +237,42 @@ h2.title a.ctools-dropdown-link {
 .node-teaser.os-links-trail .node-inner {
   padding: 2px;
   }
+
+  
+  /* Styling for Contextual */
+
+.vsite-admin {
+	position: absolute;
+  right: 2px;
+  top: -16px;
+  display: none;
+  width: 100%;
+}
+
+.node:hover .vsite-admin,
+.block:hover .vsite-admin,
+.view:hover .vsite-admin,
+.comment:hover .vsite-admin,
+.page-node #content:hover .vsite-admin {
+	display: block;
+}
+
+.node:hover,
+.block:hover,
+.view:hover,
+.comment:hover,
+.page-node #content:hover {
+	outline: 1px #005C9C dashed;
+}
+
+.node .vsite-admin a.ctools-dropdown-link,
+.view .vsite-admin a.ctools-dropdown-link,
+.block .vsite-admin a.ctools-dropdown-link,
+.comment .vsite-admin a.ctools-dropdown-link {
+  background: url('../images/scholarbase-sprite.png') 0 -124px no-repeat transparent;
+  padding: 0 !important;
+  height: 16px;	
+  display: inline-block;
+  width: 16px;
+  text-indent: -999em;
+}
