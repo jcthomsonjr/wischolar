@@ -28,7 +28,7 @@ function os_spaces_presets() {
         'scholar_links' => 0,
         'scholar_software' => 0,
       ),
-      'spaces_og_selective' => 0,
+      'spaces_og_selective' => 3,
       'spaces_og_register' => 1,
       'spaces_og_directory' => 1,
       'spaces_og_private' => 0,
