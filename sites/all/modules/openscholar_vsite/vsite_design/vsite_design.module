@@ -200,7 +200,7 @@ function theme_vsite_design_theme_form($form) {
 	$output = drupal_render($form['vsite_design_maintheme']);
 
 	//UL List
-	$output .= '<ul class = "theme-picker">';
+	$output .= '<ul class = "theme-picker"><h2>Theme Picker</h2>(To choose a theme click on a tumbnail, then click the Save button in the black bar at the bottom of the screen)<br><br>';
 	foreach ($form['vsite_design_maintheme']['#enabled_themes'] as $o_theme){
 		$s_sub_theme = '';
 		$a_info = array_merge((array)$o_theme->info, array('theme_name'=>$o_theme->name));
