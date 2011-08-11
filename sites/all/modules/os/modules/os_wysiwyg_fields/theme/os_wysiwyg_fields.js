@@ -64,9 +64,11 @@
 		
 		if (!hasRun) {
 			// prevent wysiwyg_fields from stripping out the oembed code and replacing it with empty token
-			Drupal.wysiwyg.plugins.wysiwyg_fields_field_os_inline_oembed.detach = function (content, settings, instanceId) {
-				return Drupal.wysiwygFields.wysiwygDetach('zzzzz_do_not_find_me', content, settings, instanceId);
-			};
+			if (typeof Drupal.wysiwyg.plugins.wysiwyg_fields_field_os_inline_oembed == 'object') {
+				Drupal.wysiwyg.plugins.wysiwyg_fields_field_os_inline_oembed.detach = function (content, settings, instanceId) {
+					return Drupal.wysiwygFields.wysiwygDetach('zzzzz_do_not_find_me', content, settings, instanceId);
+				};
+			}
 		}
 		
 		// pull the Insert button out of a div and next to remove
