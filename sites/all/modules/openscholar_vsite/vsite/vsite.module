@@ -356,7 +356,7 @@ function vsite_preprocess_node(&$vars){
   // node admin links (see hook_vsite_admin_link)
   $links = vsite_get_admin_links('node', $node);
   if ($links) {
-    //$vars['vsite_admin_links'] = theme('ctools_dropdown', "Admin", $links , false, 'vsite-admin');
+    $vars['vsite_admin_links'] = theme('ctools_dropdown', "Admin", $links , false, 'vsite-admin');
   }
 
   // we dont print "submitted" info unless the feature explicitely asks
@@ -475,7 +475,7 @@ function vsite_contextual_links($links) {
   // don't display any admin links if we're in the cp
   if (context_isset('context', 'vsite-section-cp'))
     return '';
-  return theme('ctools_dropdown', " ", $links, false, 'vsite-admin contextual');
+  return ''; //theme('ctools_dropdown', " ", $links, false, 'vsite-admin contextual').'<div class="vsite-contextual-border"></div>';
 }
 
 /**

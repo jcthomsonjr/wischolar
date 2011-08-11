@@ -1,7 +1,6 @@
 html.js div.ctools-dropdown-container {
   display: none;
   position: absolute;
-  right: 0;
   top: 0;
   z-index:1001;
   white-space: nowrap;
@@ -240,33 +239,47 @@ h2.title a.ctools-dropdown-link {
 
   
   /* Styling for Contextual */
-
+/*
 .vsite-admin {
 	position: absolute;
   right: 2px;
   top: -16px;
   display: none;
   width: 100%;
+  text-align: right;
+}
+
+.vsite-contextual-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  outline: 1px dashed black;
+  display: none;
+  z-index: 1;
+}
+
+.node,
+.block,
+.view,
+.comment {
+	z-index: 2;
 }
 
 .node:hover .vsite-admin,
+.node:hover .vsite-contextual-border,
 .block:hover .vsite-admin,
-.view:hover .vsite-admin,
+.block:hover .vsite-contextual-border,
+.view:hover > .vsite-admin,
+.view:hover > .vsite-contextual-border,
 .comment:hover .vsite-admin,
-.page-node #content:hover .vsite-admin {
+.comment:hover .vsite-contextual-border {
 	display: block;
 }
 
-.node:hover,
-.block:hover,
-.view:hover,
-.comment:hover,
-.page-node #content:hover {
-	outline: 1px #005C9C dashed;
-}
-
 .node .vsite-admin a.ctools-dropdown-link,
-.view .vsite-admin a.ctools-dropdown-link,
+.view > .vsite-admin a.ctools-dropdown-link,
 .block .vsite-admin a.ctools-dropdown-link,
 .comment .vsite-admin a.ctools-dropdown-link {
   background: url('../images/scholarbase-sprite.png') 0 -124px no-repeat transparent;
@@ -276,3 +289,4 @@ h2.title a.ctools-dropdown-link {
   width: 16px;
   text-indent: -999em;
 }
+*/
