@@ -190,6 +190,7 @@ function _vsite_feed_content_types_filter(&$view){
  */
 function vsite_preprocess_views_view(&$vars){
   vsite_include('vsiteapi');
+  dpm($vars);
   if ($feature = vsite_active_feature()) {
     $contexts = context_enabled_contexts();
     $context = isset($contexts["openscholar-feature-{$feature}"]) ? $contexts["openscholar-feature-{$feature}"] : NULL;
@@ -214,6 +215,11 @@ function vsite_preprocess_views_view(&$vars){
       }
     }
   }
+  $view = &$vars['view'];
+  if ($links = vsite_get_admin_links('view', $view)) {
+    $vars['pager'] .= theme('ctools_dropdown', "", $links , false, 'vsite-admin');
+  }
+
 }
 
 /**
@@ -364,6 +370,13 @@ function vsite_preprocess_node(&$vars){
     $vars['submitted'] = '';
   }
 
+}
+
+function vsite_preprocess_block(&$vars) {
+  $block = &$vars['block'];
+  if ($links = vsite_get_admin_links('block', $block)) {
+    $block->content .= theme('ctools_dropdown', "", $links , false, 'vsite-admin');
+  }
 }
 
 /**
@@ -850,6 +863,29 @@ function node_vsite_admin_link($type, $object){
   return $links;
 }
 
+/*
+ * Implementation of hook_vsite_admin_link
+ */
+function block_vsite_admin_link($type, $object) {
+  $links = array();
+  if ($type != 'block') return;
+
+  $links['block-test'] = array(
+    'title' => t('Block Test'),
+    'href' => 'test',
+  );
+
+  // if this block comes from Views, the admin links will overlap
+  // merge them into one set of links
+  if ($block->module == 'views') {
+    // get view from id
+    // get links from id
+
+    $links;
+  }
+
+  return $links;
+}
 
 /**
  * Implemetation of hook_system_info_alter
