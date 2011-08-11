@@ -122,10 +122,18 @@ function os_wysiwyg_fields_oembedprovider_alter(&$providers) {
     if (!$p->disabled && strpos($p->name, 'oembedembedly') !== FALSE) {
       $schemes = explode("\n", $p->scheme);
       foreach ($schemes as $scheme) {
+        $pattern_replacements = array();
         $host = _oembedcore_get_host($scheme);
         if (!is_array($providers[$host])) continue;
-        foreach ($providers[$host] as &$pattern) {
+        foreach ($providers[$host] as $regex => &$pattern) {
+          if ($pos = strrpos($regex, '(.+)', strlen($regex)-5)) {
+            $pattern_replacements[$regex] = substr_replace($regex, '(.*)', $pos, 4);
+          }
           $pattern['callback'] = 'os_wysiwyg_fields_oembed_provider_callback';
+        }
+        foreach ($pattern_replacements as $old => $new) {
+          $providers[$host][$new] = $providers[$host][$old];
+          unset($providers[$host][$old]);
         }
       }
     }
@@ -140,8 +148,12 @@ function os_wysiwyg_fields_oembed_provider_callback($provider, $url, $matches, $
   unset($provider['callback']);
   $embed = oembedcore_oembed_fetch($provider, $url, $matches, $attributes);
 
+
+  // TODO: Refactor using DOMDocument
+  // DOMDocument will take a string as HTML. More forgiving than XML
+  $xml = str_replace(array('&'), array('%26'), $embed->html);
   // do things to it
-  $html = new SimpleXMLElement($embed->html);
+  $html = new SimpleXMLElement($xml);
   if ($html->getName() == 'object') {
     $param = $html->addChild('param');
     $param->addAttribute('name', 'wmode');

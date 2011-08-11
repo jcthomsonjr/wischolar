@@ -353,17 +353,10 @@ function vsite_get_vsite_by_node($node){
 function vsite_preprocess_node(&$vars){
   $node = $vars['node'];
 
-  // node admin links (see hook_vsite_admin_link)
-  $links = vsite_get_admin_links('node', $node);
-  if ($links) {
-    //$vars['vsite_admin_links'] = theme('ctools_dropdown', "Admin", $links , false, 'vsite-admin');
-  }
-
   // we dont print "submitted" info unless the feature explicitely asks
   if (! variable_get('node_submitted_info_' . $node->type, FALSE)) {
     $vars['submitted'] = '';
   }
-
 }
 
 /**
@@ -475,7 +468,7 @@ function vsite_contextual_links($links) {
   // don't display any admin links if we're in the cp
   if (context_isset('context', 'vsite-section-cp'))
     return '';
-  return theme('ctools_dropdown', " ", $links, false, 'vsite-admin contextual');
+  return ''; //theme('ctools_dropdown', " ", $links, false, 'vsite-admin contextual').'<div class="vsite-contextual-border"></div>';
 }
 
 /**
@@ -791,17 +784,6 @@ function vsite_page_alter(&$vars) {
 }
 
 /**
- * Retrieve the admin links for a given object.
- */
-function vsite_get_admin_links($type, $object){
-
-  $links = module_invoke_all('vsite_admin_link', $type, $object);
-  drupal_alter('vsite_admin_link', $links, $type, $object);
-
-  return $links;
-}
-
-/**
  * Define permissions
  */
 function vsite_perm(){
@@ -810,46 +792,6 @@ function vsite_perm(){
     "create openscholar site on behalf of others"
   );
 }
-
-/**
- * Implementation of hook_scholar_admin_link() on behalf of the node module.
- */
-function node_vsite_admin_link($type, $object){
-  $links = array();
-  if ($type == 'node') {
-    $path = "node/{$object->nid}/edit";
-    $item = menu_get_item($path);
-    if ($item && $item['access']) {
-
-      $links['node-edit'] = array(
-        'title' => t('Edit'),
-        'href' => $path,
-        'attributes' => array(
-          'class' => 'icon-edit'
-        ),
-        'query' => array(
-          'destination' => $_GET['q']
-        )
-      );
-    }
-    $path = "node/{$object->nid}/delete";
-    $item = menu_get_item($path);
-    if ($item && $item['access']) {
-      $links['node-delete'] = array(
-        'title' => t('Delete'),
-        'href' => "node/{$object->nid}/delete",
-        'attributes' => array(
-          'class' => 'icon-delete'
-        ),
-        'query' => array(
-          'destination' => $_GET['q']
-        )
-      );
-    }
-  }
-  return $links;
-}
-
 
 /**
  * Implemetation of hook_system_info_alter
