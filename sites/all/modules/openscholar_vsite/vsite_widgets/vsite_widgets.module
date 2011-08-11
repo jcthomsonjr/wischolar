@@ -207,7 +207,7 @@ function vsite_widgets_flag_alter(&$flag){
 /**
  * Implementation of hook_admin_link().
  */
-function vsite_widgets_admin_link($type, $object){
+function vsite_widgets_vsite_admin_link($type, $object){
   $links = array();
   global $user;
   //check font page settings here, only execute if front page setting equals flag
