@@ -9,13 +9,11 @@ function vsite_users_user($op, &$edit, &$account, $category = NULL) {
   switch ($op) {
     case 'view':
       $account -> content['web_sites'] = array(
-      '#title' => 'Site Membership Summary',
-      '#type' => 'user_profile_item',
-      '#value' => vsite_users_show_groups_list($account),
+	      '#title' => 'Site Membership Summary',
+	      '#type' => 'user_profile_item',
+	      '#value' => vsite_users_show_groups_list($account),
       );
-      break;
-    case 'form':
-      break;
+    break;
   }
 }
 
