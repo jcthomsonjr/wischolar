@@ -151,7 +151,7 @@ function os_wysiwyg_fields_oembed_provider_callback($provider, $url, $matches, $
 
   // TODO: Refactor using DOMDocument
   // DOMDocument will take a string as HTML. More forgiving than XML
-  $xml = str_replace(array('&'), array('%26'), $embed->html);
+  //  $xml = str_replace(array('&'), array('%26'), $embed->html);
   // do things to it
   $html = new SimpleXMLElement($xml);
   if ($html->getName() == 'object') {
