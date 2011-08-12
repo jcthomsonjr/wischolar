@@ -136,8 +136,8 @@ function os_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
       //Add default values for group type "vsite"
       if($node->type && $node->type == variable_get('scholar_content_type', 'vsite')){
         if(!isset($node->theme)){
-          $node->theme = 'scholar_airstream';
-          $node->og_theme = 'scholar_airstream';
+          $node->theme = variable_get('vsite_design_maintheme','scholar_airstream'); //Set defaults, if created through node/add
+          $node->og_theme = variable_get('vsite_design_maintheme','scholar_airstream');
         }
       }//set any defaults that need setting for group types
     break;
