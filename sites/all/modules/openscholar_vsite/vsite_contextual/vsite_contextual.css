@@ -10,7 +10,7 @@ div.ctools-dropdown div.ctools-dropdown-container {
  }
 
 /* the "Admin/Actions" link */
-.node .os-links .vsite-admin a.ctools-dropdown-link {
+.os-links .vsite-admin a.ctools-dropdown-link {
   position: absolute;
   font-size: 11px;
   font-family: 'helvetica neue', helvetica, arial, sans-serif;
@@ -32,7 +32,8 @@ div.ctools-dropdown div.ctools-dropdown-container {
   text-decoration: underline;
   }
 
-.node:hover .vsite-admin a.ctools-dropdown-link {
+.node:hover .vsite-admin a.ctools-dropdown-link,
+.block:hover .vsite-admin a.ctools-dropdown-link {
   background-position: 0 -123px;
   }
 
@@ -55,16 +56,14 @@ div.ctools-dropdown div.ctools-dropdown-container {
   width: auto;
 }
 
-.node-teaser .os-links .vsite-admin {
+.node-teaser .os-links .vsite-admin,
+.block .os-links .vsite-admin {
   display:none;
 }
 
-.node:hover .os-links .vsite-admin {
+.node:hover .os-links .vsite-admin,
+.block:hover .os-links .vsite-admin {
   display:block;
-}
-
-.node-inner {
-  padding: 3px;
 }
 
 .node-teaser.os-links-trail {
