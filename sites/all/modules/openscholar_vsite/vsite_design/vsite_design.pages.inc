@@ -4,7 +4,6 @@ function vsite_design_theme_picker_form($form_state) {
 
   // external files
   drupal_add_css(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.css');
-  drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design-sliding-container.js');
   drupal_add_js(drupal_get_path('module', 'vsite_design') . '/theme/vsite_design_theme_picker.js');
 
   //Showing and hiding the flavors
@@ -81,8 +80,7 @@ function vsite_design_theme_picker_form($form_state) {
     '#tree' => TRUE
   );
 
-  $help ='<div style="float: right" id="#helpbutton">' . theme('advanced_help_topic', 'vsitehelp', 'Chosing-your-Overall-Theme') .'</div>';
-  $form['#prefix'] = theme('vsite_design_theme_subnav', count($enabled)) . $help;
+  $form['#prefix'] = '<div style="float: right" id="#helpbutton">' . theme('advanced_help_topic', 'vsitehelp', 'Chosing-your-Overall-Theme') .'</div>';
 
   $form['#validate'][] = 'vsite_design_theme_picker_form_validate';
   $form['#submit'][] = 'vsite_design_theme_picker_form_submit';
