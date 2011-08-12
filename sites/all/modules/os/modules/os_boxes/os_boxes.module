@@ -26,7 +26,7 @@ function os_boxes_boxes_plugins() {
   $info['os_boxes_simple'] = array(
     'title' => 'Text',
     'description' => 'Simple custom text',
-    'tags' => array('Basic'),  
+    'tags' => array('Basic'),
     'handler' => array(
       'parent' => 'box',
       'class' => 'boxes_simple',
@@ -38,7 +38,7 @@ function os_boxes_boxes_plugins() {
   $info['os_boxes_feedreader'] = array(
     'title' => 'Feed Reader',  // i.e. view
     'description' => 'List of feed items',
-    'tags' => array('Content'),  
+    'tags' => array('Content'),
     'handler' => array(
       'class' => 'os_boxes_feedreader',
       'file' => 'os_boxes_feedreader.inc',
@@ -50,7 +50,7 @@ function os_boxes_boxes_plugins() {
   $info['os_boxes_rss'] = array(
     'title' => 'RSS feed',  // i.e. view
     'description' => 'RSS feed ??',
-    'tags' => array('Social'),  
+    'tags' => array('Social'),
     'handler' => array(
       'class' => 'os_boxes_feedreader',
       'file' => 'os_boxes_feedreader.inc',
@@ -59,10 +59,22 @@ function os_boxes_boxes_plugins() {
     ),
   );
   
+  $info['os_boxes_twitterfeed'] = array(
+    'title' => 'Twitter feed CUSTOM BOX',  // i.e. view
+    'description' => 'List of latest tweets',
+    'tags' => array('Social'),
+    'handler' => array(
+      'class' => 'os_boxes_twitterfeed',
+      'file' => 'os_boxes_twitterfeed.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+  
   $info['os_boxes_cclicense'] = array(
     'title' => 'CC License',  // i.e. view
     'description' => 'Displays CC license widget',
-    'tags' => array('Other'),  
+    'tags' => array('Other'),
     'handler' => array(
       'class' => 'os_boxes_cclicense',
       'file' => 'os_boxes_cclicense.inc',
@@ -74,7 +86,7 @@ function os_boxes_boxes_plugins() {
   $info['os_boxes_oembed'] = array(
     'title' => 'Media Embed',  // i.e. view
     'description' => 'Embed Media',
-    'tags' => array('Media', 'Social'),  
+    'tags' => array('Media', 'Social'),
     'handler' => array(
       'class' => 'os_boxes_oembed',
       'file' => 'os_boxes_oembed.inc',
@@ -98,11 +110,11 @@ function os_boxes_vsite_widgets(){
     if (isset($info['title'])) {
       
       $items["boxes_add__$key"] = array(
-        'module' => $info['module'], 
-        'delta' => "boxes_add__$key", 
-        'weight' => 20, 
-        'region' => false, 
-        'label' => $info['title'] 
+        'module' => 'boxes',//$info['module'],
+        'delta' => "boxes_add__$key",
+        'weight' => 20,
+        'region' => false,
+        'label' => $info['title']
       );
     
     }
@@ -183,14 +195,14 @@ function os_boxes_box_modal($js = NULL, $delta){
   $hash = boxes_create_hash($identifier);
   $delta = $identifier . "-" . $hash;
   $box = boxes_factory($plugin_key, array(
-    'delta' => $delta 
+    'delta' => $delta
   ));
   $form_state = array(
-    'box' => $box, 
-    'plugin_key' => $plugin_key, 
-    'custom_action' => TRUE, 
-    'ajax' => 'TRUE', 
-    'no_redirect' => TRUE 
+    'box' => $box,
+    'plugin_key' => $plugin_key,
+    'custom_action' => TRUE,
+    'ajax' => 'TRUE',
+    'no_redirect' => TRUE
   );
   $form = ctools_build_form('boxes_box_form', $form_state);
  // dpm($form);
