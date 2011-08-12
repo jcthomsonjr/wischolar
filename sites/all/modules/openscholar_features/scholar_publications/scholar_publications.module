@@ -705,7 +705,7 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
     $s_output .='"><div class="node-inner">';
 
 		//Add Vsite Admin links to entry
-	  $links = vsite_get_admin_links('node', $node);
+	  $links = vsite_contextual_get_admin_links('node', $node);
 	  if ($links) {
 	    $s_output .= '<div class="os-links">'.theme('ctools_dropdown', "Admin", $links , false, 'vsite-admin').'</div>';
 	  }
@@ -757,8 +757,6 @@ function theme_scholar_publications_biblio_entry($node, $base = 'biblio', $style
   if (isset($node->content['teaser']['#suffix'])) {
     $s_output .= $node->content['teaser']['#suffix'];
   }//honor drupal suffix
-
-  $s_output .= theme('contextual', contextual_get_links('node', $node));
 
   $links = module_invoke_all('link', 'node', $node, '');
   drupal_alter('link', $links, $node);
