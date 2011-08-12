@@ -33,7 +33,8 @@ div.ctools-dropdown div.ctools-dropdown-container {
   }
 
 .node:hover .vsite-admin a.ctools-dropdown-link,
-.block:hover .vsite-admin a.ctools-dropdown-link {
+.block:hover .vsite-admin a.ctools-dropdown-link,
+.view:hover > .os-links .vsite-admin a.ctools-dropdown-link {
   background-position: 0 -123px;
   }
 
@@ -57,12 +58,14 @@ div.ctools-dropdown div.ctools-dropdown-container {
 }
 
 .node-teaser .os-links .vsite-admin,
-.block .os-links .vsite-admin {
+.block .os-links .vsite-admin,
+.view > .os-links .vsite-admin {
   display:none;
 }
 
 .node:hover .os-links .vsite-admin,
-.block:hover .os-links .vsite-admin {
+.block:hover .os-links .vsite-admin,
+.view:hover > .os-links .vsite-admin {
   display:block;
 }
 
