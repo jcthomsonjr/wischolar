@@ -3,246 +3,8 @@
 include_once ('vsite.features.inc');
 
 /**
- * Implementation of hook spaces_plugins
+ * Core API ===========================================================
  */
-function vsite_spaces_plugins(){
-  $plugins = array();
-  $plugins['vsite'] = array(
-    'handler' => array(
-      'path' => drupal_get_path('module', 'vsite') . '/plugins',
-      'file' => 'vsite.inc',
-      'class' => 'vsite',
-      'parent' => 'space_og'
-    )
-  );
-  return $plugins;
-}
-
-/**
- * Alter the registry to replace spaces_og with vsite
- */
-function vsite_spaces_registry_alter(&$registry){
-
-  if (isset($registry['types']['og'])) {
-    $registry['types']['og']['plugin'] = 'vsite';
-  }
-}
-
-function vsite_menu(){
-  $items = array();
-
-  // nodeautocomplete callback for scholar
-  $items['vsite/node/autocomplete'] = array(
-    'type' => MENU_CALLBACK,
-    'title' => 'something',
-    'page callback' => 'vsite_node_autocomplete',
-    'file' => 'nodeautocomplete.inc',
-    'access arguments' => array(
-      'access content'
-    ),
-    'file path' => drupal_get_path('module', 'vsite') . '/includes'
-  );
-
-  $items['private_site'] = array(
-    'type' => MENU_CALLBACK,
-    'title' => 'Private Site',
-    'page callback' => 'vsite_private_site_login',
-    'access arguments' => array(
-      'access content'
-    )
-  );
-
-  $items['cp/settings/site_info/%vsite_group'] = array(
-    'title' => 'Site Information',
-    'page callback' => 'node_page_edit',
-    'file' => 'node.pages.inc',
-    'file path' => drupal_get_path('module', 'node'),
-    'page arguments' => array(3),
-    'weight' => 30,
-    'type' => MENU_LOCAL_TASK,
-    'menu_name' => 'cp',
-    'access callback' => 'cp_access_cp',
-  );
-
-  return $items;
-}
-
-/**
- * Implementation of hook_menu_alter().
- */
-function vsite_menu_alter(&$items) {
-  $router_items = array(
-    'node/%node/edit',
-  );
-  foreach (node_get_types('types', NULL, TRUE) as $type) {
-    $type_url_str = str_replace('_', '-', $type->type);
-    $router_items[] = 'node/add/'. $type_url_str;
-  }
-  foreach ($router_items as $path) {
-    if (isset($items[$path])) {
-      $arguments = isset($items[$path]['access arguments']) ? $items[$path]['access arguments'] : array();
-      $arguments[] = isset($items[$path]['access callback']) ? $items[$path]['access callback'] : NULL;
-      $items[$path]['access callback'] = 'vsite_node_menu_access';
-      $items[$path]['access arguments'] = $arguments;
-    }
-  }
-}
-
-/**
- * Includes different inc files
- */
-function vsite_include($inc_files){
-  $inc_files = is_array($inc_files) ? $inc_files : array(
-    $inc_files
-  );
-
-  $path = dirname(__FILE__);
-
-  foreach ( $inc_files as $inc ) {
-    if (file_exists("$path/includes/$inc.inc")) {
-      include_once "$path/includes/$inc.inc";
-    }
-  }
-}
-
-/**
- * Implementation of hook_theme().
- */
-function vsite_theme($cache, $type, $theme, $path){
-  $path = drupal_get_path('module', 'vsite');
-
-  $items['vsite_logo'] = array(
-    'arguments' => array(
-      'scholar' => NULL,
-      's_logo_field' => NULL,
-      'preset' => NULL,
-      'alt' => NULL,
-      'title' => NULL,
-      'attributes' => NULL
-    ),
-    'path' => $path . "/includes/",
-    'file' => 'vsiteapi.inc'
-  );
-
-  $items['vsite_login_link'] = array(
-    'arguments' => array(
-      'link_text' => NULL,
-      'a_attributes' => NULL
-    ),
-    'path' => $path . "/includes/",
-    'file' => 'vsiteapi.inc'
-  );
-
-  return $items;
-}
-
-/**
- * hook views_pre_build
- */
-function vsite_views_pre_build(&$view){
-  // the vsite_feed view should only display node from
-  // public features
-  if ($view->name == 'vsite_feed') {
-    _vsite_feed_content_types_filter($view);
-  }
-}
-
-/**
- * adds a "type" filter to a given view
- */
-function _vsite_feed_content_types_filter(&$view){
-  $vsite = vsite_get_vsite();
-  if (! $vsite) {
-    return;
-  }
-  vsite_include('vsiteapi');
-  $node_options = vsite_content_types();
-
-  // add a filter for "node types" in the view
-  $options = array();
-  foreach ( $node_options as $type => $value ) {
-    if ($value) {
-      $options[$type] = $type; // that's how views wants it
-    }
-  }
-
-  $v = array(
-    'operator' => 'in',
-    'value' => $options,
-    'group' => '0',
-    'exposed' => FALSE,
-    'expose' => array(
-      'operator' => FALSE,
-      'label' => ''
-    ),
-    'id' => 'type',
-    'table' => 'node',
-    'field' => 'type',
-    'relationship' => 'none'
-  );
-  $view->display_handler->set_option('title', $vsite->group->title);
-  $view->display_handler->set_option('style_options', array('description' => $vsite->group->og_description));
-  $view->set_item('feed', 'filter', 'type', $v);
-}
-
-/**
- * Implementation of preprocess_views_view().
- */
-function vsite_preprocess_views_view(&$vars){
-  vsite_include('vsiteapi');
-  if ($feature = vsite_active_feature()) {
-    $contexts = context_enabled_contexts();
-    $context = isset($contexts["openscholar-feature-{$feature}"]) ? $contexts["openscholar-feature-{$feature}"] : NULL;
-    $view = $vars['view'];
-    $space = spaces_get_space();
-
-    if ($space && $context && strpos($view->current_display, 'page') !== FALSE && empty($view->result) && empty($vars['empty'])) {
-      static $once;
-      if (! $once) {
-        $once = TRUE;
-
-        $output = '';
-        global $user;
-
-        // Get the first nodetype
-        if (! empty($context->node)) {
-          reset($context->node);
-          $nodetype = current($context->node);
-        }
-
-        $vars['empty'] = vsite_empty_view_message($nodetype, $space);
-      }
-    }
-  }
-}
-
-/**
- * Return the empty message for a given node type and vsite
- *
- * @param $node_type string
- * @param $space vsite
- * @return string
- */
-function vsite_empty_view_message($s_node_type, $space){
-  global $user;
-
-  if (! empty($s_node_type) && node_access('create', $s_node_type) && ($space->type == 'og') && $space->menu_access('node')) {
-    $types = node_get_types();
-    if ($type = $types[$s_node_type]) {
-      $output .= '<p class="empty-content">' . t('Add your first <span class="show-content-type">!type</span> to get started', array(
-        '!type' => $type->name
-      )) . '</p>';
-      //$output .=  theme('links', context_links()) ."</div>";
-    }
-  }
-  else {
-    $output .= t('There is currently no content to view in this section.');
-  }
-
-  return $output;
-}
-
-/** API functions **/
 
 /**
  * API function for getting the active site or a vsite specified by ID
@@ -331,7 +93,6 @@ function vsite_get_vsite_by_node($node){
     case 0 :
       return false;
       break;
-
     //assumes that node could be in multiple sites
     default :
       if (! empty($sites)) {
@@ -344,6 +105,253 @@ function vsite_get_vsite_by_node($node){
         return $spaces;
         break;
       }
+  }
+}
+
+/**
+ * Return the empty message for a given node type and vsite
+ *
+ * @param $node_type string
+ * @param $space vsite
+ * @return string
+ */
+function vsite_empty_view_message($s_node_type, $space){
+  global $user;
+
+  if (! empty($s_node_type) && node_access('create', $s_node_type) && ($space->type == 'og') && $space->menu_access('node')) {
+    $types = node_get_types();
+    if ($type = $types[$s_node_type]) {
+      $output .= '<p class="empty-content">' . t('Add your first <span class="show-content-type">!type</span> to get started', array(
+        '!type' => $type->name
+      )) . '</p>';
+      //$output .=  theme('links', context_links()) ."</div>";
+    }
+  }
+  else {
+    $output .= t('There is currently no content to view in this section.');
+  }
+
+  return $output;
+}
+
+/**
+ * Includes different inc files
+ */
+function vsite_include($inc_files){
+  $inc_files = is_array($inc_files) ? $inc_files : array(
+    $inc_files
+  );
+
+  $path = dirname(__FILE__);
+
+  foreach ( $inc_files as $inc ) {
+    if (file_exists("$path/includes/$inc.inc")) {
+      include_once "$path/includes/$inc.inc";
+    }
+  }
+}
+
+/**
+ * Set the default view for a feature
+ * @param string $s_view
+ */
+function vsite_set_default_feature_view($s_view = NULL){
+  static $cached_view;
+
+  if ($s_view !== NULL)
+    $cached_view = $s_view;
+
+  return isset($cached_view) ? $cached_view : false;
+}
+
+/**
+ * Returns the default view (if any) associated with the current active feature
+ */
+function vsite_get_default_feature_view(){
+  return vsite_set_default_feature_view();
+}
+
+///////// REVIEW THESE API FUNCTIONS /////// -RB 8/12
+
+/**
+ * Returns the group node given the id in a url
+ * @param $n_vsite_id integer (VSITE ID)
+ * @return object node
+ */
+function vsite_group_load($n_vsite_id = false){
+  if ($n_vsite_id === false)
+    $n_vsite_id = vsite_group_to_arg();
+
+  //Same as Site ID
+  $o_group_node = node_load($n_vsite_id);
+  $vsite = vsite_get_vsite();
+
+  if ($o_group_node->type == variable_get('scholar_content_type', 'vsite') && //Make sure that they have update permissions or they are accessing the node withing the context of thier own site
+($o_group_node->nid == $vsite->group->nid || node_access('update', $o_group_node))) { //Does not replace the functonality of 'access callback' but provides a stopgap
+    return $o_group_node;
+  }
+
+  return false;
+}
+
+/**
+ * Default the param to the current site, used when making a link
+ *
+ * @return number sid
+ */
+function vsite_group_to_arg(){
+  $vsite = vsite_get_vsite();
+  return $vsite->group->nid;
+}
+
+/**
+ * Render the private site login page
+ */
+function vsite_private_site_login(){
+  if (! user_is_logged_in()) {
+    $s_html = drupal_get_form('user_login');
+  }
+
+  return "This site is private, you must be logged in and be a site member to view." . $s_html;
+}
+
+/**
+ * Implemented hooks ==================================================
+ */
+
+/**
+ * Implementation of hook menu
+ */
+function vsite_menu(){
+  $items = array();
+
+  // nodeautocomplete callback for scholar
+  $items['vsite/node/autocomplete'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => 'something',
+    'page callback' => 'vsite_node_autocomplete',
+    'file' => 'nodeautocomplete.inc',
+    'access arguments' => array(
+      'access content'
+    ),
+    'file path' => drupal_get_path('module', 'vsite') . '/includes'
+  );
+
+  $items['private_site'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => 'Private Site',
+    'page callback' => 'vsite_private_site_login',
+    'access arguments' => array(
+      'access content'
+    )
+  );
+
+  $items['cp/settings/site_info/%vsite_group'] = array(
+    'title' => 'Site Information',
+    'page callback' => 'node_page_edit',
+    'file' => 'node.pages.inc',
+    'file path' => drupal_get_path('module', 'node'),
+    'page arguments' => array(3),
+    'weight' => 30,
+    'type' => MENU_LOCAL_TASK,
+    'menu_name' => 'cp',
+    'access callback' => 'cp_access_cp',
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function vsite_menu_alter(&$items) {
+  $router_items = array(
+    'node/%node/edit',
+  );
+  foreach (node_get_types('types', NULL, TRUE) as $type) {
+    $type_url_str = str_replace('_', '-', $type->type);
+    $router_items[] = 'node/add/'. $type_url_str;
+  }
+  foreach ($router_items as $path) {
+    if (isset($items[$path])) {
+      $arguments = isset($items[$path]['access arguments']) ? $items[$path]['access arguments'] : array();
+      $arguments[] = isset($items[$path]['access callback']) ? $items[$path]['access callback'] : NULL;
+      $items[$path]['access callback'] = 'vsite_node_menu_access';
+      $items[$path]['access arguments'] = $arguments;
+    }
+  }
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function vsite_theme($cache, $type, $theme, $path){
+  $path = drupal_get_path('module', 'vsite');
+
+  $items['vsite_logo'] = array(
+    'arguments' => array(
+      'scholar' => NULL,
+      's_logo_field' => NULL,
+      'preset' => NULL,
+      'alt' => NULL,
+      'title' => NULL,
+      'attributes' => NULL
+    ),
+    'path' => $path . "/includes/",
+    'file' => 'vsiteapi.inc'
+  );
+
+  $items['vsite_login_link'] = array(
+    'arguments' => array(
+      'link_text' => NULL,
+      'a_attributes' => NULL
+    ),
+    'path' => $path . "/includes/",
+    'file' => 'vsiteapi.inc'
+  );
+
+  return $items;
+}
+
+/**
+ * hook views_pre_build
+ */
+function vsite_views_pre_build(&$view){
+  // the vsite_feed view should only display node from
+  // public features
+  if ($view->name == 'vsite_feed') {
+    _vsite_feed_content_types_filter($view);
+  }
+}
+
+/**
+ * Implementation of preprocess_views_view().
+ */
+function vsite_preprocess_views_view(&$vars){
+  vsite_include('vsiteapi');
+  if ($feature = vsite_active_feature()) {
+    $contexts = context_enabled_contexts();
+    $context = isset($contexts["openscholar-feature-{$feature}"]) ? $contexts["openscholar-feature-{$feature}"] : NULL;
+    $view = $vars['view'];
+    $space = spaces_get_space();
+
+    if ($space && $context && strpos($view->current_display, 'page') !== FALSE && empty($view->result) && empty($vars['empty'])) {
+      static $once;
+      if (! $once) {
+        $once = TRUE;
+
+        $output = '';
+        global $user;
+
+        // Get the first nodetype
+        if (! empty($context->node)) {
+          reset($context->node);
+          $nodetype = current($context->node);
+        }
+
+        $vars['empty'] = vsite_empty_view_message($nodetype, $space);
+      }
+    }
   }
 }
 
@@ -464,6 +472,11 @@ function vsite_theme_registry_alter(&$theme_registry){
   );
 }
 
+/**
+ * Implementation of hook contextual links
+ * @param $links
+ * @todo Unfinished
+ */
 function vsite_contextual_links($links) {
   // don't display any admin links if we're in the cp
   if (context_isset('context', 'vsite-section-cp'))
@@ -635,17 +648,8 @@ function vsite_form_alter(&$form, $form_state, $form_id){
 }
 
 /**
- * Validate our custom arranged flags
- * @param $form array
- * @param $form_state array
- */
-function vsite_validate_node_flags($form, &$form_state){
-  //Reassign back to revision info for submission
-  if (isset($form_state['values']['options']['log']))
-    $form_state['values']['log'] = $form_state['values']['options']['log'];
-}
-
-/**
+ * Implementation of hook nodeapi
+ *
  * Submit our custom arranged flags
  * @param $form_id string
  * @param $form_values array
@@ -734,38 +738,6 @@ function vsite_nodeapi(&$node, $op, $teaser = NULL, $page = NULL){
   }
 }
 
-
-/**
- * Returns the group node given the id in a url
- * @param $n_vsite_id integer (VSITE ID)
- * @return object node
- */
-function vsite_group_load($n_vsite_id = false){
-  if ($n_vsite_id === false)
-    $n_vsite_id = vsite_group_to_arg();
-
-  //Same as Site ID
-  $o_group_node = node_load($n_vsite_id);
-  $vsite = vsite_get_vsite();
-
-  if ($o_group_node->type == variable_get('scholar_content_type', 'vsite') && //Make sure that they have update permissions or they are accessing the node withing the context of thier own site
-($o_group_node->nid == $vsite->group->nid || node_access('update', $o_group_node))) { //Does not replace the functonality of 'access callback' but provides a stopgap
-    return $o_group_node;
-  }
-
-  return false;
-}
-
-/**
- * Default the param to the current site, used when making a link
- *
- * @return number sid
- */
-function vsite_group_to_arg(){
-  $vsite = vsite_get_vsite();
-  return $vsite->group->nid;
-}
-
 /**
  * A preprocess_page() function that is called *before* all other
  * preprocessors (including template_preprocess_page()). This allows
@@ -783,6 +755,8 @@ function vsite_page_alter(&$vars) {
 }
 
 /**
+ * Implementation of hook perm
+ *
  * Define permissions
  */
 function vsite_perm(){
@@ -795,7 +769,7 @@ function vsite_perm(){
 /**
  * Implemetation of hook_system_info_alter
  *
- * Used to set the default vsite_layout regions on scholar themes
+ * Used to set the default regions used in scholar themes
  *
  * @param $info
  * @param $file
@@ -822,17 +796,6 @@ function vsite_system_info_alter(&$info, $file){
     $info['regions']['closure_region'] = "closure";
 
   }
-}
-
-/**
- * Render the private site login page
- */
-function vsite_private_site_login(){
-  if (! user_is_logged_in()) {
-    $s_html = drupal_get_form('user_login');
-  }
-
-  return "This site is private, you must be logged in and be a site member to view." . $s_html;
 }
 
 /**
@@ -876,25 +839,11 @@ function vsite_context_page_reaction(){
   }
 }
 
-function vsite_set_default_feature_view($s_view = NULL){
-  static $cached_view;
-
-  if ($s_view !== NULL)
-    $cached_view = $s_view;
-
-  return isset($cached_view) ? $cached_view : false;
-}
-
 /**
- * Returns the default view (if any) associated with a feature
- */
-function vsite_get_default_feature_view(){
-  return vsite_set_default_feature_view();
-}
-
-
-/**
- * Lookup the correct purl provider given a node to create a absolute deep link
+ * Lookup the correct purl provider given a node to create a absolute deep link.
+ *
+ * This is a higher cost function than $vsite->get_absolute(), but is useful if you have
+ * a view that is outside a vsite and you wish to link correctly to the vsite.
  */
 function vsite_add_purl_provider($node, &$options){
 
@@ -1011,39 +960,6 @@ function vsite_feature_default_view($feature){
 }
 
 
-/*
- * Not used at the moment
- * Retaining for future maybe use
- */
-function vsite_access_feature() {
-  $vsite = vsite_get_vsite();
-  if (!$vsite) return true;
-
-  $args = func_get_args();
-  if (is_array($args[4])) {
-    return call_user_func_array('spaces_access_feature_perms', $args);
-  }
-  else {
-    return call_user_func_array('spaces_access_feature', $args);
-  }
-}
-
-function vsite_views_plugins() {
-  return array(
-    'module' => 'vsite',
-    'access' => array(
-      'vsite_feature' => array(
-        'title' => t('Vsite feature'),
-        'help' => t('Access will be granted if the given feature is enabled in the current space, or if not in a space.'),
-        'handler' => 'vsite_plugin_access_spaces_feature',
-        'path' => drupal_get_path('module', 'vsite') .'/includes',
-        'parent' => 'spaces_feature',
-        'uses options' => TRUE,
-      ),
-    ),
-  );
-}
-
 /**
  * Vsite Node menu access callback. Allows vsite to restrict access
  * to nodes outside a space before it allows space types to manage access as
@@ -1055,10 +971,6 @@ function vsite_node_menu_access(){
   $args = func_get_args();
   $access_callback = array_pop($args);
 
-//  if($access_callback == "og_menu_access_node_edit" && is_object($args[0])){
-//  	$args[0]->status = 1;
-//  }//We want to treat access published and unpublished nodes the same when editing them
-//
   if (empty($access_callback) || call_user_func_array($access_callback, $args)) {
 
     $access_param = array_pop($args);
@@ -1095,4 +1007,91 @@ function vsite_strongarm_alter(&$vars){
 		}
 	}//Allow access to og content type by default
 
+}
+
+/**
+ * Spaces Integration  ===========================================================
+ */
+
+/**
+ * Implementation of hook spaces_plugins
+ */
+function vsite_spaces_plugins(){
+  $plugins = array();
+  $plugins['vsite'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'vsite') . '/plugins',
+      'file' => 'vsite.inc',
+      'class' => 'vsite',
+      'parent' => 'space_og'
+    )
+  );
+  return $plugins;
+}
+
+/**
+ * Alter the registry to extend spaces_og with vsite
+ */
+function vsite_spaces_registry_alter(&$registry){
+
+  if (isset($registry['types']['og'])) {
+    $registry['types']['og']['plugin'] = 'vsite';
+  }
+}
+
+/**
+ * Form Functions  ===========================================================
+ */
+
+/**
+ * Validate our custom arranged flags
+ * @param $form array
+ * @param $form_state array
+ */
+function vsite_validate_node_flags($form, &$form_state){
+  //Reassign back to revision info for submission
+  if (isset($form_state['values']['options']['log']))
+    $form_state['values']['log'] = $form_state['values']['options']['log'];
+}
+
+/**
+ * Private Util Functions  ===========================================================
+ */
+
+/**
+ * adds a "type" filter to a given view
+ */
+function _vsite_feed_content_types_filter(&$view){
+  $vsite = vsite_get_vsite();
+  if (! $vsite) {
+    return;
+  }
+  vsite_include('vsiteapi');
+  $node_options = vsite_content_types();
+
+  // add a filter for "node types" in the view
+  $options = array();
+  foreach ( $node_options as $type => $value ) {
+    if ($value) {
+      $options[$type] = $type; // that's how views wants it
+    }
+  }
+
+  $v = array(
+    'operator' => 'in',
+    'value' => $options,
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => ''
+    ),
+    'id' => 'type',
+    'table' => 'node',
+    'field' => 'type',
+    'relationship' => 'none'
+  );
+  $view->display_handler->set_option('title', $vsite->group->title);
+  $view->display_handler->set_option('style_options', array('description' => $vsite->group->og_description));
+  $view->set_item('feed', 'filter', 'type', $v);
 }
