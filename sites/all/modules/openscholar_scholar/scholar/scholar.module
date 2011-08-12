@@ -162,7 +162,7 @@ function _scholar_basicinfo_wdgt(){
 function _scholar_logo_wdgt(){
 
   $block['subject'] = t(''); // intentionally blank
-  $block['content'] = '<div id="logo"><a href="'.url("home").'">'.theme('vsite_logo',vsite_get_vsite(),'field_vsite_logo' ,'vsite_design_landscape_logo').'</a></div>';
+  $block['content'] = '<div id="logo"><a href="'.url("<front>").'">'.theme('vsite_logo',vsite_get_vsite(),'field_vsite_logo' ,'vsite_design_landscape_logo').'</a></div>';
 
   return $block;
 }

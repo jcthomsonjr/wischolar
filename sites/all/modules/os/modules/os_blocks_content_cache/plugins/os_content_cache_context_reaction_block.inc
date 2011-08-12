@@ -6,7 +6,7 @@
 class os_content_cache_context_reaction_block extends vsite_context_reaction_block {
 	
 	protected $cache_default_min_lifespan = -1;
-	protected $cache_default_max_lifespan = 3600; //One Hour
+	protected $cache_default_max_lifespan = 43200; //12 Hours
 
   /**
    * Build a block's content. Largely taken from block_list().
