@@ -59,6 +59,18 @@ function os_boxes_boxes_plugins() {
     ),
   );
   
+  $info['os_boxes_twitterfeed'] = array(
+    'title' => 'Twitter feed CUSTOM BOX',  // i.e. view
+    'description' => 'List of latest tweets',
+    'tags' => array('Social'),  
+    'handler' => array(
+      'class' => 'os_boxes_twitterfeed',
+      'file' => 'os_boxes_twitterfeed.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+  
   $info['os_boxes_cclicense'] = array(
     'title' => 'CC License',  // i.e. view
     'description' => 'Displays CC license widget',
