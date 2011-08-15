@@ -12,7 +12,8 @@ class os_boxes_shields extends os_boxes_default {
   public function options_defaults() {
     $options = parent::options_defaults();
 
-    //$options['license_type'] = 'cc';
+    $options['vsite_shields_disable_shield'] = variable_get('vsite_shields_disable_shield', 0);
+    $options['vsite_shields_shield'] = variable_get('vsite_shields_shield', '');
     return $options;
   }
 
@@ -25,8 +26,8 @@ class os_boxes_shields extends os_boxes_default {
       '#prefix' => "<br />",
       '#type' => 'checkbox',
       '#title' => t('Disable Shields'),
+      '#default_value' = $this->options['vsite_shields_disable_shields'],
       '#attributes' => array('onChange' => "vsite_shields_grey_out(this);"),
-      '#default_value' => variable_get('vsite_shields_disable_shield', 0),
       '#description' => "Select the shield that you wish to appear in the 'shield widget' on your site.  Click disable to display none.",
     );
     //The shield List
@@ -51,7 +52,6 @@ class os_boxes_shields extends os_boxes_default {
         '#type' => 'radios',
         '#options' => $shield_options,
         // use the spaces original value, which should always be set as long as a shield has been uploaded
-        '#default_value' => variable_get('vsite_shields_shield', ''),
         '#suffix' => '</div>',
         '#pre_render' => array('os_boxes_shields_prerender'),
       );
@@ -83,7 +83,7 @@ class os_boxes_shields extends os_boxes_default {
 
   	$s_filename = variable_get('vsite_shields_shield', '');
   	if ($s_filename) {
-  	  $block['subject'] = t('');
+  	  $block['subject'] = $block['title'] = '';
   	  $block['content'] = '<div id="scholar-shield"><img src="'.url($s_filename, array('alias' => TRUE)).'" /> </div>';
 
   	  return $block;
