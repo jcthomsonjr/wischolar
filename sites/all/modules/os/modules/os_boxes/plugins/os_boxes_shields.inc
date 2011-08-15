@@ -26,7 +26,7 @@ class os_boxes_shields extends os_boxes_default {
       '#prefix' => "<br />",
       '#type' => 'checkbox',
       '#title' => t('Disable Shields'),
-      '#default_value' = $this->options['vsite_shields_disable_shields'],
+      '#default_value' => $this->options['vsite_shields_disable_shields'],
       '#attributes' => array('onChange' => "vsite_shields_grey_out(this);"),
       '#description' => "Select the shield that you wish to appear in the 'shield widget' on your site.  Click disable to display none.",
     );
