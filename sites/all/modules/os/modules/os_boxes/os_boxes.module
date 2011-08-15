@@ -104,6 +104,29 @@ function os_boxes_boxes_plugins() {
 function os_boxes_vsite_widgets(){
   $items = array();
   
+  /**
+   * Avalible block defintions
+   */
+  ctools_include('plugins');
+  $plugins = ctools_get_plugins('boxes', 'plugins');
+
+  $items = array();
+  foreach ( $plugins as $key => $info ) {
+    if (isset($info['title'])) {
+      $items["boxes-boxes_add__$key"] = array(
+        'module' => 'boxes',
+        'delta' => "boxes_add__$key",
+        'weight' => -10,
+        'region' => false,
+        'label' => $info['title'],
+        'block_config' => "cp/osboxes/nojs/{$key}",
+      );
+    }
+  }
+  
+  /**
+   * Block instances for this site
+   */
   $boxes = boxes_load();
   foreach ($boxes as $box) {
   	if(!$box->delta) continue;

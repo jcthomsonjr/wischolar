@@ -488,10 +488,6 @@ function vsite_layout_region_widgets( $page_type = 'none') {
   $default_blocks = module_invoke_all('vsite_widgets');
   foreach ($default_blocks as $s_key => $a_block) $default_blocks[$s_key]['region'] = false; //Get any new blocks that have been introduced, and include them in the top bar
   
-  if(module_exists('boxes')){
-  	$default_blocks = array_merge(vsite_layout_get_default_block_plugins(),$default_blocks);
-  }
-  
   $a_region_widgets = array();
   if($context && ($a_widgets = $context->reactions['block']['blocks'])){
     $a_widgets = array_merge($default_blocks,$a_widgets);
@@ -509,27 +505,4 @@ function vsite_layout_region_widgets( $page_type = 'none') {
   }
 
   return $a_region_widgets;
-}
-
-/**
- * Get the box definitions that are avalible for block creation
- */
-function vsite_layout_get_default_block_plugins(){
-  ctools_include('plugins');
-  $plugins = ctools_get_plugins('boxes', 'plugins');
-
-  $items = array();
-  foreach ( $plugins as $key => $info ) {
-    if (isset($info['title'])) {
-      $items["boxes-boxes_add__$key"] = array(
-        'module' => 'boxes',
-        'delta' => "boxes_add__$key",
-        'weight' => -10,
-        'region' => false,
-        'label' => $info['title']
-      );
-    }
-  }
-  
-  return $items;
 }
