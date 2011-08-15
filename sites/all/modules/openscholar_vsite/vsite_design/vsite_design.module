@@ -212,7 +212,7 @@ function theme_vsite_design_theme_form($form) {
 			}//Is a sub-flavor set?
 		}//Are there flavors to select from?
 
-		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['vsite_design_maintheme']['#default_value'])?'checked':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' .
+		$output .= '<li class = "item-theme-picker '.(($o_theme->name == $form['vsite_design_maintheme']['#default_value'])?'checked current':'').'" id="maintheme-'.str_replace('_','-',$o_theme->name) .'">' .
 		             theme('vsite_design_theme_picker', $a_info ,$s_sub_theme) .
 		           '</li>';
 	}
