@@ -420,7 +420,7 @@ function cp_preprocess_page(&$vars){
         'title' => t('Hello <strong>!username</strong>', array(
           '!username' => $user->name
         )),
-        'href' => 'cp/users',
+        'href' => 'user',
         'html' => TRUE
       );
       $user_links[] = array(
@@ -775,7 +775,7 @@ function cp_toolbar_menu_links(){
     'title' => t('Hello <strong>!username</strong>', array(
       '!username' => $user->name
     )),
-    'href' => 'cp/users',
+    'href' => 'user',
     'html' => TRUE
   );
   $user_links[] = array(

@@ -198,7 +198,7 @@ function iqss_pinserver_register_notify($user, $vsite, $alter = TRUE){
   '!uri_brief' => preg_replace('!^https?://!', '', $base_url),
   '!mailto' => $user->mail,
   '!date' => format_date(time(), 'medium', '', NULL, $message['language']->language),
-  '!scholar_edit_url' => url($vsite -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
+  '!scholar_edit_url' => url("user/{$user->uid}/edit", array('absolute' => TRUE)),
   '!help_about' =>  url('help/vsitehelp/Scholar-Web-Sites-Project-Documentation', array('absolute' => TRUE)),
   '!help_getting_started' => url( 'help/vsitehelp/Getting-Started', array('absolute' => TRUE)),
   '!help_features' => url('help/vsitehelp/Features', array('absolute' => TRUE)),

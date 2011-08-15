@@ -254,7 +254,7 @@ function scholarregister_notify_user($vsite, $user){
       'absolute' => TRUE,
       'language' => $message['language']
     )),
-    '!scholar_edit_url' => url($vsite -> group -> purl . "/cp/users/myaccount", array('absolute' => TRUE)),
+    '!scholar_edit_url' => url("/user/{$user->uid}/edit", array('absolute' => TRUE)),
     '!password' => $password
   );
 
