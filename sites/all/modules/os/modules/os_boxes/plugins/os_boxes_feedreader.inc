@@ -31,9 +31,28 @@ class os_boxes_feedreader extends os_boxes_default {
       ), 
       '#required' => TRUE,
     );
+    
+    
+    //add this user's feeds to #options
+    //$view = views_get_view('scholar_reader');
+    //$view->set_display();
+    $query = 'SELECT n.nid,n.title FROM {og_ancestry} og INNER JOIN {node} n on og.nid = n.nid WHERE n.type = "feed" '; //WHERE USER
+    if ($vsite = vsite_get_vsite()) {
+      $query .= ' AND og.group_nid = %d ';
+      $uid = $vsite->id;
+    } else {
+      $uid = null;
+    }
+    $result = db_query($query, $uid);
+    while ($r = db_fetch_object($result)) {
+      $form['feed']['#options'] += array($r->nid => $r->title);
+    }
+    
+    
     $form['number_of_items'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of items to display'),
+      '#default_value' => $this->options['number_of_items']
     );
 
     $form += parent::options_form();
