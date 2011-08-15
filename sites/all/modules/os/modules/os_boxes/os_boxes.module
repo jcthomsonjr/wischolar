@@ -103,30 +103,20 @@ function os_boxes_boxes_plugins() {
  */
 function os_boxes_vsite_widgets(){
   $items = array();
-  ctools_include('plugins');
-  $plugins = ctools_get_plugins('boxes', 'plugins');
-  //dpm($plugins);
-  foreach ( $plugins as $key => $info ) {
-    if (isset($info['title'])) {
-      
-      $items["boxes_add__$key"] = array(
-        'module' => 'boxes',//$info['module'],
-        'delta' => "boxes_add__$key",
-        'weight' => 20,
-        'region' => false,
-        'label' => $info['title']
-      );
-    
-    }
-  }
   
-    $items['boxes-og-3-5e481b5d'] = array(
-      'module' => 'boxes',
-      'delta' => 'og-3-5e481b5d',
-      'weight' => -5,
-      'region' => 'right',
-      'label' => 'XXXXXXXX',
+  $boxes = boxes_load();
+  foreach ($boxes as $box) {
+  	if(!$box->delta) continue;
+    $items["boxes-{$box->delta}"] = array(
+      'module' => 'boxes',//$info['module'],
+      'delta' => $box->delta,
+      'weight' => 20,
+      'region' => false,
+      'label' => $box->title,
+      'cache' => BLOCK_CACHE_CONTENT_CACHE,
     );
+  }
+
   return $items;
 }
 
