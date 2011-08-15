@@ -82,8 +82,9 @@ function pathauto_extra_preprocess_page(&$variables) {
   if (arg(0) == 'node' && arg(1) == 'add' && arg(2)) {
     $vsite=vsite_get_vsite();
     $data = array( 'pathauto_extra' => array(
-        'type' => arg(2),
-        'gid' => $vsite->id,
+      'type' => arg(2),
+      'gid' => $vsite->id,
+      'make_alias' => TRUE,
     ));
        
     drupal_add_js($data, 'setting');

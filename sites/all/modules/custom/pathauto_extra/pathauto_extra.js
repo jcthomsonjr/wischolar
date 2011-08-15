@@ -27,16 +27,18 @@ $(document).ready(function() {
   
   //add listener to URL path settings.  fetch new path via ajax
   $('a.vertical-tabs-list-path').click(function(){
-    var href = href = 'http://' + document.location.host + '/pathauto_extra/alias_js';
-    var data = Drupal.settings.pathauto_extra;
-    data.title = $.trim($('#edit-title').attr('value'));
+    if (Drupal.settings.pathauto_extra && Drupal.settings.pathauto_extra.make_alias) {
+      var href = href = 'http://' + document.location.host + '/pathauto_extra/alias_js';
+      var data = Drupal.settings.pathauto_extra;
+      data.title = $.trim($('#edit-title').attr('value'));
     
-    if (  data.title.length > 0 && $('#edit-pathauto-perform-alias').attr('checked')  ) {
-      $.getJSON(href, data, function(json) {
-        if (json.status) {
-          $('#edit-path').attr('value', json.data);
-        }
-      });
+      if (  data.title.length > 0 && $('#edit-pathauto-perform-alias').attr('checked')  ) {
+        $.getJSON(href, data, function(json) {
+          if (json.status) {
+            $('#edit-path').attr('value', json.data);
+          }
+        });
+      }
     }
   });
   
