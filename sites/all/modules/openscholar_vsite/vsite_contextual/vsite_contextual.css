@@ -48,7 +48,7 @@ div.ctools-dropdown div.ctools-dropdown-container {
   height: 18px;
   position: absolute;
   right: 0;
-  top: -18px;
+  top: 2px;
   width: 14px;
   padding: 0 0 5px 5px;
   z-index:1;
@@ -90,6 +90,21 @@ div.ctools-dropdown div.ctools-dropdown-container {
   padding: 2px;
 }
 
+.os-links-outline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  outline: 1px dashed black;
+  display: none;
+  z-index: 1;
+}
+
+*:hover > .os-links-outline {
+	display: block;
+}
+
   
   /* Styling for Contextual */
 /*
@@ -100,17 +115,6 @@ div.ctools-dropdown div.ctools-dropdown-container {
   display: none;
   width: 100%;
   text-align: right;
-}
-
-.vsite-contextual-border {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  outline: 1px dashed black;
-  display: none;
-  z-index: 1;
 }
 
 .node,
