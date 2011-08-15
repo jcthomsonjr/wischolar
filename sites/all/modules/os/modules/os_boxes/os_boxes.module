@@ -34,7 +34,7 @@ function os_boxes_boxes_plugins() {
       'path' => drupal_get_path('module', 'boxes') .'/plugins',
     ),
   );
-  
+
   $info['os_boxes_feedreader'] = array(
     'title' => 'Feed Reader',  // i.e. view
     'description' => 'List of feed items',
@@ -46,7 +46,7 @@ function os_boxes_boxes_plugins() {
       'parent' => 'os_boxes_default',
     ),
   );
-  
+
   $info['os_boxes_rss'] = array(
     'title' => 'RSS feed',  // i.e. view
     'description' => 'RSS feed ??',
@@ -58,7 +58,7 @@ function os_boxes_boxes_plugins() {
       'parent' => 'os_boxes_default',
     ),
   );
-  
+
   $info['os_boxes_twitterfeed'] = array(
     'title' => 'Twitter feed CUSTOM BOX',  // i.e. view
     'description' => 'List of latest tweets',
@@ -70,7 +70,7 @@ function os_boxes_boxes_plugins() {
       'parent' => 'os_boxes_default',
     ),
   );
-  
+
   $info['os_boxes_cclicense'] = array(
     'title' => 'CC License',  // i.e. view
     'description' => 'Displays CC license widget',
@@ -82,7 +82,7 @@ function os_boxes_boxes_plugins() {
       'parent' => 'os_boxes_default',
     ),
   );
-  
+
   $info['os_boxes_oembed'] = array(
     'title' => 'Media Embed',  // i.e. view
     'description' => 'Embed Media',
@@ -95,6 +95,18 @@ function os_boxes_boxes_plugins() {
     ),
   );
 
+  $info['os_boxes_shields'] = array(
+    'title' => 'Shield',
+    'description' => 'Department Shield',
+    'tags' => array('Other'),
+    'handler' => array(
+      'class' => 'os_boxes_shields',
+      'file' => 'os_boxes_shields.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    )
+  );
+
   return $info;
 }
 
@@ -103,7 +115,7 @@ function os_boxes_boxes_plugins() {
  */
 function os_boxes_vsite_widgets(){
   $items = array();
-  
+
   /**
    * Avalible block defintions
    */
@@ -123,7 +135,7 @@ function os_boxes_vsite_widgets(){
       );
     }
   }
-  
+
   /**
    * Block instances for this site
    */
@@ -166,12 +178,12 @@ function os_boxes_menu() {
       );
     }
   }
-  
+
   $items['osboxestest'] = array(
     'title' => 'somettite',
     'page callback' => 'os_boxes_test',
     'access callback' => TRUE
-  
+
   );
   return $items;
 }
@@ -184,7 +196,7 @@ function os_boxes_test(){
   ctools_modal_add_js();
 
   $output = ctools_modal_text_button('simplebox', 'cp/osboxes/nojs/simple', 'simplebox', 'context-button');
-  
+
   return $output;
 }
 
@@ -194,12 +206,12 @@ function os_boxes_test(){
 function os_boxes_box_modal($js = NULL, $delta){
   module_load_include('inc', 'boxes', 'boxes.admin');
   module_load_include('inc', 'boxes', 'plugins/boxes_box');
-  
+
   // Fall back if $js is not set.
   if (! $js) {
     return drupal_get_form('boxes_add_form', $delta);
   }
-  
+
   ctools_include('modal');
   ctools_include('ajax');
   ctools_include('form');
@@ -219,9 +231,9 @@ function os_boxes_box_modal($js = NULL, $delta){
   );
   $form = ctools_build_form('boxes_box_form', $form_state);
  // dpm($form);
-  
+
   $output = ctools_modal_form_render($form_state, $form);
-  
+
   if (empty($output)) {
     // empty $output signifies success, so we'll use it as our $commands
     // array.
