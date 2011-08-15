@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * @file
+ * The class for "Shield" type widgets.
+ */
+
+class os_boxes_shields extends os_boxes_default {
+  /**
+   * Implementation of boxes_content::options_defaults().
+   */
+  public function options_defaults() {
+    $options = parent::options_defaults();
+
+    //$options['license_type'] = 'cc';
+    return $options;
+  }
+
+  /**
+   * Implementation of boxes_content::options_form().
+   */
+  public function options_form(){
+
+    $form['vsite_shields_disable_shield'] = array(
+      '#prefix' => "<br />",
+      '#type' => 'checkbox',
+      '#title' => t('Disable Shields'),
+      '#attributes' => array('onChange' => "vsite_shields_grey_out(this);"),
+      '#default_value' => variable_get('vsite_shields_disable_shield', 0),
+      '#description' => "Select the shield that you wish to appear in the 'shield widget' on your site.  Click disable to display none.",
+    );
+    //The shield List
+    $a_shields = variable_get('vsite_shields_shield_info', array());
+
+    if (count($a_shields)) {
+      $shield_options = array();
+      $path_prefix = file_create_path().'/vsite_shields/';
+      foreach ($a_shields as $fname => $shield)  {
+        if (!$shield['hidden']) {
+          $shield_obj = new stdClass();
+          $shield_obj->filename = $path_prefix.$fname;
+          if (file_exists($shield_obj->filename)) {
+            $shield_options[$shield_obj->filename] = theme('vsite_shields_theme_shieldpicker', $shield_obj);
+          }
+        }
+      }
+
+      $form['vsite_shields_shield'] = array(
+        '#prefix' => "<div class='shield_wrapper clear-block'>",
+        '#title' => t('Shield'),
+        '#type' => 'radios',
+        '#options' => $shield_options,
+        // use the spaces original value, which should always be set as long as a shield has been uploaded
+        '#default_value' => variable_get('vsite_shields_shield', ''),
+        '#suffix' => '</div>',
+        '#pre_render' => array('os_boxes_shields_prerender'),
+      );
+    }
+    if (empty($shield_options)) {
+      $form['vsite_shields_shield'] = array(
+        '#type' => 'markup',
+        '#value' => t('Your site has no shields to display.'),
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+      );
+    }
+  //END Shield List
+
+    $form += parent::options_form();
+    return $form;
+  }
+
+  /**
+   * Implementation of boxes_content::render().
+   */
+  public function render() {
+    //@todo
+    $block = parent::render();
+  	$shields = variable_get('vsite_shields_shield_info', array());
+  	if(!vsite_widgets_shield_access() || empty($shields)) {
+  		return $block;
+  	}//Disabled?
+
+  	$s_filename = variable_get('vsite_shields_shield', '');
+  	if ($s_filename) {
+  	  $block['subject'] = t('');
+  	  $block['content'] = '<div id="scholar-shield"><img src="'.url($s_filename, array('alias' => TRUE)).'" /> </div>';
+
+  	  return $block;
+  	}
+    return $block;
+  }
+
+}
+
+function os_boxes_shields_prerender($elements) {
+  drupal_add_css(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.css');
+  drupal_add_js(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields-shield-picker.js');
+  drupal_add_js(drupal_get_path('module', 'vsite_shields') . '/theme/vsite_shields.greyout.js');
+
+  return $elements;
+}
