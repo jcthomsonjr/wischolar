@@ -48,14 +48,10 @@ div.ctools-dropdown div.ctools-dropdown-container {
   height: 18px;
   position: absolute;
   right: 0;
-  top: -18px;
+  top: 0px;
   width: 14px;
   padding: 0 0 5px 5px;
-  z-index:1;
-}
-
-.title + .os-links {
-	top: 2px;
+  z-index:2;
 }
   
 .node-teaser .os-links {
@@ -80,7 +76,7 @@ div.ctools-dropdown div.ctools-dropdown-container {
 }
 
 .node-teaser.os-links-trail {
-  border:1px solid #ccd5f1;
+  border: 1px dashed black;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
@@ -88,6 +84,21 @@ div.ctools-dropdown div.ctools-dropdown-container {
 
 .node-teaser.os-links-trail .node-inner {
   padding: 2px;
+}
+
+.os-links-outline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  outline: 1px dashed black;
+  display: none;
+  z-index: 0;
+}
+
+*:hover > .os-links-outline {
+	display: block;
 }
 
   
@@ -100,17 +111,6 @@ div.ctools-dropdown div.ctools-dropdown-container {
   display: none;
   width: 100%;
   text-align: right;
-}
-
-.vsite-contextual-border {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  outline: 1px dashed black;
-  display: none;
-  z-index: 1;
 }
 
 .node,

@@ -25,6 +25,7 @@
     <div class="os-links">
       <?php print $vsite_admin_links; ?>
     </div>
+  	<div class="os-links-outline"></div>
   <?php endif; ?>
   <?php if ($admin_links): ?>
     <div class="views-admin-links views-hide">
