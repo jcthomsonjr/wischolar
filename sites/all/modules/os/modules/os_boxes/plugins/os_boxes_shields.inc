@@ -12,8 +12,8 @@ class os_boxes_shields extends os_boxes_default {
   public function options_defaults() {
     $options = parent::options_defaults();
 
-    $options['vsite_shields_disable_shield'] = variable_get('vsite_shields_disable_shield', 0);
-    $options['vsite_shields_shield'] = variable_get('vsite_shields_shield', '');
+    $options['disabled'] = FALSE;
+    $options['shield'] = "";
     return $options;
   }
 
@@ -22,11 +22,11 @@ class os_boxes_shields extends os_boxes_default {
    */
   public function options_form(){
 
-    $form['vsite_shields_disable_shield'] = array(
+    $form['disabled'] = array(
       '#prefix' => "<br />",
       '#type' => 'checkbox',
       '#title' => t('Disable Shields'),
-      '#default_value' = $this->options['vsite_shields_disable_shields'],
+      '#default_value' => $this->options['disabled'],
       '#attributes' => array('onChange' => "vsite_shields_grey_out(this);"),
       '#description' => "Select the shield that you wish to appear in the 'shield widget' on your site.  Click disable to display none.",
     );
@@ -46,18 +46,19 @@ class os_boxes_shields extends os_boxes_default {
         }
       }
 
-      $form['vsite_shields_shield'] = array(
+      $form['shield'] = array(
         '#prefix' => "<div class='shield_wrapper clear-block'>",
         '#title' => t('Shield'),
         '#type' => 'radios',
         '#options' => $shield_options,
+        '#default_value' => $this->options['shield'],
         // use the spaces original value, which should always be set as long as a shield has been uploaded
         '#suffix' => '</div>',
         '#pre_render' => array('os_boxes_shields_prerender'),
       );
     }
     if (empty($shield_options)) {
-      $form['vsite_shields_shield'] = array(
+      $form['shield'] = array(
         '#type' => 'markup',
         '#value' => t('Your site has no shields to display.'),
         '#prefix' => '<div>',
@@ -76,17 +77,10 @@ class os_boxes_shields extends os_boxes_default {
   public function render() {
     //@todo
     $block = parent::render();
-  	$shields = variable_get('vsite_shields_shield_info', array());
-  	if(!vsite_widgets_shield_access() || empty($shields)) {
-  		return $block;
-  	}//Disabled?
 
-  	$s_filename = variable_get('vsite_shields_shield', '');
-  	if ($s_filename) {
-  	  $block['subject'] = $block['title'] = '';
-  	  $block['content'] = '<div id="scholar-shield"><img src="'.url($s_filename, array('alias' => TRUE)).'" /> </div>';
-
-  	  return $block;
+  	$filename = $this->options['shield'];
+  	if ($filename && !$this->options['disabled']) {
+  	  $block['content'] = '<div id="scholar-shield"><img src="'.url($filename, array('alias' => TRUE)).'" /> </div>';
   	}
     return $block;
   }
