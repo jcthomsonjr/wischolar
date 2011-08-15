@@ -268,7 +268,7 @@ function _scholar_front_admin_frontpage(){
 
       $s_info = l("Add/edit your site information",'cp/settings/site_info/'.$vsite->id);
       $s_features = l("Enable or disable features for your site",'cp/build/features');
-      $s_members = l("Manage who may use your site",'cp/users/members');
+      $s_members = l("Manage who may use your site",'cp/users');
       $s_theme = l("Change the look of your site",'cp/appearance');
       $s_layout = l("Move elements in your page layout",'cp/build/layout');
       $s_docs = l("View documentation","help/vsitehelp/OpenScholar-Documentation");

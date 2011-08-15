@@ -37,15 +37,9 @@ function vsitehelp_help($path) {
 
     //users
     case 'cp/users':
-      return theme('advanced_help_topic', 'vsitehelp', 'My-Account');
-      
-    case 'cp/users/myaccount/personal':
-      return theme('advanced_help_topic', 'vsitehelp', 'Adding-Your-Personal-Information');
-      
-    case 'cp/users/members':
-      return theme('advanced_help_topic', 'vsitehelp', 'Managing-Your-Users');
+    	return theme('advanced_help_topic', 'vsitehelp', 'Managing-Your-Users');
 
-    //news
+     //news
     case 'cp/news':
       return theme('advanced_help_topic', 'vsitehelp', 'Getting-Project-News');
 

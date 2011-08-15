@@ -32,24 +32,12 @@ function vsite_users_menu() {
   $items = array();
 
   $items['cp/users'] = array(
-    'title' => 'Users',
-    'page callback' => 'vsite_user_edit',
-    'access callback' => 'vsite_user_edit_access',
-    'file path' => drupal_get_path('module', 'user'),
-    'file' => 'user.pages.inc',
+    'title' => 'User Management',
+    'page callback' => 'vsite_users_members',
+    'file' => 'vsite_users.pages.inc',
     'weight' => 50,
   );
-
-  $items['cp/users/myaccount'] = array(
-    'title' => 'My Account',
-    'page callback' => 'vsite_user_edit',
-    'access callback' => 'vsite_user_edit_access',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'file path' => drupal_get_path('module', 'user'),
-    'file' => 'user.pages.inc',
-    'weight' => 10,
-  );
-
+  
   $items['cp/users/members'] = array(
     'title' => 'Manage Members',
     'page callback' => 'vsite_users_members',
@@ -57,27 +45,6 @@ function vsite_users_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 20,
   );
-
-  $items['cp/users/myaccount/edit'] = array(
-    'title' => 'My Account',
-    'page callback' => 'vsite_user_edit',
-    'access callback' => 'vsite_user_edit_access',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'file path' => drupal_get_path('module', 'user'),
-    'file' => 'user.pages.inc',
-  );
-
-  $items['cp/users/myaccount/personal'] = array(
-    'title' => 'Personal Information',
-    'page callback' => 'vsite_user_content_profile_edit_page',
-    'page arguments' => array('vsite_users_profile'),
-    'access callback' => 'vsite_user_edit_access',
-    'weight' => 1,
-    'file' => 'node.pages.inc',
-    'file path' => drupal_get_path('module', 'node'),
-    'type' => MENU_LOCAL_TASK,
-  );
-
 
   // make them all part of 'cp' menu
   foreach ($items as $path => $item) {
@@ -104,18 +71,6 @@ function vsite_users_menu() {
   );
 
   return $items;
-}
-
-/**
- * Implements hook_menu_alter()
- */
-function vsite_users_menu_alter(&$a_menu) {
-  global $user;
-  //if ($user -> uid !== '1') {
-    // blocking the Groups tab if user is not admin (from spaces_og.module)
-    $a_menu['user/%user/groups']['access callback']  = FALSE;
-    $a_menu['user/%user/groups']['access arguments'] = NULL;
- // }
 }
 
 /**
