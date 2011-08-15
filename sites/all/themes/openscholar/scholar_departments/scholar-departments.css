@@ -1,7 +1,7 @@
 body {
   color:#37352B;
   min-width: 980px;
-background: url("images/bodyBg.png") repeat-x;
+background: url("images/bodyBg.png") repeat-x scroll 0px -12px #EFEFEF;
  }    
 
 /* TYPOGRAPHY*/
@@ -27,7 +27,7 @@ h2, h3, h4 {
   }
 
 h2.title {
-  margin-top: 0;
+  margin-top: 15px;
   margin-bottom: 1em;
   font-size:1.6em;
   color:#991122;
@@ -49,7 +49,8 @@ h3.title {
   letter-spacing: .5px;
   margin-bottom: 10px;
   margin-top:5px;
-  background: #991122; 
+  background: url('images/h3Bg.png') repeat-x;
+  background-position:center bottom;
 padding: 6px 0 5px 7px;
   width:98%;
   text-shadow: #222 0px 1px 0px;
@@ -57,7 +58,6 @@ padding: 6px 0 5px 7px;
 
 .sidebar h3.title a {
   color: #FFF;
-
   }
 
 
@@ -155,7 +155,13 @@ body.header-main-right #header,
 body.header-left-right #header,
 body.header-left-main-right #header {
   background:url('images/headerBg.png') repeat-x;
-  height:175px;
+  height:160px;
+ }
+ 
+ body.header-main-right .column,
+body.header-left-right .column,
+body.header-left-main-right .column {
+  padding:0px;
  }
 
 body.navbar-off #header {
@@ -166,7 +172,7 @@ body.no-sidebars #header,
 body.no-sidebars #content-area .hg-container,
 body.sidebar-second #content-area .hg-container,
 body.no-sidebars #footer {
-  padding-left: 43px;
+  padding-left: 20px;
   }
 
 body.sidebar-first #content-area .hg-container {
@@ -196,8 +202,9 @@ border-left:1px solid #CCC;
 
  
     border: 1px solid #CCCCCC;
+  margin-top: 20px;
     padding: 0 8px 8px 4px;
-    width: 200px;
+    width: 230px;
 }
 
 body.navbar-off #sidebar-first {

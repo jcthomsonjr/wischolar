@@ -18,8 +18,16 @@
 ?>
   <?php echo $screenshot?>
   <div class="theme-info">
-    <h3><?php echo $info['name'] ?></h3><?php echo $sub_theme ?>
+    <h3><?php echo $info['name'] ?></h3>
+    <?php if ($sub_theme): ?>
+<div style="text-align:right;">Flavors  <?php echo $sub_theme ?></div>
+  <?php endif; ?>
 
-<?php //echo $info['description'] ?>
 
-	</div>
+
+
+
+
+
+
+
