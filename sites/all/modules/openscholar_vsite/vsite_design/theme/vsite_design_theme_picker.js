@@ -3,10 +3,10 @@ if (Drupal.jsEnabled) {
 
     $('li.item-theme-picker').click(function(){
     	// remove the active class from every li first
-    	$(".item-theme-picker").removeClass('checked');
+    	$(".item-theme-picker").removeClass('checked new');
     	// add the class to this one
-    	$(this).addClass('checked');
-    	$("#edit-vsite-design-" + $(this).attr('id')).attr("checked", "checked").change();
+    	$(this).addClass('checked new');
+    	$("#edit-vsite-design-" + $(this).attr('id')).attr("checked new", "checked new").change();
     });
     
     $('#vsite-design-theme-picker-form').submit(function(event) {
