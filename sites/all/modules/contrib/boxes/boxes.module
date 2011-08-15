@@ -247,7 +247,7 @@ function boxes_load($delta = NULL) {
   $boxes = array();
   foreach (ctools_export_load_object('box') as $box) {
     $box = boxes_box::load($box->delta);
-    drupal_alter('boxes_load', $box, $delta);
+    drupal_alter('boxes_load', $box, $box->delta);
     $boxes[$box->delta] = $box;
   }
   return $boxes;
