@@ -100,9 +100,25 @@ function vsite_layout_vsite_default_blocks_alter(&$a_widgets) {
 function vsite_layout_form_alter(&$form, $form_state, $form_id){
 switch ($form_id) {
     case 'boxes_box_form' :
-      $a;
+      if(!is_array($form['#submit'])) $form['#submit'] = array();
+      $form['#submit'][] = "vsite_layout_box_form_submit";
     break;
   }
+}
+
+/**
+ * Handle submittion of box form in "cp/build/layout"
+ */
+function vsite_layout_box_form_submit($form, $form_state) {
+	$origin = arg(4);
+	if(isset($origin) && $origin == "cp_layout"){
+
+		$box = $form_state['box'];
+		$form_state['js commands'] = array(
+		  
+		  ctools_ajax_command_replace("div#cp-settings-layout dd#boxes-boxes_add__{$form_state['plugin_key']}","<dd class=\"scholarlayout-item\" id=\"boxes-{$box->delta}\"> {$box->title} <div class=\"close-this\">Remove</div></dd>"),
+		);
+	}
 }
 
 /**

@@ -172,9 +172,6 @@ function os_boxes_menu() {
         'page arguments' => array( 2,3),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
-
-        //'file' => 'boxes.admin.inc',
-        //'file path' => $path
       );
     }
   }
@@ -229,23 +226,20 @@ function os_boxes_box_modal($js = NULL, $delta){
     'ajax' => 'TRUE',
     'no_redirect' => TRUE
   );
-  $form = ctools_build_form('boxes_box_form', $form_state);
- // dpm($form);
-
-  $output = ctools_modal_form_render($form_state, $form);
+  
+  $output = ctools_modal_form_wrapper("boxes_box_form", $form_state);
 
   if (empty($output)) {
-    // empty $output signifies success, so we'll use it as our $commands
-    // array.
     $output = array();
-    $inplace = ctools_ajax_text_button(t('remain here'), 'ctools_ajax_sample/nojs/login/inplace', t('Go to your account'));
-    $account = ctools_ajax_text_button(t('your account'), 'ctools_ajax_sample/nojs/login/user', t('Go to your account'));
-    $output[] = ctools_modal_command_display(t('Login Success'), '<div class="modal-message">Login successful. You can now choose whether to ' . 'inplace' . ', or go to ' . 'account' . '.</div>');
+    $output[] = ctools_modal_command_dismiss();
   }
-  ctools_ajax_render($output);
-}
+  else {
+    $output[] = ctools_ajax_command_after('#modal-content #edit-submit','<input class="form-submit close" onClick="$(\'div.modal-header a.close\').click(); return false;" value="Cancel" />');
+  }
 
-function os_boxes_boxes_load_alter(&$box, $delta) {
-  //dpm($box);
-  //dpm($delta);
+  if(isset($form_state['js commands']) && is_array($form_state['js commands'])){
+  	$output = array_merge($output,$form_state['js commands']);
+  }
+  
+  ctools_ajax_render($output);
 }

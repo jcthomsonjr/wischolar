@@ -17,7 +17,7 @@
 		  <div class="close-this">Remove</div>
 		 <?php
 		 if($w['block_config_path']){
-		 	 print ctools_modal_text_button("Configure",$w['block_config_path'],"open the form to configure this block","configure");
+		 	 print ctools_modal_text_button("Configure",$w['block_config_path']."/cp_layout","open the form to configure this block","configure");
 		 }
 		 if($w['overides']){
 		 	 ?>

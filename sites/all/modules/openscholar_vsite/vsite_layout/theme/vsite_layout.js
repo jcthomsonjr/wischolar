@@ -104,6 +104,7 @@ function scholarlayout_afterdrag(event, ui) {
   var item = $(this);
   var target = $(event.originalTarget);
   if(item.attr("id") == "scholarlayout-top-widgets" && target && target.children('a.configure').length){
+	  $(event.originalTarget).clone().prependTo("#scholarlayout-top-widgets");
 	  target.children('a.configure').click();
 	  return;
   }//This started from the top
