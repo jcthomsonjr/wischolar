@@ -12,6 +12,8 @@ class os_boxes_feedreader extends os_boxes_default {
   public function options_defaults() {
     $options = parent::options_defaults();
 
+    $options['feed'] = '';
+    $options['number_of_items'] = 10;
     
     return $options;
   }
@@ -29,6 +31,10 @@ class os_boxes_feedreader extends os_boxes_default {
       ), 
       '#required' => TRUE,
     );
+    $form['number_of_items'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Number of items to display'),
+    );
 
     $form += parent::options_form();
     return $form;
@@ -39,8 +45,16 @@ class os_boxes_feedreader extends os_boxes_default {
    */
   public function render() {
     //@todo
+    $view = views_get_view('scholar_reader');
+    $view->set_display();
+    $view->display_handler->set_option('items_per_page', $this->options['number_of_items']);
+      
+    if ($this->options['feed'] != 'all') {
+      $view->set_arguments(array($this->options['feed']));
+    }
+    
     $block = parent::render();
-    $block['content'] = "Feed reader output";
+    $block['content'] = $view->execute_display();
     return $block;
   }
 
