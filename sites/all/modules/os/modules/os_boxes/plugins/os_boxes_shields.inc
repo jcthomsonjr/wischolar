@@ -80,6 +80,7 @@ class os_boxes_shields extends os_boxes_default {
 
   	$filename = $this->options['shield'];
   	if ($filename && !$this->options['disabled']) {
+  	  $block['subject'] = $block['title'] = '';
   	  $block['content'] = '<div id="scholar-shield"><img src="'.url($filename, array('alias' => TRUE)).'" /> </div>';
   	}
     return $block;
