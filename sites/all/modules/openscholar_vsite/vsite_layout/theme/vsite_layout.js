@@ -100,7 +100,14 @@ function scholarlayout_add_removal_hooks() {
 var scholarlayout_change_bound = false;
 
 function scholarlayout_afterdrag(event, ui) {
+  
   var item = $(this);
+  var target = $(event.originalTarget);
+  if(item.attr("id") == "scholarlayout-top-widgets" && target && target.children('a.configure').length){
+	  target.children('a.configure').click();
+	  return;
+  }//This started from the top
+  
   var regions = $("#scholarlayout-container > .scholarlayout-widgets-list");
   $.each(regions, function(i, region) {
     var items = $("#" + region.id + " > .scholarlayout-item");

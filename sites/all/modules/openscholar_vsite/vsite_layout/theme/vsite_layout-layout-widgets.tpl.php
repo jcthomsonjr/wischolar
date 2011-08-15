@@ -16,6 +16,9 @@
 		<dd class="<?php echo $s_class ?><?php if($w['overides']) {?> with-overrides<?php } ?>" id="<?php print $s_widget_key; ?>"> <?php print $w['label']; ?>
 		  <div class="close-this">Remove</div>
 		 <?php
+		 if($w['block_config_path']){
+		 	 print ctools_modal_text_button("Configure",$w['block_config_path'],"open the form to configure this block","configure");
+		 }
 		 if($w['overides']){
 		 	 ?>
 

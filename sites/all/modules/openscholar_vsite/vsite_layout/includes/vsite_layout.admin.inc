@@ -16,6 +16,11 @@ function vsite_layout_layout() {
   drupal_add_js(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.js');
   drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/vsite_layout.css');
   drupal_add_css(drupal_get_path('module', 'vsite_layout') . '/theme/cp-layout-map.css');
+  
+  //Support for ctools popups
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_modal_add_js();
 
   $space = vsite_get_vsite();
   $a_info = drupal_parse_info_file(drupal_get_path('theme', $space->group->og_theme) . "/" . $space->group->og_theme . ".info");
