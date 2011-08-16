@@ -29,7 +29,7 @@ class os_boxes_booktoc extends os_boxes_default {
     foreach ($view->result as $row) {
       $options[$row->nid] = $row->node_title;
     }
-    $form = array(
+    $form['book_nid'] = array(
       '#type' => 'select',
       '#title' => t('Which Book'),
       '#options' => $options,
@@ -44,10 +44,11 @@ class os_boxes_booktoc extends os_boxes_default {
    * Implementation of boxes_content::render().
    */
   public function render() {
-    $title = isset($this->title) ? check_plain($this->title) : NULL;
-    $block['title'] = $title;
-    $block['subject'] = $title;
-    $block['delta'] = $this->delta;
+    $block = parent::render();
+
+    $node = node_load($this->options['book_nid']);
+    $block['content'] = menu_tree_output(menu_tree_all_data($node->book['menu_name']));
+    //$block['content'] = theme('book_all_books_block', $book_menu);
     return $block;
   }
 }
