@@ -83,6 +83,18 @@ function os_boxes_boxes_plugins() {
     ),
   );
 
+  $info['os_boxes_bio'] = array(
+    'title' => 'Bio Box',  // i.e. view
+    'description' => 'Displays biography blurb',
+    'tags' => array('Other'),
+    'handler' => array(
+      'class' => 'os_boxes_bio',
+      'file' => 'os_boxes_bio.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+  
   $info['os_boxes_oembed'] = array(
     'title' => 'Media Embed',  // i.e. view
     'description' => 'Embed Media',
