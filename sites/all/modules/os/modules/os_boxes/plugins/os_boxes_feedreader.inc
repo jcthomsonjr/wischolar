@@ -32,14 +32,13 @@ class os_boxes_feedreader extends os_boxes_default {
       '#required' => TRUE,
     );
     
-    $v = views_get_view("scholar_reader");
-    $v -> set_display('block_1');
-    $v -> execute(); 
-    
-    foreach($v -> result as $r) {
-      $form['feed']['#options'] += array($r->nid => $r->title);
+    // for each feed node, add nid/node_title to the select options
+    $view = views_get_view("scholar_reader");
+    $view->set_display('block_1');
+    $view->execute(); 
+    foreach($view->result as $r) {
+      $form['feed']['#options'] += array($r->nid => $r->node_title);
     }
-    
     
     $form['number_of_items'] = array(
       '#type' => 'textfield',
