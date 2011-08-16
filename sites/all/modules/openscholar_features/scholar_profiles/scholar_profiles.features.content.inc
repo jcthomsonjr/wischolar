@@ -555,7 +555,7 @@ function scholar_profiles_content_default_fields() {
     'list_default' => 1,
     'description_field' => '0',
     'widget' => array(
-      'resolution' => '120x120',
+      'resolution' => '310x310',
       'enforce_ratio' => 1,
       'croparea' => '500x500',
       'enforce_minimum' => NULL,

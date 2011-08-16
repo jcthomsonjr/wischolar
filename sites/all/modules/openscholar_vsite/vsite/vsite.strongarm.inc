@@ -198,7 +198,7 @@ function vsite_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_update_action';
-  $strongarm->value = '2';
+  $strongarm->value = '0';
 
   $export['pathauto_update_action'] = $strongarm;
   $strongarm = new stdClass;
@@ -232,23 +232,6 @@ function vsite_strongarm() {
   $strongarm->value = 'jpg jpeg gif png txt doc docx xls pdf ppt pps odt ods odp xml';
 
   $export['upload_extensions_default'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE;
-  $strongarm->api_version = 1;
-  $strongarm->name = 'spaces_features';
-  $strongarm->value = array(
-    'scholar_announcements' => 1,
-    'scholar_publications' => 1,
-    'scholar_presentations' => 1,
-    'scholar_events' => 1,
-    'scholar_classes' => 1,
-    'scholar_image_gallery' => 1,
-    'scholar_blog' => 1,
-    'scholar_links' => 1,
-    'scholar_software' => 1,
-  );
-
-  $export['spaces_features'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;

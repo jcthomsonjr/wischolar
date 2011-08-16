@@ -75,6 +75,8 @@ function vsite_search_apachesolr_form_alter(&$form, $form_state, $form_id) {
         }
       }
     }
+    //Allow this form to be safely cached, token not needed, no content is added by search form
+    unset($form['#token']);
   }
 }
 
