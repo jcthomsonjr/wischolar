@@ -12,7 +12,7 @@ class os_boxes_feedreader extends os_boxes_default {
   public function options_defaults() {
     $options = parent::options_defaults();
 
-    $options['feed'] = '';
+    $options['feed'] = 'all';
     $options['number_of_items'] = 10;
     
     return $options;
@@ -32,19 +32,11 @@ class os_boxes_feedreader extends os_boxes_default {
       '#required' => TRUE,
     );
     
+    $v = views_get_view("scholar_reader");
+    $v -> set_display('block_1');
+    $v -> execute(); 
     
-    //add this user's feeds to #options
-    //$view = views_get_view('scholar_reader');
-    //$view->set_display();
-    $query = 'SELECT n.nid,n.title FROM {og_ancestry} og INNER JOIN {node} n on og.nid = n.nid WHERE n.type = "feed" '; //WHERE USER
-    if ($vsite = vsite_get_vsite()) {
-      $query .= ' AND og.group_nid = %d ';
-      $uid = $vsite->id;
-    } else {
-      $uid = null;
-    }
-    $result = db_query($query, $uid);
-    while ($r = db_fetch_object($result)) {
+    foreach($v -> result as $r) {
       $form['feed']['#options'] += array($r->nid => $r->title);
     }
     
