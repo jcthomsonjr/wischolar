@@ -51,7 +51,7 @@ function ctools_modal_add_js() {
   $settings = array(
     'CToolsModal' => array(
       'loadingText' => t('Loading...'),
-      'closeText' => t('Close Window'),
+      'closeText' => t(''),
       'closeImage' => theme('image', ctools_image_path('icon-close-window.png'), t('Close window'), t('Close window')),
       'throbber' => theme('image', ctools_image_path('throbber.gif'), t('Loading...'), t('Loading')),
     ),
