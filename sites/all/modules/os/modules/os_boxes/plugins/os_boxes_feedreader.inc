@@ -56,7 +56,7 @@ class os_boxes_feedreader extends os_boxes_default {
   public function render() {
     //@todo
     $view = views_get_view('scholar_reader');
-    $view->set_display();
+    $view->set_display('block_2');
     $view->display_handler->set_option('items_per_page', $this->options['number_of_items']);
       
     if ($this->options['feed'] != 'all') {
@@ -64,7 +64,8 @@ class os_boxes_feedreader extends os_boxes_default {
     }
     
     $block = parent::render();
-    $block['content'] = $view->execute_display();
+    $output = $view->execute_display();
+    $block['content'] = $output['content']; 
     return $block;
   }
 

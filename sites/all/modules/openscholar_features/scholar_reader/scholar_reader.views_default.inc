@@ -980,7 +980,13 @@ function scholar_reader_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('arguments', array());
+  $handler->override_option('arguments', array(
+    'feed_nid' => array(
+      'id' => 'feed_nid',
+      'table' => 'feeds_data_scholar_feed_importer',
+      'field' => 'feed_nid',
+    ),
+  ));
   $handler->override_option('title', 'Latest news');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
