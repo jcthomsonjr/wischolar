@@ -77,21 +77,46 @@ function vsite_layout_vsite_default_blocks_alter(&$a_widgets) {
   static  $a_settings;
 
   if (!is_array($a_settings)) {
+  	$a_settings = array();
     $space = vsite_get_vsite();
-    if (!$space) return;
+    if ($space){
 
-    $s_path = drupal_get_path('theme', $space->group->og_theme);
-    if (!$s_path) return;
-
-    $a_info = drupal_parse_info_file($s_path . "/" . $space->group->og_theme . ".info");
-    $a_settings = (is_array($a_info) && array_key_exists('scholar', $a_info) && array_key_exists('widgets', $a_info['scholar']))?$a_info['scholar']['widgets']:array();
-  }
+	    $s_path = drupal_get_path('theme', $space->group->og_theme);
+	    if ($s_path){
+		    $a_info = drupal_parse_info_file($s_path . "/" . $space->group->og_theme . ".info");
+		    $a_settings = (is_array($a_info) && array_key_exists('scholar', $a_info) && array_key_exists('widgets', $a_info['scholar']))?$a_info['scholar']['widgets']:array();
+	    }
+    }//In a space
+  }//Get theme settings?
 
   foreach ($a_settings as $s_widget => $s_region) {
     $s_region = (strlen($s_region) && $s_region != 'false')?$s_region:false;
     if (array_key_exists($s_widget, $a_widgets)) $a_widgets[$s_widget]['region'] = $s_region;
   }//alter based on theme settings
+  
+  //Add user blocks and module defined blocks to the preset blocks
+  vsite_layout_merge_default_blocks($a_widgets);
+}
 
+
+/**
+ * Add default blocks to current blocks
+ *
+ * Gathers default blocks via the hook and calls alter hook which
+ * lets other modules make changes, an example is some themes like
+ * to change the default region of a block
+ */
+function vsite_layout_merge_default_blocks(&$blocks) {
+  if(!is_array($blocks)) return;
+  
+  static $default_blocks;
+  
+  if(!isset($default_blocks)){
+	  $default_blocks = module_invoke_all('vsite_widgets');
+	  $blocks = array_merge($default_blocks,$blocks);  //Everywhere plus the feature
+  }
+
+  uasort($blocks, 'vsite_layout_sort_block_by_weight');
 }
 
 /**

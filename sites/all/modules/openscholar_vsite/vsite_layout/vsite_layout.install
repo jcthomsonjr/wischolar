@@ -45,7 +45,7 @@ function vsite_layout_update_6002(&$sandbox) {
     		}
     		
     		$a_new_blocks = (isset($context->reactions['block']['blocks']))? $context->reactions['block']:array( 'blocks' => array());
-    		vsite_layout_merge_default_blocks($a_new_blocks['blocks']);
+    		//vsite_layout_merge_default_blocks($a_new_blocks['blocks']);
     		
 	    	foreach ($a_new_blocks['blocks'] as $s_key => $block) {
 			    $a_new_blocks['blocks'][$s_key]['region'] = isset($a_blocks[$s_key])? $a_blocks[$s_key]:false;
