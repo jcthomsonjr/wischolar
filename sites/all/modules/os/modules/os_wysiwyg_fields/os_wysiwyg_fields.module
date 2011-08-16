@@ -151,20 +151,23 @@ function os_wysiwyg_fields_oembed_provider_callback($provider, $url, $matches, $
 
   // TODO: Refactor using DOMDocument
   // DOMDocument will take a string as HTML. More forgiving than XML
-  $xml = str_replace(array('&'), array('%26'), $embed->html);
+  // $html = str_replace(array('&'), array('%26'), $embed->html);
   // do things to it
-  $html = new SimpleXMLElement($xml);
-  if ($html->getName() == 'object') {
-    $param = $html->addChild('param');
-    $param->addAttribute('name', 'wmode');
-    $param->addAttribute('value', 'transparent');
-    foreach ($html->children() as $child) {
-      if ($child->getName() == 'embed') {
-        $child->addAttribute('wmode', 'transparent');
-      }
+  $html = new DOMDocument(null, null);
+  @$html->loadHTML($embed->html);
+  if ($object = $html->getElementsByTagName('object')) {
+    $object = $object->item(0);
+    $param = $html->createElement('param', 'transparent');
+    $param->setAttribute('name', 'wmode');
+    $param->setAttribute('value', 'transparent');
+    $object->appendChild($param);
+
+    if ($embed_tag = $html->getElementsByTagName('embed')) {
+      $embed_tag = $embed_tag->item(0);
+      $embed_tag->setAttribute('wmode', 'transparent');
     }
 
-    $embed->html = str_replace('<?xml version="1.0"?>', '', $html->asXML());
+    $embed->html = $html->saveHTML();
   }
 
   return $embed;
