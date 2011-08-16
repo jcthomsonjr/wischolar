@@ -2,7 +2,7 @@
 
 /**
  * @file
- * The class for "CC license" type widgets.  
+ * The class for "CC license" type widgets.
  */
 
 class os_boxes_cclicense extends os_boxes_default {
@@ -12,7 +12,7 @@ class os_boxes_cclicense extends os_boxes_default {
   public function options_defaults() {
     $options = parent::options_defaults();
 
-    //$options['license_type'] = 'cc';
+    $options['license_type'] = '';
     return $options;
   }
 
@@ -20,13 +20,13 @@ class os_boxes_cclicense extends os_boxes_default {
    * Implementation of boxes_content::options_form().
    */
   public function options_form(){
-    
+
     $form['license_type'] = array(
-      '#type' => 'select', 
-      '#title' => t('License Type'), 
-      '#options' => array(
-        'cc' => t('cc') 
-      ), 
+      '#type' => 'select',
+      '#title' => t('License Type'),
+      '#options' => creativecommons_get_available_license_list(),
+      '#default_value' => $this->options['license_type'],
+    	'#attributes' => array('class' => 'creativecommons creativecommons-license-select'),
       '#required' => TRUE,
     );
 

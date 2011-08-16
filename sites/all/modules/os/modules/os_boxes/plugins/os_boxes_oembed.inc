@@ -31,6 +31,7 @@ class os_boxes_oembed extends os_boxes_default {
         'oembed_url' => t('Embed.ly Provider URL'),
         'pasted' => t('Original embed code.')
       ),
+      '#default_value' => $this->options['selection'],
       '#description' => t('Which source do you want to use?'),
     );
 
