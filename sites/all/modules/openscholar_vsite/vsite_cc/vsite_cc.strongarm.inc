@@ -80,5 +80,12 @@ function vsite_cc_strongarm() {
   );
 
   $export['creativecommons_required_metadata'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'creativecommons_search';
+  $strongarm->value = FALSE;
+
+  $export['creativecommons_search'] = $strongarm;
   return $export;
 }
