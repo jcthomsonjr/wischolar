@@ -65,6 +65,7 @@ class os_boxes_oembed extends os_boxes_default {
         $block['content'] = embedfilter_filter('process', 0, -1, $this->options['pasted']);
       break;
     }
+    $block['content'] = embedfilter_media_resize($block['content'], 200);
     return $block;
   }
 
