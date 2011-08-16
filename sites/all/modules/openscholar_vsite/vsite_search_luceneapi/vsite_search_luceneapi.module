@@ -61,6 +61,8 @@ function vsite_search_luceneapi_form_alter($form, $form_state, $form_id) {
     case 'search_form':
       // Remove the facets fieldset from the search form
       unset($form['facets']);
+      //Allow this form to be safely cached, token not needed, no content is added by search form
+      unset($form['#token']);
       break;
   }
 }
