@@ -3,7 +3,7 @@
 /**
  * Implementation of hook_install().
  */
-function os_boxes_install(){
+function os_boxes_enable(){
   _os_boxes_make_blurbs_from_bios();
 }
 
@@ -40,8 +40,10 @@ function _os_boxes_make_blurbs_from_bios(){
         'body' => $blurb,
         'delta' => $delta, 
       );
-      $box = boxes_factory('os_boxes_simple', $boxopts); 
-      $vsite->controllers->boxes->set($box->delta, $box);
+      
+	  if ($box = boxes_factory('os_boxes_simple', $boxopts)) { 
+        $vsite->controllers->boxes->set($box->delta, $box);
+	  }
       
       $a_blurb_updates[] = $r->uid;
     }
