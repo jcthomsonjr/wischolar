@@ -4,14 +4,15 @@
  * Implementation of hook_install().
  */
 function os_boxes_install(){
+  _os_boxes_make_blurbs_from_bios();
 }
 
 /*
- * hook_update_N
+ * copies bio hook into a new simple box
  */
-function os_boxes_update_6001(&$sandbox){
+function _os_boxes_make_blurbs_from_bios(){
   $res = array();
-
+  
   //copy blurbs from bios into simple boxes
   $query  = 'SELECT DISTINCT c.nid,c.field_hook_text_value,n.uid ';
   $query .= 'FROM {content_type_bio} c INNER JOIN {node} n ON c.nid=n.nid ';
