@@ -6,6 +6,8 @@
  */
 
 class os_boxes_cclicense extends os_boxes_default {
+
+  var $license;
   /**
    * Implementation of boxes_content::options_defaults().
    */
@@ -20,6 +22,8 @@ class os_boxes_cclicense extends os_boxes_default {
    * Implementation of boxes_content::options_form().
    */
   public function options_form(){
+
+    $this->create_license();
 
     $form['license_type'] = array(
       '#type' => 'select',
@@ -39,9 +43,22 @@ class os_boxes_cclicense extends os_boxes_default {
    */
   public function render() {
     //@todo
+    $this->create_license();
+    $this->license->uri = $this->options['license_type'];
+    $this->license->fetch();
+
     $block = parent::render();
-    $block['content'] = "CC License output";
+    $block['content'] = $this->license->get_html();
+    $block['content'] = str_replace(array('This', 'Work', ', ', 'by ', 'is'), array('These', 'Works', '', '', 'are '), $block['content']);
     return $block;
+  }
+
+  private function create_license() {
+    if (!isset($this->license)) {
+      $this->license = new creativecommons_license('');
+      $vsite = vsite_get_vsite();
+      $this->nid = $vsite->group->nid;
+    }
   }
 
 }

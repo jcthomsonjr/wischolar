@@ -30,6 +30,7 @@ class os_boxes_bio extends os_boxes_default {
       '#required' => TRUE,
     );*/
     //options to include cv?
+    //show more link
 
     $form += parent::options_form();
     return $form;
@@ -40,13 +41,24 @@ class os_boxes_bio extends os_boxes_default {
    */
   public function render() {
     //@todo
-    $block = parent::render();
-    $blurb = scholar_biocv_bio_blurb_content();//'new bio block<br /><Br />'.$s_out;
-    if ($blurb['content']) {
-      $block['content'] = $blurb['content'];
-    } else {  
-      $block['content'] = '';
+    $block = parent::render();    
+    
+    if (($vsite = vsite_get_vsite()) == FALSE) {
+      return array(); 
     }
+
+    $bio_node = content_profile_load('bio', $vsite->group->uid, $lang = '');
+    if(!$bio_node) {
+      return array();
+    }
+
+    //won't be blurb for long.  blurb text is to be copied to a simple box instance for each user with a blurb.
+    $blurb = $bio_node->field_hook_text[0]['value'];
+    $output = strlen($blurb) ? $blurb : node_teaser($bio_node->body, null,400) ;
+    // trim the output's length
+    $output .= l(" more", $bio_node->path,array(attributes=>array('class'=>'more')));
+    $block['content'] = $output;
+    
     return $block;
   }
 

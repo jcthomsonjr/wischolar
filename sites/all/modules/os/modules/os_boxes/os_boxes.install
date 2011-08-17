@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+function os_boxes_install(){
+}
+
+/*
+ * hook_update_N
+ */
+function os_boxes_update_6001(&$sandbox){
+  $res = array();
+
+  //copy blurbs from bios into simple boxes
+  $query  = 'SELECT DISTINCT c.nid,c.field_hook_text_value,n.uid ';
+  $query .= 'FROM {content_type_bio} c INNER JOIN {node} n ON c.nid=n.nid ';
+  $query .= 'WHERE field_hook_text_value IS NOT NULL';
+  $result = db_query($query);
+  // for final update, doing a list of nids might be safer.  I figure this code can be used to provide that list at a 
+  //later date.  for now it's adequate for testing.
+  
+  while ($r = db_fetch_object($result)) {
+    $blurb = trim($r->field_hook_text_value);
+    if (strlen($blurb) && $vsite = array_shift(vsite_get_vsite_by_owner($r->uid))) {
+ // how to handle multiple vsites?  ignore them for they are merce?
+
+      //make delta
+      $identifier = $vsite->type . '-' . $vsite->id;
+      $hash = boxes_create_hash($identifier);
+      $delta = $identifier . '-' . $hash;
+      
+      $boxopts = array(
+        'title' => 'My Bio',
+        'body' => $blurb,
+        'delta' => $delta, //where does this come from?
+      );
+      $box = boxes_factory('os_boxes_simple', $boxopts); //or just 'simple' ?
+      $vsite->controllers->boxes->set($box->delta, $box);
+      
+    }
+  }
+  
+  return $res;
+}
+

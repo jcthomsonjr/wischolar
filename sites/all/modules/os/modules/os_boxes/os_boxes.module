@@ -94,7 +94,7 @@ function os_boxes_boxes_plugins() {
       'parent' => 'os_boxes_default',
     ),
   );
-  
+
   $info['os_boxes_oembed'] = array(
     'title' => 'Media Embed',  // i.e. view
     'description' => 'Embed Media',
@@ -114,6 +114,18 @@ function os_boxes_boxes_plugins() {
     'handler' => array(
       'class' => 'os_boxes_shields',
       'file' => 'os_boxes_shields.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    )
+  );
+
+  $info['os_boxes_booktoc'] = array(
+    'title' => 'Book Table of Contents',
+    'description' => 'Table of Contents',
+    'tags' => array('Content'),
+    'handler' => array(
+      'class' => 'os_boxes_booktoc',
+      'file' => 'os_boxes_booktoc.inc',
       'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
       'parent' => 'os_boxes_default',
     )
@@ -238,7 +250,7 @@ function os_boxes_box_modal($js = NULL, $delta){
     'ajax' => 'TRUE',
     'no_redirect' => TRUE
   );
-  
+
   $output = ctools_modal_form_wrapper("boxes_box_form", $form_state);
 
   if (empty($output)) {
@@ -252,6 +264,6 @@ function os_boxes_box_modal($js = NULL, $delta){
   if(isset($form_state['js commands']) && is_array($form_state['js commands'])){
   	$output = array_merge($output,$form_state['js commands']);
   }
-  
+
   ctools_ajax_render($output);
 }
