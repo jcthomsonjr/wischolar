@@ -39,6 +39,8 @@ class os_boxes_feedreader extends os_boxes_default {
     foreach($view->result as $r) {
       $form['feed']['#options'] += array($r->nid => $r->node_title);
     }
+    $form['feed']['#default_value'] = $this->options['feed'];
+    
     
     $form['number_of_items'] = array(
       '#type' => 'textfield',
