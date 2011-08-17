@@ -842,7 +842,7 @@ function _scholar_publications_add_owner_checkbox(&$form_element){
  */
 function _scholar_publications_pub_by_type_wgt(){
 
-  $s = "SELECT COUNT(n.nid) AS num, tid, name FROM {biblio} n JOIN {biblio_types} ON (biblio_type = tid) GROUP BY biblio_type";
+  $s = "SELECT COUNT(DISTINCT n.nid) AS num, tid, name FROM {biblio} n JOIN {biblio_types} ON (biblio_type = tid) GROUP BY biblio_type";
   $res = db_query(db_rewrite_sql($s));
 
   $i = 0;
