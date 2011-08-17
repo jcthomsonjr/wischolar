@@ -39,7 +39,8 @@ class os_boxes_gallery extends os_boxes_default {
     foreach($view->result as $r) {
       $form['gallery']['#options'] += array($r->nid => $r->node_title);
     }
-    
+    $form['gallery']['#default_value'] = $this->options['gallery'];
+        
     $form['number_of_items'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of items to display'),
