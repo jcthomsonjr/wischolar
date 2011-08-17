@@ -22,8 +22,8 @@
  *   A newly constructed View object. To be properly handled by the Views module,
  *   the $view->name property must be set.
  */
-function _os_simpleviews_build_view($simpleview = array()) {
-  $simpleview += os_simpleviews_default_data();
+function _spaces_simpleviews_build_view($simpleview = array()) {
+  $simpleview += spaces_simpleviews_default_data();
 
   views_include('view');
   // Now we'll set up the basic starting structure.
@@ -42,11 +42,11 @@ function _os_simpleviews_build_view($simpleview = array()) {
   $handler->override_option('use_pager', '1'); //@todo make it configurable
   
   // the row style based on the style selected by the user (e.g. teaser, fields)
-  _os_simpleviews_set_row_style($handler, $simpleview);
+  _spaces_simpleviews_set_row_style($handler, $simpleview);
   
-  _os_simpleviews_add_filter($handler, $simpleview);
-  _os_simpleviews_add_sort($handler, $simpleview);
-  _os_simpleviews_add_argument($handler, $simpleview);
+  _spaces_simpleviews_add_filter($handler, $simpleview);
+  _spaces_simpleviews_add_sort($handler, $simpleview);
+  _spaces_simpleviews_add_argument($handler, $simpleview);
   
   
   // we dont add any display (page, block, rss etc.). The caller 
@@ -60,14 +60,14 @@ function _os_simpleviews_build_view($simpleview = array()) {
   return $view;
 }
 
-function _os_simpleviews_set_row_style($handler, $simpleview){
+function _spaces_simpleviews_set_row_style($handler, $simpleview){
   // teaser or fields ?
   
   if ($simpleview['style'] == 'teasers') {
-    _os_simpleviews_set_display_to_teaser_list(&$handler, $simpleview);
+    _spaces_simpleviews_set_display_to_teaser_list(&$handler, $simpleview);
   }
   elseif ($simpleview['style'] == 'titles') {
-    _os_simpleviews_set_display_to_title_list(&$handler, $simpleview);
+    _spaces_simpleviews_set_display_to_title_list(&$handler, $simpleview);
   }
 
 }
@@ -75,7 +75,7 @@ function _os_simpleviews_set_row_style($handler, $simpleview){
 /**
  * sets the display to teaser view
  */
-function _os_simpleviews_set_display_to_teaser_list(&$handler, $simpleview){
+function _spaces_simpleviews_set_display_to_teaser_list(&$handler, $simpleview){
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
     'teaser' => 1, 
@@ -86,7 +86,7 @@ function _os_simpleviews_set_display_to_teaser_list(&$handler, $simpleview){
 /**
  * sets the display to list view
  */
-function _os_simpleviews_set_display_to_title_list(&$handler, $simpleview) {
+function _spaces_simpleviews_set_display_to_title_list(&$handler, $simpleview) {
 
   $handler->override_option('fields', array(
     'title' => array(
@@ -109,7 +109,7 @@ function _os_simpleviews_set_display_to_title_list(&$handler, $simpleview) {
 }
 
 
-function _os_simpleviews_add_filter(&$handler, $simpleview) {
+function _spaces_simpleviews_add_filter(&$handler, $simpleview) {
   // We always want to add the status filter.
   $filters['status'] = array(
     'operator' => '=',
@@ -165,7 +165,7 @@ function _os_simpleviews_add_filter(&$handler, $simpleview) {
 }
 
 
-function _os_simpleviews_add_sort(&$handler, $simpleview) {
+function _spaces_simpleviews_add_sort(&$handler, $simpleview) {
   switch ($simpleview['sort']) {
     case 'newest':
       $sorts['created'] =  array(
@@ -263,7 +263,7 @@ function _os_simpleviews_add_sort(&$handler, $simpleview) {
 }
 
 
-function _os_simpleviews_add_argument(&$handler, $simpleview) {
+function _spaces_simpleviews_add_argument(&$handler, $simpleview) {
   $argument = $simpleview['argument'];
 
   dpm($argument);

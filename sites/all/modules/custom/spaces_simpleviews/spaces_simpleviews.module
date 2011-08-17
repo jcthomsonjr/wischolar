@@ -2,20 +2,17 @@
 
 /**
  * @file
- * OS SimpleViews utility library.
+ * Spaces SimpleViews utility library.
  *
  * Provides some wrapper functions to programatically manipulate a given view
  * - Based on the simpleviews module
- * 
- * @todo
- * - configure nr of items
  */
 
 
 /**
  * Default values for the view object 
  */
-function os_simpleviews_default_data(){
+function spaces_simpleviews_default_data(){
   return array(
     'filter' => 'all nodes',  // @todo get the current context and the node type(s) associated with it, make that the default
     'style' => 'titles', 
@@ -28,19 +25,19 @@ function os_simpleviews_default_data(){
  * Builds the view
  * @param $simpleview
  */
-function os_simpleviews_build_view($simpleview = array()){
-  $simpleview += os_simpleviews_default_data();
-  module_load_include('inc', 'os_simpleviews', 'os_simpleviews');
-  return _os_simpleviews_build_view($simpleview);
+function spaces_simpleviews_build_view($simpleview = array()){
+  $simpleview += spaces_simpleviews_default_data();
+  module_load_include('inc', 'spaces_simpleviews', 'spaces_simpleviews');
+  return _spaces_simpleviews_build_view($simpleview);
 }
 
 /**
  * Build the record editing chunk, in a reusable fashion.
  */
-function os_simpleviews_get_edit_form($simpleview = array()){
-  $simpleview += os_simpleviews_default_data();
+function spaces_simpleviews_get_edit_form($simpleview = array()){
+  $simpleview += spaces_simpleviews_default_data();
   
-  //$form['#theme'] = 'os_simpleviews_edit_form';  //@todo provide a theme hook or remove this
+  //$form['#theme'] = 'spaces_simpleviews_edit_form';  //@todo provide a theme hook or remove this
   
 
   $form['filter'] = array(
@@ -106,20 +103,20 @@ function os_simpleviews_get_edit_form($simpleview = array()){
 /**
  * Implementation of hook_boxes_plugins().
  */
-function os_simpleviews_boxes_plugins(){
+function spaces_simpleviews_boxes_plugins(){
   $info = array();
   
   $info['listing'] = array(
-    'title' => 'Listing',  // i.e. view
+    'title' => 'List of posts',
     'description' => 'List of posts', 
     'tags' => array(
       'Content' 
     ), 
     'handler' => array(
-      'class' => 'os_simpleviews_boxes_listing', 
-      'file' => 'os_simpleviews_boxes_listing.inc', 
-      'path' => drupal_get_path('module', 'os_simpleviews') . '/plugins', 
-      'parent' => 'os_boxes_default' 
+      'class' => 'spaces_simpleviews_boxes_listing', 
+      'file' => 'spaces_simpleviews_boxes_listing.inc', 
+      'path' => drupal_get_path('module', 'spaces_simpleviews') . '/plugins', 
+      //'parent' => 'box' 
     ) 
   );
   
