@@ -15,6 +15,7 @@ class os_boxes_oembed extends os_boxes_default {
     $options['selection'] = FALSE;
     $options['oembed_url'] = '';
     $options['pasted'] = '';
+    $options['width'] = 200;
 
     return $options;
   }
@@ -48,6 +49,13 @@ class os_boxes_oembed extends os_boxes_default {
       '#description' => embedfilter_filter_tips(0, 1),
     );
 
+    $form['width'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Maximum Width of Embed'),
+      '#default_value' => $this->options['width'],
+      '#description' => t('The maximum width of the embedded resource, in pixels.'),
+    );
+
     $form += parent::options_form();
     return $form;
   }
@@ -66,7 +74,7 @@ class os_boxes_oembed extends os_boxes_default {
         $block['content'] = embedfilter_filter('process', 0, -1, $this->options['pasted']);
       break;
     }
-    $block['content'] = embedfilter_media_resize($block['content'], 200);
+    $block['content'] = embedfilter_media_resize($block['content'], $this->options['width']);
     return $block;
   }
 

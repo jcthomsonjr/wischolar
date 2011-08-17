@@ -478,7 +478,13 @@ function scholar_image_gallery_views_default_views() {
       'field' => 'title',
     ),
   ));
-  $handler->override_option('arguments', array());
+  $handler->override_option('arguments', array(
+    'field_gallery_nid' => array(
+      'id' => 'field_gallery_nid',
+      'table' => 'node_data_field_gallery',
+      'field' => 'field_gallery_nid',
+    ),
+  ));
   $handler->override_option('title', 'Recent images');
   $handler->override_option('use_pager', '0');
   $handler->override_option('block_description', 'Recent images');
