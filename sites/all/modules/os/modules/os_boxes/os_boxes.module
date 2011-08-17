@@ -47,6 +47,18 @@ function os_boxes_boxes_plugins() {
     ),
   );
 
+  $info['os_boxes_gallery'] = array(
+    'title' => 'Image Gallery',  // i.e. view
+    'description' => 'List of images',
+    'tags' => array('Content'),
+    'handler' => array(
+      'class' => 'os_boxes_gallery',
+      'file' => 'os_boxes_gallery.inc',
+      'path' => drupal_get_path('module', 'os_boxes') .'/plugins',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+  
   $info['os_boxes_rss'] = array(
     'title' => 'RSS feed',  // i.e. view
     'description' => 'RSS feed ??',
