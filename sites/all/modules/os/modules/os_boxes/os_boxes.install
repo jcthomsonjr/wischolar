@@ -24,10 +24,16 @@ function os_boxes_update_6001(&$sandbox){
     $blurb = trim($r->field_hook_text_value);
     if (strlen($blurb) && $vsite = array_shift(vsite_get_vsite_by_owner($r->uid))) {
  // how to handle multiple vsites?  ignore them for they are merce?
+
+      //make delta
+      $identifier = $vsite->type . '-' . $vsite->id;
+      $hash = boxes_create_hash($identifier);
+      $delta = $identifier . '-' . $hash;
+      
       $boxopts = array(
         'title' => 'My Bio',
         'body' => $blurb,
-        'delta' => 'delta', //where does this come from?
+        'delta' => $delta, //where does this come from?
       );
       $box = boxes_factory('os_boxes_simple', $boxopts); //or just 'simple' ?
       $vsite->controllers->boxes->set($box->delta, $box);

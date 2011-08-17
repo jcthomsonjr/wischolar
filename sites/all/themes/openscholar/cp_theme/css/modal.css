@@ -41,6 +41,10 @@ div.ctools-modal-content .modal-header {
 
 div.ctools-modal-content .modal-header a {
 float:right;
+color: transparent;
+background: url('../images/icon-close-window.png') no-repeat;
+width:30px;
+height:30px;
   }
 
 div.ctools-modal-content .modal-content {
@@ -65,6 +69,7 @@ div.ctools-modal-content a.close:hover {
 div.ctools-modal-content a.close img {
   position: relative;
   top: 1px;
+  display:none;
 }
 
 div.ctools-modal-content .modal-content .modal-throbber-wrapper {
@@ -76,10 +81,19 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
 }
 
 /** modal forms CSS **/
+	
+.form-region-main .form-item, .form-region-right .form-item {
+    margin-top: 15px;
+}
+
+.form-item .form-item {
+    margin-top: 0px;
+}
 
 div.ctools-modal-content .form-item label.option {
   width: auto;
   float: none;
+  font-weight:normal;
 }
 
 div.ctools-modal-content .form-item .description {
@@ -101,12 +115,11 @@ div.ctools-modal-content .modal-form .no-float label  {
 div.ctools-modal-content fieldset,
 div.ctools-modal-content .form-radios,
 div.ctools-modal-content .form-checkboxes {
-
+margin:0px;
 }
 
 div.ctools-modal-content fieldset {
   padding-bottom: 10px;
-  border-bottom: 1px solid #ccc;
   clear: left;
 }
 
