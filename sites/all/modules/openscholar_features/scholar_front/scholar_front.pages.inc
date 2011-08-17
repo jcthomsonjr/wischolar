@@ -14,7 +14,6 @@ function scholar_front_settings($form_state) {
 
   $form['frontpage'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Content on Front Page'),
   );
 
   $front_page = variable_get('site_frontpage', 'scholar_front/features');
@@ -151,7 +150,6 @@ function scholar_front_settings($form_state) {
 
   $form['site_title'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Site Title Settings'),
     'scholar_front_site_title' => array(
       '#type' => 'textfield',
       '#title' => t('Site Title'),

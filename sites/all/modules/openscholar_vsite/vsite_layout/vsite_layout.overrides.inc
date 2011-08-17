@@ -46,29 +46,11 @@ function vsite_layout_spaces_presets_alter(&$presets) {
 		foreach ($contexts as $s_key => $context) {
 			if(strpos($s_key,"openscholar-feature-") !== 0) continue;
 			$blocks = isset($context->reactions['block']['blocks'])? $context->reactions['block']['blocks']:array();
-			vsite_layout_merge_default_blocks($blocks);
-
+			
 			if(is_array($blocks)){
 			  $preset->value['context'][$s_key.":reaction:block"]['blocks'] = $blocks;
 			}
 		}
 
 	}
-}
-
-
-/**
- * Merge default blocks with passed blocks
- *
- * Gathers default blocks via the hook and calls alter hook which
- * lets other modules make changes, an example is some themes like
- * to change the default region of a block
- */
-function vsite_layout_merge_default_blocks(&$blocks) {
-  if(!is_array($blocks)) return;
-
-  $default_blocks = module_invoke_all('vsite_widgets');
-  $blocks = array_merge($default_blocks,$blocks);  //Everywhere plus the feature
-
-  uasort($blocks, 'vsite_layout_sort_block_by_weight');
 }
