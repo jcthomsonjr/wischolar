@@ -93,10 +93,10 @@ function scholar_publications_settings($space) {
   
   //Should urls in citations be shortened?
   $form['scholar_publications'] = array(
-    '#type' => 'fieldset',
-    '#title' =>t('Include URL in citation'),
-    '#region' => 'footer',
+ '#type' => 'fieldset',
+  '#region' => 'footer',
   );
+ 
   $form['scholar_publications']['scholar_publications_shorten_citations'] = array(
    '#type' => 'checkbox',
    '#title' => t('When this is checked, a shortened URL will be included in the citation.'),
