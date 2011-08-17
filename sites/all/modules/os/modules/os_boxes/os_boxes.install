@@ -23,9 +23,11 @@ function os_boxes_update_6001(&$sandbox){
   $a_blurb_updates = array();
   while ($r = db_fetch_object($result)) {
     $blurb = trim($r->field_hook_text_value);
-    if (strlen($blurb) && $vsite = array_shift(vsite_get_vsite_by_owner($r->uid))) {
- // how to handle multiple vsites?  ignore them for they are merce?
-
+    
+    //users who own multiple vsites should still have their bios listed on each vsite
+    //no vsite has multiple owners.
+    $vsites = vsite_get_vsite_by_owner($r->uid);
+    while (strlen($blurb) && $vsite = array_shift($vsites)){
       //make delta
       $identifier = $vsite->type . '-' . $vsite->id;
       $hash = boxes_create_hash($identifier);
