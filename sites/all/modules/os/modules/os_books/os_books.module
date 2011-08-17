@@ -3,15 +3,21 @@
 /*
  * Gets the root node of any book tree
  */
-function os_books_get_root($node, $level = 3) {
+function os_books_get_root($node, $level = 0) {
   if (is_numeric($node)) $node = node_load($node);
 
-  if (isset($node->book) && $node->book['depth'] > $level) { // book page
-    while($node -> book['depth'] > $level){
-      $parent = book_link_load($node->book['plid']);
-      $pid = $parent['nid'];
-      $node = node_load(array('nid' => $pid));
+  if (!isset($node->book)) return $node;
+  if ($level) {
+    if (isset($node->book) && $node->book['depth'] > $level) { // book page
+      while($node -> book['depth'] > $level){
+        $parent = book_link_load($node->book['plid']);
+        $pid = $parent['nid'];
+        $node = node_load(array('nid' => $pid));
+      }
     }
+  }
+  else {
+    $node = node_load($node->book['bid']);
   }
   return $node;
 }
@@ -19,12 +25,12 @@ function os_books_get_root($node, $level = 3) {
 /*
  * Takes any node in a book tree and builds the entirety of that tree
  */
-function os_books_build_tree($node) {
+function os_books_build_tree($node, $flatten = false) {
   $root = os_books_get_root($node);
 
   if (isset($root->book)) {
     $tree = book_menu_subtree_data($root->book);
-    $tree = _os_books_flatten_book($tree);
+    if ($flatten) $tree = _os_books_flatten_book($tree);
     return book_export_traverse($tree, false);
   }
 }
@@ -34,7 +40,7 @@ function os_books_build_tree($node) {
  */
 function os_books_nodeapi(&$node, $op, $teaser, $page) {
   if ($op == 'view' && $node->type == 'book' && $page) {
-    $content = os_books_build_tree($node);
+    $content = os_books_build_tree($node, true);
     $content = str_replace(array('node-', 'class="section'), array('book-node-', 'class="book-page section'), $content);
     $node->content['full-book'] = array(
       '#value' => $content,
