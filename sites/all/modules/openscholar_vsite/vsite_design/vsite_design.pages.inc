@@ -86,6 +86,11 @@ function vsite_design_theme_picker_form($form_state) {
   $form['#submit'][] = 'vsite_design_theme_picker_form_submit';
 
   $form = system_settings_form($form);
+  $form['buttons'] += array(
+    '#type' => 'markup',
+    '#prefix' => '<div id="themeButtons">',
+    '#suffix' => '</div>',
+  );
 
   // system_settings_form sets a new theme. replace it with our theme
   $form['#theme'] = 'vsite_design_theme_form';
