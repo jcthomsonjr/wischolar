@@ -1,0 +1,78 @@
+<?php
+
+/*
+ * Gets the root node of any book tree
+ */
+function os_books_get_root($node, $level = 3) {
+  if (is_numeric($node)) $node = node_load($node);
+
+  if (isset($node->book) && $node->book['depth'] > $level) { // book page
+    while($node -> book['depth'] > $level){
+      $parent = book_link_load($node->book['plid']);
+      $pid = $parent['nid'];
+      $node = node_load(array('nid' => $pid));
+    }
+  }
+  return $node;
+}
+
+/*
+ * Takes any node in a book tree and builds the entirety of that tree
+ */
+function os_books_build_tree($node) {
+  $root = os_books_get_root($node);
+
+  if (isset($root->book)) {
+    $tree = book_menu_subtree_data($root->book);
+    $tree = _os_books_flatten_book($tree);
+    return book_export_traverse($tree, false);
+  }
+}
+
+/**
+ * Replace the body of the node with the full book
+ */
+function os_books_nodeapi(&$node, $op, $teaser, $page) {
+  if ($op == 'view' && $node->type == 'book' && $page) {
+    $content = os_books_build_tree($node);
+    $content = str_replace(array('node-', 'class="section'), array('book-node-', 'class="book-page section'), $content);
+    $node->content['full-book'] = array(
+      '#value' => $content,
+      '#weight' => 10,
+    );
+  }
+}
+
+/*
+ * Implementation of hook_link.
+ */
+function os_books_link($type, $node, $teaser = FALSE) {
+  $links = array();
+  if ($type == 'node' && $node->type == 'book') {
+    $links['permalink'] = array(
+      'title' => t('Permalink'),
+      'href' => drupal_get_path_alias('node/'. $node->nid),
+      'attributes' => array(
+      	'id' => t('book-permalink'),
+      	'title' => t('Permanent Link')
+      ),
+    );
+  }
+  return $links;
+}
+
+/**
+ * Flattens our book tree
+ * @param array $tree
+ */
+function _os_books_flatten_book($tree) {
+  if (!is_array($tree)) {
+    return array();
+  }
+  $result = array();
+  foreach ($tree as $key => $value) {
+    $result[$key]['link'] = $value['link'];
+    $result = array_merge($result, _os_books_flatten_book($value['below']));
+  }
+  return $result;
+}
