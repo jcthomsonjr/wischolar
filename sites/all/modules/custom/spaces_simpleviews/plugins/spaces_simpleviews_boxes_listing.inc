@@ -49,8 +49,14 @@ class spaces_simpleviews_boxes_listing extends boxes_box {
     $view->init();
     $view->set_display('default');
 
-    $block = parent::render();
-    $block['content'] = $view->execute_display();
+    $title = isset($this->title) ? check_plain($this->title) : NULL;
+    $block = array(
+      'title' => $title,
+      'subject' => $title,
+      'delta' => $this->delta,
+      'content' => $view->execute_display(),
+    );
+    
     return $block;
   }
 
