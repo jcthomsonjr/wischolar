@@ -1,0 +1,114 @@
+<?php
+// $Id: shib_auth.install,v 1.3.4.2.2.17 2009/10/20 11:25:33 dorion Exp $
+/**
+ * @file
+ * This is the install file of the Shibboleth authentication module for Drupal system
+ *
+ */
+/**
+ * Implementation of hook_install().
+ *
+ * Hook to install module, and enable it as a block
+ */
+function shib_auth_install() {
+  drupal_install_schema('shib_auth');
+
+  // Place block into the 'blocks' table manually
+  foreach (list_themes() as $key => $theme) {
+    if ($theme->status) {
+      // Delete block from database for version changes
+      $block_query = db_query("SELECT * FROM {blocks} WHERE module = 'shib_auth'");
+      if (!db_fetch_object($block_query)) {
+        db_query("INSERT INTO {blocks} (visibility, pages, custom, title, module, theme, status, weight, delta, cache, region) VALUES(%d, '%s', %d, '%s', '%s', '%s', %d, %d, '%s', %d, '%s')", 0, '', 0, '', 'shib_auth', $theme->name, TRUE, 0, 0, BLOCK_NO_CACHE, 'left');
+      }
+    }
+  }
+  cache_clear_all(NULL, 'cache_block');
+
+  drupal_set_message(t('Shibboleth authentication module installed successfully.'));
+}
+
+/**
+ * Implementation of hook_uninstall().
+ *
+ * Hook to uninstall variables and the block, witch were created and used by the module
+ */
+function shib_auth_uninstall() {
+
+  // Drop variables.
+  $variables = array(
+    'auth_link_text',
+    'shib_auth_handler_url',
+    'shib_auth_handler_protocol',
+    'shib_auth_wayf_uri',
+    'shib_auth_username_variable',
+    'shib_auth_username_email',
+    'shib_auth_auto_destroy_session',
+    'shib_logout_url',
+    'shib_auth_debug_state',
+    'shib_auth_debug_url',
+    'shib_auth_mail_shib_only',
+    
+  );
+  foreach ($variables as $variable) {
+    variable_del($variable);
+  }
+
+  // Remove block from the 'blocks' table manually
+  db_query("DELETE FROM {blocks} WHERE module = 'shib_auth'");
+  cache_clear_all(NULL, 'cache_block');
+
+  drupal_uninstall_schema('shib_auth');
+
+  drupal_set_message(t('The Shibboleth authentication module was uninstalled successfully.'));
+}
+
+/**
+ * Implementation of hook_schema().
+ *
+ * This is how the schema of the module will look like
+ */
+function shib_auth_schema() {
+  $schema['shib_auth'] = array(
+    'description' => t('Storing shibboleth authentication rules'),
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t("The id of the Shibboleth role assignment rule"),
+      ),
+      'field' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'default' => '',
+        'description' => t("The observed server variable."),
+      ),
+      'regexpression' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'default' => '',
+        'description' => t("The joint regular expression."),
+      ),
+      'role' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'default' => '',
+        'description' => t("The assigned role."),
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implementation of the hook_n_update().
+ *
+ * Fixes [#605354]
+ */
+function shib_auth_update_6000() {
+  menu_cache_clear_all();
+  return;
+}

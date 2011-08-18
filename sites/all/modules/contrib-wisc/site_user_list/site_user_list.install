@@ -1,0 +1,173 @@
+<?php
+// $Id: site_user_list.install,v 1.4 2009/06/24 17:14:26 pukku Exp $
+
+/**
+ * Implementation of hook_schema().
+ */
+function site_user_list_schema() {
+  $schema = array();
+  
+  $schema['site_user_list_fields'] = array(
+    'description' => t('Information on the fields to display in the Site User List.'),
+    'fields' => array(
+      'field_identifier' => array(
+        'description' => t('The (usually prefixed by @) name of the field.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'display' => array(
+        'description' => t('How this field should be displayed.'),
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'column_header' => array(
+        'description' => t('The title for this column.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'weight' => array(
+        'description' => t('Order of the column.'),
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'db_column' => array(
+        'description' => t('The column to display.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'search_column' => array(
+        'description' => t('If searching, search against which column?'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+      'sort_column' => array(
+        'description' => t('Sort using this column, if provided.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+      'eval_template' => array(
+        'description' => t('TODO'),
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'template_condition_columns' => array(
+        'description' => t('TODO'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+      'template' => array(
+        'description' => t('TODO'),
+        'type' => 'text',
+        'not null' => FALSE,
+      ),
+    ),
+    
+  );
+  
+  return $schema;
+}
+
+function site_user_list_install() {
+  drupal_install_schema('site_user_list');
+
+  $default_query_type = 'query';
+
+  global $db_type;
+  if ((($db_type == 'mysql') || ($db_type == 'mysqli'))
+            && (version_compare(db_version(), '4.1', '<'))) {
+    $default_query_type = 'table';
+  }
+
+  variable_set('site_user_list_query_type', $default_query_type);
+  drupal_set_message('Please make sure you visit the ' . l('Site User List settings page', 'admin/settings/site_user_list/general') . ' to configure this module!');
+  
+  // set up a default view
+  db_query("INSERT INTO {site_user_list_fields} (field_identifier, display, column_header, weight,
+                                                 db_column, search_column, sort_column,
+                                                 eval_template, template)
+            VALUES ('@uid', 3, 'User ID', -1, '@uid', '@uid', '@uid', 0, '@uid')");
+
+  db_query("INSERT INTO {site_user_list_fields} (field_identifier, display, column_header, weight,
+                                                 db_column, search_column, sort_column,
+                                                 eval_template, template)
+            VALUES ('@name', 3, 'User name', 0, '@name', '@name', '@name', 0, '@name')");
+
+  db_query("INSERT INTO {site_user_list_fields} (field_identifier, display, column_header, weight,
+                                                 db_column, search_column, sort_column,
+                                                 eval_template, template)
+            VALUES ('@mail', 3, 'Email', 1, '@mail', '@mail', '@mail', 0, '<a href=\"mailto:@mail\">@mail</a>')");
+
+  db_query("INSERT INTO {site_user_list_fields} (field_identifier, display, column_header, weight,
+                                                 db_column, search_column, sort_column,
+                                                 eval_template, template)
+            VALUES ('@user_view', 4, '', 19, '', '', '', 0, 'view')");
+
+  db_query("INSERT INTO {site_user_list_fields} (field_identifier, display, column_header, weight,
+                                                 db_column, search_column, sort_column,
+                                                 eval_template, template)
+            VALUES ('@user_edit', 4, '', 20, '', '', '', 0, 'edit')");
+
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function site_user_list_uninstall() {
+  drupal_uninstall_schema('site_user_list');
+  
+  $log = variable_get('site_user_list_log_rebuilds', 0);
+  if (db_table_exists("{site_user_list_view}")) {
+    db_query("DROP VIEW {site_user_list_view}");
+    if ($log) {
+      watchdog('site_user_list', 'Dropped view {site_user_list_view} as part of uninstall');
+    }
+  }
+  if (db_table_exists("{site_user_list_table}")) {
+    db_query("DROP TABLE {site_user_list_table}");
+    if ($log) {
+      watchdog('site_user_list', 'Dropped table {site_user_list_table} as part of uninstall');
+    }
+  }
+  
+  variable_del('site_user_list_query_type');
+  variable_del('site_user_list_select_from');
+  variable_del('site_user_list_use_cron');
+  variable_del('site_user_list_log_rebuilds');
+  
+  variable_del('site_user_list_title');
+  variable_del('site_user_list_column_delta');
+  
+  variable_del('site_user_list_d_show');
+  variable_del('site_user_list_d_weight');
+
+  variable_del('site_user_list_s_show');
+  variable_del('site_user_list_s_weight');
+  variable_del('site_user_list_s_before');
+  variable_del('site_user_list_s_after');
+
+  variable_del('site_user_list_r_show');
+  variable_del('site_user_list_r_weight');
+  variable_del('site_user_list_r_count');
+  variable_del('site_user_list_include_blocked_users');
+  variable_del('site_user_list_display_sql_query');
+  
+  // this should be in profile.module
+  variable_del('profile_site_user_list_visible_fields');
+  variable_del('profile_site_user_list_exclude_fid');
+  variable_del('profile_site_user_list_exclude_set');
+  
+  drupal_set_message('The Site User List module has been uninstalled.');
+}
+
+/// @anchor Upgrade functions.
+
+/* Do we need an upgrade function from Drupal 5.x to 6.x? */

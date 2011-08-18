@@ -1,0 +1,301 @@
+# translation of hu.po to Hungarian
+# $Id: hu.po,v 1.1.2.2 2009/05/07 12:21:59 martoni Exp $
+#
+# Hungarian translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  shib_auth.module: n/a
+#  shib_auth.info: n/a
+#  shib_auth.install: n/a
+#
+# Kristof BAJNOK <bajnokk@niif.hu>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: hu\n"
+"POT-Creation-Date: 2009-04-24 10:21+0200\n"
+"PO-Revision-Date: 2009-05-07 10:52+0200\n"
+"Last-Translator: Kristof BAJNOK <bajnokk@niif.hu>\n"
+"Language-Team: Hungarian <aai@niif.hu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: shib_auth.module:21
+msgid "The Shibboleth authentication module lets you utilize the advantages of the Single Sign On (SSO) methods."
+msgstr "A Shibboleth authentikációs modul használatával kihasználhatjuk a Single Sign On (SSO) azonosítás előnyeit."
+
+#: shib_auth.module:22
+msgid "For more help related to Shibboleth and module configuration, see <a href=\"@wiki\">NIIF AAI wiki pages</a>."
+msgstr "A Shibboleth és a modul beállításához a <a href=\"@wiki\">NIIF AAI wiki</a>-n található segédlet"
+
+#: shib_auth.module:27
+msgid "The text shown in the block and other login pages can be changed on the <a href=\"@block\">block settings page</a>."
+msgstr "A blokkban és a többi bejelentkező oldalon megjelenő szöveg megváltoztatható a <a href=\"@block\">blokk beállításoknál</a>."
+
+#: shib_auth.module:63
+msgid "Your Drupal session has been destroyed because your SSO session is lost or expired."
+msgstr "Az Ön Drupal munkamenetét megszüntettük, mert az SSO munkamenet elveszett vagy lejárt."
+
+#: shib_auth.module:86
+msgid "Username is missing. Please contact your Shibboleth administrator!"
+msgstr "Hiba a Shibboleth bejelentkezéskor - A felhasználónév nem található. Kérem lépjen kapcsolatba a Shibboleth adminisztrátorral."
+
+#: shib_auth.module:107;124;150
+msgid "Error saving user account. E-mail address is already used."
+msgstr "Hiba a felhasználó adatainak mentése során. Ez az e-mail cím már foglalt ebben a Drupal rendszerben."
+
+#: shib_auth.module:135;174
+msgid "E-mail address is missing. Please contact your Shibboleth administrator!"
+msgstr "E-mail cím nem található. Kérem lépjen kapcsolatba a Shibboleth adminisztrátorral!"
+
+#: shib_auth.module:301;336
+msgid "Shibboleth Login"
+msgstr "Shibboleth belépés"
+
+#: shib_auth.module:319
+#: shib_auth.info:0
+msgid "Shibboleth authentication"
+msgstr "Shibboleth azonosítás"
+
+#: shib_auth.module:332
+msgid "Text of the auth link"
+msgstr "Az azonosítást elvégző hivatkozás szövege"
+
+#: shib_auth.module:335
+msgid "Here you can replace the text of the authentication link."
+msgstr "Itt módosíthatja azt a szöveget, amire kattintva a felhasználó azonosíthatja magát a Shibboleth segítségével"
+
+#: shib_auth.module:350
+msgid "Shibboleth login"
+msgstr "Shibboleth belépés"
+
+#: shib_auth.module:369
+msgid "Shibboleth handler settings"
+msgstr "Shibboleth handler beállítások"
+
+#: shib_auth.module:376
+msgid "Attribute settings"
+msgstr "Attribútum beállítások"
+
+#: shib_auth.module:384
+msgid "Shibboleth handler URL"
+msgstr "Shibboleth handler URL-je"
+
+#: shib_auth.module:386
+msgid "The URL can be absolute or relative to the server base url: http://www.example.com/Shibboleth.sso; /Shibboleth.sso"
+msgstr "A cím lehet abszolút, vagy honlap gyökeréhez képest relatív Példák: http://www.example.com/Shibboleth.sso; /Shibboleth.sso"
+
+#: shib_auth.module:391
+msgid "Shibboleth handler protocol"
+msgstr "A Shibboleth handler protokoll"
+
+#: shib_auth.module:394
+msgid "HTTP"
+msgstr "HTTP"
+
+#: shib_auth.module:395
+msgid "HTTPS"
+msgstr "HTTPS"
+
+#: shib_auth.module:397
+msgid "This option will be effective only if the handler URL is a relative path."
+msgstr "Ennek a beállításnak csak akkor van szerepe, ha a megadott URL relatív."
+
+#: shib_auth.module:402
+msgid "WAYF location"
+msgstr "WAYF helye"
+
+#: shib_auth.module:408
+msgid "Server variable for username"
+msgstr "A felhasználónevet tartalmazó szerverváltozó"
+
+#: shib_auth.module:414
+msgid "Server variable for e-mail address"
+msgstr "Az e-mail címet tartalmazó szerverváltozó"
+
+#: shib_auth.module:420
+msgid "Allow e-mail address override"
+msgstr "E-mail cím felülbírálásának engedélyezése"
+
+#: shib_auth.module:422
+msgid "Allow the IDP to override the locally stored e-mail addresses."
+msgstr "Az IDP megbízása arra, hogy felülírja a helyben tárolt e-mail címeket a belépésnél."
+
+#: shib_auth.module:427
+msgid "Allow user define own e-mail address"
+msgstr "A felhasználó megadhatja az e-mail címét, ha szükséges"
+
+#: shib_auth.module:429
+msgid "Allow the user to define her own e-mail addresses if the 'Allow e-mail address override' is disabled."
+msgstr "Amennyiben az e-mail cím felülbírálása le van tiltva, a felhasználó saját maga adhatja meg e-mail címét."
+
+#: shib_auth.module:439
+msgid "Enable DEBUG mode."
+msgstr "Debug mód engedélyezése"
+
+#: shib_auth.module:445
+msgid "DEBUG path prefix"
+msgstr "A debug információk megejelenítése ezen előtag után"
+
+#: shib_auth.module:447
+msgid "For example use 'user/' for display DEBUG messages on paths 'user/*'!"
+msgstr "Például a 'user/' előtag a  'user/*' -ben lévő tartalmaknál fogja kiirni a DEBUG információkat"
+
+#: shib_auth.module:452
+msgid "Destroy Drupal session when the Shibboleth session expires."
+msgstr "A Shibboleth munkamenet lejárata esetén a Drupal munkamenet megszüntetése"
+
+#: shib_auth.module:458
+msgid "Change Logout settings"
+msgstr "Kijelentkezési beállítások"
+
+#: shib_auth.module:463
+msgid "URL to redirect to after logout"
+msgstr "Link, amelyre kijelentkezés után a felhasználót továbbítja a rendszer"
+
+#: shib_auth.module:465
+msgid "The URL can be absolute or relative to the server base url. The relative paths will be automatically extended with the site base URL."
+msgstr "A link abszolút és a szerver címéhez képest relatív is lehet. A relatív linkek a szerver URL után írva kerülnek meghívásra."
+
+#: shib_auth.module:479
+msgid "Shibboleth settings"
+msgstr "Shibboleth beállítások"
+
+#: shib_auth.module:480
+msgid "Settings of the Shibboleth authentication module"
+msgstr "A Shibboleth azonosítással kapcsolatos beállítások"
+
+#: shib_auth.module:487
+msgid "General settings"
+msgstr "Általános beállítások"
+
+#: shib_auth.module:494
+msgid "Shibboleth group rules"
+msgstr "Shibboleth csoport szabályok"
+
+#: shib_auth.module:495
+msgid "Administer attribute-based role assignment"
+msgstr "Attribútum-alapú szerepek beállítása"
+
+#: shib_auth.module:504
+msgid "Add new rule"
+msgstr "Új szabály hozzáadása"
+
+#: shib_auth.module:505
+msgid "Add new attribute-based role assignment rule"
+msgstr "Új attribútum-alapú szerep-hozzárendelési szabály létrehozása"
+
+#: shib_auth.module:538
+msgid "Please enter your email address"
+msgstr "Kérem adja meg e-mail címét"
+
+#: shib_auth.module:556
+msgid "E-mail"
+msgstr "E-mail"
+
+#: shib_auth.module:562
+msgid "Send"
+msgstr "Küldés"
+
+#: shib_auth.module:574
+msgid "You have to fill the 'E-mail' field."
+msgstr "Kérem töltse ki az 'E-mail' mezőt"
+
+#: shib_auth.module:616
+msgid "Clone"
+msgstr "Másolás"
+
+#: shib_auth.module:617
+msgid "Edit"
+msgstr "Szerkeszt"
+
+#: shib_auth.module:618
+msgid "Delete"
+msgstr "Töröl"
+
+#: shib_auth.module:624
+msgid "There is no rule in the database"
+msgstr "Jelenleg nincs szabály az adatbázisban"
+
+#: shib_auth.module:734
+msgid "Entry id"
+msgstr "Bejegyzés azonosítója"
+
+#: shib_auth.module:740
+msgid "Shibboleth attribute name"
+msgstr "Shibboleth attribútum név"
+
+#: shib_auth.module:744
+msgid "More properly: <b>$_SERVER</b> field name; enable DEBUG mode to list available fields. <br/>Note that it might differ from your users' fields."
+msgstr "Helyesebben: <b>$_SERVER</b> mezőnév; a szerverváltozókat a debug mód bekapcsolásával tekintheti meg <br/>Kérjük, vegye figyelembe, hogy ezek különbözhetnek a felhasználók mezőneveitől."
+
+#: shib_auth.module:748
+msgid "Value (regexp)"
+msgstr "Érték (reguláris kifejezés)"
+
+#: shib_auth.module:758
+msgid "Roles"
+msgstr "Szerepek"
+
+#: shib_auth.module:791
+msgid "Your changes are saved."
+msgstr "Elmentve."
+
+#: shib_auth.module:263
+msgid "administer shibboleth authentication"
+msgstr "Shibboleth azonosítás beállítása"
+
+#: shib_auth.module:514
+msgid "Delete rule"
+msgstr "Szabály törlése"
+
+#: shib_auth.module:522;530
+msgid "Edit rule"
+msgstr "Szabály módosítása"
+
+#: shib_auth.module:415
+msgid "E-mail source settings"
+msgstr "E-mail cím bekérés"
+
+#: shib_auth.module:417
+msgid "Require and use only Shibboleth-provided email address"
+msgstr "Kizárólag az IdP-től kapott e-mail cím használható"
+
+#: shib_auth.module:417
+msgid "Ask for missing e-mail address"
+msgstr "Az e-mail cím bekérése a felhasználó regisztrációjakor, ha nem ismert"
+
+#: shib_auth.install:28
+msgid "Shibboleth authentication module installed successfully."
+msgstr "A Shibboleth azonosító modul telepítője sikeresen lefutott."
+
+#: shib_auth.install:62
+msgid "The Shibboleth authentication module was uninstalled successfully."
+msgstr "A Shibboleth azonosító modul eltávolítása sikeres volt."
+
+#: shib_auth.install:72
+msgid "Storing shibboleth authentication rules"
+msgstr "Shibboleth azonosító szabályok tárolása"
+
+#: shib_auth.install:78
+msgid "The shibboleth group rule's id."
+msgstr "Szerep-hozzárendelési szabály azonosítója"
+
+#: shib_auth.install:84
+msgid "The observed server variable."
+msgstr "A vizsgált szerver változó"
+
+#: shib_auth.install:90
+msgid "The joint regular expression."
+msgstr "A reguláris kifejezés"
+
+#: shib_auth.install:96
+msgid "The adjudicated role."
+msgstr "A hozzárendelési szabály"
+
+#: shib_auth.info:0
+msgid "Shibboleth authentication module."
+msgstr "Shibboleth azonosító modul"
+
