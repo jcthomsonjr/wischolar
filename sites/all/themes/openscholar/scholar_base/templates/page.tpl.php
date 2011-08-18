@@ -101,10 +101,13 @@
           <?php endif; ?>
           <?php
             $home_link =  l('Powered by OpenScholar','http://openscholar.harvard.edu', array('attributes' => array('class' => 'poweredby'),'html'=>TRUE));
-            $login_link = theme('vsite_login_link',"Login",array('class' => 'footer-login'));
+            $login_link = theme('vsite_login_link',"Visitor Login",array('class' => 'footer-login'));
           ?>
-          <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> <span id="powered-link"><?php print $home_link; ?></span></p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?>
-        </div><!-- /wrap -->
+          <p class="copy"><?php print $login_link;?> <?php if ($footer_message) { print $footer_message; } ?> 
+           <div class="wischolar-home"><a href="https://wischolar.wisc.edu/"><img src="/sites/default/files/wischolar_footer.png" alt="WiScholar: University of Wisconisn-Madison"></a></div>
+          <!-- Harvard branding and tracking
+          <span id="powered-link"><?php print $home_link; ?></span></p><?php if(variable_get('openscholar_reportverinfo', 1)){ ?><img src="http://openscholar.harvard.edu/openscholar_lu/spacer.gif?<?php echo drupal_query_string_encode($openscholar_version_info) ?>" /><?php } ?> -->
+          </div><!-- /wrap -->
       </div> <!-- /#footer -->
     </div><!-- /page-wrapper -->
   </div> <!-- /page -->

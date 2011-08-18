@@ -37,11 +37,11 @@ function vsite_widget_rss(){
   if (! $vsite = vsite_get_vsite()) {
     return;
   }
-
+  
   if ($image = theme('image', 'misc/feed.png', t('Syndicate content'), 'RSS')) {
     $block['content'] = l($image, 'feed', array('html' => TRUE, 'attributes' => array('class' => 'feed-icon')));
   }
-
+  
   return $block;
 
 }
@@ -101,7 +101,7 @@ function vsite_widgets_shield(){
 	$s_filename = variable_get('vsite_shields_shield', '');
 	if ($s_filename) {
 	  $block['subject'] = t('');
-	  $block['content'] = '<div id="scholar-shield"><img src="'.url($s_filename, array('alias' => TRUE)).'" /> </div>';
+	  $block['content'] = '<div id="scholar-shield"><a href="http://wisc.edu/"><img src="'.url($s_filename, array('alias' => TRUE)).'" /></a> </div>';
 
 	  return $block;
 	}
@@ -142,7 +142,7 @@ function vsite_widgets_vsite_widgets(){
       'region' => 'right',
       'label' => 'Scholar search widget',
     ),
-
+    
     'vsite_widgets-4' => array(
       'module' => 'vsite_widgets',
       'delta' => '2',
@@ -150,7 +150,7 @@ function vsite_widgets_vsite_widgets(){
       'region' => false,
       'label' => 'AddThis Button - Share posts using popular services',
     ),
-
+    
     'vsite_widgets-5' => array(
       'module' => 'vsite_widgets',
       'delta' => '3',
@@ -158,7 +158,7 @@ function vsite_widgets_vsite_widgets(){
       'region' => false,
       'label' => 'Google Translate',
     ),
-
+    
    'vsite_widgets-6' => array(
       'module' => 'vsite_widgets',
       'delta' => '6',
@@ -205,7 +205,7 @@ function vsite_widgets_flag_alter(&$flag){
 }
 
 /**
- * Implementation of hook_admin_link().
+ * Implementation of hook_link().
  */
 function vsite_widgets_vsite_admin_link($type, $object){
   $links = array();

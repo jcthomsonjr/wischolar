@@ -3,6 +3,7 @@
     <div class="os-links">
       <?php print $vsite_admin_links; ?>
     </div>
+          <?php if ($picture) print $picture; ?>
     <?php if (!$page): ?>
       <h3 class="title">
         <a href="<?php print $node_url; ?>" title="<?php print $title ?>"><?php print $title; ?></a>
