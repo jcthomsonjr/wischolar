@@ -25,7 +25,7 @@ class spaces_simpleviews_boxes_listing extends boxes_box {
    */
   public function options_form(){
     
-    $form = spaces_simpleviews_get_edit_form();
+    $form = spaces_simpleviews_get_edit_form($this->options);
     
     //$form += parent::options_form();
     return $form;
