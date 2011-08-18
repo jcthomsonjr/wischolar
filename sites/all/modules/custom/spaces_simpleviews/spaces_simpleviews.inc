@@ -64,10 +64,10 @@ function _spaces_simpleviews_set_row_style($handler, $simpleview){
   // teaser or fields ?
   
   if ($simpleview['style'] == 'teasers') {
-    _spaces_simpleviews_set_display_to_teaser_list(&$handler, $simpleview);
+    _spaces_simpleviews_set_display_to_teaser_list($handler, $simpleview);
   }
   elseif ($simpleview['style'] == 'titles') {
-    _spaces_simpleviews_set_display_to_title_list(&$handler, $simpleview);
+    _spaces_simpleviews_set_display_to_title_list($handler, $simpleview);
   }
 
 }
