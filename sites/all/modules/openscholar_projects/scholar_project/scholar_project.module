@@ -75,8 +75,17 @@ function _scholar_project_basicinfo_wdgt(){
 
   if(!strlen($scholar->group->title)) return $block;
 
+/*
   $output =  "<h1>" . l($scholar->group->title, $scholar->get_absolute_url()) . "</h1>".
   ((strlen($scholar->group->og_description)) ? "<h2>" . $scholar->group->og_description . "</h2>" : "" );
+*/
+
+  $output =  "<h1>" .
+  	l($scholar->group->title) .
+  	"</h1>" .
+	((strlen($scholar->group->og_description)) ? "<h2>" .
+	$scholar->group->og_description .
+	"</h2>" : "" );
 
   $block['content'] = $output;
   return $block;
